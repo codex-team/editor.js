@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>CodeX Editor</title>
+    <link rel="stylesheet" href="editor.css" />
+</head>
+<body style="padding: 100px">
+
+
+    <h1>CodeX Editor</h1>
+
+    <form action="">
+
+        <textarea name="" id="html_result" cols="30" rows="10"></textarea>
+
+    </form>
+
+    <!-- <div class="codex_editor editor_wrapper">
+        <div class="editor_content">
+            <div class="node">
+
+                <div class="add_buttons example">
+
+                    <span class="toggler"><i class="ce_icon-plus-circled-1"></i></span>
+
+                    <button data-type="header"><i class="ce_icon-header"></i></button>
+                    <button data-type="picture"><i class="ce_icon-picture"></i></button>
+                    <button data-type="list"><i class="ce_icon-list"></i></button>
+                    <button data-type="quote"><i class="ce_icon-quote"></i></button>
+                    <button data-type="code"><i class="ce_icon-code"></i></button>
+                    <button data-type="twitter"><i class="ce_icon-twitter"></i></button>
+                    <button data-type="instagram"><i class="ce_icon-instagram"></i></button>
+                    <button data-type="smile"><i class="ce_icon-smile"></i></button>
+
+                </div>
+
+                <p class="content"  contenteditable="true">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et, eligendi cum amet unde nobis est asperiores similique odio quisquam nostrum quidem, vero esse culpa reprehenderit delectus debitis. Odio, optio, sed.
+                </p>
+
+            </div>
+        </div>
+    </div> -->
+
+
+
+</body>
+</html>
+
+<script src="ce_interface.js?v=<?= filemtime("public/js/ce_interface.js") ?>"></script>
+<script>
+
+    function ready(f){/in/.test(document.readyState) ? setTimeout(ready,9,f) : f();}
+
+    /** Document is ready */
+    ready(function() {
+        window.cEditor = new ce('html_result');
+    })
+
+</script>
