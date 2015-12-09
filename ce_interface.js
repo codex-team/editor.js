@@ -3,21 +3,40 @@
 * @author Savchenko Peter (vk.com/specc)
 */
 
-var ce = function(textareaId) {
+var ce = function(settings) {
 
-    this.resultTextarea = document.getElementById(textareaId);
+    this.textareaId     = "codex_editor";
+    this.resultTextarea = document.getElementById(this.textareaId);
 
     if (typeof this.resultTextarea == undefined || this.resultTextarea == null ){
 
-        console.warn('Textarea not found with ID %o', textareaId);
+        console.warn('Textarea not found with ID %o', this.textareaId);
         return this;
 
     }
 
-    this.toolbarOpened = false;
-    this.tools = ['header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'];
+    // prepare settings
+    this.allTools = ['header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'];
+
+    var defaultSettings = {
+
+    };
+
+
+    if ("undefined" == typeof settings || "object" != typeof settings)
+        settings = defaultSettings;
+    else {
+        // todo just merge settings with defaults
+    }
+
+    if ("undefined" == typeof settings.tools || !Array.isArray(settings.tools))
+        settings.tools = this.allTools;
+
+    this.settings = settings;
 
     /** Some configurations */
+    this.toolbarOpened = false;
+
     this.BUTTONS_TOGGLED_CLASSNANE = 'buttons_toggled';
     this.key = { TAB: 9, ENTER: 13, BACKSPACE: 8, DELETE: 46, DOWN: 40, SPACE: 32, ESC: 27, CTRL: 17, META: 91, SHIFT: 16, ALT: 18 };
 
@@ -27,33 +46,42 @@ var ce = function(textareaId) {
     /** Bind all events */
     this.bindEvents();
 
-}
+};
 
 /**
 * Editor interface drawing
-* @use this.tools to get necessary items
-* @todo get tools from user inital-settings
 */
 ce.prototype.makeInterface = function () {
 
     var wrapper   = this.make.editorWrapper(),
-        firstNode = this.make.node(null, 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro quia nihil repellendus aut cupiditate reprehenderit sapiente magnam nobis doloremque eaque! Sint nobis assumenda nisi ducimus minima illo tenetur, cumque facilis.' ),
+        firstNode = this.make.textNode('Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro quia nihil repellendus aut cupiditate reprehenderit sapiente magnam nobis doloremque eaque! Sint nobis assumenda nisi ducimus minima illo tenetur, cumque facilis.' ),
         toolbar   = this.make.toolbar(),
-        button;
+        button,
+        tool;
 
-    for (var i = 0; i < this.tools.length; i++) {
-        button = this.make.toolbarButton(this.tools[i]);
-        toolbar.appendChild(button);
-    };
+    this.wrapper = wrapper;
+    this.toolbar = toolbar;
 
-    /**
-    * Add toolbar to node
-    * @todo make toolbar rendering once
-    */
-    firstNode.appendChild(toolbar);
+    this.toolbarButtons = document.createElement("span");
+    this.toolbarButtons.classList.add("buttons");
+
+    // обходим базовый список, чтобы сохранить оригинальную последовательность кнопок
+    for (var i = 0; i < this.allTools.length; i++) {
+        tool = this.allTools[i];
+
+        if (this.settings.tools.indexOf(tool) < 0)
+            continue;
+
+        button = this.make.toolbarButton(tool);
+        this.toolbarButtons.appendChild(button);
+    }
+
 
     /** Add first node */
     wrapper.appendChild(firstNode);
+
+    /** Add toolbar to node */
+    wrapper.appendChild(toolbar);
 
     /** Insert Editor after initial textarea. Hide textarea */
     this.resultTextarea.parentNode.insertBefore(wrapper, this.resultTextarea.nextSibling);
@@ -63,7 +91,7 @@ ce.prototype.makeInterface = function () {
     var contentEditable = firstNode.getElementsByClassName('ce_node_content');
     contentEditable.length && contentEditable[0].focus();
 
-}
+};
 
 /**
 * All events binds in one place
@@ -77,7 +105,7 @@ ce.prototype.bindEvents = function () {
         _this.globalKeydownCallback(event);
     }, false );
 
-}
+};
 
 /**
 * All window keydowns handles here
@@ -89,40 +117,70 @@ ce.prototype.globalKeydownCallback = function (event) {
         case this.key.ENTER : this.enterKeyPressed(event); break; // Enter
     }
 
-}
+};
 
 /**
-* @todo: check if currently focused in contenteditable element
+*
 */
 ce.prototype.tabKeyPressed = function(event) {
 
-    var toolbar = document.getElementsByClassName('add_buttons');
+    // check if currently focused in contenteditable element
+    if ("BODY" == event.target.tagName)
+        return;
 
-    if ( !toolbar[0].className.includes(this.BUTTONS_TOGGLED_CLASSNANE) ){
-        toolbar[0].className += ' ' + this.BUTTONS_TOGGLED_CLASSNANE;
-        this.toolbarOpened = true;
-    } else {
-        toolbar[0].className = toolbar[0].className.replace(this.BUTTONS_TOGGLED_CLASSNANE, '');
-        this.toolbarOpened = false
-    }
+    var toolbar = event.target.parentNode.nextSibling,
+        _this = this;
+
+    toolbar.appendChild(this.toolbarButtons);
+
+    // repair buttons animation
+    setTimeout(function () {
+
+        if ( !toolbar.className.includes(_this.BUTTONS_TOGGLED_CLASSNANE) ){
+            toolbar.className += ' ' + _this.BUTTONS_TOGGLED_CLASSNANE;
+            _this.toolbarOpened = true;
+        } else {
+            toolbar.className = toolbar.className.replace(_this.BUTTONS_TOGGLED_CLASSNANE, '');
+            _this.toolbarOpened = false
+        }
+
+    }, 10);
 
     event.preventDefault();
 
-}
+};
 
 /**
 * Handle Enter key. Adds new Node;
 */
 ce.prototype.enterKeyPressed = function(event) {
 
-      console.log('ENTER');
+    if (event.shiftKey){
+        document.execCommand('insertHTML', false, '<br><br>');
+    } else {
+        var
+            newNode = this.make.textNode(),
+            toolbar = this.make.toolbar();
 
-}
+
+        /** Add node */
+        this.wrapper.insertBefore(newNode, event.target.parentNode.nextSibling);
+
+        /** Add toolbar to node */
+        this.wrapper.insertBefore(toolbar, newNode);
+
+        /** Set auto focus */
+        var contentEditable = newNode.getElementsByClassName('ce_node_content');
+        contentEditable.length && contentEditable[0].focus();
+    }
+
+    event.preventDefault();
+};
 
 /**
 * Creates HTML elements
 */
-ce.prototype.make = function (window) {
+ce.prototype.make = function () {
 
     /** Empty toolbar with toggler */
     function toolbar () {
@@ -133,7 +191,7 @@ ce.prototype.make = function (window) {
 
         /** Toggler button*/
         bar.innerHTML = '<span class="toggler">' +
-                            '<i class="ce_icon-plus-circled-1"></i>'+
+                            '<i class="plus_btn ce_icon-plus-circled-1"></i>'+
                         '</span>';
         return bar;
 
@@ -153,7 +211,7 @@ ce.prototype.make = function (window) {
     * Paragraph node
     * @todo set unique id with prefix
     */
-    function node (id, content){
+    function textNode (content){
 
         var node = document.createElement('div');
 
@@ -175,13 +233,13 @@ ce.prototype.make = function (window) {
     var ceMake = function () {
         this.toolbar       = toolbar;
         this.toolbarButton = toolbarButton;
-        this.node          = node;
+        this.textNode      = textNode;
         this.editorWrapper = editorWrapper;
-    }
+    };
 
     return new ceMake();
 
-}(this)
+}();
 
 
 

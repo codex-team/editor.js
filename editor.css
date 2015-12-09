@@ -1,34 +1,34 @@
 @font-face {
-  font-family: 'codex_editor';
-  src: url('fonts/codex_editor/codex_editor.eot?52438661');
-  src: url('fonts/codex_editor/codex_editor.eot?52438661#iefix') format('embedded-opentype'),
-       url('fonts/codex_editor/codex_editor.woff?52438661') format('woff'),
-       url('fonts/codex_editor/codex_editor.ttf?52438661') format('truetype'),
-       url('fonts/codex_editor/codex_editor.svg?52438661#codex_editor') format('svg');
-  font-weight: normal;
-  font-style: normal;
+    font-family: 'codex_editor';
+    src: url('fonts/codex_editor/codex_editor.eot?52438661');
+    src: url('fonts/codex_editor/codex_editor.eot?52438661#iefix') format('embedded-opentype'),
+    url('fonts/codex_editor/codex_editor.woff?52438661') format('woff'),
+    url('fonts/codex_editor/codex_editor.ttf?52438661') format('truetype'),
+    url('fonts/codex_editor/codex_editor.svg?52438661#codex_editor') format('svg');
+    font-weight: normal;
+    font-style: normal;
 }
 [class^="ce_icon-"]:before, [class*="ce_icon-"]:before {
-  font-family: "codex_editor";
-  font-style: normal;
-  font-weight: normal;
-  speak: none;
+    font-family: "codex_editor";
+    font-style: normal;
+    font-weight: normal;
+    speak: none;
 
-  display: inline-block;
-  text-decoration: inherit;
-  width: 1em;
-  margin-right: .2em;
-  text-align: center;
-  font-variant: normal;
-  text-transform: none;
+    display: inline-block;
+    text-decoration: inherit;
+    width: 1em;
+    margin-right: .2em;
+    text-align: center;
+    font-variant: normal;
+    text-transform: none;
 
-  line-height: 1em;
+    line-height: 1em;
 
-  /* Animation center compensation - margins should be symmetric */
-  margin-left: .2em;
+    /* Animation center compensation - margins should be symmetric */
+    margin-left: .2em;
 
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
 .ce_icon-instagram:before { content: '\e800'; } /* '' */
@@ -87,41 +87,55 @@
 }
 
 .codex_editor .add_buttons{
-    position: relative;
+    /* position: relative; */
+    /* left: -42px; */
+    /* top: -30px; */
     color: #3b4352;
     font-size: 16px;
+    margin-left: -42px;
+    margin-top: -20px;
+    margin-bottom: -25px;
 }
-    .codex_editor .add_buttons button:hover,
-    .codex_editor .add_buttons .focused{
-        color: #3770ef;
-    }
-    .codex_editor .add_buttons button{
-        transition: all 150ms ease-in;
-        transform: translate3d(-50px, 0 , 0);
-        opacity: 0;
-        font-size: 14px;
-        /*display: none;*/
-    }
-    .codex_editor .buttons_toggled{
-        background: #fff;
-    }
-    .codex_editor .buttons_toggled button{
-        opacity: 1;
-        transform: translate3d(0,0,0);
-    }
+
+.add_buttons .buttons {
+    position: absolute;
+}
+.codex_editor .add_buttons button:hover,
+.codex_editor .add_buttons .focused{
+    color: #3770ef;
+}
+.codex_editor .add_buttons button{
+    transition: all 150ms ease-in;
+    transform: translate3d(-50px, 0 , 0);
+    opacity: 0;
+    font-size: 14px;
+    /*display: none;*/
+}
+.codex_editor .buttons_toggled{
+    background: #fff;
+}
+.codex_editor .buttons_toggled button{
+    opacity: 1;
+    transform: translate3d(0,0,0);
+}
 
 
 .codex_editor .toggler{
-    position: absolute;
-    left: -42px;
+    /* position: relative; */
+    /* left: -42px; */
     display: inline-block;
     font-size: 23px;
     color: #387ff5;
     transition: transform 100ms ease-in;
 }
-    .codex_editor .buttons_toggled .toggler{
-        transform: rotate(45deg);
-    }
+
+.codex_editor .toggler .buttons {
+    position: relative;
+    top: -2px;
+}
+.codex_editor .buttons_toggled .plus_btn{
+    transform: rotate(45deg);
+}
 
 
 
