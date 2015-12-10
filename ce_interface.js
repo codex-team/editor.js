@@ -5,40 +5,22 @@
 
 var ce = function(settings) {
 
-    this.textareaId     = "codex_editor";
-    this.resultTextarea = document.getElementById(this.textareaId);
+    this.resultTextarea = document.getElementById("codex_editor");
 
     if (typeof this.resultTextarea == undefined || this.resultTextarea == null ){
-
         console.warn('Textarea not found with ID %o', this.textareaId);
         return this;
-
     }
 
-    // prepare settings
-    this.allTools = ['header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'];
-
-    var defaultSettings = {
-
-    };
-
-
-    if ("undefined" == typeof settings || "object" != typeof settings)
-        settings = defaultSettings;
+    /* Prepare settings */
+    if ("undefined" == typeof settings) settings = this.defaultSettings;
     else {
         // todo just merge settings with defaults
     }
 
-    if ("undefined" == typeof settings.tools || !Array.isArray(settings.tools))
-        settings.tools = this.allTools;
+    settings.tools = settings.tools || this.allTools;
+    this.settings  = settings;
 
-    this.settings = settings;
-
-    /** Some configurations */
-    this.toolbarOpened = false;
-
-    this.BUTTONS_TOGGLED_CLASSNANE = 'buttons_toggled';
-    this.key = { TAB: 9, ENTER: 13, BACKSPACE: 8, DELETE: 46, DOWN: 40, SPACE: 32, ESC: 27, CTRL: 17, META: 91, SHIFT: 16, ALT: 18 };
 
     /** Making a wrapper and interface */
     this.makeInterface();
@@ -48,49 +30,47 @@ var ce = function(settings) {
 
 };
 
+// All posible tools
+ce.prototype.allTools = ['header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'];
+
+// Default settings configuration
+ce.prototype.defaultSettings = {
+
+};
+
+// Add this class when open tool bar for css animation
+ce.prototype.BUTTONS_TOGGLED_CLASSNANE = 'buttons_toggled';
+
+// Default tool bar is closed
+ce.prototype.toolbarOpened = false;
+
+// Key event constants
+ce.prototype.key = { TAB: 9, ENTER: 13, BACKSPACE: 8, DELETE: 46, DOWN: 40, SPACE: 32, ESC: 27, CTRL: 17, META: 91, SHIFT: 16, ALT: 18 };
+
 /**
-* Editor interface drawing
+ * Editor interface drawing
+ * calls one time in editor constructor
 */
 ce.prototype.makeInterface = function () {
 
     var wrapper   = this.make.editorWrapper(),
         firstNode = this.make.textNode('Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro quia nihil repellendus aut cupiditate reprehenderit sapiente magnam nobis doloremque eaque! Sint nobis assumenda nisi ducimus minima illo tenetur, cumque facilis.' ),
-        toolbar   = this.make.toolbar(),
-        button,
-        tool;
+        toolbar   = this.make.toolbar();
 
     this.wrapper = wrapper;
     this.toolbar = toolbar;
 
-    this.toolbarButtons = document.createElement("span");
-    this.toolbarButtons.classList.add("buttons");
+    this.toolbarButtons = this.make.toolbarButtons(this.allTools, this.settings.tools);
 
-    // обходим базовый список, чтобы сохранить оригинальную последовательность кнопок
-    for (var i = 0; i < this.allTools.length; i++) {
-        tool = this.allTools[i];
-
-        if (this.settings.tools.indexOf(tool) < 0)
-            continue;
-
-        button = this.make.toolbarButton(tool);
-        this.toolbarButtons.appendChild(button);
-    }
-
-
-    /** Add first node */
+    /** Add first node  and tool bar*/
     wrapper.appendChild(firstNode);
-
-    /** Add toolbar to node */
     wrapper.appendChild(toolbar);
 
     /** Insert Editor after initial textarea. Hide textarea */
     this.resultTextarea.parentNode.insertBefore(wrapper, this.resultTextarea.nextSibling);
     this.resultTextarea.hidden = true;
 
-    /** Set auto focus */
-    var contentEditable = firstNode.getElementsByClassName('ce_node_content');
-    contentEditable.length && contentEditable[0].focus();
-
+    this.focusNode(firstNode);
 };
 
 /**
@@ -104,6 +84,17 @@ ce.prototype.bindEvents = function () {
     window.addEventListener('keydown', function (event) {
         _this.globalKeydownCallback(event);
     }, false );
+
+};
+
+/**
+ * Sets focus to node conteneditable child
+ * todo depending on node type
+*/
+ce.prototype.focusNode = function (node) {
+
+    var contentEditable = node.getElementsByClassName('ce_node_content');
+    contentEditable.length && contentEditable[0].focus();
 
 };
 
@@ -125,15 +116,14 @@ ce.prototype.globalKeydownCallback = function (event) {
 ce.prototype.tabKeyPressed = function(event) {
 
     // check if currently focused in contenteditable element
-    if ("BODY" == event.target.tagName)
-        return;
+    if ("BODY" == event.target.tagName) return;
 
     var toolbar = event.target.parentNode.nextSibling,
         _this = this;
 
     toolbar.appendChild(this.toolbarButtons);
 
-    // repair buttons animation
+    // repair buttons animation - just add css class async
     setTimeout(function () {
 
         if ( !toolbar.className.includes(_this.BUTTONS_TOGGLED_CLASSNANE) ){
@@ -144,7 +134,7 @@ ce.prototype.tabKeyPressed = function(event) {
             _this.toolbarOpened = false
         }
 
-    }, 10);
+    });
 
     event.preventDefault();
 
@@ -158,10 +148,8 @@ ce.prototype.enterKeyPressed = function(event) {
     if (event.shiftKey){
         document.execCommand('insertHTML', false, '<br><br>');
     } else {
-        var
-            newNode = this.make.textNode(),
+        var newNode = this.make.textNode(),
             toolbar = this.make.toolbar();
-
 
         /** Add node */
         this.wrapper.insertBefore(newNode, event.target.parentNode.nextSibling);
@@ -182,6 +170,8 @@ ce.prototype.enterKeyPressed = function(event) {
 */
 ce.prototype.make = function () {
 
+    var _this = this;
+
     /** Empty toolbar with toggler */
     function toolbar () {
 
@@ -197,6 +187,7 @@ ce.prototype.make = function () {
 
     }
 
+    // Creates one button with given type
     function toolbarButton (type) {
 
         var button = document.createElement('button');
@@ -205,6 +196,26 @@ ce.prototype.make = function () {
         button.innerHTML    = '<i class="ce_icon-' + type + '"></i>';
 
         return button;
+
+    }
+
+    // Creates all tool bar buttons from editor settings
+    // allTools, usedTools - needs becose cant get them from editor object - bad context
+    function toolbarButtons (allTools, usedTools) {
+
+        var toolbarButtons = document.createElement("span");
+
+        toolbarButtons.classList.add("buttons");
+
+        // Walk base buttons list - save buttons origin sorting
+        allTools.forEach(function(item) {
+
+            if (usedTools.indexOf(item) >= 0) toolbarButtons.appendChild( this.toolbarButton(item) );
+
+        }, this);
+
+        return toolbarButtons;
+
     }
 
     /**
@@ -231,10 +242,11 @@ ce.prototype.make = function () {
     }
 
     var ceMake = function () {
-        this.toolbar       = toolbar;
-        this.toolbarButton = toolbarButton;
-        this.textNode      = textNode;
-        this.editorWrapper = editorWrapper;
+        this.toolbar        = toolbar;
+        this.toolbarButtons = toolbarButtons;
+        this.toolbarButton  = toolbarButton;
+        this.textNode       = textNode;
+        this.editorWrapper  = editorWrapper;
     };
 
     return new ceMake();
