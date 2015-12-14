@@ -12,7 +12,7 @@
 
     <form action="">
 
-        <textarea name="" id="html_result" cols="30" rows="10"></textarea>
+        <textarea name="" id="codex_editor" cols="30" rows="10"></textarea>
 
     </form>
 
@@ -48,14 +48,18 @@
 </body>
 </html>
 
-<script src="ce_interface.js?v=<?= filemtime("public/js/ce_interface.js") ?>"></script>
+<script src="ce_interface.js"></script>
 <script>
 
-    function ready(f){/in/.test(document.readyState) ? setTimeout(ready,9,f) : f();}
+    function ready(f){
+        /in/.test(document.readyState) ? setTimeout(ready,9,f) : f();
+    }
 
     /** Document is ready */
     ready(function() {
-        window.cEditor = new ce('html_result');
+        window.cEditor = new ce({
+            tools : ['header', 'picture']
+        });
     })
 
 </script>
