@@ -90,15 +90,26 @@
 .codex_editor .add_buttons{
     color: #3b4352;
     font-size: 16px;
-    margin-left: -42px;
-    margin-top: -50px;
-    margin-bottom: -25px;
-    position: relative;
+    /* margin-left: -42px; */
+    /* margin-top: -50px; */
+    /* margin-bottom: -25px; */
+    position: absolute;
+    /* visibility: hidden; */
+    opacity: 0;
+    transition: opacity .15s ease-in-out;
+    top: 0;
+    left: -35px;
+    white-space: nowrap;
 }
+
+.codex_editor .node.selected + .add_buttons{visibility:visible;}
 
 .add_buttons .buttons {
     position: absolute;
-    top: 3px;
+    top: 1px;
+    background: wheat;
+    padding: 2px;
+    border-radius: 3px;
 }
 .codex_editor .add_buttons button:hover,
 .codex_editor .add_buttons .focused{
@@ -113,6 +124,7 @@
 .codex_editor .buttons_toggled{
     background: #fff;
     z-index: 10;
+    opacity: 1;
 }
 .codex_editor .buttons_toggled button{
     opacity: 1;
@@ -137,6 +149,13 @@
 
 /** Typography styles */
 .codex_editor p{
-    margin: 30px 0;
+    padding: 5px 0;
     font-size: 17px;
+    margin: 0;
+    min-height: 20px;
+}
+
+.codex_editor {position: relative;}
+
+.codex_editor .ce_content {
 }

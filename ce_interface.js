@@ -55,15 +55,17 @@ ce.prototype.makeInterface = function () {
 
     var wrapper   = this.make.editorWrapper(),
         firstNode = this.make.textNode('Lorem ipsum dolor sit amet, consectetur adipisicing elit. Porro quia nihil repellendus aut cupiditate reprehenderit sapiente magnam nobis doloremque eaque! Sint nobis assumenda nisi ducimus minima illo tenetur, cumque facilis.' ),
-        toolbar   = this.make.toolbar();
+        toolbar   = this.make.toolbar(),
+        editableWrapper;
 
     this.wrapper = wrapper;
+    this.editableWrapper = editableWrapper = wrapper.getElementsByClassName("ce_content")[0];
     this.toolbar = toolbar;
 
     this.toolbarButtons = this.make.toolbarButtons(this.allTools, this.settings.tools);
 
     /** Add first node  and tool bar*/
-    wrapper.appendChild(firstNode);
+    editableWrapper.appendChild(firstNode);
     wrapper.appendChild(toolbar);
 
     /** Insert Editor after initial textarea. Hide textarea */
@@ -78,11 +80,21 @@ ce.prototype.makeInterface = function () {
 */
 ce.prototype.bindEvents = function () {
 
-    var _this = this;
+    var _this = this,
+        selectedNodeClass = "selected";
 
     /** All keydowns on Window */
-    window.addEventListener('keydown', function (event) {
+    document.addEventListener('keydown', function (event) {
         _this.globalKeydownCallback(event);
+    }, false );
+
+
+    /** All blur on Window */
+    document.addEventListener('focus', function (event) {
+        // check if currently focused in contenteditable element
+        if ("BODY" == event.target.tagName) return;
+
+        event.target.classList.add(selectedNodeClass)
     }, false );
 
 };
@@ -92,16 +104,35 @@ ce.prototype.bindEvents = function () {
  * todo depending on node type
 */
 ce.prototype.focusNode = function (node) {
+    debugger
+    //if (node.classList.contains('ce_node_content')) node.focus();
+    //else {
+    //    var contentEditable = node.getElementsByClassName('ce_node_content');
+    //    contentEditable.length && contentEditable[0].focus();
+    //}
 
-    var contentEditable = node.getElementsByClassName('ce_node_content');
-    contentEditable.length && contentEditable[0].focus();
+    node.focus();
+    if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
+        var range = document.createRange();
+        range.selectNodeContents(node);
+        range.collapse(false);
 
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    } else if (typeof document.body.createTextRange != "undefined") {
+        var textRange = document.body.createTextRange();
+        textRange.moveToElementText(node);
+        textRange.collapse(false);
+        textRange.select();
+    }
 };
 
 /**
 * All window keydowns handles here
 */
 ce.prototype.globalKeydownCallback = function (event) {
+    console.log("keydown", event);
 
     switch (event.keyCode){
         case this.key.TAB   : this.tabKeyPressed(event); break; // TAB
@@ -118,10 +149,18 @@ ce.prototype.tabKeyPressed = function(event) {
     // check if currently focused in contenteditable element
     if ("BODY" == event.target.tagName) return;
 
-    var toolbar = event.target.parentNode.nextSibling,
+    var toolbar = event.target.nextSibling,
         _this = this;
 
     toolbar.appendChild(this.toolbarButtons);
+
+
+    var sel = window.getSelection();
+    var curNode = sel.anchorNode.tagName ? sel.anchorNode : sel.focusNode.parentElement;
+
+    //debugger
+    var posTop =
+    toolbar.style.top = curNode.offsetTop + "px";
 
     // repair buttons animation - just add css class async
     setTimeout(function () {
@@ -130,7 +169,7 @@ ce.prototype.tabKeyPressed = function(event) {
             toolbar.className += ' ' + _this.BUTTONS_TOGGLED_CLASSNANE;
             _this.toolbarOpened = true;
         } else {
-            toolbar.className = toolbar.className.replace(_this.BUTTONS_TOGGLED_CLASSNANE, '');
+            toolbar.className = toolbar.className.replace(' ' + _this.BUTTONS_TOGGLED_CLASSNANE, '');
             _this.toolbarOpened = false
         }
 
@@ -145,33 +184,37 @@ ce.prototype.tabKeyPressed = function(event) {
 */
 ce.prototype.enterKeyPressed = function(event) {
 
-    if (event.shiftKey){
-        document.execCommand('insertHTML', false, '<br><br>');
-    } else {
-        var newNode = this.make.textNode(),
-            toolbar = this.make.toolbar();
+    var _this = this;
 
-        /** Add node */
-        this.wrapper.insertBefore(newNode, event.target.parentNode.nextSibling);
+    //if (event.shiftKey){
+    //    document.execCommand('insertHTML', false, '<br><br>');
+    //} else {
+    //    var newNode = this.make.textNode(),
+    //        toolbar = this.make.toolbar();
+    //
+    //    var sel = window.getSelection();
+    //    var curNode = sel.focusNode.parentElement;
+    //
+    //    /** Add node */
+    //    this.editableWrapper.insertBefore(newNode, curNode.nextSibling);
+    //
+    //    /** Add toolbar to node */
+    //    //this.editableWrapper.insertBefore(toolbar, newNode);
+    //
+    //    /** Set auto focus */
+    //    setTimeout(function () {
+    //
+    //        _this.focusNode(newNode);
+    //    });
+    //}
 
-        /** Add toolbar to node */
-        this.wrapper.insertBefore(toolbar, newNode);
-
-        /** Set auto focus */
-        var contentEditable = newNode.getElementsByClassName('ce_node_content');
-        contentEditable.length && contentEditable[0].focus();
-    }
-
-    event.preventDefault();
+    //event.preventDefault();
 };
 
 /**
 * Creates HTML elements
 */
 ce.prototype.make = function () {
-
-    var _this = this;
-
     /** Empty toolbar with toggler */
     function toolbar () {
 
@@ -224,19 +267,30 @@ ce.prototype.make = function () {
     */
     function textNode (content){
 
-        var node = document.createElement('div');
+        var node = document.createElement('p');
 
-        node.className += 'node';
-        node.innerHTML = '<p class="ce_node_content" contenteditable="true">' + (content || '') + '</p>';
+        //node.setAttribute("tabindex", 0);
+
+        node.classList.add("node");
+        node.classList.add("ce_node_content");
+        node.setAttribute("contenteditable", "true");
+
+        node.innerHTML = content || '';
 
         return node;
     }
 
     function editorWrapper () {
 
-        var wrapper = document.createElement('div');
+        var wrapper = document.createElement('div'),
+            editable_wrapper = document.createElement('div');
+
+
+        editable_wrapper.className += 'ce_content';
+        editable_wrapper.setAttribute("contenteditable", "true");
 
         wrapper.className += 'codex_editor';
+        wrapper.appendChild(editable_wrapper);
 
         return wrapper;
     }
