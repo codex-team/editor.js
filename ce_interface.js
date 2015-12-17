@@ -45,7 +45,7 @@ ce.prototype.BUTTONS_TOGGLED_CLASSNANE = 'buttons_toggled';
 ce.prototype.toolbarOpened = false;
 
 // Key event constants
-ce.prototype.key = { TAB: 9, ENTER: 13, BACKSPACE: 8, DELETE: 46, DOWN: 40, SPACE: 32, ESC: 27, CTRL: 17, META: 91, SHIFT: 16, ALT: 18 };
+ce.prototype.key = { TAB: 9, ENTER: 13, BACKSPACE: 8, DELETE: 46, SPACE: 32, ESC: 27, CTRL: 17, META: 91, SHIFT: 16, ALT: 18, LEFT: 37, UP: 38, DOWN: 40, RIGHT: 39 };
 
 /**
  * Editor interface drawing
@@ -63,6 +63,9 @@ ce.prototype.makeInterface = function () {
     this.toolbar = toolbar;
 
     this.toolbarButtons = this.make.toolbarButtons(this.allTools, this.settings.tools);
+
+    toolbar.appendChild(this.toolbarButtons);
+
 
     /** Add first node  and tool bar*/
     editableWrapper.appendChild(firstNode);
@@ -90,11 +93,69 @@ ce.prototype.bindEvents = function () {
 
 
     /** All blur on Window */
-    document.addEventListener('focus', function (event) {
+    document.addEventListener('mouseover', function (event) {
         // check if currently focused in contenteditable element
-        if ("BODY" == event.target.tagName) return;
+        //if ("BODY" == event.target.tagName) return;
 
-        event.target.classList.add(selectedNodeClass)
+        //event.target.classList.add(selectedNodeClass)
+
+        var sender = event.target
+
+        if (sender.classList.contains("node") && !_this.toolbar.isOpened) {
+            console.log("hover", sender);
+            var toolbar = _this.toolbar;
+
+
+            toolbar.style.top = sender.offsetTop + "px";
+
+            // repair buttons animation - just add css class async
+            //setTimeout(function () {
+                toolbar.classList.add("show");
+
+            //});
+        }
+    }, false );
+
+    /** All blur on Window */
+    document.addEventListener('mouseout', function (event) {
+        // check if currently focused in contenteditable element
+        //if ("BODY" == event.target.tagName) return;
+
+        //event.target.classList.add(selectedNodeClass)
+
+        var sender = event.target
+
+        //
+        //var sel = window.getSelection();
+        //var curSelectedNode = sel.anchorNode.tagName ? sel.anchorNode : sel.focusNode.parentElement;
+
+        if (!_this.toolbar.isOpened) {
+        //if (sender.classList.contains("node")) {
+        //debugger
+        //if (!curSelectedNode.isEqualNode(sender) && !_this.toolbarButtons.isEqualNode(sender)) {
+            //debugger
+            console.log("mouseout", sender);
+            var toolbar = _this.toolbar;
+            //
+            //
+            //toolbar.style.top = sender.offsetTop + "px";
+
+            // repair buttons animation - just add css class async
+            //setTimeout(function () {
+                toolbar.classList.remove("show");
+                //toolbar.classList.remove(_this.BUTTONS_TOGGLED_CLASSNANE);
+
+            //if (_this.focusedToolbarBtn) {
+            //    //console.log("has focused btn", _this.focusedToolbarBtn)
+            //
+            //    _this.focusedToolbarBtn.classList.remove("focused")
+            //    _this.focusedToolbarBtn = false;
+            //
+            //    event.preventDefault();
+            //    return
+            //}
+            //});
+        }
     }, false );
 
 };
@@ -104,7 +165,8 @@ ce.prototype.bindEvents = function () {
  * todo depending on node type
 */
 ce.prototype.focusNode = function (node) {
-    debugger
+    //debugger
+
     //if (node.classList.contains('ce_node_content')) node.focus();
     //else {
     //    var contentEditable = node.getElementsByClassName('ce_node_content');
@@ -134,10 +196,51 @@ ce.prototype.focusNode = function (node) {
 ce.prototype.globalKeydownCallback = function (event) {
     console.log("keydown", event);
 
-    switch (event.keyCode){
-        case this.key.TAB   : this.tabKeyPressed(event); break; // TAB
-        case this.key.ENTER : this.enterKeyPressed(event); break; // Enter
+    var _this = this;
+
+    // TODO process key navigation on toolBar then its opened
+    if (this.toolbar.isOpened) {
+        if (event.which == this.key.LEFT || event.which == this.key.UP || event.which == this.key.DOWN || event.which == this.key.RIGHT) {
+            this.moveToolBarButtonFocus(event.which == this.key.LEFT || event.which == this.key.UP )
+
+            event.preventDefault();
+            //return
+        } else if (event.which == this.key.ENTER) {
+            // TODO process seleceted toolBtn
+            //insert new node or change type of current?
+            //and close toolbar
+
+            // TODO do the same by mouse clicking on any toolbar btn
+
+            event.preventDefault();
+        } else if (event.which != this.key.TAB && event.which != this.key.SHIFT) {
+
+            var toolbar = this.toolbar;
+
+            toolbar.isOpened = false;
+            this.focusedToolbarBtn.classList.remove("focused");
+            this.focusedToolbarBtn = false;
+
+            // repair buttons animation - just add css class async
+            setTimeout(function () {
+                toolbar.classList.remove("show");
+                toolbar.classList.remove(_this.BUTTONS_TOGGLED_CLASSNANE);
+            });
+
+            //event.preventDefault();
+            //return
+        }
+
     }
+
+    if (event.which == this.key.TAB)
+        this.tabKeyPressed(event)
+
+    //
+    //switch (event.keyCode){
+    //    case this.key.TAB   : this.tabKeyPressed(event); break; // TAB
+    //    case this.key.ENTER : this.enterKeyPressed(event); break; // Enter
+    //}
 
 };
 
@@ -149,42 +252,86 @@ ce.prototype.tabKeyPressed = function(event) {
     // check if currently focused in contenteditable element
     if ("BODY" == event.target.tagName) return;
 
-    var toolbar = event.target.nextSibling,
-        _this = this;
+    var _this = this;
 
-    toolbar.appendChild(this.toolbarButtons);
+    var toolbar = this.toolbar;
 
+    if (!toolbar.isOpened) {
+        var sel = window.getSelection();
+        var curNode = sel.anchorNode.tagName ? sel.anchorNode : sel.focusNode.parentElement;
 
-    var sel = window.getSelection();
-    var curNode = sel.anchorNode.tagName ? sel.anchorNode : sel.focusNode.parentElement;
+        toolbar.style.top = curNode.offsetTop + "px";
 
-    //debugger
-    var posTop =
-    toolbar.style.top = curNode.offsetTop + "px";
-
-    // repair buttons animation - just add css class async
-    setTimeout(function () {
-
-        if ( !toolbar.className.includes(_this.BUTTONS_TOGGLED_CLASSNANE) ){
-            toolbar.className += ' ' + _this.BUTTONS_TOGGLED_CLASSNANE;
-            _this.toolbarOpened = true;
-        } else {
-            toolbar.className = toolbar.className.replace(' ' + _this.BUTTONS_TOGGLED_CLASSNANE, '');
-            _this.toolbarOpened = false
+        if (!toolbar.classList.contains(_this.BUTTONS_TOGGLED_CLASSNANE)) {
+            // repair buttons animation - just add css class async
+            setTimeout(function () {
+                toolbar.classList.add(_this.BUTTONS_TOGGLED_CLASSNANE)
+                toolbar.isOpened = true;
+            });
         }
 
-    });
+    }
+
+    //
+    this.moveToolBarButtonFocus(event.shiftKey);
 
     event.preventDefault();
-
 };
+
+/*
+*
+* */
+ce.prototype.moveToolBarButtonFocus = function(focusPrev){
+    var allButtons = this.toolbarButtons;
+
+    var focusedQuery = allButtons.getElementsByClassName("focused");//[0] || allButtons.firstChild;
+    var focused;
+
+//debugger
+    console.log("focusing", focusedQuery)
+    if (focusedQuery.length > 0) {
+        focused = focusedQuery[0]
+
+        focused.classList.remove("focused")
+
+        if (focusPrev) focused = focused.previousSibling;
+        else focused = focused.nextSibling;
+
+        if (!focused) {
+            if (focusPrev) focused = allButtons.lastChild;
+            else focused = allButtons.firstChild;
+        }
+
+        focused.classList.add("focused")
+    } else {
+        focused = allButtons.firstChild;
+
+
+        focused.classList.add("focused")
+    }
+
+    this.focusedToolbarBtn = focused;
+
+    //return !!focused;
+}
 
 /**
 * Handle Enter key. Adds new Node;
 */
 ce.prototype.enterKeyPressed = function(event) {
 
-    var _this = this;
+    //var _this = this;
+
+
+    if (this.toolbar.isOpened) {
+        console.log("has focused btn", this.focusedToolbarBtn)
+
+        event.preventDefault();
+        return
+    }
+
+    this.toolbar.classList.remove("show")
+    this.toolbar.classList.remove(this.BUTTONS_TOGGLED_CLASSNANE)
 
     //if (event.shiftKey){
     //    document.execCommand('insertHTML', false, '<br><br>');
