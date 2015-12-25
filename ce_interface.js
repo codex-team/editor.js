@@ -3,6 +3,13 @@
 * @author Savchenko Peter (vk.com/specc)
 */
 
+    /*
+    * TODO
+    * выделение нескольких блоков и нажатие энтера - вместо замены новой стро
+    *
+    * */
+
+
 var ce = function(settings) {
 
     this.resultTextarea = document.getElementById("codex_editor");
@@ -210,9 +217,56 @@ ce.prototype.globalKeydownCallback = function (event) {
             //insert new node or change type of current?
             //and close toolbar
 
+            //debugger
+            var btnType = this.focusedToolbarBtn.dataset["type"];
+
+            switch (btnType){
+
+                case "header":
+                    // TODO insertHeader()
+
+                    // TODO make.HeaderNode()
+                    var header = document.createElement("h2");
+
+                    header.classList.add("node");
+                    header.dataset["type"] = "header";
+
+                    var curNode = this.getFocusedNode();
+
+                    header.textContent = curNode.textContent;
+                    curNode.textContent = "";
+
+                    // insert before, if curNode is paragraph or header or some other text-editable node
+                    if (curNode.dataset["type"] == "text")
+                        curNode.parentNode.insertBefore(header, curNode);
+                    // else insert header node after
+                    else
+                        curNode.parentNode.insertBefore(header, curNode.nextSibling);
+
+                    this.focusNode(header);
+
+                break;
+
+            }
+
+            // TODO closeToolar()
+                var toolbar = this.toolbar;
+
+                toolbar.isOpened = false;
+                this.focusedToolbarBtn.classList.remove("focused");
+                this.focusedToolbarBtn = false;
+
+                // repair buttons animation - just add css class async
+                setTimeout(function () {
+                    toolbar.classList.remove("show");
+                    toolbar.classList.remove(_this.BUTTONS_TOGGLED_CLASSNANE);
+                });
+
             // TODO do the same by mouse clicking on any toolbar btn
 
             event.preventDefault();
+            return
+
         } else if (event.which != this.key.TAB && event.which != this.key.SHIFT) {
 
             var toolbar = this.toolbar;
@@ -237,12 +291,21 @@ ce.prototype.globalKeydownCallback = function (event) {
         this.tabKeyPressed(event)
 
     //
-    //switch (event.keyCode){
-    //    case this.key.TAB   : this.tabKeyPressed(event); break; // TAB
-    //    case this.key.ENTER : this.enterKeyPressed(event); break; // Enter
-    //}
+    switch (event.keyCode){
+        //case this.key.TAB   : this.tabKeyPressed(event); break; // TAB
+        case this.key.ENTER : this.enterKeyPressed.call(_this, event); break; // Enter
+    }
 
 };
+
+/**
+* Returns node which is currently focused
+*/
+ce.prototype.getFocusedNode = function(focusPrev){
+    var sel = window.getSelection();
+    return sel.anchorNode.tagName ? sel.anchorNode : sel.focusNode.parentElement;
+}
+
 
 /**
 *
@@ -320,7 +383,7 @@ ce.prototype.moveToolBarButtonFocus = function(focusPrev){
 */
 ce.prototype.enterKeyPressed = function(event) {
 
-    //var _this = this;
+    var _this = this;
 
 
     if (this.toolbar.isOpened) {
@@ -330,29 +393,32 @@ ce.prototype.enterKeyPressed = function(event) {
         return
     }
 
-    this.toolbar.classList.remove("show")
-    this.toolbar.classList.remove(this.BUTTONS_TOGGLED_CLASSNANE)
 
     //if (event.shiftKey){
     //    document.execCommand('insertHTML', false, '<br><br>');
     //} else {
-    //    var newNode = this.make.textNode(),
-    //        toolbar = this.make.toolbar();
-    //
-    //    var sel = window.getSelection();
-    //    var curNode = sel.focusNode.parentElement;
-    //
-    //    /** Add node */
-    //    this.editableWrapper.insertBefore(newNode, curNode.nextSibling);
-    //
-    //    /** Add toolbar to node */
-    //    //this.editableWrapper.insertBefore(toolbar, newNode);
-    //
-    //    /** Set auto focus */
-    //    setTimeout(function () {
-    //
-    //        _this.focusNode(newNode);
-    //    });
+
+        var sel = window.getSelection();
+        var curNode = this.getFocusedNode();
+
+
+        if (curNode.dataset["type"] == "header") {
+            var newNode = this.make.textNode();
+
+            /** Add node */
+            this.editableWrapper.insertBefore(newNode, curNode.nextSibling);
+
+            /** Set auto focus */
+            setTimeout(function () {
+
+                _this.focusNode(newNode);
+            });
+
+            event.preventDefault();
+            return;
+        }
+
+
     //}
 
     //event.preventDefault();
@@ -419,8 +485,7 @@ ce.prototype.make = function () {
         //node.setAttribute("tabindex", 0);
 
         node.classList.add("node");
-        node.classList.add("ce_node_content");
-        node.setAttribute("contenteditable", "true");
+        node.dataset["type"] = "text";
 
         node.innerHTML = content || '';
 
