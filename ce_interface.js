@@ -35,6 +35,7 @@ var ce = function(settings) {
     /** Bind all events */
     this.bindEvents();
 
+
 };
 
 // All posible tools
@@ -80,10 +81,39 @@ ce.prototype.makeInterface = function () {
 
     /** Insert Editor after initial textarea. Hide textarea */
     this.resultTextarea.parentNode.insertBefore(wrapper, this.resultTextarea.nextSibling);
-    this.resultTextarea.hidden = true;
+    //this.resultTextarea.hidden = true;
 
     this.focusNode(firstNode);
 };
+
+
+/*
+ * Экспорт разметки в итоговый текстареа
+ * пока по кнопке "экспорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
+ * */
+ce.prototype.exportHtml = function () {
+    console.log("export");
+
+    this.resultTextarea.innerHTML = this.editableWrapper.innerHTML;
+
+    return false;
+};
+
+
+/*
+ * Импорт разметки из итоговой текстареа
+ * пока по кнопке "импорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
+ * */
+ce.prototype.importHtml = function () {
+    console.log("importHtml");
+
+    //this.resultTextarea.innerHTML = this.editableWrapper.innerHTML;
+    
+
+    return false;
+};
+
+
 
 /**
 * All events binds in one place
@@ -92,6 +122,24 @@ ce.prototype.bindEvents = function () {
 
     var _this = this,
         selectedNodeClass = "selected";
+
+    /*
+    * Экспорт разметки в итоговый текстареа
+    * пока по кнопке "экспорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
+    * */
+    document.getElementById("export_html").addEventListener('click', function () {
+        _this.exportHtml.apply(_this)
+    });
+
+
+    /*
+    * Импорт разметки из итоговой текстареа
+    * пока по кнопке "импорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
+    * */
+    document.getElementById("import_html").addEventListener('click', function () {
+        _this.importHtml.apply(_this)
+    });
+
 
     /** All keydowns on Window */
     document.addEventListener('keydown', function (event) {
@@ -106,7 +154,7 @@ ce.prototype.bindEvents = function () {
 
         //event.target.classList.add(selectedNodeClass)
 
-        var sender = event.target
+        var sender = event.target;
 
         if (sender.classList.contains("node") && !_this.toolbar.isOpened) {
             console.log("hover", sender);
@@ -197,6 +245,17 @@ ce.prototype.focusNode = function (node) {
     }
 };
 
+/*
+*
+* */
+ce.prototype.isTextSelected = function(){
+
+    //var sel = window.getSelection();
+    //debugger
+
+    return !!window.getSelection().toString()
+}
+
 /**
 * All window keydowns handles here
 */
@@ -213,6 +272,8 @@ ce.prototype.globalKeydownCallback = function (event) {
             event.preventDefault();
             //return
         } else if (event.which == this.key.ENTER) {
+
+
             // TODO process seleceted toolBtn
             //insert new node or change type of current?
             //and close toolbar
@@ -402,7 +463,7 @@ ce.prototype.enterKeyPressed = function(event) {
         var curNode = this.getFocusedNode();
 
 
-        if (curNode.dataset["type"] == "header") {
+        if (curNode.dataset["type"] == "header" && !this.isTextSelected()) {
             var newNode = this.make.textNode();
 
             /** Add node */
