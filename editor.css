@@ -85,6 +85,7 @@
 .codex_editor .node{
     position: relative;
     z-index: 5;
+    min-height: 20px;
 }
 
 .codex_editor .add_buttons{
@@ -168,7 +169,6 @@
     padding: 5px 0;
     font-size: 17px;
     margin: 0;
-    min-height: 20px;
 }
 
 .codex_editor {position: relative;}

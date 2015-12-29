@@ -141,32 +141,49 @@ ce.prototype.bindEvents = function () {
     }, false );
 
 
-    /** All blur on Window */
+    /** All mouseover on Window */
     document.addEventListener('mouseover', function (event) {
-        var sender = event.target;
-
-        if (sender.classList.contains("node") && !_this.toolbar.isOpened) {
-            var toolbar = _this.toolbar;
-
-            toolbar.style.top = sender.offsetTop + "px";
-
-            toolbar.classList.add("show");
-        }
+        _this.globalMouseOverCallback(event);
     }, false );
 
 
-    /** All blur on Window */
+    /** All mouseout on Window */
     document.addEventListener('mouseout', function (event) {
-        var sender = event.target
-
-        if (!_this.toolbar.isOpened) {
-            var toolbar = _this.toolbar;
-
-            toolbar.classList.remove("show");
-        }
+        _this.globalMouseOutCallback(event);
     }, false );
 
 };
+
+
+/**
+ * All window mouseover handles here
+*/
+ce.prototype.globalMouseOverCallback = function (event) {
+    var sender = event.target;
+
+    if (sender.classList.contains("node") && !this.toolbar.isOpened) {
+        var toolbar = this.toolbar;
+
+        toolbar.style.top = sender.offsetTop + "px";
+
+        toolbar.classList.add("show");
+    }
+};
+
+
+/**
+ * All window mouseout handles here
+*/
+ce.prototype.globalMouseOutCallback = function (event) {
+    var sender = event.target;
+
+    if (!this.toolbar.isOpened) {
+        var toolbar = this.toolbar;
+
+        toolbar.classList.remove("show");
+    }
+};
+
 
 /**
  * Sets focus to node conteneditable child
@@ -198,108 +215,76 @@ ce.prototype.isTextSelected = function(){
     return !!window.getSelection().toString()
 };
 
+/*
+* Определяет, относится ли нажатая кнопка к навигационным
+* */
+ce.prototype.isNavigationKey = function(keyCode){
+    return keyCode == this.key.LEFT || keyCode == this.key.UP || keyCode == this.key.DOWN || keyCode == this.key.RIGHT
+};
+
 /**
 * All window keydowns handles here
 */
 ce.prototype.globalKeydownCallback = function (event) {
-    console.log("keydown", event);
 
-    var _this = this;
-
-    // TODO process key navigation on toolBar then its opened
-    if (this.toolbar.isOpened) {
-        if (event.which == this.key.LEFT || event.which == this.key.UP || event.which == this.key.DOWN || event.which == this.key.RIGHT) {
-            this.moveToolBarButtonFocus(event.which == this.key.LEFT || event.which == this.key.UP )
-
-            event.preventDefault();
-            //return
-        } else if (event.which == this.key.ENTER) {
-
-
-            // TODO process seleceted toolBtn
-            //insert new node or change type of current?
-            //and close toolbar
-
-            //debugger
-            var btnType = this.focusedToolbarBtn.dataset["type"];
-
-            switch (btnType){
-
-                case "header":
-                    // TODO insertHeader()
-
-                    // TODO make.HeaderNode()
-                    var header = document.createElement("h2");
-
-                    header.classList.add("node");
-                    header.dataset["type"] = "header";
-
-                    var curNode = this.getFocusedNode();
-
-                    header.textContent = curNode.textContent;
-                    curNode.textContent = "";
-
-                    // insert before, if curNode is paragraph or header or some other text-editable node
-                    if (curNode.dataset["type"] == "text")
-                        curNode.parentNode.insertBefore(header, curNode);
-                    // else insert header node after
-                    else
-                        curNode.parentNode.insertBefore(header, curNode.nextSibling);
-
-                    this.focusNode(header);
-
-                break;
-
-            }
-
-            // TODO closeToolar()
-                var toolbar = this.toolbar;
-
-                toolbar.isOpened = false;
-                this.focusedToolbarBtn.classList.remove("focused");
-                this.focusedToolbarBtn = false;
-
-                // repair buttons animation - just add css class async
-                setTimeout(function () {
-                    toolbar.classList.remove("show");
-                    toolbar.classList.remove(_this.BUTTONS_TOGGLED_CLASSNANE);
-                });
-
-            // TODO do the same by mouse clicking on any toolbar btn
-
-            event.preventDefault();
-            return
-
-        } else if (event.which != this.key.TAB && event.which != this.key.SHIFT) {
-
-            var toolbar = this.toolbar;
-
-            toolbar.isOpened = false;
-            this.focusedToolbarBtn.classList.remove("focused");
-            this.focusedToolbarBtn = false;
-
-            // repair buttons animation - just add css class async
-            setTimeout(function () {
-                toolbar.classList.remove("show");
-                toolbar.classList.remove(_this.BUTTONS_TOGGLED_CLASSNANE);
-            });
-
-            //event.preventDefault();
-            //return
-        }
-
-    }
-
-    if (event.which == this.key.TAB)
-        this.tabKeyPressed(event)
+    /**
+     * Обработка клавиш на панеле добавления
+     */
+    this.processToolBarKeyPressed(event);
 
     //
     switch (event.keyCode){
-        //case this.key.TAB   : this.tabKeyPressed(event); break; // TAB
-        case this.key.ENTER : this.enterKeyPressed.call(_this, event); break; // Enter
+        case this.key.TAB   : this.tabKeyPressed(event); break; // TAB
+        case this.key.ENTER : this.enterKeyPressed(event); break; // Enter
     }
 
 };
+
+
+/**
+* Обрабатывает нажатие клавиш при открытой панеле добавления
+*/
+ce.prototype.processToolBarKeyPressed = function(event){
+    if (this.toolbar.isOpened) {
+
+        if (this.isNavigationKey(event.which)) {
+
+            this.moveToolBarButtonFocus(event.which == this.key.LEFT || event.which == this.key.UP );
+
+            event.preventDefault();
+
+        } else if (event.which == this.key.ENTER) {
+            // will process later
+        } else if (event.which != this.key.TAB && event.which != this.key.SHIFT) {
+
+            this.closeToolBar();
+
+        }
+
+    }
+};
+
+
+
+/**
+* Closes tool bar (plus btn)
+*/
+ce.prototype.closeToolBar = function(){
+    var _this = this,
+        toolbar = this.toolbar;
+
+    toolbar.isOpened = false;
+    this.focusedToolbarBtn.classList.remove("focused");
+    this.focusedToolbarBtn = false;
+
+    // repair buttons animation - just add css class async
+    setTimeout(function () {
+        toolbar.classList.remove("show");
+        toolbar.classList.remove(_this.BUTTONS_TOGGLED_CLASSNANE);
+    });
+};
+
+
 
 /**
 * Returns node which is currently focused
@@ -381,33 +366,73 @@ ce.prototype.moveToolBarButtonFocus = function(focusPrev){
 */
 ce.prototype.enterKeyPressed = function(event) {
 
-    var _this = this;
+    var _this = this,
+        curNode = this.getFocusedNode();
 
+    /*
+    * обработка выбранной кнопки тулбара
+    * */
     if (this.toolbar.isOpened) {
-        console.log("has focused btn", this.focusedToolbarBtn)
+
+        switch ( this.focusedToolbarBtn.dataset["type"] ){
+
+            case "header":
+                var header = this.make.headerNode();
+
+                if (curNode.textContent){
+
+                    header.textContent  = curNode.textContent;
+                    curNode.textContent = "";
+
+                    // insert before, if curNode is paragraph or header or some other text-editable node
+                    if (curNode.dataset["type"] == "text"){
+                        curNode.parentNode.insertBefore(header, curNode);
+                        curNode.remove();
+                    }
+                    // else insert header node after
+                    else
+                        curNode.parentNode.insertBefore(header, curNode.nextSibling);
+
+                } else {
+
+                    curNode.parentNode.insertBefore(header, curNode);
+                    curNode.remove();
+
+                }
+
+                this.focusNode(header);
+
+                break;
+
+        }
+
+        this.closeToolBar();
+
+        // TODO do the same by mouse clicking on any toolbar btn
 
         event.preventDefault();
-        return
+
     }
+    /*
+    * Перехват создания нового параграфа при нахождении в заголовке.
+    * По-умолчанию создается просто div.
+    * */
+    else {
 
-    var sel = window.getSelection();
-    var curNode = this.getFocusedNode();
+        if (curNode.dataset["type"] == "header" && !this.isTextSelected()) {
+            var newNode = this.make.textNode();
 
+            /** Add node */
+            this.editableWrapper.insertBefore(newNode, curNode.nextSibling);
 
-    if (curNode.dataset["type"] == "header" && !this.isTextSelected()) {
-        var newNode = this.make.textNode();
+            /** Set auto focus */
+            setTimeout(function () {
 
-        /** Add node */
-        this.editableWrapper.insertBefore(newNode, curNode.nextSibling);
+                _this.focusNode(newNode);
+            });
 
-        /** Set auto focus */
-        setTimeout(function () {
-
-            _this.focusNode(newNode);
-        });
-
-        event.preventDefault();
-        return;
+            event.preventDefault();
+        }
     }
 };
 
@@ -477,6 +502,21 @@ ce.prototype.make = function () {
         return node;
     }
 
+    /**
+    * Header node
+    */
+    function headerNode (content){
+
+        var node = document.createElement('h2');
+
+        node.classList.add("node");
+        node.dataset["type"] = "header";
+
+        node.innerHTML = content || '';
+
+        return node;
+    }
+
     function editorWrapper () {
 
         var wrapper = document.createElement('div'),
@@ -496,8 +536,9 @@ ce.prototype.make = function () {
         this.toolbar        = toolbar;
         this.toolbarButtons = toolbarButtons;
         this.toolbarButton  = toolbarButton;
-        this.textNode       = textNode;
         this.editorWrapper  = editorWrapper;
+        this.textNode       = textNode;
+        this.headerNode     = headerNode;
     };
 
     return new ceMake();
