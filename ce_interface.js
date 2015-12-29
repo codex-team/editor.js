@@ -92,9 +92,7 @@ ce.prototype.makeInterface = function () {
  * пока по кнопке "экспорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
  * */
 ce.prototype.exportHtml = function () {
-    console.log("export");
-
-    this.resultTextarea.innerHTML = this.editableWrapper.innerHTML;
+    this.resultTextarea.value = this.editableWrapper.innerHTML;
 
     return false;
 };
@@ -105,14 +103,10 @@ ce.prototype.exportHtml = function () {
  * пока по кнопке "импорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
  * */
 ce.prototype.importHtml = function () {
-    console.log("importHtml");
-
-    //this.resultTextarea.innerHTML = this.editableWrapper.innerHTML;
-    
+    this.editableWrapper.innerHTML = this.resultTextarea.value;
 
     return false;
 };
-
 
 
 /**
@@ -124,7 +118,7 @@ ce.prototype.bindEvents = function () {
         selectedNodeClass = "selected";
 
     /*
-    * Экспорт разметки в итоговый текстареа
+    * Экспорт разметки в итоговый textarea
     * пока по кнопке "экспорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
     * */
     document.getElementById("export_html").addEventListener('click', function () {
@@ -133,7 +127,7 @@ ce.prototype.bindEvents = function () {
 
 
     /*
-    * Импорт разметки из итоговой текстареа
+    * Импорт разметки из итоговой textarea
     * пока по кнопке "импорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
     * */
     document.getElementById("import_html").addEventListener('click', function () {
@@ -149,67 +143,26 @@ ce.prototype.bindEvents = function () {
 
     /** All blur on Window */
     document.addEventListener('mouseover', function (event) {
-        // check if currently focused in contenteditable element
-        //if ("BODY" == event.target.tagName) return;
-
-        //event.target.classList.add(selectedNodeClass)
-
         var sender = event.target;
 
         if (sender.classList.contains("node") && !_this.toolbar.isOpened) {
-            console.log("hover", sender);
             var toolbar = _this.toolbar;
-
 
             toolbar.style.top = sender.offsetTop + "px";
 
-            // repair buttons animation - just add css class async
-            //setTimeout(function () {
-                toolbar.classList.add("show");
-
-            //});
+            toolbar.classList.add("show");
         }
     }, false );
 
+
     /** All blur on Window */
     document.addEventListener('mouseout', function (event) {
-        // check if currently focused in contenteditable element
-        //if ("BODY" == event.target.tagName) return;
-
-        //event.target.classList.add(selectedNodeClass)
-
         var sender = event.target
 
-        //
-        //var sel = window.getSelection();
-        //var curSelectedNode = sel.anchorNode.tagName ? sel.anchorNode : sel.focusNode.parentElement;
-
         if (!_this.toolbar.isOpened) {
-        //if (sender.classList.contains("node")) {
-        //debugger
-        //if (!curSelectedNode.isEqualNode(sender) && !_this.toolbarButtons.isEqualNode(sender)) {
-            //debugger
-            console.log("mouseout", sender);
             var toolbar = _this.toolbar;
-            //
-            //
-            //toolbar.style.top = sender.offsetTop + "px";
 
-            // repair buttons animation - just add css class async
-            //setTimeout(function () {
-                toolbar.classList.remove("show");
-                //toolbar.classList.remove(_this.BUTTONS_TOGGLED_CLASSNANE);
-
-            //if (_this.focusedToolbarBtn) {
-            //    //console.log("has focused btn", _this.focusedToolbarBtn)
-            //
-            //    _this.focusedToolbarBtn.classList.remove("focused")
-            //    _this.focusedToolbarBtn = false;
-            //
-            //    event.preventDefault();
-            //    return
-            //}
-            //});
+            toolbar.classList.remove("show");
         }
     }, false );
 
@@ -220,15 +173,8 @@ ce.prototype.bindEvents = function () {
  * todo depending on node type
 */
 ce.prototype.focusNode = function (node) {
-    //debugger
-
-    //if (node.classList.contains('ce_node_content')) node.focus();
-    //else {
-    //    var contentEditable = node.getElementsByClassName('ce_node_content');
-    //    contentEditable.length && contentEditable[0].focus();
-    //}
-
     node.focus();
+
     if (typeof window.getSelection != "undefined" && typeof document.createRange != "undefined") {
         var range = document.createRange();
         range.selectNodeContents(node);
@@ -246,15 +192,11 @@ ce.prototype.focusNode = function (node) {
 };
 
 /*
-*
+* Определяет, есть ли выделенный текст
 * */
 ce.prototype.isTextSelected = function(){
-
-    //var sel = window.getSelection();
-    //debugger
-
     return !!window.getSelection().toString()
-}
+};
 
 /**
 * All window keydowns handles here
@@ -362,10 +304,10 @@ ce.prototype.globalKeydownCallback = function (event) {
 /**
 * Returns node which is currently focused
 */
-ce.prototype.getFocusedNode = function(focusPrev){
+ce.prototype.getFocusedNode = function(){
     var sel = window.getSelection();
     return sel.anchorNode.tagName ? sel.anchorNode : sel.focusNode.parentElement;
-}
+};
 
 
 /**
@@ -402,21 +344,19 @@ ce.prototype.tabKeyPressed = function(event) {
     event.preventDefault();
 };
 
-/*
-*
+/**
+* Перемещает фокус на следующую кнопку в панеле добавления (плюс)
 * */
 ce.prototype.moveToolBarButtonFocus = function(focusPrev){
     var allButtons = this.toolbarButtons;
 
-    var focusedQuery = allButtons.getElementsByClassName("focused");//[0] || allButtons.firstChild;
+    var focusedQuery = allButtons.getElementsByClassName("focused");
     var focused;
 
-//debugger
-    console.log("focusing", focusedQuery)
     if (focusedQuery.length > 0) {
-        focused = focusedQuery[0]
+        focused = focusedQuery[0];
 
-        focused.classList.remove("focused")
+        focused.classList.remove("focused");
 
         if (focusPrev) focused = focused.previousSibling;
         else focused = focused.nextSibling;
@@ -426,18 +366,15 @@ ce.prototype.moveToolBarButtonFocus = function(focusPrev){
             else focused = allButtons.firstChild;
         }
 
-        focused.classList.add("focused")
+        focused.classList.add("focused");
     } else {
         focused = allButtons.firstChild;
 
-
-        focused.classList.add("focused")
+        focused.classList.add("focused");
     }
 
     this.focusedToolbarBtn = focused;
-
-    //return !!focused;
-}
+};
 
 /**
 * Handle Enter key. Adds new Node;
@@ -446,7 +383,6 @@ ce.prototype.enterKeyPressed = function(event) {
 
     var _this = this;
 
-
     if (this.toolbar.isOpened) {
         console.log("has focused btn", this.focusedToolbarBtn)
 
@@ -454,35 +390,25 @@ ce.prototype.enterKeyPressed = function(event) {
         return
     }
 
-
-    //if (event.shiftKey){
-    //    document.execCommand('insertHTML', false, '<br><br>');
-    //} else {
-
-        var sel = window.getSelection();
-        var curNode = this.getFocusedNode();
+    var sel = window.getSelection();
+    var curNode = this.getFocusedNode();
 
 
-        if (curNode.dataset["type"] == "header" && !this.isTextSelected()) {
-            var newNode = this.make.textNode();
+    if (curNode.dataset["type"] == "header" && !this.isTextSelected()) {
+        var newNode = this.make.textNode();
 
-            /** Add node */
-            this.editableWrapper.insertBefore(newNode, curNode.nextSibling);
+        /** Add node */
+        this.editableWrapper.insertBefore(newNode, curNode.nextSibling);
 
-            /** Set auto focus */
-            setTimeout(function () {
+        /** Set auto focus */
+        setTimeout(function () {
 
-                _this.focusNode(newNode);
-            });
+            _this.focusNode(newNode);
+        });
 
-            event.preventDefault();
-            return;
-        }
-
-
-    //}
-
-    //event.preventDefault();
+        event.preventDefault();
+        return;
+    }
 };
 
 /**
@@ -543,8 +469,6 @@ ce.prototype.make = function () {
 
         var node = document.createElement('p');
 
-        //node.setAttribute("tabindex", 0);
-
         node.classList.add("node");
         node.dataset["type"] = "text";
 
@@ -579,22 +503,3 @@ ce.prototype.make = function () {
     return new ceMake();
 
 }();
-
-
-
-
-
-/**
-* Polyfilling ECMAScript 6 method String.includes
-* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/includes#Browser_compatibility
-*/
-if ( !String.prototype.includes ) {
-
-    String.prototype.includes = function() {
-
-        'use strict';
-
-        return String.prototype.indexOf.apply(this, arguments) !== -1;
-
-    };
-}
