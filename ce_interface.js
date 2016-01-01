@@ -32,6 +32,13 @@ var ce = function(settings) {
     /** Making a wrapper and interface */
     this.makeInterface();
 
+
+    /*
+     * Импорт содержимого textarea в редактор
+     * */
+    this.importHtml();
+
+
     /** Bind all events */
     this.bindEvents();
 
@@ -98,14 +105,67 @@ ce.prototype.exportHtml = function () {
 };
 
 
-/*
+/**
  * Импорт разметки из итоговой текстареа
  * пока по кнопке "импорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
+ *
+ * TODO
+ * 1) удалить лишние узлы, работа с которыми не предполагается в рамках редактора
+ * 2) удалить скрипты, стили
+ * 3) поочищать содержимое узлов от мусора - должен остаться только текст, теги форматирования (жирность и тд) и переносы строк (или их тоже убираем?)
  * */
 ce.prototype.importHtml = function () {
-    this.editableWrapper.innerHTML = this.resultTextarea.value;
+    var node, body, i, nodeType, tmp;
 
-    return false;
+    /*
+    * Парсим содержимое textarea.
+    * Создаем новый документ, получаем указатель на контенейр body.
+    * */
+    tmp  = new DOMParser().parseFromString( this.resultTextarea.value, "text/html" );
+    body = tmp.getElementsByTagName("body")[0];
+
+    /*
+    * Обходим корневые узлы. Проставляем им класс и тип узла.
+    * */
+    for(i = 0; i < body.children.length; i++){
+        node = body.children.item(i);
+
+        if (!node.classList.contains("node"))
+            node.classList.add("node");
+
+
+        switch (node.tagName){
+            case "P" :
+                nodeType = "text";
+            break;
+
+            case "H1" :
+            case "H2" :
+            case "H3" :
+            case "H4" :
+            case "H5" :
+            case "H6" :
+                nodeType = "header";
+            break;
+
+            case "UL" :
+                nodeType = "list";
+            break;
+
+            case "IMG" :
+                nodeType = "picture";
+            break;
+
+            case "CODE" :
+                nodeType = "code";
+            break;
+        }
+
+        node.dataset["type"] = nodeType;
+    }
+
+    this.editableWrapper.innerHTML = body.innerHTML;
+
 };
 
 
@@ -123,15 +183,6 @@ ce.prototype.bindEvents = function () {
     * */
     document.getElementById("export_html").addEventListener('click', function () {
         _this.exportHtml.apply(_this)
-    });
-
-
-    /*
-    * Импорт разметки из итоговой textarea
-    * пока по кнопке "импорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
-    * */
-    document.getElementById("import_html").addEventListener('click', function () {
-        _this.importHtml.apply(_this)
     });
 
 
