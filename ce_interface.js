@@ -42,7 +42,6 @@ var ce = function(settings) {
     /** Bind all events */
     this.bindEvents();
 
-
 };
 
 // All posible tools
@@ -88,7 +87,7 @@ ce.prototype.makeInterface = function () {
 
     /** Insert Editor after initial textarea. Hide textarea */
     this.resultTextarea.parentNode.insertBefore(wrapper, this.resultTextarea.nextSibling);
-    //this.resultTextarea.hidden = true;
+    this.resultTextarea.hidden = true;
 
     this.focusNode(firstNode);
 };
@@ -99,7 +98,8 @@ ce.prototype.makeInterface = function () {
  * пока по кнопке "экспорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
  * */
 ce.prototype.exportHtml = function () {
-    this.resultTextarea.value = this.editableWrapper.innerHTML;
+    this.resultTextarea.innerHTML = this.editableWrapper.innerHTML;
+    this.resultTextarea.value     = this.editableWrapper.innerHTML;
 
     return false;
 };
@@ -178,10 +178,10 @@ ce.prototype.bindEvents = function () {
         selectedNodeClass = "selected";
 
     /*
-    * Экспорт разметки в итоговый textarea
-    * пока по кнопке "экспорт", потом можно сделать на каждое изменение в редакторе (надо ли это?)
+    * Экспорт разметки в итоговый textarea по нажатию на кнопку "сохранить".
+    * Кнопка сохранения должна иметь, так же как и textarea, особенный ID.
     * */
-    document.getElementById("export_html").addEventListener('click', function () {
+    document.getElementById("codex_editor_export_btn").addEventListener('click', function () {
         _this.exportHtml.apply(_this)
     });
 
