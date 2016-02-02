@@ -4,6 +4,13 @@
     <meta charset="utf-8">
     <title>CodeX Editor</title>
     <link rel="stylesheet" href="editor.css" />
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,700,800&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+    <style>
+        body{
+            font-family: 'Open Sans';
+            font-size: 13px;
+        }
+    </style>
 </head>
 <body style="padding: 100px">
 
@@ -67,7 +74,8 @@
 </body>
 </html>
 
-<script src="ce_interface.js"></script>
+<!-- <script src="ce_interface.js"></script> -->
+<script src="codex-editor.js"></script>
 <script>
 
     function ready(f){
@@ -76,9 +84,9 @@
 
     /** Document is ready */
     ready(function() {
-        window.cEditor = new ce({
-            tools : ['header']
-        });
+
+        cEditor.start({textareaId: 'codex_editor'});
+
     })
 
 </script>
