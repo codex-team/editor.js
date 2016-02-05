@@ -19,7 +19,7 @@ var cEditor = (function (cEditor) {
         textarea : null,
         wrapper  : null,
         toolbar  : null,
-        toolbarButtons : {}, // {type : DomEl, ... }
+        toolbarButtons : {}, // { type : DomEl, ... }
         redactor : null
     }
 
@@ -124,13 +124,18 @@ cEditor.core = {
     },
 
     /**
-    * DOM node types map
+    * Readable DOM-node types map
     */
     nodeTypes : {
         TAG     : 1,
         TEXT    : 3,
         COMMENT : 8
     },
+
+    /**
+    * Readable keys map
+    */
+    keys : { TAB: 9, ENTER: 13, BACKSPACE: 8, DELETE: 46, SPACE: 32, ESC: 27, CTRL: 17, META: 91, SHIFT: 16, ALT: 18, LEFT: 37, UP: 38, DOWN: 40, RIGHT: 39 },
 
     /**
     * Check object for DOM node
@@ -192,9 +197,135 @@ cEditor.ui = {
 
         cEditor.core.log('ui.bindEvents fired', 'info');
 
+        /** All keydowns on Document */
+        document.addEventListener('keydown', function (event) {
+            cEditor.callback.globalKeydown(event);
+        }, false );
+
     }
 
-}
+};
+
+cEditor.callback = {
+
+    globalKeydown : function(event){
+
+        switch (event.keyCode){
+            case cEditor.core.keys.TAB   : this.tabKeyPressed(event); break;
+            case cEditor.core.keys.ENTER : this.enterKeyPressed(event); break;
+            case cEditor.core.keys.ESC   : this.escapeKeyPressed(event); break;
+        }
+
+
+        /** temporary */
+        event.preventDefault();
+
+
+    },
+
+    tabKeyPressed : function(event){
+
+        console.log('TAB pressed: %o', event);
+
+        if ( !cEditor.toolbar.opened ) {
+            cEditor.toolbar.open();
+        } else {
+            cEditor.toolbar.leaf();
+        }
+
+    },
+
+    enterKeyPressed : function(event){
+
+        console.log('ENTER pressed');
+        cEditor.toolbar.close();
+
+    },
+
+    escapeKeyPressed : function(event){
+
+        console.log('Escape pressed');
+        cEditor.toolbar.close();
+
+    }
+
+
+};
+
+cEditor.toolbar = {
+
+    opened  : false,
+
+    current : null,
+
+    open : function (){
+
+        cEditor.nodes.toolbar.classList.add('opened');
+
+        this.opened = true;
+
+    },
+
+    close : function(){
+
+        cEditor.nodes.toolbar.classList.remove('opened');
+
+        this.opened  = false;
+        this.current = null;
+        for (button in cEditor.nodes.toolbarButtons){
+            cEditor.nodes.toolbarButtons[button].classList.remove('selected');
+        }
+
+    },
+
+    toggle : function(){
+
+        if ( !this.opened ){
+
+            this.open();
+
+        } else {
+
+            this.close();
+
+        }
+
+    },
+
+    leaf : function(){
+
+        var currentTool = this.current,
+            tools       = cEditor.settings.tools,
+            barButtons  = cEditor.nodes.toolbarButtons,
+            nextToolIndex;
+
+        if ( !currentTool ) {
+
+            for (toolToSelect in barButtons) break;
+
+        } else {
+
+            nextToolIndex = tools.indexOf(currentTool) + 1;
+
+            if ( nextToolIndex == tools.length) nextToolIndex = 0;
+
+            toolToSelect = tools[nextToolIndex];
+
+        }
+
+        for (button in barButtons) barButtons[button].classList.remove('selected')
+
+        barButtons[toolToSelect].classList.add('selected');
+
+        this.current = toolToSelect;
+
+
+    }
+
+
+};
+
+
 
 /**
 * Content parsing module
