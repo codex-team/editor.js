@@ -22,8 +22,10 @@
     <br>
     <form action="">
 
-        <textarea name="" id="codex_editor" cols="30" rows="10" style="width: 100%;height: 300px;">
-            <h2>Введение</h2>
+        <textarea hidden name="" id="codex_editor" cols="30" rows="10" style="width: 100%;height: 300px;">
+            <h2>Введение</h2> 1111
+            2222222 <a href="//link.ru">Link</a>444444
+
             <p>На днях я получил очередной проект по разработке личного кабинета.<br>             Как обычно, я открыл консоль, чтобы посмотреть историю проекта, ветки и все ли правки закомичены (от слова commit - фиксировать). Однако ничего из этого я не узнал — проект не содержал .git репозитория.<br>             Эта ситуация в очередной раз заставила задуматься о том, как много разработчиков до сих пор не понимают необходимость контролировать изменения в файлах с исходным кодом. А многие и вовсе не знают что это такое, и как этим пользоваться.</p>
 
             <h2>Почему нужно использовать систему контроля версий</h2>
@@ -42,33 +44,40 @@
 
     </form>
 
-    <!-- <div class="codex_editor editor_wrapper">
-        <div class="editor_content">
-            <div class="node">
+    <!--
+    <div class="ce_wrapper">
 
-                <div class="add_buttons example">
+        <div class="ce_toolbar">
 
-                    <span class="toggler"><i class="ce_icon-plus-circled-1"></i></span>
+            <span class="toggler"><i class="ce_icon-plus-circled-1"></i></span>
 
-                    <button data-type="header"><i class="ce_icon-header"></i></button>
-                    <button data-type="picture"><i class="ce_icon-picture"></i></button>
-                    <button data-type="list"><i class="ce_icon-list"></i></button>
-                    <button data-type="quote"><i class="ce_icon-quote"></i></button>
-                    <button data-type="code"><i class="ce_icon-code"></i></button>
-                    <button data-type="twitter"><i class="ce_icon-twitter"></i></button>
-                    <button data-type="instagram"><i class="ce_icon-instagram"></i></button>
-                    <button data-type="smile"><i class="ce_icon-smile"></i></button>
+            <li data-type="header"><i class="ce_icon-header"></i></li>
+            <li data-type="picture"><i class="ce_icon-picture"></i></li>
+            <li data-type="list"><i class="ce_icon-list"></i></li>
+            <li data-type="quote"><i class="ce_icon-quote"></i></li>
+            <li data-type="code"><i class="ce_icon-code"></i></li>
+            <li data-type="twitter"><i class="ce_icon-twitter"></i></li>
+            <li data-type="instagram"><i class="ce_icon-instagram"></i></li>
+            <li data-type="smile"><i class="ce_icon-smile"></i></li>
 
-                </div>
-
-                <p class="content"  contenteditable="true">
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Et, eligendi cum amet unde nobis est asperiores similique odio quisquam nostrum quidem, vero esse culpa reprehenderit delectus debitis. Odio, optio, sed.
-                </p>
-
-            </div>
         </div>
-    </div> -->
 
+        <div class="ce_redactor" contenteditable="true">
+            <h2>Введение</h2>
+            <p>На днях я получил очередной проект по разработке личного кабинета.<br>             Как обычно, я открыл консоль, чтобы посмотреть историю проекта, ветки и все ли правки закомичены (от слова commit - фиксировать). Однако ничего из этого я не узнал — проект не содержал .git репозитория.<br>             Эта ситуация в очередной раз заставила задуматься о том, как много разработчиков до сих пор не понимают необходимость контролировать изменения в файлах с исходным кодом. А многие и вовсе не знают что это такое, и как этим пользоваться.</p>
+
+            <h2>Почему нужно использовать систему контроля версий</h2>
+            <p>Основные преимущества:</p>
+            <ul>
+                <li>одновременная работа нескольких человек над проектом</li>
+                <li>возможность быстро обнаружить и откатить, все не зафиксированные изменения</li>
+                <li>возможность быстро откатить ошибочные, уже зафиксированные, изменения</li>
+                <li>история всех изменений в проекте, с указанием даты и авторов</li>
+                <li>возможность изучить процесс развития проекта</li>
+            </ul>
+        </div>
+    </div>
+    -->
 
 
 </body>
