@@ -70,108 +70,48 @@
 
 
 /* EDITOR */
-.hidden {display: none !important;}
-.hidden_file {position: absolute; opacity: 0; z-index: -1; left:-99999px; }
-
-.codex_editor button{
-    border: 0;
-    outline: none;
-    background: transparent;
-}
-.codex_editor [contenteditable]{
+.ce_redactor {
+    position: relative;
     outline: none;
 }
 
-.codex_editor .node{
-    position: relative;
-    z-index: 5;
-    min-height: 20px;
-}
-
-.codex_editor .add_buttons{
-    color: #3b4352;
-    font-size: 16px;
-    /* margin-left: -42px; */
-    /* margin-top: -50px; */
-    /* margin-bottom: -25px; */
+.ce_toolbar{
     position: absolute;
-    /* visibility: hidden; */
-    opacity: 0;
-    transition: opacity .15s ease-in-out;
-    top: 0;
-    left: -35px;
-    white-space: nowrap;
-}
+    z-index: 2;
 
-.add_buttons.show {
+    margin-left: -45px;
+    transform: translateY(100px);
+
+    overflow: hidden;
+
     background: #fff;
-    z-index: 10;
-    opacity: 1;
+    border: 1px solid #e3e7ee;
+    border-radius: 2px;
+    box-shadow: 0 2px 11px rgba(27,39,54,.11);
+    color: #2e394b;
 }
-.add_buttons.show .buttons {display:none;}
-
-.codex_editor .node.selected + .add_buttons{visibility:visible;}
-
-.add_buttons .buttons {
-    position: absolute;
-    top: 1px;
-    background: wheat;
-    padding: 2px;
-    border-radius: 3px;
-    display: none;
-}
-.codex_editor .add_buttons button:hover,
-.codex_editor .add_buttons .focused{
-    color: #3770ef;
-}
-.codex_editor .add_buttons button{
-    transition: all 150ms ease-in;
-    transform: translate3d(-50px, 0 , 0);
-    opacity: 0;
-    font-size: 14px;
-}
-.codex_editor .buttons_toggled{
-    background: #fff;
-    z-index: 10;
-    opacity: 1;
-}
-.codex_editor .buttons_toggled button{
-    opacity: 1;
-    transform: translate3d(0,0,0);
-}
-
-
-.codex_editor .toggler{
-    display: inline-block;
-    font-size: 23px;
-    color: #387ff5;
-    transition: transform 100ms ease-in;
-    cursor: pointer;
-}
-
-.codex_editor .toggler .buttons {
-    position: relative;
-    top: -2px;
-}
-.codex_editor .buttons_toggled .toggler{
-    transform: rotate(45deg);
-}
-
-.codex_editor .buttons_toggled .buttons{
-    display: inline;
-}
-
-
+    .ce_toolbar .toggler{
+        color: #3e6dd6
+    }
+    .ce_toolbar .toggler,
+    .ce_toolbar li
+    {
+        display: inline-block;
+        padding: 12px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+        .ce_toolbar .selected,
+        .ce_toolbar li:hover
+        {
+            background: #3e6dd6;
+            color: #e2edff;
+        }
 
 
 /** Typography styles */
-.codex_editor p{
+.ce_redactor p{
     padding: 5px 0;
     font-size: 1em;
     margin: 0;
-}
-
-.codex_editor {position: relative;}
-
-.codex_editor .ce_content {
 }
