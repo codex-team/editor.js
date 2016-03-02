@@ -214,16 +214,17 @@ cEditor.callback = {
             case cEditor.core.keys.TAB   : this.tabKeyPressed(event); break;
             case cEditor.core.keys.ENTER : this.enterKeyPressed(event); break;
             case cEditor.core.keys.ESC   : this.escapeKeyPressed(event); break;
+            case cEditor.core.keys.UP    : /** | */
+            case cEditor.core.keys.DOWN  : /** | */
+            case cEditor.core.keys.LEFT  : /** V */
+            case cEditor.core.keys.RIGHT : this.arrowKeyPressed(event); break;
         }
-
-
-        /** temporary */
-        event.preventDefault();
-
 
     },
 
     tabKeyPressed : function(event){
+
+        event.preventDefault();
 
         console.log('TAB pressed: %o', event);
 
@@ -237,18 +238,33 @@ cEditor.callback = {
 
     enterKeyPressed : function(event){
 
-        console.log('ENTER pressed');
-        cEditor.toolbar.close();
+        console.log('Enter pressed');
+
+        if (cEditor.toolbar.opened && event.target == cEditor.nodes.redactor) {
+
+            event.preventDefault();
+            cEditor.toolbar.toolClicked();
+            cEditor.toolbar.close();
+
+        };
 
     },
 
     escapeKeyPressed : function(event){
 
+        event.preventDefault();
         console.log('Escape pressed');
         cEditor.toolbar.close();
 
-    }
+    },
 
+    arrowKeyPressed : function(event){
+
+        console.log('Arrow pressed');
+        if (event.target == cEditor.nodes.redactor) {
+            console.log(cEditor.html.getNodeFocused());
+        };
+    }
 
 };
 
@@ -319,13 +335,51 @@ cEditor.toolbar = {
 
         this.current = toolToSelect;
 
+    },
+
+    /**
+    * Transforming selected node type into selected toolbar element type
+    */
+    toolClicked : function() {
+
+        var nodeFocused = cEditor.html.getNodeFocused();
+
+        switch (cEditor.toolbar.current) {
+            case 'header' : newTag = 'h1';
+        };
+
+        cEditor.html.switchNode(nodeFocused, newTag);
 
     }
 
-
 };
 
+cEditor.html = {
 
+    getNodeFocused : function() {
+
+        var selection = window.getSelection();
+      
+        if (selection.anchorNode != null) {
+            return selection.anchorNode.tagName ? selection.anchorNode : selection.focusNode.parentElement;
+        } else {
+            return null;
+        }
+
+    },
+
+    switchNode : function (targetNode, tagName) {
+
+        /**  */
+        if (!targetNode && !tagName) return;
+
+        var newNode = cEditor.draw.block(tagName, targetNode.innerHTML);
+          
+        cEditor.nodes.redactor.replaceChild(newNode, targetNode);
+
+    }
+
+};
 
 /**
 * Content parsing module
