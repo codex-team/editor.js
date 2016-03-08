@@ -198,7 +198,7 @@ cEditor.ui = {
         cEditor.core.log('ui.bindEvents fired', 'info');
 
         /** All keydowns on Document */
-        document.addEventListener('keydown', function (event) {
+        document.addEventListener('keyup', function (event) {
             cEditor.callback.globalKeydown(event);
         }, false );
 
@@ -214,10 +214,8 @@ cEditor.callback = {
             case cEditor.core.keys.TAB   : this.tabKeyPressed(event); break;
             case cEditor.core.keys.ENTER : this.enterKeyPressed(event); break;
             case cEditor.core.keys.ESC   : this.escapeKeyPressed(event); break;
-            case cEditor.core.keys.UP    : /** | */
-            case cEditor.core.keys.DOWN  : /** | */
-            case cEditor.core.keys.LEFT  : /** V */
-            case cEditor.core.keys.RIGHT : this.arrowKeyPressed(event); break;
+            case cEditor.core.keys.UP    : 
+            case cEditor.core.keys.DOWN  : this.arrowKeyPressed(event); break;
         }
 
     },
@@ -261,16 +259,20 @@ cEditor.callback = {
     arrowKeyPressed : function(event){
 
         console.log('Arrow pressed');
-        if (event.target == cEditor.nodes.redactor) {
-            console.log(cEditor.html.getNodeFocused());
-        };
+
+        cEditor.toolbar.close();
+
+        cEditor.toolbar.move(cEditor.html.getNodeFocused());
+
     }
 
 };
 
 cEditor.toolbar = {
 
-    opened  : false,
+    defaultOffset : 30,
+
+    opened : false,
 
     current : null,
 
@@ -342,13 +344,29 @@ cEditor.toolbar = {
     */
     toolClicked : function() {
 
-        var nodeFocused = cEditor.html.getNodeFocused();
+        var nodeFocused = cEditor.html.getNodeFocused(),
+            newTag;
 
         switch (cEditor.toolbar.current) {
             case 'header' : newTag = 'h1';
         };
 
         cEditor.html.switchNode(nodeFocused, newTag);
+
+    },
+
+
+    /**
+    * Moving toolbar to the specified node
+    */
+    move : function(destinationBlock) {
+
+        console.log(cEditor.nodes.toolbar);
+
+        var newYCoordinate = destinationBlock.offsetTop - cEditor.toolbar.defaultOffset - 
+                             cEditor.nodes.toolbar.clientHeight;
+
+        cEditor.nodes.toolbar.style.transform = "translateY(" + newYCoordinate + "px)";
 
     }
 
