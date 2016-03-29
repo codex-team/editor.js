@@ -141,6 +141,10 @@
     border-top: 2px solid #EAECF3;
     border-bottom: 2px solid #EAECF3;
 }
+.ce_redactor code{
+    display: block;
+    margin: 1em 0;
+}
 
 @-webkit-keyframes bounceIn {
     0% { opacity: 0; -webkit-transform: scale(.3);}

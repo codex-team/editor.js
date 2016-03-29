@@ -217,6 +217,10 @@ cEditor.ui = {
             cEditor.callback.redactorInputEvent(event);
         }, false );
 
+        // for (button in cEditor.nodes.toolbarButtons){
+        //     cEditor.nodes.toolbarButtons[button].addEventListener('click', cEditor.toolbar. toolClicked, false);
+        // }
+
     }
 
 };
@@ -224,7 +228,7 @@ cEditor.ui = {
 cEditor.callback = {
 
 
-    redactorSyncTimout : null,
+    redactorSyncTimeout : null,
 
     globalKeydown : function(event){
 
@@ -260,10 +264,13 @@ cEditor.callback = {
 
     enterKeyPressed : function(event){
 
+        cEditor.content.workingNodeChanged();
+
         if (cEditor.toolbar.opened && event.target == cEditor.nodes.redactor) {
 
-            event.preventDefault();
-            cEditor.toolbar.toolClicked();
+            // event.preventDefault();
+
+            cEditor.toolbar.toolClicked(event);
             cEditor.toolbar.close();
 
         };
@@ -280,27 +287,19 @@ cEditor.callback = {
 
     arrowKeyPressed : function(event){
 
+        cEditor.content.workingNodeChanged();
+
         cEditor.toolbar.close();
-
-        var nodeFocused = cEditor.html.getNodeFocused();
-
-        if (!nodeFocused) {
-            return;
-        }
-
-        cEditor.toolbar.move(nodeFocused);
+        cEditor.toolbar.move();
 
     },
 
     redactorClicked : function (event) {
 
-        var nodeFocused = cEditor.html.getNodeFocused();
+        cEditor.content.workingNodeChanged();
 
-        if (!nodeFocused) {
-            return;
-        }
-
-        cEditor.toolbar.move(nodeFocused);
+        cEditor.toolbar.move();
+        cEditor.toolbar.open();
 
     },
 
@@ -309,14 +308,14 @@ cEditor.callback = {
         /**
         * Clear previous sync-timeout
         */
-        if (this.redactorSyncTimout){
-            clearTimeout(this.redactorSyncTimout);
+        if (this.redactorSyncTimeout){
+            clearTimeout(this.redactorSyncTimeout);
         }
 
         /**
         * Start waiting to input finish and sync redactor
         */
-        this.redactorSyncTimout = setTimeout(function() {
+        this.redactorSyncTimeout = setTimeout(function() {
 
             cEditor.content.sync();
 
@@ -327,10 +326,9 @@ cEditor.callback = {
 };
 
 
-/**
-* @todo merge module with cEditor.html
-*/
 cEditor.content = {
+
+    currentNode : null,
 
     /**
     * Synchronizes redactor with original textarea
@@ -348,6 +346,94 @@ cEditor.content = {
         * Put it to the textarea
         */
         cEditor.nodes.textarea.value = cEditor.state.html;
+
+    },
+
+    getNodeFocused : function() {
+
+        var selection = window.getSelection(),
+            focused;
+
+        if (selection.anchorNode != null) {
+            focused = selection.anchorNode.tagName ? selection.anchorNode : selection.focusNode.parentElement;
+        }
+
+        if (focused != cEditor.nodes.redactor){
+            return focused;
+        }
+
+        return null;
+
+    },
+
+    /**
+    * Trigger this event when working node changed
+    */
+    workingNodeChanged : function (setCurrent) {
+
+        this.currentNode = setCurrent || this.getNodeFocused();
+
+    },
+
+    switchBlock : function (targetBlock, newBlockTagname) {
+
+        if (!targetBlock || !newBlockTagname) return;
+
+
+        var nodeToReplace;
+
+        /**
+        * First-level nodes replaces as-is,
+        * otherwise we need to replace parent node
+        */
+        if (cEditor.parser.isFirstLevelBlock(targetBlock)) {
+            nodeToReplace = targetBlock;
+        } else {
+            nodeToReplace = targetBlock.parentNode;
+        }
+
+        /**
+        * Make new node with original content
+        */
+        var nodeCreated = cEditor.draw.block(newBlockTagname, targetBlock.innerHTML);
+
+        /**
+        * If it is a first-level node, replace as-is.
+        */
+        if (cEditor.parser.isFirstLevelBlock(nodeCreated)) {
+
+            cEditor.nodes.redactor.replaceChild(nodeCreated, nodeToReplace);
+
+            /**
+            * Set new node as current
+            */
+            cEditor.content.workingNodeChanged(nodeCreated);
+            return;
+
+        }
+
+        /**
+        * If it is not a first-level node, for example LI or IMG
+        * we need to wrap it in block-tag (<p> or <ul>)
+        */
+        var newNodeWrapperTagname,
+            newNodeWrapper;
+
+        switch (newBlockTagname){
+            case 'LI' : newNodeWrapperTagname = 'UL'; break;
+            default   : newNodeWrapperTagname = 'P'; break;
+        }
+
+        newNodeWrapper = cEditor.draw.block(newNodeWrapperTagname);
+        newNodeWrapper.appendChild(nodeCreated);
+
+        cEditor.nodes.redactor.replaceChild(newNodeWrapper, nodeToReplace);
+
+        /**
+        * Set new node as current
+        */
+        cEditor.content.workingNodeChanged(nodeCreated);
+
 
     }
 
@@ -434,18 +520,19 @@ cEditor.toolbar = {
     /**
     * Transforming selected node type into selected toolbar element type
     */
-    toolClicked : function() {
+    toolClicked : function(event) {
 
-        var nodeFocused = cEditor.html.getNodeFocused(),
+        var workingNode = cEditor.content.currentNode,
             newTag;
 
         switch (cEditor.toolbar.current) {
             case 'header' : newTag = 'H1'; break;
             case 'quote'  : newTag = 'BLOCKQUOTE'; break;
             case 'code'   : newTag = 'CODE'; break;
+            case 'list'   : newTag = 'LI'; break;
         };
 
-        cEditor.html.switchNode(nodeFocused, newTag);
+        cEditor.content.switchBlock(workingNode, newTag);
 
     },
 
@@ -453,39 +540,16 @@ cEditor.toolbar = {
     /**
     * Moving toolbar to the specified node
     */
-    move : function(destinationBlock) {
+    move : function() {
 
-        var newYCoordinate = destinationBlock.offsetTop - cEditor.toolbar.defaultOffset -
+        if (!cEditor.content.currentNode) {
+            return;
+        }
+
+        var newYCoordinate = cEditor.content.currentNode.offsetTop - cEditor.toolbar.defaultOffset -
                              cEditor.nodes.toolbar.clientHeight;
 
         cEditor.nodes.toolbar.style.transform = "translateY(" + newYCoordinate + "px)";
-
-    }
-
-};
-
-cEditor.html = {
-
-    getNodeFocused : function() {
-
-        var selection = window.getSelection();
-
-        if (selection.anchorNode != null) {
-            return selection.anchorNode.tagName ? selection.anchorNode : selection.focusNode.parentElement;
-        } else {
-            return null;
-        }
-
-    },
-
-    switchNode : function (targetNode, tagName) {
-
-        /**  */
-        if (!targetNode && !tagName) return;
-
-        var newNode = cEditor.draw.block(tagName, targetNode.innerHTML);
-
-        cEditor.nodes.redactor.replaceChild(newNode, targetNode);
 
     }
 
