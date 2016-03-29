@@ -85,7 +85,6 @@
     z-index: 2;
 
     margin-left: -45px;
-    /*transform: translateY(100px);*/
 
     overflow: hidden;
 
@@ -96,12 +95,12 @@
     color: #2e394b;
 
     display: none;
-    
+
 }
     .ce_toolbar.opened{
         display: block;
 
-        animation-name: bounceIn; animation-duration: 200ms; animation-iteration-count: 1;
+       /*animation-name: bounceIn; animation-duration: 200ms; animation-iteration-count: 1;*/
     }
 
 
@@ -133,6 +132,14 @@
 }
 .ce_redactor li{
     margin: 5px 0;
+}
+.ce_redactor blockquote{
+    font-size: 1.1em;
+    line-height: 1.9em;
+    margin: 2em 0;
+    padding: 2em 3.5em;
+    border-top: 2px solid #EAECF3;
+    border-bottom: 2px solid #EAECF3;
 }
 
 @-webkit-keyframes bounceIn {

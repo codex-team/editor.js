@@ -198,8 +198,18 @@ cEditor.ui = {
         cEditor.core.log('ui.bindEvents fired', 'info');
 
         /** All keydowns on Document */
-        document.addEventListener('keyup', function (event) {
+        document.addEventListener('keydown', function (event) {
             cEditor.callback.globalKeydown(event);
+        }, false );
+
+        /** All keydowns on Document */
+        document.addEventListener('keyup', function (event) {
+            cEditor.callback.globalKeyup(event);
+        }, false );
+
+        /** Mouse click to radactor */
+        cEditor.nodes.redactor.addEventListener('click', function (event) {
+            cEditor.callback.redactorClicked(event);
         }, false );
 
     }
@@ -214,15 +224,23 @@ cEditor.callback = {
             case cEditor.core.keys.TAB   : this.tabKeyPressed(event); break;
             case cEditor.core.keys.ENTER : this.enterKeyPressed(event); break;
             case cEditor.core.keys.ESC   : this.escapeKeyPressed(event); break;
-            case cEditor.core.keys.UP    : 
+        }
+
+    },
+
+    globalKeyup : function(event){
+
+        switch (event.keyCode){
+            case cEditor.core.keys.UP    :
             case cEditor.core.keys.DOWN  : this.arrowKeyPressed(event); break;
         }
 
     },
 
+
     tabKeyPressed : function(event){
 
-        event.preventDefault();
+
 
         console.log('TAB pressed: %o', event);
 
@@ -232,11 +250,15 @@ cEditor.callback = {
             cEditor.toolbar.leaf();
         }
 
+        event.preventDefault();
+
+        // return false;
+
     },
 
     enterKeyPressed : function(event){
 
-        console.log('Enter pressed');
+        console.log('Enter pressed, event.target: %o', event.target);
 
         if (cEditor.toolbar.opened && event.target == cEditor.nodes.redactor) {
 
@@ -262,7 +284,26 @@ cEditor.callback = {
 
         cEditor.toolbar.close();
 
-        cEditor.toolbar.move(cEditor.html.getNodeFocused());
+        var nodeFocused = cEditor.html.getNodeFocused();
+
+        if (!nodeFocused) {
+            return;
+        }
+
+        cEditor.toolbar.move(nodeFocused);
+
+    },
+
+    redactorClicked : function (event) {
+
+        var nodeFocused = cEditor.html.getNodeFocused();
+
+        if (!nodeFocused) {
+            return;
+        }
+
+        cEditor.toolbar.move(nodeFocused);
+
 
     }
 
@@ -270,13 +311,17 @@ cEditor.callback = {
 
 cEditor.toolbar = {
 
-    defaultOffset : 30,
+    defaultOffset : 10,
 
     opened : false,
 
     current : null,
 
     open : function (){
+
+        if (this.opened) {
+            return;
+        }
 
         cEditor.nodes.toolbar.classList.add('opened');
 
@@ -285,6 +330,8 @@ cEditor.toolbar = {
     },
 
     close : function(){
+
+        console.log('close!');
 
         cEditor.nodes.toolbar.classList.remove('opened');
 
@@ -347,8 +394,12 @@ cEditor.toolbar = {
         var nodeFocused = cEditor.html.getNodeFocused(),
             newTag;
 
+        console.log(cEditor.toolbar.current);
+
         switch (cEditor.toolbar.current) {
-            case 'header' : newTag = 'h1';
+            case 'header' : newTag = 'H1'; break;
+            case 'quote'  : newTag = 'BLOCKQUOTE'; break;
+            case 'code'   : newTag = 'CODE'; break;
         };
 
         cEditor.html.switchNode(nodeFocused, newTag);
@@ -363,7 +414,7 @@ cEditor.toolbar = {
 
         console.log(cEditor.nodes.toolbar);
 
-        var newYCoordinate = destinationBlock.offsetTop - cEditor.toolbar.defaultOffset - 
+        var newYCoordinate = destinationBlock.offsetTop - cEditor.toolbar.defaultOffset -
                              cEditor.nodes.toolbar.clientHeight;
 
         cEditor.nodes.toolbar.style.transform = "translateY(" + newYCoordinate + "px)";
@@ -377,7 +428,7 @@ cEditor.html = {
     getNodeFocused : function() {
 
         var selection = window.getSelection();
-      
+
         if (selection.anchorNode != null) {
             return selection.anchorNode.tagName ? selection.anchorNode : selection.focusNode.parentElement;
         } else {
@@ -392,7 +443,7 @@ cEditor.html = {
         if (!targetNode && !tagName) return;
 
         var newNode = cEditor.draw.block(tagName, targetNode.innerHTML);
-          
+
         cEditor.nodes.redactor.replaceChild(newNode, targetNode);
 
     }
