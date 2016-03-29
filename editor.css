@@ -70,6 +70,11 @@
 
 
 /* EDITOR */
+
+.ce_wrapper {
+    position: relative;
+}
+
 .ce_redactor {
     position: relative;
     outline: none;
@@ -90,9 +95,8 @@
     box-shadow: 0 2px 11px rgba(27,39,54,.11);
     color: #2e394b;
 
-    top: 300px;
-
     display: none;
+    
 }
     .ce_toolbar.opened{
         display: block;
