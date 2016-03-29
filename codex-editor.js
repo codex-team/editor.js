@@ -212,11 +212,19 @@ cEditor.ui = {
             cEditor.callback.redactorClicked(event);
         }, false );
 
+        /** Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text */
+        cEditor.nodes.redactor.addEventListener('input', function (event) {
+            cEditor.callback.redactorInputEvent(event);
+        }, false );
+
     }
 
 };
 
 cEditor.callback = {
+
+
+    redactorSyncTimout : null,
 
     globalKeydown : function(event){
 
@@ -240,10 +248,6 @@ cEditor.callback = {
 
     tabKeyPressed : function(event){
 
-
-
-        console.log('TAB pressed: %o', event);
-
         if ( !cEditor.toolbar.opened ) {
             cEditor.toolbar.open();
         } else {
@@ -252,13 +256,9 @@ cEditor.callback = {
 
         event.preventDefault();
 
-        // return false;
-
     },
 
     enterKeyPressed : function(event){
-
-        console.log('Enter pressed, event.target: %o', event.target);
 
         if (cEditor.toolbar.opened && event.target == cEditor.nodes.redactor) {
 
@@ -272,15 +272,13 @@ cEditor.callback = {
 
     escapeKeyPressed : function(event){
 
-        event.preventDefault();
-        console.log('Escape pressed');
         cEditor.toolbar.close();
+
+        event.preventDefault();
 
     },
 
     arrowKeyPressed : function(event){
-
-        console.log('Arrow pressed');
 
         cEditor.toolbar.close();
 
@@ -304,13 +302,62 @@ cEditor.callback = {
 
         cEditor.toolbar.move(nodeFocused);
 
+    },
+
+    redactorInputEvent : function (event) {
+
+        /**
+        * Clear previous sync-timeout
+        */
+        if (this.redactorSyncTimout){
+            clearTimeout(this.redactorSyncTimout);
+        }
+
+        /**
+        * Start waiting to input finish and sync redactor
+        */
+        this.redactorSyncTimout = setTimeout(function() {
+
+            cEditor.content.sync();
+
+        }, 500);
 
     }
 
 };
 
+
+/**
+* @todo merge module with cEditor.html
+*/
+cEditor.content = {
+
+    /**
+    * Synchronizes redactor with original textarea
+    */
+    sync : function () {
+
+        cEditor.core.log('syncing...');
+
+        /**
+        * Save redactor content to cEditor.state
+        */
+        cEditor.state.html = cEditor.nodes.redactor.innerHTML;
+
+        /**
+        * Put it to the textarea
+        */
+        cEditor.nodes.textarea.value = cEditor.state.html;
+
+    }
+
+}
+
 cEditor.toolbar = {
 
+    /**
+    * Margin between focused node and toolbar
+    */
     defaultOffset : 10,
 
     opened : false,
@@ -330,8 +377,6 @@ cEditor.toolbar = {
     },
 
     close : function(){
-
-        console.log('close!');
 
         cEditor.nodes.toolbar.classList.remove('opened');
 
@@ -394,8 +439,6 @@ cEditor.toolbar = {
         var nodeFocused = cEditor.html.getNodeFocused(),
             newTag;
 
-        console.log(cEditor.toolbar.current);
-
         switch (cEditor.toolbar.current) {
             case 'header' : newTag = 'H1'; break;
             case 'quote'  : newTag = 'BLOCKQUOTE'; break;
@@ -411,8 +454,6 @@ cEditor.toolbar = {
     * Moving toolbar to the specified node
     */
     move : function(destinationBlock) {
-
-        console.log(cEditor.nodes.toolbar);
 
         var newYCoordinate = destinationBlock.offsetTop - cEditor.toolbar.defaultOffset -
                              cEditor.nodes.toolbar.clientHeight;
