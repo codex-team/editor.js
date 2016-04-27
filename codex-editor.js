@@ -268,10 +268,10 @@ cEditor.callback = {
 
         if (cEditor.toolbar.opened && event.target == cEditor.nodes.redactor) {
 
-            // event.preventDefault();
+            event.preventDefault();
 
             cEditor.toolbar.toolClicked(event);
-            cEditor.toolbar.close();
+            // cEditor.toolbar.close();
 
         };
 
@@ -289,7 +289,7 @@ cEditor.callback = {
 
         cEditor.content.workingNodeChanged();
 
-        cEditor.toolbar.close();
+        // cEditor.toolbar.close();
         cEditor.toolbar.move();
 
     },
@@ -355,12 +355,25 @@ cEditor.content = {
             focused;
 
         if (selection.anchorNode != null) {
-            focused = selection.anchorNode.tagName ? selection.anchorNode : selection.focusNode.parentElement;
+
+            if ( selection.anchorNode.nodeType == cEditor.core.nodeTypes.TAG ) {
+                focused = selection.anchorNode;
+            } else {
+                focused = selection.focusNode.parentElement;
+            }
         }
+
+        if ( !cEditor.parser.isFirstLevelBlock(focused) ) {
+            focused = focused.parentElement;
+        }
+
+        console.log('focused' , focused);
 
         if (focused != cEditor.nodes.redactor){
             return focused;
         }
+
+
 
         return null;
 
@@ -408,6 +421,9 @@ cEditor.content = {
             * Set new node as current
             */
             cEditor.content.workingNodeChanged(nodeCreated);
+            setTimeout(function() {
+                cEditor.content.currentNode.focus();
+            }, 100);
             return;
 
         }
@@ -433,6 +449,9 @@ cEditor.content = {
         * Set new node as current
         */
         cEditor.content.workingNodeChanged(nodeCreated);
+        setTimeout(function() {
+            cEditor.content.currentNode.focus();
+        }, 100);
 
 
     }
