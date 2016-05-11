@@ -135,7 +135,7 @@ cEditor.core = {
     /**
     * Readable keys map
     */
-    keys : { TAB: 9, ENTER: 13, BACKSPACE: 8, DELETE: 46, SPACE: 32, ESC: 27, CTRL: 17, META: 91, SHIFT: 16, ALT: 18, LEFT: 37, UP: 38, DOWN: 40, RIGHT: 39 },
+    keys : { BACKSPACE: 8, TAB: 9, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, ESC: 27, SPACE: 32, LEFT: 37, UP: 38, DOWN: 40, RIGHT: 39, DELETE: 46, META: 91 },
 
     /**
     * Check object for DOM node
@@ -186,6 +186,7 @@ cEditor.ui = {
         /** Save created ui-elements to static nodes state */
         cEditor.nodes.wrapper  = wrapper;
         cEditor.nodes.toolbar  = toolbar;
+
         cEditor.nodes.redactor = redactor;
 
     },
@@ -310,6 +311,7 @@ cEditor.callback = {
         cEditor.content.workingNodeChanged();
 
         cEditor.toolbar.move();
+
         cEditor.toolbar.open();
 
     },
@@ -378,7 +380,7 @@ cEditor.content = {
             focused = focused.parentElement;
         }
 
-        console.log('focused' , focused);
+        // console.log('focused' , focused);
 
         if (focused != cEditor.nodes.redactor){
             return focused;
@@ -491,6 +493,8 @@ cEditor.toolbar = {
     /**
     * Margin between focused node and toolbar
     */
+    defaultClientHeight : 43,
+
     defaultOffset : 10,
 
     opened : false,
@@ -504,7 +508,6 @@ cEditor.toolbar = {
         }
 
         cEditor.nodes.toolbar.classList.add('opened');
-
         this.opened = true;
 
     },
@@ -589,12 +592,17 @@ cEditor.toolbar = {
     */
     move : function() {
 
+        var toolbarHeight ;
+
         if (!cEditor.content.currentNode) {
             return;
         }
 
+        toolbarHeight = ( cEditor.nodes.toolbar.clientHeight == 0 ) ? cEditor.toolbar.defaultClientHeight : cEditor.nodes.toolbar.clientHeight ;
+
         var newYCoordinate = cEditor.content.currentNode.offsetTop - cEditor.toolbar.defaultOffset -
-                             cEditor.nodes.toolbar.clientHeight;
+                             toolbarHeight;
+
 
         cEditor.nodes.toolbar.style.transform = "translateY(" + newYCoordinate + "px)";
 
