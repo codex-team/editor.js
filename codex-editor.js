@@ -493,7 +493,7 @@ cEditor.toolbar = {
     /**
     * Margin between focused node and toolbar
     */
-    defaultClientHeight : 43,
+    defaultToolbarHeight : 43,
 
     defaultOffset : 10,
 
@@ -598,10 +598,9 @@ cEditor.toolbar = {
             return;
         }
 
-        toolbarHeight = ( cEditor.nodes.toolbar.clientHeight == 0 ) ? cEditor.toolbar.defaultClientHeight : cEditor.nodes.toolbar.clientHeight ;
+        toolbarHeight = cEditor.nodes.toolbar.clientHeight || cEditor.toolbar.defaultToolbarHeight;
 
-        var newYCoordinate = cEditor.content.currentNode.offsetTop - cEditor.toolbar.defaultOffset -
-                             toolbarHeight;
+        var newYCoordinate = cEditor.content.currentNode.offsetTop - cEditor.toolbar.defaultOffset - toolbarHeight;
 
 
         cEditor.nodes.toolbar.style.transform = "translateY(" + newYCoordinate + "px)";
