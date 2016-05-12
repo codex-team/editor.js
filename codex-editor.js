@@ -278,7 +278,7 @@ cEditor.callback = {
 
         if (cEditor.toolbar.opened && event.target == cEditor.nodes.redactor) {
 
-            console.log('preventDefault');
+            //console.log('preventDefault');
 
             event.preventDefault();
 
@@ -575,6 +575,8 @@ cEditor.toolbar = {
         var workingNode = cEditor.content.currentNode,
             newTag;
 
+        console.log(workingNode);
+
         switch (cEditor.toolbar.current) {
             case 'header' : newTag = 'H1'; break;
             case 'quote'  : newTag = 'BLOCKQUOTE'; break;
@@ -582,7 +584,8 @@ cEditor.toolbar = {
             case 'list'   : newTag = 'LI'; break;
         };
 
-        cEditor.content.switchBlock(workingNode, newTag);
+        //cEditor.content.switchBlock(workingNode, newTag);
+        //cEditor.content.currentNode = newTag;
 
     },
 
