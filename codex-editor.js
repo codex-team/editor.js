@@ -218,16 +218,10 @@ cEditor.ui = {
             cEditor.callback.redactorInputEvent(event);
         }, false );
 
+        /** Bind click listeners on toolbar buttons */
         for (button in cEditor.nodes.toolbarButtons){
             cEditor.nodes.toolbarButtons[button].addEventListener('click', function (event) {
-
-                console.log(this.dataset.type);
-
-                cEditor.toolbar.current = this.dataset.type;
-
-                cEditor.toolbar.toolClicked(event);
-                cEditor.toolbar.close();
-
+                cEditor.callback.toolbarButtonClicked(event, this);
             }, false);
         }
 
@@ -313,6 +307,19 @@ cEditor.callback = {
         cEditor.toolbar.move();
 
         cEditor.toolbar.open();
+
+    },
+
+    /**
+    * Toolbar button click handler
+    * @param this - cursor to the button
+    */
+    toolbarButtonClicked : function (event, button) {
+
+        cEditor.toolbar.current = button.dataset.type;
+
+        cEditor.toolbar.toolClicked(event);
+        cEditor.toolbar.close();
 
     },
 
