@@ -369,6 +369,25 @@ cEditor.content = {
 
     },
 
+    /**
+     * Creates Documnt Range and sets to 0 position
+     */
+
+     setCaret : function(NodeElement, caretPosition) {
+
+        var nodeFirstChild = NodeElement.firstChild;
+
+        var range = document.createRange();
+
+        var selection = window.getSelection();
+
+        range.setStart(nodeFirstChild, caretPosition);
+        range.setEnd(nodeFirstChild, caretPosition);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+    },
+
     getNodeFocused : function() {
 
         var selection = window.getSelection(),
@@ -410,12 +429,14 @@ cEditor.content = {
 
     switchBlock : function (targetBlock, newBlockTagname) {
 
+        /**
+          * Get caret position before we change block
+        */
+        caretPosition   = window.getSelection().anchorOffset;
+      
         if (!targetBlock || !newBlockTagname) return;
 
-
         var nodeToReplace;
-
-        console.log('0 %o', cEditor.content.currentNode);
 
         /**
         * First-level nodes replaces as-is,
@@ -427,14 +448,10 @@ cEditor.content = {
             nodeToReplace = targetBlock.parentNode;
         }
 
-        console.log('1 %o', cEditor.content.currentNode);
-
         /**
         * Make new node with original content
         */
         var nodeCreated = cEditor.draw.block(newBlockTagname, targetBlock.innerHTML);
-
-        console.log('2 %o', cEditor.content.currentNode);
 
         /**
         * If it is a first-level node, replace as-is.
@@ -443,16 +460,18 @@ cEditor.content = {
 
             cEditor.nodes.redactor.replaceChild(nodeCreated, nodeToReplace);
 
-            console.log('3 %o', cEditor.content.currentNode);
-
             /**
             * Set new node as current
             */
+
             cEditor.content.workingNodeChanged(nodeCreated);
-            // setTimeout(function() {
-            //     cEditor.content.currentNode.focus();
-            // }, 100);
-            console.log('4 %o', cEditor.content.currentNode);
+
+            /**
+              * Получаем узел и передаем его setCaret
+            */
+            var nodeChanged = cEditor.content.currentNode;
+            cEditor.content.setCaret(nodeChanged, caretPosition);
+
             return;
 
         }
@@ -474,23 +493,14 @@ cEditor.content = {
         newNodeWrapper = cEditor.draw.block(newNodeWrapperTagname);
         newNodeWrapper.appendChild(nodeCreated);
 
-        console.log('6 %o', cEditor.content.currentNode);
 
         cEditor.nodes.redactor.replaceChild(newNodeWrapper, nodeToReplace);
-
-        console.log('7 %o', cEditor.content.currentNode);
 
         /**
         * Set new node as current
         */
         cEditor.content.workingNodeChanged(nodeCreated);
-        // setTimeout(function() {
-        //     cEditor.content.currentNode.focus();
-        // }, 100);
-
-        console.log('8 %o', cEditor.content.currentNode);
-
-
+        cEditor.content.setCaret(nodeCreated, caretPosition);
     }
 
 }
@@ -582,8 +592,6 @@ cEditor.toolbar = {
         var workingNode = cEditor.content.currentNode,
             newTag;
 
-        console.log(workingNode);
-
         switch (cEditor.toolbar.current) {
             case 'header' : newTag = 'H1'; break;
             case 'quote'  : newTag = 'BLOCKQUOTE'; break;
@@ -591,9 +599,8 @@ cEditor.toolbar = {
             case 'list'   : newTag = 'LI'; break;
         };
 
-        //cEditor.content.switchBlock(workingNode, newTag);
-        //cEditor.content.currentNode = newTag;
-
+        cEditor.content.switchBlock(workingNode, newTag);
+        cEditor.content.workingNodeChanged(workingNode);
     },
 
 
