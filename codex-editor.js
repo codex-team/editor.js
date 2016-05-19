@@ -350,6 +350,9 @@ cEditor.content = {
 
     currentNode : null,
 
+    caretPosition : null,
+    FocusedchildNode: null,
+
     /**
     * Synchronizes redactor with original textarea
     */
@@ -369,6 +372,13 @@ cEditor.content = {
 
     },
 
+    getCaretPosition (selection) {
+
+        this.caretPosition    = selection.anchorOffset;
+        this.FocusedchildNode = selection.anchorNode;
+
+    },
+
     /**
      * Creates Documnt Range and sets to 0 position
      * @param NodeElement   - Changed Node.
@@ -376,19 +386,24 @@ cEditor.content = {
      * @param caretPosition - caret offset before modification
      */
 
-     setCaret : function(NodeElement, selectedNode, caretPosition = 0) {
+     setCaret : function(NodeElement, selectedNode = null, caretPosition = 0) {
+
+        if (selectedNode == null)
+            selectedNode = this.FocusedchildNode;
+
+        if (caretPosition == 0)
+            caretPosition = this.caretPosition;
+
 
         var childs = NodeElement.childNodes,
-            nodeChild;
+            nodeChild,
+            index ;
 
-        if (childs.length == 1)
-          nodeChild = NodeElement.firstChild;
-
-        else {
-          for(var i = 0; i < childs.length; i++)
-             if (selectedNode.textContent === childs[i].textContent)
-              nodeChild = childs[i];
-        }
+        for( index = 0; index < childs.length; index++)
+             if (selectedNode.textContent === childs[index].textContent) {
+                nodeChild = childs[index];
+                break;
+             }
 
         var range = document.createRange(),
             selection = window.getSelection();
@@ -463,9 +478,8 @@ cEditor.content = {
         /**
           * Get caret position before we change block
         */
-        var selection     = window.getSelection(),
-            caretPosition = selection.anchorOffset,
-            selectedNode  = selection.anchorNode;
+        cEditor.content.getCaretPosition(window.getSelection());
+
 
         /**
         * If it is a first-level node, replace as-is.
@@ -481,9 +495,9 @@ cEditor.content = {
             cEditor.content.workingNodeChanged(nodeCreated);
 
             /**
-              * Получаем узел и передаем его setCaret
+              * Setting caret
             */
-            cEditor.content.setCaret(cEditor.content.currentNode, selectedNode, caretPosition);
+            cEditor.content.setCaret(cEditor.content.currentNode);
 
             return;
 
@@ -513,7 +527,8 @@ cEditor.content = {
         * Set new node as current
         */
         cEditor.content.workingNodeChanged(nodeCreated);
-        cEditor.content.setCaret(nodeCreated, selectedNode, caretPosition);
+
+        cEditor.content.setCaret(nodeCreated);
     }
 
 }
