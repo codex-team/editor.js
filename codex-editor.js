@@ -371,18 +371,30 @@ cEditor.content = {
 
     /**
      * Creates Documnt Range and sets to 0 position
+     * @param NodeElement   - Changed Node.
+     * @param selectedNode  - ChildNode before block modification
+     * @param caretPosition - caret offset before modification
      */
 
-     setCaret : function(NodeElement, caretPosition) {
+     setCaret : function(NodeElement, selectedNode, caretPosition = 0) {
 
-        var nodeFirstChild = NodeElement.firstChild;
+        var childs = NodeElement.childNodes,
+            nodeChild;
 
-        var range = document.createRange();
+        if (childs.length == 1)
+          nodeChild = NodeElement.firstChild;
 
-        var selection = window.getSelection();
+        else {
+          for(var i = 0; i < childs.length; i++)
+             if (selectedNode.textContent === childs[i].textContent)
+              nodeChild = childs[i];
+        }
 
-        range.setStart(nodeFirstChild, caretPosition);
-        range.setEnd(nodeFirstChild, caretPosition);
+        var range = document.createRange(),
+            selection = window.getSelection();
+
+        range.setStart(nodeChild, caretPosition);
+        range.setEnd(nodeChild, caretPosition);
 
         selection.removeAllRanges();
         selection.addRange(range);
@@ -429,11 +441,6 @@ cEditor.content = {
 
     switchBlock : function (targetBlock, newBlockTagname) {
 
-        /**
-          * Get caret position before we change block
-        */
-        caretPosition   = window.getSelection().anchorOffset;
-      
         if (!targetBlock || !newBlockTagname) return;
 
         var nodeToReplace;
@@ -454,6 +461,13 @@ cEditor.content = {
         var nodeCreated = cEditor.draw.block(newBlockTagname, targetBlock.innerHTML);
 
         /**
+          * Get caret position before we change block
+        */
+        var selection     = window.getSelection(),
+            caretPosition = selection.anchorOffset,
+            selectedNode  = selection.anchorNode;
+
+        /**
         * If it is a first-level node, replace as-is.
         */
         if (cEditor.parser.isFirstLevelBlock(nodeCreated)) {
@@ -469,8 +483,7 @@ cEditor.content = {
             /**
               * Получаем узел и передаем его setCaret
             */
-            var nodeChanged = cEditor.content.currentNode;
-            cEditor.content.setCaret(nodeChanged, caretPosition);
+            cEditor.content.setCaret(cEditor.content.currentNode, selectedNode, caretPosition);
 
             return;
 
@@ -500,7 +513,7 @@ cEditor.content = {
         * Set new node as current
         */
         cEditor.content.workingNodeChanged(nodeCreated);
-        cEditor.content.setCaret(nodeCreated, caretPosition);
+        cEditor.content.setCaret(nodeCreated, selectedNode, caretPosition);
     }
 
 }
