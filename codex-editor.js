@@ -272,8 +272,6 @@ cEditor.callback = {
 
         if (cEditor.toolbar.opened && event.target == cEditor.nodes.redactor) {
 
-            console.log('preventDefault');
-
             event.preventDefault();
 
             cEditor.toolbar.toolClicked(event);
@@ -351,6 +349,16 @@ cEditor.content = {
     currentNode : null,
 
     /**
+    * @var {int} caretOffset - caret position in a text node.
+    */
+    caretOffset : null,
+
+    /**
+    * @var {int} focusedNodeIndex - we get index of child node from first-level block
+    */
+    focusedNodeIndex: null,
+
+    /**
     * Synchronizes redactor with original textarea
     */
     sync : function () {
@@ -367,6 +375,58 @@ cEditor.content = {
         */
         cEditor.nodes.textarea.value = cEditor.state.html;
 
+    },
+
+    /**
+    * We need to save caret before we change the block,
+    * so that we could return it to original position in a new tag.
+    * We save caret offset in a text and index of child node.
+    */
+    saveCaretPosition () {
+
+        var selection = window.getSelection();
+        var previousElement = selection.anchorNode.previousSibling,
+            nodeIndex = 0;
+
+        while (previousElement != null) {
+
+          nodeIndex ++;
+          previousElement = previousElement.previousSibling;
+
+        }
+
+        this.caretOffset       = selection.anchorOffset;
+        this.focusedNodeIndex  = nodeIndex;
+
+    },
+
+    /**
+    * Creates Documnt Range and sets caret to the NodeElement.
+    * @param {Element} NodeElement - Changed Node.
+    */
+
+    setCaret : function(NodeElement) {
+
+        var nodeIndex   = this.focusedNodeIndex || 0,
+            caretOffset = this.caretOffset || 0;
+
+        var childs = NodeElement.childNodes,
+            nodeChild = childs[nodeIndex];
+
+        var range = document.createRange(),
+            selection = window.getSelection();
+
+        range.setStart(nodeChild, caretOffset);
+        range.setEnd(nodeChild, caretOffset);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        /**
+        * set caret to default posilion
+        */
+        this.focusedNodeIndex   = null;
+        this.caretOffset        = null;
     },
 
     getNodeFocused : function() {
@@ -387,13 +447,9 @@ cEditor.content = {
             focused = focused.parentElement;
         }
 
-        // console.log('focused' , focused);
-
         if (focused != cEditor.nodes.redactor){
             return focused;
         }
-
-
 
         return null;
 
@@ -412,10 +468,7 @@ cEditor.content = {
 
         if (!targetBlock || !newBlockTagname) return;
 
-
         var nodeToReplace;
-
-        console.log('0 %o', cEditor.content.currentNode);
 
         /**
         * First-level nodes replaces as-is,
@@ -427,14 +480,16 @@ cEditor.content = {
             nodeToReplace = targetBlock.parentNode;
         }
 
-        console.log('1 %o', cEditor.content.currentNode);
-
         /**
         * Make new node with original content
         */
         var nodeCreated = cEditor.draw.block(newBlockTagname, targetBlock.innerHTML);
 
-        console.log('2 %o', cEditor.content.currentNode);
+        /**
+          * Get caret position before we change block
+        */
+        cEditor.content.saveCaretPosition();
+
 
         /**
         * If it is a first-level node, replace as-is.
@@ -443,16 +498,17 @@ cEditor.content = {
 
             cEditor.nodes.redactor.replaceChild(nodeCreated, nodeToReplace);
 
-            console.log('3 %o', cEditor.content.currentNode);
-
             /**
             * Set new node as current
             */
+
             cEditor.content.workingNodeChanged(nodeCreated);
-            // setTimeout(function() {
-            //     cEditor.content.currentNode.focus();
-            // }, 100);
-            console.log('4 %o', cEditor.content.currentNode);
+
+            /**
+            * Setting caret
+            */
+            cEditor.content.setCaret(nodeCreated);
+
             return;
 
         }
@@ -469,28 +525,18 @@ cEditor.content = {
             default   : newNodeWrapperTagname = 'P'; break;
         }
 
-        console.log('5 %o', cEditor.content.currentNode);
-
         newNodeWrapper = cEditor.draw.block(newNodeWrapperTagname);
         newNodeWrapper.appendChild(nodeCreated);
 
-        console.log('6 %o', cEditor.content.currentNode);
 
         cEditor.nodes.redactor.replaceChild(newNodeWrapper, nodeToReplace);
-
-        console.log('7 %o', cEditor.content.currentNode);
 
         /**
         * Set new node as current
         */
         cEditor.content.workingNodeChanged(nodeCreated);
-        // setTimeout(function() {
-        //     cEditor.content.currentNode.focus();
-        // }, 100);
 
-        console.log('8 %o', cEditor.content.currentNode);
-
-
+        cEditor.content.setCaret(nodeCreated);
     }
 
 }
