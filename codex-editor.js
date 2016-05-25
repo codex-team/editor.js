@@ -356,7 +356,7 @@ cEditor.content = {
     caretOffset : null,
 
     /**
-      * @var {int} focusedNodeIndex - we get index of child node from first-level block
+    * @var {int} focusedNodeIndex - we get index of child node from first-level block
     */
     focusedNodeIndex: null,
 
@@ -427,8 +427,8 @@ cEditor.content = {
         /**
         * set caret to default posilion
         */
-        this.focusedNodeIndex   = 0;
-        this.caretOffset        = 0;
+        this.focusedNodeIndex   = null;
+        this.caretOffset        = null;
     },
 
     getNodeFocused : function() {
