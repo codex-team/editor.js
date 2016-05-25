@@ -351,7 +351,7 @@ cEditor.content = {
     currentNode : null,
 
     /**
-      * @var {int} caretOffset - caret position in a text node.
+    * @var {int} caretOffset - caret position in a text node.
     */
     caretOffset : null,
 
@@ -379,10 +379,16 @@ cEditor.content = {
 
     },
 
+    /**
+    * We need to save caret before we change the block,
+    * so that we could return it to original position in a new tag.
+    * We save caret offset in a text and index of child node.
+    */
     saveCaretPosition () {
 
         var selection = window.getSelection();
-        var previousElement = selection.anchorNode.previousSibling, nodeIndex = 0;
+        var previousElement = selection.anchorNode.previousSibling,
+            nodeIndex = 0;
 
         while (previousElement != null) {
 
@@ -397,21 +403,14 @@ cEditor.content = {
     },
 
     /**
-     * Creates Documnt Range and sets caret
-     * @param {Element} NodeElement - Changed Node.
-     * @param {int} nodeIndex - first-level child index
-     * @param {int} caretOffset - caret position in a text node
-     */
+    * Creates Documnt Range and sets caret to the NodeElement.
+    * @param {Element} NodeElement - Changed Node.
+    */
 
-     setCaret : function(NodeElement, nodeIndex = 0, caretOffset = 0) {
+    setCaret : function(NodeElement) {
 
-        if (nodeIndex == 0) {
-            nodeIndex = this.focusedNodeIndex;
-        }
-
-        if (caretOffset == 0) {
-            caretOffset = this.caretOffset;
-        }
+        var nodeIndex   = this.focusedNodeIndex || 0,
+            caretOffset = this.caretOffset || 0;
 
         var childs = NodeElement.childNodes,
             nodeChild = childs[nodeIndex];
@@ -424,6 +423,12 @@ cEditor.content = {
 
         selection.removeAllRanges();
         selection.addRange(range);
+
+        /**
+        * set caret to default posilion
+        */
+        this.focusedNodeIndex   = 0;
+        this.caretOffset        = 0;
     },
 
     getNodeFocused : function() {
