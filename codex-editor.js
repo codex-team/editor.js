@@ -351,8 +351,8 @@ cEditor.content = {
     currentNode : null,
 
     /**
-      * @param caretOffset - caret offset
-      * @param focusedChildNode - focused child node
+      * @var {int} caretOffset - caret position in a text node.
+      * @var {Element} focusedChildNode - if block has several child nodes, we set child that is focused.
     */
 
     caretOffset : null,
@@ -388,9 +388,9 @@ cEditor.content = {
 
     /**
      * Creates Documnt Range and sets caret
-     * @param NodeElement   - Changed Node.
-     * @param selectedNode  - ChildNode before block modification
-     * @param caretOffset - caret offset before modification
+     * @param {Element} NodeElement - Changed Node.
+     * @param {Element} selectedNode  - ChildNode before block modification
+     * @param {int} caretOffset - caret position in a text node
      */
 
      setCaret : function(NodeElement, selectedNode = null, caretOffset = 0) {
@@ -448,8 +448,6 @@ cEditor.content = {
         if (focused != cEditor.nodes.redactor){
             return focused;
         }
-
-
 
         return null;
 
