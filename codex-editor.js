@@ -352,11 +352,13 @@ cEditor.content = {
 
     /**
       * @var {int} caretOffset - caret position in a text node.
-      * @var {Element} focusedChildNode - if block has several child nodes, we set child that is focused.
     */
-
     caretOffset : null,
-    focusedChildNode: null,
+
+    /**
+      * @var {int} focusedNodeIndex - we get index of child node from first-level block
+    */
+    focusedNodeIndex: null,
 
     /**
     * Synchronizes redactor with original textarea
@@ -380,23 +382,31 @@ cEditor.content = {
     saveCaretPosition () {
 
         var selection = window.getSelection();
+        var previousElement = selection.anchorNode.previousSibling, nodeIndex = 0;
 
-        this.caretOffset    = selection.anchorOffset;
-        this.focusedChildNode = selection.anchorNode;
+        while (previousElement != null) {
+
+          nodeIndex ++;
+          previousElement = previousElement.previousSibling;
+
+        }
+
+        this.caretOffset       = selection.anchorOffset;
+        this.focusedNodeIndex  = nodeIndex;
 
     },
 
     /**
      * Creates Documnt Range and sets caret
      * @param {Element} NodeElement - Changed Node.
-     * @param {Element} selectedNode  - ChildNode before block modification
+     * @param {int} nodeIndex - first-level child index
      * @param {int} caretOffset - caret position in a text node
      */
 
-     setCaret : function(NodeElement, selectedNode = null, caretOffset = 0) {
+     setCaret : function(NodeElement, nodeIndex = 0, caretOffset = 0) {
 
-        if (selectedNode == null) {
-            selectedNode = this.focusedChildNode;
+        if (nodeIndex == 0) {
+            nodeIndex = this.focusedNodeIndex;
         }
 
         if (caretOffset == 0) {
@@ -404,16 +414,7 @@ cEditor.content = {
         }
 
         var childs = NodeElement.childNodes,
-            nodeChild,
-            index ;
-
-        for( index = 0; index < childs.length; index++) {
-
-            if (selectedNode.textContent === childs[index].textContent) {
-                nodeChild = childs[index];
-                break;
-             }
-        }
+            nodeChild = childs[nodeIndex];
 
         var range = document.createRange(),
             selection = window.getSelection();
