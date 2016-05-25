@@ -272,8 +272,6 @@ cEditor.callback = {
 
         if (cEditor.toolbar.opened && event.target == cEditor.nodes.redactor) {
 
-            //console.log('preventDefault');
-
             event.preventDefault();
 
             cEditor.toolbar.toolClicked(event);
@@ -390,6 +388,8 @@ cEditor.content = {
         var previousElement = selection.anchorNode.previousSibling,
             nodeIndex = 0;
 
+        console.log(selection);
+
         while (previousElement != null) {
 
           nodeIndex ++;
@@ -408,6 +408,9 @@ cEditor.content = {
     */
 
     setCaret : function(NodeElement) {
+
+        console.log("this.focusedNodeIndex %o", this.focusedNodeIndex );
+        console.log("this.caretOffset %o", this.caretOffset);
 
         var nodeIndex   = this.focusedNodeIndex || 0,
             caretOffset = this.caretOffset || 0;
@@ -509,9 +512,9 @@ cEditor.content = {
             cEditor.content.workingNodeChanged(nodeCreated);
 
             /**
-              * Setting caret
+            * Setting caret
             */
-            cEditor.content.setCaret(cEditor.content.currentNode);
+            cEditor.content.setCaret(nodeCreated);
 
             return;
 
@@ -640,7 +643,7 @@ cEditor.toolbar = {
         };
 
         cEditor.content.switchBlock(workingNode, newTag);
-        cEditor.content.workingNodeChanged(workingNode);
+    
     },
 
 
