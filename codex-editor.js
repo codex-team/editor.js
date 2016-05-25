@@ -350,8 +350,13 @@ cEditor.content = {
 
     currentNode : null,
 
-    caretPosition : null,
-    FocusedchildNode: null,
+    /**
+      * @param caretOffset - caret offset
+      * @param focusedChildNode - focused child node
+    */
+
+    caretOffset : null,
+    focusedChildNode: null,
 
     /**
     * Synchronizes redactor with original textarea
@@ -372,44 +377,49 @@ cEditor.content = {
 
     },
 
-    getCaretPosition (selection) {
+    saveCaretPosition () {
 
-        this.caretPosition    = selection.anchorOffset;
-        this.FocusedchildNode = selection.anchorNode;
+        var selection = window.getSelection();
+
+        this.caretOffset    = selection.anchorOffset;
+        this.focusedChildNode = selection.anchorNode;
 
     },
 
     /**
-     * Creates Documnt Range and sets to 0 position
+     * Creates Documnt Range and sets caret
      * @param NodeElement   - Changed Node.
      * @param selectedNode  - ChildNode before block modification
-     * @param caretPosition - caret offset before modification
+     * @param caretOffset - caret offset before modification
      */
 
-     setCaret : function(NodeElement, selectedNode = null, caretPosition = 0) {
+     setCaret : function(NodeElement, selectedNode = null, caretOffset = 0) {
 
-        if (selectedNode == null)
-            selectedNode = this.FocusedchildNode;
+        if (selectedNode == null) {
+            selectedNode = this.focusedChildNode;
+        }
 
-        if (caretPosition == 0)
-            caretPosition = this.caretPosition;
-
+        if (caretOffset == 0) {
+            caretOffset = this.caretOffset;
+        }
 
         var childs = NodeElement.childNodes,
             nodeChild,
             index ;
 
-        for( index = 0; index < childs.length; index++)
-             if (selectedNode.textContent === childs[index].textContent) {
+        for( index = 0; index < childs.length; index++) {
+
+            if (selectedNode.textContent === childs[index].textContent) {
                 nodeChild = childs[index];
                 break;
              }
+        }
 
         var range = document.createRange(),
             selection = window.getSelection();
 
-        range.setStart(nodeChild, caretPosition);
-        range.setEnd(nodeChild, caretPosition);
+        range.setStart(nodeChild, caretOffset);
+        range.setEnd(nodeChild, caretOffset);
 
         selection.removeAllRanges();
         selection.addRange(range);
@@ -478,7 +488,7 @@ cEditor.content = {
         /**
           * Get caret position before we change block
         */
-        cEditor.content.getCaretPosition(window.getSelection());
+        cEditor.content.saveCaretPosition();
 
 
         /**
@@ -514,8 +524,6 @@ cEditor.content = {
             case 'LI' : newNodeWrapperTagname = 'UL'; break;
             default   : newNodeWrapperTagname = 'P'; break;
         }
-
-        console.log('5 %o', cEditor.content.currentNode);
 
         newNodeWrapper = cEditor.draw.block(newNodeWrapperTagname);
         newNodeWrapper.appendChild(nodeCreated);
