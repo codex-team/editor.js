@@ -227,7 +227,11 @@ cEditor.ui = {
             cEditor.nodes.toolbarButtons[button].addEventListener('click', function (event) {
                 cEditor.callback.toolbarButtonClicked(event, this);
             }, false);
-        }
+        };
+
+        cEditor.nodes.redactor.addEventListener('pointerdown', function(event) {
+            console.log('here');
+        });
 
     }
 
@@ -241,9 +245,9 @@ cEditor.callback = {
     globalKeydown : function(event){
 
         switch (event.keyCode){
-            case cEditor.core.keys.TAB   : this.tabKeyPressed(event); break;
-            case cEditor.core.keys.ENTER : this.enterKeyPressed(event); break;
-            case cEditor.core.keys.ESC   : this.escapeKeyPressed(event); break;
+            case cEditor.core.keys.TAB   : this.tabKeyPressed(event);       break;
+            case cEditor.core.keys.ENTER : this.enterKeyPressed(event);     break;
+            case cEditor.core.keys.ESC   : this.escapeKeyPressed(event);    break;
         }
 
     },
@@ -297,8 +301,49 @@ cEditor.callback = {
 
         cEditor.content.workingNodeChanged();
 
+        /* Closing toolbar */
         cEditor.toolbar.close();
         cEditor.toolbar.move();
+
+        /* Changing focused block to Previous or Next Node */
+        var selection = window.getSelection(),
+            focusedElement = selection.anchorNode.parentNode;
+
+        // console.log('focused %o', focusedElement);
+
+        if (event.keyCode == cEditor.core.keys.DOWN) {
+
+            while ( focusedElement.nextSibling == null ) {
+                focusedElement = focusedElement.parentNode;
+            }
+
+            // console.log('nextNode: %o', focusedElement.nextSibling);
+
+            if ( selection.focusNode.length == selection.anchorOffset ) {
+
+                cEditor.content.caretOffset      = 0;
+                cEditor.content.focusedNodeIndex = 0;
+
+                cEditor.content.setCaret(focusedElement.nextSibling);
+            }
+        }
+        else if (event.keyCode == cEditor.core.keys.UP) {
+
+            while ( focusedElement.previousSibling == null ) {
+                focusedElement = focusedElement.parentNode;
+            }
+
+            // console.log('nextNode: %o', focusedElement.previousSibling);
+
+            if ( selection.anchorOffset == 0 ) {
+
+                cEditor.content.caretOffset      = 0;
+                cEditor.content.focusedNodeIndex = 0;
+
+                cEditor.content.setCaret(focusedElement.previousSibling);
+
+            }
+        }
 
     },
 
