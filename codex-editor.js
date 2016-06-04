@@ -211,6 +211,9 @@ cEditor.ui = {
         /** Mouse click to radactor */
         cEditor.nodes.redactor.addEventListener('click', function (event) {
             cEditor.callback.redactorClicked(event);
+
+            cEditor.content.saveCaretPosition();
+
         }, false );
 
         /** Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text */
@@ -385,15 +388,17 @@ cEditor.content = {
     saveCaretPosition () {
 
         var selection = window.getSelection();
+
         var previousElement = selection.anchorNode.previousSibling,
+            parent = selection.anchorNode.parentElement;
             nodeIndex = 0;
 
-        while (previousElement != null) {
+            while (previousElement != null) {
 
-          nodeIndex ++;
-          previousElement = previousElement.previousSibling;
+              nodeIndex ++;
+              previousElement = previousElement.previousSibling;
 
-        }
+            }
 
         this.caretOffset       = selection.anchorOffset;
         this.focusedNodeIndex  = nodeIndex;
@@ -422,11 +427,6 @@ cEditor.content = {
         selection.removeAllRanges();
         selection.addRange(range);
 
-        /**
-        * set caret to default posilion
-        */
-        this.focusedNodeIndex   = null;
-        this.caretOffset        = null;
     },
 
     getNodeFocused : function() {
@@ -484,13 +484,7 @@ cEditor.content = {
         * Make new node with original content
         */
         var nodeCreated = cEditor.draw.block(newBlockTagname, targetBlock.innerHTML);
-
-        /**
-          * Get caret position before we change block
-        */
-        cEditor.content.saveCaretPosition();
-
-
+        
         /**
         * If it is a first-level node, replace as-is.
         */
