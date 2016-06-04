@@ -3,6 +3,7 @@
 * https://ifmo.su/editor
 * @author CodeX team team@ifmo.su
 */
+
 var cEditor = (function (cEditor) {
 
     // Default settings
@@ -484,7 +485,7 @@ cEditor.content = {
         * Make new node with original content
         */
         var nodeCreated = cEditor.draw.block(newBlockTagname, targetBlock.innerHTML);
-        
+
         /**
         * If it is a first-level node, replace as-is.
         */
