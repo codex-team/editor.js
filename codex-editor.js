@@ -3,6 +3,7 @@
 * https://ifmo.su/editor
 * @author CodeX team team@ifmo.su
 */
+
 var cEditor = (function (cEditor) {
 
     // Default settings
