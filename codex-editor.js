@@ -425,7 +425,6 @@ cEditor.content = {
 
         selection.removeAllRanges();
         selection.addRange(range);
-
     },
 
     getNodeFocused : function() {
