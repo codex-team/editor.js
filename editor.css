@@ -78,6 +78,8 @@
 .ce_redactor {
     position: relative;
     outline: none;
+    background: #FCFCFC;
+    padding: 1px 0;
 }
 
 .ce_toolbar{
@@ -124,11 +126,16 @@
 
 
 /** Typography styles */
+
 .ce_redactor p{
     padding: 5px 0;
     font-size: 1em;
     line-height: 1.7em;
     margin: 0;
+}
+.ce_redactor ul,
+.ce_redactor ol{
+    list-style-position: inside;
 }
 .ce_redactor li{
     margin: 5px 0;
@@ -145,6 +152,15 @@
     display: block;
     margin: 1em 0;
 }
+
+
+.ce_redactor .ce_block{
+    padding: 10px;
+    margin: 5px;
+    border: 1px dotted #ccc;
+    background: #fff;
+}
+
 
 @-webkit-keyframes bounceIn {
     0% { opacity: 0; -webkit-transform: scale(.3);}

@@ -485,6 +485,9 @@ cEditor.content = {
         */
         var nodeCreated = cEditor.draw.block(newBlockTagname, targetBlock.innerHTML);
 
+        /** Mark node as redactor block*/
+        nodeCreated.classList.add('ce_block');
+
         /**
           * Get caret position before we change block
         */
@@ -759,6 +762,11 @@ cEditor.parser = {
 
                 if ( cEditor.core.isDomNode(block) ) {
 
+                    block.contentEditable = "true";
+
+                    /** Mark node as redactor block*/
+                    block.classList.add('ce_block');
+
                     /** Append block to the redactor */
                     cEditor.nodes.redactor.appendChild(block);
 
@@ -864,7 +872,6 @@ cEditor.draw = {
         var redactor = document.createElement('div');
 
         redactor.className += 'ce_redactor';
-        redactor.contentEditable = true;
 
         return redactor;
 
