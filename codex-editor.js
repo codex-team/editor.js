@@ -388,17 +388,15 @@ cEditor.content = {
     saveCaretPosition () {
 
         var selection = window.getSelection();
-
         var previousElement = selection.anchorNode.previousSibling,
-            parent = selection.anchorNode.parentElement;
             nodeIndex = 0;
 
-            while (previousElement != null) {
+        while (previousElement != null) {
 
-              nodeIndex ++;
-              previousElement = previousElement.previousSibling;
+          nodeIndex ++;
+          previousElement = previousElement.previousSibling;
 
-            }
+        }
 
         this.caretOffset       = selection.anchorOffset;
         this.focusedNodeIndex  = nodeIndex;
@@ -484,7 +482,7 @@ cEditor.content = {
         * Make new node with original content
         */
         var nodeCreated = cEditor.draw.block(newBlockTagname, targetBlock.innerHTML);
-        
+
         /**
         * If it is a first-level node, replace as-is.
         */
