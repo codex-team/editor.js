@@ -214,7 +214,6 @@ cEditor.ui = {
             cEditor.callback.redactorClicked(event);
 
             cEditor.content.saveCaretPosition();
-            // console.log(cEditor.content.caretOffset, cEditor.content.focusedNodeIndex);
 
         }, false );
 
@@ -417,8 +416,6 @@ cEditor.content = {
 
         var childs = NodeElement.childNodes,
             nodeChild = childs[nodeIndex];
-
-        console.log(caretOffset, nodeChild);
 
         var range = document.createRange(),
             selection = window.getSelection();
