@@ -3,6 +3,7 @@
 * https://ifmo.su/editor
 * @author CodeX team team@ifmo.su
 */
+
 var cEditor = (function (cEditor) {
 
     // Default settings
@@ -211,6 +212,9 @@ cEditor.ui = {
         /** Mouse click to radactor */
         cEditor.nodes.redactor.addEventListener('click', function (event) {
             cEditor.callback.redactorClicked(event);
+
+            cEditor.content.saveCaretPosition();
+
         }, false );
 
         /** Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text */
@@ -421,12 +425,6 @@ cEditor.content = {
 
         selection.removeAllRanges();
         selection.addRange(range);
-
-        /**
-        * set caret to default posilion
-        */
-        this.focusedNodeIndex   = null;
-        this.caretOffset        = null;
     },
 
     getNodeFocused : function() {
@@ -487,12 +485,6 @@ cEditor.content = {
 
         /** Mark node as redactor block*/
         nodeCreated.classList.add('ce_block');
-
-        /**
-          * Get caret position before we change block
-        */
-        cEditor.content.saveCaretPosition();
-
 
         /**
         * If it is a first-level node, replace as-is.
