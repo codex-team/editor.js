@@ -229,10 +229,6 @@ cEditor.ui = {
             }, false);
         };
 
-        cEditor.nodes.redactor.addEventListener('pointerdown', function(event) {
-            console.log('here');
-        });
-
     }
 
 };
@@ -256,6 +252,8 @@ cEditor.callback = {
 
         switch (event.keyCode){
             case cEditor.core.keys.UP    :
+            case cEditor.core.keys.LEFT  :
+            case cEditor.core.keys.RIGHT :
             case cEditor.core.keys.DOWN  : this.arrowKeyPressed(event); break;
         }
 
@@ -309,16 +307,20 @@ cEditor.callback = {
         var selection = window.getSelection(),
             focusedElement = selection.anchorNode.parentNode;
 
-        // console.log('focused %o', focusedElement);
+        if (event.keyCode == cEditor.core.keys.DOWN || event.keyCode == cEditor.core.keys.RIGHT ) {
 
-        if (event.keyCode == cEditor.core.keys.DOWN) {
+            /* Stop transition when caret is not at the end of Text node */
+            if ( cEditor.content.caretOffset != selection.anchorNode.length) {
+                cEditor.content.saveCaretPosition();
+                return ;
+            }
 
+            /* Get parents until we didn't find nextSibling to switch caret */
             while ( focusedElement.nextSibling == null ) {
                 focusedElement = focusedElement.parentNode;
             }
 
-            // console.log('nextNode: %o', focusedElement.nextSibling);
-
+            /* Setting Caret to the first child of next node */
             if ( selection.focusNode.length == selection.anchorOffset ) {
 
                 cEditor.content.caretOffset      = 0;
@@ -326,25 +328,32 @@ cEditor.callback = {
 
                 cEditor.content.setCaret(focusedElement.nextSibling);
             }
-        }
-        else if (event.keyCode == cEditor.core.keys.UP) {
 
+        }
+        else if (event.keyCode == cEditor.core.keys.UP || event.keyCode == cEditor.core.keys.LEFT ) {
+
+            /* Stop transition when caret is not at the beggining of Text node */
+            if ( cEditor.content.caretOffset != 0 ) {
+                cEditor.content.saveCaretPosition();
+                return ;
+            }
+
+            /* Get parents until we didn't find nextSibling to switch caret */
             while ( focusedElement.previousSibling == null ) {
                 focusedElement = focusedElement.parentNode;
             }
 
-            // console.log('nextNode: %o', focusedElement.previousSibling);
-
+            /* Setting Caret to the first child of previous node */
             if ( selection.anchorOffset == 0 ) {
 
-                cEditor.content.caretOffset      = 0;
-                cEditor.content.focusedNodeIndex = 0;
+                cEditor.content.focusedNodeIndex = focusedElement.previousSibling.childNodes.length - 1;
+                cEditor.content.caretOffset      = focusedElement.previousSibling.childNodes[cEditor.content.focusedNodeIndex].length;
 
                 cEditor.content.setCaret(focusedElement.previousSibling);
 
             }
-        }
 
+        }
     },
 
     redactorClicked : function (event) {
