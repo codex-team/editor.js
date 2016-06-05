@@ -309,7 +309,10 @@ cEditor.callback = {
 
         if (event.keyCode == cEditor.core.keys.DOWN || event.keyCode == cEditor.core.keys.RIGHT ) {
 
-            /* Stop transition when caret is not at the end of Text node */
+            /** Stop transition when caret is not at the end of Text node
+             *  When we click "DOWN", caret moves to the end of node.
+             *  We should check check caret position before we transmit/switch the block.
+            */
             if ( cEditor.content.caretOffset != selection.anchorNode.length) {
                 cEditor.content.saveCaretPosition();
                 return ;
@@ -332,7 +335,10 @@ cEditor.callback = {
         }
         else if (event.keyCode == cEditor.core.keys.UP || event.keyCode == cEditor.core.keys.LEFT ) {
 
-            /* Stop transition when caret is not at the beggining of Text node */
+            /** Stop transition when caret is not at the beggining of Text node
+             *  When we click "UP", caret moves to the end of node.
+             *  We should check check caret position before we transmit/switch the block.
+            */
             if ( cEditor.content.caretOffset != 0 ) {
                 cEditor.content.saveCaretPosition();
                 return ;
