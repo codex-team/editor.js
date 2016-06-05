@@ -214,6 +214,7 @@ cEditor.ui = {
             cEditor.callback.redactorClicked(event);
 
             cEditor.content.saveCaretPosition();
+            // console.log(cEditor.content.caretOffset, cEditor.content.focusedNodeIndex);
 
         }, false );
 
@@ -417,6 +418,8 @@ cEditor.content = {
         var childs = NodeElement.childNodes,
             nodeChild = childs[nodeIndex];
 
+        console.log(caretOffset, nodeChild);
+
         var range = document.createRange(),
             selection = window.getSelection();
 
@@ -483,7 +486,8 @@ cEditor.content = {
         */
         var nodeCreated = cEditor.draw.block(newBlockTagname, targetBlock.innerHTML);
 
-        /** Mark node as redactor block*/
+        /** Mark node as redactor block */
+        nodeCreated.contentEditable = "true";
         nodeCreated.classList.add('ce_block');
 
         /**
