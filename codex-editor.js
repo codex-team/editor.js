@@ -219,7 +219,12 @@ cEditor.ui = {
 
         /** Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text */
         cEditor.nodes.redactor.addEventListener('input', function (event) {
+
+            /** Saving caret in every modifications */
+            cEditor.content.saveCaretPosition();
+
             cEditor.callback.redactorInputEvent(event);
+
         }, false );
 
         /** Bind click listeners on toolbar buttons */
