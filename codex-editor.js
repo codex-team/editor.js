@@ -21,7 +21,7 @@ var cEditor = (function (cEditor) {
         wrapper  : null,
         toolbar  : null,
         toolbarButtons : {}, // { type : DomEl, ... }
-        redactor : null
+        redactor : null,
     }
 
     // Current editor state
@@ -211,13 +211,17 @@ cEditor.ui = {
 
         /** Mouse click to radactor */
         cEditor.nodes.redactor.addEventListener('click', function (event) {
+
             cEditor.callback.redactorClicked(event);
 
             cEditor.content.saveCaretPosition();
 
         }, false );
 
-        /** Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text */
+        /**
+         *  @deprecated;
+         *  Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text
+        */
         cEditor.nodes.redactor.addEventListener('input', function (event) {
 
             /** Saving caret in every modifications */
@@ -233,6 +237,17 @@ cEditor.ui = {
                 cEditor.callback.toolbarButtonClicked(event, this);
             }, false);
         };
+
+    },
+
+    addBlockHandlers : function(block) {
+
+        block.addEventListener('keydown', function(event) {
+
+            cEditor.content.saveCaretPosition();
+            cEditor.callback.blockTransition(event, block);
+
+        }, false);
 
     }
 
@@ -308,63 +323,6 @@ cEditor.callback = {
         cEditor.toolbar.close();
         cEditor.toolbar.move();
 
-        /* Changing focused block to Previous or Next Node */
-        var selection = window.getSelection(),
-            focusedElement = selection.anchorNode.parentNode;
-
-        if (event.keyCode == cEditor.core.keys.DOWN || event.keyCode == cEditor.core.keys.RIGHT ) {
-
-            /** Stop transition when caret is not at the end of Text node
-             *  When we click "DOWN", caret moves to the end of node.
-             *  We should check check caret position before we transmit/switch the block.
-            */
-            if ( cEditor.content.caretOffset != selection.anchorNode.length) {
-                cEditor.content.saveCaretPosition();
-                return ;
-            }
-
-            /* Get parents until we didn't find nextSibling to switch caret */
-            while ( focusedElement.nextSibling == null ) {
-                focusedElement = focusedElement.parentNode;
-            }
-
-            /* Setting Caret to the first child of next node */
-            if ( selection.focusNode.length == selection.anchorOffset ) {
-
-                cEditor.content.caretOffset      = 0;
-                cEditor.content.focusedNodeIndex = 0;
-
-                cEditor.content.setCaret(focusedElement.nextSibling);
-            }
-
-        }
-        else if (event.keyCode == cEditor.core.keys.UP || event.keyCode == cEditor.core.keys.LEFT ) {
-
-            /** Stop transition when caret is not at the beggining of Text node
-             *  When we click "UP", caret moves to the end of node.
-             *  We should check check caret position before we transmit/switch the block.
-            */
-            if ( cEditor.content.caretOffset != 0 ) {
-                cEditor.content.saveCaretPosition();
-                return ;
-            }
-
-            /* Get parents until we didn't find nextSibling to switch caret */
-            while ( focusedElement.previousSibling == null ) {
-                focusedElement = focusedElement.parentNode;
-            }
-
-            /* Setting Caret to the first child of previous node */
-            if ( selection.anchorOffset == 0 ) {
-
-                cEditor.content.focusedNodeIndex = focusedElement.previousSibling.childNodes.length - 1;
-                cEditor.content.caretOffset      = focusedElement.previousSibling.childNodes[cEditor.content.focusedNodeIndex].length;
-
-                cEditor.content.setCaret(focusedElement.previousSibling);
-
-            }
-
-        }
     },
 
     redactorClicked : function (event) {
@@ -408,7 +366,27 @@ cEditor.callback = {
 
         }, 500);
 
-    }
+    },
+
+    blockTransition : function(event, block) {
+
+        if (event.keyCode == cEditor.core.keys.DOWN || event.keyCode == cEditor.core.keys.RIGHT ) {
+
+
+            if ( block.nextSibling == null )
+                return ;
+
+            cEditor.content.setToNextSibling( block );
+        }
+
+        else if (event.keyCode == cEditor.core.keys.UP || event.keyCode == cEditor.core.keys.LEFT ) {
+
+            if ( block.previousSibling == null )
+                return ;
+
+            cEditor.content.setToPreviousSibling( block );
+        }
+    },
 
 };
 
@@ -477,10 +455,18 @@ cEditor.content = {
     setCaret : function(NodeElement) {
 
         var nodeIndex   = this.focusedNodeIndex || 0,
-            caretOffset = this.caretOffset || 0;
-
-        var childs = NodeElement.childNodes,
+            caretOffset = this.caretOffset || 0,
+            childs = NodeElement.childNodes,
             nodeChild = childs[nodeIndex];
+
+        var range = document.createRange();
+
+        if ( NodeElement.childNodes.length == 0 ) {
+
+            nodeChild   = NodeElement;
+            caretOffset = 0;
+
+        }
 
         var range = document.createRange(),
             selection = window.getSelection();
@@ -598,6 +584,79 @@ cEditor.content = {
         cEditor.content.workingNodeChanged(nodeCreated);
 
         cEditor.content.setCaret(nodeCreated);
+    },
+
+    setToNextSibling : function(block) {
+
+        var selection = window.getSelection(),
+            focusedElement = selection.anchorNode.parentNode;
+
+        /** Stop transition when caret is not at the end of Text node
+         *  When we click "DOWN", caret moves to the end of node.
+         *  We should check check caret position before we transmit/switch the block.
+        */
+        if ( cEditor.content.caretOffset != selection.anchorNode.length
+            && typeof( selection.anchorNode.length ) != 'undefined') {
+
+            cEditor.content.saveCaretPosition();
+            return ;
+
+        }
+
+        /* Setting Caret to the first child of next node */
+        else if ( selection.focusNode.length == cEditor.content.caretOffset ) {
+
+            cEditor.content.caretOffset      = 0;
+            cEditor.content.focusedNodeIndex = 0;
+
+            cEditor.content.setCaret(block.nextSibling);
+
+        } else {
+
+            cEditor.content.caretOffset      = 0;
+            cEditor.content.focusedNodeIndex = 0;
+
+            cEditor.content.setCaret(block.nextSibling);
+        }
+    },
+
+    setToPreviousSibling : function(block) {
+
+        var selection = window.getSelection(),
+            focusedElement = selection.anchorNode.parentNode;
+
+        /** Stop transition when caret is not at the beggining of Text node
+         *  When we click "UP", caret moves to the end of node.
+         *  We should check check caret position before we transmit/switch the block.
+        */
+
+        cEditor.content.saveCaretPosition();
+
+        if ( cEditor.content.caretOffset != 0
+            && typeof( selection.anchorNode.length ) != 'undefined') {
+            cEditor.content.saveCaretPosition();
+            return ;
+
+        }
+
+        /* Setting Caret to the first child of previous node */
+        else if ( selection.anchorOffset == 0
+                && typeof( block.previousSibling.length ) != 'undefined') {
+
+            cEditor.content.focusedNodeIndex = block.previousSibling.childNodes.length - 1;
+            cEditor.content.caretOffset      = block.previousSibling.childNodes[cEditor.content.focusedNodeIndex].length;
+
+            cEditor.content.setCaret(block.previousSibling);
+
+        }
+        else {
+
+            cEditor.content.focusedNodeIndex = 0;
+            cEditor.content.caretOffset      = 0;
+
+            cEditor.content.setCaret(block.previousSibling);
+
+        }
     }
 
 }
@@ -830,8 +889,9 @@ cEditor.parser = {
 
                     /** Save block to the cEditor.state array */
                     cEditor.state.blocks.push(block);
-                };
 
+                    cEditor.ui.addBlockHandlers(block);
+                };
             })
 
             /** Log if something wrong with node */
