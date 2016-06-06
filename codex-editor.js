@@ -214,7 +214,7 @@ cEditor.ui = {
 
             cEditor.callback.redactorClicked(event);
 
-            cEditor.content.saveCaretPosition();
+            cEditor.caret.save();
 
         }, false );
 
@@ -225,7 +225,7 @@ cEditor.ui = {
         cEditor.nodes.redactor.addEventListener('input', function (event) {
 
             /** Saving caret in every modifications */
-            cEditor.content.saveCaretPosition();
+            cEditor.caret.save();
 
             cEditor.callback.redactorInputEvent(event);
 
@@ -244,7 +244,7 @@ cEditor.ui = {
 
         block.addEventListener('keydown', function(event) {
 
-            cEditor.content.saveCaretPosition();
+            cEditor.caret.save();
             cEditor.callback.blockTransition(event, block);
 
         }, false);
@@ -372,11 +372,10 @@ cEditor.callback = {
 
         if (event.keyCode == cEditor.core.keys.DOWN || event.keyCode == cEditor.core.keys.RIGHT ) {
 
-
             if ( block.nextSibling == null )
                 return ;
 
-            cEditor.content.setToNextSibling( block );
+            cEditor.caret.setToNextBlock( block );
         }
 
         else if (event.keyCode == cEditor.core.keys.UP || event.keyCode == cEditor.core.keys.LEFT ) {
@@ -384,7 +383,7 @@ cEditor.callback = {
             if ( block.previousSibling == null )
                 return ;
 
-            cEditor.content.setToPreviousSibling( block );
+            cEditor.caret.setToPreviousBlock( block );
         }
     },
 
@@ -394,16 +393,6 @@ cEditor.callback = {
 cEditor.content = {
 
     currentNode : null,
-
-    /**
-    * @var {int} caretOffset - caret position in a text node.
-    */
-    caretOffset : null,
-
-    /**
-    * @var {int} focusedNodeIndex - we get index of child node from first-level block
-    */
-    focusedNodeIndex: null,
 
     /**
     * Synchronizes redactor with original textarea
@@ -422,60 +411,6 @@ cEditor.content = {
         */
         cEditor.nodes.textarea.value = cEditor.state.html;
 
-    },
-
-    /**
-    * We need to save caret before we change the block,
-    * so that we could return it to original position in a new tag.
-    * We save caret offset in a text and index of child node.
-    */
-    saveCaretPosition () {
-
-        var selection = window.getSelection();
-        var previousElement = selection.anchorNode.previousSibling,
-            nodeIndex = 0;
-
-        while (previousElement != null) {
-
-          nodeIndex ++;
-          previousElement = previousElement.previousSibling;
-
-        }
-
-        this.caretOffset       = selection.anchorOffset;
-        this.focusedNodeIndex  = nodeIndex;
-
-    },
-
-    /**
-    * Creates Documnt Range and sets caret to the NodeElement.
-    * @param {Element} NodeElement - Changed Node.
-    */
-
-    setCaret : function(NodeElement) {
-
-        var nodeIndex   = this.focusedNodeIndex || 0,
-            caretOffset = this.caretOffset || 0,
-            childs = NodeElement.childNodes,
-            nodeChild = childs[nodeIndex];
-
-        var range = document.createRange();
-
-        if ( NodeElement.childNodes.length == 0 ) {
-
-            nodeChild   = NodeElement;
-            caretOffset = 0;
-
-        }
-
-        var range = document.createRange(),
-            selection = window.getSelection();
-
-        range.setStart(nodeChild, caretOffset);
-        range.setEnd(nodeChild, caretOffset);
-
-        selection.removeAllRanges();
-        selection.addRange(range);
     },
 
     getNodeFocused : function() {
@@ -554,7 +489,7 @@ cEditor.content = {
             /**
             * Setting caret
             */
-            cEditor.content.setCaret(nodeCreated);
+            cEditor.caret.set(nodeCreated);
 
             return;
 
@@ -583,10 +518,79 @@ cEditor.content = {
         */
         cEditor.content.workingNodeChanged(nodeCreated);
 
-        cEditor.content.setCaret(nodeCreated);
+        cEditor.caret.set(nodeCreated);
     },
 
-    setToNextSibling : function(block) {
+}
+
+cEditor.caret = {
+
+    /**
+    * @var {int} caretOffset - caret position in a text node.
+    */
+
+    Offset : null,
+
+    /**
+    * @var {int} focusedNodeIndex - we get index of child node from first-level block
+    */
+
+    focusedNodeIndex: null,
+
+    /**
+    * We need to save caret before we change the block,
+    * so that we could return it to original position in a new tag.
+    * We save caret offset in a text and index of child node.
+    */
+    save : function() {
+
+        var selection = window.getSelection();
+        var previousElement = selection.anchorNode.previousSibling,
+            nodeIndex = 0;
+
+        while (previousElement != null) {
+
+          nodeIndex ++;
+          previousElement = previousElement.previousSibling;
+
+        }
+
+        this.Offset       = selection.anchorOffset;
+        this.focusedNodeIndex  = nodeIndex;
+
+    },
+
+    /**
+    * Creates Documnt Range and sets caret to the NodeElement.
+    * @param {Element} NodeElement - Changed Node.
+    */
+    set : function(NodeElement) {
+
+        var nodeIndex   = this.focusedNodeIndex || 0,
+            caretOffset = this.caretOffset || 0,
+            childs = NodeElement.childNodes,
+            nodeChild = childs[nodeIndex];
+
+        var range = document.createRange();
+
+        if ( NodeElement.childNodes.length == 0 ) {
+
+            nodeChild   = NodeElement;
+            caretOffset = 0;
+
+        }
+
+        var range = document.createRange(),
+            selection = window.getSelection();
+
+        range.setStart(nodeChild, caretOffset);
+        range.setEnd(nodeChild, caretOffset);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+    },
+
+    setToNextBlock : function(block) {
 
         var selection = window.getSelection(),
             focusedElement = selection.anchorNode.parentNode;
@@ -595,32 +599,33 @@ cEditor.content = {
          *  When we click "DOWN", caret moves to the end of node.
          *  We should check check caret position before we transmit/switch the block.
         */
-        if ( cEditor.content.caretOffset != selection.anchorNode.length
+        
+        if ( cEditor.caret.Offset != selection.anchorNode.length
             && typeof( selection.anchorNode.length ) != 'undefined') {
-
-            cEditor.content.saveCaretPosition();
+            cEditor.caret.save();
             return ;
 
         }
 
         /* Setting Caret to the first child of next node */
-        else if ( selection.focusNode.length == cEditor.content.caretOffset ) {
+        else if ( selection.focusNode.length == cEditor.caret.Offset ) {
 
-            cEditor.content.caretOffset      = 0;
-            cEditor.content.focusedNodeIndex = 0;
+            /** Firstchild of block */
+            cEditor.caret.Offset           = 0;
+            cEditor.caret.focusedNodeIndex = 0;
 
-            cEditor.content.setCaret(block.nextSibling);
+            cEditor.caret.set(block.nextSibling);
 
         } else {
 
-            cEditor.content.caretOffset      = 0;
-            cEditor.content.focusedNodeIndex = 0;
-
-            cEditor.content.setCaret(block.nextSibling);
+            /** Firstchild of block */
+            cEditor.caret.Offset           = 0;
+            cEditor.caret.focusedNodeIndex = 0;
+            cEditor.caret.set(block.nextSibling);
         }
     },
 
-    setToPreviousSibling : function(block) {
+    setToPreviousBlock : function(block) {
 
         var selection = window.getSelection(),
             focusedElement = selection.anchorNode.parentNode;
@@ -630,36 +635,35 @@ cEditor.content = {
          *  We should check check caret position before we transmit/switch the block.
         */
 
-        cEditor.content.saveCaretPosition();
-
-        if ( cEditor.content.caretOffset != 0
+        if ( cEditor.caret.Offset != 0
             && typeof( selection.anchorNode.length ) != 'undefined') {
-            cEditor.content.saveCaretPosition();
+
+            cEditor.caret.save();
             return ;
 
         }
 
         /* Setting Caret to the first child of previous node */
         else if ( selection.anchorOffset == 0
-                && typeof( block.previousSibling.length ) != 'undefined') {
+                && cEditor.caret.focusedNodeIndex == 0
+                && typeof( block.previousSibling.childNodes.length ) != 'undefined') {
 
-            cEditor.content.focusedNodeIndex = block.previousSibling.childNodes.length - 1;
-            cEditor.content.caretOffset      = block.previousSibling.childNodes[cEditor.content.focusedNodeIndex].length;
+            cEditor.caret.focusedNodeIndex = (block.previousSibling.childNodes.length  == 0) ? 0 : block.previousSibling.childNodes.length - 1;
+            cEditor.caret.Offset           = (block.previousSibling.childNodes.length  == 0) ? 0 : block.previousSibling.childNodes[cEditor.caret.focusedNodeIndex].length;
 
-            cEditor.content.setCaret(block.previousSibling);
+            cEditor.caret.set(block.previousSibling);
 
         }
         else {
 
-            cEditor.content.focusedNodeIndex = 0;
-            cEditor.content.caretOffset      = 0;
+            cEditor.caret.Offset           = 0;
+            cEditor.caret.focusedNodeIndex = 0;
 
-            cEditor.content.setCaret(block.previousSibling);
+            cEditor.caret.set(block.previousSibling);
 
         }
-    }
-
-}
+    },
+};
 
 cEditor.toolbar = {
 
@@ -890,9 +894,12 @@ cEditor.parser = {
                     /** Save block to the cEditor.state array */
                     cEditor.state.blocks.push(block);
 
+                    // return block;
                     cEditor.ui.addBlockHandlers(block);
                 };
+
             })
+            // .then(cEditor.ui.addBlockHandlers(block))
 
             /** Log if something wrong with node */
             .catch(function(error) {
