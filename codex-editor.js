@@ -244,8 +244,7 @@ cEditor.ui = {
 
         block.addEventListener('keydown', function(event) {
 
-            cEditor.caret.save();
-            cEditor.callback.blockTransition(event, block);
+            cEditor.callback.blockKeydown(event, block);
 
         }, false);
 
@@ -368,24 +367,106 @@ cEditor.callback = {
 
     },
 
-    blockTransition : function(event, block) {
+    blockKeydown : function(event, block) {
 
-        if (event.keyCode == cEditor.core.keys.DOWN || event.keyCode == cEditor.core.keys.RIGHT ) {
+        switch (event.keyCode){
 
-            if ( block.nextSibling == null )
-                return ;
+            case cEditor.core.keys.DOWN:
+            case cEditor.core.keys.RIGHT:
+                cEditor.callback.blockRightOrDownArrowPressed(block);
+                break;
 
-            cEditor.caret.setToNextBlock( block );
+            case cEditor.core.keys.UP:
+            case cEditor.core.keys.LEFT:
+                cEditor.callback.blockLeftOrUpArrowPressed(block);
+
+                break;
+
         }
 
-        else if (event.keyCode == cEditor.core.keys.UP || event.keyCode == cEditor.core.keys.LEFT ) {
-
-            if ( block.previousSibling == null )
-                return ;
-
-            cEditor.caret.setToPreviousBlock( block );
-        }
     },
+
+    /**
+    * RIGHT or DOWN keydowns on block
+    */
+    blockRightOrDownArrowPressed : function (block) {
+
+        var selection      = window.getSelection(),
+            focusedNode = selection.anchorNode,
+            focusedNodeHolder;
+
+        /** Check for caret exists */
+        if (!focusedNode){
+            return false;
+        }
+
+        focusedNodeHolder = focusedNode.parentNode;
+
+        /**
+        * Find deepest child node
+        * Iterate child nodes and find LAST and DEEPEST node (
+        * We need it to check caret positon (it must be at the end)
+        */
+        var focusedTextNode = '';
+
+        if (focusedNodeHolder.childNodes){
+            /** Looking from the END of node */
+            focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, focusedNodeHolder.childNodes.length);
+        }
+
+        /**
+        * Stop transition when caret is not at the end of Text node
+        * When we click "DOWN", caret moves to the end of node.
+        * We should check check caret position before we transmit/switch the block.
+        */
+        if ( focusedTextNode.length != selection.anchorOffset ) {
+            return false;
+        }
+
+        cEditor.caret.setToNextBlock(block);
+
+    },
+
+    /**
+    * LEFT or UP keydowns on block
+    */
+    blockLeftOrUpArrowPressed : function (block) {
+
+        var selection      = window.getSelection(),
+            focusedNode = selection.anchorNode,
+            focusedNodeHolder;
+
+        /** Check for caret exists */
+        if (!focusedNode){
+            return false;
+        }
+
+        focusedNodeHolder = focusedNode.parentNode;
+
+        /**
+        * Find deepest child node
+        * Iterate child nodes and find LAST and DEEPEST node (
+        * We need it to check caret positon (it must be at the end)
+        */
+        var focusedTextNode = '';
+
+        if (focusedNodeHolder.childNodes){
+            /** Looking from the END of node */
+            focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, 0);
+        }
+
+        /**
+        * Stop transition when caret is not at the end of Text node
+        * When we click "DOWN", caret moves to the end of node.
+        * We should check check caret position before we transmit/switch the block.
+        */
+        if ( selection.anchorOffset !== 0) {
+            return false;
+        }
+
+        cEditor.caret.setToPreviousBlock(block);
+
+    }
 
 };
 
@@ -521,6 +602,50 @@ cEditor.content = {
         cEditor.caret.set(nodeCreated);
     },
 
+
+    /**
+    * Iterates between child noted and looking for #text node on deepest level
+    * @param {Element} block - node where find
+    * @param {int} postiton - starting postion
+    *      Example: childNodex.length to find from the end
+    *               or 0 to find from the start
+    * @return {TextNode} block
+    * @uses DFS
+    */
+    getDeepestTextNodeFromPosition : function (block, position) {
+
+        var looking_from_start = false;
+
+        /** For looking from START */
+        if (position === 0) {
+            looking_from_start = true;
+            position = 1;
+        }
+
+        while ( position ) {
+
+            /** @todo comment */
+            if ( looking_from_start ) {
+                block = block.childNodes[0];
+            } else {
+                block = block.childNodes[position-1];
+            }
+
+
+            if ( block.nodeType == cEditor.core.nodeTypes.TAG ){
+
+                position = block.childNodes.length;
+
+            } else {
+
+                position = 0;
+            }
+
+        }
+
+        return block;
+    }
+
 }
 
 cEditor.caret = {
@@ -561,108 +686,90 @@ cEditor.caret = {
     },
 
     /**
-    * Creates Documnt Range and sets caret to the NodeElement.
-    * @param {Element} NodeElement - Changed Node.
+    * Creates Documnt Range and sets caret to the element.
+    * @uses caret.save — if you need to save caret position
+    * @param {Element} el - Changed Node.
+    * @todo remove saving positon
+    * @todo - Check nodeToSet for type: if TAG -> look for nearest TextNode
     */
-    set : function(NodeElement) {
+    set : function( el , index, offset) {
 
-        var nodeIndex   = this.focusedNodeIndex || 0,
-            caretOffset = this.offset || 0,
-            childs = NodeElement.childNodes,
-            nodeChild = childs[nodeIndex];
+        offset = offset || this.offset || 0;
+        index  = index  || this.focusedNodeIndex || 0;
 
-        var range = document.createRange();
+        console.log('el %o', el);
+        console.log('el.childs %o', el.childs);
+        console.log('offset %o', offset);
+        console.log('index %o', index);
 
-        if ( NodeElement.childNodes.length == 0 ) {
 
-            nodeChild   = NodeElement;
-            caretOffset = 0;
+        var childs = el.childNodes,
+            nodeToSet;
+
+        if ( childs.length === 0 ) {
+
+            nodeToSet = el;
+            offset    = 0;
+
+        } else{
+
+            nodeToSet = childs[index];
 
         }
 
-        var range = document.createRange(),
+        var range     = document.createRange(),
             selection = window.getSelection();
 
-        console.log(nodeChild, caretOffset);
+        setTimeout(function() {
 
-        range.setStart(nodeChild, caretOffset);
-        range.setEnd(nodeChild, caretOffset);
+            range.setStart(nodeToSet, offset);
+            range.setEnd(nodeToSet, offset);
 
-        selection.removeAllRanges();
-        selection.addRange(range);
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+        }, 0);
+
     },
 
+    /**
+    * @param {Element} - block element where we should find caret position
+    */
+    get : function (el) {
+
+
+
+
+
+    },
+
+    /**
+    * @param {Element} block - element from which we take next block
+    */
     setToNextBlock : function(block) {
 
-        var selection = window.getSelection(),
-            focusedElement = selection.anchorNode.parentNode;
-
-        /** Stop transition when caret is not at the end of Text node
-         *  When we click "DOWN", caret moves to the end of node.
-         *  We should check check caret position before we transmit/switch the block.
-        */
-
-        if ( cEditor.caret.offset != selection.anchorNode.length
-            && typeof( selection.anchorNode.length ) != 'undefined') {
-            cEditor.caret.save();
-            return ;
-
+        if ( !block.nextSibling ) {
+            return false;
         }
 
-        /* Setting Caret to the first child of next node */
-        else if ( selection.focusNode.length == cEditor.caret.Offset ) {
+        cEditor.caret.set(block.nextSibling, 0, 0);
 
-            /** Firstchild of block */
-            cEditor.caret.offset           = 0;
-            cEditor.caret.focusedNodeIndex = 0;
-
-            cEditor.caret.set(block.nextSibling);
-
-        } else {
-
-            /** Firstchild of block */
-            cEditor.caret.offset           = 0;
-            cEditor.caret.focusedNodeIndex = 0;
-            cEditor.caret.set(block.nextSibling);
-        }
     },
 
     setToPreviousBlock : function(block) {
 
-        var selection = window.getSelection(),
-            focusedElement = selection.anchorNode.parentNode;
-
-        /** Stop transition when caret is not at the beggining of Text node
-         *  When we click "UP", caret moves to the end of node.
-         *  We should check check caret position before we transmit/switch the block.
-        */
-
-        if ( cEditor.caret.offset != 0
-            && typeof( selection.anchorNode.length ) != 'undefined') {
-
-            cEditor.caret.save();
-            return ;
-
+        if ( !block.previousSibling ) {
+            return false;
         }
 
-        /* Setting Caret to the first child of previous node */
-        else if ( selection.anchorOffset == 0
-                && cEditor.caret.focusedNodeIndex == 0
-                && typeof( block.previousSibling.childNodes.length ) != 'undefined') {
+        var lastChildOfPreiviousBlockIndex = block.previousSibling.childNodes.length;
 
-            cEditor.caret.focusedNodeIndex = (block.previousSibling.childNodes.length  == 0) ? 0 : block.previousSibling.childNodes.length - 1;
-            cEditor.caret.offset           = (block.previousSibling.childNodes.length  == 0) ? 0 : block.previousSibling.childNodes[cEditor.caret.focusedNodeIndex].length;
-
-            cEditor.caret.set(block.previousSibling);
-
-        } else {
-
-            cEditor.caret.offset           = 0;
-            cEditor.caret.focusedNodeIndex = 0;
-
-            cEditor.caret.set(block.previousSibling);
-
+        /** Index in childs Array */
+        if (lastChildOfPreiviousBlockIndex !== 0) {
+            lastChildOfPreiviousBlockIndex--;
         }
+
+        cEditor.caret.set(block.previousSibling, lastChildOfPreiviousBlockIndex , 0);
     },
 };
 
