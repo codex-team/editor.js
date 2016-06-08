@@ -526,10 +526,10 @@ cEditor.content = {
 cEditor.caret = {
 
     /**
-    * @var {int} caretOffset - caret position in a text node.
+    * @var {int} offset - caret position in a text node.
     */
 
-    Offset : null,
+    offset : null,
 
     /**
     * @var {int} focusedNodeIndex - we get index of child node from first-level block
@@ -555,7 +555,7 @@ cEditor.caret = {
 
         }
 
-        this.Offset       = selection.anchorOffset;
+        this.offset       = selection.anchorOffset;
         this.focusedNodeIndex  = nodeIndex;
 
     },
@@ -567,7 +567,7 @@ cEditor.caret = {
     set : function(NodeElement) {
 
         var nodeIndex   = this.focusedNodeIndex || 0,
-            caretOffset = this.caretOffset || 0,
+            caretOffset = this.offset || 0,
             childs = NodeElement.childNodes,
             nodeChild = childs[nodeIndex];
 
@@ -582,6 +582,8 @@ cEditor.caret = {
 
         var range = document.createRange(),
             selection = window.getSelection();
+
+        console.log(nodeChild, caretOffset);
 
         range.setStart(nodeChild, caretOffset);
         range.setEnd(nodeChild, caretOffset);
@@ -599,8 +601,8 @@ cEditor.caret = {
          *  When we click "DOWN", caret moves to the end of node.
          *  We should check check caret position before we transmit/switch the block.
         */
-        
-        if ( cEditor.caret.Offset != selection.anchorNode.length
+
+        if ( cEditor.caret.offset != selection.anchorNode.length
             && typeof( selection.anchorNode.length ) != 'undefined') {
             cEditor.caret.save();
             return ;
@@ -611,7 +613,7 @@ cEditor.caret = {
         else if ( selection.focusNode.length == cEditor.caret.Offset ) {
 
             /** Firstchild of block */
-            cEditor.caret.Offset           = 0;
+            cEditor.caret.offset           = 0;
             cEditor.caret.focusedNodeIndex = 0;
 
             cEditor.caret.set(block.nextSibling);
@@ -619,7 +621,7 @@ cEditor.caret = {
         } else {
 
             /** Firstchild of block */
-            cEditor.caret.Offset           = 0;
+            cEditor.caret.offset           = 0;
             cEditor.caret.focusedNodeIndex = 0;
             cEditor.caret.set(block.nextSibling);
         }
@@ -635,7 +637,7 @@ cEditor.caret = {
          *  We should check check caret position before we transmit/switch the block.
         */
 
-        if ( cEditor.caret.Offset != 0
+        if ( cEditor.caret.offset != 0
             && typeof( selection.anchorNode.length ) != 'undefined') {
 
             cEditor.caret.save();
@@ -649,14 +651,13 @@ cEditor.caret = {
                 && typeof( block.previousSibling.childNodes.length ) != 'undefined') {
 
             cEditor.caret.focusedNodeIndex = (block.previousSibling.childNodes.length  == 0) ? 0 : block.previousSibling.childNodes.length - 1;
-            cEditor.caret.Offset           = (block.previousSibling.childNodes.length  == 0) ? 0 : block.previousSibling.childNodes[cEditor.caret.focusedNodeIndex].length;
+            cEditor.caret.offset           = (block.previousSibling.childNodes.length  == 0) ? 0 : block.previousSibling.childNodes[cEditor.caret.focusedNodeIndex].length;
 
             cEditor.caret.set(block.previousSibling);
 
-        }
-        else {
+        } else {
 
-            cEditor.caret.Offset           = 0;
+            cEditor.caret.offset           = 0;
             cEditor.caret.focusedNodeIndex = 0;
 
             cEditor.caret.set(block.previousSibling);
