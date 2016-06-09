@@ -583,13 +583,16 @@ cEditor.caret = {
         var range = document.createRange(),
             selection = window.getSelection();
 
-        console.log(nodeChild, caretOffset);
+        setTimeout(function() {
 
-        range.setStart(nodeChild, caretOffset);
-        range.setEnd(nodeChild, caretOffset);
+            range.setStart(nodeChild, caretOffset);
+            range.setEnd(nodeChild, caretOffset);
 
-        selection.removeAllRanges();
-        selection.addRange(range);
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+        }, 50);
+
     },
 
     setToNextBlock : function(block) {
@@ -609,22 +612,29 @@ cEditor.caret = {
 
         }
 
-        /* Setting Caret to the first child of next node */
-        else if ( selection.focusNode.length == cEditor.caret.Offset ) {
+        console.log(block);
 
-            /** Firstchild of block */
-            cEditor.caret.offset           = 0;
-            cEditor.caret.focusedNodeIndex = 0;
+        var el = block;
 
-            cEditor.caret.set(block.nextSibling);
+        console.log(block.childNodes.length);
+        // while ( block.)
 
-        } else {
-
-            /** Firstchild of block */
-            cEditor.caret.offset           = 0;
-            cEditor.caret.focusedNodeIndex = 0;
-            cEditor.caret.set(block.nextSibling);
-        }
+        // /* Setting Caret to the first child of next node */
+        // else if ( selection.focusNode.length == cEditor.caret.Offset ) {
+        //
+        //     /** Firstchild of block */
+        //     cEditor.caret.offset           = 0;
+        //     cEditor.caret.focusedNodeIndex = 0;
+        //
+        //     cEditor.caret.set(block.nextSibling);
+        //
+        // } else {
+        //
+        //     /** Firstchild of block */
+        //     cEditor.caret.offset           = 0;
+        //     cEditor.caret.focusedNodeIndex = 0;
+        //     cEditor.caret.set(block.nextSibling);
+        // }
     },
 
     setToPreviousBlock : function(block) {
