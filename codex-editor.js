@@ -511,7 +511,9 @@ cEditor.callback = {
         cEditor.ui.addBlockHandlers(newBlock);
 
         cEditor.core.insertAfter(block, newBlock);
+
         cEditor.caret.setToNextBlock(block);
+        
         cEditor.toolbar.move();
 
         /** Prevent <div></div> creation */
@@ -522,15 +524,14 @@ cEditor.callback = {
     backspacePressed: function (block) {
 
         text = block.textContent.trim();
-        if (text == "") {
 
-            cEditor.caret.setToPreviousBlock(block);
+        if (text) return;
 
-            block.remove();
+        cEditor.caret.setToPreviousBlock(block);
 
-            cEditor.toolbar.move();
+        block.remove();
 
-        }
+        cEditor.toolbar.move();
 
     }
 
