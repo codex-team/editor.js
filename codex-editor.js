@@ -45,6 +45,7 @@ var cEditor = (function (cEditor) {
 
             // If all ok, make UI, bind events and parse initial-content
             .then(this.ui.make)
+            .then(this.ui.addTools)
             .then(this.ui.bindEvents)
             .then(this.parser.parseTextareaContent)
             .catch(function (error) {
@@ -176,22 +177,39 @@ cEditor.ui = {
         wrapper.appendChild(toolbar);
         wrapper.appendChild(redactor);
 
-        /** Make toolbar buttons */
-        cEditor.settings.tools.forEach(function(type) {
-
-            tool = cEditor.draw.toolbarButton(type);
-            toolbar.appendChild(tool);
-
-            /** Save tools to static nodes */
-            cEditor.nodes.toolbarButtons[type] = tool;
-
-        });
-
         /** Save created ui-elements to static nodes state */
         cEditor.nodes.wrapper  = wrapper;
         cEditor.nodes.toolbar  = toolbar;
 
         cEditor.nodes.redactor = redactor;
+
+    },
+
+    /**
+    * Append tools passed in cEditor.tools
+    */
+    addTools : function () {
+
+        var tool,
+            tool_button;
+
+        /** Make toolbar buttons */
+        for (var name in cEditor.tools){
+
+            tool = cEditor.tools[name];
+
+            if (!tool.iconClassname) {
+                cEditor.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', name);
+                continue;
+            }
+
+            tool_button = cEditor.draw.toolbarButton(name, tool.iconClassname);
+            cEditor.nodes.toolbar.appendChild(tool_button);
+
+            /** Save tools to static nodes */
+            cEditor.nodes.toolbarButtons[name] = tool_button;
+
+        }
 
     },
 
@@ -903,7 +921,7 @@ cEditor.toolbar = {
 
         this.opened  = false;
         this.current = null;
-        for (button in cEditor.nodes.toolbarButtons){
+        for (var button in cEditor.nodes.toolbarButtons){
             cEditor.nodes.toolbarButtons[button].classList.remove('selected');
         }
 
@@ -928,10 +946,12 @@ cEditor.toolbar = {
         var currentTool = this.current,
             tools       = cEditor.settings.tools,
             barButtons  = cEditor.nodes.toolbarButtons,
-            nextToolIndex;
+            nextToolIndex,
+            toolToSelect;
 
         if ( !currentTool ) {
 
+            /** Get first tool from object*/
             for (toolToSelect in barButtons) break;
 
         } else {
@@ -944,7 +964,7 @@ cEditor.toolbar = {
 
         }
 
-        for (button in barButtons) barButtons[button].classList.remove('selected')
+        for (var button in barButtons) barButtons[button].classList.remove('selected');
 
         barButtons[toolToSelect].classList.add('selected');
 
@@ -954,20 +974,31 @@ cEditor.toolbar = {
 
     /**
     * Transforming selected node type into selected toolbar element type
+    * @param {event} event
     */
-    toolClicked : function(event) {
+    toolClicked : function() {
 
         var workingNode = cEditor.content.currentNode,
-            newTag;
+            newTag,
+            appendCallback;
 
         switch (cEditor.toolbar.current) {
-            case 'header' : newTag = 'H1'; break;
-            case 'quote'  : newTag = 'BLOCKQUOTE'; break;
-            case 'code'   : newTag = 'CODE'; break;
-            case 'list'   : newTag = 'LI'; break;
-        };
+            case 'paragraph' : newTag = 'P'; break;
+            case 'header'    : newTag = 'H1'; break;
+            case 'quote'     : newTag = 'BLOCKQUOTE'; break;
+            case 'code'      : newTag = 'CODE'; break;
+            case 'list'      : newTag = 'LI'; break;
+        }
 
         cEditor.content.switchBlock(workingNode, newTag);
+
+        /** Fire tool append callback  */
+        appendCallback = cEditor.tools[cEditor.toolbar.current].appendCallback;
+
+        if (appendCallback && typeof appendCallback == 'function') {
+            appendCallback.call();
+        }
+
 
     },
 
@@ -986,7 +1017,7 @@ cEditor.toolbar = {
 
         cEditor.nodes.toolbar.style.transform = "translateY(" + newYCoordinate + "px)";
 
-    }
+    },
 
 };
 
@@ -1016,7 +1047,7 @@ cEditor.parser = {
             /** Write log if something goes wrong */
             .catch(function(error) {
                 cEditor.core.log('Error while parsing content: %o', 'warn', error);
-            })
+            });
 
     },
 
@@ -1104,7 +1135,7 @@ cEditor.parser = {
 
                     return block;
 
-                };
+                }
                 return null;
             })
             .then(cEditor.ui.addBlockHandlers)
@@ -1179,6 +1210,99 @@ cEditor.parser = {
 
 };
 
+
+
+cEditor.tools = {
+
+    paragraph : {
+
+        type           : 'paragraph',
+        iconClassname  : 'ce_icon-smile',
+        append         : document.createElement('P'),
+        appendCallback : function () {
+                            console.log('paragraph added');
+                        },
+        settings       : null,
+
+    },
+
+    header : {
+
+        type           : 'header',
+        iconClassname  : 'ce_icon-header',
+        append         : document.createElement('H2'),
+        appendCallback : function () {
+                            console.log('header added');
+                        },
+        settings       : null,
+
+    },
+
+    quote : {
+
+        type           : 'quote',
+        iconClassname  : 'ce_icon-quote',
+        append         : document.createElement('BLOCKQUOTE'),
+        appendCallback : function () {
+                            console.log('quote added');
+                        },
+        settings       : null,
+
+    },
+
+    code : {
+
+        type           : 'code',
+        iconClassname  : 'ce_icon-code',
+        append         : document.createElement('CODE'),
+        appendCallback : function () {
+                            console.log('code added');
+                        },
+        settings       : null,
+
+    },
+
+    list : {
+
+        type           : 'code',
+        iconClassname  : 'ce_icon-list',
+        append         : document.createElement('LI'),
+        appendCallback : function () {
+                            console.log('code added');
+                        },
+        settings       : null,
+
+    }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
 * Creates HTML elements
 */
@@ -1229,12 +1353,12 @@ cEditor.draw = {
     /**
     * Toolbar button
     */
-    toolbarButton : function (type) {
+    toolbarButton : function (type, classname) {
 
         var button = document.createElement("li");
 
         button.dataset.type = type;
-        button.innerHTML    = '<i class="ce_icon-' + type + '"></i>';
+        button.innerHTML    = '<i class="' + classname + '"></i>';
 
         return button;
 
