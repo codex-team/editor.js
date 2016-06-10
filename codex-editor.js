@@ -513,7 +513,7 @@ cEditor.callback = {
         cEditor.core.insertAfter(block, newBlock);
 
         cEditor.caret.setToNextBlock(block);
-        
+
         cEditor.toolbar.move();
 
         /** Prevent <div></div> creation */
@@ -870,7 +870,6 @@ cEditor.caret = {
 
         cEditor.caret.set(previousBlock, lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
 
-        console.log(block);
         cEditor.content.workingNodeChanged(block.previousSibling);
 
     },
