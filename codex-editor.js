@@ -381,6 +381,14 @@ cEditor.callback = {
                 cEditor.callback.blockRightOrDownArrowPressed(block);
                 break;
 
+            case cEditor.core.keys.ENTER:
+                cEditor.callback.enterPressed(block);
+                break;
+
+            case cEditor.core.keys.BACKSPACE:
+                cEditor.callback.backspacePressed(block);
+                break;
+
             case cEditor.core.keys.UP:
             case cEditor.core.keys.LEFT:
                 cEditor.callback.blockLeftOrUpArrowPressed(block);
@@ -489,6 +497,40 @@ cEditor.callback = {
         }
 
         cEditor.caret.setToPreviousBlock(block);
+
+    },
+
+    enterPressed: function (block) {
+
+        /** Create new Block and append it after current */
+        var newBlock = cEditor.draw.block('p', '');
+
+        newBlock.contentEditable = "true";
+        newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
+
+        cEditor.ui.addBlockHandlers(newBlock);
+
+        cEditor.core.insertAfter(block, newBlock);
+        cEditor.caret.setToNextBlock(block);
+        cEditor.toolbar.move();
+
+        /** Prevent <div></div> creation */
+        event.preventDefault();
+
+    },
+
+    backspacePressed: function (block) {
+
+        text = block.textContent.trim();
+        if (text == "") {
+
+            cEditor.caret.setToPreviousBlock(block);
+
+            block.remove();
+
+            cEditor.toolbar.move();
+
+        }
 
     }
 
@@ -735,7 +777,7 @@ cEditor.caret = {
     },
 
     /**
-    * Creates Documnt Range and sets caret to the element.
+    * Creates Document Range and sets caret to the element.
     * @uses caret.save — if you need to save caret position
     * @param {Element} el - Changed Node.
     * @todo remove saving positon
@@ -794,6 +836,8 @@ cEditor.caret = {
 
         cEditor.caret.set(block.nextSibling, 0, 0);
 
+        cEditor.content.workingNodeChanged(block.nextSibling);
+
     },
 
     setToPreviousBlock : function(block) {
@@ -819,6 +863,13 @@ cEditor.caret = {
         cEditor.caret.focusedNodeIndex  = lastChildOfPreiviousBlockIndex;
 
         cEditor.caret.set(previousBlock , lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
+
+        if ( block.previousSibling.innerHTML == '') {
+            cEditor.content.workingNodeChanged(previousBlock);
+        } else {
+            cEditor.content.workingNodeChanged(previousBlock.parentNode);
+        }
+
     },
 };
 
