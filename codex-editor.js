@@ -264,6 +264,8 @@ cEditor.callback = {
 
     globalKeydown : function(event){
 
+        cEditor.caret.save();
+
         switch (event.keyCode){
             case cEditor.core.keys.TAB   : this.tabKeyPressed(event);       break;
             case cEditor.core.keys.ENTER : this.enterKeyPressed(event);     break;
@@ -456,6 +458,8 @@ cEditor.callback = {
             return false;
         }
 
+        /** Saving caret after keydown event happend */
+        cEditor.caret.save();
 
         /** Looking for parent contentEditable block */
         while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
@@ -484,8 +488,8 @@ cEditor.callback = {
         * When we click "DOWN", caret moves to the end of node.
         * We should check check caret position before we transmit/switch the block.
         */
-        if ( selection.anchorOffset !== 0) {
-            return false;
+        if ( (cEditor.caret.offset !== 0 || cEditor.caret.focusedNodeIndex !== 0) && focusedNodeHolder.childNodes.length !== 0 ) {
+            return;
         }
 
         cEditor.caret.setToPreviousBlock(block);
@@ -719,17 +723,34 @@ cEditor.caret = {
     save : function() {
 
         var selection = window.getSelection();
-        var previousElement = selection.anchorNode.previousSibling,
+        var parentElement = selection.anchorNode,
+            previousElement = selection.anchorNode.previousSibling,
             nodeIndex = 0;
 
+        /**
+        * We get index of node which is child of #BLOCK_CLASSNAME.
+        * if selected node is not below the block container, we get the closest TAG which is below #BLOCK_CLASSNAME
+        */
+        if ( parentElement.className !== cEditor.ui.BLOCK_CLASSNAME ) {
+
+            while (parentElement.parentNode.className !== cEditor.ui.BLOCK_CLASSNAME) {
+
+                parentElement = parentElement.parentNode;
+
+            }
+
+            previousElement = parentElement.previousSibling;
+        }
+
+        /** Counting index of focused node */
         while (previousElement != null) {
 
-          nodeIndex ++;
-          previousElement = previousElement.previousSibling;
+            nodeIndex ++;
+            previousElement = previousElement.previousSibling;
 
         }
 
-        this.offset       = selection.anchorOffset;
+        this.offset            = selection.anchorOffset;
         this.focusedNodeIndex  = nodeIndex;
 
     },
