@@ -451,18 +451,11 @@ cEditor.callback = {
             return false;
         }
 
+
         /** Looking for parent contentEditable block */
         while (focusedNode.className != 'ce_block') {
-
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;
-        }
-
-        /** TAG is focused and node doesn't have childs */
-        if (focusedNode.childNodes.length === 0)
-        {
-            cEditor.caret.setToPreviousBlock(block);
-            return false;
         }
 
         /**
@@ -470,13 +463,17 @@ cEditor.callback = {
         * Iterate child nodes and find LAST and DEEPEST node (
         * We need it to check caret positon (it must be at the end)
         */
-        var focusedTextNode = '';
+        focusedNodeHolder = focusedNodeHolder || focusedNode;
 
-        if (focusedNodeHolder.childNodes){
-            /** Looking from the END of node */
-            focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, 0);
+        if (focusedNodeHolder.childNodes.length !== 0) {
+
+            var focusedTextNode = '';
+
+            if (focusedNodeHolder.childNodes){
+                /** Looking from the END of node */
+                focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, 0);
+            }
         }
-
         /**
         * Stop transition when caret is not at the end of Text node
         * When we click "DOWN", caret moves to the end of node.
@@ -672,11 +669,11 @@ cEditor.content = {
 
         while ( position ) {
 
-            /** @todo comment */
+            /** initial verticle of node. */
             if ( looking_from_start ) {
                 block = block.childNodes[0];
             } else {
-                block = block.childNodes[position-1];
+                block = block.childNodes[position - 1];
             }
 
             if ( block.nodeType == cEditor.core.nodeTypes.TAG ){
@@ -750,7 +747,8 @@ cEditor.caret = {
         if ( childs.length === 0 ) {
 
             nodeToSet = el;
-            offset    = 0;
+            if ( index !== 0 )
+                offset = 0;
 
         } else {
 
@@ -769,7 +767,7 @@ cEditor.caret = {
             selection.removeAllRanges();
             selection.addRange(range);
 
-        }, 100);
+        }, 10);
     },
 
     /**
@@ -801,21 +799,31 @@ cEditor.caret = {
             return false;
         }
 
-        var lastChildOfPreiviousBlockIndex = block.previousSibling.childNodes.length;
-        var theEndOfPrevieousBlockLastNode = 0;
+        var lastChildOfPreiviousBlockIndex = block.previousSibling.childNodes.length,
+            previousBlock = block.previousSibling,
+            theEndOfPreviousBlockLastNode = 0;
 
         /** Index in childs Array */
-        if (lastChildOfPreiviousBlockIndex !== 0) {
-            lastChildOfPreiviousBlockIndex--;
-        }
+        // if (lastChildOfPreiviousBlockIndex !== 0) {
+        //     lastChildOfPreiviousBlockIndex--;
+        // }
 
         if (block.previousSibling.childNodes.length !== 0) {
-            theEndOfPrevieousBlockLastNode = block.previousSibling.childNodes[lastChildOfPreiviousBlockIndex].length;
+
+            previousBlock = cEditor.content.getDeepestTextNodeFromPosition(block.previousSibling, lastChildOfPreiviousBlockIndex);
+            theEndOfPreviousBlockLastNode = previousBlock.length;
+            lastChildOfPreiviousBlockIndex = 0;
+
         }
-        cEditor.caret.offset            = theEndOfPrevieousBlockLastNode;
+
+        cEditor.caret.offset            = theEndOfPreviousBlockLastNode;
         cEditor.caret.focusedNodeIndex  = lastChildOfPreiviousBlockIndex;
 
-        cEditor.caret.set(block.previousSibling, lastChildOfPreiviousBlockIndex , theEndOfPrevieousBlockLastNode);
+        console.log('block %o', previousBlock);
+        console.log('offset %o', theEndOfPreviousBlockLastNode);
+        console.log('node %o', lastChildOfPreiviousBlockIndex);
+
+        cEditor.caret.set(previousBlock , lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
     },
 };
 
@@ -1048,12 +1056,12 @@ cEditor.parser = {
                     /** Save block to the cEditor.state array */
                     cEditor.state.blocks.push(block);
 
-                    return block;
-                    // cEditor.ui.addBlockHandlers(block);
+                    cEditor.ui.addBlockHandlers(block);
+                    // return block;
                 };
 
             })
-                .then(cEditor.ui.addBlockHandlers)
+            // .then(cEditor.ui.addBlockHandlers)
 
             /** Log if something wrong with node */
             .catch(function(error) {
