@@ -149,6 +149,9 @@ cEditor.core = {
 
 cEditor.ui = {
 
+    /** Blocks name. */
+    BLOCK_CLASSNAME : 'ce_block',
+
     /**
     * Making main interface
     */
@@ -401,7 +404,7 @@ cEditor.callback = {
             return false;
         }
 
-        while (focusedNode.className != 'ce_block') {
+        while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
 
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;
@@ -455,7 +458,7 @@ cEditor.callback = {
 
 
         /** Looking for parent contentEditable block */
-        while (focusedNode.className != 'ce_block') {
+        while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;
         }
@@ -573,7 +576,7 @@ cEditor.content = {
 
         /** Mark node as redactor block */
         nodeCreated.contentEditable = "true";
-        nodeCreated.classList.add('ce_block');
+        nodeCreated.classList.add(cEditor.ui.BLOCK_CLASSNAME);
 
         /**
         * If it is a first-level node, replace as-is.
@@ -749,7 +752,7 @@ cEditor.caret = {
         if ( childs.length === 0 ) {
 
             nodeToSet = el;
-        
+
         } else {
 
             nodeToSet = childs[index];
@@ -818,10 +821,6 @@ cEditor.caret = {
 
         cEditor.caret.offset            = theEndOfPreviousBlockLastNode;
         cEditor.caret.focusedNodeIndex  = lastChildOfPreiviousBlockIndex;
-
-        console.log('block %o', previousBlock);
-        console.log('offset %o', theEndOfPreviousBlockLastNode);
-        console.log('node %o', lastChildOfPreiviousBlockIndex);
 
         cEditor.caret.set(previousBlock , lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
     },
@@ -1055,8 +1054,6 @@ cEditor.parser = {
 
                     /** Save block to the cEditor.state array */
                     cEditor.state.blocks.push(block);
-
-                    cEditor.ui.addBlockHandlers(block);
 
                     return block;
 
