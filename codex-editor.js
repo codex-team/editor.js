@@ -21,7 +21,7 @@ var cEditor = (function (cEditor) {
         wrapper  : null,
         toolbar  : null,
         toolbarButtons : {}, // { type : DomEl, ... }
-        redactor : null
+        redactor : null,
     }
 
     // Current editor state
@@ -149,6 +149,9 @@ cEditor.core = {
 
 cEditor.ui = {
 
+    /** Blocks name. */
+    BLOCK_CLASSNAME : 'ce_block',
+
     /**
     * Making main interface
     */
@@ -211,16 +214,24 @@ cEditor.ui = {
 
         /** Mouse click to radactor */
         cEditor.nodes.redactor.addEventListener('click', function (event) {
+
             cEditor.callback.redactorClicked(event);
 
-            cEditor.content.saveCaretPosition();
-            // console.log(cEditor.content.caretOffset, cEditor.content.focusedNodeIndex);
+            cEditor.caret.save();
 
         }, false );
 
-        /** Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text */
+        /**
+         *  @deprecated;
+         *  Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text
+        */
         cEditor.nodes.redactor.addEventListener('input', function (event) {
+
+            /** Saving caret in every modifications */
+            cEditor.caret.save();
+
             cEditor.callback.redactorInputEvent(event);
+
         }, false );
 
         /** Bind click listeners on toolbar buttons */
@@ -228,7 +239,19 @@ cEditor.ui = {
             cEditor.nodes.toolbarButtons[button].addEventListener('click', function (event) {
                 cEditor.callback.toolbarButtonClicked(event, this);
             }, false);
-        }
+        };
+
+    },
+
+    addBlockHandlers : function(block) {
+
+        if (!block) return;
+
+        block.addEventListener('keydown', function(event) {
+
+            cEditor.callback.blockKeydown(event, block);
+
+        }, false);
 
     }
 
@@ -242,9 +265,9 @@ cEditor.callback = {
     globalKeydown : function(event){
 
         switch (event.keyCode){
-            case cEditor.core.keys.TAB   : this.tabKeyPressed(event); break;
-            case cEditor.core.keys.ENTER : this.enterKeyPressed(event); break;
-            case cEditor.core.keys.ESC   : this.escapeKeyPressed(event); break;
+            case cEditor.core.keys.TAB   : this.tabKeyPressed(event);       break;
+            case cEditor.core.keys.ENTER : this.enterKeyPressed(event);     break;
+            case cEditor.core.keys.ESC   : this.escapeKeyPressed(event);    break;
         }
 
     },
@@ -253,6 +276,8 @@ cEditor.callback = {
 
         switch (event.keyCode){
             case cEditor.core.keys.UP    :
+            case cEditor.core.keys.LEFT  :
+            case cEditor.core.keys.RIGHT :
             case cEditor.core.keys.DOWN  : this.arrowKeyPressed(event); break;
         }
 
@@ -298,6 +323,7 @@ cEditor.callback = {
 
         cEditor.content.workingNodeChanged();
 
+        /* Closing toolbar */
         cEditor.toolbar.close();
         cEditor.toolbar.move();
 
@@ -344,6 +370,126 @@ cEditor.callback = {
 
         }, 500);
 
+    },
+
+    blockKeydown : function(event, block) {
+
+        switch (event.keyCode){
+
+            case cEditor.core.keys.DOWN:
+            case cEditor.core.keys.RIGHT:
+                cEditor.callback.blockRightOrDownArrowPressed(block);
+                break;
+
+            case cEditor.core.keys.UP:
+            case cEditor.core.keys.LEFT:
+                cEditor.callback.blockLeftOrUpArrowPressed(block);
+                break;
+
+        }
+
+    },
+
+    /**
+    * RIGHT or DOWN keydowns on block
+    */
+    blockRightOrDownArrowPressed : function (block) {
+
+        var selection      = window.getSelection(),
+            focusedNode = selection.anchorNode,
+            focusedNodeHolder;
+
+        /** Check for caret exists */
+        if (!focusedNode){
+            return false;
+        }
+
+        while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
+
+            focusedNodeHolder = focusedNode.parentNode;
+            focusedNode       = focusedNodeHolder;
+        }
+
+        /** TAG is focused and node doesn't have childs */
+        if (focusedNode.childNodes.length === 0)
+        {
+            cEditor.caret.setToNextBlock(block);
+            return;
+        }
+
+        /**
+        * Find deepest child node
+        * Iterate child nodes and find LAST and DEEPEST node (
+        * We need it to check caret positon (it must be at the end)
+        */
+        var focusedTextNode = '';
+
+        if (focusedNodeHolder.childNodes){
+            /** Looking from the END of node */
+            focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, focusedNodeHolder.childNodes.length);
+        }
+
+        /**
+        * Stop transition when caret is not at the end of Text node
+        * When we click "DOWN", caret moves to the end of node.
+        * We should check check caret position before we transmit/switch the block.
+        */
+        if ( focusedTextNode.length != selection.anchorOffset ) {
+            return false;
+        }
+
+        cEditor.caret.setToNextBlock(block);
+
+    },
+
+    /**
+    * LEFT or UP keydowns on block
+    */
+    blockLeftOrUpArrowPressed : function (block) {
+
+        var selection      = window.getSelection(),
+            focusedNode = selection.anchorNode,
+            focusedNodeHolder;
+
+        /** Check for caret exists */
+        if (!focusedNode){
+            return false;
+        }
+
+
+        /** Looking for parent contentEditable block */
+        while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
+            focusedNodeHolder = focusedNode.parentNode;
+            focusedNode       = focusedNodeHolder;
+        }
+
+        /**
+        * Find deepest child node
+        * Iterate child nodes and find LAST and DEEPEST node (
+        * We need it to check caret positon (it must be at the end)
+        */
+        focusedNodeHolder = focusedNodeHolder || focusedNode;
+
+        if (focusedNodeHolder.childNodes.length !== 0) {
+
+            var focusedTextNode = '';
+
+            if (focusedNodeHolder.childNodes){
+                /** Looking from the END of node */
+                focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, 0);
+            }
+        }
+        /**
+        * Stop transition when caret is not at the end of Text node
+        * When we click "DOWN", caret moves to the end of node.
+        * We should check check caret position before we transmit/switch the block.
+        */
+        if ( selection.anchorOffset !== 0) {
+            return false;
+        }
+
+        cEditor.caret.setToPreviousBlock(block);
+
     }
 
 };
@@ -352,16 +498,6 @@ cEditor.callback = {
 cEditor.content = {
 
     currentNode : null,
-
-    /**
-    * @var {int} caretOffset - caret position in a text node.
-    */
-    caretOffset : null,
-
-    /**
-    * @var {int} focusedNodeIndex - we get index of child node from first-level block
-    */
-    focusedNodeIndex: null,
 
     /**
     * Synchronizes redactor with original textarea
@@ -380,54 +516,6 @@ cEditor.content = {
         */
         cEditor.nodes.textarea.value = cEditor.state.html;
 
-    },
-
-    /**
-    * We need to save caret before we change the block,
-    * so that we could return it to original position in a new tag.
-    * We save caret offset in a text and index of child node.
-    */
-    saveCaretPosition () {
-
-        var selection = window.getSelection();
-        var previousElement = selection.anchorNode.previousSibling,
-            nodeIndex = 0;
-
-        while (previousElement != null) {
-
-          nodeIndex ++;
-          previousElement = previousElement.previousSibling;
-
-        }
-
-        this.caretOffset       = selection.anchorOffset;
-        this.focusedNodeIndex  = nodeIndex;
-
-    },
-
-    /**
-    * Creates Documnt Range and sets caret to the NodeElement.
-    * @param {Element} NodeElement - Changed Node.
-    */
-
-    setCaret : function(NodeElement) {
-
-        var nodeIndex   = this.focusedNodeIndex || 0,
-            caretOffset = this.caretOffset || 0;
-
-        var childs = NodeElement.childNodes,
-            nodeChild = childs[nodeIndex];
-
-        console.log(caretOffset, nodeChild);
-
-        var range = document.createRange(),
-            selection = window.getSelection();
-
-        range.setStart(nodeChild, caretOffset);
-        range.setEnd(nodeChild, caretOffset);
-
-        selection.removeAllRanges();
-        selection.addRange(range);
     },
 
     getNodeFocused : function() {
@@ -488,7 +576,7 @@ cEditor.content = {
 
         /** Mark node as redactor block */
         nodeCreated.contentEditable = "true";
-        nodeCreated.classList.add('ce_block');
+        nodeCreated.classList.add(cEditor.ui.BLOCK_CLASSNAME);
 
         /**
         * If it is a first-level node, replace as-is.
@@ -506,7 +594,7 @@ cEditor.content = {
             /**
             * Setting caret
             */
-            cEditor.content.setCaret(nodeCreated);
+            cEditor.caret.set(nodeCreated);
 
             return;
 
@@ -535,10 +623,204 @@ cEditor.content = {
         */
         cEditor.content.workingNodeChanged(nodeCreated);
 
-        cEditor.content.setCaret(nodeCreated);
+        cEditor.caret.set(nodeCreated);
+    },
+
+
+    /**
+    * Iterates between child noted and looking for #text node on deepest level
+    * @param {Element} block - node where find
+    * @param {int} postiton - starting postion
+    *      Example: childNodex.length to find from the end
+    *               or 0 to find from the start
+    * @return {TextNode} block
+    * @uses DFS
+    */
+    getDeepestTextNodeFromPosition : function (block, position) {
+
+        /**
+        * Clear Block from empty and useless spaces with trim.
+        * Such nodes we should remove
+        */
+        var index,
+            blockChilds = block.childNodes;
+
+        for(index = 0; index < blockChilds.length; index++)
+        {
+            var node = blockChilds[index];
+
+            if (node.nodeType == cEditor.core.nodeTypes.TEXT) {
+
+                text = node.textContent.trim();
+
+                if (text == '') {
+
+                    block.removeChild(node);
+                    position--;
+                }
+            }
+        }
+        /** Setting default position when we deleted all empty nodes */
+        if ( position < 0 )
+            position = 1;
+
+        var looking_from_start = false;
+
+        /** For looking from START */
+        if (position === 0) {
+            looking_from_start = true;
+            position = 1;
+        }
+
+        while ( position ) {
+
+            /** initial verticle of node. */
+            if ( looking_from_start ) {
+                block = block.childNodes[0];
+            } else {
+                block = block.childNodes[position - 1];
+            }
+
+            if ( block.nodeType == cEditor.core.nodeTypes.TAG ){
+
+                position = block.childNodes.length;
+
+            } else if (block.nodeType == cEditor.core.nodeTypes.TEXT ){
+
+                position = 0;
+            }
+
+        }
+
+        return block;
     }
 
 }
+
+cEditor.caret = {
+
+    /**
+    * @var {int} offset - caret position in a text node.
+    */
+
+    offset : null,
+
+    /**
+    * @var {int} focusedNodeIndex - we get index of child node from first-level block
+    */
+
+    focusedNodeIndex: null,
+
+    /**
+    * We need to save caret before we change the block,
+    * so that we could return it to original position in a new tag.
+    * We save caret offset in a text and index of child node.
+    */
+    save : function() {
+
+        var selection = window.getSelection();
+        var previousElement = selection.anchorNode.previousSibling,
+            nodeIndex = 0;
+
+        while (previousElement != null) {
+
+          nodeIndex ++;
+          previousElement = previousElement.previousSibling;
+
+        }
+
+        this.offset       = selection.anchorOffset;
+        this.focusedNodeIndex  = nodeIndex;
+
+    },
+
+    /**
+    * Creates Documnt Range and sets caret to the element.
+    * @uses caret.save — if you need to save caret position
+    * @param {Element} el - Changed Node.
+    * @todo remove saving positon
+    * @todo - Check nodeToSet for type: if TAG -> look for nearest TextNode
+    */
+    set : function( el , index, offset) {
+
+        offset = offset || this.offset || 0;
+        index  = index  || this.focusedNodeIndex || 0;
+
+        var childs = el.childNodes,
+            nodeToSet;
+
+        if ( childs.length === 0 ) {
+
+            nodeToSet = el;
+
+        } else {
+
+            nodeToSet = childs[index];
+
+        }
+
+        var range     = document.createRange(),
+            selection = window.getSelection();
+
+        setTimeout(function() {
+
+            range.setStart(nodeToSet, offset);
+            range.setEnd(nodeToSet, offset);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+        }, 10);
+    },
+
+    /**
+    * @param {Element} - block element where we should find caret position
+    */
+    get : function (el) {
+
+    },
+
+    /**
+    * @param {Element} block - element from which we take next block
+    */
+    setToNextBlock : function(block) {
+
+        if ( !block.nextSibling ) {
+            return false;
+        }
+
+        cEditor.caret.offset            = 0;
+        cEditor.caret.focusedNodeIndex  = 0;
+
+        cEditor.caret.set(block.nextSibling, 0, 0);
+
+    },
+
+    setToPreviousBlock : function(block) {
+
+        if ( !block.previousSibling ) {
+            return false;
+        }
+
+        var lastChildOfPreiviousBlockIndex = block.previousSibling.childNodes.length,
+            previousBlock = block.previousSibling,
+            theEndOfPreviousBlockLastNode = 0;
+
+        /** Index in childs Array */
+        if (block.previousSibling.childNodes.length !== 0) {
+
+            previousBlock = cEditor.content.getDeepestTextNodeFromPosition(block.previousSibling, lastChildOfPreiviousBlockIndex);
+            theEndOfPreviousBlockLastNode = previousBlock.length;
+            lastChildOfPreiviousBlockIndex = 0;
+
+        }
+
+        cEditor.caret.offset            = theEndOfPreviousBlockLastNode;
+        cEditor.caret.focusedNodeIndex  = lastChildOfPreiviousBlockIndex;
+
+        cEditor.caret.set(previousBlock , lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
+    },
+};
 
 cEditor.toolbar = {
 
@@ -768,9 +1050,13 @@ cEditor.parser = {
 
                     /** Save block to the cEditor.state array */
                     cEditor.state.blocks.push(block);
-                };
 
+                    return block;
+
+                };
+                return null;
             })
+            .then(cEditor.ui.addBlockHandlers)
 
             /** Log if something wrong with node */
             .catch(function(error) {
