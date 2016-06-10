@@ -675,7 +675,7 @@ cEditor.content = {
     * @param {int} postiton - starting postion
     *      Example: childNodex.length to find from the end
     *               or 0 to find from the start
-    * @return {TextNode} block
+    * @return {Text} block
     * @uses DFS
     */
     getDeepestTextNodeFromPosition : function (block, position) {
@@ -702,6 +702,11 @@ cEditor.content = {
                 }
             }
         }
+
+        if (block.childNodes.length === 0) {
+            return document.createTextNode('');
+        }
+
         /** Setting default position when we deleted all empty nodes */
         if ( position < 0 )
             position = 1;
@@ -862,13 +867,10 @@ cEditor.caret = {
         cEditor.caret.offset            = theEndOfPreviousBlockLastNode;
         cEditor.caret.focusedNodeIndex  = lastChildOfPreiviousBlockIndex;
 
-        cEditor.caret.set(previousBlock , lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
+        cEditor.caret.set(previousBlock, lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
 
-        if ( block.previousSibling.innerHTML == '') {
-            cEditor.content.workingNodeChanged(previousBlock);
-        } else {
-            cEditor.content.workingNodeChanged(previousBlock.parentNode);
-        }
+        console.log(block);
+        cEditor.content.workingNodeChanged(block.previousSibling);
 
     },
 };
