@@ -462,7 +462,7 @@ cEditor.callback = {
         if (focusedNode.childNodes.length === 0)
         {
             cEditor.caret.setToPreviousBlock(block);
-            return;
+            return false;
         }
 
         /**
@@ -1048,12 +1048,12 @@ cEditor.parser = {
                     /** Save block to the cEditor.state array */
                     cEditor.state.blocks.push(block);
 
-                    // return block;
-                    cEditor.ui.addBlockHandlers(block);
+                    return block;
+                    // cEditor.ui.addBlockHandlers(block);
                 };
 
             })
-            // .then(cEditor.ui.addBlockHandlers(block))
+                .then(cEditor.ui.addBlockHandlers)
 
             /** Log if something wrong with node */
             .catch(function(error) {
