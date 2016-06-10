@@ -523,9 +523,7 @@ cEditor.callback = {
 
     backspacePressed: function (block) {
 
-        text = block.textContent.trim();
-
-        if (text) return;
+        if (block.textContent.trim()) return;
 
         cEditor.caret.setToPreviousBlock(block);
 
