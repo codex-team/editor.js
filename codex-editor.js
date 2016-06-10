@@ -807,10 +807,6 @@ cEditor.caret = {
             theEndOfPreviousBlockLastNode = 0;
 
         /** Index in childs Array */
-        // if (lastChildOfPreiviousBlockIndex !== 0) {
-        //     lastChildOfPreiviousBlockIndex--;
-        // }
-
         if (block.previousSibling.childNodes.length !== 0) {
 
             previousBlock = cEditor.content.getDeepestTextNodeFromPosition(block.previousSibling, lastChildOfPreiviousBlockIndex);
