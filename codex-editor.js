@@ -242,6 +242,8 @@ cEditor.ui = {
 
     addBlockHandlers : function(block) {
 
+        if (!block) return;
+
         block.addEventListener('keydown', function(event) {
 
             cEditor.callback.blockKeydown(event, block);
@@ -747,9 +749,7 @@ cEditor.caret = {
         if ( childs.length === 0 ) {
 
             nodeToSet = el;
-            if ( index !== 0 )
-                offset = 0;
-
+        
         } else {
 
             nodeToSet = childs[index];
@@ -1057,11 +1057,13 @@ cEditor.parser = {
                     cEditor.state.blocks.push(block);
 
                     cEditor.ui.addBlockHandlers(block);
-                    // return block;
-                };
 
+                    return block;
+
+                };
+                return null;
             })
-            // .then(cEditor.ui.addBlockHandlers)
+            .then(cEditor.ui.addBlockHandlers)
 
             /** Log if something wrong with node */
             .catch(function(error) {
