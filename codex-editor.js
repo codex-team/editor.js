@@ -381,6 +381,14 @@ cEditor.callback = {
                 cEditor.callback.blockRightOrDownArrowPressed(block);
                 break;
 
+            case cEditor.core.keys.ENTER:
+                cEditor.callback.enterPressed(block);
+                break;
+
+            case cEditor.core.keys.BACKSPACE:
+                cEditor.callback.backspacePressed(block);
+                break;
+
             case cEditor.core.keys.UP:
             case cEditor.core.keys.LEFT:
                 cEditor.callback.blockLeftOrUpArrowPressed(block);
@@ -489,6 +497,39 @@ cEditor.callback = {
         }
 
         cEditor.caret.setToPreviousBlock(block);
+
+    },
+
+    enterPressed: function (block) {
+
+        /** Create new Block and append it after current */
+        var newBlock = cEditor.draw.block('p', '');
+
+        newBlock.contentEditable = "true";
+        newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
+
+        cEditor.ui.addBlockHandlers(newBlock);
+
+        cEditor.core.insertAfter(block, newBlock);
+
+        cEditor.caret.setToNextBlock(block);
+
+        cEditor.toolbar.move();
+
+        /** Prevent <div></div> creation */
+        event.preventDefault();
+
+    },
+
+    backspacePressed: function (block) {
+
+        if (block.textContent.trim()) return;
+
+        cEditor.caret.setToPreviousBlock(block);
+
+        block.remove();
+
+        cEditor.toolbar.move();
 
     }
 
@@ -633,7 +674,7 @@ cEditor.content = {
     * @param {int} postiton - starting postion
     *      Example: childNodex.length to find from the end
     *               or 0 to find from the start
-    * @return {TextNode} block
+    * @return {Text} block
     * @uses DFS
     */
     getDeepestTextNodeFromPosition : function (block, position) {
@@ -660,6 +701,11 @@ cEditor.content = {
                 }
             }
         }
+
+        if (block.childNodes.length === 0) {
+            return document.createTextNode('');
+        }
+
         /** Setting default position when we deleted all empty nodes */
         if ( position < 0 )
             position = 1;
@@ -735,7 +781,7 @@ cEditor.caret = {
     },
 
     /**
-    * Creates Documnt Range and sets caret to the element.
+    * Creates Document Range and sets caret to the element.
     * @uses caret.save — if you need to save caret position
     * @param {Element} el - Changed Node.
     * @todo remove saving positon
@@ -794,6 +840,8 @@ cEditor.caret = {
 
         cEditor.caret.set(block.nextSibling, 0, 0);
 
+        cEditor.content.workingNodeChanged(block.nextSibling);
+
     },
 
     setToPreviousBlock : function(block) {
@@ -818,7 +866,10 @@ cEditor.caret = {
         cEditor.caret.offset            = theEndOfPreviousBlockLastNode;
         cEditor.caret.focusedNodeIndex  = lastChildOfPreiviousBlockIndex;
 
-        cEditor.caret.set(previousBlock , lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
+        cEditor.caret.set(previousBlock, lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
+
+        cEditor.content.workingNodeChanged(block.previousSibling);
+
     },
 };
 
