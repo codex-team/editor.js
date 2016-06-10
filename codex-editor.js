@@ -406,6 +406,9 @@ cEditor.callback = {
             return false;
         }
 
+        /** Saving caret after keydown event happend */
+        cEditor.caret.save();
+
         while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
 
             focusedNodeHolder = focusedNode.parentNode;
@@ -423,20 +426,21 @@ cEditor.callback = {
         * Find deepest child node
         * Iterate child nodes and find LAST and DEEPEST node (
         * We need it to check caret positon (it must be at the end)
+        * @param focusedNodeIndex is index of childnode by length
         */
-        var focusedTextNode = '';
+        var focusedTextNode = '',
+            focusedNodeIndex = cEditor.caret.focusedNodeIndex + 1;
 
         if (focusedNodeHolder.childNodes){
             /** Looking from the END of node */
             focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, focusedNodeHolder.childNodes.length);
         }
-
         /**
         * Stop transition when caret is not at the end of Text node
         * When we click "DOWN", caret moves to the end of node.
         * We should check check caret position before we transmit/switch the block.
         */
-        if ( focusedTextNode.length != selection.anchorOffset ) {
+        if ( block.childNodes.length != focusedNodeIndex || focusedTextNode.length != selection.anchorOffset) {
             return false;
         }
 
@@ -599,6 +603,7 @@ cEditor.content = {
             * Setting caret
             */
             cEditor.caret.set(nodeCreated);
+            cEditor.ui.addBlockHandlers(nodeCreated);
 
             return;
 
