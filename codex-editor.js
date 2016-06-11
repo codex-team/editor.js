@@ -45,6 +45,7 @@ var cEditor = (function (cEditor) {
 
             // If all ok, make UI, bind events and parse initial-content
             .then(this.ui.make)
+            .then(this.ui.addTools)
             .then(this.ui.bindEvents)
             .then(this.parser.parseTextareaContent)
             .catch(function (error) {
@@ -176,22 +177,39 @@ cEditor.ui = {
         wrapper.appendChild(toolbar);
         wrapper.appendChild(redactor);
 
-        /** Make toolbar buttons */
-        cEditor.settings.tools.forEach(function(type) {
-
-            tool = cEditor.draw.toolbarButton(type);
-            toolbar.appendChild(tool);
-
-            /** Save tools to static nodes */
-            cEditor.nodes.toolbarButtons[type] = tool;
-
-        });
-
         /** Save created ui-elements to static nodes state */
         cEditor.nodes.wrapper  = wrapper;
         cEditor.nodes.toolbar  = toolbar;
 
         cEditor.nodes.redactor = redactor;
+
+    },
+
+    /**
+    * Append tools passed in cEditor.tools
+    */
+    addTools : function () {
+
+        var tool,
+            tool_button;
+
+        /** Make toolbar buttons */
+        for (var name in cEditor.tools){
+
+            tool = cEditor.tools[name];
+
+            if (!tool.iconClassname) {
+                cEditor.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', name);
+                continue;
+            }
+
+            tool_button = cEditor.draw.toolbarButton(name, tool.iconClassname);
+            cEditor.nodes.toolbar.appendChild(tool_button);
+
+            /** Save tools to static nodes */
+            cEditor.nodes.toolbarButtons[name] = tool_button;
+
+        }
 
     },
 
@@ -264,8 +282,6 @@ cEditor.callback = {
 
     globalKeydown : function(event){
 
-        cEditor.caret.save();
-
         switch (event.keyCode){
             case cEditor.core.keys.TAB   : this.tabKeyPressed(event);       break;
             case cEditor.core.keys.ENTER : this.enterKeyPressed(event);     break;
@@ -302,8 +318,7 @@ cEditor.callback = {
 
         cEditor.content.workingNodeChanged();
 
-        if (cEditor.toolbar.opened && event.target == cEditor.nodes.redactor) {
-
+        if ( cEditor.toolbar.opened && event.target == cEditor.content.currentNode) {
             event.preventDefault();
 
             cEditor.toolbar.toolClicked(event);
@@ -374,6 +389,9 @@ cEditor.callback = {
 
     },
 
+    /**
+    * Block handlers
+    */
     blockKeydown : function(event, block) {
 
         switch (event.keyCode){
@@ -383,13 +401,20 @@ cEditor.callback = {
                 cEditor.callback.blockRightOrDownArrowPressed(block);
                 break;
 
+            case cEditor.core.keys.ENTER:
+                cEditor.callback.enterPressed(block);
+                break;
+
+            case cEditor.core.keys.BACKSPACE:
+                cEditor.callback.backspacePressed(block);
+                break;
+
             case cEditor.core.keys.UP:
             case cEditor.core.keys.LEFT:
                 cEditor.callback.blockLeftOrUpArrowPressed(block);
                 break;
 
         }
-
     },
 
     /**
@@ -435,11 +460,17 @@ cEditor.callback = {
             /** Looking from the END of node */
             focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, focusedNodeHolder.childNodes.length);
         }
+
+        if (focusedNodeHolder.childNodes){
+            /** Looking from the END of node */
+            focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, focusedNodeHolder.childNodes.length);
+        }
         /**
         * Stop transition when caret is not at the end of Text node
         * When we click "DOWN", caret moves to the end of node.
         * We should check check caret position before we transmit/switch the block.
         */
+
         if ( block.childNodes.length != focusedNodeIndex || focusedTextNode.length != selection.anchorOffset) {
             return false;
         }
@@ -492,16 +523,74 @@ cEditor.callback = {
         * When we click "DOWN", caret moves to the end of node.
         * We should check check caret position before we transmit/switch the block.
         */
+        if ( selection.anchorOffset !== 0) {
+            return false;
+        }
+
+        if (focusedNodeHolder.childNodes.length !== 0) {
+
+            var focusedTextNode = '';
+
+            if (focusedNodeHolder.childNodes){
+                /** Looking from the END of node */
+                focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, 0);
+            }
+        }
+        /**
+        * Stop transition when caret is not at the end of Text node
+        * When we click "DOWN", caret moves to the end of node.
+        * We should check check caret position before we transmit/switch the block.
+        */
         if ( (cEditor.caret.offset !== 0 || cEditor.caret.focusedNodeIndex !== 0) && focusedNodeHolder.childNodes.length !== 0 ) {
             return;
         }
 
         cEditor.caret.setToPreviousBlock(block);
 
+    },
+
+    enterPressed: function (block) {
+
+        var selection = window.getSelection();
+            selectionsTextLength = selection.anchorNode.length;
+
+        if ( selectionsTextLength === cEditor.caret.offset
+            && selection.anchorNode.parentNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
+
+            /** Prevent <div></div> creation */
+            event.preventDefault();
+
+            /** Create new Block and append it after current */
+            var newBlock = cEditor.draw.block('p', '');
+
+            newBlock.contentEditable = "true";
+            newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
+
+            cEditor.ui.addBlockHandlers(newBlock);
+
+            cEditor.core.insertAfter(block, newBlock);
+
+            cEditor.caret.setToNextBlock(block);
+
+            cEditor.toolbar.move();
+        }
+    },
+
+    backspacePressed: function (block) {
+
+        if (block.textContent.trim()) return;
+
+        cEditor.caret.setToPreviousBlock(block);
+
+        block.remove();
+
+        cEditor.toolbar.move();
+
+        event.preventDefault();
+
     }
 
 };
-
 
 cEditor.content = {
 
@@ -604,7 +693,6 @@ cEditor.content = {
             */
             cEditor.caret.set(nodeCreated);
             cEditor.ui.addBlockHandlers(nodeCreated);
-
             return;
 
         }
@@ -642,7 +730,7 @@ cEditor.content = {
     * @param {int} postiton - starting postion
     *      Example: childNodex.length to find from the end
     *               or 0 to find from the start
-    * @return {TextNode} block
+    * @return {Text} block
     * @uses DFS
     */
     getDeepestTextNodeFromPosition : function (block, position) {
@@ -669,6 +757,11 @@ cEditor.content = {
                 }
             }
         }
+
+        if (block.childNodes.length === 0) {
+            return document.createTextNode('');
+        }
+
         /** Setting default position when we deleted all empty nodes */
         if ( position < 0 )
             position = 1;
@@ -796,7 +889,7 @@ cEditor.caret = {
             selection.removeAllRanges();
             selection.addRange(range);
 
-        }, 10);
+        }, 50);
     },
 
     /**
@@ -819,7 +912,7 @@ cEditor.caret = {
         cEditor.caret.focusedNodeIndex  = 0;
 
         cEditor.caret.set(block.nextSibling, 0, 0);
-
+        cEditor.content.workingNodeChanged(block.nextSibling);
     },
 
     setToPreviousBlock : function(block) {
@@ -844,7 +937,9 @@ cEditor.caret = {
         cEditor.caret.offset            = theEndOfPreviousBlockLastNode;
         cEditor.caret.focusedNodeIndex  = lastChildOfPreiviousBlockIndex;
 
-        cEditor.caret.set(previousBlock , lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
+        cEditor.caret.set(previousBlock, lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
+
+        cEditor.content.workingNodeChanged(block.previousSibling);
     },
 };
 
@@ -878,7 +973,7 @@ cEditor.toolbar = {
 
         this.opened  = false;
         this.current = null;
-        for (button in cEditor.nodes.toolbarButtons){
+        for (var button in cEditor.nodes.toolbarButtons){
             cEditor.nodes.toolbarButtons[button].classList.remove('selected');
         }
 
@@ -903,10 +998,12 @@ cEditor.toolbar = {
         var currentTool = this.current,
             tools       = cEditor.settings.tools,
             barButtons  = cEditor.nodes.toolbarButtons,
-            nextToolIndex;
+            nextToolIndex,
+            toolToSelect;
 
         if ( !currentTool ) {
 
+            /** Get first tool from object*/
             for (toolToSelect in barButtons) break;
 
         } else {
@@ -919,7 +1016,7 @@ cEditor.toolbar = {
 
         }
 
-        for (button in barButtons) barButtons[button].classList.remove('selected')
+        for (var button in barButtons) barButtons[button].classList.remove('selected');
 
         barButtons[toolToSelect].classList.add('selected');
 
@@ -929,20 +1026,31 @@ cEditor.toolbar = {
 
     /**
     * Transforming selected node type into selected toolbar element type
+    * @param {event} event
     */
-    toolClicked : function(event) {
+    toolClicked : function() {
 
         var workingNode = cEditor.content.currentNode,
-            newTag;
+            newTag,
+            appendCallback;
 
         switch (cEditor.toolbar.current) {
-            case 'header' : newTag = 'H1'; break;
-            case 'quote'  : newTag = 'BLOCKQUOTE'; break;
-            case 'code'   : newTag = 'CODE'; break;
-            case 'list'   : newTag = 'LI'; break;
-        };
+            case 'paragraph' : newTag = 'P'; break;
+            case 'header'    : newTag = 'H1'; break;
+            case 'quote'     : newTag = 'BLOCKQUOTE'; break;
+            case 'code'      : newTag = 'CODE'; break;
+            case 'list'      : newTag = 'LI'; break;
+        }
 
         cEditor.content.switchBlock(workingNode, newTag);
+
+        /** Fire tool append callback  */
+        appendCallback = cEditor.tools[cEditor.toolbar.current].appendCallback;
+
+        if (appendCallback && typeof appendCallback == 'function') {
+            appendCallback.call();
+        }
+
 
     },
 
@@ -961,7 +1069,7 @@ cEditor.toolbar = {
 
         cEditor.nodes.toolbar.style.transform = "translateY(" + newYCoordinate + "px)";
 
-    }
+    },
 
 };
 
@@ -991,7 +1099,7 @@ cEditor.parser = {
             /** Write log if something goes wrong */
             .catch(function(error) {
                 cEditor.core.log('Error while parsing content: %o', 'warn', error);
-            })
+            });
 
     },
 
@@ -1079,7 +1187,7 @@ cEditor.parser = {
 
                     return block;
 
-                };
+                }
                 return null;
             })
             .then(cEditor.ui.addBlockHandlers)
@@ -1154,6 +1262,97 @@ cEditor.parser = {
 
 };
 
+cEditor.tools = {
+
+    paragraph : {
+
+        type           : 'paragraph',
+        iconClassname  : 'ce_icon-smile',
+        append         : document.createElement('P'),
+        appendCallback : function () {
+                            console.log('paragraph added');
+                        },
+        settings       : null,
+
+    },
+
+    header : {
+
+        type           : 'header',
+        iconClassname  : 'ce_icon-header',
+        append         : document.createElement('H2'),
+        appendCallback : function () {
+                            console.log('header added');
+                        },
+        settings       : null,
+
+    },
+
+    quote : {
+
+        type           : 'quote',
+        iconClassname  : 'ce_icon-quote',
+        append         : document.createElement('BLOCKQUOTE'),
+        appendCallback : function () {
+                            console.log('quote added');
+                        },
+        settings       : null,
+
+    },
+
+    code : {
+
+        type           : 'code',
+        iconClassname  : 'ce_icon-code',
+        append         : document.createElement('CODE'),
+        appendCallback : function () {
+                            console.log('code added');
+                        },
+        settings       : null,
+
+    },
+
+    list : {
+
+        type           : 'code',
+        iconClassname  : 'ce_icon-list',
+        append         : document.createElement('LI'),
+        appendCallback : function () {
+                            console.log('code added');
+                        },
+        settings       : null,
+
+    }
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 /**
 * Creates HTML elements
 */
@@ -1204,12 +1403,12 @@ cEditor.draw = {
     /**
     * Toolbar button
     */
-    toolbarButton : function (type) {
+    toolbarButton : function (type, classname) {
 
         var button = document.createElement("li");
 
         button.dataset.type = type;
-        button.innerHTML    = '<i class="ce_icon-' + type + '"></i>';
+        button.innerHTML    = '<i class="' + classname + '"></i>';
 
         return button;
 
