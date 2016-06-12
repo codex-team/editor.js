@@ -540,6 +540,11 @@ cEditor.callback = {
             currentNode = selection.anchorNode,
             parentOfFocusedNode = currentNode.parentNode;
 
+        /**
+        * We add new block with contentEditable property if enter key is pressed.
+        * First we check, if caret is at the end of last node and offset is legth of text node
+        * focusedNodeIndex + 1, because that we compare non-arrays index.
+        */
         if ( currentNode.length === cEditor.caret.offset
             && parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
 
@@ -547,7 +552,7 @@ cEditor.callback = {
             event.preventDefault();
 
             /** Create new Block and append it after current */
-            var newBlock = cEditor.draw.block('p', '');
+            var newBlock = cEditor.draw.block('p');
 
             newBlock.contentEditable = "true";
             newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
