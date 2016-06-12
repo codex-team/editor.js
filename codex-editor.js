@@ -460,11 +460,6 @@ cEditor.callback = {
             /** Looking from the END of node */
             focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, focusedNodeHolder.childNodes.length);
         }
-
-        if (focusedNodeHolder.childNodes){
-            /** Looking from the END of node */
-            focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, focusedNodeHolder.childNodes.length);
-        }
         /**
         * Stop transition when caret is not at the end of Text node
         * When we click "DOWN", caret moves to the end of node.
