@@ -536,11 +536,12 @@ cEditor.callback = {
 
     enterPressed: function (block) {
 
-        var selection = window.getSelection();
-            selectionsTextLength = selection.anchorNode.length;
+        var selection   = window.getSelection(),
+            currentNode = selection.anchorNode,
+            parentOfFocusedNode = currentNode.parentNode;
 
-        if ( selectionsTextLength === cEditor.caret.offset
-            && selection.anchorNode.parentNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
+        if ( currentNode.length === cEditor.caret.offset
+            && parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
 
             /** Prevent <div></div> creation */
             event.preventDefault();
@@ -814,7 +815,7 @@ cEditor.caret = {
     save : function() {
 
         var selection = window.getSelection();
-        var parentElement = selection.anchorNode,
+        var parentElement   = selection.anchorNode,
             previousElement = selection.anchorNode.previousSibling,
             nodeIndex = 0;
 
@@ -847,7 +848,7 @@ cEditor.caret = {
     },
 
     /**
-    * Creates Documnt Range and sets caret to the element.
+    * Creates Document Range and sets caret to the element.
     * @uses caret.save — if you need to save caret position
     * @param {Element} el - Changed Node.
     * @todo remove saving positon
