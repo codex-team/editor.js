@@ -318,8 +318,7 @@ cEditor.callback = {
 
         cEditor.content.workingNodeChanged();
 
-        if (cEditor.toolbar.opened && event.target == cEditor.nodes.redactor) {
-
+        if ( cEditor.toolbar.opened && event.target == cEditor.content.currentNode) {
             event.preventDefault();
 
             cEditor.toolbar.toolClicked(event);
@@ -390,6 +389,9 @@ cEditor.callback = {
 
     },
 
+    /**
+    * Block handlers for KeyDown events
+    */
     blockKeydown : function(event, block) {
 
         switch (event.keyCode){
@@ -413,7 +415,6 @@ cEditor.callback = {
                 break;
 
         }
-
     },
 
     /**
@@ -421,22 +422,26 @@ cEditor.callback = {
     */
     blockRightOrDownArrowPressed : function (block) {
 
-        var selection      = window.getSelection(),
+        var selection   = window.getSelection(),
             focusedNode = selection.anchorNode,
             focusedNodeHolder;
 
-        /** Check for caret exists */
+        /** Check for caret existance */
         if (!focusedNode){
             return false;
         }
 
+        /** Saving caret after keydown event happend */
+        cEditor.caret.save();
+
+        /** Looking for closest (parent) contentEditable element of focused node */
         while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
 
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;
         }
 
-        /** TAG is focused and node doesn't have childs */
+        /** Founded contentEditable element doesn't have childs */
         if (focusedNode.childNodes.length === 0)
         {
             cEditor.caret.setToNextBlock(block);
@@ -445,10 +450,13 @@ cEditor.callback = {
 
         /**
         * Find deepest child node
-        * Iterate child nodes and find LAST and DEEPEST node (
-        * We need it to check caret positon (it must be at the end)
+        * Iterate child nodes and find LAST DEEPEST node
+        * We need to check caret positon (it must be at the end)
+        * @param focusedNodeIndex is index of childnode by length
+        * @param focusedTextNode is Text node founded by DFS algorithm
         */
-        var focusedTextNode = '';
+        var focusedTextNode = '',
+            focusedNodeIndex = cEditor.caret.focusedNodeIndex + 1;
 
         if (focusedNodeHolder.childNodes){
             /** Looking from the END of node */
@@ -457,10 +465,10 @@ cEditor.callback = {
 
         /**
         * Stop transition when caret is not at the end of Text node
-        * When we click "DOWN", caret moves to the end of node.
-        * We should check check caret position before we transmit/switch the block.
+        * When we click "DOWN" or "RIGHT", caret moves to the end of node.
+        * We should check caret position before we transmit/switch the block.
         */
-        if ( focusedTextNode.length != selection.anchorOffset ) {
+        if ( block.childNodes.length != focusedNodeIndex || focusedTextNode.length != selection.anchorOffset) {
             return false;
         }
 
@@ -473,15 +481,17 @@ cEditor.callback = {
     */
     blockLeftOrUpArrowPressed : function (block) {
 
-        var selection      = window.getSelection(),
+        var selection   = window.getSelection(),
             focusedNode = selection.anchorNode,
             focusedNodeHolder;
 
-        /** Check for caret exists */
+        /** Check for caret existance */
         if (!focusedNode){
             return false;
         }
 
+        /** Saving caret after keydown event happend */
+        cEditor.caret.save();
 
         /** Looking for parent contentEditable block */
         while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
@@ -491,8 +501,8 @@ cEditor.callback = {
 
         /**
         * Find deepest child node
-        * Iterate child nodes and find LAST and DEEPEST node (
-        * We need it to check caret positon (it must be at the end)
+        * Iterate child nodes and find First DEEPEST node
+        * We need it to check caret positon (it must be at the begining)
         */
         focusedNodeHolder = focusedNodeHolder || focusedNode;
 
@@ -501,17 +511,23 @@ cEditor.callback = {
             var focusedTextNode = '';
 
             if (focusedNodeHolder.childNodes){
-                /** Looking from the END of node */
+                /** Looking from the first child */
                 focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, 0);
             }
         }
         /**
-        * Stop transition when caret is not at the end of Text node
-        * When we click "DOWN", caret moves to the end of node.
-        * We should check check caret position before we transmit/switch the block.
+        * When we click "UP" or "LEFT", caret behaviour is as default.
+        * We should check caret position before we transmit/switch the block.
         */
         if ( selection.anchorOffset !== 0) {
             return false;
+        }
+
+        /**
+        * We can't switch block till caret is not at the begining of first node and has zero offset
+        */
+        if ( (cEditor.caret.offset !== 0 || cEditor.caret.focusedNodeIndex !== 0) && focusedNodeHolder.childNodes.length !== 0 ) {
+            return;
         }
 
         cEditor.caret.setToPreviousBlock(block);
@@ -520,23 +536,37 @@ cEditor.callback = {
 
     enterPressed: function (block) {
 
-        /** Create new Block and append it after current */
-        var newBlock = cEditor.draw.block('p', '');
+        var selection   = window.getSelection(),
+            currentNode = selection.anchorNode,
+            parentOfFocusedNode = currentNode.parentNode;
 
-        newBlock.contentEditable = "true";
-        newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
+        /**
+        * We add new block with contentEditable property if enter key is pressed.
+        * First we check, if caret is at the end of last node and offset is legth of text node
+        * focusedNodeIndex + 1, because that we compare non-arrays index.
+        */
+        if ( currentNode.length === cEditor.caret.offset
+            && parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
 
-        cEditor.ui.addBlockHandlers(newBlock);
+            /** Prevent <div></div> creation */
+            event.preventDefault();
 
-        cEditor.core.insertAfter(block, newBlock);
+            /** Create new Block and append it after current */
+            var newBlock = cEditor.draw.block('p');
 
-        cEditor.caret.setToNextBlock(block);
+            newBlock.contentEditable = "true";
+            newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
 
-        cEditor.toolbar.move();
+            /** Add event listeners (Keydown) for new created block */
+            cEditor.ui.addBlockHandlers(newBlock);
 
-        /** Prevent <div></div> creation */
-        event.preventDefault();
+            cEditor.core.insertAfter(block, newBlock);
 
+            /** set focus to the current (created) block */
+            cEditor.caret.setToNextBlock(block);
+
+            cEditor.toolbar.move();
+        }
     },
 
     backspacePressed: function (block) {
@@ -549,10 +579,11 @@ cEditor.callback = {
 
         cEditor.toolbar.move();
 
+        event.preventDefault();
+
     }
 
 };
-
 
 cEditor.content = {
 
@@ -655,6 +686,9 @@ cEditor.content = {
             */
             cEditor.caret.set(nodeCreated);
 
+            /** Add event listeners for created node */
+            cEditor.ui.addBlockHandlers(nodeCreated);
+
             return;
 
         }
@@ -712,6 +746,9 @@ cEditor.content = {
 
                 text = node.textContent.trim();
 
+                /** Text is empty. We should remove this child from node before we start DFS
+                * decrease the quantity of childs.
+                */
                 if (text == '') {
 
                     block.removeChild(node);
@@ -783,17 +820,34 @@ cEditor.caret = {
     save : function() {
 
         var selection = window.getSelection();
-        var previousElement = selection.anchorNode.previousSibling,
+        var parentElement   = selection.anchorNode,
+            previousElement = selection.anchorNode.previousSibling,
             nodeIndex = 0;
 
+        /**
+        * We get index of node which is child of #BLOCK_CLASSNAME.
+        * if selected node is not below the block container, we get the closest TAG which is below #BLOCK_CLASSNAME
+        */
+        if ( parentElement.className !== cEditor.ui.BLOCK_CLASSNAME ) {
+
+            while (parentElement.parentNode.className !== cEditor.ui.BLOCK_CLASSNAME) {
+
+                parentElement = parentElement.parentNode;
+
+            }
+
+            previousElement = parentElement.previousSibling;
+        }
+
+        /** Counting index of focused node */
         while (previousElement != null) {
 
-          nodeIndex ++;
-          previousElement = previousElement.previousSibling;
+            nodeIndex ++;
+            previousElement = previousElement.previousSibling;
 
         }
 
-        this.offset       = selection.anchorOffset;
+        this.offset            = selection.anchorOffset;
         this.focusedNodeIndex  = nodeIndex;
 
     },
@@ -834,7 +888,7 @@ cEditor.caret = {
             selection.removeAllRanges();
             selection.addRange(range);
 
-        }, 10);
+        }, 50);
     },
 
     /**
@@ -857,9 +911,7 @@ cEditor.caret = {
         cEditor.caret.focusedNodeIndex  = 0;
 
         cEditor.caret.set(block.nextSibling, 0, 0);
-
         cEditor.content.workingNodeChanged(block.nextSibling);
-
     },
 
     setToPreviousBlock : function(block) {
@@ -887,7 +939,6 @@ cEditor.caret = {
         cEditor.caret.set(previousBlock, lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
 
         cEditor.content.workingNodeChanged(block.previousSibling);
-
     },
 };
 
@@ -1209,8 +1260,6 @@ cEditor.parser = {
     }
 
 };
-
-
 
 cEditor.tools = {
 
