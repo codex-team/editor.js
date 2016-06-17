@@ -271,6 +271,10 @@ cEditor.ui = {
 
         }, false);
 
+        block.addEventListener('paste', function (event) {
+            cEditor.callback.blockPaste(event, block);
+        }, false);
+
     }
 
 };
@@ -580,6 +584,21 @@ cEditor.callback = {
         cEditor.toolbar.move();
 
         event.preventDefault();
+
+    },
+
+    blockPaste: function(event, block) {
+
+        var clipboardData, pastedData;
+
+        event.stopPropagation();
+        event.preventDefault();
+
+        clipboardData = event.clipboardData || window.clipboardData;
+        pastedData = clipboardData.getData('Text');
+
+        nodeContent = document.createTextNode(pastedData);
+        block.appendChild(nodeContent);
 
     }
 
