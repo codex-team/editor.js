@@ -589,9 +589,8 @@ cEditor.callback = {
 
     blockPaste: function(event, block) {
 
-        var clipboardData, pastedData;
+        var clipboardData, pastedData, nodeContent;
 
-        event.stopPropagation();
         event.preventDefault();
 
         clipboardData = event.clipboardData || window.clipboardData;
