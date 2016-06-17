@@ -1,15 +1,14 @@
 @font-face {
     font-family: 'codex_editor';
-    src: url('fonts/codex_editor/codex-editor.eot?20895205');
-    src: url('fonts/codex_editor/codex-editor.eot?20895205#iefix') format('embedded-opentype'),
-    url('fonts/codex_editor/codex-editor.woff?20895205') format('woff'),
-    url('fonts/codex_editor/codex-editor.ttf?20895205') format('truetype'),
-    url('fonts/codex_editor/codex-editor.svg?20895205#codex_editor') format('svg');
+    src: url('fonts/codex_editor/codex_editor.eot?52438661');
+    src: url('fonts/codex_editor/codex_editor.eot?52438661#iefix') format('embedded-opentype'),
+    url('fonts/codex_editor/codex_editor.woff?52438661') format('woff'),
+    url('fonts/codex_editor/codex_editor.ttf?52438661') format('truetype'),
+    url('fonts/codex_editor/codex_editor.svg?52438661#codex_editor') format('svg');
     font-weight: normal;
     font-style: normal;
 }
-[class^="ce-icon-"]:before,
-[class*="ce-icon-"]:before {
+[class^="ce_icon-"]:before, [class*="ce_icon-"]:before {
     font-family: "codex_editor";
     font-style: normal;
     font-weight: normal;
@@ -32,37 +31,41 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
-.ce-icon-instagram:before { content: '\e800'; } /* '' */
-.ce-icon-picture:before { content: '\e801'; } /* '' */
-.ce-icon-cog:before { content: '\e802'; } /* '' */
-.ce-icon-link:before { content: '\e803'; } /* '' */
-.ce-icon-unlink:before { content: '\e804'; } /* '' */
-.ce-icon-code:before { content: '\e805'; } /* '' */
-.ce-icon-quote:before { content: '\e806'; } /* '' */
-.ce-icon-trash:before { content: '\e807'; } /* '' */
-.ce-icon-down-big:before { content: '\e808'; } /* '' */
-.ce-icon-up-big:before { content: '\e809'; } /* '' */
-.ce-icon-header:before { content: '\e80a'; } /* '' */
-.ce-icon-paragraph:before { content: '\e80b'; } /* '' */
-.ce-icon-align-left:before { content: '\e80c'; } /* '' */
-.ce-icon-align-center:before { content: '\e80d'; } /* '' */
-.ce-icon-align-right:before { content: '\e80e'; } /* '' */
-.ce-icon-font:before { content: '\e80f'; } /* '' */
-.ce-icon-bold:before { content: '\e810'; } /* '' */
-.ce-icon-medium:before { content: '\e811'; } /* '' */
-.ce-icon-italic:before { content: '\e812'; } /* '' */
-.ce-icon-list-bullet:before { content: '\e813'; } /* '' */
-.ce-icon-list-numbered:before { content: '\e814'; } /* '' */
-.ce-icon-strike:before { content: '\e815'; } /* '' */
-.ce-icon-underline:before { content: '\e816'; } /* '' */
-.ce-icon-table:before { content: '\e817'; } /* '' */
-.ce-icon-ellipsis-vert:before { content: '\e818'; } /* '' */
-.ce-icon-columns:before { content: '\e819'; } /* '' */
-.ce-icon-smile:before { content: '\e81a'; } /* '' */
-.ce-icon-newspaper:before { content: '\e81b'; } /* '' */
-.ce-icon-twitter:before { content: '\e81c'; } /* '' */
-.ce-icon-facebook-squared:before { content: '\e81d'; } /* '' */
-.ce-icon-vkontakte:before { content: '\e81e'; } /* '' */
+.ce_icon-instagram:before { content: '\e800'; } /* '' */
+.ce_icon-minus:before { content: '\e801'; } /* '' */
+.ce_icon-picture:before { content: '\e802'; } /* '' */
+.ce_icon-minus-circled:before { content: '\e803'; } /* '' */
+.ce_icon-cog:before { content: '\e804'; } /* '' */
+.ce_icon-link:before { content: '\e805'; } /* '' */
+.ce_icon-unlink:before { content: '\e806'; } /* '' */
+.ce_icon-code:before { content: '\e807'; } /* '' */
+.ce_icon-quote-right:before { content: '\e808'; } /* '' */
+.ce_icon-comment:before { content: '\e809'; } /* '' */
+.ce_icon-trash-empty:before { content: '\e80a'; } /* '' */
+.ce_icon-down-open:before { content: '\e80b'; } /* '' */
+.ce_icon-up-open:before { content: '\e80c'; } /* '' */
+.ce_icon-up-big:before { content: '\e80d'; } /* '' */
+.ce_icon-down-big:before { content: '\e80e'; } /* '' */
+.ce_icon-header:before { content: '\e80f'; } /* '' */
+.ce_icon-align-center:before { content: '\e810'; } /* '' */
+.ce_icon-align-left:before { content: '\e811'; } /* '' */
+.ce_icon-align-right:before { content: '\e812'; } /* '' */
+.ce_icon-list:before { content: '\e813'; } /* '' */
+.ce_icon-strike:before { content: '\e814'; } /* '' */
+.ce_icon-underline:before { content: '\e815'; } /* '' */
+.ce_icon-table:before { content: '\e816'; } /* '' */
+.ce_icon-columns:before { content: '\e817'; } /* '' */
+.ce_icon-bold:before { content: '\e818'; } /* '' */
+.ce_icon-italic:before { content: '\e819'; } /* '' */
+.ce_icon-smile:before { content: '\e81a'; } /* '' */
+.ce_icon-twitter:before { content: '\e81b'; } /* '' */
+.ce_icon-plus-1:before { content: '\e81c'; } /* '' */
+.ce_icon-plus-circled-1:before { content: '\e81d'; } /* '' */
+.ce_icon-quote:before { content: '\e81e'; } /* '' */
+.ce_icon-code-1:before { content: '\e81f'; } /* '' */
+.ce_icon-trash:before { content: '\e820'; } /* '' */
+.ce_icon-list-add:before { content: '\e821'; } /* '' */
+.ce_icon-list-1:before { content: '\e822'; } /* '' */
 
 
 
@@ -83,7 +86,9 @@
     position: absolute;
     z-index: 2;
 
-    margin-left: -1px;
+    margin-left: -45px;
+
+    overflow: hidden;
 
     background: #fff;
     border: 1px solid #e3e7ee;
@@ -102,9 +107,7 @@
 
 
     .ce_toolbar .toggler{
-        color: #6485d0;
-        background: #f8f9fd;
-        cursor: pointer;
+        color: #3e6dd6
     }
     .ce_toolbar .toggler,
     .ce_toolbar li
@@ -115,41 +118,11 @@
         font-size: 14px;
     }
         .ce_toolbar .selected,
-        .ce_toolbar .toggler:hover,
         .ce_toolbar li:hover
         {
             background: #3e6dd6;
             color: #e2edff;
         }
-
-        .ce_toolbar .settings_btn{
-            font-size: 1.1em;
-        }
-
-
-/** Block settings panel */
-
-.ce_block_settings{
-    position: absolute;
-    z-index: 2;
-    margin-top: 15px;
-    margin-left: 4px;
-    padding: 25px;
-
-    color: #2e394b;
-
-    overflow: hidden;
-
-    background: #fff;
-    border: 1px solid #e8e9f1;
-    border-radius: 2px;
-    box-shadow: 0 2px 11px rgba(27,39,54,.11);
-
-    display: none;
-}
-    .ce_block_settings.opened{
-        display: block;
-    }
 
 
 /** Typography styles */
@@ -168,10 +141,12 @@
     margin: 5px 0;
 }
 .ce_redactor blockquote{
-    font-size: 1.3em;
+    font-size: 1.1em;
     line-height: 1.9em;
-    margin: 2.5em 200px !important;
-    padding: 2.5em 3.5em !important;
+    margin: 2em 0;
+    padding: 2em 3.5em;
+    border-top: 2px solid #EAECF3;
+    border-bottom: 2px solid #EAECF3;
 }
 .ce_redactor code{
     display: block;
@@ -184,14 +159,10 @@
 
 .ce_redactor .ce_block{
     padding: 10px;
-    margin: -1px;
+    margin: 5px;
     border: 1px dotted #ccc;
     background: #fff;
-    outline: none;
 }
-    .ce_redactor .ce_block:focus{
-        box-shadow: inset 0 0 0px 2px rgba(148, 158, 191, 0.05);
-    }
 
 
 @-webkit-keyframes bounceIn {
