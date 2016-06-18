@@ -24,13 +24,13 @@ var cEditor = (function (cEditor) {
         block_settings : null,
         toolbarButtons : {}, // { type : DomEl, ... }
         redactor : null,
-    }
+    };
 
     // Current editor state
     cEditor.state = {
         html   : '',
         blocks : []
-    }
+    };
 
     /**
     * Initialization
