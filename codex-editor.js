@@ -20,6 +20,8 @@ var cEditor = (function (cEditor) {
         textarea : null,
         wrapper  : null,
         toolbar  : null,
+        show_settings_button : null,
+        block_settings : null,
         toolbarButtons : {}, // { type : DomEl, ... }
         redactor : null,
     }
@@ -160,8 +162,9 @@ cEditor.ui = {
 
         var wrapper,
             toolbar,
-            tool,
-            redactor;
+            redactor,
+            block_settings,
+            show_settings_button;
 
         /** Make editor wrapper */
         wrapper = cEditor.draw.wrapper();
@@ -171,8 +174,13 @@ cEditor.ui = {
 
 
         /** Make toolbar and content-editable redactor */
-        toolbar  = cEditor.draw.toolbar();
-        redactor = cEditor.draw.redactor();
+        toolbar              = cEditor.draw.toolbar();
+        show_settings_button = cEditor.draw.show_settings_button();
+        block_settings       = cEditor.draw.block_settings();
+        redactor             = cEditor.draw.redactor();
+
+        toolbar.appendChild(show_settings_button);
+        toolbar.appendChild(block_settings);
 
         wrapper.appendChild(toolbar);
         wrapper.appendChild(redactor);
@@ -180,6 +188,8 @@ cEditor.ui = {
         /** Save created ui-elements to static nodes state */
         cEditor.nodes.wrapper  = wrapper;
         cEditor.nodes.toolbar  = toolbar;
+        cEditor.nodes.block_settings       = block_settings;
+        cEditor.nodes.show_settings_button = show_settings_button;
 
         cEditor.nodes.redactor = redactor;
 
@@ -236,6 +246,13 @@ cEditor.ui = {
             cEditor.callback.redactorClicked(event);
 
             cEditor.caret.save();
+
+        }, false );
+
+        /** Mouse click to radactor */
+        cEditor.nodes.show_settings_button.addEventListener('click', function (event) {
+
+            cEditor.callback.showSettingsButtonClicked(event);
 
         }, false );
 
@@ -353,6 +370,7 @@ cEditor.callback = {
         cEditor.toolbar.move();
 
         cEditor.toolbar.open();
+        cEditor.toolbar.settings.close();
 
     },
 
@@ -549,7 +567,7 @@ cEditor.callback = {
             && parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
 
             /** Prevent <div></div> creation */
-            event.preventDefault();
+            // event.preventDefault();
 
             /** Create new Block and append it after current */
             var newBlock = cEditor.draw.block('p');
@@ -580,6 +598,15 @@ cEditor.callback = {
         cEditor.toolbar.move();
 
         event.preventDefault();
+
+    },
+
+    /**
+    * Clicks on block settings button
+    */
+    showSettingsButtonClicked : function(){
+
+        cEditor.toolbar.settings.toggle();
 
     }
 
@@ -1070,7 +1097,45 @@ cEditor.toolbar = {
 
     },
 
+    /**
+    * Block settings methods
+    */
+    settings : {
+
+        opened : false,
+
+        open : function(){
+
+            cEditor.nodes.block_settings.classList.add('opened');
+            this.opened = true;
+
+        },
+
+        close : function(){
+
+            cEditor.nodes.block_settings.classList.remove('opened');
+            this.opened = false;
+
+        },
+
+        toggle : function(){
+
+            if ( !this.opened ){
+
+                this.open();
+
+            } else {
+
+                this.close();
+
+            }
+
+        },
+
+    }
+
 };
+
 
 /**
 * Content parsing module
@@ -1266,7 +1331,7 @@ cEditor.tools = {
     paragraph : {
 
         type           : 'paragraph',
-        iconClassname  : 'ce_icon-smile',
+        iconClassname  : 'ce-icon-paragraph',
         append         : document.createElement('P'),
         appendCallback : function () {
                             console.log('paragraph added');
@@ -1278,7 +1343,7 @@ cEditor.tools = {
     header : {
 
         type           : 'header',
-        iconClassname  : 'ce_icon-header',
+        iconClassname  : 'ce-icon-header',
         append         : document.createElement('H2'),
         appendCallback : function () {
                             console.log('header added');
@@ -1290,7 +1355,7 @@ cEditor.tools = {
     quote : {
 
         type           : 'quote',
-        iconClassname  : 'ce_icon-quote',
+        iconClassname  : 'ce-icon-quote',
         append         : document.createElement('BLOCKQUOTE'),
         appendCallback : function () {
                             console.log('quote added');
@@ -1302,7 +1367,7 @@ cEditor.tools = {
     code : {
 
         type           : 'code',
-        iconClassname  : 'ce_icon-code',
+        iconClassname  : 'ce-icon-code',
         append         : document.createElement('CODE'),
         appendCallback : function () {
                             console.log('code added');
@@ -1314,7 +1379,7 @@ cEditor.tools = {
     list : {
 
         type           : 'code',
-        iconClassname  : 'ce_icon-list',
+        iconClassname  : 'ce-icon-list-bullet',
         append         : document.createElement('LI'),
         appendCallback : function () {
                             console.log('code added');
@@ -1392,11 +1457,35 @@ cEditor.draw = {
 
         bar.className += 'ce_toolbar';
 
-        /** Toggler button*/
-        bar.innerHTML = '<span class="toggler">' +
-                            '<i class="plus_btn ce_icon-plus-circled-1"></i>'+
-                        '</span>';
         return bar;
+    },
+
+    /**
+    * Empty toolbar with toggler
+    */
+    block_settings : function () {
+
+        var settings = document.createElement('div');
+
+        settings.className += 'ce_block_settings';
+        settings.innerHTML = 'Настройки блока';
+
+        return settings;
+    },
+
+    /**
+    * Empty toolbar with toggler
+    */
+    show_settings_button : function () {
+
+        var toggler = document.createElement('span');
+
+        toggler.className = 'toggler';
+
+        /** Toggler button*/
+        toggler.innerHTML = '<i class="settings_btn ce-icon-cog"></i>';
+
+        return toggler;
     },
 
     /**
