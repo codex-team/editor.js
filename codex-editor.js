@@ -616,8 +616,8 @@ cEditor.callback = {
 
         nodeContent = document.createTextNode(pastedData);
         block.appendChild(nodeContent);
-	},
-	
+    },
+    
     /**
     * Clicks on block settings button
     */
