@@ -481,6 +481,8 @@ cEditor.callback = {
     */
     blockLeftOrUpArrowPressed : function (block) {
 
+        console.log('here');
+
         var selection   = window.getSelection(),
             focusedNode = selection.anchorNode,
             focusedNodeHolder;
@@ -546,7 +548,7 @@ cEditor.callback = {
         * focusedNodeIndex + 1, because that we compare non-arrays index.
         */
         if ( currentNode.length === cEditor.caret.offset
-            && parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
+             && parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
 
             /** Prevent <div></div> creation */
             event.preventDefault();
@@ -828,7 +830,7 @@ cEditor.caret = {
         * We get index of node which is child of #BLOCK_CLASSNAME.
         * if selected node is not below the block container, we get the closest TAG which is below #BLOCK_CLASSNAME
         */
-        if ( parentElement.className !== cEditor.ui.BLOCK_CLASSNAME ) {
+        if ( parentElement != null && parentElement.className !== cEditor.ui.BLOCK_CLASSNAME ) {
 
             while (parentElement.parentNode.className !== cEditor.ui.BLOCK_CLASSNAME) {
 
