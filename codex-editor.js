@@ -1087,15 +1087,11 @@ cEditor.toolbar = {
             newTag,
             appendCallback;
 
-        switch (cEditor.toolbar.current) {
-            case 'paragraph' : newTag = 'P'; break;
-            case 'header'    : newTag = 'H1'; break;
-            case 'quote'     : newTag = 'BLOCKQUOTE'; break;
-            case 'code'      : newTag = 'CODE'; break;
-            case 'list'      : newTag = 'LI'; break;
-        }
+        /** Append to New tag that pointed in tool settings */
+        var appendToTag = cEditor.tools[cEditor.toolbar.current].append;
 
-        cEditor.content.switchBlock(workingNode, newTag);
+        /** Switch working node to the new toolbar appending tag which is pointed in settings */
+        cEditor.content.switchBlock(workingNode, appendToTag);
 
         /** Fire tool append callback  */
         appendCallback = cEditor.tools[cEditor.toolbar.current].appendCallback;
@@ -1359,7 +1355,7 @@ cEditor.tools = {
 
         type           : 'paragraph',
         iconClassname  : 'ce-icon-paragraph',
-        append         : document.createElement('P'),
+        append         : 'P',
         appendCallback : function () {
                             console.log('paragraph added');
                         },
@@ -1371,7 +1367,7 @@ cEditor.tools = {
 
         type           : 'header',
         iconClassname  : 'ce-icon-header',
-        append         : document.createElement('H2'),
+        append         : 'H1',
         appendCallback : function () {
                             console.log('header added');
                         },
@@ -1383,7 +1379,7 @@ cEditor.tools = {
 
         type           : 'quote',
         iconClassname  : 'ce-icon-quote',
-        append         : document.createElement('BLOCKQUOTE'),
+        append         : 'BLOCKQUOTE',
         appendCallback : function () {
                             console.log('quote added');
                         },
@@ -1395,7 +1391,7 @@ cEditor.tools = {
 
         type           : 'code',
         iconClassname  : 'ce-icon-code',
-        append         : document.createElement('CODE'),
+        append         : 'CODE',
         appendCallback : function () {
                             console.log('code added');
                         },
@@ -1407,7 +1403,7 @@ cEditor.tools = {
 
         type           : 'list',
         iconClassname  : 'ce-icon-list-bullet',
-        append         : document.createElement('LI'),
+        append         : 'LI',
         appendCallback : function () {
                             console.log('code added');
                         },
