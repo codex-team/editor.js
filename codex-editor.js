@@ -696,6 +696,15 @@ cEditor.content = {
 
     },
 
+    createBlock : function (currentNode, newNode) {
+
+        /** For arrowKeys */
+        cEditor.ui.addBlockHandlers(newNode);
+
+        cEditor.core.insertAfter(currentNode, newNode);
+
+    },
+
     switchBlock : function (targetBlock, newBlockTagname) {
 
         if (!targetBlock || !newBlockTagname) return;
@@ -1084,14 +1093,18 @@ cEditor.toolbar = {
     toolClicked : function() {
 
         var workingNode = cEditor.content.currentNode,
-            newTag,
+            workingNodeHtmlContent = workingNode.innerHTML,
+            newBlock,
             appendCallback;
 
         /** Append to New tag that pointed in tool settings */
-        var appendToTag = cEditor.tools[cEditor.toolbar.current].append;
+        var toolsAppend = cEditor.tools[cEditor.toolbar.current].append;
 
         /** Switch working node to the new toolbar appending tag which is pointed in settings */
-        cEditor.content.switchBlock(workingNode, appendToTag);
+        // cEditor.content.switchBlock(workingNode, appendToTag);
+        // var append = cEditor.content.appendToBlock(toolbarsBlockTag, workingNodeHtmlContent);
+
+        newBlock = cEditor.content.createBlock( workingNode, toolsAppend );
 
         /** Fire tool append callback  */
         appendCallback = cEditor.tools[cEditor.toolbar.current].appendCallback;
@@ -1355,7 +1368,7 @@ cEditor.tools = {
 
         type           : 'paragraph',
         iconClassname  : 'ce-icon-paragraph',
-        append         : 'P',
+        append         : document.createElement('P'),
         appendCallback : function () {
                             console.log('paragraph added');
                         },
@@ -1367,9 +1380,9 @@ cEditor.tools = {
 
         type           : 'header',
         iconClassname  : 'ce-icon-header',
-        append         : 'H1',
+        append         : document.createElement('H1'),
         appendCallback : function () {
-                            console.log('header added');
+
                         },
         settings       : null,
 
@@ -1379,7 +1392,7 @@ cEditor.tools = {
 
         type           : 'quote',
         iconClassname  : 'ce-icon-quote',
-        append         : 'BLOCKQUOTE',
+        append         : document.createElement('BLOCKQUOTE'),
         appendCallback : function () {
                             console.log('quote added');
                         },
@@ -1391,7 +1404,7 @@ cEditor.tools = {
 
         type           : 'code',
         iconClassname  : 'ce-icon-code',
-        append         : 'CODE',
+        append         : document.createElement('CODE'),
         appendCallback : function () {
                             console.log('code added');
                         },
@@ -1403,7 +1416,7 @@ cEditor.tools = {
 
         type           : 'list',
         iconClassname  : 'ce-icon-list-bullet',
-        append         : 'LI',
+        append         : document.createElement('LI'),
         appendCallback : function () {
                             console.log('code added');
                         },
