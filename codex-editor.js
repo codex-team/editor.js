@@ -571,7 +571,7 @@ cEditor.callback = {
             && parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
 
             /** Prevent <div></div> creation */
-            // event.preventDefault();
+            event.preventDefault();
 
             /** Create new Block and append it after current */
             var newBlock = cEditor.draw.block('p');
@@ -595,7 +595,16 @@ cEditor.callback = {
 
         if (block.textContent.trim()) return;
 
-        cEditor.caret.setToPreviousBlock(block);
+        if (block.previousSibling == null) {
+
+            cEditor.caret.setToNextBlock(block);
+
+        }
+        else {
+
+            cEditor.caret.setToPreviousBlock(block);
+
+        }
 
         block.remove();
 
@@ -617,7 +626,7 @@ cEditor.callback = {
         nodeContent = document.createTextNode(pastedData);
         block.appendChild(nodeContent);
     },
-    
+
     /**
     * Clicks on block settings button
     */
@@ -684,6 +693,17 @@ cEditor.content = {
     workingNodeChanged : function (setCurrent) {
 
         this.currentNode = setCurrent || this.getNodeFocused();
+
+    },
+
+    insertNewBlock : function (newNode) {
+
+        var workingNode = cEditor.content.currentNode;
+
+        /** For arrowKeys */
+        cEditor.ui.addBlockHandlers(newNode);
+
+        cEditor.core.insertAfter(workingNode, newNode);
 
     },
 
@@ -872,7 +892,8 @@ cEditor.caret = {
         * We get index of node which is child of #BLOCK_CLASSNAME.
         * if selected node is not below the block container, we get the closest TAG which is below #BLOCK_CLASSNAME
         */
-        if ( parentElement.className !== cEditor.ui.BLOCK_CLASSNAME ) {
+
+        if ( parentElement != null && parentElement.className !== cEditor.ui.BLOCK_CLASSNAME ) {
 
             while (parentElement.parentNode.className !== cEditor.ui.BLOCK_CLASSNAME) {
 
@@ -1074,18 +1095,16 @@ cEditor.toolbar = {
     toolClicked : function() {
 
         var workingNode = cEditor.content.currentNode,
-            newTag,
+            workingNodeHtmlContent = workingNode.innerHTML,
             appendCallback;
 
-        switch (cEditor.toolbar.current) {
-            case 'paragraph' : newTag = 'P'; break;
-            case 'header'    : newTag = 'H1'; break;
-            case 'quote'     : newTag = 'BLOCKQUOTE'; break;
-            case 'code'      : newTag = 'CODE'; break;
-            case 'list'      : newTag = 'LI'; break;
-        }
+        /** Append to New tag that pointed in tool settings */
+        var toolsAppend = cEditor.tools[cEditor.toolbar.current].append;
 
-        cEditor.content.switchBlock(workingNode, newTag);
+        /** Switch working node to the new toolbar appending tag which is pointed in settings */
+        // cEditor.content.switchBlock(workingNode, appendToTag);
+
+        cEditor.content.insertNewBlock(toolsAppend);
 
         /** Fire tool append callback  */
         appendCallback = cEditor.tools[cEditor.toolbar.current].appendCallback;
@@ -1361,9 +1380,9 @@ cEditor.tools = {
 
         type           : 'header',
         iconClassname  : 'ce-icon-header',
-        append         : document.createElement('H2'),
+        append         : document.createElement('h1'),
         appendCallback : function () {
-                            console.log('header added');
+
                         },
         settings       : null,
 
@@ -1395,7 +1414,7 @@ cEditor.tools = {
 
     list : {
 
-        type           : 'code',
+        type           : 'list',
         iconClassname  : 'ce-icon-list-bullet',
         append         : document.createElement('LI'),
         appendCallback : function () {
