@@ -696,12 +696,14 @@ cEditor.content = {
 
     },
 
-    createBlock : function (currentNode, newNode) {
+    insertNewBlock : function (newNode) {
+
+        var workingNode = cEditor.content.currentNode;
 
         /** For arrowKeys */
         cEditor.ui.addBlockHandlers(newNode);
 
-        cEditor.core.insertAfter(currentNode, newNode);
+        cEditor.core.insertAfter(workingNode, newNode);
 
     },
 
@@ -1094,7 +1096,6 @@ cEditor.toolbar = {
 
         var workingNode = cEditor.content.currentNode,
             workingNodeHtmlContent = workingNode.innerHTML,
-            newBlock,
             appendCallback;
 
         /** Append to New tag that pointed in tool settings */
@@ -1102,9 +1103,8 @@ cEditor.toolbar = {
 
         /** Switch working node to the new toolbar appending tag which is pointed in settings */
         // cEditor.content.switchBlock(workingNode, appendToTag);
-        // var append = cEditor.content.appendToBlock(toolbarsBlockTag, workingNodeHtmlContent);
 
-        newBlock = cEditor.content.createBlock( workingNode, toolsAppend );
+        cEditor.content.insertNewBlock(toolsAppend);
 
         /** Fire tool append callback  */
         appendCallback = cEditor.tools[cEditor.toolbar.current].appendCallback;
@@ -1380,7 +1380,7 @@ cEditor.tools = {
 
         type           : 'header',
         iconClassname  : 'ce-icon-header',
-        append         : document.createElement('H1'),
+        append         : document.createElement('h1'),
         appendCallback : function () {
 
                         },
