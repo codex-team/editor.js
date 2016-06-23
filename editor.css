@@ -134,7 +134,7 @@
     z-index: 2;
     margin-top: 15px;
     margin-left: 4px;
-    padding: 25px;
+    padding: 25px 30px;
 
     color: #2e394b;
 
@@ -194,6 +194,43 @@
     }
 
 
+
+
+
+
+
+
+/**
+* Plugin styles
+*/
+
+
+/** H e a d e r - settings */
+.ce_plugin_header--settings{
+    white-space: nowrap;
+    /*padding-right: 10px;    */
+}
+.ce_plugin_header--caption{
+    color: #b9c2c2;
+}
+.ce_plugin_header--select_button{
+    display: inline-block;
+    margin-left: 40px;
+    border-bottom: 1px solid #c3d5ed;
+    padding-bottom: 2px;
+    color: #5399d4;
+    cursor: pointer;
+}
+    .ce_plugin_header--select_button:hover{
+        border-bottom-color: #f6d8da;
+        color: #cc7d74;
+    }
+
+
+
+
+
+/*
 @-webkit-keyframes bounceIn {
     0% { opacity: 0; -webkit-transform: scale(.3);}
     50% {opacity: 1; -webkit-transform: scale(1.05);}
@@ -226,3 +263,4 @@
     -o-animation-name: bounceIn; -o-animation-duration: 600ms; -o-animation-iteration-count: 1;
     animation-name: bounceIn; animation-duration: 600ms; animation-iteration-count: 1;
 }
+*/
