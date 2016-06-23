@@ -624,10 +624,10 @@ cEditor.callback = {
     showSettingsButtonClicked : function(){
 
         /** 
-        * Detect type of current block 
-        * Used to open its settings from tool.settings property.
+        * Get type of current block 
+        * It uses to append settings from tool.settings property.
         * ...
-        * It stored in data-type attribute on block
+        * Type is stored in data-type attribute on block
         */
         var currentToolType = cEditor.content.currentNode.dataset.type;
 
@@ -699,7 +699,7 @@ cEditor.content = {
     * Replaces one redactor block with another
     * @param {Element} targetBlock - block to replace. Mostly currentNode.
     * @param {Element} newBlock
-    * @param {string} newBlockType - type of new block; we need to store id to data-attribute
+    * @param {string} newBlockType - type of new block; we need to store it to data-attribute
     *
     * [!] Function does not saves old block content. 
     *     You can get it manually and pass with newBlock.innerHTML
@@ -1723,7 +1723,7 @@ var headerTool = {
             selectTypeButton.textContent = types[type];
             selectTypeButton.className   = 'ce_plugin_header--select_button';
 
-            this.addSelectTypeClickListeners(selectTypeButton, type);
+            this.addSelectTypeClickListener(selectTypeButton, type);
 
             holder.appendChild(selectTypeButton);
 
@@ -1736,7 +1736,7 @@ var headerTool = {
     /**
     * Binds click event to passed button
     */
-    addSelectTypeClickListeners : function (el, type) {
+    addSelectTypeClickListener : function (el, type) {
         
         el.addEventListener('click', function () {
         
@@ -1746,14 +1746,14 @@ var headerTool = {
     },
 
     /**
-    * Switches old header with new type 
+    * Replaces old header with new type 
     * @params {string} type - new header tagName: H1—H6
     */
     selectTypeClicked : function (type) {
 
         var old_header, new_header;
 
-        /** Current header stored now is a currentNode */
+        /** Now current header stored as a currentNode */
         old_header = cEditor.content.currentNode;
 
         /** Making new header */
