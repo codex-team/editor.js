@@ -49,7 +49,7 @@ var cEditor = (function (cEditor) {
             .then(this.ui.make)
             .then(this.ui.addTools)
             .then(this.ui.bindEvents)
-            .then(this.parser.parseTextareaContent)
+            // .then(this.parser.parseTextareaContent)
             .catch(function (error) {
                 cEditor.core.log('Initialization failed with error: %o', 'warn', error);
             })
@@ -83,6 +83,10 @@ cEditor.core = {
 
                 cEditor.settings.tools = userSettings.tools || cEditor.settings.tools;
 
+            }
+
+            if (userSettings.data) {
+                cEditor.state.blocks = userSettings.data;
             }
 
             cEditor.nodes.textarea = document.getElementById(userSettings.textareaId || cEditor.settings.textareaId);
@@ -737,6 +741,7 @@ cEditor.content = {
 
         var workingNode = cEditor.content.currentNode;
 
+        el.classList.add(cEditor.ui.BLOCK_CLASSNAME);
         newBlock.dataset.type = blockType;
 
         cEditor.core.insertAfter(workingNode, newBlock);
@@ -1484,7 +1489,7 @@ cEditor.tools = {
 
     },
 
-    quote : {
+    /*quote : {
 
         type           : 'quote',
         iconClassname  : 'ce-icon-quote',
@@ -1494,7 +1499,7 @@ cEditor.tools = {
                         },
         settings       : null,
 
-    },
+    },*/
 
     code : {
 
@@ -1691,7 +1696,6 @@ var headerTool = {
         var el = document.createElement('H2');
 
         el.contentEditable = 'true';
-        el.classList.add(cEditor.ui.BLOCK_CLASSNAME);
 
         cEditor.ui.addBlockHandlers(el);
 
