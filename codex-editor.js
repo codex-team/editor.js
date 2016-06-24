@@ -20,10 +20,10 @@ var cEditor = (function (cEditor) {
         textarea : null,
         wrapper  : null,
         toolbar  : null,
-        show_settings_button : null,
-        block_settings : null,
-        toolbarButtons : {}, // { type : DomEl, ... }
-        redactor : null,
+        showSettingsButton : null,
+        blockSettings      : null,
+        toolbarButtons     : {}, // { type : DomEl, ... }
+        redactor           : null,
     }
 
     // Current editor state
@@ -163,8 +163,8 @@ cEditor.ui = {
         var wrapper,
             toolbar,
             redactor,
-            block_settings,
-            show_settings_button;
+            blockSettings,
+            showSettingsButton;
 
         /** Make editor wrapper */
         wrapper = cEditor.draw.wrapper();
@@ -174,13 +174,13 @@ cEditor.ui = {
 
 
         /** Make toolbar and content-editable redactor */
-        toolbar              = cEditor.draw.toolbar();
-        show_settings_button = cEditor.draw.show_settings_button();
-        block_settings       = cEditor.draw.block_settings();
-        redactor             = cEditor.draw.redactor();
+        toolbar            = cEditor.draw.toolbar();
+        showSettingsButton = cEditor.draw.settingsButton();
+        blockSettings      = cEditor.draw.blockSettings();
+        redactor           = cEditor.draw.redactor();
 
-        toolbar.appendChild(show_settings_button);
-        toolbar.appendChild(block_settings);
+        toolbar.appendChild(showSettingsButton);
+        toolbar.appendChild(blockSettings);
 
         wrapper.appendChild(toolbar);
         wrapper.appendChild(redactor);
@@ -188,8 +188,8 @@ cEditor.ui = {
         /** Save created ui-elements to static nodes state */
         cEditor.nodes.wrapper  = wrapper;
         cEditor.nodes.toolbar  = toolbar;
-        cEditor.nodes.block_settings       = block_settings;
-        cEditor.nodes.show_settings_button = show_settings_button;
+        cEditor.nodes.blockSettings       = blockSettings;
+        cEditor.nodes.showSettingsButton = showSettingsButton;
 
         cEditor.nodes.redactor = redactor;
 
@@ -249,8 +249,8 @@ cEditor.ui = {
 
         }, false );
 
-        /** Mouse click to radactor */
-        cEditor.nodes.show_settings_button.addEventListener('click', function (event) {
+        /** Clicks to SETTINGS button in toolbar */
+        cEditor.nodes.showSettingsButton.addEventListener('click', function (event) {
 
             cEditor.callback.showSettingsButtonClicked(event);
 
@@ -623,7 +623,15 @@ cEditor.callback = {
     */
     showSettingsButtonClicked : function(){
 
-        cEditor.toolbar.settings.toggle();
+        /** 
+        * Get type of current block 
+        * It uses to append settings from tool.settings property.
+        * ...
+        * Type is stored in data-type attribute on block
+        */
+        var currentToolType = cEditor.content.currentNode.dataset.type;
+
+        cEditor.toolbar.settings.toggle(currentToolType);
 
     }
 
@@ -687,6 +695,48 @@ cEditor.content = {
 
     },
 
+    /**
+    * Replaces one redactor block with another
+    * @param {Element} targetBlock - block to replace. Mostly currentNode.
+    * @param {Element} newBlock
+    * @param {string} newBlockType - type of new block; we need to store it to data-attribute
+    *
+    * [!] Function does not saves old block content. 
+    *     You can get it manually and pass with newBlock.innerHTML
+    */
+    replaceBlock : function function_name(targetBlock, newBlock, newBlockType) {
+    
+        if (!targetBlock || !newBlock || !newBlockType){
+            cEditor.core.log('replaceBlock: missed params');
+            return;
+        }
+
+        /** Add redactor block classname to new block */
+        newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
+
+        /** Store block type */
+        newBlock.dataset.type = newBlockType;
+
+        /** Replacing */
+        cEditor.nodes.redactor.replaceChild(newBlock, targetBlock);
+
+        /**
+        * Set new node as current
+        */
+        cEditor.content.workingNodeChanged(newBlock);
+
+        /**
+        * Setting caret
+        * @todo is it necessary?
+        */
+        cEditor.caret.set(newBlock);
+
+    },
+
+
+    /**
+    * @deprecated with replaceBlock()
+    */
     switchBlock : function (targetBlock, newBlockTagname) {
 
         if (!targetBlock || !newBlockTagname) return;
@@ -1085,6 +1135,10 @@ cEditor.toolbar = {
             case 'list'      : newTag = 'LI'; break;
         }
 
+        /**
+        * @todo 
+        * use insertBlock or replaceBlock instead of switchBlock
+        */
         cEditor.content.switchBlock(workingNode, newTag);
 
         /** Fire tool append callback  */
@@ -1121,25 +1175,51 @@ cEditor.toolbar = {
 
         opened : false,
 
-        open : function(){
+        /**
+        * Append and open settings
+        */
+        open : function(toolType){
 
-            cEditor.nodes.block_settings.classList.add('opened');
+            /**
+            * Append settings content
+            * It's stored in tool.settings
+            */
+            if (!cEditor.tools[toolType] || !cEditor.core.isDomNode(cEditor.tools[toolType].settings) ) {
+                
+                cEditor.core.log('Wrong tool type', 'warn');
+                cEditor.nodes.blockSettings.innerHTML = 'Настройки для этого плагина еще не созданы';
+            
+            } else {
+
+                cEditor.nodes.blockSettings.appendChild(cEditor.tools[toolType].settings);
+
+            }
+
+            cEditor.nodes.blockSettings.classList.add('opened');
             this.opened = true;
 
         },
 
+        /** 
+        * Close and clear settings
+        */
         close : function(){
 
-            cEditor.nodes.block_settings.classList.remove('opened');
+            cEditor.nodes.blockSettings.classList.remove('opened');
+            cEditor.nodes.blockSettings.innerHTML = '';
+
             this.opened = false;
 
         },
 
-        toggle : function(){
+        /**
+        * @param {string} toolType - plugin type
+        */
+        toggle : function( toolType ){
 
             if ( !this.opened ){
 
-                this.open();
+                this.open(toolType);
 
             } else {
 
@@ -1306,6 +1386,10 @@ cEditor.parser = {
 
         /** First level nodes already appears as blocks */
         if ( cEditor.parser.isFirstLevelBlock(node) ){
+            
+            /** Save plugin type in data-type */
+            node = this.storeBlockType(node);
+            
             return node;
         }
 
@@ -1327,7 +1411,37 @@ cEditor.parser = {
             parentBlock.appendChild(node);
         }
 
+        /** Save plugin type in data-type */
+        parentBlock = this.storeBlockType(parentBlock);
+
         return parentBlock;
+
+    },
+
+    /**
+    * It's a crutch 
+    * - - - - - - -
+    * We need block type stored as data-attr
+    * Now supports only simple blocks : P, HEADER, QUOTE, CODE
+    * Remove it after updating parser module for the block-oriented structure: 
+    *       - each block must have stored type
+    * @param {Element} node 
+    */
+    storeBlockType : function (node) {
+        
+        switch (node.tagName) {
+            case 'P' :          node.dataset.type = 'paragraph'; break;
+            case 'H1': 
+            case 'H2': 
+            case 'H3': 
+            case 'H4': 
+            case 'H5': 
+            case 'H6':          node.dataset.type = 'header'; break;
+            case 'BLOCKQUOTE':  node.dataset.type = 'quote'; break;
+            case 'CODE':        node.dataset.type = 'code'; break;
+        }
+
+        return node;
 
     },
 
@@ -1352,18 +1466,6 @@ cEditor.tools = {
         append         : document.createElement('P'),
         appendCallback : function () {
                             console.log('paragraph added');
-                        },
-        settings       : null,
-
-    },
-
-    header : {
-
-        type           : 'header',
-        iconClassname  : 'ce-icon-header',
-        append         : document.createElement('H2'),
-        appendCallback : function () {
-                            console.log('header added');
                         },
         settings       : null,
 
@@ -1395,7 +1497,7 @@ cEditor.tools = {
 
     list : {
 
-        type           : 'code',
+        type           : 'list',
         iconClassname  : 'ce-icon-list-bullet',
         append         : document.createElement('LI'),
         appendCallback : function () {
@@ -1406,14 +1508,6 @@ cEditor.tools = {
     }
 
 };
-
-
-
-
-
-
-
-
 
 
 
@@ -1478,22 +1572,21 @@ cEditor.draw = {
     },
 
     /**
-    * Empty toolbar with toggler
+    * Block settings panel 
     */
-    block_settings : function () {
+    blockSettings : function () {
 
         var settings = document.createElement('div');
 
         settings.className += 'ce_block_settings';
-        settings.innerHTML = 'Настройки блока';
 
         return settings;
     },
 
     /**
-    * Empty toolbar with toggler
+    * Settings button in toolbar
     */
-    show_settings_button : function () {
+    settingsButton : function () {
 
         var toggler = document.createElement('span');
 
@@ -1534,3 +1627,161 @@ cEditor.draw = {
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/**
+* Example of making plugin
+* H e a d e r 
+*/
+var headerTool = {
+
+    /**
+    * Make initial header block
+    * @return {Element} element to append
+    */
+    makeBlockToAppend : function () {
+
+        return document.createElement('H2');
+    
+    },
+
+    /**
+    * Block appending callback
+    */
+    appendCallback : function (argument) {
+        
+        console.log('header appended...');
+    
+    },
+
+    /**
+    * Settings panel content
+    *  - - - - - - - - - - - - -
+    * | настройки   H1  H2  H3  |
+    *  - - - - - - - - - - - - - 
+    * @return {Element} element contains all settings
+    */
+    makeSettings : function () {
+        
+        var holder  = document.createElement('DIV'),
+            caption = document.createElement('SPAN'),
+            types   = {
+                        H2: 'Заголовок раздела',
+                        H3: 'Подзаголовок',
+                        H4: 'Заголовок 3-его уровня'
+                    },
+            selectTypeButton;
+
+        /** Add holder classname */
+        holder.className = 'ce_plugin_header--settings'
+
+        /** Add settings helper caption */
+        caption.textContent = 'Настройки заголовка';
+        caption.className   = 'ce_plugin_header--caption';
+
+        holder.appendChild(caption);
+
+        /** Now add type selectors */
+        for (var type in types){
+
+            selectTypeButton = document.createElement('SPAN');
+
+            selectTypeButton.textContent = types[type];
+            selectTypeButton.className   = 'ce_plugin_header--select_button';
+
+            this.addSelectTypeClickListener(selectTypeButton, type);
+
+            holder.appendChild(selectTypeButton);
+
+        }
+
+        return holder;
+
+    },
+
+    /**
+    * Binds click event to passed button
+    */
+    addSelectTypeClickListener : function (el, type) {
+        
+        el.addEventListener('click', function () {
+        
+            headerTool.selectTypeClicked(type);
+        
+        }, false);
+    },
+
+    /**
+    * Replaces old header with new type 
+    * @params {string} type - new header tagName: H1—H6
+    */
+    selectTypeClicked : function (type) {
+
+        var old_header, new_header;
+
+        /** Now current header stored as a currentNode */
+        old_header = cEditor.content.currentNode;
+
+        /** Making new header */
+        new_header = document.createElement(type);
+
+        new_header.innerHTML = old_header.innerHTML;
+        new_header.contentEditable = true;
+
+        cEditor.content.replaceBlock(old_header, new_header, 'header');
+
+        /** Close settings after replacing */
+        cEditor.toolbar.settings.close();
+
+    },
+
+
+};
+
+/**
+* Now plugin is ready. 
+* Add it to redactor tools
+*/
+cEditor.tools.header = {
+
+    type           : 'header',
+    iconClassname  : 'ce-icon-header',
+    append         : headerTool.makeBlockToAppend(),
+    appendCallback : headerTool.appendCallback,
+    settings       : headerTool.makeSettings(),
+
+};
