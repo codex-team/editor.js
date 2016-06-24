@@ -50,6 +50,7 @@ var cEditor = (function (cEditor) {
             .then(this.ui.addTools)
             .then(this.ui.bindEvents)
             // .then(this.parser.parseTextareaContent)
+            .then(this.renderer.makeBlocksFromData)
             .catch(function (error) {
                 cEditor.core.log('Initialization failed with error: %o', 'warn', error);
             })
@@ -153,6 +154,72 @@ cEditor.core = {
     }
 
 }
+
+
+/**
+* Methods for parsing JSON reactor data to HTML blocks
+*/
+cEditor.renderer = {
+
+    /**
+    * Asyncronously parses input JSON to redactor blocks
+    */
+    makeBlocksFromData : function (argument) {
+
+        console.info('renderer makeBlocksFromData');
+
+        Promise.resolve()
+
+                        /** First, get JSON from state */
+                        .then(function() {
+                            return cEditor.state.blocks;
+                        })
+
+                        /** Then, start to iterate they */
+                        .then(cEditor.renderer.appendBlocks)
+                        
+                        /** Write log if something goes wrong */
+                        .catch(function(error) {
+                            cEditor.core.log('Error while parsing JSON: %o', 'warn', error);
+                        });
+    
+    },
+
+    /**
+    * Parses JSON to blocks
+    * @param {object} data
+    * @return Primise -> nodeList
+    */
+    appendBlocks : function (data) {
+
+        console.info('renderer appendBlocks %o', data);
+
+        /**
+        * Тут надо создать очередь по аналогии с parser.appendNodesToRedactor,
+        * которая будет асинхронно парсить блоки с помощью метода render у каждого плагина
+        */
+
+    },
+
+}
+
+/**
+* Methods for saving HTML blocks to JSON object
+*/
+cEditor.saver = {
+
+    /**
+    * Saves blocks
+    */
+    saveBlocks : function (argument) {
+
+        console.info('saver saveBlocks');
+    
+    }
+
+}
+
+
 
 cEditor.ui = {
 
