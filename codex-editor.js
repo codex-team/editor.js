@@ -27,7 +27,7 @@ var cEditor = (function (cEditor) {
     }
 
     // Current editor state
-    cEditor.state = {
+    cEditor.state = { 
         html   : '',
         blocks : []
     }
