@@ -737,6 +737,7 @@ cEditor.content = {
 
         var workingNode = cEditor.content.currentNode;
 
+        el.classList.add(cEditor.ui.BLOCK_CLASSNAME);
         newBlock.dataset.type = blockType;
 
         cEditor.core.insertAfter(workingNode, newBlock);
@@ -1484,7 +1485,7 @@ cEditor.tools = {
 
     },
 
-    quote : {
+    /*quote : {
 
         type           : 'quote',
         iconClassname  : 'ce-icon-quote',
@@ -1494,7 +1495,7 @@ cEditor.tools = {
                         },
         settings       : null,
 
-    },
+    },*/
 
     code : {
 
@@ -1691,7 +1692,6 @@ var headerTool = {
         var el = document.createElement('H2');
 
         el.contentEditable = 'true';
-        el.classList.add(cEditor.ui.BLOCK_CLASSNAME);
 
         cEditor.ui.addBlockHandlers(el);
 
