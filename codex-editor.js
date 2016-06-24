@@ -27,7 +27,7 @@ var cEditor = (function (cEditor) {
     }
 
     // Current editor state
-    cEditor.state = {
+    cEditor.state = { 
         html   : '',
         blocks : []
     }
@@ -49,7 +49,7 @@ var cEditor = (function (cEditor) {
             .then(this.ui.make)
             .then(this.ui.addTools)
             .then(this.ui.bindEvents)
-            .then(this.parser.parseTextareaContent)
+            // .then(this.parser.parseTextareaContent)
             .catch(function (error) {
                 cEditor.core.log('Initialization failed with error: %o', 'warn', error);
             })
@@ -83,6 +83,10 @@ cEditor.core = {
 
                 cEditor.settings.tools = userSettings.tools || cEditor.settings.tools;
 
+            }
+
+            if (userSettings.data) {
+                cEditor.state.blocks = userSettings.data;
             }
 
             cEditor.nodes.textarea = document.getElementById(userSettings.textareaId || cEditor.settings.textareaId);
