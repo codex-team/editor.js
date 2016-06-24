@@ -617,14 +617,14 @@ cEditor.callback = {
         nodeContent = document.createTextNode(pastedData);
         block.appendChild(nodeContent);
     },
-    
+
     /**
     * Clicks on block settings button
     */
     showSettingsButtonClicked : function(){
 
-        /** 
-        * Get type of current block 
+        /**
+        * Get type of current block
         * It uses to append settings from tool.settings property.
         * ...
         * Type is stored in data-type attribute on block
@@ -701,11 +701,11 @@ cEditor.content = {
     * @param {Element} newBlock
     * @param {string} newBlockType - type of new block; we need to store it to data-attribute
     *
-    * [!] Function does not saves old block content. 
+    * [!] Function does not saves old block content.
     *     You can get it manually and pass with newBlock.innerHTML
     */
     replaceBlock : function function_name(targetBlock, newBlock, newBlockType) {
-    
+
         if (!targetBlock || !newBlock || !newBlockType){
             cEditor.core.log('replaceBlock: missed params');
             return;
@@ -733,7 +733,15 @@ cEditor.content = {
 
     },
 
+    insertBlock : function(newBlock, blockType) {
 
+        var workingNode = cEditor.content.currentNode;
+
+        newBlock.dataset.type = blockType;
+
+        cEditor.core.insertAfter(workingNode, newBlock);
+
+    },
     /**
     * @deprecated with replaceBlock()
     */
@@ -1136,10 +1144,15 @@ cEditor.toolbar = {
         }
 
         /**
-        * @todo 
+        * @todo
         * use insertBlock or replaceBlock instead of switchBlock
         */
-        cEditor.content.switchBlock(workingNode, newTag);
+        // cEditor.content.switchBlock(workingNode, newTag);
+
+        var tools = cEditor.tools[cEditor.toolbar.current];
+
+        /** Insert new Block from plugin */
+        cEditor.content.insertBlock(tools.append, tools.type);
 
         /** Fire tool append callback  */
         appendCallback = cEditor.tools[cEditor.toolbar.current].appendCallback;
@@ -1185,10 +1198,10 @@ cEditor.toolbar = {
             * It's stored in tool.settings
             */
             if (!cEditor.tools[toolType] || !cEditor.core.isDomNode(cEditor.tools[toolType].settings) ) {
-                
+
                 cEditor.core.log('Wrong tool type', 'warn');
                 cEditor.nodes.blockSettings.innerHTML = 'Настройки для этого плагина еще не созданы';
-            
+
             } else {
 
                 cEditor.nodes.blockSettings.appendChild(cEditor.tools[toolType].settings);
@@ -1200,7 +1213,7 @@ cEditor.toolbar = {
 
         },
 
-        /** 
+        /**
         * Close and clear settings
         */
         close : function(){
@@ -1386,10 +1399,10 @@ cEditor.parser = {
 
         /** First level nodes already appears as blocks */
         if ( cEditor.parser.isFirstLevelBlock(node) ){
-            
+
             /** Save plugin type in data-type */
             node = this.storeBlockType(node);
-            
+
             return node;
         }
 
@@ -1419,23 +1432,23 @@ cEditor.parser = {
     },
 
     /**
-    * It's a crutch 
+    * It's a crutch
     * - - - - - - -
     * We need block type stored as data-attr
     * Now supports only simple blocks : P, HEADER, QUOTE, CODE
-    * Remove it after updating parser module for the block-oriented structure: 
+    * Remove it after updating parser module for the block-oriented structure:
     *       - each block must have stored type
-    * @param {Element} node 
+    * @param {Element} node
     */
     storeBlockType : function (node) {
-        
+
         switch (node.tagName) {
             case 'P' :          node.dataset.type = 'paragraph'; break;
-            case 'H1': 
-            case 'H2': 
-            case 'H3': 
-            case 'H4': 
-            case 'H5': 
+            case 'H1':
+            case 'H2':
+            case 'H3':
+            case 'H4':
+            case 'H5':
             case 'H6':          node.dataset.type = 'header'; break;
             case 'BLOCKQUOTE':  node.dataset.type = 'quote'; break;
             case 'CODE':        node.dataset.type = 'code'; break;
@@ -1572,7 +1585,7 @@ cEditor.draw = {
     },
 
     /**
-    * Block settings panel 
+    * Block settings panel
     */
     blockSettings : function () {
 
@@ -1665,7 +1678,7 @@ cEditor.draw = {
 
 /**
 * Example of making plugin
-* H e a d e r 
+* H e a d e r
 */
 var headerTool = {
 
@@ -1675,28 +1688,35 @@ var headerTool = {
     */
     makeBlockToAppend : function () {
 
-        return document.createElement('H2');
-    
+        var el = document.createElement('H2');
+
+        el.contentEditable = 'true';
+        el.classList.add(cEditor.ui.BLOCK_CLASSNAME);
+
+        cEditor.ui.addBlockHandlers(el);
+
+        return el;
+
     },
 
     /**
     * Block appending callback
     */
     appendCallback : function (argument) {
-        
+
         console.log('header appended...');
-    
+
     },
 
     /**
     * Settings panel content
     *  - - - - - - - - - - - - -
     * | настройки   H1  H2  H3  |
-    *  - - - - - - - - - - - - - 
+    *  - - - - - - - - - - - - -
     * @return {Element} element contains all settings
     */
     makeSettings : function () {
-        
+
         var holder  = document.createElement('DIV'),
             caption = document.createElement('SPAN'),
             types   = {
@@ -1737,16 +1757,16 @@ var headerTool = {
     * Binds click event to passed button
     */
     addSelectTypeClickListener : function (el, type) {
-        
+
         el.addEventListener('click', function () {
-        
+
             headerTool.selectTypeClicked(type);
-        
+
         }, false);
     },
 
     /**
-    * Replaces old header with new type 
+    * Replaces old header with new type
     * @params {string} type - new header tagName: H1—H6
     */
     selectTypeClicked : function (type) {
@@ -1764,6 +1784,9 @@ var headerTool = {
 
         cEditor.content.replaceBlock(old_header, new_header, 'header');
 
+        /** Add listeners for Arrow keys*/
+        cEditor.ui.addBlockHandlers(new_header);
+
         /** Close settings after replacing */
         cEditor.toolbar.settings.close();
 
@@ -1773,7 +1796,7 @@ var headerTool = {
 };
 
 /**
-* Now plugin is ready. 
+* Now plugin is ready.
 * Add it to redactor tools
 */
 cEditor.tools.header = {
