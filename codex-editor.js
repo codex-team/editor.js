@@ -166,8 +166,6 @@ cEditor.renderer = {
     */
     makeBlocksFromData : function (argument) {
 
-        console.info('renderer makeBlocksFromData');
-
         Promise.resolve()
 
                         /** First, get JSON from state */
@@ -180,7 +178,7 @@ cEditor.renderer = {
                         
                         /** Write log if something goes wrong */
                         .catch(function(error) {
-                            cEditor.core.log('Error while parsing JSON: %o', 'warn', error);
+                            cEditor.core.log('Error while parsing JSON: %o', 'error', error);
                         });
     
     },
@@ -192,12 +190,119 @@ cEditor.renderer = {
     */
     appendBlocks : function (data) {
 
-        console.info('renderer appendBlocks %o', data);
+        var blocks = data.items;
 
         /**
-        * Тут надо создать очередь по аналогии с parser.appendNodesToRedactor,
-        * которая будет асинхронно парсить блоки с помощью метода render у каждого плагина
+        * Sequence of one-by-one blocks appending
+        * Uses to save blocks order after async-handler
         */
+        var nodeSequence = Promise.resolve();
+
+        for (var index = 0; index < blocks.length ; index++ ) {
+
+            /** Add node to sequence at specified index */
+            cEditor.renderer.appendNodeAtIndex(nodeSequence, blocks, index);
+
+        }
+
+    },
+
+    /**
+    * Append node at specified index
+    */
+    appendNodeAtIndex : function (nodeSequence, blocks, index) {
+
+        /** We need to append node to sequence */
+        nodeSequence
+
+            /** first, get node async-aware */
+            .then(function() {
+
+                return cEditor.renderer.getNodeAsync(blocks , index);
+
+            })
+
+            /**
+            * second, compose editor-block from JSON object
+            */
+            .then(cEditor.renderer.createBlockFromData)
+
+            /**
+            * now insert block to redactor
+            */
+            .then(function(blockData){
+
+                /**
+                * blockData has 'block' and 'type' information
+                */
+                cEditor.content.insertBlock(blockData.block, blockData.type);
+
+                /** Pass created block to next step */
+                return blockData.block;
+                
+            })
+
+            /**
+            * add handlers to new block 
+            */
+            .then(cEditor.ui.addBlockHandlers)
+
+            /** Log if something wrong with node */
+            .catch(function(error) {
+                cEditor.core.log('Node skipped while parsing because %o', 'error', error);
+            });
+
+    },
+
+    /**
+    * Asynchronously returns block data from blocksList by index
+    * @return Promise to node
+    */
+    getNodeAsync : function (blocksList, index) {
+
+        return Promise.resolve().then(function() {
+
+            return blocksList[index];
+
+        });
+    },
+
+    /**
+    * Creates editor block by JSON-data
+    *
+    * @uses render method of each plugin
+    *
+    * @param {object} blockData looks like 
+    *                            { header : {
+    *                                            text: '', 
+    *                                            type: 'H3', ...
+    *                                        }
+    *                            }
+    * @return {object} with type and Element
+    */
+    createBlockFromData : function (blockData) {
+
+        /** Get first key of object that stores plugin name */
+        for (var pluginName in blockData) break;
+
+        /** Check for plugin existance */
+        if (!cEditor.tools[pluginName]) {
+            throw Error(`Plugin «${pluginName}» not found`);
+        }
+
+        /** Check for plugin having render method */
+        if (typeof cEditor.tools[pluginName].render != 'function') {
+            throw Error(`Plugin «${pluginName}» must have «render» method`);
+        }
+
+        /** Fire the render method with data */
+        var block = cEditor.tools[pluginName].render(blockData[pluginName]);
+
+        /** Retrun type and block */
+        return {
+            type  : pluginName,
+            block : block
+        }
 
     },
 
@@ -808,10 +913,28 @@ cEditor.content = {
 
         var workingNode = cEditor.content.currentNode;
 
-        el.classList.add(cEditor.ui.BLOCK_CLASSNAME);
+        newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
         newBlock.dataset.type = blockType;
 
-        cEditor.core.insertAfter(workingNode, newBlock);
+        
+        if (workingNode) {
+        
+            cEditor.core.insertAfter(workingNode, newBlock);
+        
+        } else {
+
+            /** 
+            * If redactor is empty, append as first child
+            */
+            cEditor.nodes.redactor.appendChild(newBlock);
+
+            /**
+            * Set new node as current
+            */
+            cEditor.content.workingNodeChanged(newBlock);
+        }
+
+        
 
     },
     /**
@@ -1756,17 +1879,54 @@ var headerTool = {
 
     /**
     * Make initial header block
+    * @param {object} JSON to with block data
     * @return {Element} element to append
     */
-    makeBlockToAppend : function () {
+    makeBlockToAppend : function (data) {
 
-        var el = document.createElement('H2');
+        var availableTypes = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'],
+            tag;
 
-        el.contentEditable = 'true';
+        if (data && data.type && availableTypes.includes(data.type)) {
 
-        cEditor.ui.addBlockHandlers(el);
+            tag = document.createElement( data.type );
 
-        return el;
+            /** 
+            * Save header type in data-attr.
+            * We need it in save method to extract type from HTML to JSON
+            */
+            tag.dataset.headerData = data.type;
+
+        } else {
+
+            tag = document.createElement( 'DIV' );
+
+        }
+
+        if (data && data.text) {
+            tag.textContent = data.text;
+        }
+
+        tag.contentEditable = true;
+
+        return tag;
+
+    },
+
+    /**
+    * Method to extract JSON data from HTML block
+    */
+    save : function (block){
+
+        var data = {
+            type : null,
+            text : null
+        };
+
+        data.type = blockData.dataset.headerData;
+        data.text = blockData.textContent;
+
+        return data;
 
     },
 
@@ -1863,6 +2023,15 @@ var headerTool = {
 
     },
 
+    /**
+    * Method to renders HTML block from JSON
+    */
+    render : function (data) {
+
+       return headerTool.makeBlockToAppend(data);
+        
+    },
+
 
 };
 
@@ -1877,5 +2046,7 @@ cEditor.tools.header = {
     append         : headerTool.makeBlockToAppend(),
     appendCallback : headerTool.appendCallback,
     settings       : headerTool.makeSettings(),
+    render         : headerTool.render,
+    save           : headerTool.save 
 
 };
