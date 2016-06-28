@@ -1914,6 +1914,15 @@ var headerTool = {
     },
 
     /**
+    * Method to render HTML block from JSON
+    */
+    render : function (data) {
+
+       return headerTool.makeBlockToAppend(data);
+        
+    },
+
+    /**
     * Method to extract JSON data from HTML block
     */
     save : function (block){
@@ -2023,14 +2032,6 @@ var headerTool = {
 
     },
 
-    /**
-    * Method to renders HTML block from JSON
-    */
-    render : function (data) {
-
-       return headerTool.makeBlockToAppend(data);
-        
-    },
 
 
 };
