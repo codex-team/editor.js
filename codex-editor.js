@@ -1907,8 +1907,6 @@ var headerTool = {
 
             tag = document.createElement( 'H2' );
 
-            cEditor.ui.addBlockHandlers(tag);
-
         }
 
         if (data && data.text) {
