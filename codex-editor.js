@@ -8,7 +8,7 @@ var cEditor = (function (cEditor) {
 
     // Default settings
     cEditor.settings = {
-        tools      : ['header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
+        tools      : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
         textareaId : 'codex-editor',
 
         // First-level tags viewing as separated blocks. Other'll be inserted as child
@@ -27,7 +27,7 @@ var cEditor = (function (cEditor) {
     }
 
     // Current editor state
-    cEditor.state = { 
+    cEditor.state = {
         html   : '',
         blocks : []
     }
@@ -175,12 +175,12 @@ cEditor.renderer = {
 
                         /** Then, start to iterate they */
                         .then(cEditor.renderer.appendBlocks)
-                        
+
                         /** Write log if something goes wrong */
                         .catch(function(error) {
                             cEditor.core.log('Error while parsing JSON: %o', 'error', error);
                         });
-    
+
     },
 
     /**
@@ -239,11 +239,11 @@ cEditor.renderer = {
 
                 /** Pass created block to next step */
                 return blockData.block;
-                
+
             })
 
             /**
-            * add handlers to new block 
+            * add handlers to new block
             */
             .then(cEditor.ui.addBlockHandlers)
 
@@ -272,9 +272,9 @@ cEditor.renderer = {
     *
     * @uses render method of each plugin
     *
-    * @param {object} blockData looks like 
+    * @param {object} blockData looks like
     *                            { header : {
-    *                                            text: '', 
+    *                                            text: '',
     *                                            type: 'H3', ...
     *                                        }
     *                            }
@@ -292,6 +292,7 @@ cEditor.renderer = {
 
         /** Check for plugin having render method */
         if (typeof cEditor.tools[pluginName].render != 'function') {
+
             throw Error(`Plugin «${pluginName}» must have «render» method`);
         }
 
@@ -319,7 +320,7 @@ cEditor.saver = {
     saveBlocks : function (argument) {
 
         console.info('saver saveBlocks');
-    
+
     }
 
 }
@@ -916,14 +917,14 @@ cEditor.content = {
         newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
         newBlock.dataset.type = blockType;
 
-        
+
         if (workingNode) {
-        
+
             cEditor.core.insertAfter(workingNode, newBlock);
-        
+
         } else {
 
-            /** 
+            /**
             * If redactor is empty, append as first child
             */
             cEditor.nodes.redactor.appendChild(newBlock);
@@ -934,7 +935,7 @@ cEditor.content = {
             cEditor.content.workingNodeChanged(newBlock);
         }
 
-        
+
 
     },
     /**
@@ -1292,11 +1293,13 @@ cEditor.toolbar = {
     leaf : function(){
 
         var currentTool = this.current,
-            tools       = cEditor.settings.tools,
+            // tools       = cEditor.settings.tools,
+            tools       = Object.keys(cEditor.tools),
             barButtons  = cEditor.nodes.toolbarButtons,
             nextToolIndex,
             toolToSelect;
 
+        // console.log(tools);
         if ( !currentTool ) {
 
             /** Get first tool from object*/
@@ -1667,7 +1670,7 @@ cEditor.parser = {
 
 cEditor.tools = {
 
-    paragraph : {
+    /*paragraph : {
 
         type           : 'paragraph',
         iconClassname  : 'ce-icon-paragraph',
@@ -1677,7 +1680,7 @@ cEditor.tools = {
                         },
         settings       : null,
 
-    },
+    },*/
 
     /*quote : {
 
@@ -1691,7 +1694,7 @@ cEditor.tools = {
 
     },*/
 
-    code : {
+    /*code : {
 
         type           : 'code',
         iconClassname  : 'ce-icon-code',
@@ -1713,7 +1716,7 @@ cEditor.tools = {
                         },
         settings       : null,
 
-    }
+    }*/
 
 };
 
@@ -1870,6 +1873,91 @@ cEditor.draw = {
 
 
 
+/**
+* Paragraph Plugin\
+* Creates P tag and adds content to this tag
+*/
+var paragraphTool = {
+
+    /**
+    * Make initial header block
+    * @param {object} JSON to with block data
+    * @return {Element} element to append
+    */
+    makeBlockToAppend : function (data) {
+
+        var tag = document.createElement('P');
+
+        if (data && data.text) {
+            tag.innerHTML = data.text;
+        }
+
+        tag.contentEditable = true;
+
+        cEditor.ui.addBlockHandlers(tag);
+
+        return tag;
+
+    },
+
+    /**
+    * Method to render HTML block from JSON
+    */
+    render : function (data) {
+
+       return paragraphTool.makeBlockToAppend(data);
+
+    },
+
+    /**
+    * Method to extract JSON data from HTML block
+    */
+    save : function (block){
+
+        var data = {
+            type : null,
+            text : null
+        };
+
+        data.text = blockData.textContent;
+
+        return data;
+
+    },
+
+    /**
+    * Block appending callback
+    */
+    appendCallback : function (argument) {
+
+        console.log('paragraph appended...');
+
+    },
+
+    /**
+    * @return {Element} element contains all settings
+    */
+    makeSettings : function () {
+        return false;
+    },
+
+};
+
+/**
+* Now plugin is ready.
+* Add it to redactor tools
+*/
+cEditor.tools.paragraph = {
+
+    type           : 'paragraph',
+    iconClassname  : 'ce-icon-paragraph',
+    append         : paragraphTool.makeBlockToAppend(),
+    appendCallback : paragraphTool.appendCallback,
+    settings       : paragraphTool.makeSettings(),
+    render         : paragraphTool.render,
+    save           : paragraphTool.save
+
+};
 
 /**
 * Example of making plugin
@@ -1891,7 +1979,7 @@ var headerTool = {
 
             tag = document.createElement( data.type );
 
-            /** 
+            /**
             * Save header type in data-attr.
             * We need it in save method to extract type from HTML to JSON
             */
@@ -1899,7 +1987,9 @@ var headerTool = {
 
         } else {
 
-            tag = document.createElement( 'DIV' );
+            tag = document.createElement( 'H2' );
+
+            cEditor.ui.addBlockHandlers(tag);
 
         }
 
@@ -1919,7 +2009,7 @@ var headerTool = {
     render : function (data) {
 
        return headerTool.makeBlockToAppend(data);
-        
+
     },
 
     /**
@@ -2032,8 +2122,6 @@ var headerTool = {
 
     },
 
-
-
 };
 
 /**
@@ -2048,6 +2136,53 @@ cEditor.tools.header = {
     appendCallback : headerTool.appendCallback,
     settings       : headerTool.makeSettings(),
     render         : headerTool.render,
-    save           : headerTool.save 
+    save           : headerTool.save
+
+};
+
+var quoteTools = {
+
+    makeBlockToAppend : function(data) {
+
+        var tag = document.createElement('BLOCKQUOTE');
+
+        if (data && data.text) {
+            tag.innerHTML = data.text;
+        }
+
+        return tag;
+    },
+
+    render : function(data) {
+        return quoteTools.makeBlockToAppend(data);
+    },
+
+    save : function(data) {
+        return ;
+    },
+
+    makeSettings : function(data) {
+
+
+
+    },
+
+    appendCallback : function() {
+
+        console.log('quote added.....');
+
+    },
+
+};
+
+cEditor.tools.quote = {
+
+    type            : 'quote',
+    iconClassname   : 'ce-icon-quote',
+    append          : quoteTools.makeBlockToAppend(),
+    appendCallback  : '',
+    settings        : '',
+    render          : quoteTools.render,
+    save            : quoteTools.save,
 
 };
