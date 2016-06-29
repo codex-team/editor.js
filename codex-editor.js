@@ -1670,73 +1670,7 @@ cEditor.parser = {
 
 cEditor.tools = {
 
-    /*paragraph : {
-
-        type           : 'paragraph',
-        iconClassname  : 'ce-icon-paragraph',
-        append         : document.createElement('P'),
-        appendCallback : function () {
-                            console.log('paragraph added');
-                        },
-        settings       : null,
-
-    },*/
-
-    /*quote : {
-
-        type           : 'quote',
-        iconClassname  : 'ce-icon-quote',
-        append         : document.createElement('BLOCKQUOTE'),
-        appendCallback : function () {
-                            console.log('quote added');
-                        },
-        settings       : null,
-
-    },*/
-
-    /*code : {
-
-        type           : 'code',
-        iconClassname  : 'ce-icon-code',
-        append         : document.createElement('CODE'),
-        appendCallback : function () {
-                            console.log('code added');
-                        },
-        settings       : null,
-
-    },
-
-    list : {
-
-        type           : 'list',
-        iconClassname  : 'ce-icon-list-bullet',
-        append         : document.createElement('LI'),
-        appendCallback : function () {
-                            console.log('code added');
-                        },
-        settings       : null,
-
-    }*/
-
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /**
