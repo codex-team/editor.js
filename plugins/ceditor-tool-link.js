@@ -1,0 +1,182 @@
+/**
+ * Created by nostr on 29.06.16.
+ */
+
+/**
+ * Link tool plugin
+ */
+var linkTool = {
+
+    defaultText    : 'Insert link here ...',
+    currentInput   : null,
+    currentBlock   : null,
+
+    /**
+     * Make initial header block
+     * @param {object} JSON to with block data
+     * @return {Element} element to append
+     */
+    makeBlockToAppend : function (data) {
+
+        var wrapper = document.createElement('div');
+
+        var tag = document.createElement('input');
+
+            tag.setAttribute("type", "text");
+
+            tag.setAttribute("class", "ceditor-tool-link-input")
+
+            tag.placeholder = linkTool.defaultText;
+
+            tag.contentEditable = false;
+
+            linkTool.currentInput = tag;
+
+        wrapper.appendChild(tag);
+
+        linkTool.currentBlock = wrapper;
+
+        return wrapper;
+
+    },
+
+    /**
+     * Method to render HTML block from JSON
+     */
+    render : function (data) {
+
+        return paragraphTool.makeBlockToAppend(data);
+
+    },
+
+    /**
+     * Method to extract JSON data from HTML block
+     */
+    save : function (block){
+
+        var data = {
+            text : null
+        };
+
+        data.text = blockData.textContent;
+
+        return data;
+
+    },
+
+    appendCallback : function () {
+
+        console.log('link callback is appended...');
+
+        linkTool.currentInput.addEventListener('paste', function (event) {
+            linkTool.blockPasteCallback(event, linkTool.currentInput);
+        }, false);
+
+    },
+
+    blockPasteCallback : function (event, block) {
+
+        clipboardData = event.clipboardData || window.clipboardData;
+        pastedData = clipboardData.getData('Text');
+
+
+        Promise.resolve()
+
+            .then(function () {
+                return linkTool.urlify(pastedData)
+            })
+
+            .then(fetch('/ajax/link'))
+
+            .then(function (response) {
+
+                if (response.status == "200"){
+
+                    return response.json();
+
+                }
+                else {
+
+                    return {
+                        'fullLink'      : 'http://yandex.ru',
+                        'shortLink'     : 'yandex.ru',
+                        'image'         : 'https://yastatic.net/morda-logo/i/apple-touch-icon/ru-76x76.png',
+                        'title'         : 'Яндекс',
+                        'description'   : 'Сайт, поисковик, проч.'
+                    };
+
+                }
+
+            })
+            
+            .then(linkTool.buildBlockForLink)
+
+            .catch(function(error) {
+                cEditor.core.log('Error while doing things with link paste: %o', 'error', error);
+            });
+
+    },
+
+    urlify              : function (text) {
+
+        var urlRegex = /(https?:\/\/[^\s]+)/g;
+
+        var links = text.match(urlRegex);
+
+        if (links) {
+            return links[0];
+        }
+
+        return null;
+
+    },
+
+    buildBlockForLink       : function (json) {
+
+        console.log(json);
+
+        if (json == {}) {
+
+            return;
+
+        }
+
+        var siteImage = document.createElement('img');
+        var siteTitle = document.createElement('div');
+        var siteDescription = document.createElement('div');
+        var siteUrl = document.createElement('div');
+
+        var siteLink = document.createElement('a');
+        siteLink.setAttribute('href', json.fullLink);
+        siteLink.innerText = json
+
+        siteImage.setAttribute('src', json.image);
+
+        siteTitle.innerHTML = json.title;
+
+        siteDescription.innerHTML = json.description;
+
+        siteUrl.innerHTML = json.shortLink;
+
+        linkTool.currentInput.remove();
+
+        linkTool.currentBlock.appendChild(siteImage);
+        linkTool.currentBlock.appendChild(siteTitle);
+        linkTool.currentBlock.appendChild(siteDescription);
+        linkTool.currentBlock.appendChild(siteUrl);
+        
+    }
+
+};
+
+cEditor.tools.link = {
+
+    type           : 'link',
+    iconClassname  : 'ce-icon-link',
+    append         : linkTool.makeBlockToAppend(),
+    appendCallback : linkTool.appendCallback,
+    // settings       : linkTool.makeSettings(),
+    // render         : linkTool.render,
+    // save           : linkTool.save
+
+};
