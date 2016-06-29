@@ -6,3 +6,17 @@
     width: 100%;
 
 }
+
+.tool-link-panel {
+    margin: auto;
+    width: 50%;
+}
+
+.ceditor-tool-link .tool-link-image {
+    float:left;
+}
+
+.ceditor-tool-link .tool-link-content {
+    padding-left: 75px;
+    margin-bottom: 15px;
+}
