@@ -1828,8 +1828,6 @@ var paragraphTool = {
 
         tag.contentEditable = true;
 
-        cEditor.ui.addBlockHandlers(tag);
-
         return tag;
 
     },
@@ -1849,7 +1847,6 @@ var paragraphTool = {
     save : function (block){
 
         var data = {
-
             text : null
         };
 
