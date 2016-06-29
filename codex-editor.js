@@ -516,7 +516,11 @@ cEditor.callback = {
 
         cEditor.content.workingNodeChanged();
 
-        if ( cEditor.toolbar.opened && event.target == cEditor.content.currentNode) {
+        var isEnterPressedOnToolbar = cEditor.toolbar.opened && 
+                               cEditor.toolbar.current &&
+                               event.target == cEditor.content.currentNode;
+
+        if ( isEnterPressedOnToolbar ) {
             event.preventDefault();
 
             cEditor.toolbar.toolClicked(event);
@@ -601,7 +605,7 @@ cEditor.callback = {
                 break;
 
             case cEditor.core.keys.ENTER:
-                cEditor.callback.enterPressed(block);
+                cEditor.callback.enterPressedOnBlock(block, event);
                 break;
 
             case cEditor.core.keys.BACKSPACE:
@@ -733,7 +737,7 @@ cEditor.callback = {
 
     },
 
-    enterPressed: function (block) {
+    enterPressedOnBlock: function (block, event) {
 
         var selection   = window.getSelection(),
             currentNode = selection.anchorNode,
@@ -748,7 +752,7 @@ cEditor.callback = {
             && parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
 
             /** Prevent <div></div> creation */
-            // event.preventDefault();
+            event.preventDefault();
 
             /** Create new Block and append it after current */
             var newBlock = cEditor.draw.block('p');
@@ -941,7 +945,7 @@ cEditor.content = {
     /**
     * @deprecated with replaceBlock()
     */
-    switchBlock : function (targetBlock, newBlockTagname) {
+    _switchBlock : function (targetBlock, newBlockTagname) {
 
         if (!targetBlock || !newBlockTagname) return;
 
@@ -1015,6 +1019,25 @@ cEditor.content = {
         cEditor.content.workingNodeChanged(nodeCreated);
 
         cEditor.caret.set(nodeCreated);
+    },
+
+    /**
+    * Replaces blocks with saving content
+    * @param {Element} noteToReplace 
+    * @param {Element} newNode 
+    * @param {Element} blockType 
+    */
+    switchBlock : function(nodeToReplace, newNode, blockType){
+
+        /** Saving content */
+        newNode.innerHTML = nodeToReplace.innerHTML;
+
+        /** Replacing */
+        cEditor.content.replaceBlock(nodeToReplace, newNode, blockType);
+
+        /** Add event listeners */
+        cEditor.ui.addBlockHandlers(newNode);
+    
     },
 
 
@@ -1329,28 +1352,29 @@ cEditor.toolbar = {
     */
     toolClicked : function() {
 
-        var workingNode = cEditor.content.currentNode,
-            newTag,
-            appendCallback;
-
-        switch (cEditor.toolbar.current) {
-            case 'paragraph' : newTag = 'P'; break;
-            case 'header'    : newTag = 'H1'; break;
-            case 'quote'     : newTag = 'BLOCKQUOTE'; break;
-            case 'code'      : newTag = 'CODE'; break;
-            case 'list'      : newTag = 'LI'; break;
-        }
+        var REPLACEBLE_TOOLS = ['paragraph', 'header', 'code'],
+            tool             = cEditor.tools[cEditor.toolbar.current],
+            workingNode      = cEditor.content.currentNode,
+            appendCallback,
+            newBlock;
 
         /**
-        * @todo
-        * use insertBlock or replaceBlock instead of switchBlock
+        * Copy plugin 'append' Element
         */
-        // cEditor.content.switchBlock(workingNode, newTag);
+        newBlock = tool.append.cloneNode(true);
 
-        var tools = cEditor.tools[cEditor.toolbar.current];
+        /** Can replace? */
+        if (REPLACEBLE_TOOLS.indexOf(tool.type) != -1 && workingNode) {
 
-        /** Insert new Block from plugin */
-        cEditor.content.insertBlock(tools.append, tools.type);
+            /** Replace current block */
+            cEditor.content.switchBlock(workingNode, newBlock, tool.type);
+
+        } else {
+
+            /** Insert new Block from plugin */
+            cEditor.content.insertBlock(newBlock, tool.type);
+
+        }
 
         /** Fire tool append callback  */
         appendCallback = cEditor.tools[cEditor.toolbar.current].appendCallback;
