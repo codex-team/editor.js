@@ -1915,7 +1915,7 @@ var paragraphTool = {
     save : function (block){
 
         var data = {
-            type : null,
+
             text : null
         };
 
@@ -1923,22 +1923,6 @@ var paragraphTool = {
 
         return data;
 
-    },
-
-    /**
-    * Block appending callback
-    */
-    appendCallback : function (argument) {
-
-        console.log('paragraph appended...');
-
-    },
-
-    /**
-    * @return {Element} element contains all settings
-    */
-    makeSettings : function () {
-        return false;
     },
 
 };
@@ -1952,8 +1936,8 @@ cEditor.tools.paragraph = {
     type           : 'paragraph',
     iconClassname  : 'ce-icon-paragraph',
     append         : paragraphTool.makeBlockToAppend(),
-    appendCallback : paragraphTool.appendCallback,
-    settings       : paragraphTool.makeSettings(),
+    appendCallback : null,
+    settings       : null,
     render         : paragraphTool.render,
     save           : paragraphTool.save
 
@@ -2137,52 +2121,5 @@ cEditor.tools.header = {
     settings       : headerTool.makeSettings(),
     render         : headerTool.render,
     save           : headerTool.save
-
-};
-
-var quoteTools = {
-
-    makeBlockToAppend : function(data) {
-
-        var tag = document.createElement('BLOCKQUOTE');
-
-        if (data && data.text) {
-            tag.innerHTML = data.text;
-        }
-
-        return tag;
-    },
-
-    render : function(data) {
-        return quoteTools.makeBlockToAppend(data);
-    },
-
-    save : function(data) {
-        return ;
-    },
-
-    makeSettings : function(data) {
-
-
-
-    },
-
-    appendCallback : function() {
-
-        console.log('quote added.....');
-
-    },
-
-};
-
-cEditor.tools.quote = {
-
-    type            : 'quote',
-    iconClassname   : 'ce-icon-quote',
-    append          : quoteTools.makeBlockToAppend(),
-    appendCallback  : '',
-    settings        : '',
-    render          : quoteTools.render,
-    save            : quoteTools.save,
 
 };
