@@ -516,7 +516,11 @@ cEditor.callback = {
 
         cEditor.content.workingNodeChanged();
 
-        if ( cEditor.toolbar.opened && event.target == cEditor.content.currentNode) {
+        var isEnterPressedOnToolbar = cEditor.toolbar.opened && 
+                               cEditor.toolbar.current &&
+                               event.target == cEditor.content.currentNode;
+
+        if ( isEnterPressedOnToolbar ) {
             event.preventDefault();
 
             cEditor.toolbar.toolClicked(event);
@@ -601,7 +605,7 @@ cEditor.callback = {
                 break;
 
             case cEditor.core.keys.ENTER:
-                cEditor.callback.enterPressed(block);
+                cEditor.callback.enterPressedOnBlock(block, event);
                 break;
 
             case cEditor.core.keys.BACKSPACE:
@@ -733,7 +737,7 @@ cEditor.callback = {
 
     },
 
-    enterPressed: function (block) {
+    enterPressedOnBlock: function (block, event) {
 
         var selection   = window.getSelection(),
             currentNode = selection.anchorNode,
@@ -748,7 +752,7 @@ cEditor.callback = {
             && parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
 
             /** Prevent <div></div> creation */
-            // event.preventDefault();
+            event.preventDefault();
 
             /** Create new Block and append it after current */
             var newBlock = cEditor.draw.block('p');
@@ -1351,18 +1355,24 @@ cEditor.toolbar = {
         var REPLACEBLE_TOOLS = ['paragraph', 'header', 'code'],
             tool             = cEditor.tools[cEditor.toolbar.current],
             workingNode      = cEditor.content.currentNode,
-            appendCallback;
+            appendCallback,
+            newBlock;
+
+        /**
+        * Copy plugin 'append' Element
+        */
+        newBlock = tool.append.cloneNode(true);
 
         /** Can replace? */
         if (REPLACEBLE_TOOLS.indexOf(tool.type) != -1 && workingNode) {
 
             /** Replace current block */
-            cEditor.content.switchBlock(workingNode, tool.append, tool.type);
+            cEditor.content.switchBlock(workingNode, newBlock, tool.type);
 
         } else {
 
             /** Insert new Block from plugin */
-            cEditor.content.insertBlock(tool.append, tool.type);
+            cEditor.content.insertBlock(newBlock, tool.type);
 
         }
 
