@@ -226,6 +226,71 @@
         color: #cc7d74;
     }
 
+/** Quote - settings */
+.ce_plugin_quote--settings{
+    white-space: nowrap;
+    /*padding-right: 10px;    */
+}
+.ce_plugin_quote--caption{
+    color: #b9c2c2;
+}
+.ce_plugin_quote--select_button{
+    display: inline-block;
+    margin-left: 40px;
+    border-bottom: 1px solid #c3d5ed;
+    padding-bottom: 2px;
+    color: #5399d4;
+    cursor: pointer;
+}
+.ce_plugin_quote--select_button:hover{
+    border-bottom-color: #f6d8da;
+    color: #cc7d74;
+}
+
+.quoteStyle-simple--blockquote {
+    text-align: justify;
+}
+
+.quoteStyle-withCaption--author {
+    margin-top: 25px;
+    text-align: right;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.quoteStyle-withCaption--blockquote:focus, .quoteStyle-withCaption--author:focus {
+   outline: none;
+}
+
+.quoteStyle-withPhoto--photo {
+    width: 100px;
+    height: 100px;
+    border: 1px solid #8E8E8E;
+    border-radius: 50%;
+    float: left;
+    margin-right: 30px;
+}
+
+.quoteStyle-withPhoto--author, .quoteStyle-withPhoto--position  {
+    outline: none;
+    overflow: hidden;
+    font-weight: bold;
+    /*border-bottom: 1px solid black;*/
+}
+
+.quoteStyle-withPhoto--quote {
+    outline: none;
+    overflow: hidden;
+    text-align: justify;
+}
+
+.quoteStle-withPhoto--author::before {
+}
+
+
+.clearfix {
+    clear: both;
+}
 
 
 

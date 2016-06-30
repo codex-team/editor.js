@@ -2065,9 +2065,16 @@ cEditor.tools.header = {
 };
 
 
+/
 /** QUOTE PLUGIN **/
 
 var quoteTools = {
+
+    quote       : null,
+    style       : null,
+    author      : null,
+    position    : null,
+    photo       : null,
 
     /**
     * Make Quote from JSON datasets
@@ -2076,7 +2083,13 @@ var quoteTools = {
 
         var tag;
 
-        if (data && data.text) {
+        if (data && data.type) {
+
+            this.quote    = data.text;
+            this.style    = data.type;
+            this.author   = data.author || null;
+            this.position = data.position || null;  
+            this.photo    = data.photo || null;
 
             switch (data.type) {
                 case 'simple':
@@ -2094,6 +2107,8 @@ var quoteTools = {
             tag = document.createElement('BLOCKQUOTE');
             tag.contentEditable = 'true';
 
+            this.style = 'simple';
+
         }
 
         return tag;
@@ -2106,14 +2121,15 @@ var quoteTools = {
     save : function(block) {
 
         /**
-        * Parses to JSON quote block and get from there:
+        * Extracts JSON quote data from HTML block
         * @param {Text} text, {Text} author, {Object} photo
         */
         parsedblock = quoteTools.parseBlockQuote(block);
 
         var data = {
             type    : 'quote',
-            text    : parsedblock.text,
+            style   : parsedblock.style,
+            text    : parsedblock.quote,
             author  : parsedblock.author,
             photo   : parsedblock.photo,
         };
@@ -2150,7 +2166,7 @@ var quoteTools = {
 
             selectTypeButton.className   = 'ce_plugin_quote--select_button';
 
-            this.addSelectTypeClickListener(selectTypeButton, type, data);
+            this.addSelectTypeClickListener(selectTypeButton, type);
 
             holder.appendChild(selectTypeButton);
 
@@ -2160,12 +2176,12 @@ var quoteTools = {
 
     },
 
-    addSelectTypeClickListener : function(el, type, data) {
+    addSelectTypeClickListener : function(el, type) {
 
         var quoteStyleFunction;
 
         /**
-        *   Choose Quote style to replace
+        *  Choose Quote style to replace
         */
         switch (type) {
             case 'simple':
@@ -2185,7 +2201,7 @@ var quoteTools = {
             * Parsing currentNode to JSON.
             */
             var parsedOldQuote  = quoteTools.parseBlockQuote(),
-                newStyledQuote   = quoteStyleFunction(parsedOldQuote);
+                newStyledQuote  = quoteStyleFunction(parsedOldQuote);
 
             cEditor.content.replaceBlock(cEditor.content.currentNode, newStyledQuote, 'quote');
 
@@ -2197,11 +2213,15 @@ var quoteTools = {
 
     makeSimpleQuote : function(data) {
 
-
         var blockquote = document.createElement('BLOCKQUOTE');
 
         blockquote.innerHTML = data.text;
-        blockquote.setAttribute('id', 'text');
+
+        blockquote.classList.add('quoteStyle-simple--blockquote');
+        
+        blockquote.dataset.quoteStyle = 'simple';
+        blockquote.id = 'ce_quote--text';
+        
         blockquote.contentEditable = 'true';
 
         return blockquote;
@@ -2209,17 +2229,29 @@ var quoteTools = {
 
     makeQuoteWithCaption : function(data) {
 
-        var block = document.createElement('BLOCKQUOTE');
+        var block   = document.createElement('BLOCKQUOTE'),
+            quote   = document.createElement('DIV'),
+            author  = document.createElement('DIV');
 
-        var quote = document.createElement('DIV');
+
+            /* Creating ContentEditable block for quote */
             quote.contentEditable = 'true';
-            quote.setAttribute('id', 'text');
+            
+            quote.classList.add('quoteStyle-withCaption--blockquote');
+            
             quote.innerHTML = data.text;
+            quote.id = 'ce_quote--text';
 
-        var author = document.createElement('DIV');
+            /* Block for author of quote */
             author.contentEditable = 'true';
-            author.setAttribute('id', 'author');
+            
+            author.classList.add('quoteStyle-withCaption--author');
+            
+            author.id = 'ce_quote--author';
             author.textContent = data.author;
+
+        /* Appending created tags */
+        block.dataset.quoteStyle = 'withCaption';
 
         block.appendChild(quote);
         block.appendChild(author);
@@ -2230,22 +2262,43 @@ var quoteTools = {
 
     makeQuoteWithPhoto : function(data) {
 
-        var block = document.createElement('BLOCKQUOTE');
+        var block = document.createElement('BLOCKQUOTE'),
+            photo = document.createElement('IMG'),
+            author = document.createElement('DIV'),
+            position = document.createElement('DIV'),
+            quote = document.createElement('DIV');
 
-        var photo  = document.createElement('DIV');
 
-        var author = document.createElement('DIV');
+            /* Author of quote — photo */
+            photo.classList.add('quoteStyle-withPhoto--photo')
+            photo.src = "../img/01.jpg";
+
+            /*  Author name */
             author.contentEditable = 'true';
-            author.setAttribute('id', 'author');
+            author.classList.add('quoteStyle-withPhoto--author');
+            author.id = 'ce_quote--author';
             author.textContent = data.author;
 
-        var quote = document.createElement('DIV');
+            /*  Author's position and job */
+            position.contentEditable = 'true';
+            position.classList.add('quoteStyle-withPhoto--position');
+            position.id = 'ce_quote--position';
+            position.textContent = data.position;
+
+        var header = document.createElement('DIV');
+            header.appendChild(author);
+            header.appendChild(position);
+
+            /* Quote */
             quote.contentEditable = 'true';
-            quote.setAttribute('id', 'text');
+            quote.classList.add('quoteStyle-withPhoto--quote');
+            quote.id = 'ce_quote--text';
             quote.innerHTML = data.text;
 
+        block.dataset.quoteStyle = 'withPhoto';
+
         block.appendChild(photo);
-        block.appendChild(author);
+        block.appendChild(header);
         block.appendChild(quote);
 
 
@@ -2254,17 +2307,31 @@ var quoteTools = {
 
     parseBlockQuote : function(block) {
 
-        var currentNode = block || cEditor.content.currentNode;
+        var currentNode = block || cEditor.content.currentNode,
+            photo       = currentNode.getElementsByTagName('img')[0],
+            quote       = document.getElementById('ce_quote--text'),
+            author      = document.getElementById('ce_quote--author'),
+            position    = document.getElementById('ce_quote--position');
 
-        var quote   = currentNode.querySelector('#text')    ? currentNode.querySelector('#text').textContent : currentNode.textContent,
-            caption = currentNode.querySelector('#author')  ? currentNode.querySelector('#author').textContent : '',
-            avatar  = currentNode.querySelector('#photo') || '';
+        this.style = currentNode.dataset.quoteStyle;
 
+        if ( position )
+            this.position = position.textContent;
+        
+        if ( author )
+            this.author = author.textContent;
+
+        if ( quote ) 
+            this.quote = quote.textContent;
+
+        if ( photo )
+            this.photo = photo.src;
 
         var data = {
-            text    : quote,
-            author  : caption,
-            photo   : avatar,
+            text        : this.quote,
+            author      : this.author,
+            position    : this.position,
+            photo       : this.photo,
         };
 
         return data;
