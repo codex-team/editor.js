@@ -8,7 +8,6 @@
 var linkTool = {
 
     defaultText    : 'Insert link here ...',
-    currentInput   : null,
     currentBlock   : null,
     elementClasses : {
         link        : "tool-link-link",
@@ -44,9 +43,7 @@ var linkTool = {
 
         /* Bind callbacks **/
 
-        tag.addEventListener('paste', function (event) {
-            linkTool.blockPasteCallback(event, linkTool.currentInput);
-        }, false);
+        tag.addEventListener('paste', linkTool.blockPasteCallback, false);
 
         return wrapper;
 
