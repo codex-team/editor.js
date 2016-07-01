@@ -516,7 +516,7 @@ cEditor.callback = {
 
         cEditor.content.workingNodeChanged();
 
-        var isEnterPressedOnToolbar = cEditor.toolbar.opened && 
+        var isEnterPressedOnToolbar = cEditor.toolbar.opened &&
                                cEditor.toolbar.current &&
                                event.target == cEditor.content.currentNode;
 
@@ -922,17 +922,6 @@ cEditor.content = {
         newBlock.dataset.type = blockType;
 
 
-        /** Content-editable blocks. We can set focus to such blocks and hang listeners */
-        switch (blockType) {
-            case 'header'   :
-            case 'paragraph':
-            case 'quote'    :
-            case 'list'     :
-                cEditor.ui.addBlockHandlers(newBlock);
-                break;
-
-        }
-
         if (workingNode) {
 
             cEditor.core.insertAfter(workingNode, newBlock);
@@ -1034,9 +1023,9 @@ cEditor.content = {
 
     /**
     * Replaces blocks with saving content
-    * @param {Element} noteToReplace 
-    * @param {Element} newNode 
-    * @param {Element} blockType 
+    * @param {Element} noteToReplace
+    * @param {Element} newNode
+    * @param {Element} blockType
     */
     switchBlock : function(nodeToReplace, newNode, blockType){
 
@@ -1048,7 +1037,7 @@ cEditor.content = {
 
         /** Add event listeners */
         cEditor.ui.addBlockHandlers(newNode);
-    
+
     },
 
 
@@ -1369,18 +1358,20 @@ cEditor.toolbar = {
             appendCallback,
             newBlock;
 
-        /**
-        * Copy plugin 'append' Element
-        */
-        newBlock = tool.append.cloneNode(true);
-
         /** Can replace? */
         if (REPLACEBLE_TOOLS.indexOf(tool.type) != -1 && workingNode) {
+
+            /**
+            * Copy plugin 'append' Element
+            */
+            newBlock = tool.append.cloneNode(true);
 
             /** Replace current block */
             cEditor.content.switchBlock(workingNode, newBlock, tool.type);
 
         } else {
+
+            newBlock = tool.append;
 
             /** Insert new Block from plugin */
             cEditor.content.insertBlock(newBlock, tool.type);
@@ -2085,225 +2076,5 @@ cEditor.tools.header = {
     settings       : headerTool.makeSettings(),
     render         : headerTool.render,
     save           : headerTool.save
-
-};
-
-
-/** QUOTE PLUGIN **/
-
-var quoteTools = {
-
-    /**
-    * Make Quote from JSON datasets
-    */
-    makeBlockToAppend : function(data) {
-
-        var tag;
-
-        if (data && data.text) {
-
-            switch (data.type) {
-                case 'simple':
-                    tag = quoteTools.makeSimpleQuote(data);
-                    break;
-                case 'withCaption':
-                    tag = quoteTools.makeQuoteWithCaption(data);
-                    break;
-                case 'withPhoto':
-                    tag = quoteTools.makeQuoteWithPhoto(data);
-                    break;
-            }
-        } else {
-
-            tag = document.createElement('BLOCKQUOTE');
-            tag.contentEditable = 'true';
-
-        }
-
-        return tag;
-    },
-
-    render : function(data) {
-        return quoteTools.makeBlockToAppend(data);
-    },
-
-    save : function(block) {
-
-        /**
-        * Parses to JSON quote block and get from there:
-        * @param {Text} text, {Text} author, {Object} photo
-        */
-        parsedblock = quoteTools.parseBlockQuote(block);
-
-        var data = {
-            type    : 'quote',
-            text    : parsedblock.text,
-            author  : parsedblock.author,
-            photo   : parsedblock.photo,
-        };
-
-        return data;
-    },
-
-    makeSettings : function(data) {
-
-        var holder  = document.createElement('DIV'),
-            caption = document.createElement('SPAN'),
-            types   = {
-                        simple      : 'Простая цитата',
-                        withCaption : 'Цитата с подписью',
-                        withPhoto   : 'Цитата с фото и ФИО'
-                    },
-            selectTypeButton;
-
-        /** Add holder classname */
-        holder.className = 'ce_plugin_quote--settings'
-
-        /** Add settings helper caption */
-        caption.textContent = 'Настройки цитат';
-        caption.className   = 'ce_plugin_quote--caption';
-
-        holder.appendChild(caption);
-
-        /** Now add type selectors */
-        for (var type in types){
-
-            selectTypeButton = document.createElement('SPAN');
-
-            selectTypeButton.textContent = types[type];
-
-            selectTypeButton.className   = 'ce_plugin_quote--select_button';
-
-            this.addSelectTypeClickListener(selectTypeButton, type, data);
-
-            holder.appendChild(selectTypeButton);
-
-        }
-
-        return holder;
-
-    },
-
-    addSelectTypeClickListener : function(el, type, data) {
-
-        var quoteStyleFunction;
-
-        /**
-        *   Choose Quote style to replace
-        */
-        switch (type) {
-            case 'simple':
-                quoteStyleFunction = quoteTools.makeSimpleQuote;
-                break;
-            case 'withCaption':
-                quoteStyleFunction = quoteTools.makeQuoteWithCaption;
-                break;
-            case 'withPhoto':
-                quoteStyleFunction = quoteTools.makeQuoteWithPhoto;
-                break;
-        }
-
-        el.addEventListener('click', function () {
-
-            /**
-            * Parsing currentNode to JSON.
-            */
-            var parsedOldQuote  = quoteTools.parseBlockQuote(),
-                newStyledQuote   = quoteStyleFunction(parsedOldQuote);
-
-            cEditor.content.replaceBlock(cEditor.content.currentNode, newStyledQuote, 'quote');
-
-            cEditor.ui.addBlockHandlers(newStyledQuote);
-
-        }, false);
-
-    },
-
-    makeSimpleQuote : function(data) {
-
-
-        var blockquote = document.createElement('BLOCKQUOTE');
-
-        blockquote.innerHTML = data.text;
-        blockquote.setAttribute('id', 'text');
-        blockquote.contentEditable = 'true';
-
-        return blockquote;
-    },
-
-    makeQuoteWithCaption : function(data) {
-
-        var block = document.createElement('BLOCKQUOTE');
-
-        var quote = document.createElement('DIV');
-            quote.contentEditable = 'true';
-            quote.setAttribute('id', 'text');
-            quote.innerHTML = data.text;
-
-        var author = document.createElement('DIV');
-            author.contentEditable = 'true';
-            author.setAttribute('id', 'author');
-            author.textContent = data.author;
-
-        block.appendChild(quote);
-        block.appendChild(author);
-
-        return block;
-
-    },
-
-    makeQuoteWithPhoto : function(data) {
-
-        var block = document.createElement('BLOCKQUOTE');
-
-        var photo  = document.createElement('DIV');
-
-        var author = document.createElement('DIV');
-            author.contentEditable = 'true';
-            author.setAttribute('id', 'author');
-            author.textContent = data.author;
-
-        var quote = document.createElement('DIV');
-            quote.contentEditable = 'true';
-            quote.setAttribute('id', 'text');
-            quote.innerHTML = data.text;
-
-        block.appendChild(photo);
-        block.appendChild(author);
-        block.appendChild(quote);
-
-
-        return block;
-    },
-
-    parseBlockQuote : function(block) {
-
-        var currentNode = block || cEditor.content.currentNode;
-
-        var quote   = currentNode.querySelector('#text')    ? currentNode.querySelector('#text').textContent : currentNode.textContent,
-            caption = currentNode.querySelector('#author')  ? currentNode.querySelector('#author').textContent : '',
-            avatar  = currentNode.querySelector('#photo') || '';
-
-
-        var data = {
-            text    : quote,
-            author  : caption,
-            photo   : avatar,
-        };
-
-        return data;
-    },
-
-};
-
-cEditor.tools.quote = {
-
-    type            : 'quote',
-    iconClassname   : 'ce-icon-quote',
-    append          : quoteTools.makeBlockToAppend(),
-    appendCallback  : null,
-    settings        : quoteTools.makeSettings(),
-    render          : quoteTools.render,
-    save            : quoteTools.save,
 
 };
