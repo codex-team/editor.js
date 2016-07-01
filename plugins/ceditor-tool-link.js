@@ -60,9 +60,11 @@ var linkTool = {
      */
     save : function (block){
 
+        var linkElement = linkTool.elementClasses.link;
+
         var data = {
-            fullLink    : block.querySelector("." + linkTool.elementClasses.link).href,
-            shortLink   : block.querySelector("." + linkTool.elementClasses.link).textContent,
+            fullLink    : block.querySelector("." + linkElement).href,
+            shortLink   : block.querySelector("." + linkElement).textContent,
             image       : block.querySelector("." + linkTool.elementClasses.image).src,
             title       : block.querySelector("." + linkTool.elementClasses.title).textContent,
             description : block.querySelector("." + linkTool.elementClasses.description).textContent

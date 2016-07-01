@@ -1,3 +1,12 @@
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+
 .ceditor-tool-link-input {
     outline: none;
     border: 0;
@@ -8,7 +17,7 @@
     width: 50%;
     position: relative;
     margin: 25px auto;
-    background-color: #f8f7ef;
+    background: #f8f7ef;
     border: 1px solid transparent;
     padding: 25px 30px;
 }
@@ -16,14 +25,14 @@
 .ceditor-tool-link .tool-link-image {
     float:right;
     width: 75px;
-    border-radius: 400px;
+    border-radius: 50%;
 }
 
 .ceditor-tool-link .tool-link-title {
     display: block;
     width: 340px;
     margin-bottom: 4px;
-    line-height: 1.2;
+    line-height: 1.2em;
     font-size: 20px;
     font-weight: 700;
     color: #000;
@@ -47,13 +56,4 @@
     text-transform: uppercase;
     text-decoration: none;
     color: rgba(165,156,86,.8);
-}
-
-.clearfix:after {
-    visibility: hidden;
-    display: block;
-    font-size: 0;
-    content: " ";
-    clear: both;
-    height: 0;
 }
