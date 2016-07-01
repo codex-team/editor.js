@@ -2120,7 +2120,8 @@ var quoteTools = {
             tag = document.createElement('BLOCKQUOTE');
 
             tag.contentEditable = 'true';
-            tag.id = 'ce_quote--text';
+            tag.dataset.quoteStyle = 'simple';
+            tag.class = 'ce_quote--text';
 
         }
         return tag;
@@ -2224,6 +2225,9 @@ var quoteTools = {
 
             cEditor.ui.addBlockHandlers(newStyledQuote);
 
+            /** Close settings after replacing */
+            cEditor.toolbar.settings.close();
+
         }, false);
 
     },
@@ -2234,10 +2238,9 @@ var quoteTools = {
 
         blockquote.innerHTML = data.text || '';
 
-        blockquote.classList.add('quoteStyle-simple--blockquote');
+        blockquote.classList.add('ce_quote--text');
 
         blockquote.dataset.quoteStyle = 'simple';
-        blockquote.id = 'ce_quote--text';
 
         blockquote.contentEditable = 'true';
 
@@ -2253,17 +2256,15 @@ var quoteTools = {
             /* Creating ContentEditable block for quote */
             quote.contentEditable = 'true';
 
-            quote.classList.add('quoteStyle-withCaption--blockquote');
+            quote.classList.add('quoteStyle-withCaption--blockquote', 'ce_quote--text');
 
             quote.innerHTML = data.text;
-            quote.id = 'ce_quote--text';
 
             /* Block for author of quote */
             author.contentEditable = 'true';
 
-            author.classList.add('quoteStyle-withCaption--author');
+            author.classList.add('quoteStyle-withCaption--author', 'ce_quote--author');
 
-            author.id = 'ce_quote--author';
             author.textContent = data.author;
 
         /* Appending created tags */
@@ -2291,14 +2292,16 @@ var quoteTools = {
 
             /*  Author name */
             author.contentEditable = 'true';
-            author.classList.add('quoteStyle-withPhoto--author');
-            author.id = 'ce_quote--author';
+
+            author.classList.add('quoteStyle-withPhoto--author', 'ce_quote--author');
+
             author.textContent = data.author;
 
             /*  Author's position and job */
             position.contentEditable = 'true';
-            position.classList.add('quoteStyle-withPhoto--position');
-            position.id = 'ce_quote--position';
+
+            position.classList.add('quoteStyle-withPhoto--position', 'ce_quote--position');
+
             position.textContent = data.position;
 
         var header = document.createElement('DIV');
@@ -2307,8 +2310,8 @@ var quoteTools = {
 
             /* Quote */
             quote.contentEditable = 'true';
-            quote.classList.add('quoteStyle-withPhoto--quote');
-            quote.id = 'ce_quote--text';
+            quote.classList.add('quoteStyle-withPhoto--quote', 'ce_quote--text');
+
             quote.innerHTML = data.text;
 
         block.dataset.quoteStyle = 'withPhoto';
@@ -2317,7 +2320,6 @@ var quoteTools = {
         block.appendChild(header);
         block.appendChild(quote);
 
-
         return block;
     },
 
@@ -2325,20 +2327,21 @@ var quoteTools = {
 
         var currentNode = block || cEditor.content.currentNode,
             photo       = currentNode.getElementsByTagName('img')[0],
-            quote       = currentNode.querySelector('#ce_quote--text'),
-            author      = currentNode.querySelector('#ce_quote--author'),
-            position    = currentNode.querySelector('#ce_quote--position');
+            author      = currentNode.querySelector('.ce_quote--author'),
+            position    = currentNode.querySelector('.ce_quote--position'),
+            quote ;
 
-        // this.style = currentNode.dataset.quoteStyle;
-        console.log(currentNode);
+        /** Simple quote text placed in Blockquote tag*/
+        if (currentNode.dataset.quoteStyle == 'simple')
+            quote = currentNode.textContent;
+        else
+            quote = currentNode.querySelector('.ce_quote--text').textContent;
+
         if ( position )
             position = position.textContent;
 
         if ( author )
             author = author.textContent;
-
-        if ( quote )
-            quote = quote.textContent;
 
         if ( photo )
             photo = photo.src;

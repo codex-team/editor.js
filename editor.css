@@ -247,10 +247,6 @@
     color: #cc7d74;
 }
 
-.quoteStyle-simple--blockquote {
-    text-align: justify;
-}
-
 .quoteStyle-withCaption--author {
     margin-top: 25px;
     text-align: right;
