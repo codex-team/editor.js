@@ -45,7 +45,7 @@ var ce = function(settings) {
 };
 
 // All posible tools
-ce.prototype.allTools = ['header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'];
+ce.prototype.allTools = ['header', 'picture', 'list', 'quote', 'code', 'link', 'twitter', 'instagram', 'smile'];
 
 // Default settings configuration
 ce.prototype.defaultSettings = {
