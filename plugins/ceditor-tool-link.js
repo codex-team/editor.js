@@ -20,19 +20,19 @@ var linkTool = {
 
         var wrapper = document.createElement('div');
 
-        wrapper.setAttribute("class", "ceditor-tool-link")
+        wrapper.classList.add("ceditor-tool-link");
 
         var tag = document.createElement('input');
 
-            tag.setAttribute("type", "text");
+        tag.setAttribute("type", "text");
 
-            tag.setAttribute("class", "ceditor-tool-link-input")
+        tag.classList.add("ceditor-tool-link-input");
 
-            tag.placeholder = linkTool.defaultText;
+        tag.placeholder = linkTool.defaultText;
 
-            tag.contentEditable = false;
+        tag.contentEditable = false;
 
-            linkTool.currentInput = tag;
+        linkTool.currentInput = tag;
 
         wrapper.appendChild(tag);
 
@@ -78,9 +78,9 @@ var linkTool = {
 
     blockPasteCallback : function (event, block) {
 
+        console.log("blockPasteCallback");
         clipboardData = event.clipboardData || window.clipboardData;
         pastedData = clipboardData.getData('Text');
-
 
         Promise.resolve()
 
@@ -110,7 +110,7 @@ var linkTool = {
                 }
 
             })
-            
+
             .then(linkTool.buildBlockForLink)
 
             .catch(function(error) {
@@ -144,35 +144,35 @@ var linkTool = {
         }
 
         var wrapper = document.createElement('div');
-        wrapper.setAttribute("class", "tool-link-panel");
+        wrapper.classList.add("tool-link-panel");
 
-            var siteImage = document.createElement('img');
-            var siteTitle = document.createElement('div');
-            var siteDescription = document.createElement('div');
-            var siteUrl = document.createElement('div');
+        var siteImage = document.createElement('img');
+        var siteTitle = document.createElement('div');
+        var siteDescription = document.createElement('div');
+        var siteUrl = document.createElement('div');
 
-            siteImage.setAttribute("class", "tool-link-image");
-            siteTitle.setAttribute("class", "tool-link-content tool-link-title");
-            siteUrl.setAttribute("class", "tool-link-content tool-link-url");
-            siteDescription.setAttribute("class", "tool-link-content tool-link-description");
+        siteImage.classList.add("tool-link-image");
+        siteTitle.classList.add("tool-link-content", "tool-link-title");
+        siteUrl.classList.add("tool-link-content", "tool-link-url");
+        siteDescription.classList.add("tool-link-content", "tool-link-description");
 
-            var siteLink = document.createElement('a');
-            siteLink.setAttribute('href', json.fullLink);
-            siteLink.setAttribute("class", "tool-link-url");
-            siteLink.innerText = json.shortLink;
+        var siteLink = document.createElement('a');
+        siteLink.setAttribute('href', json.fullLink);
+        siteLink.classList.add("tool-link-url");
+        siteLink.innerText = json.shortLink;
 
-            siteImage.setAttribute('src', json.image);
+        siteImage.setAttribute('src', json.image);
 
-            siteTitle.innerHTML = json.title;
+        siteTitle.innerHTML = json.title;
 
-            siteDescription.innerHTML = json.description;
+        siteDescription.innerHTML = json.description;
 
-            siteUrl.innerHTML = json.shortLink;
+        siteUrl.innerHTML = json.shortLink;
 
-            wrapper.appendChild(siteImage);
-            wrapper.appendChild(siteTitle);
-            wrapper.appendChild(siteDescription);
-            wrapper.appendChild(siteLink);
+        wrapper.appendChild(siteImage);
+        wrapper.appendChild(siteTitle);
+        wrapper.appendChild(siteDescription);
+        wrapper.appendChild(siteLink);
 
         linkTool.currentInput.remove();
 
