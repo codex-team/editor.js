@@ -117,9 +117,9 @@ var linkTool = {
 
     },
 
-    urlify              : function (text) {
+    urlify : function (text) {
 
-        var urlRegex = /(https?:\/\/[^\s]+)/g;
+        var urlRegex = /(https?:\/\/\S+)/g;
 
         var links = text.match(urlRegex);
 
@@ -131,7 +131,7 @@ var linkTool = {
 
     },
 
-    buildBlockForLink       : function (json) {
+    buildBlockForLink : function (json) {
 
         console.log(json);
 
@@ -141,31 +141,30 @@ var linkTool = {
 
         }
 
-        var wrapper = document.createElement('div');
+        var wrapper = document.createElement('div'),
+            siteImage = document.createElement('img'),
+            siteTitle = document.createElement('div'),
+            siteDescription = document.createElement('div'),
+            siteUrl = document.createElement('div'),
+            siteLink = document.createElement('a');
+
         wrapper.classList.add("tool-link-panel");
 
-        var siteImage = document.createElement('img');
-        var siteTitle = document.createElement('div');
-        var siteDescription = document.createElement('div');
-        var siteUrl = document.createElement('div');
-
         siteImage.classList.add("tool-link-image");
-        siteTitle.classList.add("tool-link-content", "tool-link-title");
-        siteUrl.classList.add("tool-link-content", "tool-link-url");
-        siteDescription.classList.add("tool-link-content", "tool-link-description");
+        siteImage.setAttribute('src', json.image);
 
-        var siteLink = document.createElement('a');
+        siteTitle.classList.add("tool-link-content", "tool-link-title");
+        siteTitle.innerHTML = json.title;
+
+        siteUrl.classList.add("tool-link-content", "tool-link-url");
+        siteUrl.innerHTML = json.shortLink;
+
+        siteDescription.classList.add("tool-link-content", "tool-link-description");
+        siteDescription.innerHTML = json.description;
+
         siteLink.setAttribute('href', json.fullLink);
         siteLink.classList.add("tool-link-url");
         siteLink.innerText = json.shortLink;
-
-        siteImage.setAttribute('src', json.image);
-
-        siteTitle.innerHTML = json.title;
-
-        siteDescription.innerHTML = json.description;
-
-        siteUrl.innerHTML = json.shortLink;
 
         wrapper.appendChild(siteImage);
         wrapper.appendChild(siteTitle);
