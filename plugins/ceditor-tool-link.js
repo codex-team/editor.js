@@ -22,19 +22,11 @@ var linkTool = {
      * @param {object} JSON with block data
      * @return {Element} element to append
      */
-    makeBlockToAppend : function (data) {
+    makeNewBlock : function (data) {
 
-        var wrapper = document.createElement('div');
+        var wrapper = linkTool.ui.mainBlock();
 
-        wrapper.classList.add("ceditor-tool-link");
-
-        var tag = document.createElement('input');
-
-        tag.classList.add("ceditor-tool-link-input");
-
-        tag.placeholder = linkTool.defaultText;
-
-        tag.contentEditable = false;
+        var tag = linkTool.ui.input();
 
         linkTool.currentInput = tag;
 
@@ -53,9 +45,19 @@ var linkTool = {
     /**
      * Method to render HTML block from JSON
      */
-    render : function (data) {
+    render : function (json) {
 
-        return linkTool.makeBlockToAppend(data);
+        console.log(json);
+
+        var block = linkTool.ui.mainBlock();
+
+        var tag = linkTool.ui.make(json);
+
+        block.appendChild(tag);
+
+        this.currentBlock = block;
+
+        return block;
 
     },
 
@@ -175,10 +177,34 @@ linkTool.ui = {
 
         wrapper.appendChild(siteImage);
         wrapper.appendChild(siteTitle);
-        wrapper.appendChild(siteDescription);
         wrapper.appendChild(siteLink);
+        wrapper.appendChild(siteDescription);
 
         return wrapper;
+
+    },
+
+    mainBlock : function () {
+
+        var wrapper = document.createElement('div');
+
+        wrapper.classList += "ceditor-tool-link";
+
+        return wrapper
+
+    },
+
+    input : function () {
+
+        var inpitTag = document.createElement('input');
+
+        inpitTag.classList += "ceditor-tool-link-input";
+
+        inpitTag.placeholder = linkTool.defaultText;
+
+        inpitTag.contentEditable = false;
+
+        return inpitTag;
 
     },
 
@@ -186,7 +212,7 @@ linkTool.ui = {
 
         var wrapper = document.createElement('div');
 
-        wrapper.className += 'tool-link-panel';
+        wrapper.className += 'tool-link-panel clearfix';
 
         return wrapper;
 
@@ -210,7 +236,9 @@ linkTool.ui = {
 
         linkTag.classList += linkTool.elementClasses.link;
 
-        linkTag.setAttribute('href', linkUrl);
+        linkTag.href = linkUrl;
+
+        linkTag.target = "_blank";
 
         linkTag.innerText = linkText;
 
@@ -240,16 +268,16 @@ linkTool.ui = {
         return descriptionTag;
     }
 
-}
+};
 
 cEditor.tools.link = {
 
     type           : 'link',
     iconClassname  : 'ce-icon-link',
-    append         : linkTool.makeBlockToAppend(),
-    appendCallback : linkTool.appendCallback
+    make           : linkTool.makeNewBlock,
+    appendCallback : linkTool.appendCallback,
+    render         : linkTool.render
     // settings       : linkTool.makeSettings(),
-    // render         : linkTool.render,
     // save           : linkTool.save
 
 };

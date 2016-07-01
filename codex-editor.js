@@ -1358,20 +1358,18 @@ cEditor.toolbar = {
             appendCallback,
             newBlock;
 
+        /**
+         * Copy plugin 'append' Element
+         */
+        newBlock = tool.append.cloneNode(true);
+
         /** Can replace? */
         if (REPLACEBLE_TOOLS.indexOf(tool.type) != -1 && workingNode) {
-
-            /**
-            * Copy plugin 'append' Element
-            */
-            newBlock = tool.append.cloneNode(true);
 
             /** Replace current block */
             cEditor.content.switchBlock(workingNode, newBlock, tool.type);
 
         } else {
-
-            newBlock = tool.append;
 
             /** Insert new Block from plugin */
             cEditor.content.insertBlock(newBlock, tool.type);
