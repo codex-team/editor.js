@@ -9,6 +9,7 @@ var linkTool = {
 
     defaultText    : 'Insert link here ...',
     currentBlock   : null,
+    currentInput   : null,
     elementClasses : {
         link        : "tool-link-link",
         image       : "tool-link-image",
@@ -35,7 +36,7 @@ var linkTool = {
 
         tag.contentEditable = false;
 
-        this.currentInput = tag;
+        linkTool.currentInput = tag;
 
         wrapper.appendChild(tag);
 
@@ -84,7 +85,9 @@ var linkTool = {
     blockPasteCallback : function (event, block) {
 
         console.log("blockPasteCallback");
+
         clipboardData = event.clipboardData || window.clipboardData;
+
         pastedData = clipboardData.getData('Text');
 
         Promise.resolve()
@@ -105,8 +108,8 @@ var linkTool = {
                 else {
 
                     return {
-                        'fullLink'      : 'http://yandex.ru',
-                        'shortLink'     : 'yandex.ru',
+                        'linkUrl'       : 'http://yandex.ru',
+                        'linkText'      : 'yandex.ru',
                         'image'         : 'https://yastatic.net/morda-logo/i/apple-touch-icon/ru-76x76.png',
                         'title'         : 'Яндекс',
                         'description'   : 'Сайт, поисковик, проч.'
@@ -148,49 +151,103 @@ var linkTool = {
 
         }
 
-        var wrapper = document.createElement('div'),
-            siteImage = document.createElement('img'),
-            siteTitle = document.createElement('div'),
-            siteDescription = document.createElement('div'),
-            siteLink = document.createElement('a');
+        var block = linkTool.ui.make(json);
 
-        wrapper.classList.add("tool-link-panel");
+        linkTool.currentInput.remove();
 
-        siteImage.classList.add(linkTool.elementClasses.image);
-        siteImage.setAttribute('src', json.image);
+        linkTool.currentBlock.appendChild(block);
 
-        siteTitle.classList.add("tool-link-content", linkTool.elementClasses.title);
-        siteTitle.innerHTML = json.title;
+        linkTool.currentBlock = null;
 
-        siteDescription.classList.add("tool-link-content", linkTool.elementClasses.description);
-        siteDescription.innerHTML = json.description;
+    }
 
-        siteLink.setAttribute('href', json.fullLink);
-        siteLink.classList.add(linkTool.elementClasses.link);
-        siteLink.innerText = json.shortLink;
+};
+
+linkTool.ui = {
+    
+    make : function (json) {
+
+        var wrapper = this.wrapper(),
+            siteImage = this.image(json.image),
+            siteTitle = this.title(json.title),
+            siteDescription = this.description(json.description),
+            siteLink = this.link(json.linkUrl, json.linkText);
 
         wrapper.appendChild(siteImage);
         wrapper.appendChild(siteTitle);
         wrapper.appendChild(siteDescription);
         wrapper.appendChild(siteLink);
 
-        linkTool.currentInput.remove();
+        return wrapper;
 
-        linkTool.currentBlock.appendChild(wrapper);
+    },
 
-        linkTool.currentBlock = null;
-        linkTool.currentInput = null;
+    wrapper : function () {
 
+        var wrapper = document.createElement('div');
+
+        wrapper.className += 'tool-link-panel';
+
+        return wrapper;
+
+    },
+    
+    image : function (imageSrc) {
+
+        var imageTag = document.createElement('img');
+
+        imageTag.classList += linkTool.elementClasses.image;
+
+        imageTag.setAttribute('src', imageSrc);
+
+        return imageTag;
+        
+    },
+
+    link : function (linkUrl, linkText) {
+
+        var linkTag = document.createElement('a');
+
+        linkTag.classList += linkTool.elementClasses.link;
+
+        linkTag.setAttribute('href', linkUrl);
+
+        linkTag.innerText = linkText;
+
+        return linkTag;
+
+    },
+
+    title : function (titleText) {
+
+        var titleTag = document.createElement('div');
+
+        titleTag.classList.add("tool-link-content", linkTool.elementClasses.title);
+
+        titleTag.innerHTML = titleText;
+
+        return titleTag;
+    },
+
+    description : function (descriptionText) {
+
+        var descriptionTag = document.createElement('div');
+
+        descriptionTag.classList.add("tool-link-content", linkTool.elementClasses.description);
+
+        descriptionTag.innerHTML = descriptionText;
+
+        return descriptionTag;
     }
 
-};
+}
 
 cEditor.tools.link = {
 
     type           : 'link',
     iconClassname  : 'ce-icon-link',
     append         : linkTool.makeBlockToAppend(),
-    appendCallback : linkTool.appendCallback,
+    appendCallback : linkTool.appendCallback
     // settings       : linkTool.makeSettings(),
     // render         : linkTool.render,
     // save           : linkTool.save
