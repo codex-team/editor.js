@@ -516,7 +516,7 @@ cEditor.callback = {
 
         cEditor.content.workingNodeChanged();
 
-        var isEnterPressedOnToolbar = cEditor.toolbar.opened && 
+        var isEnterPressedOnToolbar = cEditor.toolbar.opened &&
                                cEditor.toolbar.current &&
                                event.target == cEditor.content.currentNode;
 
@@ -1023,9 +1023,9 @@ cEditor.content = {
 
     /**
     * Replaces blocks with saving content
-    * @param {Element} noteToReplace 
-    * @param {Element} newNode 
-    * @param {Element} blockType 
+    * @param {Element} noteToReplace
+    * @param {Element} newNode
+    * @param {Element} blockType
     */
     switchBlock : function(nodeToReplace, newNode, blockType){
 
@@ -1037,7 +1037,7 @@ cEditor.content = {
 
         /** Add event listeners */
         cEditor.ui.addBlockHandlers(newNode);
-    
+
     },
 
 
@@ -1358,18 +1358,20 @@ cEditor.toolbar = {
             appendCallback,
             newBlock;
 
-        /**
-        * Copy plugin 'append' Element
-        */
-        newBlock = tool.append.cloneNode(true);
-
         /** Can replace? */
         if (REPLACEBLE_TOOLS.indexOf(tool.type) != -1 && workingNode) {
+
+            /**
+            * Copy plugin 'append' Element
+            */
+            newBlock = tool.append.cloneNode(true);
 
             /** Replace current block */
             cEditor.content.switchBlock(workingNode, newBlock, tool.type);
 
         } else {
+
+            newBlock = tool.append;
 
             /** Insert new Block from plugin */
             cEditor.content.insertBlock(newBlock, tool.type);
