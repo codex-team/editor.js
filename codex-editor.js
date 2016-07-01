@@ -2065,16 +2065,9 @@ cEditor.tools.header = {
 };
 
 
-/
 /** QUOTE PLUGIN **/
 
 var quoteTools = {
-
-    quote       : null,
-    style       : null,
-    author      : null,
-    position    : null,
-    photo       : null,
 
     /**
     * Make Quote from JSON datasets
@@ -2084,12 +2077,6 @@ var quoteTools = {
         var tag;
 
         if (data && data.type) {
-
-            this.quote    = data.text;
-            this.style    = data.type;
-            this.author   = data.author || null;
-            this.position = data.position || null;  
-            this.photo    = data.photo || null;
 
             switch (data.type) {
                 case 'simple':
@@ -2105,12 +2092,11 @@ var quoteTools = {
         } else {
 
             tag = document.createElement('BLOCKQUOTE');
-            tag.contentEditable = 'true';
 
-            this.style = 'simple';
+            tag.contentEditable = 'true';
+            tag.id = 'ce_quote--text';
 
         }
-
         return tag;
     },
 
@@ -2166,7 +2152,8 @@ var quoteTools = {
 
             selectTypeButton.className   = 'ce_plugin_quote--select_button';
 
-            this.addSelectTypeClickListener(selectTypeButton, type);
+            var quoteStyle = quoteTools.selectTypeQuoteStyle(type);
+            quoteTools.addSelectTypeClickListener(selectTypeButton, quoteStyle);
 
             holder.appendChild(selectTypeButton);
 
@@ -2176,9 +2163,7 @@ var quoteTools = {
 
     },
 
-    addSelectTypeClickListener : function(el, type) {
-
-        var quoteStyleFunction;
+    selectTypeQuoteStyle : function(type) {
 
         /**
         *  Choose Quote style to replace
@@ -2195,13 +2180,19 @@ var quoteTools = {
                 break;
         }
 
+        return quoteStyleFunction;
+
+    },
+
+    addSelectTypeClickListener : function(el, quoteStyle) {
+
         el.addEventListener('click', function () {
 
             /**
             * Parsing currentNode to JSON.
             */
             var parsedOldQuote  = quoteTools.parseBlockQuote(),
-                newStyledQuote  = quoteStyleFunction(parsedOldQuote);
+                newStyledQuote  = quoteStyle(parsedOldQuote);
 
             cEditor.content.replaceBlock(cEditor.content.currentNode, newStyledQuote, 'quote');
 
@@ -2215,13 +2206,13 @@ var quoteTools = {
 
         var blockquote = document.createElement('BLOCKQUOTE');
 
-        blockquote.innerHTML = data.text;
+        blockquote.innerHTML = data.text || '';
 
         blockquote.classList.add('quoteStyle-simple--blockquote');
-        
+
         blockquote.dataset.quoteStyle = 'simple';
         blockquote.id = 'ce_quote--text';
-        
+
         blockquote.contentEditable = 'true';
 
         return blockquote;
@@ -2233,20 +2224,19 @@ var quoteTools = {
             quote   = document.createElement('DIV'),
             author  = document.createElement('DIV');
 
-
             /* Creating ContentEditable block for quote */
             quote.contentEditable = 'true';
-            
+
             quote.classList.add('quoteStyle-withCaption--blockquote');
-            
+
             quote.innerHTML = data.text;
             quote.id = 'ce_quote--text';
 
             /* Block for author of quote */
             author.contentEditable = 'true';
-            
+
             author.classList.add('quoteStyle-withCaption--author');
-            
+
             author.id = 'ce_quote--author';
             author.textContent = data.author;
 
@@ -2309,29 +2299,29 @@ var quoteTools = {
 
         var currentNode = block || cEditor.content.currentNode,
             photo       = currentNode.getElementsByTagName('img')[0],
-            quote       = document.getElementById('ce_quote--text'),
-            author      = document.getElementById('ce_quote--author'),
-            position    = document.getElementById('ce_quote--position');
+            quote       = currentNode.querySelector('#ce_quote--text'),
+            author      = currentNode.querySelector('#ce_quote--author'),
+            position    = currentNode.querySelector('#ce_quote--position');
 
-        this.style = currentNode.dataset.quoteStyle;
-
+        // this.style = currentNode.dataset.quoteStyle;
+        console.log(currentNode);
         if ( position )
-            this.position = position.textContent;
-        
-        if ( author )
-            this.author = author.textContent;
+            position = position.textContent;
 
-        if ( quote ) 
-            this.quote = quote.textContent;
+        if ( author )
+            author = author.textContent;
+
+        if ( quote )
+            quote = quote.textContent;
 
         if ( photo )
-            this.photo = photo.src;
+            photo = photo.src;
 
         var data = {
-            text        : this.quote,
-            author      : this.author,
-            position    : this.position,
-            photo       : this.photo,
+            text        : quote,
+            author      : author,
+            position    : position,
+            photo       : photo,
         };
 
         return data;

@@ -281,7 +281,6 @@
 .quoteStyle-withPhoto--quote {
     outline: none;
     overflow: hidden;
-    text-align: justify;
 }
 
 .quoteStle-withPhoto--author::before {
