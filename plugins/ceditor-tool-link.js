@@ -10,6 +10,12 @@ var linkTool = {
     defaultText    : 'Insert link here ...',
     currentInput   : null,
     currentBlock   : null,
+    elementClasses : {
+        link        : "tool-link-link",
+        image       : "tool-link-image",
+        title       : "tool-link-title",
+        description : "tool-link-description"
+    },
 
     /**
      * Make initial header block
@@ -36,6 +42,12 @@ var linkTool = {
 
         this.currentBlock = wrapper;
 
+        /* Bind callbacks **/
+
+        tag.addEventListener('paste', function (event) {
+            linkTool.blockPasteCallback(event, linkTool.currentInput);
+        }, false);
+
         return wrapper;
 
     },
@@ -45,7 +57,7 @@ var linkTool = {
      */
     render : function (data) {
 
-        return paragraphTool.makeBlockToAppend(data);
+        return linkTool.makeBlockToAppend(data);
 
     },
 
@@ -55,10 +67,12 @@ var linkTool = {
     save : function (block){
 
         var data = {
-            text : null
+            fullLink    : block.querySelector("." + linkTool.elementClasses.link).href,
+            shortLink   : block.querySelector("." + linkTool.elementClasses.link).textContent,
+            image       : block.querySelector("." + linkTool.elementClasses.image).src,
+            title       : block.querySelector("." + linkTool.elementClasses.title).textContent,
+            description : block.querySelector("." + linkTool.elementClasses.description).textContent
         };
-
-        data.text = blockData.textContent;
 
         return data;
 
@@ -67,10 +81,6 @@ var linkTool = {
     appendCallback : function () {
 
         console.log('link callback is appended...');
-
-        linkTool.currentInput.addEventListener('paste', function (event) {
-            linkTool.blockPasteCallback(event, linkTool.currentInput);
-        }, false);
 
     },
 
@@ -145,25 +155,21 @@ var linkTool = {
             siteImage = document.createElement('img'),
             siteTitle = document.createElement('div'),
             siteDescription = document.createElement('div'),
-            siteUrl = document.createElement('div'),
             siteLink = document.createElement('a');
 
         wrapper.classList.add("tool-link-panel");
 
-        siteImage.classList.add("tool-link-image");
+        siteImage.classList.add(linkTool.elementClasses.image);
         siteImage.setAttribute('src', json.image);
 
-        siteTitle.classList.add("tool-link-content", "tool-link-title");
+        siteTitle.classList.add("tool-link-content", linkTool.elementClasses.title);
         siteTitle.innerHTML = json.title;
 
-        siteUrl.classList.add("tool-link-content", "tool-link-url");
-        siteUrl.innerHTML = json.shortLink;
-
-        siteDescription.classList.add("tool-link-content", "tool-link-description");
+        siteDescription.classList.add("tool-link-content", linkTool.elementClasses.description);
         siteDescription.innerHTML = json.description;
 
         siteLink.setAttribute('href', json.fullLink);
-        siteLink.classList.add("tool-link-url");
+        siteLink.classList.add(linkTool.elementClasses.link);
         siteLink.innerText = json.shortLink;
 
         wrapper.appendChild(siteImage);
