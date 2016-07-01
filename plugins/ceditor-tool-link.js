@@ -13,7 +13,7 @@ var linkTool = {
 
     /**
      * Make initial header block
-     * @param {object} JSON to with block data
+     * @param {object} JSON with block data
      * @return {Element} element to append
      */
     makeBlockToAppend : function (data) {
