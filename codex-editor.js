@@ -390,6 +390,11 @@ cEditor.ui = {
                 continue;
             }
 
+            if (typeof tool.make != 'function') {
+                cEditor.core.log('make method missed. Tool %o skipped', 'warn', name);
+                continue;
+            }
+
             tool_button = cEditor.draw.toolbarButton(name, tool.iconClassname);
             cEditor.nodes.toolbar.appendChild(tool_button);
 
@@ -1369,20 +1374,16 @@ cEditor.toolbar = {
             appendCallback,
             newBlock;
 
+        /** Make block from plugin */
+        newBlock = tool.make();
+
         /** Can replace? */
         if (REPLACEBLE_TOOLS.indexOf(tool.type) != -1 && workingNode) {
-
-            /**
-            * Copy plugin 'append' Element
-            */
-            newBlock = tool.append.cloneNode(true);
 
             /** Replace current block */
             cEditor.content.switchBlock(workingNode, newBlock, tool.type);
 
         } else {
-
-            newBlock = tool.append;
 
             /** Insert new Block from plugin */
             cEditor.content.insertBlock(newBlock, tool.type);
@@ -1855,7 +1856,7 @@ var paragraphTool = {
     * @param {object} JSON to with block data
     * @return {Element} element to append
     */
-    makeBlockToAppend : function (data) {
+    make : function (data) {
 
         var tag = document.createElement('P');
 
@@ -1874,7 +1875,7 @@ var paragraphTool = {
     */
     render : function (data) {
 
-       return paragraphTool.makeBlockToAppend(data);
+       return paragraphTool.make(data);
 
     },
 
@@ -1903,7 +1904,7 @@ cEditor.tools.paragraph = {
 
     type           : 'paragraph',
     iconClassname  : 'ce-icon-paragraph',
-    append         : paragraphTool.makeBlockToAppend(),
+    make           : paragraphTool.make,
     appendCallback : null,
     settings       : null,
     render         : paragraphTool.render,
@@ -1922,7 +1923,7 @@ var headerTool = {
     * @param {object} JSON to with block data
     * @return {Element} element to append
     */
-    makeBlockToAppend : function (data) {
+    make : function (data) {
 
         var availableTypes = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'],
             tag;
@@ -1958,7 +1959,7 @@ var headerTool = {
     */
     render : function (data) {
 
-       return headerTool.makeBlockToAppend(data);
+       return headerTool.make(data);
 
     },
 
@@ -2082,7 +2083,7 @@ cEditor.tools.header = {
 
     type           : 'header',
     iconClassname  : 'ce-icon-header',
-    append         : headerTool.makeBlockToAppend(),
+    make           : headerTool.make,
     appendCallback : headerTool.appendCallback,
     settings       : headerTool.makeSettings(),
     render         : headerTool.render,
