@@ -24,19 +24,17 @@ var linkTool = {
 
         var tag = document.createElement('input');
 
-        tag.setAttribute("type", "text");
-
         tag.classList.add("ceditor-tool-link-input");
 
         tag.placeholder = linkTool.defaultText;
 
         tag.contentEditable = false;
 
-        linkTool.currentInput = tag;
+        this.currentInput = tag;
 
         wrapper.appendChild(tag);
 
-        linkTool.currentBlock = wrapper;
+        this.currentBlock = wrapper;
 
         return wrapper;
 
