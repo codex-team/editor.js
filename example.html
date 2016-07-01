@@ -5,27 +5,39 @@
     <title>CodeX Editor</title>
     <link rel="stylesheet" href="editor.css" />
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,700,800&subset=latin,cyrillic' rel='stylesheet' type='text/css' async=true>
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
     <style>
         body{
             font-family: 'Open Sans';
+            /*font-family: 'Lora';*/
             font-size: 14px;
+        }
+        .article{
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1{
+            font-size: 2em;
         }
     </style>
     <link rel="stylesheet" href="plugins/ceditor-tool-link.css" />
 </head>
 <body style="padding: 100px">
 
+    <article class="article">
 
-    <h1>CodeX Editor</h1>
+        <h1>CodeX Editor</h1>
 
-    <button id="codex_editor_export_btn">Сохранить</button>
-    <br>
-    <br>
-    <form action="">
+        <button id="codex_editor_export_btn">Сохранить</button>
+        <br>
+        <br>
+        <form action="">
 
-        <textarea hidden name="" id="codex_editor" cols="30" rows="10" style="width: 100%;height: 300px;"></textarea>
+            <textarea hidden name="" id="codex_editor" cols="30" rows="10" style="width: 100%;height: 300px;"></textarea>
 
-    </form>
+        </form>
+
+    </article>
 
     <!--
     <div class="ce_wrapper">
