@@ -32,8 +32,6 @@ var linkTool = {
 
         wrapper.appendChild(tag);
 
-        this.currentBlock = wrapper;
-
         /* Bind callbacks **/
 
         tag.addEventListener('paste', linkTool.blockPasteCallback, false);
@@ -47,15 +45,11 @@ var linkTool = {
      */
     render : function (json) {
 
-        console.log(json);
-
         var block = linkTool.ui.mainBlock();
 
         var tag = linkTool.ui.make(json);
 
         block.appendChild(tag);
-
-        this.currentBlock = block;
 
         return block;
 
@@ -84,13 +78,13 @@ var linkTool = {
 
     },
 
-    blockPasteCallback : function (event, block) {
-
-        console.log("blockPasteCallback");
+    blockPasteCallback : function (event) {
 
         clipboardData = event.clipboardData || window.clipboardData;
 
         pastedData = clipboardData.getData('Text');
+
+        var block = event.target.parentNode;
 
         Promise.resolve()
 
@@ -98,7 +92,7 @@ var linkTool = {
                 return linkTool.urlify(pastedData)
             })
 
-            .then(fetch('/ajax/link'))
+            .then(fetch('http://ajax.ru/link'))
 
             .then(function (response) {
 
@@ -121,7 +115,9 @@ var linkTool = {
 
             })
 
-            .then(linkTool.buildBlockForLink)
+            .then(function (json) {
+                linkTool.composeLinkPreview(json, block)
+            })
 
             .catch(function(error) {
                 cEditor.core.log('Error while doing things with link paste: %o', 'error', error);
@@ -143,9 +139,7 @@ var linkTool = {
 
     },
 
-    buildBlockForLink : function (json) {
-
-        console.log(json);
+    composeLinkPreview : function (json, currentBlock) {
 
         if (json == {}) {
 
@@ -153,13 +147,11 @@ var linkTool = {
 
         }
 
-        var block = linkTool.ui.make(json);
+        var previewBlock = linkTool.ui.make(json);
 
         linkTool.currentInput.remove();
 
-        linkTool.currentBlock.appendChild(block);
-
-        linkTool.currentBlock = null;
+        currentBlock.appendChild(previewBlock);
 
     }
 
