@@ -8,13 +8,17 @@
 var linkTool = {
 
     defaultText    : 'Insert link here ...',
+    ENTER_KEY      : 13,
+
     currentBlock   : null,
     currentInput   : null,
     elementClasses : {
         link        : "tool-link-link",
         image       : "tool-link-image",
         title       : "tool-link-title",
-        description : "tool-link-description"
+        description : "tool-link-description",
+        loader      : "tool-link-loader",
+        error       : "tool-link-error"
     },
 
     /**
@@ -35,6 +39,8 @@ var linkTool = {
         /* Bind callbacks **/
 
         tag.addEventListener('paste', linkTool.blockPasteCallback, false);
+
+        tag.addEventListener('keydown', linkTool.blockKeyDownCallback, false);
 
         return wrapper;
 
@@ -82,19 +88,53 @@ var linkTool = {
 
     blockPasteCallback : function (event) {
 
-        clipboardData = event.clipboardData || window.clipboardData;
+        var clipboardData = event.clipboardData || window.clipboardData,
+            pastedData = clipboardData.getData('Text'),
+            block = event.target.parentNode;
 
-        pastedData = clipboardData.getData('Text');
+        linkTool.renderLink(pastedData, block);
 
-        var block = event.target.parentNode;
+        event.stopPropagation();
+
+    },
+
+    blockKeyDownCallback : function (event) {
+
+        var inputTag = event.target,
+            block = inputTag.parentNode;
+
+        if (block.classList.contains(linkTool.elementClasses.error))
+        {
+            block.classList.remove(linkTool.elementClasses.error)
+        }
+
+        if (event.keyCode == linkTool.ENTER_KEY) {
+
+            var url = inputTag.value;
+
+            linkTool.renderLink(url, block);
+
+            event.preventDefault();
+
+        }
+
+    },
+
+    renderLink : function (url, block) {
 
         Promise.resolve()
 
             .then(function () {
-                return linkTool.urlify(pastedData)
+                return linkTool.urlify(url)
             })
 
-            .then(fetch('http://ajax.ru/link'))
+            .then(function (url) {
+
+                /* Show loader gif **/
+                block.classList.add(linkTool.elementClasses.loader);
+
+                return fetch('/server/?url=' + encodeURI(url));
+            })
 
             .then(function (response) {
 
@@ -105,13 +145,7 @@ var linkTool = {
                 }
                 else {
 
-                    return {
-                        'linkUrl'       : 'http://yandex.ru',
-                        'linkText'      : 'yandex.ru',
-                        'image'         : 'https://yastatic.net/morda-logo/i/apple-touch-icon/ru-76x76.png',
-                        'title'         : 'Яндекс',
-                        'description'   : 'Сайт, поисковик, проч.'
-                    };
+                    return Error("Invalid response status: %o", response);
 
                 }
 
@@ -122,6 +156,12 @@ var linkTool = {
             })
 
             .catch(function(error) {
+
+                /* Hide loader gif **/
+                block.classList.remove(linkTool.elementClasses.loader);
+
+                block.classList.add(linkTool.elementClasses.error);
+
                 cEditor.core.log('Error while doing things with link paste: %o', 'error', error);
             });
 
@@ -137,7 +177,7 @@ var linkTool = {
             return links[0];
         }
 
-        return null;
+        return Promise.reject(Error("Url is not matched"));
 
     },
 
@@ -155,6 +195,8 @@ var linkTool = {
 
         currentBlock.appendChild(previewBlock);
 
+        currentBlock.classList.remove(linkTool.elementClasses.loader);
+
     }
 
 };
@@ -164,7 +206,7 @@ linkTool.ui = {
     make : function (json) {
 
         var wrapper = this.wrapper(),
-            siteImage = this.image(json.image),
+            siteImage = this.image(json.image, linkTool.elementClasses.image),
             siteTitle = this.title(json.title),
             siteDescription = this.description(json.description),
             siteLink = this.link(json.linkUrl, json.linkText);
@@ -190,15 +232,15 @@ linkTool.ui = {
 
     input : function () {
 
-        var inpitTag = document.createElement('input');
+        var inputTag = document.createElement('input');
 
-        inpitTag.classList += "ceditor-tool-link-input";
+        inputTag.classList += "ceditor-tool-link-input";
 
-        inpitTag.placeholder = linkTool.defaultText;
+        inputTag.placeholder = linkTool.defaultText;
 
-        inpitTag.contentEditable = false;
+        inputTag.contentEditable = false;
 
-        return inpitTag;
+        return inputTag;
 
     },
 
@@ -212,11 +254,11 @@ linkTool.ui = {
 
     },
     
-    image : function (imageSrc) {
+    image : function (imageSrc, imageClass) {
 
         var imageTag = document.createElement('img');
 
-        imageTag.classList += linkTool.elementClasses.image;
+        imageTag.classList += imageClass;
 
         imageTag.setAttribute('src', imageSrc);
 
@@ -260,7 +302,7 @@ linkTool.ui = {
         descriptionTag.innerHTML = descriptionText;
 
         return descriptionTag;
-    }
+    },
 
 };
 

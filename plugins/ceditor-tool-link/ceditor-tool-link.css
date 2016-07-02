@@ -11,6 +11,10 @@
     outline: none;
     border: 0;
     width: 100%;
+    background: transparent;
+    font-size: 1em;
+    padding: 12px;
+    transition: background 200ms;
 }
 
 .tool-link-panel {
@@ -56,4 +60,24 @@
     text-transform: uppercase;
     text-decoration: none;
     color: rgba(165,156,86,.8);
+}
+
+.tool-link-loader {
+
+    background: url("loading.gif") !important;
+    opacity: 0.1;
+
+}
+
+.tool-link-error {
+
+    /*background: repeating-linear-gradient(*/
+            /*45deg,*/
+            /*#bc320e,*/
+            /*#606dbc 10px,*/
+            /*#465298 10px,*/
+            /*#465298 20px*/
+    /*);*/
+    background: rgba(255, 0, 0, 0.9);
+
 }

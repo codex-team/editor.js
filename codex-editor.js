@@ -722,6 +722,13 @@ cEditor.callback = {
             return false;
         }
 
+        /**
+        * LEFT or UP not at the beginning
+        */
+        if ( selection.anchorOffset !== 0) {
+            return false;
+        }
+
         /** Saving caret after keydown event happend */
         cEditor.caret.save();
 
@@ -732,37 +739,43 @@ cEditor.callback = {
         }
 
         /**
-        * Find deepest child node
-        * Iterate child nodes and find First DEEPEST node
-        * We need it to check caret positon (it must be at the begining)
+        * Do nothing if caret is not at the beginning of first child
         */
-        focusedNodeHolder = focusedNodeHolder || focusedNode;
+        var caretInFirstChild   = false,
+            caretAtTheBeginning = false;
 
-        if (focusedNodeHolder.childNodes.length !== 0) {
+        var editableElement = focusedNode.querySelector('[contenteditable]'),
+            firstChild,
+            deepestTextnode;
 
-            var focusedTextNode = '';
-
-            if (focusedNodeHolder.childNodes){
-                /** Looking from the first child */
-                focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, 0);
-            }
-        }
-        /**
-        * When we click "UP" or "LEFT", caret behaviour is as default.
-        * We should check caret position before we transmit/switch the block.
-        */
-        if ( selection.anchorOffset !== 0) {
-            return false;
-        }
-
-        /**
-        * We can't switch block till caret is not at the begining of first node and has zero offset
-        */
-        if ( (cEditor.caret.offset !== 0 || cEditor.caret.focusedNodeIndex !== 0) && focusedNodeHolder.childNodes.length !== 0 ) {
+        if (!editableElement) {
+            cEditor.core.log('Can not find editable element in current block: %o', 'warn', focusedNode);
             return;
         }
 
-        cEditor.caret.setToPreviousBlock(block);
+        firstChild = editableElement.childNodes[0];
+
+        if (cEditor.core.isDomNode(firstChild)) {
+
+            deepestTextnode = cEditor.content.getDeepestTextNodeFromPosition(firstChild, 0);
+
+        } else {
+
+            deepestTextnode = firstChild;
+
+        }
+
+        caretInFirstChild   = selection.anchorNode == deepestTextnode;
+        caretAtTheBeginning = cEditor.caret.offset === 0;
+
+        console.log("каретка в первом узле: %o", caretInFirstChild);
+        console.log("каретка в начале первого узла: %o", caretAtTheBeginning);
+
+        if ( caretInFirstChild && caretAtTheBeginning ) {
+
+            cEditor.caret.setToPreviousBlock(focusedNode);
+
+        }
 
     },
 
@@ -1288,7 +1301,7 @@ cEditor.caret = {
 
         console.log("nextBlock: %o", nextBlock);
 
-        nextBlockEditableElement = nextBlock.querySelector('[contenteditable], [contenteditable="true"]');
+        nextBlockEditableElement = nextBlock.querySelector('[contenteditable]');
 
         console.log("nextBlockEditableElement: %o", nextBlockEditableElement);
 
@@ -1302,6 +1315,9 @@ cEditor.caret = {
         cEditor.content.workingNodeChanged(block.nextSibling);
     },
 
+    /**
+    * @todo передалать на prevBlock.querySelector('[contenteditable]') по аналогии с setToNextBlock
+    */
     setToPreviousBlock : function(block) {
 
         if ( !block.previousSibling ) {
