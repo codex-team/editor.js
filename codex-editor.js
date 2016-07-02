@@ -12,7 +12,8 @@ var cEditor = (function (cEditor) {
         textareaId : 'codex-editor',
 
         // First-level tags viewing as separated blocks. Other'll be inserted as child
-        blockTags  : ['P','BLOCKQUOTE','UL','CODE','OL','H1','H2','H3','H4','H5','H6']
+        blockTags       : ['P','BLOCKQUOTE','UL','CODE','OL','H1','H2','H3','H4','H5','H6'],
+        uploadImagesUrl : '/upload/save.php',
     };
 
     // Static nodes
@@ -49,6 +50,7 @@ var cEditor = (function (cEditor) {
             .then(this.ui.make)
             .then(this.ui.addTools)
             .then(this.ui.bindEvents)
+            .then(this.transport.prepare)
             // .then(this.parser.parseTextareaContent)
             .then(this.renderer.makeBlocksFromData)
             .catch(function (error) {
@@ -1546,6 +1548,95 @@ cEditor.toolbar = {
             }
 
         },
+
+    }
+
+};
+
+/**
+* File transport module
+*/
+cEditor.transport = {
+
+    input : null,
+
+    prepare : function(){
+
+        var input = document.createElement('INPUT');
+
+        input.type = 'file';
+        input.addEventListener('change', cEditor.transport.fileSelected);
+
+        cEditor.transport.input = input;
+
+    },
+
+    /**
+    * Callback for file selection
+    */
+    fileSelected : function(event){
+
+        var input = this,
+            files = input.files,
+            filesLength = files.length,
+            formdData   = new FormData(),
+            file,
+            i;
+
+        for (i = 0; i < filesLength; i++) {
+
+            file = files[i];
+
+            /**
+            * Uncomment if need file type checking
+            * if (!file.type.match('image.*')) {
+            *     continue;
+            * }
+            */
+
+            formdData.append('files[]', file, file.name);
+        }
+
+        cEditor.transport.ajax({
+            data : formdData
+        });
+
+        console.log("files: %o", files);
+
+    },
+
+    /**
+    * @todo use callback for success and error
+    */
+    selectAndUpload : function (callback) {
+
+        this.input.click();
+
+    },
+
+    /**
+    * Ajax requests module
+    */
+    ajax : function(params){
+
+        var xhr = new XMLHttpRequest(),
+            success = typeof params.success == 'function' ? params.success : function(){},
+            error   = typeof params.error   == 'function' ? params.error   : function(){};
+
+        xhr.open('POST', cEditor.settings.uploadImagesUrl, true);
+
+        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log("success request: %o", xhr);
+                success(xhr.responseText);
+            } else {
+                console.log("request error: %o", xhr);
+            }
+        };
+
+        xhr.send(params.data);
 
     }
 

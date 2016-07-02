@@ -9,12 +9,15 @@ var ceImage = {
 	make : function ( data ) {
 
 		var holder       = ceImage.ui.holder(),
-			uploadButton = ceImage.ui.uploadButton();
+			uploadButton = ceImage.ui.uploadButton(),
+			input        = ceImage.ui.input();
 
-		holder.textContent = 'Past image URL or file';
+		input.placeholder = 'Past image URL or file';
+
 		holder.appendChild(uploadButton);
+		holder.appendChild(input);
 
-		holder.contentEditable = true;
+		uploadButton.addEventListener('click', ceImage.uploadButtonClicked, false );
 
 		return holder;
 
@@ -26,8 +29,13 @@ var ceImage = {
 
 	},
 
-	/** */
 	save : function ( block ){
+
+	},
+
+	uploadButtonClicked : function(event){
+
+		cEditor.transport.selectAndUpload();
 
 	},
 
@@ -40,6 +48,14 @@ var ceImage = {
 			element.classList.add('ce-plugin-image__holder');
 
 			return element;
+
+		},
+
+		input : function(){
+
+			var input = document.createElement('INPUT');
+
+			return input;
 
 		},
 
