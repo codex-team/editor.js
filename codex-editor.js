@@ -2096,6 +2096,8 @@ cEditor.tools.header = {
 
 var quoteTools = {
 
+    captionPlaceholder  : 'Введите имя автора',
+    jobPlacaholder      : 'Введите должность',
     /**
     * Make Quote from JSON datasets
     */
@@ -2224,8 +2226,6 @@ var quoteTools = {
 
             cEditor.content.replaceBlock(cEditor.content.currentNode, newStyledQuote, 'quote');
 
-            cEditor.ui.addBlockHandlers(newStyledQuote);
-
             /** Close settings after replacing */
             cEditor.toolbar.settings.close();
 
@@ -2233,95 +2233,95 @@ var quoteTools = {
 
     },
 
+    setBlockHandler : function(block) {
+
+    },
+
     makeSimpleQuote : function(data) {
 
-        var blockquote = document.createElement('BLOCKQUOTE');
+        var wrapper = quoteTools.ui.blockquote();
 
-        blockquote.innerHTML = data.text || '';
+        wrapper.innerHTML = data.text || '';
 
-        blockquote.classList.add('ce_quote--text');
+        wrapper.classList.add('ce_quote--text');
 
-        blockquote.dataset.quoteStyle = 'simple';
+        wrapper.dataset.quoteStyle = 'simple';
 
-        blockquote.contentEditable = 'true';
+        wrapper.contentEditable = 'true';
 
-        return blockquote;
+        return wrapper;
     },
 
     makeQuoteWithCaption : function(data) {
 
-        var block   = document.createElement('BLOCKQUOTE'),
-            quote   = document.createElement('DIV'),
-            author  = document.createElement('DIV');
+        var wrapper = quoteTools.ui.blockquote(),
+            text    = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withCaption--blockquote', 'ce_quote--text']),
+            author  = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withCaption--author', 'ce_quote--author']);
 
-            /* Creating ContentEditable block for quote */
-            quote.contentEditable = 'true';
+            /* make text block ontentEditable */
+            text.contentEditable = 'true';
 
-            quote.classList.add('quoteStyle-withCaption--blockquote', 'ce_quote--text');
+            text.innerHTML = data.text;
 
-            quote.innerHTML = data.text;
-
-            /* Block for author of quote */
+            /* make Author contentEditable */
             author.contentEditable = 'true';
 
-            author.classList.add('quoteStyle-withCaption--author', 'ce_quote--author');
+            author.textContent = data.author || quoteTools.captionPlaceholder;
 
-            author.textContent = data.author;
+            quoteTools.ui.mousedown(author, quoteTools.captionPlaceholder);
+            quoteTools.ui.keyPressed(author, quoteTools.captionPlaceholder);
 
-        /* Appending created tags */
-        block.dataset.quoteStyle = 'withCaption';
 
-        block.appendChild(quote);
-        block.appendChild(author);
+        /* Appending created components */
+        wrapper.dataset.quoteStyle = 'withCaption';
 
-        return block;
+        wrapper.appendChild(text);
+        wrapper.appendChild(author);
+
+        return wrapper;
 
     },
 
     makeQuoteWithPhoto : function(data) {
 
-        var block = document.createElement('BLOCKQUOTE'),
-            photo = document.createElement('IMG'),
-            author = document.createElement('DIV'),
-            position = document.createElement('DIV'),
-            quote = document.createElement('DIV');
+        var wrapper  = quoteTools.ui.blockquote();
+            photo    = quoteTools.ui.makeBlock('IMG', ['quoteStyle-withPhoto--photo']),
+            author   = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--author', 'ce_quote--author']),
+            job      = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--position', 'ce_quote--position']),
+            quote    = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--quote', 'ce_quote--text'])
 
+            /* Default Image src */
+            photo.src = data.photo || '../img/01.jpg';
 
-            /* Author of quote — photo */
-            photo.classList.add('quoteStyle-withPhoto--photo')
-            photo.src = "../img/01.jpg";
-
-            /*  Author name */
+            /* make author block contentEditable */
             author.contentEditable = 'true';
+            author.textContent = data.author || quoteTools.captionPlaceholder;
 
-            author.classList.add('quoteStyle-withPhoto--author', 'ce_quote--author');
-
-            author.textContent = data.author;
+            quoteTools.ui.mousedown(author, quoteTools.captionPlaceholder);
+            quoteTools.ui.keyPressed(author, quoteTools.captionPlaceholder);
 
             /*  Author's position and job */
-            position.contentEditable = 'true';
+            job.contentEditable = 'true';
+            job.textContent = data.position || quoteTools.jobPlacaholder;
 
-            position.classList.add('quoteStyle-withPhoto--position', 'ce_quote--position');
+            quoteTools.ui.mousedown(job, quoteTools.jobPlacaholder);
+            quoteTools.ui.keyPressed(job, quoteTools.jobPlacaholder);
 
-            position.textContent = data.position;
+        var authorsWrapper = quoteTools.ui.makeBlock('DIV');
+            authorsWrapper.appendChild(author);
+            authorsWrapper.appendChild(job);
 
-        var header = document.createElement('DIV');
-            header.appendChild(author);
-            header.appendChild(position);
-
-            /* Quote */
+            /* make quote text contentEditable */
             quote.contentEditable = 'true';
-            quote.classList.add('quoteStyle-withPhoto--quote', 'ce_quote--text');
-
             quote.innerHTML = data.text;
 
-        block.dataset.quoteStyle = 'withPhoto';
+        wrapper.dataset.quoteStyle = 'withPhoto';
 
-        block.appendChild(photo);
-        block.appendChild(header);
-        block.appendChild(quote);
+        wrapper.appendChild(photo);
+        wrapper.appendChild(authorsWrapper);
+        wrapper.appendChild(quote);
 
-        return block;
+        return wrapper;
     },
 
     parseBlockQuote : function(block) {
@@ -2333,18 +2333,18 @@ var quoteTools = {
             quote ;
 
         /** Simple quote text placed in Blockquote tag*/
-        if (currentNode.dataset.quoteStyle == 'simple')
+        if ( currentNode.dataset.quoteStyle == 'simple' )
             quote = currentNode.textContent;
         else
             quote = currentNode.querySelector('.ce_quote--text').textContent;
 
-        if ( position )
+        if (position)
             position = position.textContent;
 
-        if ( author )
+        if (author)
             author = author.textContent;
 
-        if ( photo )
+        if (photo)
             photo = photo.src;
 
         var data = {
@@ -2358,6 +2358,83 @@ var quoteTools = {
     },
 
 };
+
+quoteTools.ui = {
+
+    wrapper : function($classList) {
+
+        var el = document.createElement('DIV');
+
+        el.classList.add($classList);
+
+        return el;
+
+    },
+
+    blockquote : function() {
+
+        var el = document.createElement('BLOCKQUOTE');
+
+        return el;
+
+    },
+
+    makeBlock : function(tag, classList) {
+
+        var el = document.createElement(tag);
+
+
+        if ( classList ) {
+
+            for( var i = 0; i < classList.length; i++)
+                el.className += ' ' + classList[i];
+
+        }
+        return el;
+
+    },
+
+    mousedown : function(block, placeholder) {
+
+        block.addEventListener('focus', function() {
+
+            quoteTools.ui.clear(block, placeholder);
+
+        });
+
+    },
+
+    keyPressed : function(block, placeholder) {
+
+        block.addEventListener('keydown', function(){
+
+            quoteTools.ui.fillbyPlaceholder(block, placeholder);
+
+        });
+
+    },
+
+    clear : function(block, placeholder) {
+
+        if ( block.textContent == placeholder) {
+            block.innerHTML = '';
+        }
+    },
+
+    fillbyPlaceholder : function(block, placeholder) {
+
+        quoteTools.ui.clear(block, placeholder);
+
+        setTimeout( function() {
+
+            if (block.textContent == '') {
+                block.textContent = placeholder;
+            }
+
+        }, 10);
+
+    }
+}
 
 cEditor.tools.quote = {
 

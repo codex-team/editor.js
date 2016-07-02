@@ -170,7 +170,7 @@
 .ce_redactor blockquote{
     font-size: 1.3em;
     line-height: 1.9em;
-    margin: 2.5em 200px !important;
+    margin: 2.5em 162px !important;
     padding: 2.5em 3.5em !important;
 }
 .ce_redactor code{
@@ -227,6 +227,7 @@
     }
 
 /** Quote - settings */
+
 .ce_plugin_quote--settings{
     white-space: nowrap;
     /*padding-right: 10px;    */
@@ -246,12 +247,22 @@
     border-bottom-color: #f6d8da;
     color: #cc7d74;
 }
-
+.clearfix_quote:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
 .quoteStyle-withCaption--author {
     margin-top: 25px;
     text-align: right;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: bold;
+    color: #000;
+    line-height: 1.5em;
+
 }
 
 .quoteStyle-withCaption--blockquote:focus, .quoteStyle-withCaption--author:focus {
@@ -259,8 +270,8 @@
 }
 
 .quoteStyle-withPhoto--photo {
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
     border: 1px solid #8E8E8E;
     border-radius: 50%;
     float: left;
@@ -268,27 +279,22 @@
 }
 
 .quoteStyle-withPhoto--author, .quoteStyle-withPhoto--position  {
-    outline: none;
     overflow: hidden;
     font-weight: bold;
+    font-size: 17px;
+    line-height: 1.5em;
     /*border-bottom: 1px solid black;*/
+    border: 0px;
+    outline: none;
+
+    word-break: break-word;
 }
 
 .quoteStyle-withPhoto--quote {
+    margin-top: 15px;
     outline: none;
     overflow: hidden;
 }
-
-.quoteStle-withPhoto--author::before {
-}
-
-
-.clearfix {
-    clear: both;
-}
-
-
-
 
 /*
 @-webkit-keyframes bounceIn {
