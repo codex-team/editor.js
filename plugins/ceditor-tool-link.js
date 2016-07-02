@@ -121,32 +121,32 @@ var linkTool = {
             })
 
             .then(function (url) {
+                return fetch('/server/?url=' + encodeURI(url));
+            })
 
-                fetch('/server/?url=' + encodeURI(url)).then(function (response) {
+            .then(function (response) {
 
-                    if (response.status == "200"){
+                if (response.status == "200"){
 
-                        return response.json();
+                    return response.json();
 
-                    }
-                    else {
+                }
+                else {
 
-                        return {
-                            'linkUrl'       : 'http://yandex.ru',
-                            'linkText'      : 'yandex.ru',
-                            'image'         : 'https://yastatic.net/morda-logo/i/apple-touch-icon/ru-76x76.png',
-                            'title'         : 'Яндекс',
-                            'description'   : 'Сайт, поисковик, проч.'
-                        };
+                    return {
+                        'linkUrl'       : 'http://yandex.ru',
+                        'linkText'      : 'yandex.ru',
+                        'image'         : 'https://yastatic.net/morda-logo/i/apple-touch-icon/ru-76x76.png',
+                        'title'         : 'Яндекс',
+                        'description'   : 'Сайт, поисковик, проч.'
+                    };
 
-                    }
+                }
 
-                })
+            })
 
-                .then(function (json) {
-                    linkTool.composeLinkPreview(json, block)
-                })
-
+            .then(function (json) {
+                linkTool.composeLinkPreview(json, block)
             })
 
             .catch(function(error) {
@@ -218,15 +218,15 @@ linkTool.ui = {
 
     input : function () {
 
-        var inpitTag = document.createElement('input');
+        var inputTag = document.createElement('input');
 
-        inpitTag.classList += "ceditor-tool-link-input";
+        inputTag.classList += "ceditor-tool-link-input";
 
-        inpitTag.placeholder = linkTool.defaultText;
+        inputTag.placeholder = linkTool.defaultText;
 
-        inpitTag.contentEditable = false;
+        inputTag.contentEditable = false;
 
-        return inpitTag;
+        return inputTag;
 
     },
 
