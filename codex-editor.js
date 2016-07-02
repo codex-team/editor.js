@@ -254,6 +254,7 @@ cEditor.renderer = {
 
     },
 
+
     /**
     * Asynchronously returns block data from blocksList by index
     * @return Promise to node
@@ -926,7 +927,6 @@ cEditor.content = {
         newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
         newBlock.dataset.type = blockType;
 
-
         if (workingNode) {
 
             cEditor.core.insertAfter(workingNode, newBlock);
@@ -938,11 +938,12 @@ cEditor.content = {
             */
             cEditor.nodes.redactor.appendChild(newBlock);
 
-            /**
-            * Set new node as current
-            */
-            cEditor.content.workingNodeChanged(newBlock);
         }
+
+        /**
+        * Set new node as current
+        */
+        cEditor.content.workingNodeChanged(newBlock);
 
 
 
