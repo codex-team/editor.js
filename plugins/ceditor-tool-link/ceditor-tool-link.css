@@ -12,6 +12,9 @@
     border: 0;
     width: 100%;
     background: transparent;
+    font-size: 1em;
+    padding: 12px;
+    transition: background 200ms;
 }
 
 .tool-link-panel {
@@ -63,5 +66,18 @@
 
     background: url("loading.gif") !important;
     opacity: 0.1;
+
+}
+
+.tool-link-error {
+
+    /*background: repeating-linear-gradient(*/
+            /*45deg,*/
+            /*#bc320e,*/
+            /*#606dbc 10px,*/
+            /*#465298 10px,*/
+            /*#465298 20px*/
+    /*);*/
+    background: rgba(255, 0, 0, 0.9);
 
 }
