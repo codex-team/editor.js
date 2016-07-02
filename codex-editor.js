@@ -2363,7 +2363,7 @@ cEditor.tools.quote = {
 
     type            : 'quote',
     iconClassname   : 'ce-icon-quote',
-    append          : quoteTools.makeBlockToAppend(),
+    make            : quoteTools.makeBlockToAppend,
     appendCallback  : null,
     settings        : quoteTools.makeSettings(),
     render          : quoteTools.render,
