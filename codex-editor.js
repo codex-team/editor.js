@@ -937,7 +937,7 @@ cEditor.content = {
         }
 
         /** Add redactor block classname to new block */
-        newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
+        // newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
 
         /** Store block type */
         newBlock.dataset.type = newBlockType;
@@ -964,13 +964,9 @@ cEditor.content = {
     */
     insertBlock : function(newBlockContent, blockType) {
 
-        var workingBlock = cEditor.content.currentNode,
-            newBlock = cEditor.draw.block('DIV');
+        var workingBlock = cEditor.content.currentNode;
 
-        newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
-        newBlock.dataset.type = blockType;
-
-        newBlock.appendChild(newBlockContent);
+        var newBlock = cEditor.content.composeNewBlock(newBlockContent, blockType);
 
         if (workingBlock) {
 
@@ -1078,16 +1074,22 @@ cEditor.content = {
     * @param {Element} newNode
     * @param {Element} blockType
     */
-    switchBlock : function(nodeToReplace, newNode, blockType){
+    switchBlock : function(blockToReplace, newBlock, blockType){
+
+        var oldBlockEditable = blockToReplace.querySelector('[contenteditable]');
 
         /** Saving content */
-        newNode.innerHTML = nodeToReplace.innerHTML;
+        newBlock.innerHTML = oldBlockEditable.innerHTML;
+
+        var newBlockComposed = cEditor.content.composeNewBlock(newBlock, blockType);
+
+        newBlockComposed.appendChild(newBlock);
 
         /** Replacing */
-        cEditor.content.replaceBlock(nodeToReplace, newNode, blockType);
+        cEditor.content.replaceBlock(blockToReplace, newBlockComposed, blockType);
 
         /** Add event listeners */
-        cEditor.ui.addBlockHandlers(newNode);
+        cEditor.ui.addBlockHandlers(newBlock);
 
     },
 
@@ -1166,6 +1168,19 @@ cEditor.content = {
         }
 
         return block;
+    },
+
+    composeNewBlock : function (block, blockType) {
+
+        newBlock = cEditor.draw.block('DIV');
+
+        newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
+        newBlock.dataset.type = blockType;
+
+        newBlock.appendChild(block);
+
+        return newBlock;
+
     }
 
 };
@@ -1425,21 +1440,21 @@ cEditor.toolbar = {
             tool             = cEditor.tools[cEditor.toolbar.current],
             workingNode      = cEditor.content.currentNode,
             appendCallback,
-            newBlock;
+            newBlockContent;
 
         /** Make block from plugin */
-        newBlock = tool.make();
+        newBlockContent = tool.make();
 
         /** Can replace? */
         if (REPLACEBLE_TOOLS.indexOf(tool.type) != -1 && workingNode) {
 
             /** Replace current block */
-            cEditor.content.switchBlock(workingNode, newBlock, tool.type);
+            cEditor.content.switchBlock(workingNode, newBlockContent, tool.type);
 
         } else {
 
             /** Insert new Block from plugin */
-            cEditor.content.insertBlock(newBlock, tool.type);
+            cEditor.content.insertBlock(newBlockContent, tool.type);
 
         }
 
