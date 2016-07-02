@@ -11,6 +11,7 @@
     outline: none;
     border: 0;
     width: 100%;
+    background: transparent;
 }
 
 .tool-link-panel {
@@ -56,4 +57,11 @@
     text-transform: uppercase;
     text-decoration: none;
     color: rgba(165,156,86,.8);
+}
+
+.tool-link-loader {
+
+    background: url("loading.gif") !important;
+    opacity: 0.1;
+
 }
