@@ -24,13 +24,13 @@ var cEditor = (function (cEditor) {
         blockSettings      : null,
         toolbarButtons     : {}, // { type : DomEl, ... }
         redactor           : null,
-    }
+    };
 
     // Current editor state
     cEditor.state = {
         html   : '',
         blocks : []
-    }
+    };
 
     /**
     * Initialization
@@ -53,7 +53,7 @@ var cEditor = (function (cEditor) {
             .then(this.renderer.makeBlocksFromData)
             .catch(function (error) {
                 cEditor.core.log('Initialization failed with error: %o', 'warn', error);
-            })
+            });
 
     };
 
@@ -92,7 +92,7 @@ cEditor.core = {
 
             cEditor.nodes.textarea = document.getElementById(userSettings.textareaId || cEditor.settings.textareaId);
 
-            if (typeof cEditor.nodes.textarea == undefined || cEditor.nodes.textarea == null) {
+            if (typeof cEditor.nodes.textarea === undefined || cEditor.nodes.textarea === null) {
                 reject(Error("Textarea wasn't found by ID: #" + userSettings.textareaId));
             } else {
                 resolve();
@@ -153,7 +153,7 @@ cEditor.core = {
         return el && typeof el === 'object' && el.nodeType && el.nodeType == this.nodeTypes.TAG;
     }
 
-}
+};
 
 
 /**
@@ -304,11 +304,11 @@ cEditor.renderer = {
         return {
             type  : pluginName,
             block : block
-        }
+        };
 
     },
 
-}
+};
 
 /**
 * Methods for saving HTML blocks to JSON object
@@ -324,7 +324,7 @@ cEditor.saver = {
 
     }
 
-}
+};
 
 
 
@@ -532,7 +532,7 @@ cEditor.callback = {
             cEditor.toolbar.toolClicked(event);
             cEditor.toolbar.close();
 
-        };
+        }
 
     },
 
@@ -556,7 +556,16 @@ cEditor.callback = {
 
     redactorClicked : function (event) {
 
-        cEditor.content.workingNodeChanged();
+        if ( cEditor.parser.isFirstLevelBlock(event.target) ) {
+
+            /** If clicked on editor first-level block, set event target*/
+            cEditor.content.workingNodeChanged(event.target);
+
+        } else {
+
+            /** Otherwise get current node from selection */
+            cEditor.content.workingNodeChanged();
+        }
 
         cEditor.toolbar.move();
 
@@ -653,35 +662,49 @@ cEditor.callback = {
         /** Founded contentEditable element doesn't have childs */
         if (focusedNode.childNodes.length === 0)
         {
-            cEditor.caret.setToNextBlock(block);
+            cEditor.caret.setToNextBlock(focusedNode);
             return;
         }
 
         /**
-        * Find deepest child node
-        * Iterate child nodes and find LAST DEEPEST node
-        * We need to check caret positon (it must be at the end)
-        * @param focusedNodeIndex is index of childnode by length
-        * @param focusedTextNode is Text node founded by DFS algorithm
+        * Do nothing when caret doesn not reaches the end of last child
         */
-        var focusedTextNode = '',
-            focusedNodeIndex = cEditor.caret.focusedNodeIndex + 1;
+        var caretInLastChild    = false,
+            caretAtTheEndOfText = false;
 
-        if (focusedNodeHolder.childNodes){
-            /** Looking from the END of node */
-            focusedTextNode = cEditor.content.getDeepestTextNodeFromPosition(focusedNodeHolder, focusedNodeHolder.childNodes.length);
+        var editableElement = focusedNode.querySelector('[contenteditable]'),
+            lastChild,
+            deepestTextnode;
+
+        if (!editableElement) {
+            cEditor.core.log('Can not find editable element in current block: %o', 'warn', focusedNode);
+            return;
         }
 
-        /**
-        * Stop transition when caret is not at the end of Text node
-        * When we click "DOWN" or "RIGHT", caret moves to the end of node.
-        * We should check caret position before we transmit/switch the block.
-        */
-        if ( block.childNodes.length != focusedNodeIndex || focusedTextNode.length != selection.anchorOffset) {
+        lastChild = editableElement.childNodes[editableElement.childNodes.length - 1 ];
+
+        if (cEditor.core.isDomNode(lastChild)) {
+
+            deepestTextnode = cEditor.content.getDeepestTextNodeFromPosition(lastChild, lastChild.childNodes.length);
+
+        } else {
+
+            deepestTextnode = lastChild;
+
+        }
+
+        caretInLastChild = selection.anchorNode == deepestTextnode;
+        caretAtTheEndOfText = deepestTextnode.length == selection.anchorOffset;
+
+        console.log("каретка в последнем узле: %o", caretInLastChild);
+        console.log("каретка в конце последнего узла: %o", caretAtTheEndOfText);
+
+        if ( !caretInLastChild  || !caretAtTheEndOfText ) {
+            cEditor.core.log('arrow [down|right] : caret does not reached the end');
             return false;
         }
 
-        cEditor.caret.setToNextBlock(block);
+        cEditor.caret.setToNextBlock(focusedNode);
 
     },
 
@@ -754,8 +777,8 @@ cEditor.callback = {
         * First we check, if caret is at the end of last node and offset is legth of text node
         * focusedNodeIndex + 1, because that we compare non-arrays index.
         */
-        if ( currentNode.length === cEditor.caret.offset
-            && parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
+        if ( currentNode.length === cEditor.caret.offset &&
+             parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
 
             /** Prevent <div></div> creation */
             event.preventDefault();
@@ -852,17 +875,26 @@ cEditor.content = {
         var selection = window.getSelection(),
             focused;
 
-        if (selection.anchorNode != null) {
+        if (selection.anchorNode === null) {
+            return null;
+        }
 
-            if ( selection.anchorNode.nodeType == cEditor.core.nodeTypes.TAG ) {
-                focused = selection.anchorNode;
-            } else {
-                focused = selection.focusNode.parentElement;
-            }
+        if ( selection.anchorNode.nodeType == cEditor.core.nodeTypes.TAG ) {
+            focused = selection.anchorNode;
+        } else {
+            focused = selection.focusNode.parentElement;
         }
 
         if ( !cEditor.parser.isFirstLevelBlock(focused) ) {
-            focused = focused.parentElement;
+
+            /** Iterate with parent nodes to find first-level*/
+            var parent = focused.parentNode;
+
+            while (parent && !cEditor.parser.isFirstLevelBlock(parent)){
+                parent = parent.parentNode;
+            }
+
+            focused = parent;
         }
 
         if (focused != cEditor.nodes.redactor){
@@ -878,7 +910,13 @@ cEditor.content = {
     */
     workingNodeChanged : function (setCurrent) {
 
-        this.currentNode = setCurrent || this.getNodeFocused();
+        var nodeWithSelection = this.getNodeFocused();
+
+        if (!setCurrent && !nodeWithSelection) {
+            return;
+        }
+
+        this.currentNode = setCurrent || nodeWithSelection;
 
     },
 
@@ -920,16 +958,23 @@ cEditor.content = {
 
     },
 
-    insertBlock : function(newBlock, blockType) {
+    /**
+    * Inserts new block to redactor
+    * Wrapps block into a DIV with BLOCK_CLASSNAME class
+    */
+    insertBlock : function(newBlockContent, blockType) {
 
-        var workingNode = cEditor.content.currentNode;
+        var workingBlock = cEditor.content.currentNode,
+            newBlock = cEditor.draw.block('DIV');
 
         newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
         newBlock.dataset.type = blockType;
 
-        if (workingNode) {
+        newBlock.appendChild(newBlockContent);
 
-            cEditor.core.insertAfter(workingNode, newBlock);
+        if (workingBlock) {
+
+            cEditor.core.insertAfter(workingBlock, newBlock);
 
         } else {
 
@@ -1076,7 +1121,7 @@ cEditor.content = {
                 /** Text is empty. We should remove this child from node before we start DFS
                 * decrease the quantity of childs.
                 */
-                if (text == '') {
+                if (text === '') {
 
                     block.removeChild(node);
                     position--;
@@ -1123,7 +1168,7 @@ cEditor.content = {
         return block;
     }
 
-}
+};
 
 cEditor.caret = {
 
@@ -1146,10 +1191,17 @@ cEditor.caret = {
     */
     save : function() {
 
-        var selection = window.getSelection();
-        var parentElement   = selection.anchorNode,
-            previousElement = selection.anchorNode.previousSibling,
+        var selection = window.getSelection(),
+            parentElement,
+            previousElement,
             nodeIndex = 0;
+
+        if (!selection.anchorNode) {
+            return;
+        }
+
+        parentElement   = selection.anchorNode;
+        previousElement = selection.anchorNode.previousSibling;
 
         /**
         * We get index of node which is child of #BLOCK_CLASSNAME.
@@ -1167,7 +1219,7 @@ cEditor.caret = {
         }
 
         /** Counting index of focused node */
-        while (previousElement != null) {
+        while (previousElement !== null) {
 
             nodeIndex ++;
             previousElement = previousElement.previousSibling;
@@ -1230,14 +1282,25 @@ cEditor.caret = {
     */
     setToNextBlock : function(block) {
 
+        cEditor.caret.offset            = 0;
+        cEditor.caret.focusedNodeIndex  = 0;
+
+        var nextBlock = block.nextSibling,
+            nextBlockEditableElement;
+
+        console.log("nextBlock: %o", nextBlock);
+
+        nextBlockEditableElement = nextBlock.querySelector('[contenteditable], [contenteditable="true"]');
+
+        console.log("nextBlockEditableElement: %o", nextBlockEditableElement);
+
+
         if ( !block.nextSibling ) {
             return false;
         }
 
-        cEditor.caret.offset            = 0;
-        cEditor.caret.focusedNodeIndex  = 0;
 
-        cEditor.caret.set(block.nextSibling, 0, 0);
+        cEditor.caret.set(nextBlockEditableElement, 0, 0);
         cEditor.content.workingNodeChanged(block.nextSibling);
     },
 
@@ -1690,7 +1753,7 @@ cEditor.parser = {
     isFirstLevelBlock : function (node) {
 
         return node.nodeType == cEditor.core.nodeTypes.TAG &&
-               cEditor.settings.blockTags.indexOf(node.tagName) !== -1;
+               node.classList.contains(cEditor.ui.BLOCK_CLASSNAME);
 
     }
 
@@ -1799,7 +1862,7 @@ cEditor.draw = {
     }
 
 
-}
+};
 
 
 
@@ -1848,7 +1911,7 @@ var paragraphTool = {
     */
     make : function (data) {
 
-        var tag = document.createElement('P');
+        var tag = document.createElement('DIV');
 
         if (data && data.text) {
             tag.innerHTML = data.text;
@@ -1998,7 +2061,7 @@ var headerTool = {
             selectTypeButton;
 
         /** Add holder classname */
-        holder.className = 'ce_plugin_header--settings'
+        holder.className = 'ce_plugin_header--settings';
 
         /** Add settings helper caption */
         caption.textContent = 'Настройки заголовка';
