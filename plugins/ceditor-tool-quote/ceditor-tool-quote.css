@@ -1,5 +1,4 @@
 /** Quote - settings */
-
 .ce_plugin_quote--settings{
     white-space: nowrap;
     /*padding-right: 10px;    */
@@ -37,10 +36,16 @@
 
 }
 
-.quoteStyle-withCaption--blockquote:focus, .quoteStyle-withCaption--author:focus {
+.quoteStyle-withCaption--blockquote:focus,
+.quoteStyle-withCaption--author:focus {
    outline: none;
 }
 
+/** Quote with photo */
+.ce_redactor .quoteStyle-withPhoto--wrapper {
+    margin: 0px !important;
+    padding: 4.5em 6.5em !important;
+}
 .quoteStyle-withPhoto--photo {
     width: 90px;
     height: 90px;
@@ -50,20 +55,31 @@
     margin-right: 30px;
 }
 
-.quoteStyle-withPhoto--author, .quoteStyle-withPhoto--position  {
-    overflow: hidden;
+.quoteStyle-withPhoto--author {
+    font-size: 24px;
     font-weight: bold;
-    font-size: 17px;
-    line-height: 1.5em;
-    /*border-bottom: 1px solid black;*/
-    border: 0px;
+    color: #000;
+    letter-spacing: 0px;
     outline: none;
-
-    word-break: break-word;
+    overflow: hidden;
+}
+.quoteStyle-withPhoto--job {
+    font-weight: regular;
+    font-size: 19px;
+    color: #818BA1;
+    letter-spacing: 0px;
+    outline: none;
+    overflow: hidden;
 }
 
 .quoteStyle-withPhoto--quote {
-    margin-top: 15px;
+    margin-top: 30px;
     outline: none;
     overflow: hidden;
+}
+
+.quoteStyle-withPhoto--authorWrapper {
+
+    margin-top: 10px;
+
 }

@@ -56,6 +56,7 @@ var quoteTools = {
             style   : parsedblock.style,
             text    : parsedblock.quote,
             author  : parsedblock.author,
+            job     : parsedblock.job,
             photo   : parsedblock.photo,
         };
 
@@ -196,7 +197,7 @@ var quoteTools = {
         var wrapper  = quoteTools.ui.blockquote();
             photo    = quoteTools.ui.makeBlock('IMG', ['quoteStyle-withPhoto--photo']),
             author   = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--author', 'ce_quote--author']),
-            job      = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--position', 'ce_quote--position']),
+            job      = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--job', 'ce_quote--job']),
             quote    = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--quote', 'ce_quote--text'])
 
             /* Default Image src */
@@ -211,12 +212,12 @@ var quoteTools = {
 
             /*  Author's position and job */
             job.contentEditable = 'true';
-            job.textContent = data.position || quoteTools.jobPlacaholder;
+            job.textContent = data.job || quoteTools.jobPlacaholder;
 
             quoteTools.ui.mousedown(job, quoteTools.jobPlacaholder);
             quoteTools.ui.keyPressed(job, quoteTools.jobPlacaholder);
 
-        var authorsWrapper = quoteTools.ui.makeBlock('DIV');
+        var authorsWrapper = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--authorWrapper']);
             authorsWrapper.appendChild(author);
             authorsWrapper.appendChild(job);
 
@@ -224,6 +225,7 @@ var quoteTools = {
             quote.contentEditable = 'true';
             quote.innerHTML = data.text;
 
+        wrapper.classList.add('quoteStyle-withPhoto--wrapper');
         wrapper.dataset.quoteStyle = 'withPhoto';
 
         wrapper.appendChild(photo);
@@ -238,7 +240,7 @@ var quoteTools = {
         var currentNode = block || cEditor.content.currentNode,
             photo       = currentNode.getElementsByTagName('img')[0],
             author      = currentNode.querySelector('.ce_quote--author'),
-            position    = currentNode.querySelector('.ce_quote--position'),
+            job         = currentNode.querySelector('.ce_quote--job'),
             quote ;
 
         /** Simple quote text placed in Blockquote tag*/
@@ -247,8 +249,8 @@ var quoteTools = {
         else
             quote = currentNode.querySelector('.ce_quote--text').textContent;
 
-        if (position)
-            position = position.textContent;
+        if (job)
+            job = job.textContent;
 
         if (author)
             author = author.textContent;
@@ -257,9 +259,10 @@ var quoteTools = {
             photo = photo.src;
 
         var data = {
+            style       : currentNode.dataset.quoteStyle,
             text        : quote,
             author      : author,
-            position    : position,
+            job         : job,
             photo       : photo,
         };
 
