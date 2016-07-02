@@ -8,6 +8,8 @@
 var linkTool = {
 
     defaultText    : 'Insert link here ...',
+    keyEnterCode    : 13,
+
     currentBlock   : null,
     currentInput   : null,
     elementClasses : {
@@ -35,6 +37,8 @@ var linkTool = {
         /* Bind callbacks **/
 
         tag.addEventListener('paste', linkTool.blockPasteCallback, false);
+
+        tag.addEventListener('keydown', linkTool.blockKeyDownCallback, false);
 
         return wrapper;
 
@@ -82,16 +86,40 @@ var linkTool = {
 
     blockPasteCallback : function (event) {
 
-        clipboardData = event.clipboardData || window.clipboardData;
+        var clipboardData = event.clipboardData || window.clipboardData,
+            pastedData = clipboardData.getData('Text'),
+            block = event.target.parentNode;
 
-        pastedData = clipboardData.getData('Text');
+        linkTool.renderLink(pastedData, block);
 
-        var block = event.target.parentNode;
+        event.stopPropagation();
+
+    },
+
+    blockKeyDownCallback : function (event) {
+
+        if (event.keyCode == linkTool.keyEnterCode) {
+
+            var inputTag = event.target,
+                block = inputTag.parentNode,
+                url = inputTag.value;
+
+            event.preventDefault();
+
+            linkTool.renderLink(url, block);
+
+        }
+
+    },
+
+    renderLink : function (url, block) {
+
+        console.log(url, block);
 
         Promise.resolve()
 
             .then(function () {
-                return linkTool.urlify(pastedData)
+                return linkTool.urlify(url)
             })
 
             .then(fetch('http://ajax.ru/link'))
@@ -137,7 +165,7 @@ var linkTool = {
             return links[0];
         }
 
-        return null;
+        Promise.reject(Error("Url is not matched"));
 
     },
 
