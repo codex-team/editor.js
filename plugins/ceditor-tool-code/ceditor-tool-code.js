@@ -4,6 +4,8 @@
  */
 var codeTool = {
 
+    baseClass : "tool-code",
+
     /**
      * Make initial header block
      * @param {object} JSON with block data
@@ -12,6 +14,8 @@ var codeTool = {
     make : function (data) {
 
         var tag = document.createElement('code');
+
+        tag.classList += codeTool.baseClass;
 
         if (data && data.text) {
             tag.innerHTML = data.text;

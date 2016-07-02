@@ -166,13 +166,7 @@
 .ce_redactor li{
     margin: 5px 0;
 }
-.ce_redactor code{
-    display: block;
-    font-family: 'monospace', 'monaco', 'consolas', 'courier';
-    line-height: 1.5em;
-    background: #f8f8fd !important;
-    color: #4a8bd1;
-}
+
 
 
 .ce_redactor .ce_block{
