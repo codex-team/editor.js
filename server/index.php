@@ -64,8 +64,6 @@ function get_meta_from_html($html)
     }
 
     return [
-        'linkUrl'       => $url,
-        'linkText'      => $shortUrl,
         'image'         => $image,
         'title'         => $title,
         'description'   => $description
@@ -79,9 +77,23 @@ if (!$url)
     exit(0);
 }
 
-$html = file_get_contents_curl($url[0]);
+$fullUrl = $url[0];
+$shortUrl = $url[1];
+
+$html = file_get_contents_curl($fullUrl);
 
 $result = get_meta_from_html($html);
+
+$result = array_merge(
+
+    get_meta_from_html($html), 
+
+    [
+        'linkUrl'   => $fullUrl,
+        'linkText'  => $shortUrl,
+    ]
+
+);
 
 echo json_encode($result);
 
