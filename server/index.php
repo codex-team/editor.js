@@ -15,27 +15,20 @@ function file_get_contents_curl($url)
     return $data;
 }
 
-function get_url_params()
+function get_url()
 {
-
-    if (isset($_GET['url']))
-    {
-        $url = $_GET['url'];
-        preg_match("/\b(?:(?:https?):\/\/)([-a-z0-9+&@#\/%?=~_|!:,.;]*[-a-z0-9+&@#\/%=~_|])/i", $url, $result);
-        if (!$result)
-        {
-            return false;
-        }
-        else
-        {
-            return $result;
-        }
-    }
-    else 
+    if (!isset($_GET['url']))
     {
         return false;
     }
 
+    $url = $_GET['url'];
+
+    if (filter_var($url, FILTER_VALIDATE_URL) === FALSE) {
+       return false;
+    }
+    
+    return $url;
 }
 
 function get_meta_from_html($html)
@@ -70,17 +63,16 @@ function get_meta_from_html($html)
     ];
 }
 
-$url = get_url_params();
+$url = get_url();
+
+$url_params = parse_url($url);
 
 if (!$url)
 {
     exit(0);
 }
 
-$fullUrl = $url[0];
-$shortUrl = $url[1];
-
-$html = file_get_contents_curl($fullUrl);
+$html = file_get_contents_curl($url);
 
 $result = get_meta_from_html($html);
 
@@ -88,10 +80,10 @@ $result = array_merge(
 
     get_meta_from_html($html), 
 
-    [
-        'linkUrl'   => $fullUrl,
-        'linkText'  => $shortUrl,
-    ]
+    array(
+        'linkUrl'   => $url,
+        'linkText'  => $url_params["host"] . $url_params["path"],
+    )
 
 );
 
