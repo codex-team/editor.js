@@ -17,7 +17,8 @@ var linkTool = {
         image       : "tool-link-image",
         title       : "tool-link-title",
         description : "tool-link-description",
-        loader      : "tool-link-loader"
+        loader      : "tool-link-loader",
+        error       : "tool-link-error"
     },
 
     /**
@@ -99,11 +100,17 @@ var linkTool = {
 
     blockKeyDownCallback : function (event) {
 
+        var inputTag = event.target,
+            block = inputTag.parentNode;
+
+        if (block.classList.contains(linkTool.elementClasses.error))
+        {
+            block.classList.remove(linkTool.elementClasses.error)
+        }
+
         if (event.keyCode == linkTool.ENTER_KEY) {
 
-            var inputTag = event.target,
-                block = inputTag.parentNode,
-                url = inputTag.value;
+            var url = inputTag.value;
 
             linkTool.renderLink(url, block);
 
@@ -152,6 +159,8 @@ var linkTool = {
 
                 /* Hide loader gif **/
                 block.classList.remove(linkTool.elementClasses.loader);
+
+                block.classList.add(linkTool.elementClasses.error);
 
                 cEditor.core.log('Error while doing things with link paste: %o', 'error', error);
             });
