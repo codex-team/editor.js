@@ -138,13 +138,7 @@ var linkTool = {
                 }
                 else {
 
-                    return {
-                        'linkUrl'       : 'http://yandex.ru',
-                        'linkText'      : 'yandex.ru',
-                        'image'         : 'https://yastatic.net/morda-logo/i/apple-touch-icon/ru-76x76.png',
-                        'title'         : 'Яндекс',
-                        'description'   : 'Сайт, поисковик, проч.'
-                    };
+                    return Error("Invalid response status: %o", response);
 
                 }
 
