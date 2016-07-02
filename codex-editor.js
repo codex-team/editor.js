@@ -1094,8 +1094,6 @@ cEditor.content = {
 
         var newBlockComposed = cEditor.content.composeNewBlock(newBlock, blockType);
 
-        newBlockComposed.appendChild(newBlock);
-
         /** Replacing */
         cEditor.content.replaceBlock(blockToReplace, newBlockComposed, blockType);
 
