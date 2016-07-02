@@ -18,22 +18,36 @@
     border-bottom-color: #f6d8da;
     color: #cc7d74;
 }
-.clearfix_quote:after {
-    visibility: hidden;
-    display: block;
-    font-size: 0;
-    content: " ";
-    clear: both;
-    height: 0;
+
+/** Quote Styles */
+
+.quoteStyle-withCaption--author:empty {
+    direction: rtl;
 }
 .quoteStyle-withCaption--author {
+
+    margin: 2.5em 100px !important;
     margin-top: 25px;
     text-align: right;
-    font-size: 17px;
+    font-size: 1.38em;
     font-weight: bold;
     color: #000;
     line-height: 1.5em;
 
+}
+.quoteStyle-simple--text,
+.quoteStyle-withCaption--blockquote,
+.quoteStyle-withPhoto--quote {
+    font-size: 1.3em;
+    line-height: 1.9em;
+}
+
+.quoteStyle-simple--text,
+.quoteStyle-withCaption--blockquote
+{
+    margin: 2.5em 100px;
+    padding: 1.5em 2.0em !important;
+    background: #FBFBFB;
 }
 
 .quoteStyle-withCaption--blockquote:focus,
@@ -41,39 +55,106 @@
    outline: none;
 }
 
+.quoteStyle-simple--text:empty::before,
+.quoteStyle-withCaption--blockquote:empty::before,
+.quoteStyle-withPhoto--quote:empty::before
+{
+    content : 'Введите цитату';
+    color: #818BA1;
+    opacity: 0.7;
+    transition: opacity 200ms ease;
+}
+
+.quoteStyle-withCaption--author:empty::before
+{
+    content : 'Введите имя автора';
+    color: #A5ABBC;
+    opacity: 1;
+    transition: opacity 200ms ease;
+}
+.quoteStyle-withPhoto--author:empty::before {
+    content : 'Введите имя автора';
+    color: #000;
+    opacity: .8;
+    transition: opacity 200ms ease;
+}
+
+.quoteStyle-simple--text:focus::before,
+.quoteStyle-withCaption--blockquote:focus::before,
+.quoteStyle-withPhoto--quote:focus::before
+{
+    opacity: .1;
+}
+
+.quoteStyle-withCaption--author:focus::before,
+.quoteStyle-withPhoto--author:focus::before
+{
+    opacity: .1;
+}
+
 /** Quote with photo */
 .ce_redactor .quoteStyle-withPhoto--wrapper {
-    margin: 0px !important;
-    padding: 4.5em 6.5em !important;
+    margin: 0;
+    padding: 4.5em 8.5em !important;
 }
+
 .quoteStyle-withPhoto--photo {
     width: 80px;
     height: 80px;
-    border: 1px solid #8E8E8E;
+    text-align: center;
+    line-height: 80px;
     border-radius: 50%;
     float: left;
-    margin-right: 33px;
+    margin-right: 35px;
+    border: 3px dashed #D7E2EE;
+}
+.quoteStyle-withPhoto--photo:hover {
+    cursor: pointer;
+    background: #F0F3F6;
+    border: 3px dashed #D7E2EE;
+}
+
+.quoteStyle-withPhoto--photo:hover::after {
+    display: block;
+}
+
+.quoteStyle-withPhoto--photo .ce-icon-picture {
+    font-family: "codex_editor";
+	font-size: 1.5em;
+	color: #8990AA;
 }
 
 .quoteStyle-withPhoto--author {
-    font-size: 24px;
+    font-size: 1.56em;
     font-weight: bold;
     color: #000;
-    /*letter-spacing: 0px;*/
     outline: none;
     overflow: hidden;
+    margin-bottom: 6px;
 }
 .quoteStyle-withPhoto--job {
     font-weight: regular;
-    font-size: 19px;
+    font-size: 1.38em;
     color: #818BA1;
-    /*letter-spacing: 0px;*/
     outline: none;
     overflow: hidden;
 }
 
+.quoteStyle-withPhoto--job:empty::before {
+    content : 'Введите должность автора';
+    color: #A5ABBC;
+    opacity: 1;
+    transition: opacity 200ms ease;
+}
+
+.quoteStyle-withPhoto--job:focus::before {
+    opacity: .1;
+}
+
 .quoteStyle-withPhoto--quote {
-    margin-top: 30px;
+    background: #FBFBFB;
+    margin-top: 45px;
+    line-height: 32px;
     outline: none;
     overflow: hidden;
 }

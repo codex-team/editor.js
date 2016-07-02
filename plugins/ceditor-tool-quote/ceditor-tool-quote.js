@@ -5,8 +5,6 @@
 
 var quoteTools = {
 
-    captionPlaceholder  : 'Введите имя автора',
-    jobPlacaholder      : 'Введите должность',
     /**
     * Make Quote from JSON datasets
     */
@@ -32,10 +30,14 @@ var quoteTools = {
             tag = document.createElement('BLOCKQUOTE');
 
             tag.contentEditable = 'true';
+
             tag.dataset.quoteStyle = 'simple';
-            tag.class = 'ce_quote--text';
+
+            tag.classList.add('ce_quote--text');
+            tag.classList.add('quoteStyle-simple--text');
 
         }
+
         return tag;
     },
 
@@ -143,17 +145,11 @@ var quoteTools = {
 
     },
 
-    setBlockHandler : function(block) {
-
-    },
-
     makeSimpleQuote : function(data) {
 
-        var wrapper = quoteTools.ui.blockquote();
+        var wrapper = quoteTools.ui.makeBlock('BLOCKQUOTE', ['quoteStyle-simple--text', 'ce_quote--text']);
 
         wrapper.innerHTML = data.text || '';
-
-        wrapper.classList.add('ce_quote--text');
 
         wrapper.dataset.quoteStyle = 'simple';
 
@@ -176,11 +172,7 @@ var quoteTools = {
             /* make Author contentEditable */
             author.contentEditable = 'true';
 
-            author.textContent = data.author || quoteTools.captionPlaceholder;
-
-            quoteTools.ui.mousedown(author, quoteTools.captionPlaceholder);
-            quoteTools.ui.keyPressed(author, quoteTools.captionPlaceholder);
-
+            author.textContent = data.author;
 
         /* Appending created components */
         wrapper.dataset.quoteStyle = 'withCaption';
@@ -195,27 +187,22 @@ var quoteTools = {
     makeQuoteWithPhoto : function(data) {
 
         var wrapper  = quoteTools.ui.blockquote();
-            photo    = quoteTools.ui.makeBlock('IMG', ['quoteStyle-withPhoto--photo']),
+            photo    = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--photo']),
             author   = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--author', 'ce_quote--author']),
             job      = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--job', 'ce_quote--job']),
             quote    = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--quote', 'ce_quote--text'])
 
             /* Default Image src */
-            photo.src = data.photo || 'plugins/ceditor-tool-quote/img/codex.png';
+            var icon = quoteTools.ui.makeBlock('SPAN', ['ce-icon-picture']);
+            photo.appendChild(icon);
 
             /* make author block contentEditable */
             author.contentEditable = 'true';
-            author.textContent = data.author || quoteTools.captionPlaceholder;
-
-            quoteTools.ui.mousedown(author, quoteTools.captionPlaceholder);
-            quoteTools.ui.keyPressed(author, quoteTools.captionPlaceholder);
+            author.textContent = data.author;
 
             /*  Author's position and job */
             job.contentEditable = 'true';
-            job.textContent = data.job || quoteTools.jobPlacaholder;
-
-            quoteTools.ui.mousedown(job, quoteTools.jobPlacaholder);
-            quoteTools.ui.keyPressed(job, quoteTools.jobPlacaholder);
+            job.textContent = data.job;
 
         var authorsWrapper = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--authorWrapper']);
             authorsWrapper.appendChild(author);
@@ -304,48 +291,8 @@ quoteTools.ui = {
         }
         return el;
 
-    },
-
-    mousedown : function(block, placeholder) {
-
-        block.addEventListener('focus', function() {
-
-            quoteTools.ui.clear(block, placeholder);
-
-        });
-
-    },
-
-    keyPressed : function(block, placeholder) {
-
-        block.addEventListener('keydown', function(){
-
-            quoteTools.ui.fillbyPlaceholder(block, placeholder);
-
-        });
-
-    },
-
-    clear : function(block, placeholder) {
-
-        if ( block.textContent == placeholder) {
-            block.innerHTML = '';
-        }
-    },
-
-    fillbyPlaceholder : function(block, placeholder) {
-
-        quoteTools.ui.clear(block, placeholder);
-
-        setTimeout( function() {
-
-            if (block.textContent == '') {
-                block.textContent = placeholder;
-            }
-
-        }, 10);
-
     }
+
 }
 
 cEditor.tools.quote = {
