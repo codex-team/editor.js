@@ -166,12 +166,6 @@
 .ce_redactor li{
     margin: 5px 0;
 }
-.ce_redactor blockquote{
-    font-size: 1.3em;
-    line-height: 1.9em;
-    margin: 2.5em 200px !important;
-    padding: 2.5em 3.5em !important;
-}
 .ce_redactor code{
     display: block;
     font-family: 'monospace', 'monaco', 'consolas', 'courier';
@@ -225,10 +219,6 @@
         border-bottom-color: #f6d8da;
         color: #cc7d74;
     }
-
-
-
-
 
 /*
 @-webkit-keyframes bounceIn {

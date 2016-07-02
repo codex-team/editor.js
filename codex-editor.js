@@ -1003,8 +1003,6 @@ cEditor.content = {
         */
         cEditor.content.workingNodeChanged(newBlock);
 
-
-
     },
     /**
     * @deprecated with replaceBlock()
