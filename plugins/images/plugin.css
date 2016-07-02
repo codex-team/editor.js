@@ -1,0 +1,22 @@
+/**
+* Image plugin for codex-editor
+* @author CodeX Team <team@ifmo.su>
+*
+* @version 0.0.1
+*/
+.ce-plugin-image__holder{
+	background: #FEFEFE;
+	border: 2px dashed #E8EBF5;
+	border-radius: 55px;
+	margin: 30px 0;
+	padding: 30px 40px;
+	white-space: nowrap;
+	color: #A5ABBC;
+	font-size: 1.2em;
+}
+.ce-plugin-image__button{
+	float: right;
+	font-family: "codex_editor";
+	font-size: 1.5em;
+	color: #8990AA;
+}
