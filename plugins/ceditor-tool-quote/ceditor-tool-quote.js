@@ -201,7 +201,7 @@ var quoteTools = {
             quote    = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withPhoto--quote', 'ce_quote--text'])
 
             /* Default Image src */
-            photo.src = data.photo || '../img/01.jpg';
+            photo.src = data.photo || 'plugins/ceditor-tool-quote/img/codex.png';
 
             /* make author block contentEditable */
             author.contentEditable = 'true';

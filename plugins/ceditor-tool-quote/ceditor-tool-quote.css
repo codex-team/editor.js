@@ -47,19 +47,19 @@
     padding: 4.5em 6.5em !important;
 }
 .quoteStyle-withPhoto--photo {
-    width: 90px;
-    height: 90px;
+    width: 80px;
+    height: 80px;
     border: 1px solid #8E8E8E;
     border-radius: 50%;
     float: left;
-    margin-right: 30px;
+    margin-right: 33px;
 }
 
 .quoteStyle-withPhoto--author {
     font-size: 24px;
     font-weight: bold;
     color: #000;
-    letter-spacing: 0px;
+    /*letter-spacing: 0px;*/
     outline: none;
     overflow: hidden;
 }
@@ -67,7 +67,7 @@
     font-weight: regular;
     font-size: 19px;
     color: #818BA1;
-    letter-spacing: 0px;
+    /*letter-spacing: 0px;*/
     outline: none;
     overflow: hidden;
 }
