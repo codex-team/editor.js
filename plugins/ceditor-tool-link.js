@@ -9,9 +9,11 @@ var linkTool = {
 
     defaultText    : 'Insert link here ...',
     ENTER_KEY      : 13,
+    loaderSrc      : '/plugins/ceditor-tool-link/loading.gif',
 
     currentBlock   : null,
     currentInput   : null,
+    currentLoader  : null,
     elementClasses : {
         link        : "tool-link-link",
         image       : "tool-link-image",
@@ -104,9 +106,9 @@ var linkTool = {
                 block = inputTag.parentNode,
                 url = inputTag.value;
 
-            event.preventDefault();
-
             linkTool.renderLink(url, block);
+
+            event.preventDefault();
 
         }
 
@@ -121,12 +123,20 @@ var linkTool = {
             })
 
             .then(function (url) {
+
+                /* Show loader gif **/
+                linkTool.currentLoader = linkTool.ui.image(linkTool.loaderSrc, "");
+                block.appendChild(linkTool.currentLoader);
+
                 return fetch('/server/?url=' + encodeURI(url));
             })
 
             .then(function (response) {
 
                 if (response.status == "200"){
+
+                    /* Hide loader gif **/
+                    linkTool.currentLoader.remove();
 
                     return response.json();
 
@@ -150,6 +160,10 @@ var linkTool = {
             })
 
             .catch(function(error) {
+
+                /* Hide loader gif **/
+                linkTool.currentLoader.remove();
+
                 cEditor.core.log('Error while doing things with link paste: %o', 'error', error);
             });
 
@@ -192,7 +206,7 @@ linkTool.ui = {
     make : function (json) {
 
         var wrapper = this.wrapper(),
-            siteImage = this.image(json.image),
+            siteImage = this.image(json.image, linkTool.elementClasses.image),
             siteTitle = this.title(json.title),
             siteDescription = this.description(json.description),
             siteLink = this.link(json.linkUrl, json.linkText);
@@ -240,11 +254,11 @@ linkTool.ui = {
 
     },
     
-    image : function (imageSrc) {
+    image : function (imageSrc, imageClass) {
 
         var imageTag = document.createElement('img');
 
-        imageTag.classList += linkTool.elementClasses.image;
+        imageTag.classList += imageClass;
 
         imageTag.setAttribute('src', imageSrc);
 
@@ -288,7 +302,7 @@ linkTool.ui = {
         descriptionTag.innerHTML = descriptionText;
 
         return descriptionTag;
-    }
+    },
 
 };
 
