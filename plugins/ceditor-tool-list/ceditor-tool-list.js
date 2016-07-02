@@ -16,8 +16,10 @@ var listTool = {
      */
     make : function () {
 
+        console.log("this: %o", this);
+
         var tag = listTool.ui.make(),
-            li = this.block("li", "tool-link-li");
+            li  = listTool.ui.block("li", "tool-link-li");
 
         tag.appendChild(li);
 
@@ -30,7 +32,8 @@ var listTool = {
      */
     render : function (data) {
 
-        var tag = listTool.ui.make();
+        var type = data.type == 'ordered' ? 'OL' : 'UL',
+            tag  = listTool.ui.make(type);
 
         data.items.forEach(function (element, index, array) {
 
@@ -113,9 +116,9 @@ var listTool = {
 
 listTool.ui = {
 
-    make : function (blockType = "ul") {
+    make : function (blockType) {
 
-        var wrapper = this.block(blockType, listTool.baseClass);
+        var wrapper = this.block(blockType || 'UL', listTool.baseClass);
 
         wrapper.contentEditable = true;
 
@@ -123,11 +126,11 @@ listTool.ui = {
 
     },
 
-    block : function (blockType, blockClass = "") {
+    block : function (blockType, blockClass) {
 
         var block = document.createElement(blockType);
 
-        block.classList.add(blockClass);
+        if ( blockClass ) block.classList.add(blockClass);
 
         return block;
 
