@@ -5,18 +5,43 @@
 * @version 0.0.1
 */
 .ce-plugin-image__holder{
+	position: relative;
 	background: #FEFEFE;
 	border: 2px dashed #E8EBF5;
 	border-radius: 55px;
 	margin: 30px 0;
-	padding: 30px 40px;
-	white-space: nowrap;
-	color: #A5ABBC;
-	font-size: 1.2em;
+	padding: 30px 110px 30px 40px;
 }
+	.ce-plugin-image__holder input{
+		border: 0;
+		background: transparent;
+		outline: none;
+		-webkit-appearance: none;
+		font-size: 1.2em;
+		color: #A5ABBC;
+	}
+	/* Placeholder color for Chrome */
+	.ce-plugin-image__holder input::-webkit-input-placeholder {
+	  color: #A5ABBC;
+	}
+	/* Placeholder color for IE 10+ */
+	.ce-plugin-image__holder input:-ms-input-placeholder {
+	  color: #A5ABBC;
+	}
+	/* Placeholder color for Firefox 19+ */
+	.ce-plugin-image__holder input::-moz-placeholder {
+	  color: #A5ABBC;
+	  opacity: 1;
+	}
 .ce-plugin-image__button{
-	float: right;
+	position: absolute;
+	z-index: 2;
+	right: 40px;
+	cursor: pointer;
 	font-family: "codex_editor";
 	font-size: 1.5em;
 	color: #8990AA;
 }
+	.ce-plugin-image__button:hover{
+		color: #393F52;
+	}
