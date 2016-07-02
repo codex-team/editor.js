@@ -8,7 +8,7 @@
 var linkTool = {
 
     defaultText    : 'Insert link here ...',
-    keyEnterCode    : 13,
+    keyEnterCode   : 13,
 
     currentBlock   : null,
     currentInput   : null,
@@ -114,39 +114,39 @@ var linkTool = {
 
     renderLink : function (url, block) {
 
-        console.log(url, block);
-
         Promise.resolve()
 
             .then(function () {
                 return linkTool.urlify(url)
             })
 
-            .then(fetch('http://ajax.ru/link'))
+            .then(function (url) {
 
-            .then(function (response) {
+                fetch('/server/?url=' + encodeURI(url)).then(function (response) {
 
-                if (response.status == "200"){
+                    if (response.status == "200"){
 
-                    return response.json();
+                        return response.json();
 
-                }
-                else {
+                    }
+                    else {
 
-                    return {
-                        'linkUrl'       : 'http://yandex.ru',
-                        'linkText'      : 'yandex.ru',
-                        'image'         : 'https://yastatic.net/morda-logo/i/apple-touch-icon/ru-76x76.png',
-                        'title'         : 'Яндекс',
-                        'description'   : 'Сайт, поисковик, проч.'
-                    };
+                        return {
+                            'linkUrl'       : 'http://yandex.ru',
+                            'linkText'      : 'yandex.ru',
+                            'image'         : 'https://yastatic.net/morda-logo/i/apple-touch-icon/ru-76x76.png',
+                            'title'         : 'Яндекс',
+                            'description'   : 'Сайт, поисковик, проч.'
+                        };
 
-                }
+                    }
 
-            })
+                })
 
-            .then(function (json) {
-                linkTool.composeLinkPreview(json, block)
+                .then(function (json) {
+                    linkTool.composeLinkPreview(json, block)
+                })
+
             })
 
             .catch(function(error) {
@@ -165,7 +165,7 @@ var linkTool = {
             return links[0];
         }
 
-        Promise.reject(Error("Url is not matched"));
+        return Promise.reject(Error("Url is not matched"));
 
     },
 
