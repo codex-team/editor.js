@@ -8,7 +8,7 @@
 var linkTool = {
 
     defaultText    : 'Insert link here ...',
-    keyEnterCode   : 13,
+    ENTER_KEY      : 13,
 
     currentBlock   : null,
     currentInput   : null,
@@ -98,7 +98,7 @@ var linkTool = {
 
     blockKeyDownCallback : function (event) {
 
-        if (event.keyCode == linkTool.keyEnterCode) {
+        if (event.keyCode == linkTool.ENTER_KEY) {
 
             var inputTag = event.target,
                 block = inputTag.parentNode,
