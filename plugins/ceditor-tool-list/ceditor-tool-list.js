@@ -16,8 +16,6 @@ var listTool = {
      */
     make : function () {
 
-        console.log("this: %o", this);
-
         var tag = listTool.ui.make(),
             li  = listTool.ui.block("li", "tool-link-li");
 
@@ -109,7 +107,6 @@ var listTool = {
         currentBlock.appendChild(newEditable);
         oldEditable.remove();
 
-        console.log(event, blockType, currentBlock, oldEditable);
     },
 
 };
