@@ -75,7 +75,6 @@
 .ce_redactor {
     position: relative;
     outline: none;
-    background: #FCFCFC;
     padding: 1px 0;
 }
 
@@ -184,13 +183,14 @@
 
 .ce_redactor .ce_block{
     padding: 10px;
-    margin: -1px;
-    border: 1px dotted #ccc;
+    /*margin: -1px;*/
+    /*border: 1px dotted #ccc;*/
     background: #fff;
     outline: none;
 }
     .ce_redactor .ce_block:focus{
-        box-shadow: inset 0 0 0px 2px rgba(148, 158, 191, 0.05);
+        background: #fbfbfb;
+        border-radius: 3px;
     }
 
 
