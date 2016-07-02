@@ -1,0 +1,69 @@
+/** Quote - settings */
+
+.ce_plugin_quote--settings{
+    white-space: nowrap;
+    /*padding-right: 10px;    */
+}
+.ce_plugin_quote--caption{
+    color: #b9c2c2;
+}
+.ce_plugin_quote--select_button{
+    display: inline-block;
+    margin-left: 40px;
+    border-bottom: 1px solid #c3d5ed;
+    padding-bottom: 2px;
+    color: #5399d4;
+    cursor: pointer;
+}
+.ce_plugin_quote--select_button:hover{
+    border-bottom-color: #f6d8da;
+    color: #cc7d74;
+}
+.clearfix_quote:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+}
+.quoteStyle-withCaption--author {
+    margin-top: 25px;
+    text-align: right;
+    font-size: 17px;
+    font-weight: bold;
+    color: #000;
+    line-height: 1.5em;
+
+}
+
+.quoteStyle-withCaption--blockquote:focus, .quoteStyle-withCaption--author:focus {
+   outline: none;
+}
+
+.quoteStyle-withPhoto--photo {
+    width: 90px;
+    height: 90px;
+    border: 1px solid #8E8E8E;
+    border-radius: 50%;
+    float: left;
+    margin-right: 30px;
+}
+
+.quoteStyle-withPhoto--author, .quoteStyle-withPhoto--position  {
+    overflow: hidden;
+    font-weight: bold;
+    font-size: 17px;
+    line-height: 1.5em;
+    /*border-bottom: 1px solid black;*/
+    border: 0px;
+    outline: none;
+
+    word-break: break-word;
+}
+
+.quoteStyle-withPhoto--quote {
+    margin-top: 15px;
+    outline: none;
+    overflow: hidden;
+}
