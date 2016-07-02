@@ -65,49 +65,57 @@ var listTool = {
 
         var holder  = document.createElement('DIV'),
             caption = document.createElement('SPAN'),
-            types   = {
-                unordered    : 'Обычный список',
-                ordered      : 'Нумерованный список'
-            },
             selectTypeButton;
 
         /** Add holder classname */
-        holder.className = 'ce_plugin_list--settings'
+        holder.className = 'ce_plugin_list--settings';
 
         /** Add settings helper caption */
         caption.textContent = 'Настройки списков';
         caption.className   = 'ce_plugin_list--caption';
 
+        var orderedButton = listTool.ui.button("ordered"),
+            unorderedButton = listTool.ui.button("unordered");
+
+        orderedButton.addEventListener('click', function (event) {
+            listTool.changeBlockStyle(event, 'ol');
+            cEditor.toolbar.settings.close();
+        });
+
+        unorderedButton.addEventListener('click', function (event) {
+            listTool.changeBlockStyle(event, 'ul');
+            cEditor.toolbar.settings.close();
+        });
+
         holder.appendChild(caption);
-
-        /** Now add type selectors */
-        for (var type in types){
-
-            selectTypeButton = document.createElement('SPAN');
-
-            selectTypeButton.textContent = types[type];
-
-            selectTypeButton.className   = 'ce_plugin_list--select_button';
-
-            var quoteStyle = quoteTools.selectTypeQuoteStyle(type);
-            quoteTools.addSelectTypeClickListener(selectTypeButton, quoteStyle);
-
-            holder.appendChild(selectTypeButton);
-
-        }
+        holder.appendChild(orderedButton);
+        holder.appendChild(unorderedButton);
 
         return holder;
 
     },
 
+    changeBlockStyle : function (event, blockType) {
+
+        var currentBlock = cEditor.content.currentNode,
+            newEditable = listTool.ui.make(blockType),
+            oldEditable = currentBlock.querySelector("[contenteditable]");
+
+        newEditable.innerHTML = oldEditable.innerHTML;
+
+        currentBlock.appendChild(newEditable);
+        oldEditable.remove();
+
+        console.log(event, blockType, currentBlock, oldEditable);
+    },
 
 };
 
 listTool.ui = {
 
-    make : function (json) {
+    make : function (blockType = "ul") {
 
-        var wrapper = this.block("div", listTool.baseClass);
+        var wrapper = this.block(blockType, listTool.baseClass);
 
         wrapper.contentEditable = true;
 
@@ -123,6 +131,21 @@ listTool.ui = {
 
         return block;
 
+    },
+
+    button : function (buttonType) {
+
+        var types   = {
+                unordered    : 'Обычный список',
+                ordered      : 'Нумерованный список'
+            },
+            button = document.createElement('SPAN');
+
+        button.textContent = types[buttonType];
+
+        button.className   = 'ce_plugin_list--select_button';
+
+        return button;
     }
 };
 
