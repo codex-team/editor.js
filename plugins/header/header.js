@@ -1,7 +1,9 @@
 /**
-* Example of making plugin
-* H e a d e r
+* Header Plugin\
+* @author CodeX Team <team@ifmo.su>
+* @version 0.0.1
 */
+
 var headerTool = {
 
     /**
@@ -142,16 +144,18 @@ var headerTool = {
 
         /** Now current header stored as a currentNode */
         old_header = cEditor.content.currentNode;
-
         /** Making new header */
         new_header = document.createElement(type);
 
         new_header.innerHTML = old_header.innerHTML;
         new_header.contentEditable = true;
 
-        cEditor.content.replaceBlock(old_header, new_header, 'header');
+        cEditor.content.switchBlock(old_header, new_header, 'header');
 
-        /** Add listeners for Arrow keys*/
+        /**
+        * @deprecated
+        * Add listeners for Arrow key
+        */
         cEditor.ui.addBlockHandlers(new_header);
 
         /** Close settings after replacing */

@@ -1,10 +1,9 @@
 /**
- * Created by nostr on 29.06.16.
- */
+* Link Tool\
+* @author CodeX Team <team@ifmo.su>
+* @version 0.0.1
+*/
 
-/**
- * Link tool plugin
- */
 var linkTool = {
 
     defaultText    : 'Insert link here ...',
@@ -202,7 +201,7 @@ var linkTool = {
 };
 
 linkTool.ui = {
-    
+
     make : function (json) {
 
         var wrapper = this.wrapper(),
@@ -253,7 +252,7 @@ linkTool.ui = {
         return wrapper;
 
     },
-    
+
     image : function (imageSrc, imageClass) {
 
         var imageTag = document.createElement('img');
@@ -263,7 +262,7 @@ linkTool.ui = {
         imageTag.setAttribute('src', imageSrc);
 
         return imageTag;
-        
+
     },
 
     link : function (linkUrl, linkText) {

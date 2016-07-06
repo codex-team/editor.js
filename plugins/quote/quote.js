@@ -1,6 +1,8 @@
 /**
-* Codex Team
-* @author Khaydarov Murod
+* Quote Plugin
+*
+* @author CodeX Team <team@ifmo.su>
+* @version 0.0.1
 */
 
 var quoteTools = {
@@ -136,7 +138,10 @@ var quoteTools = {
             var parsedOldQuote  = quoteTools.parseBlockQuote(),
                 newStyledQuote  = quoteStyle(parsedOldQuote);
 
-            cEditor.content.replaceBlock(cEditor.content.currentNode, newStyledQuote, 'quote');
+            var wrapper = cEditor.content.composeNewBlock(newStyledQuote, 'quote');
+            wrapper.appendChild(newStyledQuote);
+
+            cEditor.content.replaceBlock(cEditor.content.currentNode, wrapper, 'quote');
 
             /** Close settings after replacing */
             cEditor.toolbar.settings.close();
@@ -160,7 +165,7 @@ var quoteTools = {
 
     makeQuoteWithCaption : function(data) {
 
-        var wrapper = quoteTools.ui.blockquote(),
+        var blockquote  = quoteTools.ui.blockquote(),
             text    = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withCaption--blockquote', 'ce_quote--text']),
             author  = quoteTools.ui.makeBlock('DIV', ['quoteStyle-withCaption--author', 'ce_quote--author']);
 
@@ -175,12 +180,12 @@ var quoteTools = {
             author.textContent = data.author;
 
         /* Appending created components */
-        wrapper.dataset.quoteStyle = 'withCaption';
+        blockquote.dataset.quoteStyle = 'withCaption';
 
-        wrapper.appendChild(text);
-        wrapper.appendChild(author);
+        blockquote.appendChild(text);
+        blockquote.appendChild(author);
 
-        return wrapper;
+        return blockquote;
 
     },
 

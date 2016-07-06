@@ -1,4 +1,9 @@
-/** H e a d e r - settings */
+/**
+* Header settings
+* @author CodeX Team <team@ifmo.su>
+* @version 0.0.1
+*/
+
 .ce_plugin_header--settings{
     white-space: nowrap;
     /*padding-right: 10px;    */

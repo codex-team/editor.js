@@ -529,6 +529,7 @@ cEditor.callback = {
                                event.target == cEditor.content.currentNode;
 
         if ( isEnterPressedOnToolbar ) {
+
             event.preventDefault();
 
             cEditor.toolbar.toolClicked(event);
@@ -799,19 +800,21 @@ cEditor.callback = {
             event.preventDefault();
 
             /** Create new Block and append it after current */
-            var newBlock = cEditor.draw.block('p');
+            var newBlock = cEditor.draw.block('DIV');
 
             newBlock.contentEditable = "true";
-            newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
+
+            var wrapper = cEditor.content.composeNewBlock(newBlock, 'paragraph');
 
             /** Add event listeners (Keydown) for new created block */
-            cEditor.ui.addBlockHandlers(newBlock);
+            cEditor.ui.addBlockHandlers(wrapper);
 
-            cEditor.core.insertAfter(block, newBlock);
+            cEditor.core.insertAfter(block.parentNode, wrapper);
 
             /** set focus to the current (created) block */
-            cEditor.caret.setToNextBlock(block);
+            cEditor.caret.setToNextBlock(block.parentNode);
 
+            cEditor.toolbar.close();
             cEditor.toolbar.move();
         }
     },
@@ -1304,7 +1307,7 @@ cEditor.caret = {
     },
 
     /**
-    * @param {Element} block - element from which we take next block
+    * @param {Element} block - element from which we take next contenteditable block
     */
     setToNextBlock : function(block) {
 
@@ -1323,7 +1326,7 @@ cEditor.caret = {
 
         if (!nextBlockEditableElement)
         {
-            var hasContentEditableElement = null;
+            var hasContentEditableElement = false;
 
             /** Looking for contenteditable element */
             while (!hasContentEditableElement)
@@ -1354,7 +1357,7 @@ cEditor.caret = {
     },
 
     /**
-    * @todo передалать на prevBlock.querySelector('[contenteditable]') по аналогии с setToNextBlock
+    * @param {Element} block - element from which we take previous contenteditable block
     */
     setToPreviousBlock : function(block) {
 
@@ -1366,10 +1369,44 @@ cEditor.caret = {
             previousBlock = block.previousSibling,
             theEndOfPreviousBlockLastNode = 0;
 
-        /** Index in childs Array */
-        if (block.previousSibling.childNodes.length !== 0) {
+        /** This is first block */
+        if (!previousBlock) {
+            console.log('Sorry, I cant move');
+            return false;
+        }
 
-            previousBlock = cEditor.content.getDeepestTextNodeFromPosition(block.previousSibling, lastChildOfPreiviousBlockIndex);
+        previousBlockEditableElement = previousBlock.querySelector('[contenteditable]');
+
+        if (!previousBlockEditableElement) {
+
+            var hasContentEditableElement = false;
+
+            while (!hasContentEditableElement) {
+
+                previousBlock = previousBlock.previousSibling;
+
+                if (!previousBlock) {
+
+                    console.log('Cant move');
+                    return false;
+
+                }
+
+                previousBlockEditableElement = previousBlock.querySelector('[contenteditable]');
+
+                if (previousBlockEditableElement) {
+
+                    hasContentEditableElement = true;
+                    console.log('Founded: %o', previousBlockEditableElement);
+
+                }
+            }
+        }
+
+        /** Index in childs Array */
+        if (previousBlock.childNodes.length !== 0) {
+
+            previousBlock = cEditor.content.getDeepestTextNodeFromPosition(previousBlock, lastChildOfPreiviousBlockIndex);
             theEndOfPreviousBlockLastNode = previousBlock.length;
             lastChildOfPreiviousBlockIndex = 0;
 
