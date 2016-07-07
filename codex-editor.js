@@ -788,13 +788,23 @@ cEditor.callback = {
             currentNode = selection.anchorNode,
             parentOfFocusedNode = currentNode.parentNode;
 
+        while (!parentOfFocusedNode.classList.contains(cEditor.ui.BLOCK_CLASSNAME)){
+            parentOfFocusedNode = parentOfFocusedNode.parentNode;
+        }
+
+        /** Get child that wrappered by redactor */
+        parentOfFocusedNode = parentOfFocusedNode.childNodes[0];
+
+        var lastNode = parentOfFocusedNode.childNodes[parentOfFocusedNode.childNodes.length - 1];
+
         /**
         * We add new block with contentEditable property if enter key is pressed.
         * First we check, if caret is at the end of last node and offset is legth of text node
         * focusedNodeIndex + 1, because that we compare non-arrays index.
         */
+
         if ( currentNode.length === cEditor.caret.offset &&
-             parentOfFocusedNode.childNodes.length == cEditor.caret.focusedNodeIndex + 1) {
+                currentNode.parentNode == lastNode) {
 
             /** Prevent <div></div> creation */
             event.preventDefault();
@@ -809,10 +819,14 @@ cEditor.callback = {
             /** Add event listeners (Keydown) for new created block */
             cEditor.ui.addBlockHandlers(wrapper);
 
-            cEditor.core.insertAfter(block.parentNode, wrapper);
+            /** If block is not parent (redactor ui parsed) than set parent */
+            if (!block.classList.contains(cEditor.ui.BLOCK_CLASSNAME)) {
+                block = block.parentNode;
+            }
+            cEditor.core.insertAfter(block, wrapper);
 
             /** set focus to the current (created) block */
-            cEditor.caret.setToNextBlock(block.parentNode);
+            cEditor.caret.setToNextBlock(block);
 
             cEditor.toolbar.close();
             cEditor.toolbar.move();
@@ -1375,7 +1389,7 @@ cEditor.caret = {
             return false;
         }
 
-        previousBlockEditableElement = previousBlock.querySelector('[contenteditable]');
+        var previousBlockEditableElement = previousBlock.querySelector('[contenteditable]');
 
         if (!previousBlockEditableElement) {
 

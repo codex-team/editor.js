@@ -26,10 +26,9 @@
 }
 .quoteStyle-withCaption--author {
 
-    margin: 2.5em 100px !important;
-    margin-top: 25px;
+    margin: 0 100px 3em !important;
     text-align: right;
-    font-size: 1.38em;
+    font-size: 1.16em;
     font-weight: bold;
     color: #000;
     line-height: 1.5em;
@@ -38,16 +37,19 @@
 .quoteStyle-simple--text,
 .quoteStyle-withCaption--blockquote,
 .quoteStyle-withPhoto--quote {
-    font-size: 1.3em;
+    font-size: 1.13em;
     line-height: 1.9em;
 }
 
-.quoteStyle-simple--text,
+.quoteStyle-simple--text {
+    padding: 1.2em 2.1em;
+    margin: 2.5em 100px;
+    background: #FBFBFB;
+}
 .quoteStyle-withCaption--blockquote
 {
-    margin: 2.5em 100px;
+    margin: 0 100px;
     padding: 1.5em 2.0em !important;
-    background: #FBFBFB;
 }
 
 .quoteStyle-withCaption--blockquote:focus,
@@ -68,7 +70,8 @@
 .quoteStyle-withCaption--author:empty::before
 {
     content : 'Введите имя автора';
-    color: #A5ABBC;
+    font-weight: normal;
+    color: #a1a5b3;;
     opacity: 1;
     transition: opacity 200ms ease;
 }
@@ -99,19 +102,18 @@
 }
 
 .quoteStyle-withPhoto--photo {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     text-align: center;
-    line-height: 80px;
+    line-height: 70px;
     border-radius: 50%;
     float: left;
-    margin-right: 35px;
-    border: 3px dashed #D7E2EE;
+    margin-right: 25px;
+    border: 2px dashed #D7E2EE;
 }
 .quoteStyle-withPhoto--photo:hover {
     cursor: pointer;
     background: #F0F3F6;
-    border: 3px dashed #D7E2EE;
 }
 
 .quoteStyle-withPhoto--photo:hover::after {
@@ -121,11 +123,11 @@
 .quoteStyle-withPhoto--photo .ce-icon-picture {
     font-family: "codex_editor";
 	font-size: 1.5em;
-	color: #8990AA;
+	color: #d5dbea;
 }
 
 .quoteStyle-withPhoto--author {
-    font-size: 1.56em;
+    font-size: 1.36em;
     font-weight: bold;
     color: #000;
     outline: none;
@@ -133,7 +135,7 @@
     margin-bottom: 6px;
 }
 .quoteStyle-withPhoto--job {
-    font-size: 1.38em;
+    font-size: 1.08em;
     color: #818BA1;
     outline: none;
     overflow: hidden;
@@ -151,9 +153,8 @@
 }
 
 .quoteStyle-withPhoto--quote {
-    background: #FBFBFB;
-    margin-top: 45px;
-    line-height: 32px;
+    margin-top: 33px;
+    line-height: 2em;
     outline: none;
     overflow: hidden;
 }

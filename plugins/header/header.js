@@ -152,12 +152,6 @@ var headerTool = {
 
         cEditor.content.switchBlock(old_header, new_header, 'header');
 
-        /**
-        * @deprecated
-        * Add listeners for Arrow key
-        */
-        cEditor.ui.addBlockHandlers(new_header);
-
         /** Close settings after replacing */
         cEditor.toolbar.settings.close();
 
