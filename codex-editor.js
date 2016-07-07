@@ -675,14 +675,23 @@ cEditor.callback = {
         var caretInLastChild    = false,
             caretAtTheEndOfText = false;
 
-        var editableElement = focusedNode.querySelector('[contenteditable]'),
+        var editableElement = focusedNode.querySelectorAll('[contenteditable]'),
             lastChild,
             deepestTextnode;
+
+        if (editableElement.length == 1) {
+
+            editableElement = editableElement[0];
+        }
+        else {
+            editableElement = editableElement[editableElement.length - 1];
+        }
 
         if (!editableElement) {
             cEditor.core.log('Can not find editable element in current block: %o', 'warn', focusedNode);
             return;
         }
+
 
         lastChild = editableElement.childNodes[editableElement.childNodes.length - 1 ];
 
@@ -695,7 +704,7 @@ cEditor.callback = {
             deepestTextnode = lastChild;
 
         }
-
+        
         caretInLastChild = selection.anchorNode == deepestTextnode;
         caretAtTheEndOfText = deepestTextnode.length == selection.anchorOffset;
 
@@ -1331,8 +1340,8 @@ cEditor.caret = {
         var nextBlock = block.nextSibling,
             nextBlockEditableElement;
 
+        /** We reached the end of document */
         if (!nextBlock) {
-            console.log('I cant move, there is no blocks');
             return false;
         }
 
@@ -1349,25 +1358,20 @@ cEditor.caret = {
 
                 /** If caret reached the end of redactor wrapper */
                 if (!nextBlock) {
-
-                    console.log('Cant find any contenteditable element');
                     return false;
-
                 }
 
                 nextBlockEditableElement = nextBlock.querySelector('[contenteditable]');
 
                 if (nextBlockEditableElement) {
-
                     hasContentEditableElement = true;
-                    console.log('founded: %o', nextBlockEditableElement);
-
                 }
             }
         }
 
         cEditor.caret.set(nextBlockEditableElement, 0, 0);
         cEditor.content.workingNodeChanged(block.nextSibling);
+
     },
 
     /**

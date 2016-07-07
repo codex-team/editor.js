@@ -294,11 +294,12 @@ quoteTools.ui = {
                 el.className += ' ' + classList[i];
 
         }
+
         return el;
 
     }
 
-}
+};
 
 cEditor.tools.quote = {
 
