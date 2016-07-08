@@ -670,23 +670,33 @@ cEditor.callback = {
         var selection = window.getSelection();
 
         var editableElements    = cEditor.state.inputs,
-            focusedInput        = editableElements[cEditor.caret.focusedInput],
+            focusedInput        = editableElements[cEditor.caret.focusedInput];
+
+        /** If input os empty */
+        if (focusedInput.childNodes.length === 0) {
+
+            cEditor.caret.focusedInput = cEditor.caret.focusedInput + 1;
+            cEditor.caret.setToEditableElement(editableElements[cEditor.caret.focusedInput], 0);
+        }
+        /** Else we look for last child and compare offset */
+        else {
             childOfFocusedInput = focusedInput.childNodes[cEditor.caret.focusedNodeIndex];
 
-        if (childOfFocusedInput.childNodes.length != 0 && cEditor.caret.focusedNodeIndex != 0) {
-            childOfFocusedInput = childOfFocusedInput.childNodes[0];
-        }
-
-        var lengthOfChildInput = childOfFocusedInput.length;
-
-        if ((lengthOfChildInput == cEditor.caret.offset && focusedInput.childNodes.length == cEditor.caret.focusedNodeIndex + 1)
-            || (cEditor.caret.focusedNodeIndex == 0 && selection.anchorNode.length == cEditor.caret.offset)) {
-
-            if (cEditor.caret.focusedInput == editableElements.length - 1) {
-                return false;
+            if (childOfFocusedInput.childNodes.length != 0 && cEditor.caret.focusedNodeIndex != 0) {
+                childOfFocusedInput = childOfFocusedInput.childNodes[0];
             }
 
-            cEditor.caret.setToEditableElement(editableElements[cEditor.caret.focusedInput + 1], 0);
+            var lengthOfChildInput = childOfFocusedInput.length;
+
+            if ((lengthOfChildInput == cEditor.caret.offset && focusedInput.childNodes.length == cEditor.caret.focusedNodeIndex + 1)
+                || (cEditor.caret.focusedNodeIndex == 0 && selection.anchorNode.length == cEditor.caret.offset)) {
+
+                if (cEditor.caret.focusedInput == editableElements.length - 1) {
+                    return false;
+                }
+
+                cEditor.caret.setToEditableElement(editableElements[cEditor.caret.focusedInput + 1], 0);
+            }
         }
     },
 
@@ -700,29 +710,43 @@ cEditor.callback = {
         var selection = window.getSelection();
 
         var editableElements    = cEditor.state.inputs,
-            focusedInput        = editableElements[cEditor.caret.focusedInput],
+            focusedInput        = editableElements[cEditor.caret.focusedInput];
+
+        /** If input os empty */
+        if (focusedInput.childNodes.length === 0) {
+
+            cEditor.caret.focusedInput = cEditor.caret.focusedInput - 1;
+            cEditor.caret.setToEditableElement(editableElements[cEditor.caret.focusedInput], 0);
+        }
+        /** Else we look for last child and compare offset */
+        else {
             childOfFocusedInput = focusedInput.childNodes[cEditor.caret.focusedNodeIndex];
 
-        if (childOfFocusedInput.childNodes.length != 0 && cEditor.caret.focusedNodeIndex != 0) {
-            childOfFocusedInput = childOfFocusedInput.childNodes[0];
-        }
-
-        var lengthOfChildInput = childOfFocusedInput.length;
-
-        if (cEditor.caret.offset == 0 && cEditor.caret.focusedNodeIndex == 0) {
-
-            if (cEditor.caret.focusedInput == 0) {
-                return false;
+            if (childOfFocusedInput.childNodes.length != 0 && cEditor.caret.focusedNodeIndex != 0) {
+                childOfFocusedInput = childOfFocusedInput.childNodes[0];
             }
 
-            cEditor.caret.setToEditableElement(editableElements[cEditor.caret.focusedInput - 1], 1);
+            var lengthOfChildInput = childOfFocusedInput.length;
+
+            if (cEditor.caret.offset == 0 && cEditor.caret.focusedNodeIndex == 0) {
+
+                if (cEditor.caret.focusedInput == 0) {
+                    return false;
+                }
+
+                cEditor.caret.setToEditableElement(editableElements[cEditor.caret.focusedInput - 1], 1);
+            }
         }
     },
 
     enterPressedOnBlock: function (block, event) {
 
-        var selection   = window.getSelection(),
-            currentNode = selection.anchorNode,
+
+        cEditor.caret.save();
+
+        var selection    = window.getSelection(),
+            currentNode  = selection.anchorNode,
+            anchorOffset = selection.anchorOffset,
             parentOfFocusedNode = currentNode.parentNode;
 
         while (!parentOfFocusedNode.classList.contains(cEditor.ui.BLOCK_CLASSNAME)){
@@ -739,9 +763,11 @@ cEditor.callback = {
         * First we check, if caret is at the end of last node and offset is legth of text node
         * focusedNodeIndex + 1, because that we compare non-arrays index.
         */
+        if (cEditor.core.isDomNode(lastNode))
+            lastNode = lastNode.childNodes[0];
 
         if ( currentNode.length === cEditor.caret.offset &&
-                currentNode.parentNode == lastNode) {
+                currentNode == lastNode) {
 
             /** Prevent <div></div> creation */
             event.preventDefault();
@@ -750,6 +776,7 @@ cEditor.callback = {
             var newBlock = cEditor.draw.block('DIV');
 
             newBlock.contentEditable = "true";
+            // newBlock.textContent     = 'Новый блок';
 
             var wrapper = cEditor.content.composeNewBlock(newBlock, 'paragraph');
 
@@ -762,8 +789,12 @@ cEditor.callback = {
             }
             cEditor.core.insertAfter(block, wrapper);
 
+            cEditor.caret.save();
+
             /** set focus to the current (created) block */
-            cEditor.caret.setToNextBlock(block);
+            cEditor.caret.focusedInput = cEditor.caret.focusedInput + 1;
+            cEditor.caret.setToEditableElement(cEditor.state.inputs[cEditor.caret.focusedInput], 0);
+            // console.log(cEditor.caret.focusedInput);
 
             cEditor.toolbar.close();
             cEditor.toolbar.move();
@@ -1248,7 +1279,6 @@ cEditor.caret = {
             nodeToSet;
 
         if ( childs.length === 0 ) {
-
             nodeToSet = el;
 
         } else {
@@ -1258,8 +1288,9 @@ cEditor.caret = {
         }
 
         /** Getting TEXT */
-        if (cEditor.core.isDomNode(nodeToSet))
+        if (cEditor.core.isDomNode(nodeToSet) && childs.length != 0) {
             nodeToSet = nodeToSet.childNodes[0];
+        }
 
         var range     = document.createRange(),
             selection = window.getSelection();
