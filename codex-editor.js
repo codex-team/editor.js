@@ -30,7 +30,8 @@ var cEditor = (function (cEditor) {
     // Current editor state
     cEditor.state = {
         html   : '',
-        blocks : []
+        blocks : [],
+        inputs : [],
     };
 
     /**
@@ -477,7 +478,28 @@ cEditor.ui = {
             cEditor.callback.blockPaste(event, block);
         }, false);
 
-    }
+    },
+
+    /** getting all contenteditable elements */
+    getAllInputs : function() {
+
+        var redactor = cEditor.nodes.redactor,
+            inputs   = redactor.querySelectorAll('[contenteditable]');
+
+        elements = [];
+
+        for (key in inputs) {
+
+            if (cEditor.core.isDomNode(inputs[key])) {
+                elements[key] = inputs[key];
+            }
+
+        }
+
+        cEditor.state.inputs = elements;
+
+        // return elements;
+    },
 
 };
 
@@ -643,81 +665,39 @@ cEditor.callback = {
     */
     blockRightOrDownArrowPressed : function (block) {
 
-        var selection   = window.getSelection(),
-            focusedNode = selection.anchorNode,
-            focusedNodeHolder;
-
-        /** Check for caret existance */
-        if (!focusedNode){
-            return false;
-        }
-
-        /** Saving caret after keydown event happend */
         cEditor.caret.save();
 
-        /** Looking for closest (parent) contentEditable element of focused node */
-        while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
+        var selection = window.getSelection();
 
-            focusedNodeHolder = focusedNode.parentNode;
-            focusedNode       = focusedNodeHolder;
+        var editableElements    = cEditor.state.inputs,
+            focusedInput        = editableElements[cEditor.caret.focusedInput];
+
+        /** If input os empty */
+        if (focusedInput.childNodes.length === 0) {
+
+            cEditor.caret.focusedInput = cEditor.caret.focusedInput + 1;
+            cEditor.caret.setToEditableElement(editableElements[cEditor.caret.focusedInput], 0);
         }
-
-        /** Founded contentEditable element doesn't have childs */
-        if (focusedNode.childNodes.length === 0)
-        {
-            cEditor.caret.setToNextBlock(focusedNode);
-            return;
-        }
-
-        /**
-        * Do nothing when caret doesn not reaches the end of last child
-        */
-        var caretInLastChild    = false,
-            caretAtTheEndOfText = false;
-
-        var editableElement = focusedNode.querySelectorAll('[contenteditable]'),
-            lastChild,
-            deepestTextnode;
-
-        if (editableElement.length == 1) {
-
-            editableElement = editableElement[0];
-        }
+        /** Else we look for last child and compare offset */
         else {
-            editableElement = editableElement[editableElement.length - 1];
+            childOfFocusedInput = focusedInput.childNodes[cEditor.caret.focusedNodeIndex];
+
+            if (childOfFocusedInput.childNodes.length != 0 && cEditor.caret.focusedNodeIndex != 0) {
+                childOfFocusedInput = childOfFocusedInput.childNodes[0];
+            }
+
+            var lengthOfChildInput = childOfFocusedInput.length;
+
+            if ((lengthOfChildInput == cEditor.caret.offset && focusedInput.childNodes.length == cEditor.caret.focusedNodeIndex + 1)
+                || (cEditor.caret.focusedNodeIndex == 0 && selection.anchorNode.length == cEditor.caret.offset)) {
+
+                if (cEditor.caret.focusedInput == editableElements.length - 1) {
+                    return false;
+                }
+
+                cEditor.caret.setToEditableElement(editableElements[cEditor.caret.focusedInput + 1], 0);
+            }
         }
-
-        if (!editableElement) {
-            cEditor.core.log('Can not find editable element in current block: %o', 'warn', focusedNode);
-            return;
-        }
-
-
-        lastChild = editableElement.childNodes[editableElement.childNodes.length - 1 ];
-
-        if (cEditor.core.isDomNode(lastChild)) {
-
-            deepestTextnode = cEditor.content.getDeepestTextNodeFromPosition(lastChild, lastChild.childNodes.length);
-
-        } else {
-
-            deepestTextnode = lastChild;
-
-        }
-        
-        caretInLastChild = selection.anchorNode == deepestTextnode;
-        caretAtTheEndOfText = deepestTextnode.length == selection.anchorOffset;
-
-        console.log("каретка в последнем узле: %o", caretInLastChild);
-        console.log("каретка в конце последнего узла: %o", caretAtTheEndOfText);
-
-        if ( !caretInLastChild  || !caretAtTheEndOfText ) {
-            cEditor.core.log('arrow [down|right] : caret does not reached the end');
-            return false;
-        }
-
-        cEditor.caret.setToNextBlock(focusedNode);
-
     },
 
     /**
@@ -725,76 +705,48 @@ cEditor.callback = {
     */
     blockLeftOrUpArrowPressed : function (block) {
 
-        var selection   = window.getSelection(),
-            focusedNode = selection.anchorNode,
-            focusedNodeHolder;
-
-        /** Check for caret existance */
-        if (!focusedNode){
-            return false;
-        }
-
-        /**
-        * LEFT or UP not at the beginning
-        */
-        if ( selection.anchorOffset !== 0) {
-            return false;
-        }
-
-        /** Saving caret after keydown event happend */
         cEditor.caret.save();
 
-        /** Looking for parent contentEditable block */
-        while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
-            focusedNodeHolder = focusedNode.parentNode;
-            focusedNode       = focusedNodeHolder;
+        var selection = window.getSelection();
+
+        var editableElements    = cEditor.state.inputs,
+            focusedInput        = editableElements[cEditor.caret.focusedInput];
+
+        /** If input os empty */
+        if (focusedInput.childNodes.length === 0) {
+
+            cEditor.caret.focusedInput = cEditor.caret.focusedInput - 1;
+            cEditor.caret.setToEditableElement(editableElements[cEditor.caret.focusedInput], 0);
         }
+        /** Else we look for last child and compare offset */
+        else {
+            childOfFocusedInput = focusedInput.childNodes[cEditor.caret.focusedNodeIndex];
 
-        /**
-        * Do nothing if caret is not at the beginning of first child
-        */
-        var caretInFirstChild   = false,
-            caretAtTheBeginning = false;
+            if (childOfFocusedInput.childNodes.length != 0 && cEditor.caret.focusedNodeIndex != 0) {
+                childOfFocusedInput = childOfFocusedInput.childNodes[0];
+            }
 
-        var editableElement = focusedNode.querySelector('[contenteditable]'),
-            firstChild,
-            deepestTextnode;
+            var lengthOfChildInput = childOfFocusedInput.length;
 
-        if (!editableElement) {
-            cEditor.core.log('Can not find editable element in current block: %o', 'warn', focusedNode);
-            return;
+            if (cEditor.caret.offset == 0 && cEditor.caret.focusedNodeIndex == 0) {
+
+                if (cEditor.caret.focusedInput == 0) {
+                    return false;
+                }
+
+                cEditor.caret.setToEditableElement(editableElements[cEditor.caret.focusedInput - 1], 1);
+            }
         }
-
-        firstChild = editableElement.childNodes[0];
-
-        if (cEditor.core.isDomNode(firstChild)) {
-
-            deepestTextnode = cEditor.content.getDeepestTextNodeFromPosition(firstChild, 0);
-
-        } else {
-
-            deepestTextnode = firstChild;
-
-        }
-
-        caretInFirstChild   = selection.anchorNode == deepestTextnode;
-        caretAtTheBeginning = cEditor.caret.offset === 0;
-
-        console.log("каретка в первом узле: %o", caretInFirstChild);
-        console.log("каретка в начале первого узла: %o", caretAtTheBeginning);
-
-        if ( caretInFirstChild && caretAtTheBeginning ) {
-
-            cEditor.caret.setToPreviousBlock(focusedNode);
-
-        }
-
     },
 
     enterPressedOnBlock: function (block, event) {
 
-        var selection   = window.getSelection(),
-            currentNode = selection.anchorNode,
+
+        cEditor.caret.save();
+
+        var selection    = window.getSelection(),
+            currentNode  = selection.anchorNode,
+            anchorOffset = selection.anchorOffset,
             parentOfFocusedNode = currentNode.parentNode;
 
         while (!parentOfFocusedNode.classList.contains(cEditor.ui.BLOCK_CLASSNAME)){
@@ -811,9 +763,11 @@ cEditor.callback = {
         * First we check, if caret is at the end of last node and offset is legth of text node
         * focusedNodeIndex + 1, because that we compare non-arrays index.
         */
+        if (cEditor.core.isDomNode(lastNode))
+            lastNode = lastNode.childNodes[0];
 
         if ( currentNode.length === cEditor.caret.offset &&
-                currentNode.parentNode == lastNode) {
+                currentNode == lastNode) {
 
             /** Prevent <div></div> creation */
             event.preventDefault();
@@ -822,6 +776,7 @@ cEditor.callback = {
             var newBlock = cEditor.draw.block('DIV');
 
             newBlock.contentEditable = "true";
+            // newBlock.textContent     = 'Новый блок';
 
             var wrapper = cEditor.content.composeNewBlock(newBlock, 'paragraph');
 
@@ -834,8 +789,12 @@ cEditor.callback = {
             }
             cEditor.core.insertAfter(block, wrapper);
 
+            cEditor.caret.save();
+
             /** set focus to the current (created) block */
-            cEditor.caret.setToNextBlock(block);
+            cEditor.caret.focusedInput = cEditor.caret.focusedInput + 1;
+            cEditor.caret.setToEditableElement(cEditor.state.inputs[cEditor.caret.focusedInput], 0);
+            // console.log(cEditor.caret.focusedInput);
 
             cEditor.toolbar.close();
             cEditor.toolbar.move();
@@ -1231,6 +1190,12 @@ cEditor.caret = {
     offset : null,
 
     /**
+    * @var {int} focusedInput - current caret position
+    */
+
+    focusedInput : null,
+
+    /**
     * @var {int} focusedNodeIndex - we get index of child node from first-level block
     */
 
@@ -1243,43 +1208,61 @@ cEditor.caret = {
     */
     save : function() {
 
-        var selection = window.getSelection(),
-            parentElement,
-            previousElement,
-            nodeIndex = 0;
+        /** @todo move to more global event */
+        cEditor.ui.getAllInputs();
 
-        if (!selection.anchorNode) {
-            return;
-        }
+        inputs = cEditor.state.inputs;
 
-        parentElement   = selection.anchorNode;
-        previousElement = selection.anchorNode.previousSibling;
+        var selection   = window.getSelection(),
+            focusedNode = selection.anchorNode.parentNode,
+            currentInputIndex = null,
+            founded = false,
+            child = 0;
 
-        /**
-        * We get index of node which is child of #BLOCK_CLASSNAME.
-        * if selected node is not below the block container, we get the closest TAG which is below #BLOCK_CLASSNAME
-        */
-        if ( parentElement.className !== cEditor.ui.BLOCK_CLASSNAME ) {
+        for(currentInputIndex = 0; currentInputIndex < inputs.length; currentInputIndex ++) {
 
-            while (parentElement.parentNode.className !== cEditor.ui.BLOCK_CLASSNAME) {
+            var countOfChilds = inputs[currentInputIndex].childNodes.length;
 
-                parentElement = parentElement.parentNode;
+            /** editable is first-level element */
+            if (countOfChilds == 1 && inputs[currentInputIndex] == focusedNode)
+            {
+                currentInputIndex = currentInputIndex;
+                break;
 
             }
+            /** for more complicated blocks */
+            else {
 
-            previousElement = parentElement.previousSibling;
+                /** focused input is parent of focused child */
+                if (inputs[currentInputIndex] == focusedNode) {
+                    break;
+                }
+
+                /** Looking for focused contains into inputs childred */
+                var counter = 0;
+
+                while(counter != inputs[currentInputIndex].childNodes.length) {
+
+                    if (inputs[currentInputIndex].childNodes[counter] == focusedNode) {
+
+                        founded = true;
+                        child   = counter;
+                        break;
+
+                    }
+                    counter ++;
+                }
+
+                if (founded) {
+                    break;
+                }
+            }
+
         }
 
-        /** Counting index of focused node */
-        while (previousElement !== null) {
-
-            nodeIndex ++;
-            previousElement = previousElement.previousSibling;
-
-        }
-
-        this.offset            = selection.anchorOffset;
-        this.focusedNodeIndex  = nodeIndex;
+        this.focusedInput     = currentInputIndex;
+        this.focusedNodeIndex = child;
+        this.offset           = selection.anchorOffset;
 
     },
 
@@ -1292,20 +1275,21 @@ cEditor.caret = {
     */
     set : function( el , index, offset) {
 
-        offset = offset || this.offset || 0;
-        index  = index  || this.focusedNodeIndex || 0;
-
         var childs = el.childNodes,
             nodeToSet;
 
         if ( childs.length === 0 ) {
-
             nodeToSet = el;
 
         } else {
 
             nodeToSet = childs[index];
 
+        }
+
+        /** Getting TEXT */
+        if (cEditor.core.isDomNode(nodeToSet) && childs.length != 0) {
+            nodeToSet = nodeToSet.childNodes[0];
         }
 
         var range     = document.createRange(),
@@ -1319,7 +1303,7 @@ cEditor.caret = {
             selection.removeAllRanges();
             selection.addRange(range);
 
-        }, 50);
+        }, 10);
     },
 
     /**
@@ -1332,46 +1316,24 @@ cEditor.caret = {
     /**
     * @param {Element} block - element from which we take next contenteditable block
     */
-    setToNextBlock : function(block) {
+    setToEditableElement : function(element, position) {
 
-        cEditor.caret.offset            = 0;
-        cEditor.caret.focusedNodeIndex  = 0;
+        if (position == 0) {
 
-        var nextBlock = block.nextSibling,
-            nextBlockEditableElement;
-
-        /** We reached the end of document */
-        if (!nextBlock) {
-            return false;
+            cEditor.caret.set(element, 0, 0);
         }
+        else {
 
-        nextBlockEditableElement = nextBlock.querySelector('[contenteditable]');
+            var lastNode = element.childNodes.length - 1,
+                lengthOfLastNode = element.childNodes[lastNode];
 
-        if (!nextBlockEditableElement)
-        {
-            var hasContentEditableElement = false;
+            if (cEditor.core.isDomNode(lengthOfLastNode))
+                lengthOfLastNode = lengthOfLastNode.childNodes[0];
 
-            /** Looking for contenteditable element */
-            while (!hasContentEditableElement)
-            {
-                nextBlock = nextBlock.nextSibling;
+            lengthOfLastNode = lengthOfLastNode.length;
 
-                /** If caret reached the end of redactor wrapper */
-                if (!nextBlock) {
-                    return false;
-                }
-
-                nextBlockEditableElement = nextBlock.querySelector('[contenteditable]');
-
-                if (nextBlockEditableElement) {
-                    hasContentEditableElement = true;
-                }
-            }
+            cEditor.caret.set(element, lastNode, lengthOfLastNode);
         }
-
-        cEditor.caret.set(nextBlockEditableElement, 0, 0);
-        cEditor.content.workingNodeChanged(block.nextSibling);
-
     },
 
     /**
