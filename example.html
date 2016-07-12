@@ -21,8 +21,6 @@
         }
     </style>
 
-    <link rel="stylesheet" href="plugins/images/plugin.css" />
-
 </head>
 <body style="padding: 100px">
 
@@ -96,7 +94,7 @@
     INPUT.items = [
                     {
                         header : {
-                                    type : 'H2',
+                                    type : 'H3',
                                     text : 'Введение',
                                 },
                     },
@@ -164,6 +162,15 @@
                         paragraph : {
                                         text : '<strong>Репозиторий </strong>— дерево изменений проекта.',
                                     }
+                    },
+                    {
+                        link : {
+                            'linkUrl'       : 'http://google.com',
+                            'linkText'      : 'google.com',
+                            'image'         : 'http://2.bp.blogspot.com/-7bZ5EziliZQ/VynIS9F7OAI/AAAAAAAASQ0/BJFntXCAntstZe6hQuo5KTrhi5Dyz9yHgCK4B/s1600/googlelogo_color_200x200.png',
+                            'title'         : 'Google',
+                            'description'   : 'Поисковик, поисковик, проч.'
+                        }
                     },
                     {
                         link : {
@@ -269,16 +276,23 @@
 
 </script>
 
-<script src="plugins/ceditor-tool-link/ceditor-tool-link.js"></script>
-<link rel="stylesheet" href="plugins/ceditor-tool-link/ceditor-tool-link.css" />
+<script src="plugins/paragraph/paragraph.js"></script>
+<link rel="stylesheet" href="plugins/paragraph/paragraph.css" />
 
-<script src="plugins/ceditor-tool-code/ceditor-tool-code.js"></script>
-<link rel="stylesheet" href="plugins/ceditor-tool-code/ceditor-tool-code.css" />
+<script src="plugins/header/header.js"></script>
+<link rel="stylesheet" href="plugins/header/header.css" />
 
-<script src="plugins/ceditor-tool-quote/ceditor-tool-quote.js"></script>
-<link rel="stylesheet" href="plugins/ceditor-tool-quote/ceditor-tool-quote.css" />
+<script src="plugins/link/link.js"></script>
+<link rel="stylesheet" href="plugins/link/link.css" />
 
-<script src="plugins/ceditor-tool-list/ceditor-tool-list.js"></script>
-<link rel="stylesheet" href="plugins/ceditor-tool-list/ceditor-tool-list.css" />
+<script src="plugins/code/code.js"></script>
+<link rel="stylesheet" href="plugins/code/code.css" />
 
-<script src="plugins/images/plugin.js"></script>
+<script src="plugins/quote/quote.js"></script>
+<link rel="stylesheet" href="plugins/quote/quote.css" />
+
+<script src="plugins/list/list.js"></script>
+<link rel="stylesheet" href="plugins/list/list.css" />
+
+<script src="plugins/images/images.js"></script>
+<link rel="stylesheet" href="plugins/images/images.css" />
