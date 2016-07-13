@@ -30,7 +30,8 @@ var cEditor = (function (cEditor) {
     // Current editor state
     cEditor.state = {
         html   : '',
-        blocks : []
+        blocks : [],
+        inputs : [],
     };
 
     /**
@@ -53,6 +54,7 @@ var cEditor = (function (cEditor) {
             .then(this.transport.prepare)
             // .then(this.parser.parseTextareaContent)
             .then(this.renderer.makeBlocksFromData)
+            .then(this.ui.saveInputs)
             .catch(function (error) {
                 cEditor.core.log('Initialization failed with error: %o', 'warn', error);
             });
@@ -244,11 +246,6 @@ cEditor.renderer = {
 
             })
 
-            /**
-            * add handlers to new block
-            */
-            .then(cEditor.ui.addBlockHandlers)
-
             /** Log if something wrong with node */
             .catch(function(error) {
                 cEditor.core.log('Node skipped while parsing because %o', 'error', error);
@@ -430,8 +427,6 @@ cEditor.ui = {
 
             cEditor.callback.redactorClicked(event);
 
-            cEditor.caret.save();
-
         }, false );
 
         /** Clicks to SETTINGS button in toolbar */
@@ -446,9 +441,6 @@ cEditor.ui = {
          *  Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text
         */
         cEditor.nodes.redactor.addEventListener('input', function (event) {
-
-            /** Saving caret in every modifications */
-            cEditor.caret.save();
 
             cEditor.callback.redactorInputEvent(event);
 
@@ -476,6 +468,21 @@ cEditor.ui = {
         block.addEventListener('paste', function (event) {
             cEditor.callback.blockPaste(event, block);
         }, false);
+
+    },
+
+    /** getting all contenteditable elements */
+    saveInputs : function() {
+
+        var redactor = cEditor.nodes.redactor,
+            elements = [];
+
+        setTimeout(function () {
+
+            /** Save all inputs in global variable state */
+            cEditor.state.inputs = redactor.querySelectorAll('[contenteditable]');
+
+        }, 10);
 
     }
 
@@ -643,6 +650,7 @@ cEditor.callback = {
     blockRightOrDownArrowPressed : function (block) {
 
         var selection   = window.getSelection(),
+            inputs      = cEditor.state.inputs,
             focusedNode = selection.anchorNode,
             focusedNodeHolder;
 
@@ -651,20 +659,26 @@ cEditor.callback = {
             return false;
         }
 
-        /** Saving caret after keydown event happend */
-        cEditor.caret.save();
-
         /** Looking for closest (parent) contentEditable element of focused node */
-        while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
+        while (focusedNode.contentEditable != 'true') {
 
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;
         }
 
-        /** Founded contentEditable element doesn't have childs */
-        if (focusedNode.childNodes.length === 0)
+        /** Input index in DOM level */
+        var editableElementIndex = 0;
+        while (focusedNode != inputs[editableElementIndex]) {
+            editableElementIndex ++;
+        }
+
+        /**
+        * Founded contentEditable element doesn't have childs
+        * Or maybe New created block
+        */
+        if (!focusedNode.textContent)
         {
-            cEditor.caret.setToNextBlock(focusedNode);
+            cEditor.caret.setToNextBlock(editableElementIndex);
             return;
         }
 
@@ -674,16 +688,10 @@ cEditor.callback = {
         var caretInLastChild    = false,
             caretAtTheEndOfText = false;
 
-        var editableElement = focusedNode.querySelector('[contenteditable]'),
-            lastChild,
+        var lastChild,
             deepestTextnode;
 
-        if (!editableElement) {
-            cEditor.core.log('Can not find editable element in current block: %o', 'warn', focusedNode);
-            return;
-        }
-
-        lastChild = editableElement.childNodes[editableElement.childNodes.length - 1 ];
+        lastChild = focusedNode.childNodes[focusedNode.childNodes.length - 1 ];
 
         if (cEditor.core.isDomNode(lastChild)) {
 
@@ -706,7 +714,7 @@ cEditor.callback = {
             return false;
         }
 
-        cEditor.caret.setToNextBlock(focusedNode);
+        cEditor.caret.setToNextBlock(editableElementIndex);
 
     },
 
@@ -716,6 +724,7 @@ cEditor.callback = {
     blockLeftOrUpArrowPressed : function (block) {
 
         var selection   = window.getSelection(),
+            inputs      = cEditor.state.inputs,
             focusedNode = selection.anchorNode,
             focusedNodeHolder;
 
@@ -731,13 +740,16 @@ cEditor.callback = {
             return false;
         }
 
-        /** Saving caret after keydown event happend */
-        cEditor.caret.save();
-
         /** Looking for parent contentEditable block */
-        while (focusedNode.className != cEditor.ui.BLOCK_CLASSNAME) {
+        while (focusedNode.contentEditable != 'true') {
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;
+        }
+
+        /** Input index in DOM level */
+        var editableElementIndex = 0;
+        while (focusedNode != inputs[editableElementIndex]) {
+            editableElementIndex ++;
         }
 
         /**
@@ -746,16 +758,19 @@ cEditor.callback = {
         var caretInFirstChild   = false,
             caretAtTheBeginning = false;
 
-        var editableElement = focusedNode.querySelector('[contenteditable]'),
-            firstChild,
+        var firstChild,
             deepestTextnode;
 
-        if (!editableElement) {
-            cEditor.core.log('Can not find editable element in current block: %o', 'warn', focusedNode);
+        /**
+        * Founded contentEditable element doesn't have childs
+        * Or maybe New created block
+        */
+        if (!focusedNode.textContent) {
+            cEditor.caret.setToPreviousBlock(editableElementIndex);
             return;
         }
 
-        firstChild = editableElement.childNodes[0];
+        firstChild = focusedNode.childNodes[0];
 
         if (cEditor.core.isDomNode(firstChild)) {
 
@@ -768,14 +783,14 @@ cEditor.callback = {
         }
 
         caretInFirstChild   = selection.anchorNode == deepestTextnode;
-        caretAtTheBeginning = cEditor.caret.offset === 0;
+        caretAtTheBeginning = selection.anchorOffset === 0;
 
         console.log("каретка в первом узле: %o", caretInFirstChild);
         console.log("каретка в начале первого узла: %o", caretAtTheBeginning);
 
         if ( caretInFirstChild && caretAtTheBeginning ) {
 
-            cEditor.caret.setToPreviousBlock(focusedNode);
+            cEditor.caret.setToPreviousBlock(editableElementIndex);
 
         }
 
@@ -818,12 +833,13 @@ cEditor.callback = {
 
     backspacePressed: function (block) {
 
-        if (block.textContent.trim()) return;
+        cEditor.ui.saveInputs();
 
-        cEditor.caret.setToPreviousBlock(block);
+        if (block.textContent.trim()) return;
 
         block.remove();
 
+        cEditor.toolbar.close();
         cEditor.toolbar.move();
 
         event.preventDefault();
@@ -966,10 +982,14 @@ cEditor.content = {
         cEditor.content.workingNodeChanged(newBlock);
 
         /**
-        * Setting caret
-        * @todo is it necessary?
+        * Add block handlers
         */
-        cEditor.caret.set(newBlock);
+        cEditor.ui.addBlockHandlers(newBlock);
+
+        /**
+        * Save changes
+        */
+        cEditor.ui.saveInputs();
 
     },
 
@@ -995,6 +1015,15 @@ cEditor.content = {
             cEditor.nodes.redactor.appendChild(newBlock);
 
         }
+        /**
+        * Save changes
+        */
+        cEditor.ui.saveInputs();
+
+        /**
+        * Block handler
+        */
+        cEditor.ui.addBlockHandlers(newBlock);
 
         /**
         * Set new node as current
@@ -1078,7 +1107,7 @@ cEditor.content = {
         */
         cEditor.content.workingNodeChanged(nodeCreated);
 
-        cEditor.caret.set(nodeCreated);
+        //cEditor.caret.set(nodeCreated);
     },
 
     /**
@@ -1099,8 +1128,11 @@ cEditor.content = {
         /** Replacing */
         cEditor.content.replaceBlock(blockToReplace, newBlockComposed, blockType);
 
+        /** Save new Inputs when block is changed */
+        cEditor.ui.saveInputs();
+
         /** Add event listeners */
-        cEditor.ui.addBlockHandlers(newBlock);
+        //cEditor.ui.addBlockHandlers(newBlockComposed);
 
     },
 
@@ -1199,6 +1231,11 @@ cEditor.content = {
 cEditor.caret = {
 
     /**
+    * @var {int} InputIndex - editable element in DOM
+    */
+    InputIndex : null,
+
+    /**
     * @var {int} offset - caret position in a text node.
     */
 
@@ -1261,8 +1298,6 @@ cEditor.caret = {
     * Creates Document Range and sets caret to the element.
     * @uses caret.save — if you need to save caret position
     * @param {Element} el - Changed Node.
-    * @todo remove saving positon
-    * @todo - Check nodeToSet for type: if TAG -> look for nearest TextNode
     */
     set : function( el , index, offset) {
 
@@ -1282,6 +1317,11 @@ cEditor.caret = {
 
         }
 
+        if (cEditor.core.isDomNode(nodeToSet)) {
+
+            nodeToSet = cEditor.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
+        }
+
         var range     = document.createRange(),
             selection = window.getSelection();
 
@@ -1293,7 +1333,7 @@ cEditor.caret = {
             selection.removeAllRanges();
             selection.addRange(range);
 
-        }, 50);
+        }, 20);
     },
 
     /**
@@ -1306,58 +1346,46 @@ cEditor.caret = {
     /**
     * @param {Element} block - element from which we take next block
     */
-    setToNextBlock : function(block) {
+    setToNextBlock : function(index) {
 
-        cEditor.caret.offset            = 0;
-        cEditor.caret.focusedNodeIndex  = 0;
+        var inputs = cEditor.state.inputs,
+            nextInput = inputs[index + 1];
 
-        var nextBlock = block.nextSibling,
-            nextBlockEditableElement;
-
-        console.log("nextBlock: %o", nextBlock);
-
-        nextBlockEditableElement = nextBlock.querySelector('[contenteditable]');
-
-        console.log("nextBlockEditableElement: %o", nextBlockEditableElement);
-
-
-        if ( !block.nextSibling ) {
-            return false;
+        /**
+        * When new Block created or deleted content of input
+        * We should add some text node to set caret
+        */
+        if (!nextInput.childNodes.length) {
+            var emptyTextElement = document.createTextNode('');
+            nextInput.appendChild(emptyTextElement);
         }
 
+        cEditor.caret.InputIndex = nextInput;
+        cEditor.caret.set(nextInput, 0, 0);
+        cEditor.content.workingNodeChanged(nextInput);
 
-        cEditor.caret.set(nextBlockEditableElement, 0, 0);
-        cEditor.content.workingNodeChanged(block.nextSibling);
     },
 
-    /**
-    * @todo передалать на prevBlock.querySelector('[contenteditable]') по аналогии с setToNextBlock
-    */
-    setToPreviousBlock : function(block) {
+    setToPreviousBlock : function(index) {
 
-        if ( !block.previousSibling ) {
-            return false;
+        var inputs = cEditor.state.inputs,
+            previousInput = inputs[index - 1];
+
+        var lastChildNode = cEditor.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length),
+            lengthOfLastChildNode = lastChildNode.length;
+
+        /**
+        * When new Block created or deleted content of input
+        * We should add some text node to set caret
+        */
+        if (!previousInput.childNodes.length) {
+            var emptyTextElement = document.createTextNode('');
+            previousInput.appendChild(emptyTextElement);
         }
 
-        var lastChildOfPreiviousBlockIndex = block.previousSibling.childNodes.length,
-            previousBlock = block.previousSibling,
-            theEndOfPreviousBlockLastNode = 0;
-
-        /** Index in childs Array */
-        if (block.previousSibling.childNodes.length !== 0) {
-
-            previousBlock = cEditor.content.getDeepestTextNodeFromPosition(block.previousSibling, lastChildOfPreiviousBlockIndex);
-            theEndOfPreviousBlockLastNode = previousBlock.length;
-            lastChildOfPreiviousBlockIndex = 0;
-
-        }
-
-        cEditor.caret.offset            = theEndOfPreviousBlockLastNode;
-        cEditor.caret.focusedNodeIndex  = lastChildOfPreiviousBlockIndex;
-
-        cEditor.caret.set(previousBlock, lastChildOfPreiviousBlockIndex, theEndOfPreviousBlockLastNode);
-
-        cEditor.content.workingNodeChanged(block.previousSibling);
+        cEditor.caret.InputIndex = previousInput;
+        cEditor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
+        cEditor.content.workingNodeChanged(inputs[index - 1]);
     },
 };
 
@@ -1414,13 +1442,11 @@ cEditor.toolbar = {
     leaf : function(){
 
         var currentTool = this.current,
-            // tools       = cEditor.settings.tools,
             tools       = Object.keys(cEditor.tools),
             barButtons  = cEditor.nodes.toolbarButtons,
             nextToolIndex,
             toolToSelect;
 
-        // console.log(tools);
         if ( !currentTool ) {
 
             /** Get first tool from object*/
@@ -1479,6 +1505,10 @@ cEditor.toolbar = {
             appendCallback.call();
         }
 
+        setTimeout(function () {
+            /** Save new changes */
+            cEditor.ui.saveInputs();
+        }, 50);
 
     },
 
@@ -1771,6 +1801,7 @@ cEditor.parser = {
                 }
                 return null;
             })
+
             .then(cEditor.ui.addBlockHandlers)
 
             /** Log if something wrong with node */
@@ -1877,11 +1908,6 @@ cEditor.parser = {
 
 };
 
-cEditor.tools = {
-
-};
-
-
 /**
 * Creates HTML elements
 */
@@ -1979,285 +2005,13 @@ cEditor.draw = {
 
     }
 
-
 };
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /**
-* Paragraph Plugin\
-* Creates P tag and adds content to this tag
+* Developer plugins
 */
-var paragraphTool = {
 
-    /**
-    * Make initial header block
-    * @param {object} JSON with block data
-    * @return {Element} element to append
-    */
-    make : function (data) {
-
-        var tag = document.createElement('DIV');
-
-        if (data && data.text) {
-            tag.innerHTML = data.text;
-        }
-
-        tag.contentEditable = true;
-
-        return tag;
-
-    },
-
-    /**
-    * Method to render HTML block from JSON
-    */
-    render : function (data) {
-
-       return paragraphTool.make(data);
-
-    },
-
-    /**
-    * Method to extract JSON data from HTML block
-    */
-    save : function (block){
-
-        var data = {
-            text : null
-        };
-
-        data.text = blockData.textContent;
-
-        return data;
-
-    },
-
-};
-
-/**
-* Now plugin is ready.
-* Add it to redactor tools
-*/
-cEditor.tools.paragraph = {
-
-    type           : 'paragraph',
-    iconClassname  : 'ce-icon-paragraph',
-    make           : paragraphTool.make,
-    appendCallback : null,
-    settings       : null,
-    render         : paragraphTool.render,
-    save           : paragraphTool.save
-
-};
-
-/**
-* Example of making plugin
-* H e a d e r
-*/
-var headerTool = {
-
-    /**
-    * Make initial header block
-    * @param {object} JSON with block data
-    * @return {Element} element to append
-    */
-    make : function (data) {
-
-        var availableTypes = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'],
-            tag;
-
-        if (data && data.type && availableTypes.includes(data.type)) {
-
-            tag = document.createElement( data.type );
-
-            /**
-            * Save header type in data-attr.
-            * We need it in save method to extract type from HTML to JSON
-            */
-            tag.dataset.headerData = data.type;
-
-        } else {
-
-            tag = document.createElement( 'H2' );
-
-        }
-
-        if (data && data.text) {
-            tag.textContent = data.text;
-        }
-
-        tag.contentEditable = true;
-
-        return tag;
-
-    },
-
-    /**
-    * Method to render HTML block from JSON
-    */
-    render : function (data) {
-
-       return headerTool.make(data);
-
-    },
-
-    /**
-    * Method to extract JSON data from HTML block
-    */
-    save : function (block){
-
-        var data = {
-            type : null,
-            text : null
-        };
-
-        data.type = blockData.dataset.headerData;
-        data.text = blockData.textContent;
-
-        return data;
-
-    },
-
-    /**
-    * Block appending callback
-    */
-    appendCallback : function (argument) {
-
-        console.log('header appended...');
-
-    },
-
-    /**
-    * Settings panel content
-    *  - - - - - - - - - - - - -
-    * | настройки   H1  H2  H3  |
-    *  - - - - - - - - - - - - -
-    * @return {Element} element contains all settings
-    */
-    makeSettings : function () {
-
-        var holder  = document.createElement('DIV'),
-            caption = document.createElement('SPAN'),
-            types   = {
-                        H2: 'Заголовок раздела',
-                        H3: 'Подзаголовок',
-                        H4: 'Заголовок 3-его уровня'
-                    },
-            selectTypeButton;
-
-        /** Add holder classname */
-        holder.className = 'ce_plugin_header--settings';
-
-        /** Add settings helper caption */
-        caption.textContent = 'Настройки заголовка';
-        caption.className   = 'ce_plugin_header--caption';
-
-        holder.appendChild(caption);
-
-        /** Now add type selectors */
-        for (var type in types){
-
-            selectTypeButton = document.createElement('SPAN');
-
-            selectTypeButton.textContent = types[type];
-            selectTypeButton.className   = 'ce_plugin_header--select_button';
-
-            this.addSelectTypeClickListener(selectTypeButton, type);
-
-            holder.appendChild(selectTypeButton);
-
-        }
-
-        return holder;
-
-    },
-
-    /**
-    * Binds click event to passed button
-    */
-    addSelectTypeClickListener : function (el, type) {
-
-        el.addEventListener('click', function () {
-
-            headerTool.selectTypeClicked(type);
-
-        }, false);
-    },
-
-    /**
-    * Replaces old header with new type
-    * @params {string} type - new header tagName: H1—H6
-    */
-    selectTypeClicked : function (type) {
-
-        var old_header, new_header;
-
-        /** Now current header stored as a currentNode */
-        old_header = cEditor.content.currentNode;
-
-        /** Making new header */
-        new_header = document.createElement(type);
-
-        new_header.innerHTML = old_header.innerHTML;
-        new_header.contentEditable = true;
-
-        cEditor.content.replaceBlock(old_header, new_header, 'header');
-
-        /** Add listeners for Arrow keys*/
-        cEditor.ui.addBlockHandlers(new_header);
-
-        /** Close settings after replacing */
-        cEditor.toolbar.settings.close();
-
-    },
-
-};
-
-/**
-* Now plugin is ready.
-* Add it to redactor tools
-*/
-cEditor.tools.header = {
-
-    type           : 'header',
-    iconClassname  : 'ce-icon-header',
-    make           : headerTool.make,
-    appendCallback : headerTool.appendCallback,
-    settings       : headerTool.makeSettings(),
-    render         : headerTool.render,
-    save           : headerTool.save
+cEditor.tools = {
 
 };
