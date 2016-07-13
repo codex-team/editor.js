@@ -136,7 +136,10 @@ var quoteTools = {
             var parsedOldQuote  = quoteTools.parseBlockQuote(),
                 newStyledQuote  = quoteStyle(parsedOldQuote);
 
-            cEditor.content.replaceBlock(cEditor.content.currentNode, newStyledQuote, 'quote');
+            var wrapper = cEditor.content.composeNewBlock(newStyledQuote, 'quote');
+                wrapper.appendChild(newStyledQuote);
+
+            cEditor.content.replaceBlock(cEditor.content.currentNode, wrapper, 'quote');
 
             /** Close settings after replacing */
             cEditor.toolbar.settings.close();
