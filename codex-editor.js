@@ -484,21 +484,8 @@ cEditor.ui = {
 
         setTimeout(function () {
 
-            var inputs   = redactor.querySelectorAll('[contenteditable]');
-
-            for (var key in inputs) {
-
-                /**
-                * querySelectorAll('[contenteditable]') returns object methods like length, keys and so on.
-                * We need to get only DOM elements
-                */
-                if (cEditor.core.isDomNode(inputs[key])) {
-                    elements[key] = inputs[key];
-                }
-            }
-
             /** Save all inputs in global variable state */
-            cEditor.state.inputs = elements;
+            cEditor.state.inputs = redactor.querySelectorAll('[contenteditable]');
 
         }, 10);
 
