@@ -1940,7 +1940,7 @@ cEditor.notifications = {
     */
     errorThrown : function(errorMsg, event) {
 
-        cEditor.notifications.send('This action is not available currently', event.type, 'append');
+        cEditor.notifications.send('This action is not available currently', event.type, false);
 
     },
 
@@ -1948,6 +1948,7 @@ cEditor.notifications = {
     * Appends notification with different types
     * @param message {string} - Error or alert message
     * @param type {string} - Type of message notification. Ex: Error, Warning, Danger ...
+    * @param append {boolean} - can be True or False when notification should be inserted after
     */
     send : function(message, type, append) {
 
@@ -1956,7 +1957,7 @@ cEditor.notifications = {
         notification.textContent = message;
         notification.classList.add('ce_notification-item', 'ce_notification-' + type, 'flipInX');
 
-        if (append) {
+        if (!append) {
             cEditor.nodes.notifications.innerHTML = '';
         }
 
