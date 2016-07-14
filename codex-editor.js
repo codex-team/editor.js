@@ -21,6 +21,7 @@ var cEditor = (function (cEditor) {
         textarea : null,
         wrapper  : null,
         toolbar  : null,
+        notifications      : null,
         showSettingsButton : null,
         blockSettings      : null,
         toolbarButtons     : {}, // { type : DomEl, ... }
@@ -126,7 +127,9 @@ cEditor.core = {
                 if ( arg ) console[ type ]( msg , arg );
                 else console[ type ]( msg );
             }
+
         }catch(e){}
+
     },
 
     /**
@@ -340,6 +343,7 @@ cEditor.ui = {
         var wrapper,
             toolbar,
             redactor,
+            notifications,
             blockSettings,
             showSettingsButton;
 
@@ -349,6 +353,9 @@ cEditor.ui = {
         /** Append editor wrapper after initial textarea */
         cEditor.core.insertAfter(cEditor.nodes.textarea, wrapper);
 
+        /** Append block with notifications to the document */
+        notifications      = cEditor.draw.alertsHolder();
+        cEditor.nodes.notifications = document.body.appendChild(notifications);
 
         /** Make toolbar and content-editable redactor */
         toolbar            = cEditor.draw.toolbar();
@@ -411,6 +418,10 @@ cEditor.ui = {
     bindEvents : function () {
 
         cEditor.core.log('ui.bindEvents fired', 'info');
+
+        window.addEventListener('error', function (errorMsg, url, lineNumber) {
+            cEditor.notifications.errorThrown(errorMsg, event);
+        }, false );
 
         /** All keydowns on Document */
         document.addEventListener('keydown', function (event) {
@@ -1853,6 +1864,19 @@ cEditor.draw = {
     },
 
     /**
+    * Block with notifications
+    */
+    alertsHolder : function() {
+
+        var block = document.createElement('div');
+
+        block.classList.add('ce_notifications-block');
+
+        return block;
+
+    },
+
+    /**
     * Block settings panel
     */
     blockSettings : function () {
@@ -1907,6 +1931,44 @@ cEditor.draw = {
     }
 
 };
+
+/** Module which extends notifications and make different animations for logs */
+cEditor.notifications = {
+
+    /**
+    * Error notificator. Shows block with message
+    */
+    errorThrown : function(errorMsg, event) {
+
+        cEditor.notifications.send('This action is not available currently', event.type, false);
+
+    },
+
+    /**
+    * Appends notification with different types
+    * @param message {string} - Error or alert message
+    * @param type {string} - Type of message notification. Ex: Error, Warning, Danger ...
+    * @param append {boolean} - can be True or False when notification should be inserted after
+    */
+    send : function(message, type, append) {
+
+        var notification = cEditor.draw.block('div');
+
+        notification.textContent = message;
+        notification.classList.add('ce_notification-item', 'ce_notification-' + type, 'flipInX');
+
+        if (!append) {
+            cEditor.nodes.notifications.innerHTML = '';
+        }
+
+        cEditor.nodes.notifications.appendChild(notification);
+
+        setTimeout(function () {
+            notification.remove();
+        }, 3000);
+
+    },
+}
 
 
 /**
