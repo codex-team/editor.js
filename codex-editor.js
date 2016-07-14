@@ -21,6 +21,7 @@ var cEditor = (function (cEditor) {
         textarea : null,
         wrapper  : null,
         toolbar  : null,
+        notifications      : null,
         showSettingsButton : null,
         blockSettings      : null,
         toolbarButtons     : {}, // { type : DomEl, ... }
@@ -126,7 +127,9 @@ cEditor.core = {
                 if ( arg ) console[ type ]( msg , arg );
                 else console[ type ]( msg );
             }
+
         }catch(e){}
+
     },
 
     /**
@@ -340,6 +343,7 @@ cEditor.ui = {
         var wrapper,
             toolbar,
             redactor,
+            notifications,
             blockSettings,
             showSettingsButton;
 
@@ -349,6 +353,10 @@ cEditor.ui = {
         /** Append editor wrapper after initial textarea */
         cEditor.core.insertAfter(cEditor.nodes.textarea, wrapper);
 
+        /** Append to the document block with notifications */
+        notifications      = cEditor.draw.notifications();
+        cEditor.nodes.notifications = document.body.appendChild(notifications);
+        // console.log(notifications);
 
         /** Make toolbar and content-editable redactor */
         toolbar            = cEditor.draw.toolbar();
@@ -411,6 +419,11 @@ cEditor.ui = {
     bindEvents : function () {
 
         cEditor.core.log('ui.bindEvents fired', 'info');
+
+        /** Error notificator */
+        window.addEventListener('error', function (errorMsg, url, lineNumber) {
+            cEditor.callback.notifyUser(errorMsg, event);
+        }, false );
 
         /** All keydowns on Document */
         document.addEventListener('keydown', function (event) {
@@ -492,6 +505,10 @@ cEditor.callback = {
 
 
     redactorSyncTimeout : null,
+
+    notifyUser : function(errorMsg, event) {
+        cEditor.notifications.send('This action is not available currently', event.type);
+    },
 
     globalKeydown : function(event){
 
@@ -1853,6 +1870,19 @@ cEditor.draw = {
     },
 
     /**
+    * Block with notifications
+    */
+    notifications : function() {
+
+        var block = document.createElement('div');
+
+        block.classList.add('notifications-block');
+
+        return block;
+
+    },
+
+    /**
     * Block settings panel
     */
     blockSettings : function () {
@@ -1907,6 +1937,34 @@ cEditor.draw = {
     }
 
 };
+
+/** Module which extends notifications and make different animations for logs */
+cEditor.notifications = {
+
+    send : function(message, type) {
+
+        var notification = cEditor.notifications.alert(message, type);
+        cEditor.nodes.notifications.appendChild(notification);
+
+        setTimeout(function () {
+            notification.remove();
+        }, 3000);
+
+    },
+
+    alert : function(content, type) {
+
+        var block = cEditor.draw.block('div');
+
+        block.textContent = content;
+        block.classList.add('notification-item', 'notification-' + type, 'flipInX');
+
+        return block;
+
+    },
+
+
+}
 
 
 /**
