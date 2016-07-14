@@ -419,6 +419,10 @@ cEditor.ui = {
 
         cEditor.core.log('ui.bindEvents fired', 'info');
 
+        window.addEventListener('error', function (errorMsg, url, lineNumber) {
+            cEditor.notifications.errorThrown(errorMsg, event);
+        }, false );
+
         /** All keydowns on Document */
         document.addEventListener('keydown', function (event) {
             cEditor.callback.globalKeydown(event);
@@ -499,10 +503,6 @@ cEditor.callback = {
 
 
     redactorSyncTimeout : null,
-
-    notifyUser : function(errorMsg, event) {
-        cEditor.notifications.send('This action is not available currently', event.type);
-    },
 
     globalKeydown : function(event){
 
@@ -1872,8 +1872,6 @@ cEditor.draw = {
 
         block.classList.add('ce_notifications-block');
 
-        cEditor.notifications.onerror();
-
         return block;
 
     },
@@ -1940,11 +1938,9 @@ cEditor.notifications = {
     /**
     * Error notificator. Shows block with message
     */
-    onerror : function() {
+    errorThrown : function(errorMsg, event) {
 
-        window.addEventListener('error', function (errorMsg, url, lineNumber) {
-            cEditor.callback.notifyUser(errorMsg, event);
-        }, false );
+        cEditor.notifications.send('This action is not available currently', event.type, 'append');
 
     },
 
@@ -1953,12 +1949,16 @@ cEditor.notifications = {
     * @param message {string} - Error or alert message
     * @param type {string} - Type of message notification. Ex: Error, Warning, Danger ...
     */
-    send : function(message, type) {
+    send : function(message, type, append) {
 
         var notification = cEditor.draw.block('div');
 
         notification.textContent = message;
         notification.classList.add('ce_notification-item', 'ce_notification-' + type, 'flipInX');
+
+        if (append) {
+            cEditor.nodes.notifications.innerHTML = '';
+        }
 
         cEditor.nodes.notifications.appendChild(notification);
 
