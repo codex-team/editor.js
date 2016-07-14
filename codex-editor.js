@@ -850,13 +850,19 @@ cEditor.callback = {
 
         var clipboardData, pastedData, nodeContent;
 
+        /** Prevent Default Browser behaviour */
         event.preventDefault();
 
         clipboardData = event.clipboardData || window.clipboardData;
         pastedData = clipboardData.getData('Text');
 
         nodeContent = document.createTextNode(pastedData);
-        block.appendChild(nodeContent);
+
+        var index = cEditor.caret.getCurrentInputIndex();
+
+        /** Insert parsed content to the editable block */
+        var editableElement = cEditor.state.inputs[index];
+        editableElement.appendChild(nodeContent);
     },
 
     /**
@@ -1031,84 +1037,6 @@ cEditor.content = {
         cEditor.content.workingNodeChanged(newBlock);
 
     },
-    /**
-    * @deprecated with replaceBlock()
-    */
-    _switchBlock : function (targetBlock, newBlockTagname) {
-
-        if (!targetBlock || !newBlockTagname) return;
-
-        var nodeToReplace;
-
-        /**
-        * First-level nodes replaces as-is,
-        * otherwise we need to replace parent node
-        */
-        if (cEditor.parser.isFirstLevelBlock(targetBlock)) {
-            nodeToReplace = targetBlock;
-        } else {
-            nodeToReplace = targetBlock.parentNode;
-        }
-
-        /**
-        * Make new node with original content
-        */
-        var nodeCreated = cEditor.draw.block(newBlockTagname, targetBlock.innerHTML);
-
-        /** Mark node as redactor block */
-        nodeCreated.contentEditable = "true";
-        nodeCreated.classList.add(cEditor.ui.BLOCK_CLASSNAME);
-
-        /**
-        * If it is a first-level node, replace as-is.
-        */
-        if (cEditor.parser.isFirstLevelBlock(nodeCreated)) {
-
-            cEditor.nodes.redactor.replaceChild(nodeCreated, nodeToReplace);
-
-            /**
-            * Set new node as current
-            */
-
-            cEditor.content.workingNodeChanged(nodeCreated);
-
-            /**
-            * Setting caret
-            */
-            cEditor.caret.set(nodeCreated);
-
-            /** Add event listeners for created node */
-            cEditor.ui.addBlockHandlers(nodeCreated);
-
-            return;
-
-        }
-
-        /**
-        * If it is not a first-level node, for example LI or IMG
-        * we need to wrap it in block-tag (<p> or <ul>)
-        */
-        var newNodeWrapperTagname,
-            newNodeWrapper;
-
-        switch (newBlockTagname){
-            case 'LI' : newNodeWrapperTagname = 'UL'; break;
-            default   : newNodeWrapperTagname = 'P'; break;
-        }
-
-        newNodeWrapper = cEditor.draw.block(newNodeWrapperTagname);
-        newNodeWrapper.appendChild(nodeCreated);
-
-
-        cEditor.nodes.redactor.replaceChild(newNodeWrapper, nodeToReplace);
-
-        /**
-        * Set new node as current
-        */
-        cEditor.content.workingNodeChanged(nodeCreated);
-
-        //cEditor.caret.set(nodeCreated);
-    },
 
     /**
     * Replaces blocks with saving content
@@ -1233,7 +1161,7 @@ cEditor.caret = {
     /**
     * @var {int} InputIndex - editable element in DOM
     */
-    InputIndex : null,
+    inputIndex : null,
 
     /**
     * @var {int} offset - caret position in a text node.
@@ -1246,54 +1174,6 @@ cEditor.caret = {
     */
 
     focusedNodeIndex: null,
-
-    /**
-    * We need to save caret before we change the block,
-    * so that we could return it to original position in a new tag.
-    * We save caret offset in a text and index of child node.
-    */
-    save : function() {
-
-        var selection = window.getSelection(),
-            parentElement,
-            previousElement,
-            nodeIndex = 0;
-
-        if (!selection.anchorNode) {
-            return;
-        }
-
-        parentElement   = selection.anchorNode;
-        previousElement = selection.anchorNode.previousSibling;
-
-        /**
-        * We get index of node which is child of #BLOCK_CLASSNAME.
-        * if selected node is not below the block container, we get the closest TAG which is below #BLOCK_CLASSNAME
-        */
-        if ( parentElement.className !== cEditor.ui.BLOCK_CLASSNAME ) {
-
-            while (parentElement.parentNode.className !== cEditor.ui.BLOCK_CLASSNAME) {
-
-                parentElement = parentElement.parentNode;
-
-            }
-
-            previousElement = parentElement.previousSibling;
-        }
-
-        /** Counting index of focused node */
-        while (previousElement !== null) {
-
-            nodeIndex ++;
-            previousElement = previousElement.previousSibling;
-
-        }
-
-        this.offset            = selection.anchorOffset;
-        this.focusedNodeIndex  = nodeIndex;
-
-    },
-
     /**
     * Creates Document Range and sets caret to the element.
     * @uses caret.save — if you need to save caret position
@@ -1337,10 +1217,31 @@ cEditor.caret = {
     },
 
     /**
-    * @param {Element} - block element where we should find caret position
+    * @return current index of input and saves it in caret object
     */
-    get : function (el) {
+    getCurrentInputIndex : function () {
 
+        /** Index of Input that we paste sanitized content */
+        var selection   = window.getSelection(),
+            inputs      = cEditor.state.inputs,
+            focusedNode = selection.anchorNode,
+            focusedNodeHolder;
+
+        /** Looking for parent contentEditable block */
+        while (focusedNode.contentEditable != 'true') {
+            focusedNodeHolder = focusedNode.parentNode;
+            focusedNode       = focusedNodeHolder;
+        }
+
+        /** Input index in DOM level */
+        var editableElementIndex = 0;
+
+        while (focusedNode != inputs[editableElementIndex]) {
+            editableElementIndex ++;
+        }
+
+        this.inputIndex = editableElementIndex;
+        return this.inputIndex;
     },
 
     /**
@@ -1360,7 +1261,7 @@ cEditor.caret = {
             nextInput.appendChild(emptyTextElement);
         }
 
-        cEditor.caret.InputIndex = nextInput;
+        cEditor.caret.inputIndex = nextInput;
         cEditor.caret.set(nextInput, 0, 0);
         cEditor.content.workingNodeChanged(nextInput);
 
@@ -1383,7 +1284,7 @@ cEditor.caret = {
             previousInput.appendChild(emptyTextElement);
         }
 
-        cEditor.caret.InputIndex = previousInput;
+        cEditor.caret.inputIndex = previousInput;
         cEditor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
         cEditor.content.workingNodeChanged(inputs[index - 1]);
     },

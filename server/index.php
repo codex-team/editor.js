@@ -30,7 +30,7 @@ function get_url()
     if (filter_var($url, FILTER_VALIDATE_URL) === FALSE) {
        return false;
     }
-    
+
     return $url;
 }
 
@@ -54,7 +54,7 @@ function get_meta_from_html($html)
             $description = $meta->getAttribute('content');
         if($meta->getAttribute('name') == 'keywords')
             $keywords = $meta->getAttribute('content');
-        if($meta->getAttribute('property')=='og:image'){ 
+        if($meta->getAttribute('property')=='og:image'){
             $image = $meta->getAttribute('content');
         }
     }
@@ -81,11 +81,11 @@ $result = get_meta_from_html($html);
 
 $result = array_merge(
 
-    get_meta_from_html($html), 
+    get_meta_from_html($html),
 
     array(
         'linkUrl'   => $url,
-        'linkText'  => $url_params["host"] . $url_params["path"],
+        'linkText' => $url_params["host"] . isset($url_params["path"])?$url_params["path"]:"",
     )
 
 );
