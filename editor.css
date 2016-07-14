@@ -218,7 +218,7 @@
 
 
 /** Alerts */
-.notifications-block {
+.ce_notifications-block {
 
     position: fixed;
     top: 0;
@@ -229,11 +229,11 @@
     /*height: 50px;*/
 
 }
-    .notification-remove {
+    .ce_notification-remove {
         display: none;
     }
 
-    .notification-item {
+    .ce_notification-item {
         margin-top: 10px;
         padding: 10px 20px;
         border-radius: 3px;
@@ -247,7 +247,7 @@
         animation-fill-mode: both;
     }
 
-    .notification-error {
+    .ce_notification-error {
         background: #e79c9c;
     }
 

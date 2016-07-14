@@ -353,10 +353,9 @@ cEditor.ui = {
         /** Append editor wrapper after initial textarea */
         cEditor.core.insertAfter(cEditor.nodes.textarea, wrapper);
 
-        /** Append to the document block with notifications */
-        notifications      = cEditor.draw.notifications();
+        /** Append block with notifications to the document */
+        notifications      = cEditor.draw.alertsHolder();
         cEditor.nodes.notifications = document.body.appendChild(notifications);
-        // console.log(notifications);
 
         /** Make toolbar and content-editable redactor */
         toolbar            = cEditor.draw.toolbar();
@@ -419,11 +418,6 @@ cEditor.ui = {
     bindEvents : function () {
 
         cEditor.core.log('ui.bindEvents fired', 'info');
-
-        /** Error notificator */
-        window.addEventListener('error', function (errorMsg, url, lineNumber) {
-            cEditor.callback.notifyUser(errorMsg, event);
-        }, false );
 
         /** All keydowns on Document */
         document.addEventListener('keydown', function (event) {
@@ -1872,11 +1866,13 @@ cEditor.draw = {
     /**
     * Block with notifications
     */
-    notifications : function() {
+    alertsHolder : function() {
 
         var block = document.createElement('div');
 
-        block.classList.add('notifications-block');
+        block.classList.add('ce_notifications-block');
+
+        cEditor.notifications.onerror();
 
         return block;
 
@@ -1941,9 +1937,29 @@ cEditor.draw = {
 /** Module which extends notifications and make different animations for logs */
 cEditor.notifications = {
 
+    /**
+    * Error notificator. Shows block with message
+    */
+    onerror : function() {
+
+        window.addEventListener('error', function (errorMsg, url, lineNumber) {
+            cEditor.callback.notifyUser(errorMsg, event);
+        }, false );
+
+    },
+
+    /**
+    * Appends notification with different types
+    * @param message {string} - Error or alert message
+    * @param type {string} - Type of message notification. Ex: Error, Warning, Danger ...
+    */
     send : function(message, type) {
 
-        var notification = cEditor.notifications.alert(message, type);
+        var notification = cEditor.draw.block('div');
+
+        notification.textContent = message;
+        notification.classList.add('ce_notification-item', 'ce_notification-' + type, 'flipInX');
+
         cEditor.nodes.notifications.appendChild(notification);
 
         setTimeout(function () {
@@ -1951,19 +1967,6 @@ cEditor.notifications = {
         }, 3000);
 
     },
-
-    alert : function(content, type) {
-
-        var block = cEditor.draw.block('div');
-
-        block.textContent = content;
-        block.classList.add('notification-item', 'notification-' + type, 'flipInX');
-
-        return block;
-
-    },
-
-
 }
 
 
