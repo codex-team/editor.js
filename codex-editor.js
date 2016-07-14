@@ -850,13 +850,17 @@ cEditor.callback = {
 
         var clipboardData, pastedData, nodeContent;
 
+        /** Prevent Default Browser behaviour */
         event.preventDefault();
 
         clipboardData = event.clipboardData || window.clipboardData;
         pastedData = clipboardData.getData('Text');
 
         nodeContent = document.createTextNode(pastedData);
-        block.appendChild(nodeContent);
+
+        /** Insert parsed content to first editable block */
+        var editableElement = block.querySelector('[contentEditable]');
+        editableElement.appendChild(nodeContent);
     },
 
     /**
@@ -1030,84 +1034,6 @@ cEditor.content = {
         */
         cEditor.content.workingNodeChanged(newBlock);
 
-    },
-    /**
-    * @deprecated with replaceBlock()
-    */
-    _switchBlock : function (targetBlock, newBlockTagname) {
-
-        if (!targetBlock || !newBlockTagname) return;
-
-        var nodeToReplace;
-
-        /**
-        * First-level nodes replaces as-is,
-        * otherwise we need to replace parent node
-        */
-        if (cEditor.parser.isFirstLevelBlock(targetBlock)) {
-            nodeToReplace = targetBlock;
-        } else {
-            nodeToReplace = targetBlock.parentNode;
-        }
-
-        /**
-        * Make new node with original content
-        */
-        var nodeCreated = cEditor.draw.block(newBlockTagname, targetBlock.innerHTML);
-
-        /** Mark node as redactor block */
-        nodeCreated.contentEditable = "true";
-        nodeCreated.classList.add(cEditor.ui.BLOCK_CLASSNAME);
-
-        /**
-        * If it is a first-level node, replace as-is.
-        */
-        if (cEditor.parser.isFirstLevelBlock(nodeCreated)) {
-
-            cEditor.nodes.redactor.replaceChild(nodeCreated, nodeToReplace);
-
-            /**
-            * Set new node as current
-            */
-
-            cEditor.content.workingNodeChanged(nodeCreated);
-
-            /**
-            * Setting caret
-            */
-            cEditor.caret.set(nodeCreated);
-
-            /** Add event listeners for created node */
-            cEditor.ui.addBlockHandlers(nodeCreated);
-
-            return;
-
-        }
-
-        /**
-        * If it is not a first-level node, for example LI or IMG
-        * we need to wrap it in block-tag (<p> or <ul>)
-        */
-        var newNodeWrapperTagname,
-            newNodeWrapper;
-
-        switch (newBlockTagname){
-            case 'LI' : newNodeWrapperTagname = 'UL'; break;
-            default   : newNodeWrapperTagname = 'P'; break;
-        }
-
-        newNodeWrapper = cEditor.draw.block(newNodeWrapperTagname);
-        newNodeWrapper.appendChild(nodeCreated);
-
-
-        cEditor.nodes.redactor.replaceChild(newNodeWrapper, nodeToReplace);
-
-        /**
-        * Set new node as current
-        */
-        cEditor.content.workingNodeChanged(nodeCreated);
-
-        //cEditor.caret.set(nodeCreated);
     },
 
     /**

@@ -19,6 +19,9 @@ var listTool = {
         var tag = listTool.ui.make(),
             li  = listTool.ui.block("li", "tool-link-li");
 
+        var br = document.createElement("br");
+
+        li.appendChild(br);
         tag.appendChild(li);
 
         return tag;
