@@ -54,15 +54,16 @@ var listTool = {
     /**
      * Method to extract JSON data from HTML block
      */
-    save : function (block){
+    save : function (blockContent){
 
-        var json = {
-            type : 'list',
-            data : {
-                type  : null,
-                items : [],
-            }
-        };
+        var block = blockContent[0],
+            json  = {
+                type : 'list',
+                data : {
+                    type  : null,
+                    items : [],
+                }
+            };
 
         for(var index = 0; index < block.childNodes.length; index++)
             json.data.items[index] = block.childNodes[index].textContent;
