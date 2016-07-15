@@ -35,14 +35,15 @@ var paragraphTool = {
     /**
     * Method to extract JSON data from HTML block
     */
-    save : function (block){
+    save : function (blockContent){
 
-        var json = {
-            type : 'paragraph',
-            data : {
-                text : null,
-            }
-        };
+        var block = blockContent[0],
+            json  = {
+                type : 'paragraph',
+                data : {
+                    text : null,
+                }
+            };
 
         json.data.text = block.innerHTML;
         return json;

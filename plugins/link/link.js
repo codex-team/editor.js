@@ -64,20 +64,21 @@ var linkTool = {
     /**
      * Method to extract JSON data from HTML block
      */
-    save : function (block){
+    save : function (blockContent){
 
         var linkElement = linkTool.elementClasses.link;
 
-        var json = {
-            type : 'link',
-            data : {
-                fullLink    : block.querySelector("." + linkElement).href,
-                shortLink   : block.querySelector("." + linkElement).textContent,
-                image       : block.querySelector("." + linkTool.elementClasses.image).src,
-                title       : block.querySelector("." + linkTool.elementClasses.title).textContent,
-                description : block.querySelector("." + linkTool.elementClasses.description).textContent
-            }
-        };
+        var block = blockContent[0],
+            json = {
+                type : 'link',
+                data : {
+                    fullLink    : block.querySelector("." + linkElement).href,
+                    shortLink   : block.querySelector("." + linkElement).textContent,
+                    image       : block.querySelector("." + linkTool.elementClasses.image).src,
+                    title       : block.querySelector("." + linkTool.elementClasses.title).textContent,
+                    description : block.querySelector("." + linkTool.elementClasses.description).textContent
+                }
+            };
 
         return json;
 

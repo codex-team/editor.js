@@ -52,15 +52,16 @@ var headerTool = {
     /**
     * Method to extract JSON data from HTML block
     */
-    save : function (block){
+    save : function (blockContent) {
 
-        var json = {
-            type : 'header',
-            data : {
-                type : null,
-                text : null,
-            }
-        };
+        var block = blockContent[0],
+            json  = {
+                type : 'header',
+                data : {
+                    type : null,
+                    text : null,
+                }
+            };
 
         json.data.type = block.dataset.headerData;
         json.data.text = block.textContent;
