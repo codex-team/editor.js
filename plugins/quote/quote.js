@@ -53,16 +53,18 @@ var quoteTools = {
         */
         parsedblock = quoteTools.parseBlockQuote(block);
 
-        var data = {
-            type    : 'quote',
-            style   : parsedblock.style,
-            text    : parsedblock.quote,
-            author  : parsedblock.author,
-            job     : parsedblock.job,
-            photo   : parsedblock.photo,
+        var json = {
+            type : 'quote',
+            data : {
+                style  : parsedblock.style,
+                text   : parsedblock.text,
+                author : parsedblock.author,
+                job    : parsedblock.job,
+                photo  : parsedblock.photo,
+            }
         };
 
-        return data;
+        return json;
     },
 
     makeSettings : function(data) {
