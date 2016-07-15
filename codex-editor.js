@@ -285,8 +285,11 @@ cEditor.renderer = {
     */
     createBlockFromData : function (blockData) {
 
+        /** New parser */
+        var pluginName = blockData.type;
+
         /** Get first key of object that stores plugin name */
-        for (var pluginName in blockData) break;
+        // for (var pluginName in blockData) break;
 
         /** Check for plugin existance */
         if (!cEditor.tools[pluginName]) {
@@ -299,8 +302,11 @@ cEditor.renderer = {
             throw Error(`Plugin «${pluginName}» must have «render» method`);
         }
 
+        /** New Parser */
+        var block = cEditor.tools[pluginName].render(blockData.data);
+
         /** Fire the render method with data */
-        var block = cEditor.tools[pluginName].render(blockData[pluginName]);
+        // var block = cEditor.tools[pluginName].render(blockData[pluginName]);
 
         /** Retrun type and block */
         return {
