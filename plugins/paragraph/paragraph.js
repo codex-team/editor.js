@@ -37,13 +37,15 @@ var paragraphTool = {
     */
     save : function (block){
 
-        var data = {
-            text : null
+        var json = {
+            type : 'paragraph',
+            data : {
+                text : null,
+            }
         };
 
-        data.text = blockData.textContent;
-
-        return data;
+        json.data.text = block.innerHTML;
+        return json;
 
     },
 
