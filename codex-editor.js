@@ -542,9 +542,10 @@ cEditor.callback = {
 
         cEditor.content.workingNodeChanged();
 
+        var index = cEditor.caret.getCurrentInputIndex();
         var isEnterPressedOnToolbar = cEditor.toolbar.opened &&
                                cEditor.toolbar.current &&
-                               event.target == cEditor.content.currentNode;
+                               event.target == cEditor.state.inputs[index];
 
         if ( isEnterPressedOnToolbar ) {
             event.preventDefault();
@@ -1402,6 +1403,7 @@ cEditor.toolbar = {
 
             /** Replace current block */
             cEditor.content.switchBlock(workingNode, newBlockContent, tool.type);
+
 
         } else {
 

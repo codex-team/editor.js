@@ -83,11 +83,13 @@
 
     margin-left: -1px;
 
-    background: #fff;
-    border: 1px solid #e3e7ee;
-    border-radius: 2px;
-    box-shadow: 0 2px 11px rgba(27,39,54,.11);
-    color: #2e394b;
+    background: #414758;
+    /*background: #fff;*/
+    /*border: 1px solid #e3e7ee;*/
+    /*box-shadow: 0 2px 11px rgba(27,39,54,.11);*/
+    /*color: #2e394b;*/
+    border-radius: 3px;
+    color: #bab9d8;
 
     display: none;
 
@@ -100,14 +102,18 @@
 
 
     .ce_toolbar .toggler{
-        color: #6485d0;
-        background: #f8f9fd;
+        /*background: #f8f9fd;*/
+        background: #34384a;
+        /*color: #6485d0;*/
+        color: #05ff9b;
         cursor: pointer;
+        border-radius: 3px 0 0 3px
     }
     .ce_toolbar .toggler,
     .ce_toolbar li
     {
         display: inline-block;
+        margin: 0 !important;
         padding: 12px;
         cursor: pointer;
         font-size: 14px;
@@ -116,8 +122,8 @@
         .ce_toolbar .toggler:hover,
         .ce_toolbar li:hover
         {
-            background: #3e6dd6;
-            color: #e2edff;
+            background: #36374e;
+            color: #85aeff;
         }
 
         .ce_toolbar .settings_btn{
@@ -130,18 +136,16 @@
 .ce_block_settings{
     position: absolute;
     z-index: 2;
-    margin-top: 15px;
-    margin-left: 4px;
     padding: 25px 30px;
 
-    color: #2e394b;
+    background: #32384c !important;
+    color: #81839e;
 
     overflow: hidden;
 
     background: #fff;
-    border: 1px solid #e8e9f1;
-    border-radius: 2px;
-    box-shadow: 0 2px 11px rgba(27,39,54,.11);
+    border-radius: 0 0 3px 3px;
+    font-size: 14px;
 
     display: none;
 }
