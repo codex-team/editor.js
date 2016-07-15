@@ -41,8 +41,6 @@ var codeTool = {
      */
     save : function (blockContent){
 
-
-
         var block = blockContent[0];
             json  = {
                 type : 'code',
