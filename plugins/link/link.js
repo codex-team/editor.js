@@ -64,19 +64,23 @@ var linkTool = {
     /**
      * Method to extract JSON data from HTML block
      */
-    save : function (block){
+    save : function (blockContent){
 
         var linkElement = linkTool.elementClasses.link;
 
-        var data = {
-            fullLink    : block.querySelector("." + linkElement).href,
-            shortLink   : block.querySelector("." + linkElement).textContent,
-            image       : block.querySelector("." + linkTool.elementClasses.image).src,
-            title       : block.querySelector("." + linkTool.elementClasses.title).textContent,
-            description : block.querySelector("." + linkTool.elementClasses.description).textContent
-        };
+        var block = blockContent[0],
+            json = {
+                type : 'link',
+                data : {
+                    fullLink    : block.querySelector("." + linkElement).href,
+                    shortLink   : block.querySelector("." + linkElement).textContent,
+                    image       : block.querySelector("." + linkTool.elementClasses.image).src,
+                    title       : block.querySelector("." + linkTool.elementClasses.title).textContent,
+                    description : block.querySelector("." + linkTool.elementClasses.description).textContent
+                }
+            };
 
-        return data;
+        return json;
 
     },
 
@@ -202,7 +206,7 @@ var linkTool = {
 };
 
 linkTool.ui = {
-    
+
     make : function (json) {
 
         var wrapper = this.wrapper(),
@@ -253,7 +257,7 @@ linkTool.ui = {
         return wrapper;
 
     },
-    
+
     image : function (imageSrc, imageClass) {
 
         var imageTag = document.createElement('img');
@@ -263,7 +267,7 @@ linkTool.ui = {
         imageTag.setAttribute('src', imageSrc);
 
         return imageTag;
-        
+
     },
 
     link : function (linkUrl, linkText) {
@@ -312,8 +316,8 @@ cEditor.tools.link = {
     iconClassname  : 'ce-icon-link',
     make           : linkTool.makeNewBlock,
     appendCallback : linkTool.appendCallback,
-    render         : linkTool.render
+    render         : linkTool.render,
     // settings       : linkTool.makeSettings(),
-    // save           : linkTool.save
+    save           : linkTool.save
 
 };

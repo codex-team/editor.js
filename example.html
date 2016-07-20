@@ -82,164 +82,321 @@
 <script src="codex-editor.js"></script>
 <script>
 
-    /**
-    * Input JSON style
-    */
-    var INPUT = {
-                    items : [],
-                    count : 10,
-                };
+var INPUT = {
+    items : [],
+    count : 10,
+};
 
-    /** Fill with example data */
-    INPUT.items = [
-                    {
-                        header : {
-                                    type : 'H2',
-                                    text : 'Введение',
-                                },
-                    },
-                    {
-                        paragraph : {
-                                        text : '<p>На днях я получил очередной проект по разработке личного кабинета.</p><p>Как обычно, я открыл консоль, чтобы посмотреть историю проекта, ветки и все ли правки закомичены (от слова commit - фиксировать). Однако ничего из этого я не узнал — проект не содержал .git репозитория.</p><p>Эта ситуация в очередной раз заставила задуматься о том, как много разработчиков до сих пор не понимают необходимость контролировать изменения в файлах с исходным кодом. А многие и вовсе не знают что это такое, и как этим пользоваться.</p>'
-                                    }
-                    },
-                     {
-                        link : {
-                            'linkUrl'       : 'http://yandex.ru',
-                            'linkText'      : 'yandex.ru',
-                            'image'         : 'https://yastatic.net/morda-logo/i/apple-touch-icon/ru-76x76.png',
-                            'title'         : 'Яндекс',
-                            'description'   : 'Сайт, поисковик, проч.'
-                        }
-                    },
-                    {
-                        header : {
-                                    type : 'H2',
-                                    text : 'Почему нужно использовать систему контроля версий',
-                                }
-                    },
-                    {
-                        header : {
-                                    type : 'H3',
-                                    text : 'Основные преимущества',
-                                }
-                    },
-                    {
-                        list : {
-                                    type : 'unordered',
-                                    items : [
-                                        'одновременная работа нескольких человек над проектом',
-                                        'возможность быстро обнаружить и откатить, все не зафиксированные изменения',
-                                        'возможность быстро откатить ошибочные, уже зафиксированные, изменения',
-                                        'история всех изменений в проекте, с указанием даты и авторов',
-                                        'возможность изучить процесс развития проекта',
-                                    ]
-                                }
+/** Fill with example data */
+INPUT.items = [
+    {
+        type : 'paragraph',
+        data : {
+            text : '<p>Ladies and gentlemen, prepare yourself for a pivotal moment in the history of web development…</p>'
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : '<p><i>[Drumroll begins]</i></p><p>Promises have arrived natively in JavaScript!</p><p><i>[Fireworks explode, glittery paper rains from above, the crowd goes wild]</i></p>'
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : 'At this point you fall into one of these categories:'
+        }
+    },
+    {
+        type : 'list',
+        data : {
+            type : 'unordered',
+            items : [
+                `People are cheering around you, but you're not sure what all the fuss is about. Maybe you're not even sure what a "promise" is. You'd shrug, but the weight of glittery paper is weighing down on your shoulders. If so, don't worry about it, it took me ages to work out why I should care about this stuff. You probably want to begin here`,
+                `You punch the air! About time right? You've used these Promise things before but it bothers you that all implementations have a slightly different API. What's the API for the official JavaScript version? You probably want to begin here`,
+                `You knew about this already and you scoff at those who are jumping up and down like it's news to them. Take a moment to bask in your own superiority, then head straight to the API reference`
+            ]
+        }
 
-                    },
-                    {
-                        header : {
-                                    type : 'H2',
-                                    text : 'Что такое git',
-                                }
-                    },
-                    {
-                        quote : {
-                                    type   : 'simple',
-                                    text   : 'git — распределенная система контроля версий файлов.<br>             «Распределенная» значит, что каждый репозиторий содержит всю историю изменений, и из него можно развернуть полноценную рабочую копию проекта.',
-                                    photo  : '',
-                                    author : 'sss',
-                                }
-                    },
-                    {
-                        header : {
-                                    type : 'H2',
-                                    text : 'Основные термины и понятия при работе с системой Git',
-                                }
-                    },
-                    {
-                        paragraph : {
-                                        text : '<strong>Репозиторий </strong>— дерево изменений проекта.',
-                                    }
-                    },
-                    {
-                        link : {
-                            'linkUrl'       : 'http://google.com',
-                            'linkText'      : 'google.com',
-                            'image'         : 'http://2.bp.blogspot.com/-7bZ5EziliZQ/VynIS9F7OAI/AAAAAAAASQ0/BJFntXCAntstZe6hQuo5KTrhi5Dyz9yHgCK4B/s1600/googlelogo_color_200x200.png',
-                            'title'         : 'Google',
-                            'description'   : 'Поисковик, поисковик, проч.'
-                        }
-                    },
-                    {
-                        paragraph : {
-                                        text : '<strong>Ветка </strong>— указатель на коммит. <p> На один коммит может указывать несколько веток. Как правило это случается при создании новой ветки из текущей. Например для реализации в ней новой задачи. По мере добавления коммитов — ветки будут расходится в разные стороны.</p>'
-                                    }
-                    },
-                    {
-                        paragraph : {
-                                        text : '<strong>Коммит</strong> (от слова commit - фиксировать) — логическая единица изменений.<p>Каждый из них имеет историю уникальный ID и цепочку предшествующих коммитов. Можно «откатить» (отменить) изменения любого из коммитов. Для любого коммита из истории можно создать указатель, то есть ветку.</p>'
-                                    }
-                    },
-                    {
-                        paragraph : {
-                                text : '<strong>Индекс</strong> — изменения, которые будут зафиксированы при следующем коммите. <p> При этом, во время коммита, могут быть изменения, не добавленные в индекс — они не будут закоммичены. Их надо будет отдельно добавить в индекс и зафиксировать. Таким образом, можно вносить разом, все необходимые по мере работы, правки и фиксировать их логическими группами.</p>'
-                        }
-                    },
-                    {
-                        paragraph : {
-                                text : '<p>В первое время вам понадобятся только основные команды. Давайте рассмотрим их:</p>'
-                        }
-                    },
-                    {
-                        list : {
-                            type : 'unordered',
-                            items : [
-                                'init — создает новый репозиторий',
-                                'status — отображает список измененных, добавленных и удаленных файлов',
-                                'branch — отображает список веток и активную среди них',
-                                'add — добавляет указанные файлы в индекс',
-                                'reset — удаляет указанные файлы из индекса',
-                                'commit — фиксирует добавленнные в индекс изменения',
-                                'checkout — переключает активную ветку; отменяет не добавленные в индекс изменения',
-                                'merge — объединяет указанную ветку с активной',
-                                'log — выводит список последних коммитов (можно указать количество и формат)'
-                            ]
-                        }
-                    },
-                    {
-                        header : {
-                            type : 'H2',
-                            text : 'Примеры команд для работы с Git'
-                        }
-                    },
-                    {
-                        paragraph : {
-                            text : '<p>Создайте новую папку для тестового проекта.</p><p>Чтобы начать работу с гитом, надо его инициализировать — открыть консоль, перейти в корневую папку проекта и выполнить команду:'
-                        }
-                    },
-                    {
-                        code : {
-                            text : '$git init'
-                        }
-                    },
-                    {
-                        paragraph : {
-                            text : '<p>Эта команда создаст новый пустой репозиторий. Проще говоря, появится папка .git с какими-то непонятными файлами.&nbsp;Причем такой репозиторий, который находится в папке проекта, файлы которого вы можете менять — называется «рабочей копией». Существуют еще «внешние копии» или bare-репозитории.</p><p>Все остальные команды можно вызывать в корневой папке или в одной из вложенных.</p><p>Теперь можно вносить изменения.</p><p>Список изменений можно увидеть выполнив команду:</p>'
-                        }
-                    },
-                    {
-                        code : {
-                            text : '$git status'
-                        }
-                    },
-                    {
-                        paragraph : {
-                                        text : 'После создания нового репозитория дерево содержит только одну ветку — master. Ветка состоит из коммитов, расположенных в хронологическом порядке.&nbsp;Как правило, в ветке master находятся проверенные и протестированные изменения.'
-                                    }
-                    },
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H2',
+            text : 'What\'s all the fuss about?',
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : 'JavaScript is single threaded, meaning that two bits of script cannot run at the same time, they have to run one after another. In browsers, JavaScript shares a thread with a load of other stuff. What that stuff is differs from browser to browser, but typically JavaScript is in the same queue as painting, updating styles, and handling user actions (such as highlighting text and interacting with form controls). Activity in one of these things delays the others.'
+        }
+    },
+    {
+        type : 'link',
+        data : {
+            'linkUrl'       : 'http://yandex.ru',
+            'linkText'      : 'yandex.ru',
+            'image'         : 'https://yastatic.net/morda-logo/i/apple-touch-icon/ru-76x76.png',
+            'title'         : 'Яндекс',
+            'description'   : 'Russian largest Search Engine'
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H3',
+            text : 'Promises arrive in JavaScript!',
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : 'Promises have been around for a while in the form of libraries, such as:',
+        }
+    },
+    {
+        type : 'list',
+        data : {
+            type : 'unordered',
+            items : [
+                'Q',
+                'when',
+                'WinJS',
+                'RSVP.js',
+            ]
+        }
 
-               ];
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "The above and JavaScript promises share a common, standardised behaviour called Promises/A+. If you're a jQuery user, they have something similar called Deferreds. However, Deferreds aren't compliant, which makes them subtly different and less useful, so beware. jQuery also has a Promise type, but this is just a subset of Deferred and has the same issues. Although promise implementations follow a standardised behaviour, their overall APIs differ. JavaScript promises are similar in API to RSVP.js. Here's how you create a promise:",
+        }
+    },
+    {
+        type : 'code',
+        data : {
+            text : "var promise = new Promise(function(resolve, reject) { // do a thing, possibly async, then… if (/* everything turned out fine */) { resolve('Stuff worked!''); } else  reject(Error('It broke')); } });",
+        }
+    },
+    {
+        type : 'quote',
+        data : {
+            type   : 'withCaption',
+            text   : "But what does this mean for promises? Well, you can use this return/resume behaviour to write async code that looks like (and is as easy to follow as) synchronous code. Don't worry too much about understanding it line-for-line, but here's a helper function that lets us use 'yield' to wait for promises to settle:",
+            photo  : '',
+            author : '— Jake Archibald',
+            job    : 'CEO Mozilla Firefox',
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "The promise constructor takes one argument, a callback with two parameters, resolve and reject. Do something within the callback, perhaps async, then call resolve if everything worked, otherwise call reject.Like 'throw' in plain old JavaScript, it's customary, but not required, to reject with an Error object. The benefit of Error objects is they capture a stack trace, making debugging tools more helpful. Here's how you use that promise:",
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H2',
+            text : 'Browser support & polyfill',
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "There are already implementations of promises in browsers today. As of Chrome 32, Opera 19, Firefox 29, Safari 8 & Microsoft Edge, promises are enabled by default. To bring browsers that lack a complete promises implementation up to spec compliance, or add promises to other browsers and Node.js, check out the polyfill (2k gzipped).",
+        }
+    },
+    {
+        type : 'link',
+        data : {
+            'linkUrl'       : 'http://google.com',
+            'linkText'      : 'google.com',
+            'image'         : 'https://2.bp.blogspot.com/-7bZ5EziliZQ/VynIS9F7OAI/AAAAAAAASQ0/BJFntXCAntstZe6hQuo5KTrhi5Dyz9yHgCK4B/s1600/googlelogo_color_200x200.png',
+            'title'         : 'Google',
+            'description'   : 'The largest US Search Engine',
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H2',
+            text : 'Compatibility with other libraries',
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "The JavaScript promises API will treat anything with a then method as promise-like (or thenable in promise-speak *sigh*), so if you use a library that returns a Q promise, that's fine, it'll play nice with the new JavaScript promises. Although, as I mentioned, jQuery's Deferreds are a bit… unhelpful. Thankfully you can cast them to standard promises, which is worth doing as soon as possible:",
+        }
+    },
+    {
+        type : 'code',
+        data : {
+            text : "var jsPromise = Promise.resolve($.ajax('/whatever.json'));",
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H2',
+            text : "Complex async code made easier",
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "Right, let's code some things. Say we want to:",
+        }
+    },
+    {
+        type : 'list',
+        data : {
+            type : 'ordered',
+            items : [
+                'Start a spinner to indicate loading',
+                'Fetch some JSON for a story, which gives us the title, and urls for each chapter',
+                'Add title to the page',
+                'Fetch each chapter',
+                'Add the story to the page',
+                'Stop the spinner',
+            ]
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "…but also tell the user if something went wrong along the way. We'll want to stop the spinner at that point too, else it'll keep on spinning, get dizzy, and crash into some other UI. Of course, you wouldn't use JavaScript to deliver a story, serving as HTML is faster, but this pattern is pretty common when dealing with APIs: Multiple data fetches, then do something when it's all done.",
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H2',
+            text : "Queuing asynchronous actions",
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "You can also chain 'thens' to run async actions in sequence.When you return something from a 'then' callback, it's a bit magic. If you return a value, the next 'then' is called with that value. However, if you return something promise-like, the next 'then' waits on it, and is only called when that promise settles (succeeds/fails). For example:",
+        }
+    },
+    {
+        type : 'quote',
+        data : {
+            type : 'simple',
+            text  : "This is the first time we've seen Promise.resolve, which creates a promise that resolves to whatever value you give it. If you pass it an instance of Promise it'll simply return it (note: this is a change to the spec that some implementations don't yet follow). If you pass it something promise-like (has a 'then' method), it creates a genuine Promise that fulfills/rejects in the same way. If you pass in any other value, eg Promise.resolve('Hello'), it creates a promise that fulfills with that value. If you call it with no value, as above, it fulfills with 'ndefined'",
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "There's also Promise.reject(val), which creates a promise that rejects with the value you give it (or undefined). We can tidy up the above code using array.reduce:",
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H2',
+            text : "Promise API Reference",
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "All methods work in Chrome, Opera, Firefox, Microsoft Edge, and Safari unless otherwise noted. The polyfill provides the below for all browers.",
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H2',
+            text : "Static Methods",
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H3',
+            text : 'Promise.resolve(promise);',
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "Returns promise (only if promise.constructor == Promise)",
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H3',
+            text : 'Promise.resolve(thenable);',
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "Make a new promise from the thenable. A thenable is promise-like in as far as it has a 'then' method.",
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H3',
+            text : 'Promise.resolve(obj);',
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "Make a promise that fulfills to obj. in this situation.",
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H3',
+            text : 'Promise.all(array);',
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "Make a promise that rejects to obj. For consistency and debugging (e.g. stack traces), obj should be an instanceof Error.",
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H3',
+            text : 'Promise.race(array);',
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "Make a Promise that fulfills as soon as any item fulfills, or rejects as soon as any item rejects, whichever happens first.",
+        }
+    },
+    {
+        type : 'header',
+        data : {
+            type : 'H2',
+            text : 'Conclution',
+        }
+    },
+    {
+        type : 'paragraph',
+        data : {
+            text : "promise.then(onFulfilled, onRejected)'onFulfilled is called when/if 'promise' resolves. onRejected is called when/if 'promise' rejects. Both are optional, if either/both are omitted the next <b>onFulfilled/onRejected</b> in the chain is called. Both callbacks have a single parameter, the fulfillment value or rejection reason. 'then' returns a new promise equivalent to the value you return from <b>onFulfilled/onRejected</b> after being passed through Promise.resolve. If an error is thrown in the callback, the returned promise rejects with that <b>error.promise.catch(onRejected)</b> Sugar for promise.then(undefined, onRejected). Many thanks to Anne van Kesteren, Domenic Denicola, Tom Ashworth, Remy Sharp, Addy Osmani, Arthur Evans, and Yutaka Hirano who proofread this and made <b>corrections/recommendations</b>. Also, thanks to Mathias Bynens for updating various parts of the article.",
+        }
+    }
+
+];
 
     /**
     * @todo uncomment and append all text to items
@@ -266,8 +423,23 @@
 
 </script>
 
-<script src="plugins/ceditor-tool-link/ceditor-tool-link.js"></script>
-<link rel="stylesheet" href="plugins/ceditor-tool-link/ceditor-tool-link.css" />
+<script src="plugins/paragraph/paragraph.js"></script>
+<link rel="stylesheet" href="plugins/paragraph/paragraph.css" />
+
+<script src="plugins/header/header.js"></script>
+<link rel="stylesheet" href="plugins/header/header.css" />
+
+<script src="plugins/link/link.js"></script>
+<link rel="stylesheet" href="plugins/link/link.css" />
+
+<script src="plugins/code/code.js"></script>
+<link rel="stylesheet" href="plugins/code/code.css" />
+
+<script src="plugins/quote/quote.js"></script>
+<link rel="stylesheet" href="plugins/quote/quote.css" />
+
+<script src="plugins/list/list.js"></script>
+<link rel="stylesheet" href="plugins/list/list.css" />
 
 <script src="plugins/images/plugin.js"></script>
 <link rel="stylesheet" href="plugins/images/plugin.css" />
