@@ -28,18 +28,17 @@ var linkTool = {
      */
     makeNewBlock : function (data) {
 
-        var wrapper = linkTool.ui.mainBlock();
-
-        var tag = linkTool.ui.input();
+        var wrapper = linkTool.ui.mainBlock(),
+            tag     = linkTool.ui.input();
 
         linkTool.currentInput = tag;
 
         wrapper.appendChild(tag);
 
-        /* Bind callbacks **/
-
+        /**
+        * Bind callbacks
+        **/
         tag.addEventListener('paste', linkTool.blockPasteCallback, false);
-
         tag.addEventListener('keydown', linkTool.blockKeyDownCallback, false);
 
         return wrapper;
@@ -51,9 +50,8 @@ var linkTool = {
      */
     render : function (json) {
 
-        var block = linkTool.ui.mainBlock();
-
-        var tag = linkTool.ui.make(json);
+        var block = linkTool.ui.mainBlock(),
+            tag   = linkTool.ui.make(json);
 
         block.appendChild(tag);
 
@@ -84,17 +82,11 @@ var linkTool = {
 
     },
 
-    appendCallback : function () {
-
-        console.log('link callback is appended...');
-
-    },
-
     blockPasteCallback : function (event) {
 
         var clipboardData = event.clipboardData || window.clipboardData,
-            pastedData = clipboardData.getData('Text'),
-            block = event.target.parentNode;
+            pastedData    = clipboardData.getData('Text'),
+            block         = event.target.parentNode;
 
         linkTool.renderLink(pastedData, block);
 
@@ -105,16 +97,17 @@ var linkTool = {
     blockKeyDownCallback : function (event) {
 
         var inputTag = event.target,
-            block = inputTag.parentNode;
+            block    = inputTag.parentNode,
+            url;
 
-        if (block.classList.contains(linkTool.elementClasses.error))
+        if ( block.classList.contains(linkTool.elementClasses.error) )
         {
-            block.classList.remove(linkTool.elementClasses.error)
+            block.classList.remove(linkTool.elementClasses.error);
         }
 
         if (event.keyCode == linkTool.ENTER_KEY) {
 
-            var url = inputTag.value;
+            url = inputTag.value;
 
             linkTool.renderLink(url, block);
 
@@ -124,12 +117,15 @@ var linkTool = {
 
     },
 
+    /**
+    * @todo move request-url to accepted settings
+    */
     renderLink : function (url, block) {
 
         Promise.resolve()
 
             .then(function () {
-                return linkTool.urlify(url)
+                return linkTool.urlify(url);
             })
 
             .then(function (url) {
@@ -137,7 +133,7 @@ var linkTool = {
                 /* Show loader gif **/
                 block.classList.add(linkTool.elementClasses.loader);
 
-                return fetch('/server/?url=' + encodeURI(url));
+                return fetch('/editor/parseLink?url=' + encodeURI(url));
             })
 
             .then(function (response) {
@@ -146,8 +142,7 @@ var linkTool = {
 
                     return response.json();
 
-                }
-                else {
+                } else {
 
                     return Error("Invalid response status: %o", response);
 
@@ -156,7 +151,7 @@ var linkTool = {
             })
 
             .then(function (json) {
-                linkTool.composeLinkPreview(json, block)
+                linkTool.composeLinkPreview(json, block);
             })
 
             .catch(function(error) {
@@ -220,6 +215,9 @@ linkTool.ui = {
         wrapper.appendChild(siteLink);
         wrapper.appendChild(siteDescription);
 
+        siteTitle.contentEditable = true;
+        siteDescription.contentEditable = true;
+
         return wrapper;
 
     },
@@ -230,7 +228,7 @@ linkTool.ui = {
 
         wrapper.classList += "ceditor-tool-link";
 
-        return wrapper
+        return wrapper;
 
     },
 

@@ -13,26 +13,26 @@
     width: 100%;
     background: transparent;
     font-size: 1em;
-    padding: 12px;
+    padding: 8px 25px;
     transition: background 200ms;
+    border-left: 3px solid #65d8b3;
 }
 
 .tool-link-panel {
-    width: 50%;
     position: relative;
-    margin: 25px auto;
+    margin: 5px 0;
     background: #f8f7ef;
     border: 1px solid transparent;
     padding: 25px 30px;
 }
 
-.ceditor-tool-link .tool-link-image {
+.tool-link-image {
     float:right;
     width: 75px;
-    border-radius: 50%;
+    border-radius: 3px;
 }
 
-.ceditor-tool-link .tool-link-title {
+.tool-link-title {
     display: block;
     width: 340px;
     margin-bottom: 4px;
@@ -42,16 +42,14 @@
     color: #000;
 }
 
-.ceditor-tool-link .tool-link-description {
+.tool-link-description {
     display: block;
-    width: 400px;
     margin-top: 10px;
     font-size: 14px;
     color: #000;
 }
 
-.ceditor-tool-link .tool-link-link {
-    display: block;
+.tool-link-link {
     width: 360px;
     font-size: 10px;
     margin-bottom: 4px;
@@ -63,21 +61,15 @@
 }
 
 .tool-link-loader {
-
     background: url("loading.gif") !important;
     opacity: 0.1;
-
 }
 
 .tool-link-error {
-
-    /*background: repeating-linear-gradient(*/
-            /*45deg,*/
-            /*#bc320e,*/
-            /*#606dbc 10px,*/
-            /*#465298 10px,*/
-            /*#465298 20px*/
-    /*);*/
-    background: rgba(255, 0, 0, 0.9);
-
+    background: rgb(255, 241, 241);
+    color: #bf4747;
 }
+.tool-link-error .ceditor-tool-link-input {
+    border-left-color: #d86b6b
+}
+
