@@ -153,7 +153,7 @@ var headerTool = {
         new_header.innerHTML = old_header.innerHTML;
         new_header.contentEditable = true;
 
-        cEditor.content.replaceBlock(old_header, new_header, 'header');
+        cEditor.content.switchBlock(old_header, new_header, 'header');
 
         /** Add listeners for Arrow keys*/
         cEditor.ui.addBlockHandlers(new_header);

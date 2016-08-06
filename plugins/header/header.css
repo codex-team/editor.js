@@ -6,18 +6,14 @@
     white-space: nowrap;
     /*padding-right: 10px;    */
 }
-.ce_plugin_header--caption{
-    color: #b9c2c2;
-}
 .ce_plugin_header--select_button{
     display: inline-block;
     margin-left: 40px;
-    border-bottom: 1px solid #c3d5ed;
-    padding-bottom: 2px;
-    color: #5399d4;
+    border-bottom: 1px solid #475588;
+    color: #6881e6;
     cursor: pointer;
 }
     .ce_plugin_header--select_button:hover{
-        border-bottom-color: #f6d8da;
-        color: #cc7d74;
+        border-bottom-color: #687da5;
+        color: #8da8dc;
     }

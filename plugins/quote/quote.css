@@ -3,20 +3,16 @@
     white-space: nowrap;
     /*padding-right: 10px;    */
 }
-.ce_plugin_quote--caption{
-    color: #b9c2c2;
-}
 .ce_plugin_quote--select_button{
     display: inline-block;
     margin-left: 40px;
-    border-bottom: 1px solid #c3d5ed;
-    padding-bottom: 2px;
-    color: #5399d4;
+    border-bottom: 1px solid #475588;
+    color: #6881e6;
     cursor: pointer;
 }
 .ce_plugin_quote--select_button:hover{
-    border-bottom-color: #f6d8da;
-    color: #cc7d74;
+    border-bottom-color: #687da5;
+    color: #8da8dc;
 }
 
 /** Quote Styles */
@@ -26,10 +22,9 @@
 }
 .quoteStyle-withCaption--author {
 
-    margin: 2.5em 100px !important;
-    margin-top: 25px;
+    margin: 0 100px 3em !important;
     text-align: right;
-    font-size: 1.38em;
+    font-size: 1.16em;
     font-weight: bold;
     color: #000;
     line-height: 1.5em;
@@ -38,16 +33,19 @@
 .quoteStyle-simple--text,
 .quoteStyle-withCaption--blockquote,
 .quoteStyle-withPhoto--quote {
-    font-size: 1.3em;
+    font-size: 1.04em;
     line-height: 1.9em;
 }
 
-.quoteStyle-simple--text,
+.quoteStyle-simple--text {
+    padding: 1.2em 2.1em;
+    margin: 2.5em 2em;
+    background: #FBFBFB;
+}
 .quoteStyle-withCaption--blockquote
 {
-    margin: 2.5em 100px;
+    margin: 0 1em;
     padding: 1.5em 2.0em !important;
-    background: #FBFBFB;
 }
 
 .quoteStyle-withCaption--blockquote:focus,
@@ -68,7 +66,8 @@
 .quoteStyle-withCaption--author:empty::before
 {
     content : 'Введите имя автора';
-    color: #A5ABBC;
+    font-weight: normal;
+    color: #a1a5b3;;
     opacity: 1;
     transition: opacity 200ms ease;
 }
@@ -95,45 +94,54 @@
 /** Quote with photo */
 .ce_redactor .quoteStyle-withPhoto--wrapper {
     margin: 0;
-    padding: 4.5em 8.5em !important;
+    padding: 4.5em 3.6em !important;
 }
 
 .quoteStyle-withPhoto--photo {
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
+    overflow: hidden;
     text-align: center;
-    line-height: 80px;
+    line-height: 70px;
     border-radius: 50%;
     float: left;
-    margin-right: 35px;
-    border: 3px dashed #D7E2EE;
+    margin-right: 25px;
+    border: 2px dashed #D7E2EE;
 }
-.quoteStyle-withPhoto--photo:hover {
-    cursor: pointer;
-    background: #F0F3F6;
-    border: 3px dashed #D7E2EE;
-}
+    .quoteStyle-withPhoto--photo:hover {
+        cursor: pointer;
+        background: #F0F3F6;
+    }
 
-.quoteStyle-withPhoto--photo:hover::after {
-    display: block;
-}
+    .quoteStyle-withPhoto--photo:hover::after {
+        display: block;
+    }
+
+    .authorsPhoto {
+        height: 110%;
+        vertical-align: top;
+    }
+
+    .authorsPhoto-wrapper {
+        border: 0 !important;
+    }
 
 .quoteStyle-withPhoto--photo .ce-icon-picture {
     font-family: "codex_editor";
 	font-size: 1.5em;
-	color: #8990AA;
+	color: #d5dbea;
 }
 
 .quoteStyle-withPhoto--author {
-    font-size: 1.56em;
+    font-size: 1.36em;
     font-weight: bold;
     color: #000;
     outline: none;
     overflow: hidden;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 .quoteStyle-withPhoto--job {
-    font-size: 1.38em;
+    font-size: 1.04em;
     color: #818BA1;
     outline: none;
     overflow: hidden;
@@ -151,9 +159,8 @@
 }
 
 .quoteStyle-withPhoto--quote {
-    background: #FBFBFB;
-    margin-top: 45px;
-    line-height: 32px;
+    margin-top: 33px;
+    line-height: 1.82em;
     outline: none;
     overflow: hidden;
 }

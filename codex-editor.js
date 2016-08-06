@@ -13,7 +13,7 @@ var cEditor = (function (cEditor) {
 
         // First-level tags viewing as separated blocks. Other'll be inserted as child
         blockTags       : ['P','BLOCKQUOTE','UL','CODE','OL','H1','H2','H3','H4','H5','H6'],
-        uploadImagesUrl : '/upload/save.php',
+        uploadImagesUrl : '/editor/transport/',
     };
 
     // Static nodes
@@ -133,6 +133,7 @@ cEditor.core = {
     },
 
     /**
+    * @protected
     * Helper for insert one element after another
     */
     insertAfter : function (target, element) {
@@ -140,6 +141,7 @@ cEditor.core = {
     },
 
     /**
+    * @const
     * Readable DOM-node types map
     */
     nodeTypes : {
@@ -149,11 +151,13 @@ cEditor.core = {
     },
 
     /**
+    * @const
     * Readable keys map
     */
     keys : { BACKSPACE: 8, TAB: 9, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, ESC: 27, SPACE: 32, LEFT: 37, UP: 38, DOWN: 40, RIGHT: 39, DELETE: 46, META: 91 },
 
     /**
+    * @protected
     * Check object for DOM node
     */
     isDomNode : function (el) {
@@ -407,14 +411,24 @@ cEditor.saver = {
 
 };
 
-
+/**
+* Methods:
+*   - make
+*   - addTools
+*   - bindEvents
+*   - addBlockHandlers
+*   - saveInputs
+*/
 
 cEditor.ui = {
 
-    /** Blocks name. */
+    /**
+    * @const {string} BLOCK_CLASSNAME - redactor blocks name
+    */
     BLOCK_CLASSNAME : 'ce_block',
 
     /**
+    * @private
     * Making main interface
     */
     make : function () {
@@ -459,6 +473,7 @@ cEditor.ui = {
     },
 
     /**
+    * @private
     * Append tools passed in cEditor.tools
     */
     addTools : function () {
@@ -492,6 +507,7 @@ cEditor.ui = {
     },
 
     /**
+    * @private
     * Bind editor UI events
     */
     bindEvents : function () {
@@ -537,11 +553,11 @@ cEditor.ui = {
         }, false );
 
         /** Bind click listeners on toolbar buttons */
-        for (button in cEditor.nodes.toolbarButtons){
+        for (var button in cEditor.nodes.toolbarButtons){
             cEditor.nodes.toolbarButtons[button].addEventListener('click', function (event) {
                 cEditor.callback.toolbarButtonClicked(event, this);
             }, false);
-        };
+        }
 
     },
 
@@ -797,9 +813,6 @@ cEditor.callback = {
         caretInLastChild = selection.anchorNode == deepestTextnode;
         caretAtTheEndOfText = deepestTextnode.length == selection.anchorOffset;
 
-        console.log("каретка в последнем узле: %o", caretInLastChild);
-        console.log("каретка в конце последнего узла: %o", caretAtTheEndOfText);
-
         if ( !caretInLastChild  || !caretAtTheEndOfText ) {
             cEditor.core.log('arrow [down|right] : caret does not reached the end');
             return false;
@@ -875,9 +888,6 @@ cEditor.callback = {
 
         caretInFirstChild   = selection.anchorNode == deepestTextnode;
         caretAtTheBeginning = selection.anchorOffset === 0;
-
-        console.log("каретка в первом узле: %o", caretInFirstChild);
-        console.log("каретка в начале первого узла: %o", caretAtTheBeginning);
 
         if ( caretInFirstChild && caretAtTheBeginning ) {
 
@@ -1050,6 +1060,7 @@ cEditor.content = {
 
     /**
     * Replaces one redactor block with another
+    * @protected
     * @param {Element} targetBlock - block to replace. Mostly currentNode.
     * @param {Element} newBlock
     * @param {string} newBlockType - type of new block; we need to store it to data-attribute
@@ -1064,11 +1075,13 @@ cEditor.content = {
             return;
         }
 
-        /** Add redactor block classname to new block */
-        // newBlock.classList.add(cEditor.ui.BLOCK_CLASSNAME);
-
         /** Store block type */
         newBlock.dataset.type = newBlockType;
+
+        /** If target-block is not a frist-level block, then we iterate parents to find it */
+        while(!targetBlock.classList.contains(cEditor.ui.BLOCK_CLASSNAME)) {
+            targetBlock = targetBlock.parentNode;
+        }
 
         /** Replacing */
         cEditor.nodes.redactor.replaceChild(newBlock, targetBlock);
@@ -1093,6 +1106,7 @@ cEditor.content = {
     /**
     * Inserts new block to redactor
     * Wrapps block into a DIV with BLOCK_CLASSNAME class
+    * @protected
     */
     insertBlock : function(newBlockContent, blockType) {
 
@@ -1131,6 +1145,7 @@ cEditor.content = {
 
     /**
     * Replaces blocks with saving content
+    * @protected
     * @param {Element} noteToReplace
     * @param {Element} newNode
     * @param {Element} blockType
@@ -1140,7 +1155,9 @@ cEditor.content = {
         var oldBlockEditable = blockToReplace.querySelector('[contenteditable]');
 
         /** Saving content */
-        newBlock.innerHTML = oldBlockEditable.innerHTML;
+        if (oldBlockEditable) {
+            newBlock.innerHTML = oldBlockEditable.innerHTML;
+        }
 
         var newBlockComposed = cEditor.content.composeNewBlock(newBlock, blockType);
 
@@ -1150,14 +1167,12 @@ cEditor.content = {
         /** Save new Inputs when block is changed */
         cEditor.ui.saveInputs();
 
-        /** Add event listeners */
-        //cEditor.ui.addBlockHandlers(newBlockComposed);
-
     },
 
 
     /**
     * Iterates between child noted and looking for #text node on deepest level
+    * @private
     * @param {Element} block - node where find
     * @param {int} postiton - starting postion
     *      Example: childNodex.length to find from the end
@@ -1232,6 +1247,9 @@ cEditor.content = {
         return block;
     },
 
+    /**
+    * @private
+    */
     composeNewBlock : function (block, blockType) {
 
         newBlock = cEditor.draw.block('DIV');
@@ -1265,8 +1283,10 @@ cEditor.caret = {
     */
 
     focusedNodeIndex: null,
+
     /**
     * Creates Document Range and sets caret to the element.
+    * @protected
     * @uses caret.save — if you need to save caret position
     * @param {Element} el - Changed Node.
     */
@@ -1308,6 +1328,7 @@ cEditor.caret = {
     },
 
     /**
+    * @protected
     * @return current index of input and saves it in caret object
     */
     getCurrentInputIndex : function () {
@@ -1394,6 +1415,9 @@ cEditor.toolbar = {
 
     current : null,
 
+    /**
+    * @protected
+    */
     open : function (){
 
         if (this.opened) {
@@ -1405,6 +1429,9 @@ cEditor.toolbar = {
 
     },
 
+    /**
+    * @protected
+    */
     close : function(){
 
         cEditor.nodes.toolbar.classList.remove('opened');
@@ -1541,7 +1568,7 @@ cEditor.toolbar = {
             if (!cEditor.tools[toolType] || !cEditor.core.isDomNode(cEditor.tools[toolType].settings) ) {
 
                 cEditor.core.log('Wrong tool type', 'warn');
-                cEditor.nodes.blockSettings.innerHTML = 'Настройки для этого плагина еще не созданы';
+                cEditor.nodes.blockSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
 
             } else {
 
@@ -1594,6 +1621,11 @@ cEditor.transport = {
 
     input : null,
 
+    /**
+    * @property {Object} arguments - keep plugin settings and defined callbacks
+    */
+    arguments : null,
+
     prepare : function(){
 
         var input = document.createElement('INPUT');
@@ -1610,40 +1642,30 @@ cEditor.transport = {
     */
     fileSelected : function(event){
 
-        var input = this,
-            files = input.files,
+        var input       = this,
+            files       = input.files,
             filesLength = files.length,
             formdData   = new FormData(),
             file,
             i;
 
-        for (i = 0; i < filesLength; i++) {
-
-            file = files[i];
-
-            /**
-            * Uncomment if need file type checking
-            * if (!file.type.match('image.*')) {
-            *     continue;
-            * }
-            */
-
-            formdData.append('files[]', file, file.name);
-        }
+        formdData.append('files', files[0], files[0].name);
 
         cEditor.transport.ajax({
-            data : formdData
+            data : formdData,
+            success : cEditor.transport.arguments.success,
+            error   : cEditor.transport.arguments.error,
         });
-
-        console.log("files: %o", files);
 
     },
 
     /**
-    * @todo use callback for success and error
+    * Use plugin callbacks
+    * @protected
     */
-    selectAndUpload : function (callback) {
+    selectAndUpload : function (args) {
 
+        this.arguments = args;
         this.input.click();
 
     },
@@ -1663,7 +1685,6 @@ cEditor.transport = {
 
         xhr.onload = function () {
             if (xhr.status === 200) {
-                console.log("success request: %o", xhr);
                 success(xhr.responseText);
             } else {
                 console.log("request error: %o", xhr);
@@ -2018,6 +2039,7 @@ cEditor.notifications = {
 
     /**
     * Error notificator. Shows block with message
+    * @protected
     */
     errorThrown : function(errorMsg, event) {
 
