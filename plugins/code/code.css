@@ -1,3 +1,8 @@
+.ce-code {
+    max-width: 700px;
+    margin: 20px auto !important;
+}
+
 .tool-code {
     display: block;
     font-family: 'monospace', 'monaco', 'consolas', 'courier';

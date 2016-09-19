@@ -34,6 +34,8 @@ var headerTool = {
             tag.textContent = data.text;
         }
 
+        tag.classList.add('ce-header');
+        tag.setAttribute('data-placeholder', 'Heading');
         tag.contentEditable = true;
 
         return tag;
@@ -145,18 +147,17 @@ var headerTool = {
         var old_header, new_header;
 
         /** Now current header stored as a currentNode */
-        old_header = cEditor.content.currentNode;
+        old_header = cEditor.content.currentNode.querySelector('[contentEditable]');
 
         /** Making new header */
         new_header = document.createElement(type);
 
         new_header.innerHTML = old_header.innerHTML;
         new_header.contentEditable = true;
+        new_header.setAttribute('data-placeholder', 'Heading');
+        new_header.classList.add('ce-header');
 
         cEditor.content.switchBlock(old_header, new_header, 'header');
-
-        /** Add listeners for Arrow keys*/
-        cEditor.ui.addBlockHandlers(new_header);
 
         /** Close settings after replacing */
         cEditor.toolbar.settings.close();

@@ -36,6 +36,7 @@ var quoteTools = {
 
             tag.dataset.quoteStyle = 'simple';
 
+            tag.classList.add(quoteTools.styles.ce_quote);
             tag.classList.add(quoteTools.styles.quoteText);
             tag.classList.add(quoteTools.styles.simple.text);
 
@@ -160,7 +161,7 @@ var quoteTools = {
         wrapper.innerHTML = data.text || '';
 
         wrapper.dataset.quoteStyle = 'simple';
-
+        wrapper.classList.add(quoteTools.styles.ce_quote);
         wrapper.contentEditable = 'true';
 
         return wrapper;
@@ -184,6 +185,7 @@ var quoteTools = {
 
         /* Appending created components */
         wrapper.dataset.quoteStyle = 'withCaption';
+        wrapper.classList.add(quoteTools.styles.ce_quote);
 
         wrapper.appendChild(text);
         wrapper.appendChild(author);
@@ -222,6 +224,7 @@ var quoteTools = {
             quote.contentEditable = 'true';
             quote.innerHTML = data.text;
 
+        wrapper.classList.add(quoteTools.styles.ce_quote);
         wrapper.classList.add(quoteTools.styles.withPhoto.wrapper);
         wrapper.dataset.quoteStyle = 'withPhoto';
 
@@ -282,6 +285,7 @@ var quoteTools = {
 
 quoteTools.styles = {
 
+    ce_quote     : 'ce-quote',
     quoteText    : 'ce_quote--text',
     quoteAuthor  : 'ce_quote--author',
     authorsJob   : 'ce_quote--job',

@@ -21,6 +21,7 @@ var codeTool = {
             tag.innerHTML = data.text;
         }
 
+        tag.classList.add('ce-code');
         tag.contentEditable = true;
 
         return tag;

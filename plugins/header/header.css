@@ -1,6 +1,12 @@
 /**
 * Plugin styles
 */
+.ce-header {
+    max-width: 700px;
+    margin: 20px auto !important;
+    padding: 0 !important;
+}
+
 /** H e a d e r - settings */
 .ce_plugin_header--settings{
     white-space: nowrap;
@@ -8,12 +14,24 @@
 }
 .ce_plugin_header--select_button{
     display: inline-block;
-    margin-left: 40px;
-    border-bottom: 1px solid #475588;
-    color: #6881e6;
+    margin-left: 15px;
+    color: #70a1ff;
     cursor: pointer;
 }
     .ce_plugin_header--select_button:hover{
-        border-bottom-color: #687da5;
         color: #8da8dc;
     }
+
+
+/**
+* Empty header placeholder
+*/
+.ce-header:empty::before{
+    content : attr(data-placeholder);
+    color: #818BA1;
+    opacity: .7;
+    transition: opacity 200ms ease;
+}
+.ce-header:focus::before{
+    opacity: .1;
+}

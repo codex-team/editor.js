@@ -1,3 +1,9 @@
+.ce-link {
+    max-width: 700px;
+    margin: 20px auto;
+    padding: 0 !important;
+}
+
 .clearfix:after {
     visibility: hidden;
     display: block;
@@ -72,4 +78,3 @@
 .tool-link-error .ceditor-tool-link-input {
     border-left-color: #d86b6b
 }
-

@@ -7,11 +7,13 @@
 var ceImage = {
 
     elementClasses : {
+
+        ce_image      : 'ce-image',
         uploadedImage : {
                 centered  : 'ce-plugin-image__uploaded--centered',
                 stretched : 'ce-plugin-image__uploaded--stretched',
         },
-        stretch       : 'ce-plugin-image--stretch',
+        stretch       : 'ce_block--stretched',
         imageCaption  : 'ce-plugin-image__caption',
         imageWrapper  : 'ce-plugin-image__wrapper',
         formHolder    : 'ce-plugin-image__holder',
@@ -28,13 +30,16 @@ var ceImage = {
         * If we can't find image or we've got some problems with image path, we show plugin uploader
         */
         if (!data || !data.file.url) {
+
             holder = ceImage.ui.formView();
+            holder.classList.add(ceImage.elementClasses.ce_image);
+
         } else {
 
             if ( !data.isStretch) {
-                holder = ceImage.ui.centeredImage(data);
+                holder = ceImage.ui.imageView(data, ceImage.elementClasses.uploadedImage.centered, 'false');
             } else {
-                holder = ceImage.ui.stretchedImage(data);
+                holder = ceImage.ui.imageView(data, ceImage.elementClasses.uploadedImage.stretched, 'true');
             }
         }
 
@@ -94,18 +99,32 @@ var ceImage = {
 
     selectTypeClicked : function(type) {
 
-        var current = cEditor.content.currentNode;
+        var current = cEditor.content.currentNode,
+            image   = ceImage.ui.getImage(current),
+            wrapper = current.querySelector('.' + ceImage.elementClasses.imageWrapper);
 
-        if (type == 'stretched') {
+        /** Clear classList */
+        current.className = '';
+        image.className   = '';
 
+        /** Add important first-level class ce_block */
+        current.classList.add(cEditor.ui.BLOCK_CLASSNAME);
+
+        if (type === 'stretched') {
+
+            image.classList.add(ceImage.elementClasses.uploadedImage.stretched);
             current.classList.add(ceImage.elementClasses.stretch);
 
-        } else if (type == 'centered') {
+            /** Setting dataset for saver */
+            wrapper.dataset.stretched = true;
 
-            current.classList.remove(ceImage.elementClasses.stretch);
+        } else if (type === 'centered') {
 
+            image.classList.add(ceImage.elementClasses.uploadedImage.centered);
+
+            /** Setting dataset for saver */
+            wrapper.dataset.stretched = false;
         }
-
     },
 
     render : function( data ) {
@@ -117,8 +136,7 @@ var ceImage = {
     save : function ( block ) {
 
         var data    = block[0],
-            image   = data.querySelector('.' + ceImage.elementClasses.uploadedImage.centered) ||
-                      data.querySelector('.' + ceImage.elementClasses.uploadedImage.stretched),
+            image   = ceImage.ui.getImage(data),
             caption = data.querySelector('.' + ceImage.elementClasses.imageCaption);
 
         var json = {
@@ -152,7 +170,57 @@ var ceImage = {
             success,
             error,
         });
-    }
+    },
+
+    pastedImageURL : function(event) {
+
+        var clipboardData = event.clipboardData || window.clipboardData,
+            pastedData    = clipboardData.getData('Text'),
+            block         = event.target.parentNode;
+
+        ceImage.renderURL(pastedData, block);
+
+        event.stopPropagation();
+    },
+
+    renderURL : function(pastedData, block) {
+
+        Promise.resolve()
+
+            .then(function() {
+                return pastedData;
+            })
+
+            .then(ceImage.urlify)
+
+            .then(function(url) {
+
+                /* Show loader gif **/
+                // block.classList.add(linkTool.elementClasses.loader);
+
+                return fetch('/editor/transport?files=' + encodeURI(url))
+            })
+
+            .then(function(response) {
+                console.log(response);
+            });
+
+    },
+
+    urlify : function (text) {
+
+        var urlRegex = /(https?:\/\/\S+)/g;
+
+        var links = text.match(urlRegex);
+
+        if (links) {
+            console.log(links[0]);
+            return links[0];
+        }
+
+        return Promise.reject(Error("Url is not matched"));
+
+    },
 };
 
 ceImage.ui = {
@@ -213,10 +281,9 @@ ceImage.ui = {
 
     caption : function() {
 
-        var div = document.createElement('div');
+        var div  = document.createElement('div');
 
         div.classList.add(ceImage.elementClasses.imageCaption);
-
         div.contentEditable = true;
 
         return div;
@@ -236,6 +303,8 @@ ceImage.ui = {
         holder.appendChild(uploadButton);
         holder.appendChild(input);
 
+        input.addEventListener('paste', ceImage.pastedImageURL, false);
+
         uploadButton.addEventListener('click', ceImage.uploadButtonClicked, false );
 
         return holder;
@@ -243,6 +312,44 @@ ceImage.ui = {
 
     /**
     * wraps image and caption
+    * @param {object} data - image information
+    * @param {string} imageTypeClass - plugin's style
+    * @param {boolean} stretched - stretched or not
+    * @return wrapped block with image and caption
+    */
+    imageView : function(data, imageTypeClass, stretched) {
+
+        var file = data.file.url,
+            text = data.caption,
+            type     = data.type,
+            image    = ceImage.ui.image(file, imageTypeClass),
+            caption  = ceImage.ui.caption(),
+            wrapper  = ceImage.ui.wrapper();
+
+        caption.textContent = text;
+
+        wrapper.dataset.stretched = stretched,
+        /** Appeding to the wrapper */
+        wrapper.appendChild(image);
+        wrapper.appendChild(caption);
+
+        return wrapper;
+    },
+
+    /**
+    * @param {HTML} data - Rendered block with image
+    */
+    getImage : function(data) {
+
+        var image = data.querySelector('.' + ceImage.elementClasses.uploadedImage.centered) ||
+                    data.querySelector('.' + ceImage.elementClasses.uploadedImage.stretched);
+
+        return image;
+    },
+
+    /**
+    * wraps image and caption
+    * @deprecated
     * @param {object} data - image information
     * @return wrapped block with image and caption
     */
@@ -267,6 +374,7 @@ ceImage.ui = {
 
     /**
     * wraps image and caption
+    * @deprecated
     * @param {object} data - image information
     * @return stretched image
     */
@@ -331,7 +439,7 @@ ceImage.photoUploadingCallbacks = {
 
     /** Error callback. Sends notification to user that something happend or plugin doesn't supports method */
     error : function(result) {
-        console.log('Choosen file is not image or image is corrupted');
+        console.log('Choosen file is not an image or image is corrupted');
         cEditor.notifications.errorThrown();
     },
 
@@ -348,6 +456,7 @@ cEditor.tools.image = {
     make           : ceImage.make,
     settings       : ceImage.makeSettings(),
     render         : ceImage.render,
-    save           : ceImage.save
+    save           : ceImage.save,
+    isStretched    : true
 
 };

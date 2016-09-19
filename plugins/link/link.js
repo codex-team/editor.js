@@ -35,6 +35,7 @@ var linkTool = {
 
         wrapper.appendChild(tag);
 
+        wrapper.classList.add('ce-link');
         /**
         * Bind callbacks
         **/

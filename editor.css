@@ -31,6 +31,15 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+.ce-icon-plus {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background: url('/public/fonts/codex_editor/icon-plus.svg') no-repeat;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
 .ce-icon-instagram:before { content: '\e800'; } /* '' */
 .ce-icon-picture:before { content: '\e801'; } /* '' */
 .ce-icon-cog:before { content: '\e802'; } /* '' */
@@ -75,25 +84,31 @@
     position: relative;
     outline: none;
     padding: 1px 0;
+    min-height: 350px;
 }
 
 .ce_toolbar{
     position: absolute;
-    z-index: 2;
 
-    margin-left: -1px;
+    width: 100%;
+    margin-left: -4px;
 
-    background: #414758;
-    /*background: #fff;*/
-    /*border: 1px solid #e3e7ee;*/
-    /*box-shadow: 0 2px 11px rgba(27,39,54,.11);*/
-    /*color: #2e394b;*/
     border-radius: 3px;
     color: #bab9d8;
 
     display: none;
+    z-index: 2;
 
 }
+    .ce_toolbar_tools--title {
+        text-transform: capitalize;
+        margin-left: 6px;
+        vertical-align: middle;
+    }
+    .ce_redactor_tools i {
+        vertical-align: middle;
+    }
+
     .ce_toolbar.opened{
         display: block;
 
@@ -102,22 +117,41 @@
 
 
     .ce_toolbar .toggler{
-        /*background: #f8f9fd;*/
-        background: #34384a;
-        /*color: #6485d0;*/
-        color: #05ff9b;
+        /*background: #34384a;*/
+        background: #414758;
+        color: #bab9d8;
+
         cursor: pointer;
-        border-radius: 3px 0 0 3px
+        padding: 6px 8px 6px 13px;
+
+        border-top-left-radius: 50px;
+        border-bottom-left-radius: 50px;
     }
+
+    .ce_toolbar .trash-toggler {
+        /*background: #34384a;*/
+        background: #414758;
+        cursor: pointer;
+        padding: 6px 13px 6px 8px;
+        border-top-right-radius: 50px;
+        border-bottom-right-radius: 50px;
+    }
+
     .ce_toolbar .toggler,
+    .ce_toolbar .trash-toggler,
     .ce_toolbar li
     {
         display: inline-block;
         margin: 0 !important;
-        padding: 12px;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 12px;
+        vertical-align: middle;
     }
+
+    .ce_toolbar li {
+        padding: 12px 9px;
+    }
+
         .ce_toolbar .selected,
         .ce_toolbar .toggler:hover,
         .ce_toolbar li:hover
@@ -125,27 +159,129 @@
             background: #36374e;
             color: #85aeff;
         }
+        .ce_toolbar .trash-toggler:hover {
+            color: #ff5c59;
+        }
+        .trash-active {
+            background: #FF5959 !important;
+            color: #fff !important;
+        }
+        .trash-active:hover {
+            background: #E22C2C !important;
+        }
+        .removing-request {
+            opacity: .1;
+        }
+        .ce_toolbar .remove_btn {
+            font-size: 1.1em;
+        }
 
-        .ce_toolbar .settings_btn{
+        .ce_toolbar .settings_btn {
             font-size: 1.1em;
         }
 
 
-/** Block settings panel */
-
-.ce_block_settings{
+/** Plus button */
+.ce_redactor_plusButton {
     position: absolute;
-    z-index: 2;
-    padding: 25px 30px;
+    left: 8%;
+    margin-top: 8px;
 
-    background: #32384c !important;
+    text-align: center;
+    line-height: 32px;
+
+    width: 32px;
+    height: 32px;
+
+    border-radius: 50%;
+
+    background: #414758;
+    /*background-image: url('fonts/codex_editor/icon-plus.svg');;*/
+
+    z-index: 2;
+
+    transition: transform 100ms linear;
+}
+    .ce_redactor_plusButton:hover {
+        cursor: pointer;
+    }
+
+    .ce_redactor_plusButton--clicked {
+        transform: rotate(145deg);
+        color: rgb(156, 156, 156);
+    }
+
+/** First-level block buttons */
+.ce_block_blockButtons {
+
+    position: absolute;
+    top: 6px;
+    right: 18px;
+    border-radius: 50px;
+
+    z-index: 2;
+}
+
+/** Tools */
+.ce_redactor_tools {
+    position: absolute;
+    top: 100%;
+
+    display: none;
+
+    max-width: 700px;
+    margin-left: 119px;
+
+    background: #414758;
+
+    border: 3px solid #fff;
+    border-radius: 50px;
+}
+
+    .ce_redactor_tools li {
+        line-height: 1em;
+        padding: 15px 10px;
+    }
+
+    .ce_redactor_tools li:first-child{
+        padding-left: 20px;
+
+        border-top-left-radius: 50px;
+        border-bottom-left-radius: 50px;
+    }
+    .ce_redactor_tools li:last-child {
+        padding-right: 20px;
+
+        border-top-right-radius: 50px;
+        border-bottom-right-radius: 50px;
+    }
+
+
+    .ce_redactor_tools.opened {
+        display: block;
+    }
+
+/** Block settings panel */
+.ce_block_settings {
+    position: absolute;
+    right: 0;
+    margin-top: 8px;
+
+    min-width: 320px;
+    text-align: center;
+
+    z-index: 999;
+    padding: 15px 25px;
+
+    background: #414758;
     color: #81839e;
 
     overflow: hidden;
 
-    background: #fff;
-    border-radius: 0 0 3px 3px;
-    font-size: 14px;
+    border-radius: 50px;
+    border: 3px solid #fff;
+
+    font-size: 12px;
 
     display: none;
 }
@@ -173,7 +309,7 @@
 
 
 .ce_redactor .ce_block{
-    padding: 10px;
+    /*padding: 10px;*/
     /*margin: -1px;*/
     /*border: 1px dotted #ccc;*/
     background: #fff;
@@ -212,7 +348,6 @@
     animation-name: bounceIn; animation-duration: 600ms; animation-iteration-count: 1;
 }
 */
-
 
 /** Alerts */
 .ce_notifications-block {
