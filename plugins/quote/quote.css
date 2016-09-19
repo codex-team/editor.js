@@ -1,3 +1,8 @@
+.ce-quote {
+    max-width: 700px;
+    margin: 20px auto !important;
+}
+
 /** Quote - settings */
 .ce_plugin_quote--settings{
     white-space: nowrap;
@@ -5,15 +10,13 @@
 }
 .ce_plugin_quote--select_button{
     display: inline-block;
-    margin-left: 40px;
-    border-bottom: 1px solid #475588;
-    color: #6881e6;
+    margin-left: 15px;
+    color: #70a1ff;
     cursor: pointer;
 }
-.ce_plugin_quote--select_button:hover{
-    border-bottom-color: #687da5;
-    color: #8da8dc;
-}
+    .ce_plugin_quote--select_button:hover{
+        color: #8da8dc;
+    }
 
 /** Quote Styles */
 

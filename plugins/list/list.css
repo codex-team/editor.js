@@ -1,12 +1,16 @@
+.ce-list {
+    max-width: 700px;
+    margin: 20px auto !important;
+}
+
 .ce_plugin_list--settings{
     white-space: nowrap;
 }
 
 .ce_plugin_list--select_button{
     display: inline-block;
-    margin-left: 40px;
-    border-bottom: 1px solid #475588;
-    color: #6881e6;
+    margin-left: 15px;
+    color: #70a1ff;
     cursor: pointer;
 }
     .ce_plugin_list--select_button:hover{
