@@ -2,8 +2,6 @@ var codex = require('../editor');
 
 var saver = (function(saver) {
 
-    saver.init = function() {};
-
     /**
      * Saves blocks
      * @private
@@ -108,8 +106,6 @@ var saver = (function(saver) {
     return saver;
 
 })({});
-
-saver.init();
 
 codex.saver = saver;
 module.exports = saver;

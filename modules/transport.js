@@ -2,10 +2,6 @@ var codex = require('../editor');
 
 var transport = (function(transport){
 
-    transport.init = function() {
-
-    };
-
     transport.input = null;
 
     /**
@@ -100,8 +96,6 @@ var transport = (function(transport){
     return transport;
 
 })({});
-
-transport.init();
 
 codex.transport = transport;
 module.exports  = transport;

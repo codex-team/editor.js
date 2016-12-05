@@ -2,10 +2,6 @@ var codex = require('../editor');
 
 var renderer = (function(renderer) {
 
-    renderer.init = function() {
-        require('./tools');
-    };
-
     /**
      * Asyncronously parses input JSON to redactor blocks
      */
@@ -170,8 +166,6 @@ var renderer = (function(renderer) {
     return renderer;
 
 })({});
-
-renderer.init();
 
 codex.renderer = renderer;
 module.exports = renderer;

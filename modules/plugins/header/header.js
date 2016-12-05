@@ -7,9 +7,9 @@
  */
 
 /** Include to Build css */
-require('./header.css');
+// require('./header.css');
 
-var codex = require('../../../editor');
+// var codex = require('../../../editor');
 var headerTool = {
 
     /**
@@ -165,20 +165,3 @@ var headerTool = {
 
 };
 
-/**
-* Now plugin is ready.
-* Add it to redactor tools
-*/
-module.exports = {
-
-    type             : 'header',
-    iconClassname    : 'ce-icon-header',
-    make             : headerTool.make,
-    appendCallback   : headerTool.appendCallback,
-    settings         : headerTool.makeSettings(),
-    render           : headerTool.render,
-    save             : headerTool.save,
-    displayInToolbox : true,
-    enableLineBreaks : false
-
-};

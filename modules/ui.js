@@ -3,16 +3,6 @@ var codex = require('../editor');
 var ui = (function(ui){
 
     /**
-     * Initializes important modules
-     */
-    ui.init = function() {
-        require('./draw');
-        require('./toolbar/toolbar');
-        require('./callbacks');
-    };
-
-
-    /**
      * Basic editor classnames
      */
     ui.className = {
@@ -169,12 +159,17 @@ var ui = (function(ui){
         var tool,
             tool_button;
 
+        for(var name in codex.settings.tools) {
+            tool = codex.settings.tools[name];
+            codex.tools[name] = tool;;
+        }
+
         /** Make toolbar buttons */
         for (var name in codex.tools){
 
             tool = codex.tools[name];
 
-            if (!tool.displayInToolbox) {
+            if (tool.displayInToolbox == false) {
                 continue;
             }
 
@@ -198,6 +193,7 @@ var ui = (function(ui){
             /** Save tools to static nodes */
             codex.nodes.toolbarButtons[name] = tool_button;
         }
+
 
         /**
          * Add inline toolbar tools
@@ -382,8 +378,6 @@ var ui = (function(ui){
     return ui;
 
 })({});
-
-ui.init();
 
 codex.ui = ui;
 module.exports = codex;

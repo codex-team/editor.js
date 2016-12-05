@@ -25,48 +25,7 @@
 }
 .ce-paragraph p:last-of-type{
     margin-bottom: 0;
-}/**
-* Plugin styles
-*/
-.ce-header {
-    padding: .7em 0;
-    margin: 0;
-    line-height: 1.4em;
-}
-.ce-header p,
-.ce-header div{
-    padding: 0 !important;
-    margin: 0 !important;
-}
-
-/** H e a d e r - settings */
-.ce_plugin_header--select_button{
-    display: block;
-    color: #306ac7;
-    cursor: pointer;
-    line-height: 1.3em;
-}
-    .ce_plugin_header--select_button:not(:last-of-type){
-        margin-bottom: 1.5em;
-    }
-    .ce_plugin_header--select_button:hover{
-        color: #a1b4ec;
-    }
-
-
-/**
-* Empty header placeholder
-*/
-.ce-header:empty::before{
-    content : attr(data-placeholder);
-    color: #818BA1;
-    opacity: .7;
-    transition: opacity 200ms ease;
-}
-.ce-header:focus::before{
-    opacity: .1;
-}
-.ce-code {
+}.ce-code {
     display: block;
     border: 1px solid #ebeef3;
     border-radius: 3px;
@@ -557,4 +516,4 @@
     /*background: url("loading.gif") !important;*/
     opacity: 0.1;
 }
-/*# sourceMappingURL=build.css.map*/
+/*# sourceMappingURL=codex.css.map*/

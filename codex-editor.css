@@ -134,7 +134,7 @@
 */
 .ce-toolbar__actions{
     position: absolute;
-    right: -50px;
+    right: 10px;
     border-radius: 2px;
     padding: 2px 4px;
     /*background: #f9f9fb;*/

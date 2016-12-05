@@ -2,10 +2,6 @@ var codex = require('../editor');
 
 var callbacks = (function(callbacks) {
 
-    callbacks.init = function() {
-
-    };
-
     callbacks.redactorSyncTimeout = null;
 
     callbacks.globalKeydown = function(event){
@@ -757,8 +753,6 @@ var callbacks = (function(callbacks) {
     return callbacks;
 
 })({});
-
-callbacks.init();
 
 codex.callback = callbacks;
 module.exports  = callbacks;

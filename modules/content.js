@@ -2,10 +2,6 @@ var codex = require('../editor');
 
 var content = (function(content) {
 
-    content.init = function() {
-        require('./caret');
-    };
-
     content.currentNode = null;
 
     /**
@@ -630,8 +626,6 @@ var content = (function(content) {
     return content;
 
 })({});
-
-content.init();
 
 codex.content = content;
 module.exports = content;

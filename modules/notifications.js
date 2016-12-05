@@ -2,10 +2,6 @@ var codex = require('../editor');
 
 var notifications = (function(notifications) {
 
-    notifications.init = function() {
-
-    };
-
     /**
      * Error notificator. Shows block with message
      * @protected
@@ -44,8 +40,6 @@ var notifications = (function(notifications) {
     return notifications;
 
 })({});
-
-notifications.init();
 
 codex.notifications = notifications;
 module.exports = notifications;

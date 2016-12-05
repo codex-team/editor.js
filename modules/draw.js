@@ -2,8 +2,6 @@ var codex = require('../editor');
 
 var draw = (function(draw) {
 
-    draw.init = function() { };
-
     /**
      * Base editor wrapper
      */
@@ -305,8 +303,6 @@ var draw = (function(draw) {
     return draw;
 
 })({});
-
-draw.init();
 
 codex.draw = draw;
 

@@ -2,8 +2,6 @@ var codex = require('../editor');
 
 var caret = (function(caret) {
 
-    caret.init = function() { };
-
     /**
      * @var {int} InputIndex - editable element in DOM
      */
@@ -238,8 +236,6 @@ var caret = (function(caret) {
     return caret;
 
 })({});
-
-caret.init();
 
 codex.caret = caret;
 module.exports = caret;
