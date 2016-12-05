@@ -14,7 +14,7 @@ module.exports = {
 
     entry: "./index",
     output: {
-        filename: "./bundle/codex.js",
+        filename: "./bundle/codex-editor.js",
         library: "codex"
     },
 
@@ -46,7 +46,7 @@ module.exports = {
             _ : 'lodash'
         }),
 
-        new ExtractTextWebpackPlugin('./bundle/codex.css')
+        new ExtractTextWebpackPlugin('./bundle/codex-editor.css')
     ],
 
     module : {

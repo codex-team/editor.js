@@ -75,36 +75,34 @@ var codex = (function(codex){
      *          - tools [],
      *          - textareaId String
      *          ...
+     *
+     * Load user defined tools
+     * Tools must contain this important objects :
+     *  @param {String} type - this is a type of plugin. It can be used as plugin name
+     *  @param {String} iconClassname - this a icon in toolbar
+     *  @param {Object} make - what should plugin do, when it is clicked
+     *  @param {Object} appendCallback - callback after clicking
+     *  @param {Element} settings - what settings does it have
+     *  @param {Object} render - plugin get JSON, and should return HTML
+     *  @param {Object} save - plugin gets HTML content, returns JSON
+     *  @param {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
+     *  @param {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
+     *
+     * @example
+     *   -  type             : 'header',
+     *   -  iconClassname    : 'ce-icon-header',
+     *   -  make             : headerTool.make,
+     *   -  appendCallback   : headerTool.appendCallback,
+     *   -  settings         : headerTool.makeSettings(),
+     *   -  render           : headerTool.render,
+     *   -  save             : headerTool.save,
+     *   -  displayInToolbox : true,
+     *   -  enableLineBreaks : false
      */
     codex.start = function (userSettings) {
 
         init();
 
-        /**
-         * Load user defined tools
-         * Tools must contain this important objects :
-         *  @param {String} Type - this is a type of plugin. It can be used as plugin name
-         *  @param {String} iconClassname - this a icon in toolbar
-         *  @param {Object} make - what should plugin do, when it is clicked
-         *  @param {Object} appendCallback - callback after clicking
-         *  @param {Element} settings - what settings does it have
-         *  @param {Object} render - plugin get JSON, and should return HTML
-         *  @param {Object} save - plugin gets HTML content, returns JSON
-         *  @param {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
-         *  @param {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
-         *
-         * @example
-         *   -  type             : 'header',
-         *   -  iconClassname    : 'ce-icon-header',
-         *   -  make             : headerTool.make,
-         *   -  appendCallback   : headerTool.appendCallback,
-         *   -  settings         : headerTool.makeSettings(),
-         *   -  render           : headerTool.render,
-         *   -  save             : headerTool.save,
-         *   -  displayInToolbox : true,
-         *   -  enableLineBreaks : false
-         *
-         */
         this.core.prepare(userSettings)
 
         // If all ok, make UI, bind events and parse initial-content
