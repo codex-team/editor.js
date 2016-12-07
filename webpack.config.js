@@ -12,10 +12,12 @@ var ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
 
-    entry: "./index",
+    entry: {
+        codex: "./index"
+    },
     output: {
-        filename: "./bundle/codex-editor.js",
-        library: "codex"
+        filename: "./codex.editor.js",
+        library: ["codex", "editor"]
     },
 
     watch: true,
@@ -44,9 +46,7 @@ module.exports = {
 
         new webpack.ProvidePlugin({
             _ : 'lodash'
-        }),
-
-        new ExtractTextWebpackPlugin('./bundle/codex-editor.css')
+        })
     ],
 
     module : {

@@ -6,10 +6,10 @@
  * @copyright Khaydarov Murod
  */
 
+console.log(codex);
 /** Include to Build css */
 require('./paragraph.css');
 
-var codex = require('../../../editor');
 var paragraphTool = {
 
     /**
