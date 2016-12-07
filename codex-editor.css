@@ -1,0 +1,414 @@
+/**
+* CodeX Editor stylesheets
+* @author CodeX Team https://ifmo.su
+*
+* https://github.com/codex-team/codex.editor
+*/
+
+
+@import url('icons.css');
+
+
+/**
+* Editor wrapper
+*/
+.codex-editor{
+    position: relative;
+}
+
+/**
+* Working zone - redactor
+*/
+.ce-redactor{
+    position: relative;
+    padding-bottom: 120px;
+    min-height: 350px;
+}
+
+/*.ce-redactor * {
+    box-sizing: border-box;
+}*/
+
+/**
+* Remove outlines from inputs
+*/
+.ce-redactor [contenteditable]{
+    outline: none !important;
+}
+
+/**
+* Toolbar
+*/
+.ce-toolbar{
+    position: absolute;
+    z-index: 2;
+    width: 100%;
+
+    /* hidden by default */
+    display: none;
+}
+.ce-toolbar.opened{
+    display: block;
+}
+
+    .ce-toolbar__content {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+/**
+* Plus button
+*/
+.ce-toolbar__plus{
+    background-image: url('fonts/codex_editor/icon-plus.svg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    text-align: center;
+    transition: transform 100ms ease;
+    will-change: transform;
+
+    margin-left: -50px;
+}
+.ce-toolbar__plus.clicked{
+    transform: rotate(45deg);
+}
+
+/**
+* Tools list
+*/
+.ce-toolbar__tools{
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    /* hidden by default */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-100px);
+    transition: all 150ms cubic-bezier(0.600, -0.280, 0.735, 0.045);
+}
+.ce-toolbar__tools.opened{
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+}
+
+.ce-toolbar__plus,
+.ce-toolbar__tools li {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    background-color: #eff2f5;
+    /*box-shadow: 0 0 0 1px #6d748c;*/
+    margin-right: 17px;
+    border-radius: 16px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 14px;
+
+    will-change: transform, margin-right;
+    transition: transform 200ms cubic-bezier(0.600, -0.280, 0.735, 0.045), margin 200ms ease-out;
+}
+.ce-toolbar__tools li i{
+    line-height: 32px;
+}
+.ce-toolbar__tools li:hover,
+.ce-toolbar__tools .selected{
+    background: #383b5d;
+    box-shadow: none;
+    color: #fff;
+}
+
+/* animation for tools opening */
+.ce-toolbar__tools li{
+    transform: rotate(-180deg) scale(.7);
+    margin-right: -15px;
+}
+.ce-toolbar__tools.opened li{
+    transform: none;
+    margin-right: 17px;
+}
+
+/**
+* Toolbar right zone with SETTINGS and DELETE
+*/
+.ce-toolbar__actions{
+    position: absolute;
+    right: 10px;
+    border-radius: 2px;
+    padding: 2px 4px;
+    /*background: #f9f9fb;*/
+}
+
+/**
+* Settings button
+*/
+.ce-toolbar__settings-btn{
+    margin-right: .3em;
+    cursor: pointer;
+}
+.ce-toolbar__settings-btn,
+.ce-toolbar__remove-btn{
+    color: #5e6475;
+}
+.ce-toolbar__settings-btn:hover,
+.ce-toolbar__remove-btn:hover{
+    color: #272b35
+}
+
+/**
+* Settigns pane
+*/
+.ce-settings,
+.ce-toolbar__remove-confirmation{
+    position: absolute;
+    right: 0;
+    margin-top: 10px;
+    min-width: 200px;
+    background: #FFFFFF;
+    border: 1px solid #e7e9f1;
+    box-shadow: 0px 2px 5px 0px rgba(16, 23, 49, 0.05);
+    border-radius: 3px;
+    white-space: nowrap;
+    color: #707684;
+    font-size: 13.4px;
+
+    /* hidden by default */
+    display: none;
+}
+
+/**
+* Settings and remove-confirmation corner
+*/
+.ce-settings:before,
+.ce-toolbar__remove-confirmation:before,
+.ce-settings:after,
+.ce-toolbar__remove-confirmation:after{
+    content: "";
+    position: absolute;
+    top: -14px;
+    right: 10px;
+    border-style: solid;
+}
+
+.ce-settings:before,
+.ce-toolbar__remove-confirmation:before {
+    margin: -2px -1px 0;
+    border-width: 8px;
+    border-color: transparent transparent #e7e9f1 transparent;
+}
+.ce-settings:after,
+.ce-toolbar__remove-confirmation:after {
+    border-width: 7px;
+    border-color: transparent transparent #fff transparent;
+}
+.ce-settings:before,
+.ce-settings:after{
+    right: 31px;
+}
+.ce-toolbar__remove-confirmation:before,
+.ce-toolbar__remove-confirmation:after{
+    right: 10px;
+}
+.ce-toolbar__remove-confirmation{
+    right: -3px;
+}
+
+
+
+.ce-settings__item,
+.ce-toolbar__remove-confirm
+.ce-toolbar__remove-cancel {
+    cursor: pointer;
+}
+
+.ce-settings.opened,
+.ce-toolbar__remove-confirmation.opened{
+    display: block;
+}
+
+.ce-settings_plugin{
+    padding: 20px;
+    border-bottom: 1px solid #E8EAEE;
+}
+.ce-settings_plugin:empty{
+    display: none;
+}
+.ce-settings_default{
+    padding: 20px;
+}
+.ce-settings__item i {
+    margin-right: 1.3em;
+}
+
+
+/**
+ * Trash button
+ */
+.ce-toolbar__remove-btn {
+    cursor: pointer;
+}
+.ce-toolbar__remove-confirmation{
+    padding: 5px 0;
+}
+.ce-toolbar__remove-confirm,
+.ce-toolbar__remove-cancel{
+    padding: 10px 20px;
+}
+.ce-toolbar__remove-confirm{
+    color: #ea5c5c;
+}
+.ce-toolbar__remove-confirm:hover{
+    background: #e23d3d;
+    color: #fff;
+}
+.ce-toolbar__remove-cancel:hover{
+    background: #edf0f5;
+}
+
+
+
+/**
+* Overlayed inline toolbar
+*/
+.ce-toolbar-inline{
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 3;
+    background: #242533;
+    border-radius: 3px;
+    padding: 0 5px;
+    margin-top: -.5em;
+
+    will-change: transform;
+    transition: transform .2s cubic-bezier(0.600, -0.280, 0.735, 0.045);
+
+    color: #fff;
+
+    /* hidden by default */
+    display: none;
+}
+.ce-toolbar-inline.opened {
+    display: block;
+}
+.ce-toolbar-inline__buttons{
+}
+.ce-toolbar-inline__buttons button{
+    background: none;
+    border: 0;
+    height: auto !important;
+    padding: 12px 8px;
+    color: inherit;
+    font-size: 12px;
+    cursor: pointer;
+}
+.ce-toolbar-inline__buttons button:hover{
+    background: #171827;
+    color: #428bff;
+}
+.ce-toolbar-inline__actions{
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    border-radius: 3px;
+    background: #242533;
+    display: none;
+}
+    .ce-toolbar-inline__actions.opened{
+        display: block;
+    }
+    .ce-toolbar-inline__actions input{
+        background: transparent !important;
+        border : 0 !important;
+        box-sizing: border-box !important;
+        padding: 10px;
+        width: 100%;
+        color: #fff;
+        outline: none;
+    }
+
+    .ce-toolbar-inline__actions input::-moz-placeholder{ color: #afb4c3  !important;}
+    .ce-toolbar-inline__actions input::-webkit-input-placeholder{ color: #afb4c3 !important;}
+
+
+
+
+/**
+* Base blocks
+*/
+.ce-block{
+    margin: 0 5px;
+    border-radius: 3px;
+}
+.ce-block--focused{
+    background: #f9f9fb;
+}
+
+.ce-block--feed-mode{
+    position: relative;
+}
+.ce-block--feed-mode:before {
+    content: '\e81b';
+    font-family: "codex_editor";
+    display: inline-block;
+    position: absolute;
+
+    left: 17px;
+    top: 13px;
+    font-size: 16px;
+    color: #ef4a4a;
+}
+
+/**
+* Block content holder
+*/
+.ce-block__content{
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1px;
+}
+.ce-block--stretched{
+    max-width: none;
+    padding: 0;
+}
+
+/**
+* Typographycs
+*/
+.ce-redactor p{
+    margin: 0;
+}
+
+/**
+* Loading bar class
+*/
+.ce-redactor__loader{
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 4px, #f5f9ff 4px, #eaedef 8px) !important;
+    background-size: 56px 56px;
+    animation: loading-bar 1.3s infinite linear;
+}
+
+@keyframes loading-bar {
+    100% { background-position: -56% 0 }
+}
+
+
+/**
+* Mobile viewport styles
+* =================================
+*/
+@media all and (max-width: 800px){
+
+    .ce-block{
+        margin: 0;
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    .ce-block__content{
+        margin: 0 15px;
+    }
+
+}

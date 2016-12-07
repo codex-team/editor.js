@@ -4,3 +4,6 @@ Thumbs.db
 /.idea/
 /*.sublime-project
 /*.sublime-workspace
+
+node_modules/*
+plugins/*
