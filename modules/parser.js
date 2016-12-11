@@ -9,7 +9,7 @@ var parser = (function(parser) {
     /**
      * Splits content by `\n` and returns blocks
      */
-    parser.getSeparatedTexttSeparatedTextFromContent = function(content) {
+    parser.getSeparatedTextFromContent = function(content) {
         return content.split('\n');
     };
 
