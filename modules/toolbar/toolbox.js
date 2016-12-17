@@ -87,10 +87,7 @@ var toolbox = (function(toolbox) {
         }
 
         for (var button in barButtons) barButtons[button].classList.remove('selected');
-        console.log(toolToSelect);
-        console.log(barButtons);
         barButtons[toolToSelect].classList.add('selected');
-
         codex.toolbar.current = toolToSelect;
 
     };
