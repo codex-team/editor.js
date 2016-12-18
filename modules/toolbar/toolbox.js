@@ -44,10 +44,18 @@ var toolbox = (function(toolbox) {
     toolbox.leaf = function(){
 
         var currentTool = codex.toolbar.current,
+            tool,
             tools       = Object.keys(codex.tools),
             barButtons  = codex.nodes.toolbarButtons,
             nextToolIndex,
+            hiddenToolsAmount = 0,
             toolToSelect;
+
+        /** Count toolbox hidden tools */
+        for( tool in codex.tools ) {
+            if (!codex.tools[tool].displayInToolbox)
+                hiddenToolsAmount ++;
+        }
 
         if ( !currentTool ) {
 
@@ -58,16 +66,30 @@ var toolbox = (function(toolbox) {
 
             nextToolIndex = tools.indexOf(currentTool) + 1;
 
-            if ( nextToolIndex == tools.length) nextToolIndex = 0;
+            var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 1);
+
+            if ( toolIsLastInToolbox ) {
+
+                nextToolIndex = 0;
+
+                /** getting first displayed tool */
+                for( tool in codex.tools ) {
+
+                    nextToolIndex ++;
+
+                    if (!codex.tools[tool].displayInToolbox){
+                        break;
+                    }
+                }
+
+            }
 
             toolToSelect = tools[nextToolIndex];
 
         }
 
         for (var button in barButtons) barButtons[button].classList.remove('selected');
-
         barButtons[toolToSelect].classList.add('selected');
-
         codex.toolbar.current = toolToSelect;
 
     };
