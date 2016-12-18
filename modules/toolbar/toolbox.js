@@ -66,7 +66,9 @@ var toolbox = (function(toolbox) {
 
             nextToolIndex = tools.indexOf(currentTool) + 1;
 
-            if ( nextToolIndex == tools.length - (hiddenToolsAmount - 1) ) {
+            var lengthOfVisibleTools = nextToolIndex == tools.length - (hiddenToolsAmount - 1);
+
+            if ( lengthOfVisibleTools ) {
 
                 nextToolIndex = 0;
 
