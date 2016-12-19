@@ -129,7 +129,8 @@ var renderer = (function(renderer) {
     renderer.createBlockFromData = function (blockData) {
 
         /** New parser */
-        var pluginName = blockData.type;
+        var pluginName = blockData.type,
+            cover      = blockData.cover;
 
         /** Get first key of object that stores plugin name */
         // for (var pluginName in blockData) break;
@@ -148,9 +149,6 @@ var renderer = (function(renderer) {
         /** New Parser */
         var block = codex.tools[pluginName].render(blockData.data);
 
-        /** Fire the render method with data */
-        // var block = codex.tools[pluginName].render(blockData[pluginName]);
-
         /** is first-level block stretched */
         var stretched = codex.tools[pluginName].isStretched || false;
 
@@ -158,7 +156,8 @@ var renderer = (function(renderer) {
         return {
             type      : pluginName,
             block     : block,
-            stretched : stretched
+            stretched : stretched,
+            cover     : cover
         };
 
     };

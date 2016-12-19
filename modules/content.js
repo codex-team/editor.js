@@ -179,9 +179,14 @@ var content = (function(content) {
         var workingBlock    = codex.content.currentNode,
             newBlockContent = blockData.block,
             blockType       = blockData.type,
+            cover           = blockData.cover,
             isStretched     = blockData.stretched;
 
         var newBlock = codex.content.composeNewBlock(newBlockContent, blockType, isStretched);
+
+        if (cover === true) {
+            newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
+        }
 
         if (workingBlock) {
 

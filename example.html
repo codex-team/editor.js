@@ -9,19 +9,40 @@
 <textarea name="" id="codex_area" cols="30" rows="10" hidden></textarea>
 
 </body>
-
+<script src="./plugins.js?v=10"></script>
 <script src="./codex-editor.js?v=10"></script>
 <link rel="stylesheet" href="./codex-editor.css?v=10">
 
 <script>
     codex.start({
         textareaId : "codex_area",
+        tools : tools,
         data : {
-            items: [],
+            items: [
+                {
+                    type : 'paragraph',
+                    data : {
+                        text : "The promise constructor takes one argument, a callback with two parameters, resolve and reject. Do something within the callback, perhaps async, then call resolve if everything worked, otherwise call reject.Like 'throw' in plain old JavaScript, it's customary, but not required, to reject with an Error object. The benefit of Error objects is they capture a stack trace, making debugging tools more helpful. Here's how you use that promise:",
+                    },
+                    cover : true
+                }
+            ],
             count: 0
         }
     });
 </script>
 
 <link rel="stylesheet" href="codex-editor.css">
+
+<link rel="stylesheet" href="plugins/paragraph/paragraph.css">
+<link rel="stylesheet" href="plugins/code/code.css">
+<link rel="stylesheet" href="plugins/header/header.css">
+<link rel="stylesheet" href="plugins/image/image.css">
+<link rel="stylesheet" href="plugins/instagram/instagram.css">
+<link rel="stylesheet" href="plugins/link/link.css">
+<link rel="stylesheet" href="plugins/list/list.css">
+<link rel="stylesheet" href="plugins/paste/paste.css">
+<link rel="stylesheet" href="plugins/twitter/twitter.css">
+
+
 </html>

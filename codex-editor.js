@@ -954,7 +954,8 @@ var codex =
 	    renderer.createBlockFromData = function (blockData) {
 	
 	        /** New parser */
-	        var pluginName = blockData.type;
+	        var pluginName = blockData.type,
+	            cover = blockData.cover;
 	
 	        /** Get first key of object that stores plugin name */
 	        // for (var pluginName in blockData) break;
@@ -973,9 +974,6 @@ var codex =
 	        /** New Parser */
 	        var block = codex.tools[pluginName].render(blockData.data);
 	
-	        /** Fire the render method with data */
-	        // var block = codex.tools[pluginName].render(blockData[pluginName]);
-	
 	        /** is first-level block stretched */
 	        var stretched = codex.tools[pluginName].isStretched || false;
 	
@@ -983,7 +981,8 @@ var codex =
 	        return {
 	            type: pluginName,
 	            block: block,
-	            stretched: stretched
+	            stretched: stretched,
+	            cover: cover
 	        };
 	    };
 	
@@ -1275,9 +1274,14 @@ var codex =
 	        var workingBlock = codex.content.currentNode,
 	            newBlockContent = blockData.block,
 	            blockType = blockData.type,
+	            cover = blockData.cover,
 	            isStretched = blockData.stretched;
 	
 	        var newBlock = codex.content.composeNewBlock(newBlockContent, blockType, isStretched);
+	
+	        if (cover === true) {
+	            newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
+	        }
 	
 	        if (workingBlock) {
 	
