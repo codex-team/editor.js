@@ -638,7 +638,7 @@ var tools =
 	
 	        var wrapper = document.createElement('div');
 	
-	        wrapper.classList += "ceditor-tool-link";
+	        wrapper.classList.add("ceditor-tool-link");
 	
 	        return wrapper;
 	    },
@@ -647,7 +647,7 @@ var tools =
 	
 	        var inputTag = document.createElement('input');
 	
-	        inputTag.classList += "ceditor-tool-link-input";
+	        inputTag.classList.add("ceditor-tool-link-input");
 	
 	        inputTag.placeholder = linkTool.defaultText;
 	
@@ -669,7 +669,7 @@ var tools =
 	
 	        var imageTag = document.createElement('img');
 	
-	        imageTag.classList += imageClass;
+	        imageTag.classList.add(imageClass);
 	
 	        imageTag.setAttribute('src', imageSrc);
 	
@@ -680,7 +680,7 @@ var tools =
 	
 	        var linkTag = document.createElement('a');
 	
-	        linkTag.classList += linkTool.elementClasses.link;
+	        linkTag.classList.add(linkTool.elementClasses.link);
 	
 	        linkTag.href = linkUrl;
 	
