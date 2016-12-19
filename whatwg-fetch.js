@@ -1,4 +1,4 @@
-var fetch =
+var codex =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};

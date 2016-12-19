@@ -14,8 +14,7 @@ module.exports = {
 
     entry: {
         "whatwg-fetch": "whatwg-fetch",
-        "codex-editor": "./index",
-        "plugins":  "./plugins/plugins"
+        "codex-editor": "./index"
     },
     output: {
         filename: "[name].js",

@@ -9,32 +9,169 @@
 <textarea name="" id="codex_area" cols="30" rows="10" hidden></textarea>
 
 </body>
-<script src="./plugins.js?v=10"></script>
+
 <script src="./codex-editor.js?v=10"></script>
 <link rel="stylesheet" href="./codex-editor.css?v=10">
+
+<link rel="stylesheet" href="codex-editor.css">
+
+<script src="plugins/paragraph/paragraph.js"></script>
+<link rel="stylesheet" href="plugins/paragraph/paragraph.css">
+
+<script src="plugins/header/header.js"></script>
+<link rel="stylesheet" href="plugins/header/header.css">
+
+<script src="plugins/code/code.js"></script>
+<link rel="stylesheet" href="plugins/code/code.css">
+
+<script src="plugins/link/link.js"></script>
+<link rel="stylesheet" href="plugins/link/link.css">
+
+<script src="plugins/quote/quote.js"></script>
+<link rel="stylesheet" href="plugins/quote/quote.css">
+
+<script src="plugins/list/list.js"></script>
+<link rel="stylesheet" href="plugins/list/list.css">
+
+<script src="plugins/image/image.js"></script>
+<link rel="stylesheet" href="plugins/image/image.css">
+
+<script src="plugins/instagram/instagram.js"></script>
+<link rel="stylesheet" href="plugins/instagram/instagram.css">
+
+<script src="plugins/twitter/twitter.js"></script>
+<link rel="stylesheet" href="plugins/twitter/twitter.css">
+
+<script src="plugins/paste/paste.js"></script>
+<link rel="stylesheet" href="plugins/paste/paste.css">
 
 <script>
     codex.start({
         textareaId : "codex_area",
-        tools : tools,
+        tools : {
+            paragraph: {
+                type: 'paragraph',
+                iconClassname: 'ce-icon-paragraph',
+                make: paragraphTool.make,
+                appendCallback: null,
+                settings: null,
+                render: paragraphTool.render,
+                save: paragraphTool.save,
+                displayInToolbox: false,
+                enableLineBreaks: false,
+                allowedToPaste: true
+            },
+            paste: {
+                type: 'paste',
+                iconClassname: '',
+                prepare: pasteTool.prepare,
+                make: pasteTool.make,
+                appendCallback: null,
+                settings: null,
+                render: null,
+                save: pasteTool.save,
+                displayInToolbox: false,
+                enableLineBreaks: false,
+                callbacks: pasteTool.callbacks,
+                allowedToPaste: false
+            },
+            header: {
+                type: 'header',
+                iconClassname: 'ce-icon-header',
+                make: headerTool.make,
+                appendCallback: headerTool.appendCallback,
+                settings: headerTool.makeSettings(),
+                render: headerTool.render,
+                save: headerTool.save
+            },
+            code: {
+                type: 'code',
+                iconClassname: 'ce-icon-code',
+                make: codeTool.make,
+                appendCallback: null,
+                settings: null,
+                render: codeTool.render,
+                save: codeTool.save,
+                displayInToolbox: true,
+                enableLineBreaks: true
+            },
+            link: {
+                type: 'link',
+                iconClassname: 'ce-icon-link',
+                make: linkTool.makeNewBlock,
+                appendCallback: linkTool.appendCallback,
+                render: linkTool.render,
+                save: linkTool.save,
+                displayInToolbox: true,
+                enableLineBreaks: true
+            },
+            list: {
+                type: 'list',
+                iconClassname: 'ce-icon-list-bullet',
+                make: listTool.make,
+                appendCallback: null,
+                settings: listTool.makeSettings(),
+                render: listTool.render,
+                save: listTool.save,
+                displayInToolbox: true,
+                enableLineBreaks: true
+            },
+            quote: {
+                type: 'quote',
+                iconClassname: 'ce-icon-quote',
+                make: quoteTools.makeBlockToAppend,
+                appendCallback: null,
+                settings: quoteTools.makeSettings(),
+                render: quoteTools.render,
+                save: quoteTools.save,
+                displayInToolbox: true,
+                enableLineBreaks: true,
+                allowedToPaste: true
+            },
+            image: {
+                type: 'image',
+                iconClassname: 'ce-icon-picture',
+                make: ceImage.make,
+                appendCallback: ceImage.appendCallback,
+                settings: ceImage.makeSettings(),
+                render: ceImage.render,
+                save: ceImage.save,
+                isStretched: true,
+                displayInToolbox: true,
+                enableLineBreaks: false
+            },
+            instagram: {
+                type: 'instagram',
+                iconClassname: 'ce-icon-instagram',
+                prepare: instagramTool.prepare,
+                make: instagramTool.make,
+                appendCallback: null,
+                settings: null,
+                render: instagramTool.reneder,
+                save: instagramTool.save,
+                displayInToolbox: false,
+                enableLineBreaks: false,
+                allowedToPaste: false
+            },
+            twitter: {
+                type: 'twitter',
+                iconClassname: 'ce-icon-twitter',
+                prepare: twitterTool.prepare,
+                make: twitterTool.make,
+                appendCallback: null,
+                settings: null,
+                render: twitterTool.render,
+                save: twitterTool.save,
+                displayInToolbox: false,
+                enableLineBreaks: false,
+                allowedToPaste: false
+            }
+        },
         data : {
             items: [],
             count: 0
         }
     });
 </script>
-
-<link rel="stylesheet" href="codex-editor.css">
-
-<link rel="stylesheet" href="plugins/paragraph/paragraph.css">
-<link rel="stylesheet" href="plugins/code/code.css">
-<link rel="stylesheet" href="plugins/header/header.css">
-<link rel="stylesheet" href="plugins/image/image.css">
-<link rel="stylesheet" href="plugins/instagram/instagram.css">
-<link rel="stylesheet" href="plugins/link/link.css">
-<link rel="stylesheet" href="plugins/list/list.css">
-<link rel="stylesheet" href="plugins/paste/paste.css">
-<link rel="stylesheet" href="plugins/twitter/twitter.css">
-
 
 </html>
