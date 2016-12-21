@@ -154,24 +154,7 @@ var headerTool = {
 
         /** Close settings after replacing */
         codex.toolbar.settings.close();
-    },
+    }
 
 };
 
-/**
-* Now plugin is ready.
-* Add it to redactor tools
-*/
-// headerTool = {
-//
-//     type             : 'header',
-//     iconClassname    : 'ce-icon-header',
-//     make             : headerTool.make,
-//     appendCallback   : headerTool.appendCallback,
-//     settings         : headerTool.makeSettings(),
-//     render           : headerTool.render,
-//     save             : headerTool.save,
-//     displayInToolbox : true,
-//     enableLineBreaks : false
-//
-// };

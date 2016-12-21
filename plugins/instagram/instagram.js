@@ -115,19 +115,3 @@ instagramTool.content = {
     }
 
 };
-
-// instagramTool = {
-//
-//     type             : 'instagram',
-//     iconClassname    : 'ce-icon-instagram',
-//     prepare          : instagramTool.prepare,
-//     make             : instagramTool.make,
-//     appendCallback   : null,
-//     settings         : null,
-//     render           : instagramTool.render,
-//     save             : instagramTool.save,
-//     displayInToolbox : false,
-//     enableLineBreaks : false,
-//     allowedToPaste   : false
-//
-// };

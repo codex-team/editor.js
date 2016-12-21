@@ -223,20 +223,3 @@ pasteTool.callbacks = {
     }
 
 };
-
-// module.exports = {
-//
-//     type             : 'paste',
-//     iconClassname    : '',
-//     prepare          : pasteTool.prepare,
-//     make             : pasteTool.make,
-//     appendCallback   : null,
-//     settings         : null,
-//     render           : null,
-//     save             : pasteTool.save,
-//     callbacks        : pasteTool.callbacks,
-//     displayInToolbox : false,
-//     enableLineBreaks : false,
-//     allowedToPaste   : false
-//
-// };

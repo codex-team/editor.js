@@ -67,22 +67,3 @@ var paragraphTool = {
     }
 
 };
-
-/**
-* Now plugin is ready.
-* Add it to redactor tools
-*/
-// module.exports = {
-//
-//     type             : 'paragraph',
-//     iconClassname    : 'ce-icon-paragraph',
-//     make             : paragraphTool.make,
-//     appendCallback   : null,
-//     settings         : null,
-//     render           : paragraphTool.render,
-//     save             : paragraphTool.save,
-//     displayInToolbox : false,
-//     enableLineBreaks : false,
-//     allowedToPaste   : true
-//
-// };

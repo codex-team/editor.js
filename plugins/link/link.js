@@ -306,16 +306,3 @@ linkTool.ui = {
     }
 
 };
-
-// linkTool = {
-//
-//     type             : 'link',
-//     iconClassname    : 'ce-icon-link',
-//     make             : linkTool.makeNewBlock,
-//     appendCallback   : linkTool.appendCallback,
-//     render           : linkTool.render,
-//     save             : linkTool.save,
-//     displayInToolbox : true,
-//     enableLineBreaks : true
-//
-// };

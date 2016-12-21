@@ -52,21 +52,3 @@ var codeTool = {
     }
 
 };
-
-/**
- * Now plugin is ready.
- * Add it to redactor tools
- */
-// codeTool = {
-//
-//     type             : 'code',
-//     iconClassname    : 'ce-icon-code',
-//     make             : codeTool.make,
-//     appendCallback   : null,
-//     settings         : null,
-//     render           : codeTool.render,
-//     save             : codeTool.save,
-//     displayInToolbox : true,
-//     enableLineBreaks : true
-//
-// };

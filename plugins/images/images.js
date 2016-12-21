@@ -441,23 +441,6 @@ ceImage.photoUploadingCallbacks = {
     error : function(result) {
         console.log('Choosen file is not an image or image is corrupted');
         cEditor.notifications.errorThrown();
-    },
-
-}
-
-
-/**
-* Add plugin it to redactor tools
-*/
-cEditor.tools.image = {
-
-    type             : 'image',
-    iconClassname    : 'ce-icon-picture',
-    make             : ceImage.make,
-    settings         : ceImage.makeSettings(),
-    render           : ceImage.render,
-    save             : ceImage.save,
-    isStretched      : true,
-    enableLineBreaks : false
+    }
 
 };

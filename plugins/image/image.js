@@ -400,22 +400,3 @@ ceImage.photoUploadingCallbacks = {
     }
 
 };
-
-
-/**
-* Add plugin it to redactor tools
-*/
-// ceImage = {
-//
-//     type             : 'image',
-//     iconClassname    : 'ce-icon-picture',
-//     make             : ceImage.make,
-//     appendCallback   : ceImage.appendCallback,
-//     settings         : ceImage.makeSettings(),
-//     render           : ceImage.render,
-//     save             : ceImage.save,
-//     isStretched      : true,
-//     displayInToolbox : true,
-//     enableLineBreaks : false
-//
-// };

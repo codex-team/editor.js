@@ -88,19 +88,3 @@ twitterTool.content = {
         return block;
     }
 };
-
-// module.exports = {
-//
-//     type             : 'twitter',
-//     iconClassname    : 'ce-icon-twitter',
-//     prepare          : twitterTool.prepare,
-//     make             : twitterTool.make,
-//     appendCallback   : null,
-//     settings         : null,
-//     render           : twitterTool.render,
-//     save             : twitterTool.save,
-//     displayInToolbox : false,
-//     enableLineBreaks : false,
-//     allowedToPaste   : false
-//
-// };

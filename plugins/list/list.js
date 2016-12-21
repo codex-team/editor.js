@@ -155,21 +155,3 @@ listTool.ui = {
         return button;
     }
 };
-
-/**
- * Now plugin is ready.
- * Add it to redactor tools
-//  */
-// module.exports = {
-//
-//     type             : 'list',
-//     iconClassname    : 'ce-icon-list-bullet',
-//     make             : listTool.make,
-//     appendCallback   : null,
-//     settings         : listTool.makeSettings(),
-//     render           : listTool.render,
-//     save             : listTool.save,
-//     displayInToolbox : true,
-//     enableLineBreaks : true
-//
-// };

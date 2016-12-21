@@ -444,18 +444,3 @@ quoteTools.photoUploadingCallbacks = {
     }
 
 };
-
-// module.exports = {
-//
-//     type             : 'quote',
-//     iconClassname    : 'ce-icon-quote',
-//     make             : quoteTools.makeBlockToAppend,
-//     appendCallback   : null,
-//     settings         : quoteTools.makeSettings(),
-//     render           : quoteTools.render,
-//     save             : quoteTools.save,
-//     displayInToolbox : true,
-//     enableLineBreaks : true,
-//     allowedToPaste   : true
-//
-// };
