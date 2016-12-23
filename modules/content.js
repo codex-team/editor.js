@@ -1,5 +1,3 @@
-var codex = require('../editor');
-
 var content = (function(content) {
 
     content.currentNode = null;
@@ -466,7 +464,7 @@ var content = (function(content) {
         codex.content.insertBlock({
             type  : NEW_BLOCK_TYPE,
             block : codex.tools[NEW_BLOCK_TYPE].render({
-                text : newNode,
+                text : newNode
             })
         }, true );
 
@@ -632,5 +630,4 @@ var content = (function(content) {
 
 })({});
 
-codex.content = content;
 module.exports = content;

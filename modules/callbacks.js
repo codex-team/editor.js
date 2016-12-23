@@ -1,5 +1,3 @@
-var codex = require('../editor');
-
 var callbacks = (function(callbacks) {
 
     callbacks.redactorSyncTimeout = null;
@@ -755,5 +753,4 @@ var callbacks = (function(callbacks) {
 
 })({});
 
-codex.callback = callbacks;
 module.exports  = callbacks;

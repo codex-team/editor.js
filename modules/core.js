@@ -1,5 +1,3 @@
-var codex = require('./../editor');
-
 var core = (function(core) {
 
     /**
@@ -173,8 +171,6 @@ var core = (function(core) {
     return core;
 
 })({});
-
-codex.core = core;
 
 module.exports = core;
 

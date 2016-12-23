@@ -1,5 +1,3 @@
-var codex = require('../editor');
-
 var caret = (function(caret) {
 
     /**
@@ -237,5 +235,4 @@ var caret = (function(caret) {
 
 })({});
 
-codex.caret = caret;
 module.exports = caret;

@@ -1,5 +1,3 @@
-var codex = require('../editor');
-
 var draw = (function(draw) {
 
     /**
@@ -303,8 +301,6 @@ var draw = (function(draw) {
     return draw;
 
 })({});
-
-codex.draw = draw;
 
 module.exports = draw;
 

@@ -1,5 +1,3 @@
-var codex = require('../../editor');
-
 var inline = (function(inline) {
 
     inline.init = function() {

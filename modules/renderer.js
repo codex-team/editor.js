@@ -1,5 +1,3 @@
-var codex = require('../editor');
-
 var renderer = (function(renderer) {
 
     /**
@@ -166,5 +164,4 @@ var renderer = (function(renderer) {
 
 })({});
 
-codex.renderer = renderer;
 module.exports = renderer;

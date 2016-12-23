@@ -1,5 +1,3 @@
-var codex = require('../editor');
-
 var ui = (function(ui){
 
     /**
@@ -379,5 +377,4 @@ var ui = (function(ui){
 
 })({});
 
-codex.ui = ui;
-module.exports = codex;
+module.exports = ui;

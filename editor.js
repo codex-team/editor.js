@@ -7,19 +7,19 @@ var codex = (function(codex){
 
     var init = function() {
 
-        require('./modules/core');
-        require('./modules/ui');
-        require('./modules/transport');
-        require('./modules/renderer');
-        require('./modules/saver');
-        require('./modules/content');
-        require('./modules/toolbar/toolbar');
-        require('./modules/tools');
-        require('./modules/callbacks');
-        require('./modules/draw');
-        require('./modules/caret');
-        require('./modules/notifications');
-        require('./modules/parser');
+        codex.core          = require('./modules/core');
+        codex.ui            = require('./modules/ui');
+        codex.transport     = require('./modules/transport');
+        codex.renderer      = require('./modules/renderer');
+        codex.saver         = require('./modules/saver');
+        codex.content       = require('./modules/content');
+        codex.toolbar       = require('./modules/toolbar/toolbar');
+        codex.tools         = require('./modules/tools');
+        codex.callback      = require('./modules/callbacks');
+        codex.draw          = require('./modules/draw');
+        codex.caret         = require('./modules/caret');
+        codex.notifications = require('./modules/notifications');
+        codex.parser        = require('./modules/parser');
     };
 
     /**

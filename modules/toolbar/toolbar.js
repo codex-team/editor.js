@@ -1,5 +1,3 @@
-var codex = require('../../editor');
-
 var toolbar = (function(toolbar) {
 
     toolbar.init = function() {
@@ -35,9 +33,9 @@ var toolbar = (function(toolbar) {
     toolbar.close = function(){
 
         codex.nodes.toolbar.classList.remove('opened');
-        this.opened  = false;
 
-        this.current = null;
+        toolbar.opened  = false;
+        toolbar.current = null;
 
         for (var button in codex.nodes.toolbarButtons){
             codex.nodes.toolbarButtons[button].classList.remove('selected');
@@ -99,6 +97,5 @@ var toolbar = (function(toolbar) {
 
 toolbar.init();
 
-codex.toolbar = toolbar;
 module.exports = toolbar;
 

@@ -1,5 +1,3 @@
-var codex = require('../editor');
-
 var notifications = (function(notifications) {
 
     /**
@@ -10,7 +8,7 @@ var notifications = (function(notifications) {
 
         codex.notifications.send('This action is not available currently', event.type, false);
 
-    },
+    };
 
     /**
      * Appends notification with different types
@@ -41,5 +39,4 @@ var notifications = (function(notifications) {
 
 })({});
 
-codex.notifications = notifications;
 module.exports = notifications;

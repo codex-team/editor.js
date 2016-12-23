@@ -1,5 +1,3 @@
-var codex = require('../../editor');
-
 var settings = (function(settings) {
 
     settings.init = function() {

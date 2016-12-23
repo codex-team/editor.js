@@ -1,5 +1,3 @@
-var codex = require('../../editor');
-
 var toolbox = (function(toolbox) {
 
     toolbox.init = function() {

@@ -1,10 +1,4 @@
-var codex = require('../editor');
-
 var parser = (function(parser) {
-
-    parser.init = function() {
-
-    };
 
     /**
      * Splits content by `\n` and returns blocks
@@ -255,7 +249,4 @@ var parser = (function(parser) {
 
 })({});
 
-parser.init();
-
-codex.parser = parser;
 module.exports = parser;
