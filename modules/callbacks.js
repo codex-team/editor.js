@@ -623,7 +623,8 @@ var callbacks = (function(callbacks) {
             range           = codex.content.getRange();
             selectionLength = range.endOffset - range.startOffset;
 
-            if (codex.caret.position.atStart() && !selectionLength) {
+
+            if (codex.caret.position.atStart() && !selectionLength && codex.state.inputs[currentInputIndex - 1]) {
 
                 codex.content.mergeBlocks(currentInputIndex);
 
