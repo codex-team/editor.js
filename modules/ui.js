@@ -169,7 +169,7 @@ var ui = (function(ui){
 
             tool = codex.tools[name];
 
-            if (tool.displayInToolbox == false) {
+            if (!tool.displayInToolbox) {
                 continue;
             }
 

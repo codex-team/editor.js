@@ -1,3 +1,8 @@
+/**
+ * @author Codex Team
+ * @version 1.0.5
+ */
+
 var codex = (function(codex){
 
     var init = function() {

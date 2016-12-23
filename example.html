@@ -10,8 +10,8 @@
 
 </body>
 
-<script src="./codex-editor.js?v=10"></script>
-<link rel="stylesheet" href="./codex-editor.css?v=10">
+<script src="./codex-editor.js?v=11"></script>
+<link rel="stylesheet" href="./codex-editor.css?v=11">
 
 <link rel="stylesheet" href="codex-editor.css">
 
@@ -57,7 +57,6 @@
                 settings: null,
                 render: paragraphTool.render,
                 save: paragraphTool.save,
-                displayInToolbox: false,
                 enableLineBreaks: false,
                 allowedToPaste: true
             },
@@ -70,7 +69,6 @@
                 settings: null,
                 render: null,
                 save: pasteTool.save,
-                displayInToolbox: false,
                 enableLineBreaks: false,
                 callbacks: pasteTool.callbacks,
                 allowedToPaste: false
@@ -82,7 +80,8 @@
                 appendCallback: headerTool.appendCallback,
                 settings: headerTool.makeSettings(),
                 render: headerTool.render,
-                save: headerTool.save
+                save: headerTool.save,
+                displayInToolbox: true
             },
             code: {
                 type: 'code',

@@ -60,6 +60,11 @@ var codex =
 
 	'use strict';
 	
+	/**
+	 * @author Codex Team
+	 * @version 1.0.5
+	 */
+	
 	var codex = function (codex) {
 	
 	    var init = function init() {
@@ -521,7 +526,7 @@ var codex =
 	
 	            tool = codex.tools[name];
 	
-	            if (tool.displayInToolbox == false) {
+	            if (!tool.displayInToolbox) {
 	                continue;
 	            }
 	
@@ -2585,7 +2590,6 @@ var codex =
 	    toolbox.leaf = function () {
 	
 	        var currentTool = codex.toolbar.current,
-	            tool,
 	            tools = Object.keys(codex.tools),
 	            barButtons = codex.nodes.toolbarButtons,
 	            nextToolIndex,
@@ -2593,7 +2597,7 @@ var codex =
 	            toolToSelect;
 	
 	        /** Count toolbox hidden tools */
-	        for (tool in codex.tools) {
+	        for (var tool in codex.tools) {
 	            if (!codex.tools[tool].displayInToolbox) hiddenToolsAmount++;
 	        }
 	
@@ -2607,20 +2611,20 @@ var codex =
 	
 	            nextToolIndex = tools.indexOf(currentTool) + 1;
 	
-	            var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 1);
+	            var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 2);
 	
 	            if (toolIsLastInToolbox) {
 	
 	                nextToolIndex = 0;
 	
 	                /** getting first displayed tool */
-	                for (tool in codex.tools) {
+	                for (var tool in codex.tools) {
 	
-	                    nextToolIndex++;
-	
-	                    if (!codex.tools[tool].displayInToolbox) {
+	                    if (codex.tools[tool].displayInToolbox) {
 	                        break;
 	                    }
+	
+	                    nextToolIndex++;
 	                }
 	            }
 	
