@@ -6,13 +6,16 @@
  */
 'use strict';
 
+var pkg = require('./package.json');
+
 /**
  * Environment
  * @type {any}
  */
 const NODE_ENV = process.env.NODE_ENV || 'development';
+const VERSION  = process.env.VERSION || pkg.version;
 
-var pkg = require('./package.json');
+var versioning = VERSION.split('.');
 
 /**
  * Plugins for bundle
@@ -54,7 +57,10 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV),
-            VERSION: pkg.version
+            VERSION: VERSION,
+            MAJOR: parseInt(versioning[0]),
+            MINOR: versioning[1],
+            BUILD: versioning[2]
         }),
 
         new webpack.EnvironmentPlugin('VERSION', pkg.version),

@@ -26,9 +26,9 @@ var codex = (function(codex){
     };
 
     codex.version = {
-        major : 1,
-        minor : 0,
-        build : process.env.VERSION
+        major : MAJOR,
+        minor : MINOR,
+        build : BUILD
     };
 
     /**

@@ -88,9 +88,9 @@ var codex =
 	    };
 	
 	    codex.version = {
-	        major: 1,
-	        minor: 0,
-	        build: (undefined)
+	        major: (1),
+	        minor: (0),
+	        build: (6)
 	    };
 	
 	    /**
