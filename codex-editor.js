@@ -61,6 +61,9 @@ var codex =
 	'use strict';
 	
 	/**
+	 *
+	 * Codex Editor
+	 *
 	 * @author Codex Team
 	 * @version 1.0.6
 	 */
@@ -82,6 +85,12 @@ var codex =
 	        codex.caret = __webpack_require__(15);
 	        codex.notifications = __webpack_require__(16);
 	        codex.parser = __webpack_require__(17);
+	    };
+	
+	    codex.version = {
+	        major: 1,
+	        minor: 0,
+	        build: (undefined)
 	    };
 	
 	    /**
@@ -190,6 +199,13 @@ var codex =
 	'use strict';
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	/**
+	 * Codex Editor Core
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
 	
 	var core = function (core) {
 	
@@ -363,6 +379,13 @@ var codex =
 /***/ function(module, exports) {
 
 	'use strict';
+	
+	/**
+	 * Codex Editor UI module
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
 	
 	var ui = function (ui) {
 	
@@ -648,7 +671,9 @@ var codex =
 	
 	            codex.tools[tool].prepare();
 	        }
-	    }, ui.addBlockHandlers = function (block) {
+	    };
+	
+	    ui.addBlockHandlers = function (block) {
 	
 	        if (!block) return;
 	
@@ -730,7 +755,7 @@ var codex =
 	 * Codex.Editor Transport Module
 	 *
 	 * @author Codex Team
-	 * @version 1.0.0
+	 * @version 1.0
 	 */
 	
 	var transport = function (transport) {
@@ -833,6 +858,13 @@ var codex =
 /***/ function(module, exports) {
 
 	'use strict';
+	
+	/**
+	 * Codex Editor Renderer Module
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
 	
 	var renderer = function (renderer) {
 	
@@ -998,6 +1030,13 @@ var codex =
 
 	'use strict';
 	
+	/**
+	 * Codex Editor Saver
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
+	
 	var saver = function (saver) {
 	
 	    /**
@@ -1096,6 +1135,14 @@ var codex =
 /***/ function(module, exports) {
 
 	'use strict';
+	
+	/**
+	 * Codex Editor Content Module
+	 * Works with DOM
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
 	
 	var content = function (content) {
 	
@@ -1703,6 +1750,17 @@ var codex =
 
 	'use strict';
 	
+	/**
+	 * Codex Editor toolbar module
+	 *
+	 * Contains:
+	 *  - Inline toolbox
+	 *  - Toolbox within plus button
+	 *  - Settings section
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
 	var toolbar = function (toolbar) {
 	
 	    toolbar.init = function () {
@@ -2044,6 +2102,15 @@ var codex =
 
 	'use strict';
 	
+	/**
+	 * Inline toolbar
+	 *
+	 * Contains from tools:
+	 * Bold, Italic, Underline and Anchor
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
 	var inline = function (inline) {
 	
 	    inline.init = function () {};
@@ -2528,6 +2595,14 @@ var codex =
 
 	'use strict';
 	
+	/**
+	 * Codex Editor toolbox
+	 *
+	 * All tools be able to appended here
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
 	var toolbox = function (toolbox) {
 	
 	    toolbox.init = function () {
@@ -2693,9 +2768,16 @@ var codex =
 
 	"use strict";
 	
+	/**
+	 * Codex Editor tools
+	 * This tools will be appended in toolbox
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
 	var tools = function (tools) {
 	
-	    return tools;
+	  return tools;
 	}({});
 	
 	module.exports = tools;
@@ -2705,6 +2787,13 @@ var codex =
 /***/ function(module, exports) {
 
 	'use strict';
+	
+	/**
+	 * Codex Editor callbacks module
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
 	
 	var callbacks = function (callbacks) {
 	
@@ -3415,6 +3504,13 @@ var codex =
 
 	'use strict';
 	
+	/**
+	 * Codex Editor Draw module
+	 *
+	 * @author Codex Team
+	 * @version 1.0.
+	 */
+	
 	var draw = function (draw) {
 	
 	    /**
@@ -3713,6 +3809,13 @@ var codex =
 
 	'use strict';
 	
+	/**
+	 * Codex Editor Caret Module
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
+	
 	var caret = function (caret) {
 	
 	    /**
@@ -3950,6 +4053,13 @@ var codex =
 
 	'use strict';
 	
+	/**
+	 * Codex Editor Notification Module
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
+	
 	var notifications = function (notifications) {
 	
 	    /**
@@ -3995,6 +4105,13 @@ var codex =
 /***/ function(module, exports) {
 
 	'use strict';
+	
+	/**
+	 * Codex Editor Parser Module
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
 	
 	var parser = function (parser) {
 	

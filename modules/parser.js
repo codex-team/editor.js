@@ -1,3 +1,10 @@
+/**
+ * Codex Editor Parser Module
+ *
+ * @author Codex Team
+ * @version 1.0
+ */
+
 var parser = (function(parser) {
 
     /**

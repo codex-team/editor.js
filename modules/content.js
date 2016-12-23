@@ -1,3 +1,11 @@
+/**
+ * Codex Editor Content Module
+ * Works with DOM
+ *
+ * @author Codex Team
+ * @version 1.0
+ */
+
 var content = (function(content) {
 
     content.currentNode = null;

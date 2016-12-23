@@ -1,3 +1,10 @@
+/**
+ * Codex Editor Core
+ *
+ * @author Codex Team
+ * @version 1.0
+ */
+
 var core = (function(core) {
 
     /**

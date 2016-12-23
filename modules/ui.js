@@ -1,3 +1,10 @@
+/**
+ * Codex Editor UI module
+ *
+ * @author Codex Team
+ * @version 1.0
+ */
+
 var ui = (function(ui){
 
     /**
@@ -302,7 +309,7 @@ var ui = (function(ui){
 
             codex.tools[tool].prepare();
         }
-    },
+    };
 
     ui.addBlockHandlers = function(block) {
 

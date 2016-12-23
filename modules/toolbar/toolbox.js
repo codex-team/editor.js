@@ -1,3 +1,11 @@
+/**
+ * Codex Editor toolbox
+ *
+ * All tools be able to appended here
+ *
+ * @author Codex Team
+ * @version 1.0
+ */
 var toolbox = (function(toolbox) {
 
     toolbox.init = function() {

@@ -6,9 +6,20 @@
  */
 'use strict';
 
+/**
+ * Environment
+ * @type {any}
+ */
 const NODE_ENV = process.env.NODE_ENV || 'development';
-var webpack = require('webpack');
-var ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+
+var pkg = require('./package.json');
+
+/**
+ * Plugins for bundle
+ * @type {webpack}
+ */
+var webpack                     = require('webpack');
+var ExtractTextWebpackPlugin    = require('extract-text-webpack-plugin');
 
 module.exports = {
 
@@ -42,8 +53,11 @@ module.exports = {
 
     plugins: [
         new webpack.DefinePlugin({
-            NODE_ENV: JSON.stringify(NODE_ENV)
+            NODE_ENV: JSON.stringify(NODE_ENV),
+            VERSION: pkg.version
         }),
+
+        new webpack.EnvironmentPlugin('VERSION', pkg.version),
 
         new webpack.ProvidePlugin({
             _ : 'lodash'

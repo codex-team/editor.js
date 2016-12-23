@@ -1,4 +1,7 @@
 /**
+ *
+ * Codex Editor
+ *
  * @author Codex Team
  * @version 1.0.6
  */
@@ -20,6 +23,12 @@ var codex = (function(codex){
         codex.caret         = require('./modules/caret');
         codex.notifications = require('./modules/notifications');
         codex.parser        = require('./modules/parser');
+    };
+
+    codex.version = {
+        major : 1,
+        minor : 0,
+        build : process.env.VERSION
     };
 
     /**

@@ -1,3 +1,10 @@
+/**
+ * Codex Editor Draw module
+ *
+ * @author Codex Team
+ * @version 1.0.
+ */
+
 var draw = (function(draw) {
 
     /**
