@@ -41,9 +41,8 @@ var codex =
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -56,8 +55,7 @@ var codex =
 	module.exports = editor;
 
 /***/ },
-
-/***/ 1:
+/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -80,21 +78,17 @@ var codex =
 	        codex.renderer = __webpack_require__(5);
 	        codex.saver = __webpack_require__(6);
 	        codex.content = __webpack_require__(7);
-	        codex.toolbar = __webpack_require__(68);
-	        codex.tools = __webpack_require__(72);
-	        codex.callback = __webpack_require__(73);
-	        codex.draw = __webpack_require__(74);
-	        codex.caret = __webpack_require__(75);
-	        codex.notifications = __webpack_require__(76);
-	        codex.parser = __webpack_require__(77);
-	        codex.sanitizer = __webpack_require__(79);
+	        codex.toolbar = __webpack_require__(8);
+	        codex.tools = __webpack_require__(12);
+	        codex.callback = __webpack_require__(13);
+	        codex.draw = __webpack_require__(14);
+	        codex.caret = __webpack_require__(15);
+	        codex.notifications = __webpack_require__(16);
+	        codex.parser = __webpack_require__(17);
+	        codex.sanitizer = __webpack_require__(18);
 	    };
 	
-	    codex.version = {
-	        major: (1),
-	        minor: (0),
-	        build: (6)
-	    };
+	    codex.version = ("1.0.6");
 	
 	    /**
 	     * @public
@@ -196,8 +190,7 @@ var codex =
 	module.exports = codex;
 
 /***/ },
-
-/***/ 2:
+/* 2 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -379,8 +372,7 @@ var codex =
 	module.exports = core;
 
 /***/ },
-
-/***/ 3:
+/* 3 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -750,8 +742,7 @@ var codex =
 	module.exports = ui;
 
 /***/ },
-
-/***/ 4:
+/* 4 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -860,8 +851,7 @@ var codex =
 	module.exports = transport;
 
 /***/ },
-
-/***/ 5:
+/* 5 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1032,8 +1022,7 @@ var codex =
 	module.exports = renderer;
 
 /***/ },
-
-/***/ 6:
+/* 6 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1139,8 +1128,7 @@ var codex =
 	module.exports = saver;
 
 /***/ },
-
-/***/ 7:
+/* 7 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1686,8 +1674,7 @@ var codex =
 	module.exports = content;
 
 /***/ },
-
-/***/ 68:
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1706,9 +1693,9 @@ var codex =
 	var toolbar = function (toolbar) {
 	
 	    toolbar.init = function () {
-	        toolbar.settings = __webpack_require__(69);
-	        toolbar.inline = __webpack_require__(70);
-	        toolbar.toolbox = __webpack_require__(71);
+	        toolbar.settings = __webpack_require__(9);
+	        toolbar.inline = __webpack_require__(10);
+	        toolbar.toolbox = __webpack_require__(11);
 	    };
 	
 	    /**
@@ -1798,8 +1785,7 @@ var codex =
 	module.exports = toolbar;
 
 /***/ },
-
-/***/ 69:
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2040,8 +2026,7 @@ var codex =
 	module.exports = settings;
 
 /***/ },
-
-/***/ 70:
+/* 10 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2534,8 +2519,7 @@ var codex =
 	module.exports = inline;
 
 /***/ },
-
-/***/ 71:
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2551,7 +2535,7 @@ var codex =
 	var toolbox = function (toolbox) {
 	
 	    toolbox.init = function () {
-	        __webpack_require__(68);
+	        __webpack_require__(8);
 	    };
 	
 	    toolbox.opened = false;
@@ -2708,8 +2692,7 @@ var codex =
 	module.exports = toolbox;
 
 /***/ },
-
-/***/ 72:
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2729,8 +2712,7 @@ var codex =
 	module.exports = tools;
 
 /***/ },
-
-/***/ 73:
+/* 13 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3446,8 +3428,7 @@ var codex =
 	module.exports = callbacks;
 
 /***/ },
-
-/***/ 74:
+/* 14 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3752,8 +3733,7 @@ var codex =
 	module.exports = draw;
 
 /***/ },
-
-/***/ 75:
+/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3997,8 +3977,7 @@ var codex =
 	module.exports = caret;
 
 /***/ },
-
-/***/ 76:
+/* 16 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4051,8 +4030,7 @@ var codex =
 	module.exports = notifications;
 
 /***/ },
-
-/***/ 77:
+/* 17 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4303,8 +4281,7 @@ var codex =
 	module.exports = parser;
 
 /***/ },
-
-/***/ 79:
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
@@ -4559,20 +4536,19 @@ var codex =
 	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	}
 	
-	__webpack_require__(80);
-	__webpack_require__(81);
-	__webpack_require__(82);
+	__webpack_require__(19);
+	__webpack_require__(20);
+	__webpack_require__(21);
 	
 	module.exports = Sanitize;
 
 /***/ },
-
-/***/ 80:
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Sanitize = __webpack_require__(79);
+	var Sanitize = __webpack_require__(18);
 	
 	if (!Sanitize.Config) {
 	  Sanitize.Config = {};
@@ -4601,13 +4577,12 @@ var codex =
 	codex.sanitizer = Sanitize;
 
 /***/ },
-
-/***/ 81:
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Sanitize = __webpack_require__(79);
+	var Sanitize = __webpack_require__(18);
 	
 	if (!Sanitize.Config) {
 	  Sanitize.Config = {};
@@ -4641,13 +4616,12 @@ var codex =
 	codex.sanitizer = Sanitize;
 
 /***/ },
-
-/***/ 82:
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Sanitize = __webpack_require__(79);
+	var Sanitize = __webpack_require__(18);
 	
 	if (!Sanitize.Config) {
 	  Sanitize.Config = {};
@@ -4660,6 +4634,5 @@ var codex =
 	codex.sanitizer = Sanitize;
 
 /***/ }
-
-/******/ });
+/******/ ]);
 //# sourceMappingURL=codex-editor.js.map
