@@ -26,11 +26,7 @@ var codex = (function(codex){
         codex.sanitizer     = require('./modules/sanitizer/sanitize');
     };
 
-    codex.version = {
-        major : MAJOR,
-        minor : MINOR,
-        build : BUILD
-    };
+    codex.version = VERSION;
 
     /**
      * @public
