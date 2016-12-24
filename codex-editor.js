@@ -1664,15 +1664,14 @@ var codex =
 	     *
 	     * Sanitizes HTML content
 	     * @param {Element} target - inserted element
-	     * @uses DFS function for deep searching
+	     * @uses Sanitize library and BASIC configuration
+	     * @todo Fix caret positioning
 	     */
 	    content.sanitize = function (target) {
 	
 	        if (!target) {
 	            return;
 	        }
-	
-	        console.log(target);
 	
 	        var sanitizer = new codex.sanitizer(codex.sanitizer.Config.BASIC);
 	        var clearHTML = sanitizer.clean_node(codex.content.currentNode.childNodes[0]);
