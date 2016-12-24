@@ -71,7 +71,6 @@ var codex =
 	var codex = function (codex) {
 	
 	    var init = function init() {
-	
 	        codex.core = __webpack_require__(2);
 	        codex.ui = __webpack_require__(3);
 	        codex.transport = __webpack_require__(4);
@@ -88,7 +87,7 @@ var codex =
 	        codex.sanitizer = __webpack_require__(18);
 	    };
 	
-	    codex.version = ("1.0.6");
+	    codex.version = ("1.0.10");
 	
 	    /**
 	     * @public
@@ -2535,6 +2534,7 @@ var codex =
 	var toolbox = function (toolbox) {
 	
 	    toolbox.init = function () {
+	
 	        __webpack_require__(8);
 	    };
 	
@@ -2545,6 +2545,7 @@ var codex =
 	
 	        /** Close setting if toolbox is opened */
 	        if (codex.toolbar.settings.opened) {
+	
 	            codex.toolbar.settings.close();
 	        }
 	
@@ -2582,7 +2583,11 @@ var codex =
 	
 	        /** Count toolbox hidden tools */
 	        for (var tool in codex.tools) {
-	            if (!codex.tools[tool].displayInToolbox) hiddenToolsAmount++;
+	
+	            if (!codex.tools[tool].displayInToolbox) {
+	
+	                hiddenToolsAmount++;
+	            }
 	        }
 	
 	        if (!currentTool) {
@@ -2605,6 +2610,7 @@ var codex =
 	                for (var tool in codex.tools) {
 	
 	                    if (codex.tools[tool].displayInToolbox) {
+	
 	                        break;
 	                    }
 	
@@ -2649,6 +2655,7 @@ var codex =
 	        };
 	
 	        if (workingNode && UNREPLACEBLE_TOOLS.indexOf(workingNode.dataset.tool) === -1 && workingNode.textContent.trim() === '') {
+	
 	            /** Replace current block */
 	            codex.content.switchBlock(workingNode, newBlockContent, tool.type);
 	        } else {
@@ -2664,6 +2671,7 @@ var codex =
 	        appendCallback = tool.appendCallback;
 	
 	        if (appendCallback && typeof appendCallback == 'function') {
+	
 	            appendCallback.call(event);
 	        }
 	
@@ -4551,27 +4559,26 @@ var codex =
 	var Sanitize = __webpack_require__(18);
 	
 	if (!Sanitize.Config) {
-	  Sanitize.Config = {};
+	    Sanitize.Config = {};
 	}
 	
 	Sanitize.Config.BASIC = {
-	  elements: ['a', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'dl', 'dt', 'em', 'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub', 'sup', 'u', 'ul'],
+	    elements: ['a', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'dl', 'dt', 'em', 'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub', 'sup', 'u', 'ul'],
+	    attributes: {
+	        'a': ['href'],
+	        'blockquote': ['cite'],
+	        'q': ['cite']
+	    },
 	
-	  attributes: {
-	    'a': ['href'],
-	    'blockquote': ['cite'],
-	    'q': ['cite']
-	  },
+	    add_attributes: {
+	        'a': { 'rel': 'nofollow' }
+	    },
 	
-	  add_attributes: {
-	    'a': { 'rel': 'nofollow' }
-	  },
-	
-	  protocols: {
-	    'a': { 'href': ['ftp', 'http', 'https', 'mailto', Sanitize.RELATIVE] },
-	    'blockquote': { 'cite': ['http', 'https', Sanitize.RELATIVE] },
-	    'q': { 'cite': ['http', 'https', Sanitize.RELATIVE] }
-	  }
+	    protocols: {
+	        'a': { 'href': ['ftp', 'http', 'https', 'mailto', Sanitize.RELATIVE] },
+	        'blockquote': { 'cite': ['http', 'https', Sanitize.RELATIVE] },
+	        'q': { 'cite': ['http', 'https', Sanitize.RELATIVE] }
+	    }
 	};
 	
 	codex.sanitizer = Sanitize;
@@ -4585,32 +4592,30 @@ var codex =
 	var Sanitize = __webpack_require__(18);
 	
 	if (!Sanitize.Config) {
-	  Sanitize.Config = {};
+	    Sanitize.Config = {};
 	}
 	
 	Sanitize.Config.RELAXED = {
-	  elements: ['a', 'b', 'blockquote', 'br', 'caption', 'cite', 'code', 'col', 'colgroup', 'dd', 'dl', 'dt', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'i', 'img', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'u', 'ul'],
-	
-	  attributes: {
-	    'a': ['href', 'title'],
-	    'blockquote': ['cite'],
-	    'col': ['span', 'width'],
-	    'colgroup': ['span', 'width'],
-	    'img': ['align', 'alt', 'height', 'src', 'title', 'width'],
-	    'ol': ['start', 'type'],
-	    'q': ['cite'],
-	    'table': ['summary', 'width'],
-	    'td': ['abbr', 'axis', 'colspan', 'rowspan', 'width'],
-	    'th': ['abbr', 'axis', 'colspan', 'rowspan', 'scope', 'width'],
-	    'ul': ['type']
-	  },
-	
-	  protocols: {
-	    'a': { 'href': ['ftp', 'http', 'https', 'mailto', Sanitize.RELATIVE] },
-	    'blockquote': { 'cite': ['http', 'https', Sanitize.RELATIVE] },
-	    'img': { 'src': ['http', 'https', Sanitize.RELATIVE] },
-	    'q': { 'cite': ['http', 'https', Sanitize.RELATIVE] }
-	  }
+	    elements: ['a', 'b', 'blockquote', 'br', 'caption', 'cite', 'code', 'col', 'colgroup', 'dd', 'dl', 'dt', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'i', 'img', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'u', 'ul'],
+	    attributes: {
+	        'a': ['href', 'title'],
+	        'blockquote': ['cite'],
+	        'col': ['span', 'width'],
+	        'colgroup': ['span', 'width'],
+	        'img': ['align', 'alt', 'height', 'src', 'title', 'width'],
+	        'ol': ['start', 'type'],
+	        'q': ['cite'],
+	        'table': ['summary', 'width'],
+	        'td': ['abbr', 'axis', 'colspan', 'rowspan', 'width'],
+	        'th': ['abbr', 'axis', 'colspan', 'rowspan', 'scope', 'width'],
+	        'ul': ['type']
+	    },
+	    protocols: {
+	        'a': { 'href': ['ftp', 'http', 'https', 'mailto', Sanitize.RELATIVE] },
+	        'blockquote': { 'cite': ['http', 'https', Sanitize.RELATIVE] },
+	        'img': { 'src': ['http', 'https', Sanitize.RELATIVE] },
+	        'q': { 'cite': ['http', 'https', Sanitize.RELATIVE] }
+	    }
 	};
 	
 	codex.sanitizer = Sanitize;
@@ -4624,11 +4629,11 @@ var codex =
 	var Sanitize = __webpack_require__(18);
 	
 	if (!Sanitize.Config) {
-	  Sanitize.Config = {};
+	    Sanitize.Config = {};
 	}
 	
 	Sanitize.Config.RESTRICTED = {
-	  elements: ['a', 'b', 'em', 'i', 'strong', 'u']
+	    elements: ['a', 'b', 'em', 'i', 'strong', 'u']
 	};
 	
 	codex.sanitizer = Sanitize;
