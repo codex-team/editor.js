@@ -25,11 +25,7 @@ var codex = (function(codex){
         codex.parser        = require('./modules/parser');
     };
 
-    codex.version = {
-        major : MAJOR,
-        minor : MINOR,
-        build : BUILD
-    };
+    codex.version = VERSION;
 
     /**
      * @public

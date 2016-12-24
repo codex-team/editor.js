@@ -59,7 +59,7 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV),
-            VERSION: VERSION,
+            VERSION: JSON.stringify(VERSION),
             MAJOR: parseInt(versioning[0]),
             MINOR: versioning[1],
             BUILD: versioning[2]
@@ -76,6 +76,7 @@ module.exports = {
 
         loaders : [{
             test : /\.js$/,
+            exclude: /(node_modules)/,
             loader : 'babel',
             query: {
                 presets: [__dirname + '/node_modules/babel-preset-es2015']
@@ -84,7 +85,7 @@ module.exports = {
         {
             test : /\.js$/,
             loader: 'eslint-loader',
-            exclude: /node_modules/
+            exclude: /(node_modules)/
         },
         {
             test: /node_modules\/entities\/.*\.json$/,
