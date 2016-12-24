@@ -3,7 +3,7 @@
  * Works with DOM
  *
  * @author Codex Team
- * @version 1.0
+ * @version 1.1.1
  */
 
 var content = (function(content) {
@@ -553,84 +553,13 @@ var content = (function(content) {
             return;
         }
 
-        for (var i = 0; i < target.childNodes.length; i++) {
-            this.dfs(target.childNodes[i]);
-        }
-    };
+        console.log(target);
 
-    /**
-     * Clears styles
-     * @param {Element|Text}
-     */
-    content.clearStyles = function(target) {
+        var sanitizer = new codex.sanitizer(codex.sanitizer.Config.BASIC);
+        var clearHTML = sanitizer.clean_node(codex.content.currentNode.childNodes[0]);
 
-        var href,
-            newNode = null,
-            blockTags   = ['P', 'BLOCKQUOTE', 'UL', 'CODE', 'OL', 'LI', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'DIV', 'PRE', 'HEADER', 'SECTION'],
-            allowedTags = ['P', 'B', 'I', 'A', 'U', 'BR'],
-            needReplace = !allowedTags.includes(target.tagName),
-            isDisplayedAsBlock = blockTags.includes(target.tagName);
-
-        if (!codex.core.isDomNode(target)){
-            return target;
-        }
-
-        if (!target.parentNode){
-            return target;
-        }
-
-        if (needReplace) {
-
-            if (isDisplayedAsBlock) {
-
-                newNode = document.createElement('P');
-                newNode.innerHTML = target.innerHTML;
-                target.parentNode.replaceChild(newNode, target);
-                target = newNode;
-
-            } else {
-
-                newNode = document.createTextNode(` ${target.textContent} `);
-                newNode.textContent = newNode.textContent.replace(/\s{2,}/g, ' ');
-                target.parentNode.replaceChild(newNode, target);
-
-            }
-        }
-
-        /** keep href attributes of tag A */
-        if (target.tagName == 'A') {
-            href = target.getAttribute('href');
-        }
-
-        /** Remove all tags */
-        while(target.attributes.length > 0) {
-            target.removeAttribute(target.attributes[0].name);
-        }
-
-        /** return href */
-        if (href) {
-            target.setAttribute('href', href);
-        }
-
-        return target;
-
-    };
-
-    /**
-     * Depth-first search Algorithm
-     * returns all childs
-     * @param {Element}
-     */
-    content.dfs = function(el) {
-
-        if (!codex.core.isDomNode(el))
-            return;
-
-        var sanitized = this.clearStyles(el);
-
-        for(var i = 0; i < sanitized.childNodes.length; i++) {
-            this.dfs(sanitized.childNodes[i]);
-        }
+        target.innerHTML = "";
+        target.appendChild(clearHTML);
 
     };
 
