@@ -6,7 +6,8 @@
  */
 'use strict';
 
-var pkg = require('./package.json');
+var pkg  = require('./package.json');
+var path = require('path');
 
 /**
  * Environment
@@ -44,8 +45,9 @@ module.exports = {
     devtool: NODE_ENV == 'development' ? "source-map" : null,
 
     resolve : {
+        fallback: path.join(__dirname, "node_modules"),
         modulesDirectories : ['./node_modules', './modules'],
-        extensions : ['', '.js']
+        extensions : ['', '.js', '.json']
     },
 
     resolveLoader : {
@@ -74,11 +76,20 @@ module.exports = {
 
         loaders : [{
             test : /\.js$/,
-            exclude: /(node_modules)/,
             loader : 'babel',
             query: {
                 presets: [__dirname + '/node_modules/babel-preset-es2015']
             }
+        },
+        {
+            test : /\.js$/,
+            loader: 'eslint-loader',
+            exclude: /node_modules/
+        },
+        {
+            test: /node_modules\/entities\/.*\.json$/,
+            include : /(node_modules)/,
+            loader: 'json'
         },
         {
             test : /\.css$/,
