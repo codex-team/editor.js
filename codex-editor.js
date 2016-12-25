@@ -87,7 +87,7 @@ var codex =
 	        codex.sanitizer = __webpack_require__(18);
 	    };
 	
-	    codex.version = ("1.0.10");
+	    codex.version = ("1.0.12");
 	
 	    /**
 	     * @public
@@ -1137,7 +1137,7 @@ var codex =
 	 * Works with DOM
 	 *
 	 * @author Codex Team
-	 * @version 1.1.1
+	 * @version 1.1.2
 	 */
 	
 	var content = function (content) {
@@ -1665,6 +1665,18 @@ var codex =
 	
 	        target.innerHTML = "";
 	        target.appendChild(clearHTML);
+	
+	        /**
+	         * Preliminary solution:
+	         * Always set caret at the end of input
+	         */
+	        var inputIndex = codex.caret.getCurrentInputIndex();
+	
+	        /**
+	         * setting to current block:
+	         * (index + 1) minus 1 is current
+	         */
+	        codex.caret.setToPreviousBlock(inputIndex + 1);
 	    };
 	
 	    return content;
