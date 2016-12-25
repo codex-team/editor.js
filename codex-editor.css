@@ -60,6 +60,7 @@
 * Plus button
 */
 .ce-toolbar__plus{
+    position: absolute;
     background-image: url('fonts/codex_editor/icon-plus.svg');
     background-position: center center;
     background-repeat: no-repeat;

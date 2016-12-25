@@ -1,4 +1,10 @@
-var codex = require('../editor');
+/**
+ *
+ * Codex.Editor Transport Module
+ *
+ * @author Codex Team
+ * @version 1.0.0
+ */
 
 var transport = (function(transport){
 
@@ -97,5 +103,4 @@ var transport = (function(transport){
 
 })({});
 
-codex.transport = transport;
 module.exports  = transport;

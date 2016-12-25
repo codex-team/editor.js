@@ -1,5 +1,3 @@
-var codex = require('../editor');
-
 var callbacks = (function(callbacks) {
 
     callbacks.redactorSyncTimeout = null;
@@ -623,7 +621,8 @@ var callbacks = (function(callbacks) {
             range           = codex.content.getRange();
             selectionLength = range.endOffset - range.startOffset;
 
-            if (codex.caret.position.atStart() && !selectionLength) {
+
+            if (codex.caret.position.atStart() && !selectionLength && codex.state.inputs[currentInputIndex - 1]) {
 
                 codex.content.mergeBlocks(currentInputIndex);
 
@@ -754,5 +753,4 @@ var callbacks = (function(callbacks) {
 
 })({});
 
-codex.callback = callbacks;
 module.exports  = callbacks;

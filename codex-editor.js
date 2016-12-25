@@ -60,23 +60,28 @@ var codex =
 
 	'use strict';
 	
+	/**
+	 * @author Codex Team
+	 * @version 1.0.6
+	 */
+	
 	var codex = function (codex) {
 	
 	    var init = function init() {
 	
-	        __webpack_require__(2);
-	        __webpack_require__(3);
-	        __webpack_require__(4);
-	        __webpack_require__(5);
-	        __webpack_require__(6);
-	        __webpack_require__(7);
-	        __webpack_require__(8);
-	        __webpack_require__(12);
-	        __webpack_require__(13);
-	        __webpack_require__(14);
-	        __webpack_require__(15);
-	        __webpack_require__(16);
-	        __webpack_require__(17);
+	        codex.core = __webpack_require__(2);
+	        codex.ui = __webpack_require__(3);
+	        codex.transport = __webpack_require__(4);
+	        codex.renderer = __webpack_require__(5);
+	        codex.saver = __webpack_require__(6);
+	        codex.content = __webpack_require__(7);
+	        codex.toolbar = __webpack_require__(8);
+	        codex.tools = __webpack_require__(12);
+	        codex.callback = __webpack_require__(13);
+	        codex.draw = __webpack_require__(14);
+	        codex.caret = __webpack_require__(15);
+	        codex.notifications = __webpack_require__(16);
+	        codex.parser = __webpack_require__(17);
 	    };
 	
 	    /**
@@ -180,13 +185,11 @@ var codex =
 
 /***/ },
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	var codex = __webpack_require__(1);
 	
 	var core = function (core) {
 	
@@ -353,17 +356,13 @@ var codex =
 	    return core;
 	}({});
 	
-	codex.core = core;
-	
 	module.exports = core;
 
 /***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
-	
-	var codex = __webpack_require__(1);
 	
 	var ui = function (ui) {
 	
@@ -521,7 +520,7 @@ var codex =
 	
 	            tool = codex.tools[name];
 	
-	            if (tool.displayInToolbox == false) {
+	            if (!tool.displayInToolbox) {
 	                continue;
 	            }
 	
@@ -718,16 +717,21 @@ var codex =
 	    return ui;
 	}({});
 	
-	codex.ui = ui;
-	module.exports = codex;
+	module.exports = ui;
 
 /***/ },
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
-	var codex = __webpack_require__(1);
+	/**
+	 *
+	 * Codex.Editor Transport Module
+	 *
+	 * @author Codex Team
+	 * @version 1.0.0
+	 */
 	
 	var transport = function (transport) {
 	
@@ -822,16 +826,13 @@ var codex =
 	    return transport;
 	}({});
 	
-	codex.transport = transport;
 	module.exports = transport;
 
 /***/ },
 /* 5 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
-	
-	var codex = __webpack_require__(1);
 	
 	var renderer = function (renderer) {
 	
@@ -954,7 +955,8 @@ var codex =
 	    renderer.createBlockFromData = function (blockData) {
 	
 	        /** New parser */
-	        var pluginName = blockData.type;
+	        var pluginName = blockData.type,
+	            cover = blockData.cover;
 	
 	        /** Get first key of object that stores plugin name */
 	        // for (var pluginName in blockData) break;
@@ -973,9 +975,6 @@ var codex =
 	        /** New Parser */
 	        var block = codex.tools[pluginName].render(blockData.data);
 	
-	        /** Fire the render method with data */
-	        // var block = codex.tools[pluginName].render(blockData[pluginName]);
-	
 	        /** is first-level block stretched */
 	        var stretched = codex.tools[pluginName].isStretched || false;
 	
@@ -983,23 +982,21 @@ var codex =
 	        return {
 	            type: pluginName,
 	            block: block,
-	            stretched: stretched
+	            stretched: stretched,
+	            cover: cover
 	        };
 	    };
 	
 	    return renderer;
 	}({});
 	
-	codex.renderer = renderer;
 	module.exports = renderer;
 
 /***/ },
 /* 6 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
-	
-	var codex = __webpack_require__(1);
 	
 	var saver = function (saver) {
 	
@@ -1092,16 +1089,13 @@ var codex =
 	    return saver;
 	}({});
 	
-	codex.saver = saver;
 	module.exports = saver;
 
 /***/ },
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
-	
-	var codex = __webpack_require__(1);
 	
 	var content = function (content) {
 	
@@ -1275,9 +1269,14 @@ var codex =
 	        var workingBlock = codex.content.currentNode,
 	            newBlockContent = blockData.block,
 	            blockType = blockData.type,
+	            cover = blockData.cover,
 	            isStretched = blockData.stretched;
 	
 	        var newBlock = codex.content.composeNewBlock(newBlockContent, blockType, isStretched);
+	
+	        if (cover === true) {
+	            newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
+	        }
 	
 	        if (workingBlock) {
 	
@@ -1696,7 +1695,6 @@ var codex =
 	    return content;
 	}({});
 	
-	codex.content = content;
 	module.exports = content;
 
 /***/ },
@@ -1704,8 +1702,6 @@ var codex =
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	
-	var codex = __webpack_require__(1);
 	
 	var toolbar = function (toolbar) {
 	
@@ -1741,9 +1737,9 @@ var codex =
 	    toolbar.close = function () {
 	
 	        codex.nodes.toolbar.classList.remove('opened');
-	        this.opened = false;
 	
-	        this.current = null;
+	        toolbar.opened = false;
+	        toolbar.current = null;
 	
 	        for (var button in codex.nodes.toolbarButtons) {
 	            codex.nodes.toolbarButtons[button].classList.remove('selected');
@@ -1799,7 +1795,6 @@ var codex =
 	
 	toolbar.init();
 	
-	codex.toolbar = toolbar;
 	module.exports = toolbar;
 
 /***/ },
@@ -1807,8 +1802,6 @@ var codex =
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	
-	var codex = __webpack_require__(1);
 	
 	var settings = function (settings) {
 	
@@ -2047,11 +2040,9 @@ var codex =
 
 /***/ },
 /* 10 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
-	
-	var codex = __webpack_require__(1);
 	
 	var inline = function (inline) {
 	
@@ -2537,8 +2528,6 @@ var codex =
 
 	'use strict';
 	
-	var codex = __webpack_require__(1);
-	
 	var toolbox = function (toolbox) {
 	
 	    toolbox.init = function () {
@@ -2581,7 +2570,6 @@ var codex =
 	    toolbox.leaf = function () {
 	
 	        var currentTool = codex.toolbar.current,
-	            tool,
 	            tools = Object.keys(codex.tools),
 	            barButtons = codex.nodes.toolbarButtons,
 	            nextToolIndex,
@@ -2589,7 +2577,7 @@ var codex =
 	            toolToSelect;
 	
 	        /** Count toolbox hidden tools */
-	        for (tool in codex.tools) {
+	        for (var tool in codex.tools) {
 	            if (!codex.tools[tool].displayInToolbox) hiddenToolsAmount++;
 	        }
 	
@@ -2603,20 +2591,20 @@ var codex =
 	
 	            nextToolIndex = tools.indexOf(currentTool) + 1;
 	
-	            var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 1);
+	            var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 2);
 	
 	            if (toolIsLastInToolbox) {
 	
 	                nextToolIndex = 0;
 	
 	                /** getting first displayed tool */
-	                for (tool in codex.tools) {
+	                for (var tool in codex.tools) {
 	
-	                    nextToolIndex++;
-	
-	                    if (!codex.tools[tool].displayInToolbox) {
+	                    if (codex.tools[tool].displayInToolbox) {
 	                        break;
 	                    }
+	
+	                    nextToolIndex++;
 	                }
 	            }
 	
@@ -2701,27 +2689,22 @@ var codex =
 
 /***/ },
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	'use strict';
-	
-	var codex = __webpack_require__(1);
+	"use strict";
 	
 	var tools = function (tools) {
 	
 	    return tools;
 	}({});
 	
-	codex.tools = tools;
 	module.exports = tools;
 
 /***/ },
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
-	
-	var codex = __webpack_require__(1);
 	
 	var callbacks = function (callbacks) {
 	
@@ -3305,7 +3288,7 @@ var codex =
 	            range = codex.content.getRange();
 	            selectionLength = range.endOffset - range.startOffset;
 	
-	            if (codex.caret.position.atStart() && !selectionLength) {
+	            if (codex.caret.position.atStart() && !selectionLength && codex.state.inputs[currentInputIndex - 1]) {
 	
 	                codex.content.mergeBlocks(currentInputIndex);
 	            } else {
@@ -3424,16 +3407,13 @@ var codex =
 	    return callbacks;
 	}({});
 	
-	codex.callback = callbacks;
 	module.exports = callbacks;
 
 /***/ },
 /* 14 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
-	
-	var codex = __webpack_require__(1);
 	
 	var draw = function (draw) {
 	
@@ -3725,17 +3705,13 @@ var codex =
 	    return draw;
 	}({});
 	
-	codex.draw = draw;
-	
 	module.exports = draw;
 
 /***/ },
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
-	
-	var codex = __webpack_require__(1);
 	
 	var caret = function (caret) {
 	
@@ -3966,16 +3942,13 @@ var codex =
 	    return caret;
 	}({});
 	
-	codex.caret = caret;
 	module.exports = caret;
 
 /***/ },
 /* 16 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
-	
-	var codex = __webpack_require__(1);
 	
 	var notifications = function (notifications) {
 	
@@ -3986,7 +3959,7 @@ var codex =
 	    notifications.errorThrown = function (errorMsg, event) {
 	
 	        codex.notifications.send('This action is not available currently', event.type, false);
-	    },
+	    };
 	
 	    /**
 	     * Appends notification with different types
@@ -4015,20 +3988,15 @@ var codex =
 	    return notifications;
 	}({});
 	
-	codex.notifications = notifications;
 	module.exports = notifications;
 
 /***/ },
 /* 17 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
-	var codex = __webpack_require__(1);
-	
 	var parser = function (parser) {
-	
-	    parser.init = function () {};
 	
 	    /**
 	     * Splits content by `\n` and returns blocks
@@ -4264,9 +4232,6 @@ var codex =
 	    return parser;
 	}({});
 	
-	parser.init();
-	
-	codex.parser = parser;
 	module.exports = parser;
 
 /***/ }

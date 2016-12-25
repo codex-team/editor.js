@@ -1,5 +1,3 @@
-var codex = require('../editor');
-
 var content = (function(content) {
 
     content.currentNode = null;
@@ -179,9 +177,14 @@ var content = (function(content) {
         var workingBlock    = codex.content.currentNode,
             newBlockContent = blockData.block,
             blockType       = blockData.type,
+            cover           = blockData.cover,
             isStretched     = blockData.stretched;
 
         var newBlock = codex.content.composeNewBlock(newBlockContent, blockType, isStretched);
+
+        if (cover === true) {
+            newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
+        }
 
         if (workingBlock) {
 
@@ -461,7 +464,7 @@ var content = (function(content) {
         codex.content.insertBlock({
             type  : NEW_BLOCK_TYPE,
             block : codex.tools[NEW_BLOCK_TYPE].render({
-                text : newNode,
+                text : newNode
             })
         }, true );
 
@@ -627,5 +630,4 @@ var content = (function(content) {
 
 })({});
 
-codex.content = content;
 module.exports = content;

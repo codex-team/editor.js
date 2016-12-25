@@ -13,11 +13,12 @@ var ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 module.exports = {
 
     entry: {
-        codex: "./index"
+        "whatwg-fetch": "whatwg-fetch",
+        "codex-editor": "./index"
     },
     output: {
-        filename: "./codex.editor.js",
-        library: ["codex", "editor"]
+        filename: "[name].js",
+        library: ["codex"]
     },
 
     watch: true,

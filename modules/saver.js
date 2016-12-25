@@ -1,5 +1,3 @@
-var codex = require('../editor');
-
 var saver = (function(saver) {
 
     /**
@@ -107,5 +105,4 @@ var saver = (function(saver) {
 
 })({});
 
-codex.saver = saver;
 module.exports = saver;
