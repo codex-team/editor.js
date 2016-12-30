@@ -17,30 +17,30 @@ var ui = (function(ui){
          */
         BLOCK_CLASSNAME : 'ce-block',
 
-            /**
-             * @const {String} wrapper for plugins content
-             */
-            BLOCK_CONTENT : 'ce-block__content',
+        /**
+         * @const {String} wrapper for plugins content
+         */
+        BLOCK_CONTENT : 'ce-block__content',
 
-            /**
-             * @const {String} BLOCK_STRETCHED - makes block stretched
-             */
-            BLOCK_STRETCHED : 'ce-block--stretched',
+        /**
+         * @const {String} BLOCK_STRETCHED - makes block stretched
+         */
+        BLOCK_STRETCHED : 'ce-block--stretched',
 
-            /**
-             * @const {String} BLOCK_HIGHLIGHTED - adds background
-             */
-            BLOCK_HIGHLIGHTED : 'ce-block--focused',
+        /**
+         * @const {String} BLOCK_HIGHLIGHTED - adds background
+         */
+        BLOCK_HIGHLIGHTED : 'ce-block--focused',
 
-            /**
-             * @const {String} - highlights covered blocks
-             */
-            BLOCK_IN_FEED_MODE : 'ce-block--feed-mode',
+        /**
+         * @const {String} - highlights covered blocks
+         */
+        BLOCK_IN_FEED_MODE : 'ce-block--feed-mode',
 
-            /**
-             * @const {String} - for all default settings
-             */
-            SETTINGS_ITEM : 'ce-settings__item'
+        /**
+         * @const {String} - for all default settings
+         */
+        SETTINGS_ITEM : 'ce-settings__item'
 
     };
 
@@ -264,7 +264,10 @@ var ui = (function(ui){
         }, false );
 
         /** All keydowns on Document */
-        codex.nodes.redactor.addEventListener('keydown', codex.callback.globalKeydown, false );
+        document.addEventListener('keydown', codex.callback.globalKeydown, false );
+
+        /** All keydowns on Redactor zone */
+        codex.nodes.redactor.addEventListener('keydown', codex.callback.redactorKeyDown, false);
 
         /** All keydowns on Document */
         document.addEventListener('keyup', codex.callback.globalKeyup, false );

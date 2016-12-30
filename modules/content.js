@@ -3,12 +3,22 @@
  * Works with DOM
  *
  * @author Codex Team
- * @version 1.1.2
+ * @version 1.1.6
  */
 
 var content = (function(content) {
 
+    /**
+     * Links to current active block
+     * @type {null | Element}
+     */
     content.currentNode = null;
+
+    /**
+     * clicked in redactor area
+     * @type {null | Boolean}
+     */
+    content.editorArea = null;
 
     /**
      * Synchronizes redactor with original textarea
@@ -259,6 +269,12 @@ var content = (function(content) {
 
         }
 
+        /**
+         * Block is inserted, wait for new click that defined focusing on editors area
+         * @type {boolean}
+         */
+        content.editorArea = false;
+
     };
 
     /**
@@ -464,7 +480,7 @@ var content = (function(content) {
         newNode = newNode.innerHTML;
 
         /** This type of block creates when enter is pressed */
-        var NEW_BLOCK_TYPE = 'paragraph';
+        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
 
         /**
          * Make new paragraph with text after caret
@@ -546,7 +562,6 @@ var content = (function(content) {
      * Sanitizes HTML content
      * @param {Element} target - inserted element
      * @uses Sanitize library and BASIC configuration
-     * @todo Fix caret positioning
      */
     content.sanitize = function(target) {
 
@@ -554,23 +569,50 @@ var content = (function(content) {
             return;
         }
 
+        /**
+         * Sanitize configuration.
+         * Using basic sanitize
+         */
         var sanitizer = new codex.sanitizer(codex.sanitizer.Config.BASIC);
-        var clearHTML = sanitizer.clean_node(codex.content.currentNode.childNodes[0]);
 
-        target.innerHTML = "";
-        target.appendChild(clearHTML);
+        var clearHTML = sanitizer.clean_node(codex.content.currentNode.childNodes[0]),
+            i,
+            tool;
+
+        for (i = 0; i < clearHTML.childNodes.length; i++) {
+
+            var tag = clearHTML.childNodes[i],
+                blockType = null;
+
+            for (tool in codex.tools) {
+
+                var handleTags = codex.tools[tool].handleTagOnPaste;
+
+                if (!handleTags) {
+                    continue;
+                }
+
+                if (handleTags.indexOf(tag.tagName) !== -1) {
+                    blockType = codex.tools[tool];
+                    break;
+                }
+
+            }
+
+            if (blockType) {
+                codex.parser.insertPastedContent(blockType, tag);
+            }
+
+        }
 
         /**
-         * Preliminary solution:
-         * Always set caret at the end of input
+         * Remove node where data pasted
          */
-        var inputIndex = codex.caret.getCurrentInputIndex();
+        target = content.getFirstLevelBlock(target);
 
-        /**
-         * setting to current block:
-         * (index + 1) minus 1 is current
-         */
-        codex.caret.setToPreviousBlock(inputIndex + 1);
+        if (target) {
+            target.remove();
+        }
 
     };
 

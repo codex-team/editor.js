@@ -3,7 +3,7 @@
  * Codex Editor
  *
  * @author Codex Team
- * @version 1.0.6
+ * @version 1.1.4
  */
 
 var codex = (function(codex){

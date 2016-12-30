@@ -65,7 +65,7 @@ var codex =
 	 * Codex Editor
 	 *
 	 * @author Codex Team
-	 * @version 1.0.6
+	 * @version 1.1.4
 	 */
 	
 	var codex = function (codex) {
@@ -87,7 +87,7 @@ var codex =
 	        codex.sanitizer = __webpack_require__(18);
 	    };
 	
-	    codex.version = ("1.0.12");
+	    codex.version = ("1.1.0");
 	
 	    /**
 	     * @public
@@ -200,7 +200,7 @@ var codex =
 	 * Codex Editor Core
 	 *
 	 * @author Codex Team
-	 * @version 1.0
+	 * @version 1.1.2
 	 */
 	
 	var core = function (core) {
@@ -222,6 +222,14 @@ var codex =
 	
 	            if (userSettings.data) {
 	                codex.state.blocks = userSettings.data;
+	            }
+	
+	            if (userSettings.initialBlockPlugin) {
+	                codex.settings.initialBlockPlugin = userSettings.initialBlockPlugin;
+	            }
+	
+	            if (userSettings.uploadImagesUrl) {
+	                codex.settings.uploadImagesUrl = userSettings.uploadImagesUrl;
 	            }
 	
 	            codex.nodes.textarea = document.getElementById(userSettings.textareaId || codex.settings.textareaId);
@@ -624,7 +632,10 @@ var codex =
 	        }, false);
 	
 	        /** All keydowns on Document */
-	        codex.nodes.redactor.addEventListener('keydown', codex.callback.globalKeydown, false);
+	        document.addEventListener('keydown', codex.callback.globalKeydown, false);
+	
+	        /** All keydowns on Redactor zone */
+	        codex.nodes.redactor.addEventListener('keydown', codex.callback.redactorKeyDown, false);
 	
 	        /** All keydowns on Document */
 	        document.addEventListener('keyup', codex.callback.globalKeyup, false);
@@ -1137,12 +1148,22 @@ var codex =
 	 * Works with DOM
 	 *
 	 * @author Codex Team
-	 * @version 1.1.2
+	 * @version 1.1.6
 	 */
 	
 	var content = function (content) {
 	
+	    /**
+	     * Links to current active block
+	     * @type {null | Element}
+	     */
 	    content.currentNode = null;
+	
+	    /**
+	     * clicked in redactor area
+	     * @type {null | Boolean}
+	     */
+	    content.editorArea = null;
 	
 	    /**
 	     * Synchronizes redactor with original textarea
@@ -1375,6 +1396,12 @@ var codex =
 	                }, 10);
 	            }
 	        }
+	
+	        /**
+	         * Block is inserted, wait for new click that defined focusing on editors area
+	         * @type {boolean}
+	         */
+	        content.editorArea = false;
 	    };
 	
 	    /**
@@ -1574,7 +1601,7 @@ var codex =
 	        newNode = newNode.innerHTML;
 	
 	        /** This type of block creates when enter is pressed */
-	        var NEW_BLOCK_TYPE = 'paragraph';
+	        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
 	
 	        /**
 	         * Make new paragraph with text after caret
@@ -1652,7 +1679,6 @@ var codex =
 	     * Sanitizes HTML content
 	     * @param {Element} target - inserted element
 	     * @uses Sanitize library and BASIC configuration
-	     * @todo Fix caret positioning
 	     */
 	    content.sanitize = function (target) {
 	
@@ -1660,23 +1686,48 @@ var codex =
 	            return;
 	        }
 	
+	        /**
+	         * Sanitize configuration.
+	         * Using basic sanitize
+	         */
 	        var sanitizer = new codex.sanitizer(codex.sanitizer.Config.BASIC);
-	        var clearHTML = sanitizer.clean_node(codex.content.currentNode.childNodes[0]);
 	
-	        target.innerHTML = "";
-	        target.appendChild(clearHTML);
+	        var clearHTML = sanitizer.clean_node(codex.content.currentNode.childNodes[0]),
+	            i,
+	            tool;
+	
+	        for (i = 0; i < clearHTML.childNodes.length; i++) {
+	
+	            var tag = clearHTML.childNodes[i],
+	                blockType = null;
+	
+	            for (tool in codex.tools) {
+	
+	                var handleTags = codex.tools[tool].handleTagOnPaste;
+	
+	                if (!handleTags) {
+	                    continue;
+	                }
+	
+	                if (handleTags.indexOf(tag.tagName) !== -1) {
+	                    blockType = codex.tools[tool];
+	                    break;
+	                }
+	            }
+	
+	            if (blockType) {
+	                codex.parser.insertPastedContent(blockType, tag);
+	            }
+	        }
 	
 	        /**
-	         * Preliminary solution:
-	         * Always set caret at the end of input
+	         * Remove node where data pasted
 	         */
-	        var inputIndex = codex.caret.getCurrentInputIndex();
+	        target = content.getFirstLevelBlock(target);
 	
-	        /**
-	         * setting to current block:
-	         * (index + 1) minus 1 is current
-	         */
-	        codex.caret.setToPreviousBlock(inputIndex + 1);
+	        if (target) {
+	            target.remove();
+	        }
 	    };
 	
 	    return content;
@@ -2741,7 +2792,7 @@ var codex =
 	 * Codex Editor callbacks module
 	 *
 	 * @author Codex Team
-	 * @version 1.0
+	 * @version 1.1.3
 	 */
 	
 	var callbacks = function (callbacks) {
@@ -2750,10 +2801,17 @@ var codex =
 	
 	    callbacks.globalKeydown = function (event) {
 	        switch (event.keyCode) {
+	            case codex.core.keys.ENTER:
+	                codex.callback.enterKeyPressed(event);break;
+	        }
+	    };
+	
+	    callbacks.redactorKeyDown = function (event) {
+	        switch (event.keyCode) {
 	            case codex.core.keys.TAB:
 	                codex.callback.tabKeyPressed(event);break;
 	            case codex.core.keys.ENTER:
-	                codex.callback.enterKeyPressed(event);break;
+	                codex.callback.enterKeyPressedOnRedactorZone(event);break;
 	            case codex.core.keys.ESC:
 	                codex.callback.escapeKeyPressed(event);break;
 	            default:
@@ -2786,17 +2844,9 @@ var codex =
 	        event.preventDefault();
 	    };
 	
-	    /**
-	     * ENTER key handler
-	     * Makes new paragraph block
-	     */
 	    callbacks.enterKeyPressed = function (event) {
 	
-	        /** Set current node */
-	        var firstLevelBlocksArea = codex.callback.clickedOnFirstLevelBlockArea();
-	
-	        if (firstLevelBlocksArea) {
-	            event.preventDefault();
+	        if (codex.content.editorArea) {
 	
 	            /**
 	             * it means that we lose input index, saved index before is not correct
@@ -2805,8 +2855,14 @@ var codex =
 	            codex.caret.inputIndex = -1;
 	
 	            codex.callback.enterPressedOnBlock();
-	            return;
 	        }
+	    };
+	
+	    /**
+	     * ENTER key handler
+	     * Makes new paragraph block
+	     */
+	    callbacks.enterKeyPressedOnRedactorZone = function (event) {
 	
 	        if (event.target.contentEditable == 'true') {
 	
@@ -2831,7 +2887,7 @@ var codex =
 	        var enableLineBreaks = codex.tools[tool].enableLineBreaks;
 	
 	        /** This type of block creates when enter is pressed */
-	        var NEW_BLOCK_TYPE = 'paragraph';
+	        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
 	
 	        /**
 	         * When toolbar is opened, select tool instead of making new paragraph
@@ -2843,6 +2899,12 @@ var codex =
 	            codex.toolbar.toolbox.toolClicked(event);
 	
 	            codex.toolbar.close();
+	
+	            /**
+	             * Stop other listeners callback executions
+	             */
+	            event.stopPropagation();
+	            event.stopImmediatePropagation();
 	
 	            return;
 	        }
@@ -2951,6 +3013,8 @@ var codex =
 	
 	    callbacks.redactorClicked = function (event) {
 	
+	        callbacks.isClickedOnFirstLevelBlockArea();
+	
 	        codex.content.workingNodeChanged(event.target);
 	
 	        codex.ui.saveInputs();
@@ -2985,13 +3049,13 @@ var codex =
 	            }
 	
 	            /** If input is empty, then we set caret to the last input */
-	            if (codex.state.inputs.length && codex.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == 'paragraph') {
+	            if (codex.state.inputs.length && codex.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == codex.settings.initialBlockPlugin) {
 	
 	                codex.caret.setToBlock(indexOfLastInput);
 	            } else {
 	
 	                /** Create new input when caret clicked in redactors area */
-	                var NEW_BLOCK_TYPE = 'paragraph';
+	                var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
 	
 	                codex.content.insertBlock({
 	                    type: NEW_BLOCK_TYPE,
@@ -3044,7 +3108,7 @@ var codex =
 	        var currentNodeType = codex.content.currentNode.dataset.tool;
 	
 	        /** Mark current block*/
-	        if (currentNodeType != 'paragraph' || !inputIsEmpty) {
+	        if (currentNodeType != codex.settings.initialBlockPlugin || !inputIsEmpty) {
 	
 	            codex.content.markBlock();
 	        }
@@ -3057,7 +3121,7 @@ var codex =
 	     * Therefore, to be sure that we've clicked first-level block area, we should have currentNode, which always
 	     * specifies to the first-level block. Other cases we just ignore.
 	     */
-	    callbacks.clickedOnFirstLevelBlockArea = function () {
+	    callbacks.isClickedOnFirstLevelBlockArea = function () {
 	
 	        var selection = window.getSelection(),
 	            anchorNode = selection.anchorNode,
@@ -3065,7 +3129,7 @@ var codex =
 	
 	        if (selection.rangeCount == 0) {
 	
-	            return true;
+	            codex.content.editorArea = true;
 	        } else {
 	
 	            if (!codex.core.isDomNode(anchorNode)) {
@@ -3090,7 +3154,7 @@ var codex =
 	            }
 	
 	            /** If editable element founded, flag is "TRUE", Therefore we return "FALSE" */
-	            return flag ? false : true;
+	            codex.content.editorArea = flag ? false : true;
 	        }
 	    };
 	
@@ -3303,7 +3367,7 @@ var codex =
 	     */
 	    callbacks.enterPressedOnBlock = function (event) {
 	
-	        var NEW_BLOCK_TYPE = 'paragraph';
+	        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
 	
 	        codex.content.insertBlock({
 	            type: NEW_BLOCK_TYPE,
@@ -3394,7 +3458,11 @@ var codex =
 	        setTimeout(function () {
 	
 	            codex.content.sanitize(node);
+	
+	            event.preventDefault();
 	        }, 10);
+	
+	        event.stopImmediatePropagation();
 	    };
 	
 	    callbacks._blockPaste = function (event) {
@@ -4053,238 +4121,26 @@ var codex =
 /* 17 */
 /***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 	
 	/**
 	 * Codex Editor Parser Module
 	 *
 	 * @author Codex Team
-	 * @version 1.0
+	 * @version 1.1
 	 */
 	
 	var parser = function (parser) {
 	
-	    /**
-	     * Splits content by `\n` and returns blocks
-	     */
-	    parser.getSeparatedTextFromContent = function (content) {
-	        return content.split('\n');
-	    };
-	
 	    /** inserting text */
-	    parser.insertPastedContent = function (content) {
+	    parser.insertPastedContent = function (blockType, tag) {
 	
-	        var blocks = this.getSeparatedTextFromContent(content),
-	            i,
-	            inputIndex = cEditor.caret.getCurrentInputIndex(),
-	            textNode,
-	            parsedTextContent;
-	
-	        for (i = 0; i < blocks.length; i++) {
-	
-	            blocks[i].trim();
-	
-	            if (blocks[i]) {
-	                var data = cEditor.draw.pluginsRender('paragraph', blocks[i]);
-	                cEditor.content.insertBlock(data);
-	            }
-	        }
-	    };
-	
-	    /**
-	     * Asynchronously parses textarea input string to HTML editor blocks
-	     */
-	    parser.parseTextareaContent = function () {
-	
-	        var initialContent = cEditor.nodes.textarea.value;
-	
-	        if (initialContent.trim().length === 0) return true;
-	
-	        cEditor.parser
-	
-	        /** Get child nodes async-aware */
-	        .getNodesFromString(initialContent)
-	
-	        /** Then append nodes to the redactor */
-	        .then(cEditor.parser.appendNodesToRedactor)
-	
-	        /** Write log if something goes wrong */
-	        .catch(function (error) {
-	            cEditor.core.log('Error while parsing content: %o', 'warn', error);
+	        codex.content.insertBlock({
+	            type: blockType.type,
+	            block: blockType.render({
+	                text: tag.innerHTML
+	            })
 	        });
-	    };
-	
-	    /**
-	     * Parses string to nodeList
-	     * @param string inputString
-	     * @return Primise -> nodeList
-	     */
-	    parser.getNodesFromString = function (inputString) {
-	
-	        return Promise.resolve().then(function () {
-	
-	            var contentHolder = document.createElement('div');
-	
-	            contentHolder.innerHTML = inputString;
-	
-	            /**
-	             *    Returning childNodes will include:
-	             *        - Elements (html-tags),
-	             *        - Texts (empty-spaces or non-wrapped strings )
-	             *        - Comments and other
-	             */
-	            return contentHolder.childNodes;
-	        });
-	    };
-	
-	    /**
-	     * Appends nodes to the redactor
-	     * @param nodeList nodes - list for nodes to append
-	     */
-	    parser.appendNodesToRedactor = function (nodes) {
-	
-	        /**
-	         * Sequence of one-by-one nodes appending
-	         * Uses to save blocks order after async-handler
-	         */
-	        var nodeSequence = Promise.resolve();
-	
-	        for (var index = 0; index < nodes.length; index++) {
-	
-	            /** Add node to sequence at specified index */
-	            cEditor.parser.appendNodeAtIndex(nodeSequence, nodes, index);
-	        }
-	    };
-	
-	    /**
-	     * Append node at specified index
-	     */
-	    parser.appendNodeAtIndex = function (nodeSequence, nodes, index) {
-	
-	        /** We need to append node to sequence */
-	        nodeSequence
-	
-	        /** first, get node async-aware */
-	        .then(function () {
-	
-	            return cEditor.parser.getNodeAsync(nodes, index);
-	        })
-	
-	        /**
-	         *    second, compose editor-block from node
-	         *    and append it to redactor
-	         */
-	        .then(function (node) {
-	
-	            var block = cEditor.parser.createBlockByDomNode(node);
-	
-	            if (cEditor.core.isDomNode(block)) {
-	
-	                block.contentEditable = "true";
-	
-	                /** Mark node as redactor block*/
-	                block.classList.add('ce-block');
-	
-	                /** Append block to the redactor */
-	                cEditor.nodes.redactor.appendChild(block);
-	
-	                /** Save block to the cEditor.state array */
-	                cEditor.state.blocks.push(block);
-	
-	                return block;
-	            }
-	            return null;
-	        }).then(cEditor.ui.addBlockHandlers)
-	
-	        /** Log if something wrong with node */
-	        .catch(function (error) {
-	            cEditor.core.log('Node skipped while parsing because %o', 'warn', error);
-	        });
-	    };
-	
-	    /**
-	     * Asynchronously returns node from nodeList by index
-	     * @return Promise to node
-	     */
-	    parser.getNodeAsync = function (nodeList, index) {
-	
-	        return Promise.resolve().then(function () {
-	
-	            return nodeList.item(index);
-	        });
-	    };
-	
-	    /**
-	     * Creates editor block by DOM node
-	     *
-	     * First-level blocks (see cEditor.settings.blockTags) saves as-is,
-	     * other wrapps with <p>-tag
-	     *
-	     * @param DOMnode node
-	     * @return First-level node (paragraph)
-	     */
-	    parser.createBlockByDomNode = function (node) {
-	
-	        /** First level nodes already appears as blocks */
-	        if (cEditor.parser.isFirstLevelBlock(node)) {
-	
-	            /** Save plugin type in data-type */
-	            node = this.storeBlockType(node);
-	
-	            return node;
-	        }
-	
-	        /** Other nodes wraps into parent block (paragraph-tag) */
-	        var parentBlock,
-	            nodeContent = node.textContent.trim(),
-	            isPlainTextNode = node.nodeType != cEditor.core.nodeTypes.TAG;
-	
-	        /** Skip empty textNodes with space-symbols */
-	        if (isPlainTextNode && !nodeContent.length) return null;
-	
-	        /** Make <p> tag */
-	        parentBlock = cEditor.draw.block('P');
-	
-	        if (isPlainTextNode) {
-	            parentBlock.textContent = nodeContent.replace(/(\s){2,}/, '$1'); // remove double spaces
-	        } else {
-	            parentBlock.appendChild(node);
-	        }
-	
-	        /** Save plugin type in data-type */
-	        parentBlock = this.storeBlockType(parentBlock);
-	
-	        return parentBlock;
-	    };
-	
-	    /**
-	     * It's a crutch
-	     * - - - - - - -
-	     * We need block type stored as data-attr
-	     * Now supports only simple blocks : P, HEADER, QUOTE, CODE
-	     * Remove it after updating parser module for the block-oriented structure:
-	     *       - each block must have stored type
-	     * @param {Element} node
-	     */
-	    parser.storeBlockType = function (node) {
-	
-	        switch (node.tagName) {
-	            case 'P':
-	                node.dataset.tool = 'paragraph';break;
-	            case 'H1':
-	            case 'H2':
-	            case 'H3':
-	            case 'H4':
-	            case 'H5':
-	            case 'H6':
-	                node.dataset.tool = 'header';break;
-	            case 'BLOCKQUOTE':
-	                node.dataset.tool = 'quote';break;
-	            case 'CODE':
-	                node.dataset.tool = 'code';break;
-	        }
-	
-	        return node;
 	    };
 	
 	    /**
@@ -4575,7 +4431,7 @@ var codex =
 	}
 	
 	Sanitize.Config.BASIC = {
-	    elements: ['a', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'dl', 'dt', 'em', 'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub', 'sup', 'u', 'ul'],
+	    elements: ['a', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'dl', 'dt', 'em', 'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub', 'sup', 'u', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
 	    attributes: {
 	        'a': ['href'],
 	        'blockquote': ['cite'],
