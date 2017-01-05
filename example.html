@@ -45,6 +45,9 @@
 <script src="plugins/paste/paste.js"></script>
 <link rel="stylesheet" href="plugins/paste/paste.css">
 
+<script src="plugins/youtube/youtube.js"></script>
+<link rel="stylesheet" href="plugins/youtube/youtube.css">
+
 <script>
     codex.start({
         textareaId : "codex_area",
@@ -161,6 +164,17 @@
                 settings: null,
                 render: twitterTool.render,
                 save: twitterTool.save,
+                displayInToolbox: false,
+                enableLineBreaks: false,
+                allowedToPaste: false
+            },
+            youtube: {
+                type: 'youtube',
+                make: youtubeTool.make,
+                appendCallback: null,
+                settings: null,
+                render: youtubeTool.render,
+                save: youtubeTool.save,
                 displayInToolbox: false,
                 enableLineBreaks: false,
                 allowedToPaste: false

@@ -1,0 +1,10 @@
+.ce-redactor .youtube {
+    width: 100%;
+    max-width: 650px;
+    margin: 10px auto;
+}
+
+.youtube__loader {
+    background: url("loading.gif") !important;
+    opacity: 0.1;
+}

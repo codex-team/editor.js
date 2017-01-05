@@ -90,13 +90,15 @@ pasteTool.callbacks = {
                 twitter : new RegExp("http?.+twitter.com?.+\/"),
                 facebook : /https?.+facebook.+\/\d+\?/,
                 vk : /https?.+vk?.com\/feed\?w=wall\d+_\d+/,
+                youtube : /https?.+youtube.com\/watch\?v=.{11}/
             },
 
             image  = regexTemplates.image.test(string),
             instagram = regexTemplates.instagram.exec(string),
             twitter = regexTemplates.twitter.exec(string),
             facebook = regexTemplates.facebook.test(string),
-            vk = regexTemplates.vk.test(string);
+            vk = regexTemplates.vk.test(string),
+            youtube = regexTemplates.youtube.test(string);
 
         if (image) {
 
@@ -117,6 +119,10 @@ pasteTool.callbacks = {
         } else if (vk) {
 
             pasteTool.callbacks.vkMedia(string);
+
+        } else if (youtube) {
+
+            pasteTool.callbacks.youtubeMedia(string);
 
         }
 
@@ -173,7 +179,6 @@ pasteTool.callbacks = {
      * @param url
      */
     instagramMedia : function(url) {
-
         var fullUrl = url.input,
             data;
 
@@ -184,6 +189,22 @@ pasteTool.callbacks = {
 
         codex.tools.instagram.make(data, true);
 
+    },
+
+    /**
+     * callback for youtube url's
+     * Using iframe to render
+     * @uses Youtube tool
+     * @param url
+     */
+    youtubeMedia : function(url) {
+        var data = {
+            youtube_url: url
+        };
+
+        console.log(url);
+
+        codex.tools.youtube.make(data, true);
     },
 
     /**
