@@ -2,7 +2,7 @@
  * Codex Editor callbacks module
  *
  * @author Codex Team
- * @version 1.1.3
+ * @version 1.2.1
  */
 
 var callbacks = (function(callbacks) {
@@ -737,7 +737,7 @@ var callbacks = (function(callbacks) {
         /**
          * configuration of the observer:
          */
-        var config = { attributes: true, childList: true, characterData: false };
+        var config = { attributes: true, childList: true, characterData: false, subtree : true };
 
         // pass in the target node, as well as the observer options
         observer.observe(codex.state.inputs[currentInputIndex], config);
@@ -747,7 +747,20 @@ var callbacks = (function(callbacks) {
      * Sends all mutations to paste handler
      */
     callbacks.handlePasteEvents = function(mutations) {
-        mutations.forEach(codex.content.paste);
+
+        var self = this,
+            callback;
+
+        /**
+         * using closure to call the function immediatelly.
+         * Also, we should sanitize pasted or changed data one time and ignore
+         * changings which makes sanitize method.
+         * For that, we need to send Context, MutationObserver.__proto__ that contains
+         * observer disconnect method.
+         */
+        mutations.forEach(function(mutation) {
+            (codex.content.paste.bind(self, mutation))();
+        });
     };
 
     /**

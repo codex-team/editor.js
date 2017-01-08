@@ -3,7 +3,7 @@
  * Works with DOM
  *
  * @author Codex Team
- * @version 1.1.6
+ * @version 1.2.0
  */
 
 var content = (function(content) {
@@ -533,7 +533,7 @@ var content = (function(content) {
             tool        = workingNode.dataset.tool;
 
         if (codex.tools[tool].allowedToPaste) {
-            codex.content.sanitize(mutation.addedNodes);
+            (codex.content.sanitize.bind(this, mutation.addedNodes))();
         } else {
             codex.content.pasteTextContent(mutation.addedNodes);
         }
@@ -569,50 +569,86 @@ var content = (function(content) {
             return;
         }
 
+        var node = target[0];
+
+        if (!node) {
+            return;
+        }
+
+        /**
+         * Disconnect Observer
+         * hierarchy of function calls inherits context of observer
+         */
+        this.disconnect();
+
         /**
          * Sanitize configuration.
          * Using basic sanitize
          */
         var sanitizer = new codex.sanitizer(codex.sanitizer.Config.BASIC);
 
-        var clearHTML = sanitizer.clean_node(codex.content.currentNode.childNodes[0]),
+        var clearHTML,
             i,
             tool;
 
-        for (i = 0; i < clearHTML.childNodes.length; i++) {
-
-            var tag = clearHTML.childNodes[i],
-                blockType = null;
-
-            for (tool in codex.tools) {
-
-                var handleTags = codex.tools[tool].handleTagOnPaste;
-
-                if (!handleTags) {
-                    continue;
-                }
-
-                if (handleTags.indexOf(tag.tagName) !== -1) {
-                    blockType = codex.tools[tool];
-                    break;
-                }
-
-            }
-
-            if (blockType) {
-                codex.parser.insertPastedContent(blockType, tag);
-            }
-
+        /**
+         * Don't sanitize text node
+         */
+        if (node.nodeType == codex.core.nodeTypes.TEXT) {
+            return;
         }
+
+        /**
+         * Clear dirty content
+         */
+        clearHTML = sanitizer.clean_node(node);
+        node.replaceWith(clearHTML);
+
+        // for(i = 0; i < target.childNodes.length; i++) {
+
+            // var node = target.childNodes[i];
+
+            // console.log("Узел %o", node);
+
+            // node.replaceWith(clearHTML);
+        // }
+
+        // return;
+
+        // for (i = 0; i < clearHTML.childNodes.length; i++) {
+        //
+        //     var tag = clearHTML.childNodes[i],
+        //         blockType = null;
+        //
+        //     for (tool in codex.tools) {
+        //
+        //         var handleTags = codex.tools[tool].handleTagOnPaste;
+        //
+        //         if (!handleTags) {
+        //             continue;
+        //         }
+        //
+        //         if (handleTags.indexOf(tag.tagName) !== -1) {
+        //             blockType = codex.tools[tool];
+        //             break;
+        //         }
+        //
+        //     }
+        //
+        //     if (blockType) {
+        //         codex.parser.insertPastedContent(blockType, tag);
+        //     }
+        //
+        // }
 
         /**
          * Remove node where data pasted
          */
-        target = content.getFirstLevelBlock(target);
+        // target = content.getFirstLevelBlock(target);
 
-        if (target) {
-            target.remove();
-        }
+        // if (target) {
+        //     target.remove();
+        // }
 
     };
 

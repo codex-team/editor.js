@@ -65,7 +65,7 @@ var codex =
 	 * Codex Editor
 	 *
 	 * @author Codex Team
-	 * @version 1.1.4
+	 * @version 1.2.1
 	 */
 	
 	var codex = function (codex) {
@@ -87,7 +87,7 @@ var codex =
 	        codex.sanitizer = __webpack_require__(18);
 	    };
 	
-	    codex.version = ("1.1.0");
+	    codex.version = ("1.2.2");
 	
 	    /**
 	     * @public
@@ -388,7 +388,7 @@ var codex =
 	 * Codex Editor UI module
 	 *
 	 * @author Codex Team
-	 * @version 1.0
+	 * @version 1.1
 	 */
 	
 	var ui = function (ui) {
@@ -693,9 +693,23 @@ var codex =
 	
 	        /**
 	         * Pasting content from another source
+	         * We have two type of sanitization
+	         * First - uses deep-first search algorithm to get sub nodes,
+	         * sanitizes whole Block_content and replaces cleared nodes
+	         *
+	         * Method is used in codex.callback.blockPaste(event)
+	         *
+	         * Secont - uses Mutation observer.
+	         * Observer "observe" DOM changes and send changings to callback.
+	         * Callback gets changed node, not whole Block_content.
+	         * Inserted or changed node, which we've gotten have been cleared and replaced with diry node
+	         *
+	         * Method is used in codex.callback._blockPaste(event)
+	         *
+	         * @uses codex.callback._blockPaste(event), the second method.
 	         */
 	        block.addEventListener('paste', function (event) {
-	            codex.callback.blockPaste(event);
+	            codex.callback._blockPaste(event);
 	        }, false);
 	
 	        block.addEventListener('mouseup', function () {
@@ -1148,7 +1162,7 @@ var codex =
 	 * Works with DOM
 	 *
 	 * @author Codex Team
-	 * @version 1.1.6
+	 * @version 1.2.0
 	 */
 	
 	var content = function (content) {
@@ -1651,7 +1665,7 @@ var codex =
 	            tool = workingNode.dataset.tool;
 	
 	        if (codex.tools[tool].allowedToPaste) {
-	            codex.content.sanitize(mutation.addedNodes);
+	            codex.content.sanitize.bind(this, mutation.addedNodes)();
 	        } else {
 	            codex.content.pasteTextContent(mutation.addedNodes);
 	        }
@@ -1686,48 +1700,84 @@ var codex =
 	            return;
 	        }
 	
+	        var node = target[0];
+	
+	        if (!node) {
+	            return;
+	        }
+	
+	        /**
+	         * Disconnect Observer
+	         * hierarchy of function calls inherits context of observer
+	         */
+	        this.disconnect();
+	
 	        /**
 	         * Sanitize configuration.
 	         * Using basic sanitize
 	         */
 	        var sanitizer = new codex.sanitizer(codex.sanitizer.Config.BASIC);
 	
-	        var clearHTML = sanitizer.clean_node(codex.content.currentNode.childNodes[0]),
-	            i,
-	            tool;
+	        var clearHTML, i, tool;
 	
-	        for (i = 0; i < clearHTML.childNodes.length; i++) {
-	
-	            var tag = clearHTML.childNodes[i],
-	                blockType = null;
-	
-	            for (tool in codex.tools) {
-	
-	                var handleTags = codex.tools[tool].handleTagOnPaste;
-	
-	                if (!handleTags) {
-	                    continue;
-	                }
-	
-	                if (handleTags.indexOf(tag.tagName) !== -1) {
-	                    blockType = codex.tools[tool];
-	                    break;
-	                }
-	            }
-	
-	            if (blockType) {
-	                codex.parser.insertPastedContent(blockType, tag);
-	            }
+	        /**
+	         * Don't sanitize text node
+	         */
+	        if (node.nodeType == codex.core.nodeTypes.TEXT) {
+	            return;
 	        }
+	
+	        /**
+	         * Clear dirty content
+	         */
+	        clearHTML = sanitizer.clean_node(node);
+	        node.replaceWith(clearHTML);
+	
+	        // for(i = 0; i < target.childNodes.length; i++) {
+	
+	        // var node = target.childNodes[i];
+	
+	        // console.log("Узел %o", node);
+	
+	        // node.replaceWith(clearHTML);
+	        // }
+	
+	        // return;
+	
+	        // for (i = 0; i < clearHTML.childNodes.length; i++) {
+	        //
+	        //     var tag = clearHTML.childNodes[i],
+	        //         blockType = null;
+	        //
+	        //     for (tool in codex.tools) {
+	        //
+	        //         var handleTags = codex.tools[tool].handleTagOnPaste;
+	        //
+	        //         if (!handleTags) {
+	        //             continue;
+	        //         }
+	        //
+	        //         if (handleTags.indexOf(tag.tagName) !== -1) {
+	        //             blockType = codex.tools[tool];
+	        //             break;
+	        //         }
+	        //
+	        //     }
+	        //
+	        //     if (blockType) {
+	        //         codex.parser.insertPastedContent(blockType, tag);
+	        //     }
+	        //
+	        // }
 	
 	        /**
 	         * Remove node where data pasted
 	         */
-	        target = content.getFirstLevelBlock(target);
+	        // target = content.getFirstLevelBlock(target);
 	
-	        if (target) {
-	            target.remove();
-	        }
+	        // if (target) {
+	        //     target.remove();
+	        // }
 	    };
 	
 	    return content;
@@ -2792,7 +2842,7 @@ var codex =
 	 * Codex Editor callbacks module
 	 *
 	 * @author Codex Team
-	 * @version 1.1.3
+	 * @version 1.2.1
 	 */
 	
 	var callbacks = function (callbacks) {
@@ -3477,7 +3527,7 @@ var codex =
 	        /**
 	         * configuration of the observer:
 	         */
-	        var config = { attributes: true, childList: true, characterData: false };
+	        var config = { attributes: true, childList: true, characterData: false, subtree: true };
 	
 	        // pass in the target node, as well as the observer options
 	        observer.observe(codex.state.inputs[currentInputIndex], config);
@@ -3487,7 +3537,20 @@ var codex =
 	     * Sends all mutations to paste handler
 	     */
 	    callbacks.handlePasteEvents = function (mutations) {
-	        mutations.forEach(codex.content.paste);
+	
+	        var self = this,
+	            callback;
+	
+	        /**
+	         * using closure to call the function immediatelly.
+	         * Also, we should sanitize pasted or changed data one time and ignore
+	         * changings which makes sanitize method.
+	         * For that, we need to send Context, MutationObserver.__proto__ that contains
+	         * observer disconnect method.
+	         */
+	        mutations.forEach(function (mutation) {
+	            codex.content.paste.bind(self, mutation)();
+	        });
 	    };
 	
 	    /**
@@ -4431,7 +4494,7 @@ var codex =
 	}
 	
 	Sanitize.Config.BASIC = {
-	    elements: ['a', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'dl', 'dt', 'em', 'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub', 'sup', 'u', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
+	    elements: ['a', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'dl', 'dt', 'em', 'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub', 'sup', 'u', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span'],
 	    attributes: {
 	        'a': ['href'],
 	        'blockquote': ['cite'],

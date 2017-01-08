@@ -2,7 +2,7 @@
  * Codex Editor UI module
  *
  * @author Codex Team
- * @version 1.0
+ * @version 1.1
  */
 
 var ui = (function(ui){
@@ -327,9 +327,23 @@ var ui = (function(ui){
 
         /**
          * Pasting content from another source
+         * We have two type of sanitization
+         * First - uses deep-first search algorithm to get sub nodes,
+         * sanitizes whole Block_content and replaces cleared nodes
+         *
+         * Method is used in codex.callback.blockPaste(event)
+         *
+         * Secont - uses Mutation observer.
+         * Observer "observe" DOM changes and send changings to callback.
+         * Callback gets changed node, not whole Block_content.
+         * Inserted or changed node, which we've gotten have been cleared and replaced with diry node
+         *
+         * Method is used in codex.callback._blockPaste(event)
+         *
+         * @uses codex.callback._blockPaste(event), the second method.
          */
         block.addEventListener('paste', function (event) {
-            codex.callback.blockPaste(event);
+            codex.callback._blockPaste(event);
         }, false);
 
         block.addEventListener('mouseup', function(){
