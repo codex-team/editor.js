@@ -1179,13 +1179,13 @@ var codex =
 	        a: {
 	            href: true,
 	            target: '_blank',
-	            rel: true
+	            rel: 'nofollow'
 	        },
-	        i: true,
-	        b: true,
-	        strong: true,
-	        em: true,
-	        span: true
+	        i: {},
+	        b: {},
+	        strong: {},
+	        em: {},
+	        span: {}
 	    }
 	};
 	
