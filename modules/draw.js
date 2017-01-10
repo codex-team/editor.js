@@ -1,3 +1,10 @@
+/**
+ * Codex Editor Draw module
+ *
+ * @author Codex Team
+ * @version 1.0.
+ */
+
 var draw = (function(draw) {
 
     /**
@@ -153,7 +160,7 @@ var draw = (function(draw) {
         div.classList.add('ce-settings_default');
 
         return div;
-    },
+    };
 
     draw.pluginsSettings = function() {
 

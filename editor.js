@@ -1,12 +1,14 @@
 /**
+ *
+ * Codex Editor
+ *
  * @author Codex Team
- * @version 1.0.6
+ * @version 1.2.5
  */
 
 var codex = (function(codex){
 
     var init = function() {
-
         codex.core          = require('./modules/core');
         codex.ui            = require('./modules/ui');
         codex.transport     = require('./modules/transport');
@@ -21,6 +23,8 @@ var codex = (function(codex){
         codex.notifications = require('./modules/notifications');
         codex.parser        = require('./modules/parser');
     };
+
+    codex.version = VERSION;
 
     /**
      * @public
