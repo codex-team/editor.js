@@ -76,13 +76,7 @@ youtubeTool.content = {
         setTimeout(function(){
             blockContent.classList.remove('youtube__loader');
         }, 500);
-
-        codex.content.insertBlock({
-            type  : 'paragraph',
-            block : codex.tools['paragraph'].render({
-                text : ''
-            })
-        }, true );
+        
     },
 
     makeEmbedUrl: function (url) {
