@@ -10,8 +10,8 @@
 
 </body>
 
-<script src="./codex-editor.js?v=11"></script>
-<link rel="stylesheet" href="./codex-editor.css?v=11">
+<script src="./codex-editor.js?v=108"></script>
+<link rel="stylesheet" href="./codex-editor.css?v=11000">
 
 <link rel="stylesheet" href="codex-editor.css">
 
@@ -51,6 +51,8 @@
 <script>
     codex.start({
         textareaId : "codex_area",
+        initialBlockPlugin : 'paragraph',
+        uploadImagesUrl : '/hull',
         tools : {
             paragraph: {
                 type: 'paragraph',
@@ -61,7 +63,8 @@
                 render: paragraphTool.render,
                 save: paragraphTool.save,
                 enableLineBreaks: false,
-                allowedToPaste: true
+                allowedToPaste: true,
+                handleTagOnPaste : ['P']
             },
             paste: {
                 type: 'paste',
@@ -84,7 +87,8 @@
                 settings: headerTool.makeSettings(),
                 render: headerTool.render,
                 save: headerTool.save,
-                displayInToolbox: true
+                displayInToolbox: true,
+                handleTagOnPaste : ['H1', 'H2', 'H3', 'H4', 'H5', 'H6']
             },
             code: {
                 type: 'code',
@@ -151,7 +155,6 @@
                 settings: null,
                 render: instagramTool.reneder,
                 save: instagramTool.save,
-                displayInToolbox: false,
                 enableLineBreaks: false,
                 allowedToPaste: false
             },
@@ -164,7 +167,6 @@
                 settings: null,
                 render: twitterTool.render,
                 save: twitterTool.save,
-                displayInToolbox: false,
                 enableLineBreaks: false,
                 allowedToPaste: false
             },

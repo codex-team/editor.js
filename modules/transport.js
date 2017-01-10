@@ -3,7 +3,7 @@
  * Codex.Editor Transport Module
  *
  * @author Codex Team
- * @version 1.0.0
+ * @version 1.0
  */
 
 var transport = (function(transport){

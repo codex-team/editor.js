@@ -1,3 +1,12 @@
+/**
+ * Inline toolbar
+ *
+ * Contains from tools:
+ * Bold, Italic, Underline and Anchor
+ *
+ * @author Codex Team
+ * @version 1.0
+ */
 var inline = (function(inline) {
 
     inline.init = function() {

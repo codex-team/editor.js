@@ -6,9 +6,24 @@
  */
 'use strict';
 
+var pkg  = require('./package.json');
+var path = require('path');
+
+/**
+ * Environment
+ * @type {any}
+ */
 const NODE_ENV = process.env.NODE_ENV || 'development';
-var webpack = require('webpack');
-var ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+const VERSION  = process.env.VERSION || pkg.version;
+
+var versioning = VERSION.split('.');
+
+/**
+ * Plugins for bundle
+ * @type {webpack}
+ */
+var webpack                     = require('webpack');
+var ExtractTextWebpackPlugin    = require('extract-text-webpack-plugin');
 
 module.exports = {
 
@@ -30,8 +45,9 @@ module.exports = {
     devtool: NODE_ENV == 'development' ? "source-map" : null,
 
     resolve : {
+        fallback: path.join(__dirname, "node_modules"),
         modulesDirectories : ['./node_modules', './modules'],
-        extensions : ['', '.js']
+        extensions : ['', '.js', '.json']
     },
 
     resolveLoader : {
@@ -42,8 +58,14 @@ module.exports = {
 
     plugins: [
         new webpack.DefinePlugin({
-            NODE_ENV: JSON.stringify(NODE_ENV)
+            NODE_ENV: JSON.stringify(NODE_ENV),
+            VERSION: JSON.stringify(VERSION),
+            MAJOR: parseInt(versioning[0]),
+            MINOR: versioning[1],
+            BUILD: versioning[2]
         }),
+
+        new webpack.EnvironmentPlugin('VERSION', pkg.version),
 
         new webpack.ProvidePlugin({
             _ : 'lodash'
@@ -59,6 +81,16 @@ module.exports = {
             query: {
                 presets: [__dirname + '/node_modules/babel-preset-es2015']
             }
+        },
+        {
+            test : /\.js$/,
+            loader: 'eslint-loader',
+            exclude: /(node_modules)/
+        },
+        {
+            test: /node_modules\/entities\/.*\.json$/,
+            include : /(node_modules)/,
+            loader: 'json'
         },
         {
             test : /\.css$/,
