@@ -22,17 +22,11 @@ var Config = {
             target: '_blank',
             rel: true
         },
-        i: {
-            style: true
-        },
-        b: {
-            style: ture
-        },
+        i: true,
+        b: true,
         strong: true,
         em: true,
-        span: {
-            style: true
-        }
+        span: true
     }
 };
 
@@ -601,7 +595,7 @@ var content = (function(content) {
      *
      * Sanitizes HTML content
      * @param {Element} target - inserted element
-     * @uses Sanitize library and BASIC configuration
+     * @uses Sanitize library html-janitor
      */
     content.sanitize = function(target) {
 
@@ -631,14 +625,11 @@ var content = (function(content) {
         /**
          * Clear dirty content
          */
-
         var sanitizer = new janitor(Config),
             clear = sanitizer.clean(node.outerHTML);
 
-        var newFragment = document.createElement('DIV');
-        newFragment.innerHTML = clear;
-
-        node.replaceWith(newFragment.childNodes[0]);
+        var div = codex.draw.node('DIV', [], { innerHTML: clear });
+        node.replaceWith(div.childNodes[0]);
 
         // for (i = 0; i < clearHTML.childNodes.length; i++) {
         //

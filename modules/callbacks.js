@@ -708,6 +708,11 @@ var callbacks = (function(callbacks) {
 
     };
 
+    /**
+     * @deprecated
+     *
+     * @param event
+     */
     callbacks.blockPaste = function(event) {
 
         var currentInputIndex = codex.caret.getCurrentInputIndex(),
@@ -725,7 +730,7 @@ var callbacks = (function(callbacks) {
 
     };
 
-    callbacks._blockPaste = function(event) {
+    callbacks.blockPasteViaSanitize = function(event) {
 
         var currentInputIndex = codex.caret.getCurrentInputIndex();
 

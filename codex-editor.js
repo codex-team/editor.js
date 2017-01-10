@@ -695,7 +695,7 @@ var codex =
 	         * We have two type of sanitization
 	         * First - uses deep-first search algorithm to get sub nodes,
 	         * sanitizes whole Block_content and replaces cleared nodes
-	         *
+	         * This method is deprecated
 	         * Method is used in codex.callback.blockPaste(event)
 	         *
 	         * Secont - uses Mutation observer.
@@ -703,12 +703,14 @@ var codex =
 	         * Callback gets changed node, not whole Block_content.
 	         * Inserted or changed node, which we've gotten have been cleared and replaced with diry node
 	         *
-	         * Method is used in codex.callback._blockPaste(event)
+	         * Method is used in codex.callback.blockPasteViaSanitize(event)
 	         *
-	         * @uses codex.callback._blockPaste(event), the second method.
+	         * @uses html-janitor
+	         * @example codex.callback.blockPasteViaSanitize(event), the second method.
+	         *
 	         */
 	        block.addEventListener('paste', function (event) {
-	            codex.callback._blockPaste(event);
+	            codex.callback.blockPasteViaSanitize(event);
 	        }, false);
 	
 	        block.addEventListener('mouseup', function () {
@@ -1179,17 +1181,11 @@ var codex =
 	            target: '_blank',
 	            rel: true
 	        },
-	        i: {
-	            style: true
-	        },
-	        b: {
-	            style: ture
-	        },
+	        i: true,
+	        b: true,
 	        strong: true,
 	        em: true,
-	        span: {
-	            style: true
-	        }
+	        span: true
 	    }
 	};
 	
@@ -1730,7 +1726,7 @@ var codex =
 	     *
 	     * Sanitizes HTML content
 	     * @param {Element} target - inserted element
-	     * @uses Sanitize library and BASIC configuration
+	     * @uses Sanitize library html-janitor
 	     */
 	    content.sanitize = function (target) {
 	
@@ -1760,14 +1756,11 @@ var codex =
 	        /**
 	         * Clear dirty content
 	         */
-	
 	        var sanitizer = new janitor(Config),
 	            clear = sanitizer.clean(node.outerHTML);
 	
-	        var newFragment = document.createElement('DIV');
-	        newFragment.innerHTML = clear;
-	
-	        node.replaceWith(newFragment.childNodes[0]);
+	        var div = codex.draw.node('DIV', [], { innerHTML: clear });
+	        node.replaceWith(div.childNodes[0]);
 	
 	        // for (i = 0; i < clearHTML.childNodes.length; i++) {
 	        //
@@ -3707,6 +3700,11 @@ var codex =
 	        event.preventDefault();
 	    };
 	
+	    /**
+	     * @deprecated
+	     *
+	     * @param event
+	     */
 	    callbacks.blockPaste = function (event) {
 	
 	        var currentInputIndex = codex.caret.getCurrentInputIndex(),
@@ -3722,7 +3720,7 @@ var codex =
 	        event.stopImmediatePropagation();
 	    };
 	
-	    callbacks._blockPaste = function (event) {
+	    callbacks.blockPasteViaSanitize = function (event) {
 	
 	        var currentInputIndex = codex.caret.getCurrentInputIndex();
 	
@@ -3950,7 +3948,9 @@ var codex =
 	        div.classList.add('ce-settings_default');
 	
 	        return div;
-	    }, draw.pluginsSettings = function () {
+	    };
+	
+	    draw.pluginsSettings = function () {
 	
 	        var div = document.createElement('div');
 	

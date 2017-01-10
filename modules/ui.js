@@ -330,7 +330,7 @@ var ui = (function(ui){
          * We have two type of sanitization
          * First - uses deep-first search algorithm to get sub nodes,
          * sanitizes whole Block_content and replaces cleared nodes
-         *
+         * This method is deprecated
          * Method is used in codex.callback.blockPaste(event)
          *
          * Secont - uses Mutation observer.
@@ -338,12 +338,14 @@ var ui = (function(ui){
          * Callback gets changed node, not whole Block_content.
          * Inserted or changed node, which we've gotten have been cleared and replaced with diry node
          *
-         * Method is used in codex.callback._blockPaste(event)
+         * Method is used in codex.callback.blockPasteViaSanitize(event)
          *
-         * @uses codex.callback._blockPaste(event), the second method.
+         * @uses html-janitor
+         * @example codex.callback.blockPasteViaSanitize(event), the second method.
+         *
          */
         block.addEventListener('paste', function (event) {
-            codex.callback._blockPaste(event);
+            codex.callback.blockPasteViaSanitize(event);
         }, false);
 
         block.addEventListener('mouseup', function(){
