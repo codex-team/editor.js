@@ -65,7 +65,7 @@ var codex =
 	 * Codex Editor
 	 *
 	 * @author Codex Team
-	 * @version 1.2.1
+	 * @version 1.2.5
 	 */
 	
 	var codex = function (codex) {
@@ -77,17 +77,16 @@ var codex =
 	        codex.renderer = __webpack_require__(5);
 	        codex.saver = __webpack_require__(6);
 	        codex.content = __webpack_require__(7);
-	        codex.toolbar = __webpack_require__(8);
-	        codex.tools = __webpack_require__(12);
-	        codex.callback = __webpack_require__(13);
-	        codex.draw = __webpack_require__(14);
-	        codex.caret = __webpack_require__(15);
-	        codex.notifications = __webpack_require__(16);
-	        codex.parser = __webpack_require__(17);
-	        codex.sanitizer = __webpack_require__(18);
+	        codex.toolbar = __webpack_require__(9);
+	        codex.tools = __webpack_require__(13);
+	        codex.callback = __webpack_require__(14);
+	        codex.draw = __webpack_require__(15);
+	        codex.caret = __webpack_require__(16);
+	        codex.notifications = __webpack_require__(17);
+	        codex.parser = __webpack_require__(18);
 	    };
 	
-	    codex.version = ("1.2.2");
+	    codex.version = ("1.2.8");
 	
 	    /**
 	     * @public
@@ -1153,7 +1152,7 @@ var codex =
 
 /***/ },
 /* 7 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -1162,8 +1161,31 @@ var codex =
 	 * Works with DOM
 	 *
 	 * @author Codex Team
-	 * @version 1.2.0
+	 * @version 1.3.1
 	 */
+	
+	var janitor = __webpack_require__(8);
+	
+	/**
+	 * Default settings for sane.
+	 * @uses html-janitor
+	 */
+	var Config = {
+	
+	    tags: {
+	        p: {},
+	        a: {
+	            href: true,
+	            target: '_blank',
+	            rel: true
+	        },
+	        i: true,
+	        b: true,
+	        strong: true,
+	        em: true,
+	        span: true
+	    }
+	};
 	
 	var content = function (content) {
 	
@@ -1713,14 +1735,6 @@ var codex =
 	        this.disconnect();
 	
 	        /**
-	         * Sanitize configuration.
-	         * Using basic sanitize
-	         */
-	        var sanitizer = new codex.sanitizer(codex.sanitizer.Config.BASIC);
-	
-	        var clearHTML, i, tool;
-	
-	        /**
 	         * Don't sanitize text node
 	         */
 	        if (node.nodeType == codex.core.nodeTypes.TEXT) {
@@ -1730,19 +1744,14 @@ var codex =
 	        /**
 	         * Clear dirty content
 	         */
-	        clearHTML = sanitizer.clean_node(node);
-	        node.replaceWith(clearHTML);
 	
-	        // for(i = 0; i < target.childNodes.length; i++) {
+	        var sanitizer = new janitor(Config),
+	            clear = sanitizer.clean(node.outerHTML);
 	
-	        // var node = target.childNodes[i];
+	        var newFragment = document.createElement('DIV');
+	        newFragment.innerHTML = clear;
 	
-	        // console.log("Узел %o", node);
-	
-	        // node.replaceWith(clearHTML);
-	        // }
-	
-	        // return;
+	        node.replaceWith(newFragment.childNodes[0]);
 	
 	        // for (i = 0; i < clearHTML.childNodes.length; i++) {
 	        //
@@ -1769,15 +1778,6 @@ var codex =
 	        //     }
 	        //
 	        // }
-	
-	        /**
-	         * Remove node where data pasted
-	         */
-	        // target = content.getFirstLevelBlock(target);
-	
-	        // if (target) {
-	        //     target.remove();
-	        // }
 	    };
 	
 	    return content;
@@ -1787,6 +1787,197 @@ var codex =
 
 /***/ },
 /* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports === 'object') {
+	    module.exports = factory();
+	  } else {
+	    root.HTMLJanitor = factory();
+	  }
+	}(this, function () {
+	
+	  /**
+	   * @param {Object} config.tags Dictionary of allowed tags.
+	   * @param {boolean} config.keepNestedBlockElements Default false.
+	   */
+	  function HTMLJanitor(config) {
+	
+	    var tagDefinitions = config['tags'];
+	    var tags = Object.keys(tagDefinitions);
+	
+	    var validConfigValues = tags
+	      .map(function(k) { return typeof tagDefinitions[k]; })
+	      .every(function(type) { return type === 'object' || type === 'boolean' || type === 'function'; });
+	
+	    if(!validConfigValues) {
+	      throw new Error("The configuration was invalid");
+	    }
+	
+	    this.config = config;
+	  }
+	
+	  // TODO: not exhaustive?
+	  var blockElementNames = ['P', 'LI', 'TD', 'TH', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'PRE'];
+	  function isBlockElement(node) {
+	    return blockElementNames.indexOf(node.nodeName) !== -1;
+	  }
+	
+	  var inlineElementNames = ['A', 'B', 'STRONG', 'I', 'EM', 'SUB', 'SUP', 'U', 'STRIKE'];
+	  function isInlineElement(node) {
+	    return inlineElementNames.indexOf(node.nodeName) !== -1;
+	  }
+	
+	  HTMLJanitor.prototype.clean = function (html) {
+	    var sandbox = document.createElement('div');
+	    sandbox.innerHTML = html;
+	
+	    this._sanitize(sandbox);
+	
+	    return sandbox.innerHTML;
+	  };
+	
+	  HTMLJanitor.prototype._sanitize = function (parentNode) {
+	    var treeWalker = createTreeWalker(parentNode);
+	    var node = treeWalker.firstChild();
+	    if (!node) { return; }
+	
+	    do {
+	      // Ignore nodes that have already been sanitized
+	      if (node._sanitized) {
+	        continue;
+	      }
+	
+	      if (node.nodeType === Node.TEXT_NODE) {
+	        // If this text node is just whitespace and the previous or next element
+	        // sibling is a block element, remove it
+	        // N.B.: This heuristic could change. Very specific to a bug with
+	        // `contenteditable` in Firefox: http://jsbin.com/EyuKase/1/edit?js,output
+	        // FIXME: make this an option?
+	        if (node.data.trim() === ''
+	            && ((node.previousElementSibling && isBlockElement(node.previousElementSibling))
+	                 || (node.nextElementSibling && isBlockElement(node.nextElementSibling)))) {
+	          parentNode.removeChild(node);
+	          this._sanitize(parentNode);
+	          break;
+	        } else {
+	          continue;
+	        }
+	      }
+	
+	      // Remove all comments
+	      if (node.nodeType === Node.COMMENT_NODE) {
+	        parentNode.removeChild(node);
+	        this._sanitize(parentNode);
+	        break;
+	      }
+	
+	      var isInline = isInlineElement(node);
+	      var containsBlockElement;
+	      if (isInline) {
+	        containsBlockElement = Array.prototype.some.call(node.childNodes, isBlockElement);
+	      }
+	
+	      // Block elements should not be nested (e.g. <li><p>...); if
+	      // they are, we want to unwrap the inner block element.
+	      var isNotTopContainer = !! parentNode.parentNode;
+	      var isNestedBlockElement =
+	            isBlockElement(parentNode) &&
+	            isBlockElement(node) &&
+	            isNotTopContainer;
+	
+	      var nodeName = node.nodeName.toLowerCase();
+	
+	      var allowedAttrs = getAllowedAttrs(this.config, nodeName, node);
+	
+	      var isInvalid = isInline && containsBlockElement;
+	
+	      // Drop tag entirely according to the whitelist *and* if the markup
+	      // is invalid.
+	      if (isInvalid || shouldRejectNode(node, allowedAttrs)
+	          || (!this.config.keepNestedBlockElements && isNestedBlockElement)) {
+	        // Do not keep the inner text of SCRIPT/STYLE elements.
+	        if (! (node.nodeName === 'SCRIPT' || node.nodeName === 'STYLE')) {
+	          while (node.childNodes.length > 0) {
+	            parentNode.insertBefore(node.childNodes[0], node);
+	          }
+	        }
+	        parentNode.removeChild(node);
+	
+	        this._sanitize(parentNode);
+	        break;
+	      }
+	
+	      // Sanitize attributes
+	      for (var a = 0; a < node.attributes.length; a += 1) {
+	        var attr = node.attributes[a];
+	
+	        if (shouldRejectAttr(attr, allowedAttrs, node)) {
+	          node.removeAttribute(attr.name);
+	          // Shift the array to continue looping.
+	          a = a - 1;
+	        }
+	      }
+	
+	      // Sanitize children
+	      this._sanitize(node);
+	
+	      // Mark node as sanitized so it's ignored in future runs
+	      node._sanitized = true;
+	    } while ((node = treeWalker.nextSibling()));
+	  };
+	
+	  function createTreeWalker(node) {
+	    return document.createTreeWalker(node,
+	                                     NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT,
+	                                     null, false);
+	  }
+	
+	  function getAllowedAttrs(config, nodeName, node){
+	    if (typeof config.tags[nodeName] === 'function') {
+	      return config.tags[nodeName](node);
+	    } else {
+	      return config.tags[nodeName];
+	    }
+	  }
+	
+	  function shouldRejectNode(node, allowedAttrs){
+	    if (typeof allowedAttrs === 'undefined') {
+	      return true;
+	    } else if (typeof allowedAttrs === 'boolean') {
+	      return !allowedAttrs;
+	    }
+	
+	    return false;
+	  }
+	
+	  function shouldRejectAttr(attr, allowedAttrs, node){
+	    var attrName = attr.name.toLowerCase();
+	
+	    if (allowedAttrs === true){
+	      return false;
+	    } else if (typeof allowedAttrs[attrName] === 'function'){
+	      return !allowedAttrs[attrName](attr.value, node);
+	    } else if (typeof allowedAttrs[attrName] === 'undefined'){
+	      return true;
+	    } else if (allowedAttrs[attrName] === false) {
+	      return true;
+	    } else if (typeof allowedAttrs[attrName] === 'string') {
+	      return (allowedAttrs[attrName] !== attr.value);
+	    }
+	
+	    return false;
+	  }
+	
+	  return HTMLJanitor;
+	
+	}));
+
+
+/***/ },
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1805,9 +1996,9 @@ var codex =
 	var toolbar = function (toolbar) {
 	
 	    toolbar.init = function () {
-	        toolbar.settings = __webpack_require__(9);
-	        toolbar.inline = __webpack_require__(10);
-	        toolbar.toolbox = __webpack_require__(11);
+	        toolbar.settings = __webpack_require__(10);
+	        toolbar.inline = __webpack_require__(11);
+	        toolbar.toolbox = __webpack_require__(12);
 	    };
 	
 	    /**
@@ -1897,7 +2088,7 @@ var codex =
 	module.exports = toolbar;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2138,7 +2329,7 @@ var codex =
 	module.exports = settings;
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2631,7 +2822,7 @@ var codex =
 	module.exports = inline;
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2648,7 +2839,7 @@ var codex =
 	
 	    toolbox.init = function () {
 	
-	        __webpack_require__(8);
+	        __webpack_require__(9);
 	    };
 	
 	    toolbox.opened = false;
@@ -2813,7 +3004,7 @@ var codex =
 	module.exports = toolbox;
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -2833,7 +3024,7 @@ var codex =
 	module.exports = tools;
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2842,7 +3033,7 @@ var codex =
 	 * Codex Editor callbacks module
 	 *
 	 * @author Codex Team
-	 * @version 1.2.1
+	 * @version 1.2.5
 	 */
 	
 	var callbacks = function (callbacks) {
@@ -3527,7 +3718,12 @@ var codex =
 	        /**
 	         * configuration of the observer:
 	         */
-	        var config = { attributes: true, childList: true, characterData: false, subtree: true };
+	        var config = {
+	            attributes: true,
+	            childList: true,
+	            characterData: false,
+	            subtree: true
+	        };
 	
 	        // pass in the target node, as well as the observer options
 	        observer.observe(codex.state.inputs[currentInputIndex], config);
@@ -3542,14 +3738,15 @@ var codex =
 	            callback;
 	
 	        /**
-	         * using closure to call the function immediatelly.
+	         * Calling function with context of this function.
 	         * Also, we should sanitize pasted or changed data one time and ignore
 	         * changings which makes sanitize method.
 	         * For that, we need to send Context, MutationObserver.__proto__ that contains
 	         * observer disconnect method.
 	         */
+	        console.warn('mutations count: %o', mutations.length);
 	        mutations.forEach(function (mutation) {
-	            codex.content.paste.bind(self, mutation)();
+	            codex.content.paste.call(self, mutation);
 	        });
 	    };
 	
@@ -3579,7 +3776,7 @@ var codex =
 	module.exports = callbacks;
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3884,7 +4081,7 @@ var codex =
 	module.exports = draw;
 
 /***/ },
-/* 15 */
+/* 16 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4128,7 +4325,7 @@ var codex =
 	module.exports = caret;
 
 /***/ },
-/* 16 */
+/* 17 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4181,7 +4378,7 @@ var codex =
 	module.exports = notifications;
 
 /***/ },
-/* 17 */
+/* 18 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -4218,356 +4415,6 @@ var codex =
 	}({});
 	
 	module.exports = parser;
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	/**
-	 * Copyright (c) 2010 by Gabriel Birke
-	 *
-	 * Permission is hereby granted, free of charge, to any person obtaining a copy
-	 * of this software and associated documentation files (the 'Software'), to deal
-	 * in the Software without restriction, including without limitation the rights
-	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	 * copies of the Software, and to permit persons to whom the Software is
-	 * furnished to do so, subject to the following conditions:
-	 *
-	 * The above copyright notice and this permission notice shall be included in all
-	 * copies or substantial portions of the Software.
-	 *
-	 * THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-	 * SOFTWARE.
-	 */
-	function Sanitize() {
-	    var i, e, options;
-	    options = arguments[0] || {};
-	    this.config = {};
-	    this.config.elements = options.elements ? options.elements : [];
-	    this.config.attributes = options.attributes ? options.attributes : {};
-	    this.config.attributes[Sanitize.ALL] = this.config.attributes[Sanitize.ALL] ? this.config.attributes[Sanitize.ALL] : [];
-	    this.config.allow_comments = options.allow_comments ? options.allow_comments : false;
-	    this.allowed_elements = {};
-	    this.config.protocols = options.protocols ? options.protocols : {};
-	    this.config.add_attributes = options.add_attributes ? options.add_attributes : {};
-	    this.dom = options.dom ? options.dom : document;
-	    for (i = 0; i < this.config.elements.length; i++) {
-	        this.allowed_elements[this.config.elements[i]] = true;
-	    }
-	    this.config.remove_element_contents = {};
-	    this.config.remove_all_contents = false;
-	    if (options.remove_contents) {
-	
-	        if (options.remove_contents instanceof Array) {
-	            for (i = 0; i < options.remove_contents.length; i++) {
-	                this.config.remove_element_contents[options.remove_contents[i]] = true;
-	            }
-	        } else {
-	            this.config.remove_all_contents = true;
-	        }
-	    }
-	    this.transformers = options.transformers ? options.transformers : [];
-	}
-	
-	Sanitize.REGEX_PROTOCOL = /^([A-Za-z0-9\+\-\.\&\;\*\s]*?)(?:\:|&*0*58|&*x0*3a)/i;
-	
-	// emulate Ruby symbol with string constant
-	Sanitize.RELATIVE = '__RELATIVE__';
-	Sanitize.ALL = '__ALL__';
-	
-	Sanitize.prototype.clean_node = function (container) {
-	    var fragment = this.dom.createDocumentFragment();
-	    this.current_element = fragment;
-	    this.whitelist_nodes = [];
-	
-	    /**
-	     * Utility function to check if an element exists in an array
-	     */
-	    function _array_index(needle, haystack) {
-	        var i;
-	        for (i = 0; i < haystack.length; i++) {
-	            if (haystack[i] == needle) return i;
-	        }
-	        return -1;
-	    }
-	
-	    function _merge_arrays_uniq() {
-	        var result = [];
-	        var uniq_hash = {};
-	        var i, j;
-	        for (i = 0; i < arguments.length; i++) {
-	            if (!arguments[i] || !arguments[i].length) continue;
-	            for (j = 0; j < arguments[i].length; j++) {
-	                if (uniq_hash[arguments[i][j]]) continue;
-	                uniq_hash[arguments[i][j]] = true;
-	                result.push(arguments[i][j]);
-	            }
-	        }
-	        return result;
-	    }
-	
-	    /**
-	     * Clean function that checks the different node types and cleans them up accordingly
-	     * @param elem DOM Node to clean
-	     */
-	    function _clean(elem) {
-	        var clone;
-	        switch (elem.nodeType) {
-	            // Element
-	            case 1:
-	                _clean_element.call(this, elem);
-	                break;
-	            // Text
-	            case 3:
-	                clone = elem.cloneNode(false);
-	                this.current_element.appendChild(clone);
-	                break;
-	            // Entity-Reference (normally not used)
-	            case 5:
-	                clone = elem.cloneNode(false);
-	                this.current_element.appendChild(clone);
-	                break;
-	            // Comment
-	            case 8:
-	                if (this.config.allow_comments) {
-	                    clone = elem.cloneNode(false);
-	                    this.current_element.appendChild(clone);
-	                }
-	                break;
-	            default:
-	                if (console && console.log) console.log("unknown node type", elem.nodeType);
-	                break;
-	        }
-	    }
-	
-	    function _clean_element(elem) {
-	        var i, j, clone, parent_element, name, allowed_attributes, attr, attr_name, attr_node, protocols, del, attr_ok;
-	        var transform = _transform_element.call(this, elem);
-	
-	        elem = transform.node;
-	        name = elem.nodeName.toLowerCase();
-	
-	        // check if element itself is allowed
-	        parent_element = this.current_element;
-	        if (this.allowed_elements[name] || transform.whitelist) {
-	            this.current_element = this.dom.createElement(elem.nodeName);
-	            parent_element.appendChild(this.current_element);
-	
-	            // clean attributes
-	            var attrs = this.config.attributes;
-	            allowed_attributes = _merge_arrays_uniq(attrs[name], attrs[Sanitize.ALL], transform.attr_whitelist);
-	            for (i = 0; i < allowed_attributes.length; i++) {
-	                attr_name = allowed_attributes[i];
-	                attr = elem.attributes[attr_name];
-	                if (attr) {
-	                    attr_ok = true;
-	                    // Check protocol attributes for valid protocol
-	                    if (this.config.protocols[name] && this.config.protocols[name][attr_name]) {
-	                        protocols = this.config.protocols[name][attr_name];
-	                        del = attr.value.toLowerCase().match(Sanitize.REGEX_PROTOCOL);
-	                        if (del) {
-	                            attr_ok = _array_index(del[1], protocols) != -1;
-	                        } else {
-	                            attr_ok = _array_index(Sanitize.RELATIVE, protocols) != -1;
-	                        }
-	                    }
-	                    if (attr_ok) {
-	                        attr_node = document.createAttribute(attr_name);
-	                        attr_node.value = attr.value;
-	                        this.current_element.setAttributeNode(attr_node);
-	                    }
-	                }
-	            }
-	
-	            // Add attributes
-	            if (this.config.add_attributes[name]) {
-	                for (attr_name in this.config.add_attributes[name]) {
-	                    attr_node = document.createAttribute(attr_name);
-	                    attr_node.value = this.config.add_attributes[name][attr_name];
-	                    this.current_element.setAttributeNode(attr_node);
-	                }
-	            }
-	        } // End checking if element is allowed
-	        // If this node is in the dynamic whitelist array (built at runtime by
-	        // transformers), let it live with all of its attributes intact.
-	        else if (_array_index(elem, this.whitelist_nodes) != -1) {
-	                this.current_element = elem.cloneNode(true);
-	                // Remove child nodes, they will be sanitiazied and added by other code
-	                while (this.current_element.childNodes.length > 0) {
-	                    this.current_element.removeChild(this.current_element.firstChild);
-	                }
-	                parent_element.appendChild(this.current_element);
-	            }
-	
-	        // iterate over child nodes
-	        if (!this.config.remove_all_contents && !this.config.remove_element_contents[name]) {
-	            for (i = 0; i < elem.childNodes.length; i++) {
-	                _clean.call(this, elem.childNodes[i]);
-	            }
-	        }
-	
-	        // some versions of IE don't support normalize.
-	        if (this.current_element.normalize) {
-	            this.current_element.normalize();
-	        }
-	        this.current_element = parent_element;
-	    } // END clean_element function
-	
-	    function _transform_element(node) {
-	        var output = {
-	            attr_whitelist: [],
-	            node: node,
-	            whitelist: false
-	        };
-	        var i, j, transform;
-	        for (i = 0; i < this.transformers.length; i++) {
-	            transform = this.transformers[i]({
-	                allowed_elements: this.allowed_elements,
-	                config: this.config,
-	                node: node,
-	                node_name: node.nodeName.toLowerCase(),
-	                whitelist_nodes: this.whitelist_nodes,
-	                dom: this.dom
-	            });
-	            if (transform == null) continue;else if ((typeof transform === 'undefined' ? 'undefined' : _typeof(transform)) == 'object') {
-	                if (transform.whitelist_nodes && transform.whitelist_nodes instanceof Array) {
-	                    for (j = 0; j < transform.whitelist_nodes.length; j++) {
-	                        if (_array_index(transform.whitelist_nodes[j], this.whitelist_nodes) == -1) {
-	                            this.whitelist_nodes.push(transform.whitelist_nodes[j]);
-	                        }
-	                    }
-	                }
-	                output.whitelist = transform.whitelist ? true : false;
-	                if (transform.attr_whitelist) {
-	                    output.attr_whitelist = _merge_arrays_uniq(output.attr_whitelist, transform.attr_whitelist);
-	                }
-	                output.node = transform.node ? transform.node : output.node;
-	            } else {
-	                throw new Error("transformer output must be an object or null");
-	            }
-	        }
-	        return output;
-	    }
-	
-	    for (i = 0; i < container.childNodes.length; i++) {
-	        _clean.call(this, container.childNodes[i]);
-	    }
-	
-	    if (fragment.normalize) {
-	        fragment.normalize();
-	    }
-	
-	    return fragment;
-	};
-	
-	if (true) {
-	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_RESULT__ = function () {
-	        return Sanitize;
-	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	}
-	
-	__webpack_require__(19);
-	__webpack_require__(20);
-	__webpack_require__(21);
-	
-	module.exports = Sanitize;
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Sanitize = __webpack_require__(18);
-	
-	if (!Sanitize.Config) {
-	    Sanitize.Config = {};
-	}
-	
-	Sanitize.Config.BASIC = {
-	    elements: ['a', 'b', 'blockquote', 'br', 'cite', 'code', 'dd', 'dl', 'dt', 'em', 'i', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub', 'sup', 'u', 'ul', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'span'],
-	    attributes: {
-	        'a': ['href'],
-	        'blockquote': ['cite'],
-	        'q': ['cite']
-	    },
-	
-	    add_attributes: {
-	        'a': { 'rel': 'nofollow' }
-	    },
-	
-	    protocols: {
-	        'a': { 'href': ['ftp', 'http', 'https', 'mailto', Sanitize.RELATIVE] },
-	        'blockquote': { 'cite': ['http', 'https', Sanitize.RELATIVE] },
-	        'q': { 'cite': ['http', 'https', Sanitize.RELATIVE] }
-	    }
-	};
-	
-	codex.sanitizer = Sanitize;
-
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Sanitize = __webpack_require__(18);
-	
-	if (!Sanitize.Config) {
-	    Sanitize.Config = {};
-	}
-	
-	Sanitize.Config.RELAXED = {
-	    elements: ['a', 'b', 'blockquote', 'br', 'caption', 'cite', 'code', 'col', 'colgroup', 'dd', 'dl', 'dt', 'em', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'i', 'img', 'li', 'ol', 'p', 'pre', 'q', 'small', 'strike', 'strong', 'sub', 'sup', 'table', 'tbody', 'td', 'tfoot', 'th', 'thead', 'tr', 'u', 'ul'],
-	    attributes: {
-	        'a': ['href', 'title'],
-	        'blockquote': ['cite'],
-	        'col': ['span', 'width'],
-	        'colgroup': ['span', 'width'],
-	        'img': ['align', 'alt', 'height', 'src', 'title', 'width'],
-	        'ol': ['start', 'type'],
-	        'q': ['cite'],
-	        'table': ['summary', 'width'],
-	        'td': ['abbr', 'axis', 'colspan', 'rowspan', 'width'],
-	        'th': ['abbr', 'axis', 'colspan', 'rowspan', 'scope', 'width'],
-	        'ul': ['type']
-	    },
-	    protocols: {
-	        'a': { 'href': ['ftp', 'http', 'https', 'mailto', Sanitize.RELATIVE] },
-	        'blockquote': { 'cite': ['http', 'https', Sanitize.RELATIVE] },
-	        'img': { 'src': ['http', 'https', Sanitize.RELATIVE] },
-	        'q': { 'cite': ['http', 'https', Sanitize.RELATIVE] }
-	    }
-	};
-	
-	codex.sanitizer = Sanitize;
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var Sanitize = __webpack_require__(18);
-	
-	if (!Sanitize.Config) {
-	    Sanitize.Config = {};
-	}
-	
-	Sanitize.Config.RESTRICTED = {
-	    elements: ['a', 'b', 'em', 'i', 'strong', 'u']
-	};
-	
-	codex.sanitizer = Sanitize;
 
 /***/ }
 /******/ ]);

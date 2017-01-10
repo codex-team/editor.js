@@ -3,8 +3,32 @@
  * Works with DOM
  *
  * @author Codex Team
- * @version 1.2.0
+ * @version 1.3.1
  */
+
+var janitor = require('html-janitor');
+
+
+/**
+ * Default settings for sane.
+ * @uses html-janitor
+ */
+var Config = {
+
+    tags: {
+        p: {},
+        a: {
+            href: true,
+            target: '_blank',
+            rel: true
+        },
+        i: true,
+        b: true,
+        strong: true,
+        em: true,
+        span: true
+    }
+};
 
 var content = (function(content) {
 
@@ -582,16 +606,6 @@ var content = (function(content) {
         this.disconnect();
 
         /**
-         * Sanitize configuration.
-         * Using basic sanitize
-         */
-        var sanitizer = new codex.sanitizer(codex.sanitizer.Config.BASIC);
-
-        var clearHTML,
-            i,
-            tool;
-
-        /**
          * Don't sanitize text node
          */
         if (node.nodeType == codex.core.nodeTypes.TEXT) {
@@ -601,19 +615,14 @@ var content = (function(content) {
         /**
          * Clear dirty content
          */
-        clearHTML = sanitizer.clean_node(node);
-        node.replaceWith(clearHTML);
 
-        // for(i = 0; i < target.childNodes.length; i++) {
+        var sanitizer = new janitor(Config),
+            clear = sanitizer.clean(node.outerHTML);
 
-            // var node = target.childNodes[i];
+        var newFragment = document.createElement('DIV');
+        newFragment.innerHTML = clear;
 
-            // console.log("Узел %o", node);
-
-            // node.replaceWith(clearHTML);
-        // }
-
-        // return;
+        node.replaceWith(newFragment.childNodes[0]);
 
         // for (i = 0; i < clearHTML.childNodes.length; i++) {
         //
@@ -639,15 +648,6 @@ var content = (function(content) {
         //         codex.parser.insertPastedContent(blockType, tag);
         //     }
         //
-        // }
-
-        /**
-         * Remove node where data pasted
-         */
-        // target = content.getFirstLevelBlock(target);
-
-        // if (target) {
-        //     target.remove();
         // }
 
     };
