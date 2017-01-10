@@ -710,9 +710,7 @@ var codex =
 	         * @example codex.callback.blockPasteViaSanitize(event), the second method.
 	         *
 	         */
-	        block.addEventListener('paste', function (event) {
-	            codex.callback.blockPasteProcessing(event);
-	        }, false);
+	        block.addEventListener('paste', codex.callback.blockPasteCallback, false);
 	
 	        block.addEventListener('mouseup', function () {
 	            codex.toolbar.inline.show();
@@ -3723,14 +3721,14 @@ var codex =
 	        event.stopImmediatePropagation();
 	    };
 	
-	    callbacks.blockPasteProcessing = function (event) {
+	    callbacks.blockPasteCallback = function (event) {
 	
 	        var currentInputIndex = codex.caret.getCurrentInputIndex();
 	
 	        /**
 	         * create an observer instance
 	         */
-	        var observer = new MutationObserver(codex.callback.handlePasteEvents);
+	        var observer = new MutationObserver(codex.callback.handleMutationsOnPaste);
 	
 	        /**
 	         * configuration of the observer:
@@ -3749,7 +3747,7 @@ var codex =
 	    /**
 	     * Sends all mutations to paste handler
 	     */
-	    callbacks.handlePasteEvents = function (mutations) {
+	    callbacks.handleMutationsOnPaste = function (mutations) {
 	
 	        var self = this;
 	

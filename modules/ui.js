@@ -344,9 +344,7 @@ var ui = (function(ui){
          * @example codex.callback.blockPasteViaSanitize(event), the second method.
          *
          */
-        block.addEventListener('paste', function (event) {
-            codex.callback.blockPasteProcessing(event);
-        }, false);
+        block.addEventListener('paste', codex.callback.blockPasteCallback, false);
 
         block.addEventListener('mouseup', function(){
             codex.toolbar.inline.show();

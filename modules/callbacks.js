@@ -730,14 +730,14 @@ var callbacks = (function(callbacks) {
 
     };
 
-    callbacks.blockPasteProcessing = function(event) {
+    callbacks.blockPasteCallback = function(event) {
 
         var currentInputIndex = codex.caret.getCurrentInputIndex();
 
         /**
          * create an observer instance
          */
-        var observer = new MutationObserver(codex.callback.handlePasteEvents);
+        var observer = new MutationObserver(codex.callback.handleMutationsOnPaste);
 
         /**
          * configuration of the observer:
@@ -756,7 +756,7 @@ var callbacks = (function(callbacks) {
     /**
      * Sends all mutations to paste handler
      */
-    callbacks.handlePasteEvents = function(mutations) {
+    callbacks.handleMutationsOnPaste = function(mutations) {
 
         var self = this;
 
