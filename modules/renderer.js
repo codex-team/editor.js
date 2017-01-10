@@ -1,10 +1,3 @@
-/**
- * Codex Editor Renderer Module
- *
- * @author Codex Team
- * @version 1.0
- */
-
 var renderer = (function(renderer) {
 
     /**

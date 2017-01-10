@@ -1,6 +1,6 @@
 {
   "name": "codex.editor",
-  "version": "1.2.8",
+  "version": "1.0.0",
   "description": "Codex Editor. Native JS, based on API and Open Source",
   "main": "index.js",
   "scripts": {
@@ -17,11 +17,7 @@
     "babel-polyfill": "^6.20.0",
     "babel-runtime": "^6.20.0",
     "css-loader": "^0.26.1",
-    "eslint": "^3.12.2",
-    "eslint-loader": "^1.6.1",
     "extract-text-webpack-plugin": "^1.0.1",
-    "html-janitor": "^2.0.2",
-    "path": "^0.12.7",
     "webpack": "^1.14.0"
   }
 }

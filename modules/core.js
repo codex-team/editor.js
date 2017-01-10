@@ -1,10 +1,3 @@
-/**
- * Codex Editor Core
- *
- * @author Codex Team
- * @version 1.1.2
- */
-
 var core = (function(core) {
 
     /**
@@ -25,14 +18,6 @@ var core = (function(core) {
 
             if (userSettings.data) {
                 codex.state.blocks = userSettings.data;
-            }
-
-            if (userSettings.initialBlockPlugin) {
-                codex.settings.initialBlockPlugin = userSettings.initialBlockPlugin;
-            }
-
-            if (userSettings.uploadImagesUrl) {
-                codex.settings.uploadImagesUrl = userSettings.uploadImagesUrl;
             }
 
             codex.nodes.textarea = document.getElementById(userSettings.textareaId || codex.settings.textareaId);

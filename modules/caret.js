@@ -1,10 +1,3 @@
-/**
- * Codex Editor Caret Module
- *
- * @author Codex Team
- * @version 1.0
- */
-
 var caret = (function(caret) {
 
     /**

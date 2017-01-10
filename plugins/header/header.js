@@ -35,10 +35,6 @@ var headerTool = {
             tag.textContent = data.text;
         }
 
-        if (!tag.dataset.headerData) {
-            tag.dataset.headerData = 'H2';
-        }
-
         tag.classList.add('ce-header');
         tag.setAttribute('data-placeholder', 'Heading');
         tag.contentEditable = true;

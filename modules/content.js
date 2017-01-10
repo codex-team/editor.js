@@ -1,48 +1,6 @@
-/**
- * Codex Editor Content Module
- * Works with DOM
- *
- * @author Codex Team
- * @version 1.3.1
- */
-
-var janitor = require('html-janitor');
-
-
-/**
- * Default settings for sane.
- * @uses html-janitor
- */
-var Config = {
-
-    tags: {
-        p: {},
-        a: {
-            href: true,
-            target: '_blank',
-            rel: 'nofollow'
-        },
-        i: {},
-        b: {},
-        strong: {},
-        em: {},
-        span: {}
-    }
-};
-
 var content = (function(content) {
 
-    /**
-     * Links to current active block
-     * @type {null | Element}
-     */
     content.currentNode = null;
-
-    /**
-     * clicked in redactor area
-     * @type {null | Boolean}
-     */
-    content.editorAreaHightlighted = null;
 
     /**
      * Synchronizes redactor with original textarea
@@ -296,12 +254,6 @@ var content = (function(content) {
 
         }
 
-        /**
-         * Block is inserted, wait for new click that defined focusing on editors area
-         * @type {boolean}
-         */
-        content.editorAreaHightlighted = false;
-
     };
 
     /**
@@ -507,7 +459,7 @@ var content = (function(content) {
         newNode = newNode.innerHTML;
 
         /** This type of block creates when enter is pressed */
-        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+        var NEW_BLOCK_TYPE = 'paragraph';
 
         /**
          * Make new paragraph with text after caret
@@ -560,7 +512,7 @@ var content = (function(content) {
             tool        = workingNode.dataset.tool;
 
         if (codex.tools[tool].allowedToPaste) {
-            codex.content.sanitize.call(this, mutation.addedNodes);
+            codex.content.sanitize(mutation.addedNodes);
         } else {
             codex.content.pasteTextContent(mutation.addedNodes);
         }
@@ -575,18 +527,8 @@ var content = (function(content) {
      */
     content.pasteTextContent = function(nodes) {
 
-        var node = nodes[0],
-            textNode;
-
-        if (!node) {
-            return;
-        }
-
-        if (node.nodeType == codex.core.nodeTypes.TEXT) {
-            textNode = document.createTextNode(node);
-        } else {
+        var node     = nodes[0],
             textNode = document.createTextNode(node.textContent);
-        }
 
         if (codex.core.isDomNode(node)) {
             node.parentNode.replaceChild(textNode, node);
@@ -598,7 +540,7 @@ var content = (function(content) {
      *
      * Sanitizes HTML content
      * @param {Element} target - inserted element
-     * @uses Sanitize library html-janitor
+     * @uses DFS function for deep searching
      */
     content.sanitize = function(target) {
 
@@ -606,59 +548,84 @@ var content = (function(content) {
             return;
         }
 
-        var node = target[0];
+        for (var i = 0; i < target.childNodes.length; i++) {
+            this.dfs(target.childNodes[i]);
+        }
+    };
 
-        if (!node) {
-            return;
+    /**
+     * Clears styles
+     * @param {Element|Text}
+     */
+    content.clearStyles = function(target) {
+
+        var href,
+            newNode = null,
+            blockTags   = ['P', 'BLOCKQUOTE', 'UL', 'CODE', 'OL', 'LI', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'DIV', 'PRE', 'HEADER', 'SECTION'],
+            allowedTags = ['P', 'B', 'I', 'A', 'U', 'BR'],
+            needReplace = !allowedTags.includes(target.tagName),
+            isDisplayedAsBlock = blockTags.includes(target.tagName);
+
+        if (!codex.core.isDomNode(target)){
+            return target;
         }
 
-        /**
-         * Disconnect Observer
-         * hierarchy of function calls inherits context of observer
-         */
-        this.disconnect();
-
-        /**
-         * Don't sanitize text node
-         */
-        if (node.nodeType == codex.core.nodeTypes.TEXT) {
-            return;
+        if (!target.parentNode){
+            return target;
         }
 
-        /**
-         * Clear dirty content
-         */
-        var sanitizer = new janitor(Config),
-            clear = sanitizer.clean(node.outerHTML);
+        if (needReplace) {
 
-        var div = codex.draw.node('DIV', [], { innerHTML: clear });
-        node.replaceWith(div.childNodes[0]);
+            if (isDisplayedAsBlock) {
 
-        // for (i = 0; i < clearHTML.childNodes.length; i++) {
-        //
-        //     var tag = clearHTML.childNodes[i],
-        //         blockType = null;
-        //
-        //     for (tool in codex.tools) {
-        //
-        //         var handleTags = codex.tools[tool].handleTagOnPaste;
-        //
-        //         if (!handleTags) {
-        //             continue;
-        //         }
-        //
-        //         if (handleTags.indexOf(tag.tagName) !== -1) {
-        //             blockType = codex.tools[tool];
-        //             break;
-        //         }
-        //
-        //     }
-        //
-        //     if (blockType) {
-        //         codex.parser.insertPastedContent(blockType, tag);
-        //     }
-        //
-        // }
+                newNode = document.createElement('P');
+                newNode.innerHTML = target.innerHTML;
+                target.parentNode.replaceChild(newNode, target);
+                target = newNode;
+
+            } else {
+
+                newNode = document.createTextNode(` ${target.textContent} `);
+                newNode.textContent = newNode.textContent.replace(/\s{2,}/g, ' ');
+                target.parentNode.replaceChild(newNode, target);
+
+            }
+        }
+
+        /** keep href attributes of tag A */
+        if (target.tagName == 'A') {
+            href = target.getAttribute('href');
+        }
+
+        /** Remove all tags */
+        while(target.attributes.length > 0) {
+            target.removeAttribute(target.attributes[0].name);
+        }
+
+        /** return href */
+        if (href) {
+            target.setAttribute('href', href);
+        }
+
+        return target;
+
+    };
+
+    /**
+     * Depth-first search Algorithm
+     * returns all childs
+     * @param {Element}
+     */
+    content.dfs = function(el) {
+
+        if (!codex.core.isDomNode(el))
+            return;
+
+        var sanitized = this.clearStyles(el);
+
+        for(var i = 0; i < sanitized.childNodes.length; i++) {
+            this.dfs(sanitized.childNodes[i]);
+        }
 
     };
 

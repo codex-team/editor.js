@@ -61,32 +61,28 @@ var codex =
 	'use strict';
 	
 	/**
-	 *
-	 * Codex Editor
-	 *
 	 * @author Codex Team
-	 * @version 1.2.5
+	 * @version 1.0.6
 	 */
 	
 	var codex = function (codex) {
 	
 	    var init = function init() {
+	
 	        codex.core = __webpack_require__(2);
 	        codex.ui = __webpack_require__(3);
 	        codex.transport = __webpack_require__(4);
 	        codex.renderer = __webpack_require__(5);
 	        codex.saver = __webpack_require__(6);
 	        codex.content = __webpack_require__(7);
-	        codex.toolbar = __webpack_require__(9);
-	        codex.tools = __webpack_require__(13);
-	        codex.callback = __webpack_require__(14);
-	        codex.draw = __webpack_require__(15);
-	        codex.caret = __webpack_require__(16);
-	        codex.notifications = __webpack_require__(17);
-	        codex.parser = __webpack_require__(18);
+	        codex.toolbar = __webpack_require__(8);
+	        codex.tools = __webpack_require__(12);
+	        codex.callback = __webpack_require__(13);
+	        codex.draw = __webpack_require__(14);
+	        codex.caret = __webpack_require__(15);
+	        codex.notifications = __webpack_require__(16);
+	        codex.parser = __webpack_require__(17);
 	    };
-	
-	    codex.version = ("1.2.8");
 	
 	    /**
 	     * @public
@@ -195,13 +191,6 @@ var codex =
 	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
-	/**
-	 * Codex Editor Core
-	 *
-	 * @author Codex Team
-	 * @version 1.1.2
-	 */
-	
 	var core = function (core) {
 	
 	    /**
@@ -221,14 +210,6 @@ var codex =
 	
 	            if (userSettings.data) {
 	                codex.state.blocks = userSettings.data;
-	            }
-	
-	            if (userSettings.initialBlockPlugin) {
-	                codex.settings.initialBlockPlugin = userSettings.initialBlockPlugin;
-	            }
-	
-	            if (userSettings.uploadImagesUrl) {
-	                codex.settings.uploadImagesUrl = userSettings.uploadImagesUrl;
 	            }
 	
 	            codex.nodes.textarea = document.getElementById(userSettings.textareaId || codex.settings.textareaId);
@@ -382,13 +363,6 @@ var codex =
 /***/ function(module, exports) {
 
 	'use strict';
-	
-	/**
-	 * Codex Editor UI module
-	 *
-	 * @author Codex Team
-	 * @version 1.1
-	 */
 	
 	var ui = function (ui) {
 	
@@ -631,10 +605,7 @@ var codex =
 	        }, false);
 	
 	        /** All keydowns on Document */
-	        document.addEventListener('keydown', codex.callback.globalKeydown, false);
-	
-	        /** All keydowns on Redactor zone */
-	        codex.nodes.redactor.addEventListener('keydown', codex.callback.redactorKeyDown, false);
+	        codex.nodes.redactor.addEventListener('keydown', codex.callback.globalKeydown, false);
 	
 	        /** All keydowns on Document */
 	        document.addEventListener('keyup', codex.callback.globalKeyup, false);
@@ -677,9 +648,7 @@ var codex =
 	
 	            codex.tools[tool].prepare();
 	        }
-	    };
-	
-	    ui.addBlockHandlers = function (block) {
+	    }, ui.addBlockHandlers = function (block) {
 	
 	        if (!block) return;
 	
@@ -692,25 +661,9 @@ var codex =
 	
 	        /**
 	         * Pasting content from another source
-	         * We have two type of sanitization
-	         * First - uses deep-first search algorithm to get sub nodes,
-	         * sanitizes whole Block_content and replaces cleared nodes
-	         * This method is deprecated
-	         * Method is used in codex.callback.blockPaste(event)
-	         *
-	         * Secont - uses Mutation observer.
-	         * Observer "observe" DOM changes and send changings to callback.
-	         * Callback gets changed node, not whole Block_content.
-	         * Inserted or changed node, which we've gotten have been cleared and replaced with diry node
-	         *
-	         * Method is used in codex.callback.blockPasteViaSanitize(event)
-	         *
-	         * @uses html-janitor
-	         * @example codex.callback.blockPasteViaSanitize(event), the second method.
-	         *
 	         */
 	        block.addEventListener('paste', function (event) {
-	            codex.callback.blockPasteViaSanitize(event);
+	            codex.callback.blockPaste(event);
 	        }, false);
 	
 	        block.addEventListener('mouseup', function () {
@@ -777,7 +730,7 @@ var codex =
 	 * Codex.Editor Transport Module
 	 *
 	 * @author Codex Team
-	 * @version 1.0
+	 * @version 1.0.0
 	 */
 	
 	var transport = function (transport) {
@@ -880,13 +833,6 @@ var codex =
 /***/ function(module, exports) {
 
 	'use strict';
-	
-	/**
-	 * Codex Editor Renderer Module
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
 	
 	var renderer = function (renderer) {
 	
@@ -1052,13 +998,6 @@ var codex =
 
 	'use strict';
 	
-	/**
-	 * Codex Editor Saver
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
-	
 	var saver = function (saver) {
 	
 	    /**
@@ -1154,54 +1093,13 @@ var codex =
 
 /***/ },
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
-	/**
-	 * Codex Editor Content Module
-	 * Works with DOM
-	 *
-	 * @author Codex Team
-	 * @version 1.3.1
-	 */
-	
-	var janitor = __webpack_require__(8);
-	
-	/**
-	 * Default settings for sane.
-	 * @uses html-janitor
-	 */
-	var Config = {
-	
-	    tags: {
-	        p: {},
-	        a: {
-	            href: true,
-	            target: '_blank',
-	            rel: 'nofollow'
-	        },
-	        i: {},
-	        b: {},
-	        strong: {},
-	        em: {},
-	        span: {}
-	    }
-	};
-	
 	var content = function (content) {
 	
-	    /**
-	     * Links to current active block
-	     * @type {null | Element}
-	     */
 	    content.currentNode = null;
-	
-	    /**
-	     * clicked in redactor area
-	     * @type {null | Boolean}
-	     */
-	    content.editorAreaHightlighted = null;
 	
 	    /**
 	     * Synchronizes redactor with original textarea
@@ -1436,12 +1334,6 @@ var codex =
 	                }, 10);
 	            }
 	        }
-	
-	        /**
-	         * Block is inserted, wait for new click that defined focusing on editors area
-	         * @type {boolean}
-	         */
-	        content.editorAreaHightlighted = false;
 	    };
 	
 	    /**
@@ -1641,7 +1533,7 @@ var codex =
 	        newNode = newNode.innerHTML;
 	
 	        /** This type of block creates when enter is pressed */
-	        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+	        var NEW_BLOCK_TYPE = 'paragraph';
 	
 	        /**
 	         * Make new paragraph with text after caret
@@ -1691,7 +1583,7 @@ var codex =
 	            tool = workingNode.dataset.tool;
 	
 	        if (codex.tools[tool].allowedToPaste) {
-	            codex.content.sanitize.call(this, mutation.addedNodes);
+	            codex.content.sanitize(mutation.addedNodes);
 	        } else {
 	            codex.content.pasteTextContent(mutation.addedNodes);
 	        }
@@ -1706,17 +1598,7 @@ var codex =
 	    content.pasteTextContent = function (nodes) {
 	
 	        var node = nodes[0],
-	            textNode;
-	
-	        if (!node) {
-	            return;
-	        }
-	
-	        if (node.nodeType == codex.core.nodeTypes.TEXT) {
-	            textNode = document.createTextNode(node);
-	        } else {
 	            textNode = document.createTextNode(node.textContent);
-	        }
 	
 	        if (codex.core.isDomNode(node)) {
 	            node.parentNode.replaceChild(textNode, node);
@@ -1728,7 +1610,7 @@ var codex =
 	     *
 	     * Sanitizes HTML content
 	     * @param {Element} target - inserted element
-	     * @uses Sanitize library html-janitor
+	     * @uses DFS function for deep searching
 	     */
 	    content.sanitize = function (target) {
 	
@@ -1736,59 +1618,80 @@ var codex =
 	            return;
 	        }
 	
-	        var node = target[0];
+	        for (var i = 0; i < target.childNodes.length; i++) {
+	            this.dfs(target.childNodes[i]);
+	        }
+	    };
 	
-	        if (!node) {
-	            return;
+	    /**
+	     * Clears styles
+	     * @param {Element|Text}
+	     */
+	    content.clearStyles = function (target) {
+	
+	        var href,
+	            newNode = null,
+	            blockTags = ['P', 'BLOCKQUOTE', 'UL', 'CODE', 'OL', 'LI', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'DIV', 'PRE', 'HEADER', 'SECTION'],
+	            allowedTags = ['P', 'B', 'I', 'A', 'U', 'BR'],
+	            needReplace = !allowedTags.includes(target.tagName),
+	            isDisplayedAsBlock = blockTags.includes(target.tagName);
+	
+	        if (!codex.core.isDomNode(target)) {
+	            return target;
 	        }
 	
-	        /**
-	         * Disconnect Observer
-	         * hierarchy of function calls inherits context of observer
-	         */
-	        this.disconnect();
-	
-	        /**
-	         * Don't sanitize text node
-	         */
-	        if (node.nodeType == codex.core.nodeTypes.TEXT) {
-	            return;
+	        if (!target.parentNode) {
+	            return target;
 	        }
 	
-	        /**
-	         * Clear dirty content
-	         */
-	        var sanitizer = new janitor(Config),
-	            clear = sanitizer.clean(node.outerHTML);
+	        if (needReplace) {
 	
-	        var div = codex.draw.node('DIV', [], { innerHTML: clear });
-	        node.replaceWith(div.childNodes[0]);
+	            if (isDisplayedAsBlock) {
 	
-	        // for (i = 0; i < clearHTML.childNodes.length; i++) {
-	        //
-	        //     var tag = clearHTML.childNodes[i],
-	        //         blockType = null;
-	        //
-	        //     for (tool in codex.tools) {
-	        //
-	        //         var handleTags = codex.tools[tool].handleTagOnPaste;
-	        //
-	        //         if (!handleTags) {
-	        //             continue;
-	        //         }
-	        //
-	        //         if (handleTags.indexOf(tag.tagName) !== -1) {
-	        //             blockType = codex.tools[tool];
-	        //             break;
-	        //         }
-	        //
-	        //     }
-	        //
-	        //     if (blockType) {
-	        //         codex.parser.insertPastedContent(blockType, tag);
-	        //     }
-	        //
-	        // }
+	                newNode = document.createElement('P');
+	                newNode.innerHTML = target.innerHTML;
+	                target.parentNode.replaceChild(newNode, target);
+	                target = newNode;
+	            } else {
+	
+	                newNode = document.createTextNode(' ' + target.textContent + ' ');
+	                newNode.textContent = newNode.textContent.replace(/\s{2,}/g, ' ');
+	                target.parentNode.replaceChild(newNode, target);
+	            }
+	        }
+	
+	        /** keep href attributes of tag A */
+	        if (target.tagName == 'A') {
+	            href = target.getAttribute('href');
+	        }
+	
+	        /** Remove all tags */
+	        while (target.attributes.length > 0) {
+	            target.removeAttribute(target.attributes[0].name);
+	        }
+	
+	        /** return href */
+	        if (href) {
+	            target.setAttribute('href', href);
+	        }
+	
+	        return target;
+	    };
+	
+	    /**
+	     * Depth-first search Algorithm
+	     * returns all childs
+	     * @param {Element}
+	     */
+	    content.dfs = function (el) {
+	
+	        if (!codex.core.isDomNode(el)) return;
+	
+	        var sanitized = this.clearStyles(el);
+	
+	        for (var i = 0; i < sanitized.childNodes.length; i++) {
+	            this.dfs(sanitized.childNodes[i]);
+	        }
 	    };
 	
 	    return content;
@@ -1800,216 +1703,14 @@ var codex =
 /* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
-	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else if (typeof exports === 'object') {
-	    module.exports = factory();
-	  } else {
-	    root.HTMLJanitor = factory();
-	  }
-	}(this, function () {
-	
-	  /**
-	   * @param {Object} config.tags Dictionary of allowed tags.
-	   * @param {boolean} config.keepNestedBlockElements Default false.
-	   */
-	  function HTMLJanitor(config) {
-	
-	    var tagDefinitions = config['tags'];
-	    var tags = Object.keys(tagDefinitions);
-	
-	    var validConfigValues = tags
-	      .map(function(k) { return typeof tagDefinitions[k]; })
-	      .every(function(type) { return type === 'object' || type === 'boolean' || type === 'function'; });
-	
-	    if(!validConfigValues) {
-	      throw new Error("The configuration was invalid");
-	    }
-	
-	    this.config = config;
-	  }
-	
-	  // TODO: not exhaustive?
-	  var blockElementNames = ['P', 'LI', 'TD', 'TH', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'PRE'];
-	  function isBlockElement(node) {
-	    return blockElementNames.indexOf(node.nodeName) !== -1;
-	  }
-	
-	  var inlineElementNames = ['A', 'B', 'STRONG', 'I', 'EM', 'SUB', 'SUP', 'U', 'STRIKE'];
-	  function isInlineElement(node) {
-	    return inlineElementNames.indexOf(node.nodeName) !== -1;
-	  }
-	
-	  HTMLJanitor.prototype.clean = function (html) {
-	    var sandbox = document.createElement('div');
-	    sandbox.innerHTML = html;
-	
-	    this._sanitize(sandbox);
-	
-	    return sandbox.innerHTML;
-	  };
-	
-	  HTMLJanitor.prototype._sanitize = function (parentNode) {
-	    var treeWalker = createTreeWalker(parentNode);
-	    var node = treeWalker.firstChild();
-	    if (!node) { return; }
-	
-	    do {
-	      // Ignore nodes that have already been sanitized
-	      if (node._sanitized) {
-	        continue;
-	      }
-	
-	      if (node.nodeType === Node.TEXT_NODE) {
-	        // If this text node is just whitespace and the previous or next element
-	        // sibling is a block element, remove it
-	        // N.B.: This heuristic could change. Very specific to a bug with
-	        // `contenteditable` in Firefox: http://jsbin.com/EyuKase/1/edit?js,output
-	        // FIXME: make this an option?
-	        if (node.data.trim() === ''
-	            && ((node.previousElementSibling && isBlockElement(node.previousElementSibling))
-	                 || (node.nextElementSibling && isBlockElement(node.nextElementSibling)))) {
-	          parentNode.removeChild(node);
-	          this._sanitize(parentNode);
-	          break;
-	        } else {
-	          continue;
-	        }
-	      }
-	
-	      // Remove all comments
-	      if (node.nodeType === Node.COMMENT_NODE) {
-	        parentNode.removeChild(node);
-	        this._sanitize(parentNode);
-	        break;
-	      }
-	
-	      var isInline = isInlineElement(node);
-	      var containsBlockElement;
-	      if (isInline) {
-	        containsBlockElement = Array.prototype.some.call(node.childNodes, isBlockElement);
-	      }
-	
-	      // Block elements should not be nested (e.g. <li><p>...); if
-	      // they are, we want to unwrap the inner block element.
-	      var isNotTopContainer = !! parentNode.parentNode;
-	      var isNestedBlockElement =
-	            isBlockElement(parentNode) &&
-	            isBlockElement(node) &&
-	            isNotTopContainer;
-	
-	      var nodeName = node.nodeName.toLowerCase();
-	
-	      var allowedAttrs = getAllowedAttrs(this.config, nodeName, node);
-	
-	      var isInvalid = isInline && containsBlockElement;
-	
-	      // Drop tag entirely according to the whitelist *and* if the markup
-	      // is invalid.
-	      if (isInvalid || shouldRejectNode(node, allowedAttrs)
-	          || (!this.config.keepNestedBlockElements && isNestedBlockElement)) {
-	        // Do not keep the inner text of SCRIPT/STYLE elements.
-	        if (! (node.nodeName === 'SCRIPT' || node.nodeName === 'STYLE')) {
-	          while (node.childNodes.length > 0) {
-	            parentNode.insertBefore(node.childNodes[0], node);
-	          }
-	        }
-	        parentNode.removeChild(node);
-	
-	        this._sanitize(parentNode);
-	        break;
-	      }
-	
-	      // Sanitize attributes
-	      for (var a = 0; a < node.attributes.length; a += 1) {
-	        var attr = node.attributes[a];
-	
-	        if (shouldRejectAttr(attr, allowedAttrs, node)) {
-	          node.removeAttribute(attr.name);
-	          // Shift the array to continue looping.
-	          a = a - 1;
-	        }
-	      }
-	
-	      // Sanitize children
-	      this._sanitize(node);
-	
-	      // Mark node as sanitized so it's ignored in future runs
-	      node._sanitized = true;
-	    } while ((node = treeWalker.nextSibling()));
-	  };
-	
-	  function createTreeWalker(node) {
-	    return document.createTreeWalker(node,
-	                                     NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT,
-	                                     null, false);
-	  }
-	
-	  function getAllowedAttrs(config, nodeName, node){
-	    if (typeof config.tags[nodeName] === 'function') {
-	      return config.tags[nodeName](node);
-	    } else {
-	      return config.tags[nodeName];
-	    }
-	  }
-	
-	  function shouldRejectNode(node, allowedAttrs){
-	    if (typeof allowedAttrs === 'undefined') {
-	      return true;
-	    } else if (typeof allowedAttrs === 'boolean') {
-	      return !allowedAttrs;
-	    }
-	
-	    return false;
-	  }
-	
-	  function shouldRejectAttr(attr, allowedAttrs, node){
-	    var attrName = attr.name.toLowerCase();
-	
-	    if (allowedAttrs === true){
-	      return false;
-	    } else if (typeof allowedAttrs[attrName] === 'function'){
-	      return !allowedAttrs[attrName](attr.value, node);
-	    } else if (typeof allowedAttrs[attrName] === 'undefined'){
-	      return true;
-	    } else if (allowedAttrs[attrName] === false) {
-	      return true;
-	    } else if (typeof allowedAttrs[attrName] === 'string') {
-	      return (allowedAttrs[attrName] !== attr.value);
-	    }
-	
-	    return false;
-	  }
-	
-	  return HTMLJanitor;
-	
-	}));
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 	
-	/**
-	 * Codex Editor toolbar module
-	 *
-	 * Contains:
-	 *  - Inline toolbox
-	 *  - Toolbox within plus button
-	 *  - Settings section
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
 	var toolbar = function (toolbar) {
 	
 	    toolbar.init = function () {
-	        toolbar.settings = __webpack_require__(10);
-	        toolbar.inline = __webpack_require__(11);
-	        toolbar.toolbox = __webpack_require__(12);
+	        toolbar.settings = __webpack_require__(9);
+	        toolbar.inline = __webpack_require__(10);
+	        toolbar.toolbox = __webpack_require__(11);
 	    };
 	
 	    /**
@@ -2099,7 +1800,7 @@ var codex =
 	module.exports = toolbar;
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2340,20 +2041,11 @@ var codex =
 	module.exports = settings;
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports) {
 
 	'use strict';
 	
-	/**
-	 * Inline toolbar
-	 *
-	 * Contains from tools:
-	 * Bold, Italic, Underline and Anchor
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
 	var inline = function (inline) {
 	
 	    inline.init = function () {};
@@ -2833,24 +2525,15 @@ var codex =
 	module.exports = inline;
 
 /***/ },
-/* 12 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	/**
-	 * Codex Editor toolbox
-	 *
-	 * All tools be able to appended here
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
 	var toolbox = function (toolbox) {
 	
 	    toolbox.init = function () {
-	
-	        __webpack_require__(9);
+	        __webpack_require__(8);
 	    };
 	
 	    toolbox.opened = false;
@@ -2860,7 +2543,6 @@ var codex =
 	
 	        /** Close setting if toolbox is opened */
 	        if (codex.toolbar.settings.opened) {
-	
 	            codex.toolbar.settings.close();
 	        }
 	
@@ -2898,11 +2580,7 @@ var codex =
 	
 	        /** Count toolbox hidden tools */
 	        for (var tool in codex.tools) {
-	
-	            if (!codex.tools[tool].displayInToolbox) {
-	
-	                hiddenToolsAmount++;
-	            }
+	            if (!codex.tools[tool].displayInToolbox) hiddenToolsAmount++;
 	        }
 	
 	        if (!currentTool) {
@@ -2925,7 +2603,6 @@ var codex =
 	                for (var tool in codex.tools) {
 	
 	                    if (codex.tools[tool].displayInToolbox) {
-	
 	                        break;
 	                    }
 	
@@ -2970,7 +2647,6 @@ var codex =
 	        };
 	
 	        if (workingNode && UNREPLACEBLE_TOOLS.indexOf(workingNode.dataset.tool) === -1 && workingNode.textContent.trim() === '') {
-	
 	            /** Replace current block */
 	            codex.content.switchBlock(workingNode, newBlockContent, tool.type);
 	        } else {
@@ -2986,7 +2662,6 @@ var codex =
 	        appendCallback = tool.appendCallback;
 	
 	        if (appendCallback && typeof appendCallback == 'function') {
-	
 	            appendCallback.call(event);
 	        }
 	
@@ -3015,37 +2690,23 @@ var codex =
 	module.exports = toolbox;
 
 /***/ },
-/* 13 */
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";
 	
-	/**
-	 * Codex Editor tools
-	 * This tools will be appended in toolbox
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
 	var tools = function (tools) {
 	
-	  return tools;
+	    return tools;
 	}({});
 	
 	module.exports = tools;
 
 /***/ },
-/* 14 */
+/* 13 */
 /***/ function(module, exports) {
 
 	'use strict';
-	
-	/**
-	 * Codex Editor callbacks module
-	 *
-	 * @author Codex Team
-	 * @version 1.2.5
-	 */
 	
 	var callbacks = function (callbacks) {
 	
@@ -3053,17 +2714,10 @@ var codex =
 	
 	    callbacks.globalKeydown = function (event) {
 	        switch (event.keyCode) {
-	            case codex.core.keys.ENTER:
-	                codex.callback.enterKeyPressed(event);break;
-	        }
-	    };
-	
-	    callbacks.redactorKeyDown = function (event) {
-	        switch (event.keyCode) {
 	            case codex.core.keys.TAB:
 	                codex.callback.tabKeyPressed(event);break;
 	            case codex.core.keys.ENTER:
-	                codex.callback.enterKeyPressedOnRedactorZone(event);break;
+	                codex.callback.enterKeyPressed(event);break;
 	            case codex.core.keys.ESC:
 	                codex.callback.escapeKeyPressed(event);break;
 	            default:
@@ -3096,9 +2750,17 @@ var codex =
 	        event.preventDefault();
 	    };
 	
+	    /**
+	     * ENTER key handler
+	     * Makes new paragraph block
+	     */
 	    callbacks.enterKeyPressed = function (event) {
 	
-	        if (codex.content.editorAreaHightlighted) {
+	        /** Set current node */
+	        var firstLevelBlocksArea = codex.callback.clickedOnFirstLevelBlockArea();
+	
+	        if (firstLevelBlocksArea) {
+	            event.preventDefault();
 	
 	            /**
 	             * it means that we lose input index, saved index before is not correct
@@ -3107,14 +2769,8 @@ var codex =
 	            codex.caret.inputIndex = -1;
 	
 	            codex.callback.enterPressedOnBlock();
+	            return;
 	        }
-	    };
-	
-	    /**
-	     * ENTER key handler
-	     * Makes new paragraph block
-	     */
-	    callbacks.enterKeyPressedOnRedactorZone = function (event) {
 	
 	        if (event.target.contentEditable == 'true') {
 	
@@ -3139,7 +2795,7 @@ var codex =
 	        var enableLineBreaks = codex.tools[tool].enableLineBreaks;
 	
 	        /** This type of block creates when enter is pressed */
-	        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+	        var NEW_BLOCK_TYPE = 'paragraph';
 	
 	        /**
 	         * When toolbar is opened, select tool instead of making new paragraph
@@ -3151,12 +2807,6 @@ var codex =
 	            codex.toolbar.toolbox.toolClicked(event);
 	
 	            codex.toolbar.close();
-	
-	            /**
-	             * Stop other listeners callback executions
-	             */
-	            event.stopPropagation();
-	            event.stopImmediatePropagation();
 	
 	            return;
 	        }
@@ -3265,8 +2915,6 @@ var codex =
 	
 	    callbacks.redactorClicked = function (event) {
 	
-	        callbacks.markWhenClickedOnFirstLevelBlockArea();
-	
 	        codex.content.workingNodeChanged(event.target);
 	
 	        codex.ui.saveInputs();
@@ -3301,13 +2949,13 @@ var codex =
 	            }
 	
 	            /** If input is empty, then we set caret to the last input */
-	            if (codex.state.inputs.length && codex.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == codex.settings.initialBlockPlugin) {
+	            if (codex.state.inputs.length && codex.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == 'paragraph') {
 	
 	                codex.caret.setToBlock(indexOfLastInput);
 	            } else {
 	
 	                /** Create new input when caret clicked in redactors area */
-	                var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+	                var NEW_BLOCK_TYPE = 'paragraph';
 	
 	                codex.content.insertBlock({
 	                    type: NEW_BLOCK_TYPE,
@@ -3360,7 +3008,7 @@ var codex =
 	        var currentNodeType = codex.content.currentNode.dataset.tool;
 	
 	        /** Mark current block*/
-	        if (currentNodeType != codex.settings.initialBlockPlugin || !inputIsEmpty) {
+	        if (currentNodeType != 'paragraph' || !inputIsEmpty) {
 	
 	            codex.content.markBlock();
 	        }
@@ -3373,7 +3021,7 @@ var codex =
 	     * Therefore, to be sure that we've clicked first-level block area, we should have currentNode, which always
 	     * specifies to the first-level block. Other cases we just ignore.
 	     */
-	    callbacks.markWhenClickedOnFirstLevelBlockArea = function () {
+	    callbacks.clickedOnFirstLevelBlockArea = function () {
 	
 	        var selection = window.getSelection(),
 	            anchorNode = selection.anchorNode,
@@ -3381,7 +3029,7 @@ var codex =
 	
 	        if (selection.rangeCount == 0) {
 	
-	            codex.content.editorAreaHightlighted = true;
+	            return true;
 	        } else {
 	
 	            if (!codex.core.isDomNode(anchorNode)) {
@@ -3406,7 +3054,7 @@ var codex =
 	            }
 	
 	            /** If editable element founded, flag is "TRUE", Therefore we return "FALSE" */
-	            codex.content.editorAreaHightlighted = flag ? false : true;
+	            return flag ? false : true;
 	        }
 	    };
 	
@@ -3619,7 +3267,7 @@ var codex =
 	     */
 	    callbacks.enterPressedOnBlock = function (event) {
 	
-	        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+	        var NEW_BLOCK_TYPE = 'paragraph';
 	
 	        codex.content.insertBlock({
 	            type: NEW_BLOCK_TYPE,
@@ -3702,11 +3350,6 @@ var codex =
 	        event.preventDefault();
 	    };
 	
-	    /**
-	     * @deprecated
-	     *
-	     * @param event
-	     */
 	    callbacks.blockPaste = function (event) {
 	
 	        var currentInputIndex = codex.caret.getCurrentInputIndex(),
@@ -3715,14 +3358,10 @@ var codex =
 	        setTimeout(function () {
 	
 	            codex.content.sanitize(node);
-	
-	            event.preventDefault();
 	        }, 10);
-	
-	        event.stopImmediatePropagation();
 	    };
 	
-	    callbacks.blockPasteViaSanitize = function (event) {
+	    callbacks._blockPaste = function (event) {
 	
 	        var currentInputIndex = codex.caret.getCurrentInputIndex();
 	
@@ -3734,12 +3373,7 @@ var codex =
 	        /**
 	         * configuration of the observer:
 	         */
-	        var config = {
-	            attributes: true,
-	            childList: true,
-	            characterData: false,
-	            subtree: true
-	        };
+	        var config = { attributes: true, childList: true, characterData: false };
 	
 	        // pass in the target node, as well as the observer options
 	        observer.observe(codex.state.inputs[currentInputIndex], config);
@@ -3749,19 +3383,7 @@ var codex =
 	     * Sends all mutations to paste handler
 	     */
 	    callbacks.handlePasteEvents = function (mutations) {
-	
-	        var self = this;
-	
-	        /**
-	         * Calling function with context of this function.
-	         * Also, we should sanitize pasted or changed data one time and ignore
-	         * changings which makes sanitize method.
-	         * For that, we need to send Context, MutationObserver.__proto__ that contains
-	         * observer disconnect method.
-	         */
-	        mutations.forEach(function (mutation) {
-	            codex.content.paste.call(self, mutation);
-	        });
+	        mutations.forEach(codex.content.paste);
 	    };
 	
 	    /**
@@ -3790,17 +3412,10 @@ var codex =
 	module.exports = callbacks;
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports) {
 
 	'use strict';
-	
-	/**
-	 * Codex Editor Draw module
-	 *
-	 * @author Codex Team
-	 * @version 1.0.
-	 */
 	
 	var draw = function (draw) {
 	
@@ -3950,9 +3565,7 @@ var codex =
 	        div.classList.add('ce-settings_default');
 	
 	        return div;
-	    };
-	
-	    draw.pluginsSettings = function () {
+	    }, draw.pluginsSettings = function () {
 	
 	        var div = document.createElement('div');
 	
@@ -4097,17 +3710,10 @@ var codex =
 	module.exports = draw;
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
-	
-	/**
-	 * Codex Editor Caret Module
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
 	
 	var caret = function (caret) {
 	
@@ -4341,17 +3947,10 @@ var codex =
 	module.exports = caret;
 
 /***/ },
-/* 17 */
+/* 16 */
 /***/ function(module, exports) {
 
 	'use strict';
-	
-	/**
-	 * Codex Editor Notification Module
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
 	
 	var notifications = function (notifications) {
 	
@@ -4394,29 +3993,234 @@ var codex =
 	module.exports = notifications;
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports) {
 
-	"use strict";
-	
-	/**
-	 * Codex Editor Parser Module
-	 *
-	 * @author Codex Team
-	 * @version 1.1
-	 */
+	'use strict';
 	
 	var parser = function (parser) {
 	
-	    /** inserting text */
-	    parser.insertPastedContent = function (blockType, tag) {
+	    /**
+	     * Splits content by `\n` and returns blocks
+	     */
+	    parser.getSeparatedTextFromContent = function (content) {
+	        return content.split('\n');
+	    };
 	
-	        codex.content.insertBlock({
-	            type: blockType.type,
-	            block: blockType.render({
-	                text: tag.innerHTML
-	            })
+	    /** inserting text */
+	    parser.insertPastedContent = function (content) {
+	
+	        var blocks = this.getSeparatedTextFromContent(content),
+	            i,
+	            inputIndex = cEditor.caret.getCurrentInputIndex(),
+	            textNode,
+	            parsedTextContent;
+	
+	        for (i = 0; i < blocks.length; i++) {
+	
+	            blocks[i].trim();
+	
+	            if (blocks[i]) {
+	                var data = cEditor.draw.pluginsRender('paragraph', blocks[i]);
+	                cEditor.content.insertBlock(data);
+	            }
+	        }
+	    };
+	
+	    /**
+	     * Asynchronously parses textarea input string to HTML editor blocks
+	     */
+	    parser.parseTextareaContent = function () {
+	
+	        var initialContent = cEditor.nodes.textarea.value;
+	
+	        if (initialContent.trim().length === 0) return true;
+	
+	        cEditor.parser
+	
+	        /** Get child nodes async-aware */
+	        .getNodesFromString(initialContent)
+	
+	        /** Then append nodes to the redactor */
+	        .then(cEditor.parser.appendNodesToRedactor)
+	
+	        /** Write log if something goes wrong */
+	        .catch(function (error) {
+	            cEditor.core.log('Error while parsing content: %o', 'warn', error);
 	        });
+	    };
+	
+	    /**
+	     * Parses string to nodeList
+	     * @param string inputString
+	     * @return Primise -> nodeList
+	     */
+	    parser.getNodesFromString = function (inputString) {
+	
+	        return Promise.resolve().then(function () {
+	
+	            var contentHolder = document.createElement('div');
+	
+	            contentHolder.innerHTML = inputString;
+	
+	            /**
+	             *    Returning childNodes will include:
+	             *        - Elements (html-tags),
+	             *        - Texts (empty-spaces or non-wrapped strings )
+	             *        - Comments and other
+	             */
+	            return contentHolder.childNodes;
+	        });
+	    };
+	
+	    /**
+	     * Appends nodes to the redactor
+	     * @param nodeList nodes - list for nodes to append
+	     */
+	    parser.appendNodesToRedactor = function (nodes) {
+	
+	        /**
+	         * Sequence of one-by-one nodes appending
+	         * Uses to save blocks order after async-handler
+	         */
+	        var nodeSequence = Promise.resolve();
+	
+	        for (var index = 0; index < nodes.length; index++) {
+	
+	            /** Add node to sequence at specified index */
+	            cEditor.parser.appendNodeAtIndex(nodeSequence, nodes, index);
+	        }
+	    };
+	
+	    /**
+	     * Append node at specified index
+	     */
+	    parser.appendNodeAtIndex = function (nodeSequence, nodes, index) {
+	
+	        /** We need to append node to sequence */
+	        nodeSequence
+	
+	        /** first, get node async-aware */
+	        .then(function () {
+	
+	            return cEditor.parser.getNodeAsync(nodes, index);
+	        })
+	
+	        /**
+	         *    second, compose editor-block from node
+	         *    and append it to redactor
+	         */
+	        .then(function (node) {
+	
+	            var block = cEditor.parser.createBlockByDomNode(node);
+	
+	            if (cEditor.core.isDomNode(block)) {
+	
+	                block.contentEditable = "true";
+	
+	                /** Mark node as redactor block*/
+	                block.classList.add('ce-block');
+	
+	                /** Append block to the redactor */
+	                cEditor.nodes.redactor.appendChild(block);
+	
+	                /** Save block to the cEditor.state array */
+	                cEditor.state.blocks.push(block);
+	
+	                return block;
+	            }
+	            return null;
+	        }).then(cEditor.ui.addBlockHandlers)
+	
+	        /** Log if something wrong with node */
+	        .catch(function (error) {
+	            cEditor.core.log('Node skipped while parsing because %o', 'warn', error);
+	        });
+	    };
+	
+	    /**
+	     * Asynchronously returns node from nodeList by index
+	     * @return Promise to node
+	     */
+	    parser.getNodeAsync = function (nodeList, index) {
+	
+	        return Promise.resolve().then(function () {
+	
+	            return nodeList.item(index);
+	        });
+	    };
+	
+	    /**
+	     * Creates editor block by DOM node
+	     *
+	     * First-level blocks (see cEditor.settings.blockTags) saves as-is,
+	     * other wrapps with <p>-tag
+	     *
+	     * @param DOMnode node
+	     * @return First-level node (paragraph)
+	     */
+	    parser.createBlockByDomNode = function (node) {
+	
+	        /** First level nodes already appears as blocks */
+	        if (cEditor.parser.isFirstLevelBlock(node)) {
+	
+	            /** Save plugin type in data-type */
+	            node = this.storeBlockType(node);
+	
+	            return node;
+	        }
+	
+	        /** Other nodes wraps into parent block (paragraph-tag) */
+	        var parentBlock,
+	            nodeContent = node.textContent.trim(),
+	            isPlainTextNode = node.nodeType != cEditor.core.nodeTypes.TAG;
+	
+	        /** Skip empty textNodes with space-symbols */
+	        if (isPlainTextNode && !nodeContent.length) return null;
+	
+	        /** Make <p> tag */
+	        parentBlock = cEditor.draw.block('P');
+	
+	        if (isPlainTextNode) {
+	            parentBlock.textContent = nodeContent.replace(/(\s){2,}/, '$1'); // remove double spaces
+	        } else {
+	            parentBlock.appendChild(node);
+	        }
+	
+	        /** Save plugin type in data-type */
+	        parentBlock = this.storeBlockType(parentBlock);
+	
+	        return parentBlock;
+	    };
+	
+	    /**
+	     * It's a crutch
+	     * - - - - - - -
+	     * We need block type stored as data-attr
+	     * Now supports only simple blocks : P, HEADER, QUOTE, CODE
+	     * Remove it after updating parser module for the block-oriented structure:
+	     *       - each block must have stored type
+	     * @param {Element} node
+	     */
+	    parser.storeBlockType = function (node) {
+	
+	        switch (node.tagName) {
+	            case 'P':
+	                node.dataset.tool = 'paragraph';break;
+	            case 'H1':
+	            case 'H2':
+	            case 'H3':
+	            case 'H4':
+	            case 'H5':
+	            case 'H6':
+	                node.dataset.tool = 'header';break;
+	            case 'BLOCKQUOTE':
+	                node.dataset.tool = 'quote';break;
+	            case 'CODE':
+	                node.dataset.tool = 'code';break;
+	        }
+	
+	        return node;
 	    };
 	
 	    /**

@@ -1,14 +1,3 @@
-/**
- * Codex Editor toolbar module
- *
- * Contains:
- *  - Inline toolbox
- *  - Toolbox within plus button
- *  - Settings section
- *
- * @author Codex Team
- * @version 1.0
- */
 var toolbar = (function(toolbar) {
 
     toolbar.init = function() {

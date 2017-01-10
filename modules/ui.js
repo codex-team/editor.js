@@ -1,10 +1,3 @@
-/**
- * Codex Editor UI module
- *
- * @author Codex Team
- * @version 1.1
- */
-
 var ui = (function(ui){
 
     /**
@@ -17,30 +10,30 @@ var ui = (function(ui){
          */
         BLOCK_CLASSNAME : 'ce-block',
 
-        /**
-         * @const {String} wrapper for plugins content
-         */
-        BLOCK_CONTENT : 'ce-block__content',
+            /**
+             * @const {String} wrapper for plugins content
+             */
+            BLOCK_CONTENT : 'ce-block__content',
 
-        /**
-         * @const {String} BLOCK_STRETCHED - makes block stretched
-         */
-        BLOCK_STRETCHED : 'ce-block--stretched',
+            /**
+             * @const {String} BLOCK_STRETCHED - makes block stretched
+             */
+            BLOCK_STRETCHED : 'ce-block--stretched',
 
-        /**
-         * @const {String} BLOCK_HIGHLIGHTED - adds background
-         */
-        BLOCK_HIGHLIGHTED : 'ce-block--focused',
+            /**
+             * @const {String} BLOCK_HIGHLIGHTED - adds background
+             */
+            BLOCK_HIGHLIGHTED : 'ce-block--focused',
 
-        /**
-         * @const {String} - highlights covered blocks
-         */
-        BLOCK_IN_FEED_MODE : 'ce-block--feed-mode',
+            /**
+             * @const {String} - highlights covered blocks
+             */
+            BLOCK_IN_FEED_MODE : 'ce-block--feed-mode',
 
-        /**
-         * @const {String} - for all default settings
-         */
-        SETTINGS_ITEM : 'ce-settings__item'
+            /**
+             * @const {String} - for all default settings
+             */
+            SETTINGS_ITEM : 'ce-settings__item'
 
     };
 
@@ -264,10 +257,7 @@ var ui = (function(ui){
         }, false );
 
         /** All keydowns on Document */
-        document.addEventListener('keydown', codex.callback.globalKeydown, false );
-
-        /** All keydowns on Redactor zone */
-        codex.nodes.redactor.addEventListener('keydown', codex.callback.redactorKeyDown, false);
+        codex.nodes.redactor.addEventListener('keydown', codex.callback.globalKeydown, false );
 
         /** All keydowns on Document */
         document.addEventListener('keyup', codex.callback.globalKeyup, false );
@@ -312,7 +302,7 @@ var ui = (function(ui){
 
             codex.tools[tool].prepare();
         }
-    };
+    },
 
     ui.addBlockHandlers = function(block) {
 
@@ -327,25 +317,9 @@ var ui = (function(ui){
 
         /**
          * Pasting content from another source
-         * We have two type of sanitization
-         * First - uses deep-first search algorithm to get sub nodes,
-         * sanitizes whole Block_content and replaces cleared nodes
-         * This method is deprecated
-         * Method is used in codex.callback.blockPaste(event)
-         *
-         * Secont - uses Mutation observer.
-         * Observer "observe" DOM changes and send changings to callback.
-         * Callback gets changed node, not whole Block_content.
-         * Inserted or changed node, which we've gotten have been cleared and replaced with diry node
-         *
-         * Method is used in codex.callback.blockPasteViaSanitize(event)
-         *
-         * @uses html-janitor
-         * @example codex.callback.blockPasteViaSanitize(event), the second method.
-         *
          */
         block.addEventListener('paste', function (event) {
-            codex.callback.blockPasteViaSanitize(event);
+            codex.callback.blockPaste(event);
         }, false);
 
         block.addEventListener('mouseup', function(){

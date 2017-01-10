@@ -1,10 +1,3 @@
-/**
- * Codex Editor Notification Module
- *
- * @author Codex Team
- * @version 1.0
- */
-
 var notifications = (function(notifications) {
 
     /**

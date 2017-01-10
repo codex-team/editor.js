@@ -1,17 +1,7 @@
-/**
- * Codex Editor toolbox
- *
- * All tools be able to appended here
- *
- * @author Codex Team
- * @version 1.0
- */
 var toolbox = (function(toolbox) {
 
-    toolbox.init = function () {
-
+    toolbox.init = function() {
         require('./toolbar');
-
     };
 
     toolbox.opened = false;
@@ -21,9 +11,7 @@ var toolbox = (function(toolbox) {
 
         /** Close setting if toolbox is opened */
         if (codex.toolbar.settings.opened) {
-
             codex.toolbar.settings.close();
-
         }
 
         /** display toolbox */
@@ -62,14 +50,8 @@ var toolbox = (function(toolbox) {
 
         /** Count toolbox hidden tools */
         for( var tool in codex.tools ) {
-
-            if (!codex.tools[tool].displayInToolbox) {
-
+            if (!codex.tools[tool].displayInToolbox)
                 hiddenToolsAmount ++;
-
-            }
-
-
         }
 
         if ( !currentTool ) {
@@ -91,9 +73,7 @@ var toolbox = (function(toolbox) {
                 for( var tool in codex.tools ) {
 
                     if (codex.tools[tool].displayInToolbox){
-
                         break;
-
                     }
 
                     nextToolIndex ++;
@@ -143,7 +123,6 @@ var toolbox = (function(toolbox) {
             UNREPLACEBLE_TOOLS.indexOf(workingNode.dataset.tool) === -1 &&
             workingNode.textContent.trim() === ''
         ){
-
             /** Replace current block */
             codex.content.switchBlock(workingNode, newBlockContent, tool.type);
 
@@ -161,9 +140,7 @@ var toolbox = (function(toolbox) {
         appendCallback = tool.appendCallback;
 
         if (appendCallback && typeof appendCallback == 'function') {
-
             appendCallback.call(event);
-
         }
 
         setTimeout(function() {
