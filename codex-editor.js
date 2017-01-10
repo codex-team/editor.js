@@ -3263,7 +3263,7 @@ var codex =
 	
 	    callbacks.redactorClicked = function (event) {
 	
-	        callbacks.markWhenClickedOnFirstLevelBlockArea();
+	        callbacks.detectWhenClickedOnFirstLevelBlockArea();
 	
 	        codex.content.workingNodeChanged(event.target);
 	
@@ -3371,7 +3371,7 @@ var codex =
 	     * Therefore, to be sure that we've clicked first-level block area, we should have currentNode, which always
 	     * specifies to the first-level block. Other cases we just ignore.
 	     */
-	    callbacks.markWhenClickedOnFirstLevelBlockArea = function () {
+	    callbacks.detectWhenClickedOnFirstLevelBlockArea = function () {
 	
 	        var selection = window.getSelection(),
 	            anchorNode = selection.anchorNode,
