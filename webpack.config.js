@@ -16,8 +16,6 @@ var path = require('path');
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const VERSION  = process.env.VERSION || pkg.version;
 
-var versioning = VERSION.split('.');
-
 /**
  * Plugins for bundle
  * @type {webpack}
@@ -59,16 +57,7 @@ module.exports = {
     plugins: [
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV),
-            VERSION: JSON.stringify(VERSION),
-            MAJOR: parseInt(versioning[0]),
-            MINOR: versioning[1],
-            BUILD: versioning[2]
-        }),
-
-        new webpack.EnvironmentPlugin('VERSION', pkg.version),
-
-        new webpack.ProvidePlugin({
-            _ : 'lodash'
+            VERSION: JSON.stringify(VERSION)
         })
     ],
 
@@ -86,11 +75,6 @@ module.exports = {
             test : /\.js$/,
             loader: 'eslint-loader',
             exclude: /(node_modules)/
-        },
-        {
-            test: /node_modules\/entities\/.*\.json$/,
-            include : /(node_modules)/,
-            loader: 'json'
         },
         {
             test : /\.css$/,
