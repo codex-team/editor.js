@@ -1,3 +1,10 @@
+/**
+ * Codex Editor Saver
+ *
+ * @author Codex Team
+ * @version 1.0
+ */
+
 var saver = (function(saver) {
 
     /**

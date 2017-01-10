@@ -1,13 +1,26 @@
+/**
+ * Codex Editor callbacks module
+ *
+ * @author Codex Team
+ * @version 1.2.5
+ */
+
 var callbacks = (function(callbacks) {
 
     callbacks.redactorSyncTimeout = null;
 
     callbacks.globalKeydown = function(event){
         switch (event.keyCode){
-            case codex.core.keys.TAB   : codex.callback.tabKeyPressed(event);       break;
             case codex.core.keys.ENTER : codex.callback.enterKeyPressed(event);     break;
-            case codex.core.keys.ESC   : codex.callback.escapeKeyPressed(event);    break;
-            default                      : codex.callback.defaultKeyPressed(event);    break;
+        }
+    };
+
+    callbacks.redactorKeyDown = function(event) {
+        switch (event.keyCode){
+            case codex.core.keys.TAB   : codex.callback.tabKeyPressed(event);                     break;
+            case codex.core.keys.ENTER : codex.callback.enterKeyPressedOnRedactorZone(event);     break;
+            case codex.core.keys.ESC   : codex.callback.escapeKeyPressed(event);                  break;
+            default                    : codex.callback.defaultKeyPressed(event);                 break;
         }
     };
 
@@ -35,17 +48,9 @@ var callbacks = (function(callbacks) {
         event.preventDefault();
     };
 
-    /**
-     * ENTER key handler
-     * Makes new paragraph block
-     */
-    callbacks.enterKeyPressed = function(event){
+    callbacks.enterKeyPressed = function(event) {
 
-        /** Set current node */
-        var firstLevelBlocksArea = codex.callback.clickedOnFirstLevelBlockArea();
-
-        if (firstLevelBlocksArea) {
-            event.preventDefault();
+        if (codex.content.editorAreaHightlighted) {
 
             /**
              * it means that we lose input index, saved index before is not correct
@@ -54,8 +59,14 @@ var callbacks = (function(callbacks) {
             codex.caret.inputIndex = -1;
 
             codex.callback.enterPressedOnBlock();
-            return;
         }
+    };
+
+    /**
+     * ENTER key handler
+     * Makes new paragraph block
+     */
+    callbacks.enterKeyPressedOnRedactorZone = function(event){
 
         if (event.target.contentEditable == 'true') {
 
@@ -83,7 +94,7 @@ var callbacks = (function(callbacks) {
         var enableLineBreaks = codex.tools[tool].enableLineBreaks;
 
         /** This type of block creates when enter is pressed */
-        var NEW_BLOCK_TYPE = 'paragraph';
+        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
 
         /**
          * When toolbar is opened, select tool instead of making new paragraph
@@ -95,6 +106,12 @@ var callbacks = (function(callbacks) {
             codex.toolbar.toolbox.toolClicked(event);
 
             codex.toolbar.close();
+
+            /**
+             * Stop other listeners callback executions
+             */
+            event.stopPropagation();
+            event.stopImmediatePropagation();
 
             return;
 
@@ -217,6 +234,8 @@ var callbacks = (function(callbacks) {
 
     callbacks.redactorClicked = function (event) {
 
+        callbacks.detectWhenClickedOnFirstLevelBlockArea();
+
         codex.content.workingNodeChanged(event.target);
 
         codex.ui.saveInputs();
@@ -252,14 +271,14 @@ var callbacks = (function(callbacks) {
             }
 
             /** If input is empty, then we set caret to the last input */
-            if (codex.state.inputs.length && codex.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == 'paragraph') {
+            if (codex.state.inputs.length && codex.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == codex.settings.initialBlockPlugin) {
 
                 codex.caret.setToBlock(indexOfLastInput);
 
             } else {
 
                 /** Create new input when caret clicked in redactors area */
-                var NEW_BLOCK_TYPE = 'paragraph';
+                var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
 
                 codex.content.insertBlock({
                     type  : NEW_BLOCK_TYPE,
@@ -318,7 +337,7 @@ var callbacks = (function(callbacks) {
         var currentNodeType = codex.content.currentNode.dataset.tool;
 
         /** Mark current block*/
-        if (currentNodeType != 'paragraph' || !inputIsEmpty) {
+        if (currentNodeType != codex.settings.initialBlockPlugin || !inputIsEmpty) {
 
             codex.content.markBlock();
 
@@ -333,16 +352,15 @@ var callbacks = (function(callbacks) {
      * Therefore, to be sure that we've clicked first-level block area, we should have currentNode, which always
      * specifies to the first-level block. Other cases we just ignore.
      */
-    callbacks.clickedOnFirstLevelBlockArea = function() {
+    callbacks.detectWhenClickedOnFirstLevelBlockArea = function() {
 
         var selection  = window.getSelection(),
             anchorNode = selection.anchorNode,
             flag = false;
 
-
         if (selection.rangeCount == 0) {
 
-            return true;
+            codex.content.editorAreaHightlighted = true;
 
         } else {
 
@@ -368,7 +386,7 @@ var callbacks = (function(callbacks) {
             }
 
             /** If editable element founded, flag is "TRUE", Therefore we return "FALSE" */
-            return flag ? false : true;
+            codex.content.editorAreaHightlighted = flag ? false : true;
         }
 
     };
@@ -597,7 +615,7 @@ var callbacks = (function(callbacks) {
      */
     callbacks.enterPressedOnBlock = function (event) {
 
-        var NEW_BLOCK_TYPE  = 'paragraph';
+        var NEW_BLOCK_TYPE  = codex.settings.initialBlockPlugin;
 
         codex.content.insertBlock({
             type  : NEW_BLOCK_TYPE,
@@ -690,6 +708,11 @@ var callbacks = (function(callbacks) {
 
     };
 
+    /**
+     * @deprecated
+     *
+     * @param event
+     */
     callbacks.blockPaste = function(event) {
 
         var currentInputIndex = codex.caret.getCurrentInputIndex(),
@@ -699,23 +722,32 @@ var callbacks = (function(callbacks) {
 
             codex.content.sanitize(node);
 
+            event.preventDefault();
+
         }, 10);
+
+        event.stopImmediatePropagation();
 
     };
 
-    callbacks._blockPaste = function(event) {
+    callbacks.blockPasteCallback = function(event) {
 
         var currentInputIndex = codex.caret.getCurrentInputIndex();
 
         /**
          * create an observer instance
          */
-        var observer = new MutationObserver(codex.callback.handlePasteEvents);
+        var observer = new MutationObserver(codex.callback.handleMutationsOnPaste);
 
         /**
          * configuration of the observer:
          */
-        var config = { attributes: true, childList: true, characterData: false };
+        var config = {
+            attributes: true,
+            childList: true,
+            characterData: false,
+            subtree : true
+        };
 
         // pass in the target node, as well as the observer options
         observer.observe(codex.state.inputs[currentInputIndex], config);
@@ -724,8 +756,20 @@ var callbacks = (function(callbacks) {
     /**
      * Sends all mutations to paste handler
      */
-    callbacks.handlePasteEvents = function(mutations) {
-        mutations.forEach(codex.content.paste);
+    callbacks.handleMutationsOnPaste = function(mutations) {
+
+        var self = this;
+
+        /**
+         * Calling function with context of this function.
+         * Also, we should sanitize pasted or changed data one time and ignore
+         * changings which makes sanitize method.
+         * For that, we need to send Context, MutationObserver.__proto__ that contains
+         * observer disconnect method.
+         */
+        mutations.forEach(function(mutation) {
+            codex.content.paste.call(self, mutation);
+        });
     };
 
     /**
