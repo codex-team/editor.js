@@ -50,7 +50,7 @@ var callbacks = (function(callbacks) {
 
     callbacks.enterKeyPressed = function(event) {
 
-        if (codex.content.editorArea) {
+        if (codex.content.editorAreaHightlighted) {
 
             /**
              * it means that we lose input index, saved index before is not correct
@@ -234,7 +234,7 @@ var callbacks = (function(callbacks) {
 
     callbacks.redactorClicked = function (event) {
 
-        callbacks.isClickedOnFirstLevelBlockArea();
+        callbacks.markWhenClickedOnFirstLevelBlockArea();
 
         codex.content.workingNodeChanged(event.target);
 
@@ -352,7 +352,7 @@ var callbacks = (function(callbacks) {
      * Therefore, to be sure that we've clicked first-level block area, we should have currentNode, which always
      * specifies to the first-level block. Other cases we just ignore.
      */
-    callbacks.isClickedOnFirstLevelBlockArea = function() {
+    callbacks.markWhenClickedOnFirstLevelBlockArea = function() {
 
         var selection  = window.getSelection(),
             anchorNode = selection.anchorNode,
@@ -360,7 +360,7 @@ var callbacks = (function(callbacks) {
 
         if (selection.rangeCount == 0) {
 
-            codex.content.editorArea = true;
+            codex.content.editorAreaHightlighted = true;
 
         } else {
 
@@ -386,7 +386,7 @@ var callbacks = (function(callbacks) {
             }
 
             /** If editable element founded, flag is "TRUE", Therefore we return "FALSE" */
-            codex.content.editorArea = flag ? false : true;
+            codex.content.editorAreaHightlighted = flag ? false : true;
         }
 
     };
@@ -753,8 +753,7 @@ var callbacks = (function(callbacks) {
      */
     callbacks.handlePasteEvents = function(mutations) {
 
-        var self = this,
-            callback;
+        var self = this;
 
         /**
          * Calling function with context of this function.
@@ -763,7 +762,6 @@ var callbacks = (function(callbacks) {
          * For that, we need to send Context, MutationObserver.__proto__ that contains
          * observer disconnect method.
          */
-        console.warn('mutations count: %o', mutations.length);
         mutations.forEach(function(mutation) {
             codex.content.paste.call(self, mutation);
         });

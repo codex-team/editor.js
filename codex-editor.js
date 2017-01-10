@@ -1179,11 +1179,17 @@ var codex =
 	            target: '_blank',
 	            rel: true
 	        },
-	        i: true,
-	        b: true,
+	        i: {
+	            style: true
+	        },
+	        b: {
+	            style: ture
+	        },
 	        strong: true,
 	        em: true,
-	        span: true
+	        span: {
+	            style: true
+	        }
 	    }
 	};
 	
@@ -1199,7 +1205,7 @@ var codex =
 	     * clicked in redactor area
 	     * @type {null | Boolean}
 	     */
-	    content.editorArea = null;
+	    content.editorAreaHightlighted = null;
 	
 	    /**
 	     * Synchronizes redactor with original textarea
@@ -1437,7 +1443,7 @@ var codex =
 	         * Block is inserted, wait for new click that defined focusing on editors area
 	         * @type {boolean}
 	         */
-	        content.editorArea = false;
+	        content.editorAreaHightlighted = false;
 	    };
 	
 	    /**
@@ -1687,7 +1693,7 @@ var codex =
 	            tool = workingNode.dataset.tool;
 	
 	        if (codex.tools[tool].allowedToPaste) {
-	            codex.content.sanitize.bind(this, mutation.addedNodes)();
+	            codex.content.sanitize.call(this, mutation.addedNodes);
 	        } else {
 	            codex.content.pasteTextContent(mutation.addedNodes);
 	        }
@@ -1702,7 +1708,17 @@ var codex =
 	    content.pasteTextContent = function (nodes) {
 	
 	        var node = nodes[0],
+	            textNode;
+	
+	        if (!node) {
+	            return;
+	        }
+	
+	        if (node.nodeType == codex.core.nodeTypes.TEXT) {
+	            textNode = document.createTextNode(node);
+	        } else {
 	            textNode = document.createTextNode(node.textContent);
+	        }
 	
 	        if (codex.core.isDomNode(node)) {
 	            node.parentNode.replaceChild(textNode, node);
@@ -3087,7 +3103,7 @@ var codex =
 	
 	    callbacks.enterKeyPressed = function (event) {
 	
-	        if (codex.content.editorArea) {
+	        if (codex.content.editorAreaHightlighted) {
 	
 	            /**
 	             * it means that we lose input index, saved index before is not correct
@@ -3254,7 +3270,7 @@ var codex =
 	
 	    callbacks.redactorClicked = function (event) {
 	
-	        callbacks.isClickedOnFirstLevelBlockArea();
+	        callbacks.markWhenClickedOnFirstLevelBlockArea();
 	
 	        codex.content.workingNodeChanged(event.target);
 	
@@ -3362,7 +3378,7 @@ var codex =
 	     * Therefore, to be sure that we've clicked first-level block area, we should have currentNode, which always
 	     * specifies to the first-level block. Other cases we just ignore.
 	     */
-	    callbacks.isClickedOnFirstLevelBlockArea = function () {
+	    callbacks.markWhenClickedOnFirstLevelBlockArea = function () {
 	
 	        var selection = window.getSelection(),
 	            anchorNode = selection.anchorNode,
@@ -3370,7 +3386,7 @@ var codex =
 	
 	        if (selection.rangeCount == 0) {
 	
-	            codex.content.editorArea = true;
+	            codex.content.editorAreaHightlighted = true;
 	        } else {
 	
 	            if (!codex.core.isDomNode(anchorNode)) {
@@ -3395,7 +3411,7 @@ var codex =
 	            }
 	
 	            /** If editable element founded, flag is "TRUE", Therefore we return "FALSE" */
-	            codex.content.editorArea = flag ? false : true;
+	            codex.content.editorAreaHightlighted = flag ? false : true;
 	        }
 	    };
 	
@@ -3734,8 +3750,7 @@ var codex =
 	     */
 	    callbacks.handlePasteEvents = function (mutations) {
 	
-	        var self = this,
-	            callback;
+	        var self = this;
 	
 	        /**
 	         * Calling function with context of this function.
@@ -3744,7 +3759,6 @@ var codex =
 	         * For that, we need to send Context, MutationObserver.__proto__ that contains
 	         * observer disconnect method.
 	         */
-	        console.warn('mutations count: %o', mutations.length);
 	        mutations.forEach(function (mutation) {
 	            codex.content.paste.call(self, mutation);
 	        });

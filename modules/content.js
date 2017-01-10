@@ -22,11 +22,17 @@ var Config = {
             target: '_blank',
             rel: true
         },
-        i: true,
-        b: true,
+        i: {
+            style: true
+        },
+        b: {
+            style: ture
+        },
         strong: true,
         em: true,
-        span: true
+        span: {
+            style: true
+        }
     }
 };
 
@@ -42,7 +48,7 @@ var content = (function(content) {
      * clicked in redactor area
      * @type {null | Boolean}
      */
-    content.editorArea = null;
+    content.editorAreaHightlighted = null;
 
     /**
      * Synchronizes redactor with original textarea
@@ -297,7 +303,7 @@ var content = (function(content) {
          * Block is inserted, wait for new click that defined focusing on editors area
          * @type {boolean}
          */
-        content.editorArea = false;
+        content.editorAreaHightlighted = false;
 
     };
 
@@ -557,7 +563,7 @@ var content = (function(content) {
             tool        = workingNode.dataset.tool;
 
         if (codex.tools[tool].allowedToPaste) {
-            (codex.content.sanitize.bind(this, mutation.addedNodes))();
+            codex.content.sanitize.call(this, mutation.addedNodes);
         } else {
             codex.content.pasteTextContent(mutation.addedNodes);
         }
@@ -572,8 +578,18 @@ var content = (function(content) {
      */
     content.pasteTextContent = function(nodes) {
 
-        var node     = nodes[0],
+        var node = nodes[0],
+            textNode;
+
+        if (!node) {
+            return;
+        }
+
+        if (node.nodeType == codex.core.nodeTypes.TEXT) {
+            textNode = document.createTextNode(node);
+        } else {
             textNode = document.createTextNode(node.textContent);
+        }
 
         if (codex.core.isDomNode(node)) {
             node.parentNode.replaceChild(textNode, node);
