@@ -1,6 +1,6 @@
 {
   "name": "codex.editor",
-  "version": "1.0.6",
+  "version": "1.2.8",
   "description": "Codex Editor. Native JS, based on API and Open Source",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,6 @@
   "author": "Codex Team",
   "license": "ISC",
   "dependencies": {
-    "json-loader": "^0.5.4",
     "whatwg-fetch": "^2.0.1"
   },
   "devDependencies": {
@@ -23,7 +22,6 @@
     "extract-text-webpack-plugin": "^1.0.1",
     "html-janitor": "^2.0.2",
     "path": "^0.12.7",
-    "sanitize-html": "^1.13.0",
     "webpack": "^1.14.0"
   }
 }

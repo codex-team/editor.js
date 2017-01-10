@@ -160,7 +160,7 @@ var draw = (function(draw) {
         div.classList.add('ce-settings_default');
 
         return div;
-    },
+    };
 
     draw.pluginsSettings = function() {
 

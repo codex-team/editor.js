@@ -38,12 +38,12 @@
     "semi": [2, "always"],
     "indent": [2, 4, { "SwitchCase": 1 }],
     "camelcase": [2, { "properties": "always" }],
-    "newline-after-var": [1, "always"],
-
+    "newline-after-var": [1, "always"]
   },
   "globals":{
     "document": true,
     "require": true,
-    "module": true
+    "module": true,
+    "codex": true
   }
 }
