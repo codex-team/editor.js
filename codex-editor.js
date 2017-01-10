@@ -71,6 +71,7 @@ var codex =
 	var codex = function (codex) {
 	
 	    var init = function init() {
+	
 	        codex.core = __webpack_require__(2);
 	        codex.ui = __webpack_require__(3);
 	        codex.transport = __webpack_require__(4);
@@ -2844,6 +2845,7 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
+	
 	var toolbox = function (toolbox) {
 	
 	    toolbox.init = function () {
@@ -3025,6 +3027,7 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
+	
 	var tools = function (tools) {
 	
 	  return tools;

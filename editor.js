@@ -9,6 +9,7 @@
 var codex = (function(codex){
 
     var init = function() {
+
         codex.core          = require('./modules/core');
         codex.ui            = require('./modules/ui');
         codex.transport     = require('./modules/transport');
