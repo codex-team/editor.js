@@ -710,7 +710,7 @@ var codex =
 	         *
 	         */
 	        block.addEventListener('paste', function (event) {
-	            codex.callback.blockPasteViaSanitize(event);
+	            codex.callback.blockPasteProcessing(event);
 	        }, false);
 	
 	        block.addEventListener('mouseup', function () {
@@ -3720,7 +3720,7 @@ var codex =
 	        event.stopImmediatePropagation();
 	    };
 	
-	    callbacks.blockPasteViaSanitize = function (event) {
+	    callbacks.blockPasteProcessing = function (event) {
 	
 	        var currentInputIndex = codex.caret.getCurrentInputIndex();
 	

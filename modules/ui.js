@@ -345,7 +345,7 @@ var ui = (function(ui){
          *
          */
         block.addEventListener('paste', function (event) {
-            codex.callback.blockPasteViaSanitize(event);
+            codex.callback.blockPasteProcessing(event);
         }, false);
 
         block.addEventListener('mouseup', function(){

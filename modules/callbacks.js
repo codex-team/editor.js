@@ -730,7 +730,7 @@ var callbacks = (function(callbacks) {
 
     };
 
-    callbacks.blockPasteViaSanitize = function(event) {
+    callbacks.blockPasteProcessing = function(event) {
 
         var currentInputIndex = codex.caret.getCurrentInputIndex();
 
