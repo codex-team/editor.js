@@ -23,8 +23,6 @@ var youtubeTool = {
 
             frame.src = youtubeTool.content.makeEmbedUrl(data.youtube_url);
 
-            console.log(frame.src);
-
             setTimeout(function() {
 
                 /** Render block */
