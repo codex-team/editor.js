@@ -1055,7 +1055,7 @@ var codex =
 	 * Codex Editor Saver
 	 *
 	 * @author Codex Team
-	 * @version 1.0
+	 * @version 1.0.2
 	 */
 	
 	var saver = function (saver) {
@@ -1139,6 +1139,11 @@ var codex =
 	            type: pluginName,
 	            data: savedData
 	        };
+	
+	        /**
+	         * Do not allow empty initial plugins block
+	         */
+	        if (savedData.text.trim() == '' && pluginName == codex.settings.initialBlockPlugin) return;
 	
 	        /** Marks Blocks that will be in main page */
 	        output.cover = block.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
