@@ -90,15 +90,54 @@ pasteTool.callbacks = {
                 twitter : new RegExp("http?.+twitter.com?.+\/"),
                 facebook : /https?.+facebook.+\/\d+\?/,
                 vk : /https?.+vk?.com\/feed\?w=wall\d+_\d+/,
-                youtube : /https?.+youtube.com\/watch\?v=.{11}/
+                video : {
+                    vimeo: {
+                        regex: /(?:http[s]?:\/\/)?(?:www.)?vimeo\.co(?:.+\/([^\/]\d+)(?:#t=[\d]+)?s?$)/,
+                        html: "<iframe src=\"<%= protocol %>//player.vimeo.com/video/<%= remote_id %>?title=0&byline=0\" width=\"580\" height=\"320\" frameborder=\"0\"></iframe>"
+                    },
+                    youtube: {
+                        regex: /^.*(?:(?:youtu\.be\/)|(?:youtube\.com)\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)(?:[\?\&]t\=(\d*)|)/,
+                        html: "<iframe src=\"<%= protocol %>//www.youtube.com/embed/<%= remote_id %>\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>",
+                        timestamp: '?t='
+                    },
+                    coub: {
+                        regex: /https?:\/\/coub\.com\/view\/([^\/\?\&]+)/,
+                        html: "<iframe src=\"https://coub.com/embed/<%= remote_id %>\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>"
+                    },
+                    vine: {
+                        regex: /https?:\/\/vine\.co\/v\/([^\/\?\&]+)/,
+                        html: "<iframe src=\"https://vine.co/v/<%= remote_id %>/embed/simple/\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>"
+                    },
+                    vk: {
+                        regex: /https?:\/\/vk\.com\/.*(?:video)([-_0-9]+)/,
+                        html: "<iframe src=\"https://tjournal.ru/proxy/video/<%= remote_id %>\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>"
+                    },
+                    imgur: {
+                        regex: /https?:\/\/(?:i\.)?imgur\.com.*\/([a-zA-Z0-9]+)(?:\.gifv)?/,
+                        html: "<blockquote class=\"imgur-embed-pub\" lang=\"en\" data-id=\"<%= remote_id %>\" data-context=\"false\"></blockquote><script async src=\"//s.imgur.com/min/embed.js\" charset=\"utf-8\"></script>",
+                        square: true
+                    },
+                    gfycat: {
+                        regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
+                        html: "<iframe src='https://gfycat.com/ifr/<%= remote_id %>' frameborder='0' scrolling='no' width='580' style='-webkit-backface-visibility: hidden;-webkit-transform: scale(1);' ></iframe>",
+                        square: true
+                    }
+                }
             },
 
             image  = regexTemplates.image.test(string),
             instagram = regexTemplates.instagram.exec(string),
             twitter = regexTemplates.twitter.exec(string),
             facebook = regexTemplates.facebook.test(string),
-            vk = regexTemplates.vk.test(string),
-            youtube = regexTemplates.youtube.test(string);
+            vk = regexTemplates.vk.test(string);
+
+        /**
+         * Video testing
+         */
+        var youtube = regexTemplates.video.youtube.regex.test(string);
+        var vimeo   = regexTemplates.video.vimeo.regex.test(string);
+        var coub    = regexTemplates.video.coub.regex.test(string);
+        var vine    = regexTemplates.video.vine.regex.test(string);
 
         if (image) {
 
@@ -123,6 +162,15 @@ pasteTool.callbacks = {
         } else if (youtube) {
 
             pasteTool.callbacks.youtubeMedia(string);
+
+        } else if (vimeo) {
+
+
+        } else if (vine) {
+
+
+        } else if (coub) {
+
 
         }
 
