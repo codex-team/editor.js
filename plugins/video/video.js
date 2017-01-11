@@ -1,32 +1,32 @@
 /**
- * Youtube plugin by gohabereg
+ * Video plugin by gohabereg
  * @version 1.0.0
  */
-var youtubeTool = {
+var videoTool = {
 
     make : function(data, isInternal) {
 
-        if (!data.youtube_url)
+        if (!data.video_url)
             return;
 
         var properties = {
             width: '560',
             height: '315',
-            src: data.youtube_url,
+            src: data.video_url,
             frameborder: '0',
             allowfullscreen: true
         };
 
-        var frame = codex.draw.node('IFRAME', 'youtube', properties);
+        var frame = codex.draw.node('IFRAME', 'video', properties);
 
         if (isInternal) {
 
-            frame.src = youtubeTool.content.makeEmbedUrl(data.youtube_url);
+            frame.src = videoTool.content.makeEmbedUrl(data.video_url);
 
             setTimeout(function() {
 
                 /** Render block */
-                youtubeTool.content.render(frame);
+                videoTool.content.render(frame);
 
             }, 200);
         }
@@ -47,7 +47,7 @@ var youtubeTool = {
             return;
 
         data = {
-            youtube_url: blockContent.src
+            video_url: blockContent.src
         };
 
         return data;
@@ -58,23 +58,23 @@ var youtubeTool = {
      * Render data
      */
     render : function(data) {
-        return youtubeTool.make(data);
+        return videoTool.make(data);
     }
 
 };
 
-youtubeTool.content = {
+videoTool.content = {
 
     render: function (content) {
-        codex.content.switchBlock(codex.content.currentNode, content, 'youtube');
+        codex.content.switchBlock(codex.content.currentNode, content, 'video');
 
         var blockContent = codex.content.currentNode.childNodes[0];
-        blockContent.classList.add('youtube__loader');
+        blockContent.classList.add('video__loader');
 
         setTimeout(function(){
-            blockContent.classList.remove('youtube__loader');
-        }, 500);
-        
+            blockContent.classList.remove('video__loader');
+        }, 1000);
+
     },
 
     makeEmbedUrl: function (url) {

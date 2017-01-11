@@ -194,17 +194,15 @@ pasteTool.callbacks = {
     /**
      * callback for youtube url's
      * Using iframe to render
-     * @uses Youtube tool
+     * @uses video tool
      * @param url
      */
     youtubeMedia : function(url) {
         var data = {
-            youtube_url: url
+            video_url: url
         };
 
-        console.log(url);
-
-        codex.tools.youtube.make(data, true);
+        codex.tools.video.make(data, true);
     },
 
     /**
