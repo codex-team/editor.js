@@ -749,6 +749,18 @@ var callbacks = (function(callbacks) {
 
     };
 
+    /**
+     * Clicks on block comment button
+     */
+    callbacks.showCommentButtonClicked = function(){
+
+        codex.comments.add(codex.content.currentNode);
+
+        codex.toolbar.toolbox.close();
+        codex.toolbar.settings.hideRemoveActions();
+
+    };
+
     return callbacks;
 
 })({});

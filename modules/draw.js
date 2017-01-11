@@ -190,6 +190,22 @@ var draw = (function(draw) {
         return toggler;
     };
 
+
+    draw.commentButton = function() {
+        var btn = draw.node('SPAN', 'ce-toolbar__comment-btn', {innerHTML: '<i class="ce-icon-newspaper"></i>'});
+
+        return btn;
+    };
+
+    draw.commentInput = function() {
+        var wrapper = draw.node('DIV', 'ce-comment__wrapper', {textContent: 'Ваш комментарий:'}),
+            input   = draw.node('TEXTAREA', 'ce-comment__input');
+
+        wrapper.appendChild(input);
+
+        return wrapper
+    };
+
     /**
      * Redactor tools wrapper
      */

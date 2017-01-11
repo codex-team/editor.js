@@ -54,6 +54,7 @@ var ui = (function(ui){
             blockButtons,
             blockSettings,
             showSettingsButton,
+            showCommentButton,
             showTrashButton,
             toolbox,
             plusButton;
@@ -74,6 +75,7 @@ var ui = (function(ui){
         inlineToolbar         = codex.draw.inlineToolbar();
         plusButton            = codex.draw.plusButton();
         showSettingsButton    = codex.draw.settingsButton();
+        showCommentButton     = codex.draw.commentButton();
         showTrashButton       = codex.toolbar.settings.makeRemoveBlockButton();
         blockSettings         = codex.draw.blockSettings();
         blockButtons          = codex.draw.blockButtons();
@@ -93,6 +95,7 @@ var ui = (function(ui){
          */
         blockButtons.appendChild(showSettingsButton);
         blockButtons.appendChild(showTrashButton);
+        blockButtons.appendChild(showCommentButton);
         blockButtons.appendChild(blockSettings);
 
         /** Append plus button */
@@ -121,6 +124,7 @@ var ui = (function(ui){
         codex.nodes.defaultSettings    = defaultSettings;
         codex.nodes.showSettingsButton = showSettingsButton;
         codex.nodes.showTrashButton    = showTrashButton;
+        codex.nodes.showCommentButton  = showCommentButton;
 
         codex.nodes.redactor = redactor;
 
@@ -276,6 +280,13 @@ var ui = (function(ui){
          * Clicks to SETTINGS button in toolbar
          */
         codex.nodes.showSettingsButton.addEventListener('click', codex.callback.showSettingsButtonClicked, false );
+
+        /**
+         * Clicks to COMMENT button in toolbar
+         */
+        codex.nodes.showCommentButton.addEventListener('click', codex.callback.showCommentButtonClicked, false );
+
+
         /**
          *  @deprecated ( but now in use for syncronization );
          *  Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text

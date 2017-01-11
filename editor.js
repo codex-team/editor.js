@@ -20,6 +20,7 @@ var codex = (function(codex){
         codex.caret         = require('./modules/caret');
         codex.notifications = require('./modules/notifications');
         codex.parser        = require('./modules/parser');
+        codex.comments      = require('./modules/comments');
     };
 
     /**
@@ -70,7 +71,8 @@ var codex = (function(codex){
     codex.state = {
         jsonOutput: [],
         blocks    : [],
-        inputs    : []
+        inputs    : [],
+        comments  : []
     };
 
     /**

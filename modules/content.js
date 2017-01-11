@@ -366,6 +366,7 @@ var content = (function(content) {
         }
 
         newBlock.dataset.tool = tool;
+        newBlock.dataset.id = +(new Date);
         return newBlock;
     };
 

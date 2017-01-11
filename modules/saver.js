@@ -101,6 +101,22 @@ var saver = (function(saver) {
         codex.state.jsonOutput.push(output);
     };
 
+    saver.saveComments = function() {
+
+        var comments = codex.nodes.redactor.querySelectorAll('.ce-comment__wrapper');
+
+        for (var i = 0; i < comments.length; i++) {
+
+            var comment = {
+                blockId: comments[i].dataset.blockId,
+                text: comments[i].querySelector('.ce-comment__input').value
+            };
+
+            codex.state.comments.push(comment);
+        }
+
+    };
+
     return saver;
 
 })({});
