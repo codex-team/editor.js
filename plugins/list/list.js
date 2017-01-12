@@ -16,7 +16,7 @@ var list = (function(list) {
 
             var wrapper = this.block(blockType || 'UL', baseClass);
 
-            wrapper.dataset.type = 'ul';
+            wrapper.dataset.type = 'UL';
             wrapper.contentEditable = true;
 
             return wrapper;
@@ -46,6 +46,27 @@ var list = (function(list) {
             button.className = 'ce_plugin_list--select_button';
 
             return button;
+        }
+    };
+
+    var methods = {
+
+        /**
+         * Changes block type => OL or UL
+         * @param event
+         * @param blockType
+         */
+        changeBlockStyle : function (event, blockType) {
+
+            var currentBlock = codex.content.currentNode,
+                newEditable = ui.make(blockType),
+                oldEditable = currentBlock.querySelector("[contenteditable]");
+
+            newEditable.dataset.type = blockType;
+            newEditable.innerHTML = oldEditable.innerHTML;
+            newEditable.classList.add('ce-list');
+
+            codex.content.switchBlock(currentBlock, newEditable, 'list');
         }
     };
 
@@ -97,7 +118,14 @@ var list = (function(list) {
 
     list.validate = function(data) {
 
-        if (data.type != 'UL' || data.type != 'OL' || data.items.length == 0)
+        var items = data.items.every(function(item){
+            return item.trim() != '';
+        });
+
+        if (!items)
+            return;
+
+        if (data.type != 'UL' && data.type != 'OL')
             return;
 
         return true;
@@ -134,12 +162,12 @@ var list = (function(list) {
             unorderedButton = ui.button("unordered");
 
         orderedButton.addEventListener('click', function (event) {
-            changeBlockStyle(event, 'ol');
+            methods.changeBlockStyle(event, 'OL');
             codex.toolbar.settings.close();
         });
 
         unorderedButton.addEventListener('click', function (event) {
-            changeBlockStyle(event, 'ul');
+            methods.changeBlockStyle(event, 'UL');
             codex.toolbar.settings.close();
         });
 
@@ -148,19 +176,6 @@ var list = (function(list) {
 
         return holder;
 
-    };
-
-    var changeBlockStyle = function (event, blockType) {
-
-        var currentBlock = codex.content.currentNode,
-            newEditable = ui.make(blockType),
-            oldEditable = currentBlock.querySelector("[contenteditable]");
-
-        newEditable.dataset.type = blockType;
-        newEditable.innerHTML = oldEditable.innerHTML;
-        newEditable.classList.add('ce-list');
-
-        codex.content.switchBlock(currentBlock, newEditable, 'list');
     };
 
     return list;

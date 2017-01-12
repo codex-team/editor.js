@@ -125,6 +125,218 @@ var quote = (function(quote) {
 
     };
 
+    var methods = {
+
+        changeStyleClicked : function() {
+
+            var changeStyleButton = this,
+                quote = codex.content.currentNode.querySelector('.' + styles.ce_quote),
+                newStyle = changeStyleButton.dataset.style,
+                styleSelectors = this.parentNode.childNodes;
+
+            quote.dataset.quoteStyle = newStyle;
+
+            /**
+             * Mark selected style button
+             */
+            for (var i = styleSelectors.length - 1; i >= 0; i--) {
+                styleSelectors[i].classList.remove(styles.settings.selectedType);
+            }
+
+            this.classList.add(styles.settings.selectedType);
+
+        },
+
+        /**
+         * @deprecated
+         */
+        selectTypeQuoteStyle : function(type) {
+
+            /**
+             *  Choose Quote style to replace
+             */
+            switch (type) {
+                case 'simple':
+                    quoteStyleFunction = makeSimpleQuote;
+                    break;
+                case 'withCaption':
+                    quoteStyleFunction = makeQuoteWithCaption;
+                    break;
+                case 'withPhoto':
+                    quoteStyleFunction = makeQuoteWithPhoto;
+                    break;
+            }
+            return quoteStyleFunction;
+        },
+
+        /**
+         * @deprecated
+         */
+        addSelectTypeClickListener : function(el, quoteStyle) {
+
+            el.addEventListener('click', function () {
+
+                /**
+                 * Parsing currentNode to JSON.
+                 */
+                var parsedOldQuote  = methods.parseBlockQuote(),
+                    newStyledQuote  = quoteStyle(parsedOldQuote);
+
+                var wrapper = codex.content.composeNewBlock(newStyledQuote, 'quote');
+                wrapper.appendChild(newStyledQuote);
+
+                codex.content.switchBlock(codex.content.currentNode, newStyledQuote, 'quote');
+
+                /** Close settings after replacing */
+                codex.toolbar.settings.close();
+
+            }, false);
+
+        },
+
+        /**
+         * @deprecated
+         */
+        makeSimpleQuote : function(data) {
+
+            var wrapper = ui.makeBlock('BLOCKQUOTE', [styles.simple.text, styles.quoteText]);
+
+            wrapper.innerHTML = data.text || '';
+
+            wrapper.dataset.quoteStyle = 'simple';
+            wrapper.classList.add(styles.ce_quote);
+            wrapper.contentEditable = 'true';
+
+            return wrapper;
+        },
+
+        /**
+         * @deprecated
+         */
+        makeQuoteWithCaption : function(data) {
+
+            var wrapper = ui.blockquote(),
+                text    = ui.makeBlock('DIV', [styles.withCaption.blockquote, styles.quoteText]),
+                author  = ui.makeBlock('DIV', [styles.withCaption.author, styles.quoteAuthor]);
+
+            /* make text block ontentEditable */
+            text.contentEditable = 'true';
+
+            text.innerHTML = data.text;
+
+            /* make Author contentEditable */
+            author.contentEditable = 'true';
+
+            author.textContent = data.cite;
+
+            /* Appending created components */
+            wrapper.dataset.quoteStyle = 'withCaption';
+            wrapper.classList.add(styles.ce_quote);
+
+            wrapper.appendChild(text);
+            wrapper.appendChild(author);
+
+            return wrapper;
+
+        },
+
+        makeQuoteWithPhoto : function(data) {
+
+            var wrapper  = ui.blockquote(),
+                photo    = ui.makeBlock('DIV', [styles.withPhoto.photo]),
+                author   = ui.makeBlock('DIV', [styles.withPhoto.author, styles.quoteAuthor]),
+                job      = ui.makeBlock('DIV', [styles.withPhoto.job, styles.authorsJob]),
+                quote    = ui.makeBlock('DIV', [styles.withPhoto.quote, styles.quoteText]);
+
+            /* Default Image src */
+            if (!data.photo) {
+
+                var icon = ui.makeBlock('SPAN', ['ce-icon-picture']);
+                photo.appendChild(icon);
+
+            } else {
+
+                var authorsPhoto = ui.img(styles.authorsPhoto);
+                authorsPhoto.src = data.photo;
+
+                photo.classList.add(styles.authorsPhotoWrapper);
+                photo.appendChild(authorsPhoto);
+            }
+
+
+            photo.addEventListener('click', methods.fileUploadClicked, false);
+
+            /* make author block contentEditable */
+            author.contentEditable = 'true';
+            author.textContent = data.cite;
+
+            /*  Author's position and job */
+            job.contentEditable = 'true';
+            job.textContent = data.job;
+
+            var authorsWrapper = ui.makeBlock('DIV', [styles.withPhoto.authorHolder]);
+            authorsWrapper.appendChild(author);
+            authorsWrapper.appendChild(job);
+
+            /* make quote text contentEditable */
+            quote.contentEditable = 'true';
+            quote.innerHTML = data.text;
+
+            wrapper.classList.add(styles.ce_quote);
+            wrapper.classList.add(styles.withPhoto.wrapper);
+            wrapper.dataset.quoteStyle = 'withPhoto';
+
+            wrapper.appendChild(quote);
+            wrapper.appendChild(photo);
+            wrapper.appendChild(authorsWrapper);
+
+            return wrapper;
+        },
+
+        parseBlockQuote : function(block) {
+
+            var currentNode = block || codex.content.currentNode,
+                photo       = currentNode.getElementsByTagName('img')[0],
+                author      = currentNode.querySelector('.' + styles.quoteAuthor),
+                job         = currentNode.querySelector('.' + styles.authorsJob),
+                quote ;
+
+            /** Simple quote text placed in Blockquote tag*/
+            if ( currentNode.dataset.quoteStyle == 'simple' )
+                quote = currentNode.innerHTML;
+            else
+                quote = currentNode.querySelector('.' + styles.quoteText).innerHTML;
+
+            if (job)
+                job = job.textContent;
+
+            if (author)
+                author = author.textContent;
+
+            if (photo)
+                photo = photo.src;
+
+            var data = {
+                style       : currentNode.dataset.quoteStyle,
+                text        : quote,
+                author      : author,
+                job         : job,
+                photo       : photo
+            };
+
+            return data;
+        },
+
+        fileUploadClicked : function() {
+
+            codex.transport.selectAndUpload({
+                sucess: photoUploadingCallbacks.success,
+                error: photoUploadingCallbacks.error
+            });
+
+        }
+    };
+
     /**
      * Make Quote from JSON datasets
      */
@@ -138,13 +350,13 @@ var quote = (function(quote) {
 
             switch (data.style) {
                 case 'simple':
-                    tag = makeSimpleQuote(data);
+                    tag = methods.makeSimpleQuote(data);
                     break;
                 case 'withCaption':
-                    tag = makeQuoteWithCaption(data);
+                    tag = methods.makeQuoteWithCaption(data);
                     break;
                 case 'withPhoto':
-                    tag = makeQuoteWithPhoto(data);
+                    tag = methods.makeQuoteWithPhoto(data);
                     break;
             }
         } else {
@@ -157,7 +369,7 @@ var quote = (function(quote) {
                 photo  : ''
             };
 
-            tag = makeQuoteWithPhoto(settings);
+            tag = methods.makeQuoteWithPhoto(settings);
         }
 
         return tag;
@@ -165,6 +377,7 @@ var quote = (function(quote) {
 
     quote.validate = function(data) {
 
+        console.log(data);
         if (data.style.trim() == '' || data.text.trim() == '' || data.cite.trim() == ''
             || data.size.trim() == '')
             return;
@@ -182,16 +395,16 @@ var quote = (function(quote) {
          * Extracts JSON quote data from HTML block
          * @param {Text} text, {Text} author, {Object} photo
          */
-        var parsedblock = parseBlockQuote(blockContent);
+        var parsedblock = methods.parseBlockQuote(blockContent);
+
+        if (parsedblock.style == 'withPhoto') {
+            parsedblock.style = 'small';
+        }
         var data = {
-            style  : parsedblock.style,
-            text   : parsedblock.text,
-            author : parsedblock.author,
-            job    : parsedblock.job,
-            photo  : parsedblock.photo,
-            "format":"html",
-            "cite": parsedblock.author,
-            "size": "small"
+            "text"   : parsedblock.text,
+            "format" : "html",
+            "cite"   : parsedblock.author,
+            "size"   : parsedblock.style
         };
 
         return data;
@@ -201,9 +414,11 @@ var quote = (function(quote) {
 
         var holder  = document.createElement('DIV'),
             types   = {
-                simple      : 'Простая цитата',
-                withCaption : 'Цитата с подписью',
-                withPhoto   : 'Цитата с фото и ФИО'
+                big : 'По центру',
+                small : 'Врезка'
+                // simple      : 'Простая цитата',
+                // withCaption : 'Цитата с подписью',
+                // withPhoto   : 'Цитата с фото и ФИО'
             },
             selectTypeButton;
 
@@ -226,7 +441,7 @@ var quote = (function(quote) {
 
             // var quoteStyle = quoteTools.selectTypeQuoteStyle(type);
 
-            selectTypeButton.addEventListener('click', changeStyleClicked, false);
+            selectTypeButton.addEventListener('click', methods.changeStyleClicked, false);
             // quoteTools.addSelectTypeClickListener(selectTypeButton, quoteStyle);
 
             holder.appendChild(selectTypeButton);
@@ -234,219 +449,6 @@ var quote = (function(quote) {
         }
 
         return holder;
-
-    };
-
-
-    var changeStyleClicked = function() {
-
-        var changeStyleButton = this,
-            quote = codex.content.currentNode.querySelector('.' + styles.ce_quote),
-            newStyle = changeStyleButton.dataset.style,
-            styleSelectors = this.parentNode.childNodes;
-
-        quote.dataset.quoteStyle = newStyle;
-
-        /**
-         * Mark selected style button
-         */
-        for (var i = styleSelectors.length - 1; i >= 0; i--) {
-            styleSelectors[i].classList.remove(styles.settings.selectedType);
-        }
-
-        this.classList.add(styles.settings.selectedType);
-
-    };
-
-    /**
-     * @deprecated
-     */
-    var selectTypeQuoteStyle = function(type) {
-
-        /**
-         *  Choose Quote style to replace
-         */
-        switch (type) {
-            case 'simple':
-                quoteStyleFunction = makeSimpleQuote;
-                break;
-            case 'withCaption':
-                quoteStyleFunction = makeQuoteWithCaption;
-                break;
-            case 'withPhoto':
-                quoteStyleFunction = makeQuoteWithPhoto;
-                break;
-        }
-        return quoteStyleFunction;
-    };
-
-    /**
-     * @deprecated
-     */
-    var addSelectTypeClickListener = function(el, quoteStyle) {
-
-        el.addEventListener('click', function () {
-
-            /**
-             * Parsing currentNode to JSON.
-             */
-            var parsedOldQuote  = parseBlockQuote(),
-                newStyledQuote  = quoteStyle(parsedOldQuote);
-
-            var wrapper = codex.content.composeNewBlock(newStyledQuote, 'quote');
-            wrapper.appendChild(newStyledQuote);
-
-            codex.content.switchBlock(codex.content.currentNode, newStyledQuote, 'quote');
-
-            /** Close settings after replacing */
-            codex.toolbar.settings.close();
-
-        }, false);
-
-    };
-
-    /**
-     * @deprecated
-     */
-    var makeSimpleQuote = function(data) {
-
-        var wrapper = ui.makeBlock('BLOCKQUOTE', [styles.simple.text, styles.quoteText]);
-
-        wrapper.innerHTML = data.text || '';
-
-        wrapper.dataset.quoteStyle = 'simple';
-        wrapper.classList.add(styles.ce_quote);
-        wrapper.contentEditable = 'true';
-
-        return wrapper;
-    };
-
-    /**
-     * @deprecated
-     */
-    var makeQuoteWithCaption = function(data) {
-
-        var wrapper = ui.blockquote(),
-            text    = ui.makeBlock('DIV', [styles.withCaption.blockquote, styles.quoteText]),
-            author  = ui.makeBlock('DIV', [styles.withCaption.author, styles.quoteAuthor]);
-
-        /* make text block ontentEditable */
-        text.contentEditable = 'true';
-
-        text.innerHTML = data.text;
-
-        /* make Author contentEditable */
-        author.contentEditable = 'true';
-
-        author.textContent = data.cite;
-
-        /* Appending created components */
-        wrapper.dataset.quoteStyle = 'withCaption';
-        wrapper.classList.add(styles.ce_quote);
-
-        wrapper.appendChild(text);
-        wrapper.appendChild(author);
-
-        return wrapper;
-
-    };
-
-    var makeQuoteWithPhoto = function(data) {
-
-        var wrapper  = ui.blockquote(),
-            photo    = ui.makeBlock('DIV', [styles.withPhoto.photo]),
-            author   = ui.makeBlock('DIV', [styles.withPhoto.author, styles.quoteAuthor]),
-            job      = ui.makeBlock('DIV', [styles.withPhoto.job, styles.authorsJob]),
-            quote    = ui.makeBlock('DIV', [styles.withPhoto.quote, styles.quoteText]);
-
-        /* Default Image src */
-        if (!data.photo) {
-
-            var icon = ui.makeBlock('SPAN', ['ce-icon-picture']);
-            photo.appendChild(icon);
-
-        } else {
-
-            var authorsPhoto = ui.img(styles.authorsPhoto);
-            authorsPhoto.src = data.photo;
-
-            photo.classList.add(styles.authorsPhotoWrapper);
-            photo.appendChild(authorsPhoto);
-        }
-
-
-        photo.addEventListener('click', fileUploadClicked, false);
-
-        /* make author block contentEditable */
-        author.contentEditable = 'true';
-        author.textContent = data.cite;
-
-        /*  Author's position and job */
-        job.contentEditable = 'true';
-        job.textContent = data.job;
-
-        var authorsWrapper = ui.makeBlock('DIV', [styles.withPhoto.authorHolder]);
-        authorsWrapper.appendChild(author);
-        authorsWrapper.appendChild(job);
-
-        /* make quote text contentEditable */
-        quote.contentEditable = 'true';
-        quote.innerHTML = data.text;
-
-        wrapper.classList.add(styles.ce_quote);
-        wrapper.classList.add(styles.withPhoto.wrapper);
-        wrapper.dataset.quoteStyle = 'withPhoto';
-
-        wrapper.appendChild(quote);
-        wrapper.appendChild(photo);
-        wrapper.appendChild(authorsWrapper);
-
-        return wrapper;
-    };
-
-    var parseBlockQuote = function(block) {
-
-        var currentNode = block || codex.content.currentNode,
-            photo       = currentNode.getElementsByTagName('img')[0],
-            author      = currentNode.querySelector('.' + styles.quoteAuthor),
-            job         = currentNode.querySelector('.' + styles.authorsJob),
-            quote ;
-
-        /** Simple quote text placed in Blockquote tag*/
-        if ( currentNode.dataset.quoteStyle == 'simple' )
-            quote = currentNode.innerHTML;
-        else
-            quote = currentNode.querySelector('.' + styles.quoteText).innerHTML;
-
-        if (job)
-            job = job.textContent;
-
-        if (author)
-            author = author.textContent;
-
-        if (photo)
-            photo = photo.src;
-
-        var data = {
-            style       : currentNode.dataset.quoteStyle,
-            text        : quote,
-            author      : author,
-            job         : job,
-            photo       : photo
-        };
-
-        return data;
-    };
-
-    var fileUploadClicked = function() {
-
-        var success = photoUploadingCallbacks.success,
-            error   = photoUploadingCallbacks.error;
-
-        codex.transport.selectAndUpload({
-            success,
-            error,
-        });
 
     };
 

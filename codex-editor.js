@@ -2108,6 +2108,12 @@ var codex =
 
 	'use strict';
 	
+	/**
+	 * Toolbar settings
+	 *
+	 * @version 1.0.3
+	 */
+	
 	var settings = function (settings) {
 	
 	    settings.init = function () {
@@ -2130,13 +2136,17 @@ var codex =
 	         * Append settings content
 	         * It's stored in tool.settings
 	         */
-	        if (!codex.tools[toolType] || !codex.core.isDomNode(codex.tools[toolType].settings)) {
+	        if (!codex.tools[toolType] || !codex.tools[toolType].settings) {
 	
 	            codex.core.log('Plugin \xAB' + toolType + '\xBB has no settings', 'warn');
 	            // codex.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
 	        } else {
 	
-	            codex.nodes.pluginSettings.appendChild(codex.tools[toolType].settings);
+	            /**
+	             * Draw settings block
+	             */
+	            var settingsBlock = codex.tools[toolType].settings();
+	            codex.nodes.pluginSettings.appendChild(settingsBlock);
 	        }
 	
 	        var currentBlock = codex.content.currentNode;

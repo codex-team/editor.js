@@ -76,7 +76,12 @@ pasteTool.callbacks = {
         var clipBoardData = event.clipboardData || window.clipboardData,
             content = clipBoardData.getData('Text');
 
-        pasteTool.callbacks.analize(content);
+        var result = pasteTool.callbacks.analize(content);
+
+        if (result) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+        }
     },
 
     /**
@@ -101,24 +106,31 @@ pasteTool.callbacks = {
         if (image) {
 
             pasteTool.callbacks.uploadImage(string);
+            return true;
 
         } else if (instagram) {
 
             pasteTool.callbacks.instagramMedia(instagram);
+            return true;
 
         } else if (twitter) {
 
             pasteTool.callbacks.twitterMedia(twitter);
+            return true;
 
         } else if (facebook) {
 
             pasteTool.callbacks.facebookMedia(string);
+            return true;
 
         } else if (vk) {
 
             pasteTool.callbacks.vkMedia(string);
+            return true;
 
         }
+
+        return false;
 
     },
 
@@ -194,7 +206,7 @@ pasteTool.callbacks = {
      */
     twitterMedia : function(url) {
 
-        var fullUrl = url.input,
+        var fullUrl = Array.isArray(url) ? url.input : url,
             tweetId,
             arr,
             data;
@@ -204,19 +216,9 @@ pasteTool.callbacks = {
 
         /** Example */
         data = {
-            media:true,
-            conversation:false,
-            user:{
-                profile_image_url:"http:\/\/pbs.twimg.com\/profile_images\/1817165982\/nikita-likhachev-512_normal.jpg",
-                profile_image_url_https:"https:\/\/pbs.twimg.com\/profile_images\/1817165982\/nikita-likhachev-512_normal.jpg",
-                screen_name:"Niketas",
-                name:"Никита Лихачёв"
-            },
             id: tweetId,
-            text:"ВНИМАНИЕ ЧИТАТЬ ВСЕМ НЕ ДАЙ БОГ ПРОПУСТИТЕ НУ ИЛИ ХОТЯ БЫ КЛИКНИ И ПОДОЖДИ 15 СЕКУНД https:\/\/t.co\/iWyOHf4xr2",
-            created_at:"Tue Jun 28 14:09:12 +0000 2016",
-            status_url:"https:\/\/twitter.com\/Niketas\/status\/747793978511101953",
-            caption:"Caption"
+            id_str: tweetId,
+            status_url: fullUrl
         };
 
         codex.tools.twitter.make(data);

@@ -27,11 +27,11 @@ var link = (function(link) {
 
         make : function (json) {
 
-            var wrapper = this.wrapper(),
-                siteImage = this.image(json.image, settings.elementClasses.image),
-                siteTitle = this.title(json.title),
-                siteDescription = this.description(json.description),
-                siteLink = this.link(json.url, json.url);
+            var wrapper = ui.wrapper(),
+                siteImage = ui.image(json.image, settings.elementClasses.image),
+                siteTitle = ui.title(json.title),
+                siteDescription = ui.description(json.description),
+                siteLink = ui.link(json.url, json.url);
 
             wrapper.appendChild(siteImage);
             wrapper.appendChild(siteTitle);
@@ -131,6 +131,120 @@ var link = (function(link) {
 
     };
 
+    var methods = {
+
+        blockPasteCallback : function (event) {
+
+            var clipboardData = event.clipboardData || window.clipboardData,
+                pastedData    = clipboardData.getData('Text'),
+                block         = event.target.parentNode;
+
+            methods.renderLink(pastedData, block);
+
+            event.stopPropagation();
+
+        },
+
+        blockKeyDownCallback : function (event) {
+
+            var inputTag = event.target,
+                block    = inputTag.parentNode,
+                url;
+
+            if ( block.classList.contains(settings.elementClasses.error) ) {
+                block.classList.remove(settings.elementClasses.error);
+            }
+
+            if (event.keyCode == settings.ENTER_KEY) {
+
+                url = inputTag.value;
+
+                methods.renderLink(url, block);
+
+                event.preventDefault();
+            }
+        },
+
+        /**
+         * @todo move request-url to accepted settings
+         */
+        renderLink : function (url, block) {
+
+            Promise.resolve()
+
+                .then(function () {
+                    return methods.urlify(url);
+                })
+
+                .then(function (url) {
+
+                    /* Show loader gif **/
+                    block.classList.add(settings.elementClasses.loader);
+
+                    return fetch('/club/linkInfo?url=' + encodeURI(url));
+                })
+
+                .then(function (response) {
+
+                    if (response.status == "200"){
+
+                        return response.json();
+
+                    } else {
+
+                        return Error("Invalid response status: %o", response);
+
+                    }
+
+                })
+
+                .then(function (json) {
+                    methods.composeLinkPreview(json, block);
+                })
+
+                .catch(function(error) {
+
+                    /* Hide loader gif **/
+                    block.classList.remove(settings.elementClasses.loader);
+
+                    block.classList.add(settings.elementClasses.error);
+
+                    codex.core.log('Error while doing things with link paste: %o', 'error', error);
+                });
+
+        },
+
+        urlify : function (text) {
+
+            var urlRegex = /(https?:\/\/\S+)/g;
+
+            var links = text.match(urlRegex);
+
+            if (links) {
+                return links[0];
+            }
+
+            return Promise.reject(Error("Url is not matched"));
+
+        },
+
+        composeLinkPreview : function (json, currentBlock) {
+
+            if (json == {}) {
+                return;
+            }
+
+            var previewBlock = ui.make(json);
+
+            settings.currentInput.remove();
+
+            currentBlock.appendChild(previewBlock);
+
+            currentBlock.classList.remove(settings.elementClasses.loader);
+
+        }
+    };
+
     /**
      * Make initial header block
      * @param {object} JSON with block data
@@ -141,7 +255,7 @@ var link = (function(link) {
         var wrapper = ui.mainBlock(),
             tag     = ui.input();
 
-        currentInput = tag;
+        settings.currentInput = tag;
 
         wrapper.appendChild(tag);
 
@@ -149,8 +263,8 @@ var link = (function(link) {
         /**
          * Bind callbacks
          **/
-        tag.addEventListener('paste', blockPasteCallback, false);
-        tag.addEventListener('keydown', blockKeyDownCallback, false);
+        tag.addEventListener('paste', methods.blockPasteCallback, false);
+        tag.addEventListener('keydown', methods.blockKeyDownCallback, false);
 
         return wrapper;
 
@@ -189,126 +303,12 @@ var link = (function(link) {
         var data = {
             url    : blockContent.querySelector("." + linkElement).href,
             shortLink   : blockContent.querySelector("." + linkElement).textContent,
-            image       : blockContent.querySelector("." + linkTool.elementClasses.image).src,
-            title       : blockContent.querySelector("." + linkTool.elementClasses.title).textContent,
-            description : blockContent.querySelector("." + linkTool.elementClasses.description).textContent
+            image       : blockContent.querySelector("." + settings.elementClasses.image).src,
+            title       : blockContent.querySelector("." + settings.elementClasses.title).textContent,
+            description : blockContent.querySelector("." + settings.elementClasses.description).textContent
         };
 
         return data;
-
-    };
-
-    var blockPasteCallback = function (event) {
-
-        var clipboardData = event.clipboardData || window.clipboardData,
-            pastedData    = clipboardData.getData('Text'),
-            block         = event.target.parentNode;
-
-        renderLink(pastedData, block);
-
-        event.stopPropagation();
-
-    };
-
-    var blockKeyDownCallback = function (event) {
-
-        var inputTag = event.target,
-            block    = inputTag.parentNode,
-            url;
-
-        if ( block.classList.contains(settings.elementClasses.error) )
-        {
-            block.classList.remove(settings.elementClasses.error);
-        }
-
-        if (event.keyCode == linkTool.ENTER_KEY) {
-
-            url = inputTag.value;
-
-            renderLink(url, block);
-
-            event.preventDefault();
-
-        }
-
-    };
-
-    /**
-     * @todo move request-url to accepted settings
-     */
-    var renderLink = function (url, block) {
-
-        Promise.resolve()
-
-            .then(function () {
-                return urlify(url);
-            })
-
-            .then(function (url) {
-
-                /* Show loader gif **/
-                block.classList.add(settings.elementClasses.loader);
-
-                return fetch('/club/linkInfo?url=' + encodeURI(url));
-            })
-
-            .then(function (response) {
-
-                if (response.status == "200"){
-
-                    return response.json();
-
-                } else {
-
-                    return Error("Invalid response status: %o", response);
-
-                }
-
-            })
-
-            .then(function (json) {
-                composeLinkPreview(json, block);
-            })
-
-            .catch(function(error) {
-
-                /* Hide loader gif **/
-                block.classList.remove(settings.elementClasses.loader);
-
-                block.classList.add(settings.elementClasses.error);
-
-                codex.core.log('Error while doing things with link paste: %o', 'error', error);
-            });
-
-    };
-
-    var urlify = function (text) {
-
-        var urlRegex = /(https?:\/\/\S+)/g;
-
-        var links = text.match(urlRegex);
-
-        if (links) {
-            return links[0];
-        }
-
-        return Promise.reject(Error("Url is not matched"));
-
-    };
-
-    var composeLinkPreview = function (json, currentBlock) {
-
-        if (json == {}) {
-            return;
-        }
-
-        var previewBlock = ui.make(json);
-
-        linkTool.currentInput.remove();
-
-        currentBlock.appendChild(previewBlock);
-
-        currentBlock.classList.remove(settings.elementClasses.loader);
 
     };
 
