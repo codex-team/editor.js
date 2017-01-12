@@ -1,6 +1,7 @@
 /**
  * Paste plugin.
  *
+ * Listen to clipboard paste event and analize pasted text whit patterns in pattern.js
  */
 
 /**

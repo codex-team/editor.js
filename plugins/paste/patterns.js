@@ -1,6 +1,13 @@
 /**
  * Patterns
  *
+ * To add plugin create callback function in one and add here this object:
+ * {
+ *      type     : '', - type of pasted text (for example, 'image', 'url' or your plugin name)
+ *      regex    : /regex/, - regex for pasted text
+ *      callback : yourPlugin.smthPastedCallback - callback function in your plugin which is called when pasted text matches regex
+ * }
+ *
  */
 
 pasteTool.patterns = [
