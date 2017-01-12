@@ -103,11 +103,11 @@ videoTool.content = {
         },
         vk: {
             regex: /https?:\/\/vk\.com\/.*(?:video)([-_0-9]+)/,
-            html: "<iframe src=\"https://tjournal.ru/proxy/video/<%= remote_id %>\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>"
+            html: "<iframe src=\"//vk.com/video_ext.php?id=<%= remote_id %>\" width=\"853\" height=\"480\" frameborder=\"0\" allowfullscreen></iframe>"
         },
         imgur: {
             regex: /https?:\/\/(?:i\.)?imgur\.com.*\/([a-zA-Z0-9]+)(?:\.gifv)?/,
-            html: "<blockquote class=\"imgur-embed-pub\" lang=\"en\" data-id=\"<%= remote_id %>\" data-context=\"false\"></blockquote><script async src=\"//s.imgur.com/min/embed.js\" charset=\"utf-8\"></script>"
+            html: "<iframe allowfullscreen=\"true\" scrolling=\"no\" src=\"http://imgur.com/<%= remote_id %>/embed\" id=\"imgur-embed-iframe-pub-<%= remote_id %>\" class=\"imgur-embed-iframe-pub\" style=\"height: 500px; width: 540px; border: 1px solid #000\"></iframe>"
         },
         gfycat: {
             regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,

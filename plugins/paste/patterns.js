@@ -58,7 +58,7 @@ pasteTool.patterns = [
     },
     {
         type: 'vk',
-        regex: /https?:\/\/vk\.com\/.*(?:video)([-_0-9]+)/,
+        regex: /https?:\/\/vk\.com\/.*(?:video)[-0-9]+_([0-9]+)/,
         callback: videoTool.urlPastedCallbacks.generalCallback
     },
     {
