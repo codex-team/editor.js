@@ -346,7 +346,7 @@ ceImage.ui = {
 
         return wrapper;
 
-    }
+    },
 
 };
 
@@ -399,4 +399,83 @@ ceImage.photoUploadingCallbacks = {
         codex.notifications.errorThrown();
     }
 
+};
+
+ceImage.urlPastedCallbacks = {
+
+    /**
+     * Upload image by URL
+     *
+     * @uses codex Image tool
+     * @param filename
+     * @returns {Element}
+     */
+    uploadedImage : function(filename) {
+
+        var data = {
+            background: false,
+            border: false,
+            isStretch: false,
+            file: {
+                url: "upload/redactor_images/" + filename,
+                bigUrl: "upload/redactor_images/" + filename,
+                width: null,
+                height: null,
+                additionalData: "null"
+            },
+            caption: '',
+            cover: null
+        };
+
+        /** Using Image plugin make method */
+        var image = ceImage.make(data);
+
+        return image;
+
+    },
+
+
+    /**
+     * Direct upload from pasted path
+     * @param path
+     */
+    uploadImage : function(path) {
+
+        var ajaxUrl = location.protocol + '//' + location.hostname + ':32769',
+            file,
+            image,
+            current = codex.content.currentNode,
+            beforeSend,
+            success_callback;
+
+        /** When image is uploaded to redactors folder */
+        success_callback = function(data) {
+
+            console.log(data);
+            return;
+            var file = JSON.parse(data);
+            image = ceImage.urlPastedCallbacks.uploadedImage(file.filename);
+            codex.content.switchBlock(current, image, 'image');
+
+        };
+
+        /** Before sending XMLHTTP request */
+        beforeSend = function() {
+            var content = current.querySelector('.ce-block__content');
+            content.classList.add('ce-plugin-image__loader');
+        };
+
+        /** Preparing data for XMLHTTP */
+        var data = {
+            url: '/club/fetchImage',
+            type: "POST",
+            data : {
+                url: path
+            },
+            beforeSend : beforeSend,
+            success : success_callback
+        };
+
+        codex.core.ajax(data);
+    }
 };

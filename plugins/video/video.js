@@ -6,32 +6,26 @@ var videoTool = {
 
     make : function(data, isInternal) {
 
-        if (!data.video_url)
+        if (!data.video_id)
             return;
 
-        var properties = {
-            width: '560',
-            height: '315',
-            src: data.video_url,
-            frameborder: '0',
-            allowfullscreen: true
-        };
+        var html  = videoTool.content.getHtmlWithVideoId(data.service, data.video_id),
+            block = videoTool.content.makeElementFromHtml(html);
 
-        var frame = codex.draw.node('IFRAME', 'video', properties);
+        block.dataset.id = data.video_id;
+        block.dataset.videoSeirvice = data.service;
 
         if (isInternal) {
-
-            frame.src = videoTool.content.makeEmbedUrl(data.video_url);
 
             setTimeout(function() {
 
                 /** Render block */
-                videoTool.content.render(frame);
+                videoTool.content.render(block);
 
             }, 200);
         }
 
-        return frame;
+        return block;
 
     },
 
@@ -47,7 +41,8 @@ var videoTool = {
             return;
 
         data = {
-            video_url: blockContent.src
+            video_id: blockContent.dataset.id,
+            service: blockContent.dataset.videoService
         };
 
         return data;
@@ -59,7 +54,8 @@ var videoTool = {
      */
     render : function(data) {
         return videoTool.make(data);
-    }
+    },
+
 
 };
 
@@ -77,9 +73,59 @@ videoTool.content = {
 
     },
 
-    makeEmbedUrl: function (url) {
+    getHtmlWithVideoId: function (type, id) {
+        return videoTool.content.services[type].html.replace("<%= remote_id %>", id);
+    },
 
-        return url.replace(/watch\?v=/, 'embed/');
+    makeElementFromHtml: function(html) {
+        var wrapper = document.createElement('DIV');
+        wrapper.innerHTML = html;
+        return wrapper.firstElementChild;
+    },
 
+    services: {
+        vimeo: {
+            regex: /(?:http[s]?:\/\/)?(?:www.)?vimeo\.co(?:.+\/([^\/]\d+)(?:#t=[\d]+)?s?$)/,
+            html: "<iframe src=\"https://player.vimeo.com/video/<%= remote_id %>?title=0&byline=0\" width=\"580\" height=\"320\" frameborder=\"0\"></iframe>"
+        },
+        youtube: {
+            regex: /^.*(?:(?:youtu\.be\/)|(?:youtube\.com)\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)(?:[\?\&]t\=(\d*)|)/,
+            html: "<iframe src=\"https://www.youtube.com/embed/<%= remote_id %>\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>",
+            timestamp: '?t='
+        },
+        coub: {
+            regex: /https?:\/\/coub\.com\/view\/([^\/\?\&]+)/,
+            html: "<iframe src=\"//coub.com/embed/<%= remote_id %>\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>"
+        },
+        vine: {
+            regex: /https?:\/\/vine\.co\/v\/([^\/\?\&]+)/,
+            html: "<iframe src=\"https://vine.co/v/<%= remote_id %>/embed/simple/\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>"
+        },
+        vk: {
+            regex: /https?:\/\/vk\.com\/.*(?:video)([-_0-9]+)/,
+            html: "<iframe src=\"https://tjournal.ru/proxy/video/<%= remote_id %>\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>"
+        },
+        imgur: {
+            regex: /https?:\/\/(?:i\.)?imgur\.com.*\/([a-zA-Z0-9]+)(?:\.gifv)?/,
+            html: "<blockquote class=\"imgur-embed-pub\" lang=\"en\" data-id=\"<%= remote_id %>\" data-context=\"false\"></blockquote><script async src=\"//s.imgur.com/min/embed.js\" charset=\"utf-8\"></script>"
+        },
+        gfycat: {
+            regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
+            html: "<iframe src='https://gfycat.com/ifr/<%= remote_id %>' frameborder='0' scrolling='no' width='580' height='436' allowfullscreen ></iframe>",
+        }
+    }
+};
+
+videoTool.urlPastedCallbacks = {
+    generalCallback: function(url, pattern) {
+
+        var id = pattern.regex.exec(url)[1];
+
+        var data = {
+            video_id: id,
+            service: pattern.type
+        };
+
+        videoTool.make(data, true);
     }
 };

@@ -100,7 +100,7 @@ var toolbox = (function(toolbox) {
         /**
          * UNREPLACEBLE_TOOLS this types of tools are forbidden to replace even they are empty
          */
-        var UNREPLACEBLE_TOOLS = ['image', 'link', 'list', 'instagram', 'twitter'],
+        var UNREPLACEBLE_TOOLS = ['image', 'link', 'list', 'instagram', 'twitter', 'video'],
             tool               = codex.tools[codex.toolbar.current],
             workingNode        = codex.content.currentNode,
             currentInputIndex  = codex.caret.inputIndex,

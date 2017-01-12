@@ -88,3 +88,37 @@ twitterTool.content = {
         return block;
     }
 };
+
+/**
+ * callback for twitter utl's coming from pasteTool
+ * Using Twittter Widget to render
+ * @param url
+ */
+twitterTool.urlPastedCallback = function(url) {
+
+    var tweetId,
+        arr,
+        data;
+
+    arr = url.split('/');
+    tweetId = arr.pop();
+
+    /** Example */
+    data = {
+        media:true,
+        conversation:false,
+        user:{
+            profile_image_url:"http:\/\/pbs.twimg.com\/profile_images\/1817165982\/nikita-likhachev-512_normal.jpg",
+            profile_image_url_https:"https:\/\/pbs.twimg.com\/profile_images\/1817165982\/nikita-likhachev-512_normal.jpg",
+            screen_name:"Niketas",
+            name:"Никита Лихачёв"
+        },
+        id: tweetId,
+        text:"ВНИМАНИЕ ЧИТАТЬ ВСЕМ НЕ ДАЙ БОГ ПРОПУСТИТЕ НУ ИЛИ ХОТЯ БЫ КЛИКНИ И ПОДОЖДИ 15 СЕКУНД https:\/\/t.co\/iWyOHf4xr2",
+        created_at:"Tue Jun 28 14:09:12 +0000 2016",
+        status_url:"https:\/\/twitter.com\/Niketas\/status\/747793978511101953",
+        caption:"Caption"
+    };
+
+    codex.tools.twitter.make(data);
+}

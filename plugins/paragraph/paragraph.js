@@ -34,7 +34,7 @@ var paragraphTool = {
          * If pasted URL from instagram, twitter or Image
          * it renders via Social widgets content or uploads image and uses Image tool to render
          */
-        tag.addEventListener('paste', codex.tools.paste.callbacks.pasted, false);
+        tag.addEventListener('paste', codex.tools.paste.callbacks, false);
 
         return tag;
 

@@ -42,11 +42,12 @@
 <script src="plugins/twitter/twitter.js"></script>
 <link rel="stylesheet" href="plugins/twitter/twitter.css">
 
-<script src="plugins/paste/paste.js"></script>
-<link rel="stylesheet" href="plugins/paste/paste.css">
-
 <script src="plugins/video/video.js"></script>
 <link rel="stylesheet" href="plugins/video/video.css">
+
+<script src="plugins/paste/paste.js"></script>
+<script src="plugins/paste/patterns.js"></script>
+<link rel="stylesheet" href="plugins/paste/paste.css">
 
 <script>
     codex.start({
@@ -73,7 +74,7 @@
                 render: null,
                 save: pasteTool.save,
                 enableLineBreaks: false,
-                callbacks: pasteTool.callbacks,
+                callbacks: pasteTool.pasted,
                 allowedToPaste: false
             },
             header: {

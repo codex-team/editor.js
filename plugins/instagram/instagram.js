@@ -115,3 +115,17 @@ instagramTool.content = {
     }
 
 };
+
+/**
+ * callback for instagram url's coming from pasteTool
+ * Using instagram Embed Widgete to render
+ * @param url
+ */
+instagramTool.urlPastedCallback = function(url) {
+    var data = {
+        instagram_url: url
+    };
+
+    codex.tools.instagram.make(data, true);
+
+};
