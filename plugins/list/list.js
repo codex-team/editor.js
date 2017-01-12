@@ -24,6 +24,8 @@ var listTool = {
         li.appendChild(br);
         tag.appendChild(li);
 
+        tag.classList.add('ce-list');
+
         return tag;
 
     },
@@ -35,6 +37,8 @@ var listTool = {
 
         var type = data.type == 'ordered' ? 'OL' : 'UL',
             tag  = listTool.ui.make(type);
+
+        tag.classList.add('ce-list');
 
         data.items.forEach(function (element, index, array) {
 
@@ -56,51 +60,41 @@ var listTool = {
      */
     save : function (blockContent){
 
-        var block = blockContent[0],
-            json  = {
-                type : 'list',
-                data : {
-                    type  : null,
-                    items : [],
-                }
+        var data = {
+                type  : null,
+                items : [],
             };
 
-        for(var index = 0; index < block.childNodes.length; index++)
-            json.data.items[index] = block.childNodes[index].textContent;
+        for(var index = 0; index < blockContent.childNodes.length; index++)
+            data.items[index] = blockContent.childNodes[index].textContent;
 
-        json.data.type = block.dataset.type;
+        data.type = blockContent.dataset.type;
 
-        return json;
+        return data;
 
     },
 
     makeSettings : function(data) {
 
         var holder  = document.createElement('DIV'),
-            caption = document.createElement('SPAN'),
             selectTypeButton;
 
         /** Add holder classname */
         holder.className = 'ce_plugin_list--settings';
-
-        /** Add settings helper caption */
-        caption.textContent = 'Настройки списков';
-        caption.className   = 'ce_plugin_list--caption';
 
         var orderedButton = listTool.ui.button("ordered"),
             unorderedButton = listTool.ui.button("unordered");
 
         orderedButton.addEventListener('click', function (event) {
             listTool.changeBlockStyle(event, 'ol');
-            cEditor.toolbar.settings.close();
+            codex.toolbar.settings.close();
         });
 
         unorderedButton.addEventListener('click', function (event) {
             listTool.changeBlockStyle(event, 'ul');
-            cEditor.toolbar.settings.close();
+            codex.toolbar.settings.close();
         });
 
-        holder.appendChild(caption);
         holder.appendChild(orderedButton);
         holder.appendChild(unorderedButton);
 
@@ -110,16 +104,15 @@ var listTool = {
 
     changeBlockStyle : function (event, blockType) {
 
-        var currentBlock = cEditor.content.currentNode,
+        var currentBlock = codex.content.currentNode,
             newEditable = listTool.ui.make(blockType),
             oldEditable = currentBlock.querySelector("[contenteditable]");
 
-        newEditable.dataset.type = blockType;
-        newEditable.innerHTML = oldEditable.innerHTML;
+            newEditable.dataset.type = blockType;
+            newEditable.innerHTML = oldEditable.innerHTML;
+            newEditable.classList.add('ce-list');
 
-        currentBlock.appendChild(newEditable);
-        oldEditable.remove();
-
+            codex.content.switchBlock(currentBlock, newEditable, 'list');
     },
 
 };
@@ -130,6 +123,7 @@ listTool.ui = {
 
         var wrapper = this.block(blockType || 'UL', listTool.baseClass);
 
+        wrapper.dataset.type    = 'ul';
         wrapper.contentEditable = true;
 
         return wrapper;
@@ -149,31 +143,15 @@ listTool.ui = {
     button : function (buttonType) {
 
         var types   = {
-                unordered    : 'Обычный список',
-                ordered      : 'Нумерованный список'
+                unordered    : '<i class="ce-icon-list-bullet"></i>Обычный список',
+                ordered      : '<i class="ce-icon-list-numbered"></i>Нумерованный список'
             },
             button = document.createElement('SPAN');
 
-        button.textContent = types[buttonType];
+        button.innerHTML = types[buttonType];
 
         button.className   = 'ce_plugin_list--select_button';
 
         return button;
     }
-};
-
-/**
- * Now plugin is ready.
- * Add it to redactor tools
- */
-cEditor.tools.list = {
-
-    type           : 'list',
-    iconClassname  : 'ce-icon-list-bullet',
-    make           : listTool.make,
-    appendCallback : null,
-    settings       : listTool.makeSettings(),
-    render         : listTool.render,
-    save           : listTool.save
-
 };

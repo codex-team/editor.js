@@ -1,0 +1,17 @@
+{
+  "browser": true,
+  "predef": [
+    "define",
+    "require",
+    "jasmine",
+    "expect",
+    "describe",
+    "it",
+    "beforeEach",
+    "afterEach",
+    "spyOn",
+    "run",
+    "waits",
+    "waitsFor"
+  ]
+}

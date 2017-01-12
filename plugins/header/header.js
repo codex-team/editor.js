@@ -27,6 +27,7 @@ var headerTool = {
         } else {
 
             tag = document.createElement( 'H2' );
+            tag.dataset.headerData = 'H2';
 
         }
 
@@ -34,6 +35,12 @@ var headerTool = {
             tag.textContent = data.text;
         }
 
+        if (!tag.dataset.headerData) {
+            tag.dataset.headerData = 'H2';
+        }
+
+        tag.classList.add('ce-header');
+        tag.setAttribute('data-placeholder', 'Heading');
         tag.contentEditable = true;
 
         return tag;
@@ -54,19 +61,16 @@ var headerTool = {
     */
     save : function (blockContent) {
 
-        var block = blockContent[0],
-            json  = {
-                type : 'header',
-                data : {
-                    type : null,
-                    text : null,
-                }
+        var data = {
+                "heading-styles": blockContent.dataset.headerData,
+                format:"html",
+                text : null,
+
             };
 
-        json.data.type = block.dataset.headerData;
-        json.data.text = block.textContent;
+        data.text = blockContent.textContent;
 
-        return json;
+        return data;
 
     },
 
@@ -89,7 +93,6 @@ var headerTool = {
     makeSettings : function () {
 
         var holder  = document.createElement('DIV'),
-            caption = document.createElement('SPAN'),
             types   = {
                         H2: 'Заголовок раздела',
                         H3: 'Подзаголовок',
@@ -99,12 +102,6 @@ var headerTool = {
 
         /** Add holder classname */
         holder.className = 'ce_plugin_header--settings';
-
-        /** Add settings helper caption */
-        caption.textContent = 'Настройки заголовка';
-        caption.className   = 'ce_plugin_header--caption';
-
-        holder.appendChild(caption);
 
         /** Now add type selectors */
         for (var type in types){
@@ -145,38 +142,23 @@ var headerTool = {
         var old_header, new_header;
 
         /** Now current header stored as a currentNode */
-        old_header = cEditor.content.currentNode;
+        old_header = codex.content.currentNode.querySelector('[contentEditable]');
 
         /** Making new header */
         new_header = document.createElement(type);
 
         new_header.innerHTML = old_header.innerHTML;
         new_header.contentEditable = true;
+        new_header.setAttribute('data-placeholder', 'Heading');
+        new_header.classList.add('ce-header');
 
-        cEditor.content.switchBlock(old_header, new_header, 'header');
+        new_header.dataset.headerData = type;
 
-        /** Add listeners for Arrow keys*/
-        cEditor.ui.addBlockHandlers(new_header);
+        codex.content.switchBlock(old_header, new_header, 'header');
 
         /** Close settings after replacing */
-        cEditor.toolbar.settings.close();
-
-    },
-
-};
-
-/**
-* Now plugin is ready.
-* Add it to redactor tools
-*/
-cEditor.tools.header = {
-
-    type           : 'header',
-    iconClassname  : 'ce-icon-header',
-    make           : headerTool.make,
-    appendCallback : headerTool.appendCallback,
-    settings       : headerTool.makeSettings(),
-    render         : headerTool.render,
-    save           : headerTool.save
+        codex.toolbar.settings.close();
+    }
 
 };
+

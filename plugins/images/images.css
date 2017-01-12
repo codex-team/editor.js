@@ -4,6 +4,11 @@
 *
 * @version 0.0.1
 */
+.ce-image {
+    max-width: 700px;
+    margin: 20px auto !important;
+}
+
 .ce-plugin-image__holder{
 	position: relative;
 	background: #FEFEFE;
@@ -56,29 +61,33 @@
 }
 
 .ce-plugin-image__uploaded--stretched {
-	/*width: 939px;*/
+	width: 100%;
 }
-	.ce-plugin-image--stretch {
+	.ce-plugin-image__firstlevel--stretch {
 		margin: 0 !important;
-		max-width: 100% !important;
+		max-width: none !important;
+		padding: 0 !important;
 	}
 
 .ce-plugin-image__caption {
-    margin-top: 1em;
+    max-width: 700px;
+    margin: 1em auto;
     text-align: center;
     color: #898a8c;
 }
 
-    .ce-plugin-image--caption:empty::before {
-        content : 'Подпись';
+    .ce-plugin-image__caption:empty::before {
+        content: 'Введите подпись';
+        text-align: center;
         font-weight: normal;
         color: #a1a5b3;;
-        opacity: 1;
+        opacity: .9;
         transition: opacity 200ms ease;
     }
 
-    .ce-plugin-image--caption:focus::before {
+    .ce-plugin-image__caption:focus::before {
         opacity: .1;
+        text-align: center;
     }
 
 /** Settings */
@@ -88,12 +97,10 @@
 }
 .ce_plugin_image--select_button{
     display: inline-block;
-    margin-left: 40px;
-    border-bottom: 1px solid #475588;
-    color: #6881e6;
+    margin-left: 15px;
+    color: #70a1ff;
     cursor: pointer;
 }
     .ce_plugin_image--select_button:hover{
-        border-bottom-color: #687da5;
         color: #8da8dc;
     }

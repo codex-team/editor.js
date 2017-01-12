@@ -1,3 +1,8 @@
+.ce-link {
+    padding: 0.7em 0 !important;
+    border-radius: 3px;
+}
+
 .clearfix:after {
     visibility: hidden;
     display: block;
@@ -61,9 +66,16 @@
 }
 
 .tool-link-loader {
-    background: url("loading.gif") !important;
-    opacity: 0.1;
+    background-color: transparent;
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 4px, #f5f9ff 4px, #eaedef 8px) !important;
+    background-size: 56px 56px;
+    animation: loading-bar 5s infinite linear;
 }
+@keyframes loading-bar {
+    100% { background-position: -56% 0 }
+}
+
+
 
 .tool-link-error {
     background: rgb(255, 241, 241);
@@ -72,4 +84,3 @@
 .tool-link-error .ceditor-tool-link-input {
     border-left-color: #d86b6b
 }
-

@@ -4,7 +4,7 @@
  */
 var codeTool = {
 
-    baseClass : "tool-code",
+    baseClass : "ce-code",
 
     /**
      * Make initial header block
@@ -15,7 +15,7 @@ var codeTool = {
 
         var tag = document.createElement('code');
 
-        tag.classList += codeTool.baseClass;
+        tag.classList.add(codeTool.baseClass);
 
         if (data && data.text) {
             tag.innerHTML = data.text;
@@ -41,34 +41,14 @@ var codeTool = {
      */
     save : function (blockContent){
 
-        var block = blockContent[0];
-            json  = {
-                type : 'code',
-                data : {
-                    text : null,
-                }
+        var data = {
+                text : null,
             };
 
-        json.data.text = block.innerHTML;
+        data.text = blockContent.innerHTML;
 
-        return json;
+        return data;
 
-    },
-
-};
-
-/**
- * Now plugin is ready.
- * Add it to redactor tools
- */
-cEditor.tools.code = {
-
-    type           : 'code',
-    iconClassname  : 'ce-icon-code',
-    make           : codeTool.make,
-    appendCallback : null,
-    settings       : null,
-    render         : codeTool.render,
-    save           : codeTool.save
+    }
 
 };

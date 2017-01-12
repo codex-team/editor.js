@@ -35,6 +35,7 @@ var linkTool = {
 
         wrapper.appendChild(tag);
 
+        wrapper.classList.add('ce-link');
         /**
         * Bind callbacks
         **/
@@ -53,6 +54,7 @@ var linkTool = {
         var block = linkTool.ui.mainBlock(),
             tag   = linkTool.ui.make(json);
 
+        block.classList.add('ce-link');
         block.appendChild(tag);
 
         return block;
@@ -66,19 +68,15 @@ var linkTool = {
 
         var linkElement = linkTool.elementClasses.link;
 
-        var block = blockContent[0],
-            json = {
-                type : 'link',
-                data : {
-                    fullLink    : block.querySelector("." + linkElement).href,
-                    shortLink   : block.querySelector("." + linkElement).textContent,
-                    image       : block.querySelector("." + linkTool.elementClasses.image).src,
-                    title       : block.querySelector("." + linkTool.elementClasses.title).textContent,
-                    description : block.querySelector("." + linkTool.elementClasses.description).textContent
-                }
+        var data = {
+                url    : blockContent.querySelector("." + linkElement).href,
+                shortLink   : blockContent.querySelector("." + linkElement).textContent,
+                image       : blockContent.querySelector("." + linkTool.elementClasses.image).src,
+                title       : blockContent.querySelector("." + linkTool.elementClasses.title).textContent,
+                description : blockContent.querySelector("." + linkTool.elementClasses.description).textContent
             };
 
-        return json;
+        return data;
 
     },
 
@@ -133,7 +131,7 @@ var linkTool = {
                 /* Show loader gif **/
                 block.classList.add(linkTool.elementClasses.loader);
 
-                return fetch('/editor/parseLink?url=' + encodeURI(url));
+                return fetch('/club/linkInfo?url=' + encodeURI(url));
             })
 
             .then(function (response) {
@@ -151,6 +149,7 @@ var linkTool = {
             })
 
             .then(function (json) {
+                console.log(json);
                 linkTool.composeLinkPreview(json, block);
             })
 
@@ -161,7 +160,7 @@ var linkTool = {
 
                 block.classList.add(linkTool.elementClasses.error);
 
-                cEditor.core.log('Error while doing things with link paste: %o', 'error', error);
+                codex.core.log('Error while doing things with link paste: %o', 'error', error);
             });
 
     },
@@ -187,7 +186,7 @@ var linkTool = {
             return;
 
         }
-
+        
         var previewBlock = linkTool.ui.make(json);
 
         linkTool.currentInput.remove();
@@ -208,7 +207,7 @@ linkTool.ui = {
             siteImage = this.image(json.image, linkTool.elementClasses.image),
             siteTitle = this.title(json.title),
             siteDescription = this.description(json.description),
-            siteLink = this.link(json.linkUrl, json.linkText);
+            siteLink = this.link(json.url, json.url);
 
         wrapper.appendChild(siteImage);
         wrapper.appendChild(siteTitle);
@@ -226,7 +225,7 @@ linkTool.ui = {
 
         var wrapper = document.createElement('div');
 
-        wrapper.classList += "ceditor-tool-link";
+        wrapper.classList.add("ceditor-tool-link");
 
         return wrapper;
 
@@ -236,7 +235,7 @@ linkTool.ui = {
 
         var inputTag = document.createElement('input');
 
-        inputTag.classList += "ceditor-tool-link-input";
+        inputTag.classList.add("ceditor-tool-link-input");
 
         inputTag.placeholder = linkTool.defaultText;
 
@@ -260,7 +259,7 @@ linkTool.ui = {
 
         var imageTag = document.createElement('img');
 
-        imageTag.classList += imageClass;
+        imageTag.classList.add(imageClass);
 
         imageTag.setAttribute('src', imageSrc);
 
@@ -272,7 +271,7 @@ linkTool.ui = {
 
         var linkTag = document.createElement('a');
 
-        linkTag.classList += linkTool.elementClasses.link;
+        linkTag.classList.add(linkTool.elementClasses.link);
 
         linkTag.href = linkUrl;
 
@@ -304,18 +303,6 @@ linkTool.ui = {
         descriptionTag.innerHTML = descriptionText;
 
         return descriptionTag;
-    },
-
-};
-
-cEditor.tools.link = {
-
-    type           : 'link',
-    iconClassname  : 'ce-icon-link',
-    make           : linkTool.makeNewBlock,
-    appendCallback : linkTool.appendCallback,
-    render         : linkTool.render,
-    // settings       : linkTool.makeSettings(),
-    save           : linkTool.save
+    }
 
 };
