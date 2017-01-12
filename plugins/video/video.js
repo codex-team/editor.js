@@ -2,88 +2,34 @@
  * Video plugin by gohabereg
  * @version 1.0.0
  */
-var videoTool = {
+var video = function(video){
 
-    make : function(data, isInternal) {
+    var methods = {
 
-        if (!data.video_id)
-            return;
+        addInternal: function (content) {
+            codex.content.switchBlock(codex.content.currentNode, content, 'video');
 
-        var html  = videoTool.content.getHtmlWithVideoId(data.service, data.video_id),
-            block = videoTool.content.makeElementFromHtml(html);
+            var blockContent = codex.content.currentNode.childNodes[0];
+            blockContent.classList.add('video__loader');
 
-        block.dataset.id = data.video_id;
-        block.dataset.videoSeirvice = data.service;
+            setTimeout(function(){
+                blockContent.classList.remove('video__loader');
+            }, 1000);
 
-        if (isInternal) {
+        },
 
-            setTimeout(function() {
+        getHtmlWithVideoId: function (type, id) {
+            return services[type].html.replace(/<\%\= remote\_id \%\>/g, id);
+        },
 
-                /** Render block */
-                videoTool.content.render(block);
-
-            }, 200);
+        makeElementFromHtml: function(html) {
+            var wrapper = document.createElement('DIV');
+            wrapper.innerHTML = html;
+            return wrapper.firstElementChild;
         }
+    };
 
-        return block;
-
-    },
-
-    /**
-     * Saving JSON output.
-     * Upload data via ajax
-     */
-    save : function(blockContent) {
-
-        var data;
-
-        if (!blockContent)
-            return;
-
-        data = {
-            video_id: blockContent.dataset.id,
-            service: blockContent.dataset.videoService
-        };
-
-        return data;
-
-    },
-
-    /**
-     * Render data
-     */
-    render : function(data) {
-        return videoTool.make(data);
-    },
-
-
-};
-
-videoTool.content = {
-
-    render: function (content) {
-        codex.content.switchBlock(codex.content.currentNode, content, 'video');
-
-        var blockContent = codex.content.currentNode.childNodes[0];
-        blockContent.classList.add('video__loader');
-
-        setTimeout(function(){
-            blockContent.classList.remove('video__loader');
-        }, 1000);
-
-    },
-
-    getHtmlWithVideoId: function (type, id) {
-        return videoTool.content.services[type].html.replace(/<\%\= remote\_id \%\>/g, id);
-    },
-
-    makeElementFromHtml: function(html) {
-        var wrapper = document.createElement('DIV');
-        wrapper.innerHTML = html;
-        return wrapper.firstElementChild;
-    },
-
-    services: {
+    var services = {
         vimeo: {
             regex: /(?:http[s]?:\/\/)?(?:www.)?vimeo\.co(?:.+\/([^\/]\d+)(?:#t=[\d]+)?s?$)/,
             html: "<iframe src=\"https://player.vimeo.com/video/<%= remote_id %>?title=0&byline=0\" width=\"580\" height=\"320\" frameborder=\"0\"></iframe>"
@@ -113,11 +59,56 @@ videoTool.content = {
             regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
             html: "<iframe src='https://gfycat.com/ifr/<%= remote_id %>' frameborder='0' scrolling='no' width='580' height='436' allowfullscreen ></iframe>",
         }
-    }
-};
+    };
 
-videoTool.urlPastedCallbacks = {
-    generalCallback: function(url, pattern) {
+
+    video.make = function(data, isInternal) {
+
+        if (!data.video_id)
+            return;
+
+        var html  = methods.getHtmlWithVideoId(data.service, data.video_id),
+            block = methods.makeElementFromHtml(html);
+
+        block.dataset.id = data.video_id;
+        block.dataset.videoSeirvice = data.service;
+
+        if (isInternal) {
+                methods.addInternal(block);
+        }
+
+        return block;
+
+    };
+
+    /**
+     * Saving JSON output.
+     * Upload data via ajax
+     */
+    video.save = function(blockContent) {
+
+        var data;
+
+        if (!blockContent)
+            return;
+
+        data = {
+            video_id: blockContent.dataset.id,
+            service: blockContent.dataset.videoService
+        };
+
+        return data;
+
+    };
+
+    /**
+     * Render data
+     */
+    video.render = function(data) {
+        return video.make(data);
+    };
+
+    video.urlPastedCallback = function(url, pattern) {
 
         var id = pattern.regex.exec(url)[1];
 
@@ -126,6 +117,9 @@ videoTool.urlPastedCallbacks = {
             service: pattern.type
         };
 
-        videoTool.make(data, true);
-    }
-};
+        video.make(data, true);
+    };
+
+    return video;
+
+}({});

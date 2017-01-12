@@ -39,37 +39,37 @@ pasteTool.patterns = [
     {
         type: 'youtube',
         regex: /^.*(?:(?:youtu\.be\/)|(?:youtube\.com)\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)(?:[\?\&]t\=(\d*)|)/,
-        callback: videoTool.urlPastedCallbacks.generalCallback
+        callback: video.urlPastedCallback
     },
     {
         type: 'vimeo',
         regex: /(?:http[s]?:\/\/)?(?:www.)?vimeo\.co(?:.+\/([^\/]\d+)(?:#t=[\d]+)?s?$)/,
-        callback: videoTool.urlPastedCallbacks.generalCallback
+        callback: video.urlPastedCallback
     },
     {
         type: 'coub',
         regex: /https?:\/\/coub\.com\/view\/([^\/\?\&]+)/,
-        callback: videoTool.urlPastedCallbacks.generalCallback
+        callback: video.urlPastedCallback
     },
     {
         type: 'vine',
         regex: /https?:\/\/vine\.co\/v\/([^\/\?\&]+)/,
-        callback: videoTool.urlPastedCallbacks.generalCallback
+        callback: video.urlPastedCallback
     },
     {
         type: 'vk',
         regex: /https?:\/\/vk\.com\/.*(?:video)[-0-9]+_([0-9]+)/,
-        callback: videoTool.urlPastedCallbacks.generalCallback
+        callback: video.urlPastedCallback
     },
     {
         type: 'imgur',
         regex: /https?:\/\/(?:i\.)?imgur\.com.*\/([a-zA-Z0-9]+)(?:\.gifv)?/,
-        callback: videoTool.urlPastedCallbacks.generalCallback
+        callback: video.urlPastedCallback
     },
     {
         type: 'gfycat',
         regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
-        callback: videoTool.urlPastedCallbacks.generalCallback
+        callback: video.urlPastedCallback
     }
 
 ];
