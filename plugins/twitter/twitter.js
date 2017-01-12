@@ -3,12 +3,44 @@
  * @version 1.0.0
  */
 
-var twitterTool = {
+var twitter = (function(twitter) {
+
+    var content = {
+
+        /**
+         * Twitter render method appends content after block
+         * @param tweetId
+         */
+        twitter : function(tweetId) {
+
+            var tweet = twitterTool.content.twitterBlock();
+
+            codex.content.switchBlock(codex.content.currentNode, tweet, 'twitter');
+
+            var blockContent = codex.content.currentNode.childNodes[0];
+            blockContent.classList.add('twitter__loader');
+
+            window.twttr.widgets.createTweet(tweetId, blockContent);
+
+            setTimeout(function() {
+                blockContent.classList.remove('twitter__loader');
+            }, 500);
+
+            /** Remove empty DIV */
+            blockContent.childNodes[0].remove();
+
+        },
+
+        twitterBlock : function() {
+            var block = codex.draw.node('DIV', '', {});
+            return block;
+        }
+    };
 
     /**
      * Prepare twitter scripts
      */
-    prepare : function() {
+    twitter.prepare = function() {
 
         var script = "//platform.twitter.com/widgets.js";
 
@@ -17,17 +49,21 @@ var twitterTool = {
          */
         codex.core.importScript(script, 'twitterAPI');
 
-    },
+    };
 
-    make : function(data) {
+    twitter.make = function(data) {
 
         if (!data.id)
             return;
 
         twitterTool.content.twitter(data.id);
-    },
+    };
 
-    save : function(blockContent) {
+    twitter.validate = function(data) {
+
+    };
+
+    twitter.save = function(blockContent) {
 
         var data;
 
@@ -49,42 +85,14 @@ var twitterTool = {
 
         return data;
 
-    },
+    };
 
-    render : function(data) {
-        return twitterTool.make(data);
-    }
+    twitter.render = function(data) {
+        return twitter.make(data);
+    };
 
-};
+    return twitter;
 
-twitterTool.content = {
+})({});
 
-    /**
-     * Twitter render method appends content after block
-     * @param tweetId
-     */
-    twitter : function(tweetId) {
 
-        var tweet = twitterTool.content.twitterBlock();
-
-        codex.content.switchBlock(codex.content.currentNode, tweet, 'twitter');
-
-        var blockContent = codex.content.currentNode.childNodes[0];
-        blockContent.classList.add('twitter__loader');
-
-        window.twttr.widgets.createTweet(tweetId, blockContent);
-
-        setTimeout(function() {
-            blockContent.classList.remove('twitter__loader');
-        }, 500);
-
-        /** Remove empty DIV */
-        blockContent.childNodes[0].remove();
-
-    },
-
-    twitterBlock : function() {
-        var block = codex.draw.node('DIV', '', {});
-        return block;
-    }
-};

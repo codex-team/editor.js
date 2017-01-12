@@ -1,21 +1,19 @@
 /**
-* Paragraph Plugin\
+* Paragraph Plugin
 * Creates P tag and adds content to this tag
 */
-// var tools = require('./../plugins');
 
-var paragraphTool = {
+var paragraph = (function(paragraph) {
 
     /**
-    * Make initial header block
-    * @param {object} JSON with block data
-    * @return {Element} element to append
-    */
-    make : function (data) {
+     * Make initial header block
+     * @param {object} JSON with block data
+     * @return {Element} element to append
+     */
+    paragraph.make = function (data) {
 
-        var tag = document.createElement('DIV');
-
-        tag.classList.add('ce-paragraph');
+        /** Create Empty DIV */
+        var tag = codex.draw.node('DIV', ['ce-paragraph'], {});
 
         if (data && data.text) {
             tag.innerHTML = data.text;
@@ -38,32 +36,55 @@ var paragraphTool = {
 
         return tag;
 
-    },
+    };
 
     /**
-    * Method to render HTML block from JSON
-    */
-    render : function (data) {
+     * Method to render HTML block from JSON
+     */
+    paragraph.render = function (data) {
 
-       return paragraphTool.make(data);
+        return this.make(data);
 
-    },
+    };
 
     /**
-    * Method to extract JSON data from HTML block
-    */
-    save : function (blockContent){
+     * Method to extract JSON data from HTML block
+     */
+    paragraph.save = function (blockContent){
 
         var data = {
-                text : null,
-                format: "html",
-                introText: '<<same>>'
-            };
+            text : null,
+            format: "html",
+            introText: '<<same>>'
+        };
 
         data.text = blockContent.innerHTML;
 
         return data;
 
-    }
+    };
 
-};
+    /**
+     * Validate data.
+     * Define which objects are important and which are not
+     *
+     * @param data
+     *
+     * @return [Boolean]
+     */
+    paragraph.validate = function(data) {
+
+        /**
+         * Do not allow:
+         *  - Empty text
+         */
+        if (data.text.trim() == '')
+            return;
+
+        return true;
+
+    };
+
+    return paragraph;
+
+})({});

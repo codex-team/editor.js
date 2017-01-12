@@ -1140,10 +1140,12 @@ var codex =
 	            data: savedData
 	        };
 	
+	        var result = codex.tools[pluginName].validate(savedData);
+	
 	        /**
-	         * Do not allow empty initial plugins block
+	         * Do not allow invalid data
 	         */
-	        if (savedData.text.trim() == '' && pluginName == codex.settings.initialBlockPlugin) return;
+	        if (!result) return;
 	
 	        /** Marks Blocks that will be in main page */
 	        output.cover = block.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);

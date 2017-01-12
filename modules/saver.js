@@ -102,10 +102,12 @@ var saver = (function(saver) {
             data: savedData
         };
 
+        var result = codex.tools[pluginName].validate(savedData);
+
         /**
-         * Do not allow empty initial plugins block
+         * Do not allow invalid data
          */
-        if (savedData.text.trim() == '' && pluginName == codex.settings.initialBlockPlugin)
+        if (!result)
             return;
 
         /** Marks Blocks that will be in main page */
