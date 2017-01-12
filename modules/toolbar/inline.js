@@ -1,3 +1,12 @@
+/**
+ * Inline toolbar
+ *
+ * Contains from tools:
+ * Bold, Italic, Underline and Anchor
+ *
+ * @author Codex Team
+ * @version 1.0
+ */
 var inline = (function(inline) {
 
     inline.init = function() {
@@ -12,7 +21,7 @@ var inline = (function(inline) {
      * saving selection that need for execCommand for styling
      *
      */
-    inline.storedSelection = null,
+    inline.storedSelection = null;
 
     /**
      * @protected
@@ -20,6 +29,18 @@ var inline = (function(inline) {
      * Open inline toobar
      */
     inline.show = function() {
+
+        var currentNode = codex.content.currentNode,
+            tool = currentNode.dataset.tool,
+            plugin;
+
+        /**
+         * tool allowed to open inline toolbar
+         */
+        plugin = codex.tools[tool];
+
+        if (!plugin.showInlineToolbar)
+            return;
 
         var selectedText = this.getSelectionText(),
             toolbar      = codex.nodes.inlineToolbar.wrapper,
@@ -171,6 +192,11 @@ var inline = (function(inline) {
                 if (range.getClientRects) {
                     range.collapse(true);
                     var rect = range.getClientRects()[0];
+
+                    if (!rect) {
+                        return;
+                    }
+
                     x = rect.left;
                     y = rect.top;
                 }

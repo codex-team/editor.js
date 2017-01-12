@@ -1,6 +1,9 @@
 /**
+ *
+ * Codex Editor
+ *
  * @author Codex Team
- * @version 1.0.6
+ * @version 1.2.5
  */
 
 var codex = (function(codex){
@@ -21,6 +24,8 @@ var codex = (function(codex){
         codex.notifications = require('./modules/notifications');
         codex.parser        = require('./modules/parser');
     };
+
+    codex.version = VERSION;
 
     /**
      * @public
