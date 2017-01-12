@@ -74,7 +74,7 @@ videoTool.content = {
     },
 
     getHtmlWithVideoId: function (type, id) {
-        return videoTool.content.services[type].html.replace("<%= remote_id %>", id);
+        return videoTool.content.services[type].html.replace(/<\%\= remote\_id \%\>/g, id);
     },
 
     makeElementFromHtml: function(html) {
