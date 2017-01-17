@@ -1,6 +1,0 @@
-{
-  "name": "html-janitor",
-  "devDependencies": {
-    "requirejs": "2.1.9"
-  }
-}
