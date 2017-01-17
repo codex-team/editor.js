@@ -85,9 +85,10 @@ var codex =
 	        codex.caret = __webpack_require__(16);
 	        codex.notifications = __webpack_require__(17);
 	        codex.parser = __webpack_require__(18);
+	        codex.sanitizer = __webpack_require__(19);
 	    };
 	
-	    codex.version = ("1.2.8");
+	    codex.version = ("1.3.0");
 	
 	    /**
 	     * @public
@@ -1158,7 +1159,7 @@ var codex =
 
 /***/ },
 /* 7 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
@@ -1169,29 +1170,6 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.3.1
 	 */
-	
-	var janitor = __webpack_require__(8);
-	
-	/**
-	 * Default settings for sane.
-	 * @uses html-janitor
-	 */
-	var Config = {
-	
-	    tags: {
-	        p: {},
-	        a: {
-	            href: true,
-	            target: '_blank',
-	            rel: 'nofollow'
-	        },
-	        i: {},
-	        b: {},
-	        strong: {},
-	        em: {},
-	        span: {}
-	    }
-	};
 	
 	var content = function (content) {
 	
@@ -1693,7 +1671,7 @@ var codex =
 	            tool = workingNode.dataset.tool;
 	
 	        if (codex.tools[tool].allowedToPaste) {
-	            codex.content.sanitize.call(this, mutation.addedNodes);
+	            codex.content.sanitize.call(this, mutation.target);
 	        } else {
 	            codex.content.pasteTextContent(mutation.addedNodes);
 	        }
@@ -1760,10 +1738,10 @@ var codex =
 	        /**
 	         * Clear dirty content
 	         */
-	        var sanitizer = new janitor(Config),
-	            clear = sanitizer.clean(node.outerHTML);
+	        var cleaner = codex.sanitizer.init(codex.satinizer.Config.BASIC),
+	            clean = cleaner.clean(target.outerHTML);
 	
-	        var div = codex.draw.node('DIV', [], { innerHTML: clear });
+	        var div = codex.draw.node('DIV', [], { innerHTML: clean });
 	        node.replaceWith(div.childNodes[0]);
 	
 	        // for (i = 0; i < clearHTML.childNodes.length; i++) {
@@ -3742,7 +3720,20 @@ var codex =
 	        event.stopImmediatePropagation();
 	    };
 	
-	    callbacks.blockPasteCallback = function (event) {
+	    /**
+	     * This method is used to observe pasted dirty data.
+	     *
+	     * Mutation handlers send to separate observers each mutation (added, changed and so on), which will be
+	     * passed from handler that sanitizes and replaces data.
+	     *
+	     * Probably won't be used
+	     *
+	     * @deprecated
+	     *
+	     * @param event
+	     * @private
+	     */
+	    callbacks._blockPasteCallback = function (event) {
 	
 	        var currentInputIndex = codex.caret.getCurrentInputIndex();
 	
@@ -3756,13 +3747,73 @@ var codex =
 	         */
 	        var config = {
 	            attributes: true,
-	            childList: true,
+	            childList: false,
 	            characterData: false,
 	            subtree: true
 	        };
 	
 	        // pass in the target node, as well as the observer options
 	        observer.observe(codex.state.inputs[currentInputIndex], config);
+	    };
+	
+	    /**
+	     * This method prevents default behaviour.
+	     *
+	     * We get from clipboard pasted data, sanitize, make a fragment that contains of this sanitized nodes.
+	     * Firstly, we need to memorize the caret position. We can do that by getting the range of selection.
+	     * After all, we insert clear fragment into caret placed position. Then, we should move the caret to the last node
+	     *
+	     * @param event
+	     */
+	    callbacks.blockPasteCallback = function (event) {
+	
+	        /** Prevent default behaviour */
+	        event.preventDefault();
+	
+	        /** get html pasted data - dirty data */
+	        var data = event.clipboardData.getData('text/html');
+	
+	        /** Temporary DIV that is used to work with childs as arrays item */
+	        var div = codex.draw.node('DIV', '', {}),
+	            cleaner = new codex.sanitizer.init(codex.sanitizer.Config.BASIC),
+	            cleanData,
+	            fragment;
+	
+	        /** Create fragment, that we paste to range after proccesing */
+	        fragment = document.createDocumentFragment();
+	
+	        cleanData = cleaner.clean(data);
+	
+	        div.innerHTML = cleanData;
+	
+	        var node, lastNode;
+	
+	        /**
+	         * and fill in fragment
+	         */
+	        while (node = div.firstChild) {
+	            lastNode = fragment.appendChild(node);
+	        }
+	
+	        /**
+	         * work with selection and range
+	         */
+	        var selection, range;
+	        selection = window.getSelection();
+	
+	        range = selection.getRangeAt(0);
+	        range.deleteContents();
+	
+	        range.insertNode(fragment);
+	
+	        /** Preserve the selection */
+	        if (lastNode) {
+	            range = range.cloneRange();
+	            range.setStartAfter(lastNode);
+	            range.collapse(true);
+	            selection.removeAllRanges();
+	            selection.addRange(range);
+	        }
 	    };
 	
 	    /**
@@ -4451,6 +4502,53 @@ var codex =
 	}({});
 	
 	module.exports = parser;
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	/**
+	 * Codex Sanitizer
+	 */
+	
+	var janitor = __webpack_require__(8);
+	
+	var sanitizer = function (sanitizer) {
+	
+	    /**
+	     * Basic config
+	     */
+	    var Config = {
+	
+	        BASIC: {
+	
+	            tags: {
+	                p: {},
+	                a: {
+	                    href: true,
+	                    target: '_blank',
+	                    rel: 'nofollow'
+	                },
+	                ul: {},
+	                i: {},
+	                b: {},
+	                strong: {},
+	                em: {},
+	                span: {}
+	            }
+	        }
+	    };
+	
+	    sanitizer.Config = Config;
+	
+	    sanitizer.init = janitor;
+	
+	    return sanitizer;
+	}({});
+	
+	module.exports = sanitizer;
 
 /***/ }
 /******/ ]);
