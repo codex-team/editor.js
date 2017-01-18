@@ -102,12 +102,16 @@ var saver = (function(saver) {
             data: savedData
         };
 
-        /**
-         * Do not allow empty initial plugins block
-         */
-        if (savedData.text.trim() == '' && pluginName == codex.settings.initialBlockPlugin)
-            return;
+        if (codex.tools[pluginName].validate) {
+            var result = codex.tools[pluginName].validate(savedData);
 
+            /**
+             * Do not allow invalid data
+             */
+            if (!result)
+                return;
+        }
+        
         /** Marks Blocks that will be in main page */
         output.cover = block.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
 

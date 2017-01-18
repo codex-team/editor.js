@@ -2,20 +2,19 @@
  * Code Plugin\
  * Creates code tag and adds content to this tag
  */
-var codeTool = {
 
-    baseClass : "ce-code",
+var code = (function(code) {
+
+    var baseClass = "ce-code";
 
     /**
      * Make initial header block
      * @param {object} JSON with block data
      * @return {Element} element to append
      */
-    make : function (data) {
+    code.make = function (data) {
 
-        var tag = document.createElement('code');
-
-        tag.classList.add(codeTool.baseClass);
+        var tag = codex.draw.node('CODE', [baseClass], {});
 
         if (data && data.text) {
             tag.innerHTML = data.text;
@@ -24,31 +23,36 @@ var codeTool = {
         tag.contentEditable = true;
 
         return tag;
-
-    },
+    };
 
     /**
      * Method to render HTML block from JSON
      */
-    render : function (data) {
+    code.render = function (data) {
 
         return codeTool.make(data);
-
-    },
+    };
 
     /**
      * Method to extract JSON data from HTML block
      */
-    save : function (blockContent){
+    code.save = function (blockContent){
 
         var data = {
-                text : null,
-            };
-
-        data.text = blockContent.innerHTML;
-
+            text : blockContent.innerHTML
+        };
         return data;
 
-    }
+    };
 
-};
+    code.validate = function(data) {
+
+        if (data.text.trim() == '')
+            return;
+
+        return true;
+    };
+
+    return code;
+
+})({});

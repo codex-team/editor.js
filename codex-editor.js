@@ -1141,10 +1141,14 @@ var codex =
 	            data: savedData
 	        };
 	
-	        /**
-	         * Do not allow empty initial plugins block
-	         */
-	        if (savedData.text.trim() == '' && pluginName == codex.settings.initialBlockPlugin) return;
+	        if (codex.tools[pluginName].validate) {
+	            var result = codex.tools[pluginName].validate(savedData);
+	
+	            /**
+	             * Do not allow invalid data
+	             */
+	            if (!result) return;
+	        }
 	
 	        /** Marks Blocks that will be in main page */
 	        output.cover = block.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
@@ -1893,6 +1897,12 @@ var codex =
 
 	'use strict';
 	
+	/**
+	 * Toolbar settings
+	 *
+	 * @version 1.0.3
+	 */
+	
 	var settings = function (settings) {
 	
 	    settings.init = function () {
@@ -1915,13 +1925,17 @@ var codex =
 	         * Append settings content
 	         * It's stored in tool.settings
 	         */
-	        if (!codex.tools[toolType] || !codex.core.isDomNode(codex.tools[toolType].settings)) {
+	        if (!codex.tools[toolType] || !codex.tools[toolType].settings) {
 	
 	            codex.core.log('Plugin \xAB' + toolType + '\xBB has no settings', 'warn');
 	            // codex.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
 	        } else {
 	
-	            codex.nodes.pluginSettings.appendChild(codex.tools[toolType].settings);
+	            /**
+	             * Draw settings block
+	             */
+	            var settingsBlock = codex.tools[toolType].settings();
+	            codex.nodes.pluginSettings.appendChild(settingsBlock);
 	        }
 	
 	        var currentBlock = codex.content.currentNode;
