@@ -1,5 +1,0 @@
-.gitignore
-node_modules/
-test.js
-.travis.yml
-coverage

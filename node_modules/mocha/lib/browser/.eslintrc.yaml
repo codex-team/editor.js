@@ -1,4 +1,0 @@
-env:
-  node: false
-  browser: false
-  commonjs: true

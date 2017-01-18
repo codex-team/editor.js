@@ -1,9 +1,0 @@
-{
-  "env": {
-    "node": true
-  },
-  "rules": {
-    "strict": [2, "never"],
-    "quotes": [2, "single"]
-  }
-}
