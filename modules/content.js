@@ -3,32 +3,8 @@
  * Works with DOM
  *
  * @author Codex Team
- * @version 1.3.1
+ * @version 1.3.4
  */
-
-var janitor = require('html-janitor');
-
-
-/**
- * Default settings for sane.
- * @uses html-janitor
- */
-var Config = {
-
-    tags: {
-        p: {},
-        a: {
-            href: true,
-            target: '_blank',
-            rel: 'nofollow'
-        },
-        i: {},
-        b: {},
-        strong: {},
-        em: {},
-        span: {}
-    }
-};
 
 var content = (function(content) {
 
@@ -557,7 +533,7 @@ var content = (function(content) {
             tool        = workingNode.dataset.tool;
 
         if (codex.tools[tool].allowedToPaste) {
-            codex.content.sanitize.call(this, mutation.addedNodes);
+            codex.content.sanitize.call(this, mutation.target);
         } else {
             codex.content.pasteTextContent(mutation.addedNodes);
         }
@@ -625,10 +601,10 @@ var content = (function(content) {
         /**
          * Clear dirty content
          */
-        var sanitizer = new janitor(Config),
-            clear = sanitizer.clean(node.outerHTML);
+        var cleaner = codex.sanitizer.init(codex.satinizer.Config.BASIC),
+            clean = cleaner.clean(target.outerHTML);
 
-        var div = codex.draw.node('DIV', [], { innerHTML: clear });
+        var div = codex.draw.node('DIV', [], { innerHTML: clean });
         node.replaceWith(div.childNodes[0]);
 
         // for (i = 0; i < clearHTML.childNodes.length; i++) {
