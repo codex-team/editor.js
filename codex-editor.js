@@ -1141,12 +1141,14 @@ var codex =
 	            data: savedData
 	        };
 	
-	        var result = codex.tools[pluginName].validate(savedData);
+	        if (codex.tools[pluginName].validate) {
+	            var result = codex.tools[pluginName].validate(savedData);
 	
-	        /**
-	         * Do not allow invalid data
-	         */
-	        if (!result) return;
+	            /**
+	             * Do not allow invalid data
+	             */
+	            if (!result) return;
+	        }
 	
 	        /** Marks Blocks that will be in main page */
 	        output.cover = block.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
