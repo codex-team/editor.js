@@ -3,7 +3,7 @@
  * Codex Editor
  *
  * @author Codex Team
- * @version 1.2.5
+ * @version 1.3.0
  */
 
 var codex = (function(codex){
@@ -23,6 +23,7 @@ var codex = (function(codex){
         codex.caret         = require('./modules/caret');
         codex.notifications = require('./modules/notifications');
         codex.parser        = require('./modules/parser');
+        codex.sanitizer     = require('./modules/sanitizer');
     };
 
     codex.version = VERSION;
