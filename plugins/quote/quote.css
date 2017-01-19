@@ -19,9 +19,12 @@
 }
 .quoteStyle-withCaption--author {
 
-    margin: 0 100px 2em !important;
+    margin: 5px 0;
+    background: #fff;
+    border: 1px solid #ebeef3;
+    padding: 7px;
     text-align: right;
-    font-size: 1.16em;
+    font-size: 1em;
     font-weight: bold;
     color: #000;
     line-height: 1.5em;
@@ -43,6 +46,8 @@
 .quoteStyle-withCaption--blockquote {
     margin: 0;
     padding: 1.5em 2.0em !important;
+    border: 1px solid #ebeef3;
+    background: #fff;
 }
 
 .quoteStyle-withCaption--blockquote:focus,
