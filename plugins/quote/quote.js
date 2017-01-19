@@ -61,10 +61,7 @@ var quoteTools = {
 
     validate : function(output) {
 
-        if (output.type != 'quote_styled')
-            return;
-
-        if (typeof output.data.text === "string") {
+        if (typeof output.text === "string") {
             output.data.text = '<p>' + output.data.text + '</p>';
         }
 
@@ -79,7 +76,7 @@ var quoteTools = {
         */
         var parsedblock = quoteTools.parseBlockQuote(blockContent);
 
-            if (parsedblock.style == 'withPhoto') {
+            if (parsedblock.style == 'withCaption') {
                 parsedblock.style = 'small';
             }
 

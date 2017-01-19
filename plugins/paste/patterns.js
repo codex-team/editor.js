@@ -73,5 +73,3 @@ pasteTool.patterns = [
     }
 
 ];
-
-console.log(pasteTool);
