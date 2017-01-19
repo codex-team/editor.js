@@ -1,0 +1,12 @@
+.ce-redactor .video {
+    width: 100%;
+    max-width: 650px;
+    margin: 10px auto;
+}
+
+.video__loader {
+    background-image: url("loading.gif") !important;
+    background-repeat: no-repeat;
+    background-position: center center;
+    opacity: 0.5;
+}

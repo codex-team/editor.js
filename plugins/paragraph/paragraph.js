@@ -1,19 +1,19 @@
 /**
-* Paragraph Plugin
+* Paragraph Plugin\
 * Creates P tag and adds content to this tag
 */
-
-var paragraph = (function(paragraph) {
+var paragraphTool = {
 
     /**
-     * Make initial header block
-     * @param {object} JSON with block data
-     * @return {Element} element to append
-     */
-    paragraph.make = function (data) {
+    * Make initial header block
+    * @param {object} JSON with block data
+    * @return {Element} element to append
+    */
+    make : function (data) {
 
-        /** Create Empty DIV */
-        var tag = codex.draw.node('DIV', ['ce-paragraph'], {});
+        var tag = document.createElement('DIV');
+
+        tag.classList.add('ce-paragraph');
 
         if (data && data.text) {
             tag.innerHTML = data.text;
@@ -32,59 +32,44 @@ var paragraph = (function(paragraph) {
          * If pasted URL from instagram, twitter or Image
          * it renders via Social widgets content or uploads image and uses Image tool to render
          */
-        tag.addEventListener('paste', codex.tools.paste.callbacks.pasted, false);
+        tag.addEventListener('paste', codex.tools.paste.callbacks, false);
 
         return tag;
 
-    };
+    },
 
     /**
-     * Method to render HTML block from JSON
-     */
-    paragraph.render = function (data) {
+    * Method to render HTML block from JSON
+    */
+    render : function (data) {
 
-        return this.make(data);
+       return paragraphTool.make(data);
 
-    };
+    },
+
+    validate : function(output) {
+
+        if (output.text == '')
+            return;
+
+        return output;
+    },
 
     /**
-     * Method to extract JSON data from HTML block
-     */
-    paragraph.save = function (blockContent){
+    * Method to extract JSON data from HTML block
+    */
+    save : function (blockContent){
 
         var data = {
-            text : null,
-            format: "html",
-            introText: '<<same>>'
-        };
+                text : null,
+                format: "html",
+                introText: '<<same>>'
+            };
 
         data.text = blockContent.innerHTML;
 
         return data;
 
-    };
+    }
 
-    /**
-     * Validate data.
-     * Define which objects are important and which are not
-     *
-     * @param data
-     *
-     * @return [Boolean]
-     */
-    paragraph.validate = function(data) {
-
-        /**
-         * Do not allow:
-         *  - Empty text
-         */
-        if (data.text.trim() == '')
-            return;
-
-        return true;
-
-    };
-
-    return paragraph;
-
-})({});
+};

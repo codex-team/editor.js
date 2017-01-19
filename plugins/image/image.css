@@ -7,6 +7,13 @@
 .ce-image {
 }
 
+.ce-image__preview {
+    opacity: .1;
+    max-width: 600px;
+    margin: 0 auto;
+    filter: blur(5px);
+}
+
 /** upload image form */
 .ce-plugin-image__holder{
 	position: relative;
@@ -62,6 +69,8 @@
 /** Uploaded image */
 .ce-plugin-image__wrapper {
     padding: 1em 0;
+    transition: opacity .2s ease;
+    transition: filter 1.5s linear;
 }
 .ce-plugin-image__uploaded--centered {
     display: block;
