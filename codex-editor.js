@@ -88,7 +88,7 @@ var codex =
 	        codex.sanitizer = __webpack_require__(18);
 	    };
 	
-	    codex.version = ("1.2.8");
+	    codex.version = ("1.3.0");
 	
 	    /**
 	     * @public
@@ -655,6 +655,7 @@ var codex =
 	         * Clicks to SETTINGS button in toolbar
 	         */
 	        codex.nodes.showSettingsButton.addEventListener('click', codex.callback.showSettingsButtonClicked, false);
+	
 	        /**
 	         *  @deprecated ( but now in use for syncronization );
 	         *  Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text
@@ -1172,7 +1173,7 @@ var codex =
 	 * Works with DOM
 	 *
 	 * @author Codex Team
-	 * @version 1.3.4
+	 * @version 1.3.6
 	 */
 	
 	var content = function (content) {
@@ -1747,32 +1748,77 @@ var codex =
 	
 	        var div = codex.draw.node('DIV', [], { innerHTML: clean });
 	        node.replaceWith(div.childNodes[0]);
+	    };
 	
-	        // for (i = 0; i < clearHTML.childNodes.length; i++) {
-	        //
-	        //     var tag = clearHTML.childNodes[i],
-	        //         blockType = null;
-	        //
-	        //     for (tool in codex.tools) {
-	        //
-	        //         var handleTags = codex.tools[tool].handleTagOnPaste;
-	        //
-	        //         if (!handleTags) {
-	        //             continue;
-	        //         }
-	        //
-	        //         if (handleTags.indexOf(tag.tagName) !== -1) {
-	        //             blockType = codex.tools[tool];
-	        //             break;
-	        //         }
-	        //
-	        //     }
-	        //
-	        //     if (blockType) {
-	        //         codex.parser.insertPastedContent(blockType, tag);
-	        //     }
-	        //
-	        // }
+	    /**
+	     * Iterates all right siblings and parents, which has right siblings
+	     * while it does not reached the first-level block
+	     *
+	     * @param {Element} node
+	     * @return {boolean}
+	     */
+	    content.isLastNode = function (node) {
+	
+	        // console.log('погнали перебор родителей');
+	
+	        var allChecked = false;
+	
+	        while (!allChecked) {
+	
+	            // console.log('Смотрим на %o', node);
+	            // console.log('Проверим, пустые ли соседи справа');
+	
+	            if (!allSiblingsEmpty_(node)) {
+	
+	                // console.log('Есть непустые соседи. Узел не последний. Выходим.');
+	                return false;
+	            }
+	
+	            node = node.parentNode;
+	
+	            /**
+	             * Проверяем родителей до тех пор, пока не найдем блок первого уровня
+	             */
+	            if (node.classList.contains(codex.ui.className.BLOCK_CONTENT)) {
+	                allChecked = true;
+	            }
+	        }
+	
+	        return true;
+	    };
+	
+	    /**
+	     * Checks if all element right siblings is empty
+	     * @param node
+	     */
+	    var allSiblingsEmpty_ = function allSiblingsEmpty_(node) {
+	
+	        /**
+	         * Нужно убедиться, что после пустого соседа ничего нет
+	         */
+	        var sibling = node.nextSibling;
+	
+	        // console.log('Погнали проверять соседей ');
+	
+	        while (sibling) {
+	
+	            // console.log('Опаньки! нашли соседа: %o', sibling);
+	
+	            if (sibling.textContent.length) {
+	
+	                // console.log('Соседи не пустые, то есть мы не в конце.');
+	                return false;
+	            }
+	            //
+	            // console.log('Сосед пустой. Возможно мы в конце.');
+	            // console.log('Смотрим следующего');
+	
+	            sibling = sibling.nextSibling;
+	        }
+	
+	        // console.log('Все соседи пустые. -------');
+	
+	        return true;
 	    };
 	
 	    return content;
@@ -2061,7 +2107,7 @@ var codex =
 	            settingButton = codex.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML: '<i class="ce-icon-trash"></i>' }),
 	            actionWrapper = codex.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
 	            confirmAction = codex.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent: 'Удалить блок' }),
-	            cancelAction = codex.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent: 'Отменить удаление' });
+	            cancelAction = codex.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent: 'Отмена' });
 	
 	        settingButton.addEventListener('click', codex.toolbar.settings.removeButtonClicked, false);
 	
@@ -2865,7 +2911,7 @@ var codex =
 	 * Codex Editor callbacks module
 	 *
 	 * @author Codex Team
-	 * @version 1.3.1
+	 * @version 1.3.3
 	 */
 	
 	var callbacks = function (callbacks) {
@@ -2943,14 +2989,6 @@ var codex =
 	            codex.caret.saveCurrentInputIndex();
 	        }
 	
-	        if (!codex.content.currentNode) {
-	            /**
-	             * Enter key pressed in first-level block area
-	             */
-	            codex.callback.enterPressedOnBlock(event);
-	            return;
-	        }
-	
 	        var currentInputIndex = codex.caret.getCurrentInputIndex() || 0,
 	            workingNode = codex.content.currentNode,
 	            tool = workingNode.dataset.tool,
@@ -2983,13 +3021,13 @@ var codex =
 	        }
 	
 	        /**
-	         * Allow making new <p> in same block by SHIFT+ENTER and forbids to prevent default browser behaviour
+	         * Allow paragraph lineBreaks with shift enter
+	         * Or if shiftkey pressed and enter and enabledLineBreaks, the let new block creation
 	         */
-	        if (event.shiftKey && !enableLineBreaks) {
-	            codex.callback.enterPressedOnBlock(codex.content.currentBlock, event);
-	            event.preventDefault();
-	        } else if (event.shiftKey && !enableLineBreaks || !event.shiftKey && enableLineBreaks) {
-	            /** XOR */
+	        if (event.shiftKey) {
+	
+	            event.stopPropagation();
+	            event.stopImmediatePropagation();
 	            return;
 	        }
 	
@@ -2998,6 +3036,15 @@ var codex =
 	            currentSelectedNode = currentSelection.anchorNode,
 	            caretAtTheEndOfText = codex.caret.position.atTheEnd(),
 	            isTextNodeHasParentBetweenContenteditable = false;
+	
+	        /**
+	         * Allow making new <p> in same block by SHIFT+ENTER and forbids to prevent default browser behaviour
+	         */
+	        if (event.shiftKey && !enableLineBreaks) {
+	            codex.callback.enterPressedOnBlock(codex.content.currentBlock, event);
+	            event.preventDefault();
+	            return;
+	        }
 	
 	        /**
 	         * Workaround situation when caret at the Text node that has some wrapper Elements
@@ -3023,14 +3070,13 @@ var codex =
 	            }
 	        } else {
 	
-	            if (currentSelectedNode && currentSelectedNode.parentNode) {
+	            var islastNode = codex.content.isLastNode(currentSelectedNode);
 	
-	                isLastTextNode = !currentSelectedNode.parentNode.nextSibling;
-	            }
-	
-	            if (isLastTextNode && caretAtTheEndOfText) {
+	            if (islastNode && caretAtTheEndOfText) {
 	
 	                event.preventDefault();
+	                event.stopPropagation();
+	                event.stopImmediatePropagation();
 	
 	                codex.core.log('ENTER clicked in last textNode. Create new BLOCK');
 	
@@ -3044,9 +3090,6 @@ var codex =
 	
 	                /** Show plus button with empty block */
 	                codex.toolbar.showPlusButton();
-	            } else {
-	
-	                codex.core.log('Default ENTER behavior.');
 	            }
 	        }
 	
@@ -3628,6 +3671,7 @@ var codex =
 	        range.deleteContents();
 	
 	        range.insertNode(fragment);
+	        // document.execCommand('insertParagraph', false, "<p>");
 	
 	        /** Preserve the selection */
 	        if (lastNode) {
