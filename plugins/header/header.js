@@ -60,7 +60,7 @@ var headerTool = {
         var data = {
                 "heading-styles": blockContent.dataset.headerData,
                 format:"html",
-                text : null,
+                text : null
 
             };
 

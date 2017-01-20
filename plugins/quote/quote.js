@@ -62,7 +62,7 @@ var quoteTools = {
     validate : function(output) {
 
         if (typeof output.text === "string") {
-            output.data.text = '<p>' + output.data.text + '</p>';
+            output.text = '<p>' + output.text + '</p>';
         }
 
         return output;
