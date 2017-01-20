@@ -2781,7 +2781,7 @@ var codex =
 	
 	            nextToolIndex = tools.indexOf(currentTool) + 1;
 	
-	            var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 2);
+	            var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 1);
 	
 	            if (toolIsLastInToolbox) {
 	
