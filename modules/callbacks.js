@@ -2,7 +2,7 @@
  * Codex Editor callbacks module
  *
  * @author Codex Team
- * @version 1.3.1
+ * @version 1.3.3
  */
 
 var callbacks = (function(callbacks) {
@@ -74,21 +74,12 @@ var callbacks = (function(callbacks) {
             codex.caret.saveCurrentInputIndex();
         }
 
-        if (!codex.content.currentNode) {
-            /**
-             * Enter key pressed in first-level block area
-             */
-            codex.callback.enterPressedOnBlock(event);
-            return;
-        }
-
-
         var currentInputIndex       = codex.caret.getCurrentInputIndex() || 0,
             workingNode             = codex.content.currentNode,
             tool                    = workingNode.dataset.tool,
             isEnterPressedOnToolbar = codex.toolbar.opened &&
-                codex.toolbar.current &&
-                event.target == codex.state.inputs[currentInputIndex];
+                                        codex.toolbar.current &&
+                                        event.target == codex.state.inputs[currentInputIndex];
 
         /** The list of tools which needs the default browser behaviour */
         var enableLineBreaks = codex.tools[tool].enableLineBreaks;
@@ -118,14 +109,13 @@ var callbacks = (function(callbacks) {
         }
 
         /**
-         * Allow making new <p> in same block by SHIFT+ENTER and forbids to prevent default browser behaviour
+         * Allow paragraph lineBreaks with shift enter
+         * Or if shiftkey pressed and enter and enabledLineBreaks, the let new block creation
          */
-        if ( event.shiftKey && !enableLineBreaks) {
-            codex.callback.enterPressedOnBlock(codex.content.currentBlock, event);
-            event.preventDefault();
+        if ( event.shiftKey ){
 
-        } else if ( (event.shiftKey && !enableLineBreaks) || (!event.shiftKey && enableLineBreaks) ){
-            /** XOR */
+            event.stopPropagation();
+            event.stopImmediatePropagation();
             return;
         }
 
@@ -134,6 +124,15 @@ var callbacks = (function(callbacks) {
             currentSelectedNode = currentSelection.anchorNode,
             caretAtTheEndOfText = codex.caret.position.atTheEnd(),
             isTextNodeHasParentBetweenContenteditable = false;
+
+        /**
+         * Allow making new <p> in same block by SHIFT+ENTER and forbids to prevent default browser behaviour
+         */
+        if ( event.shiftKey && !enableLineBreaks) {
+            codex.callback.enterPressedOnBlock(codex.content.currentBlock, event);
+            event.preventDefault();
+            return;
+        }
 
         /**
          * Workaround situation when caret at the Text node that has some wrapper Elements
@@ -164,32 +163,26 @@ var callbacks = (function(callbacks) {
 
         } else {
 
-            if ( currentSelectedNode && currentSelectedNode.parentNode) {
+            var islastNode = codex.content.isLastNode(currentSelectedNode);
 
-                isLastTextNode = !currentSelectedNode.parentNode.nextSibling;
-
-            }
-
-            if ( isLastTextNode && caretAtTheEndOfText ) {
+            if ( islastNode && caretAtTheEndOfText ) {
 
                 event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
 
                 codex.core.log('ENTER clicked in last textNode. Create new BLOCK');
 
                 codex.content.insertBlock({
-                    type  : NEW_BLOCK_TYPE,
-                    block : codex.tools[NEW_BLOCK_TYPE].render()
-                }, true );
+                    type: NEW_BLOCK_TYPE,
+                    block: codex.tools[NEW_BLOCK_TYPE].render()
+                }, true);
 
                 codex.toolbar.move();
                 codex.toolbar.open();
 
                 /** Show plus button with empty block */
                 codex.toolbar.showPlusButton();
-
-            } else {
-
-                codex.core.log('Default ENTER behavior.');
 
             }
 
@@ -815,6 +808,7 @@ var callbacks = (function(callbacks) {
         range.deleteContents();
 
         range.insertNode(fragment);
+        // document.execCommand('insertParagraph', false, "<p>");
 
         /** Preserve the selection */
         if (lastNode) {
