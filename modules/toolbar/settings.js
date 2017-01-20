@@ -171,7 +171,7 @@ var settings = (function(settings) {
             settingButton = codex.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML : '<i class="ce-icon-trash"></i>' }),
             actionWrapper = codex.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
             confirmAction = codex.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent : 'Удалить блок' }),
-            cancelAction  = codex.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent : 'Отменить удаление' });
+            cancelAction  = codex.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent : 'Отмена' });
 
         settingButton.addEventListener('click', codex.toolbar.settings.removeButtonClicked, false);
 

@@ -229,7 +229,7 @@ var ui = (function(ui){
 
             link: {
                 icon    : 'ce-icon-link',
-                command : 'createLink',
+                command : 'createLink'
             }
         };
 
@@ -286,6 +286,7 @@ var ui = (function(ui){
          * Clicks to SETTINGS button in toolbar
          */
         codex.nodes.showSettingsButton.addEventListener('click', codex.callback.showSettingsButtonClicked, false );
+
         /**
          *  @deprecated ( but now in use for syncronization );
          *  Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text
