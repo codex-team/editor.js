@@ -48,13 +48,13 @@ var ui = (function(ui){
             toolbar,
             toolbarContent,
             inlineToolbar,
+            commentsSide,
             redactor,
             ceBlock,
             notifications,
             blockButtons,
             blockSettings,
             showSettingsButton,
-            showCommentButton,
             showTrashButton,
             toolbox,
             plusButton;
@@ -75,12 +75,12 @@ var ui = (function(ui){
         inlineToolbar         = codex.draw.inlineToolbar();
         plusButton            = codex.draw.plusButton();
         showSettingsButton    = codex.draw.settingsButton();
-        showCommentButton     = codex.draw.commentButton();
         showTrashButton       = codex.toolbar.settings.makeRemoveBlockButton();
         blockSettings         = codex.draw.blockSettings();
         blockButtons          = codex.draw.blockButtons();
         toolbox               = codex.draw.toolbox();
         redactor              = codex.draw.redactor();
+        commentsSide          = codex.draw.commentsSide();
 
         /** settings */
         var defaultSettings = codex.draw.defaultSettings(),
@@ -95,7 +95,6 @@ var ui = (function(ui){
          */
         blockButtons.appendChild(showSettingsButton);
         blockButtons.appendChild(showTrashButton);
-        blockButtons.appendChild(showCommentButton);
         blockButtons.appendChild(blockSettings);
 
         /** Append plus button */
@@ -110,12 +109,15 @@ var ui = (function(ui){
         /** Append toolbarContent to toolbar */
         toolbar.appendChild(toolbarContent);
 
+        wrapper.appendChild(commentsSide);
+
         wrapper.appendChild(toolbar);
 
         wrapper.appendChild(redactor);
 
         /** Save created ui-elements to static nodes state */
         codex.nodes.wrapper            = wrapper;
+        codex.nodes.commentsSide       = commentsSide;
         codex.nodes.toolbar            = toolbar;
         codex.nodes.plusButton         = plusButton;
         codex.nodes.toolbox            = toolbox;
@@ -124,7 +126,6 @@ var ui = (function(ui){
         codex.nodes.defaultSettings    = defaultSettings;
         codex.nodes.showSettingsButton = showSettingsButton;
         codex.nodes.showTrashButton    = showTrashButton;
-        codex.nodes.showCommentButton  = showCommentButton;
 
         codex.nodes.redactor = redactor;
 
@@ -227,6 +228,11 @@ var ui = (function(ui){
             link: {
                 icon    : 'ce-icon-link',
                 command : 'createLink',
+            },
+
+            comment: {
+                icon    : 'ce-icon-newspaper',
+                command : 'addComment'
             }
         };
 
@@ -280,12 +286,6 @@ var ui = (function(ui){
          * Clicks to SETTINGS button in toolbar
          */
         codex.nodes.showSettingsButton.addEventListener('click', codex.callback.showSettingsButtonClicked, false );
-
-        /**
-         * Clicks to COMMENT button in toolbar
-         */
-        codex.nodes.showCommentButton.addEventListener('click', codex.callback.showCommentButtonClicked, false );
-
 
         /**
          *  @deprecated ( but now in use for syncronization );

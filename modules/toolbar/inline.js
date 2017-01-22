@@ -95,6 +95,7 @@ var inline = (function(inline) {
          */
         switch (type) {
             case 'createLink' : codex.toolbar.inline.createLinkAction(event, type); break;
+            case 'addComment' : codex.toolbar.inline.addCommentAction(event, type); break;
             default           : codex.toolbar.inline.defaultToolAction(type); break;
         }
 
@@ -317,6 +318,17 @@ var inline = (function(inline) {
     /** default action behavior of tool */
     inline.defaultToolAction = function(type) {
         document.execCommand(type, false, null);
+    };
+
+    inline.addCommentAction = function(event, type) {
+
+        var currentNode = codex.content.currentNode,
+            selection   = window.getSelection();
+
+        codex.toolbar.inline.close();
+
+        codex.comments.add(currentNode, selection);
+
     };
 
     /**

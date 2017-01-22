@@ -177,10 +177,11 @@ var content = (function(content) {
         var workingBlock    = codex.content.currentNode,
             newBlockContent = blockData.block,
             blockType       = blockData.type,
+            blockId         = blockData.id,
             cover           = blockData.cover,
             isStretched     = blockData.stretched;
 
-        var newBlock = codex.content.composeNewBlock(newBlockContent, blockType, isStretched);
+        var newBlock = codex.content.composeNewBlock(newBlockContent, blockType, isStretched, blockId);
 
         if (cover === true) {
             newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
@@ -353,7 +354,7 @@ var content = (function(content) {
     /**
      * @private
      */
-    content.composeNewBlock = function (block, tool, isStretched) {
+    content.composeNewBlock = function (block, tool, isStretched, id) {
 
         var newBlock     = codex.draw.node('DIV', codex.ui.className.BLOCK_CLASSNAME, {}),
             blockContent = codex.draw.node('DIV', codex.ui.className.BLOCK_CONTENT, {});
@@ -366,7 +367,7 @@ var content = (function(content) {
         }
 
         newBlock.dataset.tool = tool;
-        newBlock.dataset.id = +(new Date);
+        newBlock.dataset.id =  id || +(new Date);
         return newBlock;
     };
 

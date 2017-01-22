@@ -107,6 +107,7 @@ var codex =
 	    codex.nodes = {
 	        textarea: null,
 	        wrapper: null,
+	        commentsSide: null,
 	        toolbar: null,
 	        inlineToolbar: {
 	            wrapper: null,
@@ -412,7 +413,7 @@ var codex =
 	         */
 	        ui.make = function () {
 	
-	                var wrapper, toolbar, toolbarContent, inlineToolbar, redactor, ceBlock, notifications, blockButtons, blockSettings, showSettingsButton, showCommentButton, showTrashButton, toolbox, plusButton;
+	                var wrapper, toolbar, toolbarContent, inlineToolbar, commentsSide, redactor, ceBlock, notifications, blockButtons, blockSettings, showSettingsButton, showTrashButton, toolbox, plusButton;
 	
 	                /** Make editor wrapper */
 	                wrapper = codex.draw.wrapper();
@@ -430,12 +431,12 @@ var codex =
 	                inlineToolbar = codex.draw.inlineToolbar();
 	                plusButton = codex.draw.plusButton();
 	                showSettingsButton = codex.draw.settingsButton();
-	                showCommentButton = codex.draw.commentButton();
 	                showTrashButton = codex.toolbar.settings.makeRemoveBlockButton();
 	                blockSettings = codex.draw.blockSettings();
 	                blockButtons = codex.draw.blockButtons();
 	                toolbox = codex.draw.toolbox();
 	                redactor = codex.draw.redactor();
+	                commentsSide = codex.draw.commentsSide();
 	
 	                /** settings */
 	                var defaultSettings = codex.draw.defaultSettings(),
@@ -450,7 +451,6 @@ var codex =
 	                 */
 	                blockButtons.appendChild(showSettingsButton);
 	                blockButtons.appendChild(showTrashButton);
-	                blockButtons.appendChild(showCommentButton);
 	                blockButtons.appendChild(blockSettings);
 	
 	                /** Append plus button */
@@ -465,12 +465,15 @@ var codex =
 	                /** Append toolbarContent to toolbar */
 	                toolbar.appendChild(toolbarContent);
 	
+	                wrapper.appendChild(commentsSide);
+	
 	                wrapper.appendChild(toolbar);
 	
 	                wrapper.appendChild(redactor);
 	
 	                /** Save created ui-elements to static nodes state */
 	                codex.nodes.wrapper = wrapper;
+	                codex.nodes.commentsSide = commentsSide;
 	                codex.nodes.toolbar = toolbar;
 	                codex.nodes.plusButton = plusButton;
 	                codex.nodes.toolbox = toolbox;
@@ -479,7 +482,6 @@ var codex =
 	                codex.nodes.defaultSettings = defaultSettings;
 	                codex.nodes.showSettingsButton = showSettingsButton;
 	                codex.nodes.showTrashButton = showTrashButton;
-	                codex.nodes.showCommentButton = showCommentButton;
 	
 	                codex.nodes.redactor = redactor;
 	
@@ -578,6 +580,11 @@ var codex =
 	                        link: {
 	                                icon: 'ce-icon-link',
 	                                command: 'createLink'
+	                        },
+	
+	                        comment: {
+	                                icon: 'ce-icon-newspaper',
+	                                command: 'addComment'
 	                        }
 	                };
 	
@@ -629,11 +636,6 @@ var codex =
 	                 * Clicks to SETTINGS button in toolbar
 	                 */
 	                codex.nodes.showSettingsButton.addEventListener('click', codex.callback.showSettingsButtonClicked, false);
-	
-	                /**
-	                 * Clicks to COMMENT button in toolbar
-	                 */
-	                codex.nodes.showCommentButton.addEventListener('click', codex.callback.showCommentButtonClicked, false);
 	
 	                /**
 	                 *  @deprecated ( but now in use for syncronization );
@@ -899,6 +901,15 @@ var codex =
 	        }
 	    };
 	
+	    renderer.appendComments = function () {
+	
+	        var comments = codex.state.blocks.comments;
+	
+	        for (var i = 0; i < comments.length; i++) {
+	            codex.comments.makeComment(comments[i]);
+	        }
+	    };
+	
 	    /**
 	     * Append node at specified index
 	     */
@@ -924,7 +935,7 @@ var codex =
 	        .then(function (blockData) {
 	
 	            /**
-	             * blockData has 'block', 'type' and 'stretched' information
+	             * blockData has 'block', 'type', 'id' and 'stretched' information
 	             */
 	            codex.content.insertBlock(blockData);
 	
@@ -936,6 +947,8 @@ var codex =
 	        .catch(function (error) {
 	            codex.core.log('Node skipped while parsing because %o', 'error', error);
 	        });
+	
+	        return nodeSequence;
 	    };
 	
 	    /**
@@ -967,7 +980,8 @@ var codex =
 	
 	        /** New parser */
 	        var pluginName = blockData.type,
-	            cover = blockData.cover;
+	            cover = blockData.cover,
+	            id = blockData.id || +new Date();
 	
 	        /** Get first key of object that stores plugin name */
 	        // for (var pluginName in blockData) break;
@@ -994,7 +1008,8 @@ var codex =
 	            type: pluginName,
 	            block: block,
 	            stretched: stretched,
-	            cover: cover
+	            cover: cover,
+	            id: id
 	        };
 	    };
 	
@@ -1081,7 +1096,7 @@ var codex =
 	        }
 	
 	        /** Result saver */
-	        var blockContent = block.childNodes[0],
+	        var blockContent = block.childNodes[1],
 	            pluginsContent = blockContent.childNodes[0],
 	            savedData = codex.tools[pluginName].save(pluginsContent),
 	            output;
@@ -1094,22 +1109,38 @@ var codex =
 	        /** Marks Blocks that will be in main page */
 	        output.cover = block.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
 	
+	        output.id = block.dataset.id;
+	
 	        codex.state.jsonOutput.push(output);
 	    };
 	
 	    saver.saveComments = function () {
 	
-	        var comments = codex.nodes.redactor.querySelectorAll('.ce-comment__wrapper');
+	        var comments = [],
+	            wrappers = codex.nodes.commentsSide.querySelectorAll('.ce-comment__wrapper');
 	
-	        for (var i = 0; i < comments.length; i++) {
+	        for (var i = 0; i < wrappers.length; i++) {
 	
-	            var comment = {
-	                blockId: comments[i].dataset.blockId,
-	                text: comments[i].querySelector('.ce-comment__input').value
-	            };
+	            var text = wrappers[i].querySelector('.ce-comment__text'),
+	                time = wrappers[i].querySelector('.ce-comment__time'),
+	                blockId = wrappers[i].dataset.blockId,
+	                commentId = wrappers[i].dataset.commentId,
+	                selectionStart = wrappers[i].dataset.selectionStart,
+	                selectionEnd = wrappers[i].dataset.selectionEnd;
 	
-	            codex.state.comments.push(comment);
+	            if (text && time) {
+	                comments.push({
+	                    text: text.textContent,
+	                    time: time.textContent,
+	                    'block-id': blockId,
+	                    'comment-id': commentId,
+	                    'selection-start': selectionStart,
+	                    'selection-end': selectionEnd
+	                });
+	            }
 	        }
+	
+	        codex.state.comments = comments;
 	    };
 	
 	    return saver;
@@ -1295,10 +1326,11 @@ var codex =
 	        var workingBlock = codex.content.currentNode,
 	            newBlockContent = blockData.block,
 	            blockType = blockData.type,
+	            blockId = blockData.id,
 	            cover = blockData.cover,
 	            isStretched = blockData.stretched;
 	
-	        var newBlock = codex.content.composeNewBlock(newBlockContent, blockType, isStretched);
+	        var newBlock = codex.content.composeNewBlock(newBlockContent, blockType, isStretched, blockId);
 	
 	        if (cover === true) {
 	            newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
@@ -1456,7 +1488,7 @@ var codex =
 	    /**
 	     * @private
 	     */
-	    content.composeNewBlock = function (block, tool, isStretched) {
+	    content.composeNewBlock = function (block, tool, isStretched, id) {
 	
 	        var newBlock = codex.draw.node('DIV', codex.ui.className.BLOCK_CLASSNAME, {}),
 	            blockContent = codex.draw.node('DIV', codex.ui.className.BLOCK_CONTENT, {});
@@ -1469,7 +1501,7 @@ var codex =
 	        }
 	
 	        newBlock.dataset.tool = tool;
-	        newBlock.dataset.id = +new Date();
+	        newBlock.dataset.id = id || +new Date();
 	        return newBlock;
 	    };
 	
@@ -2165,6 +2197,8 @@ var codex =
 	        switch (type) {
 	            case 'createLink':
 	                codex.toolbar.inline.createLinkAction(event, type);break;
+	            case 'addComment':
+	                codex.toolbar.inline.addCommentAction(event, type);break;
 	            default:
 	                codex.toolbar.inline.defaultToolAction(type);break;
 	        }
@@ -2385,6 +2419,16 @@ var codex =
 	    /** default action behavior of tool */
 	    inline.defaultToolAction = function (type) {
 	        document.execCommand(type, false, null);
+	    };
+	
+	    inline.addCommentAction = function (event, type) {
+	
+	        var currentNode = codex.content.currentNode,
+	            selection = window.getSelection();
+	
+	        codex.toolbar.inline.close();
+	
+	        codex.comments.add(currentNode, selection);
 	    };
 	
 	    /**
@@ -2940,6 +2984,10 @@ var codex =
 	
 	        callbacks.redactorClicked = function (event) {
 	
+	                if (event.target.classList.contains('ce-comments-field')) {
+	                        event.target.dispatchEvent(event);return;
+	                }
+	
 	                codex.content.workingNodeChanged(event.target);
 	
 	                codex.ui.saveInputs();
@@ -3431,15 +3479,69 @@ var codex =
 	                codex.toolbar.settings.hideRemoveActions();
 	        };
 	
-	        /**
-	         * Clicks on block comment button
-	         */
-	        callbacks.showCommentButtonClicked = function () {
+	        callbacks.commentInputChanged = function (e) {
 	
-	                codex.comments.add(codex.content.currentNode);
+	                var input = e.path[0],
+	                    wrapper = e.path[1],
+	                    sendButton = codex.draw.commentSendButton();
 	
-	                codex.toolbar.toolbox.close();
-	                codex.toolbar.settings.hideRemoveActions();
+	                if (input.value.trim() != '') {
+	
+	                        if (!wrapper.querySelector('.ce-comment__send-button')) wrapper.appendChild(sendButton);
+	                } else {
+	
+	                        var button = wrapper.querySelector('.ce-comment__send-button');
+	                        if (button) wrapper.removeChild(button);
+	                }
+	        };
+	
+	        callbacks.commentHovered = function (e) {
+	
+	                var target = e.target,
+	                    commentId = target.dataset.commentId,
+	                    commentSelection = codex.comments.getCommentSelectionById(commentId),
+	                    comment = codex.comments.getCommentById(commentId);
+	
+	                if (!commentSelection || !comment) return;
+	
+	                commentSelection.classList.add('ce-comments--highlight_hover');
+	                comment.classList.add('ce-comment__wrapper_hover');
+	        };
+	
+	        callbacks.commentBlured = function (e) {
+	
+	                var target = e.target,
+	                    commentId = target.dataset.commentId,
+	                    commentSelection = codex.comments.getCommentSelectionById(commentId),
+	                    comment = codex.comments.getCommentById(commentId);
+	
+	                if (!commentSelection || !comment) return;
+	
+	                commentSelection.classList.remove('ce-comments--highlight_hover');
+	                comment.classList.remove('ce-comment__wrapper_hover');
+	        };
+	
+	        callbacks.commentSendButtonClicked = function (e) {
+	
+	                var sendButton = e.path[0],
+	                    wrapper = e.path[1];
+	
+	                codex.comments.send(wrapper, sendButton);
+	        };
+	
+	        callbacks.commentDeleteButtonClicked = function (e) {
+	
+	                var wrapper = e.path[1];
+	
+	                codex.comments.delete(wrapper);
+	        };
+	
+	        callbacks.commentEditButtonClicked = function (e) {
+	
+	                var wrapper = e.path[1],
+	                    commentsField = e.path[2];
+	
+	                codex.comments.edit(wrapper, commentsField);
 	        };
 	
 	        return callbacks;
@@ -3465,6 +3567,11 @@ var codex =
 	                wrapper.className += 'codex-editor';
 	
 	                return wrapper;
+	        };
+	
+	        draw.commentsSide = function () {
+	
+	                return draw.node('DIV', 'ce-comments-side');
 	        };
 	
 	        /**
@@ -3635,19 +3742,85 @@ var codex =
 	                return toggler;
 	        };
 	
-	        draw.commentButton = function () {
-	                var btn = draw.node('SPAN', 'ce-toolbar__comment-btn', { innerHTML: '<i class="ce-icon-newspaper"></i>' });
+	        draw.commentsField = function (id) {
 	
-	                return btn;
+	                var field = draw.node('DIV', 'ce-comments-field');
+	
+	                field.dataset.id = id;
+	
+	                return field;
 	        };
 	
-	        draw.commentInput = function () {
-	                var wrapper = draw.node('DIV', 'ce-comment__wrapper', { textContent: 'Ваш комментарий:' }),
-	                    input = draw.node('TEXTAREA', 'ce-comment__input');
+	        draw.commentInput = function (text) {
+	
+	                var wrapper = draw.node('DIV', 'ce-comment__wrapper'),
+	                    input = draw.node('TEXTAREA', 'ce-comment__input', { placeholder: 'New comment' });
+	
+	                if (text) input.value = text;
+	
+	                input.addEventListener('input', codex.callback.commentInputChanged);
+	                wrapper.addEventListener('mouseenter', codex.callback.commentHovered);
+	                wrapper.addEventListener('mouseleave', codex.callback.commentBlured);
 	
 	                wrapper.appendChild(input);
 	
 	                return wrapper;
+	        };
+	
+	        draw.commentSelection = function () {
+	
+	                var wrapper = draw.node('SPAN', 'ce-comments--highlight', {});
+	
+	                wrapper.addEventListener('mouseenter', codex.callback.commentHovered);
+	                wrapper.addEventListener('mouseleave', codex.callback.commentBlured);
+	
+	                return wrapper;
+	        };
+	
+	        draw.commentSendButton = function () {
+	
+	                var button = draw.node('DIV', 'ce-comment__send-button', { textContent: 'Comment' });
+	
+	                button.addEventListener('click', codex.callback.commentSendButtonClicked);
+	
+	                return button;
+	        };
+	
+	        draw.commentDeleteButton = function () {
+	
+	                var button = draw.node('DIV', 'ce-comment__delete-button', { textContent: 'Delete' });
+	
+	                button.addEventListener('click', codex.callback.commentDeleteButtonClicked);
+	
+	                return button;
+	        };
+	
+	        draw.commentEditButton = function () {
+	
+	                var button = draw.node('DIV', 'ce-comment__edit-button', { textContent: 'Edit' });
+	
+	                button.addEventListener('click', codex.callback.commentEditButtonClicked);
+	
+	                return button;
+	        };
+	
+	        draw.commentTmstmp = function (edited, text) {
+	
+	                var edited = edited ? 'edited ' : '',
+	                    text = text || edited + new Date().toLocaleDateString('en-US', {
+	                        month: 'short',
+	                        day: 'numeric',
+	                        hour: 'numeric',
+	                        minute: 'numeric',
+	                        hour12: false
+	                });
+	
+	                return draw.node('DIV', 'ce-comment__time', { textContent: text });
+	        };
+	
+	        draw.commentText = function (text) {
+	
+	                return draw.node('DIV', 'ce-comment__text', { textContent: text });
 	        };
 	
 	        /**
@@ -4291,21 +4464,124 @@ var codex =
 /* 18 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 	
 	var comments = function (comments) {
 	
-	    comments.add = function (node) {
+	        comments.add = function (node, selection) {
 	
-	        var id = node.dataset.id,
-	            commentInput = codex.draw.commentInput();
+	                var blockId = node.dataset.id,
+	                    commentInput = codex.draw.commentInput(),
+	                    commentId = +new Date(),
+	                    highlight = codex.draw.commentSelection(),
+	                    range = selection.getRangeAt(0);
 	
-	        commentInput.dataset.blockId = id;
+	                commentInput.dataset.blockId = blockId;
+	                commentInput.dataset.commentId = commentId;
+	                commentInput.dataset.selectionStart = range.startOffset;
+	                commentInput.dataset.selectionEnd = range.endOffset;
 	
-	        node.insertBefore(commentInput, node.firstChild);
-	    };
+	                highlight.dataset.commentId = commentId;
 	
-	    return comments;
+	                range.surroundContents(highlight);
+	
+	                codex.nodes.commentsSide.appendChild(commentInput);
+	                commentInput.querySelector('.ce-comment__input').focus();
+	        };
+	
+	        comments.send = function (wrapper, sendButton) {
+	
+	                var input = wrapper.querySelector('.ce-comment__input'),
+	                    time = codex.draw.commentTmstmp(wrapper.dataset.edited),
+	                    text = codex.draw.commentText(input.value),
+	                    deleteButton = codex.draw.commentDeleteButton(),
+	                    editButton = codex.draw.commentEditButton();
+	
+	                wrapper.replaceChild(text, input);
+	                wrapper.replaceChild(time, sendButton);
+	                wrapper.appendChild(deleteButton);
+	                wrapper.appendChild(editButton);
+	        };
+	
+	        comments.edit = function (wrapper, commentsField) {
+	
+	                var text = wrapper.querySelector('.ce-comment__text').textContent,
+	                    sendButton = codex.draw.commentSendButton(),
+	                    newWrapper = codex.draw.commentInput(text);
+	
+	                newWrapper.dataset.edited = true;
+	                newWrapper.appendChild(sendButton);
+	
+	                commentsField.replaceChild(newWrapper, wrapper);
+	                newWrapper.querySelector('.ce-comment__input').focus();
+	        };
+	
+	        comments.delete = function (wrapper) {
+	
+	                var commentId = wrapper.dataset.commentId,
+	                    commentSelection = codex.comments.getCommentSelectionById(commentId);
+	
+	                commentSelection.className = '';
+	
+	                wrapper.parentNode.removeChild(wrapper);
+	        };
+	
+	        comments.makeComment = function (commentData) {
+	
+	                var wrapper = codex.draw.node('DIV', 'ce-comment__wrapper'),
+	                    text = codex.draw.commentText(commentData.text),
+	                    time = codex.draw.commentTmstmp(false, commentData.time),
+	                    deleteBtn = codex.draw.commentDeleteButton(),
+	                    editBtn = codex.draw.commentEditButton();
+	
+	                wrapper.dataset.blockId = commentData['block-id'];
+	                wrapper.dataset.commentId = commentData['comment-id'];
+	                wrapper.dataset.selectionStart = commentData['selection-start'];
+	                wrapper.dataset.selectionEnd = commentData['selection-end'];
+	
+	                wrapper.addEventListener('mouseenter', codex.callback.commentHovered);
+	                wrapper.addEventListener('mouseleave', codex.callback.commentBlured);
+	
+	                wrapper.appendChild(text);
+	                wrapper.appendChild(time);
+	                wrapper.appendChild(deleteBtn);
+	                wrapper.appendChild(editBtn);
+	
+	                comments.createCommentSelection(commentData['comment-id'], commentData['block-id'], commentData['selection-start'], commentData['selection-end']);
+	
+	                codex.nodes.commentsSide.appendChild(wrapper);
+	
+	                return wrapper;
+	        };
+	
+	        comments.getBlockById = function (id) {
+	                return codex.nodes.redactor.querySelector('.ce-block[data-id="' + id + '"]');
+	        };
+	
+	        comments.getCommentSelectionById = function (id) {
+	                return codex.nodes.redactor.querySelector('span[data-comment-id="' + id + '"]');
+	        };
+	
+	        comments.getCommentById = function (id) {
+	                return codex.nodes.commentsSide.querySelector('div[data-comment-id="' + id + '"]');
+	        };
+	
+	        comments.createCommentSelection = function (commentId, blockId, selectionStart, selectionEnd) {
+	
+	                var block = comments.getBlockById(blockId),
+	                    range = document.createRange(),
+	                    highlight = codex.draw.commentSelection(),
+	                    textNode = codex.content.getDeepestTextNodeFromPosition(block, 0);
+	
+	                highlight.dataset.commentId = commentId;
+	
+	                range.setStart(textNode, selectionStart);
+	                range.setEnd(textNode, selectionEnd);
+	
+	                range.surroundContents(highlight);
+	        };
+	
+	        return comments;
 	}({});
 	
 	module.exports = comments;

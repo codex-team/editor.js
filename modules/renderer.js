@@ -56,6 +56,16 @@ var renderer = (function(renderer) {
 
     };
 
+    renderer.appendComments = function() {
+
+        var comments = codex.state.blocks.comments;
+
+        for (var i = 0; i < comments.length; i++) {
+            codex.comments.makeComment(comments[i]);
+        }
+
+    };
+
     /**
      * Append node at specified index
      */
@@ -82,7 +92,7 @@ var renderer = (function(renderer) {
             .then(function(blockData){
 
                 /**
-                 * blockData has 'block', 'type' and 'stretched' information
+                 * blockData has 'block', 'type', 'id' and 'stretched' information
                  */
                 codex.content.insertBlock(blockData);
 
@@ -95,6 +105,8 @@ var renderer = (function(renderer) {
             .catch(function(error) {
                 codex.core.log('Node skipped while parsing because %o', 'error', error);
             });
+
+            return nodeSequence;
 
     };
 
@@ -128,7 +140,8 @@ var renderer = (function(renderer) {
 
         /** New parser */
         var pluginName = blockData.type,
-            cover      = blockData.cover;
+            cover      = blockData.cover,
+            id         = blockData.id || +new Date();
 
         /** Get first key of object that stores plugin name */
         // for (var pluginName in blockData) break;
@@ -155,7 +168,8 @@ var renderer = (function(renderer) {
             type      : pluginName,
             block     : block,
             stretched : stretched,
-            cover     : cover
+            cover     : cover,
+            id: id
         };
 
     };

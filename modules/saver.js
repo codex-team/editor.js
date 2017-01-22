@@ -84,11 +84,10 @@ var saver = (function(saver) {
         }
 
         /** Result saver */
-        var blockContent   = block.childNodes[0],
+        var blockContent   = block.childNodes[1],
             pluginsContent = blockContent.childNodes[0],
             savedData      = codex.tools[pluginName].save(pluginsContent),
             output;
-
 
         output = {
             type: pluginName,
@@ -98,22 +97,39 @@ var saver = (function(saver) {
         /** Marks Blocks that will be in main page */
         output.cover = block.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
 
+        output.id = block.dataset.id;
+
         codex.state.jsonOutput.push(output);
     };
 
     saver.saveComments = function() {
 
-        var comments = codex.nodes.redactor.querySelectorAll('.ce-comment__wrapper');
+        var comments = [],
+            wrappers = codex.nodes.commentsSide.querySelectorAll('.ce-comment__wrapper');
 
-        for (var i = 0; i < comments.length; i++) {
+        for (var i = 0; i < wrappers.length; i++) {
 
-            var comment = {
-                blockId: comments[i].dataset.blockId,
-                text: comments[i].querySelector('.ce-comment__input').value
-            };
+            var text = wrappers[i].querySelector('.ce-comment__text'),
+                time = wrappers[i].querySelector('.ce-comment__time'),
+                blockId = wrappers[i].dataset.blockId,
+                commentId = wrappers[i].dataset.commentId,
+                selectionStart = wrappers[i].dataset.selectionStart,
+                selectionEnd = wrappers[i].dataset.selectionEnd;
 
-            codex.state.comments.push(comment);
+            if (text && time) {
+                comments.push({
+                    text         : text.textContent,
+                    time         : time.textContent,
+                    'block-id'   : blockId,
+                    'comment-id' : commentId,
+                    'selection-start': selectionStart,
+                    'selection-end': selectionEnd
+                });
+            }
         }
+
+
+        codex.state.comments = comments;
 
     };
 

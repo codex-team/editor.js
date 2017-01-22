@@ -45,6 +45,7 @@ var codex = (function(codex){
     codex.nodes = {
         textarea          : null,
         wrapper           : null,
+        commentsSide      : null,
         toolbar           : null,
         inlineToolbar     : {
             wrapper : null,

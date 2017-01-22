@@ -217,6 +217,8 @@ var callbacks = (function(callbacks) {
 
     callbacks.redactorClicked = function (event) {
 
+        if (event.target.classList.contains('ce-comments-field')) {event.target.dispatchEvent(event); return;}
+
         codex.content.workingNodeChanged(event.target);
 
         codex.ui.saveInputs();
@@ -749,15 +751,78 @@ var callbacks = (function(callbacks) {
 
     };
 
-    /**
-     * Clicks on block comment button
-     */
-    callbacks.showCommentButtonClicked = function(){
+    callbacks.commentInputChanged = function(e) {
 
-        codex.comments.add(codex.content.currentNode);
+        var input      = e.path[0],
+            wrapper    = e.path[1],
+            sendButton = codex.draw.commentSendButton();
 
-        codex.toolbar.toolbox.close();
-        codex.toolbar.settings.hideRemoveActions();
+        if (input.value.trim() != '') {
+
+            if (!wrapper.querySelector('.ce-comment__send-button'))
+                wrapper.appendChild(sendButton);
+
+        } else {
+
+            var button = wrapper.querySelector('.ce-comment__send-button');
+            if (button)
+                wrapper.removeChild(button);
+
+        }
+
+    };
+
+    callbacks.commentHovered = function(e) {
+
+        var target           = e.target,
+            commentId        = target.dataset.commentId,
+            commentSelection = codex.comments.getCommentSelectionById(commentId),
+            comment          = codex.comments.getCommentById(commentId);
+
+        if (!commentSelection || !comment) return;
+
+        commentSelection.classList.add('ce-comments--highlight_hover');
+        comment.classList.add('ce-comment__wrapper_hover')
+
+    };
+
+    callbacks.commentBlured = function(e) {
+
+        var target           = e.target,
+            commentId        = target.dataset.commentId,
+            commentSelection = codex.comments.getCommentSelectionById(commentId),
+            comment          = codex.comments.getCommentById(commentId);
+
+        if (!commentSelection || !comment) return;
+
+        commentSelection.classList.remove('ce-comments--highlight_hover');
+        comment.classList.remove('ce-comment__wrapper_hover')
+
+    };
+
+    callbacks.commentSendButtonClicked = function(e) {
+
+        var sendButton  = e.path[0],
+            wrapper     = e.path[1];
+
+        codex.comments.send(wrapper, sendButton);
+
+    };
+
+    callbacks.commentDeleteButtonClicked = function(e) {
+
+        var wrapper = e.path[1];
+
+        codex.comments.delete(wrapper);
+
+    };
+
+    callbacks.commentEditButtonClicked = function(e) {
+
+        var wrapper       = e.path[1],
+            commentsField = e.path[2];
+
+        codex.comments.edit(wrapper, commentsField);
 
     };
 

@@ -13,6 +13,12 @@ var draw = (function(draw) {
 
     };
 
+    draw.commentsSide = function() {
+
+         return draw.node('DIV', 'ce-comments-side');
+
+    };
+
     /**
      * Content-editable holder
      */
@@ -190,20 +196,94 @@ var draw = (function(draw) {
         return toggler;
     };
 
+    draw.commentsField = function(id) {
 
-    draw.commentButton = function() {
-        var btn = draw.node('SPAN', 'ce-toolbar__comment-btn', {innerHTML: '<i class="ce-icon-newspaper"></i>'});
+        var field = draw.node('DIV', 'ce-comments-field');
 
-        return btn;
+        field.dataset.id = id;
+
+        return field;
+
     };
 
-    draw.commentInput = function() {
-        var wrapper = draw.node('DIV', 'ce-comment__wrapper', {textContent: 'Ваш комментарий:'}),
-            input   = draw.node('TEXTAREA', 'ce-comment__input');
+    draw.commentInput = function(text) {
+
+        var wrapper = draw.node('DIV', 'ce-comment__wrapper'),
+            input   = draw.node('TEXTAREA', 'ce-comment__input', {placeholder: 'New comment'});
+
+        if (text) input.value = text;
+
+        input.addEventListener('input', codex.callback.commentInputChanged);
+        wrapper.addEventListener('mouseenter', codex.callback.commentHovered);
+        wrapper.addEventListener('mouseleave', codex.callback.commentBlured);
 
         wrapper.appendChild(input);
 
         return wrapper
+
+    };
+
+    draw.commentSelection = function() {
+
+        var wrapper = draw.node('SPAN', 'ce-comments--highlight', {});
+
+        wrapper.addEventListener('mouseenter', codex.callback.commentHovered);
+        wrapper.addEventListener('mouseleave', codex.callback.commentBlured);
+
+        return wrapper;
+
+    };
+
+    draw.commentSendButton = function() {
+
+        var button = draw.node('DIV', 'ce-comment__send-button', {textContent: 'Comment'});
+
+        button.addEventListener('click', codex.callback.commentSendButtonClicked);
+
+        return button;
+
+    };
+
+    draw.commentDeleteButton = function() {
+
+        var button = draw.node('DIV', 'ce-comment__delete-button', {textContent: 'Delete'});
+
+        button.addEventListener('click', codex.callback.commentDeleteButtonClicked);
+
+        return button;
+
+    };
+
+    draw.commentEditButton = function() {
+
+        var button = draw.node('DIV', 'ce-comment__edit-button', {textContent: 'Edit'});
+
+        button.addEventListener('click', codex.callback.commentEditButtonClicked);
+
+        return button;
+
+    };
+
+    draw.commentTmstmp = function(edited, text) {
+
+        var edited = edited ? 'edited ': '',
+            text = text || edited + new Date().toLocaleDateString('en-US',{
+                                                                        month: 'short',
+                                                                        day: 'numeric',
+                                                                        hour: 'numeric',
+                                                                        minute: 'numeric',
+                                                                        hour12: false
+                                                                 });
+
+
+        return draw.node('DIV', 'ce-comment__time', {textContent: text})
+
+    };
+
+    draw.commentText = function(text) {
+
+        return draw.node('DIV', 'ce-comment__text', {textContent: text});
+
     };
 
     /**
