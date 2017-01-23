@@ -13,7 +13,7 @@
 pasteTool.patterns = [
     {
         type: 'image',
-        regex: /(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg))/,
+        regex: /(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|gif))/,
         callback: ceImage.photoUploadingCallbacks.uploadImage
     },
     {
