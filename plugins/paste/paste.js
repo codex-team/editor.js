@@ -19,19 +19,31 @@ var pasteTool = {
         var clipBoardData = event.clipboardData || window.clipboardData,
             content = clipBoardData.getData('Text');
         
-        pasteTool.analize(content);
+        pasteTool.analize(content, event);
     },
 
     /**
      * Analizes pated string and calls necessary method
      */
-    analize : function(string) {
+    analize : function(string, event) {
+
+        var embed = false;
 
         pasteTool.patterns.map(function(pattern, i){
             if (pattern.regex.test(string)) {
                 pattern.callback.call(null, string, pattern);
+                embed = true;
             }
-        })
+        });
+
+        /**
+         * Stop other event handlers 
+         */
+        if (embed) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            event.stopPropagation();
+        }
 
     }
 };
