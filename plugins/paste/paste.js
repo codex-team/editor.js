@@ -37,7 +37,7 @@ var pasteTool = {
         });
 
         /**
-         * Stop other event handlers 
+         * Stop other event handlers
          */
         if (embed) {
             event.preventDefault();
