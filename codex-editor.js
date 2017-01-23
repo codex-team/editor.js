@@ -65,7 +65,7 @@ var codex =
 	 * Codex Editor
 	 *
 	 * @author Codex Team
-	 * @version 1.3.0
+	 * @version 1.3.4
 	 */
 	
 	var codex = function (codex) {
@@ -88,7 +88,7 @@ var codex =
 	        codex.sanitizer = __webpack_require__(18);
 	    };
 	
-	    codex.version = ("1.3.0");
+	    codex.version = ("1.3.4");
 	
 	    /**
 	     * @public
@@ -2781,7 +2781,7 @@ var codex =
 	
 	            nextToolIndex = tools.indexOf(currentTool) + 1;
 	
-	            var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 1);
+	            var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 2);
 	
 	            if (toolIsLastInToolbox) {
 	
@@ -2911,7 +2911,7 @@ var codex =
 	 * Codex Editor callbacks module
 	 *
 	 * @author Codex Team
-	 * @version 1.3.3
+	 * @version 1.3.4
 	 */
 	
 	var callbacks = function (callbacks) {
@@ -3637,7 +3637,7 @@ var codex =
 	        event.preventDefault();
 	
 	        /** get html pasted data - dirty data */
-	        var data = event.clipboardData.getData('text/html');
+	        var data = event.clipboardData.getData('text/html') || event.clipboardData.getData('text/plain');
 	
 	        /** Temporary DIV that is used to work with childs as arrays item */
 	        var div = codex.draw.node('DIV', '', {}),
