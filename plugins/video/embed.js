@@ -1,24 +1,24 @@
 /**
- * Video plugin by gohabereg
+ * Embed plugin by gohabereg
  * @version 1.0.0
  */
-var video = function(video){
+var embed = function(embed){
 
     var methods = {
 
         addInternal: function (content) {
-            codex.content.switchBlock(codex.content.currentNode, content, 'video');
+            codex.content.switchBlock(codex.content.currentNode, content, 'embed');
 
             var blockContent = codex.content.currentNode.childNodes[0];
-            blockContent.classList.add('video__loader');
+            blockContent.classList.add('embed__loader');
 
             setTimeout(function(){
-                blockContent.classList.remove('video__loader');
+                blockContent.classList.remove('embed__loader');
             }, 1000);
 
         },
 
-        getHtmlWithVideoId: function (type, id) {
+        getHtmlWithEmbedId: function (type, id) {
             return services[type].html.replace(/<\%\= remote\_id \%\>/g, id);
         },
 
@@ -58,20 +58,28 @@ var video = function(video){
         gfycat: {
             regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
             html: "<iframe src='https://gfycat.com/ifr/<%= remote_id %>' frameborder='0' scrolling='no' width='580' height='436' allowfullscreen ></iframe>",
+        },
+        'twitch-channel': {
+            regex: /https?:\/\/twitch.tv\/([^\/\?\&]*)/,
+            html: "<iframe src=\"https://player.twitch.tv/?channel=<%= remote_id %>\" frameborder=\"0\" allowfullscreen=\"true\" scrolling=\"no\" height=\"378\" width=\"620\"></iframe>"
+        },
+        'twitch-video': {
+            regex: /https?:\/\/www.twitch.tv\/[^\/\?\&]*\/v\/([0-9]*)/,
+            html: "<iframe src=\"https://player.twitch.tv/?video=v<%= remote_id %>\" frameborder=\"0\" allowfullscreen=\"true\" scrolling=\"no\" height=\"378\" width=\"620\"></iframe>"
         }
     };
 
 
-    video.make = function(data, isInternal) {
+    embed.make = function(data, isInternal) {
 
-        if (!data.video_id)
+        if (!data.embed_id)
             return;
 
-        var html  = methods.getHtmlWithVideoId(data.service, data.video_id),
+        var html  = methods.getHtmlWithEmbedId(data.service, data.embed_id),
             block = methods.makeElementFromHtml(html);
 
-        block.dataset.id = data.video_id;
-        block.dataset.videoSeirvice = data.service;
+        block.dataset.id = data.embed_id;
+        block.dataset.embedSeirvice = data.service;
 
         if (isInternal) {
                 methods.addInternal(block);
@@ -85,7 +93,7 @@ var video = function(video){
      * Saving JSON output.
      * Upload data via ajax
      */
-    video.save = function(blockContent) {
+    embed.save = function(blockContent) {
 
         var data;
 
@@ -93,8 +101,8 @@ var video = function(video){
             return;
 
         data = {
-            video_id: blockContent.dataset.id,
-            service: blockContent.dataset.videoService
+            embed_id: blockContent.dataset.id,
+            service: blockContent.dataset.embedService
         };
 
         return data;
@@ -104,22 +112,22 @@ var video = function(video){
     /**
      * Render data
      */
-    video.render = function(data) {
-        return video.make(data);
+    embed.render = function(data) {
+        return embed.make(data);
     };
 
-    video.urlPastedCallback = function(url, pattern) {
+    embed.urlPastedCallback = function(url, pattern) {
 
         var id = pattern.regex.exec(url)[1];
 
         var data = {
-            video_id: id,
+            embed_id: id,
             service: pattern.type
         };
 
-        video.make(data, true);
+        embed.make(data, true);
     };
 
-    return video;
+    return embed;
 
 }({});

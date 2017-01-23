@@ -39,37 +39,47 @@ pasteTool.patterns = [
     {
         type: 'youtube',
         regex: /^.*(?:(?:youtu\.be\/)|(?:youtube\.com)\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)(?:[\?\&]t\=(\d*)|)/,
-        callback: video.urlPastedCallback
+        callback: embed.urlPastedCallback
     },
     {
         type: 'vimeo',
         regex: /(?:http[s]?:\/\/)?(?:www.)?vimeo\.co(?:.+\/([^\/]\d+)(?:#t=[\d]+)?s?$)/,
-        callback: video.urlPastedCallback
+        callback: embed.urlPastedCallback
     },
     {
         type: 'coub',
         regex: /https?:\/\/coub\.com\/view\/([^\/\?\&]+)/,
-        callback: video.urlPastedCallback
+        callback: embed.urlPastedCallback
     },
     {
         type: 'vine',
         regex: /https?:\/\/vine\.co\/v\/([^\/\?\&]+)/,
-        callback: video.urlPastedCallback
+        callback: embed.urlPastedCallback
     },
     {
         type: 'vk',
         regex: /https?:\/\/vk\.com\/.*(?:video)[-0-9]+_([0-9]+)/,
-        callback: video.urlPastedCallback
+        callback: embed.urlPastedCallback
     },
     {
         type: 'imgur',
         regex: /https?:\/\/(?:i\.)?imgur\.com.*\/([a-zA-Z0-9]+)(?:\.gifv)?/,
-        callback: video.urlPastedCallback
+        callback: embed.urlPastedCallback
     },
     {
         type: 'gfycat',
         regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
-        callback: video.urlPastedCallback
-    }
+        callback: embed.urlPastedCallback
+    },
+    {
+        type: 'twitch-channel',
+        regex: /https?:\/\/www.twitch.tv\/([^\/\?\&]*)/,
+        callback: embed.urlPastedCallback
+    },
+    {
+        type: 'twitch-video',
+        regex: /https?:\/\/www.twitch.tv\/[^\/\?\&]*\/v\/([0-9]*)/,
+        callback: embed.urlPastedCallback
+    },
 
 ];

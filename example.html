@@ -42,8 +42,8 @@
 <script src="plugins/twitter/twitter.js"></script>
 <link rel="stylesheet" href="plugins/twitter/twitter.css">
 
-<script src="plugins/video/video.js"></script>
-<link rel="stylesheet" href="plugins/video/video.css">
+<script src="plugins/video/embed.js"></script>
+<link rel="stylesheet" href="plugins/video/embed.css">
 
 <script src="plugins/paste/paste.js"></script>
 <script src="plugins/paste/patterns.js"></script>
@@ -175,13 +175,13 @@
                 enableLineBreaks: false,
                 allowedToPaste: false
             },
-            video: {
-                type: 'video',
-                make: video.make,
+            embed: {
+                type: 'embed',
+                make: embed.make,
                 appendCallback: null,
                 settings: null,
-                render: video.render,
-                save: video.save,
+                render: embed.render,
+                save: embed.save,
                 displayInToolbox: false,
                 enableLineBreaks: false,
                 allowedToPaste: false
