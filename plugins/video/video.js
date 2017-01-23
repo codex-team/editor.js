@@ -53,7 +53,7 @@ var video = function(video){
         },
         imgur: {
             regex: /https?:\/\/(?:i\.)?imgur\.com.*\/([a-zA-Z0-9]+)(?:\.gifv)?/,
-            html: "<iframe allowfullscreen=\"true\" scrolling=\"no\" src=\"http://imgur.com/<%= remote_id %>/embed\" id=\"imgur-embed-iframe-pub-<%= remote_id %>\" class=\"imgur-embed-iframe-pub\" style=\"height: 500px; width: 540px; border: 1px solid #000\"></iframe>"
+            html: "<video width=\"100%\" autoplay=\"\" preload=\"preload\" loop=\"\" style=\"opacity: 1;\"><source src=\"http://i.imgur.com/<%= remote_id %>.mp4\"></video>"
         },
         gfycat: {
             regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
