@@ -2972,7 +2972,7 @@ var codex =
 	                /**
 	                 * UNREPLACEBLE_TOOLS this types of tools are forbidden to replace even they are empty
 	                 */
-	                var UNREPLACEBLE_TOOLS = ['image', 'link', 'list', 'instagram', 'twitter', 'video'],
+	                var UNREPLACEBLE_TOOLS = ['image', 'link', 'list', 'instagram', 'twitter', 'embed'],
 	                    tool = codex.tools[codex.toolbar.current],
 	                    workingNode = codex.content.currentNode,
 	                    currentInputIndex = codex.caret.inputIndex,
