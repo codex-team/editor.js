@@ -111,6 +111,9 @@ var ceImage = {
             inFeed  = false,
             wrapper = current.querySelector('.' + ceImage.elementClasses.imageWrapper);
 
+        if (!image) {
+            return;
+        }
 
         if (current.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE)) {
             inFeed = true;
@@ -475,6 +478,7 @@ ceImage.photoUploadingCallbacks = {
         var ajaxUrl = location.protocol + '//' + location.hostname,
             file,
             image,
+            image_plugin,
             current = codex.content.currentNode,
             beforeSend,
             success_callback;
@@ -482,16 +486,49 @@ ceImage.photoUploadingCallbacks = {
         /** When image is uploaded to redactors folder */
         success_callback = function(data) {
 
-            var file = JSON.parse(data);
-            image = ceImage.photoUploadingCallbacks.uploadedImage(file);
-            codex.content.switchBlock(current, image, 'image_extended');
+            var imageInfo = JSON.parse(data);
+
+            image_plugin.dataset.stretched = false;
+            image_plugin.dataset.src = imageInfo.file.url;
+            image_plugin.dataset.bigUrl = imageInfo.file.bigUrl;
+            image_plugin.dataset.width = imageInfo.file.width;
+            image_plugin.dataset.height = imageInfo.file.height;
+            image_plugin.dataset.additionalData = imageInfo.file.additionalData;
 
         };
 
         /** Before sending XMLHTTP request */
         beforeSend = function() {
+
             var content = current.querySelector('.ce-block__content');
-            content.classList.add('ce-plugin-image__loader');
+
+            var data = {
+                background: false,
+                border: false,
+                isStretch: false,
+                file: {
+                    url: path,
+                    bigUrl: null,
+                    width: null,
+                    height: null,
+                    additionalData: null
+                },
+                caption: '',
+                cover: null
+            };
+
+            image_plugin = codex.tools.image_extended.make(data);
+
+            image_plugin.classList.add('ce-image__preview');
+
+            var img = image_plugin.querySelector('img');
+
+            img.onload = function() {
+                image_plugin.classList.remove('ce-image__preview');
+            };
+
+            codex.content.switchBlock(codex.content.currentNode, image_plugin, 'image_extended');
+
         };
 
         /** Preparing data for XMLHTTP */
@@ -508,34 +545,64 @@ ceImage.photoUploadingCallbacks = {
         codex.core.ajax(data);
     },
 
-    /**
-     * Upload image by URL
-     *
-     * @uses codex Image tool
-     * @param image
-     * @returns {Element}
-     */
-    uploadedImage : function(image) {
+    uploadFromUploadCare : function(image) {
 
+        var image_plugin;
+
+        /** Preparing data for XMLHTTP */
         var data = {
-            background: false,
-            border: false,
-            isStretch: false,
-            file: {
-                url: image.file.url,
-                bigUrl: image.file.bigUrl,
-                width: image.file.width,
-                height: image.file.height,
-                additionalData: image.file.additionalData
+            url: '/club/fetchImage',
+            type: "POST",
+            data : {
+                url: image
             },
-            caption: '',
-            cover: null
+            beforeSend : function() {
+
+                var data = {
+                    background: false,
+                    border: false,
+                    isStretch: false,
+                    file: {
+                        url: image,
+                        bigUrl: null,
+                        width: null,
+                        height: null,
+                        additionalData: null
+                    },
+                    caption: '',
+                    cover: null
+                };
+
+                /** Using Image plugin make method */
+                image_plugin = codex.tools.image_extended.make(data);
+
+                image_plugin.classList.add('ce-image__preview');
+
+                var img = image_plugin.querySelector('img');
+
+                img.onload = function() {
+                    image_plugin.classList.remove('ce-image__preview');
+                };
+
+                codex.content.switchBlock(codex.content.currentNode, image_plugin, 'image_extended');
+
+            },
+            success : function(result) {
+
+                var data = JSON.parse(result);
+
+                image_plugin.dataset.stretched = false;
+                image_plugin.dataset.src = data.file.url;
+                image_plugin.dataset.bigUrl = data.file.bigUrl;
+                image_plugin.dataset.width = data.file.width;
+                image_plugin.dataset.height = data.file.height;
+                image_plugin.dataset.additionalData = data.file.additionalData;
+
+            }
         };
 
-        /** Using Image plugin make method */
-        var image_plugin = codex.tools.image_extended.make(data);
+        codex.core.ajax(data);
 
-        return image_plugin;
 
     }
 

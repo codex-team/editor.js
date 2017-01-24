@@ -13,8 +13,13 @@
 pasteTool.patterns = [
     {
         type: 'image',
-        regex: /(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|gif))/,
+        regex: /(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg))/,
         callback: ceImage.photoUploadingCallbacks.uploadImage
+    },
+    {
+        type: 'uploadCare',
+        regex: /https:.+.uploadcare.cmtt.ru./,
+        callback: ceImage.photoUploadingCallbacks.uploadFromUploadCare
     },
     {
         type: 'instagram',
@@ -38,7 +43,7 @@ pasteTool.patterns = [
     },
     {
         type: 'youtube',
-        regex: /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/,
+        regex: /^.*(?:(?:youtu\.be\/)|(?:youtube\.com)\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)(?:[\?\&]t\=(\d*)|)/,
         callback: video.urlPastedCallback
     },
     {
@@ -73,3 +78,5 @@ pasteTool.patterns = [
     }
 
 ];
+
+console.log(pasteTool);

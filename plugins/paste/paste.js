@@ -18,7 +18,7 @@ var pasteTool = {
 
         var clipBoardData = event.clipboardData || window.clipboardData,
             content = clipBoardData.getData('Text');
-        
+
         pasteTool.analize(content, event);
     },
 
@@ -36,13 +36,10 @@ var pasteTool = {
             }
         });
 
-        /**
-         * Stop other event handlers
-         */
         if (embed) {
             event.preventDefault();
-            event.stopImmediatePropagation();
             event.stopPropagation();
+            event.stopImmediatePropagation();
         }
 
     }

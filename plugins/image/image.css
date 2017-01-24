@@ -7,12 +7,17 @@
 .ce-image {
 }
 
-.ce-image__preview {
-    opacity: .1;
-    max-width: 600px;
-    margin: 0 auto;
-    filter: blur(5px);
+
+.ce-image__wrapper img {
+    transition: all 500ms ease-in;
+    will-change: opacity, filter;
 }
+
+.ce-image__preview img {
+    opacity: .5;
+    filter: blur(1.7px) grayscale(1);
+}
+
 
 /** upload image form */
 .ce-plugin-image__holder{
@@ -66,12 +71,13 @@
 		color: #393F52;
 	}
 
+
+
 /** Uploaded image */
 .ce-plugin-image__wrapper {
     padding: 1em 0;
-    transition: opacity .2s ease;
-    transition: filter 1.5s linear;
 }
+
 .ce-plugin-image__uploaded--centered {
     display: block;
     max-width: 600px;
