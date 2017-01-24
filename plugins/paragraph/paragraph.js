@@ -52,6 +52,8 @@ var paragraphTool = {
         if (output.text == '')
             return;
 
+        output.text = '<p>' + output.text + '</p>';
+
         return output;
     },
 

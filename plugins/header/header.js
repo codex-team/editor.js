@@ -53,6 +53,23 @@ var headerTool = {
     },
 
     /**
+     * Validate blocks
+     *
+     * @param output
+     * @return {*}
+     */
+    validate : function(output) {
+
+        var heading_styles = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+
+        if (!heading_styles.includes(output["heading-styles"]) || output["text"].trim() == '') {
+            return;
+        }
+
+        return output;
+    },
+
+    /**
     * Method to extract JSON data from HTML block
     */
     save : function (blockContent) {
