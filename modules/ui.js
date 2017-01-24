@@ -378,7 +378,7 @@ var ui = (function(ui){
 
         initialBlock = codex.tools[initialBlockType].render();
 
-        initialBlock.setAttribute('data-placeholder', 'Write your story...');
+        initialBlock.setAttribute('data-placeholder', 'Расскажите свою историю...');
 
         codex.content.insertBlock({
             type  : initialBlockType,
