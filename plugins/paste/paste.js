@@ -17,9 +17,16 @@ var pasteTool = {
     pasted : function(event) {
 
         var clipBoardData = event.clipboardData || window.clipboardData,
-            content = clipBoardData.getData('Text');
+            content = clipBoardData.getData('Text'),
+            pastedDataIsEmbeded;
 
-        pasteTool.analize(content);
+        pastedDataIsEmbeded = pasteTool.analize(content);
+
+        if ( pastedDataIsEmbeded ) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+        }
     },
 
     /**
@@ -27,11 +34,16 @@ var pasteTool = {
      */
     analize : function(string) {
 
+        var isEmbed = false;
+
         pasteTool.patterns.map(function(pattern, i){
             if (pattern.regex.test(string)) {
                 pattern.callback.call(null, string, pattern);
+                isEmbed = true;
             }
         });
+
+        return isEmbed;
     }
 };
 

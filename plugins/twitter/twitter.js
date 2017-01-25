@@ -39,6 +39,11 @@ var twitterTool = {
 
         var data;
 
+        /**
+         * Get caption
+         */
+        var nodeWithCaption = blockContent.querySelector('.twitter-tweet__caption');
+
         data = {
             media:blockContent.dataset.media,
             conversation:false,
@@ -53,7 +58,7 @@ var twitterTool = {
             text: blockContent.dataset.text,
             created_at: blockContent.dataset.createdAt,
             status_url: blockContent.dataset.statusUrl,
-            caption: ""
+            caption: nodeWithCaption.innerHTML
         };
 
         return data;
@@ -101,11 +106,25 @@ twitterTool.content = {
     twitter : function(data, tweet) {
 
         setTimeout(function() {
-            if ( window.twttr ){
+            if ( window.twttr.widgets ){
                 window.twttr.widgets.createTweet(data.id_str, tweet);
             }
 
         }, 1000);
+
+        setTimeout(function() {
+
+            var caption = document.createElement('DIV');
+            caption.contentEditable = true;
+            caption.classList.add('twitter-tweet__caption');
+            caption.setAttribute('data-placeholder', 'Подпись');
+
+            if (data.caption) {
+                caption.innerHTML = data.caption;
+            }
+            tweet.appendChild(caption);
+
+        }, 1100);
 
         tweet.classList.add('twitter__loader');
 

@@ -6,3 +6,17 @@
     background: url("loading.gif") !important;
     opacity: 0.1;
 }
+
+.twitter-tweet__caption:empty::before {
+    content : attr(data-placeholder);
+    color: #818BA1;
+    opacity: .7;
+}
+
+.twitter-tweet__caption {
+    max-width: 500px;
+    border: 1px solid #ebeef3;
+    margin: 0 auto;
+    padding: 5px 15px;
+    box-sizing: border-box;
+}
