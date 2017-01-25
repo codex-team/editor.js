@@ -495,6 +495,8 @@ ceImage.photoUploadingCallbacks = {
             image_plugin.dataset.height = imageInfo.file.height;
             image_plugin.dataset.additionalData = imageInfo.file.additionalData;
 
+            image_plugin.classList.remove('ce-image__preview');
+
         };
 
         /** Before sending XMLHTTP request */
@@ -523,9 +525,9 @@ ceImage.photoUploadingCallbacks = {
 
             var img = image_plugin.querySelector('img');
 
-            img.onload = function() {
-                image_plugin.classList.remove('ce-image__preview');
-            };
+            // img.onload = function() {
+            //     image_plugin.classList.remove('ce-image__preview');
+            // };
 
             codex.content.switchBlock(codex.content.currentNode, image_plugin, 'image_extended');
 
@@ -580,9 +582,9 @@ ceImage.photoUploadingCallbacks = {
 
                 var img = image_plugin.querySelector('img');
 
-                img.onload = function() {
-                    image_plugin.classList.remove('ce-image__preview');
-                };
+                // img.onload = function() {
+                //     image_plugin.classList.remove('ce-image__preview');
+                // };
 
                 codex.content.switchBlock(codex.content.currentNode, image_plugin, 'image_extended');
 
@@ -597,6 +599,8 @@ ceImage.photoUploadingCallbacks = {
                 image_plugin.dataset.width = data.file.width;
                 image_plugin.dataset.height = data.file.height;
                 image_plugin.dataset.additionalData = data.file.additionalData;
+
+                image_plugin.classList.remove('ce-image__preview');
 
             }
         };
