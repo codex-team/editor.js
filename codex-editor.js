@@ -2911,7 +2911,7 @@ var codex =
 	 * Codex Editor callbacks module
 	 *
 	 * @author Codex Team
-	 * @version 1.3.3
+	 * @version 1.3.4
 	 */
 	
 	var callbacks = function (callbacks) {
@@ -3024,7 +3024,7 @@ var codex =
 	         * Allow paragraph lineBreaks with shift enter
 	         * Or if shiftkey pressed and enter and enabledLineBreaks, the let new block creation
 	         */
-	        if (event.shiftKey) {
+	        if (event.shiftKey || enableLineBreaks) {
 	
 	            event.stopPropagation();
 	            event.stopImmediatePropagation();
