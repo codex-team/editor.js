@@ -170,11 +170,11 @@ var ceImage = {
             border : false,
             isstretch : content.dataset.stretched === 'true' ? true : false,
             file : {
-                url : image.src,
+                url : image.dataset.src || image.src,
                 bigUrl : image.dataset.bigUrl,
-                width  : image.width,
-                height : image.height,
-                additionalData :null
+                width  : image.dataset.width,
+                height : image.dataset.height,
+                additionalData : image.dataset.additionalData
             },
             caption : caption.textContent,
             cover : null
