@@ -1,7 +1,7 @@
 /**
  * Toolbar settings
  *
- * @version 1.0.3
+ * @version 1.0.4
  */
 
 var settings = (function(settings) {
@@ -26,7 +26,7 @@ var settings = (function(settings) {
          * Append settings content
          * It's stored in tool.settings
          */
-        if (!codex.tools[toolType] || !codex.tools[toolType].settings ) {
+        if (!codex.tools[toolType] || !codex.tools[toolType].makeSettings ) {
 
             codex.core.log(`Plugin «${toolType}» has no settings`, 'warn');
             // codex.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
@@ -36,7 +36,7 @@ var settings = (function(settings) {
             /**
              * Draw settings block
              */
-            var settingsBlock = codex.tools[toolType].settings();
+            var settingsBlock = codex.tools[toolType].makeSettings();
             codex.nodes.pluginSettings.appendChild(settingsBlock);
         }
 
