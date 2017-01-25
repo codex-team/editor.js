@@ -1946,7 +1946,7 @@ var codex =
 	/**
 	 * Toolbar settings
 	 *
-	 * @version 1.0.3
+	 * @version 1.0.4
 	 */
 	
 	var settings = function (settings) {
@@ -1971,7 +1971,7 @@ var codex =
 	         * Append settings content
 	         * It's stored in tool.settings
 	         */
-	        if (!codex.tools[toolType] || !codex.tools[toolType].settings) {
+	        if (!codex.tools[toolType] || !codex.tools[toolType].makeSettings) {
 	
 	            codex.core.log('Plugin \xAB' + toolType + '\xBB has no settings', 'warn');
 	            // codex.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
@@ -1980,7 +1980,7 @@ var codex =
 	            /**
 	             * Draw settings block
 	             */
-	            var settingsBlock = codex.tools[toolType].settings();
+	            var settingsBlock = codex.tools[toolType].makeSettings();
 	            codex.nodes.pluginSettings.appendChild(settingsBlock);
 	        }
 	
@@ -2826,7 +2826,7 @@ var codex =
 	            blockData;
 	
 	        /** Make block from plugin */
-	        newBlockContent = tool.make();
+	        newBlockContent = tool.render();
 	
 	        /** information about block */
 	        blockData = {

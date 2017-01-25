@@ -53,16 +53,21 @@
             paragraph: {
                 type: 'paragraph',
                 iconClassname: 'ce-icon-paragraph',
-                make: paragraph.make,
-                appendCallback: null,
-                settings: null,
                 render: paragraph.render,
                 validate: paragraph.validate,
                 save: paragraph.save,
-                enableLineBreaks: false,
                 allowedToPaste: true,
                 showInlineToolbar: true
-//                handleTagOnPaste : ['P']
+            },
+            heading_styled: {
+                type: 'heading_styled',
+                iconClassname: 'ce-icon-header',
+                appendCallback: header.appendCallback,
+                makeSettings: header.makeSettings,
+                render: header.render,
+                validate: header.validate,
+                save: header.save,
+                displayInToolbox: true
             },
             paste: {
                 type: 'paste',
@@ -76,18 +81,6 @@
                 enableLineBreaks: false,
                 callbacks: pasteTool.callbacks,
                 allowedToPaste: false
-            },
-            header: {
-                type: 'header',
-                iconClassname: 'ce-icon-header',
-                make: header.make,
-                appendCallback: header.appendCallback,
-                settings: header.makeSettings,
-                render: header.render,
-                validate: header.validate,
-                save: header.save,
-                displayInToolbox: true
-//                handleTagOnPaste : ['H1', 'H2', 'H3', 'H4', 'H5', 'H6']
             },
             code: {
                 type: 'code',
