@@ -86,7 +86,7 @@ pasteTool.callbacks = {
 
         var regexTemplates = {
                 // image : /(?:([^:\/?#]+):)?(?:\/\/([^\/?#]*))?([^?#]*\.(?:jpe?g|gif|png))(?:\?([^#]*))?(?:#(.*))?/i,
-                image : /(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|gif))/,
+                image : /(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg))/,
                 instagram : new RegExp("http?.+instagram.com\/p?."),
                 twitter : /^http(s)?:\/\/twitter\.com\/(?:#!\/)?(\w+)\/status(es)?\/(\d+)$/,
                 facebook : /https?.+facebook.+\/\d+\?/,

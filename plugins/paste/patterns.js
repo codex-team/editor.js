@@ -13,12 +13,12 @@
 pasteTool.patterns = [
     {
         type: 'image',
-        regex: /(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg))/,
+        regex: /(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|gif))/,
         callback: ceImage.photoUploadingCallbacks.uploadImage
     },
     {
         type: 'uploadCare',
-        regex: /https:.+.uploadcare.cmtt.ru./,
+        regex: /^https:\/\/(uploadcare\.cmtt\.ru|ucarecdn\.com|static[0-9]+\.siliconrus\.cmtt\.ru|static[0-9]+\.cmtt\.ru)/,
         callback: ceImage.photoUploadingCallbacks.uploadFromUploadCare
     },
     {

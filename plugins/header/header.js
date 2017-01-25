@@ -36,7 +36,7 @@ var headerTool = {
         }
 
         tag.classList.add('ce-header');
-        tag.setAttribute('data-placeholder', 'Heading');
+        tag.setAttribute('data-placeholder', 'Заголовок');
         tag.contentEditable = true;
 
         return tag;

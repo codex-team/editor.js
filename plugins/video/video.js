@@ -57,7 +57,7 @@ var video = function(video){
         },
         gfycat: {
             regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
-            html: "<iframe src='https://gfycat.com/ifr/<%= remote_id %>' frameborder='0' scrolling='no' width='580' height='436' allowfullscreen ></iframe>",
+            html: "<iframe src='https://gfycat.com/ifr/<%= remote_id %>' frameborder='0' scrolling='no' width='580' height='436' allowfullscreen ></iframe>"
         }
     };
 

@@ -21,10 +21,9 @@ var paragraphTool = {
 
         tag.contentEditable = true;
 
-        /**
-         * if plugin need to add placeholder
-         * tag.setAttribute('data-placeholder', 'placehoder');
-         */
+        // var paragraph = document.createElement('P');
+        // paragraph.setAttribute('data-placeholder', 'Расскажите свою историю');
+        // tag.appendChild(paragraph);
 
         /**
          * @uses Paste tool callback.
@@ -51,8 +50,6 @@ var paragraphTool = {
 
         if (output.text == '')
             return;
-
-        output.text = '<p>' + output.text + '</p>';
 
         return output;
     },

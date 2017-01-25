@@ -104,6 +104,7 @@ twitterTool.content = {
             if ( window.twttr ){
                 window.twttr.widgets.createTweet(data.id_str, tweet);
             }
+
         }, 1000);
 
         tweet.classList.add('twitter__loader');
