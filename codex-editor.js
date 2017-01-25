@@ -88,7 +88,11 @@ var codex =
 	        codex.sanitizer = __webpack_require__(18);
 	    };
 	
+<<<<<<< HEAD
 	    codex.version = ("1.3.4");
+=======
+	    codex.version = ("1.3.2");
+>>>>>>> codex-team/master
 	
 	    /**
 	     * @public
@@ -744,7 +748,7 @@ var codex =
 	
 	        initialBlock = codex.tools[initialBlockType].render();
 	
-	        initialBlock.setAttribute('data-placeholder', 'Write your story...');
+	        initialBlock.setAttribute('data-placeholder', 'Расскажите свою историю...');
 	
 	        codex.content.insertBlock({
 	            type: initialBlockType,
@@ -3837,7 +3841,7 @@ var codex =
 	
 	        input.type = 'input';
 	        input.className += 'inputForLink';
-	        input.placeholder = 'Type URL ...';
+	        input.placeholder = 'Вставьте ссылку ...';
 	        input.setAttribute('form', 'defaultForm');
 	
 	        input.setAttribute('autofocus', 'autofocus');
