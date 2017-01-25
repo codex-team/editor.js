@@ -1,7 +1,7 @@
 .ce-redactor .embed {
-    width: 100%;
-    max-width: 650px;
-    margin: 10px auto;
+    max-width: 600px;
+    margin: 15px 0;
+    background: #fff;
 }
 
 .embed__loader {

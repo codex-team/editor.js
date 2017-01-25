@@ -10,7 +10,9 @@
  *
  */
 
-pasteTool.patterns = [
+var paste = paste || {};
+
+paste.patterns = [
     {
         type: 'image',
         regex: /(?:([^:\/?#]+):)?(?:\/\/([^\/?#]*))?([^?#]*\.(?:jpe?g|gif|png))(?:\?([^#]*))?(?:#(.*))?/i,
@@ -57,11 +59,6 @@ pasteTool.patterns = [
         callback: embed.urlPastedCallback
     },
     {
-        type: 'vk',
-        regex: /https?:\/\/vk\.com\/.*(?:video)[-0-9]+_([0-9]+)/,
-        callback: embed.urlPastedCallback
-    },
-    {
         type: 'imgur',
         regex: /https?:\/\/(?:i\.)?imgur\.com.*\/([a-zA-Z0-9]+)(?:\.gifv)?/,
         callback: embed.urlPastedCallback
@@ -81,5 +78,20 @@ pasteTool.patterns = [
         regex: /https?:\/\/www.twitch.tv\/[^\/\?\&]*\/v\/([0-9]*)/,
         callback: embed.urlPastedCallback
     },
+    {
+        type: 'yandex-music-album',
+        regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)/,
+        callback: embed.urlPastedCallback
+    },
+    {
+        type: 'yandex-music-track',
+        regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)\/track\/([0-9]*)/,
+        callback: embed.urlPastedCallback
+    },
+    {
+        type: 'yandex-music-playlist',
+        regex: /https?:\/\/music.yandex.ru\/users\/([^\/\?\&]*)\/playlists\/([0-9]*)/,
+        callback: embed.urlPastedCallback
+    }
 
 ];
