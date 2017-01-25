@@ -163,8 +163,6 @@ var ceImage = {
             image   = ceImage.ui.getImage(content),
             caption = content.querySelector('.' + ceImage.elementClasses.imageCaption);
 
-        console.log(image);
-
         var data = {
             background : false,
             border : false,
@@ -499,8 +497,6 @@ ceImage.photoUploadingCallbacks = {
             image.dataset.height = imageInfo.file.height;
             image.dataset.additionalData = imageInfo.file.additionalData;
 
-            console.log(image_plugin);
-            
             image_plugin.classList.remove('ce-image__preview');
 
         };
