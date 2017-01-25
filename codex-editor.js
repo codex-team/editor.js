@@ -557,8 +557,8 @@ var codex =
 	                continue;
 	            }
 	
-	            if (typeof tool.make != 'function') {
-	                codex.core.log('make method missed. Tool %o skipped', 'warn', name);
+	            if (typeof tool.render != 'function') {
+	                codex.core.log('render method missed. Tool %o skipped', 'warn', name);
 	                continue;
 	            }
 	
