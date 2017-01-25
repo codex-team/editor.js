@@ -499,6 +499,8 @@ ceImage.photoUploadingCallbacks = {
             image.dataset.height = imageInfo.file.height;
             image.dataset.additionalData = imageInfo.file.additionalData;
 
+            console.log(image_plugin);
+            
             image_plugin.classList.remove('ce-image__preview');
 
         };
