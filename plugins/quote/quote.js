@@ -11,7 +11,7 @@ var quoteTools = {
     /**
     * Default quote style
     */
-    defaultStyle : 'withCaption',
+    defaultStyle : 'withPhoto',
 
     /**
     * Make Quote from JSON datasets
@@ -22,7 +22,7 @@ var quoteTools = {
 
         if (data && data.size) {
 
-            data.style = 'withCaption';
+            data.style = 'withPhoto';
 
             switch (data.style) {
                 case 'simple':
@@ -41,15 +41,14 @@ var quoteTools = {
         } else {
 
             var settings = {
-                style  : 'withCaption',
+                style  : 'withPhoto',
                 text   : '',
                 author : '',
                 job    : '',
                 photo  : ''
             };
 
-            // tag = quoteTools.makeQuoteWithPhoto(settings);
-            tag = quoteTools.makeQuoteWithCaption(settings);
+            tag = quoteTools.makeQuoteWithPhoto(settings);
         }
 
         return tag;
@@ -76,19 +75,17 @@ var quoteTools = {
         */
         var parsedblock = quoteTools.parseBlockQuote(blockContent);
 
-            if (parsedblock.style == 'withCaption') {
+            if (parsedblock.style == 'withPhoto') {
                 parsedblock.style = 'small';
             }
 
             data = {
-                // style  : parsedblock.style,
-                // author : parsedblock.author,
-                // job    : parsedblock.job,
-                // photo  : parsedblock.photo,
                 "text"   : parsedblock.text,
                 "format" : "html",
                 "cite"   : parsedblock.author,
-                "size"   : parsedblock.style
+                "caption": parsedblock.job,
+                "size"   : parsedblock.style,
+                "image"  : parsedblock.photo
             };
 
         return data;
@@ -260,7 +257,7 @@ var quoteTools = {
             quote    = quoteTools.ui.makeBlock('DIV', [quoteTools.styles.withPhoto.quote, quoteTools.styles.quoteText]);
 
             /* Default Image src */
-            if (!data.photo) {
+            if (!data.image) {
 
                 var icon = quoteTools.ui.makeBlock('SPAN', ['ce-icon-picture']);
                 photo.appendChild(icon);
@@ -268,7 +265,9 @@ var quoteTools = {
             } else {
 
                 var authorsPhoto = quoteTools.ui.img(quoteTools.styles.authorsPhoto);
-                authorsPhoto.src = data.photo;
+
+                authorsPhoto.src = data.image;
+                authorsPhoto.dataset.bigUrl = data.image;
 
                 photo.classList.add(quoteTools.styles.authorsPhotoWrapper);
                 photo.appendChild(authorsPhoto);
@@ -283,7 +282,7 @@ var quoteTools = {
 
             /*  Author's position and job */
             job.contentEditable = 'true';
-            job.textContent = data.job;
+            job.textContent = data.caption;
 
         var authorsWrapper = quoteTools.ui.makeBlock('DIV', [quoteTools.styles.withPhoto.authorHolder]);
             authorsWrapper.appendChild(author);
@@ -325,7 +324,7 @@ var quoteTools = {
             author = author.textContent;
 
         if (photo)
-            photo = photo.src;
+            photo = photo.dataset.bigUrl;
 
         var data = {
             style       : currentNode.dataset.quoteStyle,
@@ -384,7 +383,7 @@ quoteTools.styles = {
         caption : 'ce_plugin_quote--caption',
         buttons : 'ce_plugin_quote--select_button',
         selectedType : 'ce-quote-settings--selected'
-    },
+    }
 };
 
 quoteTools.ui = {
@@ -452,6 +451,8 @@ quoteTools.photoUploadingCallbacks = {
         /** Appending uploaded image */
         uploadImageWrapper.classList.add(quoteTools.styles.authorsPhotoWrapper);
         uploadImageWrapper.appendChild(authorsPhoto);
+
+        authorsPhoto.dataset.bigUrl = parsed.data.file.bigUrl;
     },
 
     /** Error callback. Sends notification to user that something happend or plugin doesn't supports method */
