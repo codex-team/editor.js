@@ -5,7 +5,10 @@
 
 var header = (function(header) {
 
-    var methods = {
+    /**
+     * @private
+     */
+    var methods_ = {
 
         /**
          * Binds click event to passed button
@@ -14,7 +17,7 @@ var header = (function(header) {
 
             el.addEventListener('click', function () {
 
-                methods.selectTypeClicked(type);
+                methods_.selectTypeClicked(type);
 
             }, false);
         },
@@ -33,10 +36,10 @@ var header = (function(header) {
             /** Making new header */
             new_header = codex.draw.node(type, ['ce-header'], { innerHTML : old_header.innerHTML });
             new_header.contentEditable = true;
-            new_header.setAttribute('data-placeholder', 'Heading');
+            new_header.setAttribute('data-placeholder', 'Заголовок');
             new_header.dataset.headerData = type;
 
-            codex.content.switchBlock(old_header, new_header, 'header');
+            codex.content.switchBlock(old_header, new_header, 'heading_styled');
 
             /** Close settings after replacing */
             codex.toolbar.settings.close();
@@ -45,18 +48,20 @@ var header = (function(header) {
     };
 
     /**
+     * @private
+     *
      * Make initial header block
      * @param {object} JSON with block data
      * @return {Element} element to append
      */
-    header.make = function (data) {
+    var make_ = function (data) {
 
         var availableTypes = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'],
             tag;
 
         if (data && data.type && availableTypes.includes(data.type)) {
 
-            tag = codex.draw.node( data.type, [], {} );
+            tag = document.createElement(data.type);
 
             /**
              * Save header type in data-attr.
@@ -66,7 +71,7 @@ var header = (function(header) {
 
         } else {
 
-            tag = codex.draw.node( 'H2', [], {} );
+            tag = document.createElement('H2');
             tag.dataset.headerData = 'H2';
 
         }
@@ -80,10 +85,14 @@ var header = (function(header) {
         }
 
         tag.classList.add('ce-header');
-        tag.setAttribute('data-placeholder', 'Heading');
+        tag.setAttribute('data-placeholder', 'Заголовок');
         tag.contentEditable = true;
 
         return tag;
+
+    };
+
+    header.prepareDataForSave = function(data) {
 
     };
 
@@ -92,7 +101,7 @@ var header = (function(header) {
      */
     header.render = function (data) {
 
-        return this.make(data);
+        return make_(data);
 
     };
 
@@ -108,13 +117,6 @@ var header = (function(header) {
         };
 
         return data;
-    };
-
-    /**
-     * Block appending callback
-     */
-    header.appendCallback = function (argument) {
-        console.log('header appended...');
     };
 
     /**
@@ -138,7 +140,7 @@ var header = (function(header) {
         for (var type in types){
 
             selectTypeButton = codex.draw.node('SPAN', ['ce_plugin_header--select_button'], { textContent : types[type] });
-            methods.addSelectTypeClickListener(selectTypeButton, type);
+            methods_.addSelectTypeClickListener(selectTypeButton, type);
             holder.appendChild(selectTypeButton);
 
         }
