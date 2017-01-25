@@ -130,7 +130,7 @@ var toolbox = (function(toolbox) {
             blockData;
 
         /** Make block from plugin */
-        newBlockContent = tool.make();
+        newBlockContent = tool.render();
 
         /** information about block */
         blockData = {
