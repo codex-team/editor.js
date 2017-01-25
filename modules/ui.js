@@ -311,7 +311,10 @@ var ui = (function(ui){
             if (typeof codex.tools[tool].prepare != 'function')
                 continue;
 
-            codex.tools[tool].prepare();
+            if (codex.tools[tool].config) {
+                codex.tools[tool].prepare(codex.tools[tool].config);
+            }
+
         }
     };
 
