@@ -88,11 +88,7 @@ var codex =
 	        codex.sanitizer = __webpack_require__(18);
 	    };
 	
-<<<<<<< HEAD
 	    codex.version = ("1.3.4");
-=======
-	    codex.version = ("1.3.2");
->>>>>>> codex-team/master
 	
 	    /**
 	     * @public
