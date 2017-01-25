@@ -488,7 +488,9 @@ ceImage.photoUploadingCallbacks = {
 
             var imageInfo = JSON.parse(data);
 
-            console.log('here');
+            console.log(imageInfo);
+            console.log(image_plugin);
+
             image_plugin.dataset.stretched = false;
             image_plugin.dataset.src = imageInfo.file.url;
             image_plugin.dataset.bigUrl = imageInfo.file.bigUrl;
