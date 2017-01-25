@@ -499,7 +499,7 @@ ceImage.photoUploadingCallbacks = {
             image.dataset.height = imageInfo.file.height;
             image.dataset.additionalData = imageInfo.file.additionalData;
 
-            image.classList.remove('ce-image__preview');
+            image_plugin.classList.remove('ce-image__preview');
 
         };
 
@@ -594,7 +594,7 @@ ceImage.photoUploadingCallbacks = {
                 image.dataset.height = data.file.height;
                 image.dataset.additionalData = data.file.additionalData;
 
-                image.classList.remove('ce-image__preview');
+                image_plugin.classList.remove('ce-image__preview');
 
             }
         };
