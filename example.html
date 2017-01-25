@@ -132,17 +132,19 @@
                 showInlineToolbar: true,
                 allowedToPaste: true
             },
-            image: {
-                type: 'image',
+            image_extended: {
+                type: 'image_extended',
                 iconClassname: 'ce-icon-picture',
-                make: image.make,
                 appendCallback: image.appendCallback,
-                settings: image.makeSettings,
+                prepare: image.prepare,
+                makeSettings: image.makeSettings,
                 render: image.render,
                 save: image.save,
                 isStretched: true,
                 displayInToolbox: true,
-                enableLineBreaks: false
+                config: {
+                    uploadUrl : '/club/fetch'
+                }
             },
             instagram: {
                 type: 'instagram',
