@@ -76,7 +76,7 @@
         },
         {  
             "type":"video_extended",
-            "data":{  
+                "data":{
                 "source":"youtube",
                 "remote_id":"SqmAjcAPBpA",
                 "thumbnailUrl":"http:\/\/tj.local\/preview\/youtube\/SqmAjcAPBpA",
