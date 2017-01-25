@@ -6,7 +6,8 @@
     padding: 0.7em 0 !important;
     line-height: 1.7em;
 }
-.ce-paragraph:empty::before, .ce-paragraph p:empty::before{
+.ce-paragraph:empty::before,
+.ce-paragraph p:empty::before{
     content : attr(data-placeholder);
     color: #818BA1;
     opacity: .7;

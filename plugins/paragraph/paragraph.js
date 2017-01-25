@@ -6,14 +6,14 @@
 var paragraph = (function(paragraph) {
 
     /**
-     * @protected
+     * @private
      *
      * Make initial header block
      * @param {object} JSON with block data
      * @return {Element} element to append
      */
    
-    var _make = function (data) {
+    var make_ = function (data) {
 
         /** Create Empty DIV */
         var tag = codex.draw.node('DIV', ['ce-paragraph'], {});
@@ -36,13 +36,13 @@ var paragraph = (function(paragraph) {
 
     };
 
-    /*
-     * @protected
+    /**
+     * @private
      *
      * Handles input data for save
      * @param data
      */
-    var _prepareDataForSave = function(data) {
+    var prepareDataForSave_ = function(data) {
 
     };
 
@@ -63,7 +63,7 @@ var paragraph = (function(paragraph) {
      */
     paragraph.render = function (data) {
 
-        return _make(data);
+        return make_(data);
 
     };
 
