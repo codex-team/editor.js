@@ -164,7 +164,7 @@ var ceImage = {
             caption = content.querySelector('.' + ceImage.elementClasses.imageCaption);
 
         console.log(image);
-        
+
         var data = {
             background : false,
             border : false,
@@ -490,17 +490,16 @@ ceImage.photoUploadingCallbacks = {
 
             var imageInfo = JSON.parse(data);
 
-            console.log(imageInfo);
-            console.log(image_plugin);
+            var image = image_plugin.getElementsByTagName('IMG')[0];
 
-            image_plugin.dataset.stretched = false;
-            image_plugin.dataset.src = imageInfo.file.url;
-            image_plugin.dataset.bigUrl = imageInfo.file.bigUrl;
-            image_plugin.dataset.width = imageInfo.file.width;
-            image_plugin.dataset.height = imageInfo.file.height;
-            image_plugin.dataset.additionalData = imageInfo.file.additionalData;
+            image.dataset.stretched = false;
+            image.dataset.src = imageInfo.file.url;
+            image.dataset.bigUrl = imageInfo.file.bigUrl;
+            image.dataset.width = imageInfo.file.width;
+            image.dataset.height = imageInfo.file.height;
+            image.dataset.additionalData = imageInfo.file.additionalData;
 
-            image_plugin.classList.remove('ce-image__preview');
+            image.classList.remove('ce-image__preview');
 
         };
 
@@ -527,12 +526,6 @@ ceImage.photoUploadingCallbacks = {
             image_plugin = codex.tools.image_extended.make(data);
 
             image_plugin.classList.add('ce-image__preview');
-
-            var img = image_plugin.querySelector('img');
-
-            // img.onload = function() {
-            //     image_plugin.classList.remove('ce-image__preview');
-            // };
 
             codex.content.switchBlock(codex.content.currentNode, image_plugin, 'image_extended');
 
@@ -585,12 +578,6 @@ ceImage.photoUploadingCallbacks = {
 
                 image_plugin.classList.add('ce-image__preview');
 
-                var img = image_plugin.querySelector('img');
-
-                // img.onload = function() {
-                //     image_plugin.classList.remove('ce-image__preview');
-                // };
-
                 codex.content.switchBlock(codex.content.currentNode, image_plugin, 'image_extended');
 
             },
@@ -598,14 +585,16 @@ ceImage.photoUploadingCallbacks = {
 
                 var data = JSON.parse(result);
 
-                image_plugin.dataset.stretched = false;
-                image_plugin.dataset.src = data.file.url;
-                image_plugin.dataset.bigUrl = data.file.bigUrl;
-                image_plugin.dataset.width = data.file.width;
-                image_plugin.dataset.height = data.file.height;
-                image_plugin.dataset.additionalData = data.file.additionalData;
+                var image = image_plugin.getElementsByTagName('IMG')[0];
 
-                image_plugin.classList.remove('ce-image__preview');
+                image.dataset.stretched = false;
+                image.dataset.src = data.file.url;
+                image.dataset.bigUrl = data.file.bigUrl;
+                image.dataset.width = data.file.width;
+                image.dataset.height = data.file.height;
+                image.dataset.additionalData = data.file.additionalData;
+
+                image.classList.remove('ce-image__preview');
 
             }
         };

@@ -102,6 +102,7 @@
     background: #fff;
     border: 1px solid #ebeef3;
     border-radius: 3px;
+    box-sizing: border-box;
 }
 
     .ce-plugin-image__caption:empty::before {
