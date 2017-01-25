@@ -112,7 +112,7 @@ var callbacks = (function(callbacks) {
          * Allow paragraph lineBreaks with shift enter
          * Or if shiftkey pressed and enter and enabledLineBreaks, the let new block creation
          */
-        if ( event.shiftKey ){
+        if ( event.shiftKey || enableLineBreaks ){
 
             event.stopPropagation();
             event.stopImmediatePropagation();
@@ -128,7 +128,7 @@ var callbacks = (function(callbacks) {
         /**
          * Allow making new <p> in same block by SHIFT+ENTER and forbids to prevent default browser behaviour
          */
-        if ( event.shiftKey && !enableLineBreaks) {
+        if ( event.shiftKey && !enableLineBreaks ) {
             codex.callback.enterPressedOnBlock(codex.content.currentBlock, event);
             event.preventDefault();
             return;

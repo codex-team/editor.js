@@ -3024,7 +3024,7 @@ var codex =
 	         * Allow paragraph lineBreaks with shift enter
 	         * Or if shiftkey pressed and enter and enabledLineBreaks, the let new block creation
 	         */
-	        if (event.shiftKey) {
+	        if (event.shiftKey || enableLineBreaks) {
 	
 	            event.stopPropagation();
 	            event.stopImmediatePropagation();
