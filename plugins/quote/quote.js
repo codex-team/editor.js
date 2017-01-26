@@ -1,231 +1,152 @@
 /**
-* Codex Team
-* @author Khaydarov Murod
-*/
+ *
+ * Quote plugin
+ */
 
-var quoteTools = {
-
-    /** Default path to redactors images */
-    path : '/upload/redactor_images/',
+var quote = (function(quote) {
 
     /**
-    * Default quote style
-    */
-    defaultStyle : 'withPhoto',
+     * @private
+     *
+     * CSS styles
+     */
+    var elementClasses_ = {
+
+        ce_quote     : 'ce-quote',
+        quoteText    : 'ce_quote--text',
+        quoteAuthor  : 'ce_quote--author',
+        authorsJob   : 'ce_quote--job',
+        authorsPhoto : 'authorsPhoto',
+        authorsPhotoWrapper : 'authorsPhoto-wrapper',
+
+        simple : {
+            text : 'quoteStyle-simple--text'
+        },
+
+        withCaption : {
+            blockquote : 'quoteStyle-withCaption--blockquote',
+            author     : 'quoteStyle-withCaption--author'
+        },
+
+        withPhoto : {
+            photo   : 'quoteStyle-withPhoto--photo',
+            author  : 'quoteStyle-withPhoto--author',
+            job     : 'quoteStyle-withPhoto--job',
+            quote   : 'quoteStyle-withPhoto--quote',
+            wrapper : 'quoteStyle-withPhoto--wrapper',
+            authorHolder : 'quoteStyle-withPhoto--authorWrapper'
+        },
+
+        settings  : {
+            holder  : 'ce_plugin_quote--settings',
+            caption : 'ce_plugin_quote--caption',
+            buttons : 'ce_plugin_quote--select_button',
+            selectedType : 'ce-quote-settings--selected'
+        }
+    };
 
     /**
-    * Make Quote from JSON datasets
-    */
-    makeBlockToAppend : function(data) {
+     * @private
+     *
+     *
+     */
+    var methods_ = {
 
-        var tag;
+        changeStyleClicked : function() {
 
-        if (data && data.size) {
+            var changeStyleButton = this,
+                quote = codex.content.currentNode.querySelector('.' + elementClasses_.ce_quote),
+                newStyle = changeStyleButton.dataset.style,
+                styleSelectors = this.parentNode.childNodes;
 
-            data.style = 'withPhoto';
-
-            switch (data.style) {
-                case 'simple':
-                    tag = quoteTools.makeSimpleQuote(data);
-                    break;
-                case 'withCaption':
-                    tag = quoteTools.makeQuoteWithCaption(data);
-                    break;
-                case 'withPhoto':
-                    tag = quoteTools.makeQuoteWithPhoto(data);
-                    break;
-            }
-
-            tag.dataset.quoteStyle = data.size;
-
-        } else {
-
-            var settings = {
-                style  : 'withPhoto',
-                text   : '',
-                author : '',
-                job    : '',
-                photo  : ''
-            };
-
-            tag = quoteTools.makeQuoteWithPhoto(settings);
-        }
-
-        return tag;
-    },
-
-    render : function(data) {
-        return quoteTools.makeBlockToAppend(data);
-    },
-
-    validate : function(output) {
-
-        if (typeof output.text === "string") {
-            output.text = '<p>' + output.text + '</p>';
-        }
-
-        return output;
-    },
-
-    save : function(blockContent) {
-
-        /**
-        * Extracts JSON quote data from HTML block
-        * @param {Text} text, {Text} author, {Object} photo
-        */
-        var parsedblock = quoteTools.parseBlockQuote(blockContent);
-
-            if (parsedblock.style == 'withPhoto') {
-                parsedblock.style = 'small';
-            }
-
-            data = {
-                "text"   : parsedblock.text,
-                "format" : "html",
-                "cite"   : parsedblock.author,
-                "caption": parsedblock.job,
-                "size"   : parsedblock.style,
-                "image"  : parsedblock.photo
-            };
-
-        return data;
-    },
-
-    makeSettings : function(data) {
-
-        var holder  = document.createElement('DIV'),
-            types   = {
-                        big : 'По центру',
-                        small : 'Врезка'
-                        // simple      : 'Простая цитата',
-                        // withCaption : 'Цитата с подписью',
-                        // withPhoto   : 'Цитата с фото и ФИО'
-                    },
-            selectTypeButton;
-
-        /** Add holder classname */
-        holder.className = quoteTools.styles.settings.holder;
-
-        /** Now add type selectors */
-        for (var type in types){
-
-            selectTypeButton = document.createElement('SPAN');
-
-            selectTypeButton.textContent = types[type];
-            selectTypeButton.className   = quoteTools.styles.settings.buttons;
-
-            selectTypeButton.dataset.style = type;
-
-            if ( type == quoteTools.defaultStyle ){
-                selectTypeButton.classList.add(quoteTools.styles.settings.selectedType);
-            }
-
-            // var quoteStyle = quoteTools.selectTypeQuoteStyle(type);
-
-            selectTypeButton.addEventListener('click', quoteTools.changeStyleClicked, false);
-            // quoteTools.addSelectTypeClickListener(selectTypeButton, quoteStyle);
-
-            holder.appendChild(selectTypeButton);
-
-        }
-
-        return holder;
-
-    },
-
-    changeStyleClicked : function() {
-
-        var changeStyleButton = this,
-            quote = codex.content.currentNode.querySelector('.' + quoteTools.styles.ce_quote),
-            newStyle = changeStyleButton.dataset.style,
-            styleSelectors = this.parentNode.childNodes;
-
-        quote.dataset.quoteStyle = newStyle;
-
-        /**
-        * Mark selected style button
-        */
-        for (var i = styleSelectors.length - 1; i >= 0; i--) {
-            styleSelectors[i].classList.remove(quoteTools.styles.settings.selectedType);
-        }
-
-        this.classList.add(quoteTools.styles.settings.selectedType);
-
-    },
-
-    /**
-    * @deprecated
-    */
-    selectTypeQuoteStyle : function(type) {
-
-        /**
-        *  Choose Quote style to replace
-        */
-        switch (type) {
-            case 'simple':
-                quoteStyleFunction = quoteTools.makeSimpleQuote;
-                break;
-            case 'withCaption':
-                quoteStyleFunction = quoteTools.makeQuoteWithCaption;
-                break;
-            case 'withPhoto':
-                quoteStyleFunction = quoteTools.makeQuoteWithPhoto;
-                break;
-        }
-
-        return quoteStyleFunction;
-
-    },
-
-    /**
-    * @deprecated
-    */
-    addSelectTypeClickListener : function(el, quoteStyle) {
-
-        el.addEventListener('click', function () {
+            quote.dataset.quoteStyle = newStyle;
 
             /**
-            * Parsing currentNode to JSON.
-            */
-            var parsedOldQuote  = quoteTools.parseBlockQuote(),
-                newStyledQuote  = quoteStyle(parsedOldQuote);
+             * Mark selected style button
+             */
+            for (var i = styleSelectors.length - 1; i >= 0; i--) {
+                styleSelectors[i].classList.remove(elementClasses_.settings.selectedType);
+            }
 
-            var wrapper = codex.content.composeNewBlock(newStyledQuote, 'quote');
+            this.classList.add(elementClasses_.settings.selectedType);
+
+        },
+
+        /**
+         * @deprecated
+         */
+        selectTypeQuoteStyle : function(type) {
+
+            var quoteStyleFunction;
+
+            /**
+             *  Choose Quote style to replace
+             */
+            switch (type) {
+                case 'simple':
+                    quoteStyleFunction = methods_.makeSimpleQuote;
+                    break;
+                case 'withCaption':
+                    quoteStyleFunction = methods_.makeQuoteWithCaption;
+                    break;
+                case 'withPhoto':
+                    quoteStyleFunction = methods_.makeQuoteWithPhoto;
+                    break;
+            }
+
+            return quoteStyleFunction;
+
+        },
+
+        /**
+         * @deprecated
+         */
+        addSelectTypeClickListener : function(el, quoteStyle) {
+
+            el.addEventListener('click', function () {
+
+                /**
+                 * Parsing currentNode to JSON.
+                 */
+                var parsedOldQuote  = methods_.parseBlockQuote(),
+                    newStyledQuote  = quoteStyle(parsedOldQuote);
+
+                var wrapper = codex.content.composeNewBlock(newStyledQuote, 'quote');
                 wrapper.appendChild(newStyledQuote);
 
-            codex.content.switchBlock(codex.content.currentNode, newStyledQuote, 'quote');
+                codex.content.switchBlock(codex.content.currentNode, newStyledQuote, 'quote');
 
-            /** Close settings after replacing */
-            codex.toolbar.settings.close();
+                /** Close settings after replacing */
+                codex.toolbar.settings.close();
 
-        }, false);
+            }, false);
 
-    },
+        },
 
-    /**
-    * @deprecated
-    */
-    makeSimpleQuote : function(data) {
+        /**
+         * @deprecated
+         */
+        makeSimpleQuote : function(data) {
 
-        var wrapper = quoteTools.ui.makeBlock('BLOCKQUOTE', [quoteTools.styles.simple.text, quoteTools.styles.quoteText]);
+            var wrapper = ui_.makeBlock('BLOCKQUOTE', [elementClasses_.simple.text, elementClasses_.quoteText]);
 
-        wrapper.innerHTML = data.text || '';
+            wrapper.innerHTML = data.text || '';
 
-        wrapper.dataset.quoteStyle = 'simple';
-        wrapper.classList.add(quoteTools.styles.ce_quote);
-        wrapper.contentEditable = 'true';
+            wrapper.dataset.quoteStyle = 'simple';
+            wrapper.classList.add(elementClasses_.ce_quote);
+            wrapper.contentEditable = 'true';
 
-        return wrapper;
-    },
+            return wrapper;
+        },
 
-    /**
-    * @deprecated
-    */
-    makeQuoteWithCaption : function(data) {
+        /**
+         * @deprecated
+         */
+        makeQuoteWithCaption : function(data) {
 
-        var wrapper = quoteTools.ui.blockquote(),
-            text    = quoteTools.ui.makeBlock('DIV', [quoteTools.styles.withCaption.blockquote, quoteTools.styles.quoteText]),
-            author  = quoteTools.ui.makeBlock('DIV', [quoteTools.styles.withCaption.author, quoteTools.styles.quoteAuthor]);
+            var wrapper = ui_.blockquote(),
+                text    = ui_.makeBlock('DIV', [elementClasses_.withCaption.blockquote, elementClasses_.quoteText]),
+                author  = ui_.makeBlock('DIV', [elementClasses_.withCaption.author, elementClasses_.quoteAuthor]);
 
             /* make text block ontentEditable */
             text.contentEditable = 'true';
@@ -237,44 +158,44 @@ var quoteTools = {
 
             author.textContent = data.cite;
 
-        /* Appending created components */
-        wrapper.dataset.quoteStyle = 'withCaption';
-        wrapper.classList.add(quoteTools.styles.ce_quote);
+            /* Appending created components */
+            wrapper.dataset.quoteStyle = 'withCaption';
+            wrapper.classList.add(elementClasses_.ce_quote);
 
-        wrapper.appendChild(text);
-        wrapper.appendChild(author);
+            wrapper.appendChild(text);
+            wrapper.appendChild(author);
 
-        return wrapper;
+            return wrapper;
 
-    },
+        },
 
-    makeQuoteWithPhoto : function(data) {
+        makeQuoteWithPhoto : function(data) {
 
-        var wrapper  = quoteTools.ui.blockquote(),
-            photo    = quoteTools.ui.makeBlock('DIV', [quoteTools.styles.withPhoto.photo]),
-            author   = quoteTools.ui.makeBlock('DIV', [quoteTools.styles.withPhoto.author, quoteTools.styles.quoteAuthor]),
-            job      = quoteTools.ui.makeBlock('DIV', [quoteTools.styles.withPhoto.job, quoteTools.styles.authorsJob]),
-            quote    = quoteTools.ui.makeBlock('DIV', [quoteTools.styles.withPhoto.quote, quoteTools.styles.quoteText]);
+            var wrapper  = ui_.blockquote(),
+                photo    = ui_.makeBlock('DIV', [elementClasses_.withPhoto.photo]),
+                author   = ui_.makeBlock('DIV', [elementClasses_.withPhoto.author, elementClasses_.quoteAuthor]),
+                job      = ui_.makeBlock('DIV', [elementClasses_.withPhoto.job, elementClasses_.authorsJob]),
+                quote    = ui_.makeBlock('DIV', [elementClasses_.withPhoto.quote, elementClasses_.quoteText]);
 
             /* Default Image src */
             if (!data.image) {
 
-                var icon = quoteTools.ui.makeBlock('SPAN', ['ce-icon-picture']);
+                var icon = ui_.makeBlock('SPAN', ['ce-icon-picture']);
                 photo.appendChild(icon);
 
             } else {
 
-                var authorsPhoto = quoteTools.ui.img(quoteTools.styles.authorsPhoto);
+                var authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
 
                 authorsPhoto.src = data.image;
                 authorsPhoto.dataset.bigUrl = data.image;
 
-                photo.classList.add(quoteTools.styles.authorsPhotoWrapper);
+                photo.classList.add(elementClasses_.authorsPhotoWrapper);
                 photo.appendChild(authorsPhoto);
             }
 
 
-            photo.addEventListener('click', quoteTools.fileUploadClicked, false);
+            photo.addEventListener('click', fileUploadClicked_, false);
 
             /* make author block contentEditable */
             author.contentEditable = 'true';
@@ -284,7 +205,7 @@ var quoteTools = {
             job.contentEditable = 'true';
             job.textContent = data.caption;
 
-        var authorsWrapper = quoteTools.ui.makeBlock('DIV', [quoteTools.styles.withPhoto.authorHolder]);
+            var authorsWrapper = ui_.makeBlock('DIV', [elementClasses_.withPhoto.authorHolder]);
             authorsWrapper.appendChild(author);
             authorsWrapper.appendChild(job);
 
@@ -292,175 +213,324 @@ var quoteTools = {
             quote.contentEditable = 'true';
             quote.innerHTML = data.text;
 
-        wrapper.classList.add(quoteTools.styles.ce_quote);
-        wrapper.classList.add(quoteTools.styles.withPhoto.wrapper);
-        wrapper.dataset.quoteStyle = 'withPhoto';
+            wrapper.classList.add(elementClasses_.ce_quote);
+            wrapper.classList.add(elementClasses_.withPhoto.wrapper);
+            wrapper.dataset.quoteStyle = 'withPhoto';
 
-        wrapper.appendChild(quote);
-        wrapper.appendChild(photo);
-        wrapper.appendChild(authorsWrapper);
+            wrapper.appendChild(quote);
+            wrapper.appendChild(photo);
+            wrapper.appendChild(authorsWrapper);
 
-        return wrapper;
-    },
+            return wrapper;
+        },
 
-    parseBlockQuote : function(block) {
+        parseBlockQuote : function(block) {
 
-        var currentNode = block || codex.content.currentNode,
-            photo       = currentNode.getElementsByTagName('img')[0],
-            author      = currentNode.querySelector('.' + quoteTools.styles.quoteAuthor),
-            job         = currentNode.querySelector('.' + quoteTools.styles.authorsJob),
-            quote ;
+            var currentNode = block || codex.content.currentNode,
+                photo       = currentNode.getElementsByTagName('img')[0],
+                author      = currentNode.querySelector('.' + elementClasses_.quoteAuthor),
+                job         = currentNode.querySelector('.' + elementClasses_.authorsJob),
+                quote ;
 
-        /** Simple quote text placed in Blockquote tag*/
-        if ( currentNode.dataset.quoteStyle == 'simple' )
-            quote = currentNode.innerHTML;
-        else
-            quote = currentNode.querySelector('.' + quoteTools.styles.quoteText).innerHTML;
+            /** Simple quote text placed in Blockquote tag*/
+            if ( currentNode.dataset.quoteStyle == 'simple' )
+                quote = currentNode.innerHTML;
+            else
+                quote = currentNode.querySelector('.' + elementClasses_.quoteText).innerHTML;
 
-        if (job)
-            job = job.textContent;
+            if (job)
+                job = job.textContent;
 
-        if (author)
-            author = author.textContent;
+            if (author)
+                author = author.textContent;
 
-        if (photo)
-            photo = photo.dataset.bigUrl;
+            if (photo)
+                photo = photo.dataset.bigUrl;
 
-        var data = {
-            style       : currentNode.dataset.quoteStyle,
-            text        : quote,
-            author      : author,
-            job         : job,
-            photo       : photo
+            var data = {
+                style       : currentNode.dataset.quoteStyle,
+                text        : quote,
+                author      : author,
+                job         : job,
+                photo       : photo
+            };
+
+            return data;
+        }
+    };
+
+    /**
+     * @private
+     *
+     * Author image Uploader
+     */
+    var fileUploadClicked_ = function() {
+
+        var beforeSend  = photoUploadingCallbacks_.beforeSend,
+            success     = photoUploadingCallbacks_.success,
+            error       = photoUploadingCallbacks_.error;
+
+        codex.transport.selectAndUpload({
+            beforeSend: beforeSend,
+            success: success,
+            error: error
+        });
+
+    };
+
+    /**
+     * @private
+     *
+     */
+    var ui_ = {
+
+        wrapper : function($classList) {
+
+            var el = document.createElement('DIV');
+
+            el.classList.add($classList);
+
+            return el;
+
+        },
+
+        blockquote : function() {
+
+            var el = document.createElement('BLOCKQUOTE');
+
+            return el;
+
+        },
+
+        img : function(attribute) {
+
+            var imageTag = document.createElement('IMG');
+            imageTag.classList.add(attribute);
+
+            return imageTag;
+        },
+
+        makeBlock : function(tag, classList) {
+
+            var el = document.createElement(tag);
+
+            if ( classList ) {
+
+                for( var i = 0; i < classList.length; i++)
+                    el.className += ' ' + classList[i];
+
+            }
+
+            return el;
+
+        }
+
+    };
+
+    /**
+     * @private
+     *
+     * Callbacks
+     */
+    var photoUploadingCallbacks_ = {
+
+        beforeSend : function() {
+
+        },
+
+        /**
+         * Success callbacks for uploaded photo.
+         * Replace upload icon with uploaded photo
+         */
+        success : function(result) {
+
+            var parsed   = JSON.parse(result),
+                filename = parsed.filename,
+                uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
+                authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
+
+            authorsPhoto.src = parsed.data.file.url;
+
+            /** Remove icon from image wrapper */
+            uploadImageWrapper.innerHTML = '';
+
+            /** Appending uploaded image */
+            uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper);
+            uploadImageWrapper.appendChild(authorsPhoto);
+
+            authorsPhoto.dataset.bigUrl = parsed.data.file.bigUrl;
+        },
+
+        /** Error callback. Sends notification to user that something happend or plugin doesn't supports method */
+        error : function(result) {
+            console.log('Can\'t upload an image');
+        }
+
+    };
+
+    /**
+     * @private
+     *
+     * Make Quote from JSON datasets
+     */
+    var make_ = function(data) {
+
+        var tag;
+
+        if (data && data.size) {
+
+            data.style = quote.config.defaultStyle;
+
+            /**
+             * Supported types
+             */
+            switch (data.style) {
+
+                case 'simple':
+                    tag = methods_.makeSimpleQuote(data);
+                    break;
+                case 'withCaption':
+                    tag = methods_.makeQuoteWithCaption(data);
+                    break;
+                case 'withPhoto':
+                    tag = methods_.makeQuoteWithPhoto(data);
+                    break;
+            }
+
+            tag.dataset.quoteStyle = data.size;
+
+        } else {
+
+            var settings = {
+                "text"   : null,
+                "format" : "html",
+                "cite"   : null,
+                "caption": null,
+                "size"   : null,
+                "image"  : null
+            };
+
+            tag = methods_.makeQuoteWithPhoto(settings);
+        }
+
+        return tag;
+    };
+
+    var prepareDataForSave_ = function(data) {
+
+    };
+
+    /**
+     * @public
+     *
+     * Renderer
+     *
+     * @param data
+     */
+    quote.render = function(data) {
+        return make_(data);
+    };
+
+    quote.validate = function(output) {
+
+        if (typeof output.text != "string") {
+            return;
+        }
+
+        return output;
+    };
+
+    quote.save = function(blockContent) {
+
+        /**
+         * Extracts JSON quote data from HTML block
+         * @param {Text} text, {Text} author, {Object} photo
+         */
+        var parsedblock = methods_.parseBlockQuote(blockContent);
+
+        if (parsedblock.style == 'withPhoto') {
+            parsedblock.style = 'small';
+        }
+
+        data = {
+            "text"   : parsedblock.text,
+            "format" : "html",
+            "cite"   : parsedblock.author,
+            "caption": parsedblock.job,
+            "size"   : parsedblock.style,
+            "image"  : parsedblock.photo
         };
 
         return data;
-    },
-
-    fileUploadClicked : function() {
-
-        var success = quoteTools.photoUploadingCallbacks.success,
-            error   = quoteTools.photoUploadingCallbacks.error;
-
-        codex.transport.selectAndUpload({
-            success,
-            error,
-        });
-
-    }
-
-};
-
-quoteTools.styles = {
-
-    ce_quote     : 'ce-quote',
-    quoteText    : 'ce_quote--text',
-    quoteAuthor  : 'ce_quote--author',
-    authorsJob   : 'ce_quote--job',
-    authorsPhoto : 'authorsPhoto',
-    authorsPhotoWrapper : 'authorsPhoto-wrapper',
-
-    simple : {
-        text : 'quoteStyle-simple--text',
-    },
-
-    withCaption : {
-        blockquote : 'quoteStyle-withCaption--blockquote',
-        author     : 'quoteStyle-withCaption--author',
-    },
-
-    withPhoto : {
-        photo   : 'quoteStyle-withPhoto--photo',
-        author  : 'quoteStyle-withPhoto--author',
-        job     : 'quoteStyle-withPhoto--job',
-        quote   : 'quoteStyle-withPhoto--quote',
-        wrapper : 'quoteStyle-withPhoto--wrapper',
-        authorHolder : 'quoteStyle-withPhoto--authorWrapper',
-    },
-
-    settings  : {
-        holder  : 'ce_plugin_quote--settings',
-        caption : 'ce_plugin_quote--caption',
-        buttons : 'ce_plugin_quote--select_button',
-        selectedType : 'ce-quote-settings--selected'
-    }
-};
-
-quoteTools.ui = {
-
-    wrapper : function($classList) {
-
-        var el = document.createElement('DIV');
-
-        el.classList.add($classList);
-
-        return el;
-
-    },
-
-    blockquote : function() {
-
-        var el = document.createElement('BLOCKQUOTE');
-
-        return el;
-
-    },
-
-    img : function(attribute) {
-        var imageTag = document.createElement('IMG');
-        imageTag.classList.add(attribute);
-
-        return imageTag;
-    },
-
-    makeBlock : function(tag, classList) {
-
-        var el = document.createElement(tag);
-
-
-        if ( classList ) {
-
-            for( var i = 0; i < classList.length; i++)
-                el.className += ' ' + classList[i];
-
-        }
-        return el;
-
-    }
-
-};
-
-quoteTools.photoUploadingCallbacks = {
+    };
 
     /**
-    * Success callbacks for uploaded photo.
-    * Replace upload icon with uploaded photo
-    */
-    success : function(result) {
+     * @public
+     *
+     * Draws settings
+     */
+    quote.makeSettings = function(data) {
 
-        var parsed   = JSON.parse(result),
-            filename = parsed.filename,
-            uploadImageWrapper = codex.content.currentNode.querySelector('.' + quoteTools.styles.withPhoto.photo),
-            authorsPhoto = quoteTools.ui.img(quoteTools.styles.authorsPhoto);
+        var holder  = document.createElement('DIV'),
+            types   = {
+                big : 'По центру',
+                small : 'Врезка'
+            },
+            selectTypeButton;
 
-        authorsPhoto.src = parsed.data.file.url;
+        /** Add holder classname */
+        holder.className = elementClasses_.settings.holder;
 
-        /** Remove icon from image wrapper */
-        uploadImageWrapper.innerHTML = '';
+        /** Now add type selectors */
+        for (var type in types){
 
-        /** Appending uploaded image */
-        uploadImageWrapper.classList.add(quoteTools.styles.authorsPhotoWrapper);
-        uploadImageWrapper.appendChild(authorsPhoto);
+            selectTypeButton = document.createElement('SPAN');
 
-        authorsPhoto.dataset.bigUrl = parsed.data.file.bigUrl;
-    },
+            selectTypeButton.textContent = types[type];
+            selectTypeButton.className   = elementClasses_.settings.buttons;
 
-    /** Error callback. Sends notification to user that something happend or plugin doesn't supports method */
-    error : function(result) {
+            selectTypeButton.dataset.style = type;
 
-        console.log('Can\'t upload an image');
-        codex.notifications.errorThrown();
+            if ( type == quote.config.defaultStyle ){
+                selectTypeButton.classList.add(quoteTools.styles.settings.selectedType);
+            }
 
-    }
+            // var quoteStyle = quoteTools.selectTypeQuoteStyle(type);
 
-};
+            selectTypeButton.addEventListener('click', methods_.changeStyleClicked, false);
+            // quoteTools.addSelectTypeClickListener(selectTypeButton, quoteStyle);
+
+            holder.appendChild(selectTypeButton);
+
+        }
+
+        return holder;
+
+    };
+
+    /**
+     * @public
+     * Default path to redactors images
+     * @type {null}
+     */
+    quote.path = null;
+
+    /**
+     * @public
+     *
+     * @type {null}
+     */
+    quote.config = null;
+
+    /**
+     * @public
+     *
+     * @param config
+     */
+    quote.prepare = function(config) {
+        quote.config = config;
+    };
+
+    return quote;
+
+})({});
