@@ -20,12 +20,12 @@ paste.patterns = [
     },
     {
         type: 'instagram',
-        regex: new RegExp("http?.+instagram.com\/p?."),
+        regex: /http?.+instagram.com\/p\/([a-zA-Z0-9]*)/,
         callback: instagram.urlPastedCallback
     },
     {
         type: 'twitter',
-        regex: new RegExp("http?.+twitter.com?.+\/"),
+        regex: /http?.+twitter.com?.+\//,
         callback: twitter.urlPastedCallback
     },
     {

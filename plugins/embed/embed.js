@@ -28,6 +28,22 @@ var embed = function(embed){
             wrapper.innerHTML = html;
 
             return wrapper;
+        },
+
+        getRemoteId: function(source, execArray) {
+
+            switch(source) {
+                case 'yandex-music-track':
+                    id = execArray[2]+'/'+execArray[1];
+                    break;
+                case 'yandex-music-playlist':
+                    id = execArray[1]+'/'+execArray[2];
+                    break;
+                default:
+                    id = execArray[1];
+            }
+
+            return id;
         }
     };
 
@@ -82,19 +98,19 @@ var embed = function(embed){
             width: 600
         },
         'yandex-music-album': {
-            regex: '',
+            regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)/,
             html: "<iframe frameborder=\"0\" style=\"border:none;width:540px;height:400px;\" width=\"540\" height=\"400\" src=\"https://music.yandex.ru/iframe/#album/<%= remote_id %>/\"></iframe>",
             height: 400,
             width: 540
         },
         'yandex-music-track': {
-            regex: '',
+            regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)\/track\/([0-9]*)/,
             html: "<iframe frameborder=\"0\" style=\"border:none;width:540px;height:100px;\" width=\"540\" height=\"100\" src=\"https://music.yandex.ru/iframe/#track/<%= remote_id %>/\"></iframe>",
             height: 100,
             width: 540
         },
         'yandex-music-playlist': {
-            regex: '',
+            regex: /https?:\/\/music.yandex.ru\/users\/([^\/\?\&]*)\/playlists\/([0-9]*)/,
             html: "<iframe frameborder=\"0\" style=\"border:none;width:540px;height:400px;\" width=\"540\" height=\"400\" src=\"https://music.yandex.ru/iframe/#playlist/<%= remote_id %>/show/cover/description/\"></iframe>",
             height: 400,
             width: 540
@@ -162,19 +178,7 @@ var embed = function(embed){
     embed.urlPastedCallback = function(url, pattern) {
 
         var execArray = pattern.regex.exec(url),
-            id;
-
-
-        switch(pattern.type) {
-            case 'yandex-music-track':
-                id = execArray[2]+'/'+execArray[1];
-                break;
-            case 'yandex-music-playlist':
-                id = execArray[1]+'/'+execArray[2];
-                break;
-            default:
-                id = execArray[1];
-        }
+            id = methods.getRemoteId(pattern.type, execArray);
 
         var data = {
             source: pattern.type,
@@ -183,6 +187,16 @@ var embed = function(embed){
         };
 
         embed.make(data, true);
+    };
+
+    embed.validate = function(savedData) {
+
+        var source = savedData.source,
+            execArray = services[source].regex.exec(savedData.thumbnailUrl),
+            remoteId = methods.getRemoteId(source, execArray);
+
+        return remoteId == savedData.remote_id;
+
     };
 
     return embed;
