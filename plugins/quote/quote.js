@@ -18,6 +18,7 @@ var quote = (function(quote) {
         authorsJob   : 'ce_quote--job',
         authorsPhoto : 'authorsPhoto',
         authorsPhotoWrapper : 'authorsPhoto-wrapper',
+        authorsPhotoWrapper_preview : 'authorsPhotoWrapper_preview',
 
         simple : {
             text : 'quoteStyle-simple--text'
@@ -336,6 +337,30 @@ var quote = (function(quote) {
 
         beforeSend : function() {
 
+            var input = codex.transport.input,
+                files = input.files,
+                file  = files[0],
+                fileReader = new FileReader();
+
+            fileReader.readAsDataURL(file);
+
+            fileReader.onload = function(e) {
+
+                var uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
+                    authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
+
+                authorsPhoto.src = e.target.result;
+
+                /** Remove icon from image wrapper */
+                uploadImageWrapper.innerHTML = '';
+
+                /** Appending uploaded image */
+                uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper);
+                uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper_preview);
+
+                uploadImageWrapper.appendChild(authorsPhoto);
+            };
+
         },
 
         /**
@@ -346,19 +371,12 @@ var quote = (function(quote) {
 
             var parsed   = JSON.parse(result),
                 filename = parsed.filename,
-                uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
-                authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
+                uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo);
 
-            authorsPhoto.src = parsed.data.file.url;
+            var img = uploadImageWrapper.querySelector('IMG');
+            img.src = parsed.data.file.bigUrl;
 
-            /** Remove icon from image wrapper */
-            uploadImageWrapper.innerHTML = '';
-
-            /** Appending uploaded image */
-            uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper);
-            uploadImageWrapper.appendChild(authorsPhoto);
-
-            authorsPhoto.dataset.bigUrl = parsed.data.file.bigUrl;
+            uploadImageWrapper.classList.remove(elementClasses_.authorsPhotoWrapper_preview);
         },
 
         /** Error callback. Sends notification to user that something happend or plugin doesn't supports method */
@@ -439,7 +457,7 @@ var quote = (function(quote) {
         }
 
         data.text = wrapper.innerHTML;
-        
+
         return data;
     };
 
