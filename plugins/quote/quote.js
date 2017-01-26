@@ -328,12 +328,30 @@ var quote = (function(quote) {
 
     };
 
+
+
     /**
      * @private
      *
      * Callbacks
      */
     var photoUploadingCallbacks_ = {
+
+        preview_ : function(e) {
+
+            var uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
+                authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
+
+            authorsPhoto.src = e.target.result;
+
+            /** Remove icon from image wrapper */
+            uploadImageWrapper.innerHTML = '';
+
+            /** Appending uploaded image */
+            uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper, elementClasses_.authorsPhotoWrapper_preview);
+
+            uploadImageWrapper.appendChild(authorsPhoto);
+        },
 
         beforeSend : function() {
 
@@ -344,22 +362,7 @@ var quote = (function(quote) {
 
             fileReader.readAsDataURL(file);
 
-            fileReader.onload = function(e) {
-
-                var uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
-                    authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
-
-                authorsPhoto.src = e.target.result;
-
-                /** Remove icon from image wrapper */
-                uploadImageWrapper.innerHTML = '';
-
-                /** Appending uploaded image */
-                uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper);
-                uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper_preview);
-
-                uploadImageWrapper.appendChild(authorsPhoto);
-            };
+            fileReader.onload = photoUploadingCallbacks_.preview_(e);
 
         },
 
@@ -436,6 +439,8 @@ var quote = (function(quote) {
 
     var prepareDataForSave_ = function(data) {
 
+        var TEXTNODE = 3;
+
         if (data.size == 'withPhoto') {
             data.size = 'small';
         }
@@ -443,13 +448,15 @@ var quote = (function(quote) {
         var wrapper = document.createElement('DIV');
         wrapper.innerHTML = data.text;
 
-        var child;
+        var child,
+            paragraph;
 
         for (child = 0; child < wrapper.childNodes.length; child++) {
-            // is TEXT node ?
-            if (wrapper.childNodes[child].nodeType === 3) {
 
-                var paragraph = document.createElement('P');
+            // is TEXT node ?
+            if (wrapper.childNodes[child].nodeType === TEXTNODE) {
+
+                paragraph = document.createElement('P');
                 paragraph.innerHTML = wrapper.childNodes[child].textContent;
 
                 wrapper.childNodes[child].replaceWith(paragraph);
