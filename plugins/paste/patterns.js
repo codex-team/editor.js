@@ -10,26 +10,23 @@
  *
  */
 
-pasteTool.patterns = [
+var paste = paste || {};
+
+paste.patterns = [
     {
         type: 'image',
-        regex: /(http)?s?:?(\/\/[^"']*\.(?:png|jpg|jpeg|gif))/,
-        callback: ceImage.photoUploadingCallbacks.uploadImage
-    },
-    {
-        type: 'uploadCare',
-        regex: /^https:\/\/(uploadcare\.cmtt\.ru|ucarecdn\.com|static[0-9]+\.siliconrus\.cmtt\.ru|static[0-9]+\.cmtt\.ru)/,
-        callback: ceImage.photoUploadingCallbacks.uploadFromUploadCare
+        regex: /(?:([^:\/?#]+):)?(?:\/\/([^\/?#]*))?([^?#]*\.(?:jpe?g|gif|png))(?:\?([^#]*))?(?:#(.*))?/i,
+        callback: image.urlPastedCallbacks.uploadImage
     },
     {
         type: 'instagram',
-        regex: new RegExp("http?.+instagram.com\/p?."),
-        callback: instagramTool.urlPastedCallback
+        regex: /http?.+instagram.com\/p\/([a-zA-Z0-9]*)/,
+        callback: instagram.urlPastedCallback
     },
     {
         type: 'twitter',
-        regex: new RegExp("http?.+twitter.com?.+\/"),
-        callback: twitterTool.urlPastedCallback
+        regex: /http?.+twitter.com?.+\//,
+        callback: twitter.urlPastedCallback
     },
     {
         type: 'facebook',
@@ -43,38 +40,58 @@ pasteTool.patterns = [
     },
     {
         type: 'youtube',
-        regex: /^.*(?:(?:youtu\.be\/)|(?:youtube\.com)\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)(?:[\?\&]t\=(\d*)|)/,
-        callback: video.urlPastedCallback
+        regex: /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/,
+        callback: embed.urlPastedCallback
     },
     {
         type: 'vimeo',
         regex: /(?:http[s]?:\/\/)?(?:www.)?vimeo\.co(?:.+\/([^\/]\d+)(?:#t=[\d]+)?s?$)/,
-        callback: video.urlPastedCallback
+        callback: embed.urlPastedCallback
     },
     {
         type: 'coub',
         regex: /https?:\/\/coub\.com\/view\/([^\/\?\&]+)/,
-        callback: video.urlPastedCallback
+        callback: embed.urlPastedCallback
     },
     {
         type: 'vine',
         regex: /https?:\/\/vine\.co\/v\/([^\/\?\&]+)/,
-        callback: video.urlPastedCallback
-    },
-    {
-        type: 'vk',
-        regex: /https?:\/\/vk\.com\/.*(?:video)[-0-9]+_([0-9]+)/,
-        callback: video.urlPastedCallback
+        callback: embed.urlPastedCallback
     },
     {
         type: 'imgur',
         regex: /https?:\/\/(?:i\.)?imgur\.com.*\/([a-zA-Z0-9]+)(?:\.gifv)?/,
-        callback: video.urlPastedCallback
+        callback: embed.urlPastedCallback
     },
     {
         type: 'gfycat',
         regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
-        callback: video.urlPastedCallback
+        callback: embed.urlPastedCallback
+    },
+    {
+        type: 'twitch-channel',
+        regex: /https?:\/\/www.twitch.tv\/([^\/\?\&]*)/,
+        callback: embed.urlPastedCallback
+    },
+    {
+        type: 'twitch-video',
+        regex: /https?:\/\/www.twitch.tv\/[^\/\?\&]*\/v\/([0-9]*)/,
+        callback: embed.urlPastedCallback
+    },
+    {
+        type: 'yandex-music-album',
+        regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)/,
+        callback: embed.urlPastedCallback
+    },
+    {
+        type: 'yandex-music-track',
+        regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)\/track\/([0-9]*)/,
+        callback: embed.urlPastedCallback
+    },
+    {
+        type: 'yandex-music-playlist',
+        regex: /https?:\/\/music.yandex.ru\/users\/([^\/\?\&]*)\/playlists\/([0-9]*)/,
+        callback: embed.urlPastedCallback
     }
 
 ];

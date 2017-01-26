@@ -1,10 +1,10 @@
-.ce-redactor .video {
-    width: 100%;
-    max-width: 650px;
-    margin: 10px auto;
+.ce-redactor .embed {
+    max-width: 600px;
+    margin: 15px 0;
+    background: #fff;
 }
 
-.video__loader {
+.embed__loader {
     background-image: url("loading.gif") !important;
     background-repeat: no-repeat;
     background-position: center center;

@@ -9,15 +9,11 @@ var instagram = (function(instagram) {
         render : function(content) {
 
             codex.content.switchBlock(codex.content.currentNode, content, 'instagram');
+            
+            setTimeout(function() {
+                window.instgrm.Embeds.process();
+            }, 200);
 
-            var blockContent = codex.content.currentNode.childNodes[0];
-            blockContent.classList.add('instagram__loader');
-
-            window.instgrm.Embeds.process();
-
-            setTimeout(function(){
-                blockContent.classList.remove('instagram__loader');
-            }, 500);
         },
 
         /**

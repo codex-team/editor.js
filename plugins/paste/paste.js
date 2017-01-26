@@ -9,42 +9,46 @@
  *
  * Main tool settings.
  */
-var pasteTool = {
+var paste = function(paste){
     /**
      * Saves data
      * @param event
      */
-    pasted : function(event) {
+    paste.pasted = function(event) {
 
         var clipBoardData = event.clipboardData || window.clipboardData,
-            content = clipBoardData.getData('Text'),
-            pastedDataIsEmbeded;
+            content = clipBoardData.getData('Text');
 
-        pastedDataIsEmbeded = pasteTool.analize(content);
+        var result = analize(content);
 
-        if ( pastedDataIsEmbeded ) {
+        if (result) {
             event.preventDefault();
-            event.stopPropagation();
             event.stopImmediatePropagation();
         }
-    },
+    };
 
     /**
      * Analizes pated string and calls necessary method
      */
-    analize : function(string) {
 
-        var isEmbed = false;
+    var analize = function(string) {
 
-        pasteTool.patterns.map(function(pattern, i){
+        var result = false;
+
+        paste.patterns.map(function(pattern, i){
             if (pattern.regex.test(string)) {
                 pattern.callback.call(null, string, pattern);
-                isEmbed = true;
+                result = true;
             }
         });
 
-        return isEmbed;
-    }
-};
+        return result;
+
+    };
+
+
+    return paste;
+
+}(paste || {});
 
 
