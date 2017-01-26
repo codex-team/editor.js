@@ -166,8 +166,6 @@ var content = (function(content) {
             newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
         }
 
-        console.log('V if ne popal');
-
         /** Replacing */
         codex.nodes.redactor.replaceChild(newBlock, targetBlock);
 
