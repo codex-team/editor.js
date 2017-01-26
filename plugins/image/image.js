@@ -301,11 +301,11 @@ var image = (function(image) {
                 var input = codex.transport.input,
                     files = input.files;
 
-                var _validFileExtensions = ["jpg", "jpeg", "bmp", "gif", "png"];
+                var validFileExtensions = ["jpg", "jpeg", "bmp", "gif", "png"];
 
                 var type = files[0].type.split('/');
 
-                var result = _validFileExtensions.some(function(ext) {
+                var result = validFileExtensions.some(function(ext) {
                     return ext == type[1]
                 });
 
