@@ -24,9 +24,25 @@ var image = (function(image) {
         imageWrapper  : 'ce-plugin-image__wrapper',
         formHolder    : 'ce-plugin-image__holder',
         uploadButton  : 'ce-plugin-image__button',
-        imagePreview  : 'ce-image__preview'
+        imagePreview  : 'ce-image__preview',
+        selectorHolder: 'selector-holder',
+        selectorButton: 'selector-holder_button',
+        settingsHolder: 'settings-holder',
+        imageWrapperBordered : 'image__wrapper--bordered'
 
     };
+
+    /**
+     * Cache settings
+     * @type {null}
+     */
+    image.cachedSettings = null;
+
+    /**
+     * Array of configurations
+     * Need to change statement
+     */
+    image.configurations = [];
 
     /**
      *
@@ -64,11 +80,13 @@ var image = (function(image) {
          * @param {string} style - css class
          * @return {object} image - document IMG tag
          */
-        image : function(file, style) {
+        image : function(file, styles) {
 
             var image = document.createElement('IMG');
 
-            image.classList.add(style);
+            styles.map(function(item) {
+                image.classList.add(item);
+            });
 
             image.src = file.url;
             image.dataset.bigUrl = file.bigUrl;
@@ -119,12 +137,12 @@ var image = (function(image) {
          * @param {boolean} stretched - stretched or not
          * @return wrapped block with image and caption
          */
-        makeImage : function(data, imageTypeClass, stretched) {
+        makeImage : function(data, imageTypeClasses, stretched) {
 
             var file = data.file,
                 text = data.caption,
                 type     = data.type,
-                image    = ui_.image(file, imageTypeClass),
+                image    = ui_.image(file, imageTypeClasses),
                 caption  = ui_.caption(),
                 wrapper  = ui_.wrapper();
 
@@ -229,51 +247,79 @@ var image = (function(image) {
 
             el.addEventListener('click', function() {
 
-                methods_.selectTypeClicked(type);
+                switch (type) {
+                    case 'bordered':
+                        methods_.toggleBordered(type); break;
+                    case 'stretched':
+                        methods_.toggleStretched(type); break;
+                }
+
 
             }, false);
 
         },
 
-        selectTypeClicked : function(type) {
+        toggleBordered : function(type) {
 
             var current = codex.content.currentNode,
                 blockContent = current.childNodes[0],
-                image = ui_.getImage(current),
-                inFeed = false,
+                img = ui_.getImage(current),
                 wrapper = current.querySelector('.' + elementClasses_.imageWrapper);
 
-            if (!image) {
+            if (!img) {
+                return;
+            }
+
+            img.classList.toggle(elementClasses_.imageWrapperBordered);
+
+            if (img.classList.contains(elementClasses_.imageWrapperBordered)) {
+                wrapper.dataset.bordered = true;
+            } else {
+                wrapper.dataset.bordered = false;
+            }
+
+            /**
+             * Highlight current choice
+             */
+            image.configurations[type].classList.toggle('plugged-in');
+        },
+
+        toggleStretched : function(type) {
+
+            var current = codex.content.currentNode,
+                blockContent = current.childNodes[0],
+                img = ui_.getImage(current),
+                wrapper = current.querySelector('.' + elementClasses_.imageWrapper);
+
+            if (!img) {
                 return;
             }
 
             /** Clear classList */
             current.className = '';
-            image.className = '';
 
             /** Add important first-level class ce_block */
             current.classList.add(codex.ui.className.BLOCK_CLASSNAME);
 
-            if (type === 'stretched') {
+            blockContent.classList.toggle(elementClasses_.blockStretched);
+            img.classList.toggle(elementClasses_.uploadedImage.stretched);
+            img.classList.toggle(elementClasses_.uploadedImage.centered);
 
-                image.classList.add(elementClasses_.uploadedImage.stretched);
+            if (blockContent.classList.contains(elementClasses_.blockStretched)) {
 
-                blockContent.classList.add(elementClasses_.blockStretched);
-
-                /** Setting dataset for saver */
                 wrapper.dataset.stretched = true;
 
-            } else if (type === 'centered') {
+            } else {
 
-                image.classList.add(elementClasses_.uploadedImage.centered);
-
-                blockContent.classList.remove(elementClasses_.blockStretched);
-
-                /** Setting dataset for saver */
                 wrapper.dataset.stretched = false;
+
             }
 
-            codex.toolbar.settings.close();
+            /**
+             * Highlight current choice
+             */
+            image.configurations[type].classList.toggle('plugged-in');
+
         }
     };
 
@@ -485,17 +531,24 @@ var image = (function(image) {
      */
     var make_ = function ( data ) {
 
-        var holder;
+        var holder,
+            classes = [];
 
         if (data) {
 
+            if (data.border) {
+                classes.push(elementClasses_.imageWrapperBordered);
+            }
+
             if ( data.isstretch || data.isstretch === 'true') {
 
-                holder = ui_.makeImage(data, elementClasses_.uploadedImage.stretched, 'true');
+                classes.push(elementClasses_.uploadedImage.stretched);
+                holder = ui_.makeImage(data, classes, 'true');
 
             } else {
 
-                holder = ui_.makeImage(data, elementClasses_.uploadedImage.centered, 'false');
+                classes.push(elementClasses_.uploadedImage.centered);
+                holder = ui_.makeImage(data, classes, 'false');
 
             }
 
@@ -565,7 +618,7 @@ var image = (function(image) {
 
         var data = {
             background : false,
-            border : false,
+            border : content.dataset.bordered,
             isstretch : content.dataset.stretched === 'true' ? true : false,
             file : {
                 url : image.dataset.src || image.src,
@@ -581,7 +634,6 @@ var image = (function(image) {
         return data;
     };
 
-
     /**
      * @public
      *
@@ -590,29 +642,51 @@ var image = (function(image) {
      */
     image.makeSettings = function () {
 
-        var holder  = document.createElement('DIV'),
-            types   = {
-                centered  : 'По центру',
-                stretched : 'На всю ширину'
-            },
-            selectTypeButton;
+        var holder  = document.createElement('DIV');
+
+        var types = {
+            stretched : "Растянуть",
+            bordered  : "Добавить рамку"
+        };
 
         /** Add holder classname */
         holder.className = 'ce_plugin_image--settings';
 
+        if (image.cachedSettings) {
+            return image.cachedSettings;
+        }
+
         /** Now add type selectors */
         for (var type in types){
 
-            selectTypeButton = document.createElement('SPAN');
 
-            selectTypeButton.textContent = types[type];
-            selectTypeButton.className   = 'ce_plugin_image--select_button';
+            /**
+             * Settings template
+             */
+            var settingsHolder = document.createElement('DIV'),
+                selectorsHolder = document.createElement('SPAN'),
+                selectorsButton = document.createElement('SPAN');
 
-            methods_.addSelectTypeClickListener(selectTypeButton, type);
+            settingsHolder.classList.add(elementClasses_.settingsHolder);
+            selectorsHolder.classList.add(elementClasses_.selectorHolder);
+            selectorsButton.classList.add(elementClasses_.selectorButton);
 
-            holder.appendChild(selectTypeButton);
+            selectorsHolder.appendChild(selectorsButton);
+            settingsHolder.appendChild(selectorsHolder);
+
+            selectTypeButton = document.createTextNode(types[type]);
+            settingsHolder.appendChild(selectTypeButton);
+
+            methods_.addSelectTypeClickListener(settingsHolder, type);
+
+            image.configurations[type] = settingsHolder;
+
+            holder.appendChild(settingsHolder);
+
 
         }
+
+        image.cachedSettings = holder;
 
         return holder;
 
