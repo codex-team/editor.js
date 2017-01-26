@@ -15,6 +15,18 @@
     filter: blur(1.7px) grayscale(1);
 }
 
+
+.ce-image__wrapper img {
+    transition: all 500ms ease-in;
+    will-change: opacity, filter;
+}
+
+.ce-image__preview img {
+    opacity: .5;
+    filter: blur(1.7px) grayscale(1);
+}
+
+
 /** upload image form */
 .ce-plugin-image__holder{
 	position: relative;
@@ -67,10 +79,13 @@
 		color: #393F52;
 	}
 
+
+
 /** Uploaded image */
 .ce-plugin-image__wrapper {
     padding: 1em 0;
 }
+
 .ce-plugin-image__uploaded--centered {
     display: block;
     max-width: 600px;
@@ -95,6 +110,7 @@
     background: #fff;
     border: 1px solid #ebeef3;
     border-radius: 3px;
+    box-sizing: border-box;
 }
 
     .ce-plugin-image__caption:empty::before {
