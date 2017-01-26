@@ -422,8 +422,24 @@ var quote = (function(quote) {
             data.size = 'small';
         }
 
-        console.log(data);
+        var wrapper = document.createElement('DIV');
+        wrapper.innerHTML = data.text;
 
+        var child;
+
+        for (child = 0; child < wrapper.childNodes.length; child++) {
+            // is TEXT node ?
+            if (wrapper.childNodes[child].nodeType === 3) {
+
+                var paragraph = document.createElement('P');
+                paragraph.innerHTML = wrapper.childNodes[child].textContent;
+
+                wrapper.childNodes[child].replaceWith(paragraph);
+            }
+        }
+
+        data.text = wrapper.innerHTML;
+        
         return data;
     };
 
