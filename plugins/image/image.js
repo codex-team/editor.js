@@ -247,17 +247,9 @@ var image = (function(image) {
                 return;
             }
 
-            if (current.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE)) {
-                inFeed = true;
-            }
-
             /** Clear classList */
             current.className = '';
             image.className = '';
-
-            if (inFeed) {
-                current.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
-            }
 
             /** Add important first-level class ce_block */
             current.classList.add(codex.ui.className.BLOCK_CLASSNAME);
@@ -472,7 +464,7 @@ var image = (function(image) {
      */
     image.path   = null;
 
-    /**
+	/**
      * Plugin configuration
      */
     image.config = null;
