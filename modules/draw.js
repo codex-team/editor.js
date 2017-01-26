@@ -107,7 +107,7 @@ var draw = (function(draw) {
 
         input.type        = 'input';
         input.className  += 'inputForLink';
-        input.placeholder = 'Type URL ...';
+        input.placeholder = 'Вставьте ссылку ...';
         input.setAttribute('form', 'defaultForm');
 
         input.setAttribute('autofocus', 'autofocus');

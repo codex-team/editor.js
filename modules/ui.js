@@ -183,8 +183,8 @@ var ui = (function(ui){
                 continue;
             }
 
-            if (typeof tool.make != 'function') {
-                codex.core.log('make method missed. Tool %o skipped', 'warn', name);
+            if (typeof tool.render != 'function') {
+                codex.core.log('render method missed. Tool %o skipped', 'warn', name);
                 continue;
             }
 
@@ -229,7 +229,7 @@ var ui = (function(ui){
 
             link: {
                 icon    : 'ce-icon-link',
-                command : 'createLink',
+                command : 'createLink'
             }
         };
 
@@ -286,6 +286,7 @@ var ui = (function(ui){
          * Clicks to SETTINGS button in toolbar
          */
         codex.nodes.showSettingsButton.addEventListener('click', codex.callback.showSettingsButtonClicked, false );
+
         /**
          *  @deprecated ( but now in use for syncronization );
          *  Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text
@@ -310,7 +311,8 @@ var ui = (function(ui){
             if (typeof codex.tools[tool].prepare != 'function')
                 continue;
 
-            codex.tools[tool].prepare();
+            codex.tools[tool].prepare(codex.tools[tool].config || {});
+
         }
     };
 
@@ -377,7 +379,7 @@ var ui = (function(ui){
 
         initialBlock = codex.tools[initialBlockType].render();
 
-        initialBlock.setAttribute('data-placeholder', 'Write your story...');
+        initialBlock.setAttribute('data-placeholder', 'Расскажите свою историю...');
 
         codex.content.insertBlock({
             type  : initialBlockType,

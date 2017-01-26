@@ -2,31 +2,76 @@
 * Example of making plugin
 * H e a d e r
 */
-var headerTool = {
+
+var header = (function(header) {
 
     /**
-    * Make initial header block
-    * @param {object} JSON with block data
-    * @return {Element} element to append
-    */
-    make : function (data) {
+     * @private
+     */
+    var methods_ = {
+
+        /**
+         * Binds click event to passed button
+         */
+        addSelectTypeClickListener : function (el, type) {
+
+            el.addEventListener('click', function () {
+
+                methods_.selectTypeClicked(type);
+
+            }, false);
+        },
+
+        /**
+         * Replaces old header with new type
+         * @params {string} type - new header tagName: H1—H6
+         */
+        selectTypeClicked : function (type) {
+
+            var old_header, new_header;
+
+            /** Now current header stored as a currentNode */
+            old_header = codex.content.currentNode.querySelector('[contentEditable]');
+
+            /** Making new header */
+            new_header = codex.draw.node(type, ['ce-header'], { innerHTML : old_header.innerHTML });
+            new_header.contentEditable = true;
+            new_header.setAttribute('data-placeholder', 'Заголовок');
+            new_header.dataset.headerData = type;
+
+            codex.content.switchBlock(old_header, new_header, 'heading_styled');
+
+            /** Close settings after replacing */
+            codex.toolbar.settings.close();
+        }
+
+    };
+
+    /**
+     * @private
+     *
+     * Make initial header block
+     * @param {object} JSON with block data
+     * @return {Element} element to append
+     */
+    var make_ = function (data) {
 
         var availableTypes = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'],
             tag;
 
         if (data && data.type && availableTypes.includes(data.type)) {
 
-            tag = document.createElement( data.type );
+            tag = document.createElement(data.type);
 
             /**
-            * Save header type in data-attr.
-            * We need it in save method to extract type from HTML to JSON
-            */
+             * Save header type in data-attr.
+             * We need it in save method to extract type from HTML to JSON
+             */
             tag.dataset.headerData = data.type;
 
         } else {
 
-            tag = document.createElement( 'H2' );
+            tag = document.createElement('H2');
             tag.dataset.headerData = 'H2';
 
         }
@@ -40,125 +85,78 @@ var headerTool = {
         }
 
         tag.classList.add('ce-header');
-        tag.setAttribute('data-placeholder', 'Heading');
+        tag.setAttribute('data-placeholder', 'Заголовок');
         tag.contentEditable = true;
 
         return tag;
 
-    },
+    };
+
+    header.prepareDataForSave = function(data) {
+
+    };
 
     /**
-    * Method to render HTML block from JSON
-    */
-    render : function (data) {
+     * Method to render HTML block from JSON
+     */
+    header.render = function (data) {
 
-       return headerTool.make(data);
+        return make_(data);
 
-    },
+    };
 
     /**
-    * Method to extract JSON data from HTML block
-    */
-    save : function (blockContent) {
+     * Method to extract JSON data from HTML block
+     */
+    header.save = function (blockContent) {
 
         var data = {
-                "heading-styles": blockContent.dataset.headerData,
-                format:"html",
-                text : null,
-
-            };
-
-        data.text = blockContent.textContent;
+            "heading-styles": blockContent.dataset.headerData,
+            "format": "html",
+            "text": blockContent.textContent
+        };
 
         return data;
-
-    },
-
-    /**
-    * Block appending callback
-    */
-    appendCallback : function (argument) {
-
-        console.log('header appended...');
-
-    },
+    };
 
     /**
-    * Settings panel content
-    *  - - - - - - - - - - - - -
-    * | настройки   H1  H2  H3  |
-    *  - - - - - - - - - - - - -
-    * @return {Element} element contains all settings
-    */
-    makeSettings : function () {
+     * Settings panel content
+     *  - - - - - - - - - - - - -
+     * | настройки   H1  H2  H3  |
+     *  - - - - - - - - - - - - -
+     * @return {Element} element contains all settings
+     */
+    header.makeSettings = function () {
 
-        var holder  = document.createElement('DIV'),
+        var holder  = codex.draw.node('DIV', ['ce_plugin_header--settings'], {} ),
             types   = {
-                        H2: 'Заголовок раздела',
-                        H3: 'Подзаголовок',
-                        H4: 'Заголовок 3-его уровня'
-                    },
+                H2: 'Заголовок раздела',
+                H3: 'Подзаголовок',
+                H4: 'Заголовок 3-его уровня'
+            },
             selectTypeButton;
-
-        /** Add holder classname */
-        holder.className = 'ce_plugin_header--settings';
 
         /** Now add type selectors */
         for (var type in types){
 
-            selectTypeButton = document.createElement('SPAN');
-
-            selectTypeButton.textContent = types[type];
-            selectTypeButton.className   = 'ce_plugin_header--select_button';
-
-            this.addSelectTypeClickListener(selectTypeButton, type);
-
+            selectTypeButton = codex.draw.node('SPAN', ['ce_plugin_header--select_button'], { textContent : types[type] });
+            methods_.addSelectTypeClickListener(selectTypeButton, type);
             holder.appendChild(selectTypeButton);
 
         }
 
         return holder;
+    };
 
-    },
+    header.validate = function(data) {
 
-    /**
-    * Binds click event to passed button
-    */
-    addSelectTypeClickListener : function (el, type) {
+        if (data.text.trim() == '' || data['heading-styles'].trim() == '')
+            return;
 
-        el.addEventListener('click', function () {
+        return true;
+    };
 
-            headerTool.selectTypeClicked(type);
+    return header;
 
-        }, false);
-    },
-
-    /**
-    * Replaces old header with new type
-    * @params {string} type - new header tagName: H1—H6
-    */
-    selectTypeClicked : function (type) {
-
-        var old_header, new_header;
-
-        /** Now current header stored as a currentNode */
-        old_header = codex.content.currentNode.querySelector('[contentEditable]');
-
-        /** Making new header */
-        new_header = document.createElement(type);
-
-        new_header.innerHTML = old_header.innerHTML;
-        new_header.contentEditable = true;
-        new_header.setAttribute('data-placeholder', 'Heading');
-        new_header.classList.add('ce-header');
-
-        new_header.dataset.headerData = type;
-
-        codex.content.switchBlock(old_header, new_header, 'header');
-
-        /** Close settings after replacing */
-        codex.toolbar.settings.close();
-    }
-
-};
+})({});
 

@@ -1,32 +1,28 @@
 /**
-* Paragraph Plugin\
-* Creates P tag and adds content to this tag
+* Paragraph Plugin
+* Creates DIV tag and adds content to this tag
 */
-// var tools = require('./../plugins');
 
-var paragraphTool = {
+var paragraph = (function(paragraph) {
 
     /**
-    * Make initial header block
-    * @param {object} JSON with block data
-    * @return {Element} element to append
-    */
-    make : function (data) {
+     * @private
+     *
+     * Make initial header block
+     * @param {object} JSON with block data
+     * @return {Element} element to append
+     */
+   
+    var make_ = function (data) {
 
-        var tag = document.createElement('DIV');
-
-        tag.classList.add('ce-paragraph');
+        /** Create Empty DIV */
+        var tag = codex.draw.node('DIV', ['ce-paragraph'], {});
 
         if (data && data.text) {
             tag.innerHTML = data.text;
         }
 
         tag.contentEditable = true;
-
-        /**
-         * if plugin need to add placeholder
-         * tag.setAttribute('data-placeholder', 'placehoder');
-         */
 
         /**
          * @uses Paste tool callback.
@@ -38,32 +34,70 @@ var paragraphTool = {
 
         return tag;
 
-    },
+    };
 
     /**
-    * Method to render HTML block from JSON
-    */
-    render : function (data) {
+     * @private
+     *
+     * Handles input data for save
+     * @param data
+     */
+    var prepareDataForSave_ = function(data) {
 
-       return paragraphTool.make(data);
-
-    },
+    };
 
     /**
-    * Method to extract JSON data from HTML block
-    */
-    save : function (blockContent){
+     * @public
+     *
+     * Plugins should have prepare method
+     * @param config
+     */
+    paragraph.prepare = function(config) {
+
+    };
+
+    /*
+     * @public
+     *
+     * Method to render HTML block from JSON
+     */
+    paragraph.render = function (data) {
+
+        return make_(data);
+
+    };
+
+    /**
+     * @public
+     *
+     * Check output data for validity.
+     * Should be defined by developer
+     */
+    paragraph.validate = function(output) {
+
+        if (output.text == '')
+            return;
+
+        return output;
+    };
+
+    /**
+     * @public
+     *
+     * Method to extract JSON data from HTML block
+     */
+    paragraph.save = function (blockContent){
 
         var data = {
-                text : null,
-                format: "html",
-                introText: '<<same>>'
-            };
-
-        data.text = blockContent.innerHTML;
+            "text": blockContent.innerHTML,
+            "format": "html",
+            "introText": '<<same>>'
+        };
 
         return data;
 
-    }
+    };
 
-};
+    return paragraph;
+
+})({});

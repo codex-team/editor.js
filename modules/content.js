@@ -3,32 +3,8 @@
  * Works with DOM
  *
  * @author Codex Team
- * @version 1.3.1
+ * @version 1.3.6
  */
-
-var janitor = require('html-janitor');
-
-
-/**
- * Default settings for sane.
- * @uses html-janitor
- */
-var Config = {
-
-    tags: {
-        p: {},
-        a: {
-            href: true,
-            target: '_blank',
-            rel: 'nofollow'
-        },
-        i: {},
-        b: {},
-        strong: {},
-        em: {},
-        span: {}
-    }
-};
 
 var content = (function(content) {
 
@@ -560,7 +536,7 @@ var content = (function(content) {
             tool        = workingNode.dataset.tool;
 
         if (codex.tools[tool].allowedToPaste) {
-            codex.content.sanitize.call(this, mutation.addedNodes);
+            codex.content.sanitize.call(this, mutation.target);
         } else {
             codex.content.pasteTextContent(mutation.addedNodes);
         }
@@ -628,37 +604,89 @@ var content = (function(content) {
         /**
          * Clear dirty content
          */
-        var sanitizer = new janitor(Config),
-            clear = sanitizer.clean(node.outerHTML);
+        var cleaner = codex.sanitizer.init(codex.satinizer.Config.BASIC),
+            clean = cleaner.clean(target.outerHTML);
 
-        var div = codex.draw.node('DIV', [], { innerHTML: clear });
+        var div = codex.draw.node('DIV', [], { innerHTML: clean });
         node.replaceWith(div.childNodes[0]);
 
-        // for (i = 0; i < clearHTML.childNodes.length; i++) {
-        //
-        //     var tag = clearHTML.childNodes[i],
-        //         blockType = null;
-        //
-        //     for (tool in codex.tools) {
-        //
-        //         var handleTags = codex.tools[tool].handleTagOnPaste;
-        //
-        //         if (!handleTags) {
-        //             continue;
-        //         }
-        //
-        //         if (handleTags.indexOf(tag.tagName) !== -1) {
-        //             blockType = codex.tools[tool];
-        //             break;
-        //         }
-        //
-        //     }
-        //
-        //     if (blockType) {
-        //         codex.parser.insertPastedContent(blockType, tag);
-        //     }
-        //
-        // }
+
+    };
+
+    /**
+     * Iterates all right siblings and parents, which has right siblings
+     * while it does not reached the first-level block
+     *
+     * @param {Element} node
+     * @return {boolean}
+     */
+    content.isLastNode = function(node) {
+
+        // console.log('погнали перебор родителей');
+
+        var allChecked = false;
+
+        while ( !allChecked ) {
+
+            // console.log('Смотрим на %o', node);
+            // console.log('Проверим, пустые ли соседи справа');
+
+            if ( !allSiblingsEmpty_(node) ){
+
+                // console.log('Есть непустые соседи. Узел не последний. Выходим.');
+                return false;
+
+            }
+
+            node = node.parentNode;
+
+            /**
+             * Проверяем родителей до тех пор, пока не найдем блок первого уровня
+             */
+            if ( node.classList.contains(codex.ui.className.BLOCK_CONTENT) ){
+                allChecked = true;
+            }
+
+        }
+
+        return true;
+
+    };
+
+    /**
+     * Checks if all element right siblings is empty
+     * @param node
+     */
+    var allSiblingsEmpty_ = function (node) {
+
+        /**
+         * Нужно убедиться, что после пустого соседа ничего нет
+         */
+        var sibling = node.nextSibling;
+
+        // console.log('Погнали проверять соседей ');
+
+        while ( sibling ) {
+
+            // console.log('Опаньки! нашли соседа: %o', sibling);
+
+            if (sibling.textContent.length){
+
+                // console.log('Соседи не пустые, то есть мы не в конце.');
+                return false;
+
+            }
+            //
+            // console.log('Сосед пустой. Возможно мы в конце.');
+            // console.log('Смотрим следующего');
+
+            sibling = sibling.nextSibling;
+
+        }
+
+        // console.log('Все соседи пустые. -------');
+
+        return true;
 
     };
 

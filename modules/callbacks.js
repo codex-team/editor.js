@@ -2,7 +2,7 @@
  * Codex Editor callbacks module
  *
  * @author Codex Team
- * @version 1.2.5
+ * @version 1.3.4
  */
 
 var callbacks = (function(callbacks) {
@@ -74,21 +74,12 @@ var callbacks = (function(callbacks) {
             codex.caret.saveCurrentInputIndex();
         }
 
-        if (!codex.content.currentNode) {
-            /**
-             * Enter key pressed in first-level block area
-             */
-            codex.callback.enterPressedOnBlock(event);
-            return;
-        }
-
-
         var currentInputIndex       = codex.caret.getCurrentInputIndex() || 0,
             workingNode             = codex.content.currentNode,
             tool                    = workingNode.dataset.tool,
             isEnterPressedOnToolbar = codex.toolbar.opened &&
-                codex.toolbar.current &&
-                event.target == codex.state.inputs[currentInputIndex];
+                                        codex.toolbar.current &&
+                                        event.target == codex.state.inputs[currentInputIndex];
 
         /** The list of tools which needs the default browser behaviour */
         var enableLineBreaks = codex.tools[tool].enableLineBreaks;
@@ -118,14 +109,13 @@ var callbacks = (function(callbacks) {
         }
 
         /**
-         * Allow making new <p> in same block by SHIFT+ENTER and forbids to prevent default browser behaviour
+         * Allow paragraph lineBreaks with shift enter
+         * Or if shiftkey pressed and enter and enabledLineBreaks, the let new block creation
          */
-        if ( event.shiftKey && !enableLineBreaks) {
-            codex.callback.enterPressedOnBlock(codex.content.currentBlock, event);
-            event.preventDefault();
+        if ( event.shiftKey || enableLineBreaks ){
 
-        } else if ( (event.shiftKey && !enableLineBreaks) || (!event.shiftKey && enableLineBreaks) ){
-            /** XOR */
+            event.stopPropagation();
+            event.stopImmediatePropagation();
             return;
         }
 
@@ -134,6 +124,15 @@ var callbacks = (function(callbacks) {
             currentSelectedNode = currentSelection.anchorNode,
             caretAtTheEndOfText = codex.caret.position.atTheEnd(),
             isTextNodeHasParentBetweenContenteditable = false;
+
+        /**
+         * Allow making new <p> in same block by SHIFT+ENTER and forbids to prevent default browser behaviour
+         */
+        if ( event.shiftKey && !enableLineBreaks ) {
+            codex.callback.enterPressedOnBlock(codex.content.currentBlock, event);
+            event.preventDefault();
+            return;
+        }
 
         /**
          * Workaround situation when caret at the Text node that has some wrapper Elements
@@ -164,32 +163,26 @@ var callbacks = (function(callbacks) {
 
         } else {
 
-            if ( currentSelectedNode && currentSelectedNode.parentNode) {
+            var islastNode = codex.content.isLastNode(currentSelectedNode);
 
-                isLastTextNode = !currentSelectedNode.parentNode.nextSibling;
-
-            }
-
-            if ( isLastTextNode && caretAtTheEndOfText ) {
+            if ( islastNode && caretAtTheEndOfText ) {
 
                 event.preventDefault();
+                event.stopPropagation();
+                event.stopImmediatePropagation();
 
                 codex.core.log('ENTER clicked in last textNode. Create new BLOCK');
 
                 codex.content.insertBlock({
-                    type  : NEW_BLOCK_TYPE,
-                    block : codex.tools[NEW_BLOCK_TYPE].render()
-                }, true );
+                    type: NEW_BLOCK_TYPE,
+                    block: codex.tools[NEW_BLOCK_TYPE].render()
+                }, true);
 
                 codex.toolbar.move();
                 codex.toolbar.open();
 
                 /** Show plus button with empty block */
                 codex.toolbar.showPlusButton();
-
-            } else {
-
-                codex.core.log('Default ENTER behavior.');
 
             }
 
@@ -730,7 +723,20 @@ var callbacks = (function(callbacks) {
 
     };
 
-    callbacks.blockPasteCallback = function(event) {
+    /**
+     * This method is used to observe pasted dirty data.
+     *
+     * Mutation handlers send to separate observers each mutation (added, changed and so on), which will be
+     * passed from handler that sanitizes and replaces data.
+     *
+     * Probably won't be used
+     *
+     * @deprecated
+     *
+     * @param event
+     * @private
+     */
+    callbacks._blockPasteCallback = function(event) {
 
         var currentInputIndex = codex.caret.getCurrentInputIndex();
 
@@ -744,13 +750,75 @@ var callbacks = (function(callbacks) {
          */
         var config = {
             attributes: true,
-            childList: true,
+            childList: false,
             characterData: false,
             subtree : true
         };
 
         // pass in the target node, as well as the observer options
         observer.observe(codex.state.inputs[currentInputIndex], config);
+    };
+
+    /**
+     * This method prevents default behaviour.
+     *
+     * We get from clipboard pasted data, sanitize, make a fragment that contains of this sanitized nodes.
+     * Firstly, we need to memorize the caret position. We can do that by getting the range of selection.
+     * After all, we insert clear fragment into caret placed position. Then, we should move the caret to the last node
+     *
+     * @param event
+     */
+    callbacks.blockPasteCallback = function(event) {
+
+        /** Prevent default behaviour */
+        event.preventDefault();
+
+        /** get html pasted data - dirty data */
+        var data = event.clipboardData.getData('text/html');
+
+        /** Temporary DIV that is used to work with childs as arrays item */
+        var div     = codex.draw.node('DIV', '', {}),
+            cleaner = new codex.sanitizer.init(codex.sanitizer.Config.BASIC),
+            cleanData,
+            fragment;
+
+        /** Create fragment, that we paste to range after proccesing */
+        fragment = document.createDocumentFragment();
+
+        cleanData = cleaner.clean(data);
+
+        div.innerHTML = cleanData;
+
+        var node, lastNode;
+
+        /**
+         * and fill in fragment
+         */
+        while (( node = div.firstChild) ) {
+            lastNode = fragment.appendChild(node);
+        }
+
+        /**
+         * work with selection and range
+         */
+        var selection, range;
+        selection = window.getSelection();
+
+        range = selection.getRangeAt(0);
+        range.deleteContents();
+
+        range.insertNode(fragment);
+        // document.execCommand('insertParagraph', false, "<p>");
+
+        /** Preserve the selection */
+        if (lastNode) {
+            range = range.cloneRange();
+            range.setStartAfter(lastNode);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
     };
 
     /**

@@ -2,22 +2,83 @@
  * Code Plugin\
  * Creates code tag and adds content to this tag
  */
-var listTool = {
+var list = (function(list) {
 
-    baseClass : "tool-list",
-    elementClasses : {
+    var baseClass = "tool-list";
+
+    var elementClasses = {
         li  : "tool-list-li"
-    },
+    };
+
+    var ui = {
+
+        make: function (blockType) {
+
+            var wrapper = this.block(blockType || 'UL', baseClass);
+
+            wrapper.dataset.type = 'UL';
+            wrapper.contentEditable = true;
+
+            return wrapper;
+
+        },
+
+        block: function (blockType, blockClass) {
+
+            var block = document.createElement(blockType);
+
+            if (blockClass) block.classList.add(blockClass);
+
+            return block;
+
+        },
+
+        button: function (buttonType) {
+
+            var types = {
+                    unordered: '<i class="ce-icon-list-bullet"></i>Обычный список',
+                    ordered: '<i class="ce-icon-list-numbered"></i>Нумерованный список'
+                },
+                button = document.createElement('SPAN');
+
+            button.innerHTML = types[buttonType];
+
+            button.className = 'ce_plugin_list--select_button';
+
+            return button;
+        }
+    };
+
+    var methods = {
+
+        /**
+         * Changes block type => OL or UL
+         * @param event
+         * @param blockType
+         */
+        changeBlockStyle : function (event, blockType) {
+
+            var currentBlock = codex.content.currentNode,
+                newEditable = ui.make(blockType),
+                oldEditable = currentBlock.querySelector("[contenteditable]");
+
+            newEditable.dataset.type = blockType;
+            newEditable.innerHTML = oldEditable.innerHTML;
+            newEditable.classList.add('ce-list');
+
+            codex.content.switchBlock(currentBlock, newEditable, 'list');
+        }
+    };
 
     /**
      * Make initial header block
      * @param {object} JSON with block data
      * @return {Element} element to append
      */
-    make : function () {
+    list.make = function () {
 
-        var tag = listTool.ui.make(),
-            li  = listTool.ui.block("li", "tool-link-li");
+        var tag = ui.make(),
+            li  = ui.block("li", "tool-link-li");
 
         var br = document.createElement("br");
 
@@ -28,21 +89,21 @@ var listTool = {
 
         return tag;
 
-    },
+    };
 
     /**
      * Method to render HTML block from JSON
      */
-    render : function (data) {
+    list.render = function (data) {
 
         var type = data.type == 'ordered' ? 'OL' : 'UL',
-            tag  = listTool.ui.make(type);
+            tag  = ui.make(type);
 
         tag.classList.add('ce-list');
 
         data.items.forEach(function (element, index, array) {
 
-            var newLi = listTool.ui.block("li", listTool.elementClasses.li);
+            var newLi = ui.block("li", listTool.elementClasses.li);
 
             newLi.innerHTML = element;
 
@@ -53,17 +114,32 @@ var listTool = {
 
         return tag;
 
-    },
+    };
+
+    list.validate = function(data) {
+
+        var items = data.items.every(function(item){
+            return item.trim() != '';
+        });
+
+        if (!items)
+            return;
+
+        if (data.type != 'UL' && data.type != 'OL')
+            return;
+
+        return true;
+    };
 
     /**
      * Method to extract JSON data from HTML block
      */
-    save : function (blockContent){
+    list.save = function (blockContent){
 
         var data = {
-                type  : null,
-                items : [],
-            };
+            type  : null,
+            items : []
+        };
 
         for(var index = 0; index < blockContent.childNodes.length; index++)
             data.items[index] = blockContent.childNodes[index].textContent;
@@ -72,9 +148,9 @@ var listTool = {
 
         return data;
 
-    },
+    };
 
-    makeSettings : function(data) {
+    list.makeSettings = function(data) {
 
         var holder  = document.createElement('DIV'),
             selectTypeButton;
@@ -82,16 +158,16 @@ var listTool = {
         /** Add holder classname */
         holder.className = 'ce_plugin_list--settings';
 
-        var orderedButton = listTool.ui.button("ordered"),
-            unorderedButton = listTool.ui.button("unordered");
+        var orderedButton = ui.button("ordered"),
+            unorderedButton = ui.button("unordered");
 
         orderedButton.addEventListener('click', function (event) {
-            listTool.changeBlockStyle(event, 'ol');
+            methods.changeBlockStyle(event, 'OL');
             codex.toolbar.settings.close();
         });
 
         unorderedButton.addEventListener('click', function (event) {
-            listTool.changeBlockStyle(event, 'ul');
+            methods.changeBlockStyle(event, 'UL');
             codex.toolbar.settings.close();
         });
 
@@ -100,58 +176,8 @@ var listTool = {
 
         return holder;
 
-    },
+    };
 
-    changeBlockStyle : function (event, blockType) {
+    return list;
 
-        var currentBlock = codex.content.currentNode,
-            newEditable = listTool.ui.make(blockType),
-            oldEditable = currentBlock.querySelector("[contenteditable]");
-
-            newEditable.dataset.type = blockType;
-            newEditable.innerHTML = oldEditable.innerHTML;
-            newEditable.classList.add('ce-list');
-
-            codex.content.switchBlock(currentBlock, newEditable, 'list');
-    },
-
-};
-
-listTool.ui = {
-
-    make : function (blockType) {
-
-        var wrapper = this.block(blockType || 'UL', listTool.baseClass);
-
-        wrapper.dataset.type    = 'ul';
-        wrapper.contentEditable = true;
-
-        return wrapper;
-
-    },
-
-    block : function (blockType, blockClass) {
-
-        var block = document.createElement(blockType);
-
-        if ( blockClass ) block.classList.add(blockClass);
-
-        return block;
-
-    },
-
-    button : function (buttonType) {
-
-        var types   = {
-                unordered    : '<i class="ce-icon-list-bullet"></i>Обычный список',
-                ordered      : '<i class="ce-icon-list-numbered"></i>Нумерованный список'
-            },
-            button = document.createElement('SPAN');
-
-        button.innerHTML = types[buttonType];
-
-        button.className   = 'ce_plugin_list--select_button';
-
-        return button;
-    }
-};
+})({});

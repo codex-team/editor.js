@@ -29,6 +29,11 @@
     min-height: 350px;
 }
 
+
+.ce-block__content a {
+    color: #186baa;
+}
+
 /*.ce-redactor * {
     box-sizing: border-box;
 }*/
@@ -302,8 +307,10 @@
 .ce-toolbar-inline__buttons button{
     background: none;
     border: 0;
+    margin: 0 !important;
     height: auto !important;
-    padding: 12px 8px;
+    padding: 13px 9px;
+    line-height: 1em;
     color: inherit;
     font-size: 12px;
     cursor: pointer;
@@ -329,7 +336,8 @@
         background: transparent !important;
         border : 0 !important;
         box-sizing: border-box !important;
-        padding: 10px;
+        padding: 12px;
+        font-size: 13px;
         width: 100%;
         color: #fff;
         outline: none;
@@ -364,7 +372,8 @@
     left: 17px;
     top: 13px;
     font-size: 16px;
-    color: #ef4a4a;
+    /*color: #ef4a4a;*/
+    color: #7d6060;
 }
 
 /**

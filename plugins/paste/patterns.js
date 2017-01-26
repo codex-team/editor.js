@@ -16,17 +16,17 @@ paste.patterns = [
     {
         type: 'image',
         regex: /(?:([^:\/?#]+):)?(?:\/\/([^\/?#]*))?([^?#]*\.(?:jpe?g|gif|png))(?:\?([^#]*))?(?:#(.*))?/i,
-        callback: ceImage.urlPastedCallbacks.uploadImage
+        callback: image.urlPastedCallbacks.uploadImage
     },
     {
         type: 'instagram',
         regex: new RegExp("http?.+instagram.com\/p?."),
-        callback: instagramTool.urlPastedCallback
+        callback: instagram.urlPastedCallback
     },
     {
         type: 'twitter',
         regex: new RegExp("http?.+twitter.com?.+\/"),
-        callback: twitterTool.urlPastedCallback
+        callback: twitter.urlPastedCallback
     },
     {
         type: 'facebook',
