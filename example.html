@@ -75,16 +75,11 @@
             },
             paste: {
                 type: 'paste',
-                iconClassname: '',
                 prepare: paste.prepare,
                 make: paste.make,
-                appendCallback: null,
-                settings: null,
-                render: null,
                 save: paste.save,
                 enableLineBreaks: false,
-                callbacks: paste.pasted,
-                allowedToPaste: false
+                callbacks: paste.pasted
             },
             code: {
                 type: 'code',
@@ -170,15 +165,12 @@
                 type: 'twitter',
                 iconClassname: 'ce-icon-twitter',
                 prepare: twitter.prepare,
-                make: twitter.make,
-                appendCallback: null,
-                settings: null,
                 render: twitter.render,
                 validate: twitter.validate,
                 save: twitter.save,
-                displayInToolbox: false,
-                enableLineBreaks: false,
-                allowedToPaste: false
+                config : {
+                    fetchUrl : ''
+                }
             },
             embed: {
                 type: 'embed',
