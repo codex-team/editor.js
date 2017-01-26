@@ -42,7 +42,11 @@
 <script src="plugins/twitter/twitter.js"></script>
 <link rel="stylesheet" href="plugins/twitter/twitter.css">
 
+<script src="plugins/embed/embed.js"></script>
+<link rel="stylesheet" href="plugins/embed/embed.css">
+
 <script src="plugins/paste/paste.js"></script>
+<script src="plugins/paste/patterns.js"></script>
 <link rel="stylesheet" href="plugins/paste/paste.css">
 
 <script>
@@ -71,16 +75,11 @@
             },
             paste: {
                 type: 'paste',
-                iconClassname: '',
-                prepare: pasteTool.prepare,
-                make: pasteTool.make,
-                appendCallback: null,
-                settings: null,
-                render: null,
-                save: pasteTool.save,
+                prepare: paste.prepare,
+                make: paste.make,
+                save: paste.save,
                 enableLineBreaks: false,
-                callbacks: pasteTool.callbacks,
-                allowedToPaste: false
+                callbacks: paste.pasted
             },
             code: {
                 type: 'code',
@@ -166,15 +165,19 @@
                 type: 'twitter',
                 iconClassname: 'ce-icon-twitter',
                 prepare: twitter.prepare,
-                make: twitter.make,
-                appendCallback: null,
-                settings: null,
                 render: twitter.render,
                 validate: twitter.validate,
                 save: twitter.save,
-                displayInToolbox: false,
-                enableLineBreaks: false,
-                allowedToPaste: false
+                config : {
+                    fetchUrl : ''
+                }
+            },
+            embed: {
+                type: 'embed',
+                make: embed.make,
+                render: embed.render,
+                save: embed.save,
+                validate: embed.validate,
             }
         },
         data : {

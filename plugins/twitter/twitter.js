@@ -21,16 +21,16 @@ var twitter = (function(twitter) {
 
             if (codex.content.currentNode) {
                 tweet.dataset.statusUrl = data.status_url;
-                codex.content.switchBlock(codex.content.currentNode, tweet, 'twitter');
+                codex.content.switchBlock(codex.content.currentNode, tweet, 'tweet');
             }
 
             /**
              * in case if we need extra data
              */
-            if (!data.user) {
+            if ( !data.user ) {
 
                 codex.core.ajax({
-                    url : '/writing/tweetInfo?tweetId=' + data.id_str,
+                    url : twitter.config.fetchUrl + '?tweetId=' + data.id_str,
                     type: "GET",
                     success: function(result) {
                         methods.saveTwitterData(result, tweet);
@@ -43,7 +43,7 @@ var twitter = (function(twitter) {
                 tweet.dataset.profileImageUrlHttps = data.user.profile_image_url_https;
                 tweet.dataset.screenName = data.user.screen_name;
                 tweet.dataset.name = data.user.name;
-                tweet.dataset.id = data.id;
+                tweet.dataset.id = +data.id;
                 tweet.dataset.idStr = data.id_str;
                 tweet.dataset.text = data.text;
                 tweet.dataset.createdAt = data.created_at;
@@ -62,9 +62,10 @@ var twitter = (function(twitter) {
         },
 
         saveTwitterData : function(result, tweet) {
+
             var data = JSON.parse(result),
                 twitterContent = tweet;
-
+            
             setTimeout(function() {
 
                 /**
@@ -74,7 +75,7 @@ var twitter = (function(twitter) {
                 twitterContent.dataset.profileImageUrlHttps = data.user.profile_image_url_https;
                 twitterContent.dataset.screenName = data.user.screen_name;
                 twitterContent.dataset.name = data.user.name;
-                twitterContent.dataset.id = data.id;
+                twitterContent.dataset.id = +data.id;
                 twitterContent.dataset.idStr = data.id_str;
                 twitterContent.dataset.text = data.text;
                 twitterContent.dataset.createdAt = data.created_at;
@@ -90,9 +91,14 @@ var twitter = (function(twitter) {
     /**
      * Prepare twitter scripts
      */
-    twitter.prepare = function() {
+    twitter.prepare = function(config) {
 
         var script = "//platform.twitter.com/widgets.js";
+
+        /**
+         * Save configs
+         */
+        twitter.config = config;
 
         /**
          * Load script
@@ -101,12 +107,18 @@ var twitter = (function(twitter) {
 
     };
 
-    twitter.make = function(data) {
+    /**
+     * @private
+     *
+     * @param data
+     * @returns {*}
+     */
+    make_ = function(data) {
 
         if (!data.id || !data.status_url)
             return;
 
-        if (!data.id_str && typeof(data.id) === 'number') {
+        if (!data.id_str) {
             data.id_str = data.status_url.match(/[^\/]+$/)[0];
         }
 
@@ -146,7 +158,31 @@ var twitter = (function(twitter) {
     };
 
     twitter.render = function(data) {
-        return twitter.make(data);
+        return make_(data);
+    };
+
+    twitter.urlPastedCallback = function(url) {
+
+        var tweetId,
+            arr,
+            data;
+
+        arr = url.split('/');
+        tweetId = arr.pop();
+
+        /** Example */
+        data = {
+            "media" : true,
+            "conversation" : false,
+            "user" : null,
+            "id" : +tweetId,
+            "text" : null,
+            "created_at" : null,
+            "status_url" : url,
+            "caption" : null
+        };
+
+        make_(data);
     };
 
     return twitter;
