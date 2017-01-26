@@ -19,6 +19,11 @@ paste.patterns = [
         callback: image.uploadImageFromUri
     },
     {
+        type: 'uploadCare',
+        regex: /^https:\/\/(uploadcare\.cmtt\.ru|ucarecdn\.com|static[0-9]+\.siliconrus\.cmtt\.ru|static[0-9]+\.cmtt\.ru)/i,
+        callback: image.uploadImageFromUri
+    },
+    {
         type: 'instagram',
         regex: /http?.+instagram.com\/p\/([a-zA-Z0-9]*)/,
         callback: instagram.urlPastedCallback
