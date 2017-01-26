@@ -61,6 +61,10 @@ var embed = function(embed){
             height: 320,
             width: 580
         },
+        vk : {
+            regex: /^https?.+vk?.com\/feed\?w=wall\d+_\d+/,
+            html: "<iframe src=\"https://tjournal.ru/proxy/video/<%= remote_id %>?rel=0&showinfo=0&enablejsapi=1&autoplay=1\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>"
+        },
         coub: {
             regex: /https?:\/\/coub\.com\/view\/([^\/\?\&]+)/,
             html: "<iframe src=\"//coub.com/embed/<%= remote_id %>\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>",
