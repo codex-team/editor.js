@@ -151,7 +151,7 @@
 }
 .selector-holder {
     display: inline-block;
-    width: 20px;
+    width: 17px;
     background: #494361;
     line-height: 4px;
     border-radius: 14px;
@@ -173,12 +173,12 @@
  * Setting is active
  */
 .plugged-in {
-    color: #04b559;
+    color: #1FAA7E;
 }
     .plugged-in .selector-holder {
-        background: #04b559 !important;
+        background: #14DC9E !important;
     }
 
     .plugged-in .selector-holder_button {
-        margin-left: 8px !important;;
+        margin-left: 6px !important;;
     }

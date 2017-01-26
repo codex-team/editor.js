@@ -137,7 +137,7 @@ var image = (function(image) {
          * @param {boolean} stretched - stretched or not
          * @return wrapped block with image and caption
          */
-        makeImage : function(data, imageTypeClasses, stretched) {
+        makeImage : function(data, imageTypeClasses, stretched, bordered) {
 
             var file = data.file,
                 text = data.caption,
@@ -149,6 +149,8 @@ var image = (function(image) {
             caption.textContent = text;
 
             wrapper.dataset.stretched = stretched;
+            wrapper.dataset.bordered = bordered;
+
             /** Appeding to the wrapper */
             wrapper.appendChild(image);
             wrapper.appendChild(caption);
@@ -298,14 +300,11 @@ var image = (function(image) {
             /** Clear classList */
             current.className = '';
 
-            /** Add important first-level class ce_block */
-            current.classList.add(codex.ui.className.BLOCK_CLASSNAME);
-
-            blockContent.classList.toggle(elementClasses_.blockStretched);
+            blockContent.classList.add(elementClasses_.blockStretched);
             img.classList.toggle(elementClasses_.uploadedImage.stretched);
             img.classList.toggle(elementClasses_.uploadedImage.centered);
 
-            if (blockContent.classList.contains(elementClasses_.blockStretched)) {
+            if (img.classList.contains(elementClasses_.uploadedImage.stretched)) {
 
                 wrapper.dataset.stretched = true;
 
@@ -543,12 +542,12 @@ var image = (function(image) {
             if ( data.isstretch || data.isstretch === 'true') {
 
                 classes.push(elementClasses_.uploadedImage.stretched);
-                holder = ui_.makeImage(data, classes, 'true');
+                holder = ui_.makeImage(data, classes, 'true', data.border);
 
             } else {
 
                 classes.push(elementClasses_.uploadedImage.centered);
-                holder = ui_.makeImage(data, classes, 'false');
+                holder = ui_.makeImage(data, classes, 'false', data.border);
 
             }
 
@@ -618,7 +617,7 @@ var image = (function(image) {
 
         var data = {
             background : false,
-            border : content.dataset.bordered,
+            border : content.dataset.bordered === 'true' ? true : false,
             isstretch : content.dataset.stretched === 'true' ? true : false,
             file : {
                 url : image.dataset.src || image.src,
@@ -641,6 +640,9 @@ var image = (function(image) {
      * @return {Element} element contains all settings
      */
     image.makeSettings = function () {
+
+        var currentNode = codex.content.currentNode,
+            wrapper = currentNode.querySelector('.' + elementClasses_.imageWrapper);
 
         var holder  = document.createElement('DIV');
 
@@ -681,8 +683,11 @@ var image = (function(image) {
 
             image.configurations[type] = settingsHolder;
 
-            holder.appendChild(settingsHolder);
+            if (wrapper.dataset[type] === 'true') {
+                image.configurations[type].classList.add('plugged-in');
+            }
 
+            holder.appendChild(settingsHolder);
 
         }
 
