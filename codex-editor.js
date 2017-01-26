@@ -88,7 +88,7 @@ var codex =
 	        codex.sanitizer = __webpack_require__(18);
 	    };
 	
-	    codex.version = ("1.3.4");
+	    codex.version = ("1.3.5");
 	
 	    /**
 	     * @public
@@ -1173,7 +1173,7 @@ var codex =
 	 * Works with DOM
 	 *
 	 * @author Codex Team
-	 * @version 1.3.6
+	 * @version 1.3.8
 	 */
 	
 	var content = function (content) {
@@ -1320,6 +1320,14 @@ var codex =
 	        /** If target-block is not a frist-level block, then we iterate parents to find it */
 	        while (!targetBlock.classList.contains(codex.ui.className.BLOCK_CLASSNAME)) {
 	            targetBlock = targetBlock.parentNode;
+	        }
+	
+	        /**
+	         * Check is this block was in feed
+	         * If true, than set switched block also covered
+	         */
+	        if (targetBlock.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE)) {
+	            newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
 	        }
 	
 	        /** Replacing */
