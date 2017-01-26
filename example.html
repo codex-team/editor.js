@@ -118,19 +118,21 @@
                 showInlineToolbar: true,
                 enableLineBreaks: true
             },
-            quote: {
-                type: 'quote',
+            quote_styled: {
+                type: 'quote_styled',
                 iconClassname: 'ce-icon-quote',
-                make: quote.makeBlockToAppend,
-                appendCallback: null,
-                settings: quote.makeSettings,
+                makeSettings: quote.makeSettings,
+                prepare: quote.prepare,
                 render: quote.render,
                 validate: quote.validate,
                 save: quote.save,
                 displayInToolbox: true,
                 enableLineBreaks: true,
                 showInlineToolbar: true,
-                allowedToPaste: true
+                allowedToPaste: true,
+                config : {
+                    defaultStyle : 'withPhoto'
+                }
             },
             image_extended: {
                 type: 'image_extended',
