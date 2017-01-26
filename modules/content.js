@@ -3,7 +3,7 @@
  * Works with DOM
  *
  * @author Codex Team
- * @version 1.3.6
+ * @version 1.3.8
  */
 
 var content = (function(content) {
@@ -157,6 +157,16 @@ var content = (function(content) {
         while(!targetBlock.classList.contains(codex.ui.className.BLOCK_CLASSNAME)) {
             targetBlock = targetBlock.parentNode;
         }
+
+        /**
+         * Check is this block was in feed
+         * If true, than set switched block also covered
+         */
+        if (targetBlock.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE)) {
+            newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
+        }
+
+        console.log('V if ne popal');
 
         /** Replacing */
         codex.nodes.redactor.replaceChild(newBlock, targetBlock);
