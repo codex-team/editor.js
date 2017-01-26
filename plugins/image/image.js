@@ -512,6 +512,17 @@ var image = (function(image) {
     };
 
     /**
+     * @private
+     *
+     * Prepare clear data before save
+     *
+     * @param data
+     */
+    var prepareDataForSave_ = function(data) {
+
+    };
+
+    /**
      * @public
      * @param config
      */
