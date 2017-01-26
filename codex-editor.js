@@ -92,7 +92,6 @@ var codex =
 	
 	    /**
 	     * @public
-	     *
 	     * holds initial settings
 	     */
 	    codex.settings = {
