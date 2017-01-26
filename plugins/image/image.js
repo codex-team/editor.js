@@ -211,9 +211,9 @@ var image = (function(image) {
      */
     var uploadButtonClicked_ = function(event) {
 
-        var beforeSend = uploadingCallbacks_.beforeSend,
-            success    = uploadingCallbacks_.success,
-            error      = uploadingCallbacks_.error;
+        var beforeSend = uploadingCallbacks_.ByClick.beforeSend,
+            success    = uploadingCallbacks_.ByClick.success,
+            error      = uploadingCallbacks_.ByClick.error;
 
         /** Define callbacks */
         codex.transport.selectAndUpload({
@@ -333,15 +333,15 @@ var image = (function(image) {
                         cover : null
                     };
 
-                    var image = make_(data);
+                    var newImage = make_(data);
 
-                    codex.content.switchBlock(image.holder, image, 'image_extended');
-                    image.classList.add(elementClasses_.imagePreview);
+                    codex.content.switchBlock(image.holder, newImage, 'image_extended');
+                    newImage.classList.add(elementClasses_.imagePreview);
 
                     /**
                      * Change holder to image
                      */
-                    image.holder = image;
+                    image.holder = newImage;
                 };
 
             },
@@ -364,10 +364,10 @@ var image = (function(image) {
                 /**
                  * Change src of image
                  */
-                var img = image.holder.getElementsByTagName('IMG')[0];
+                var newImage = image.holder.getElementsByTagName('IMG')[0];
 
-                img.src = parsed.data.file.url;
-                img.dataset.bigUrl = parsed.data.file.bigUrl;
+                newImage.src = parsed.data.file.url;
+                newImage.dataset.bigUrl = parsed.data.file.bigUrl;
             },
 
             /** Error callback. Sends notification to user that something happend or plugin doesn't supports method */
@@ -433,7 +433,7 @@ var image = (function(image) {
                         cover: null
                     };
 
-                    image_plugin = codex.tools.image_extended.make(data);
+                    image_plugin = codex.tools.image_extended.render(data);
 
                     image_plugin.classList.add(elementClasses_.imagePreview);
 
@@ -457,62 +457,6 @@ var image = (function(image) {
                 codex.core.ajax(data);
             }
 
-        },
-
-        uploadFromUploadCare : function(image) {
-
-            var image_plugin;
-
-            /** Preparing data for XMLHTTP */
-            var data = {
-                url: image.config.uploadUrl,
-                type: "POST",
-                data : {
-                    url: image
-                },
-                beforeSend : function() {
-
-                    var data = {
-                        background: false,
-                        border: false,
-                        isStretch: false,
-                        file: {
-                            url: image,
-                            bigUrl: null,
-                            width: null,
-                            height: null,
-                            additionalData: null
-                        },
-                        caption: '',
-                        cover: null
-                    };
-
-                    /** Using Image plugin make method */
-                    image_plugin = codex.tools.image_extended.make(data);
-
-                    image_plugin.classList.add(elementClasses_.imagePreview);
-
-                    var img = image_plugin.querySelector('img');
-
-                    codex.content.switchBlock(codex.content.currentNode, image_plugin, 'image_extended');
-
-                },
-                success : function(result) {
-
-                    var data = JSON.parse(result);
-
-                    image_plugin.dataset.stretched = false;
-                    image_plugin.dataset.src = data.file.url;
-                    image_plugin.dataset.bigUrl = data.file.bigUrl;
-                    image_plugin.dataset.width = data.file.width;
-                    image_plugin.dataset.height = data.file.height;
-                    image_plugin.dataset.additionalData = data.file.additionalData;
-
-                    image_plugin.classList.remove(elementClasses_.imagePreview);
-                }
-            };
-
-            codex.core.ajax(data);
         }
     };
 
@@ -664,6 +608,11 @@ var image = (function(image) {
         return holder;
 
     };
+
+    /**
+     * Share as API
+     */
+    image.uploadImageFromUri = uploadingCallbacks_.ByPaste.uploadImageFromUrl;
 
     return image;
 
