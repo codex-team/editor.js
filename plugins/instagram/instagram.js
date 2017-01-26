@@ -9,15 +9,11 @@ var instagram = (function(instagram) {
         render : function(content) {
 
             codex.content.switchBlock(codex.content.currentNode, content, 'instagram');
+            
+            setTimeout(function() {
+                window.instgrm.Embeds.process();
+            }, 200);
 
-            var blockContent = codex.content.currentNode.childNodes[0];
-            blockContent.classList.add('instagram__loader');
-
-            window.instgrm.Embeds.process();
-
-            setTimeout(function(){
-                blockContent.classList.remove('instagram__loader');
-            }, 500);
         },
 
         /**
@@ -59,9 +55,11 @@ var instagram = (function(instagram) {
     };
 
     /**
+     * @private
+     *
      * Make instagram embed via Widgets method
      */
-    instagram.make = function(data, isInternal) {
+    var make_ = function(data, isInternal) {
 
         if (!data.instagram_url)
             return;
@@ -123,7 +121,7 @@ var instagram = (function(instagram) {
      * Render data
      */
     instagram.render = function(data) {
-        return instagram.make(data);
+        return make_(data);
     };
 
     /**
@@ -136,11 +134,11 @@ var instagram = (function(instagram) {
             instagram_url: url
         };
 
-        codex.tools.instagram.make(data, true);
+        make_(data, true);
 
     };
-
 
     return instagram;
 
 })({});
+
