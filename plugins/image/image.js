@@ -358,8 +358,12 @@ var image = (function(image) {
                  */
                 var newImage = image.holder.getElementsByTagName('IMG')[0];
 
-                newImage.src = parsed.data.file.url;
+                newImage.src            = parsed.data.file.url;
                 newImage.dataset.bigUrl = parsed.data.file.bigUrl;
+                newImage.dataset.width  = parsed.data.file.width;
+                newImage.dataset.height = parsed.data.file.height;
+                newImage.dataset.additionalData = parsed.data.file.additionalData;
+
             },
 
             /** Error callback. Sends notification to user that something happend or plugin doesn't supports method */
@@ -394,12 +398,14 @@ var image = (function(image) {
 
                     var imageInfo = JSON.parse(data);
 
-                    image_plugin.dataset.stretched = false;
-                    image_plugin.dataset.src = imageInfo.file.url;
-                    image_plugin.dataset.bigUrl = imageInfo.file.bigUrl;
-                    image_plugin.dataset.width = imageInfo.file.width;
-                    image_plugin.dataset.height = imageInfo.file.height;
-                    image_plugin.dataset.additionalData = imageInfo.file.additionalData;
+                    var newImage = image_plugin.getElementsByTagName('IMG')[0];
+
+                    newImage.dataset.stretched = false;
+                    newImage.dataset.src = imageInfo.file.url;
+                    newImage.dataset.bigUrl = imageInfo.file.bigUrl;
+                    newImage.dataset.width = imageInfo.file.width;
+                    newImage.dataset.height = imageInfo.file.height;
+                    newImage.dataset.additionalData = imageInfo.file.additionalData;
 
                     image_plugin.classList.remove(elementClasses_.imagePreview);
 
@@ -562,7 +568,7 @@ var image = (function(image) {
             border : false,
             isstretch : content.dataset.stretched === 'true' ? true : false,
             file : {
-                url : image.src,
+                url : image.dataset.src || image.src,
                 bigUrl : image.dataset.bigUrl,
                 width  : image.width,
                 height : image.height,
