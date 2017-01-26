@@ -18,6 +18,7 @@ var quote = (function(quote) {
         authorsJob   : 'ce_quote--job',
         authorsPhoto : 'authorsPhoto',
         authorsPhotoWrapper : 'authorsPhoto-wrapper',
+        authorsPhotoWrapper_preview : 'authorsPhotoWrapper_preview',
 
         simple : {
             text : 'quoteStyle-simple--text'
@@ -327,6 +328,8 @@ var quote = (function(quote) {
 
     };
 
+
+
     /**
      * @private
      *
@@ -334,7 +337,32 @@ var quote = (function(quote) {
      */
     var photoUploadingCallbacks_ = {
 
+        preview_ : function(e) {
+
+            var uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
+                authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
+
+            authorsPhoto.src = e.target.result;
+
+            /** Remove icon from image wrapper */
+            uploadImageWrapper.innerHTML = '';
+
+            /** Appending uploaded image */
+            uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper, elementClasses_.authorsPhotoWrapper_preview);
+
+            uploadImageWrapper.appendChild(authorsPhoto);
+        },
+
         beforeSend : function() {
+
+            var input = codex.transport.input,
+                files = input.files,
+                file  = files[0],
+                fileReader = new FileReader();
+
+            fileReader.readAsDataURL(file);
+
+            fileReader.onload = photoUploadingCallbacks_.preview_(e);
 
         },
 
@@ -346,19 +374,12 @@ var quote = (function(quote) {
 
             var parsed   = JSON.parse(result),
                 filename = parsed.filename,
-                uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
-                authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
+                uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo);
 
-            authorsPhoto.src = parsed.data.file.url;
+            var img = uploadImageWrapper.querySelector('IMG');
+            img.src = parsed.data.file.bigUrl;
 
-            /** Remove icon from image wrapper */
-            uploadImageWrapper.innerHTML = '';
-
-            /** Appending uploaded image */
-            uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper);
-            uploadImageWrapper.appendChild(authorsPhoto);
-
-            authorsPhoto.dataset.bigUrl = parsed.data.file.bigUrl;
+            uploadImageWrapper.classList.remove(elementClasses_.authorsPhotoWrapper_preview);
         },
 
         /** Error callback. Sends notification to user that something happend or plugin doesn't supports method */
@@ -418,6 +439,33 @@ var quote = (function(quote) {
 
     var prepareDataForSave_ = function(data) {
 
+        var TEXTNODE = 3;
+
+        if (data.size == 'withPhoto') {
+            data.size = 'small';
+        }
+
+        var wrapper = document.createElement('DIV');
+        wrapper.innerHTML = data.text;
+
+        var child,
+            paragraph;
+
+        for (child = 0; child < wrapper.childNodes.length; child++) {
+
+            // is TEXT node ?
+            if (wrapper.childNodes[child].nodeType === TEXTNODE) {
+
+                paragraph = document.createElement('P');
+                paragraph.innerHTML = wrapper.childNodes[child].textContent;
+
+                wrapper.childNodes[child].replaceWith(paragraph);
+            }
+        }
+
+        data.text = wrapper.innerHTML;
+
+        return data;
     };
 
     /**
@@ -448,11 +496,7 @@ var quote = (function(quote) {
          */
         var parsedblock = methods_.parseBlockQuote(blockContent);
 
-        if (parsedblock.style == 'withPhoto') {
-            parsedblock.style = 'small';
-        }
-
-        data = {
+        var data = {
             "text"   : parsedblock.text,
             "format" : "html",
             "cite"   : parsedblock.author,
@@ -461,7 +505,7 @@ var quote = (function(quote) {
             "image"  : parsedblock.photo
         };
 
-        return data;
+        return prepareDataForSave_(data);
     };
 
     /**
