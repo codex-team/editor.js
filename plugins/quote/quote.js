@@ -347,7 +347,7 @@ var quote = (function(quote) {
             var parsed   = JSON.parse(result),
                 filename = parsed.filename,
                 uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
-                authorsPhoto = quoteTools.ui.img(elementClasses_.authorsPhoto);
+                authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
 
             authorsPhoto.src = parsed.data.file.url;
 
@@ -387,13 +387,13 @@ var quote = (function(quote) {
             switch (data.style) {
 
                 case 'simple':
-                    tag = quoteTools.makeSimpleQuote(data);
+                    tag = methods_.makeSimpleQuote(data);
                     break;
                 case 'withCaption':
-                    tag = quoteTools.makeQuoteWithCaption(data);
+                    tag = methods_.makeQuoteWithCaption(data);
                     break;
                 case 'withPhoto':
-                    tag = quoteTools.makeQuoteWithPhoto(data);
+                    tag = methods_.makeQuoteWithPhoto(data);
                     break;
             }
 
