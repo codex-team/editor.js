@@ -1,0 +1,12 @@
+.ce-redactor .embed {
+    max-width: 600px;
+    margin: 15px 0;
+    background: #fff;
+}
+
+.embed__loader {
+    background-image: url("loading.gif") !important;
+    background-repeat: no-repeat;
+    background-position: center center;
+    opacity: 0.5;
+}
