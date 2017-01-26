@@ -418,6 +418,13 @@ var quote = (function(quote) {
 
     var prepareDataForSave_ = function(data) {
 
+        if (data.size == 'withPhoto') {
+            data.size = 'small';
+        }
+
+        console.log(data);
+
+        return data;
     };
 
     /**
@@ -448,11 +455,7 @@ var quote = (function(quote) {
          */
         var parsedblock = methods_.parseBlockQuote(blockContent);
 
-        if (parsedblock.style == 'withPhoto') {
-            parsedblock.style = 'small';
-        }
-
-        data = {
+        var data = {
             "text"   : parsedblock.text,
             "format" : "html",
             "cite"   : parsedblock.author,
@@ -461,7 +464,7 @@ var quote = (function(quote) {
             "image"  : parsedblock.photo
         };
 
-        return data;
+        return prepareDataForSave_(data);
     };
 
     /**
