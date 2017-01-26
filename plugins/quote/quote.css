@@ -127,6 +127,13 @@
 
 .authorsPhoto-wrapper {
     border: 0 !important;
+    transition: all 500ms ease-in;
+    will-change: opacity, filter;
+}
+
+.authorsPhotoWrapper_preview {
+    opacity: .5;
+    filter: blur(1.7px) grayscale(1);
 }
 
 .quoteStyle-withPhoto--photo .ce-icon-picture {
