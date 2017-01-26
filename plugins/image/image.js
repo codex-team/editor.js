@@ -298,8 +298,6 @@ var image = (function(image) {
             }
 
             /** Clear classList */
-            current.className = '';
-
             blockContent.classList.add(elementClasses_.blockStretched);
             img.classList.toggle(elementClasses_.uploadedImage.stretched);
             img.classList.toggle(elementClasses_.uploadedImage.centered);
