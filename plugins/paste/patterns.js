@@ -16,7 +16,12 @@ paste.patterns = [
     {
         type: 'image',
         regex: /(?:([^:\/?#]+):)?(?:\/\/([^\/?#]*))?([^?#]*\.(?:jpe?g|gif|png))(?:\?([^#]*))?(?:#(.*))?/i,
-        callback: image.urlPastedCallbacks.uploadImage
+        callback: image.uploadImageFromUri
+    },
+    {
+        type: 'uploadCare',
+        regex: /^https:\/\/(uploadcare\.cmtt\.ru|ucarecdn\.com|static[0-9]+\.siliconrus\.cmtt\.ru|static[0-9]+\.cmtt\.ru)/i,
+        callback: image.uploadImageFromUri
     },
     {
         type: 'instagram',
@@ -28,15 +33,17 @@ paste.patterns = [
         regex: /http?.+twitter.com?.+\//,
         callback: twitter.urlPastedCallback
     },
-    {
-        type: 'facebook',
-        regex: /https?.+facebook.+\/\d+\?/,
-        callback: ''//pasteTool.callbacks.facebookMedia
-    },
+    // {
+    //     type: 'facebook',
+    //     regex: /https?.+facebook.+\/\d+\?/,
+    //     callback: ''//pasteTool.callbacks.facebookMedia
+    // },
     {
         type: 'vk',
-        regex: /https?.+vk?.com\/feed\?w=wall\d+_\d+/,
-        callback: ''//pasteTool.callbacks.vkMedia
+        regex: /https?:\/\/vk\.com\/.*(?:video)([-0-9]+_[0-9]+)/, ///https?.+vk?.com\/feed\?w=wall\d+_\d+/,
+        callback: embed.urlPastedCallback
+
+        // https://vk.com/video142051356_456244081
     },
     {
         type: 'youtube',
@@ -93,5 +100,4 @@ paste.patterns = [
         regex: /https?:\/\/music.yandex.ru\/users\/([^\/\?\&]*)\/playlists\/([0-9]*)/,
         callback: embed.urlPastedCallback
     }
-
 ];
