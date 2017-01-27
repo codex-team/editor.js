@@ -259,9 +259,9 @@ var ui = (function(ui){
 
         codex.core.log('ui.bindEvents fired', 'info');
 
-        window.addEventListener('error', function (errorMsg, url, lineNumber) {
-            codex.notifications.errorThrown(errorMsg, event);
-        }, false );
+        // window.addEventListener('error', function (errorMsg, url, lineNumber) {
+        //     codex.notifications.errorThrown(errorMsg, event);
+        // }, false );
 
         /** All keydowns on Document */
         document.addEventListener('keydown', codex.callback.globalKeydown, false );

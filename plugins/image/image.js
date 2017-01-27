@@ -24,9 +24,26 @@ var image = (function(image) {
         imageWrapper  : 'ce-plugin-image__wrapper',
         formHolder    : 'ce-plugin-image__holder',
         uploadButton  : 'ce-plugin-image__button',
-        imagePreview  : 'ce-image__preview'
+        imagePreview  : 'ce-image__preview',
+        selectorHolder: 'ce-settings-checkbox',
+        selectorButton: 'ce-settings-checkbox__toggler',
+        settingsItem: 'ce-image-settings__item',
+        imageWrapperBordered : 'ce-image__wrapper--bordered',
+        toggled : 'ce-image-settings__item--toggled'
 
     };
+
+    /**
+     * Cache settings
+     * @type {null}
+     */
+    image.cachedSettings = null;
+
+    /**
+     * Array of configurations
+     * Need to change statement
+     */
+    image.configurations = [];
 
     /**
      *
@@ -64,11 +81,13 @@ var image = (function(image) {
          * @param {string} style - css class
          * @return {object} image - document IMG tag
          */
-        image : function(file, style) {
+        image : function(file, styles) {
 
             var image = document.createElement('IMG');
 
-            image.classList.add(style);
+            styles.map(function(item) {
+                image.classList.add(item);
+            });
 
             image.src = file.url;
             image.dataset.bigUrl = file.bigUrl;
@@ -119,18 +138,20 @@ var image = (function(image) {
          * @param {boolean} stretched - stretched or not
          * @return wrapped block with image and caption
          */
-        makeImage : function(data, imageTypeClass, stretched) {
+        makeImage : function(data, imageTypeClasses, stretched, bordered) {
 
             var file = data.file,
                 text = data.caption,
                 type     = data.type,
-                image    = ui_.image(file, imageTypeClass),
+                image    = ui_.image(file, imageTypeClasses),
                 caption  = ui_.caption(),
                 wrapper  = ui_.wrapper();
 
             caption.textContent = text;
 
             wrapper.dataset.stretched = stretched;
+            wrapper.dataset.bordered = bordered;
+
             /** Appeding to the wrapper */
             wrapper.appendChild(image);
             wrapper.appendChild(caption);
@@ -229,51 +250,84 @@ var image = (function(image) {
 
             el.addEventListener('click', function() {
 
-                methods_.selectTypeClicked(type);
+                // el - settings element
+
+                switch (type) {
+                    case 'bordered':
+                        methods_.toggleBordered(type, this); break;
+                    case 'stretched':
+                        methods_.toggleStretched(type, this); break;
+                }
+
 
             }, false);
 
         },
 
-        selectTypeClicked : function(type) {
+        toggleBordered : function(type, clickedSettingsItem ) {
 
             var current = codex.content.currentNode,
                 blockContent = current.childNodes[0],
-                image = ui_.getImage(current),
-                inFeed = false,
+                img = ui_.getImage(current),
                 wrapper = current.querySelector('.' + elementClasses_.imageWrapper);
 
-            if (!image) {
+            if (!img) {
+                return;
+            }
+
+            /**
+             * Add classes to the IMG tag and to the Settings element
+             */
+            img.classList.toggle(elementClasses_.imageWrapperBordered);
+            clickedSettingsItem.classList.toggle(elementClasses_.toggled);
+
+            /**
+             * Save settings in dataset
+             */
+            if (img.classList.contains(elementClasses_.imageWrapperBordered)) {
+                wrapper.dataset.bordered = true;
+            } else {
+                wrapper.dataset.bordered = false;
+            }
+
+            setTimeout(function() {
+                codex.toolbar.settings.close();
+            }, 200);
+
+        },
+
+        toggleStretched : function( type, clickedSettingsItem ) {
+
+            var current = codex.content.currentNode,
+                blockContent = current.childNodes[0],
+                img = ui_.getImage(current),
+                wrapper = current.querySelector('.' + elementClasses_.imageWrapper);
+
+            if (!img) {
                 return;
             }
 
             /** Clear classList */
-            current.className = '';
-            image.className = '';
+            blockContent.classList.add(elementClasses_.blockStretched);
+            img.classList.toggle(elementClasses_.uploadedImage.stretched);
+            img.classList.toggle(elementClasses_.uploadedImage.centered);
 
-            /** Add important first-level class ce_block */
-            current.classList.add(codex.ui.className.BLOCK_CLASSNAME);
+            clickedSettingsItem.classList.toggle(elementClasses_.toggled);
 
-            if (type === 'stretched') {
+            if (img.classList.contains(elementClasses_.uploadedImage.stretched)) {
 
-                image.classList.add(elementClasses_.uploadedImage.stretched);
-
-                blockContent.classList.add(elementClasses_.blockStretched);
-
-                /** Setting dataset for saver */
                 wrapper.dataset.stretched = true;
 
-            } else if (type === 'centered') {
+            } else {
 
-                image.classList.add(elementClasses_.uploadedImage.centered);
-
-                blockContent.classList.remove(elementClasses_.blockStretched);
-
-                /** Setting dataset for saver */
                 wrapper.dataset.stretched = false;
+
             }
 
-            codex.toolbar.settings.close();
+            setTimeout(function() {
+                codex.toolbar.settings.close();
+            }, 200);
+
         }
     };
 
@@ -459,12 +513,6 @@ var image = (function(image) {
     };
 
     /**
-     * Default image holder which will be replaced after image upload
-     * @type {null}
-     */
-    image.holder = null;
-
-    /**
      * Image path
      * @type {null}
      */
@@ -485,17 +533,24 @@ var image = (function(image) {
      */
     var make_ = function ( data ) {
 
-        var holder;
+        var holder,
+            classes = [];
 
         if (data) {
 
+            if (data.border) {
+                classes.push(elementClasses_.imageWrapperBordered);
+            }
+
             if ( data.isstretch || data.isstretch === 'true') {
 
-                holder = ui_.makeImage(data, elementClasses_.uploadedImage.stretched, 'true');
+                classes.push(elementClasses_.uploadedImage.stretched);
+                holder = ui_.makeImage(data, classes, 'true', data.border);
 
             } else {
 
-                holder = ui_.makeImage(data, elementClasses_.uploadedImage.centered, 'false');
+                classes.push(elementClasses_.uploadedImage.centered);
+                holder = ui_.makeImage(data, classes, 'false', data.border);
 
             }
 
@@ -565,7 +620,7 @@ var image = (function(image) {
 
         var data = {
             background : false,
-            border : false,
+            border : content.dataset.bordered === 'true' ? true : false,
             isstretch : content.dataset.stretched === 'true' ? true : false,
             file : {
                 url : image.dataset.src || image.src,
@@ -581,7 +636,6 @@ var image = (function(image) {
         return data;
     };
 
-
     /**
      * @public
      *
@@ -590,12 +644,15 @@ var image = (function(image) {
      */
     image.makeSettings = function () {
 
-        var holder  = document.createElement('DIV'),
+        var currentNode = codex.content.currentNode,
+            wrapper = currentNode.querySelector('.' + elementClasses_.imageWrapper),
+            holder  = document.createElement('DIV'),
             types   = {
-                centered  : 'По центру',
-                stretched : 'На всю ширину'
+                stretched : "На всю ширину",
+                bordered  : "Добавить рамку"
             },
-            selectTypeButton;
+            currentImageWrapper  = currentNode.querySelector('.' + elementClasses_.imageWrapper ),
+            currentImageSettings = currentImageWrapper.dataset;
 
         /** Add holder classname */
         holder.className = 'ce_plugin_image--settings';
@@ -603,14 +660,33 @@ var image = (function(image) {
         /** Now add type selectors */
         for (var type in types){
 
-            selectTypeButton = document.createElement('SPAN');
+            /**
+             * Settings template
+             */
+            var settingsItem = document.createElement('DIV'),
+                selectorsHolder = document.createElement('SPAN'),
+                selectorsButton = document.createElement('SPAN');
 
-            selectTypeButton.textContent = types[type];
-            selectTypeButton.className   = 'ce_plugin_image--select_button';
+            settingsItem.classList.add(elementClasses_.settingsItem);
+            selectorsHolder.classList.add(elementClasses_.selectorHolder);
+            selectorsButton.classList.add(elementClasses_.selectorButton);
 
-            methods_.addSelectTypeClickListener(selectTypeButton, type);
+            selectorsHolder.appendChild(selectorsButton);
+            settingsItem.appendChild(selectorsHolder);
 
-            holder.appendChild(selectTypeButton);
+            selectTypeButton = document.createTextNode(types[type]);
+            settingsItem.appendChild(selectTypeButton);
+
+            /**
+             * Activate previously selected settings
+             */
+            if ( currentImageSettings[type] == 'true' ){
+                settingsItem.classList.add(elementClasses_.toggled);
+            }
+
+            methods_.addSelectTypeClickListener(settingsItem, type);
+
+            holder.appendChild(settingsItem);
 
         }
 
@@ -622,85 +698,6 @@ var image = (function(image) {
      * Share as API
      */
     image.uploadImageFromUri = uploadingCallbacks_.ByPaste.uploadImageFromUrl;
-
-    image.urlPastedCallbacks = {
-
-        /**
-         * Upload image by URL
-         *
-         * @uses codex Image tool
-         * @param filename
-         * @returns {Element}
-         */
-        uploadedImage : function(filename) {
-
-            var data = {
-                background: false,
-                border: false,
-                isStretch: false,
-                file: {
-                    url: "upload/redactor_images/" + filename,
-                    bigUrl: "upload/redactor_images/" + filename,
-                    width: null,
-                    height: null,
-                    additionalData: "null"
-                },
-                caption: '',
-                cover: null
-            };
-
-            /** Using Image plugin make method */
-            var image = ceImage.make(data);
-
-            return image;
-
-        },
-
-
-        /**
-         * Direct upload from pasted path
-         * @param path
-         */
-        uploadImage : function(path) {
-
-            var ajaxUrl = location.protocol + '//' + location.hostname + ':32769',
-                file,
-                image,
-                current = codex.content.currentNode,
-                beforeSend,
-                success_callback;
-
-            /** When image is uploaded to redactors folder */
-            success_callback = function(data) {
-
-                console.log(data);
-                return;
-                var file = JSON.parse(data);
-                image = ceImage.urlPastedCallbacks.uploadedImage(file.filename);
-                codex.content.switchBlock(current, image, 'image');
-
-            };
-
-            /** Before sending XMLHTTP request */
-            beforeSend = function() {
-                var content = current.querySelector('.ce-block__content');
-                content.classList.add('ce-plugin-image__loader');
-            };
-
-            /** Preparing data for XMLHTTP */
-            var data = {
-                url: '/club/fetchImage',
-                type: "POST",
-                data : {
-                    url: path
-                },
-                beforeSend : beforeSend,
-                success : success_callback
-            };
-
-            codex.core.ajax(data);
-        }
-    };
 
     return image;
 
