@@ -313,7 +313,10 @@ var callbacks = (function(callbacks) {
         }
 
 
-        var inputIsEmpty = !codex.content.currentNode.textContent.trim();
+        var inputIsEmpty = !codex.content.currentNode.textContent.trim(),
+            currentNodeType = codex.content.currentNode.dataset.tool,
+            isInitialType = currentNodeType == codex.settings.initialBlockPlugin;
+
 
         if (inputIsEmpty) {
 
@@ -325,13 +328,7 @@ var callbacks = (function(callbacks) {
             /** Hide plus buttons */
             codex.toolbar.hidePlusButton();
 
-        }
-
-        var currentNodeType = codex.content.currentNode.dataset.tool;
-
-        /** Mark current block*/
-        if (currentNodeType != codex.settings.initialBlockPlugin || !inputIsEmpty) {
-
+            /** Mark current block */
             codex.content.markBlock();
 
         }
