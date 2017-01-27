@@ -9,7 +9,7 @@
 var link = (function(link) {
 
     var settings = {
-        defaultText    : 'Insert link here ...',
+        defaultText    : 'Вставьте ссылку ...',
         ENTER_KEY      : 13,
         currentBlock   : null,
         currentInput   : null,
@@ -73,7 +73,7 @@ var link = (function(link) {
 
             var wrapper = document.createElement('div');
 
-            wrapper.className += 'tool-link-panel clearfix';
+            wrapper.classList.add('tool-link-panel', 'clearfix');
 
             return wrapper;
 
@@ -165,9 +165,6 @@ var link = (function(link) {
             }
         },
 
-        /**
-         * @todo move request-url to accepted settings
-         */
         renderLink : function (url, block) {
 
             Promise.resolve()
@@ -181,7 +178,7 @@ var link = (function(link) {
                     /* Show loader gif **/
                     block.classList.add(settings.elementClasses.loader);
 
-                    return fetch('/club/linkInfo?url=' + encodeURI(url));
+                    return fetch( link.config.fetchUrl + '?url=' + encodeURI(url) );
                 })
 
                 .then(function (response) {
@@ -245,6 +242,10 @@ var link = (function(link) {
         }
     };
 
+    link.prepare = function (config) {
+        link.config = config;
+    };
+
     /**
      * Make initial header block
      * @param {object} JSON with block data
@@ -275,13 +276,35 @@ var link = (function(link) {
      */
     link.render = function (json) {
 
-        var block = ui.mainBlock(),
-            tag   = ui.make(json);
+        if ( json ) {
 
-        block.classList.add('ce-link');
-        block.appendChild(tag);
+            var block = ui.mainBlock(),
+                tag   = ui.make(json);
 
-        return block;
+            block.classList.add('ce-link');
+            block.appendChild(tag);
+
+            return block;
+
+        } else {
+
+            var wrapper = ui.mainBlock(),
+                tag     = ui.input();
+
+            settings.currentInput = tag;
+
+            wrapper.appendChild(tag);
+
+            wrapper.classList.add('ce-link');
+            /**
+             * Bind callbacks
+             **/
+            tag.addEventListener('paste', methods.blockPasteCallback, false);
+            tag.addEventListener('keydown', methods.blockKeyDownCallback, false);
+
+                return wrapper;
+        }
+
 
     };
 
