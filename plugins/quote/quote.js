@@ -246,7 +246,7 @@ var quote = (function(quote) {
                 author = author.textContent;
 
             if (photo)
-                photo = photo.dataset.bigUrl;
+                photo = photo.src;
 
             var data = {
                 style       : currentNode.dataset.quoteStyle,
