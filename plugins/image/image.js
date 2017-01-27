@@ -32,19 +32,7 @@ var image = (function(image) {
         toggled : 'ce-image-settings__item--toggled'
 
     };
-
-    /**
-     * Cache settings
-     * @type {null}
-     */
-    image.cachedSettings = null;
-
-    /**
-     * Array of configurations
-     * Need to change statement
-     */
-    image.configurations = [];
-
+    
     /**
      *
      * @private
