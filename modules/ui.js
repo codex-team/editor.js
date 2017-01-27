@@ -166,7 +166,7 @@ var ui = (function(ui){
 
         for(var name in codex.settings.tools) {
             tool = codex.settings.tools[name];
-            codex.tools[name] = tool;;
+            codex.tools[name] = tool;
         }
 
         /** Make toolbar buttons */
