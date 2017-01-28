@@ -144,10 +144,10 @@
 */
 .ce-toolbar__actions{
     position: absolute;
-    right: 10px;
+    right: 8px;
     border-radius: 2px;
-    padding: 2px 4px;
-    /*background: #f9f9fb;*/
+    padding: 4px 5px;
+    background: #f9f9fb;
 }
 
 /**
