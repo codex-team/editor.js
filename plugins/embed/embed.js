@@ -136,12 +136,12 @@ var embed = function(embed){
 
         block.classList.add('embed');
 
-        var sidePadding = (600 - services[data.source].width) / 2 + 'px';
+        // var sidePadding = (600 - services[data.source].width) / 2 + 'px';
 
-        block.style.padding = '30px ' + sidePadding;
+        // block.style.padding = '30px ' + sidePadding;
 
         if (isInternal) {
-                methods.addInternal(block);
+            methods.addInternal(block);
         }
 
         return block;
