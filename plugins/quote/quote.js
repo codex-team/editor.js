@@ -378,6 +378,7 @@ var quote = (function(quote) {
 
             var img = uploadImageWrapper.querySelector('IMG');
             img.src = parsed.data.file.bigUrl;
+            img.dataset.bigUrl = parsed.data.file.bigUrl;
 
             uploadImageWrapper.classList.remove(elementClasses_.authorsPhotoWrapper_preview);
         },
