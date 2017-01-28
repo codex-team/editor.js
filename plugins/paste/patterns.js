@@ -82,7 +82,7 @@ paste.patterns = [
     },
     {
         type: 'twitch-video',
-        regex: /https?:\/\/www.twitch.tv\/[^\/\?\&]*\/v\/([0-9]*)/,
+        regex: /https?:\/\/www.twitch.tv\/(?:[^\/\?\&]*\/v|videos)\/([0-9]*)/,
         callback: embed.urlPastedCallback
     },
     {
