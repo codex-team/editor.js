@@ -342,13 +342,13 @@ var quote = (function(quote) {
             var uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
                 authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
 
+            /** Appending uploaded image */
+            uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper, elementClasses_.authorsPhotoWrapper_preview);
+
             authorsPhoto.src = e.target.result;
 
             /** Remove icon from image wrapper */
             uploadImageWrapper.innerHTML = '';
-
-            /** Appending uploaded image */
-            uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper, elementClasses_.authorsPhotoWrapper_preview);
 
             uploadImageWrapper.appendChild(authorsPhoto);
         },

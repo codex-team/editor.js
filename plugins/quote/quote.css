@@ -127,7 +127,7 @@
 
 .authorsPhoto-wrapper {
     border: 0 !important;
-    transition: all 500ms ease-in;
+    transition: all 20ms ease-in;
     will-change: opacity, filter;
 }
 
