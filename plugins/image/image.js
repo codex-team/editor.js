@@ -135,7 +135,7 @@ var image = (function(image) {
                 caption  = ui_.caption(),
                 wrapper  = ui_.wrapper();
 
-            caption.textContent = text;
+            caption.innerHTML = text;
 
             wrapper.dataset.stretched = stretched;
             wrapper.dataset.bordered = bordered;

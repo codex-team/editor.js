@@ -42,8 +42,6 @@ paste.patterns = [
         type: 'vk',
         regex: /https?:\/\/vk\.com\/.*(?:video)([-0-9]+_[0-9]+)/, ///https?.+vk?.com\/feed\?w=wall\d+_\d+/,
         callback: embed.urlPastedCallback
-
-        // https://vk.com/video142051356_456244081
     },
     {
         type: 'youtube',
