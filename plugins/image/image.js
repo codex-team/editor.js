@@ -32,7 +32,7 @@ var image = (function(image) {
         toggled : 'ce-image-settings__item--toggled'
 
     };
-    
+
     /**
      *
      * @private
@@ -617,7 +617,7 @@ var image = (function(image) {
                 height : image.height,
                 additionalData :null
             },
-            caption : caption.textContent,
+            caption : caption.innerHTML,
             cover : null
         };
 
