@@ -362,7 +362,7 @@ var quote = (function(quote) {
 
             fileReader.readAsDataURL(file);
 
-            fileReader.onload = photoUploadingCallbacks_.preview_(e);
+            fileReader.onload = photoUploadingCallbacks_.preview_;
 
         },
 
