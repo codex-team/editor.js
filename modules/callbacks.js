@@ -2,7 +2,7 @@
  * Codex Editor callbacks module
  *
  * @author Codex Team
- * @version 1.3.4
+ * @version 1.3.5
  */
 
 var callbacks = (function(callbacks) {
@@ -771,7 +771,7 @@ var callbacks = (function(callbacks) {
         event.preventDefault();
 
         /** get html pasted data - dirty data */
-        var data = event.clipboardData.getData('text/html');
+        var data = event.clipboardData.getData('text/html') || event.clipboardData.getData('text/plain');
 
         /** Temporary DIV that is used to work with childs as arrays item */
         var div     = codex.draw.node('DIV', '', {}),
