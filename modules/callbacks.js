@@ -318,20 +318,20 @@ var callbacks = (function(callbacks) {
             isInitialType = currentNodeType == codex.settings.initialBlockPlugin;
 
 
-        if (inputIsEmpty) {
+        /** Hide plus buttons */
+        codex.toolbar.hidePlusButton();
+
+        /** Mark current block */
+        codex.content.markBlock();
+
+
+        if ( isInitialType && inputIsEmpty ) {
 
             /** Show plus button */
             codex.toolbar.showPlusButton();
 
-        } else {
-
-            /** Hide plus buttons */
-            codex.toolbar.hidePlusButton();
-
-            /** Mark current block */
-            codex.content.markBlock();
-
         }
+
 
     };
 

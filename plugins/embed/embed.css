@@ -4,6 +4,11 @@
     background: #fff;
 }
 
+.ce-redactor .embed iframe {
+    width: 100% !important;
+    border: 0 !important;
+}
+
 .embed__loader {
     background-image: url("loading.gif") !important;
     background-repeat: no-repeat;
