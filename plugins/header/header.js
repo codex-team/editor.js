@@ -130,9 +130,9 @@ var header = (function(header) {
 
         var holder  = codex.draw.node('DIV', ['ce_plugin_header--settings'], {} ),
             types   = {
-                H2: 'Заголовок раздела',
-                H3: 'Подзаголовок',
-                H4: 'Заголовок 3-его уровня'
+                H2: 'Заголовок H2',
+                H3: 'Заголовок H3',
+                H4: 'Заголовок H4'
             },
             selectTypeButton;
 
