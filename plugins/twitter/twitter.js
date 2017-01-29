@@ -11,10 +11,22 @@ var twitter = (function(twitter) {
          * Twitter render method appends content after block
          * @param tweetId
          */
-        twitter : function(data, tweet) {
+        twitter : function(data, twitterBlock) {
+
+            var tweet = methods.drawTwitterHolder(),
+                twittersCaption = methods.drawTwittersCaptionBlock();
+
+            if (data.caption) {
+                twittersCaption.innerHTML = data.caption;
+            }
+
+            /**
+             * add created tweet to holder
+             */
+            tweet.appendChild(twitterBlock);
 
             setTimeout(function() {
-                window.twttr.widgets.createTweet(data.id_str, tweet);
+                window.twttr.widgets.createTweet(data.id_str, twitterBlock);
             }, 1000);
 
             tweet.classList.add('twitter__loader');
@@ -51,13 +63,29 @@ var twitter = (function(twitter) {
                 tweet.dataset.media = data.media;
 
                 tweet.classList.remove('twitter__loader');
-
             }
+
+            /**
+             * add caption to tweet
+             */
+            tweet.appendChild(twittersCaption);
+
+            return tweet;
 
         },
 
-        twitterBlock : function() {
+        drawTwitterHolder : function() {
+            var block = codex.draw.node('DIV', '', {});
+            return block;
+        },
+
+        drawTwitterBlock : function() {
             var block = codex.draw.node('DIV', '', { height: "20px" });
+            return block;
+        },
+
+        drawTwittersCaptionBlock : function() {
+            var block = codex.draw.node('DIV', ['ce-twitter__caption'], { contentEditable : true });
             return block;
         },
 
@@ -65,7 +93,7 @@ var twitter = (function(twitter) {
 
             var data = JSON.parse(result),
                 twitterContent = tweet;
-            
+
             setTimeout(function() {
 
                 /**
@@ -122,11 +150,11 @@ var twitter = (function(twitter) {
             data.id_str = data.status_url.match(/[^\/]+$/)[0];
         }
 
-        var blockContent = methods.twitterBlock();
+        var twitterBlock   = methods.drawTwitterBlock();
 
-        methods.twitter(data, blockContent);
+        var tweet = methods.twitter(data, twitterBlock);
 
-        return blockContent;
+        return tweet;
     };
 
     twitter.validate = function(data) {
@@ -135,7 +163,8 @@ var twitter = (function(twitter) {
 
     twitter.save = function(blockContent) {
 
-        var data;
+        var data,
+            caption = blockContent.querySelector('.ce-twitter__caption');
 
         data = {
             media:blockContent.dataset.media,
@@ -151,7 +180,7 @@ var twitter = (function(twitter) {
             text: blockContent.dataset.text,
             created_at: blockContent.dataset.createdAt,
             status_url: blockContent.dataset.statusUrl,
-            caption: ""
+            caption: caption.innerHTML
         };
 
         return data;
