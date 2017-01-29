@@ -6,3 +6,16 @@
     background: url("loading.gif") !important;
     opacity: 0.1;
 }
+
+.ce-twitter__caption {
+    max-width : 500px;
+    border: 1px solid #ebeef3;
+    margin: 0 auto;
+    padding: .6em .8em;
+    box-sizing: border-box;
+}
+
+.ce-twitter__caption:empty::before {
+    content : 'Подпись';
+    opacity: .5;
+}
