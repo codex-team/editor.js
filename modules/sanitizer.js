@@ -20,7 +20,6 @@ var sanitizer = (function(sanitizer) {
                     target: '_blank',
                     rel: 'nofollow'
                 },
-                ul: {},
                 i: {},
                 b: {},
                 strong: {},

@@ -3,7 +3,7 @@
  * Works with DOM
  *
  * @author Codex Team
- * @version 1.3.8
+ * @version 1.3.11
  */
 
 var content = (function(content) {
@@ -672,29 +672,85 @@ var content = (function(content) {
          */
         var sibling = node.nextSibling;
 
-        // console.log('Погнали проверять соседей ');
-
         while ( sibling ) {
-
-            // console.log('Опаньки! нашли соседа: %o', sibling);
 
             if (sibling.textContent.length){
 
-                // console.log('Соседи не пустые, то есть мы не в конце.');
                 return false;
 
             }
-            //
-            // console.log('Сосед пустой. Возможно мы в конце.');
-            // console.log('Смотрим следующего');
 
             sibling = sibling.nextSibling;
 
         }
 
-        // console.log('Все соседи пустые. -------');
-
         return true;
+
+    };
+
+    /**
+     * @public
+     *
+     * @param [String] htmlString - html content as string
+     * @return {string} - html content as string
+     */
+    content.wrapTextWithParagraphs = function(htmlString) {
+
+        var wrapper = document.createElement('DIV'),
+            newWrapper = document.createElement('DIV'),
+            i,
+            paragraph,
+            firstLevelBlocks = ['DIV', 'P'],
+            blockTyped,
+            node;
+
+        /**
+         * Make HTML Element to Wrap Text
+         * It allows us to work with input data as HTML content
+         */
+        wrapper.innerHTML = htmlString;
+        paragraph = document.createElement('P');
+
+        for (i = 0; i < wrapper.childNodes.length; i++) {
+
+            node = wrapper.childNodes[i];
+
+            blockTyped = firstLevelBlocks.indexOf(node.tagName) != -1;
+
+            /**
+             * If node is first-levet
+             * we add this node to our new wrapper
+             */
+            if ( blockTyped ) {
+
+                /**
+                 * If we had splitted inline nodes to paragraph before
+                 */
+                if ( paragraph.childNodes.length ){
+
+                    newWrapper.appendChild(paragraph.cloneNode(true));
+
+                    /** empty paragraph */
+                    paragraph = null;
+                    paragraph = document.createElement('P');
+
+                }
+
+                newWrapper.appendChild(node.cloneNode(true));
+
+            } else {
+
+                /** Collect all inline nodes to one as paragraph */
+                paragraph.appendChild(node.cloneNode(true));
+
+                /** if node is last we should append this node to paragraph and paragraph to new wrapper */
+                if ( i == wrapper.childNodes.length - 1 ){
+                    newWrapper.appendChild(paragraph.cloneNode(true));
+                }
+            }
+        }
+
+        return newWrapper.innerHTML;
 
     };
 

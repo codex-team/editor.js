@@ -440,31 +440,12 @@ var quote = (function(quote) {
 
     var prepareDataForSave_ = function(data) {
 
-        var TEXTNODE = 3;
-
         if (data.size == 'withPhoto') {
             data.size = 'small';
         }
 
-        var wrapper = document.createElement('DIV');
-        wrapper.innerHTML = data.text;
-
-        var child,
-            paragraph;
-
-        for (child = 0; child < wrapper.childNodes.length; child++) {
-
-            // is TEXT node ?
-            if (wrapper.childNodes[child].nodeType === TEXTNODE) {
-
-                paragraph = document.createElement('P');
-                paragraph.innerHTML = wrapper.childNodes[child].textContent;
-
-                wrapper.childNodes[child].replaceWith(paragraph);
-            }
-        }
-
-        data.text = wrapper.innerHTML;
+        /** Make paragraphs */
+        data.text = codex.content.wrapTextWithParagraphs(data.text);
 
         return data;
     };
@@ -497,7 +478,7 @@ var quote = (function(quote) {
          */
         var parsedblock = methods_.parseBlockQuote(blockContent);
 
-        var data = {
+        var outputData = {
             "text"   : parsedblock.text,
             "format" : "html",
             "cite"   : parsedblock.author,
@@ -506,7 +487,7 @@ var quote = (function(quote) {
             "image"  : parsedblock.photo
         };
 
-        return prepareDataForSave_(data);
+        return prepareDataForSave_(outputData);
     };
 
     /**
