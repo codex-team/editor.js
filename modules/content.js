@@ -694,7 +694,7 @@ var content = (function(content) {
      * @param [String] htmlString - html content as string
      * @return {string} - html content as string
      */
-    content.wrapTextIntoParagraphs = function(htmlString) {
+    content.wrapTextWithParagraphs = function(htmlString) {
 
         var wrapper = document.createElement('DIV'),
             newWrapper = document.createElement('DIV'),

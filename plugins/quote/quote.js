@@ -445,7 +445,7 @@ var quote = (function(quote) {
         }
 
         /** Make paragraphs */
-        data.text = codex.content.wrapTextIntoParagraphs(data.text);
+        data.text = codex.content.wrapTextWithParagraphs(data.text);
 
         return data;
     };
