@@ -12,7 +12,7 @@ var paragraph = (function(paragraph) {
      * @param {object} JSON with block data
      * @return {Element} element to append
      */
-   
+
     var make_ = function (data) {
 
         /** Create Empty DIV */
@@ -75,7 +75,7 @@ var paragraph = (function(paragraph) {
      */
     paragraph.validate = function(output) {
 
-        if (output.text == '')
+        if (output.text === '')
             return;
 
         return output;
@@ -88,8 +88,10 @@ var paragraph = (function(paragraph) {
      */
     paragraph.save = function (blockContent){
 
+        var wrappedText = codex.content.wrapTextWithParagraphs(blockContent.innerHTML);
+
         var data = {
-            "text": blockContent.innerHTML,
+            "text": wrappedText,
             "format": "html",
             "introText": '<<same>>'
         };
