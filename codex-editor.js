@@ -1837,20 +1837,33 @@ var codex =
 	            blockTyped,
 	            node;
 	
+	        /**
+	         * Make HTML Element to Wrap Text
+	         * It allows us to work with input data as HTML content
+	         */
 	        wrapper.innerHTML = htmlString;
 	        paragraph = document.createElement('P');
 	
 	        for (i = 0; i < wrapper.childNodes.length; i++) {
 	
 	            node = wrapper.childNodes[i];
+	
 	            blockTyped = firstLevelBlocks.indexOf(node.tagName) != -1;
 	
+	            /**
+	             * If node is first-levet
+	             * we add this node to our new wrapper
+	             */
 	            if (blockTyped) {
 	
+	                /**
+	                 * If we had splitted inline nodes to paragraph before
+	                 */
 	                if (paragraph.childNodes.length) {
 	
 	                    newWrapper.appendChild(paragraph.cloneNode(true));
 	
+	                    /** empty paragraph */
 	                    paragraph = null;
 	                    paragraph = document.createElement('P');
 	                }
@@ -1858,8 +1871,10 @@ var codex =
 	                newWrapper.appendChild(node.cloneNode(true));
 	            } else {
 	
+	                /** Collect all inline nodes to one as paragraph */
 	                paragraph.appendChild(node.cloneNode(true));
 	
+	                /** if node is last we should append this node to paragraph and paragraph to new wrapper */
 	                if (i == wrapper.childNodes.length - 1) {
 	                    newWrapper.appendChild(paragraph.cloneNode(true));
 	                }
