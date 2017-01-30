@@ -213,7 +213,7 @@ var twitter = (function(twitter) {
             text: blockContent.dataset.text,
             created_at: blockContent.dataset.createdAt,
             status_url: blockContent.dataset.statusUrl,
-            caption: caption.innerHTML
+            caption: caption.innerHTML || ""
         };
 
         return data;

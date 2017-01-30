@@ -325,10 +325,10 @@ var link = (function(link) {
 
         var data = {
             url    : blockContent.querySelector("." + linkElement).href,
-            shortLink   : blockContent.querySelector("." + linkElement).textContent,
-            image       : blockContent.querySelector("." + settings.elementClasses.image).src,
-            title       : blockContent.querySelector("." + settings.elementClasses.title).textContent,
-            description : blockContent.querySelector("." + settings.elementClasses.description).textContent
+            shortLink   : blockContent.querySelector("." + linkElement).textContent || "",
+            image       : blockContent.querySelector("." + settings.elementClasses.image).src || "",
+            title       : blockContent.querySelector("." + settings.elementClasses.title).textContent || "",
+            description : blockContent.querySelector("." + settings.elementClasses.description).textContent || ""
         };
 
         return data;
