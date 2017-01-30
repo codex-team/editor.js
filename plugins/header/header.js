@@ -113,7 +113,7 @@ var header = (function(header) {
         var data = {
             "heading-styles": blockContent.dataset.headerData,
             "format": "html",
-            "text": blockContent.textContent
+            "text": blockContent.textContent || ''
         };
 
         return data;

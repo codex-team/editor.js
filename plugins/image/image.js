@@ -617,7 +617,7 @@ var image = (function(image) {
                 height : image.height,
                 additionalData :null
             },
-            caption : caption.innerHTML,
+            caption : caption.innerHTML || '',
             cover : null
         };
 

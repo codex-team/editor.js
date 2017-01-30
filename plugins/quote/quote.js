@@ -481,8 +481,8 @@ var quote = (function(quote) {
         var outputData = {
             "text"   : parsedblock.text,
             "format" : "html",
-            "cite"   : parsedblock.author,
-            "caption": parsedblock.job,
+            "cite"   : parsedblock.author || '',
+            "caption": parsedblock.job || '',
             "size"   : parsedblock.style,
             "image"  : parsedblock.photo
         };
