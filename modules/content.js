@@ -263,9 +263,6 @@ var content = (function(content) {
 
             } else {
 
-                if (currentInputIndex === codex.state.inputs.length - 1)
-                    return;
-
                 /** Timeout for browsers execution */
                 setTimeout(function () {
 

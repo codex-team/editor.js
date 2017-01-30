@@ -29,34 +29,34 @@
 
 /** upload image form */
 .ce-plugin-image__holder{
-	position: relative;
-	background: #FEFEFE;
-	border: 2px solid #edeff5;
+    position: relative;
+    background: #FEFEFE;
+    border: 2px solid #edeff5;
     text-align: center;
-	margin: 30px 0;
-	padding: 15px;
+    margin: 30px 0;
+    padding: 15px;
 }
-	.ce-plugin-image__holder input{
-		border: 0;
-		background: transparent;
-		outline: none;
-		-webkit-appearance: none;
-		font-size: 1.2em;
-		color: #A5ABBC;
-	}
-	/* Placeholder color for Chrome */
-	.ce-plugin-image__holder input::-webkit-input-placeholder {
-	  color: #A5ABBC;
-	}
-	/* Placeholder color for IE 10+ */
-	.ce-plugin-image__holder input:-ms-input-placeholder {
-	  color: #A5ABBC;
-	}
-	/* Placeholder color for Firefox 19+ */
-	.ce-plugin-image__holder input::-moz-placeholder {
-	  color: #A5ABBC;
-	  opacity: 1;
-	}
+    .ce-plugin-image__holder input{
+        border: 0;
+        background: transparent;
+        outline: none;
+        -webkit-appearance: none;
+        font-size: 1.2em;
+        color: #A5ABBC;
+    }
+    /* Placeholder color for Chrome */
+    .ce-plugin-image__holder input::-webkit-input-placeholder {
+      color: #A5ABBC;
+    }
+    /* Placeholder color for IE 10+ */
+    .ce-plugin-image__holder input:-ms-input-placeholder {
+      color: #A5ABBC;
+    }
+    /* Placeholder color for Firefox 19+ */
+    .ce-plugin-image__holder input::-moz-placeholder {
+      color: #A5ABBC;
+      opacity: 1;
+    }
 
 .ce-plugin-image__loader {
     background-color: transparent;
@@ -71,13 +71,15 @@
 
 
 .ce-plugin-image__button{
-	cursor: pointer;
-	font-size: 1;
-	color: #8990AA;
+    cursor: pointer;
+    font-size: 1;
+    color: #8990AA;
 }
-	.ce-plugin-image__button:hover{
-		color: #393F52;
-	}
+    .ce-plugin-image__button:hover{
+        color: #393F52;
+    }
+
+
 
 
 
@@ -98,13 +100,13 @@
 }
 
 .ce-plugin-image__uploaded--stretched {
-	width: 100%;
+    width: 100%;
 }
-	.ce-plugin-image__firstlevel--stretch {
-		margin: 0 !important;
-		max-width: none !important;
-		padding: 0 !important;
-	}
+    .ce-plugin-image__firstlevel--stretch {
+        margin: 0 !important;
+        max-width: none !important;
+        padding: 0 !important;
+    }
 
 .ce-plugin-image__caption {
     max-width: 600px;

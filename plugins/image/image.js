@@ -506,7 +506,7 @@ var image = (function(image) {
      */
     image.path   = null;
 
-	/**
+    /**
      * Plugin configuration
      */
     image.config = null;
