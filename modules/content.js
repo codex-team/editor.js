@@ -749,7 +749,7 @@ var content = (function(content) {
                 }
             }
         }
-        
+
         return newWrapper.innerHTML;
 
     };
