@@ -5,6 +5,13 @@
 
 var twitter = (function(twitter) {
 
+    /**
+    * CSS classes
+    */
+    var css_ = {
+        pluginWrapper : 'cdx-tweet'
+    };
+
     var methods = {
 
         /**
@@ -25,11 +32,11 @@ var twitter = (function(twitter) {
              */
             tweet.appendChild(twitterBlock);
 
-            setTimeout(function() {
-                window.twttr.widgets.createTweet(data.id_str, twitterBlock);
-            }, 1000);
+            // setTimeout(function() {
+                window.twttr.widgets.createTweet(data.id_str, twitterBlock).then(tweetInsertedCallback_);
+            // }, 1000);
 
-            tweet.classList.add('twitter__loader');
+            tweet.classList.add('ce-redactor__loader');
 
             if (codex.content.currentNode) {
                 tweet.dataset.statusUrl = data.status_url;
@@ -62,21 +69,28 @@ var twitter = (function(twitter) {
                 tweet.dataset.statusUrl = data.status_url;
                 tweet.dataset.media = data.media;
 
-                tweet.classList.remove('twitter__loader');
+                tweet.classList.remove('ce-redactor__loader');
             }
 
             /**
              * add caption to tweet
              */
-            tweet.appendChild(twittersCaption);
+            setTimeout(function() {
+                tweet.appendChild(twittersCaption);
+            }, 1000);
 
             return tweet;
 
         },
 
         drawTwitterHolder : function() {
-            var block = codex.draw.node('DIV', '', {});
+
+            var block = document.createElement('DIV');
+
+            block.classList.add(css_.pluginWrapper);
+
             return block;
+
         },
 
         drawTwitterBlock : function() {
@@ -109,19 +123,38 @@ var twitter = (function(twitter) {
                 twitterContent.dataset.createdAt = data.created_at;
                 twitterContent.dataset.media = data.entities.urls.length > 0 ? "false" : "true";
 
-                twitterContent.classList.remove('twitter__loader');
-
             }, 50);
 
         }
     };
 
     /**
+    * @private
+    * Fires after tweet widget rendered
+    */
+    function tweetInsertedCallback_(widget) {
+
+        var pluginWrapper = findParent_( widget , css_.pluginWrapper );
+
+        pluginWrapper.classList.remove('ce-redactor__loader');
+
+    }
+
+    /**
+    * @private
+    * Find closiest parent Element with CSS class
+    */
+    function findParent_ (el, cls) {
+        while ((el = el.parentElement) && !el.classList.contains(cls));
+        return el;
+    }
+
+    /**
      * Prepare twitter scripts
      */
     twitter.prepare = function(config) {
 
-        var script = "//platform.twitter.com/widgets.js";
+        var script = "https://platform.twitter.com/widgets.js";
 
         /**
          * Save configs

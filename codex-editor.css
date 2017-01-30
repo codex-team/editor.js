@@ -399,10 +399,10 @@
 /**
 * Loading bar class
 */
-.ce-redactor__loader{
+.ce-redactor__loader {
     background-image: repeating-linear-gradient(-45deg, transparent, transparent 4px, #f5f9ff 4px, #eaedef 8px) !important;
     background-size: 56px 56px;
-    animation: loading-bar 1.3s infinite linear;
+    animation: loading-bar 600ms infinite linear;
 }
 
 @keyframes loading-bar {

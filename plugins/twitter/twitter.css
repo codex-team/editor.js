@@ -1,18 +1,17 @@
 .ce-redactor .twitter-tweet {
-    margin: 0 auto;
-}
-
-.twitter__loader {
-    background: url("loading.gif") !important;
-    opacity: 0.1;
+    margin: 15px auto !important;
+    width: 100% !important;
 }
 
 .ce-twitter__caption {
-    max-width : 500px;
+    max-width: 520px;
+    margin-bottom: 15px;
+    background: #fff;
     border: 1px solid #ebeef3;
-    margin: 0 auto;
+    border-radius: 3px;
     padding: .6em .8em;
     box-sizing: border-box;
+
 }
 
 .ce-twitter__caption:empty::before {

@@ -100,11 +100,11 @@
 }
 
 .quoteStyle-withPhoto--photo {
-    width: 92px;
-    height: 92px;
+    width: 87px;
+    height: 87px;
     overflow: hidden;
     text-align: center;
-    line-height: 92px;
+    line-height: 87px;
     border-radius: 3px;
     float: left;
     margin-right: 10px;
@@ -157,7 +157,6 @@
     color: #000;
 }
 .quoteStyle-withPhoto--job {
-    color: #818BA1;
     outline: none;
     overflow: hidden;
 }
@@ -184,7 +183,8 @@
 * New styles
 */
 .ce-quote{
-    padding: 1em 0;
+    margin: 0 !important;
+    padding: 15px 0;
 }
 .quoteStyle-withPhoto--author,
 .quoteStyle-withPhoto--job,
