@@ -440,52 +440,12 @@ var quote = (function(quote) {
 
     var prepareDataForSave_ = function(data) {
 
-        var nodeTypeTag = 1,
-            wrapper = document.createElement('DIV'),
-            child,
-            paragraph,
-            nodeIsTag,
-            nodeIsParagraphTag;
-
-
         if (data.size == 'withPhoto') {
             data.size = 'small';
         }
 
-        wrapper.innerHTML = data.text;
-
-
-        for (child = 0; child < wrapper.childNodes.length; child++) {
-
-            console.log("node: %o", wrapper.childNodes[child]);
-
-            nodeIsTag = wrapper.childNodes[child].nodeType == nodeTypeTag;
-            nodeIsParagraphTag = wrapper.childNodes[child].tagName == 'P';
-
-            console.log("nodeIsTag: %o", nodeIsTag);
-            console.log("nodeIsParagraphTag: %o", nodeIsParagraphTag);
-
-            /**
-            * Wrapp all Text nodes and not-paragraph tags in <p>
-            */
-            if ( !nodeIsTag || !nodeIsParagraphTag ) {
-
-                console.log("Wrapping...");
-
-                paragraph = document.createElement('P');
-                paragraph.innerHTML = wrapper.childNodes[child].innerHTML || wrapper.childNodes[child].textContent;
-
-                console.log("paragraph: %o", paragraph);
-
-                wrapper.childNodes[child].replaceWith(paragraph);
-
-            }
-
-        }
-
-        console.log("wrapper.children: %o", wrapper.children);
-
-        data.text = wrapper.innerHTML;
+        /** Make paragraphs */
+        data.text = codex.content.makeParagraphsFromContent(data.text);
 
         return data;
     };
@@ -518,7 +478,7 @@ var quote = (function(quote) {
          */
         var parsedblock = methods_.parseBlockQuote(blockContent);
 
-        var data = {
+        var outputData = {
             "text"   : parsedblock.text,
             "format" : "html",
             "cite"   : parsedblock.author,
@@ -527,7 +487,7 @@ var quote = (function(quote) {
             "image"  : parsedblock.photo
         };
 
-        return prepareDataForSave_(data);
+        return prepareDataForSave_(outputData);
     };
 
     /**

@@ -1831,6 +1831,69 @@ var codex =
 	        return true;
 	    };
 	
+	    /**
+	     * @public
+	     *
+	     * @param [String] htmlString - html content as string
+	     * @return {string} - html content as string
+	     */
+	    content.makeParagraphsFromContent = function (htmlString) {
+	
+	        var wrapper = document.createElement('DIV'),
+	            newWrapper = document.createElement('DIV'),
+	            i,
+	            paragraph,
+	            firstLevelBlocks = ['DIV', 'BLOCKQUOTE', 'SECTION', 'ARTICLE', 'PRE', 'CODE', 'P'],
+	            blockTyped,
+	            node;
+	
+	        wrapper.innerHTML = htmlString;
+	        paragraph = document.createElement('P');
+	
+	        for (i = 0; i < wrapper.childNodes.length; i++) {
+	
+	            node = wrapper.childNodes[i];
+	            blockTyped = firstLevelBlocks.indexOf(node.tagName) != -1;
+	
+	            // console.log("Узел: %o", node);
+	            // console.log(blockTyped ? 'Он блочный' : 'Инлайновый');
+	
+	            if (blockTyped) {
+	
+	                // console.log('Проверим, не сформировали ли мы до этого параграф из инлайновых элементов');
+	                // console.log('Длина контента параграфа: ', paragraph.textContent.length);
+	
+	                if (paragraph.childNodes.length) {
+	
+	                    // console.info('Опа, параграф не пустой. Нужно его добавить и очистить');
+	                    // console.log('Клонировали, добавили');
+	
+	                    newWrapper.appendChild(paragraph.cloneNode(true));
+	
+	                    paragraph = null;
+	                    paragraph = document.createElement('P');
+	                }
+	
+	                newWrapper.appendChild(node.cloneNode(true));
+	            } else {
+	
+	                // console.log('Инлайновые элементы мы добавляем в парагаф');
+	                // console.log('Сейчас в нем %o детей', paragraph.childNodes.length);
+	
+	                paragraph.appendChild(node.cloneNode(true));
+	
+	                // console.log('А теперь: %o', paragraph.childNodes.length);
+	                // console.log('Проверим, не последний ли это элемент. Если да, то параграф нужно добавить в обертку перед выходом из цикла');
+	
+	                if (i == wrapper.childNodes.length - 1) {
+	                    newWrapper.appendChild(paragraph);
+	                }
+	            }
+	        }
+	
+	        return newWrapper.innerHTML;
+	    };
+	
 	    return content;
 	}({});
 	
@@ -4404,7 +4467,6 @@ var codex =
 	                    target: '_blank',
 	                    rel: 'nofollow'
 	                },
-	                ul: {},
 	                i: {},
 	                b: {},
 	                strong: {},
