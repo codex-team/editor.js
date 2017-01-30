@@ -88,7 +88,7 @@ var codex =
 	        codex.sanitizer = __webpack_require__(18);
 	    };
 	
-	    codex.version = ("1.3.09");
+	    codex.version = ("1.3.10");
 	
 	    /**
 	     * @public
