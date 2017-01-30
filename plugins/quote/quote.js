@@ -440,29 +440,50 @@ var quote = (function(quote) {
 
     var prepareDataForSave_ = function(data) {
 
-        var TEXTNODE = 3;
+        var nodeTypeTag = 1,
+            wrapper = document.createElement('DIV'),
+            child,
+            paragraph,
+            nodeIsTag,
+            nodeIsParagraphTag;
+
 
         if (data.size == 'withPhoto') {
             data.size = 'small';
         }
 
-        var wrapper = document.createElement('DIV');
         wrapper.innerHTML = data.text;
 
-        var child,
-            paragraph;
 
         for (child = 0; child < wrapper.childNodes.length; child++) {
 
-            // is TEXT node ?
-            if (wrapper.childNodes[child].nodeType === TEXTNODE) {
+            console.log("node: %o", wrapper.childNodes[child]);
+
+            nodeIsTag = wrapper.childNodes[child].nodeType == nodeTypeTag;
+            nodeIsParagraphTag = wrapper.childNodes[child].tagName == 'P';
+
+            console.log("nodeIsTag: %o", nodeIsTag);
+            console.log("nodeIsParagraphTag: %o", nodeIsParagraphTag);
+
+            /**
+            * Wrapp all Text nodes and not-paragraph tags in <p>
+            */
+            if ( !nodeIsTag || !nodeIsParagraphTag ) {
+
+                console.log("Wrapping...");
 
                 paragraph = document.createElement('P');
-                paragraph.innerHTML = wrapper.childNodes[child].textContent;
+                paragraph.innerHTML = wrapper.childNodes[child].innerHTML || wrapper.childNodes[child].textContent;
+
+                console.log("paragraph: %o", paragraph);
 
                 wrapper.childNodes[child].replaceWith(paragraph);
+
             }
+
         }
+
+        console.log("wrapper.children: %o", wrapper.children);
 
         data.text = wrapper.innerHTML;
 
