@@ -15,18 +15,6 @@
     filter: blur(1.7px) grayscale(1);
 }
 
-
-.ce-image__wrapper img {
-    transition: all 500ms ease-in;
-    will-change: opacity, filter;
-}
-
-.ce-image__preview img {
-    opacity: .5;
-    filter: blur(1.7px) grayscale(1);
-}
-
-
 /** upload image form */
 .ce-plugin-image__holder{
 	position: relative;
