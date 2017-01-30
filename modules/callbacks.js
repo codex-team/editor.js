@@ -2,7 +2,7 @@
  * Codex Editor callbacks module
  *
  * @author Codex Team
- * @version 1.3.4
+ * @version 1.3.5
  */
 
 var callbacks = (function(callbacks) {
@@ -313,28 +313,25 @@ var callbacks = (function(callbacks) {
         }
 
 
-        var inputIsEmpty = !codex.content.currentNode.textContent.trim();
+        var inputIsEmpty = !codex.content.currentNode.textContent.trim(),
+            currentNodeType = codex.content.currentNode.dataset.tool,
+            isInitialType = currentNodeType == codex.settings.initialBlockPlugin;
 
-        if (inputIsEmpty) {
+
+        /** Hide plus buttons */
+        codex.toolbar.hidePlusButton();
+
+        /** Mark current block */
+        codex.content.markBlock();
+
+
+        if ( isInitialType && inputIsEmpty ) {
 
             /** Show plus button */
             codex.toolbar.showPlusButton();
 
-        } else {
-
-            /** Hide plus buttons */
-            codex.toolbar.hidePlusButton();
-
         }
 
-        var currentNodeType = codex.content.currentNode.dataset.tool;
-
-        /** Mark current block*/
-        if (currentNodeType != codex.settings.initialBlockPlugin || !inputIsEmpty) {
-
-            codex.content.markBlock();
-
-        }
 
     };
 

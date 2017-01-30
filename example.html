@@ -10,10 +10,9 @@
 
 </body>
 
-<script src="./codex-editor.js?v=108"></script>
-<link rel="stylesheet" href="./codex-editor.css?v=11000">
+<script src="codex-editor.js?v=108"></script>
+<link rel="stylesheet" href="codex-editor.css?v=11000">
 
-<link rel="stylesheet" href="codex-editor.css">
 
 <script src="plugins/paragraph/paragraph.js"></script>
 <link rel="stylesheet" href="plugins/paragraph/paragraph.css">
@@ -155,19 +154,20 @@
                 validate: instagram.validate,
                 save: instagram.save
             },
-            twitter: {
-                type: 'twitter',
+            tweet: {
+                type: 'tweet',
                 iconClassname: 'ce-icon-twitter',
                 prepare: twitter.prepare,
                 render: twitter.render,
                 validate: twitter.validate,
                 save: twitter.save,
+                showInlineToolbar : true,
                 config : {
                     fetchUrl : ''
                 }
             },
-            embed: {
-                type: 'embed',
+            video_extended: {
+                type: 'video_extended',
                 make: embed.make,
                 render: embed.render,
                 save: embed.save,

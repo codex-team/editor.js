@@ -50,14 +50,14 @@ var embed = function(embed){
     var services = {
         vimeo: {
             regex: /(?:http[s]?:\/\/)?(?:www.)?vimeo\.co(?:.+\/([^\/]\d+)(?:#t=[\d]+)?s?$)/,
-            html: "<iframe src=\"https://player.vimeo.com/video/<%= remote_id %>?title=0&byline=0\" width=\"580\" height=\"320\" frameborder=\"0\"></iframe>",
+            html: "<iframe src=\"https://player.vimeo.com/video/<%= remote_id %>?title=0&byline=0\" style=\"width:100%;\" height=\"320\" frameborder=\"0\"></iframe>",
             height: 320,
             width: 580
 
         },
         youtube: {
             regex: /^.*(?:(?:youtu\.be\/)|(?:youtube\.com)\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*)(?:[\?\&]t\=(\d*)|)/,
-            html: "<iframe src=\"https://www.youtube.com/embed/<%= remote_id %>\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>",
+            html: "<iframe src=\"https://www.youtube.com/embed/<%= remote_id %>\" style=\"width:100%;\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>",
             height: 320,
             width: 580
         },
@@ -67,49 +67,49 @@ var embed = function(embed){
         },
         coub: {
             regex: /https?:\/\/coub\.com\/view\/([^\/\?\&]+)/,
-            html: "<iframe src=\"//coub.com/embed/<%= remote_id %>\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>",
+            html: "<iframe src=\"//coub.com/embed/<%= remote_id %>\" style=\"width:100%;\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>",
             height: 320,
             width: 580
         },
         vine: {
             regex: /https?:\/\/vine\.co\/v\/([^\/\?\&]+)/,
-            html: "<iframe src=\"https://vine.co/v/<%= remote_id %>/embed/simple/\" width=\"580\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>",
+            html: "<iframe src=\"https://vine.co/v/<%= remote_id %>/embed/simple/\" style=\"width:100%;\" height=\"320\" frameborder=\"0\" allowfullscreen></iframe>",
             height: 320,
             width: 580
         },
         imgur: {
             regex: /https?:\/\/(?:i\.)?imgur\.com.*\/([a-zA-Z0-9]+)(?:\.gifv)?/,
-            html: "<iframe allowfullscreen=\"true\" scrolling=\"no\" src=\"http://imgur.com/<%= remote_id %>/embed\" id=\"imgur-embed-iframe-pub-<%= remote_id %>\" class=\"imgur-embed-iframe-pub\" style=\"height: 500px; width: 540px; border: 1px solid #000\"></iframe>",
+            html: "<iframe allowfullscreen=\"true\" scrolling=\"no\" src=\"http://imgur.com/<%= remote_id %>/embed\" id=\"imgur-embed-iframe-pub-<%= remote_id %>\" class=\"imgur-embed-iframe-pub\" style=\"height: 500px; width: 100%; border: 1px solid #000\"></iframe>",
             height: 500,
             width: 540
         },
         gfycat: {
             regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
-            html: "<iframe src='https://gfycat.com/ifr/<%= remote_id %>' frameborder='0' scrolling='no' width='580' height='436' allowfullscreen ></iframe>",
+            html: "<iframe src='https://gfycat.com/ifr/<%= remote_id %>' frameborder='0' scrolling='no' style=\"width:100%;\" height='436' allowfullscreen ></iframe>",
             height: 436,
             width: 580
         },
         'twitch-channel': {
-            regex: /https?:\/\/twitch.tv\/([^\/\?\&]*)/,
-            html: "<iframe src=\"https://player.twitch.tv/?channel=<%= remote_id %>\" frameborder=\"0\" allowfullscreen=\"true\" scrolling=\"no\" height=\"366\" width=\"600\"></iframe>",
+            regex: /https?:\/\/www.twitch.tv\/([^\/\?\&]*)/,
+            html: "<iframe src=\"https://player.twitch.tv/?channel=<%= remote_id %>\" frameborder=\"0\" allowfullscreen=\"true\" scrolling=\"no\" height=\"366\" style=\"width:100%;\"></iframe>",
             height: 366,
             width: 600
         },
         'twitch-video': {
-            regex: /https?:\/\/www.twitch.tv\/[^\/\?\&]*\/v\/([0-9]*)/,
-            html: "<iframe src=\"https://player.twitch.tv/?video=v<%= remote_id %>\" frameborder=\"0\" allowfullscreen=\"true\" scrolling=\"no\" height=\"366\" width=\"600\"></iframe>",
+            regex: /https?:\/\/www.twitch.tv\/(?:[^\/\?\&]*\/v|videos)\/([0-9]*)/,
+            html: "<iframe src=\"https://player.twitch.tv/?video=v<%= remote_id %>\" frameborder=\"0\" allowfullscreen=\"true\" scrolling=\"no\" height=\"366\" style=\"width:100%;\"></iframe>",
             height: 366,
             width: 600
         },
         'yandex-music-album': {
             regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)/,
-            html: "<iframe frameborder=\"0\" style=\"border:none;width:540px;height:400px;\" width=\"540\" height=\"400\" src=\"https://music.yandex.ru/iframe/#album/<%= remote_id %>/\"></iframe>",
+            html: "<iframe frameborder=\"0\" style=\"border:none;width:540px;height:400px;\" style=\"width:100%;\" height=\"400\" src=\"https://music.yandex.ru/iframe/#album/<%= remote_id %>/\"></iframe>",
             height: 400,
             width: 540
         },
         'yandex-music-track': {
             regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)\/track\/([0-9]*)/,
-            html: "<iframe frameborder=\"0\" style=\"border:none;width:540px;height:100px;\" width=\"540\" height=\"100\" src=\"https://music.yandex.ru/iframe/#track/<%= remote_id %>/\"></iframe>",
+            html: "<iframe frameborder=\"0\" style=\"border:none;width:540px;height:100px;\" style=\"width:100%;\" height=\"100\" src=\"https://music.yandex.ru/iframe/#track/<%= remote_id %>/\"></iframe>",
             height: 100,
             width: 540
         },
@@ -136,12 +136,12 @@ var embed = function(embed){
 
         block.classList.add('embed');
 
-        var sidePadding = (600 - services[data.source].width) / 2 + 'px';
+        // var sidePadding = (600 - services[data.source].width) / 2 + 'px';
 
-        block.style.padding = '30px ' + sidePadding;
+        // block.style.padding = '30px ' + sidePadding;
 
         if (isInternal) {
-                methods.addInternal(block);
+            methods.addInternal(block);
         }
 
         return block;

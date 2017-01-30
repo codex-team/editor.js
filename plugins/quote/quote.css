@@ -18,7 +18,6 @@
     direction: rtl;
 }
 .quoteStyle-withCaption--author {
-
     margin: 5px 0;
     background: #fff;
     border: 1px solid #ebeef3;
@@ -26,15 +25,14 @@
     text-align: right;
     font-size: 1em;
     font-weight: bold;
-    color: #000;
     line-height: 1.5em;
 
 }
 .quoteStyle-simple--text,
 .quoteStyle-withCaption--blockquote,
 .quoteStyle-withPhoto--quote {
-    font-size: 1.04em;
-    line-height: 1.9em;
+    /*font-size: 1.04em;
+    line-height: 1.9em;*/
 }
 
 .quoteStyle-simple--text {
@@ -100,15 +98,16 @@
 }
 
 .quoteStyle-withPhoto--photo {
-    width: 92px;
-    height: 92px;
+    width: 94px;
+    height: 94px;
     overflow: hidden;
     text-align: center;
-    line-height: 92px;
+    line-height: 94px;
     border-radius: 3px;
     float: left;
     margin-right: 10px;
     border: 1px solid #ebeef3;
+    box-sizing: border-box;
     background: #fff;
 }
 .quoteStyle-withPhoto--photo:hover {
@@ -127,7 +126,7 @@
 
 .authorsPhoto-wrapper {
     border: 0 !important;
-    transition: all 500ms ease-in;
+    transition: all 20ms ease-in;
     will-change: opacity, filter;
 }
 
@@ -157,7 +156,6 @@
     color: #000;
 }
 .quoteStyle-withPhoto--job {
-    color: #818BA1;
     outline: none;
     overflow: hidden;
 }
@@ -175,7 +173,7 @@
 
 .quoteStyle-withPhoto--quote {
     margin-bottom: 10px;
-    line-height: 1.82em;
+    line-height: 1.7em;
     outline: none;
     overflow: hidden;
 }
@@ -184,15 +182,21 @@
 * New styles
 */
 .ce-quote{
-    padding: 1em 0;
+    margin: 0 !important;
+    padding: 15px 0;
 }
 .quoteStyle-withPhoto--author,
 .quoteStyle-withPhoto--job,
 .quoteStyle-withPhoto--quote{
     background: #fff;
-    padding: .6em .8em;
     border: 1px solid #ebeef3;
     border-radius: 3px;
+    padding: 10px 15px;
+}
+
+.quoteStyle-withPhoto--author,
+.quoteStyle-withPhoto--job {
+    line-height: 20px;
 }
 .quoteStyle-withPhoto--quote{
     min-height: 200px;

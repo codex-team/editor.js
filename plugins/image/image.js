@@ -25,24 +25,13 @@ var image = (function(image) {
         formHolder    : 'ce-plugin-image__holder',
         uploadButton  : 'ce-plugin-image__button',
         imagePreview  : 'ce-image__preview',
-        selectorHolder: 'selector-holder',
-        selectorButton: 'selector-holder_button',
-        settingsHolder: 'settings-holder',
-        imageWrapperBordered : 'image__wrapper--bordered'
+        selectorHolder: 'ce-settings-checkbox',
+        selectorButton: 'ce-settings-checkbox__toggler',
+        settingsItem: 'ce-image-settings__item',
+        imageWrapperBordered : 'ce-image__wrapper--bordered',
+        toggled : 'ce-image-settings__item--toggled'
 
     };
-
-    /**
-     * Cache settings
-     * @type {null}
-     */
-    image.cachedSettings = null;
-
-    /**
-     * Array of configurations
-     * Need to change statement
-     */
-    image.configurations = [];
 
     /**
      *
@@ -146,7 +135,7 @@ var image = (function(image) {
                 caption  = ui_.caption(),
                 wrapper  = ui_.wrapper();
 
-            caption.textContent = text;
+            caption.innerHTML = text;
 
             wrapper.dataset.stretched = stretched;
             wrapper.dataset.bordered = bordered;
@@ -249,11 +238,13 @@ var image = (function(image) {
 
             el.addEventListener('click', function() {
 
+                // el - settings element
+
                 switch (type) {
                     case 'bordered':
-                        methods_.toggleBordered(type); break;
+                        methods_.toggleBordered(type, this); break;
                     case 'stretched':
-                        methods_.toggleStretched(type); break;
+                        methods_.toggleStretched(type, this); break;
                 }
 
 
@@ -261,7 +252,7 @@ var image = (function(image) {
 
         },
 
-        toggleBordered : function(type) {
+        toggleBordered : function(type, clickedSettingsItem ) {
 
             var current = codex.content.currentNode,
                 blockContent = current.childNodes[0],
@@ -272,21 +263,28 @@ var image = (function(image) {
                 return;
             }
 
+            /**
+             * Add classes to the IMG tag and to the Settings element
+             */
             img.classList.toggle(elementClasses_.imageWrapperBordered);
+            clickedSettingsItem.classList.toggle(elementClasses_.toggled);
 
+            /**
+             * Save settings in dataset
+             */
             if (img.classList.contains(elementClasses_.imageWrapperBordered)) {
                 wrapper.dataset.bordered = true;
             } else {
                 wrapper.dataset.bordered = false;
             }
 
-            /**
-             * Highlight current choice
-             */
-            image.configurations[type].classList.toggle('plugged-in');
+            setTimeout(function() {
+                codex.toolbar.settings.close();
+            }, 200);
+
         },
 
-        toggleStretched : function(type) {
+        toggleStretched : function( type, clickedSettingsItem ) {
 
             var current = codex.content.currentNode,
                 blockContent = current.childNodes[0],
@@ -302,6 +300,8 @@ var image = (function(image) {
             img.classList.toggle(elementClasses_.uploadedImage.stretched);
             img.classList.toggle(elementClasses_.uploadedImage.centered);
 
+            clickedSettingsItem.classList.toggle(elementClasses_.toggled);
+
             if (img.classList.contains(elementClasses_.uploadedImage.stretched)) {
 
                 wrapper.dataset.stretched = true;
@@ -312,10 +312,9 @@ var image = (function(image) {
 
             }
 
-            /**
-             * Highlight current choice
-             */
-            image.configurations[type].classList.toggle('plugged-in');
+            setTimeout(function() {
+                codex.toolbar.settings.close();
+            }, 200);
 
         }
     };
@@ -502,18 +501,12 @@ var image = (function(image) {
     };
 
     /**
-     * Default image holder which will be replaced after image upload
-     * @type {null}
-     */
-    image.holder = null;
-
-    /**
      * Image path
      * @type {null}
      */
     image.path   = null;
 
-	/**
+    /**
      * Plugin configuration
      */
     image.config = null;
@@ -624,7 +617,7 @@ var image = (function(image) {
                 height : image.height,
                 additionalData :null
             },
-            caption : caption.textContent,
+            caption : caption.innerHTML,
             cover : null
         };
 
@@ -640,56 +633,50 @@ var image = (function(image) {
     image.makeSettings = function () {
 
         var currentNode = codex.content.currentNode,
-            wrapper = currentNode.querySelector('.' + elementClasses_.imageWrapper);
-
-        var holder  = document.createElement('DIV');
-
-        var types = {
-            stretched : "Растянуть",
-            bordered  : "Добавить рамку"
-        };
+            wrapper = currentNode.querySelector('.' + elementClasses_.imageWrapper),
+            holder  = document.createElement('DIV'),
+            types   = {
+                stretched : "На всю ширину",
+                bordered  : "Добавить рамку"
+            },
+            currentImageWrapper  = currentNode.querySelector('.' + elementClasses_.imageWrapper ),
+            currentImageSettings = currentImageWrapper.dataset;
 
         /** Add holder classname */
         holder.className = 'ce_plugin_image--settings';
 
-        if (image.cachedSettings) {
-            return image.cachedSettings;
-        }
-
         /** Now add type selectors */
         for (var type in types){
-
 
             /**
              * Settings template
              */
-            var settingsHolder = document.createElement('DIV'),
+            var settingsItem = document.createElement('DIV'),
                 selectorsHolder = document.createElement('SPAN'),
                 selectorsButton = document.createElement('SPAN');
 
-            settingsHolder.classList.add(elementClasses_.settingsHolder);
+            settingsItem.classList.add(elementClasses_.settingsItem);
             selectorsHolder.classList.add(elementClasses_.selectorHolder);
             selectorsButton.classList.add(elementClasses_.selectorButton);
 
             selectorsHolder.appendChild(selectorsButton);
-            settingsHolder.appendChild(selectorsHolder);
+            settingsItem.appendChild(selectorsHolder);
 
             selectTypeButton = document.createTextNode(types[type]);
-            settingsHolder.appendChild(selectTypeButton);
+            settingsItem.appendChild(selectTypeButton);
 
-            methods_.addSelectTypeClickListener(settingsHolder, type);
-
-            image.configurations[type] = settingsHolder;
-
-            if (wrapper.dataset[type] === 'true') {
-                image.configurations[type].classList.add('plugged-in');
+            /**
+             * Activate previously selected settings
+             */
+            if ( currentImageSettings[type] == 'true' ){
+                settingsItem.classList.add(elementClasses_.toggled);
             }
 
-            holder.appendChild(settingsHolder);
+            methods_.addSelectTypeClickListener(settingsItem, type);
+
+            holder.appendChild(settingsItem);
 
         }
-
-        image.cachedSettings = holder;
 
         return holder;
 

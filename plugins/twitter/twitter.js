@@ -5,19 +5,38 @@
 
 var twitter = (function(twitter) {
 
+    /**
+    * CSS classes
+    */
+    var css_ = {
+        pluginWrapper : 'cdx-tweet'
+    };
+
     var methods = {
 
         /**
          * Twitter render method appends content after block
          * @param tweetId
          */
-        twitter : function(data, tweet) {
+        twitter : function(data, twitterBlock) {
 
-            setTimeout(function() {
-                window.twttr.widgets.createTweet(data.id_str, tweet);
-            }, 1000);
+            var tweet = methods.drawTwitterHolder(),
+                twittersCaption = methods.drawTwittersCaptionBlock();
 
-            tweet.classList.add('twitter__loader');
+            if (data.caption) {
+                twittersCaption.innerHTML = data.caption;
+            }
+
+            /**
+             * add created tweet to holder
+             */
+            tweet.appendChild(twitterBlock);
+
+            // setTimeout(function() {
+                window.twttr.widgets.createTweet(data.id_str, twitterBlock).then(tweetInsertedCallback_);
+            // }, 1000);
+
+            tweet.classList.add('ce-redactor__loader');
 
             if (codex.content.currentNode) {
                 tweet.dataset.statusUrl = data.status_url;
@@ -50,14 +69,37 @@ var twitter = (function(twitter) {
                 tweet.dataset.statusUrl = data.status_url;
                 tweet.dataset.media = data.media;
 
-                tweet.classList.remove('twitter__loader');
-
+                tweet.classList.remove('ce-redactor__loader');
             }
+
+            /**
+             * add caption to tweet
+             */
+            setTimeout(function() {
+                tweet.appendChild(twittersCaption);
+            }, 1000);
+
+            return tweet;
 
         },
 
-        twitterBlock : function() {
+        drawTwitterHolder : function() {
+
+            var block = document.createElement('DIV');
+
+            block.classList.add(css_.pluginWrapper);
+
+            return block;
+
+        },
+
+        drawTwitterBlock : function() {
             var block = codex.draw.node('DIV', '', { height: "20px" });
+            return block;
+        },
+
+        drawTwittersCaptionBlock : function() {
+            var block = codex.draw.node('DIV', ['ce-twitter__caption'], { contentEditable : true });
             return block;
         },
 
@@ -65,7 +107,7 @@ var twitter = (function(twitter) {
 
             var data = JSON.parse(result),
                 twitterContent = tweet;
-            
+
             setTimeout(function() {
 
                 /**
@@ -81,19 +123,38 @@ var twitter = (function(twitter) {
                 twitterContent.dataset.createdAt = data.created_at;
                 twitterContent.dataset.media = data.entities.urls.length > 0 ? "false" : "true";
 
-                twitterContent.classList.remove('twitter__loader');
-
             }, 50);
 
         }
     };
 
     /**
+    * @private
+    * Fires after tweet widget rendered
+    */
+    function tweetInsertedCallback_(widget) {
+
+        var pluginWrapper = findParent_( widget , css_.pluginWrapper );
+
+        pluginWrapper.classList.remove('ce-redactor__loader');
+
+    }
+
+    /**
+    * @private
+    * Find closiest parent Element with CSS class
+    */
+    function findParent_ (el, cls) {
+        while ((el = el.parentElement) && !el.classList.contains(cls));
+        return el;
+    }
+
+    /**
      * Prepare twitter scripts
      */
     twitter.prepare = function(config) {
 
-        var script = "//platform.twitter.com/widgets.js";
+        var script = "https://platform.twitter.com/widgets.js";
 
         /**
          * Save configs
@@ -122,11 +183,11 @@ var twitter = (function(twitter) {
             data.id_str = data.status_url.match(/[^\/]+$/)[0];
         }
 
-        var blockContent = methods.twitterBlock();
+        var twitterBlock   = methods.drawTwitterBlock();
 
-        methods.twitter(data, blockContent);
+        var tweet = methods.twitter(data, twitterBlock);
 
-        return blockContent;
+        return tweet;
     };
 
     twitter.validate = function(data) {
@@ -135,7 +196,8 @@ var twitter = (function(twitter) {
 
     twitter.save = function(blockContent) {
 
-        var data;
+        var data,
+            caption = blockContent.querySelector('.ce-twitter__caption');
 
         data = {
             media:blockContent.dataset.media,
@@ -151,7 +213,7 @@ var twitter = (function(twitter) {
             text: blockContent.dataset.text,
             created_at: blockContent.dataset.createdAt,
             status_url: blockContent.dataset.statusUrl,
-            caption: ""
+            caption: caption.innerHTML
         };
 
         return data;

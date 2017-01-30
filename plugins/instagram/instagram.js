@@ -9,7 +9,7 @@ var instagram = (function(instagram) {
         render : function(content) {
 
             codex.content.switchBlock(codex.content.currentNode, content, 'instagram');
-            
+
             setTimeout(function() {
                 window.instgrm.Embeds.process();
             }, 200);
@@ -46,7 +46,7 @@ var instagram = (function(instagram) {
      */
     instagram.prepare = function() {
 
-        var script = "//platform.instagram.com/en_US/embeds.js";
+        var script = "https://platform.instagram.com/en_US/embeds.js";
 
         /**
          * Load widget
