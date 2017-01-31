@@ -144,7 +144,7 @@
 */
 .ce-toolbar__actions{
     position: absolute;
-    right: 8px;
+    right: 10px;
     border-radius: 2px;
     padding: 4px 5px;
     background: #f9f9fb;
@@ -419,8 +419,6 @@
 
     .ce-block{
         margin: 0;
-        padding-left: 5px;
-        padding-right: 5px;
     }
     .ce-block__content{
         margin: 0 25px;
@@ -431,9 +429,10 @@
     }
 
     .ce-toolbar__actions {
-        right: -4px;
+        right: 0;
         top: -10px;
         font-size: 14px;
+        line-height: 18px;
     }
 
     .ce-toolbar__settings-btn {
@@ -442,7 +441,7 @@
     }
 
     .ce-toolbar__plus {
-        margin-left: 4px;
+        margin-left: 0;
     }
 
     .ce-toolbar__plus,
