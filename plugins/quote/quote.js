@@ -152,12 +152,12 @@ var quote = (function(quote) {
             /* make text block ontentEditable */
             text.contentEditable = 'true';
 
-            text.innerHTML = data.text;
+            text.innerHTML = data.text || '';
 
             /* make Author contentEditable */
             author.contentEditable = 'true';
 
-            author.textContent = data.cite;
+            author.textContent = data.cite || '';
 
             /* Appending created components */
             wrapper.dataset.quoteStyle = 'withCaption';
@@ -200,11 +200,11 @@ var quote = (function(quote) {
 
             /* make author block contentEditable */
             author.contentEditable = 'true';
-            author.textContent = data.cite;
+            author.textContent = data.cite || '';
 
             /*  Author's position and job */
             job.contentEditable = 'true';
-            job.textContent = data.caption;
+            job.textContent = data.caption || '';
 
             var authorsWrapper = ui_.makeBlock('DIV', [elementClasses_.withPhoto.authorHolder]);
             authorsWrapper.appendChild(author);
@@ -212,7 +212,7 @@ var quote = (function(quote) {
 
             /* make quote text contentEditable */
             quote.contentEditable = 'true';
-            quote.innerHTML = data.text;
+            quote.innerHTML = data.text || '';
 
             wrapper.classList.add(elementClasses_.ce_quote);
             wrapper.classList.add(elementClasses_.withPhoto.wrapper);
@@ -235,15 +235,15 @@ var quote = (function(quote) {
 
             /** Simple quote text placed in Blockquote tag*/
             if ( currentNode.dataset.quoteStyle == 'simple' )
-                quote = currentNode.innerHTML;
+                quote = currentNode.innerHTML || '';
             else
                 quote = currentNode.querySelector('.' + elementClasses_.quoteText).innerHTML;
 
             if (job)
-                job = job.textContent;
+                job = job.textContent || '';
 
             if (author)
-                author = author.textContent;
+                author = author.textContent || '';
 
             if (photo)
                 photo = photo.dataset.bigUrl;
