@@ -420,8 +420,10 @@
     .ce-block{
         margin: 0;
     }
-    .ce-block__content{
-        margin: 0 25px;
+    .ce-block__content,
+    .ce-toolbar__content
+    {
+        padding: 0 25px;
     }
 
     .ce-toolbar {
@@ -441,7 +443,7 @@
     }
 
     .ce-toolbar__plus {
-        margin-left: 0;
+        margin-left: -25px;
     }
 
     .ce-toolbar__plus,
