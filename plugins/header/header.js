@@ -56,7 +56,7 @@ var header = (function(header) {
      */
     var make_ = function (data) {
 
-        var availableTypes = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'],
+        var availableTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
             tag;
 
         if (data && data.type && availableTypes.includes(data.type)) {
@@ -71,8 +71,8 @@ var header = (function(header) {
 
         } else {
 
-            tag = document.createElement('H2');
-            tag.dataset.headerData = 'H2';
+            tag = document.createElement('h2');
+            tag.dataset.headerData = 'h2';
 
         }
 
@@ -81,7 +81,7 @@ var header = (function(header) {
         }
 
         if (!tag.dataset.headerData) {
-            tag.dataset.headerData = 'H2';
+            tag.dataset.headerData = 'h2';
         }
 
         tag.classList.add('ce-header');
@@ -130,9 +130,9 @@ var header = (function(header) {
 
         var holder  = codex.draw.node('DIV', ['ce_plugin_header--settings'], {} ),
             types   = {
-                H2: 'Заголовок H2',
-                H3: 'Заголовок H3',
-                H4: 'Заголовок H4'
+                h2: 'Заголовок H2',
+                h3: 'Заголовок H3',
+                h4: 'Заголовок H4'
             },
             selectTypeButton;
 
@@ -150,8 +150,9 @@ var header = (function(header) {
 
     header.validate = function(data) {
 
-        if (data.text.trim() == '' || data['heading-styles'].trim() == '')
-            return;
+        if (data.text.trim() === '' || data['heading-styles'].trim() === ''){
+            return false;
+        }
 
         return true;
     };
