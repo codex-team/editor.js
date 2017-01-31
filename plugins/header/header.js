@@ -59,15 +59,15 @@ var header = (function(header) {
         var availableTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
             tag;
 
-        if (data && data.type && availableTypes.includes(data.type)) {
+        if (data && data.headingStyles && availableTypes.includes(data.headingStyles)) {
 
-            tag = document.createElement(data.type);
+            tag = document.createElement(data.headingStyles);
 
             /**
              * Save header type in data-attr.
              * We need it in save method to extract type from HTML to JSON
              */
-            tag.dataset.headerData = data.type;
+            tag.dataset.headerData = data.headingStyles;
 
         } else {
 
