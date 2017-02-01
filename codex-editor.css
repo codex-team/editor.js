@@ -348,8 +348,69 @@
     .ce-toolbar-inline__actions input::-webkit-input-placeholder{ color: #afb4c3 !important;}
 
 
+/**
+ * Comments
+ */
 
+.ce-comments-sidebar {
+    z-index: 10;
+}
 
+.ce-comments-field {
+    position: absolute;
+    padding: 5px;
+    z-index: 10;
+}
+
+.ce-comment {
+    width: 200px;
+    max-width: 200px;
+    padding: 5px 10px;
+    background: #fff;
+    overflow: hidden;
+    border: 1px solid #afb4c3;
+    border-radius: 10px;
+}
+
+.ce-comment__input,
+.ce-comment__text {
+    min-height: 1em;
+    margin: 5px;
+    word-wrap: break-word;
+    border: 0;
+    border-bottom: 1px solid #afb4c3;
+    outline: none;
+    resize: none;
+    font-size: 15px;
+}
+
+.ce-comment__input:empty:before {
+    content:'New comment';
+    opacity: .7;
+    color: #afb4c3;
+    transition: opacity 200ms ease;
+}
+
+.ce-comment__post,
+.ce-comment__edit,
+.ce-comment__delete {
+    float: right;
+    margin: 5px;
+    color: #afb4c3;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.ce-comment__time {
+    float: left;
+    margin: 5px;
+    color: #afb4c3;
+    font-size: 13px;
+}
+
+.ce-comment__time:before {
+    content: attr(data-edited);
+}
 /**
 * Base blocks
 */

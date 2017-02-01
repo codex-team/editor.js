@@ -77,7 +77,8 @@ var saver = (function(saver) {
 
     saver.makeFormDataFromBlocks = function(block) {
 
-        var pluginName = block.dataset.tool;
+        var pluginName = block.dataset.tool,
+            id         = block.dataset.id;
 
         /** Check for plugin existance */
         if (!codex.tools[pluginName]) {
@@ -98,6 +99,7 @@ var saver = (function(saver) {
 
 
         output = {
+            id  : id,
             type: pluginName,
             data: savedData
         };
@@ -116,6 +118,45 @@ var saver = (function(saver) {
         output.cover = block.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
 
         codex.state.jsonOutput.push(output);
+    };
+
+    saver.saveComments = function() {
+
+        var fields     = codex.nodes.commentsSidebar.querySelectorAll('.ce-comments-field');
+
+        for (var i = 0 ; i < fields.length; i++) {
+
+            var comments     = fields[i].querySelectorAll('.ce-comment'),
+                commentsData = [];
+
+            for (var j = 0; j < comments.length; j++) {
+
+                var text = comments[j].querySelector('.ce-comment__text'),
+                    time = comments[j].querySelector('.ce-comment__time');
+
+                if (!text) continue;
+
+                var comment = {
+                        edited  : comments[j].dataset.edited,
+                        text    : text.textContent,
+                        time    : time.textContent
+                };
+
+
+                commentsData.push(comment);
+            }
+
+            if (!commentsData.length) continue;
+
+            var fieldData = {
+                    blockId  : fields[i].dataset.blockId,
+                    comments : commentsData
+            };
+
+            codex.state.comments.push(fieldData);
+
+        }
+
     };
 
     return saver;

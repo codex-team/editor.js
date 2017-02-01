@@ -166,6 +166,9 @@ var content = (function(content) {
             newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
         }
 
+        /** Saving id */
+        newBlock.dataset.id = targetBlock.dataset.id;
+
         /** Replacing */
         codex.nodes.redactor.replaceChild(newBlock, targetBlock);
 
@@ -401,6 +404,8 @@ var content = (function(content) {
         }
 
         newBlock.dataset.tool = tool;
+        newBlock.dataset.id  = +new Date();
+
         return newBlock;
     };
 

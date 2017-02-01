@@ -24,6 +24,7 @@ var codex = (function(codex){
         codex.notifications = require('./modules/notifications');
         codex.parser        = require('./modules/parser');
         codex.sanitizer     = require('./modules/sanitizer');
+        codex.comments      = require('./modules/comments');
     };
 
     codex.version = VERSION;
@@ -61,11 +62,13 @@ var codex = (function(codex){
         plusButton        : null,
         showSettingsButton: null,
         showTrashButton   : null,
+        showCommentButton : null,
         blockSettings     : null,
         pluginSettings    : null,
         defaultSettings   : null,
         toolbarButtons    : {}, // { type : DomEl, ... }
-        redactor          : null
+        redactor          : null,
+        commentsSidebar   : null
     };
 
     /**
@@ -76,7 +79,8 @@ var codex = (function(codex){
     codex.state = {
         jsonOutput: [],
         blocks    : [],
-        inputs    : []
+        inputs    : [],
+        comments  : []
     };
 
     /**

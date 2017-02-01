@@ -858,6 +858,14 @@ var callbacks = (function(callbacks) {
 
     };
 
+    callbacks.showCommentButtonClicked = function() {
+
+        var block = codex.content.currentNode;
+
+        codex.comments.add(block);
+
+    }
+
     return callbacks;
 
 })({});

@@ -350,7 +350,9 @@ var codex =
 	    options = options || {}
 	    var body = options.body
 	
-	    if (input instanceof Request) {
+	    if (typeof input === 'string') {
+	      this.url = input
+	    } else {
 	      if (input.bodyUsed) {
 	        throw new TypeError('Already read')
 	      }
@@ -365,8 +367,6 @@ var codex =
 	        body = input._bodyInit
 	        input.bodyUsed = true
 	      }
-	    } else {
-	      this.url = String(input)
 	    }
 	
 	    this.credentials = options.credentials || this.credentials || 'omit'
@@ -402,7 +402,7 @@ var codex =
 	
 	  function parseHeaders(rawHeaders) {
 	    var headers = new Headers()
-	    rawHeaders.split(/\r?\n/).forEach(function(line) {
+	    rawHeaders.split('\r\n').forEach(function(line) {
 	      var parts = line.split(':')
 	      var key = parts.shift().trim()
 	      if (key) {

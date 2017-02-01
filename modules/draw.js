@@ -33,6 +33,17 @@ var draw = (function(draw) {
 
     };
 
+    /**
+     * Comments side bar
+     */
+    draw.commentsSidebar = function() {
+
+        var sidebar = draw.node('DIV', 'ce-comments-sidebar');
+
+        return sidebar;
+
+    }
+
     draw.ceBlock = function() {
 
         var block = document.createElement('DIV');
@@ -193,6 +204,21 @@ var draw = (function(draw) {
 
         /** Toggler button*/
         toggler.innerHTML = '<i class="ce-icon-cog"></i>';
+
+        return toggler;
+    };
+
+    /**
+     * Comment button in toolbar
+     */
+    draw.commentButton = function () {
+
+        var toggler = document.createElement('span');
+
+        toggler.className = 'ce-toolbar__comment-btn';
+
+        /** Toggler button*/
+        toggler.innerHTML = '<i class="ce-icon-newspaper"></i>';
 
         return toggler;
     };
