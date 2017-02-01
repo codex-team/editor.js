@@ -29,8 +29,6 @@ module.exports = (function (editor) {
 
     };
 
-
-
     /**
      * @public
      *
