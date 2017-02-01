@@ -6,50 +6,63 @@
  */
 let editor = codex.editor;
 
-var callbacks = (function(callbacks) {
+var callbacks = (function (callbacks) {
 
     callbacks.redactorSyncTimeout = null;
 
-    callbacks.globalKeydown = function(event){
-        switch (event.keyCode){
+    callbacks.globalKeydown = function (event) {
+
+        switch (event.keyCode) {
             case editor.core.keys.ENTER : editor.callback.enterKeyPressed(event);     break;
         }
+
     };
 
-    callbacks.redactorKeyDown = function(event) {
-        switch (event.keyCode){
+    callbacks.redactorKeyDown = function (event) {
+
+        switch (event.keyCode) {
             case editor.core.keys.TAB   : editor.callback.tabKeyPressed(event);                     break;
             case editor.core.keys.ENTER : editor.callback.enterKeyPressedOnRedactorZone(event);     break;
             case editor.core.keys.ESC   : editor.callback.escapeKeyPressed(event);                  break;
             default                    : editor.callback.defaultKeyPressed(event);                 break;
         }
+
     };
 
-    callbacks.globalKeyup = function(event){
-        switch (event.keyCode){
+    callbacks.globalKeyup = function (event) {
+
+        switch (event.keyCode) {
             case editor.core.keys.UP    :
             case editor.core.keys.LEFT  :
             case editor.core.keys.RIGHT :
             case editor.core.keys.DOWN  : editor.callback.arrowKeyPressed(event); break;
         }
+
     };
 
-    callbacks.tabKeyPressed = function(event){
+    callbacks.tabKeyPressed = function (event) {
 
         if ( !editor.toolbar.opened ) {
+
             editor.toolbar.open();
+
         }
 
         if (editor.toolbar.opened && !editor.toolbar.toolbox.opened) {
+
             editor.toolbar.toolbox.open();
+
         } else {
+
             editor.toolbar.toolbox.leaf();
+
         }
 
         event.preventDefault();
+
     };
 
-    callbacks.enterKeyPressed = function(event) {
+    callbacks.enterKeyPressed = function (event) {
 
         if (editor.content.editorAreaHightlighted) {
 
@@ -60,19 +73,22 @@ var callbacks = (function(callbacks) {
             editor.caret.inputIndex = -1;
 
             editor.callback.enterPressedOnBlock();
+
         }
+
     };
 
     /**
      * ENTER key handler
      * Makes new paragraph block
      */
-    callbacks.enterKeyPressedOnRedactorZone = function(event){
+    callbacks.enterKeyPressedOnRedactorZone = function (event) {
 
         if (event.target.contentEditable == 'true') {
 
             /** Update input index */
             editor.caret.saveCurrentInputIndex();
+
         }
 
         var currentInputIndex       = editor.caret.getCurrentInputIndex() || 0,
@@ -113,11 +129,12 @@ var callbacks = (function(callbacks) {
          * Allow paragraph lineBreaks with shift enter
          * Or if shiftkey pressed and enter and enabledLineBreaks, the let new block creation
          */
-        if ( event.shiftKey || enableLineBreaks ){
+        if ( event.shiftKey || enableLineBreaks ) {
 
             event.stopPropagation();
             event.stopImmediatePropagation();
             return;
+
         }
 
         var isLastTextNode = false,
@@ -130,9 +147,11 @@ var callbacks = (function(callbacks) {
          * Allow making new <p> in same block by SHIFT+ENTER and forbids to prevent default browser behaviour
          */
         if ( event.shiftKey && !enableLineBreaks ) {
+
             editor.callback.enterPressedOnBlock(editor.content.currentBlock, event);
             event.preventDefault();
             return;
+
         }
 
         /**
@@ -140,7 +159,7 @@ var callbacks = (function(callbacks) {
          * Split block cant handle this.
          * We need to save default behavior
          */
-        isTextNodeHasParentBetweenContenteditable = currentSelectedNode && currentSelectedNode.parentNode.contentEditable != "true";
+        isTextNodeHasParentBetweenContenteditable = currentSelectedNode && currentSelectedNode.parentNode.contentEditable != 'true';
 
         /**
          * Split blocks when input has several nodes and caret placed in textNode
@@ -149,7 +168,7 @@ var callbacks = (function(callbacks) {
             currentSelectedNode.nodeType == editor.core.nodeTypes.TEXT &&
             !isTextNodeHasParentBetweenContenteditable &&
             !caretAtTheEndOfText
-        ){
+        ) {
 
             event.preventDefault();
 
@@ -159,7 +178,9 @@ var callbacks = (function(callbacks) {
 
             /** Show plus button when next input after split is empty*/
             if (!editor.state.inputs[currentInputIndex + 1].textContent.trim()) {
+
                 editor.toolbar.showPlusButton();
+
             }
 
         } else {
@@ -194,7 +215,7 @@ var callbacks = (function(callbacks) {
 
     };
 
-    callbacks.escapeKeyPressed = function(event){
+    callbacks.escapeKeyPressed = function (event) {
 
         /** Close all toolbar */
         editor.toolbar.close();
@@ -206,7 +227,7 @@ var callbacks = (function(callbacks) {
 
     };
 
-    callbacks.arrowKeyPressed = function(event){
+    callbacks.arrowKeyPressed = function (event) {
 
         editor.content.workingNodeChanged();
 
@@ -216,14 +237,17 @@ var callbacks = (function(callbacks) {
 
     };
 
-    callbacks.defaultKeyPressed = function(event) {
+    callbacks.defaultKeyPressed = function (event) {
 
         editor.toolbar.close();
 
         if (!editor.toolbar.inline.actionsOpened) {
+
             editor.toolbar.inline.close();
             editor.content.clearMark();
+
         }
+
     };
 
     callbacks.redactorClicked = function (event) {
@@ -240,7 +264,9 @@ var callbacks = (function(callbacks) {
          * If selection range took off, then we hide inline toolbar
          */
         if (selectedText.length === 0) {
+
             editor.toolbar.inline.close();
+
         }
 
         /** Update current input index in memory when caret focused into existed input */
@@ -262,6 +288,7 @@ var callbacks = (function(callbacks) {
 
                 /** getting firstlevel parent of input */
                 var firstLevelBlock  = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
+
             }
 
             /** If input is empty, then we set caret to the last input */
@@ -288,7 +315,9 @@ var callbacks = (function(callbacks) {
 
                     /** Set caret to this appended input */
                     editor.caret.setToNextBlock(indexOfLastInput);
+
                 }
+
             }
 
             /**
@@ -311,6 +340,7 @@ var callbacks = (function(callbacks) {
             /** Close all panels */
             editor.toolbar.settings.close();
             editor.toolbar.toolbox.close();
+
         }
 
 
@@ -343,7 +373,7 @@ var callbacks = (function(callbacks) {
      * Therefore, to be sure that we've clicked first-level block area, we should have currentNode, which always
      * specifies to the first-level block. Other cases we just ignore.
      */
-    callbacks.detectWhenClickedOnFirstLevelBlockArea = function() {
+    callbacks.detectWhenClickedOnFirstLevelBlockArea = function () {
 
         var selection  = window.getSelection(),
             anchorNode = selection.anchorNode,
@@ -356,28 +386,39 @@ var callbacks = (function(callbacks) {
         } else {
 
             if (!editor.core.isDomNode(anchorNode)) {
+
                 anchorNode = anchorNode.parentNode;
+
             }
 
             /** Already founded, without loop */
             if (anchorNode.contentEditable == 'true') {
+
                 flag = true;
+
             }
 
             while (anchorNode.contentEditable != 'true') {
+
                 anchorNode = anchorNode.parentNode;
 
                 if (anchorNode.contentEditable == 'true') {
+
                     flag = true;
+
                 }
 
                 if (anchorNode == document.body) {
+
                     break;
+
                 }
+
             }
 
             /** If editable element founded, flag is "TRUE", Therefore we return "FALSE" */
             editor.content.editorAreaHightlighted = flag ? false : true;
+
         }
 
     };
@@ -402,14 +443,16 @@ var callbacks = (function(callbacks) {
         /**
          * Clear previous sync-timeout
          */
-        if (this.redactorSyncTimeout){
+        if (this.redactorSyncTimeout) {
+
             clearTimeout(this.redactorSyncTimeout);
+
         }
 
         /**
          * Start waiting to input finish and sync redactor
          */
-        this.redactorSyncTimeout = setTimeout(function() {
+        this.redactorSyncTimeout = setTimeout(function () {
 
             editor.content.sync();
 
@@ -418,7 +461,7 @@ var callbacks = (function(callbacks) {
     };
 
     /** Show or Hide toolbox when plus button is clicked */
-    callbacks.plusButtonClicked = function() {
+    callbacks.plusButtonClicked = function () {
 
         if (!editor.nodes.toolbox.classList.contains('opened')) {
 
@@ -429,14 +472,15 @@ var callbacks = (function(callbacks) {
             editor.toolbar.toolbox.close();
 
         }
+
     };
 
     /**
      * Block handlers for KeyDown events
      */
-    callbacks.blockKeydown = function(event, block) {
+    callbacks.blockKeydown = function (event, block) {
 
-        switch (event.keyCode){
+        switch (event.keyCode) {
 
             case editor.core.keys.DOWN:
             case editor.core.keys.RIGHT:
@@ -453,6 +497,7 @@ var callbacks = (function(callbacks) {
                 break;
 
         }
+
     };
 
     /**
@@ -466,8 +511,10 @@ var callbacks = (function(callbacks) {
             focusedNodeHolder;
 
         /** Check for caret existance */
-        if (!focusedNode){
+        if (!focusedNode) {
+
             return false;
+
         }
 
         /** Looking for closest (parent) contentEditable element of focused node */
@@ -475,22 +522,27 @@ var callbacks = (function(callbacks) {
 
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;
+
         }
 
         /** Input index in DOM level */
         var editableElementIndex = 0;
+
         while (focusedNode != inputs[editableElementIndex]) {
+
             editableElementIndex ++;
+
         }
 
         /**
          * Founded contentEditable element doesn't have childs
          * Or maybe New created block
          */
-        if (!focusedNode.textContent)
-        {
+        if (!focusedNode.textContent) {
+
             editor.caret.setToNextBlock(editableElementIndex);
             return;
+
         }
 
         /**
@@ -518,8 +570,10 @@ var callbacks = (function(callbacks) {
         caretAtTheEndOfText = deepestTextnode.length == selection.anchorOffset;
 
         if ( !caretInLastChild  || !caretAtTheEndOfText ) {
+
             editor.core.log('arrow [down|right] : caret does not reached the end');
             return false;
+
         }
 
         editor.caret.setToNextBlock(editableElementIndex);
@@ -537,27 +591,36 @@ var callbacks = (function(callbacks) {
             focusedNodeHolder;
 
         /** Check for caret existance */
-        if (!focusedNode){
+        if (!focusedNode) {
+
             return false;
+
         }
 
         /**
          * LEFT or UP not at the beginning
          */
         if ( selection.anchorOffset !== 0) {
+
             return false;
+
         }
 
         /** Looking for parent contentEditable block */
         while (focusedNode.contentEditable != 'true') {
+
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;
+
         }
 
         /** Input index in DOM level */
         var editableElementIndex = 0;
+
         while (focusedNode != inputs[editableElementIndex]) {
+
             editableElementIndex ++;
+
         }
 
         /**
@@ -574,8 +637,10 @@ var callbacks = (function(callbacks) {
          * Or maybe New created block
          */
         if (!focusedNode.textContent) {
+
             editor.caret.setToPreviousBlock(editableElementIndex);
             return;
+
         }
 
         firstChild = focusedNode.childNodes[0];
@@ -640,10 +705,13 @@ var callbacks = (function(callbacks) {
                 return;
 
             }
+
         }
 
         if (!selectionLength) {
+
             block.remove();
+
         }
 
 
@@ -683,12 +751,15 @@ var callbacks = (function(callbacks) {
                 editor.caret.setToNextBlock(editor.caret.inputIndex);
 
             }
+
         }
 
         editor.toolbar.move();
 
         if (!editor.toolbar.opened) {
+
             editor.toolbar.open();
+
         }
 
         /** Updating inputs state */
@@ -704,12 +775,12 @@ var callbacks = (function(callbacks) {
      *
      * @param event
      */
-    callbacks.blockPaste = function(event) {
+    callbacks.blockPaste = function (event) {
 
         var currentInputIndex = editor.caret.getCurrentInputIndex(),
             node = editor.state.inputs[currentInputIndex];
 
-        setTimeout(function() {
+        setTimeout(function () {
 
             editor.content.sanitize(node);
 
@@ -734,7 +805,7 @@ var callbacks = (function(callbacks) {
      * @param event
      * @private
      */
-    callbacks._blockPasteCallback = function(event) {
+    callbacks._blockPasteCallback = function (event) {
 
         var currentInputIndex = editor.caret.getCurrentInputIndex();
 
@@ -755,6 +826,7 @@ var callbacks = (function(callbacks) {
 
         // pass in the target node, as well as the observer options
         observer.observe(editor.state.inputs[currentInputIndex], config);
+
     };
 
     /**
@@ -766,7 +838,7 @@ var callbacks = (function(callbacks) {
      *
      * @param event
      */
-    callbacks.blockPasteCallback = function(event) {
+    callbacks.blockPasteCallback = function (event) {
 
         /** Prevent default behaviour */
         event.preventDefault();
@@ -793,13 +865,16 @@ var callbacks = (function(callbacks) {
          * and fill in fragment
          */
         while (( node = div.firstChild) ) {
+
             lastNode = fragment.appendChild(node);
+
         }
 
         /**
          * work with selection and range
          */
         var selection, range;
+
         selection = window.getSelection();
 
         range = selection.getRangeAt(0);
@@ -810,11 +885,13 @@ var callbacks = (function(callbacks) {
 
         /** Preserve the selection */
         if (lastNode) {
+
             range = range.cloneRange();
             range.setStartAfter(lastNode);
             range.collapse(true);
             selection.removeAllRanges();
             selection.addRange(range);
+
         }
 
     };
@@ -822,7 +899,7 @@ var callbacks = (function(callbacks) {
     /**
      * Sends all mutations to paste handler
      */
-    callbacks.handleMutationsOnPaste = function(mutations) {
+    callbacks.handleMutationsOnPaste = function (mutations) {
 
         var self = this;
 
@@ -833,15 +910,18 @@ var callbacks = (function(callbacks) {
          * For that, we need to send Context, MutationObserver.__proto__ that contains
          * observer disconnect method.
          */
-        mutations.forEach(function(mutation) {
+        mutations.forEach(function (mutation) {
+
             editor.content.paste.call(self, mutation);
+
         });
+
     };
 
     /**
      * Clicks on block settings button
      */
-    callbacks.showSettingsButtonClicked = function(){
+    callbacks.showSettingsButtonClicked = function () {
 
         /**
          * Get type of current block

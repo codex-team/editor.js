@@ -12,12 +12,14 @@
 
 let editor = codex.editor;
 
-var toolbar = (function(toolbar) {
+var toolbar = (function (toolbar) {
 
-    toolbar.init = function() {
+    toolbar.init = function () {
+
         toolbar.settings = require('./settings');
         toolbar.inline   = require('./inline');
         toolbar.toolbox  = require('./toolbox');
+
     };
 
     /**
@@ -34,7 +36,7 @@ var toolbar = (function(toolbar) {
     /**
      * @protected
      */
-    toolbar.open = function (){
+    toolbar.open = function () {
 
         editor.nodes.toolbar.classList.add('opened');
         this.opened = true;
@@ -44,15 +46,17 @@ var toolbar = (function(toolbar) {
     /**
      * @protected
      */
-    toolbar.close = function(){
+    toolbar.close = function () {
 
         editor.nodes.toolbar.classList.remove('opened');
 
         toolbar.opened  = false;
         toolbar.current = null;
 
-        for (var button in editor.nodes.toolbarButtons){
+        for (var button in editor.nodes.toolbarButtons) {
+
             editor.nodes.toolbarButtons[button].classList.remove('selected');
+
         }
 
         /** Close toolbox when toolbar is not displayed */
@@ -61,9 +65,9 @@ var toolbar = (function(toolbar) {
 
     };
 
-    toolbar.toggle = function(){
+    toolbar.toggle = function () {
 
-        if ( !this.opened ){
+        if ( !this.opened ) {
 
             this.open();
 
@@ -75,24 +79,30 @@ var toolbar = (function(toolbar) {
 
     };
 
-    toolbar.hidePlusButton = function() {
+    toolbar.hidePlusButton = function () {
+
         editor.nodes.plusButton.classList.add('hide');
+
     };
 
-    toolbar.showPlusButton = function() {
+    toolbar.showPlusButton = function () {
+
         editor.nodes.plusButton.classList.remove('hide');
+
     };
 
     /**
      * Moving toolbar to the specified node
      */
-    toolbar.move = function() {
+    toolbar.move = function () {
 
         /** Close Toolbox when we move toolbar */
         editor.toolbar.toolbox.close();
 
         if (!editor.content.currentNode) {
+
             return;
+
         }
 
         var toolbarHeight = editor.nodes.toolbar.clientHeight || editor.toolbar.defaultToolbarHeight,

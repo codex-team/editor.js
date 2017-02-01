@@ -7,7 +7,7 @@
 
 let editor = codex.editor;
 
-var renderer = (function(renderer) {
+var renderer = (function (renderer) {
 
     /**
      * Asyncronously parses input JSON to redactor blocks
@@ -27,16 +27,20 @@ var renderer = (function(renderer) {
         Promise.resolve()
 
         /** First, get JSON from state */
-            .then(function() {
+            .then(function () {
+
                 return editor.state.blocks;
+
             })
 
             /** Then, start to iterate they */
             .then(editor.renderer.appendBlocks)
 
             /** Write log if something goes wrong */
-            .catch(function(error) {
+            .catch(function (error) {
+
                 editor.core.log('Error while parsing JSON: %o', 'error', error);
+
             });
 
     };
@@ -74,9 +78,9 @@ var renderer = (function(renderer) {
         nodeSequence
 
         /** first, get node async-aware */
-            .then(function() {
+            .then(function () {
 
-                return editor.renderer.getNodeAsync(blocks , index);
+                return editor.renderer.getNodeAsync(blocks, index);
 
             })
 
@@ -88,7 +92,7 @@ var renderer = (function(renderer) {
             /**
              * now insert block to redactor
              */
-            .then(function(blockData){
+            .then(function (blockData) {
 
                 /**
                  * blockData has 'block', 'type' and 'stretched' information
@@ -101,8 +105,10 @@ var renderer = (function(renderer) {
             })
 
             /** Log if something wrong with node */
-            .catch(function(error) {
+            .catch(function (error) {
+
                 editor.core.log('Node skipped while parsing because %o', 'error', error);
+
             });
 
     };
@@ -113,11 +119,12 @@ var renderer = (function(renderer) {
      */
     renderer.getNodeAsync = function (blocksList, index) {
 
-        return Promise.resolve().then(function() {
+        return Promise.resolve().then(function () {
 
             return blocksList[index];
 
         });
+
     };
 
     /**
@@ -144,13 +151,16 @@ var renderer = (function(renderer) {
 
         /** Check for plugin existance */
         if (!editor.tools[pluginName]) {
+
             throw Error(`Plugin «${pluginName}» not found`);
+
         }
 
         /** Check for plugin having render method */
         if (typeof editor.tools[pluginName].render != 'function') {
 
             throw Error(`Plugin «${pluginName}» must have «render» method`);
+
         }
 
         /** New Parser */

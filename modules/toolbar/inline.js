@@ -10,7 +10,7 @@
 
 let editor = codex.editor;
 
-module.exports = (function(inline) {
+module.exports = (function (inline) {
 
     inline.buttonsOpened = null;
     inline.actionsOpened = null;
@@ -27,7 +27,7 @@ module.exports = (function(inline) {
      *
      * Open inline toobar
      */
-    inline.show = function() {
+    inline.show = function () {
 
         var currentNode = editor.content.currentNode,
             tool = currentNode.dataset.tool,
@@ -55,6 +55,7 @@ module.exports = (function(inline) {
 
             /** show buttons of inline toolbar */
             editor.toolbar.inline.showButtons();
+
         }
 
     };
@@ -64,9 +65,12 @@ module.exports = (function(inline) {
      *
      * Closes inline toolbar
      */
-    inline.close = function() {
+    inline.close = function () {
+
         var toolbar = editor.nodes.inlineToolbar.wrapper;
+
         toolbar.classList.remove('opened');
+
     };
 
     /**
@@ -74,10 +78,12 @@ module.exports = (function(inline) {
      *
      * Moving toolbar
      */
-    inline.move = function() {
+    inline.move = function () {
 
         if (!this.wrappersOffset) {
+
             this.wrappersOffset = this.getWrappersOffset();
+
         }
 
         var coords          = this.getSelectionCoords(),
@@ -87,7 +93,9 @@ module.exports = (function(inline) {
             newCoordinateY;
 
         if (toolbar.offsetHeight === 0) {
+
             defaultOffset = 40;
+
         }
 
         newCoordinateX = coords.x - this.wrappersOffset.left;
@@ -107,7 +115,7 @@ module.exports = (function(inline) {
      * Tool Clicked
      */
 
-    inline.toolClicked = function(event, type) {
+    inline.toolClicked = function (event, type) {
 
         /**
          * For simple tools we use default browser function
@@ -123,6 +131,7 @@ module.exports = (function(inline) {
          * after making some action
          */
         editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.toolbar.inline.hightlight);
+
     };
 
     /**
@@ -130,7 +139,7 @@ module.exports = (function(inline) {
      *
      * Saving wrappers offset in DOM
      */
-    inline.getWrappersOffset = function() {
+    inline.getWrappersOffset = function () {
 
         var wrapper = editor.nodes.wrapper,
             offset  = this.getOffset(wrapper);
@@ -154,11 +163,14 @@ module.exports = (function(inline) {
         var _y = 0;
 
         while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+
             _x += (el.offsetLeft + el.clientLeft);
             _y += (el.offsetTop + el.clientTop);
             el = el.offsetParent;
+
         }
         return { top: _y, left: _x };
+
     };
 
     /**
@@ -167,18 +179,20 @@ module.exports = (function(inline) {
      * Calculates position of selected text
      * @returns {{x: number, y: number}}
      */
-    inline.getSelectionCoords = function() {
+    inline.getSelectionCoords = function () {
 
         var sel = document.selection, range;
         var x = 0, y = 0;
 
         if (sel) {
 
-            if (sel.type != "Control") {
+            if (sel.type != 'Control') {
+
                 range = sel.createRange();
                 range.collapse(true);
                 x = range.boundingLeft;
                 y = range.boundingTop;
+
             }
 
         } else if (window.getSelection) {
@@ -189,20 +203,26 @@ module.exports = (function(inline) {
 
                 range = sel.getRangeAt(0).cloneRange();
                 if (range.getClientRects) {
+
                     range.collapse(true);
                     var rect = range.getClientRects()[0];
 
                     if (!rect) {
+
                         return;
+
                     }
 
                     x = rect.left;
                     y = rect.top;
+
                 }
 
             }
+
         }
         return { x: x, y: y };
+
     };
 
     /**
@@ -211,21 +231,26 @@ module.exports = (function(inline) {
      * Returns selected text as String
      * @returns {string}
      */
-    inline.getSelectionText = function getSelectionText(){
+    inline.getSelectionText = function getSelectionText() {
 
-        var selectedText = "";
+        var selectedText = '';
 
-        if (window.getSelection){ // all modern browsers and IE9+
+        // all modern browsers and IE9+
+        if (window.getSelection) {
+
             selectedText = window.getSelection().toString();
+
         }
 
         return selectedText;
+
     };
 
     /** Opens buttons block */
-    inline.showButtons = function() {
+    inline.showButtons = function () {
 
         var buttons = editor.nodes.inlineToolbar.buttons;
+
         buttons.classList.add('opened');
 
         editor.toolbar.inline.buttonsOpened = true;
@@ -236,31 +261,40 @@ module.exports = (function(inline) {
     };
 
     /** Makes buttons disappear */
-    inline.closeButtons = function() {
+    inline.closeButtons = function () {
+
         var buttons = editor.nodes.inlineToolbar.buttons;
+
         buttons.classList.remove('opened');
 
         editor.toolbar.inline.buttonsOpened = false;
+
     };
 
     /** Open buttons defined action if exist */
-    inline.showActions = function() {
+    inline.showActions = function () {
+
         var action = editor.nodes.inlineToolbar.actions;
+
         action.classList.add('opened');
 
         editor.toolbar.inline.actionsOpened = true;
+
     };
 
     /** Close actions block */
-    inline.closeAction = function() {
+    inline.closeAction = function () {
+
         var action = editor.nodes.inlineToolbar.actions;
+
         action.innerHTML = '';
         action.classList.remove('opened');
         editor.toolbar.inline.actionsOpened = false;
+
     };
 
     /** Action for link creation or for setting anchor */
-    inline.createLinkAction = function(event, type) {
+    inline.createLinkAction = function (event, type) {
 
         var isActive = this.isLinkActive();
 
@@ -288,6 +322,7 @@ module.exports = (function(inline) {
 
             /** Create input and close buttons */
             var action = editor.draw.inputForLink();
+
             editor.nodes.inlineToolbar.actions.appendChild(action);
 
             editor.toolbar.inline.closeButtons();
@@ -304,7 +339,7 @@ module.exports = (function(inline) {
             event.preventDefault();
 
             /** Callback to link action */
-            action.addEventListener('keydown', function(event){
+            action.addEventListener('keydown', function (event) {
 
                 if (event.keyCode == editor.core.keys.ENTER) {
 
@@ -318,30 +353,40 @@ module.exports = (function(inline) {
                     event.stopImmediatePropagation();
 
                     editor.toolbar.inline.clearRange();
+
                 }
 
             }, false);
+
         }
+
     };
 
-    inline.isLinkActive = function() {
+    inline.isLinkActive = function () {
 
         var isActive = false;
 
-        editor.nodes.inlineToolbar.buttons.childNodes.forEach(function(tool) {
+        editor.nodes.inlineToolbar.buttons.childNodes.forEach(function (tool) {
+
             var dataType = tool.dataset.type;
 
             if (dataType == 'link' && tool.classList.contains('hightlighted')) {
+
                 isActive = true;
+
             }
+
         });
 
         return isActive;
+
     };
 
     /** default action behavior of tool */
-    inline.defaultToolAction = function(type) {
+    inline.defaultToolAction = function (type) {
+
         document.execCommand(type, false, null);
+
     };
 
     /**
@@ -351,12 +396,13 @@ module.exports = (function(inline) {
      *
      * @param {String} url - URL
      */
-    inline.setAnchor = function(url) {
+    inline.setAnchor = function (url) {
 
         document.execCommand('createLink', false, url);
 
         /** Close after URL inserting */
         editor.toolbar.inline.closeAction();
+
     };
 
     /**
@@ -364,7 +410,7 @@ module.exports = (function(inline) {
      *
      * Saves selection
      */
-    inline.saveSelection = function(containerEl) {
+    inline.saveSelection = function (containerEl) {
 
         var range = window.getSelection().getRangeAt(0),
             preSelectionRange = range.cloneRange(),
@@ -379,6 +425,7 @@ module.exports = (function(inline) {
             start: start,
             end: start + range.toString().length
         };
+
     };
 
     /**
@@ -389,7 +436,7 @@ module.exports = (function(inline) {
      * @param {Element} containerEl - editable element where we restore range
      * @param {Object} savedSel - range basic information to restore
      */
-    inline.restoreSelection = function(containerEl, savedSel) {
+    inline.restoreSelection = function (containerEl, savedSel) {
 
         var range     = document.createRange(),
             charIndex = 0;
@@ -397,7 +444,7 @@ module.exports = (function(inline) {
         range.setStart(containerEl, 0);
         range.collapse(true);
 
-        var nodeStack = [containerEl],
+        var nodeStack = [ containerEl ],
             node,
             foundStart = false,
             stop = false,
@@ -410,25 +457,38 @@ module.exports = (function(inline) {
                 nextCharIndex = charIndex + node.length;
 
                 if (!foundStart && savedSel.start >= charIndex && savedSel.start <= nextCharIndex) {
+
                     range.setStart(node, savedSel.start - charIndex);
                     foundStart = true;
+
                 }
                 if (foundStart && savedSel.end >= charIndex && savedSel.end <= nextCharIndex) {
+
                     range.setEnd(node, savedSel.end - charIndex);
                     stop = true;
+
                 }
                 charIndex = nextCharIndex;
+
             } else {
+
                 var i = node.childNodes.length;
+
                 while (i--) {
+
                     nodeStack.push(node.childNodes[i]);
+
                 }
+
             }
+
         }
 
         var sel = window.getSelection();
+
         sel.removeAllRanges();
         sel.addRange(range);
+
     };
 
     /**
@@ -436,9 +496,12 @@ module.exports = (function(inline) {
      *
      * Removes all ranges from window selection
      */
-    inline.clearRange = function() {
+    inline.clearRange = function () {
+
         var selection = window.getSelection();
+
         selection.removeAllRanges();
+
     };
 
     /**
@@ -446,13 +509,18 @@ module.exports = (function(inline) {
      *
      * sets or removes hightlight
      */
-    inline.hightlight = function(tool) {
+    inline.hightlight = function (tool) {
+
         var dataType = tool.dataset.type;
 
         if (document.queryCommandState(dataType)) {
+
             editor.toolbar.inline.setButtonHighlighted(tool);
+
         } else {
+
             editor.toolbar.inline.removeButtonsHighLight(tool);
+
         }
 
         /**
@@ -463,8 +531,11 @@ module.exports = (function(inline) {
             tag = selection.anchorNode.parentNode;
 
         if (tag.tagName == 'A' && dataType == 'link') {
+
             editor.toolbar.inline.setButtonHighlighted(tool);
+
         }
+
     };
 
     /**
@@ -472,15 +543,20 @@ module.exports = (function(inline) {
      *
      * Mark button if text is already executed
      */
-    inline.setButtonHighlighted = function(button) {
+    inline.setButtonHighlighted = function (button) {
+
         button.classList.add('hightlighted');
 
         /** At link tool we also change icon */
         if (button.dataset.type == 'link') {
+
             var icon = button.childNodes[0];
+
             icon.classList.remove('ce-icon-link');
             icon.classList.add('ce-icon-unlink');
+
         }
+
     };
 
     /**
@@ -488,17 +564,23 @@ module.exports = (function(inline) {
      *
      * Removes hightlight
      */
-    inline.removeButtonsHighLight = function(button) {
+    inline.removeButtonsHighLight = function (button) {
+
         button.classList.remove('hightlighted');
 
         /** At link tool we also change icon */
         if (button.dataset.type == 'link') {
+
             var icon = button.childNodes[0];
+
             icon.classList.remove('ce-icon-unlink');
             icon.classList.add('ce-icon-link');
+
         }
+
     };
 
 
     return inline;
+
 })({});

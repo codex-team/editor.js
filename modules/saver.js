@@ -7,7 +7,7 @@
 
 let editor = codex.editor;
 
-var saver = (function(saver) {
+var saver = (function (saver) {
 
     /**
      * Saves blocks
@@ -23,23 +23,27 @@ var saver = (function(saver) {
 
         Promise.resolve()
 
-            .then(function() {
+            .then(function () {
+
                 return editor.nodes.redactor.childNodes;
+
             })
             /** Making a sequence from separate blocks */
             .then(editor.saver.makeQueue)
 
-            .then(function() {
+            .then(function () {
                 // editor.nodes.textarea.innerHTML = editor.state.html;
             })
 
-            .catch( function(error) {
+            .catch( function (error) {
+
                 console.log('Something happend');
+
             });
 
     };
 
-    saver.makeQueue = function(blocks) {
+    saver.makeQueue = function (blocks) {
 
         var queue = Promise.resolve();
 
@@ -53,10 +57,12 @@ var saver = (function(saver) {
     };
 
     /** Gets every block and makes From Data */
-    saver.getBlockData = function(queue, blocks, index) {
+    saver.getBlockData = function (queue, blocks, index) {
 
-        queue.then(function() {
+        queue.then(function () {
+
             return editor.saver.getNodeAsync(blocks, index);
+
         })
 
             .then(editor.saver.makeFormDataFromBlocks);
@@ -70,26 +76,30 @@ var saver = (function(saver) {
      */
     saver.getNodeAsync = function (blocksList, index) {
 
-        return Promise.resolve().then(function() {
+        return Promise.resolve().then(function () {
 
             return blocksList[index];
 
         });
+
     };
 
-    saver.makeFormDataFromBlocks = function(block) {
+    saver.makeFormDataFromBlocks = function (block) {
 
         var pluginName = block.dataset.tool;
 
         /** Check for plugin existance */
         if (!editor.tools[pluginName]) {
+
             throw Error(`Plugin «${pluginName}» not found`);
+
         }
 
         /** Check for plugin having render method */
         if (typeof editor.tools[pluginName].save != 'function') {
 
             throw Error(`Plugin «${pluginName}» must have save method`);
+
         }
 
         /** Result saver */
@@ -105,6 +115,7 @@ var saver = (function(saver) {
         };
 
         if (editor.tools[pluginName].validate) {
+
             var result = editor.tools[pluginName].validate(savedData);
 
             /**
@@ -112,12 +123,14 @@ var saver = (function(saver) {
              */
             if (!result)
                 return;
+
         }
 
         /** Marks Blocks that will be in main page */
         output.cover = block.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
 
         editor.state.jsonOutput.push(output);
+
     };
 
     return saver;

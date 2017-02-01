@@ -9,7 +9,7 @@
 
 let editor = codex.editor;
 
-var toolbox = (function(toolbox) {
+var toolbox = (function (toolbox) {
 
     toolbox.init = function () {
 
@@ -20,7 +20,7 @@ var toolbox = (function(toolbox) {
     toolbox.opened = false;
 
     /** Shows toolbox */
-    toolbox.open = function() {
+    toolbox.open = function () {
 
         /** Close setting if toolbox is opened */
         if (editor.toolbar.settings.opened) {
@@ -41,7 +41,7 @@ var toolbox = (function(toolbox) {
     };
 
     /** Closes toolbox */
-    toolbox.close = function() {
+    toolbox.close = function () {
 
         /** Makes toolbox disapear */
         editor.nodes.toolbox.classList.remove('opened');
@@ -54,7 +54,7 @@ var toolbox = (function(toolbox) {
 
     };
 
-    toolbox.leaf = function(){
+    toolbox.leaf = function () {
 
         var currentTool = editor.toolbar.current,
             tools       = Object.keys(editor.tools),
@@ -93,13 +93,14 @@ var toolbox = (function(toolbox) {
                 /** getting first displayed tool */
                 for( var tool in editor.tools ) {
 
-                    if (editor.tools[tool].displayInToolbox){
+                    if (editor.tools[tool].displayInToolbox) {
 
                         break;
 
                     }
 
                     nextToolIndex ++;
+
                 }
 
             }
@@ -118,7 +119,7 @@ var toolbox = (function(toolbox) {
      * Transforming selected node type into selected toolbar element type
      * @param {event} event
      */
-    toolbox.toolClicked = function() {
+    toolbox.toolClicked = function () {
 
         /**
          * UNREPLACEBLE_TOOLS this types of tools are forbidden to replace even they are empty
@@ -145,7 +146,7 @@ var toolbox = (function(toolbox) {
             workingNode &&
             UNREPLACEBLE_TOOLS.indexOf(workingNode.dataset.tool) === -1 &&
             workingNode.textContent.trim() === ''
-        ){
+        ) {
 
             /** Replace current block */
             editor.content.switchBlock(workingNode, newBlockContent, tool.type);
@@ -169,7 +170,7 @@ var toolbox = (function(toolbox) {
 
         }
 
-        setTimeout(function() {
+        setTimeout(function () {
 
             /** Set caret to current block */
             editor.caret.setToBlock(currentInputIndex);
@@ -186,6 +187,7 @@ var toolbox = (function(toolbox) {
          * Move toolbar when node is changed
          */
         editor.toolbar.move();
+
     };
 
     return toolbox;

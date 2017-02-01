@@ -7,7 +7,7 @@
 
 let editor = codex.editor;
 
-var ui = (function(ui){
+var ui = (function (ui) {
 
     /**
      * Basic editor classnames
@@ -137,9 +137,10 @@ var ui = (function(ui){
 
         /** fill in default settings */
         editor.toolbar.settings.addDefaultSettings();
+
     };
 
-    ui.makeInlineToolbar = function(container) {
+    ui.makeInlineToolbar = function (container) {
 
         /** Append to redactor new inline block */
         editor.nodes.inlineToolbar.wrapper = container;
@@ -155,6 +156,7 @@ var ui = (function(ui){
         editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.actions);
 
         editor.nodes.wrapper.appendChild(editor.nodes.inlineToolbar.wrapper);
+
     };
 
     /**
@@ -174,17 +176,23 @@ var ui = (function(ui){
             editor.tools[toolName] = tool;
 
             if (!tool.displayInToolbox) {
+
                 continue;
+
             }
 
             if (!tool.iconClassname) {
+
                 editor.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', toolName);
                 continue;
+
             }
 
             if (typeof tool.render != 'function') {
+
                 editor.core.log('render method missed. Tool %o skipped', 'warn', toolName);
                 continue;
+
             }
 
             /**
@@ -196,6 +204,7 @@ var ui = (function(ui){
 
             /** Save tools to static nodes */
             editor.nodes.toolbarButtons[toolName] = toolButton;
+
         }
 
 
@@ -207,7 +216,7 @@ var ui = (function(ui){
 
     };
 
-    ui.addInlineToolbarTools = function() {
+    ui.addInlineToolbarTools = function () {
 
         var tools = {
 
@@ -246,6 +255,7 @@ var ui = (function(ui){
              * Add callbacks to this buttons
              */
             editor.ui.setInlineToolbarButtonBehaviour(toolButton, tool.command);
+
         }
 
     };
@@ -293,8 +303,10 @@ var ui = (function(ui){
         editor.nodes.redactor.addEventListener('input', editor.callback.redactorInputEvent, false );
 
         /** Bind click listeners on toolbar buttons */
-        for (var button in editor.nodes.toolbarButtons){
+        for (var button in editor.nodes.toolbarButtons) {
+
             editor.nodes.toolbarButtons[button].addEventListener('click', editor.callback.toolbarButtonClicked, false);
+
         }
 
     };
@@ -304,9 +316,9 @@ var ui = (function(ui){
      * Ex. Load scripts or call some internal methods
      * @return Promise
      */
-    ui.preparePlugins = function() {
+    ui.preparePlugins = function () {
 
-        return new Promise(function(resolve, reject){
+        return new Promise(function (resolve, reject) {
 
             let pluginName,
                 plugin;
@@ -315,30 +327,39 @@ var ui = (function(ui){
 
                 plugin = editor.tools[pluginName];
 
-                if (typeof plugin.prepare != 'function'){
+                if (typeof plugin.prepare != 'function') {
+
                     continue;
+
                 }
 
-                plugin.prepare(plugin.config || {}).then(function(){
+                plugin.prepare(plugin.config || {}).then(function () {
+
                     resolve();
-                }).catch(function(error){
+
+                }).catch(function (error) {
+
                     reject(error);
+
                 });
 
             }
 
         });
+
     };
 
-    ui.addBlockHandlers = function(block) {
+    ui.addBlockHandlers = function (block) {
 
         if (!block) return;
 
         /**
          * Block keydowns
          */
-        block.addEventListener('keydown', function(event) {
+        block.addEventListener('keydown', function (event) {
+
             editor.callback.blockKeydown(event, block);
+
         }, false);
 
         /**
@@ -362,33 +383,38 @@ var ui = (function(ui){
          */
         block.addEventListener('paste', editor.callback.blockPasteCallback, false);
 
-        block.addEventListener('mouseup', function(){
+        block.addEventListener('mouseup', function () {
+
             editor.toolbar.inline.show();
+
         }, false);
 
     };
 
     /** getting all contenteditable elements */
-    ui.saveInputs = function() {
+    ui.saveInputs = function () {
 
         var redactor = editor.nodes.redactor,
             elements = [];
 
         /** Save all inputs in global variable state */
         editor.state.inputs = redactor.querySelectorAll('[contenteditable], input');
+
     };
 
     /**
      * Adds first initial block on empty redactor
      */
-    ui.addInitialBlock = function(){
+    ui.addInitialBlock = function () {
 
         var initialBlockType = editor.settings.initialBlockPlugin,
             initialBlock;
 
-        if ( !editor.tools[initialBlockType] ){
+        if ( !editor.tools[initialBlockType] ) {
+
             editor.core.log('Plugin %o was not implemented and can\'t be used as initial block', 'warn', initialBlockType);
             return;
+
         }
 
         initialBlock = editor.tools[initialBlockType].render();
@@ -404,13 +430,14 @@ var ui = (function(ui){
 
     };
 
-    ui.setInlineToolbarButtonBehaviour = function(button, type) {
+    ui.setInlineToolbarButtonBehaviour = function (button, type) {
 
-        button.addEventListener('mousedown', function(event) {
+        button.addEventListener('mousedown', function (event) {
 
             editor.toolbar.inline.toolClicked(event, type);
 
         }, false);
+
     };
 
     return ui;

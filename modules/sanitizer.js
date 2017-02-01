@@ -4,7 +4,7 @@
 
 var janitor = require('html-janitor');
 
-var sanitizer = (function(sanitizer) {
+var sanitizer = (function (sanitizer) {
 
     /**
      * Basic config

@@ -6,10 +6,10 @@
  */
 let editor = codex.editor;
 
-var parser = (function(parser) {
+var parser = (function (parser) {
 
     /** inserting text */
-    parser.insertPastedContent = function(blockType, tag) {
+    parser.insertPastedContent = function (blockType, tag) {
 
         editor.content.insertBlock({
             type :  blockType.type,

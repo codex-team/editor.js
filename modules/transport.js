@@ -7,7 +7,7 @@
  */
 let editor = codex.editor;
 
-var transport = (function(transport){
+var transport = (function (transport) {
 
     transport.input = null;
 
@@ -16,7 +16,7 @@ var transport = (function(transport){
      */
     transport.arguments = null;
 
-    transport.prepare = function(){
+    transport.prepare = function () {
 
         var input = document.createElement('INPUT');
 
@@ -28,19 +28,20 @@ var transport = (function(transport){
     };
 
     /** Clear input when files is uploaded */
-    transport.clearInput = function() {
+    transport.clearInput = function () {
 
         /** Remove old input */
         this.input = null;
 
         /** Prepare new one */
         this.prepare();
+
     };
 
     /**
      * Callback for file selection
      */
-    transport.fileSelected = function(event){
+    transport.fileSelected = function (event) {
 
         var input       = this,
             files       = input.files,
@@ -57,6 +58,7 @@ var transport = (function(transport){
             success    : editor.transport.arguments.success,
             error      : editor.transport.arguments.error
         });
+
     };
 
     /**
@@ -73,26 +75,32 @@ var transport = (function(transport){
     /**
      * Ajax requests module
      */
-    transport.ajax = function(params){
+    transport.ajax = function (params) {
 
         var xhr = new XMLHttpRequest(),
-            beforeSend = typeof params.beforeSend == 'function' ? params.beforeSend : function(){},
-            success    = typeof params.success    == 'function' ? params.success : function(){},
-            error      = typeof params.error      == 'function' ? params.error   : function(){};
+            beforeSend = typeof params.beforeSend == 'function' ? params.beforeSend : function () {},
+            success    = typeof params.success    == 'function' ? params.success : function () {},
+            error      = typeof params.error      == 'function' ? params.error   : function () {};
 
         beforeSend();
 
         xhr.open('POST', editor.settings.uploadImagesUrl, true);
 
-        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
         xhr.onload = function () {
+
             if (xhr.status === 200) {
+
                 success(xhr.responseText);
+
             } else {
-                console.log("request error: %o", xhr);
+
+                console.log('request error: %o', xhr);
                 error();
+
             }
+
         };
 
         xhr.send(params.data);

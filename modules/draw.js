@@ -5,7 +5,7 @@
  * @version 1.0.
  */
 
-var draw = (function(draw) {
+var draw = (function (draw) {
 
     /**
      * Base editor wrapper
@@ -33,7 +33,7 @@ var draw = (function(draw) {
 
     };
 
-    draw.ceBlock = function() {
+    draw.ceBlock = function () {
 
         var block = document.createElement('DIV');
 
@@ -53,20 +53,23 @@ var draw = (function(draw) {
         bar.className += 'ce-toolbar';
 
         return bar;
+
     };
 
-    draw.toolbarContent = function() {
+    draw.toolbarContent = function () {
 
         var wrapper = document.createElement('DIV');
+
         wrapper.classList.add('ce-toolbar__content');
 
         return wrapper;
+
     };
 
     /**
      * Inline toolbar
      */
-    draw.inlineToolbar = function() {
+    draw.inlineToolbar = function () {
 
         var bar = document.createElement('DIV');
 
@@ -79,19 +82,20 @@ var draw = (function(draw) {
     /**
      * Wrapper for inline toobar buttons
      */
-    draw.inlineToolbarButtons = function() {
+    draw.inlineToolbarButtons = function () {
 
         var wrapper = document.createElement('DIV');
 
         wrapper.className += 'ce-toolbar-inline__buttons';
 
         return wrapper;
+
     };
 
     /**
      * For some actions
      */
-    draw.inlineToolbarActions = function() {
+    draw.inlineToolbarActions = function () {
 
         var wrapper = document.createElement('DIV');
 
@@ -101,7 +105,7 @@ var draw = (function(draw) {
 
     };
 
-    draw.inputForLink = function() {
+    draw.inputForLink = function () {
 
         var input = document.createElement('INPUT');
 
@@ -119,7 +123,7 @@ var draw = (function(draw) {
     /**
      * Block with notifications
      */
-    draw.alertsHolder = function() {
+    draw.alertsHolder = function () {
 
         var block = document.createElement('div');
 
@@ -132,13 +136,14 @@ var draw = (function(draw) {
     /**
      * @todo Desc
      */
-    draw.blockButtons = function() {
+    draw.blockButtons = function () {
 
         var block = document.createElement('div');
 
         block.className += 'ce-toolbar__actions';
 
         return block;
+
     };
 
     /**
@@ -151,18 +156,20 @@ var draw = (function(draw) {
         settings.className += 'ce-settings';
 
         return settings;
+
     };
 
-    draw.defaultSettings = function() {
+    draw.defaultSettings = function () {
 
         var div = document.createElement('div');
 
         div.classList.add('ce-settings_default');
 
         return div;
+
     };
 
-    draw.pluginsSettings = function() {
+    draw.pluginsSettings = function () {
 
         var div = document.createElement('div');
 
@@ -172,7 +179,7 @@ var draw = (function(draw) {
 
     };
 
-    draw.plusButton = function() {
+    draw.plusButton = function () {
 
         var button = document.createElement('span');
 
@@ -180,6 +187,7 @@ var draw = (function(draw) {
         // button.innerHTML = '<i class="ce-icon-plus"></i>';
 
         return button;
+
     };
 
     /**
@@ -195,19 +203,21 @@ var draw = (function(draw) {
         toggler.innerHTML = '<i class="ce-icon-cog"></i>';
 
         return toggler;
+
     };
 
     /**
      * Redactor tools wrapper
      */
 
-    draw.toolbox = function() {
+    draw.toolbox = function () {
 
         var wrapper = document.createElement('div');
 
         wrapper.className = 'ce-toolbar__tools';
 
         return wrapper;
+
     };
 
     /**
@@ -221,9 +231,9 @@ var draw = (function(draw) {
      */
     draw.toolbarButton = function (type, classname) {
 
-        var button     = document.createElement("li"),
-            tool_icon  = document.createElement("i"),
-            tool_title = document.createElement("span");
+        var button     = document.createElement('li'),
+            tool_icon  = document.createElement('i'),
+            tool_title = document.createElement('span');
 
         button.dataset.type = type;
         button.setAttribute('title', type);
@@ -247,17 +257,19 @@ var draw = (function(draw) {
      * @param {String} type
      * @param {String} classname
      */
-    draw.toolbarButtonInline = function(type, classname) {
-        var button     = document.createElement("BUTTON"),
-            tool_icon  = document.createElement("I");
+    draw.toolbarButtonInline = function (type, classname) {
 
-        button.type = "button";
+        var button     = document.createElement('BUTTON'),
+            tool_icon  = document.createElement('I');
+
+        button.type = 'button';
         button.dataset.type = type;
         tool_icon.classList.add(classname);
 
         button.appendChild(tool_icon);
 
         return button;
+
     };
 
     /**
@@ -279,7 +291,7 @@ var draw = (function(draw) {
      * @param {string} className
      * @param {object} properties - allow to assign properties
      */
-    draw.node = function( tagName , className , properties ){
+    draw.node = function ( tagName, className, properties ) {
 
         var el = document.createElement( tagName );
 
@@ -287,15 +299,19 @@ var draw = (function(draw) {
 
         if ( properties ) {
 
-            for (var name in properties){
+            for (var name in properties) {
+
                 el[name] = properties[name];
+
             }
+
         }
 
         return el;
+
     };
 
-    draw.pluginsRender = function(type, content) {
+    draw.pluginsRender = function (type, content) {
 
         return {
             type  : type,
@@ -303,6 +319,7 @@ var draw = (function(draw) {
                 text : content
             })
         };
+
     };
 
     return draw;

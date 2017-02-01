@@ -5,13 +5,13 @@
  * @author Codex Team
  */
 
-module.exports = (function(editor){
+module.exports = (function (editor) {
 
     'use strict';
 
     editor.version = VERSION;
 
-    var init = function() {
+    var init = function () {
 
         editor.core          = require('./modules/core');
         editor.ui            = require('./modules/ui');
@@ -42,7 +42,7 @@ module.exports = (function(editor){
         uploadImagesUrl: '/editor/transport/',
 
         // Type of block showing on empty editor
-        initialBlockPlugin: "paragraph"
+        initialBlockPlugin: 'paragraph'
     };
 
     /**
@@ -134,7 +134,9 @@ module.exports = (function(editor){
             .then(editor.renderer.makeBlocksFromData)
             .then(editor.ui.saveInputs)
             .catch(function (error) {
+
                 editor.core.log('Initialization failed with error: %o', 'warn', error);
+
             });
 
     };

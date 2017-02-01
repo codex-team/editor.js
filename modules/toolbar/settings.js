@@ -6,10 +6,12 @@
 
 let editor = codex.editor;
 
-var settings = (function(settings) {
+var settings = (function (settings) {
 
-    settings.init = function() {
+    settings.init = function () {
+
         require('../content');
+
     };
 
     settings.opened = false;
@@ -22,7 +24,7 @@ var settings = (function(settings) {
     /**
      * Append and open settings
      */
-    settings.open = function(toolType){
+    settings.open = function (toolType) {
 
         /**
          * Append settings content
@@ -39,7 +41,9 @@ var settings = (function(settings) {
              * Draw settings block
              */
             var settingsBlock = editor.tools[toolType].makeSettings();
+
             editor.nodes.pluginSettings.appendChild(settingsBlock);
+
         }
 
         var currentBlock = editor.content.currentNode;
@@ -48,12 +52,13 @@ var settings = (function(settings) {
         editor.nodes.blockSettings.classList.add('opened');
         editor.toolbar.settings.addDefaultSettings();
         this.opened = true;
+
     };
 
     /**
      * Close and clear settings
      */
-    settings.close = function(){
+    settings.close = function () {
 
         editor.nodes.blockSettings.classList.remove('opened');
         editor.nodes.pluginSettings.innerHTML = '';
@@ -65,9 +70,9 @@ var settings = (function(settings) {
     /**
      * @param {string} toolType - plugin type
      */
-    settings.toggle = function( toolType ){
+    settings.toggle = function ( toolType ) {
 
-        if ( !this.opened ){
+        if ( !this.opened ) {
 
             this.open(toolType);
 
@@ -82,7 +87,7 @@ var settings = (function(settings) {
     /**
      * This function adds default core settings
      */
-    settings.addDefaultSettings = function() {
+    settings.addDefaultSettings = function () {
 
         /** list of default settings */
         var feedModeToggler;
@@ -115,7 +120,7 @@ var settings = (function(settings) {
      *
      * @return {Element} node/button that we place in default settings block
      */
-    settings.makeFeedModeToggler = function() {
+    settings.makeFeedModeToggler = function () {
 
         var isFeedModeActivated = editor.toolbar.settings.isFeedModeActivated(),
             setting,
@@ -139,35 +144,42 @@ var settings = (function(settings) {
         setting.addEventListener('click', editor.toolbar.settings.updateFeedMode, false);
 
         return setting;
+
     };
 
     /**
      * Updates Feed-mode
      */
-    settings.updateFeedMode = function() {
+    settings.updateFeedMode = function () {
 
         var currentNode = editor.content.currentNode;
 
         currentNode.classList.toggle(editor.ui.className.BLOCK_IN_FEED_MODE);
 
         editor.toolbar.settings.close();
+
     };
 
-    settings.isFeedModeActivated = function() {
+    settings.isFeedModeActivated = function () {
 
         var currentBlock = editor.content.currentNode;
 
         if (currentBlock) {
+
             return currentBlock.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
+
         } else {
+
             return false;
+
         }
+
     };
 
     /**
      * Here we will draw buttons and add listeners to components
      */
-    settings.makeRemoveBlockButton = function() {
+    settings.makeRemoveBlockButton = function () {
 
         var removeBlockWrapper  = editor.draw.node('SPAN', 'ce-toolbar__remove-btn', {}),
             settingButton = editor.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML : '<i class="ce-icon-trash"></i>' }),
@@ -195,14 +207,18 @@ var settings = (function(settings) {
 
     };
 
-    settings.removeButtonClicked = function() {
+    settings.removeButtonClicked = function () {
 
         var action = editor.toolbar.settings.actions;
 
         if (action.classList.contains('opened')) {
+
             editor.toolbar.settings.hideRemoveActions();
+
         } else {
+
             editor.toolbar.settings.showRemoveActions();
+
         }
 
         editor.toolbar.toolbox.close();
@@ -210,12 +226,13 @@ var settings = (function(settings) {
 
     };
 
-    settings.cancelRemovingRequest = function() {
+    settings.cancelRemovingRequest = function () {
 
         editor.toolbar.settings.actions.classList.remove('opened');
+
     };
 
-    settings.confirmRemovingRequest = function() {
+    settings.confirmRemovingRequest = function () {
 
         var currentBlock = editor.content.currentNode,
             firstLevelBlocksCount;
@@ -234,19 +251,25 @@ var settings = (function(settings) {
 
             /** Inserting new empty initial block */
             editor.ui.addInitialBlock();
+
         }
 
         editor.ui.saveInputs();
 
         editor.toolbar.close();
+
     };
 
-    settings.showRemoveActions = function() {
+    settings.showRemoveActions = function () {
+
         editor.toolbar.settings.actions.classList.add('opened');
+
     };
 
-    settings.hideRemoveActions = function() {
+    settings.hideRemoveActions = function () {
+
         editor.toolbar.settings.actions.classList.remove('opened');
+
     };
 
     return settings;
