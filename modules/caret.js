@@ -31,8 +31,8 @@ module.exports = (function (caret) {
      */
     caret.set = function ( el, index, offset) {
 
-        offset = offset || this.offset || 0;
-        index  = index  || this.focusedNodeIndex || 0;
+        offset = offset || caret.offset || 0;
+        index  = index  || caret.focusedNodeIndex || 0;
 
         var childs = el.childNodes,
             nodeToSet;
@@ -113,7 +113,7 @@ module.exports = (function (caret) {
 
         }
 
-        this.inputIndex = editableElementIndex;
+        caret.inputIndex = editableElementIndex;
 
     };
 
@@ -122,7 +122,7 @@ module.exports = (function (caret) {
      */
     caret.getCurrentInputIndex = function () {
 
-        return this.inputIndex;
+        return caret.inputIndex;
 
     };
 
