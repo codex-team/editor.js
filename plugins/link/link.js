@@ -206,7 +206,7 @@ var link = (function(link) {
 
                     block.classList.add(settings.elementClasses.error);
 
-                    codex.core.log('Error while doing things with link paste: %o', 'error', error);
+                    codex.editor.core.log('Error while doing things with link paste: %o', 'error', error);
                 });
 
         },

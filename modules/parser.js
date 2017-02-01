@@ -4,13 +4,14 @@
  * @author Codex Team
  * @version 1.1
  */
+let editor = codex.editor;
 
-var parser = (function(parser) {
+module.exports = (function (parser) {
 
     /** inserting text */
-    parser.insertPastedContent = function(blockType, tag) {
+    parser.insertPastedContent = function (blockType, tag) {
 
-        codex.content.insertBlock({
+        editor.content.insertBlock({
             type :  blockType.type,
             block : blockType.render({
                 text : tag.innerHTML
@@ -24,13 +25,11 @@ var parser = (function(parser) {
      */
     parser.isFirstLevelBlock = function (node) {
 
-        return node.nodeType == cEditor.core.nodeTypes.TAG &&
-            node.classList.contains(cEditor.ui.className.BLOCK_CLASSNAME);
+        return node.nodeType == editor.core.nodeTypes.TAG &&
+            node.classList.contains(editor.ui.className.BLOCK_CLASSNAME);
 
     };
 
     return parser;
 
 })({});
-
-module.exports = parser;

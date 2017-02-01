@@ -4,8 +4,9 @@
  * @author Codex Team
  * @version 1.0
  */
+let editor = codex.editor;
 
-var caret = (function(caret) {
+module.exports = (function (caret) {
 
     /**
      * @var {int} InputIndex - editable element in DOM
@@ -28,10 +29,10 @@ var caret = (function(caret) {
      * @uses caret.save — if you need to save caret position
      * @param {Element} el - Changed Node.
      */
-    caret.set = function( el , index, offset) {
+    caret.set = function ( el, index, offset) {
 
-        offset = offset || this.offset || 0;
-        index  = index  || this.focusedNodeIndex || 0;
+        offset = offset || caret.offset || 0;
+        index  = index  || caret.focusedNodeIndex || 0;
 
         var childs = el.childNodes,
             nodeToSet;
@@ -48,19 +49,22 @@ var caret = (function(caret) {
 
         /** If Element is INPUT */
         if (el.tagName == 'INPUT') {
+
             el.focus();
             return;
+
         }
 
-        if (codex.core.isDomNode(nodeToSet)) {
+        if (editor.core.isDomNode(nodeToSet)) {
 
-            nodeToSet = codex.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
+            nodeToSet = editor.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
+
         }
 
         var range     = document.createRange(),
             selection = window.getSelection();
 
-        setTimeout(function() {
+        window.setTimeout(function () {
 
             range.setStart(nodeToSet, offset);
             range.setEnd(nodeToSet, offset);
@@ -68,9 +72,10 @@ var caret = (function(caret) {
             selection.removeAllRanges();
             selection.addRange(range);
 
-            codex.caret.saveCurrentInputIndex();
+            editor.caret.saveCurrentInputIndex();
 
         }, 20);
+
     };
 
     /**
@@ -81,48 +86,59 @@ var caret = (function(caret) {
 
         /** Index of Input that we paste sanitized content */
         var selection   = window.getSelection(),
-            inputs      = codex.state.inputs,
+            inputs      = editor.state.inputs,
             focusedNode = selection.anchorNode,
             focusedNodeHolder;
 
-        if (!focusedNode){
+        if (!focusedNode) {
+
             return;
+
         }
 
         /** Looking for parent contentEditable block */
         while (focusedNode.contentEditable != 'true') {
+
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;
+
         }
 
         /** Input index in DOM level */
         var editableElementIndex = 0;
 
         while (focusedNode != inputs[editableElementIndex]) {
+
             editableElementIndex ++;
+
         }
 
-        this.inputIndex = editableElementIndex;
+        caret.inputIndex = editableElementIndex;
+
     };
 
     /**
      * Returns current input index (caret object)
      */
-    caret.getCurrentInputIndex = function() {
-        return this.inputIndex;
+    caret.getCurrentInputIndex = function () {
+
+        return caret.inputIndex;
+
     };
 
     /**
      * @param {int} index - index of first-level block after that we set caret into next input
      */
-    caret.setToNextBlock = function(index) {
+    caret.setToNextBlock = function (index) {
 
-        var inputs = codex.state.inputs,
+        var inputs = editor.state.inputs,
             nextInput = inputs[index + 1];
 
         if (!nextInput) {
-            codex.core.log('We are reached the end');
+
+            editor.core.log('We are reached the end');
             return;
+
         }
 
         /**
@@ -130,13 +146,16 @@ var caret = (function(caret) {
          * We should add some text node to set caret
          */
         if (!nextInput.childNodes.length) {
+
             var emptyTextElement = document.createTextNode('');
+
             nextInput.appendChild(emptyTextElement);
+
         }
 
-        codex.caret.inputIndex = index + 1;
-        codex.caret.set(nextInput, 0, 0);
-        codex.content.workingNodeChanged(nextInput);
+        editor.caret.inputIndex = index + 1;
+        editor.caret.set(nextInput, 0, 0);
+        editor.content.workingNodeChanged(nextInput);
 
     };
 
@@ -144,15 +163,15 @@ var caret = (function(caret) {
      * @param {int} index - index of target input.
      * Sets caret to input with this index
      */
-    caret.setToBlock = function(index) {
+    caret.setToBlock = function (index) {
 
-        var inputs = codex.state.inputs,
+        var inputs = editor.state.inputs,
             targetInput = inputs[index];
 
-        console.assert( targetInput , 'caret.setToBlock: target input does not exists');
-
         if ( !targetInput ) {
+
             return;
+
         }
 
         /**
@@ -160,24 +179,27 @@ var caret = (function(caret) {
          * We should add some text node to set caret
          */
         if (!targetInput.childNodes.length) {
+
             var emptyTextElement = document.createTextNode('');
+
             targetInput.appendChild(emptyTextElement);
+
         }
 
-        codex.caret.inputIndex = index;
-        codex.caret.set(targetInput, 0, 0);
-        codex.content.workingNodeChanged(targetInput);
+        editor.caret.inputIndex = index;
+        editor.caret.set(targetInput, 0, 0);
+        editor.content.workingNodeChanged(targetInput);
 
     };
 
     /**
      * @param {int} index - index of input
      */
-    caret.setToPreviousBlock = function(index) {
+    caret.setToPreviousBlock = function (index) {
 
         index = index || 0;
 
-        var inputs = codex.state.inputs,
+        var inputs = editor.state.inputs,
             previousInput = inputs[index - 1],
             lastChildNode,
             lengthOfLastChildNode,
@@ -185,11 +207,13 @@ var caret = (function(caret) {
 
 
         if (!previousInput) {
-            codex.core.log('We are reached first node');
+
+            editor.core.log('We are reached first node');
             return;
+
         }
 
-        lastChildNode = codex.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
+        lastChildNode = editor.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
         lengthOfLastChildNode = lastChildNode.length;
 
         /**
@@ -200,24 +224,28 @@ var caret = (function(caret) {
 
             emptyTextElement = document.createTextNode('');
             previousInput.appendChild(emptyTextElement);
+
         }
-        codex.caret.inputIndex = index - 1;
-        codex.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
-        codex.content.workingNodeChanged(inputs[index - 1]);
+        editor.caret.inputIndex = index - 1;
+        editor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
+        editor.content.workingNodeChanged(inputs[index - 1]);
+
     };
 
     caret.position = {
 
-        atStart : function() {
+        atStart : function () {
 
             var selection       = window.getSelection(),
                 anchorOffset    = selection.anchorOffset,
                 anchorNode      = selection.anchorNode,
-                firstLevelBlock = codex.content.getFirstLevelBlock(anchorNode),
+                firstLevelBlock = editor.content.getFirstLevelBlock(anchorNode),
                 pluginsRender   = firstLevelBlock.childNodes[0];
 
-            if (!codex.core.isDomNode(anchorNode)) {
+            if (!editor.core.isDomNode(anchorNode)) {
+
                 anchorNode = anchorNode.parentNode;
+
             }
 
             var isFirstNode  = anchorNode === pluginsRender.childNodes[0],
@@ -227,7 +255,7 @@ var caret = (function(caret) {
 
         },
 
-        atTheEnd : function() {
+        atTheEnd : function () {
 
             var selection    = window.getSelection(),
                 anchorOffset = selection.anchorOffset,
@@ -235,11 +263,10 @@ var caret = (function(caret) {
 
             /** Caret is at the end of input */
             return !anchorNode || !anchorNode.length || anchorOffset === anchorNode.length;
+
         }
     };
 
     return caret;
 
 })({});
-
-module.exports = caret;

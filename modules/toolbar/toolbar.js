@@ -9,13 +9,14 @@
  * @author Codex Team
  * @version 1.0
  */
-var toolbar = (function(toolbar) {
 
-    toolbar.init = function() {
-        toolbar.settings = require('./settings');
-        toolbar.inline   = require('./inline');
-        toolbar.toolbox  = require('./toolbox');
-    };
+let editor = codex.editor;
+
+module.exports = (function (toolbar) {
+
+    toolbar.settings = require('./settings');
+    toolbar.inline   = require('./inline');
+    toolbar.toolbox  = require('./toolbox');
 
     /**
      * Margin between focused node and toolbar
@@ -31,9 +32,9 @@ var toolbar = (function(toolbar) {
     /**
      * @protected
      */
-    toolbar.open = function (){
+    toolbar.open = function () {
 
-        codex.nodes.toolbar.classList.add('opened');
+        editor.nodes.toolbar.classList.add('opened');
         this.opened = true;
 
     };
@@ -41,26 +42,28 @@ var toolbar = (function(toolbar) {
     /**
      * @protected
      */
-    toolbar.close = function(){
+    toolbar.close = function () {
 
-        codex.nodes.toolbar.classList.remove('opened');
+        editor.nodes.toolbar.classList.remove('opened');
 
         toolbar.opened  = false;
         toolbar.current = null;
 
-        for (var button in codex.nodes.toolbarButtons){
-            codex.nodes.toolbarButtons[button].classList.remove('selected');
+        for (var button in editor.nodes.toolbarButtons) {
+
+            editor.nodes.toolbarButtons[button].classList.remove('selected');
+
         }
 
         /** Close toolbox when toolbar is not displayed */
-        codex.toolbar.toolbox.close();
-        codex.toolbar.settings.close();
+        editor.toolbar.toolbox.close();
+        editor.toolbar.settings.close();
 
     };
 
-    toolbar.toggle = function(){
+    toolbar.toggle = function () {
 
-        if ( !this.opened ){
+        if ( !this.opened ) {
 
             this.open();
 
@@ -72,41 +75,41 @@ var toolbar = (function(toolbar) {
 
     };
 
-    toolbar.hidePlusButton = function() {
-        codex.nodes.plusButton.classList.add('hide');
+    toolbar.hidePlusButton = function () {
+
+        editor.nodes.plusButton.classList.add('hide');
+
     };
 
-    toolbar.showPlusButton = function() {
-        codex.nodes.plusButton.classList.remove('hide');
+    toolbar.showPlusButton = function () {
+
+        editor.nodes.plusButton.classList.remove('hide');
+
     };
 
     /**
      * Moving toolbar to the specified node
      */
-    toolbar.move = function() {
+    toolbar.move = function () {
 
         /** Close Toolbox when we move toolbar */
-        codex.toolbar.toolbox.close();
+        editor.toolbar.toolbox.close();
 
-        if (!codex.content.currentNode) {
+        if (!editor.content.currentNode) {
+
             return;
+
         }
 
-        var toolbarHeight = codex.nodes.toolbar.clientHeight || codex.toolbar.defaultToolbarHeight,
-            newYCoordinate = codex.content.currentNode.offsetTop - (codex.toolbar.defaultToolbarHeight / 2) + codex.toolbar.defaultOffset;
+        var newYCoordinate = editor.content.currentNode.offsetTop - (editor.toolbar.defaultToolbarHeight / 2) + editor.toolbar.defaultOffset;
 
-        codex.nodes.toolbar.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
+        editor.nodes.toolbar.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
 
         /** Close trash actions */
-        codex.toolbar.settings.hideRemoveActions();
+        editor.toolbar.settings.hideRemoveActions();
 
     };
 
     return toolbar;
 
 })({});
-
-toolbar.init();
-
-module.exports = toolbar;
-

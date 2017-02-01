@@ -16,7 +16,7 @@ var paragraph = (function(paragraph) {
     var make_ = function (data) {
 
         /** Create Empty DIV */
-        var tag = codex.draw.node('DIV', ['ce-paragraph'], {});
+        var tag = codex.editor.draw.node('DIV', ['ce-paragraph'], {});
 
         if (data && data.text) {
             tag.innerHTML = data.text;
@@ -30,7 +30,7 @@ var paragraph = (function(paragraph) {
          * If pasted URL from instagram, twitter or Image
          * it renders via Social widgets content or uploads image and uses Image tool to render
          */
-        tag.addEventListener('paste', codex.tools.paste.callbacks, false);
+        tag.addEventListener('paste', codex.editor.tools.paste.callbacks, false);
 
         return tag;
 
@@ -88,7 +88,7 @@ var paragraph = (function(paragraph) {
      */
     paragraph.save = function (blockContent){
 
-        var wrappedText = codex.content.wrapTextWithParagraphs(blockContent.innerHTML);
+        var wrappedText = codex.editor.content.wrapTextWithParagraphs(blockContent.innerHTML);
 
         var data = {
             "text": wrappedText,

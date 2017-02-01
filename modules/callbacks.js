@@ -4,88 +4,106 @@
  * @author Codex Team
  * @version 1.3.5
  */
+let editor = codex.editor;
 
-var callbacks = (function(callbacks) {
+module.exports = (function (callbacks) {
 
-    callbacks.redactorSyncTimeout = null;
+    callbacks.globalKeydown = function (event) {
 
-    callbacks.globalKeydown = function(event){
-        switch (event.keyCode){
-            case codex.core.keys.ENTER : codex.callback.enterKeyPressed(event);     break;
+        switch (event.keyCode) {
+            case editor.core.keys.ENTER : editor.callback.enterKeyPressed(event);     break;
         }
+
     };
 
-    callbacks.redactorKeyDown = function(event) {
-        switch (event.keyCode){
-            case codex.core.keys.TAB   : codex.callback.tabKeyPressed(event);                     break;
-            case codex.core.keys.ENTER : codex.callback.enterKeyPressedOnRedactorZone(event);     break;
-            case codex.core.keys.ESC   : codex.callback.escapeKeyPressed(event);                  break;
-            default                    : codex.callback.defaultKeyPressed(event);                 break;
+    callbacks.redactorKeyDown = function (event) {
+
+        switch (event.keyCode) {
+            case editor.core.keys.TAB   : editor.callback.tabKeyPressed(event);                     break;
+            case editor.core.keys.ENTER : editor.callback.enterKeyPressedOnRedactorZone(event);     break;
+            case editor.core.keys.ESC   : editor.callback.escapeKeyPressed(event);                  break;
+            default                    : editor.callback.defaultKeyPressed(event);                 break;
         }
+
     };
 
-    callbacks.globalKeyup = function(event){
-        switch (event.keyCode){
-            case codex.core.keys.UP    :
-            case codex.core.keys.LEFT  :
-            case codex.core.keys.RIGHT :
-            case codex.core.keys.DOWN  : codex.callback.arrowKeyPressed(event); break;
+    callbacks.globalKeyup = function (event) {
+
+        switch (event.keyCode) {
+            case editor.core.keys.UP    :
+            case editor.core.keys.LEFT  :
+            case editor.core.keys.RIGHT :
+            case editor.core.keys.DOWN  : editor.callback.arrowKeyPressed(event); break;
         }
+
     };
 
-    callbacks.tabKeyPressed = function(event){
+    callbacks.tabKeyPressed = function (event) {
 
-        if ( !codex.toolbar.opened ) {
-            codex.toolbar.open();
+        if ( !editor.toolbar.opened ) {
+
+            editor.toolbar.open();
+
         }
 
-        if (codex.toolbar.opened && !codex.toolbar.toolbox.opened) {
-            codex.toolbar.toolbox.open();
+        if (editor.toolbar.opened && !editor.toolbar.toolbox.opened) {
+
+            editor.toolbar.toolbox.open();
+
         } else {
-            codex.toolbar.toolbox.leaf();
+
+            editor.toolbar.toolbox.leaf();
+
         }
 
         event.preventDefault();
+
     };
 
-    callbacks.enterKeyPressed = function(event) {
+    /**
+    * @param {Event} event
+    */
+    callbacks.enterKeyPressed = function () {
 
-        if (codex.content.editorAreaHightlighted) {
+        if (editor.content.editorAreaHightlighted) {
 
             /**
              * it means that we lose input index, saved index before is not correct
              * therefore we need to set caret when we insert new block
              */
-            codex.caret.inputIndex = -1;
+            editor.caret.inputIndex = -1;
 
-            codex.callback.enterPressedOnBlock();
+            editor.callback.enterPressedOnBlock();
+
         }
+
     };
 
     /**
      * ENTER key handler
      * Makes new paragraph block
      */
-    callbacks.enterKeyPressedOnRedactorZone = function(event){
+    callbacks.enterKeyPressedOnRedactorZone = function (event) {
 
         if (event.target.contentEditable == 'true') {
 
             /** Update input index */
-            codex.caret.saveCurrentInputIndex();
+            editor.caret.saveCurrentInputIndex();
+
         }
 
-        var currentInputIndex       = codex.caret.getCurrentInputIndex() || 0,
-            workingNode             = codex.content.currentNode,
+        var currentInputIndex       = editor.caret.getCurrentInputIndex() || 0,
+            workingNode             = editor.content.currentNode,
             tool                    = workingNode.dataset.tool,
-            isEnterPressedOnToolbar = codex.toolbar.opened &&
-                                        codex.toolbar.current &&
-                                        event.target == codex.state.inputs[currentInputIndex];
+            isEnterPressedOnToolbar = editor.toolbar.opened &&
+                                        editor.toolbar.current &&
+                                        event.target == editor.state.inputs[currentInputIndex];
 
         /** The list of tools which needs the default browser behaviour */
-        var enableLineBreaks = codex.tools[tool].enableLineBreaks;
+        var enableLineBreaks = editor.tools[tool].enableLineBreaks;
 
         /** This type of block creates when enter is pressed */
-        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
 
         /**
          * When toolbar is opened, select tool instead of making new paragraph
@@ -94,9 +112,9 @@ var callbacks = (function(callbacks) {
 
             event.preventDefault();
 
-            codex.toolbar.toolbox.toolClicked(event);
+            editor.toolbar.toolbox.toolClicked(event);
 
-            codex.toolbar.close();
+            editor.toolbar.close();
 
             /**
              * Stop other listeners callback executions
@@ -112,26 +130,28 @@ var callbacks = (function(callbacks) {
          * Allow paragraph lineBreaks with shift enter
          * Or if shiftkey pressed and enter and enabledLineBreaks, the let new block creation
          */
-        if ( event.shiftKey || enableLineBreaks ){
+        if ( event.shiftKey || enableLineBreaks ) {
 
             event.stopPropagation();
             event.stopImmediatePropagation();
             return;
+
         }
 
-        var isLastTextNode = false,
-            currentSelection = window.getSelection(),
+        var currentSelection = window.getSelection(),
             currentSelectedNode = currentSelection.anchorNode,
-            caretAtTheEndOfText = codex.caret.position.atTheEnd(),
+            caretAtTheEndOfText = editor.caret.position.atTheEnd(),
             isTextNodeHasParentBetweenContenteditable = false;
 
         /**
          * Allow making new <p> in same block by SHIFT+ENTER and forbids to prevent default browser behaviour
          */
         if ( event.shiftKey && !enableLineBreaks ) {
-            codex.callback.enterPressedOnBlock(codex.content.currentBlock, event);
+
+            editor.callback.enterPressedOnBlock(editor.content.currentBlock, event);
             event.preventDefault();
             return;
+
         }
 
         /**
@@ -139,31 +159,33 @@ var callbacks = (function(callbacks) {
          * Split block cant handle this.
          * We need to save default behavior
          */
-        isTextNodeHasParentBetweenContenteditable = currentSelectedNode && currentSelectedNode.parentNode.contentEditable != "true";
+        isTextNodeHasParentBetweenContenteditable = currentSelectedNode && currentSelectedNode.parentNode.contentEditable != 'true';
 
         /**
          * Split blocks when input has several nodes and caret placed in textNode
          */
         if (
-            currentSelectedNode.nodeType == codex.core.nodeTypes.TEXT &&
+            currentSelectedNode.nodeType == editor.core.nodeTypes.TEXT &&
             !isTextNodeHasParentBetweenContenteditable &&
             !caretAtTheEndOfText
-        ){
+        ) {
 
             event.preventDefault();
 
-            codex.core.log('Splitting Text node...');
+            editor.core.log('Splitting Text node...');
 
-            codex.content.splitBlock(currentInputIndex);
+            editor.content.splitBlock(currentInputIndex);
 
             /** Show plus button when next input after split is empty*/
-            if (!codex.state.inputs[currentInputIndex + 1].textContent.trim()) {
-                codex.toolbar.showPlusButton();
+            if (!editor.state.inputs[currentInputIndex + 1].textContent.trim()) {
+
+                editor.toolbar.showPlusButton();
+
             }
 
         } else {
 
-            var islastNode = codex.content.isLastNode(currentSelectedNode);
+            var islastNode = editor.content.isLastNode(currentSelectedNode);
 
             if ( islastNode && caretAtTheEndOfText ) {
 
@@ -171,164 +193,181 @@ var callbacks = (function(callbacks) {
                 event.stopPropagation();
                 event.stopImmediatePropagation();
 
-                codex.core.log('ENTER clicked in last textNode. Create new BLOCK');
+                editor.core.log('ENTER clicked in last textNode. Create new BLOCK');
 
-                codex.content.insertBlock({
+                editor.content.insertBlock({
                     type: NEW_BLOCK_TYPE,
-                    block: codex.tools[NEW_BLOCK_TYPE].render()
+                    block: editor.tools[NEW_BLOCK_TYPE].render()
                 }, true);
 
-                codex.toolbar.move();
-                codex.toolbar.open();
+                editor.toolbar.move();
+                editor.toolbar.open();
 
                 /** Show plus button with empty block */
-                codex.toolbar.showPlusButton();
+                editor.toolbar.showPlusButton();
 
             }
 
         }
 
         /** get all inputs after new appending block */
-        codex.ui.saveInputs();
+        editor.ui.saveInputs();
 
     };
 
-    callbacks.escapeKeyPressed = function(event){
+    callbacks.escapeKeyPressed = function (event) {
 
         /** Close all toolbar */
-        codex.toolbar.close();
+        editor.toolbar.close();
 
         /** Close toolbox */
-        codex.toolbar.toolbox.close();
+        editor.toolbar.toolbox.close();
 
         event.preventDefault();
 
     };
 
-    callbacks.arrowKeyPressed = function(event){
+    /**
+    * @param {Event} event
+    */
+    callbacks.arrowKeyPressed = function () {
 
-        codex.content.workingNodeChanged();
+        editor.content.workingNodeChanged();
 
         /* Closing toolbar */
-        codex.toolbar.close();
-        codex.toolbar.move();
+        editor.toolbar.close();
+        editor.toolbar.move();
 
     };
 
-    callbacks.defaultKeyPressed = function(event) {
+    /**
+    * @param {Event} event
+    */
+    callbacks.defaultKeyPressed = function () {
 
-        codex.toolbar.close();
+        editor.toolbar.close();
 
-        if (!codex.toolbar.inline.actionsOpened) {
-            codex.toolbar.inline.close();
-            codex.content.clearMark();
+        if (!editor.toolbar.inline.actionsOpened) {
+
+            editor.toolbar.inline.close();
+            editor.content.clearMark();
+
         }
+
     };
 
     callbacks.redactorClicked = function (event) {
 
         callbacks.detectWhenClickedOnFirstLevelBlockArea();
 
-        codex.content.workingNodeChanged(event.target);
+        editor.content.workingNodeChanged(event.target);
 
-        codex.ui.saveInputs();
+        editor.ui.saveInputs();
 
-        var selectedText = codex.toolbar.inline.getSelectionText();
+        var selectedText = editor.toolbar.inline.getSelectionText(),
+            firstLevelBlock;
 
         /**
          * If selection range took off, then we hide inline toolbar
          */
         if (selectedText.length === 0) {
-            codex.toolbar.inline.close();
+
+            editor.toolbar.inline.close();
+
         }
 
         /** Update current input index in memory when caret focused into existed input */
         if (event.target.contentEditable == 'true') {
 
-            codex.caret.saveCurrentInputIndex();
+            editor.caret.saveCurrentInputIndex();
 
         }
 
-        if (codex.content.currentNode === null) {
+        if (editor.content.currentNode === null) {
 
             /**
              * If inputs in redactor does not exits, then we put input index 0 not -1
              */
-            var indexOfLastInput = codex.state.inputs.length > 0 ? codex.state.inputs.length - 1 : 0;
+            var indexOfLastInput = editor.state.inputs.length > 0 ? editor.state.inputs.length - 1 : 0;
 
             /** If we have any inputs */
-            if (codex.state.inputs.length) {
+            if (editor.state.inputs.length) {
+
+                /**
+                * @todo Refactor
+                */
 
                 /** getting firstlevel parent of input */
-                var firstLevelBlock  = codex.content.getFirstLevelBlock(codex.state.inputs[indexOfLastInput]);
+                firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
+
             }
 
             /** If input is empty, then we set caret to the last input */
-            if (codex.state.inputs.length && codex.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == codex.settings.initialBlockPlugin) {
+            if (editor.state.inputs.length && editor.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == editor.settings.initialBlockPlugin) {
 
-                codex.caret.setToBlock(indexOfLastInput);
+                editor.caret.setToBlock(indexOfLastInput);
 
             } else {
 
                 /** Create new input when caret clicked in redactors area */
-                var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+                var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
 
-                codex.content.insertBlock({
+                editor.content.insertBlock({
                     type  : NEW_BLOCK_TYPE,
-                    block : codex.tools[NEW_BLOCK_TYPE].render()
+                    block : editor.tools[NEW_BLOCK_TYPE].render()
                 });
 
                 /** If there is no inputs except inserted */
-                if (codex.state.inputs.length === 1) {
+                if (editor.state.inputs.length === 1) {
 
-                    codex.caret.setToBlock(indexOfLastInput);
+                    editor.caret.setToBlock(indexOfLastInput);
 
                 } else {
 
                     /** Set caret to this appended input */
-                    codex.caret.setToNextBlock(indexOfLastInput);
+                    editor.caret.setToNextBlock(indexOfLastInput);
+
                 }
+
             }
 
             /**
              * Move toolbar to the right position and open
              */
-            codex.toolbar.move();
-
-
-            codex.toolbar.open();
+            editor.toolbar.move();
+            editor.toolbar.open();
 
         } else {
 
             /**
              * Move toolbar to the new position and open
              */
-            codex.toolbar.move();
-
-            codex.toolbar.open();
+            editor.toolbar.move();
+            editor.toolbar.open();
 
             /** Close all panels */
-            codex.toolbar.settings.close();
-            codex.toolbar.toolbox.close();
+            editor.toolbar.settings.close();
+            editor.toolbar.toolbox.close();
+
         }
 
 
-        var inputIsEmpty = !codex.content.currentNode.textContent.trim(),
-            currentNodeType = codex.content.currentNode.dataset.tool,
-            isInitialType = currentNodeType == codex.settings.initialBlockPlugin;
+        var inputIsEmpty = !editor.content.currentNode.textContent.trim(),
+            currentNodeType = editor.content.currentNode.dataset.tool,
+            isInitialType = currentNodeType == editor.settings.initialBlockPlugin;
 
 
         /** Hide plus buttons */
-        codex.toolbar.hidePlusButton();
+        editor.toolbar.hidePlusButton();
 
         /** Mark current block */
-        codex.content.markBlock();
+        editor.content.markBlock();
 
 
         if ( isInitialType && inputIsEmpty ) {
 
             /** Show plus button */
-            codex.toolbar.showPlusButton();
+            editor.toolbar.showPlusButton();
 
         }
 
@@ -342,41 +381,52 @@ var callbacks = (function(callbacks) {
      * Therefore, to be sure that we've clicked first-level block area, we should have currentNode, which always
      * specifies to the first-level block. Other cases we just ignore.
      */
-    callbacks.detectWhenClickedOnFirstLevelBlockArea = function() {
+    callbacks.detectWhenClickedOnFirstLevelBlockArea = function () {
 
         var selection  = window.getSelection(),
             anchorNode = selection.anchorNode,
             flag = false;
 
-        if (selection.rangeCount == 0) {
+        if (selection.rangeCount === 0) {
 
-            codex.content.editorAreaHightlighted = true;
+            editor.content.editorAreaHightlighted = true;
 
         } else {
 
-            if (!codex.core.isDomNode(anchorNode)) {
+            if (!editor.core.isDomNode(anchorNode)) {
+
                 anchorNode = anchorNode.parentNode;
+
             }
 
             /** Already founded, without loop */
             if (anchorNode.contentEditable == 'true') {
+
                 flag = true;
+
             }
 
             while (anchorNode.contentEditable != 'true') {
+
                 anchorNode = anchorNode.parentNode;
 
                 if (anchorNode.contentEditable == 'true') {
+
                     flag = true;
+
                 }
 
                 if (anchorNode == document.body) {
+
                     break;
+
                 }
+
             }
 
             /** If editable element founded, flag is "TRUE", Therefore we return "FALSE" */
-            codex.content.editorAreaHightlighted = flag ? false : true;
+            editor.content.editorAreaHightlighted = flag ? false : true;
+
         }
 
     };
@@ -389,84 +439,70 @@ var callbacks = (function(callbacks) {
 
         var button = this;
 
-        codex.toolbar.current = button.dataset.type;
+        editor.toolbar.current = button.dataset.type;
 
-        codex.toolbar.toolbox.toolClicked(event);
-        codex.toolbar.close();
-
-    };
-
-    callbacks.redactorInputEvent = function (event) {
-
-        /**
-         * Clear previous sync-timeout
-         */
-        if (this.redactorSyncTimeout){
-            clearTimeout(this.redactorSyncTimeout);
-        }
-
-        /**
-         * Start waiting to input finish and sync redactor
-         */
-        this.redactorSyncTimeout = setTimeout(function() {
-
-            codex.content.sync();
-
-        }, 500);
+        editor.toolbar.toolbox.toolClicked(event);
+        editor.toolbar.close();
 
     };
 
     /** Show or Hide toolbox when plus button is clicked */
-    callbacks.plusButtonClicked = function() {
+    callbacks.plusButtonClicked = function () {
 
-        if (!codex.nodes.toolbox.classList.contains('opened')) {
+        if (!editor.nodes.toolbox.classList.contains('opened')) {
 
-            codex.toolbar.toolbox.open();
+            editor.toolbar.toolbox.open();
 
         } else {
 
-            codex.toolbar.toolbox.close();
+            editor.toolbar.toolbox.close();
 
         }
+
     };
 
     /**
      * Block handlers for KeyDown events
      */
-    callbacks.blockKeydown = function(event, block) {
+    callbacks.blockKeydown = function (event) {
 
-        switch (event.keyCode){
+        let block = this; // event.target input
 
-            case codex.core.keys.DOWN:
-            case codex.core.keys.RIGHT:
-                codex.callback.blockRightOrDownArrowPressed(block);
+        switch (event.keyCode) {
+
+            case editor.core.keys.DOWN:
+            case editor.core.keys.RIGHT:
+                editor.callback.blockRightOrDownArrowPressed();
                 break;
 
-            case codex.core.keys.BACKSPACE:
-                codex.callback.backspacePressed(block);
+            case editor.core.keys.BACKSPACE:
+                editor.callback.backspacePressed(block, event);
                 break;
 
-            case codex.core.keys.UP:
-            case codex.core.keys.LEFT:
-                codex.callback.blockLeftOrUpArrowPressed(block);
+            case editor.core.keys.UP:
+            case editor.core.keys.LEFT:
+                editor.callback.blockLeftOrUpArrowPressed();
                 break;
 
         }
+
     };
 
     /**
      * RIGHT or DOWN keydowns on block
      */
-    callbacks.blockRightOrDownArrowPressed = function (block) {
+    callbacks.blockRightOrDownArrowPressed = function () {
 
         var selection   = window.getSelection(),
-            inputs      = codex.state.inputs,
+            inputs      = editor.state.inputs,
             focusedNode = selection.anchorNode,
             focusedNodeHolder;
 
         /** Check for caret existance */
-        if (!focusedNode){
+        if (!focusedNode) {
+
             return false;
+
         }
 
         /** Looking for closest (parent) contentEditable element of focused node */
@@ -474,22 +510,27 @@ var callbacks = (function(callbacks) {
 
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;
+
         }
 
         /** Input index in DOM level */
         var editableElementIndex = 0;
+
         while (focusedNode != inputs[editableElementIndex]) {
+
             editableElementIndex ++;
+
         }
 
         /**
          * Founded contentEditable element doesn't have childs
          * Or maybe New created block
          */
-        if (!focusedNode.textContent)
-        {
-            codex.caret.setToNextBlock(editableElementIndex);
+        if (!focusedNode.textContent) {
+
+            editor.caret.setToNextBlock(editableElementIndex);
             return;
+
         }
 
         /**
@@ -503,9 +544,9 @@ var callbacks = (function(callbacks) {
 
         lastChild = focusedNode.childNodes[focusedNode.childNodes.length - 1 ];
 
-        if (codex.core.isDomNode(lastChild)) {
+        if (editor.core.isDomNode(lastChild)) {
 
-            deepestTextnode = codex.content.getDeepestTextNodeFromPosition(lastChild, lastChild.childNodes.length);
+            deepestTextnode = editor.content.getDeepestTextNodeFromPosition(lastChild, lastChild.childNodes.length);
 
         } else {
 
@@ -517,46 +558,57 @@ var callbacks = (function(callbacks) {
         caretAtTheEndOfText = deepestTextnode.length == selection.anchorOffset;
 
         if ( !caretInLastChild  || !caretAtTheEndOfText ) {
-            codex.core.log('arrow [down|right] : caret does not reached the end');
+
+            editor.core.log('arrow [down|right] : caret does not reached the end');
             return false;
+
         }
 
-        codex.caret.setToNextBlock(editableElementIndex);
+        editor.caret.setToNextBlock(editableElementIndex);
 
     };
 
     /**
      * LEFT or UP keydowns on block
      */
-    callbacks.blockLeftOrUpArrowPressed = function (block) {
+    callbacks.blockLeftOrUpArrowPressed = function () {
 
         var selection   = window.getSelection(),
-            inputs      = codex.state.inputs,
+            inputs      = editor.state.inputs,
             focusedNode = selection.anchorNode,
             focusedNodeHolder;
 
         /** Check for caret existance */
-        if (!focusedNode){
+        if (!focusedNode) {
+
             return false;
+
         }
 
         /**
          * LEFT or UP not at the beginning
          */
         if ( selection.anchorOffset !== 0) {
+
             return false;
+
         }
 
         /** Looking for parent contentEditable block */
         while (focusedNode.contentEditable != 'true') {
+
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;
+
         }
 
         /** Input index in DOM level */
         var editableElementIndex = 0;
+
         while (focusedNode != inputs[editableElementIndex]) {
+
             editableElementIndex ++;
+
         }
 
         /**
@@ -573,15 +625,17 @@ var callbacks = (function(callbacks) {
          * Or maybe New created block
          */
         if (!focusedNode.textContent) {
-            codex.caret.setToPreviousBlock(editableElementIndex);
+
+            editor.caret.setToPreviousBlock(editableElementIndex);
             return;
+
         }
 
         firstChild = focusedNode.childNodes[0];
 
-        if (codex.core.isDomNode(firstChild)) {
+        if (editor.core.isDomNode(firstChild)) {
 
-            deepestTextnode = codex.content.getDeepestTextNodeFromPosition(firstChild, 0);
+            deepestTextnode = editor.content.getDeepestTextNodeFromPosition(firstChild, 0);
 
         } else {
 
@@ -594,7 +648,7 @@ var callbacks = (function(callbacks) {
 
         if ( caretInFirstChild && caretAtTheBeginning ) {
 
-            codex.caret.setToPreviousBlock(editableElementIndex);
+            editor.caret.setToPreviousBlock(editableElementIndex);
 
         }
 
@@ -602,51 +656,54 @@ var callbacks = (function(callbacks) {
 
     /**
      * Callback for enter key pressing in first-level block area
+     * @param {Event} event
      */
-    callbacks.enterPressedOnBlock = function (event) {
+    callbacks.enterPressedOnBlock = function () {
 
-        var NEW_BLOCK_TYPE  = codex.settings.initialBlockPlugin;
+        var NEW_BLOCK_TYPE  = editor.settings.initialBlockPlugin;
 
-        codex.content.insertBlock({
+        editor.content.insertBlock({
             type  : NEW_BLOCK_TYPE,
-            block : codex.tools[NEW_BLOCK_TYPE].render()
+            block : editor.tools[NEW_BLOCK_TYPE].render()
         }, true );
 
-        codex.toolbar.move();
-        codex.toolbar.open();
+        editor.toolbar.move();
+        editor.toolbar.open();
 
     };
 
-    callbacks.backspacePressed = function (block) {
+    callbacks.backspacePressed = function (block, event) {
 
-        var currentInputIndex = codex.caret.getCurrentInputIndex(),
+        var currentInputIndex = editor.caret.getCurrentInputIndex(),
             range,
             selectionLength,
             firstLevelBlocksCount;
 
         if (block.textContent.trim()) {
 
-            range           = codex.content.getRange();
+            range           = editor.content.getRange();
             selectionLength = range.endOffset - range.startOffset;
 
+            if (editor.caret.position.atStart() && !selectionLength && editor.state.inputs[currentInputIndex - 1]) {
 
-            if (codex.caret.position.atStart() && !selectionLength && codex.state.inputs[currentInputIndex - 1]) {
-
-                codex.content.mergeBlocks(currentInputIndex);
+                editor.content.mergeBlocks(currentInputIndex);
 
             } else {
 
                 return;
 
             }
+
         }
 
         if (!selectionLength) {
+
             block.remove();
+
         }
 
 
-        firstLevelBlocksCount = codex.nodes.redactor.childNodes.length;
+        firstLevelBlocksCount = editor.nodes.redactor.childNodes.length;
 
         /**
          * If all blocks are removed
@@ -654,44 +711,47 @@ var callbacks = (function(callbacks) {
         if (firstLevelBlocksCount === 0) {
 
             /** update currentNode variable */
-            codex.content.currentNode = null;
+            editor.content.currentNode = null;
 
             /** Inserting new empty initial block */
-            codex.ui.addInitialBlock();
+            editor.ui.addInitialBlock();
 
             /** Updating inputs state after deleting last block */
-            codex.ui.saveInputs();
+            editor.ui.saveInputs();
 
             /** Set to current appended block */
-            setTimeout(function () {
+            window.setTimeout(function () {
 
-                codex.caret.setToPreviousBlock(1);
+                editor.caret.setToPreviousBlock(1);
 
             }, 10);
 
         } else {
 
-            if (codex.caret.inputIndex !== 0) {
+            if (editor.caret.inputIndex !== 0) {
 
                 /** Target block is not first */
-                codex.caret.setToPreviousBlock(codex.caret.inputIndex);
+                editor.caret.setToPreviousBlock(editor.caret.inputIndex);
 
             } else {
 
                 /** If we try to delete first block */
-                codex.caret.setToNextBlock(codex.caret.inputIndex);
+                editor.caret.setToNextBlock(editor.caret.inputIndex);
 
             }
+
         }
 
-        codex.toolbar.move();
+        editor.toolbar.move();
 
-        if (!codex.toolbar.opened) {
-            codex.toolbar.open();
+        if (!editor.toolbar.opened) {
+
+            editor.toolbar.open();
+
         }
 
         /** Updating inputs state */
-        codex.ui.saveInputs();
+        editor.ui.saveInputs();
 
         /** Prevent default browser behaviour */
         event.preventDefault();
@@ -703,14 +763,14 @@ var callbacks = (function(callbacks) {
      *
      * @param event
      */
-    callbacks.blockPaste = function(event) {
+    callbacks.blockPaste = function (event) {
 
-        var currentInputIndex = codex.caret.getCurrentInputIndex(),
-            node = codex.state.inputs[currentInputIndex];
+        var currentInputIndex = editor.caret.getCurrentInputIndex(),
+            node = editor.state.inputs[currentInputIndex];
 
-        setTimeout(function() {
+        window.setTimeout(function () {
 
-            codex.content.sanitize(node);
+            editor.content.sanitize(node);
 
             event.preventDefault();
 
@@ -733,14 +793,14 @@ var callbacks = (function(callbacks) {
      * @param event
      * @private
      */
-    callbacks._blockPasteCallback = function(event) {
+    callbacks._blockPasteCallback = function () {
 
-        var currentInputIndex = codex.caret.getCurrentInputIndex();
+        var currentInputIndex = editor.caret.getCurrentInputIndex();
 
         /**
          * create an observer instance
          */
-        var observer = new MutationObserver(codex.callback.handleMutationsOnPaste);
+        var observer = new MutationObserver(editor.callback.handleMutationsOnPaste);
 
         /**
          * configuration of the observer:
@@ -753,7 +813,8 @@ var callbacks = (function(callbacks) {
         };
 
         // pass in the target node, as well as the observer options
-        observer.observe(codex.state.inputs[currentInputIndex], config);
+        observer.observe(editor.state.inputs[currentInputIndex], config);
+
     };
 
     /**
@@ -765,7 +826,7 @@ var callbacks = (function(callbacks) {
      *
      * @param event
      */
-    callbacks.blockPasteCallback = function(event) {
+    callbacks.blockPasteCallback = function (event) {
 
         /** Prevent default behaviour */
         event.preventDefault();
@@ -774,8 +835,8 @@ var callbacks = (function(callbacks) {
         var data = event.clipboardData.getData('text/html') || event.clipboardData.getData('text/plain');
 
         /** Temporary DIV that is used to work with childs as arrays item */
-        var div     = codex.draw.node('DIV', '', {}),
-            cleaner = new codex.sanitizer.init(codex.sanitizer.Config.BASIC),
+        var div     = editor.draw.node('DIV', '', {}),
+            cleaner = new editor.sanitizer.init(editor.sanitizer.Config.BASIC),
             cleanData,
             fragment;
 
@@ -792,13 +853,16 @@ var callbacks = (function(callbacks) {
          * and fill in fragment
          */
         while (( node = div.firstChild) ) {
+
             lastNode = fragment.appendChild(node);
+
         }
 
         /**
          * work with selection and range
          */
         var selection, range;
+
         selection = window.getSelection();
 
         range = selection.getRangeAt(0);
@@ -809,11 +873,13 @@ var callbacks = (function(callbacks) {
 
         /** Preserve the selection */
         if (lastNode) {
+
             range = range.cloneRange();
             range.setStartAfter(lastNode);
             range.collapse(true);
             selection.removeAllRanges();
             selection.addRange(range);
+
         }
 
     };
@@ -821,7 +887,7 @@ var callbacks = (function(callbacks) {
     /**
      * Sends all mutations to paste handler
      */
-    callbacks.handleMutationsOnPaste = function(mutations) {
+    callbacks.handleMutationsOnPaste = function (mutations) {
 
         var self = this;
 
@@ -832,15 +898,18 @@ var callbacks = (function(callbacks) {
          * For that, we need to send Context, MutationObserver.__proto__ that contains
          * observer disconnect method.
          */
-        mutations.forEach(function(mutation) {
-            codex.content.paste.call(self, mutation);
+        mutations.forEach(function (mutation) {
+
+            editor.content.paste.call(self, mutation);
+
         });
+
     };
 
     /**
      * Clicks on block settings button
      */
-    callbacks.showSettingsButtonClicked = function(){
+    callbacks.showSettingsButtonClicked = function () {
 
         /**
          * Get type of current block
@@ -848,18 +917,16 @@ var callbacks = (function(callbacks) {
          * ...
          * Type is stored in data-type attribute on block
          */
-        var currentToolType = codex.content.currentNode.dataset.tool;
+        var currentToolType = editor.content.currentNode.dataset.tool;
 
-        codex.toolbar.settings.toggle(currentToolType);
+        editor.toolbar.settings.toggle(currentToolType);
 
         /** Close toolbox when settings button is active */
-        codex.toolbar.toolbox.close();
-        codex.toolbar.settings.hideRemoveActions();
+        editor.toolbar.toolbox.close();
+        editor.toolbar.settings.hideRemoveActions();
 
     };
 
     return callbacks;
 
 })({});
-
-module.exports  = callbacks;

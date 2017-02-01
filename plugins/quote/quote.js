@@ -56,7 +56,7 @@ var quote = (function(quote) {
         changeStyleClicked : function() {
 
             var changeStyleButton = this,
-                quote = codex.content.currentNode.querySelector('.' + elementClasses_.ce_quote),
+                quote = codex.editor.content.currentNode.querySelector('.' + elementClasses_.ce_quote),
                 newStyle = changeStyleButton.dataset.style,
                 styleSelectors = this.parentNode.childNodes;
 
@@ -112,13 +112,13 @@ var quote = (function(quote) {
                 var parsedOldQuote  = methods_.parseBlockQuote(),
                     newStyledQuote  = quoteStyle(parsedOldQuote);
 
-                var wrapper = codex.content.composeNewBlock(newStyledQuote, 'quote');
+                var wrapper = codex.editor.content.composeNewBlock(newStyledQuote, 'quote');
                 wrapper.appendChild(newStyledQuote);
 
-                codex.content.switchBlock(codex.content.currentNode, newStyledQuote, 'quote');
+                codex.editor.content.switchBlock(codex.editor.content.currentNode, newStyledQuote, 'quote');
 
                 /** Close settings after replacing */
-                codex.toolbar.settings.close();
+                codex.editor.toolbar.settings.close();
 
             }, false);
 
@@ -227,7 +227,7 @@ var quote = (function(quote) {
 
         parseBlockQuote : function(block) {
 
-            var currentNode = block || codex.content.currentNode,
+            var currentNode = block || codex.editor.content.currentNode,
                 photo       = currentNode.getElementsByTagName('img')[0],
                 author      = currentNode.querySelector('.' + elementClasses_.quoteAuthor),
                 job         = currentNode.querySelector('.' + elementClasses_.authorsJob),
@@ -271,7 +271,7 @@ var quote = (function(quote) {
             success     = photoUploadingCallbacks_.success,
             error       = photoUploadingCallbacks_.error;
 
-        codex.transport.selectAndUpload({
+        codex.editor.transport.selectAndUpload({
             beforeSend: beforeSend,
             success: success,
             error: error
@@ -339,7 +339,7 @@ var quote = (function(quote) {
 
         preview_ : function(e) {
 
-            var uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
+            var uploadImageWrapper = codex.editor.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
                 authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
 
             /** Appending uploaded image */
@@ -355,7 +355,7 @@ var quote = (function(quote) {
 
         beforeSend : function() {
 
-            var input = codex.transport.input,
+            var input = codex.editor.transport.input,
                 files = input.files,
                 file  = files[0],
                 fileReader = new FileReader();
@@ -374,7 +374,7 @@ var quote = (function(quote) {
 
             var parsed   = JSON.parse(result),
                 filename = parsed.filename,
-                uploadImageWrapper = codex.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo);
+                uploadImageWrapper = codex.editor.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo);
 
             var img = uploadImageWrapper.querySelector('IMG');
             img.src = parsed.data.file.bigUrl;
@@ -445,7 +445,7 @@ var quote = (function(quote) {
         }
 
         /** Make paragraphs */
-        data.text = codex.content.wrapTextWithParagraphs(data.text);
+        data.text = codex.editor.content.wrapTextWithParagraphs(data.text);
 
         return data;
     };
