@@ -12,7 +12,7 @@ var code = (function(code) {
      * @param {object} JSON with block data
      * @return {Element} element to append
      */
-    code.make = function (data) {
+    var make_ = function (data) {
 
         var tag = codex.editor.draw.node('CODE', [baseClass], {});
 
@@ -30,7 +30,7 @@ var code = (function(code) {
      */
     code.render = function (data) {
 
-        return codeTool.make(data);
+        return make_(data);
     };
 
     /**

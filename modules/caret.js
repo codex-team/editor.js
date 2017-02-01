@@ -168,8 +168,6 @@ module.exports = (function (caret) {
         var inputs = editor.state.inputs,
             targetInput = inputs[index];
 
-        window.console.assert( targetInput, 'caret.setToBlock: target input does not exists');
-
         if ( !targetInput ) {
 
             return;

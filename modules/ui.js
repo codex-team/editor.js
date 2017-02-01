@@ -56,7 +56,6 @@ module.exports = (function (ui) {
         var wrapper,
             toolbar,
             toolbarContent,
-            inlineToolbar,
             redactor,
             notifications,
             blockButtons,
@@ -79,7 +78,6 @@ module.exports = (function (ui) {
         /** Make toolbar and content-editable redactor */
         toolbar               = editor.draw.toolbar();
         toolbarContent        = editor.draw.toolbarContent();
-        inlineToolbar         = editor.draw.inlineToolbar();
         plusButton            = editor.draw.plusButton();
         showSettingsButton    = editor.draw.settingsButton();
         showTrashButton       = editor.toolbar.settings.makeRemoveBlockButton();
@@ -132,14 +130,17 @@ module.exports = (function (ui) {
 
         editor.nodes.redactor = redactor;
 
-        editor.ui.makeInlineToolbar(inlineToolbar);
+        /** Make container for inline toolbar */
+        editor.ui.makeInlineToolbar();
 
         /** fill in default settings */
         editor.toolbar.settings.addDefaultSettings();
 
     };
 
-    ui.makeInlineToolbar = function (container) {
+    ui.makeInlineToolbar = function () {
+
+        var container = editor.draw.inlineToolbar();
 
         /** Append to redactor new inline block */
         editor.nodes.inlineToolbar.wrapper = container;
@@ -174,12 +175,6 @@ module.exports = (function (ui) {
 
             editor.tools[toolName] = tool;
 
-            if (!tool.displayInToolbox) {
-
-                continue;
-
-            }
-
             if (!tool.iconClassname) {
 
                 editor.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', toolName);
@@ -194,18 +189,22 @@ module.exports = (function (ui) {
 
             }
 
-            /**
-             * if tools is for toolbox
-             */
-            toolButton = editor.draw.toolbarButton(toolName, tool.iconClassname);
+            if (!tool.displayInToolbox) {
 
-            editor.nodes.toolbox.appendChild(toolButton);
+                continue;
 
-            /** Save tools to static nodes */
-            editor.nodes.toolbarButtons[toolName] = toolButton;
+            } else {
+
+                /** if tools is for toolbox */
+                toolButton = editor.draw.toolbarButton(toolName, tool.iconClassname);
+
+                editor.nodes.toolbox.appendChild(toolButton);
+
+                editor.nodes.toolbarButtons[toolName] = toolButton;
+
+            }
 
         }
-
 
         /**
          * Add inline toolbar tools

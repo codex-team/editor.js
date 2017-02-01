@@ -328,6 +328,9 @@ module.exports = (function (inline) {
         var editable        = editor.content.currentNode,
             storedSelection = editor.toolbar.inline.saveSelection(editable);
 
+        /** Save globally selection */
+        editor.toolbar.inline.storedSelection = storedSelection;
+
         if (isActive) {
 
 

@@ -53,58 +53,55 @@ module.exports = (function (toolbox) {
         let currentTool = editor.toolbar.current,
             tools       = Object.keys(editor.tools),
             barButtons  = editor.nodes.toolbarButtons,
-            nextToolIndex,
-            hiddenToolsAmount = 0,
+            nextToolIndex = 0,
             toolToSelect,
+            visibleTool,
             tool;
-
-        /** Count toolbox hidden tools */
-        for( tool in editor.tools ) {
-
-            if (!editor.tools[tool].displayInToolbox) {
-
-                hiddenToolsAmount ++;
-
-            }
-
-
-        }
 
         if ( !currentTool ) {
 
             /** Get first tool from object*/
-            for (toolToSelect in barButtons) break;
+            for(tool in editor.tools) {
+
+                if (editor.tools[tool].displayInToolbox) {
+
+                    break;
+
+                }
+
+                nextToolIndex ++;
+
+            }
 
         } else {
 
             nextToolIndex = tools.indexOf(currentTool) + 1;
+            visibleTool = tools[nextToolIndex];
 
-            var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 2);
+            while (!editor.tools[visibleTool].displayInToolbox) {
 
-            if ( toolIsLastInToolbox ) {
+                nextToolIndex++;
+                visibleTool = tools[nextToolIndex];
 
-                nextToolIndex = 0;
+                if ( nextToolIndex == tools.length ) {
 
-                /** getting first displayed tool */
-                for( tool in editor.tools ) {
-
-                    if (editor.tools[tool].displayInToolbox) {
-
-                        break;
-
-                    }
-
-                    nextToolIndex ++;
+                    nextToolIndex = 0;
+                    visibleTool = tools[nextToolIndex];
 
                 }
 
             }
 
-            toolToSelect = tools[nextToolIndex];
+        }
+
+        toolToSelect = tools[nextToolIndex];
+
+        for ( var button in barButtons ) {
+
+            barButtons[button].classList.remove('selected');
 
         }
 
-        for (var button in barButtons) barButtons[button].classList.remove('selected');
         barButtons[toolToSelect].classList.add('selected');
         editor.toolbar.current = toolToSelect;
 
