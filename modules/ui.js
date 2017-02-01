@@ -5,6 +5,8 @@
  * @version 1.1
  */
 
+let editor = codex.editor;
+
 var ui = (function(ui){
 
     /**
@@ -66,30 +68,30 @@ var ui = (function(ui){
             plusButton;
 
         /** Make editor wrapper */
-        wrapper = codex.draw.wrapper();
+        wrapper = editor.draw.wrapper();
 
         /** Append editor wrapper after initial textarea */
-        codex.core.insertAfter(codex.nodes.textarea, wrapper);
+        editor.core.insertAfter(editor.nodes.textarea, wrapper);
 
         /** Append block with notifications to the document */
-        notifications = codex.draw.alertsHolder();
-        codex.nodes.notifications = document.body.appendChild(notifications);
+        notifications = editor.draw.alertsHolder();
+        editor.nodes.notifications = document.body.appendChild(notifications);
 
         /** Make toolbar and content-editable redactor */
-        toolbar               = codex.draw.toolbar();
-        toolbarContent        = codex.draw.toolbarContent();
-        inlineToolbar         = codex.draw.inlineToolbar();
-        plusButton            = codex.draw.plusButton();
-        showSettingsButton    = codex.draw.settingsButton();
-        showTrashButton       = codex.toolbar.settings.makeRemoveBlockButton();
-        blockSettings         = codex.draw.blockSettings();
-        blockButtons          = codex.draw.blockButtons();
-        toolbox               = codex.draw.toolbox();
-        redactor              = codex.draw.redactor();
+        toolbar               = editor.draw.toolbar();
+        toolbarContent        = editor.draw.toolbarContent();
+        inlineToolbar         = editor.draw.inlineToolbar();
+        plusButton            = editor.draw.plusButton();
+        showSettingsButton    = editor.draw.settingsButton();
+        showTrashButton       = editor.toolbar.settings.makeRemoveBlockButton();
+        blockSettings         = editor.draw.blockSettings();
+        blockButtons          = editor.draw.blockButtons();
+        toolbox               = editor.draw.toolbox();
+        redactor              = editor.draw.redactor();
 
         /** settings */
-        var defaultSettings = codex.draw.defaultSettings(),
-            pluginSettings  = codex.draw.pluginsSettings();
+        var defaultSettings = editor.draw.defaultSettings(),
+            pluginSettings  = editor.draw.pluginsSettings();
 
         /** Add default and plugins settings */
         blockSettings.appendChild(pluginSettings);
@@ -119,91 +121,88 @@ var ui = (function(ui){
         wrapper.appendChild(redactor);
 
         /** Save created ui-elements to static nodes state */
-        codex.nodes.wrapper            = wrapper;
-        codex.nodes.toolbar            = toolbar;
-        codex.nodes.plusButton         = plusButton;
-        codex.nodes.toolbox            = toolbox;
-        codex.nodes.blockSettings      = blockSettings;
-        codex.nodes.pluginSettings     = pluginSettings;
-        codex.nodes.defaultSettings    = defaultSettings;
-        codex.nodes.showSettingsButton = showSettingsButton;
-        codex.nodes.showTrashButton    = showTrashButton;
+        editor.nodes.wrapper            = wrapper;
+        editor.nodes.toolbar            = toolbar;
+        editor.nodes.plusButton         = plusButton;
+        editor.nodes.toolbox            = toolbox;
+        editor.nodes.blockSettings      = blockSettings;
+        editor.nodes.pluginSettings     = pluginSettings;
+        editor.nodes.defaultSettings    = defaultSettings;
+        editor.nodes.showSettingsButton = showSettingsButton;
+        editor.nodes.showTrashButton    = showTrashButton;
 
-        codex.nodes.redactor = redactor;
+        editor.nodes.redactor = redactor;
 
-        codex.ui.makeInlineToolbar(inlineToolbar);
+        editor.ui.makeInlineToolbar(inlineToolbar);
 
         /** fill in default settings */
-        codex.toolbar.settings.addDefaultSettings();
+        editor.toolbar.settings.addDefaultSettings();
     };
 
     ui.makeInlineToolbar = function(container) {
 
         /** Append to redactor new inline block */
-        codex.nodes.inlineToolbar.wrapper = container;
+        editor.nodes.inlineToolbar.wrapper = container;
 
         /** Draw toolbar buttons */
-        codex.nodes.inlineToolbar.buttons = codex.draw.inlineToolbarButtons();
+        editor.nodes.inlineToolbar.buttons = editor.draw.inlineToolbarButtons();
 
         /** Buttons action or settings */
-        codex.nodes.inlineToolbar.actions = codex.draw.inlineToolbarActions();
+        editor.nodes.inlineToolbar.actions = editor.draw.inlineToolbarActions();
 
         /** Append to inline toolbar buttons as part of it */
-        codex.nodes.inlineToolbar.wrapper.appendChild(codex.nodes.inlineToolbar.buttons);
-        codex.nodes.inlineToolbar.wrapper.appendChild(codex.nodes.inlineToolbar.actions);
+        editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.buttons);
+        editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.actions);
 
-        codex.nodes.wrapper.appendChild(codex.nodes.inlineToolbar.wrapper);
+        editor.nodes.wrapper.appendChild(editor.nodes.inlineToolbar.wrapper);
     };
 
     /**
      * @private
-     * Append tools passed in codex.tools
+     * Append tools passed in editor.tools
      */
     ui.addTools = function () {
 
         var tool,
-            tool_button;
+            toolName,
+            toolButton;
 
-        for(var name in codex.settings.tools) {
-            tool = codex.settings.tools[name];
-            codex.tools[name] = tool;
-        }
+        for ( toolName in editor.settings.tools ) {
 
-        /** Make toolbar buttons */
-        for (var name in codex.tools){
+            tool = editor.settings.tools[toolName];
 
-            tool = codex.tools[name];
+            editor.tools[toolName] = tool;
 
             if (!tool.displayInToolbox) {
                 continue;
             }
 
             if (!tool.iconClassname) {
-                codex.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', name);
+                editor.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', toolName);
                 continue;
             }
 
             if (typeof tool.render != 'function') {
-                codex.core.log('render method missed. Tool %o skipped', 'warn', name);
+                editor.core.log('render method missed. Tool %o skipped', 'warn', toolName);
                 continue;
             }
 
             /**
              * if tools is for toolbox
              */
-            tool_button = codex.draw.toolbarButton(name, tool.iconClassname);
+            toolButton = editor.draw.toolbarButton(toolName, tool.iconClassname);
 
-            codex.nodes.toolbox.appendChild(tool_button);
+            editor.nodes.toolbox.appendChild(toolButton);
 
             /** Save tools to static nodes */
-            codex.nodes.toolbarButtons[name] = tool_button;
+            editor.nodes.toolbarButtons[toolName] = toolButton;
         }
 
 
         /**
          * Add inline toolbar tools
          */
-        codex.ui.addInlineToolbarTools();
+        editor.ui.addInlineToolbarTools();
 
 
     };
@@ -240,13 +239,13 @@ var ui = (function(ui){
 
             tool = tools[name];
 
-            toolButton = codex.draw.toolbarButtonInline(name, tool.icon);
+            toolButton = editor.draw.toolbarButtonInline(name, tool.icon);
 
-            codex.nodes.inlineToolbar.buttons.appendChild(toolButton);
+            editor.nodes.inlineToolbar.buttons.appendChild(toolButton);
             /**
              * Add callbacks to this buttons
              */
-            codex.ui.setInlineToolbarButtonBehaviour(toolButton, tool.command);
+            editor.ui.setInlineToolbarButtonBehaviour(toolButton, tool.command);
         }
 
     };
@@ -257,45 +256,45 @@ var ui = (function(ui){
      */
     ui.bindEvents = function () {
 
-        codex.core.log('ui.bindEvents fired', 'info');
+        editor.core.log('ui.bindEvents fired', 'info');
 
         // window.addEventListener('error', function (errorMsg, url, lineNumber) {
-        //     codex.notifications.errorThrown(errorMsg, event);
+        //     editor.notifications.errorThrown(errorMsg, event);
         // }, false );
 
         /** All keydowns on Document */
-        document.addEventListener('keydown', codex.callback.globalKeydown, false );
+        document.addEventListener('keydown', editor.callback.globalKeydown, false );
 
         /** All keydowns on Redactor zone */
-        codex.nodes.redactor.addEventListener('keydown', codex.callback.redactorKeyDown, false);
+        editor.nodes.redactor.addEventListener('keydown', editor.callback.redactorKeyDown, false);
 
         /** All keydowns on Document */
-        document.addEventListener('keyup', codex.callback.globalKeyup, false );
+        document.addEventListener('keyup', editor.callback.globalKeyup, false );
 
         /**
          * Mouse click to radactor
          */
-        codex.nodes.redactor.addEventListener('click', codex.callback.redactorClicked, false );
+        editor.nodes.redactor.addEventListener('click', editor.callback.redactorClicked, false );
 
         /**
          * Clicks to the Plus button
          */
-        codex.nodes.plusButton.addEventListener('click', codex.callback.plusButtonClicked, false);
+        editor.nodes.plusButton.addEventListener('click', editor.callback.plusButtonClicked, false);
 
         /**
          * Clicks to SETTINGS button in toolbar
          */
-        codex.nodes.showSettingsButton.addEventListener('click', codex.callback.showSettingsButtonClicked, false );
+        editor.nodes.showSettingsButton.addEventListener('click', editor.callback.showSettingsButtonClicked, false );
 
         /**
          *  @deprecated ( but now in use for syncronization );
          *  Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text
          */
-        codex.nodes.redactor.addEventListener('input', codex.callback.redactorInputEvent, false );
+        editor.nodes.redactor.addEventListener('input', editor.callback.redactorInputEvent, false );
 
         /** Bind click listeners on toolbar buttons */
-        for (var button in codex.nodes.toolbarButtons){
-            codex.nodes.toolbarButtons[button].addEventListener('click', codex.callback.toolbarButtonClicked, false);
+        for (var button in editor.nodes.toolbarButtons){
+            editor.nodes.toolbarButtons[button].addEventListener('click', editor.callback.toolbarButtonClicked, false);
         }
 
     };
@@ -312,9 +311,9 @@ var ui = (function(ui){
             let pluginName,
                 plugin;
 
-            for ( pluginName in codex.tools ) {
+            for ( pluginName in editor.tools ) {
 
-                plugin = codex.tools[pluginName];
+                plugin = editor.tools[pluginName];
 
                 if (typeof plugin.prepare != 'function'){
                     continue;
@@ -339,7 +338,7 @@ var ui = (function(ui){
          * Block keydowns
          */
         block.addEventListener('keydown', function(event) {
-            codex.callback.blockKeydown(event, block);
+            editor.callback.blockKeydown(event, block);
         }, false);
 
         /**
@@ -348,23 +347,23 @@ var ui = (function(ui){
          * First - uses deep-first search algorithm to get sub nodes,
          * sanitizes whole Block_content and replaces cleared nodes
          * This method is deprecated
-         * Method is used in codex.callback.blockPaste(event)
+         * Method is used in editor.callback.blockPaste(event)
          *
          * Secont - uses Mutation observer.
          * Observer "observe" DOM changes and send changings to callback.
          * Callback gets changed node, not whole Block_content.
          * Inserted or changed node, which we've gotten have been cleared and replaced with diry node
          *
-         * Method is used in codex.callback.blockPasteViaSanitize(event)
+         * Method is used in editor.callback.blockPasteViaSanitize(event)
          *
          * @uses html-janitor
-         * @example codex.callback.blockPasteViaSanitize(event), the second method.
+         * @example editor.callback.blockPasteViaSanitize(event), the second method.
          *
          */
-        block.addEventListener('paste', codex.callback.blockPasteCallback, false);
+        block.addEventListener('paste', editor.callback.blockPasteCallback, false);
 
         block.addEventListener('mouseup', function(){
-            codex.toolbar.inline.show();
+            editor.toolbar.inline.show();
         }, false);
 
     };
@@ -372,11 +371,11 @@ var ui = (function(ui){
     /** getting all contenteditable elements */
     ui.saveInputs = function() {
 
-        var redactor = codex.nodes.redactor,
+        var redactor = editor.nodes.redactor,
             elements = [];
 
         /** Save all inputs in global variable state */
-        codex.state.inputs = redactor.querySelectorAll('[contenteditable], input');
+        editor.state.inputs = redactor.querySelectorAll('[contenteditable], input');
     };
 
     /**
@@ -384,24 +383,24 @@ var ui = (function(ui){
      */
     ui.addInitialBlock = function(){
 
-        var initialBlockType = codex.settings.initialBlockPlugin,
+        var initialBlockType = editor.settings.initialBlockPlugin,
             initialBlock;
 
-        if ( !codex.tools[initialBlockType] ){
-            codex.core.log('Plugin %o was not implemented and can\'t be used as initial block', 'warn', initialBlockType);
+        if ( !editor.tools[initialBlockType] ){
+            editor.core.log('Plugin %o was not implemented and can\'t be used as initial block', 'warn', initialBlockType);
             return;
         }
 
-        initialBlock = codex.tools[initialBlockType].render();
+        initialBlock = editor.tools[initialBlockType].render();
 
         initialBlock.setAttribute('data-placeholder', 'Расскажите свою историю...');
 
-        codex.content.insertBlock({
+        editor.content.insertBlock({
             type  : initialBlockType,
             block : initialBlock
         });
 
-        codex.content.workingNodeChanged(initialBlock);
+        editor.content.workingNodeChanged(initialBlock);
 
     };
 
@@ -409,7 +408,7 @@ var ui = (function(ui){
 
         button.addEventListener('mousedown', function(event) {
 
-            codex.toolbar.inline.toolClicked(event, type);
+            editor.toolbar.inline.toolClicked(event, type);
 
         }, false);
     };

@@ -4,13 +4,14 @@
  * @author Codex Team
  * @version 1.1
  */
+let editor = codex.editor;
 
 var parser = (function(parser) {
 
     /** inserting text */
     parser.insertPastedContent = function(blockType, tag) {
 
-        codex.content.insertBlock({
+        editor.content.insertBlock({
             type :  blockType.type,
             block : blockType.render({
                 text : tag.innerHTML

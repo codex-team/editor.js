@@ -5,6 +5,8 @@
  * @version 1.0.2
  */
 
+let editor = codex.editor;
+
 var saver = (function(saver) {
 
     /**
@@ -14,21 +16,21 @@ var saver = (function(saver) {
     saver.saveBlocks = function () {
 
         /** Save html content of redactor to memory */
-        codex.state.html = codex.nodes.redactor.innerHTML;
+        editor.state.html = editor.nodes.redactor.innerHTML;
 
         /** Empty jsonOutput state */
-        codex.state.jsonOutput = [];
+        editor.state.jsonOutput = [];
 
         Promise.resolve()
 
             .then(function() {
-                return codex.nodes.redactor.childNodes;
+                return editor.nodes.redactor.childNodes;
             })
             /** Making a sequence from separate blocks */
-            .then(codex.saver.makeQueue)
+            .then(editor.saver.makeQueue)
 
             .then(function() {
-                // codex.nodes.textarea.innerHTML = codex.state.html;
+                // editor.nodes.textarea.innerHTML = editor.state.html;
             })
 
             .catch( function(error) {
@@ -44,7 +46,7 @@ var saver = (function(saver) {
         for(var index = 0; index < blocks.length; index++) {
 
             /** Add node to sequence at specified index */
-            codex.saver.getBlockData(queue, blocks, index);
+            editor.saver.getBlockData(queue, blocks, index);
 
         }
 
@@ -54,10 +56,10 @@ var saver = (function(saver) {
     saver.getBlockData = function(queue, blocks, index) {
 
         queue.then(function() {
-            return codex.saver.getNodeAsync(blocks, index);
+            return editor.saver.getNodeAsync(blocks, index);
         })
 
-            .then(codex.saver.makeFormDataFromBlocks);
+            .then(editor.saver.makeFormDataFromBlocks);
 
     };
 
@@ -80,12 +82,12 @@ var saver = (function(saver) {
         var pluginName = block.dataset.tool;
 
         /** Check for plugin existance */
-        if (!codex.tools[pluginName]) {
+        if (!editor.tools[pluginName]) {
             throw Error(`Plugin «${pluginName}» not found`);
         }
 
         /** Check for plugin having render method */
-        if (typeof codex.tools[pluginName].save != 'function') {
+        if (typeof editor.tools[pluginName].save != 'function') {
 
             throw Error(`Plugin «${pluginName}» must have save method`);
         }
@@ -93,7 +95,7 @@ var saver = (function(saver) {
         /** Result saver */
         var blockContent   = block.childNodes[0],
             pluginsContent = blockContent.childNodes[0],
-            savedData      = codex.tools[pluginName].save(pluginsContent),
+            savedData      = editor.tools[pluginName].save(pluginsContent),
             output;
 
 
@@ -102,8 +104,8 @@ var saver = (function(saver) {
             data: savedData
         };
 
-        if (codex.tools[pluginName].validate) {
-            var result = codex.tools[pluginName].validate(savedData);
+        if (editor.tools[pluginName].validate) {
+            var result = editor.tools[pluginName].validate(savedData);
 
             /**
              * Do not allow invalid data
@@ -111,11 +113,11 @@ var saver = (function(saver) {
             if (!result)
                 return;
         }
-        
-        /** Marks Blocks that will be in main page */
-        output.cover = block.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
 
-        codex.state.jsonOutput.push(output);
+        /** Marks Blocks that will be in main page */
+        output.cover = block.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
+
+        editor.state.jsonOutput.push(output);
     };
 
     return saver;

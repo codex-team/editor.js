@@ -5,6 +5,7 @@
  * @author Codex Team
  * @version 1.0
  */
+let editor = codex.editor;
 
 var transport = (function(transport){
 
@@ -20,9 +21,9 @@ var transport = (function(transport){
         var input = document.createElement('INPUT');
 
         input.type = 'file';
-        input.addEventListener('change', codex.transport.fileSelected);
+        input.addEventListener('change', editor.transport.fileSelected);
 
-        codex.transport.input = input;
+        editor.transport.input = input;
 
     };
 
@@ -50,11 +51,11 @@ var transport = (function(transport){
 
         formdData.append('files', files[0], files[0].name);
 
-        codex.transport.ajax({
+        editor.transport.ajax({
             data : formdData,
-            beforeSend : codex.transport.arguments.beforeSend,
-            success    : codex.transport.arguments.success,
-            error      : codex.transport.arguments.error
+            beforeSend : editor.transport.arguments.beforeSend,
+            success    : editor.transport.arguments.success,
+            error      : editor.transport.arguments.error
         });
     };
 
@@ -81,7 +82,7 @@ var transport = (function(transport){
 
         beforeSend();
 
-        xhr.open('POST', codex.settings.uploadImagesUrl, true);
+        xhr.open('POST', editor.settings.uploadImagesUrl, true);
 
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 

@@ -9,6 +9,9 @@
  * @author Codex Team
  * @version 1.0
  */
+
+let editor = codex.editor;
+
 var toolbar = (function(toolbar) {
 
     toolbar.init = function() {
@@ -33,7 +36,7 @@ var toolbar = (function(toolbar) {
      */
     toolbar.open = function (){
 
-        codex.nodes.toolbar.classList.add('opened');
+        editor.nodes.toolbar.classList.add('opened');
         this.opened = true;
 
     };
@@ -43,18 +46,18 @@ var toolbar = (function(toolbar) {
      */
     toolbar.close = function(){
 
-        codex.nodes.toolbar.classList.remove('opened');
+        editor.nodes.toolbar.classList.remove('opened');
 
         toolbar.opened  = false;
         toolbar.current = null;
 
-        for (var button in codex.nodes.toolbarButtons){
-            codex.nodes.toolbarButtons[button].classList.remove('selected');
+        for (var button in editor.nodes.toolbarButtons){
+            editor.nodes.toolbarButtons[button].classList.remove('selected');
         }
 
         /** Close toolbox when toolbar is not displayed */
-        codex.toolbar.toolbox.close();
-        codex.toolbar.settings.close();
+        editor.toolbar.toolbox.close();
+        editor.toolbar.settings.close();
 
     };
 
@@ -73,11 +76,11 @@ var toolbar = (function(toolbar) {
     };
 
     toolbar.hidePlusButton = function() {
-        codex.nodes.plusButton.classList.add('hide');
+        editor.nodes.plusButton.classList.add('hide');
     };
 
     toolbar.showPlusButton = function() {
-        codex.nodes.plusButton.classList.remove('hide');
+        editor.nodes.plusButton.classList.remove('hide');
     };
 
     /**
@@ -86,19 +89,19 @@ var toolbar = (function(toolbar) {
     toolbar.move = function() {
 
         /** Close Toolbox when we move toolbar */
-        codex.toolbar.toolbox.close();
+        editor.toolbar.toolbox.close();
 
-        if (!codex.content.currentNode) {
+        if (!editor.content.currentNode) {
             return;
         }
 
-        var toolbarHeight = codex.nodes.toolbar.clientHeight || codex.toolbar.defaultToolbarHeight,
-            newYCoordinate = codex.content.currentNode.offsetTop - (codex.toolbar.defaultToolbarHeight / 2) + codex.toolbar.defaultOffset;
+        var toolbarHeight = editor.nodes.toolbar.clientHeight || editor.toolbar.defaultToolbarHeight,
+            newYCoordinate = editor.content.currentNode.offsetTop - (editor.toolbar.defaultToolbarHeight / 2) + editor.toolbar.defaultOffset;
 
-        codex.nodes.toolbar.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
+        editor.nodes.toolbar.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
 
         /** Close trash actions */
-        codex.toolbar.settings.hideRemoveActions();
+        editor.toolbar.settings.hideRemoveActions();
 
     };
 

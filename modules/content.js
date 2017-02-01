@@ -5,6 +5,7 @@
  * @author Codex Team
  * @version 1.3.11
  */
+let editor = codex.editor;
 
 var content = (function(content) {
 
@@ -25,12 +26,12 @@ var content = (function(content) {
      */
     content.sync = function () {
 
-        codex.core.log('syncing...');
+        editor.core.log('syncing...');
 
         /**
-         * Save redactor content to codex.state
+         * Save redactor content to editor.state
          */
-        codex.state.html = codex.nodes.redactor.innerHTML;
+        editor.state.html = editor.nodes.redactor.innerHTML;
 
     };
 
@@ -46,25 +47,25 @@ var content = (function(content) {
             return null;
         }
 
-        if ( selection.anchorNode.nodeType == codex.core.nodeTypes.TAG ) {
+        if ( selection.anchorNode.nodeType == editor.core.nodeTypes.TAG ) {
             focused = selection.anchorNode;
         } else {
             focused = selection.focusNode.parentElement;
         }
 
-        if ( !codex.parser.isFirstLevelBlock(focused) ) {
+        if ( !editor.parser.isFirstLevelBlock(focused) ) {
 
             /** Iterate with parent nodes to find first-level*/
             var parent = focused.parentNode;
 
-            while (parent && !codex.parser.isFirstLevelBlock(parent)){
+            while (parent && !editor.parser.isFirstLevelBlock(parent)){
                 parent = parent.parentNode;
             }
 
             focused = parent;
         }
 
-        if (focused != codex.nodes.redactor){
+        if (focused != editor.nodes.redactor){
             return focused;
         }
 
@@ -77,7 +78,7 @@ var content = (function(content) {
      */
     content.markBlock = function() {
 
-        codex.content.currentNode.classList.add(codex.ui.className.BLOCK_HIGHLIGHTED);
+        editor.content.currentNode.classList.add(editor.ui.className.BLOCK_HIGHLIGHTED);
     };
 
     /**
@@ -85,8 +86,8 @@ var content = (function(content) {
      */
     content.clearMark = function() {
 
-        if (codex.content.currentNode) {
-            codex.content.currentNode.classList.remove(codex.ui.className.BLOCK_HIGHLIGHTED);
+        if (editor.content.currentNode) {
+            editor.content.currentNode.classList.remove(editor.ui.className.BLOCK_HIGHLIGHTED);
         }
 
     };
@@ -99,17 +100,17 @@ var content = (function(content) {
      */
     content.getFirstLevelBlock = function(node) {
 
-        if (!codex.core.isDomNode(node)) {
+        if (!editor.core.isDomNode(node)) {
             node = node.parentNode;
         }
 
-        if (node === codex.nodes.redactor || node === document.body) {
+        if (node === editor.nodes.redactor || node === document.body) {
 
             return null;
 
         } else {
 
-            while(!node.classList.contains(codex.ui.className.BLOCK_CLASSNAME)) {
+            while(!node.classList.contains(editor.ui.className.BLOCK_CLASSNAME)) {
                 node = node.parentNode;
             }
 
@@ -126,7 +127,7 @@ var content = (function(content) {
     content.workingNodeChanged = function (targetNode) {
 
         /** Clear background from previous marked block before we change */
-        codex.content.clearMark();
+        editor.content.clearMark();
 
         if (!targetNode) {
             return;
@@ -149,12 +150,12 @@ var content = (function(content) {
     content.replaceBlock = function function_name(targetBlock, newBlock) {
 
         if (!targetBlock || !newBlock){
-            codex.core.log('replaceBlock: missed params');
+            editor.core.log('replaceBlock: missed params');
             return;
         }
 
         /** If target-block is not a frist-level block, then we iterate parents to find it */
-        while(!targetBlock.classList.contains(codex.ui.className.BLOCK_CLASSNAME)) {
+        while(!targetBlock.classList.contains(editor.ui.className.BLOCK_CLASSNAME)) {
             targetBlock = targetBlock.parentNode;
         }
 
@@ -162,27 +163,27 @@ var content = (function(content) {
          * Check is this block was in feed
          * If true, than set switched block also covered
          */
-        if (targetBlock.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE)) {
-            newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
+        if (targetBlock.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE)) {
+            newBlock.classList.add(editor.ui.className.BLOCK_IN_FEED_MODE);
         }
 
         /** Replacing */
-        codex.nodes.redactor.replaceChild(newBlock, targetBlock);
+        editor.nodes.redactor.replaceChild(newBlock, targetBlock);
 
         /**
          * Set new node as current
          */
-        codex.content.workingNodeChanged(newBlock);
+        editor.content.workingNodeChanged(newBlock);
 
         /**
          * Add block handlers
          */
-        codex.ui.addBlockHandlers(newBlock);
+        editor.ui.addBlockHandlers(newBlock);
 
         /**
          * Save changes
          */
-        codex.ui.saveInputs();
+        editor.ui.saveInputs();
 
     };
 
@@ -200,44 +201,44 @@ var content = (function(content) {
      */
     content.insertBlock = function( blockData, needPlaceCaret ) {
 
-        var workingBlock    = codex.content.currentNode,
+        var workingBlock    = editor.content.currentNode,
             newBlockContent = blockData.block,
             blockType       = blockData.type,
             cover           = blockData.cover,
             isStretched     = blockData.stretched;
 
-        var newBlock = codex.content.composeNewBlock(newBlockContent, blockType, isStretched);
+        var newBlock = editor.content.composeNewBlock(newBlockContent, blockType, isStretched);
 
         if (cover === true) {
-            newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
+            newBlock.classList.add(editor.ui.className.BLOCK_IN_FEED_MODE);
         }
 
         if (workingBlock) {
 
-            codex.core.insertAfter(workingBlock, newBlock);
+            editor.core.insertAfter(workingBlock, newBlock);
 
         } else {
             /**
              * If redactor is empty, append as first child
              */
-            codex.nodes.redactor.appendChild(newBlock);
+            editor.nodes.redactor.appendChild(newBlock);
 
         }
 
         /**
          * Block handler
          */
-        codex.ui.addBlockHandlers(newBlock);
+        editor.ui.addBlockHandlers(newBlock);
 
         /**
          * Set new node as current
          */
-        codex.content.workingNodeChanged(newBlock);
+        editor.content.workingNodeChanged(newBlock);
 
         /**
          * Save changes
          */
-        codex.ui.saveInputs();
+        editor.ui.saveInputs();
 
 
         if ( needPlaceCaret ) {
@@ -245,7 +246,7 @@ var content = (function(content) {
             /**
              * If we don't know input index then we set default value -1
              */
-            var currentInputIndex = codex.caret.getCurrentInputIndex() || -1;
+            var currentInputIndex = editor.caret.getCurrentInputIndex() || -1;
 
 
             if (currentInputIndex == -1) {
@@ -255,24 +256,24 @@ var content = (function(content) {
                     emptyText       = document.createTextNode('');
 
                 editableElement.appendChild(emptyText);
-                codex.caret.set(editableElement, 0, 0);
+                editor.caret.set(editableElement, 0, 0);
 
-                codex.toolbar.move();
-                codex.toolbar.showPlusButton();
+                editor.toolbar.move();
+                editor.toolbar.showPlusButton();
 
 
             } else {
 
-                if (currentInputIndex === codex.state.inputs.length - 1)
+                if (currentInputIndex === editor.state.inputs.length - 1)
                     return;
 
                 /** Timeout for browsers execution */
                 setTimeout(function () {
 
                     /** Setting to the new input */
-                    codex.caret.setToNextBlock(currentInputIndex);
-                    codex.toolbar.move();
-                    codex.toolbar.open();
+                    editor.caret.setToNextBlock(currentInputIndex);
+                    editor.toolbar.move();
+                    editor.toolbar.open();
 
                 }, 10);
 
@@ -297,13 +298,13 @@ var content = (function(content) {
      */
     content.switchBlock = function(blockToReplace, newBlock, tool){
 
-        var newBlockComposed = codex.content.composeNewBlock(newBlock, tool);
+        var newBlockComposed = editor.content.composeNewBlock(newBlock, tool);
 
         /** Replacing */
-        codex.content.replaceBlock(blockToReplace, newBlockComposed);
+        editor.content.replaceBlock(blockToReplace, newBlockComposed);
 
         /** Save new Inputs when block is changed */
-        codex.ui.saveInputs();
+        editor.ui.saveInputs();
     };
 
     /**
@@ -331,7 +332,7 @@ var content = (function(content) {
         {
             node = blockChilds[index];
 
-            if (node.nodeType == codex.core.nodeTypes.TEXT) {
+            if (node.nodeType == editor.core.nodeTypes.TEXT) {
 
                 text = node.textContent.trim();
 
@@ -371,11 +372,11 @@ var content = (function(content) {
                 block = block.childNodes[position - 1];
             }
 
-            if ( block.nodeType == codex.core.nodeTypes.TAG ){
+            if ( block.nodeType == editor.core.nodeTypes.TAG ){
 
                 position = block.childNodes.length;
 
-            } else if (block.nodeType == codex.core.nodeTypes.TEXT ){
+            } else if (block.nodeType == editor.core.nodeTypes.TEXT ){
 
                 position = 0;
             }
@@ -390,14 +391,14 @@ var content = (function(content) {
      */
     content.composeNewBlock = function (block, tool, isStretched) {
 
-        var newBlock     = codex.draw.node('DIV', codex.ui.className.BLOCK_CLASSNAME, {}),
-            blockContent = codex.draw.node('DIV', codex.ui.className.BLOCK_CONTENT, {});
+        var newBlock     = editor.draw.node('DIV', editor.ui.className.BLOCK_CLASSNAME, {}),
+            blockContent = editor.draw.node('DIV', editor.ui.className.BLOCK_CONTENT, {});
 
         blockContent.appendChild(block);
         newBlock.appendChild(blockContent);
 
         if (isStretched) {
-            blockContent.classList.add(codex.ui.className.BLOCK_STRETCHED);
+            blockContent.classList.add(editor.ui.className.BLOCK_STRETCHED);
         }
 
         newBlock.dataset.tool = tool;
@@ -430,7 +431,7 @@ var content = (function(content) {
             textAfterCaret,
             textNodeAfterCaret;
 
-        var currentBlock = codex.content.currentNode.querySelector('[contentEditable]');
+        var currentBlock = editor.content.currentNode.querySelector('[contentEditable]');
 
 
         textBeforeCaret     = anchorNodeText.substring(0, caretOffset);
@@ -465,7 +466,7 @@ var content = (function(content) {
         }
 
         /** Clear current input */
-        codex.state.inputs[inputIndex].innerHTML = '';
+        editor.state.inputs[inputIndex].innerHTML = '';
 
         /**
          * Append all childs founded before anchorNode
@@ -473,10 +474,10 @@ var content = (function(content) {
         var previousChildsLength = previousChilds.length;
 
         for(i = 0; i < previousChildsLength; i++) {
-            codex.state.inputs[inputIndex].appendChild(previousChilds[i]);
+            editor.state.inputs[inputIndex].appendChild(previousChilds[i]);
         }
 
-        codex.state.inputs[inputIndex].appendChild(textNodeBeforeCaret);
+        editor.state.inputs[inputIndex].appendChild(textNodeBeforeCaret);
 
         /**
          * Append text node which is after caret
@@ -491,14 +492,14 @@ var content = (function(content) {
         newNode = newNode.innerHTML;
 
         /** This type of block creates when enter is pressed */
-        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
 
         /**
          * Make new paragraph with text after caret
          */
-        codex.content.insertBlock({
+        editor.content.insertBlock({
             type  : NEW_BLOCK_TYPE,
-            block : codex.tools[NEW_BLOCK_TYPE].render({
+            block : editor.tools[NEW_BLOCK_TYPE].render({
                 text : newNode
             })
         }, true );
@@ -517,15 +518,15 @@ var content = (function(content) {
         }
 
         var targetInput,
-            currentInputContent = codex.state.inputs[currentInputIndex].innerHTML;
+            currentInputContent = editor.state.inputs[currentInputIndex].innerHTML;
 
         if (!targetInputIndex) {
 
-            targetInput = codex.state.inputs[currentInputIndex - 1];
+            targetInput = editor.state.inputs[currentInputIndex - 1];
 
         } else {
 
-            targetInput = codex.state.inputs[targetInputIndex];
+            targetInput = editor.state.inputs[targetInputIndex];
 
         }
 
@@ -540,13 +541,13 @@ var content = (function(content) {
      */
     content.paste = function(mutation) {
 
-        var workingNode = codex.content.currentNode,
+        var workingNode = editor.content.currentNode,
             tool        = workingNode.dataset.tool;
 
-        if (codex.tools[tool].allowedToPaste) {
-            codex.content.sanitize.call(this, mutation.target);
+        if (editor.tools[tool].allowedToPaste) {
+            editor.content.sanitize.call(this, mutation.target);
         } else {
-            codex.content.pasteTextContent(mutation.addedNodes);
+            editor.content.pasteTextContent(mutation.addedNodes);
         }
 
     };
@@ -566,13 +567,13 @@ var content = (function(content) {
             return;
         }
 
-        if (node.nodeType == codex.core.nodeTypes.TEXT) {
+        if (node.nodeType == editor.core.nodeTypes.TEXT) {
             textNode = document.createTextNode(node);
         } else {
             textNode = document.createTextNode(node.textContent);
         }
 
-        if (codex.core.isDomNode(node)) {
+        if (editor.core.isDomNode(node)) {
             node.parentNode.replaceChild(textNode, node);
         }
     };
@@ -605,17 +606,17 @@ var content = (function(content) {
         /**
          * Don't sanitize text node
          */
-        if (node.nodeType == codex.core.nodeTypes.TEXT) {
+        if (node.nodeType == editor.core.nodeTypes.TEXT) {
             return;
         }
 
         /**
          * Clear dirty content
          */
-        var cleaner = codex.sanitizer.init(codex.satinizer.Config.BASIC),
+        var cleaner = editor.sanitizer.init(editor.satinizer.Config.BASIC),
             clean = cleaner.clean(target.outerHTML);
 
-        var div = codex.draw.node('DIV', [], { innerHTML: clean });
+        var div = editor.draw.node('DIV', [], { innerHTML: clean });
         node.replaceWith(div.childNodes[0]);
 
 
@@ -651,7 +652,7 @@ var content = (function(content) {
             /**
              * Проверяем родителей до тех пор, пока не найдем блок первого уровня
              */
-            if ( node.classList.contains(codex.ui.className.BLOCK_CONTENT) ){
+            if ( node.classList.contains(editor.ui.className.BLOCK_CONTENT) ){
                 allChecked = true;
             }
 

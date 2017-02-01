@@ -58,7 +58,7 @@ var list = (function(list) {
          */
         changeBlockStyle : function (event, blockType) {
 
-            var currentBlock = codex.content.currentNode,
+            var currentBlock = codex.editor.content.currentNode,
                 newEditable = ui.make(blockType),
                 oldEditable = currentBlock.querySelector("[contenteditable]");
 
@@ -66,7 +66,7 @@ var list = (function(list) {
             newEditable.innerHTML = oldEditable.innerHTML;
             newEditable.classList.add('ce-list');
 
-            codex.content.switchBlock(currentBlock, newEditable, 'list');
+            codex.editor.content.switchBlock(currentBlock, newEditable, 'list');
         }
     };
 
@@ -163,12 +163,12 @@ var list = (function(list) {
 
         orderedButton.addEventListener('click', function (event) {
             methods.changeBlockStyle(event, 'OL');
-            codex.toolbar.settings.close();
+            codex.editor.toolbar.settings.close();
         });
 
         unorderedButton.addEventListener('click', function (event) {
             methods.changeBlockStyle(event, 'UL');
-            codex.toolbar.settings.close();
+            codex.editor.toolbar.settings.close();
         });
 
         holder.appendChild(orderedButton);

@@ -27,11 +27,11 @@ module.exports = {
 
     entry: {
         "whatwg-fetch": "whatwg-fetch",
-        "codex-editor": "./index"
+        "codex-editor": "./codex"
     },
     output: {
         filename: "[name].js",
-        library: ["codex"]
+        library: ["codex","editor"]
     },
 
     watch: true,

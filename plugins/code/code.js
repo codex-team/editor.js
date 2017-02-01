@@ -14,7 +14,7 @@ var code = (function(code) {
      */
     code.make = function (data) {
 
-        var tag = codex.draw.node('CODE', [baseClass], {});
+        var tag = codex.editor.draw.node('CODE', [baseClass], {});
 
         if (data && data.text) {
             tag.innerHTML = data.text;

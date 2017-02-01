@@ -5,6 +5,8 @@
  * @version 1.1.2
  */
 
+let editor = codex.editor;
+
 var core = (function(core) {
 
     /**
@@ -19,25 +21,25 @@ var core = (function(core) {
 
             if ( userSettings ){
 
-                codex.settings.tools = userSettings.tools || codex.settings.tools;
+                editor.settings.tools = userSettings.tools || editor.settings.tools;
 
             }
 
             if (userSettings.data) {
-                codex.state.blocks = userSettings.data;
+                editor.state.blocks = userSettings.data;
             }
 
             if (userSettings.initialBlockPlugin) {
-                codex.settings.initialBlockPlugin = userSettings.initialBlockPlugin;
+                editor.settings.initialBlockPlugin = userSettings.initialBlockPlugin;
             }
 
             if (userSettings.uploadImagesUrl) {
-                codex.settings.uploadImagesUrl = userSettings.uploadImagesUrl;
+                editor.settings.uploadImagesUrl = userSettings.uploadImagesUrl;
             }
 
-            codex.nodes.textarea = document.getElementById(userSettings.textareaId || codex.settings.textareaId);
+            editor.nodes.textarea = document.getElementById(userSettings.textareaId || editor.settings.textareaId);
 
-            if (typeof codex.nodes.textarea === undefined || codex.nodes.textarea === null) {
+            if (typeof editor.nodes.textarea === undefined || editor.nodes.textarea === null) {
                 reject(Error("Textarea wasn't found by ID: #" + userSettings.textareaId));
             } else {
                 resolve();

@@ -4,6 +4,8 @@
  * @version 1.0.4
  */
 
+let editor = codex.editor;
+
 var settings = (function(settings) {
 
     settings.init = function() {
@@ -26,25 +28,25 @@ var settings = (function(settings) {
          * Append settings content
          * It's stored in tool.settings
          */
-        if (!codex.tools[toolType] || !codex.tools[toolType].makeSettings ) {
+        if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings ) {
 
-            codex.core.log(`Plugin «${toolType}» has no settings`, 'warn');
-            // codex.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
+            editor.core.log(`Plugin «${toolType}» has no settings`, 'warn');
+            // editor.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
 
         } else {
 
             /**
              * Draw settings block
              */
-            var settingsBlock = codex.tools[toolType].makeSettings();
-            codex.nodes.pluginSettings.appendChild(settingsBlock);
+            var settingsBlock = editor.tools[toolType].makeSettings();
+            editor.nodes.pluginSettings.appendChild(settingsBlock);
         }
 
-        var currentBlock = codex.content.currentNode;
+        var currentBlock = editor.content.currentNode;
 
         /** Open settings block */
-        codex.nodes.blockSettings.classList.add('opened');
-        codex.toolbar.settings.addDefaultSettings();
+        editor.nodes.blockSettings.classList.add('opened');
+        editor.toolbar.settings.addDefaultSettings();
         this.opened = true;
     };
 
@@ -53,8 +55,8 @@ var settings = (function(settings) {
      */
     settings.close = function(){
 
-        codex.nodes.blockSettings.classList.remove('opened');
-        codex.nodes.pluginSettings.innerHTML = '';
+        editor.nodes.blockSettings.classList.remove('opened');
+        editor.nodes.pluginSettings.innerHTML = '';
 
         this.opened = false;
 
@@ -86,11 +88,11 @@ var settings = (function(settings) {
         var feedModeToggler;
 
         /** Clear block and append initialized settings */
-        codex.nodes.defaultSettings.innerHTML = '';
+        editor.nodes.defaultSettings.innerHTML = '';
 
 
         /** Init all default setting buttons */
-        feedModeToggler = codex.toolbar.settings.makeFeedModeToggler();
+        feedModeToggler = editor.toolbar.settings.makeFeedModeToggler();
 
         /**
          * Fill defaultSettings
@@ -100,7 +102,7 @@ var settings = (function(settings) {
          * Button that enables/disables Feed-mode
          * Feed-mode means that block will be showed in articles-feed like cover
          */
-        codex.nodes.defaultSettings.appendChild(feedModeToggler);
+        editor.nodes.defaultSettings.appendChild(feedModeToggler);
 
     };
 
@@ -115,7 +117,7 @@ var settings = (function(settings) {
      */
     settings.makeFeedModeToggler = function() {
 
-        var isFeedModeActivated = codex.toolbar.settings.isFeedModeActivated(),
+        var isFeedModeActivated = editor.toolbar.settings.isFeedModeActivated(),
             setting,
             data;
 
@@ -133,8 +135,8 @@ var settings = (function(settings) {
 
         }
 
-        setting = codex.draw.node('DIV', codex.ui.className.SETTINGS_ITEM, data);
-        setting.addEventListener('click', codex.toolbar.settings.updateFeedMode, false);
+        setting = editor.draw.node('DIV', editor.ui.className.SETTINGS_ITEM, data);
+        setting.addEventListener('click', editor.toolbar.settings.updateFeedMode, false);
 
         return setting;
     };
@@ -144,19 +146,19 @@ var settings = (function(settings) {
      */
     settings.updateFeedMode = function() {
 
-        var currentNode = codex.content.currentNode;
+        var currentNode = editor.content.currentNode;
 
-        currentNode.classList.toggle(codex.ui.className.BLOCK_IN_FEED_MODE);
+        currentNode.classList.toggle(editor.ui.className.BLOCK_IN_FEED_MODE);
 
-        codex.toolbar.settings.close();
+        editor.toolbar.settings.close();
     };
 
     settings.isFeedModeActivated = function() {
 
-        var currentBlock = codex.content.currentNode;
+        var currentBlock = editor.content.currentNode;
 
         if (currentBlock) {
-            return currentBlock.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
+            return currentBlock.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
         } else {
             return false;
         }
@@ -167,17 +169,17 @@ var settings = (function(settings) {
      */
     settings.makeRemoveBlockButton = function() {
 
-        var removeBlockWrapper  = codex.draw.node('SPAN', 'ce-toolbar__remove-btn', {}),
-            settingButton = codex.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML : '<i class="ce-icon-trash"></i>' }),
-            actionWrapper = codex.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
-            confirmAction = codex.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent : 'Удалить блок' }),
-            cancelAction  = codex.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent : 'Отмена' });
+        var removeBlockWrapper  = editor.draw.node('SPAN', 'ce-toolbar__remove-btn', {}),
+            settingButton = editor.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML : '<i class="ce-icon-trash"></i>' }),
+            actionWrapper = editor.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
+            confirmAction = editor.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent : 'Удалить блок' }),
+            cancelAction  = editor.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent : 'Отмена' });
 
-        settingButton.addEventListener('click', codex.toolbar.settings.removeButtonClicked, false);
+        settingButton.addEventListener('click', editor.toolbar.settings.removeButtonClicked, false);
 
-        confirmAction.addEventListener('click', codex.toolbar.settings.confirmRemovingRequest, false);
+        confirmAction.addEventListener('click', editor.toolbar.settings.confirmRemovingRequest, false);
 
-        cancelAction.addEventListener('click', codex.toolbar.settings.cancelRemovingRequest, false);
+        cancelAction.addEventListener('click', editor.toolbar.settings.cancelRemovingRequest, false);
 
         actionWrapper.appendChild(confirmAction);
         actionWrapper.appendChild(cancelAction);
@@ -186,8 +188,8 @@ var settings = (function(settings) {
         removeBlockWrapper.appendChild(actionWrapper);
 
         /** Save setting */
-        codex.toolbar.settings.setting = settingButton;
-        codex.toolbar.settings.actions = actionWrapper;
+        editor.toolbar.settings.setting = settingButton;
+        editor.toolbar.settings.actions = actionWrapper;
 
         return removeBlockWrapper;
 
@@ -195,32 +197,32 @@ var settings = (function(settings) {
 
     settings.removeButtonClicked = function() {
 
-        var action = codex.toolbar.settings.actions;
+        var action = editor.toolbar.settings.actions;
 
         if (action.classList.contains('opened')) {
-            codex.toolbar.settings.hideRemoveActions();
+            editor.toolbar.settings.hideRemoveActions();
         } else {
-            codex.toolbar.settings.showRemoveActions();
+            editor.toolbar.settings.showRemoveActions();
         }
 
-        codex.toolbar.toolbox.close();
-        codex.toolbar.settings.close();
+        editor.toolbar.toolbox.close();
+        editor.toolbar.settings.close();
 
     };
 
     settings.cancelRemovingRequest = function() {
 
-        codex.toolbar.settings.actions.classList.remove('opened');
+        editor.toolbar.settings.actions.classList.remove('opened');
     };
 
     settings.confirmRemovingRequest = function() {
 
-        var currentBlock = codex.content.currentNode,
+        var currentBlock = editor.content.currentNode,
             firstLevelBlocksCount;
 
         currentBlock.remove();
 
-        firstLevelBlocksCount = codex.nodes.redactor.childNodes.length;
+        firstLevelBlocksCount = editor.nodes.redactor.childNodes.length;
 
         /**
          * If all blocks are removed
@@ -228,23 +230,23 @@ var settings = (function(settings) {
         if (firstLevelBlocksCount === 0) {
 
             /** update currentNode variable */
-            codex.content.currentNode = null;
+            editor.content.currentNode = null;
 
             /** Inserting new empty initial block */
-            codex.ui.addInitialBlock();
+            editor.ui.addInitialBlock();
         }
 
-        codex.ui.saveInputs();
+        editor.ui.saveInputs();
 
-        codex.toolbar.close();
+        editor.toolbar.close();
     };
 
     settings.showRemoveActions = function() {
-        codex.toolbar.settings.actions.classList.add('opened');
+        editor.toolbar.settings.actions.classList.add('opened');
     };
 
     settings.hideRemoveActions = function() {
-        codex.toolbar.settings.actions.classList.remove('opened');
+        editor.toolbar.settings.actions.classList.remove('opened');
     };
 
     return settings;

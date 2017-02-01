@@ -7,11 +7,10 @@
  * @author Codex Team
  * @version 1.0
  */
-var inline = (function(inline) {
 
-    inline.init = function() {
+let editor = codex.editor;
 
-    };
+module.exports = (function(inline) {
 
     inline.buttonsOpened = null;
     inline.actionsOpened = null;
@@ -30,32 +29,32 @@ var inline = (function(inline) {
      */
     inline.show = function() {
 
-        var currentNode = codex.content.currentNode,
+        var currentNode = editor.content.currentNode,
             tool = currentNode.dataset.tool,
             plugin;
 
         /**
          * tool allowed to open inline toolbar
          */
-        plugin = codex.tools[tool];
+        plugin = editor.tools[tool];
 
         if (!plugin.showInlineToolbar)
             return;
 
         var selectedText = this.getSelectionText(),
-            toolbar      = codex.nodes.inlineToolbar.wrapper,
-            buttons      = codex.nodes.inlineToolbar.buttons;
+            toolbar      = editor.nodes.inlineToolbar.wrapper,
+            buttons      = editor.nodes.inlineToolbar.buttons;
 
         if (selectedText.length > 0) {
 
             /** Move toolbar and open */
-            codex.toolbar.inline.move();
+            editor.toolbar.inline.move();
 
             /** Open inline toolbar */
             toolbar.classList.add('opened');
 
             /** show buttons of inline toolbar */
-            codex.toolbar.inline.showButtons();
+            editor.toolbar.inline.showButtons();
         }
 
     };
@@ -66,7 +65,7 @@ var inline = (function(inline) {
      * Closes inline toolbar
      */
     inline.close = function() {
-        var toolbar = codex.nodes.inlineToolbar.wrapper;
+        var toolbar = editor.nodes.inlineToolbar.wrapper;
         toolbar.classList.remove('opened');
     };
 
@@ -83,7 +82,7 @@ var inline = (function(inline) {
 
         var coords          = this.getSelectionCoords(),
             defaultOffset   = 0,
-            toolbar         = codex.nodes.inlineToolbar.wrapper,
+            toolbar         = editor.nodes.inlineToolbar.wrapper,
             newCoordinateX,
             newCoordinateY;
 
@@ -97,8 +96,8 @@ var inline = (function(inline) {
         toolbar.style.transform = `translate3D(${Math.floor(newCoordinateX)}px, ${Math.floor(newCoordinateY)}px, 0)`;
 
         /** Close everything */
-        codex.toolbar.inline.closeButtons();
-        codex.toolbar.inline.closeAction();
+        editor.toolbar.inline.closeButtons();
+        editor.toolbar.inline.closeAction();
 
     };
 
@@ -115,15 +114,15 @@ var inline = (function(inline) {
          * For more complicated tools, we should write our own behavior
          */
         switch (type) {
-            case 'createLink' : codex.toolbar.inline.createLinkAction(event, type); break;
-            default           : codex.toolbar.inline.defaultToolAction(type); break;
+            case 'createLink' : editor.toolbar.inline.createLinkAction(event, type); break;
+            default           : editor.toolbar.inline.defaultToolAction(type); break;
         }
 
         /**
          * highlight buttons
          * after making some action
          */
-        codex.nodes.inlineToolbar.buttons.childNodes.forEach(codex.toolbar.inline.hightlight);
+        editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.toolbar.inline.hightlight);
     };
 
     /**
@@ -133,7 +132,7 @@ var inline = (function(inline) {
      */
     inline.getWrappersOffset = function() {
 
-        var wrapper = codex.nodes.wrapper,
+        var wrapper = editor.nodes.wrapper,
             offset  = this.getOffset(wrapper);
 
         this.wrappersOffset = offset;
@@ -226,38 +225,38 @@ var inline = (function(inline) {
     /** Opens buttons block */
     inline.showButtons = function() {
 
-        var buttons = codex.nodes.inlineToolbar.buttons;
+        var buttons = editor.nodes.inlineToolbar.buttons;
         buttons.classList.add('opened');
 
-        codex.toolbar.inline.buttonsOpened = true;
+        editor.toolbar.inline.buttonsOpened = true;
 
         /** highlight buttons */
-        codex.nodes.inlineToolbar.buttons.childNodes.forEach(codex.toolbar.inline.hightlight);
+        editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.toolbar.inline.hightlight);
 
     };
 
     /** Makes buttons disappear */
     inline.closeButtons = function() {
-        var buttons = codex.nodes.inlineToolbar.buttons;
+        var buttons = editor.nodes.inlineToolbar.buttons;
         buttons.classList.remove('opened');
 
-        codex.toolbar.inline.buttonsOpened = false;
+        editor.toolbar.inline.buttonsOpened = false;
     };
 
     /** Open buttons defined action if exist */
     inline.showActions = function() {
-        var action = codex.nodes.inlineToolbar.actions;
+        var action = editor.nodes.inlineToolbar.actions;
         action.classList.add('opened');
 
-        codex.toolbar.inline.actionsOpened = true;
+        editor.toolbar.inline.actionsOpened = true;
     };
 
     /** Close actions block */
     inline.closeAction = function() {
-        var action = codex.nodes.inlineToolbar.actions;
+        var action = editor.nodes.inlineToolbar.actions;
         action.innerHTML = '';
         action.classList.remove('opened');
-        codex.toolbar.inline.actionsOpened = false;
+        editor.toolbar.inline.actionsOpened = false;
     };
 
     /** Action for link creation or for setting anchor */
@@ -265,15 +264,15 @@ var inline = (function(inline) {
 
         var isActive = this.isLinkActive();
 
-        var editable        = codex.content.currentNode,
-            storedSelection = codex.toolbar.inline.storedSelection;
+        var editable        = editor.content.currentNode,
+            storedSelection = editor.toolbar.inline.storedSelection;
 
         if (isActive) {
 
             var selection   = window.getSelection(),
                 anchorNode  = selection.anchorNode;
 
-            storedSelection = codex.toolbar.inline.saveSelection(editable);
+            storedSelection = editor.toolbar.inline.saveSelection(editable);
 
             /**
              * Changing stored selection. if we want to remove anchor from word
@@ -281,20 +280,20 @@ var inline = (function(inline) {
              * The solution is than we get the length of current link
              * Change start position to - end of selection minus length of anchor
              */
-            codex.toolbar.inline.restoreSelection(editable, storedSelection);
+            editor.toolbar.inline.restoreSelection(editable, storedSelection);
 
-            codex.toolbar.inline.defaultToolAction('unlink');
+            editor.toolbar.inline.defaultToolAction('unlink');
 
         } else {
 
             /** Create input and close buttons */
-            var action = codex.draw.inputForLink();
-            codex.nodes.inlineToolbar.actions.appendChild(action);
+            var action = editor.draw.inputForLink();
+            editor.nodes.inlineToolbar.actions.appendChild(action);
 
-            codex.toolbar.inline.closeButtons();
-            codex.toolbar.inline.showActions();
+            editor.toolbar.inline.closeButtons();
+            editor.toolbar.inline.showActions();
 
-            storedSelection = codex.toolbar.inline.saveSelection(editable);
+            storedSelection = editor.toolbar.inline.saveSelection(editable);
 
             /**
              * focus to input
@@ -307,10 +306,10 @@ var inline = (function(inline) {
             /** Callback to link action */
             action.addEventListener('keydown', function(event){
 
-                if (event.keyCode == codex.core.keys.ENTER) {
+                if (event.keyCode == editor.core.keys.ENTER) {
 
-                    codex.toolbar.inline.restoreSelection(editable, storedSelection);
-                    codex.toolbar.inline.setAnchor(action.value);
+                    editor.toolbar.inline.restoreSelection(editable, storedSelection);
+                    editor.toolbar.inline.setAnchor(action.value);
 
                     /**
                      * Preventing events that will be able to happen
@@ -318,7 +317,7 @@ var inline = (function(inline) {
                     event.preventDefault();
                     event.stopImmediatePropagation();
 
-                    codex.toolbar.inline.clearRange();
+                    editor.toolbar.inline.clearRange();
                 }
 
             }, false);
@@ -329,7 +328,7 @@ var inline = (function(inline) {
 
         var isActive = false;
 
-        codex.nodes.inlineToolbar.buttons.childNodes.forEach(function(tool) {
+        editor.nodes.inlineToolbar.buttons.childNodes.forEach(function(tool) {
             var dataType = tool.dataset.type;
 
             if (dataType == 'link' && tool.classList.contains('hightlighted')) {
@@ -357,7 +356,7 @@ var inline = (function(inline) {
         document.execCommand('createLink', false, url);
 
         /** Close after URL inserting */
-        codex.toolbar.inline.closeAction();
+        editor.toolbar.inline.closeAction();
     };
 
     /**
@@ -451,9 +450,9 @@ var inline = (function(inline) {
         var dataType = tool.dataset.type;
 
         if (document.queryCommandState(dataType)) {
-            codex.toolbar.inline.setButtonHighlighted(tool);
+            editor.toolbar.inline.setButtonHighlighted(tool);
         } else {
-            codex.toolbar.inline.removeButtonsHighLight(tool);
+            editor.toolbar.inline.removeButtonsHighLight(tool);
         }
 
         /**
@@ -464,7 +463,7 @@ var inline = (function(inline) {
             tag = selection.anchorNode.parentNode;
 
         if (tag.tagName == 'A' && dataType == 'link') {
-            codex.toolbar.inline.setButtonHighlighted(tool);
+            editor.toolbar.inline.setButtonHighlighted(tool);
         }
     };
 
@@ -503,7 +502,3 @@ var inline = (function(inline) {
 
     return inline;
 })({});
-
-inline.init();
-
-module.exports = inline;

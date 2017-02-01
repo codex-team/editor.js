@@ -4,6 +4,7 @@
  * @author Codex Team
  * @version 1.0
  */
+let editor = codex.editor;
 
 var caret = (function(caret) {
 
@@ -52,9 +53,9 @@ var caret = (function(caret) {
             return;
         }
 
-        if (codex.core.isDomNode(nodeToSet)) {
+        if (editor.core.isDomNode(nodeToSet)) {
 
-            nodeToSet = codex.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
+            nodeToSet = editor.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
         }
 
         var range     = document.createRange(),
@@ -68,7 +69,7 @@ var caret = (function(caret) {
             selection.removeAllRanges();
             selection.addRange(range);
 
-            codex.caret.saveCurrentInputIndex();
+            editor.caret.saveCurrentInputIndex();
 
         }, 20);
     };
@@ -81,7 +82,7 @@ var caret = (function(caret) {
 
         /** Index of Input that we paste sanitized content */
         var selection   = window.getSelection(),
-            inputs      = codex.state.inputs,
+            inputs      = editor.state.inputs,
             focusedNode = selection.anchorNode,
             focusedNodeHolder;
 
@@ -117,11 +118,11 @@ var caret = (function(caret) {
      */
     caret.setToNextBlock = function(index) {
 
-        var inputs = codex.state.inputs,
+        var inputs = editor.state.inputs,
             nextInput = inputs[index + 1];
 
         if (!nextInput) {
-            codex.core.log('We are reached the end');
+            editor.core.log('We are reached the end');
             return;
         }
 
@@ -134,9 +135,9 @@ var caret = (function(caret) {
             nextInput.appendChild(emptyTextElement);
         }
 
-        codex.caret.inputIndex = index + 1;
-        codex.caret.set(nextInput, 0, 0);
-        codex.content.workingNodeChanged(nextInput);
+        editor.caret.inputIndex = index + 1;
+        editor.caret.set(nextInput, 0, 0);
+        editor.content.workingNodeChanged(nextInput);
 
     };
 
@@ -146,7 +147,7 @@ var caret = (function(caret) {
      */
     caret.setToBlock = function(index) {
 
-        var inputs = codex.state.inputs,
+        var inputs = editor.state.inputs,
             targetInput = inputs[index];
 
         console.assert( targetInput , 'caret.setToBlock: target input does not exists');
@@ -164,9 +165,9 @@ var caret = (function(caret) {
             targetInput.appendChild(emptyTextElement);
         }
 
-        codex.caret.inputIndex = index;
-        codex.caret.set(targetInput, 0, 0);
-        codex.content.workingNodeChanged(targetInput);
+        editor.caret.inputIndex = index;
+        editor.caret.set(targetInput, 0, 0);
+        editor.content.workingNodeChanged(targetInput);
 
     };
 
@@ -177,7 +178,7 @@ var caret = (function(caret) {
 
         index = index || 0;
 
-        var inputs = codex.state.inputs,
+        var inputs = editor.state.inputs,
             previousInput = inputs[index - 1],
             lastChildNode,
             lengthOfLastChildNode,
@@ -185,11 +186,11 @@ var caret = (function(caret) {
 
 
         if (!previousInput) {
-            codex.core.log('We are reached first node');
+            editor.core.log('We are reached first node');
             return;
         }
 
-        lastChildNode = codex.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
+        lastChildNode = editor.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
         lengthOfLastChildNode = lastChildNode.length;
 
         /**
@@ -201,9 +202,9 @@ var caret = (function(caret) {
             emptyTextElement = document.createTextNode('');
             previousInput.appendChild(emptyTextElement);
         }
-        codex.caret.inputIndex = index - 1;
-        codex.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
-        codex.content.workingNodeChanged(inputs[index - 1]);
+        editor.caret.inputIndex = index - 1;
+        editor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
+        editor.content.workingNodeChanged(inputs[index - 1]);
     };
 
     caret.position = {
@@ -213,10 +214,10 @@ var caret = (function(caret) {
             var selection       = window.getSelection(),
                 anchorOffset    = selection.anchorOffset,
                 anchorNode      = selection.anchorNode,
-                firstLevelBlock = codex.content.getFirstLevelBlock(anchorNode),
+                firstLevelBlock = editor.content.getFirstLevelBlock(anchorNode),
                 pluginsRender   = firstLevelBlock.childNodes[0];
 
-            if (!codex.core.isDomNode(anchorNode)) {
+            if (!editor.core.isDomNode(anchorNode)) {
                 anchorNode = anchorNode.parentNode;
             }
 

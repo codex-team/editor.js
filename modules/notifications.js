@@ -4,6 +4,7 @@
  * @author Codex Team
  * @version 1.0
  */
+let editor = codex.editor;
 
 var notifications = (function(notifications) {
 
@@ -13,7 +14,7 @@ var notifications = (function(notifications) {
      */
     notifications.errorThrown = function(errorMsg, event) {
 
-        codex.notifications.send('This action is not available currently', event.type, false);
+        editor.notifications.send('This action is not available currently', event.type, false);
 
     };
 
@@ -25,16 +26,16 @@ var notifications = (function(notifications) {
      */
     notifications.send = function(message, type, append) {
 
-        var notification = codex.draw.block('div');
+        var notification = editor.draw.block('div');
 
         notification.textContent = message;
         notification.classList.add('ce_notification-item', 'ce_notification-' + type, 'flipInX');
 
         if (!append) {
-            codex.nodes.notifications.innerHTML = '';
+            editor.nodes.notifications.innerHTML = '';
         }
 
-        codex.nodes.notifications.appendChild(notification);
+        editor.nodes.notifications.appendChild(notification);
 
         setTimeout(function () {
             notification.remove();

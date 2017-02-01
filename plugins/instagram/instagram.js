@@ -8,7 +8,7 @@ var instagram = (function(instagram) {
 
         render : function(content) {
 
-            codex.content.switchBlock(codex.content.currentNode, content, 'instagram');
+            codex.editor.content.switchBlock(codex.editor.content.currentNode, content, 'instagram');
 
             setTimeout(function() {
                 window.instgrm.Embeds.process();
@@ -24,10 +24,10 @@ var instagram = (function(instagram) {
          */
         instagramBlock : function(url) {
 
-            var blockquote = codex.draw.node('BLOCKQUOTE', 'instagram-media instagram', {}),
-                div        = codex.draw.node('DIV', '', {}),
-                paragraph  = codex.draw.node('P', 'ce-paste__instagram--p', {}),
-                anchor     = codex.draw.node('A', '', { href : url });
+            var blockquote = codex.editor.draw.node('BLOCKQUOTE', 'instagram-media instagram', {}),
+                div        = codex.editor.draw.node('DIV', '', {}),
+                paragraph  = codex.editor.draw.node('P', 'ce-paste__instagram--p', {}),
+                anchor     = codex.editor.draw.node('A', '', { href : url });
 
             blockquote.dataset.instgrmVersion = 4;
 
@@ -48,7 +48,7 @@ var instagram = (function(instagram) {
 
         return new Promise(function(resolve, reject){
 
-            codex.core.importScript("https://platform.instagram.com/en_US/embeds.js", 'instagram-api').then(function(){
+            codex.editor.core.importScript("https://platform.instagram.com/en_US/embeds.js", 'instagram-api').then(function(){
                 resolve();
             }).catch(function(){
                 reject(Error('Instagram API was not loaded'));

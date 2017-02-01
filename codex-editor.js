@@ -1,4 +1,4 @@
-var codex =
+var codex = codex || {}; codex["editor"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -45,19 +45,6 @@ var codex =
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 *
-	 */
-	
-	'use strict';
-	
-	var editor = __webpack_require__(1);
-	module.exports = editor;
-
-/***/ },
-/* 1 */
-/***/ function(module, exports, __webpack_require__) {
-
 	'use strict';
 	
 	/**
@@ -65,37 +52,37 @@ var codex =
 	 * Codex Editor
 	 *
 	 * @author Codex Team
-	 * @version 1.3.0
 	 */
 	
-	var codex = function (codex) {
+	module.exports = function (editor) {
+	
+	    'use strict';
+	
+	    editor.version = ("1.4.0");
 	
 	    var init = function init() {
 	
-	        codex.core = __webpack_require__(2);
-	        codex.ui = __webpack_require__(3);
-	        codex.transport = __webpack_require__(4);
-	        codex.renderer = __webpack_require__(5);
-	        codex.saver = __webpack_require__(6);
-	        codex.content = __webpack_require__(7);
-	        codex.toolbar = __webpack_require__(8);
-	        codex.tools = __webpack_require__(12);
-	        codex.callback = __webpack_require__(13);
-	        codex.draw = __webpack_require__(14);
-	        codex.caret = __webpack_require__(15);
-	        codex.notifications = __webpack_require__(16);
-	        codex.parser = __webpack_require__(17);
-	        codex.sanitizer = __webpack_require__(18);
+	        editor.core = __webpack_require__(1);
+	        editor.ui = __webpack_require__(2);
+	        editor.transport = __webpack_require__(3);
+	        editor.renderer = __webpack_require__(4);
+	        editor.saver = __webpack_require__(5);
+	        editor.content = __webpack_require__(6);
+	        editor.toolbar = __webpack_require__(7);
+	        editor.callback = __webpack_require__(12);
+	        editor.draw = __webpack_require__(13);
+	        editor.caret = __webpack_require__(14);
+	        editor.notifications = __webpack_require__(15);
+	        editor.parser = __webpack_require__(16);
+	        editor.sanitizer = __webpack_require__(17);
 	    };
-	
-	    codex.version = ("1.3.11");
 	
 	    /**
 	     * @public
 	     *
 	     * holds initial settings
 	     */
-	    codex.settings = {
+	    editor.settings = {
 	        tools: ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
 	        textareaId: 'codex-editor',
 	        uploadImagesUrl: '/editor/transport/',
@@ -109,7 +96,7 @@ var codex =
 	     *
 	     * Static nodes
 	     */
-	    codex.nodes = {
+	    editor.nodes = {
 	        textarea: null,
 	        wrapper: null,
 	        toolbar: null,
@@ -135,11 +122,17 @@ var codex =
 	     *
 	     * Output state
 	     */
-	    codex.state = {
+	    editor.state = {
 	        jsonOutput: [],
 	        blocks: [],
 	        inputs: []
 	    };
+	
+	    /**
+	    * @public
+	    * Editor plugins
+	    */
+	    editor.tools = {};
 	
 	    /**
 	     * Initialization
@@ -172,25 +165,23 @@ var codex =
 	     *   -  displayInToolbox : true,
 	     *   -  enableLineBreaks : false
 	     */
-	    codex.start = function (userSettings) {
+	    editor.start = function (userSettings) {
 	
 	        init();
 	
-	        this.core.prepare(userSettings)
+	        editor.core.prepare(userSettings)
 	
 	        // If all ok, make UI, bind events and parse initial-content
-	        .then(this.ui.make).then(this.ui.addTools).then(this.ui.bindEvents).then(this.ui.preparePlugins).then(this.transport.prepare).then(this.renderer.makeBlocksFromData).then(this.ui.saveInputs).catch(function (error) {
-	            codex.core.log('Initialization failed with error: %o', 'warn', error);
+	        .then(editor.ui.make).then(editor.ui.addTools).then(editor.ui.bindEvents).then(editor.ui.preparePlugins).then(editor.transport.prepare).then(editor.renderer.makeBlocksFromData).then(editor.ui.saveInputs).catch(function (error) {
+	            editor.core.log('Initialization failed with error: %o', 'warn', error);
 	        });
 	    };
 	
-	    return codex;
+	    return editor;
 	}({});
-	
-	module.exports = codex;
 
 /***/ },
-/* 2 */
+/* 1 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -203,6 +194,8 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.1.2
 	 */
+	
+	var editor = codex.editor;
 	
 	var core = function (core) {
 	
@@ -218,24 +211,24 @@ var codex =
 	
 	            if (userSettings) {
 	
-	                codex.settings.tools = userSettings.tools || codex.settings.tools;
+	                editor.settings.tools = userSettings.tools || editor.settings.tools;
 	            }
 	
 	            if (userSettings.data) {
-	                codex.state.blocks = userSettings.data;
+	                editor.state.blocks = userSettings.data;
 	            }
 	
 	            if (userSettings.initialBlockPlugin) {
-	                codex.settings.initialBlockPlugin = userSettings.initialBlockPlugin;
+	                editor.settings.initialBlockPlugin = userSettings.initialBlockPlugin;
 	            }
 	
 	            if (userSettings.uploadImagesUrl) {
-	                codex.settings.uploadImagesUrl = userSettings.uploadImagesUrl;
+	                editor.settings.uploadImagesUrl = userSettings.uploadImagesUrl;
 	            }
 	
-	            codex.nodes.textarea = document.getElementById(userSettings.textareaId || codex.settings.textareaId);
+	            editor.nodes.textarea = document.getElementById(userSettings.textareaId || editor.settings.textareaId);
 	
-	            if (_typeof(codex.nodes.textarea) === undefined || codex.nodes.textarea === null) {
+	            if (_typeof(editor.nodes.textarea) === undefined || editor.nodes.textarea === null) {
 	                reject(Error("Textarea wasn't found by ID: #" + userSettings.textareaId));
 	            } else {
 	                resolve();
@@ -396,7 +389,7 @@ var codex =
 	module.exports = core;
 
 /***/ },
-/* 3 */
+/* 2 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -407,6 +400,8 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.1
 	 */
+	
+	var editor = codex.editor;
 	
 	var ui = function (ui) {
 	
@@ -457,30 +452,30 @@ var codex =
 	        var wrapper, toolbar, toolbarContent, inlineToolbar, redactor, ceBlock, notifications, blockButtons, blockSettings, showSettingsButton, showTrashButton, toolbox, plusButton;
 	
 	        /** Make editor wrapper */
-	        wrapper = codex.draw.wrapper();
+	        wrapper = editor.draw.wrapper();
 	
 	        /** Append editor wrapper after initial textarea */
-	        codex.core.insertAfter(codex.nodes.textarea, wrapper);
+	        editor.core.insertAfter(editor.nodes.textarea, wrapper);
 	
 	        /** Append block with notifications to the document */
-	        notifications = codex.draw.alertsHolder();
-	        codex.nodes.notifications = document.body.appendChild(notifications);
+	        notifications = editor.draw.alertsHolder();
+	        editor.nodes.notifications = document.body.appendChild(notifications);
 	
 	        /** Make toolbar and content-editable redactor */
-	        toolbar = codex.draw.toolbar();
-	        toolbarContent = codex.draw.toolbarContent();
-	        inlineToolbar = codex.draw.inlineToolbar();
-	        plusButton = codex.draw.plusButton();
-	        showSettingsButton = codex.draw.settingsButton();
-	        showTrashButton = codex.toolbar.settings.makeRemoveBlockButton();
-	        blockSettings = codex.draw.blockSettings();
-	        blockButtons = codex.draw.blockButtons();
-	        toolbox = codex.draw.toolbox();
-	        redactor = codex.draw.redactor();
+	        toolbar = editor.draw.toolbar();
+	        toolbarContent = editor.draw.toolbarContent();
+	        inlineToolbar = editor.draw.inlineToolbar();
+	        plusButton = editor.draw.plusButton();
+	        showSettingsButton = editor.draw.settingsButton();
+	        showTrashButton = editor.toolbar.settings.makeRemoveBlockButton();
+	        blockSettings = editor.draw.blockSettings();
+	        blockButtons = editor.draw.blockButtons();
+	        toolbox = editor.draw.toolbox();
+	        redactor = editor.draw.redactor();
 	
 	        /** settings */
-	        var defaultSettings = codex.draw.defaultSettings(),
-	            pluginSettings = codex.draw.pluginsSettings();
+	        var defaultSettings = editor.draw.defaultSettings(),
+	            pluginSettings = editor.draw.pluginsSettings();
 	
 	        /** Add default and plugins settings */
 	        blockSettings.appendChild(pluginSettings);
@@ -510,89 +505,85 @@ var codex =
 	        wrapper.appendChild(redactor);
 	
 	        /** Save created ui-elements to static nodes state */
-	        codex.nodes.wrapper = wrapper;
-	        codex.nodes.toolbar = toolbar;
-	        codex.nodes.plusButton = plusButton;
-	        codex.nodes.toolbox = toolbox;
-	        codex.nodes.blockSettings = blockSettings;
-	        codex.nodes.pluginSettings = pluginSettings;
-	        codex.nodes.defaultSettings = defaultSettings;
-	        codex.nodes.showSettingsButton = showSettingsButton;
-	        codex.nodes.showTrashButton = showTrashButton;
+	        editor.nodes.wrapper = wrapper;
+	        editor.nodes.toolbar = toolbar;
+	        editor.nodes.plusButton = plusButton;
+	        editor.nodes.toolbox = toolbox;
+	        editor.nodes.blockSettings = blockSettings;
+	        editor.nodes.pluginSettings = pluginSettings;
+	        editor.nodes.defaultSettings = defaultSettings;
+	        editor.nodes.showSettingsButton = showSettingsButton;
+	        editor.nodes.showTrashButton = showTrashButton;
 	
-	        codex.nodes.redactor = redactor;
+	        editor.nodes.redactor = redactor;
 	
-	        codex.ui.makeInlineToolbar(inlineToolbar);
+	        editor.ui.makeInlineToolbar(inlineToolbar);
 	
 	        /** fill in default settings */
-	        codex.toolbar.settings.addDefaultSettings();
+	        editor.toolbar.settings.addDefaultSettings();
 	    };
 	
 	    ui.makeInlineToolbar = function (container) {
 	
 	        /** Append to redactor new inline block */
-	        codex.nodes.inlineToolbar.wrapper = container;
+	        editor.nodes.inlineToolbar.wrapper = container;
 	
 	        /** Draw toolbar buttons */
-	        codex.nodes.inlineToolbar.buttons = codex.draw.inlineToolbarButtons();
+	        editor.nodes.inlineToolbar.buttons = editor.draw.inlineToolbarButtons();
 	
 	        /** Buttons action or settings */
-	        codex.nodes.inlineToolbar.actions = codex.draw.inlineToolbarActions();
+	        editor.nodes.inlineToolbar.actions = editor.draw.inlineToolbarActions();
 	
 	        /** Append to inline toolbar buttons as part of it */
-	        codex.nodes.inlineToolbar.wrapper.appendChild(codex.nodes.inlineToolbar.buttons);
-	        codex.nodes.inlineToolbar.wrapper.appendChild(codex.nodes.inlineToolbar.actions);
+	        editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.buttons);
+	        editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.actions);
 	
-	        codex.nodes.wrapper.appendChild(codex.nodes.inlineToolbar.wrapper);
+	        editor.nodes.wrapper.appendChild(editor.nodes.inlineToolbar.wrapper);
 	    };
 	
 	    /**
 	     * @private
-	     * Append tools passed in codex.tools
+	     * Append tools passed in editor.tools
 	     */
 	    ui.addTools = function () {
 	
-	        var tool, tool_button;
+	        var tool, toolName, toolButton;
 	
-	        for (var name in codex.settings.tools) {
-	            tool = codex.settings.tools[name];
-	            codex.tools[name] = tool;
-	        }
+	        for (toolName in editor.settings.tools) {
 	
-	        /** Make toolbar buttons */
-	        for (var name in codex.tools) {
+	            tool = editor.settings.tools[toolName];
 	
-	            tool = codex.tools[name];
+	            editor.tools[toolName] = tool;
 	
 	            if (!tool.displayInToolbox) {
 	                continue;
 	            }
 	
 	            if (!tool.iconClassname) {
-	                codex.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', name);
+	                editor.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', toolName);
 	                continue;
 	            }
 	
 	            if (typeof tool.render != 'function') {
-	                codex.core.log('render method missed. Tool %o skipped', 'warn', name);
+	                editor.core.log('render method missed. Tool %o skipped', 'warn', toolName);
 	                continue;
 	            }
 	
 	            /**
 	             * if tools is for toolbox
 	             */
-	            tool_button = codex.draw.toolbarButton(name, tool.iconClassname);
+	            toolButton = editor.draw.toolbarButton(toolName, tool.iconClassname);
 	
-	            codex.nodes.toolbox.appendChild(tool_button);
+	            editor.nodes.toolbox.appendChild(toolButton);
 	
 	            /** Save tools to static nodes */
-	            codex.nodes.toolbarButtons[name] = tool_button;
+	            editor.nodes.toolbarButtons[toolName] = toolButton;
 	        }
 	
 	        /**
 	         * Add inline toolbar tools
 	         */
-	        codex.ui.addInlineToolbarTools();
+	        editor.ui.addInlineToolbarTools();
 	    };
 	
 	    ui.addInlineToolbarTools = function () {
@@ -626,13 +617,13 @@ var codex =
 	
 	            tool = tools[name];
 	
-	            toolButton = codex.draw.toolbarButtonInline(name, tool.icon);
+	            toolButton = editor.draw.toolbarButtonInline(name, tool.icon);
 	
-	            codex.nodes.inlineToolbar.buttons.appendChild(toolButton);
+	            editor.nodes.inlineToolbar.buttons.appendChild(toolButton);
 	            /**
 	             * Add callbacks to this buttons
 	             */
-	            codex.ui.setInlineToolbarButtonBehaviour(toolButton, tool.command);
+	            editor.ui.setInlineToolbarButtonBehaviour(toolButton, tool.command);
 	        }
 	    };
 	
@@ -642,45 +633,45 @@ var codex =
 	     */
 	    ui.bindEvents = function () {
 	
-	        codex.core.log('ui.bindEvents fired', 'info');
+	        editor.core.log('ui.bindEvents fired', 'info');
 	
 	        // window.addEventListener('error', function (errorMsg, url, lineNumber) {
-	        //     codex.notifications.errorThrown(errorMsg, event);
+	        //     editor.notifications.errorThrown(errorMsg, event);
 	        // }, false );
 	
 	        /** All keydowns on Document */
-	        document.addEventListener('keydown', codex.callback.globalKeydown, false);
+	        document.addEventListener('keydown', editor.callback.globalKeydown, false);
 	
 	        /** All keydowns on Redactor zone */
-	        codex.nodes.redactor.addEventListener('keydown', codex.callback.redactorKeyDown, false);
+	        editor.nodes.redactor.addEventListener('keydown', editor.callback.redactorKeyDown, false);
 	
 	        /** All keydowns on Document */
-	        document.addEventListener('keyup', codex.callback.globalKeyup, false);
+	        document.addEventListener('keyup', editor.callback.globalKeyup, false);
 	
 	        /**
 	         * Mouse click to radactor
 	         */
-	        codex.nodes.redactor.addEventListener('click', codex.callback.redactorClicked, false);
+	        editor.nodes.redactor.addEventListener('click', editor.callback.redactorClicked, false);
 	
 	        /**
 	         * Clicks to the Plus button
 	         */
-	        codex.nodes.plusButton.addEventListener('click', codex.callback.plusButtonClicked, false);
+	        editor.nodes.plusButton.addEventListener('click', editor.callback.plusButtonClicked, false);
 	
 	        /**
 	         * Clicks to SETTINGS button in toolbar
 	         */
-	        codex.nodes.showSettingsButton.addEventListener('click', codex.callback.showSettingsButtonClicked, false);
+	        editor.nodes.showSettingsButton.addEventListener('click', editor.callback.showSettingsButtonClicked, false);
 	
 	        /**
 	         *  @deprecated ( but now in use for syncronization );
 	         *  Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text
 	         */
-	        codex.nodes.redactor.addEventListener('input', codex.callback.redactorInputEvent, false);
+	        editor.nodes.redactor.addEventListener('input', editor.callback.redactorInputEvent, false);
 	
 	        /** Bind click listeners on toolbar buttons */
-	        for (var button in codex.nodes.toolbarButtons) {
-	            codex.nodes.toolbarButtons[button].addEventListener('click', codex.callback.toolbarButtonClicked, false);
+	        for (var button in editor.nodes.toolbarButtons) {
+	            editor.nodes.toolbarButtons[button].addEventListener('click', editor.callback.toolbarButtonClicked, false);
 	        }
 	    };
 	
@@ -696,9 +687,9 @@ var codex =
 	            var pluginName = void 0,
 	                plugin = void 0;
 	
-	            for (pluginName in codex.tools) {
+	            for (pluginName in editor.tools) {
 	
-	                plugin = codex.tools[pluginName];
+	                plugin = editor.tools[pluginName];
 	
 	                if (typeof plugin.prepare != 'function') {
 	                    continue;
@@ -721,7 +712,7 @@ var codex =
 	         * Block keydowns
 	         */
 	        block.addEventListener('keydown', function (event) {
-	            codex.callback.blockKeydown(event, block);
+	            editor.callback.blockKeydown(event, block);
 	        }, false);
 	
 	        /**
@@ -730,34 +721,34 @@ var codex =
 	         * First - uses deep-first search algorithm to get sub nodes,
 	         * sanitizes whole Block_content and replaces cleared nodes
 	         * This method is deprecated
-	         * Method is used in codex.callback.blockPaste(event)
+	         * Method is used in editor.callback.blockPaste(event)
 	         *
 	         * Secont - uses Mutation observer.
 	         * Observer "observe" DOM changes and send changings to callback.
 	         * Callback gets changed node, not whole Block_content.
 	         * Inserted or changed node, which we've gotten have been cleared and replaced with diry node
 	         *
-	         * Method is used in codex.callback.blockPasteViaSanitize(event)
+	         * Method is used in editor.callback.blockPasteViaSanitize(event)
 	         *
 	         * @uses html-janitor
-	         * @example codex.callback.blockPasteViaSanitize(event), the second method.
+	         * @example editor.callback.blockPasteViaSanitize(event), the second method.
 	         *
 	         */
-	        block.addEventListener('paste', codex.callback.blockPasteCallback, false);
+	        block.addEventListener('paste', editor.callback.blockPasteCallback, false);
 	
 	        block.addEventListener('mouseup', function () {
-	            codex.toolbar.inline.show();
+	            editor.toolbar.inline.show();
 	        }, false);
 	    };
 	
 	    /** getting all contenteditable elements */
 	    ui.saveInputs = function () {
 	
-	        var redactor = codex.nodes.redactor,
+	        var redactor = editor.nodes.redactor,
 	            elements = [];
 	
 	        /** Save all inputs in global variable state */
-	        codex.state.inputs = redactor.querySelectorAll('[contenteditable], input');
+	        editor.state.inputs = redactor.querySelectorAll('[contenteditable], input');
 	    };
 	
 	    /**
@@ -765,31 +756,31 @@ var codex =
 	     */
 	    ui.addInitialBlock = function () {
 	
-	        var initialBlockType = codex.settings.initialBlockPlugin,
+	        var initialBlockType = editor.settings.initialBlockPlugin,
 	            initialBlock;
 	
-	        if (!codex.tools[initialBlockType]) {
-	            codex.core.log('Plugin %o was not implemented and can\'t be used as initial block', 'warn', initialBlockType);
+	        if (!editor.tools[initialBlockType]) {
+	            editor.core.log('Plugin %o was not implemented and can\'t be used as initial block', 'warn', initialBlockType);
 	            return;
 	        }
 	
-	        initialBlock = codex.tools[initialBlockType].render();
+	        initialBlock = editor.tools[initialBlockType].render();
 	
 	        initialBlock.setAttribute('data-placeholder', 'Расскажите свою историю...');
 	
-	        codex.content.insertBlock({
+	        editor.content.insertBlock({
 	            type: initialBlockType,
 	            block: initialBlock
 	        });
 	
-	        codex.content.workingNodeChanged(initialBlock);
+	        editor.content.workingNodeChanged(initialBlock);
 	    };
 	
 	    ui.setInlineToolbarButtonBehaviour = function (button, type) {
 	
 	        button.addEventListener('mousedown', function (event) {
 	
-	            codex.toolbar.inline.toolClicked(event, type);
+	            editor.toolbar.inline.toolClicked(event, type);
 	        }, false);
 	    };
 	
@@ -799,7 +790,7 @@ var codex =
 	module.exports = ui;
 
 /***/ },
-/* 4 */
+/* 3 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -811,6 +802,7 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
+	var editor = codex.editor;
 	
 	var transport = function (transport) {
 	
@@ -826,9 +818,9 @@ var codex =
 	        var input = document.createElement('INPUT');
 	
 	        input.type = 'file';
-	        input.addEventListener('change', codex.transport.fileSelected);
+	        input.addEventListener('change', editor.transport.fileSelected);
 	
-	        codex.transport.input = input;
+	        editor.transport.input = input;
 	    };
 	
 	    /** Clear input when files is uploaded */
@@ -855,11 +847,11 @@ var codex =
 	
 	        formdData.append('files', files[0], files[0].name);
 	
-	        codex.transport.ajax({
+	        editor.transport.ajax({
 	            data: formdData,
-	            beforeSend: codex.transport.arguments.beforeSend,
-	            success: codex.transport.arguments.success,
-	            error: codex.transport.arguments.error
+	            beforeSend: editor.transport.arguments.beforeSend,
+	            success: editor.transport.arguments.success,
+	            error: editor.transport.arguments.error
 	        });
 	    };
 	
@@ -885,7 +877,7 @@ var codex =
 	
 	        beforeSend();
 	
-	        xhr.open('POST', codex.settings.uploadImagesUrl, true);
+	        xhr.open('POST', editor.settings.uploadImagesUrl, true);
 	
 	        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
 	
@@ -908,7 +900,7 @@ var codex =
 	module.exports = transport;
 
 /***/ },
-/* 5 */
+/* 4 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -920,6 +912,8 @@ var codex =
 	 * @version 1.0
 	 */
 	
+	var editor = codex.editor;
+	
 	var renderer = function (renderer) {
 	
 	    /**
@@ -930,9 +924,9 @@ var codex =
 	        /**
 	         * If redactor is empty, add first paragraph to start writing
 	         */
-	        if (!codex.state.blocks.items.length) {
+	        if (!editor.state.blocks.items.length) {
 	
-	            codex.ui.addInitialBlock();
+	            editor.ui.addInitialBlock();
 	            return;
 	        }
 	
@@ -940,15 +934,15 @@ var codex =
 	
 	        /** First, get JSON from state */
 	        .then(function () {
-	            return codex.state.blocks;
+	            return editor.state.blocks;
 	        })
 	
 	        /** Then, start to iterate they */
-	        .then(codex.renderer.appendBlocks)
+	        .then(editor.renderer.appendBlocks)
 	
 	        /** Write log if something goes wrong */
 	        .catch(function (error) {
-	            codex.core.log('Error while parsing JSON: %o', 'error', error);
+	            editor.core.log('Error while parsing JSON: %o', 'error', error);
 	        });
 	    };
 	
@@ -970,7 +964,7 @@ var codex =
 	        for (var index = 0; index < blocks.length; index++) {
 	
 	            /** Add node to sequence at specified index */
-	            codex.renderer.appendNodeAtIndex(nodeSequence, blocks, index);
+	            editor.renderer.appendNodeAtIndex(nodeSequence, blocks, index);
 	        }
 	    };
 	
@@ -985,13 +979,13 @@ var codex =
 	        /** first, get node async-aware */
 	        .then(function () {
 	
-	            return codex.renderer.getNodeAsync(blocks, index);
+	            return editor.renderer.getNodeAsync(blocks, index);
 	        })
 	
 	        /**
 	         * second, compose editor-block from JSON object
 	         */
-	        .then(codex.renderer.createBlockFromData)
+	        .then(editor.renderer.createBlockFromData)
 	
 	        /**
 	         * now insert block to redactor
@@ -1001,7 +995,7 @@ var codex =
 	            /**
 	             * blockData has 'block', 'type' and 'stretched' information
 	             */
-	            codex.content.insertBlock(blockData);
+	            editor.content.insertBlock(blockData);
 	
 	            /** Pass created block to next step */
 	            return blockData.block;
@@ -1009,7 +1003,7 @@ var codex =
 	
 	        /** Log if something wrong with node */
 	        .catch(function (error) {
-	            codex.core.log('Node skipped while parsing because %o', 'error', error);
+	            editor.core.log('Node skipped while parsing because %o', 'error', error);
 	        });
 	    };
 	
@@ -1048,21 +1042,21 @@ var codex =
 	        // for (var pluginName in blockData) break;
 	
 	        /** Check for plugin existance */
-	        if (!codex.tools[pluginName]) {
+	        if (!editor.tools[pluginName]) {
 	            throw Error('Plugin \xAB' + pluginName + '\xBB not found');
 	        }
 	
 	        /** Check for plugin having render method */
-	        if (typeof codex.tools[pluginName].render != 'function') {
+	        if (typeof editor.tools[pluginName].render != 'function') {
 	
 	            throw Error('Plugin \xAB' + pluginName + '\xBB must have \xABrender\xBB method');
 	        }
 	
 	        /** New Parser */
-	        var block = codex.tools[pluginName].render(blockData.data);
+	        var block = editor.tools[pluginName].render(blockData.data);
 	
 	        /** is first-level block stretched */
-	        var stretched = codex.tools[pluginName].isStretched || false;
+	        var stretched = editor.tools[pluginName].isStretched || false;
 	
 	        /** Retrun type and block */
 	        return {
@@ -1079,7 +1073,7 @@ var codex =
 	module.exports = renderer;
 
 /***/ },
-/* 6 */
+/* 5 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1091,6 +1085,8 @@ var codex =
 	 * @version 1.0.2
 	 */
 	
+	var editor = codex.editor;
+	
 	var saver = function (saver) {
 	
 	    /**
@@ -1100,17 +1096,17 @@ var codex =
 	    saver.saveBlocks = function () {
 	
 	        /** Save html content of redactor to memory */
-	        codex.state.html = codex.nodes.redactor.innerHTML;
+	        editor.state.html = editor.nodes.redactor.innerHTML;
 	
 	        /** Empty jsonOutput state */
-	        codex.state.jsonOutput = [];
+	        editor.state.jsonOutput = [];
 	
 	        Promise.resolve().then(function () {
-	            return codex.nodes.redactor.childNodes;
+	            return editor.nodes.redactor.childNodes;
 	        })
 	        /** Making a sequence from separate blocks */
-	        .then(codex.saver.makeQueue).then(function () {
-	            // codex.nodes.textarea.innerHTML = codex.state.html;
+	        .then(editor.saver.makeQueue).then(function () {
+	            // editor.nodes.textarea.innerHTML = editor.state.html;
 	        }).catch(function (error) {
 	            console.log('Something happend');
 	        });
@@ -1123,7 +1119,7 @@ var codex =
 	        for (var index = 0; index < blocks.length; index++) {
 	
 	            /** Add node to sequence at specified index */
-	            codex.saver.getBlockData(queue, blocks, index);
+	            editor.saver.getBlockData(queue, blocks, index);
 	        }
 	    };
 	
@@ -1131,8 +1127,8 @@ var codex =
 	    saver.getBlockData = function (queue, blocks, index) {
 	
 	        queue.then(function () {
-	            return codex.saver.getNodeAsync(blocks, index);
-	        }).then(codex.saver.makeFormDataFromBlocks);
+	            return editor.saver.getNodeAsync(blocks, index);
+	        }).then(editor.saver.makeFormDataFromBlocks);
 	    };
 	
 	    /**
@@ -1152,12 +1148,12 @@ var codex =
 	        var pluginName = block.dataset.tool;
 	
 	        /** Check for plugin existance */
-	        if (!codex.tools[pluginName]) {
+	        if (!editor.tools[pluginName]) {
 	            throw Error('Plugin \xAB' + pluginName + '\xBB not found');
 	        }
 	
 	        /** Check for plugin having render method */
-	        if (typeof codex.tools[pluginName].save != 'function') {
+	        if (typeof editor.tools[pluginName].save != 'function') {
 	
 	            throw Error('Plugin \xAB' + pluginName + '\xBB must have save method');
 	        }
@@ -1165,7 +1161,7 @@ var codex =
 	        /** Result saver */
 	        var blockContent = block.childNodes[0],
 	            pluginsContent = blockContent.childNodes[0],
-	            savedData = codex.tools[pluginName].save(pluginsContent),
+	            savedData = editor.tools[pluginName].save(pluginsContent),
 	            output;
 	
 	        output = {
@@ -1173,8 +1169,8 @@ var codex =
 	            data: savedData
 	        };
 	
-	        if (codex.tools[pluginName].validate) {
-	            var result = codex.tools[pluginName].validate(savedData);
+	        if (editor.tools[pluginName].validate) {
+	            var result = editor.tools[pluginName].validate(savedData);
 	
 	            /**
 	             * Do not allow invalid data
@@ -1183,9 +1179,9 @@ var codex =
 	        }
 	
 	        /** Marks Blocks that will be in main page */
-	        output.cover = block.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
+	        output.cover = block.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
 	
-	        codex.state.jsonOutput.push(output);
+	        editor.state.jsonOutput.push(output);
 	    };
 	
 	    return saver;
@@ -1194,7 +1190,7 @@ var codex =
 	module.exports = saver;
 
 /***/ },
-/* 7 */
+/* 6 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -1206,6 +1202,7 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.3.11
 	 */
+	var editor = codex.editor;
 	
 	var content = function (content) {
 	
@@ -1226,12 +1223,12 @@ var codex =
 	     */
 	    content.sync = function () {
 	
-	        codex.core.log('syncing...');
+	        editor.core.log('syncing...');
 	
 	        /**
-	         * Save redactor content to codex.state
+	         * Save redactor content to editor.state
 	         */
-	        codex.state.html = codex.nodes.redactor.innerHTML;
+	        editor.state.html = editor.nodes.redactor.innerHTML;
 	    };
 	
 	    /**
@@ -1246,25 +1243,25 @@ var codex =
 	            return null;
 	        }
 	
-	        if (selection.anchorNode.nodeType == codex.core.nodeTypes.TAG) {
+	        if (selection.anchorNode.nodeType == editor.core.nodeTypes.TAG) {
 	            focused = selection.anchorNode;
 	        } else {
 	            focused = selection.focusNode.parentElement;
 	        }
 	
-	        if (!codex.parser.isFirstLevelBlock(focused)) {
+	        if (!editor.parser.isFirstLevelBlock(focused)) {
 	
 	            /** Iterate with parent nodes to find first-level*/
 	            var parent = focused.parentNode;
 	
-	            while (parent && !codex.parser.isFirstLevelBlock(parent)) {
+	            while (parent && !editor.parser.isFirstLevelBlock(parent)) {
 	                parent = parent.parentNode;
 	            }
 	
 	            focused = parent;
 	        }
 	
-	        if (focused != codex.nodes.redactor) {
+	        if (focused != editor.nodes.redactor) {
 	            return focused;
 	        }
 	
@@ -1276,7 +1273,7 @@ var codex =
 	     */
 	    content.markBlock = function () {
 	
-	        codex.content.currentNode.classList.add(codex.ui.className.BLOCK_HIGHLIGHTED);
+	        editor.content.currentNode.classList.add(editor.ui.className.BLOCK_HIGHLIGHTED);
 	    };
 	
 	    /**
@@ -1284,8 +1281,8 @@ var codex =
 	     */
 	    content.clearMark = function () {
 	
-	        if (codex.content.currentNode) {
-	            codex.content.currentNode.classList.remove(codex.ui.className.BLOCK_HIGHLIGHTED);
+	        if (editor.content.currentNode) {
+	            editor.content.currentNode.classList.remove(editor.ui.className.BLOCK_HIGHLIGHTED);
 	        }
 	    };
 	
@@ -1297,16 +1294,16 @@ var codex =
 	     */
 	    content.getFirstLevelBlock = function (node) {
 	
-	        if (!codex.core.isDomNode(node)) {
+	        if (!editor.core.isDomNode(node)) {
 	            node = node.parentNode;
 	        }
 	
-	        if (node === codex.nodes.redactor || node === document.body) {
+	        if (node === editor.nodes.redactor || node === document.body) {
 	
 	            return null;
 	        } else {
 	
-	            while (!node.classList.contains(codex.ui.className.BLOCK_CLASSNAME)) {
+	            while (!node.classList.contains(editor.ui.className.BLOCK_CLASSNAME)) {
 	                node = node.parentNode;
 	            }
 	
@@ -1322,7 +1319,7 @@ var codex =
 	    content.workingNodeChanged = function (targetNode) {
 	
 	        /** Clear background from previous marked block before we change */
-	        codex.content.clearMark();
+	        editor.content.clearMark();
 	
 	        if (!targetNode) {
 	            return;
@@ -1344,12 +1341,12 @@ var codex =
 	    content.replaceBlock = function function_name(targetBlock, newBlock) {
 	
 	        if (!targetBlock || !newBlock) {
-	            codex.core.log('replaceBlock: missed params');
+	            editor.core.log('replaceBlock: missed params');
 	            return;
 	        }
 	
 	        /** If target-block is not a frist-level block, then we iterate parents to find it */
-	        while (!targetBlock.classList.contains(codex.ui.className.BLOCK_CLASSNAME)) {
+	        while (!targetBlock.classList.contains(editor.ui.className.BLOCK_CLASSNAME)) {
 	            targetBlock = targetBlock.parentNode;
 	        }
 	
@@ -1357,27 +1354,27 @@ var codex =
 	         * Check is this block was in feed
 	         * If true, than set switched block also covered
 	         */
-	        if (targetBlock.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE)) {
-	            newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
+	        if (targetBlock.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE)) {
+	            newBlock.classList.add(editor.ui.className.BLOCK_IN_FEED_MODE);
 	        }
 	
 	        /** Replacing */
-	        codex.nodes.redactor.replaceChild(newBlock, targetBlock);
+	        editor.nodes.redactor.replaceChild(newBlock, targetBlock);
 	
 	        /**
 	         * Set new node as current
 	         */
-	        codex.content.workingNodeChanged(newBlock);
+	        editor.content.workingNodeChanged(newBlock);
 	
 	        /**
 	         * Add block handlers
 	         */
-	        codex.ui.addBlockHandlers(newBlock);
+	        editor.ui.addBlockHandlers(newBlock);
 	
 	        /**
 	         * Save changes
 	         */
-	        codex.ui.saveInputs();
+	        editor.ui.saveInputs();
 	    };
 	
 	    /**
@@ -1394,49 +1391,49 @@ var codex =
 	     */
 	    content.insertBlock = function (blockData, needPlaceCaret) {
 	
-	        var workingBlock = codex.content.currentNode,
+	        var workingBlock = editor.content.currentNode,
 	            newBlockContent = blockData.block,
 	            blockType = blockData.type,
 	            cover = blockData.cover,
 	            isStretched = blockData.stretched;
 	
-	        var newBlock = codex.content.composeNewBlock(newBlockContent, blockType, isStretched);
+	        var newBlock = editor.content.composeNewBlock(newBlockContent, blockType, isStretched);
 	
 	        if (cover === true) {
-	            newBlock.classList.add(codex.ui.className.BLOCK_IN_FEED_MODE);
+	            newBlock.classList.add(editor.ui.className.BLOCK_IN_FEED_MODE);
 	        }
 	
 	        if (workingBlock) {
 	
-	            codex.core.insertAfter(workingBlock, newBlock);
+	            editor.core.insertAfter(workingBlock, newBlock);
 	        } else {
 	            /**
 	             * If redactor is empty, append as first child
 	             */
-	            codex.nodes.redactor.appendChild(newBlock);
+	            editor.nodes.redactor.appendChild(newBlock);
 	        }
 	
 	        /**
 	         * Block handler
 	         */
-	        codex.ui.addBlockHandlers(newBlock);
+	        editor.ui.addBlockHandlers(newBlock);
 	
 	        /**
 	         * Set new node as current
 	         */
-	        codex.content.workingNodeChanged(newBlock);
+	        editor.content.workingNodeChanged(newBlock);
 	
 	        /**
 	         * Save changes
 	         */
-	        codex.ui.saveInputs();
+	        editor.ui.saveInputs();
 	
 	        if (needPlaceCaret) {
 	
 	            /**
 	             * If we don't know input index then we set default value -1
 	             */
-	            var currentInputIndex = codex.caret.getCurrentInputIndex() || -1;
+	            var currentInputIndex = editor.caret.getCurrentInputIndex() || -1;
 	
 	            if (currentInputIndex == -1) {
 	
@@ -1444,21 +1441,21 @@ var codex =
 	                    emptyText = document.createTextNode('');
 	
 	                editableElement.appendChild(emptyText);
-	                codex.caret.set(editableElement, 0, 0);
+	                editor.caret.set(editableElement, 0, 0);
 	
-	                codex.toolbar.move();
-	                codex.toolbar.showPlusButton();
+	                editor.toolbar.move();
+	                editor.toolbar.showPlusButton();
 	            } else {
 	
-	                if (currentInputIndex === codex.state.inputs.length - 1) return;
+	                if (currentInputIndex === editor.state.inputs.length - 1) return;
 	
 	                /** Timeout for browsers execution */
 	                setTimeout(function () {
 	
 	                    /** Setting to the new input */
-	                    codex.caret.setToNextBlock(currentInputIndex);
-	                    codex.toolbar.move();
-	                    codex.toolbar.open();
+	                    editor.caret.setToNextBlock(currentInputIndex);
+	                    editor.toolbar.move();
+	                    editor.toolbar.open();
 	                }, 10);
 	            }
 	        }
@@ -1479,13 +1476,13 @@ var codex =
 	     */
 	    content.switchBlock = function (blockToReplace, newBlock, tool) {
 	
-	        var newBlockComposed = codex.content.composeNewBlock(newBlock, tool);
+	        var newBlockComposed = editor.content.composeNewBlock(newBlock, tool);
 	
 	        /** Replacing */
-	        codex.content.replaceBlock(blockToReplace, newBlockComposed);
+	        editor.content.replaceBlock(blockToReplace, newBlockComposed);
 	
 	        /** Save new Inputs when block is changed */
-	        codex.ui.saveInputs();
+	        editor.ui.saveInputs();
 	    };
 	
 	    /**
@@ -1512,7 +1509,7 @@ var codex =
 	        for (index = 0; index < blockChilds.length; index++) {
 	            node = blockChilds[index];
 	
-	            if (node.nodeType == codex.core.nodeTypes.TEXT) {
+	            if (node.nodeType == editor.core.nodeTypes.TEXT) {
 	
 	                text = node.textContent.trim();
 	
@@ -1551,10 +1548,10 @@ var codex =
 	                block = block.childNodes[position - 1];
 	            }
 	
-	            if (block.nodeType == codex.core.nodeTypes.TAG) {
+	            if (block.nodeType == editor.core.nodeTypes.TAG) {
 	
 	                position = block.childNodes.length;
-	            } else if (block.nodeType == codex.core.nodeTypes.TEXT) {
+	            } else if (block.nodeType == editor.core.nodeTypes.TEXT) {
 	
 	                position = 0;
 	            }
@@ -1568,14 +1565,14 @@ var codex =
 	     */
 	    content.composeNewBlock = function (block, tool, isStretched) {
 	
-	        var newBlock = codex.draw.node('DIV', codex.ui.className.BLOCK_CLASSNAME, {}),
-	            blockContent = codex.draw.node('DIV', codex.ui.className.BLOCK_CONTENT, {});
+	        var newBlock = editor.draw.node('DIV', editor.ui.className.BLOCK_CLASSNAME, {}),
+	            blockContent = editor.draw.node('DIV', editor.ui.className.BLOCK_CONTENT, {});
 	
 	        blockContent.appendChild(block);
 	        newBlock.appendChild(blockContent);
 	
 	        if (isStretched) {
-	            blockContent.classList.add(codex.ui.className.BLOCK_STRETCHED);
+	            blockContent.classList.add(editor.ui.className.BLOCK_STRETCHED);
 	        }
 	
 	        newBlock.dataset.tool = tool;
@@ -1608,7 +1605,7 @@ var codex =
 	            textAfterCaret,
 	            textNodeAfterCaret;
 	
-	        var currentBlock = codex.content.currentNode.querySelector('[contentEditable]');
+	        var currentBlock = editor.content.currentNode.querySelector('[contentEditable]');
 	
 	        textBeforeCaret = anchorNodeText.substring(0, caretOffset);
 	        textAfterCaret = anchorNodeText.substring(caretOffset);
@@ -1641,7 +1638,7 @@ var codex =
 	        }
 	
 	        /** Clear current input */
-	        codex.state.inputs[inputIndex].innerHTML = '';
+	        editor.state.inputs[inputIndex].innerHTML = '';
 	
 	        /**
 	         * Append all childs founded before anchorNode
@@ -1649,10 +1646,10 @@ var codex =
 	        var previousChildsLength = previousChilds.length;
 	
 	        for (i = 0; i < previousChildsLength; i++) {
-	            codex.state.inputs[inputIndex].appendChild(previousChilds[i]);
+	            editor.state.inputs[inputIndex].appendChild(previousChilds[i]);
 	        }
 	
-	        codex.state.inputs[inputIndex].appendChild(textNodeBeforeCaret);
+	        editor.state.inputs[inputIndex].appendChild(textNodeBeforeCaret);
 	
 	        /**
 	         * Append text node which is after caret
@@ -1667,14 +1664,14 @@ var codex =
 	        newNode = newNode.innerHTML;
 	
 	        /** This type of block creates when enter is pressed */
-	        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+	        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
 	
 	        /**
 	         * Make new paragraph with text after caret
 	         */
-	        codex.content.insertBlock({
+	        editor.content.insertBlock({
 	            type: NEW_BLOCK_TYPE,
-	            block: codex.tools[NEW_BLOCK_TYPE].render({
+	            block: editor.tools[NEW_BLOCK_TYPE].render({
 	                text: newNode
 	            })
 	        }, true);
@@ -1692,14 +1689,14 @@ var codex =
 	        }
 	
 	        var targetInput,
-	            currentInputContent = codex.state.inputs[currentInputIndex].innerHTML;
+	            currentInputContent = editor.state.inputs[currentInputIndex].innerHTML;
 	
 	        if (!targetInputIndex) {
 	
-	            targetInput = codex.state.inputs[currentInputIndex - 1];
+	            targetInput = editor.state.inputs[currentInputIndex - 1];
 	        } else {
 	
-	            targetInput = codex.state.inputs[targetInputIndex];
+	            targetInput = editor.state.inputs[targetInputIndex];
 	        }
 	
 	        targetInput.innerHTML += currentInputContent;
@@ -1713,13 +1710,13 @@ var codex =
 	     */
 	    content.paste = function (mutation) {
 	
-	        var workingNode = codex.content.currentNode,
+	        var workingNode = editor.content.currentNode,
 	            tool = workingNode.dataset.tool;
 	
-	        if (codex.tools[tool].allowedToPaste) {
-	            codex.content.sanitize.call(this, mutation.target);
+	        if (editor.tools[tool].allowedToPaste) {
+	            editor.content.sanitize.call(this, mutation.target);
 	        } else {
-	            codex.content.pasteTextContent(mutation.addedNodes);
+	            editor.content.pasteTextContent(mutation.addedNodes);
 	        }
 	    };
 	
@@ -1738,13 +1735,13 @@ var codex =
 	            return;
 	        }
 	
-	        if (node.nodeType == codex.core.nodeTypes.TEXT) {
+	        if (node.nodeType == editor.core.nodeTypes.TEXT) {
 	            textNode = document.createTextNode(node);
 	        } else {
 	            textNode = document.createTextNode(node.textContent);
 	        }
 	
-	        if (codex.core.isDomNode(node)) {
+	        if (editor.core.isDomNode(node)) {
 	            node.parentNode.replaceChild(textNode, node);
 	        }
 	    };
@@ -1777,17 +1774,17 @@ var codex =
 	        /**
 	         * Don't sanitize text node
 	         */
-	        if (node.nodeType == codex.core.nodeTypes.TEXT) {
+	        if (node.nodeType == editor.core.nodeTypes.TEXT) {
 	            return;
 	        }
 	
 	        /**
 	         * Clear dirty content
 	         */
-	        var cleaner = codex.sanitizer.init(codex.satinizer.Config.BASIC),
+	        var cleaner = editor.sanitizer.init(editor.satinizer.Config.BASIC),
 	            clean = cleaner.clean(target.outerHTML);
 	
-	        var div = codex.draw.node('DIV', [], { innerHTML: clean });
+	        var div = editor.draw.node('DIV', [], { innerHTML: clean });
 	        node.replaceWith(div.childNodes[0]);
 	    };
 	
@@ -1820,7 +1817,7 @@ var codex =
 	            /**
 	             * Проверяем родителей до тех пор, пока не найдем блок первого уровня
 	             */
-	            if (node.classList.contains(codex.ui.className.BLOCK_CONTENT)) {
+	            if (node.classList.contains(editor.ui.className.BLOCK_CONTENT)) {
 	                allChecked = true;
 	            }
 	        }
@@ -1921,7 +1918,7 @@ var codex =
 	module.exports = content;
 
 /***/ },
-/* 8 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1937,12 +1934,15 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
+	
+	var editor = codex.editor;
+	
 	var toolbar = function (toolbar) {
 	
 	    toolbar.init = function () {
-	        toolbar.settings = __webpack_require__(9);
-	        toolbar.inline = __webpack_require__(10);
-	        toolbar.toolbox = __webpack_require__(11);
+	        toolbar.settings = __webpack_require__(8);
+	        toolbar.inline = __webpack_require__(9);
+	        toolbar.toolbox = __webpack_require__(10);
 	    };
 	
 	    /**
@@ -1961,7 +1961,7 @@ var codex =
 	     */
 	    toolbar.open = function () {
 	
-	        codex.nodes.toolbar.classList.add('opened');
+	        editor.nodes.toolbar.classList.add('opened');
 	        this.opened = true;
 	    };
 	
@@ -1970,18 +1970,18 @@ var codex =
 	     */
 	    toolbar.close = function () {
 	
-	        codex.nodes.toolbar.classList.remove('opened');
+	        editor.nodes.toolbar.classList.remove('opened');
 	
 	        toolbar.opened = false;
 	        toolbar.current = null;
 	
-	        for (var button in codex.nodes.toolbarButtons) {
-	            codex.nodes.toolbarButtons[button].classList.remove('selected');
+	        for (var button in editor.nodes.toolbarButtons) {
+	            editor.nodes.toolbarButtons[button].classList.remove('selected');
 	        }
 	
 	        /** Close toolbox when toolbar is not displayed */
-	        codex.toolbar.toolbox.close();
-	        codex.toolbar.settings.close();
+	        editor.toolbar.toolbox.close();
+	        editor.toolbar.settings.close();
 	    };
 	
 	    toolbar.toggle = function () {
@@ -1996,11 +1996,11 @@ var codex =
 	    };
 	
 	    toolbar.hidePlusButton = function () {
-	        codex.nodes.plusButton.classList.add('hide');
+	        editor.nodes.plusButton.classList.add('hide');
 	    };
 	
 	    toolbar.showPlusButton = function () {
-	        codex.nodes.plusButton.classList.remove('hide');
+	        editor.nodes.plusButton.classList.remove('hide');
 	    };
 	
 	    /**
@@ -2009,19 +2009,19 @@ var codex =
 	    toolbar.move = function () {
 	
 	        /** Close Toolbox when we move toolbar */
-	        codex.toolbar.toolbox.close();
+	        editor.toolbar.toolbox.close();
 	
-	        if (!codex.content.currentNode) {
+	        if (!editor.content.currentNode) {
 	            return;
 	        }
 	
-	        var toolbarHeight = codex.nodes.toolbar.clientHeight || codex.toolbar.defaultToolbarHeight,
-	            newYCoordinate = codex.content.currentNode.offsetTop - codex.toolbar.defaultToolbarHeight / 2 + codex.toolbar.defaultOffset;
+	        var toolbarHeight = editor.nodes.toolbar.clientHeight || editor.toolbar.defaultToolbarHeight,
+	            newYCoordinate = editor.content.currentNode.offsetTop - editor.toolbar.defaultToolbarHeight / 2 + editor.toolbar.defaultOffset;
 	
-	        codex.nodes.toolbar.style.transform = 'translate3D(0, ' + Math.floor(newYCoordinate) + 'px, 0)';
+	        editor.nodes.toolbar.style.transform = 'translate3D(0, ' + Math.floor(newYCoordinate) + 'px, 0)';
 	
 	        /** Close trash actions */
-	        codex.toolbar.settings.hideRemoveActions();
+	        editor.toolbar.settings.hideRemoveActions();
 	    };
 	
 	    return toolbar;
@@ -2032,7 +2032,7 @@ var codex =
 	module.exports = toolbar;
 
 /***/ },
-/* 9 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2043,10 +2043,12 @@ var codex =
 	 * @version 1.0.4
 	 */
 	
+	var editor = codex.editor;
+	
 	var settings = function (settings) {
 	
 	    settings.init = function () {
-	        __webpack_require__(7);
+	        __webpack_require__(6);
 	    };
 	
 	    settings.opened = false;
@@ -2065,24 +2067,24 @@ var codex =
 	         * Append settings content
 	         * It's stored in tool.settings
 	         */
-	        if (!codex.tools[toolType] || !codex.tools[toolType].makeSettings) {
+	        if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings) {
 	
-	            codex.core.log('Plugin \xAB' + toolType + '\xBB has no settings', 'warn');
-	            // codex.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
+	            editor.core.log('Plugin \xAB' + toolType + '\xBB has no settings', 'warn');
+	            // editor.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
 	        } else {
 	
 	            /**
 	             * Draw settings block
 	             */
-	            var settingsBlock = codex.tools[toolType].makeSettings();
-	            codex.nodes.pluginSettings.appendChild(settingsBlock);
+	            var settingsBlock = editor.tools[toolType].makeSettings();
+	            editor.nodes.pluginSettings.appendChild(settingsBlock);
 	        }
 	
-	        var currentBlock = codex.content.currentNode;
+	        var currentBlock = editor.content.currentNode;
 	
 	        /** Open settings block */
-	        codex.nodes.blockSettings.classList.add('opened');
-	        codex.toolbar.settings.addDefaultSettings();
+	        editor.nodes.blockSettings.classList.add('opened');
+	        editor.toolbar.settings.addDefaultSettings();
 	        this.opened = true;
 	    };
 	
@@ -2091,8 +2093,8 @@ var codex =
 	     */
 	    settings.close = function () {
 	
-	        codex.nodes.blockSettings.classList.remove('opened');
-	        codex.nodes.pluginSettings.innerHTML = '';
+	        editor.nodes.blockSettings.classList.remove('opened');
+	        editor.nodes.pluginSettings.innerHTML = '';
 	
 	        this.opened = false;
 	    };
@@ -2120,10 +2122,10 @@ var codex =
 	        var feedModeToggler;
 	
 	        /** Clear block and append initialized settings */
-	        codex.nodes.defaultSettings.innerHTML = '';
+	        editor.nodes.defaultSettings.innerHTML = '';
 	
 	        /** Init all default setting buttons */
-	        feedModeToggler = codex.toolbar.settings.makeFeedModeToggler();
+	        feedModeToggler = editor.toolbar.settings.makeFeedModeToggler();
 	
 	        /**
 	         * Fill defaultSettings
@@ -2133,7 +2135,7 @@ var codex =
 	         * Button that enables/disables Feed-mode
 	         * Feed-mode means that block will be showed in articles-feed like cover
 	         */
-	        codex.nodes.defaultSettings.appendChild(feedModeToggler);
+	        editor.nodes.defaultSettings.appendChild(feedModeToggler);
 	    };
 	
 	    /**
@@ -2147,7 +2149,7 @@ var codex =
 	     */
 	    settings.makeFeedModeToggler = function () {
 	
-	        var isFeedModeActivated = codex.toolbar.settings.isFeedModeActivated(),
+	        var isFeedModeActivated = editor.toolbar.settings.isFeedModeActivated(),
 	            setting,
 	            data;
 	
@@ -2163,8 +2165,8 @@ var codex =
 	            };
 	        }
 	
-	        setting = codex.draw.node('DIV', codex.ui.className.SETTINGS_ITEM, data);
-	        setting.addEventListener('click', codex.toolbar.settings.updateFeedMode, false);
+	        setting = editor.draw.node('DIV', editor.ui.className.SETTINGS_ITEM, data);
+	        setting.addEventListener('click', editor.toolbar.settings.updateFeedMode, false);
 	
 	        return setting;
 	    };
@@ -2174,19 +2176,19 @@ var codex =
 	     */
 	    settings.updateFeedMode = function () {
 	
-	        var currentNode = codex.content.currentNode;
+	        var currentNode = editor.content.currentNode;
 	
-	        currentNode.classList.toggle(codex.ui.className.BLOCK_IN_FEED_MODE);
+	        currentNode.classList.toggle(editor.ui.className.BLOCK_IN_FEED_MODE);
 	
-	        codex.toolbar.settings.close();
+	        editor.toolbar.settings.close();
 	    };
 	
 	    settings.isFeedModeActivated = function () {
 	
-	        var currentBlock = codex.content.currentNode;
+	        var currentBlock = editor.content.currentNode;
 	
 	        if (currentBlock) {
-	            return currentBlock.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
+	            return currentBlock.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
 	        } else {
 	            return false;
 	        }
@@ -2197,17 +2199,17 @@ var codex =
 	     */
 	    settings.makeRemoveBlockButton = function () {
 	
-	        var removeBlockWrapper = codex.draw.node('SPAN', 'ce-toolbar__remove-btn', {}),
-	            settingButton = codex.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML: '<i class="ce-icon-trash"></i>' }),
-	            actionWrapper = codex.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
-	            confirmAction = codex.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent: 'Удалить блок' }),
-	            cancelAction = codex.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent: 'Отмена' });
+	        var removeBlockWrapper = editor.draw.node('SPAN', 'ce-toolbar__remove-btn', {}),
+	            settingButton = editor.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML: '<i class="ce-icon-trash"></i>' }),
+	            actionWrapper = editor.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
+	            confirmAction = editor.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent: 'Удалить блок' }),
+	            cancelAction = editor.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent: 'Отмена' });
 	
-	        settingButton.addEventListener('click', codex.toolbar.settings.removeButtonClicked, false);
+	        settingButton.addEventListener('click', editor.toolbar.settings.removeButtonClicked, false);
 	
-	        confirmAction.addEventListener('click', codex.toolbar.settings.confirmRemovingRequest, false);
+	        confirmAction.addEventListener('click', editor.toolbar.settings.confirmRemovingRequest, false);
 	
-	        cancelAction.addEventListener('click', codex.toolbar.settings.cancelRemovingRequest, false);
+	        cancelAction.addEventListener('click', editor.toolbar.settings.cancelRemovingRequest, false);
 	
 	        actionWrapper.appendChild(confirmAction);
 	        actionWrapper.appendChild(cancelAction);
@@ -2216,39 +2218,39 @@ var codex =
 	        removeBlockWrapper.appendChild(actionWrapper);
 	
 	        /** Save setting */
-	        codex.toolbar.settings.setting = settingButton;
-	        codex.toolbar.settings.actions = actionWrapper;
+	        editor.toolbar.settings.setting = settingButton;
+	        editor.toolbar.settings.actions = actionWrapper;
 	
 	        return removeBlockWrapper;
 	    };
 	
 	    settings.removeButtonClicked = function () {
 	
-	        var action = codex.toolbar.settings.actions;
+	        var action = editor.toolbar.settings.actions;
 	
 	        if (action.classList.contains('opened')) {
-	            codex.toolbar.settings.hideRemoveActions();
+	            editor.toolbar.settings.hideRemoveActions();
 	        } else {
-	            codex.toolbar.settings.showRemoveActions();
+	            editor.toolbar.settings.showRemoveActions();
 	        }
 	
-	        codex.toolbar.toolbox.close();
-	        codex.toolbar.settings.close();
+	        editor.toolbar.toolbox.close();
+	        editor.toolbar.settings.close();
 	    };
 	
 	    settings.cancelRemovingRequest = function () {
 	
-	        codex.toolbar.settings.actions.classList.remove('opened');
+	        editor.toolbar.settings.actions.classList.remove('opened');
 	    };
 	
 	    settings.confirmRemovingRequest = function () {
 	
-	        var currentBlock = codex.content.currentNode,
+	        var currentBlock = editor.content.currentNode,
 	            firstLevelBlocksCount;
 	
 	        currentBlock.remove();
 	
-	        firstLevelBlocksCount = codex.nodes.redactor.childNodes.length;
+	        firstLevelBlocksCount = editor.nodes.redactor.childNodes.length;
 	
 	        /**
 	         * If all blocks are removed
@@ -2256,23 +2258,23 @@ var codex =
 	        if (firstLevelBlocksCount === 0) {
 	
 	            /** update currentNode variable */
-	            codex.content.currentNode = null;
+	            editor.content.currentNode = null;
 	
 	            /** Inserting new empty initial block */
-	            codex.ui.addInitialBlock();
+	            editor.ui.addInitialBlock();
 	        }
 	
-	        codex.ui.saveInputs();
+	        editor.ui.saveInputs();
 	
-	        codex.toolbar.close();
+	        editor.toolbar.close();
 	    };
 	
 	    settings.showRemoveActions = function () {
-	        codex.toolbar.settings.actions.classList.add('opened');
+	        editor.toolbar.settings.actions.classList.add('opened');
 	    };
 	
 	    settings.hideRemoveActions = function () {
-	        codex.toolbar.settings.actions.classList.remove('opened');
+	        editor.toolbar.settings.actions.classList.remove('opened');
 	    };
 	
 	    return settings;
@@ -2283,7 +2285,7 @@ var codex =
 	module.exports = settings;
 
 /***/ },
-/* 10 */
+/* 9 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -2297,9 +2299,10 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
-	var inline = function (inline) {
 	
-	    inline.init = function () {};
+	var editor = codex.editor;
+	
+	module.exports = function (inline) {
 	
 	    inline.buttonsOpened = null;
 	    inline.actionsOpened = null;
@@ -2318,31 +2321,31 @@ var codex =
 	     */
 	    inline.show = function () {
 	
-	        var currentNode = codex.content.currentNode,
+	        var currentNode = editor.content.currentNode,
 	            tool = currentNode.dataset.tool,
 	            plugin;
 	
 	        /**
 	         * tool allowed to open inline toolbar
 	         */
-	        plugin = codex.tools[tool];
+	        plugin = editor.tools[tool];
 	
 	        if (!plugin.showInlineToolbar) return;
 	
 	        var selectedText = this.getSelectionText(),
-	            toolbar = codex.nodes.inlineToolbar.wrapper,
-	            buttons = codex.nodes.inlineToolbar.buttons;
+	            toolbar = editor.nodes.inlineToolbar.wrapper,
+	            buttons = editor.nodes.inlineToolbar.buttons;
 	
 	        if (selectedText.length > 0) {
 	
 	            /** Move toolbar and open */
-	            codex.toolbar.inline.move();
+	            editor.toolbar.inline.move();
 	
 	            /** Open inline toolbar */
 	            toolbar.classList.add('opened');
 	
 	            /** show buttons of inline toolbar */
-	            codex.toolbar.inline.showButtons();
+	            editor.toolbar.inline.showButtons();
 	        }
 	    };
 	
@@ -2352,7 +2355,7 @@ var codex =
 	     * Closes inline toolbar
 	     */
 	    inline.close = function () {
-	        var toolbar = codex.nodes.inlineToolbar.wrapper;
+	        var toolbar = editor.nodes.inlineToolbar.wrapper;
 	        toolbar.classList.remove('opened');
 	    };
 	
@@ -2369,7 +2372,7 @@ var codex =
 	
 	        var coords = this.getSelectionCoords(),
 	            defaultOffset = 0,
-	            toolbar = codex.nodes.inlineToolbar.wrapper,
+	            toolbar = editor.nodes.inlineToolbar.wrapper,
 	            newCoordinateX,
 	            newCoordinateY;
 	
@@ -2383,8 +2386,8 @@ var codex =
 	        toolbar.style.transform = 'translate3D(' + Math.floor(newCoordinateX) + 'px, ' + Math.floor(newCoordinateY) + 'px, 0)';
 	
 	        /** Close everything */
-	        codex.toolbar.inline.closeButtons();
-	        codex.toolbar.inline.closeAction();
+	        editor.toolbar.inline.closeButtons();
+	        editor.toolbar.inline.closeAction();
 	    };
 	
 	    /**
@@ -2401,16 +2404,16 @@ var codex =
 	         */
 	        switch (type) {
 	            case 'createLink':
-	                codex.toolbar.inline.createLinkAction(event, type);break;
+	                editor.toolbar.inline.createLinkAction(event, type);break;
 	            default:
-	                codex.toolbar.inline.defaultToolAction(type);break;
+	                editor.toolbar.inline.defaultToolAction(type);break;
 	        }
 	
 	        /**
 	         * highlight buttons
 	         * after making some action
 	         */
-	        codex.nodes.inlineToolbar.buttons.childNodes.forEach(codex.toolbar.inline.hightlight);
+	        editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.toolbar.inline.hightlight);
 	    };
 	
 	    /**
@@ -2420,7 +2423,7 @@ var codex =
 	     */
 	    inline.getWrappersOffset = function () {
 	
-	        var wrapper = codex.nodes.wrapper,
+	        var wrapper = editor.nodes.wrapper,
 	            offset = this.getOffset(wrapper);
 	
 	        this.wrappersOffset = offset;
@@ -2513,37 +2516,37 @@ var codex =
 	    /** Opens buttons block */
 	    inline.showButtons = function () {
 	
-	        var buttons = codex.nodes.inlineToolbar.buttons;
+	        var buttons = editor.nodes.inlineToolbar.buttons;
 	        buttons.classList.add('opened');
 	
-	        codex.toolbar.inline.buttonsOpened = true;
+	        editor.toolbar.inline.buttonsOpened = true;
 	
 	        /** highlight buttons */
-	        codex.nodes.inlineToolbar.buttons.childNodes.forEach(codex.toolbar.inline.hightlight);
+	        editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.toolbar.inline.hightlight);
 	    };
 	
 	    /** Makes buttons disappear */
 	    inline.closeButtons = function () {
-	        var buttons = codex.nodes.inlineToolbar.buttons;
+	        var buttons = editor.nodes.inlineToolbar.buttons;
 	        buttons.classList.remove('opened');
 	
-	        codex.toolbar.inline.buttonsOpened = false;
+	        editor.toolbar.inline.buttonsOpened = false;
 	    };
 	
 	    /** Open buttons defined action if exist */
 	    inline.showActions = function () {
-	        var action = codex.nodes.inlineToolbar.actions;
+	        var action = editor.nodes.inlineToolbar.actions;
 	        action.classList.add('opened');
 	
-	        codex.toolbar.inline.actionsOpened = true;
+	        editor.toolbar.inline.actionsOpened = true;
 	    };
 	
 	    /** Close actions block */
 	    inline.closeAction = function () {
-	        var action = codex.nodes.inlineToolbar.actions;
+	        var action = editor.nodes.inlineToolbar.actions;
 	        action.innerHTML = '';
 	        action.classList.remove('opened');
-	        codex.toolbar.inline.actionsOpened = false;
+	        editor.toolbar.inline.actionsOpened = false;
 	    };
 	
 	    /** Action for link creation or for setting anchor */
@@ -2551,15 +2554,15 @@ var codex =
 	
 	        var isActive = this.isLinkActive();
 	
-	        var editable = codex.content.currentNode,
-	            storedSelection = codex.toolbar.inline.storedSelection;
+	        var editable = editor.content.currentNode,
+	            storedSelection = editor.toolbar.inline.storedSelection;
 	
 	        if (isActive) {
 	
 	            var selection = window.getSelection(),
 	                anchorNode = selection.anchorNode;
 	
-	            storedSelection = codex.toolbar.inline.saveSelection(editable);
+	            storedSelection = editor.toolbar.inline.saveSelection(editable);
 	
 	            /**
 	             * Changing stored selection. if we want to remove anchor from word
@@ -2567,19 +2570,19 @@ var codex =
 	             * The solution is than we get the length of current link
 	             * Change start position to - end of selection minus length of anchor
 	             */
-	            codex.toolbar.inline.restoreSelection(editable, storedSelection);
+	            editor.toolbar.inline.restoreSelection(editable, storedSelection);
 	
-	            codex.toolbar.inline.defaultToolAction('unlink');
+	            editor.toolbar.inline.defaultToolAction('unlink');
 	        } else {
 	
 	            /** Create input and close buttons */
-	            var action = codex.draw.inputForLink();
-	            codex.nodes.inlineToolbar.actions.appendChild(action);
+	            var action = editor.draw.inputForLink();
+	            editor.nodes.inlineToolbar.actions.appendChild(action);
 	
-	            codex.toolbar.inline.closeButtons();
-	            codex.toolbar.inline.showActions();
+	            editor.toolbar.inline.closeButtons();
+	            editor.toolbar.inline.showActions();
 	
-	            storedSelection = codex.toolbar.inline.saveSelection(editable);
+	            storedSelection = editor.toolbar.inline.saveSelection(editable);
 	
 	            /**
 	             * focus to input
@@ -2592,10 +2595,10 @@ var codex =
 	            /** Callback to link action */
 	            action.addEventListener('keydown', function (event) {
 	
-	                if (event.keyCode == codex.core.keys.ENTER) {
+	                if (event.keyCode == editor.core.keys.ENTER) {
 	
-	                    codex.toolbar.inline.restoreSelection(editable, storedSelection);
-	                    codex.toolbar.inline.setAnchor(action.value);
+	                    editor.toolbar.inline.restoreSelection(editable, storedSelection);
+	                    editor.toolbar.inline.setAnchor(action.value);
 	
 	                    /**
 	                     * Preventing events that will be able to happen
@@ -2603,7 +2606,7 @@ var codex =
 	                    event.preventDefault();
 	                    event.stopImmediatePropagation();
 	
-	                    codex.toolbar.inline.clearRange();
+	                    editor.toolbar.inline.clearRange();
 	                }
 	            }, false);
 	        }
@@ -2613,7 +2616,7 @@ var codex =
 	
 	        var isActive = false;
 	
-	        codex.nodes.inlineToolbar.buttons.childNodes.forEach(function (tool) {
+	        editor.nodes.inlineToolbar.buttons.childNodes.forEach(function (tool) {
 	            var dataType = tool.dataset.type;
 	
 	            if (dataType == 'link' && tool.classList.contains('hightlighted')) {
@@ -2641,7 +2644,7 @@ var codex =
 	        document.execCommand('createLink', false, url);
 	
 	        /** Close after URL inserting */
-	        codex.toolbar.inline.closeAction();
+	        editor.toolbar.inline.closeAction();
 	    };
 	
 	    /**
@@ -2735,9 +2738,9 @@ var codex =
 	        var dataType = tool.dataset.type;
 	
 	        if (document.queryCommandState(dataType)) {
-	            codex.toolbar.inline.setButtonHighlighted(tool);
+	            editor.toolbar.inline.setButtonHighlighted(tool);
 	        } else {
-	            codex.toolbar.inline.removeButtonsHighLight(tool);
+	            editor.toolbar.inline.removeButtonsHighLight(tool);
 	        }
 	
 	        /**
@@ -2748,7 +2751,7 @@ var codex =
 	            tag = selection.anchorNode.parentNode;
 	
 	        if (tag.tagName == 'A' && dataType == 'link') {
-	            codex.toolbar.inline.setButtonHighlighted(tool);
+	            editor.toolbar.inline.setButtonHighlighted(tool);
 	        }
 	    };
 	
@@ -2786,13 +2789,9 @@ var codex =
 	
 	    return inline;
 	}({});
-	
-	inline.init();
-	
-	module.exports = inline;
 
 /***/ },
-/* 11 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -2806,11 +2805,13 @@ var codex =
 	 * @version 1.0
 	 */
 	
+	var editor = codex.editor;
+	
 	var toolbox = function (toolbox) {
 	
 	    toolbox.init = function () {
 	
-	        __webpack_require__(8);
+	        __webpack_require__(7);
 	    };
 	
 	    toolbox.opened = false;
@@ -2819,47 +2820,47 @@ var codex =
 	    toolbox.open = function () {
 	
 	        /** Close setting if toolbox is opened */
-	        if (codex.toolbar.settings.opened) {
+	        if (editor.toolbar.settings.opened) {
 	
-	            codex.toolbar.settings.close();
+	            editor.toolbar.settings.close();
 	        }
 	
 	        /** display toolbox */
-	        codex.nodes.toolbox.classList.add('opened');
+	        editor.nodes.toolbox.classList.add('opened');
 	
 	        /** Animate plus button */
-	        codex.nodes.plusButton.classList.add('clicked');
+	        editor.nodes.plusButton.classList.add('clicked');
 	
 	        /** toolbox state */
-	        codex.toolbar.toolbox.opened = true;
+	        editor.toolbar.toolbox.opened = true;
 	    };
 	
 	    /** Closes toolbox */
 	    toolbox.close = function () {
 	
 	        /** Makes toolbox disapear */
-	        codex.nodes.toolbox.classList.remove('opened');
+	        editor.nodes.toolbox.classList.remove('opened');
 	
 	        /** Rotate plus button */
-	        codex.nodes.plusButton.classList.remove('clicked');
+	        editor.nodes.plusButton.classList.remove('clicked');
 	
 	        /** toolbox state */
-	        codex.toolbar.toolbox.opened = false;
+	        editor.toolbar.toolbox.opened = false;
 	    };
 	
 	    toolbox.leaf = function () {
 	
-	        var currentTool = codex.toolbar.current,
-	            tools = Object.keys(codex.tools),
-	            barButtons = codex.nodes.toolbarButtons,
+	        var currentTool = editor.toolbar.current,
+	            tools = Object.keys(editor.tools),
+	            barButtons = editor.nodes.toolbarButtons,
 	            nextToolIndex,
 	            hiddenToolsAmount = 0,
 	            toolToSelect;
 	
 	        /** Count toolbox hidden tools */
-	        for (var tool in codex.tools) {
+	        for (var tool in editor.tools) {
 	
-	            if (!codex.tools[tool].displayInToolbox) {
+	            if (!editor.tools[tool].displayInToolbox) {
 	
 	                hiddenToolsAmount++;
 	            }
@@ -2882,9 +2883,9 @@ var codex =
 	                nextToolIndex = 0;
 	
 	                /** getting first displayed tool */
-	                for (var tool in codex.tools) {
+	                for (var tool in editor.tools) {
 	
-	                    if (codex.tools[tool].displayInToolbox) {
+	                    if (editor.tools[tool].displayInToolbox) {
 	
 	                        break;
 	                    }
@@ -2899,7 +2900,7 @@ var codex =
 	        for (var button in barButtons) {
 	            barButtons[button].classList.remove('selected');
 	        }barButtons[toolToSelect].classList.add('selected');
-	        codex.toolbar.current = toolToSelect;
+	        editor.toolbar.current = toolToSelect;
 	    };
 	
 	    /**
@@ -2912,9 +2913,9 @@ var codex =
 	         * UNREPLACEBLE_TOOLS this types of tools are forbidden to replace even they are empty
 	         */
 	        var UNREPLACEBLE_TOOLS = ['image', 'link', 'list', 'instagram', 'twitter', 'embed'],
-	            tool = codex.tools[codex.toolbar.current],
-	            workingNode = codex.content.currentNode,
-	            currentInputIndex = codex.caret.inputIndex,
+	            tool = editor.tools[editor.toolbar.current],
+	            workingNode = editor.content.currentNode,
+	            currentInputIndex = editor.caret.inputIndex,
 	            newBlockContent,
 	            appendCallback,
 	            blockData;
@@ -2932,11 +2933,11 @@ var codex =
 	        if (workingNode && UNREPLACEBLE_TOOLS.indexOf(workingNode.dataset.tool) === -1 && workingNode.textContent.trim() === '') {
 	
 	            /** Replace current block */
-	            codex.content.switchBlock(workingNode, newBlockContent, tool.type);
+	            editor.content.switchBlock(workingNode, newBlockContent, tool.type);
 	        } else {
 	
 	            /** Insert new Block from plugin */
-	            codex.content.insertBlock(blockData);
+	            editor.content.insertBlock(blockData);
 	
 	            /** increase input index */
 	            currentInputIndex++;
@@ -2953,18 +2954,18 @@ var codex =
 	        setTimeout(function () {
 	
 	            /** Set caret to current block */
-	            codex.caret.setToBlock(currentInputIndex);
+	            editor.caret.setToBlock(currentInputIndex);
 	        }, 10);
 	
 	        /**
 	         * Changing current Node
 	         */
-	        codex.content.workingNodeChanged();
+	        editor.content.workingNodeChanged();
 	
 	        /**
 	         * Move toolbar when node is changed
 	         */
-	        codex.toolbar.move();
+	        editor.toolbar.move();
 	    };
 	
 	    return toolbox;
@@ -2975,28 +2976,8 @@ var codex =
 	module.exports = toolbox;
 
 /***/ },
+/* 11 */,
 /* 12 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	/**
-	 * Codex Editor tools
-	 * This tools will be appended in toolbox
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
-	
-	var tools = function (tools) {
-	
-	  return tools;
-	}({});
-	
-	module.exports = tools;
-
-/***/ },
-/* 13 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3007,6 +2988,7 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.3.5
 	 */
+	var editor = codex.editor;
 	
 	var callbacks = function (callbacks) {
 	
@@ -3014,44 +2996,44 @@ var codex =
 	
 	    callbacks.globalKeydown = function (event) {
 	        switch (event.keyCode) {
-	            case codex.core.keys.ENTER:
-	                codex.callback.enterKeyPressed(event);break;
+	            case editor.core.keys.ENTER:
+	                editor.callback.enterKeyPressed(event);break;
 	        }
 	    };
 	
 	    callbacks.redactorKeyDown = function (event) {
 	        switch (event.keyCode) {
-	            case codex.core.keys.TAB:
-	                codex.callback.tabKeyPressed(event);break;
-	            case codex.core.keys.ENTER:
-	                codex.callback.enterKeyPressedOnRedactorZone(event);break;
-	            case codex.core.keys.ESC:
-	                codex.callback.escapeKeyPressed(event);break;
+	            case editor.core.keys.TAB:
+	                editor.callback.tabKeyPressed(event);break;
+	            case editor.core.keys.ENTER:
+	                editor.callback.enterKeyPressedOnRedactorZone(event);break;
+	            case editor.core.keys.ESC:
+	                editor.callback.escapeKeyPressed(event);break;
 	            default:
-	                codex.callback.defaultKeyPressed(event);break;
+	                editor.callback.defaultKeyPressed(event);break;
 	        }
 	    };
 	
 	    callbacks.globalKeyup = function (event) {
 	        switch (event.keyCode) {
-	            case codex.core.keys.UP:
-	            case codex.core.keys.LEFT:
-	            case codex.core.keys.RIGHT:
-	            case codex.core.keys.DOWN:
-	                codex.callback.arrowKeyPressed(event);break;
+	            case editor.core.keys.UP:
+	            case editor.core.keys.LEFT:
+	            case editor.core.keys.RIGHT:
+	            case editor.core.keys.DOWN:
+	                editor.callback.arrowKeyPressed(event);break;
 	        }
 	    };
 	
 	    callbacks.tabKeyPressed = function (event) {
 	
-	        if (!codex.toolbar.opened) {
-	            codex.toolbar.open();
+	        if (!editor.toolbar.opened) {
+	            editor.toolbar.open();
 	        }
 	
-	        if (codex.toolbar.opened && !codex.toolbar.toolbox.opened) {
-	            codex.toolbar.toolbox.open();
+	        if (editor.toolbar.opened && !editor.toolbar.toolbox.opened) {
+	            editor.toolbar.toolbox.open();
 	        } else {
-	            codex.toolbar.toolbox.leaf();
+	            editor.toolbar.toolbox.leaf();
 	        }
 	
 	        event.preventDefault();
@@ -3059,15 +3041,15 @@ var codex =
 	
 	    callbacks.enterKeyPressed = function (event) {
 	
-	        if (codex.content.editorAreaHightlighted) {
+	        if (editor.content.editorAreaHightlighted) {
 	
 	            /**
 	             * it means that we lose input index, saved index before is not correct
 	             * therefore we need to set caret when we insert new block
 	             */
-	            codex.caret.inputIndex = -1;
+	            editor.caret.inputIndex = -1;
 	
-	            codex.callback.enterPressedOnBlock();
+	            editor.callback.enterPressedOnBlock();
 	        }
 	    };
 	
@@ -3080,19 +3062,19 @@ var codex =
 	        if (event.target.contentEditable == 'true') {
 	
 	            /** Update input index */
-	            codex.caret.saveCurrentInputIndex();
+	            editor.caret.saveCurrentInputIndex();
 	        }
 	
-	        var currentInputIndex = codex.caret.getCurrentInputIndex() || 0,
-	            workingNode = codex.content.currentNode,
+	        var currentInputIndex = editor.caret.getCurrentInputIndex() || 0,
+	            workingNode = editor.content.currentNode,
 	            tool = workingNode.dataset.tool,
-	            isEnterPressedOnToolbar = codex.toolbar.opened && codex.toolbar.current && event.target == codex.state.inputs[currentInputIndex];
+	            isEnterPressedOnToolbar = editor.toolbar.opened && editor.toolbar.current && event.target == editor.state.inputs[currentInputIndex];
 	
 	        /** The list of tools which needs the default browser behaviour */
-	        var enableLineBreaks = codex.tools[tool].enableLineBreaks;
+	        var enableLineBreaks = editor.tools[tool].enableLineBreaks;
 	
 	        /** This type of block creates when enter is pressed */
-	        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+	        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
 	
 	        /**
 	         * When toolbar is opened, select tool instead of making new paragraph
@@ -3101,9 +3083,9 @@ var codex =
 	
 	            event.preventDefault();
 	
-	            codex.toolbar.toolbox.toolClicked(event);
+	            editor.toolbar.toolbox.toolClicked(event);
 	
-	            codex.toolbar.close();
+	            editor.toolbar.close();
 	
 	            /**
 	             * Stop other listeners callback executions
@@ -3128,14 +3110,14 @@ var codex =
 	        var isLastTextNode = false,
 	            currentSelection = window.getSelection(),
 	            currentSelectedNode = currentSelection.anchorNode,
-	            caretAtTheEndOfText = codex.caret.position.atTheEnd(),
+	            caretAtTheEndOfText = editor.caret.position.atTheEnd(),
 	            isTextNodeHasParentBetweenContenteditable = false;
 	
 	        /**
 	         * Allow making new <p> in same block by SHIFT+ENTER and forbids to prevent default browser behaviour
 	         */
 	        if (event.shiftKey && !enableLineBreaks) {
-	            codex.callback.enterPressedOnBlock(codex.content.currentBlock, event);
+	            editor.callback.enterPressedOnBlock(editor.content.currentBlock, event);
 	            event.preventDefault();
 	            return;
 	        }
@@ -3150,21 +3132,21 @@ var codex =
 	        /**
 	         * Split blocks when input has several nodes and caret placed in textNode
 	         */
-	        if (currentSelectedNode.nodeType == codex.core.nodeTypes.TEXT && !isTextNodeHasParentBetweenContenteditable && !caretAtTheEndOfText) {
+	        if (currentSelectedNode.nodeType == editor.core.nodeTypes.TEXT && !isTextNodeHasParentBetweenContenteditable && !caretAtTheEndOfText) {
 	
 	            event.preventDefault();
 	
-	            codex.core.log('Splitting Text node...');
+	            editor.core.log('Splitting Text node...');
 	
-	            codex.content.splitBlock(currentInputIndex);
+	            editor.content.splitBlock(currentInputIndex);
 	
 	            /** Show plus button when next input after split is empty*/
-	            if (!codex.state.inputs[currentInputIndex + 1].textContent.trim()) {
-	                codex.toolbar.showPlusButton();
+	            if (!editor.state.inputs[currentInputIndex + 1].textContent.trim()) {
+	                editor.toolbar.showPlusButton();
 	            }
 	        } else {
 	
-	            var islastNode = codex.content.isLastNode(currentSelectedNode);
+	            var islastNode = editor.content.isLastNode(currentSelectedNode);
 	
 	            if (islastNode && caretAtTheEndOfText) {
 	
@@ -3172,52 +3154,52 @@ var codex =
 	                event.stopPropagation();
 	                event.stopImmediatePropagation();
 	
-	                codex.core.log('ENTER clicked in last textNode. Create new BLOCK');
+	                editor.core.log('ENTER clicked in last textNode. Create new BLOCK');
 	
-	                codex.content.insertBlock({
+	                editor.content.insertBlock({
 	                    type: NEW_BLOCK_TYPE,
-	                    block: codex.tools[NEW_BLOCK_TYPE].render()
+	                    block: editor.tools[NEW_BLOCK_TYPE].render()
 	                }, true);
 	
-	                codex.toolbar.move();
-	                codex.toolbar.open();
+	                editor.toolbar.move();
+	                editor.toolbar.open();
 	
 	                /** Show plus button with empty block */
-	                codex.toolbar.showPlusButton();
+	                editor.toolbar.showPlusButton();
 	            }
 	        }
 	
 	        /** get all inputs after new appending block */
-	        codex.ui.saveInputs();
+	        editor.ui.saveInputs();
 	    };
 	
 	    callbacks.escapeKeyPressed = function (event) {
 	
 	        /** Close all toolbar */
-	        codex.toolbar.close();
+	        editor.toolbar.close();
 	
 	        /** Close toolbox */
-	        codex.toolbar.toolbox.close();
+	        editor.toolbar.toolbox.close();
 	
 	        event.preventDefault();
 	    };
 	
 	    callbacks.arrowKeyPressed = function (event) {
 	
-	        codex.content.workingNodeChanged();
+	        editor.content.workingNodeChanged();
 	
 	        /* Closing toolbar */
-	        codex.toolbar.close();
-	        codex.toolbar.move();
+	        editor.toolbar.close();
+	        editor.toolbar.move();
 	    };
 	
 	    callbacks.defaultKeyPressed = function (event) {
 	
-	        codex.toolbar.close();
+	        editor.toolbar.close();
 	
-	        if (!codex.toolbar.inline.actionsOpened) {
-	            codex.toolbar.inline.close();
-	            codex.content.clearMark();
+	        if (!editor.toolbar.inline.actionsOpened) {
+	            editor.toolbar.inline.close();
+	            editor.content.clearMark();
 	        }
 	    };
 	
@@ -3225,98 +3207,98 @@ var codex =
 	
 	        callbacks.detectWhenClickedOnFirstLevelBlockArea();
 	
-	        codex.content.workingNodeChanged(event.target);
+	        editor.content.workingNodeChanged(event.target);
 	
-	        codex.ui.saveInputs();
+	        editor.ui.saveInputs();
 	
-	        var selectedText = codex.toolbar.inline.getSelectionText();
+	        var selectedText = editor.toolbar.inline.getSelectionText();
 	
 	        /**
 	         * If selection range took off, then we hide inline toolbar
 	         */
 	        if (selectedText.length === 0) {
-	            codex.toolbar.inline.close();
+	            editor.toolbar.inline.close();
 	        }
 	
 	        /** Update current input index in memory when caret focused into existed input */
 	        if (event.target.contentEditable == 'true') {
 	
-	            codex.caret.saveCurrentInputIndex();
+	            editor.caret.saveCurrentInputIndex();
 	        }
 	
-	        if (codex.content.currentNode === null) {
+	        if (editor.content.currentNode === null) {
 	
 	            /**
 	             * If inputs in redactor does not exits, then we put input index 0 not -1
 	             */
-	            var indexOfLastInput = codex.state.inputs.length > 0 ? codex.state.inputs.length - 1 : 0;
+	            var indexOfLastInput = editor.state.inputs.length > 0 ? editor.state.inputs.length - 1 : 0;
 	
 	            /** If we have any inputs */
-	            if (codex.state.inputs.length) {
+	            if (editor.state.inputs.length) {
 	
 	                /** getting firstlevel parent of input */
-	                var firstLevelBlock = codex.content.getFirstLevelBlock(codex.state.inputs[indexOfLastInput]);
+	                var firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
 	            }
 	
 	            /** If input is empty, then we set caret to the last input */
-	            if (codex.state.inputs.length && codex.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == codex.settings.initialBlockPlugin) {
+	            if (editor.state.inputs.length && editor.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == editor.settings.initialBlockPlugin) {
 	
-	                codex.caret.setToBlock(indexOfLastInput);
+	                editor.caret.setToBlock(indexOfLastInput);
 	            } else {
 	
 	                /** Create new input when caret clicked in redactors area */
-	                var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+	                var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
 	
-	                codex.content.insertBlock({
+	                editor.content.insertBlock({
 	                    type: NEW_BLOCK_TYPE,
-	                    block: codex.tools[NEW_BLOCK_TYPE].render()
+	                    block: editor.tools[NEW_BLOCK_TYPE].render()
 	                });
 	
 	                /** If there is no inputs except inserted */
-	                if (codex.state.inputs.length === 1) {
+	                if (editor.state.inputs.length === 1) {
 	
-	                    codex.caret.setToBlock(indexOfLastInput);
+	                    editor.caret.setToBlock(indexOfLastInput);
 	                } else {
 	
 	                    /** Set caret to this appended input */
-	                    codex.caret.setToNextBlock(indexOfLastInput);
+	                    editor.caret.setToNextBlock(indexOfLastInput);
 	                }
 	            }
 	
 	            /**
 	             * Move toolbar to the right position and open
 	             */
-	            codex.toolbar.move();
+	            editor.toolbar.move();
 	
-	            codex.toolbar.open();
+	            editor.toolbar.open();
 	        } else {
 	
 	            /**
 	             * Move toolbar to the new position and open
 	             */
-	            codex.toolbar.move();
+	            editor.toolbar.move();
 	
-	            codex.toolbar.open();
+	            editor.toolbar.open();
 	
 	            /** Close all panels */
-	            codex.toolbar.settings.close();
-	            codex.toolbar.toolbox.close();
+	            editor.toolbar.settings.close();
+	            editor.toolbar.toolbox.close();
 	        }
 	
-	        var inputIsEmpty = !codex.content.currentNode.textContent.trim(),
-	            currentNodeType = codex.content.currentNode.dataset.tool,
-	            isInitialType = currentNodeType == codex.settings.initialBlockPlugin;
+	        var inputIsEmpty = !editor.content.currentNode.textContent.trim(),
+	            currentNodeType = editor.content.currentNode.dataset.tool,
+	            isInitialType = currentNodeType == editor.settings.initialBlockPlugin;
 	
 	        /** Hide plus buttons */
-	        codex.toolbar.hidePlusButton();
+	        editor.toolbar.hidePlusButton();
 	
 	        /** Mark current block */
-	        codex.content.markBlock();
+	        editor.content.markBlock();
 	
 	        if (isInitialType && inputIsEmpty) {
 	
 	            /** Show plus button */
-	            codex.toolbar.showPlusButton();
+	            editor.toolbar.showPlusButton();
 	        }
 	    };
 	
@@ -3335,10 +3317,10 @@ var codex =
 	
 	        if (selection.rangeCount == 0) {
 	
-	            codex.content.editorAreaHightlighted = true;
+	            editor.content.editorAreaHightlighted = true;
 	        } else {
 	
-	            if (!codex.core.isDomNode(anchorNode)) {
+	            if (!editor.core.isDomNode(anchorNode)) {
 	                anchorNode = anchorNode.parentNode;
 	            }
 	
@@ -3360,7 +3342,7 @@ var codex =
 	            }
 	
 	            /** If editable element founded, flag is "TRUE", Therefore we return "FALSE" */
-	            codex.content.editorAreaHightlighted = flag ? false : true;
+	            editor.content.editorAreaHightlighted = flag ? false : true;
 	        }
 	    };
 	
@@ -3372,10 +3354,10 @@ var codex =
 	
 	        var button = this;
 	
-	        codex.toolbar.current = button.dataset.type;
+	        editor.toolbar.current = button.dataset.type;
 	
-	        codex.toolbar.toolbox.toolClicked(event);
-	        codex.toolbar.close();
+	        editor.toolbar.toolbox.toolClicked(event);
+	        editor.toolbar.close();
 	    };
 	
 	    callbacks.redactorInputEvent = function (event) {
@@ -3392,19 +3374,19 @@ var codex =
 	         */
 	        this.redactorSyncTimeout = setTimeout(function () {
 	
-	            codex.content.sync();
+	            editor.content.sync();
 	        }, 500);
 	    };
 	
 	    /** Show or Hide toolbox when plus button is clicked */
 	    callbacks.plusButtonClicked = function () {
 	
-	        if (!codex.nodes.toolbox.classList.contains('opened')) {
+	        if (!editor.nodes.toolbox.classList.contains('opened')) {
 	
-	            codex.toolbar.toolbox.open();
+	            editor.toolbar.toolbox.open();
 	        } else {
 	
-	            codex.toolbar.toolbox.close();
+	            editor.toolbar.toolbox.close();
 	        }
 	    };
 	
@@ -3415,18 +3397,18 @@ var codex =
 	
 	        switch (event.keyCode) {
 	
-	            case codex.core.keys.DOWN:
-	            case codex.core.keys.RIGHT:
-	                codex.callback.blockRightOrDownArrowPressed(block);
+	            case editor.core.keys.DOWN:
+	            case editor.core.keys.RIGHT:
+	                editor.callback.blockRightOrDownArrowPressed(block);
 	                break;
 	
-	            case codex.core.keys.BACKSPACE:
-	                codex.callback.backspacePressed(block);
+	            case editor.core.keys.BACKSPACE:
+	                editor.callback.backspacePressed(block);
 	                break;
 	
-	            case codex.core.keys.UP:
-	            case codex.core.keys.LEFT:
-	                codex.callback.blockLeftOrUpArrowPressed(block);
+	            case editor.core.keys.UP:
+	            case editor.core.keys.LEFT:
+	                editor.callback.blockLeftOrUpArrowPressed(block);
 	                break;
 	
 	        }
@@ -3438,7 +3420,7 @@ var codex =
 	    callbacks.blockRightOrDownArrowPressed = function (block) {
 	
 	        var selection = window.getSelection(),
-	            inputs = codex.state.inputs,
+	            inputs = editor.state.inputs,
 	            focusedNode = selection.anchorNode,
 	            focusedNodeHolder;
 	
@@ -3465,7 +3447,7 @@ var codex =
 	         * Or maybe New created block
 	         */
 	        if (!focusedNode.textContent) {
-	            codex.caret.setToNextBlock(editableElementIndex);
+	            editor.caret.setToNextBlock(editableElementIndex);
 	            return;
 	        }
 	
@@ -3479,9 +3461,9 @@ var codex =
 	
 	        lastChild = focusedNode.childNodes[focusedNode.childNodes.length - 1];
 	
-	        if (codex.core.isDomNode(lastChild)) {
+	        if (editor.core.isDomNode(lastChild)) {
 	
-	            deepestTextnode = codex.content.getDeepestTextNodeFromPosition(lastChild, lastChild.childNodes.length);
+	            deepestTextnode = editor.content.getDeepestTextNodeFromPosition(lastChild, lastChild.childNodes.length);
 	        } else {
 	
 	            deepestTextnode = lastChild;
@@ -3491,11 +3473,11 @@ var codex =
 	        caretAtTheEndOfText = deepestTextnode.length == selection.anchorOffset;
 	
 	        if (!caretInLastChild || !caretAtTheEndOfText) {
-	            codex.core.log('arrow [down|right] : caret does not reached the end');
+	            editor.core.log('arrow [down|right] : caret does not reached the end');
 	            return false;
 	        }
 	
-	        codex.caret.setToNextBlock(editableElementIndex);
+	        editor.caret.setToNextBlock(editableElementIndex);
 	    };
 	
 	    /**
@@ -3504,7 +3486,7 @@ var codex =
 	    callbacks.blockLeftOrUpArrowPressed = function (block) {
 	
 	        var selection = window.getSelection(),
-	            inputs = codex.state.inputs,
+	            inputs = editor.state.inputs,
 	            focusedNode = selection.anchorNode,
 	            focusedNodeHolder;
 	
@@ -3545,15 +3527,15 @@ var codex =
 	         * Or maybe New created block
 	         */
 	        if (!focusedNode.textContent) {
-	            codex.caret.setToPreviousBlock(editableElementIndex);
+	            editor.caret.setToPreviousBlock(editableElementIndex);
 	            return;
 	        }
 	
 	        firstChild = focusedNode.childNodes[0];
 	
-	        if (codex.core.isDomNode(firstChild)) {
+	        if (editor.core.isDomNode(firstChild)) {
 	
-	            deepestTextnode = codex.content.getDeepestTextNodeFromPosition(firstChild, 0);
+	            deepestTextnode = editor.content.getDeepestTextNodeFromPosition(firstChild, 0);
 	        } else {
 	
 	            deepestTextnode = firstChild;
@@ -3564,7 +3546,7 @@ var codex =
 	
 	        if (caretInFirstChild && caretAtTheBeginning) {
 	
-	            codex.caret.setToPreviousBlock(editableElementIndex);
+	            editor.caret.setToPreviousBlock(editableElementIndex);
 	        }
 	    };
 	
@@ -3573,32 +3555,32 @@ var codex =
 	     */
 	    callbacks.enterPressedOnBlock = function (event) {
 	
-	        var NEW_BLOCK_TYPE = codex.settings.initialBlockPlugin;
+	        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
 	
-	        codex.content.insertBlock({
+	        editor.content.insertBlock({
 	            type: NEW_BLOCK_TYPE,
-	            block: codex.tools[NEW_BLOCK_TYPE].render()
+	            block: editor.tools[NEW_BLOCK_TYPE].render()
 	        }, true);
 	
-	        codex.toolbar.move();
-	        codex.toolbar.open();
+	        editor.toolbar.move();
+	        editor.toolbar.open();
 	    };
 	
 	    callbacks.backspacePressed = function (block) {
 	
-	        var currentInputIndex = codex.caret.getCurrentInputIndex(),
+	        var currentInputIndex = editor.caret.getCurrentInputIndex(),
 	            range,
 	            selectionLength,
 	            firstLevelBlocksCount;
 	
 	        if (block.textContent.trim()) {
 	
-	            range = codex.content.getRange();
+	            range = editor.content.getRange();
 	            selectionLength = range.endOffset - range.startOffset;
 	
-	            if (codex.caret.position.atStart() && !selectionLength && codex.state.inputs[currentInputIndex - 1]) {
+	            if (editor.caret.position.atStart() && !selectionLength && editor.state.inputs[currentInputIndex - 1]) {
 	
-	                codex.content.mergeBlocks(currentInputIndex);
+	                editor.content.mergeBlocks(currentInputIndex);
 	            } else {
 	
 	                return;
@@ -3609,7 +3591,7 @@ var codex =
 	            block.remove();
 	        }
 	
-	        firstLevelBlocksCount = codex.nodes.redactor.childNodes.length;
+	        firstLevelBlocksCount = editor.nodes.redactor.childNodes.length;
 	
 	        /**
 	         * If all blocks are removed
@@ -3617,40 +3599,40 @@ var codex =
 	        if (firstLevelBlocksCount === 0) {
 	
 	            /** update currentNode variable */
-	            codex.content.currentNode = null;
+	            editor.content.currentNode = null;
 	
 	            /** Inserting new empty initial block */
-	            codex.ui.addInitialBlock();
+	            editor.ui.addInitialBlock();
 	
 	            /** Updating inputs state after deleting last block */
-	            codex.ui.saveInputs();
+	            editor.ui.saveInputs();
 	
 	            /** Set to current appended block */
 	            setTimeout(function () {
 	
-	                codex.caret.setToPreviousBlock(1);
+	                editor.caret.setToPreviousBlock(1);
 	            }, 10);
 	        } else {
 	
-	            if (codex.caret.inputIndex !== 0) {
+	            if (editor.caret.inputIndex !== 0) {
 	
 	                /** Target block is not first */
-	                codex.caret.setToPreviousBlock(codex.caret.inputIndex);
+	                editor.caret.setToPreviousBlock(editor.caret.inputIndex);
 	            } else {
 	
 	                /** If we try to delete first block */
-	                codex.caret.setToNextBlock(codex.caret.inputIndex);
+	                editor.caret.setToNextBlock(editor.caret.inputIndex);
 	            }
 	        }
 	
-	        codex.toolbar.move();
+	        editor.toolbar.move();
 	
-	        if (!codex.toolbar.opened) {
-	            codex.toolbar.open();
+	        if (!editor.toolbar.opened) {
+	            editor.toolbar.open();
 	        }
 	
 	        /** Updating inputs state */
-	        codex.ui.saveInputs();
+	        editor.ui.saveInputs();
 	
 	        /** Prevent default browser behaviour */
 	        event.preventDefault();
@@ -3663,12 +3645,12 @@ var codex =
 	     */
 	    callbacks.blockPaste = function (event) {
 	
-	        var currentInputIndex = codex.caret.getCurrentInputIndex(),
-	            node = codex.state.inputs[currentInputIndex];
+	        var currentInputIndex = editor.caret.getCurrentInputIndex(),
+	            node = editor.state.inputs[currentInputIndex];
 	
 	        setTimeout(function () {
 	
-	            codex.content.sanitize(node);
+	            editor.content.sanitize(node);
 	
 	            event.preventDefault();
 	        }, 10);
@@ -3691,12 +3673,12 @@ var codex =
 	     */
 	    callbacks._blockPasteCallback = function (event) {
 	
-	        var currentInputIndex = codex.caret.getCurrentInputIndex();
+	        var currentInputIndex = editor.caret.getCurrentInputIndex();
 	
 	        /**
 	         * create an observer instance
 	         */
-	        var observer = new MutationObserver(codex.callback.handleMutationsOnPaste);
+	        var observer = new MutationObserver(editor.callback.handleMutationsOnPaste);
 	
 	        /**
 	         * configuration of the observer:
@@ -3709,7 +3691,7 @@ var codex =
 	        };
 	
 	        // pass in the target node, as well as the observer options
-	        observer.observe(codex.state.inputs[currentInputIndex], config);
+	        observer.observe(editor.state.inputs[currentInputIndex], config);
 	    };
 	
 	    /**
@@ -3730,8 +3712,8 @@ var codex =
 	        var data = event.clipboardData.getData('text/html') || event.clipboardData.getData('text/plain');
 	
 	        /** Temporary DIV that is used to work with childs as arrays item */
-	        var div = codex.draw.node('DIV', '', {}),
-	            cleaner = new codex.sanitizer.init(codex.sanitizer.Config.BASIC),
+	        var div = editor.draw.node('DIV', '', {}),
+	            cleaner = new editor.sanitizer.init(editor.sanitizer.Config.BASIC),
 	            cleanData,
 	            fragment;
 	
@@ -3788,7 +3770,7 @@ var codex =
 	         * observer disconnect method.
 	         */
 	        mutations.forEach(function (mutation) {
-	            codex.content.paste.call(self, mutation);
+	            editor.content.paste.call(self, mutation);
 	        });
 	    };
 	
@@ -3803,13 +3785,13 @@ var codex =
 	         * ...
 	         * Type is stored in data-type attribute on block
 	         */
-	        var currentToolType = codex.content.currentNode.dataset.tool;
+	        var currentToolType = editor.content.currentNode.dataset.tool;
 	
-	        codex.toolbar.settings.toggle(currentToolType);
+	        editor.toolbar.settings.toggle(currentToolType);
 	
 	        /** Close toolbox when settings button is active */
-	        codex.toolbar.toolbox.close();
-	        codex.toolbar.settings.hideRemoveActions();
+	        editor.toolbar.toolbox.close();
+	        editor.toolbar.settings.hideRemoveActions();
 	    };
 	
 	    return callbacks;
@@ -3818,7 +3800,7 @@ var codex =
 	module.exports = callbacks;
 
 /***/ },
-/* 14 */
+/* 13 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4125,7 +4107,7 @@ var codex =
 	module.exports = draw;
 
 /***/ },
-/* 15 */
+/* 14 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4136,6 +4118,7 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
+	var editor = codex.editor;
 	
 	var caret = function (caret) {
 	
@@ -4182,9 +4165,9 @@ var codex =
 	            return;
 	        }
 	
-	        if (codex.core.isDomNode(nodeToSet)) {
+	        if (editor.core.isDomNode(nodeToSet)) {
 	
-	            nodeToSet = codex.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
+	            nodeToSet = editor.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
 	        }
 	
 	        var range = document.createRange(),
@@ -4198,7 +4181,7 @@ var codex =
 	            selection.removeAllRanges();
 	            selection.addRange(range);
 	
-	            codex.caret.saveCurrentInputIndex();
+	            editor.caret.saveCurrentInputIndex();
 	        }, 20);
 	    };
 	
@@ -4210,7 +4193,7 @@ var codex =
 	
 	        /** Index of Input that we paste sanitized content */
 	        var selection = window.getSelection(),
-	            inputs = codex.state.inputs,
+	            inputs = editor.state.inputs,
 	            focusedNode = selection.anchorNode,
 	            focusedNodeHolder;
 	
@@ -4246,11 +4229,11 @@ var codex =
 	     */
 	    caret.setToNextBlock = function (index) {
 	
-	        var inputs = codex.state.inputs,
+	        var inputs = editor.state.inputs,
 	            nextInput = inputs[index + 1];
 	
 	        if (!nextInput) {
-	            codex.core.log('We are reached the end');
+	            editor.core.log('We are reached the end');
 	            return;
 	        }
 	
@@ -4263,9 +4246,9 @@ var codex =
 	            nextInput.appendChild(emptyTextElement);
 	        }
 	
-	        codex.caret.inputIndex = index + 1;
-	        codex.caret.set(nextInput, 0, 0);
-	        codex.content.workingNodeChanged(nextInput);
+	        editor.caret.inputIndex = index + 1;
+	        editor.caret.set(nextInput, 0, 0);
+	        editor.content.workingNodeChanged(nextInput);
 	    };
 	
 	    /**
@@ -4274,7 +4257,7 @@ var codex =
 	     */
 	    caret.setToBlock = function (index) {
 	
-	        var inputs = codex.state.inputs,
+	        var inputs = editor.state.inputs,
 	            targetInput = inputs[index];
 	
 	        console.assert(targetInput, 'caret.setToBlock: target input does not exists');
@@ -4292,9 +4275,9 @@ var codex =
 	            targetInput.appendChild(emptyTextElement);
 	        }
 	
-	        codex.caret.inputIndex = index;
-	        codex.caret.set(targetInput, 0, 0);
-	        codex.content.workingNodeChanged(targetInput);
+	        editor.caret.inputIndex = index;
+	        editor.caret.set(targetInput, 0, 0);
+	        editor.content.workingNodeChanged(targetInput);
 	    };
 	
 	    /**
@@ -4304,18 +4287,18 @@ var codex =
 	
 	        index = index || 0;
 	
-	        var inputs = codex.state.inputs,
+	        var inputs = editor.state.inputs,
 	            previousInput = inputs[index - 1],
 	            lastChildNode,
 	            lengthOfLastChildNode,
 	            emptyTextElement;
 	
 	        if (!previousInput) {
-	            codex.core.log('We are reached first node');
+	            editor.core.log('We are reached first node');
 	            return;
 	        }
 	
-	        lastChildNode = codex.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
+	        lastChildNode = editor.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
 	        lengthOfLastChildNode = lastChildNode.length;
 	
 	        /**
@@ -4327,9 +4310,9 @@ var codex =
 	            emptyTextElement = document.createTextNode('');
 	            previousInput.appendChild(emptyTextElement);
 	        }
-	        codex.caret.inputIndex = index - 1;
-	        codex.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
-	        codex.content.workingNodeChanged(inputs[index - 1]);
+	        editor.caret.inputIndex = index - 1;
+	        editor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
+	        editor.content.workingNodeChanged(inputs[index - 1]);
 	    };
 	
 	    caret.position = {
@@ -4339,10 +4322,10 @@ var codex =
 	            var selection = window.getSelection(),
 	                anchorOffset = selection.anchorOffset,
 	                anchorNode = selection.anchorNode,
-	                firstLevelBlock = codex.content.getFirstLevelBlock(anchorNode),
+	                firstLevelBlock = editor.content.getFirstLevelBlock(anchorNode),
 	                pluginsRender = firstLevelBlock.childNodes[0];
 	
-	            if (!codex.core.isDomNode(anchorNode)) {
+	            if (!editor.core.isDomNode(anchorNode)) {
 	                anchorNode = anchorNode.parentNode;
 	            }
 	
@@ -4369,7 +4352,7 @@ var codex =
 	module.exports = caret;
 
 /***/ },
-/* 16 */
+/* 15 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4380,6 +4363,7 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
+	var editor = codex.editor;
 	
 	var notifications = function (notifications) {
 	
@@ -4389,7 +4373,7 @@ var codex =
 	     */
 	    notifications.errorThrown = function (errorMsg, event) {
 	
-	        codex.notifications.send('This action is not available currently', event.type, false);
+	        editor.notifications.send('This action is not available currently', event.type, false);
 	    };
 	
 	    /**
@@ -4400,16 +4384,16 @@ var codex =
 	     */
 	    notifications.send = function (message, type, append) {
 	
-	        var notification = codex.draw.block('div');
+	        var notification = editor.draw.block('div');
 	
 	        notification.textContent = message;
 	        notification.classList.add('ce_notification-item', 'ce_notification-' + type, 'flipInX');
 	
 	        if (!append) {
-	            codex.nodes.notifications.innerHTML = '';
+	            editor.nodes.notifications.innerHTML = '';
 	        }
 	
-	        codex.nodes.notifications.appendChild(notification);
+	        editor.nodes.notifications.appendChild(notification);
 	
 	        setTimeout(function () {
 	            notification.remove();
@@ -4422,7 +4406,7 @@ var codex =
 	module.exports = notifications;
 
 /***/ },
-/* 17 */
+/* 16 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -4433,13 +4417,14 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.1
 	 */
+	var editor = codex.editor;
 	
 	var parser = function (parser) {
 	
 	    /** inserting text */
 	    parser.insertPastedContent = function (blockType, tag) {
 	
-	        codex.content.insertBlock({
+	        editor.content.insertBlock({
 	            type: blockType.type,
 	            block: blockType.render({
 	                text: tag.innerHTML
@@ -4461,7 +4446,7 @@ var codex =
 	module.exports = parser;
 
 /***/ },
-/* 18 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4470,7 +4455,7 @@ var codex =
 	 * Codex Sanitizer
 	 */
 	
-	var janitor = __webpack_require__(19);
+	var janitor = __webpack_require__(18);
 	
 	var sanitizer = function (sanitizer) {
 	
@@ -4507,7 +4492,7 @@ var codex =
 	module.exports = sanitizer;
 
 /***/ },
-/* 19 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {

@@ -6,7 +6,9 @@
  * @author Codex Team
  * @version 1.0
  */
- 
+
+let editor = codex.editor;
+
 var toolbox = (function(toolbox) {
 
     toolbox.init = function () {
@@ -21,20 +23,20 @@ var toolbox = (function(toolbox) {
     toolbox.open = function() {
 
         /** Close setting if toolbox is opened */
-        if (codex.toolbar.settings.opened) {
+        if (editor.toolbar.settings.opened) {
 
-            codex.toolbar.settings.close();
+            editor.toolbar.settings.close();
 
         }
 
         /** display toolbox */
-        codex.nodes.toolbox.classList.add('opened');
+        editor.nodes.toolbox.classList.add('opened');
 
         /** Animate plus button */
-        codex.nodes.plusButton.classList.add('clicked');
+        editor.nodes.plusButton.classList.add('clicked');
 
         /** toolbox state */
-        codex.toolbar.toolbox.opened = true;
+        editor.toolbar.toolbox.opened = true;
 
     };
 
@@ -42,29 +44,29 @@ var toolbox = (function(toolbox) {
     toolbox.close = function() {
 
         /** Makes toolbox disapear */
-        codex.nodes.toolbox.classList.remove('opened');
+        editor.nodes.toolbox.classList.remove('opened');
 
         /** Rotate plus button */
-        codex.nodes.plusButton.classList.remove('clicked');
+        editor.nodes.plusButton.classList.remove('clicked');
 
         /** toolbox state */
-        codex.toolbar.toolbox.opened = false;
+        editor.toolbar.toolbox.opened = false;
 
     };
 
     toolbox.leaf = function(){
 
-        var currentTool = codex.toolbar.current,
-            tools       = Object.keys(codex.tools),
-            barButtons  = codex.nodes.toolbarButtons,
+        var currentTool = editor.toolbar.current,
+            tools       = Object.keys(editor.tools),
+            barButtons  = editor.nodes.toolbarButtons,
             nextToolIndex,
             hiddenToolsAmount = 0,
             toolToSelect;
 
         /** Count toolbox hidden tools */
-        for( var tool in codex.tools ) {
+        for( var tool in editor.tools ) {
 
-            if (!codex.tools[tool].displayInToolbox) {
+            if (!editor.tools[tool].displayInToolbox) {
 
                 hiddenToolsAmount ++;
 
@@ -89,9 +91,9 @@ var toolbox = (function(toolbox) {
                 nextToolIndex = 0;
 
                 /** getting first displayed tool */
-                for( var tool in codex.tools ) {
+                for( var tool in editor.tools ) {
 
-                    if (codex.tools[tool].displayInToolbox){
+                    if (editor.tools[tool].displayInToolbox){
 
                         break;
 
@@ -108,7 +110,7 @@ var toolbox = (function(toolbox) {
 
         for (var button in barButtons) barButtons[button].classList.remove('selected');
         barButtons[toolToSelect].classList.add('selected');
-        codex.toolbar.current = toolToSelect;
+        editor.toolbar.current = toolToSelect;
 
     };
 
@@ -122,9 +124,9 @@ var toolbox = (function(toolbox) {
          * UNREPLACEBLE_TOOLS this types of tools are forbidden to replace even they are empty
          */
         var UNREPLACEBLE_TOOLS = ['image', 'link', 'list', 'instagram', 'twitter', 'embed'],
-            tool               = codex.tools[codex.toolbar.current],
-            workingNode        = codex.content.currentNode,
-            currentInputIndex  = codex.caret.inputIndex,
+            tool               = editor.tools[editor.toolbar.current],
+            workingNode        = editor.content.currentNode,
+            currentInputIndex  = editor.caret.inputIndex,
             newBlockContent,
             appendCallback,
             blockData;
@@ -146,12 +148,12 @@ var toolbox = (function(toolbox) {
         ){
 
             /** Replace current block */
-            codex.content.switchBlock(workingNode, newBlockContent, tool.type);
+            editor.content.switchBlock(workingNode, newBlockContent, tool.type);
 
         } else {
 
             /** Insert new Block from plugin */
-            codex.content.insertBlock(blockData);
+            editor.content.insertBlock(blockData);
 
             /** increase input index */
             currentInputIndex++;
@@ -170,7 +172,7 @@ var toolbox = (function(toolbox) {
         setTimeout(function() {
 
             /** Set caret to current block */
-            codex.caret.setToBlock(currentInputIndex);
+            editor.caret.setToBlock(currentInputIndex);
 
         }, 10);
 
@@ -178,12 +180,12 @@ var toolbox = (function(toolbox) {
         /**
          * Changing current Node
          */
-        codex.content.workingNodeChanged();
+        editor.content.workingNodeChanged();
 
         /**
          * Move toolbar when node is changed
          */
-        codex.toolbar.move();
+        editor.toolbar.move();
     };
 
     return toolbox;

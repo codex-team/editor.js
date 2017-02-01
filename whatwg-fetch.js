@@ -1,4 +1,4 @@
-var codex =
+var codex = codex || {}; codex["editor"] =
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
