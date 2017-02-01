@@ -6,7 +6,7 @@
  */
 let editor = codex.editor;
 
-var parser = (function (parser) {
+module.exports = (function (parser) {
 
     /** inserting text */
     parser.insertPastedContent = function (blockType, tag) {
@@ -25,13 +25,11 @@ var parser = (function (parser) {
      */
     parser.isFirstLevelBlock = function (node) {
 
-        return node.nodeType == cEditor.core.nodeTypes.TAG &&
-            node.classList.contains(cEditor.ui.className.BLOCK_CLASSNAME);
+        return node.nodeType == editor.core.nodeTypes.TAG &&
+            node.classList.contains(editor.ui.className.BLOCK_CLASSNAME);
 
     };
 
     return parser;
 
 })({});
-
-module.exports = parser;

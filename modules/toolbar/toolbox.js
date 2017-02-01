@@ -9,13 +9,7 @@
 
 let editor = codex.editor;
 
-var toolbox = (function (toolbox) {
-
-    toolbox.init = function () {
-
-        require('./toolbar');
-
-    };
+module.exports = (function (toolbox) {
 
     toolbox.opened = false;
 
@@ -56,15 +50,16 @@ var toolbox = (function (toolbox) {
 
     toolbox.leaf = function () {
 
-        var currentTool = editor.toolbar.current,
+        let currentTool = editor.toolbar.current,
             tools       = Object.keys(editor.tools),
             barButtons  = editor.nodes.toolbarButtons,
             nextToolIndex,
             hiddenToolsAmount = 0,
-            toolToSelect;
+            toolToSelect,
+            tool;
 
         /** Count toolbox hidden tools */
-        for( var tool in editor.tools ) {
+        for( tool in editor.tools ) {
 
             if (!editor.tools[tool].displayInToolbox) {
 
@@ -91,7 +86,7 @@ var toolbox = (function (toolbox) {
                 nextToolIndex = 0;
 
                 /** getting first displayed tool */
-                for( var tool in editor.tools ) {
+                for( tool in editor.tools ) {
 
                     if (editor.tools[tool].displayInToolbox) {
 
@@ -119,7 +114,7 @@ var toolbox = (function (toolbox) {
      * Transforming selected node type into selected toolbar element type
      * @param {event} event
      */
-    toolbox.toolClicked = function () {
+    toolbox.toolClicked = function (event) {
 
         /**
          * UNREPLACEBLE_TOOLS this types of tools are forbidden to replace even they are empty
@@ -170,7 +165,7 @@ var toolbox = (function (toolbox) {
 
         }
 
-        setTimeout(function () {
+        window.setTimeout(function () {
 
             /** Set caret to current block */
             editor.caret.setToBlock(currentInputIndex);
@@ -193,7 +188,3 @@ var toolbox = (function (toolbox) {
     return toolbox;
 
 })({});
-
-toolbox.init();
-
-module.exports = toolbox;

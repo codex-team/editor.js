@@ -7,7 +7,7 @@
 
 let editor = codex.editor;
 
-var core = (function (core) {
+module.exports = (function (core) {
 
     /**
      * @public
@@ -80,10 +80,10 @@ var core = (function (core) {
 
         try{
 
-            if ( 'console' in window && console[ type ] ) {
+            if ( 'console' in window && window.console[ type ] ) {
 
-                if ( arg ) console[ type ]( msg, arg );
-                else console[ type ]( msg );
+                if ( arg ) window.console[ type ]( msg, arg );
+                else window.console[ type ]( msg );
 
             }
 
@@ -142,7 +142,7 @@ var core = (function (core) {
         }
 
         var XMLHTTP          = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
-            success_function = function () {},
+            successFunction = function () {},
             params = '',
             obj;
 
@@ -150,7 +150,7 @@ var core = (function (core) {
         data.type            = data.type || 'GET';
         data.data            = data.data || '';
         data['content-type'] = data['content-type'] || 'application/json; charset=utf-8';
-        success_function     = data.success || success_function ;
+        successFunction     = data.success || successFunction ;
 
         if (data.type == 'GET' && data.data) {
 
@@ -186,7 +186,7 @@ var core = (function (core) {
 
             if (XMLHTTP.readyState == 4 && XMLHTTP.status == 200) {
 
-                success_function(XMLHTTP.responseText);
+                successFunction(XMLHTTP.responseText);
 
             }
 
@@ -246,7 +246,3 @@ var core = (function (core) {
     return core;
 
 })({});
-
-module.exports = core;
-
-

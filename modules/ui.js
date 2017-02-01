@@ -7,7 +7,7 @@
 
 let editor = codex.editor;
 
-var ui = (function (ui) {
+module.exports = (function (ui) {
 
     /**
      * Basic editor classnames
@@ -58,7 +58,6 @@ var ui = (function (ui) {
             toolbarContent,
             inlineToolbar,
             redactor,
-            ceBlock,
             notifications,
             blockButtons,
             blockSettings,
@@ -300,7 +299,7 @@ var ui = (function (ui) {
          *  @deprecated ( but now in use for syncronization );
          *  Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text
          */
-        editor.nodes.redactor.addEventListener('input', editor.callback.redactorInputEvent, false );
+        // editor.nodes.redactor.addEventListener('input', editor.callback.redactorInputEvent, false );
 
         /** Bind click listeners on toolbar buttons */
         for (var button in editor.nodes.toolbarButtons) {
@@ -356,11 +355,7 @@ var ui = (function (ui) {
         /**
          * Block keydowns
          */
-        block.addEventListener('keydown', function (event) {
-
-            editor.callback.blockKeydown(event, block);
-
-        }, false);
+        block.addEventListener('keydown', editor.callback.blockKeydown, false);
 
         /**
          * Pasting content from another source
@@ -383,19 +378,14 @@ var ui = (function (ui) {
          */
         block.addEventListener('paste', editor.callback.blockPasteCallback, false);
 
-        block.addEventListener('mouseup', function () {
-
-            editor.toolbar.inline.show();
-
-        }, false);
+        block.addEventListener('mouseup', editor.toolbar.inline.show, false);
 
     };
 
     /** getting all contenteditable elements */
     ui.saveInputs = function () {
 
-        var redactor = editor.nodes.redactor,
-            elements = [];
+        var redactor = editor.nodes.redactor;
 
         /** Save all inputs in global variable state */
         editor.state.inputs = redactor.querySelectorAll('[contenteditable], input');
@@ -443,5 +433,3 @@ var ui = (function (ui) {
     return ui;
 
 })({});
-
-module.exports = ui;

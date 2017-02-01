@@ -6,7 +6,7 @@
  */
 let editor = codex.editor;
 
-var notifications = (function (notifications) {
+module.exports = (function (notifications) {
 
     /**
      * Error notificator. Shows block with message
@@ -39,7 +39,7 @@ var notifications = (function (notifications) {
 
         editor.nodes.notifications.appendChild(notification);
 
-        setTimeout(function () {
+        window.setTimeout(function () {
 
             notification.remove();
 
@@ -50,5 +50,3 @@ var notifications = (function (notifications) {
     return notifications;
 
 })({});
-
-module.exports = notifications;

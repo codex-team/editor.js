@@ -4,7 +4,7 @@
 
 var janitor = require('html-janitor');
 
-var sanitizer = (function (sanitizer) {
+module.exports = (function (sanitizer) {
 
     /**
      * Basic config
@@ -36,7 +36,3 @@ var sanitizer = (function (sanitizer) {
     return sanitizer;
 
 })({});
-
-module.exports = sanitizer;
-
-

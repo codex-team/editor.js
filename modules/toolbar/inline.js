@@ -42,8 +42,7 @@ module.exports = (function (inline) {
             return;
 
         var selectedText = this.getSelectionText(),
-            toolbar      = editor.nodes.inlineToolbar.wrapper,
-            buttons      = editor.nodes.inlineToolbar.buttons;
+            toolbar      = editor.nodes.inlineToolbar.wrapper;
 
         if (selectedText.length > 0) {
 
@@ -293,20 +292,44 @@ module.exports = (function (inline) {
 
     };
 
+
+    /**
+    * Callback for keydowns in inline toolbar "Insert link..." input
+    */
+    let inlineToolbarAnchorInputKeydown_ = function (event) {
+
+        if (event.keyCode != editor.core.keys.ENTER) {
+
+            return;
+
+        }
+
+        let editable        = editor.content.currentNode,
+            storedSelection = editor.toolbar.inline.storedSelection;
+
+        editor.toolbar.inline.restoreSelection(editable, storedSelection);
+        editor.toolbar.inline.setAnchor(this.value);
+
+        /**
+         * Preventing events that will be able to happen
+         */
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        editor.toolbar.inline.clearRange();
+
+    };
+
     /** Action for link creation or for setting anchor */
-    inline.createLinkAction = function (event, type) {
+    inline.createLinkAction = function (event) {
 
         var isActive = this.isLinkActive();
 
         var editable        = editor.content.currentNode,
-            storedSelection = editor.toolbar.inline.storedSelection;
+            storedSelection = editor.toolbar.inline.saveSelection(editable);
 
         if (isActive) {
 
-            var selection   = window.getSelection(),
-                anchorNode  = selection.anchorNode;
-
-            storedSelection = editor.toolbar.inline.saveSelection(editable);
 
             /**
              * Changing stored selection. if we want to remove anchor from word
@@ -328,8 +351,6 @@ module.exports = (function (inline) {
             editor.toolbar.inline.closeButtons();
             editor.toolbar.inline.showActions();
 
-            storedSelection = editor.toolbar.inline.saveSelection(editable);
-
             /**
              * focus to input
              * Solution: https://developer.mozilla.org/ru/docs/Web/API/HTMLElement/focus
@@ -339,24 +360,7 @@ module.exports = (function (inline) {
             event.preventDefault();
 
             /** Callback to link action */
-            action.addEventListener('keydown', function (event) {
-
-                if (event.keyCode == editor.core.keys.ENTER) {
-
-                    editor.toolbar.inline.restoreSelection(editable, storedSelection);
-                    editor.toolbar.inline.setAnchor(action.value);
-
-                    /**
-                     * Preventing events that will be able to happen
-                     */
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-
-                    editor.toolbar.inline.clearRange();
-
-                }
-
-            }, false);
+            action.addEventListener('keydown', inlineToolbarAnchorInputKeydown_, false);
 
         }
 

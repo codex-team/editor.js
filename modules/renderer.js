@@ -7,7 +7,7 @@
 
 let editor = codex.editor;
 
-var renderer = (function (renderer) {
+module.exports = (function (renderer) {
 
     /**
      * Asyncronously parses input JSON to redactor blocks
@@ -182,5 +182,3 @@ var renderer = (function (renderer) {
     return renderer;
 
 })({});
-
-module.exports = renderer;

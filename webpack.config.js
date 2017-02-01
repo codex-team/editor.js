@@ -55,10 +55,19 @@ module.exports = {
     },
 
     plugins: [
+
+        /** Pass variables into modules */
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV),
             VERSION: JSON.stringify(VERSION)
-        })
+        }),
+
+        /** Минифицируем CSS и JS */
+        new webpack.optimize.UglifyJsPlugin(),
+
+        /** Block biuld if errors found */
+        new webpack.NoErrorsPlugin(),
+
     ],
 
     module : {

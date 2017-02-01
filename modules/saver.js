@@ -7,7 +7,7 @@
 
 let editor = codex.editor;
 
-var saver = (function (saver) {
+module.exports = (function (saver) {
 
     /**
      * Saves blocks
@@ -37,7 +37,7 @@ var saver = (function (saver) {
 
             .catch( function (error) {
 
-                console.log('Something happend');
+                editor.core.log(error);
 
             });
 
@@ -136,5 +136,3 @@ var saver = (function (saver) {
     return saver;
 
 })({});
-
-module.exports = saver;

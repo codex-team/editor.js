@@ -6,7 +6,7 @@
  */
 let editor = codex.editor;
 
-var caret = (function (caret) {
+module.exports = (function (caret) {
 
     /**
      * @var {int} InputIndex - editable element in DOM
@@ -64,7 +64,7 @@ var caret = (function (caret) {
         var range     = document.createRange(),
             selection = window.getSelection();
 
-        setTimeout(function () {
+        window.setTimeout(function () {
 
             range.setStart(nodeToSet, offset);
             range.setEnd(nodeToSet, offset);
@@ -168,7 +168,7 @@ var caret = (function (caret) {
         var inputs = editor.state.inputs,
             targetInput = inputs[index];
 
-        console.assert( targetInput, 'caret.setToBlock: target input does not exists');
+        window.console.assert( targetInput, 'caret.setToBlock: target input does not exists');
 
         if ( !targetInput ) {
 
@@ -272,5 +272,3 @@ var caret = (function (caret) {
     return caret;
 
 })({});
-
-module.exports = caret;

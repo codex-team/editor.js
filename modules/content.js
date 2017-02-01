@@ -7,7 +7,7 @@
  */
 let editor = codex.editor;
 
-var content = (function (content) {
+module.exports = (function (content) {
 
     /**
      * Links to current active block
@@ -168,7 +168,7 @@ var content = (function (content) {
      * [!] Function does not saves old block content.
      *     You can get it manually and pass with newBlock.innerHTML
      */
-    content.replaceBlock = function function_name(targetBlock, newBlock) {
+    content.replaceBlock = function (targetBlock, newBlock) {
 
         if (!targetBlock || !newBlock) {
 
@@ -298,7 +298,7 @@ var content = (function (content) {
                     return;
 
                 /** Timeout for browsers execution */
-                setTimeout(function () {
+                window.setTimeout(function () {
 
                     /** Setting to the new input */
                     editor.caret.setToNextBlock(currentInputIndex);
@@ -391,12 +391,12 @@ var content = (function (content) {
         if ( position < 0 )
             position = 1;
 
-        var looking_from_start = false;
+        var lookingFromStart = false;
 
         /** For looking from START */
         if (position === 0) {
 
-            looking_from_start = true;
+            lookingFromStart = true;
             position = 1;
 
         }
@@ -404,7 +404,7 @@ var content = (function (content) {
         while ( position ) {
 
             /** initial verticle of node. */
-            if ( looking_from_start ) {
+            if ( lookingFromStart ) {
 
                 block = block.childNodes[0];
 
@@ -851,5 +851,3 @@ var content = (function (content) {
     return content;
 
 })({});
-
-module.exports = content;

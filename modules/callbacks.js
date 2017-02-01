@@ -6,9 +6,7 @@
  */
 let editor = codex.editor;
 
-var callbacks = (function (callbacks) {
-
-    callbacks.redactorSyncTimeout = null;
+module.exports = (function (callbacks) {
 
     callbacks.globalKeydown = function (event) {
 
@@ -62,7 +60,10 @@ var callbacks = (function (callbacks) {
 
     };
 
-    callbacks.enterKeyPressed = function (event) {
+    /**
+    * @param {Event} event
+    */
+    callbacks.enterKeyPressed = function () {
 
         if (editor.content.editorAreaHightlighted) {
 
@@ -137,8 +138,7 @@ var callbacks = (function (callbacks) {
 
         }
 
-        var isLastTextNode = false,
-            currentSelection = window.getSelection(),
+        var currentSelection = window.getSelection(),
             currentSelectedNode = currentSelection.anchorNode,
             caretAtTheEndOfText = editor.caret.position.atTheEnd(),
             isTextNodeHasParentBetweenContenteditable = false;
@@ -227,7 +227,10 @@ var callbacks = (function (callbacks) {
 
     };
 
-    callbacks.arrowKeyPressed = function (event) {
+    /**
+    * @param {Event} event
+    */
+    callbacks.arrowKeyPressed = function () {
 
         editor.content.workingNodeChanged();
 
@@ -237,7 +240,10 @@ var callbacks = (function (callbacks) {
 
     };
 
-    callbacks.defaultKeyPressed = function (event) {
+    /**
+    * @param {Event} event
+    */
+    callbacks.defaultKeyPressed = function () {
 
         editor.toolbar.close();
 
@@ -258,7 +264,8 @@ var callbacks = (function (callbacks) {
 
         editor.ui.saveInputs();
 
-        var selectedText = editor.toolbar.inline.getSelectionText();
+        var selectedText = editor.toolbar.inline.getSelectionText(),
+            firstLevelBlock;
 
         /**
          * If selection range took off, then we hide inline toolbar
@@ -286,8 +293,12 @@ var callbacks = (function (callbacks) {
             /** If we have any inputs */
             if (editor.state.inputs.length) {
 
+                /**
+                * @todo Refactor
+                */
+
                 /** getting firstlevel parent of input */
-                var firstLevelBlock  = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
+                firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
 
             }
 
@@ -324,8 +335,6 @@ var callbacks = (function (callbacks) {
              * Move toolbar to the right position and open
              */
             editor.toolbar.move();
-
-
             editor.toolbar.open();
 
         } else {
@@ -334,7 +343,6 @@ var callbacks = (function (callbacks) {
              * Move toolbar to the new position and open
              */
             editor.toolbar.move();
-
             editor.toolbar.open();
 
             /** Close all panels */
@@ -379,7 +387,7 @@ var callbacks = (function (callbacks) {
             anchorNode = selection.anchorNode,
             flag = false;
 
-        if (selection.rangeCount == 0) {
+        if (selection.rangeCount === 0) {
 
             editor.content.editorAreaHightlighted = true;
 
@@ -438,28 +446,6 @@ var callbacks = (function (callbacks) {
 
     };
 
-    callbacks.redactorInputEvent = function (event) {
-
-        /**
-         * Clear previous sync-timeout
-         */
-        if (this.redactorSyncTimeout) {
-
-            clearTimeout(this.redactorSyncTimeout);
-
-        }
-
-        /**
-         * Start waiting to input finish and sync redactor
-         */
-        this.redactorSyncTimeout = setTimeout(function () {
-
-            editor.content.sync();
-
-        }, 500);
-
-    };
-
     /** Show or Hide toolbox when plus button is clicked */
     callbacks.plusButtonClicked = function () {
 
@@ -478,22 +464,24 @@ var callbacks = (function (callbacks) {
     /**
      * Block handlers for KeyDown events
      */
-    callbacks.blockKeydown = function (event, block) {
+    callbacks.blockKeydown = function (event) {
+
+        let block = this; // event.target input
 
         switch (event.keyCode) {
 
             case editor.core.keys.DOWN:
             case editor.core.keys.RIGHT:
-                editor.callback.blockRightOrDownArrowPressed(block);
+                editor.callback.blockRightOrDownArrowPressed();
                 break;
 
             case editor.core.keys.BACKSPACE:
-                editor.callback.backspacePressed(block);
+                editor.callback.backspacePressed(block, event);
                 break;
 
             case editor.core.keys.UP:
             case editor.core.keys.LEFT:
-                editor.callback.blockLeftOrUpArrowPressed(block);
+                editor.callback.blockLeftOrUpArrowPressed();
                 break;
 
         }
@@ -503,7 +491,7 @@ var callbacks = (function (callbacks) {
     /**
      * RIGHT or DOWN keydowns on block
      */
-    callbacks.blockRightOrDownArrowPressed = function (block) {
+    callbacks.blockRightOrDownArrowPressed = function () {
 
         var selection   = window.getSelection(),
             inputs      = editor.state.inputs,
@@ -583,7 +571,7 @@ var callbacks = (function (callbacks) {
     /**
      * LEFT or UP keydowns on block
      */
-    callbacks.blockLeftOrUpArrowPressed = function (block) {
+    callbacks.blockLeftOrUpArrowPressed = function () {
 
         var selection   = window.getSelection(),
             inputs      = editor.state.inputs,
@@ -668,8 +656,9 @@ var callbacks = (function (callbacks) {
 
     /**
      * Callback for enter key pressing in first-level block area
+     * @param {Event} event
      */
-    callbacks.enterPressedOnBlock = function (event) {
+    callbacks.enterPressedOnBlock = function () {
 
         var NEW_BLOCK_TYPE  = editor.settings.initialBlockPlugin;
 
@@ -683,7 +672,7 @@ var callbacks = (function (callbacks) {
 
     };
 
-    callbacks.backspacePressed = function (block) {
+    callbacks.backspacePressed = function (block, event) {
 
         var currentInputIndex = editor.caret.getCurrentInputIndex(),
             range,
@@ -694,7 +683,6 @@ var callbacks = (function (callbacks) {
 
             range           = editor.content.getRange();
             selectionLength = range.endOffset - range.startOffset;
-
 
             if (editor.caret.position.atStart() && !selectionLength && editor.state.inputs[currentInputIndex - 1]) {
 
@@ -732,7 +720,7 @@ var callbacks = (function (callbacks) {
             editor.ui.saveInputs();
 
             /** Set to current appended block */
-            setTimeout(function () {
+            window.setTimeout(function () {
 
                 editor.caret.setToPreviousBlock(1);
 
@@ -780,7 +768,7 @@ var callbacks = (function (callbacks) {
         var currentInputIndex = editor.caret.getCurrentInputIndex(),
             node = editor.state.inputs[currentInputIndex];
 
-        setTimeout(function () {
+        window.setTimeout(function () {
 
             editor.content.sanitize(node);
 
@@ -805,7 +793,7 @@ var callbacks = (function (callbacks) {
      * @param event
      * @private
      */
-    callbacks._blockPasteCallback = function (event) {
+    callbacks._blockPasteCallback = function () {
 
         var currentInputIndex = editor.caret.getCurrentInputIndex();
 
@@ -942,5 +930,3 @@ var callbacks = (function (callbacks) {
     return callbacks;
 
 })({});
-
-module.exports  = callbacks;

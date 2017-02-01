@@ -12,15 +12,11 @@
 
 let editor = codex.editor;
 
-var toolbar = (function (toolbar) {
+module.exports = (function (toolbar) {
 
-    toolbar.init = function () {
-
-        toolbar.settings = require('./settings');
-        toolbar.inline   = require('./inline');
-        toolbar.toolbox  = require('./toolbox');
-
-    };
+    toolbar.settings = require('./settings');
+    toolbar.inline   = require('./inline');
+    toolbar.toolbox  = require('./toolbox');
 
     /**
      * Margin between focused node and toolbar
@@ -105,8 +101,7 @@ var toolbar = (function (toolbar) {
 
         }
 
-        var toolbarHeight = editor.nodes.toolbar.clientHeight || editor.toolbar.defaultToolbarHeight,
-            newYCoordinate = editor.content.currentNode.offsetTop - (editor.toolbar.defaultToolbarHeight / 2) + editor.toolbar.defaultOffset;
+        var newYCoordinate = editor.content.currentNode.offsetTop - (editor.toolbar.defaultToolbarHeight / 2) + editor.toolbar.defaultOffset;
 
         editor.nodes.toolbar.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
 
@@ -118,8 +113,3 @@ var toolbar = (function (toolbar) {
     return toolbar;
 
 })({});
-
-toolbar.init();
-
-module.exports = toolbar;
-

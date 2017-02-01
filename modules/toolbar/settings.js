@@ -6,13 +6,7 @@
 
 let editor = codex.editor;
 
-var settings = (function (settings) {
-
-    settings.init = function () {
-
-        require('../content');
-
-    };
+module.exports = (function (settings) {
 
     settings.opened = false;
 
@@ -45,8 +39,6 @@ var settings = (function (settings) {
             editor.nodes.pluginSettings.appendChild(settingsBlock);
 
         }
-
-        var currentBlock = editor.content.currentNode;
 
         /** Open settings block */
         editor.nodes.blockSettings.classList.add('opened');
@@ -275,7 +267,3 @@ var settings = (function (settings) {
     return settings;
 
 })({});
-
-settings.init();
-
-module.exports = settings;

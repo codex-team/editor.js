@@ -7,7 +7,7 @@
  */
 let editor = codex.editor;
 
-var transport = (function (transport) {
+module.exports = (function (transport) {
 
     transport.input = null;
 
@@ -40,15 +40,13 @@ var transport = (function (transport) {
 
     /**
      * Callback for file selection
+     * @param {Event} event
      */
-    transport.fileSelected = function (event) {
+    transport.fileSelected = function () {
 
         var input       = this,
             files       = input.files,
-            filesLength = files.length,
-            formdData   = new FormData(),
-            file,
-            i;
+            formdData   = new FormData();
 
         formdData.append('files', files[0], files[0].name);
 
@@ -74,6 +72,7 @@ var transport = (function (transport) {
 
     /**
      * Ajax requests module
+     * @todo use core.ajax
      */
     transport.ajax = function (params) {
 
@@ -96,7 +95,7 @@ var transport = (function (transport) {
 
             } else {
 
-                console.log('request error: %o', xhr);
+                editor.core.log('request error: %o', xhr);
                 error();
 
             }
@@ -111,5 +110,3 @@ var transport = (function (transport) {
     return transport;
 
 })({});
-
-module.exports  = transport;

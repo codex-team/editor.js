@@ -18,7 +18,7 @@
         "no-shadow": 2,
         "no-undef-init": 2,
         "no-undef": 2,
-        "no-unused-vars": 2,
+        "no-unused-vars": 1,
 
         /** Style */
         "array-bracket-spacing": [2, "never", {
@@ -61,6 +61,15 @@
     "globals":{
         "document": true,
         "module": true,
-        "require": true
+        "require": true,
+        "window": true,
+        "codex": true,
+        "VERSION" : true,
+        "Promise" : true,
+        "MutationObserver": true,
+        "FormData": true,
+        "XMLHttpRequest": true,
+        "ActiveXObject": true
+
     }
 }

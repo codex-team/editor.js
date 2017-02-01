@@ -5,7 +5,7 @@
  * @version 1.0.
  */
 
-var draw = (function (draw) {
+module.exports = (function (draw) {
 
     /**
      * Base editor wrapper
@@ -232,18 +232,18 @@ var draw = (function (draw) {
     draw.toolbarButton = function (type, classname) {
 
         var button     = document.createElement('li'),
-            tool_icon  = document.createElement('i'),
-            tool_title = document.createElement('span');
+            toolIcon  = document.createElement('i'),
+            toolTitle = document.createElement('span');
 
         button.dataset.type = type;
         button.setAttribute('title', type);
 
-        tool_icon.classList.add(classname);
-        tool_title.classList.add('ce_toolbar_tools--title');
+        toolIcon.classList.add(classname);
+        toolTitle.classList.add('ce_toolbar_tools--title');
 
 
-        button.appendChild(tool_icon);
-        button.appendChild(tool_title);
+        button.appendChild(toolIcon);
+        button.appendChild(toolTitle);
 
         return button;
 
@@ -260,13 +260,13 @@ var draw = (function (draw) {
     draw.toolbarButtonInline = function (type, classname) {
 
         var button     = document.createElement('BUTTON'),
-            tool_icon  = document.createElement('I');
+            toolIcon  = document.createElement('I');
 
         button.type = 'button';
         button.dataset.type = type;
-        tool_icon.classList.add(classname);
+        toolIcon.classList.add(classname);
 
-        button.appendChild(tool_icon);
+        button.appendChild(toolIcon);
 
         return button;
 
@@ -311,21 +311,6 @@ var draw = (function (draw) {
 
     };
 
-    draw.pluginsRender = function (type, content) {
-
-        return {
-            type  : type,
-            block : cEditor.tools[type].render({
-                text : content
-            })
-        };
-
-    };
-
     return draw;
 
 })({});
-
-module.exports = draw;
-
-
