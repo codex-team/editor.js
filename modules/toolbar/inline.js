@@ -41,7 +41,7 @@ module.exports = (function (inline) {
         if (!plugin.showInlineToolbar)
             return;
 
-        var selectedText = this.getSelectionText(),
+        var selectedText = inline.getSelectionText(),
             toolbar      = editor.nodes.inlineToolbar.wrapper;
 
         if (selectedText.length > 0) {
@@ -230,7 +230,7 @@ module.exports = (function (inline) {
      * Returns selected text as String
      * @returns {string}
      */
-    inline.getSelectionText = function getSelectionText() {
+    inline.getSelectionText = function () {
 
         var selectedText = '';
 
