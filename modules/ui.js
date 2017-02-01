@@ -316,10 +316,19 @@ module.exports = (function (ui) {
      */
     ui.preparePlugins = function () {
 
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve_, reject_) {
 
             let pluginName,
-                plugin;
+                plugin,
+                sequence;
+
+            sequence = Promise.resolve();
+
+            sequence.then(function () {
+
+                return editor.tools;
+
+            });
 
             for ( pluginName in editor.tools ) {
 
@@ -331,21 +340,44 @@ module.exports = (function (ui) {
 
                 }
 
-                plugin.prepare(plugin.config || {}).then(function () {
+                window.console.log('try: %o', pluginName);
 
-                    resolve();
+                preparePlugin_(sequence, pluginName);
 
-                }).catch(function (error) {
+                //
+                sequence.then(function () {
 
-                    reject(error);
+                    return plugin.prepare(plugin.config || {});
+
+                    // window.console.log('Successfully loaded %o', pluginName);
+
+                    // resolve();
+
+                }, function (error) {
+
+                    window.console.log(error);
 
                 });
 
             }
 
+            sequence.then(function () {
+
+                resolve_();
+
+            }).catch(function (error) {
+
+                reject_(error);
+
+            });
+
         });
 
     };
+
+    preparePlugin_ = function () {
+
+    }
 
     ui.addBlockHandlers = function (block) {
 
