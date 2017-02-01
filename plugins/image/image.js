@@ -568,7 +568,10 @@ var image = (function(image) {
      * @param config
      */
     image.prepare = function(config) {
+
         image.config = config;
+
+        return Promise.resolve();
     };
 
     /**

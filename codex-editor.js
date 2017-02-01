@@ -351,27 +351,43 @@ var codex =
 	        XMLHTTP.send(params);
 	    };
 	
-	    /** Appends script to head of document */
+	    /**
+	    * Appends script to head of document
+	    * @return Promise
+	    */
 	    core.importScript = function (scriptPath, instanceName) {
 	
-	        /** Script is already loaded */
-	        if (!instanceName || instanceName && document.getElementById('ce-script-' + instanceName)) {
-	            codex.core.log("Instance name of script is missed or script is already loaded", "warn");
-	            return;
-	        }
+	        return new Promise(function (resolve, reject) {
 	
-	        var script = document.createElement('SCRIPT');
-	        script.type = "text/javascript";
-	        script.src = scriptPath;
-	        script.async = true;
-	        script.defer = true;
+	            var instancePrefix = 'cdx-script-';
 	
-	        if (instanceName) {
-	            script.id = "ce-script-" + instanceName;
-	        }
+	            var script = void 0;
 	
-	        document.head.appendChild(script);
-	        return script;
+	            /** Script is already loaded */
+	            if (!instanceName) {
+	                reject('Instance name is missed');
+	            } else if (document.getElementById(instancePrefix + instanceName)) {
+	                resolve(scriptPath);
+	            }
+	
+	            script = document.createElement('SCRIPT');
+	            script.async = true;
+	            script.defer = true;
+	            script.id = instancePrefix + instanceName;
+	
+	            script.onload = function () {
+	
+	                resolve(scriptPath);
+	            };
+	
+	            script.onerror = function () {
+	
+	                reject(scriptPath);
+	            };
+	
+	            script.src = scriptPath;
+	            document.head.appendChild(script);
+	        });
 	    };
 	
 	    return core;
@@ -671,15 +687,30 @@ var codex =
 	    /**
 	     * Initialize plugins before using
 	     * Ex. Load scripts or call some internal methods
+	     * @return Promise
 	     */
 	    ui.preparePlugins = function () {
 	
-	        for (var tool in codex.tools) {
+	        return new Promise(function (resolve, reject) {
 	
-	            if (typeof codex.tools[tool].prepare != 'function') continue;
+	            var pluginName = void 0,
+	                plugin = void 0;
 	
-	            codex.tools[tool].prepare(codex.tools[tool].config || {});
-	        }
+	            for (pluginName in codex.tools) {
+	
+	                plugin = codex.tools[pluginName];
+	
+	                if (typeof plugin.prepare != 'function') {
+	                    continue;
+	                }
+	
+	                plugin.prepare(plugin.config || {}).then(function () {
+	                    resolve();
+	                }).catch(function (error) {
+	                    reject(error);
+	                });
+	            }
+	        });
 	    };
 	
 	    ui.addBlockHandlers = function (block) {

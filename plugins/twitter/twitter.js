@@ -6,6 +6,11 @@
 var twitter = (function(twitter) {
 
     /**
+    * User's configuration object
+    */
+    var config_ = {};
+
+    /**
     * CSS classes
     */
     var css_ = {
@@ -49,7 +54,7 @@ var twitter = (function(twitter) {
             if ( !data.user ) {
 
                 codex.core.ajax({
-                    url : twitter.config.fetchUrl + '?tweetId=' + data.id_str,
+                    url : config_.fetchUrl + '?tweetId=' + data.id_str,
                     type: "GET",
                     success: function(result) {
                         methods.saveTwitterData(result, tweet);
@@ -151,20 +156,24 @@ var twitter = (function(twitter) {
 
     /**
      * Prepare twitter scripts
+     * @param {object} config
      */
     twitter.prepare = function(config) {
-
-        var script = "https://platform.twitter.com/widgets.js";
 
         /**
          * Save configs
          */
-        twitter.config = config;
+        config_ = config;
 
-        /**
-         * Load script
-         */
-        codex.core.importScript(script, 'twitterAPI');
+        return new Promise(function(resolve, reject){
+
+            codex.core.importScript("https://platform.twitter.com/widgets.js", 'twitter-api').then(function(){
+                resolve();
+            }).catch(function(){
+                reject(Error('Twitter API was not loaded'));
+            });
+
+        });
 
     };
 

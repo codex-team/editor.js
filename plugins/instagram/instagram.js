@@ -46,12 +46,15 @@ var instagram = (function(instagram) {
      */
     instagram.prepare = function() {
 
-        var script = "https://platform.instagram.com/en_US/embeds.js";
+        return new Promise(function(resolve, reject){
 
-        /**
-         * Load widget
-         */
-        codex.core.importScript(script, 'instagramAPI');
+            codex.core.importScript("https://platform.instagram.com/en_US/embeds.js", 'instagram-api').then(function(){
+                resolve();
+            }).catch(function(){
+                reject(Error('Instagram API was not loaded'));
+            });
+
+        });
     };
 
     /**

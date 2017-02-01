@@ -159,28 +159,46 @@ var core = (function(core) {
         XMLHTTP.send(params);
     };
 
-    /** Appends script to head of document */
+    /**
+    * Appends script to head of document
+    * @return Promise
+    */
     core.importScript = function(scriptPath, instanceName) {
 
-        /** Script is already loaded */
-        if ( !instanceName || (instanceName && document.getElementById('ce-script-' + instanceName)) ) {
-            codex.core.log("Instance name of script is missed or script is already loaded", "warn");
-            return;
-        }
+        return new Promise(function(resolve, reject){
 
+            const instancePrefix = 'cdx-script-';
 
-        var script   = document.createElement('SCRIPT');
-        script.type = "text/javascript";
-        script.src = scriptPath;
-        script.async = true;
-        script.defer = true;
+            let script;
 
-        if (instanceName) {
-            script.id = "ce-script-" + instanceName;
-        }
+            /** Script is already loaded */
+            if ( !instanceName ){
+                reject('Instance name is missed');
+            } else if ( document.getElementById(instancePrefix + instanceName) ) {
+                resolve(scriptPath);
+            }
 
-        document.head.appendChild(script);
-        return script;
+            script = document.createElement('SCRIPT');
+            script.async = true;
+            script.defer = true;
+            script.id = instancePrefix + instanceName;
+
+            script.onload = function () {
+
+                resolve(scriptPath);
+
+            };
+
+            script.onerror = function () {
+
+                reject(scriptPath);
+
+            };
+
+            script.src = scriptPath;
+            document.head.appendChild(script);
+
+        });
     };
 
     return core;

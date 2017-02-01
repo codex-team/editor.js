@@ -554,7 +554,10 @@ var quote = (function(quote) {
      * @param config
      */
     quote.prepare = function(config) {
+
         quote.config = config;
+
+        return Promise.resolve();
     };
 
     return quote;

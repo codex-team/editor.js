@@ -303,17 +303,32 @@ var ui = (function(ui){
     /**
      * Initialize plugins before using
      * Ex. Load scripts or call some internal methods
+     * @return Promise
      */
     ui.preparePlugins = function() {
 
-        for(var tool in codex.tools) {
+        return new Promise(function(resolve, reject){
 
-            if (typeof codex.tools[tool].prepare != 'function')
-                continue;
+            let pluginName,
+                plugin;
 
-            codex.tools[tool].prepare(codex.tools[tool].config || {});
+            for ( pluginName in codex.tools ) {
 
-        }
+                plugin = codex.tools[pluginName];
+
+                if (typeof plugin.prepare != 'function'){
+                    continue;
+                }
+
+                plugin.prepare(plugin.config || {}).then(function(){
+                    resolve();
+                }).catch(function(error){
+                    reject(error);
+                });
+
+            }
+
+        });
     };
 
     ui.addBlockHandlers = function(block) {
