@@ -9,6 +9,9 @@
  *
  * Main tool settings.
  */
+
+let editor = codex.editor;
+
 var paste = function(paste){
     /**
      * Saves data
@@ -33,10 +36,18 @@ var paste = function(paste){
 
     var analize = function(string) {
 
-        var result = false;
+        var result  = false,
+            content = editor.content.currentNode;
 
         paste.patterns.map(function(pattern, i){
+
             if (pattern.regex.test(string)) {
+
+                /** current block is not empty */
+                if (content.textContent.trim()) {
+                    pasteToNewBlock_();
+                }
+
                 pattern.callback.call(null, string, pattern);
                 result = true;
             }
@@ -46,6 +57,19 @@ var paste = function(paste){
 
     };
 
+    var pasteToNewBlock_ = function() {
+
+        /** Create new initial block */
+        editor.content.insertBlock({
+
+            type : editor.settings.initialBlockPlugin,
+            block : editor.tools[editor.settings.initialBlockPlugin].render({
+                text : ''
+            })
+
+        }, true);
+
+    };
 
     return paste;
 
