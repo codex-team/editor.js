@@ -6,109 +6,104 @@
  * @author Codex Team
  * @version 1.0
  */
- 
-var toolbox = (function(toolbox) {
 
-    toolbox.init = function () {
+let editor = codex.editor;
 
-        require('./toolbar');
-
-    };
+module.exports = (function (toolbox) {
 
     toolbox.opened = false;
 
     /** Shows toolbox */
-    toolbox.open = function() {
+    toolbox.open = function () {
 
         /** Close setting if toolbox is opened */
-        if (codex.toolbar.settings.opened) {
+        if (editor.toolbar.settings.opened) {
 
-            codex.toolbar.settings.close();
+            editor.toolbar.settings.close();
 
         }
 
         /** display toolbox */
-        codex.nodes.toolbox.classList.add('opened');
+        editor.nodes.toolbox.classList.add('opened');
 
         /** Animate plus button */
-        codex.nodes.plusButton.classList.add('clicked');
+        editor.nodes.plusButton.classList.add('clicked');
 
         /** toolbox state */
-        codex.toolbar.toolbox.opened = true;
+        editor.toolbar.toolbox.opened = true;
 
     };
 
     /** Closes toolbox */
-    toolbox.close = function() {
+    toolbox.close = function () {
 
         /** Makes toolbox disapear */
-        codex.nodes.toolbox.classList.remove('opened');
+        editor.nodes.toolbox.classList.remove('opened');
 
         /** Rotate plus button */
-        codex.nodes.plusButton.classList.remove('clicked');
+        editor.nodes.plusButton.classList.remove('clicked');
 
         /** toolbox state */
-        codex.toolbar.toolbox.opened = false;
+        editor.toolbar.toolbox.opened = false;
 
     };
 
-    toolbox.leaf = function(){
+    toolbox.leaf = function () {
 
-        var currentTool = codex.toolbar.current,
-            tools       = Object.keys(codex.tools),
-            barButtons  = codex.nodes.toolbarButtons,
-            nextToolIndex,
-            hiddenToolsAmount = 0,
-            toolToSelect;
-
-        /** Count toolbox hidden tools */
-        for( var tool in codex.tools ) {
-
-            if (!codex.tools[tool].displayInToolbox) {
-
-                hiddenToolsAmount ++;
-
-            }
-
-
-        }
+        let currentTool = editor.toolbar.current,
+            tools       = Object.keys(editor.tools),
+            barButtons  = editor.nodes.toolbarButtons,
+            nextToolIndex = 0,
+            toolToSelect,
+            visibleTool,
+            tool;
 
         if ( !currentTool ) {
 
             /** Get first tool from object*/
-            for (toolToSelect in barButtons) break;
+            for(tool in editor.tools) {
+
+                if (editor.tools[tool].displayInToolbox) {
+
+                    break;
+
+                }
+
+                nextToolIndex ++;
+
+            }
 
         } else {
 
             nextToolIndex = tools.indexOf(currentTool) + 1;
+            visibleTool = tools[nextToolIndex];
 
-            var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 2);
+            while (!editor.tools[visibleTool].displayInToolbox) {
 
-            if ( toolIsLastInToolbox ) {
+                nextToolIndex++;
+                visibleTool = tools[nextToolIndex];
 
-                nextToolIndex = 0;
+                if ( nextToolIndex == tools.length ) {
 
-                /** getting first displayed tool */
-                for( var tool in codex.tools ) {
+                    nextToolIndex = 0;
+                    visibleTool = tools[nextToolIndex];
 
-                    if (codex.tools[tool].displayInToolbox){
-
-                        break;
-
-                    }
-
-                    nextToolIndex ++;
                 }
 
             }
 
-            toolToSelect = tools[nextToolIndex];
+        }
+
+        toolToSelect = tools[nextToolIndex];
+
+        for ( var button in barButtons ) {
+
+            barButtons[button].classList.remove('selected');
 
         }
 
-        for (var button in barButtons) barButtons[button].classList.remove('selected');
         barButtons[toolToSelect].classList.add('selected');
-        codex.toolbar.current = toolToSelect;
+        editor.toolbar.current = toolToSelect;
 
     };
 
@@ -116,15 +111,15 @@ var toolbox = (function(toolbox) {
      * Transforming selected node type into selected toolbar element type
      * @param {event} event
      */
-    toolbox.toolClicked = function() {
+    toolbox.toolClicked = function (event) {
 
         /**
          * UNREPLACEBLE_TOOLS this types of tools are forbidden to replace even they are empty
          */
         var UNREPLACEBLE_TOOLS = ['image', 'link', 'list', 'instagram', 'twitter', 'embed'],
-            tool               = codex.tools[codex.toolbar.current],
-            workingNode        = codex.content.currentNode,
-            currentInputIndex  = codex.caret.inputIndex,
+            tool               = editor.tools[editor.toolbar.current],
+            workingNode        = editor.content.currentNode,
+            currentInputIndex  = editor.caret.inputIndex,
             newBlockContent,
             appendCallback,
             blockData;
@@ -143,15 +138,15 @@ var toolbox = (function(toolbox) {
             workingNode &&
             UNREPLACEBLE_TOOLS.indexOf(workingNode.dataset.tool) === -1 &&
             workingNode.textContent.trim() === ''
-        ){
+        ) {
 
             /** Replace current block */
-            codex.content.switchBlock(workingNode, newBlockContent, tool.type);
+            editor.content.switchBlock(workingNode, newBlockContent, tool.type);
 
         } else {
 
             /** Insert new Block from plugin */
-            codex.content.insertBlock(blockData);
+            editor.content.insertBlock(blockData);
 
             /** increase input index */
             currentInputIndex++;
@@ -167,10 +162,10 @@ var toolbox = (function(toolbox) {
 
         }
 
-        setTimeout(function() {
+        window.setTimeout(function () {
 
             /** Set caret to current block */
-            codex.caret.setToBlock(currentInputIndex);
+            editor.caret.setToBlock(currentInputIndex);
 
         }, 10);
 
@@ -178,18 +173,15 @@ var toolbox = (function(toolbox) {
         /**
          * Changing current Node
          */
-        codex.content.workingNodeChanged();
+        editor.content.workingNodeChanged();
 
         /**
          * Move toolbar when node is changed
          */
-        codex.toolbar.move();
+        editor.toolbar.move();
+
     };
 
     return toolbox;
 
 })({});
-
-toolbox.init();
-
-module.exports = toolbox;

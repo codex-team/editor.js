@@ -225,7 +225,7 @@ var image = (function(image) {
             error      = uploadingCallbacks_.ByClick.error;
 
         /** Define callbacks */
-        codex.transport.selectAndUpload({
+        codex.editor.transport.selectAndUpload({
             beforeSend: beforeSend,
             success: success,
             error: error
@@ -254,7 +254,7 @@ var image = (function(image) {
 
         toggleBordered : function(type, clickedSettingsItem ) {
 
-            var current = codex.content.currentNode,
+            var current = codex.editor.content.currentNode,
                 blockContent = current.childNodes[0],
                 img = ui_.getImage(current),
                 wrapper = current.querySelector('.' + elementClasses_.imageWrapper);
@@ -279,14 +279,14 @@ var image = (function(image) {
             }
 
             setTimeout(function() {
-                codex.toolbar.settings.close();
+                codex.editor.toolbar.settings.close();
             }, 200);
 
         },
 
         toggleStretched : function( type, clickedSettingsItem ) {
 
-            var current = codex.content.currentNode,
+            var current = codex.editor.content.currentNode,
                 blockContent = current.childNodes[0],
                 img = ui_.getImage(current),
                 wrapper = current.querySelector('.' + elementClasses_.imageWrapper);
@@ -313,7 +313,7 @@ var image = (function(image) {
             }
 
             setTimeout(function() {
-                codex.toolbar.settings.close();
+                codex.editor.toolbar.settings.close();
             }, 200);
 
         }
@@ -332,7 +332,7 @@ var image = (function(image) {
              */
             beforeSend : function() {
 
-                var input = codex.transport.input,
+                var input = codex.editor.transport.input,
                     files = input.files;
 
                 var validFileExtensions = ["jpg", "jpeg", "bmp", "gif", "png"];
@@ -369,7 +369,7 @@ var image = (function(image) {
 
                     var newImage = make_(data);
 
-                    codex.content.switchBlock(image.holder, newImage, 'image_extended');
+                    codex.editor.content.switchBlock(image.holder, newImage, 'image_extended');
                     newImage.classList.add(elementClasses_.imagePreview);
 
                     /**
@@ -385,7 +385,7 @@ var image = (function(image) {
 
                 var parsed = JSON.parse(result),
                     data,
-                    currentBlock = codex.content.currentNode;
+                    currentBlock = codex.editor.content.currentNode;
 
                 /**
                  * Preparing {Object} data to draw an image
@@ -414,7 +414,7 @@ var image = (function(image) {
                 var oldHolder = image.holder;
                 var form = ui_.makeForm();
 
-                codex.content.switchBlock(oldHolder, form, 'image_extended');
+                codex.editor.content.switchBlock(oldHolder, form, 'image_extended');
 
             }
         },
@@ -431,7 +431,7 @@ var image = (function(image) {
                 var ajaxUrl = image.config.uploadUrl,
                     file,
                     image_plugin,
-                    current = codex.content.currentNode,
+                    current = codex.editor.content.currentNode,
                     beforeSend,
                     success_callback;
 
@@ -473,13 +473,13 @@ var image = (function(image) {
                         cover: null
                     };
 
-                    image_plugin = codex.tools.image_extended.render(data);
+                    image_plugin = codex.editor.tools.image_extended.render(data);
 
                     image_plugin.classList.add(elementClasses_.imagePreview);
 
                     var img = image_plugin.querySelector('img');
 
-                    codex.content.switchBlock(codex.content.currentNode, image_plugin, 'image_extended');
+                    codex.editor.content.switchBlock(codex.editor.content.currentNode, image_plugin, 'image_extended');
 
                 };
 
@@ -494,7 +494,7 @@ var image = (function(image) {
                     success : success_callback
                 };
 
-                codex.core.ajax(data);
+                codex.editor.core.ajax(data);
             }
 
         }
@@ -635,7 +635,7 @@ var image = (function(image) {
      */
     image.makeSettings = function () {
 
-        var currentNode = codex.content.currentNode,
+        var currentNode = codex.editor.content.currentNode,
             wrapper = currentNode.querySelector('.' + elementClasses_.imageWrapper),
             holder  = document.createElement('DIV'),
             types   = {

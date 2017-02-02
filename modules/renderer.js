@@ -5,7 +5,9 @@
  * @version 1.0
  */
 
-var renderer = (function(renderer) {
+let editor = codex.editor;
+
+module.exports = (function (renderer) {
 
     /**
      * Asyncronously parses input JSON to redactor blocks
@@ -15,9 +17,9 @@ var renderer = (function(renderer) {
         /**
          * If redactor is empty, add first paragraph to start writing
          */
-        if (!codex.state.blocks.items.length) {
+        if (!editor.state.blocks.items.length) {
 
-            codex.ui.addInitialBlock();
+            editor.ui.addInitialBlock();
             return;
 
         }
@@ -25,16 +27,20 @@ var renderer = (function(renderer) {
         Promise.resolve()
 
         /** First, get JSON from state */
-            .then(function() {
-                return codex.state.blocks;
+            .then(function () {
+
+                return editor.state.blocks;
+
             })
 
             /** Then, start to iterate they */
-            .then(codex.renderer.appendBlocks)
+            .then(editor.renderer.appendBlocks)
 
             /** Write log if something goes wrong */
-            .catch(function(error) {
-                codex.core.log('Error while parsing JSON: %o', 'error', error);
+            .catch(function (error) {
+
+                editor.core.log('Error while parsing JSON: %o', 'error', error);
+
             });
 
     };
@@ -57,7 +63,7 @@ var renderer = (function(renderer) {
         for (var index = 0; index < blocks.length ; index++ ) {
 
             /** Add node to sequence at specified index */
-            codex.renderer.appendNodeAtIndex(nodeSequence, blocks, index);
+            editor.renderer.appendNodeAtIndex(nodeSequence, blocks, index);
 
         }
 
@@ -72,26 +78,26 @@ var renderer = (function(renderer) {
         nodeSequence
 
         /** first, get node async-aware */
-            .then(function() {
+            .then(function () {
 
-                return codex.renderer.getNodeAsync(blocks , index);
+                return editor.renderer.getNodeAsync(blocks, index);
 
             })
 
             /**
              * second, compose editor-block from JSON object
              */
-            .then(codex.renderer.createBlockFromData)
+            .then(editor.renderer.createBlockFromData)
 
             /**
              * now insert block to redactor
              */
-            .then(function(blockData){
+            .then(function (blockData) {
 
                 /**
                  * blockData has 'block', 'type' and 'stretched' information
                  */
-                codex.content.insertBlock(blockData);
+                editor.content.insertBlock(blockData);
 
                 /** Pass created block to next step */
                 return blockData.block;
@@ -99,8 +105,10 @@ var renderer = (function(renderer) {
             })
 
             /** Log if something wrong with node */
-            .catch(function(error) {
-                codex.core.log('Node skipped while parsing because %o', 'error', error);
+            .catch(function (error) {
+
+                editor.core.log('Node skipped while parsing because %o', 'error', error);
+
             });
 
     };
@@ -111,11 +119,12 @@ var renderer = (function(renderer) {
      */
     renderer.getNodeAsync = function (blocksList, index) {
 
-        return Promise.resolve().then(function() {
+        return Promise.resolve().then(function () {
 
             return blocksList[index];
 
         });
+
     };
 
     /**
@@ -141,21 +150,24 @@ var renderer = (function(renderer) {
         // for (var pluginName in blockData) break;
 
         /** Check for plugin existance */
-        if (!codex.tools[pluginName]) {
+        if (!editor.tools[pluginName]) {
+
             throw Error(`Plugin «${pluginName}» not found`);
+
         }
 
         /** Check for plugin having render method */
-        if (typeof codex.tools[pluginName].render != 'function') {
+        if (typeof editor.tools[pluginName].render != 'function') {
 
             throw Error(`Plugin «${pluginName}» must have «render» method`);
+
         }
 
         /** New Parser */
-        var block = codex.tools[pluginName].render(blockData.data);
+        var block = editor.tools[pluginName].render(blockData.data);
 
         /** is first-level block stretched */
-        var stretched = codex.tools[pluginName].isStretched || false;
+        var stretched = editor.tools[pluginName].isStretched || false;
 
         /** Retrun type and block */
         return {
@@ -170,5 +182,3 @@ var renderer = (function(renderer) {
     return renderer;
 
 })({});
-
-module.exports = renderer;

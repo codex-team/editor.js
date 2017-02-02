@@ -31,18 +31,18 @@ var header = (function(header) {
             var old_header, new_header;
 
             /** Now current header stored as a currentNode */
-            old_header = codex.content.currentNode.querySelector('[contentEditable]');
+            old_header = codex.editor.content.currentNode.querySelector('[contentEditable]');
 
             /** Making new header */
-            new_header = codex.draw.node(type, ['ce-header'], { innerHTML : old_header.innerHTML });
+            new_header = codex.editor.draw.node(type, ['ce-header'], { innerHTML : old_header.innerHTML });
             new_header.contentEditable = true;
             new_header.setAttribute('data-placeholder', 'Заголовок');
             new_header.dataset.headerData = type;
 
-            codex.content.switchBlock(old_header, new_header, 'heading_styled');
+            codex.editor.content.switchBlock(old_header, new_header, 'heading_styled');
 
             /** Close settings after replacing */
-            codex.toolbar.settings.close();
+            codex.editor.toolbar.settings.close();
         }
 
     };
@@ -128,7 +128,7 @@ var header = (function(header) {
      */
     header.makeSettings = function () {
 
-        var holder  = codex.draw.node('DIV', ['ce_plugin_header--settings'], {} ),
+        var holder  = codex.editor.draw.node('DIV', ['ce_plugin_header--settings'], {} ),
             types   = {
                 h2: 'Заголовок H2',
                 h3: 'Заголовок H3',
@@ -139,7 +139,7 @@ var header = (function(header) {
         /** Now add type selectors */
         for (var type in types){
 
-            selectTypeButton = codex.draw.node('SPAN', ['ce_plugin_header--select_button'], { textContent : types[type] });
+            selectTypeButton = codex.editor.draw.node('SPAN', ['ce_plugin_header--select_button'], { textContent : types[type] });
             methods_.addSelectTypeClickListener(selectTypeButton, type);
             holder.appendChild(selectTypeButton);
 

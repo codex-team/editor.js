@@ -3,44 +3,45 @@
  * Codex Editor
  *
  * @author Codex Team
- * @version 1.3.0
  */
 
-var codex = (function(codex){
+module.exports = (function (editor) {
 
-    var init = function() {
+    'use strict';
 
-        codex.core          = require('./modules/core');
-        codex.ui            = require('./modules/ui');
-        codex.transport     = require('./modules/transport');
-        codex.renderer      = require('./modules/renderer');
-        codex.saver         = require('./modules/saver');
-        codex.content       = require('./modules/content');
-        codex.toolbar       = require('./modules/toolbar/toolbar');
-        codex.tools         = require('./modules/tools');
-        codex.callback      = require('./modules/callbacks');
-        codex.draw          = require('./modules/draw');
-        codex.caret         = require('./modules/caret');
-        codex.notifications = require('./modules/notifications');
-        codex.parser        = require('./modules/parser');
-        codex.sanitizer     = require('./modules/sanitizer');
+    editor.version = VERSION;
+
+    var init = function () {
+
+        editor.core          = require('./modules/core');
+        editor.ui            = require('./modules/ui');
+        editor.transport     = require('./modules/transport');
+        editor.renderer      = require('./modules/renderer');
+        editor.saver         = require('./modules/saver');
+        editor.content       = require('./modules/content');
+        editor.toolbar       = require('./modules/toolbar/toolbar');
+        editor.callback      = require('./modules/callbacks');
+        editor.draw          = require('./modules/draw');
+        editor.caret         = require('./modules/caret');
+        editor.notifications = require('./modules/notifications');
+        editor.parser        = require('./modules/parser');
+        editor.sanitizer     = require('./modules/sanitizer');
         codex.comments      = require('./modules/comments');
-    };
 
-    codex.version = VERSION;
+    };
 
     /**
      * @public
      *
      * holds initial settings
      */
-    codex.settings = {
+    editor.settings = {
         tools     : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
         textareaId: 'codex-editor',
         uploadImagesUrl: '/editor/transport/',
 
         // Type of block showing on empty editor
-        initialBlockPlugin: "paragraph"
+        initialBlockPlugin: 'paragraph'
     };
 
     /**
@@ -48,7 +49,7 @@ var codex = (function(codex){
      *
      * Static nodes
      */
-    codex.nodes = {
+    editor.nodes = {
         textarea          : null,
         wrapper           : null,
         toolbar           : null,
@@ -76,12 +77,18 @@ var codex = (function(codex){
      *
      * Output state
      */
-    codex.state = {
+    editor.state = {
         jsonOutput: [],
         blocks    : [],
         inputs    : [],
         comments  : []
     };
+
+    /**
+    * @public
+    * Editor plugins
+    */
+    editor.tools = {};
 
     /**
      * Initialization
@@ -114,31 +121,28 @@ var codex = (function(codex){
      *   -  displayInToolbox : true,
      *   -  enableLineBreaks : false
      */
-    codex.start = function (userSettings) {
+    editor.start = function (userSettings) {
 
         init();
 
-        this.core.prepare(userSettings)
+        editor.core.prepare(userSettings)
 
         // If all ok, make UI, bind events and parse initial-content
-            .then(this.ui.make)
-            .then(this.ui.addTools)
-            .then(this.ui.bindEvents)
-            .then(this.ui.preparePlugins)
-            .then(this.transport.prepare)
-            .then(this.renderer.makeBlocksFromData)
-            .then(this.ui.saveInputs)
+            .then(editor.ui.make)
+            .then(editor.ui.addTools)
+            .then(editor.ui.bindEvents)
+            .then(editor.ui.preparePlugins)
+            .then(editor.transport.prepare)
+            .then(editor.renderer.makeBlocksFromData)
+            .then(editor.ui.saveInputs)
             .catch(function (error) {
-                codex.core.log('Initialization failed with error: %o', 'warn', error);
+
+                editor.core.log('Initialization failed with error: %o', 'warn', error);
+
             });
 
     };
 
-    return codex;
+    return editor;
 
 })({});
-
-module.exports = codex;
-
-
-

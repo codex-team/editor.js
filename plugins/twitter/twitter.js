@@ -43,9 +43,9 @@ var twitter = (function(twitter) {
 
             tweet.classList.add('ce-redactor__loader');
 
-            if (codex.content.currentNode) {
+            if (codex.editor.content.currentNode) {
                 tweet.dataset.statusUrl = data.status_url;
-                codex.content.switchBlock(codex.content.currentNode, tweet, 'tweet');
+                codex.editor.content.switchBlock(codex.editor.content.currentNode, tweet, 'tweet');
             }
 
             /**
@@ -53,7 +53,7 @@ var twitter = (function(twitter) {
              */
             if ( !data.user ) {
 
-                codex.core.ajax({
+                codex.editor.core.ajax({
                     url : config_.fetchUrl + '?tweetId=' + data.id_str,
                     type: "GET",
                     success: function(result) {
@@ -99,12 +99,12 @@ var twitter = (function(twitter) {
         },
 
         drawTwitterBlock : function() {
-            var block = codex.draw.node('DIV', '', { height: "20px" });
+            var block = codex.editor.draw.node('DIV', '', { height: "20px" });
             return block;
         },
 
         drawTwittersCaptionBlock : function() {
-            var block = codex.draw.node('DIV', ['ce-twitter__caption'], { contentEditable : true });
+            var block = codex.editor.draw.node('DIV', ['ce-twitter__caption'], { contentEditable : true });
             return block;
         },
 
@@ -167,7 +167,7 @@ var twitter = (function(twitter) {
 
         return new Promise(function(resolve, reject){
 
-            codex.core.importScript("https://platform.twitter.com/widgets.js", 'twitter-api').then(function(){
+            codex.editor.core.importScript("https://platform.twitter.com/widgets.js", 'twitter-api').then(function(){
                 resolve();
             }).catch(function(){
                 reject(Error('Twitter API was not loaded'));

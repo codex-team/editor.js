@@ -7,11 +7,10 @@
  * @author Codex Team
  * @version 1.0
  */
-var inline = (function(inline) {
 
-    inline.init = function() {
+let editor = codex.editor;
 
-    };
+module.exports = (function (inline) {
 
     inline.buttonsOpened = null;
     inline.actionsOpened = null;
@@ -28,34 +27,34 @@ var inline = (function(inline) {
      *
      * Open inline toobar
      */
-    inline.show = function() {
+    inline.show = function () {
 
-        var currentNode = codex.content.currentNode,
+        var currentNode = editor.content.currentNode,
             tool = currentNode.dataset.tool,
             plugin;
 
         /**
          * tool allowed to open inline toolbar
          */
-        plugin = codex.tools[tool];
+        plugin = editor.tools[tool];
 
         if (!plugin.showInlineToolbar)
             return;
 
-        var selectedText = this.getSelectionText(),
-            toolbar      = codex.nodes.inlineToolbar.wrapper,
-            buttons      = codex.nodes.inlineToolbar.buttons;
+        var selectedText = inline.getSelectionText(),
+            toolbar      = editor.nodes.inlineToolbar.wrapper;
 
         if (selectedText.length > 0) {
 
             /** Move toolbar and open */
-            codex.toolbar.inline.move();
+            editor.toolbar.inline.move();
 
             /** Open inline toolbar */
             toolbar.classList.add('opened');
 
             /** show buttons of inline toolbar */
-            codex.toolbar.inline.showButtons();
+            editor.toolbar.inline.showButtons();
+
         }
 
     };
@@ -65,9 +64,12 @@ var inline = (function(inline) {
      *
      * Closes inline toolbar
      */
-    inline.close = function() {
-        var toolbar = codex.nodes.inlineToolbar.wrapper;
+    inline.close = function () {
+
+        var toolbar = editor.nodes.inlineToolbar.wrapper;
+
         toolbar.classList.remove('opened');
+
     };
 
     /**
@@ -75,20 +77,24 @@ var inline = (function(inline) {
      *
      * Moving toolbar
      */
-    inline.move = function() {
+    inline.move = function () {
 
         if (!this.wrappersOffset) {
+
             this.wrappersOffset = this.getWrappersOffset();
+
         }
 
         var coords          = this.getSelectionCoords(),
             defaultOffset   = 0,
-            toolbar         = codex.nodes.inlineToolbar.wrapper,
+            toolbar         = editor.nodes.inlineToolbar.wrapper,
             newCoordinateX,
             newCoordinateY;
 
         if (toolbar.offsetHeight === 0) {
+
             defaultOffset = 40;
+
         }
 
         newCoordinateX = coords.x - this.wrappersOffset.left;
@@ -97,8 +103,8 @@ var inline = (function(inline) {
         toolbar.style.transform = `translate3D(${Math.floor(newCoordinateX)}px, ${Math.floor(newCoordinateY)}px, 0)`;
 
         /** Close everything */
-        codex.toolbar.inline.closeButtons();
-        codex.toolbar.inline.closeAction();
+        editor.toolbar.inline.closeButtons();
+        editor.toolbar.inline.closeAction();
 
     };
 
@@ -108,22 +114,23 @@ var inline = (function(inline) {
      * Tool Clicked
      */
 
-    inline.toolClicked = function(event, type) {
+    inline.toolClicked = function (event, type) {
 
         /**
          * For simple tools we use default browser function
          * For more complicated tools, we should write our own behavior
          */
         switch (type) {
-            case 'createLink' : codex.toolbar.inline.createLinkAction(event, type); break;
-            default           : codex.toolbar.inline.defaultToolAction(type); break;
+            case 'createLink' : editor.toolbar.inline.createLinkAction(event, type); break;
+            default           : editor.toolbar.inline.defaultToolAction(type); break;
         }
 
         /**
          * highlight buttons
          * after making some action
          */
-        codex.nodes.inlineToolbar.buttons.childNodes.forEach(codex.toolbar.inline.hightlight);
+        editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.toolbar.inline.hightlight);
+
     };
 
     /**
@@ -131,9 +138,9 @@ var inline = (function(inline) {
      *
      * Saving wrappers offset in DOM
      */
-    inline.getWrappersOffset = function() {
+    inline.getWrappersOffset = function () {
 
-        var wrapper = codex.nodes.wrapper,
+        var wrapper = editor.nodes.wrapper,
             offset  = this.getOffset(wrapper);
 
         this.wrappersOffset = offset;
@@ -155,11 +162,14 @@ var inline = (function(inline) {
         var _y = 0;
 
         while( el && !isNaN( el.offsetLeft ) && !isNaN( el.offsetTop ) ) {
+
             _x += (el.offsetLeft + el.clientLeft);
             _y += (el.offsetTop + el.clientTop);
             el = el.offsetParent;
+
         }
         return { top: _y, left: _x };
+
     };
 
     /**
@@ -168,18 +178,20 @@ var inline = (function(inline) {
      * Calculates position of selected text
      * @returns {{x: number, y: number}}
      */
-    inline.getSelectionCoords = function() {
+    inline.getSelectionCoords = function () {
 
         var sel = document.selection, range;
         var x = 0, y = 0;
 
         if (sel) {
 
-            if (sel.type != "Control") {
+            if (sel.type != 'Control') {
+
                 range = sel.createRange();
                 range.collapse(true);
                 x = range.boundingLeft;
                 y = range.boundingTop;
+
             }
 
         } else if (window.getSelection) {
@@ -190,20 +202,26 @@ var inline = (function(inline) {
 
                 range = sel.getRangeAt(0).cloneRange();
                 if (range.getClientRects) {
+
                     range.collapse(true);
                     var rect = range.getClientRects()[0];
 
                     if (!rect) {
+
                         return;
+
                     }
 
                     x = rect.left;
                     y = rect.top;
+
                 }
 
             }
+
         }
         return { x: x, y: y };
+
     };
 
     /**
@@ -212,68 +230,109 @@ var inline = (function(inline) {
      * Returns selected text as String
      * @returns {string}
      */
-    inline.getSelectionText = function getSelectionText(){
+    inline.getSelectionText = function () {
 
-        var selectedText = "";
+        var selectedText = '';
 
-        if (window.getSelection){ // all modern browsers and IE9+
+        // all modern browsers and IE9+
+        if (window.getSelection) {
+
             selectedText = window.getSelection().toString();
+
         }
 
         return selectedText;
+
     };
 
     /** Opens buttons block */
-    inline.showButtons = function() {
+    inline.showButtons = function () {
 
-        var buttons = codex.nodes.inlineToolbar.buttons;
+        var buttons = editor.nodes.inlineToolbar.buttons;
+
         buttons.classList.add('opened');
 
-        codex.toolbar.inline.buttonsOpened = true;
+        editor.toolbar.inline.buttonsOpened = true;
 
         /** highlight buttons */
-        codex.nodes.inlineToolbar.buttons.childNodes.forEach(codex.toolbar.inline.hightlight);
+        editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.toolbar.inline.hightlight);
 
     };
 
     /** Makes buttons disappear */
-    inline.closeButtons = function() {
-        var buttons = codex.nodes.inlineToolbar.buttons;
+    inline.closeButtons = function () {
+
+        var buttons = editor.nodes.inlineToolbar.buttons;
+
         buttons.classList.remove('opened');
 
-        codex.toolbar.inline.buttonsOpened = false;
+        editor.toolbar.inline.buttonsOpened = false;
+
     };
 
     /** Open buttons defined action if exist */
-    inline.showActions = function() {
-        var action = codex.nodes.inlineToolbar.actions;
+    inline.showActions = function () {
+
+        var action = editor.nodes.inlineToolbar.actions;
+
         action.classList.add('opened');
 
-        codex.toolbar.inline.actionsOpened = true;
+        editor.toolbar.inline.actionsOpened = true;
+
     };
 
     /** Close actions block */
-    inline.closeAction = function() {
-        var action = codex.nodes.inlineToolbar.actions;
+    inline.closeAction = function () {
+
+        var action = editor.nodes.inlineToolbar.actions;
+
         action.innerHTML = '';
         action.classList.remove('opened');
-        codex.toolbar.inline.actionsOpened = false;
+        editor.toolbar.inline.actionsOpened = false;
+
+    };
+
+
+    /**
+    * Callback for keydowns in inline toolbar "Insert link..." input
+    */
+    let inlineToolbarAnchorInputKeydown_ = function (event) {
+
+        if (event.keyCode != editor.core.keys.ENTER) {
+
+            return;
+
+        }
+
+        let editable        = editor.content.currentNode,
+            storedSelection = editor.toolbar.inline.storedSelection;
+
+        editor.toolbar.inline.restoreSelection(editable, storedSelection);
+        editor.toolbar.inline.setAnchor(this.value);
+
+        /**
+         * Preventing events that will be able to happen
+         */
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        editor.toolbar.inline.clearRange();
+
     };
 
     /** Action for link creation or for setting anchor */
-    inline.createLinkAction = function(event, type) {
+    inline.createLinkAction = function (event) {
 
         var isActive = this.isLinkActive();
 
-        var editable        = codex.content.currentNode,
-            storedSelection = codex.toolbar.inline.storedSelection;
+        var editable        = editor.content.currentNode,
+            storedSelection = editor.toolbar.inline.saveSelection(editable);
+
+        /** Save globally selection */
+        editor.toolbar.inline.storedSelection = storedSelection;
 
         if (isActive) {
 
-            var selection   = window.getSelection(),
-                anchorNode  = selection.anchorNode;
-
-            storedSelection = codex.toolbar.inline.saveSelection(editable);
 
             /**
              * Changing stored selection. if we want to remove anchor from word
@@ -281,20 +340,19 @@ var inline = (function(inline) {
              * The solution is than we get the length of current link
              * Change start position to - end of selection minus length of anchor
              */
-            codex.toolbar.inline.restoreSelection(editable, storedSelection);
+            editor.toolbar.inline.restoreSelection(editable, storedSelection);
 
-            codex.toolbar.inline.defaultToolAction('unlink');
+            editor.toolbar.inline.defaultToolAction('unlink');
 
         } else {
 
             /** Create input and close buttons */
-            var action = codex.draw.inputForLink();
-            codex.nodes.inlineToolbar.actions.appendChild(action);
+            var action = editor.draw.inputForLink();
 
-            codex.toolbar.inline.closeButtons();
-            codex.toolbar.inline.showActions();
+            editor.nodes.inlineToolbar.actions.appendChild(action);
 
-            storedSelection = codex.toolbar.inline.saveSelection(editable);
+            editor.toolbar.inline.closeButtons();
+            editor.toolbar.inline.showActions();
 
             /**
              * focus to input
@@ -305,44 +363,37 @@ var inline = (function(inline) {
             event.preventDefault();
 
             /** Callback to link action */
-            action.addEventListener('keydown', function(event){
+            action.addEventListener('keydown', inlineToolbarAnchorInputKeydown_, false);
 
-                if (event.keyCode == codex.core.keys.ENTER) {
-
-                    codex.toolbar.inline.restoreSelection(editable, storedSelection);
-                    codex.toolbar.inline.setAnchor(action.value);
-
-                    /**
-                     * Preventing events that will be able to happen
-                     */
-                    event.preventDefault();
-                    event.stopImmediatePropagation();
-
-                    codex.toolbar.inline.clearRange();
-                }
-
-            }, false);
         }
+
     };
 
-    inline.isLinkActive = function() {
+    inline.isLinkActive = function () {
 
         var isActive = false;
 
-        codex.nodes.inlineToolbar.buttons.childNodes.forEach(function(tool) {
+        editor.nodes.inlineToolbar.buttons.childNodes.forEach(function (tool) {
+
             var dataType = tool.dataset.type;
 
             if (dataType == 'link' && tool.classList.contains('hightlighted')) {
+
                 isActive = true;
+
             }
+
         });
 
         return isActive;
+
     };
 
     /** default action behavior of tool */
-    inline.defaultToolAction = function(type) {
+    inline.defaultToolAction = function (type) {
+
         document.execCommand(type, false, null);
+
     };
 
     /**
@@ -352,12 +403,13 @@ var inline = (function(inline) {
      *
      * @param {String} url - URL
      */
-    inline.setAnchor = function(url) {
+    inline.setAnchor = function (url) {
 
         document.execCommand('createLink', false, url);
 
         /** Close after URL inserting */
-        codex.toolbar.inline.closeAction();
+        editor.toolbar.inline.closeAction();
+
     };
 
     /**
@@ -365,7 +417,7 @@ var inline = (function(inline) {
      *
      * Saves selection
      */
-    inline.saveSelection = function(containerEl) {
+    inline.saveSelection = function (containerEl) {
 
         var range = window.getSelection().getRangeAt(0),
             preSelectionRange = range.cloneRange(),
@@ -380,6 +432,7 @@ var inline = (function(inline) {
             start: start,
             end: start + range.toString().length
         };
+
     };
 
     /**
@@ -390,7 +443,7 @@ var inline = (function(inline) {
      * @param {Element} containerEl - editable element where we restore range
      * @param {Object} savedSel - range basic information to restore
      */
-    inline.restoreSelection = function(containerEl, savedSel) {
+    inline.restoreSelection = function (containerEl, savedSel) {
 
         var range     = document.createRange(),
             charIndex = 0;
@@ -398,7 +451,7 @@ var inline = (function(inline) {
         range.setStart(containerEl, 0);
         range.collapse(true);
 
-        var nodeStack = [containerEl],
+        var nodeStack = [ containerEl ],
             node,
             foundStart = false,
             stop = false,
@@ -411,25 +464,38 @@ var inline = (function(inline) {
                 nextCharIndex = charIndex + node.length;
 
                 if (!foundStart && savedSel.start >= charIndex && savedSel.start <= nextCharIndex) {
+
                     range.setStart(node, savedSel.start - charIndex);
                     foundStart = true;
+
                 }
                 if (foundStart && savedSel.end >= charIndex && savedSel.end <= nextCharIndex) {
+
                     range.setEnd(node, savedSel.end - charIndex);
                     stop = true;
+
                 }
                 charIndex = nextCharIndex;
+
             } else {
+
                 var i = node.childNodes.length;
+
                 while (i--) {
+
                     nodeStack.push(node.childNodes[i]);
+
                 }
+
             }
+
         }
 
         var sel = window.getSelection();
+
         sel.removeAllRanges();
         sel.addRange(range);
+
     };
 
     /**
@@ -437,9 +503,12 @@ var inline = (function(inline) {
      *
      * Removes all ranges from window selection
      */
-    inline.clearRange = function() {
+    inline.clearRange = function () {
+
         var selection = window.getSelection();
+
         selection.removeAllRanges();
+
     };
 
     /**
@@ -447,13 +516,18 @@ var inline = (function(inline) {
      *
      * sets or removes hightlight
      */
-    inline.hightlight = function(tool) {
+    inline.hightlight = function (tool) {
+
         var dataType = tool.dataset.type;
 
         if (document.queryCommandState(dataType)) {
-            codex.toolbar.inline.setButtonHighlighted(tool);
+
+            editor.toolbar.inline.setButtonHighlighted(tool);
+
         } else {
-            codex.toolbar.inline.removeButtonsHighLight(tool);
+
+            editor.toolbar.inline.removeButtonsHighLight(tool);
+
         }
 
         /**
@@ -464,8 +538,11 @@ var inline = (function(inline) {
             tag = selection.anchorNode.parentNode;
 
         if (tag.tagName == 'A' && dataType == 'link') {
-            codex.toolbar.inline.setButtonHighlighted(tool);
+
+            editor.toolbar.inline.setButtonHighlighted(tool);
+
         }
+
     };
 
     /**
@@ -473,15 +550,20 @@ var inline = (function(inline) {
      *
      * Mark button if text is already executed
      */
-    inline.setButtonHighlighted = function(button) {
+    inline.setButtonHighlighted = function (button) {
+
         button.classList.add('hightlighted');
 
         /** At link tool we also change icon */
         if (button.dataset.type == 'link') {
+
             var icon = button.childNodes[0];
+
             icon.classList.remove('ce-icon-link');
             icon.classList.add('ce-icon-unlink');
+
         }
+
     };
 
     /**
@@ -489,21 +571,23 @@ var inline = (function(inline) {
      *
      * Removes hightlight
      */
-    inline.removeButtonsHighLight = function(button) {
+    inline.removeButtonsHighLight = function (button) {
+
         button.classList.remove('hightlighted');
 
         /** At link tool we also change icon */
         if (button.dataset.type == 'link') {
+
             var icon = button.childNodes[0];
+
             icon.classList.remove('ce-icon-unlink');
             icon.classList.add('ce-icon-link');
+
         }
+
     };
 
 
     return inline;
+
 })({});
-
-inline.init();
-
-module.exports = inline;

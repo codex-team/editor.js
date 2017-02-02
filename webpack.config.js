@@ -27,11 +27,11 @@ module.exports = {
 
     entry: {
         "whatwg-fetch": "whatwg-fetch",
-        "codex-editor": "./index"
+        "codex-editor": "./codex"
     },
     output: {
         filename: "[name].js",
-        library: ["codex"]
+        library: ["codex","editor"]
     },
 
     watch: true,
@@ -55,10 +55,19 @@ module.exports = {
     },
 
     plugins: [
+
+        /** Pass variables into modules */
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV),
             VERSION: JSON.stringify(VERSION)
-        })
+        }),
+
+        /** Минифицируем CSS и JS */
+        new webpack.optimize.UglifyJsPlugin(),
+
+        /** Block biuld if errors found */
+        new webpack.NoErrorsPlugin(),
+
     ],
 
     module : {

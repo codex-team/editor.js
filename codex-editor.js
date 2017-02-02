@@ -208,196 +208,215 @@ var codex =
 	 * @version 1.1.2
 	 */
 	
-	var core = function (core) {
+	var editor = codex.editor;
 	
-	    /**
-	     * @public
-	     *
-	     * Editor preparing method
-	     * @return Promise
-	     */
-	    core.prepare = function (userSettings) {
+	module.exports = function (core) {
 	
-	        return new Promise(function (resolve, reject) {
+	            /**
+	             * @public
+	             *
+	             * Editor preparing method
+	             * @return Promise
+	             */
+	            core.prepare = function (userSettings) {
 	
-	            if (userSettings) {
+	                        return new Promise(function (resolve, reject) {
 	
-	                codex.settings.tools = userSettings.tools || codex.settings.tools;
-	            }
+	                                    if (userSettings) {
 	
-	            if (userSettings.data) {
-	                codex.state.blocks = userSettings.data;
-	            }
+	                                                editor.settings.tools = userSettings.tools || editor.settings.tools;
+	                                    }
 	
-	            if (userSettings.initialBlockPlugin) {
-	                codex.settings.initialBlockPlugin = userSettings.initialBlockPlugin;
-	            }
+	                                    if (userSettings.data) {
 	
-	            if (userSettings.uploadImagesUrl) {
-	                codex.settings.uploadImagesUrl = userSettings.uploadImagesUrl;
-	            }
+	                                                editor.state.blocks = userSettings.data;
+	                                    }
 	
-	            codex.nodes.textarea = document.getElementById(userSettings.textareaId || codex.settings.textareaId);
+	                                    if (userSettings.initialBlockPlugin) {
 	
-	            if (_typeof(codex.nodes.textarea) === undefined || codex.nodes.textarea === null) {
-	                reject(Error("Textarea wasn't found by ID: #" + userSettings.textareaId));
-	            } else {
-	                resolve();
-	            }
-	        });
-	    };
+	                                                editor.settings.initialBlockPlugin = userSettings.initialBlockPlugin;
+	                                    }
 	
-	    /**
-	     * Logging method
-	     * @param type = ['log', 'info', 'warn']
-	     */
-	    core.log = function (msg, type, arg) {
+	                                    if (userSettings.uploadImagesUrl) {
 	
-	        type = type || 'log';
+	                                                editor.settings.uploadImagesUrl = userSettings.uploadImagesUrl;
+	                                    }
 	
-	        if (!arg) {
-	            arg = msg || 'undefined';
-	            msg = '[codex-editor]:      %o';
-	        } else {
-	            msg = '[codex-editor]:      ' + msg;
-	        }
+	                                    editor.nodes.textarea = document.getElementById(userSettings.textareaId || editor.settings.textareaId);
 	
-	        try {
-	            if ('console' in window && console[type]) {
-	                if (arg) console[type](msg, arg);else console[type](msg);
-	            }
-	        } catch (e) {}
-	    };
+	                                    if (_typeof(editor.nodes.textarea) === undefined || editor.nodes.textarea === null) {
 	
-	    /**
-	     * @protected
-	     *
-	     * Helper for insert one element after another
-	     */
-	    core.insertAfter = function (target, element) {
-	        target.parentNode.insertBefore(element, target.nextSibling);
-	    };
+	                                                reject(Error("Textarea wasn't found by ID: #" + userSettings.textareaId));
+	                                    } else {
 	
-	    /**
-	     * @const
-	     *
-	     * Readable DOM-node types map
-	     */
-	    core.nodeTypes = {
-	        TAG: 1,
-	        TEXT: 3,
-	        COMMENT: 8
-	    };
-	
-	    /**
-	     * @const
-	     * Readable keys map
-	     */
-	    core.keys = { BACKSPACE: 8, TAB: 9, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, ESC: 27, SPACE: 32, LEFT: 37, UP: 38, DOWN: 40, RIGHT: 39, DELETE: 46, META: 91 };
-	
-	    /**
-	     * @protected
-	     *
-	     * Check object for DOM node
-	     */
-	    core.isDomNode = function (el) {
-	        return el && (typeof el === 'undefined' ? 'undefined' : _typeof(el)) === 'object' && el.nodeType && el.nodeType == this.nodeTypes.TAG;
-	    };
-	
-	    /**
-	     * Native Ajax
-	     */
-	    core.ajax = function (data) {
-	
-	        if (!data || !data.url) {
-	            return;
-	        }
-	
-	        var XMLHTTP = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP"),
-	            success_function = function success_function() {},
-	            params = '',
-	            obj;
-	
-	        data.async = true;
-	        data.type = data.type || 'GET';
-	        data.data = data.data || '';
-	        data['content-type'] = data['content-type'] || 'application/json; charset=utf-8';
-	        success_function = data.success || success_function;
-	
-	        if (data.type == 'GET' && data.data) {
-	
-	            data.url = /\?/.test(data.url) ? data.url + '&' + data.data : data.url + '?' + data.data;
-	        } else {
-	
-	            for (obj in data.data) {
-	                params += obj + '=' + encodeURIComponent(data.data[obj]) + '&';
-	            }
-	        }
-	
-	        if (data.withCredentials) {
-	            XMLHTTP.withCredentials = true;
-	        }
-	
-	        if (data.beforeSend && typeof data.beforeSend == 'function') {
-	            data.beforeSend.call();
-	        }
-	
-	        XMLHTTP.open(data.type, data.url, data.async);
-	        XMLHTTP.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-	        XMLHTTP.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	
-	        XMLHTTP.onreadystatechange = function () {
-	            if (XMLHTTP.readyState == 4 && XMLHTTP.status == 200) {
-	                success_function(XMLHTTP.responseText);
-	            }
-	        };
-	
-	        XMLHTTP.send(params);
-	    };
-	
-	    /**
-	    * Appends script to head of document
-	    * @return Promise
-	    */
-	    core.importScript = function (scriptPath, instanceName) {
-	
-	        return new Promise(function (resolve, reject) {
-	
-	            var instancePrefix = 'cdx-script-';
-	
-	            var script = void 0;
-	
-	            /** Script is already loaded */
-	            if (!instanceName) {
-	                reject('Instance name is missed');
-	            } else if (document.getElementById(instancePrefix + instanceName)) {
-	                resolve(scriptPath);
-	            }
-	
-	            script = document.createElement('SCRIPT');
-	            script.async = true;
-	            script.defer = true;
-	            script.id = instancePrefix + instanceName;
-	
-	            script.onload = function () {
-	
-	                resolve(scriptPath);
+	                                                resolve();
+	                                    }
+	                        });
 	            };
 	
-	            script.onerror = function () {
+	            /**
+	             * Logging method
+	             * @param type = ['log', 'info', 'warn']
+	             */
+	            core.log = function (msg, type, arg) {
 	
-	                reject(scriptPath);
+	                        type = type || 'log';
+	
+	                        if (!arg) {
+	
+	                                    arg = msg || 'undefined';
+	                                    msg = '[codex-editor]:      %o';
+	                        } else {
+	
+	                                    msg = '[codex-editor]:      ' + msg;
+	                        }
+	
+	                        try {
+	
+	                                    if ('console' in window && window.console[type]) {
+	
+	                                                if (arg) window.console[type](msg, arg);else window.console[type](msg);
+	                                    }
+	                        } catch (e) {}
 	            };
 	
-	            script.src = scriptPath;
-	            document.head.appendChild(script);
-	        });
-	    };
+	            /**
+	             * @protected
+	             *
+	             * Helper for insert one element after another
+	             */
+	            core.insertAfter = function (target, element) {
 	
-	    return core;
+	                        target.parentNode.insertBefore(element, target.nextSibling);
+	            };
+	
+	            /**
+	             * @const
+	             *
+	             * Readable DOM-node types map
+	             */
+	            core.nodeTypes = {
+	                        TAG: 1,
+	                        TEXT: 3,
+	                        COMMENT: 8
+	            };
+	
+	            /**
+	             * @const
+	             * Readable keys map
+	             */
+	            core.keys = { BACKSPACE: 8, TAB: 9, ENTER: 13, SHIFT: 16, CTRL: 17, ALT: 18, ESC: 27, SPACE: 32, LEFT: 37, UP: 38, DOWN: 40, RIGHT: 39, DELETE: 46, META: 91 };
+	
+	            /**
+	             * @protected
+	             *
+	             * Check object for DOM node
+	             */
+	            core.isDomNode = function (el) {
+	
+	                        return el && (typeof el === 'undefined' ? 'undefined' : _typeof(el)) === 'object' && el.nodeType && el.nodeType == this.nodeTypes.TAG;
+	            };
+	
+	            /**
+	             * Native Ajax
+	             */
+	            core.ajax = function (data) {
+	
+	                        if (!data || !data.url) {
+	
+	                                    return;
+	                        }
+	
+	                        var XMLHTTP = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
+	                            successFunction = function successFunction() {},
+	                            params = '',
+	                            obj;
+	
+	                        data.async = true;
+	                        data.type = data.type || 'GET';
+	                        data.data = data.data || '';
+	                        data['content-type'] = data['content-type'] || 'application/json; charset=utf-8';
+	                        successFunction = data.success || successFunction;
+	
+	                        if (data.type == 'GET' && data.data) {
+	
+	                                    data.url = /\?/.test(data.url) ? data.url + '&' + data.data : data.url + '?' + data.data;
+	                        } else {
+	
+	                                    for (obj in data.data) {
+	
+	                                                params += obj + '=' + encodeURIComponent(data.data[obj]) + '&';
+	                                    }
+	                        }
+	
+	                        if (data.withCredentials) {
+	
+	                                    XMLHTTP.withCredentials = true;
+	                        }
+	
+	                        if (data.beforeSend && typeof data.beforeSend == 'function') {
+	
+	                                    data.beforeSend.call();
+	                        }
+	
+	                        XMLHTTP.open(data.type, data.url, data.async);
+	                        XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+	                        XMLHTTP.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+	
+	                        XMLHTTP.onreadystatechange = function () {
+	
+	                                    if (XMLHTTP.readyState == 4 && XMLHTTP.status == 200) {
+	
+	                                                successFunction(XMLHTTP.responseText);
+	                                    }
+	                        };
+	
+	                        XMLHTTP.send(params);
+	            };
+	
+	            /**
+	            * Appends script to head of document
+	            * @return Promise
+	            */
+	            core.importScript = function (scriptPath, instanceName) {
+	
+	                        return new Promise(function (resolve, reject) {
+	
+	                                    var instancePrefix = 'cdx-script-';
+	
+	                                    var script = void 0;
+	
+	                                    /** Script is already loaded */
+	                                    if (!instanceName) {
+	
+	                                                reject('Instance name is missed');
+	                                    } else if (document.getElementById(instancePrefix + instanceName)) {
+	
+	                                                resolve(scriptPath);
+	                                    }
+	
+	                                    script = document.createElement('SCRIPT');
+	                                    script.async = true;
+	                                    script.defer = true;
+	                                    script.id = instancePrefix + instanceName;
+	
+	                                    script.onload = function () {
+	
+	                                                resolve(scriptPath);
+	                                    };
+	
+	                                    script.onerror = function () {
+	
+	                                                reject(scriptPath);
+	                                    };
+	
+	                                    script.src = scriptPath;
+	                                    document.head.appendChild(script);
+	                        });
+	            };
+	
+	            return core;
 	}({});
-	
-	module.exports = core;
 
 /***/ },
 /* 3 */
@@ -826,8 +845,9 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
+	var editor = codex.editor;
 	
-	var transport = function (transport) {
+	module.exports = function (transport) {
 	
 	    transport.input = null;
 	
@@ -841,9 +861,9 @@ var codex =
 	        var input = document.createElement('INPUT');
 	
 	        input.type = 'file';
-	        input.addEventListener('change', codex.transport.fileSelected);
+	        input.addEventListener('change', editor.transport.fileSelected);
 	
-	        codex.transport.input = input;
+	        editor.transport.input = input;
 	    };
 	
 	    /** Clear input when files is uploaded */
@@ -858,23 +878,21 @@ var codex =
 	
 	    /**
 	     * Callback for file selection
+	     * @param {Event} event
 	     */
-	    transport.fileSelected = function (event) {
+	    transport.fileSelected = function () {
 	
 	        var input = this,
 	            files = input.files,
-	            filesLength = files.length,
-	            formdData = new FormData(),
-	            file,
-	            i;
+	            formdData = new FormData();
 	
 	        formdData.append('files', files[0], files[0].name);
 	
-	        codex.transport.ajax({
+	        editor.transport.ajax({
 	            data: formdData,
-	            beforeSend: codex.transport.arguments.beforeSend,
-	            success: codex.transport.arguments.success,
-	            error: codex.transport.arguments.error
+	            beforeSend: editor.transport.arguments.beforeSend,
+	            success: editor.transport.arguments.success,
+	            error: editor.transport.arguments.error
 	        });
 	    };
 	
@@ -890,6 +908,7 @@ var codex =
 	
 	    /**
 	     * Ajax requests module
+	     * @todo use core.ajax
 	     */
 	    transport.ajax = function (params) {
 	
@@ -900,15 +919,18 @@ var codex =
 	
 	        beforeSend();
 	
-	        xhr.open('POST', codex.settings.uploadImagesUrl, true);
+	        xhr.open('POST', editor.settings.uploadImagesUrl, true);
 	
-	        xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+	        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 	
 	        xhr.onload = function () {
+	
 	            if (xhr.status === 200) {
+	
 	                success(xhr.responseText);
 	            } else {
-	                console.log("request error: %o", xhr);
+	
+	                editor.core.log('request error: %o', xhr);
 	                error();
 	            }
 	        };
@@ -919,8 +941,6 @@ var codex =
 	
 	    return transport;
 	}({});
-	
-	module.exports = transport;
 
 /***/ },
 /* 5 */
@@ -935,163 +955,167 @@ var codex =
 	 * @version 1.0
 	 */
 	
-	var renderer = function (renderer) {
+	var editor = codex.editor;
 	
-	    /**
-	     * Asyncronously parses input JSON to redactor blocks
-	     */
-	    renderer.makeBlocksFromData = function () {
+	module.exports = function (renderer) {
 	
 	        /**
-	         * If redactor is empty, add first paragraph to start writing
+	         * Asyncronously parses input JSON to redactor blocks
 	         */
-	        if (!codex.state.blocks.items.length) {
+	        renderer.makeBlocksFromData = function () {
 	
-	            codex.ui.addInitialBlock();
-	            return;
-	        }
+	                /**
+	                 * If redactor is empty, add first paragraph to start writing
+	                 */
+	                if (!editor.state.blocks.items.length) {
 	
-	        Promise.resolve()
+	                        editor.ui.addInitialBlock();
+	                        return;
+	                }
 	
-	        /** First, get JSON from state */
-	        .then(function () {
-	            return codex.state.blocks;
-	        })
+	                Promise.resolve()
 	
-	        /** Then, start to iterate they */
-	        .then(codex.renderer.appendBlocks)
+	                /** First, get JSON from state */
+	                .then(function () {
 	
-	        /** Write log if something goes wrong */
-	        .catch(function (error) {
-	            codex.core.log('Error while parsing JSON: %o', 'error', error);
-	        });
-	    };
+	                        return editor.state.blocks;
+	                })
 	
-	    /**
-	     * Parses JSON to blocks
-	     * @param {object} data
-	     * @return Primise -> nodeList
-	     */
-	    renderer.appendBlocks = function (data) {
+	                /** Then, start to iterate they */
+	                .then(editor.renderer.appendBlocks)
 	
-	        var blocks = data.items;
+	                /** Write log if something goes wrong */
+	                .catch(function (error) {
 	
-	        /**
-	         * Sequence of one-by-one blocks appending
-	         * Uses to save blocks order after async-handler
-	         */
-	        var nodeSequence = Promise.resolve();
-	
-	        for (var index = 0; index < blocks.length; index++) {
-	
-	            /** Add node to sequence at specified index */
-	            codex.renderer.appendNodeAtIndex(nodeSequence, blocks, index);
-	        }
-	    };
-	
-	    /**
-	     * Append node at specified index
-	     */
-	    renderer.appendNodeAtIndex = function (nodeSequence, blocks, index) {
-	
-	        /** We need to append node to sequence */
-	        nodeSequence
-	
-	        /** first, get node async-aware */
-	        .then(function () {
-	
-	            return codex.renderer.getNodeAsync(blocks, index);
-	        })
-	
-	        /**
-	         * second, compose editor-block from JSON object
-	         */
-	        .then(codex.renderer.createBlockFromData)
-	
-	        /**
-	         * now insert block to redactor
-	         */
-	        .then(function (blockData) {
-	
-	            /**
-	             * blockData has 'block', 'type' and 'stretched' information
-	             */
-	            codex.content.insertBlock(blockData);
-	
-	            /** Pass created block to next step */
-	            return blockData.block;
-	        })
-	
-	        /** Log if something wrong with node */
-	        .catch(function (error) {
-	            codex.core.log('Node skipped while parsing because %o', 'error', error);
-	        });
-	    };
-	
-	    /**
-	     * Asynchronously returns block data from blocksList by index
-	     * @return Promise to node
-	     */
-	    renderer.getNodeAsync = function (blocksList, index) {
-	
-	        return Promise.resolve().then(function () {
-	
-	            return blocksList[index];
-	        });
-	    };
-	
-	    /**
-	     * Creates editor block by JSON-data
-	     *
-	     * @uses render method of each plugin
-	     *
-	     * @param {object} blockData looks like
-	     *                            { header : {
-	     *                                            text: '',
-	     *                                            type: 'H3', ...
-	     *                                        }
-	     *                            }
-	     * @return {object} with type and Element
-	     */
-	    renderer.createBlockFromData = function (blockData) {
-	
-	        /** New parser */
-	        var pluginName = blockData.type,
-	            cover = blockData.cover;
-	
-	        /** Get first key of object that stores plugin name */
-	        // for (var pluginName in blockData) break;
-	
-	        /** Check for plugin existance */
-	        if (!codex.tools[pluginName]) {
-	            throw Error('Plugin \xAB' + pluginName + '\xBB not found');
-	        }
-	
-	        /** Check for plugin having render method */
-	        if (typeof codex.tools[pluginName].render != 'function') {
-	
-	            throw Error('Plugin \xAB' + pluginName + '\xBB must have \xABrender\xBB method');
-	        }
-	
-	        /** New Parser */
-	        var block = codex.tools[pluginName].render(blockData.data);
-	
-	        /** is first-level block stretched */
-	        var stretched = codex.tools[pluginName].isStretched || false;
-	
-	        /** Retrun type and block */
-	        return {
-	            type: pluginName,
-	            block: block,
-	            stretched: stretched,
-	            cover: cover
+	                        editor.core.log('Error while parsing JSON: %o', 'error', error);
+	                });
 	        };
-	    };
 	
-	    return renderer;
+	        /**
+	         * Parses JSON to blocks
+	         * @param {object} data
+	         * @return Primise -> nodeList
+	         */
+	        renderer.appendBlocks = function (data) {
+	
+	                var blocks = data.items;
+	
+	                /**
+	                 * Sequence of one-by-one blocks appending
+	                 * Uses to save blocks order after async-handler
+	                 */
+	                var nodeSequence = Promise.resolve();
+	
+	                for (var index = 0; index < blocks.length; index++) {
+	
+	                        /** Add node to sequence at specified index */
+	                        editor.renderer.appendNodeAtIndex(nodeSequence, blocks, index);
+	                }
+	        };
+	
+	        /**
+	         * Append node at specified index
+	         */
+	        renderer.appendNodeAtIndex = function (nodeSequence, blocks, index) {
+	
+	                /** We need to append node to sequence */
+	                nodeSequence
+	
+	                /** first, get node async-aware */
+	                .then(function () {
+	
+	                        return editor.renderer.getNodeAsync(blocks, index);
+	                })
+	
+	                /**
+	                 * second, compose editor-block from JSON object
+	                 */
+	                .then(editor.renderer.createBlockFromData)
+	
+	                /**
+	                 * now insert block to redactor
+	                 */
+	                .then(function (blockData) {
+	
+	                        /**
+	                         * blockData has 'block', 'type' and 'stretched' information
+	                         */
+	                        editor.content.insertBlock(blockData);
+	
+	                        /** Pass created block to next step */
+	                        return blockData.block;
+	                })
+	
+	                /** Log if something wrong with node */
+	                .catch(function (error) {
+	
+	                        editor.core.log('Node skipped while parsing because %o', 'error', error);
+	                });
+	        };
+	
+	        /**
+	         * Asynchronously returns block data from blocksList by index
+	         * @return Promise to node
+	         */
+	        renderer.getNodeAsync = function (blocksList, index) {
+	
+	                return Promise.resolve().then(function () {
+	
+	                        return blocksList[index];
+	                });
+	        };
+	
+	        /**
+	         * Creates editor block by JSON-data
+	         *
+	         * @uses render method of each plugin
+	         *
+	         * @param {object} blockData looks like
+	         *                            { header : {
+	         *                                            text: '',
+	         *                                            type: 'H3', ...
+	         *                                        }
+	         *                            }
+	         * @return {object} with type and Element
+	         */
+	        renderer.createBlockFromData = function (blockData) {
+	
+	                /** New parser */
+	                var pluginName = blockData.type,
+	                    cover = blockData.cover;
+	
+	                /** Get first key of object that stores plugin name */
+	                // for (var pluginName in blockData) break;
+	
+	                /** Check for plugin existance */
+	                if (!editor.tools[pluginName]) {
+	
+	                        throw Error('Plugin \xAB' + pluginName + '\xBB not found');
+	                }
+	
+	                /** Check for plugin having render method */
+	                if (typeof editor.tools[pluginName].render != 'function') {
+	
+	                        throw Error('Plugin \xAB' + pluginName + '\xBB must have \xABrender\xBB method');
+	                }
+	
+	                /** New Parser */
+	                var block = editor.tools[pluginName].render(blockData.data);
+	
+	                /** is first-level block stretched */
+	                var stretched = editor.tools[pluginName].isStretched || false;
+	
+	                /** Retrun type and block */
+	                return {
+	                        type: pluginName,
+	                        block: block,
+	                        stretched: stretched,
+	                        cover: cover
+	                };
+	        };
+	
+	        return renderer;
 	}({});
-	
-	module.exports = renderer;
 
 /***/ },
 /* 6 */
@@ -1995,13 +2019,14 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
-	var toolbar = function (toolbar) {
 	
-	    toolbar.init = function () {
-	        toolbar.settings = __webpack_require__(9);
-	        toolbar.inline = __webpack_require__(10);
-	        toolbar.toolbox = __webpack_require__(11);
-	    };
+	var editor = codex.editor;
+	
+	module.exports = function (toolbar) {
+	
+	    toolbar.settings = __webpack_require__(9);
+	    toolbar.inline = __webpack_require__(10);
+	    toolbar.toolbox = __webpack_require__(11);
 	
 	    /**
 	     * Margin between focused node and toolbar
@@ -2019,7 +2044,7 @@ var codex =
 	     */
 	    toolbar.open = function () {
 	
-	        codex.nodes.toolbar.classList.add('opened');
+	        editor.nodes.toolbar.classList.add('opened');
 	        this.opened = true;
 	    };
 	
@@ -2028,18 +2053,19 @@ var codex =
 	     */
 	    toolbar.close = function () {
 	
-	        codex.nodes.toolbar.classList.remove('opened');
+	        editor.nodes.toolbar.classList.remove('opened');
 	
 	        toolbar.opened = false;
 	        toolbar.current = null;
 	
-	        for (var button in codex.nodes.toolbarButtons) {
-	            codex.nodes.toolbarButtons[button].classList.remove('selected');
+	        for (var button in editor.nodes.toolbarButtons) {
+	
+	            editor.nodes.toolbarButtons[button].classList.remove('selected');
 	        }
 	
 	        /** Close toolbox when toolbar is not displayed */
-	        codex.toolbar.toolbox.close();
-	        codex.toolbar.settings.close();
+	        editor.toolbar.toolbox.close();
+	        editor.toolbar.settings.close();
 	    };
 	
 	    toolbar.toggle = function () {
@@ -2054,11 +2080,13 @@ var codex =
 	    };
 	
 	    toolbar.hidePlusButton = function () {
-	        codex.nodes.plusButton.classList.add('hide');
+	
+	        editor.nodes.plusButton.classList.add('hide');
 	    };
 	
 	    toolbar.showPlusButton = function () {
-	        codex.nodes.plusButton.classList.remove('hide');
+	
+	        editor.nodes.plusButton.classList.remove('hide');
 	    };
 	
 	    /**
@@ -2067,31 +2095,27 @@ var codex =
 	    toolbar.move = function () {
 	
 	        /** Close Toolbox when we move toolbar */
-	        codex.toolbar.toolbox.close();
+	        editor.toolbar.toolbox.close();
 	
-	        if (!codex.content.currentNode) {
+	        if (!editor.content.currentNode) {
+	
 	            return;
 	        }
 	
-	        var toolbarHeight = codex.nodes.toolbar.clientHeight || codex.toolbar.defaultToolbarHeight,
-	            newYCoordinate = codex.content.currentNode.offsetTop - codex.toolbar.defaultToolbarHeight / 2 + codex.toolbar.defaultOffset;
+	        var newYCoordinate = editor.content.currentNode.offsetTop - editor.toolbar.defaultToolbarHeight / 2 + editor.toolbar.defaultOffset;
 	
-	        codex.nodes.toolbar.style.transform = 'translate3D(0, ' + Math.floor(newYCoordinate) + 'px, 0)';
+	        editor.nodes.toolbar.style.transform = 'translate3D(0, ' + Math.floor(newYCoordinate) + 'px, 0)';
 	
 	        /** Close trash actions */
-	        codex.toolbar.settings.hideRemoveActions();
+	        editor.toolbar.settings.hideRemoveActions();
 	    };
 	
 	    return toolbar;
 	}({});
-	
-	toolbar.init();
-	
-	module.exports = toolbar;
 
 /***/ },
 /* 9 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
@@ -2101,244 +2125,243 @@ var codex =
 	 * @version 1.0.4
 	 */
 	
-	var settings = function (settings) {
+	var editor = codex.editor;
 	
-	    settings.init = function () {
-	        __webpack_require__(7);
-	    };
+	module.exports = function (settings) {
 	
-	    settings.opened = false;
+	        settings.opened = false;
 	
-	    settings.setting = null;
-	    settings.actions = null;
+	        settings.setting = null;
+	        settings.actions = null;
 	
-	    settings.cover = null;
-	
-	    /**
-	     * Append and open settings
-	     */
-	    settings.open = function (toolType) {
+	        settings.cover = null;
 	
 	        /**
-	         * Append settings content
-	         * It's stored in tool.settings
+	         * Append and open settings
 	         */
-	        if (!codex.tools[toolType] || !codex.tools[toolType].makeSettings) {
+	        settings.open = function (toolType) {
 	
-	            codex.core.log('Plugin \xAB' + toolType + '\xBB has no settings', 'warn');
-	            // codex.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
-	        } else {
+	                /**
+	                 * Append settings content
+	                 * It's stored in tool.settings
+	                 */
+	                if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings) {
 	
-	            /**
-	             * Draw settings block
-	             */
-	            var settingsBlock = codex.tools[toolType].makeSettings();
-	            codex.nodes.pluginSettings.appendChild(settingsBlock);
-	        }
+	                        editor.core.log('Plugin \xAB' + toolType + '\xBB has no settings', 'warn');
+	                        // editor.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
+	                } else {
 	
-	        var currentBlock = codex.content.currentNode;
+	                        /**
+	                         * Draw settings block
+	                         */
+	                        var settingsBlock = editor.tools[toolType].makeSettings();
 	
-	        /** Open settings block */
-	        codex.nodes.blockSettings.classList.add('opened');
-	        codex.toolbar.settings.addDefaultSettings();
-	        this.opened = true;
-	    };
+	                        editor.nodes.pluginSettings.appendChild(settingsBlock);
+	                }
 	
-	    /**
-	     * Close and clear settings
-	     */
-	    settings.close = function () {
-	
-	        codex.nodes.blockSettings.classList.remove('opened');
-	        codex.nodes.pluginSettings.innerHTML = '';
-	
-	        this.opened = false;
-	    };
-	
-	    /**
-	     * @param {string} toolType - plugin type
-	     */
-	    settings.toggle = function (toolType) {
-	
-	        if (!this.opened) {
-	
-	            this.open(toolType);
-	        } else {
-	
-	            this.close();
-	        }
-	    };
-	
-	    /**
-	     * This function adds default core settings
-	     */
-	    settings.addDefaultSettings = function () {
-	
-	        /** list of default settings */
-	        var feedModeToggler;
-	
-	        /** Clear block and append initialized settings */
-	        codex.nodes.defaultSettings.innerHTML = '';
-	
-	        /** Init all default setting buttons */
-	        feedModeToggler = codex.toolbar.settings.makeFeedModeToggler();
+	                /** Open settings block */
+	                editor.nodes.blockSettings.classList.add('opened');
+	                editor.toolbar.settings.addDefaultSettings();
+	                this.opened = true;
+	        };
 	
 	        /**
-	         * Fill defaultSettings
+	         * Close and clear settings
 	         */
+	        settings.close = function () {
+	
+	                editor.nodes.blockSettings.classList.remove('opened');
+	                editor.nodes.pluginSettings.innerHTML = '';
+	
+	                this.opened = false;
+	        };
 	
 	        /**
-	         * Button that enables/disables Feed-mode
-	         * Feed-mode means that block will be showed in articles-feed like cover
+	         * @param {string} toolType - plugin type
 	         */
-	        codex.nodes.defaultSettings.appendChild(feedModeToggler);
-	    };
+	        settings.toggle = function (toolType) {
 	
-	    /**
-	     * Cover setting.
-	     * This tune highlights block, so that it may be used for showing target block on main page
-	     * Draw different setting when block is marked for main page
-	     * If TRUE, then we show button that removes this selection
-	     * Also defined setting "Click" events will be listened and have separate callbacks
-	     *
-	     * @return {Element} node/button that we place in default settings block
-	     */
-	    settings.makeFeedModeToggler = function () {
+	                if (!this.opened) {
 	
-	        var isFeedModeActivated = codex.toolbar.settings.isFeedModeActivated(),
-	            setting,
-	            data;
+	                        this.open(toolType);
+	                } else {
 	
-	        if (!isFeedModeActivated) {
-	
-	            data = {
-	                innerHTML: '<i class="ce-icon-newspaper"></i>Вывести в ленте'
-	            };
-	        } else {
-	
-	            data = {
-	                innerHTML: '<i class="ce-icon-newspaper"></i>Не выводить в ленте'
-	            };
-	        }
-	
-	        setting = codex.draw.node('DIV', codex.ui.className.SETTINGS_ITEM, data);
-	        setting.addEventListener('click', codex.toolbar.settings.updateFeedMode, false);
-	
-	        return setting;
-	    };
-	
-	    /**
-	     * Updates Feed-mode
-	     */
-	    settings.updateFeedMode = function () {
-	
-	        var currentNode = codex.content.currentNode;
-	
-	        currentNode.classList.toggle(codex.ui.className.BLOCK_IN_FEED_MODE);
-	
-	        codex.toolbar.settings.close();
-	    };
-	
-	    settings.isFeedModeActivated = function () {
-	
-	        var currentBlock = codex.content.currentNode;
-	
-	        if (currentBlock) {
-	            return currentBlock.classList.contains(codex.ui.className.BLOCK_IN_FEED_MODE);
-	        } else {
-	            return false;
-	        }
-	    };
-	
-	    /**
-	     * Here we will draw buttons and add listeners to components
-	     */
-	    settings.makeRemoveBlockButton = function () {
-	
-	        var removeBlockWrapper = codex.draw.node('SPAN', 'ce-toolbar__remove-btn', {}),
-	            settingButton = codex.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML: '<i class="ce-icon-trash"></i>' }),
-	            actionWrapper = codex.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
-	            confirmAction = codex.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent: 'Удалить блок' }),
-	            cancelAction = codex.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent: 'Отмена' });
-	
-	        settingButton.addEventListener('click', codex.toolbar.settings.removeButtonClicked, false);
-	
-	        confirmAction.addEventListener('click', codex.toolbar.settings.confirmRemovingRequest, false);
-	
-	        cancelAction.addEventListener('click', codex.toolbar.settings.cancelRemovingRequest, false);
-	
-	        actionWrapper.appendChild(confirmAction);
-	        actionWrapper.appendChild(cancelAction);
-	
-	        removeBlockWrapper.appendChild(settingButton);
-	        removeBlockWrapper.appendChild(actionWrapper);
-	
-	        /** Save setting */
-	        codex.toolbar.settings.setting = settingButton;
-	        codex.toolbar.settings.actions = actionWrapper;
-	
-	        return removeBlockWrapper;
-	    };
-	
-	    settings.removeButtonClicked = function () {
-	
-	        var action = codex.toolbar.settings.actions;
-	
-	        if (action.classList.contains('opened')) {
-	            codex.toolbar.settings.hideRemoveActions();
-	        } else {
-	            codex.toolbar.settings.showRemoveActions();
-	        }
-	
-	        codex.toolbar.toolbox.close();
-	        codex.toolbar.settings.close();
-	    };
-	
-	    settings.cancelRemovingRequest = function () {
-	
-	        codex.toolbar.settings.actions.classList.remove('opened');
-	    };
-	
-	    settings.confirmRemovingRequest = function () {
-	
-	        var currentBlock = codex.content.currentNode,
-	            firstLevelBlocksCount;
-	
-	        currentBlock.remove();
-	
-	        firstLevelBlocksCount = codex.nodes.redactor.childNodes.length;
+	                        this.close();
+	                }
+	        };
 	
 	        /**
-	         * If all blocks are removed
+	         * This function adds default core settings
 	         */
-	        if (firstLevelBlocksCount === 0) {
+	        settings.addDefaultSettings = function () {
 	
-	            /** update currentNode variable */
-	            codex.content.currentNode = null;
+	                /** list of default settings */
+	                var feedModeToggler;
 	
-	            /** Inserting new empty initial block */
-	            codex.ui.addInitialBlock();
-	        }
+	                /** Clear block and append initialized settings */
+	                editor.nodes.defaultSettings.innerHTML = '';
 	
-	        codex.ui.saveInputs();
+	                /** Init all default setting buttons */
+	                feedModeToggler = editor.toolbar.settings.makeFeedModeToggler();
 	
-	        codex.toolbar.close();
-	    };
+	                /**
+	                 * Fill defaultSettings
+	                 */
 	
-	    settings.showRemoveActions = function () {
-	        codex.toolbar.settings.actions.classList.add('opened');
-	    };
+	                /**
+	                 * Button that enables/disables Feed-mode
+	                 * Feed-mode means that block will be showed in articles-feed like cover
+	                 */
+	                editor.nodes.defaultSettings.appendChild(feedModeToggler);
+	        };
 	
-	    settings.hideRemoveActions = function () {
-	        codex.toolbar.settings.actions.classList.remove('opened');
-	    };
+	        /**
+	         * Cover setting.
+	         * This tune highlights block, so that it may be used for showing target block on main page
+	         * Draw different setting when block is marked for main page
+	         * If TRUE, then we show button that removes this selection
+	         * Also defined setting "Click" events will be listened and have separate callbacks
+	         *
+	         * @return {Element} node/button that we place in default settings block
+	         */
+	        settings.makeFeedModeToggler = function () {
 	
-	    return settings;
+	                var isFeedModeActivated = editor.toolbar.settings.isFeedModeActivated(),
+	                    setting,
+	                    data;
+	
+	                if (!isFeedModeActivated) {
+	
+	                        data = {
+	                                innerHTML: '<i class="ce-icon-newspaper"></i>Вывести в ленте'
+	                        };
+	                } else {
+	
+	                        data = {
+	                                innerHTML: '<i class="ce-icon-newspaper"></i>Не выводить в ленте'
+	                        };
+	                }
+	
+	                setting = editor.draw.node('DIV', editor.ui.className.SETTINGS_ITEM, data);
+	                setting.addEventListener('click', editor.toolbar.settings.updateFeedMode, false);
+	
+	                return setting;
+	        };
+	
+	        /**
+	         * Updates Feed-mode
+	         */
+	        settings.updateFeedMode = function () {
+	
+	                var currentNode = editor.content.currentNode;
+	
+	                currentNode.classList.toggle(editor.ui.className.BLOCK_IN_FEED_MODE);
+	
+	                editor.toolbar.settings.close();
+	        };
+	
+	        settings.isFeedModeActivated = function () {
+	
+	                var currentBlock = editor.content.currentNode;
+	
+	                if (currentBlock) {
+	
+	                        return currentBlock.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
+	                } else {
+	
+	                        return false;
+	                }
+	        };
+	
+	        /**
+	         * Here we will draw buttons and add listeners to components
+	         */
+	        settings.makeRemoveBlockButton = function () {
+	
+	                var removeBlockWrapper = editor.draw.node('SPAN', 'ce-toolbar__remove-btn', {}),
+	                    settingButton = editor.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML: '<i class="ce-icon-trash"></i>' }),
+	                    actionWrapper = editor.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
+	                    confirmAction = editor.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent: 'Удалить блок' }),
+	                    cancelAction = editor.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent: 'Отмена' });
+	
+	                settingButton.addEventListener('click', editor.toolbar.settings.removeButtonClicked, false);
+	
+	                confirmAction.addEventListener('click', editor.toolbar.settings.confirmRemovingRequest, false);
+	
+	                cancelAction.addEventListener('click', editor.toolbar.settings.cancelRemovingRequest, false);
+	
+	                actionWrapper.appendChild(confirmAction);
+	                actionWrapper.appendChild(cancelAction);
+	
+	                removeBlockWrapper.appendChild(settingButton);
+	                removeBlockWrapper.appendChild(actionWrapper);
+	
+	                /** Save setting */
+	                editor.toolbar.settings.setting = settingButton;
+	                editor.toolbar.settings.actions = actionWrapper;
+	
+	                return removeBlockWrapper;
+	        };
+	
+	        settings.removeButtonClicked = function () {
+	
+	                var action = editor.toolbar.settings.actions;
+	
+	                if (action.classList.contains('opened')) {
+	
+	                        editor.toolbar.settings.hideRemoveActions();
+	                } else {
+	
+	                        editor.toolbar.settings.showRemoveActions();
+	                }
+	
+	                editor.toolbar.toolbox.close();
+	                editor.toolbar.settings.close();
+	        };
+	
+	        settings.cancelRemovingRequest = function () {
+	
+	                editor.toolbar.settings.actions.classList.remove('opened');
+	        };
+	
+	        settings.confirmRemovingRequest = function () {
+	
+	                var currentBlock = editor.content.currentNode,
+	                    firstLevelBlocksCount;
+	
+	                currentBlock.remove();
+	
+	                firstLevelBlocksCount = editor.nodes.redactor.childNodes.length;
+	
+	                /**
+	                 * If all blocks are removed
+	                 */
+	                if (firstLevelBlocksCount === 0) {
+	
+	                        /** update currentNode variable */
+	                        editor.content.currentNode = null;
+	
+	                        /** Inserting new empty initial block */
+	                        editor.ui.addInitialBlock();
+	                }
+	
+	                editor.ui.saveInputs();
+	
+	                editor.toolbar.close();
+	        };
+	
+	        settings.showRemoveActions = function () {
+	
+	                editor.toolbar.settings.actions.classList.add('opened');
+	        };
+	
+	        settings.hideRemoveActions = function () {
+	
+	                editor.toolbar.settings.actions.classList.remove('opened');
+	        };
+	
+	        return settings;
 	}({});
-	
-	settings.init();
-	
-	module.exports = settings;
 
 /***/ },
 /* 10 */
@@ -2355,503 +2378,543 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
-	var inline = function (inline) {
 	
-	    inline.init = function () {};
+	var editor = codex.editor;
 	
-	    inline.buttonsOpened = null;
-	    inline.actionsOpened = null;
-	    inline.wrappersOffset = null;
+	module.exports = function (inline) {
 	
-	    /**
-	     * saving selection that need for execCommand for styling
-	     *
-	     */
-	    inline.storedSelection = null;
-	
-	    /**
-	     * @protected
-	     *
-	     * Open inline toobar
-	     */
-	    inline.show = function () {
-	
-	        var currentNode = codex.content.currentNode,
-	            tool = currentNode.dataset.tool,
-	            plugin;
+	        inline.buttonsOpened = null;
+	        inline.actionsOpened = null;
+	        inline.wrappersOffset = null;
 	
 	        /**
-	         * tool allowed to open inline toolbar
-	         */
-	        plugin = codex.tools[tool];
-	
-	        if (!plugin.showInlineToolbar) return;
-	
-	        var selectedText = this.getSelectionText(),
-	            toolbar = codex.nodes.inlineToolbar.wrapper,
-	            buttons = codex.nodes.inlineToolbar.buttons;
-	
-	        if (selectedText.length > 0) {
-	
-	            /** Move toolbar and open */
-	            codex.toolbar.inline.move();
-	
-	            /** Open inline toolbar */
-	            toolbar.classList.add('opened');
-	
-	            /** show buttons of inline toolbar */
-	            codex.toolbar.inline.showButtons();
-	        }
-	    };
-	
-	    /**
-	     * @protected
-	     *
-	     * Closes inline toolbar
-	     */
-	    inline.close = function () {
-	        var toolbar = codex.nodes.inlineToolbar.wrapper;
-	        toolbar.classList.remove('opened');
-	    };
-	
-	    /**
-	     * @private
-	     *
-	     * Moving toolbar
-	     */
-	    inline.move = function () {
-	
-	        if (!this.wrappersOffset) {
-	            this.wrappersOffset = this.getWrappersOffset();
-	        }
-	
-	        var coords = this.getSelectionCoords(),
-	            defaultOffset = 0,
-	            toolbar = codex.nodes.inlineToolbar.wrapper,
-	            newCoordinateX,
-	            newCoordinateY;
-	
-	        if (toolbar.offsetHeight === 0) {
-	            defaultOffset = 40;
-	        }
-	
-	        newCoordinateX = coords.x - this.wrappersOffset.left;
-	        newCoordinateY = coords.y + window.scrollY - this.wrappersOffset.top - defaultOffset - toolbar.offsetHeight;
-	
-	        toolbar.style.transform = 'translate3D(' + Math.floor(newCoordinateX) + 'px, ' + Math.floor(newCoordinateY) + 'px, 0)';
-	
-	        /** Close everything */
-	        codex.toolbar.inline.closeButtons();
-	        codex.toolbar.inline.closeAction();
-	    };
-	
-	    /**
-	     * @private
-	     *
-	     * Tool Clicked
-	     */
-	
-	    inline.toolClicked = function (event, type) {
-	
-	        /**
-	         * For simple tools we use default browser function
-	         * For more complicated tools, we should write our own behavior
-	         */
-	        switch (type) {
-	            case 'createLink':
-	                codex.toolbar.inline.createLinkAction(event, type);break;
-	            default:
-	                codex.toolbar.inline.defaultToolAction(type);break;
-	        }
-	
-	        /**
-	         * highlight buttons
-	         * after making some action
-	         */
-	        codex.nodes.inlineToolbar.buttons.childNodes.forEach(codex.toolbar.inline.hightlight);
-	    };
-	
-	    /**
-	     * @private
-	     *
-	     * Saving wrappers offset in DOM
-	     */
-	    inline.getWrappersOffset = function () {
-	
-	        var wrapper = codex.nodes.wrapper,
-	            offset = this.getOffset(wrapper);
-	
-	        this.wrappersOffset = offset;
-	        return offset;
-	    };
-	
-	    /**
-	     * @private
-	     *
-	     * Calculates offset of DOM element
-	     *
-	     * @param el
-	     * @returns {{top: number, left: number}}
-	     */
-	    inline.getOffset = function (el) {
-	
-	        var _x = 0;
-	        var _y = 0;
-	
-	        while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
-	            _x += el.offsetLeft + el.clientLeft;
-	            _y += el.offsetTop + el.clientTop;
-	            el = el.offsetParent;
-	        }
-	        return { top: _y, left: _x };
-	    };
-	
-	    /**
-	     * @private
-	     *
-	     * Calculates position of selected text
-	     * @returns {{x: number, y: number}}
-	     */
-	    inline.getSelectionCoords = function () {
-	
-	        var sel = document.selection,
-	            range;
-	        var x = 0,
-	            y = 0;
-	
-	        if (sel) {
-	
-	            if (sel.type != "Control") {
-	                range = sel.createRange();
-	                range.collapse(true);
-	                x = range.boundingLeft;
-	                y = range.boundingTop;
-	            }
-	        } else if (window.getSelection) {
-	
-	            sel = window.getSelection();
-	
-	            if (sel.rangeCount) {
-	
-	                range = sel.getRangeAt(0).cloneRange();
-	                if (range.getClientRects) {
-	                    range.collapse(true);
-	                    var rect = range.getClientRects()[0];
-	
-	                    if (!rect) {
-	                        return;
-	                    }
-	
-	                    x = rect.left;
-	                    y = rect.top;
-	                }
-	            }
-	        }
-	        return { x: x, y: y };
-	    };
-	
-	    /**
-	     * @private
-	     *
-	     * Returns selected text as String
-	     * @returns {string}
-	     */
-	    inline.getSelectionText = function getSelectionText() {
-	
-	        var selectedText = "";
-	
-	        if (window.getSelection) {
-	            // all modern browsers and IE9+
-	            selectedText = window.getSelection().toString();
-	        }
-	
-	        return selectedText;
-	    };
-	
-	    /** Opens buttons block */
-	    inline.showButtons = function () {
-	
-	        var buttons = codex.nodes.inlineToolbar.buttons;
-	        buttons.classList.add('opened');
-	
-	        codex.toolbar.inline.buttonsOpened = true;
-	
-	        /** highlight buttons */
-	        codex.nodes.inlineToolbar.buttons.childNodes.forEach(codex.toolbar.inline.hightlight);
-	    };
-	
-	    /** Makes buttons disappear */
-	    inline.closeButtons = function () {
-	        var buttons = codex.nodes.inlineToolbar.buttons;
-	        buttons.classList.remove('opened');
-	
-	        codex.toolbar.inline.buttonsOpened = false;
-	    };
-	
-	    /** Open buttons defined action if exist */
-	    inline.showActions = function () {
-	        var action = codex.nodes.inlineToolbar.actions;
-	        action.classList.add('opened');
-	
-	        codex.toolbar.inline.actionsOpened = true;
-	    };
-	
-	    /** Close actions block */
-	    inline.closeAction = function () {
-	        var action = codex.nodes.inlineToolbar.actions;
-	        action.innerHTML = '';
-	        action.classList.remove('opened');
-	        codex.toolbar.inline.actionsOpened = false;
-	    };
-	
-	    /** Action for link creation or for setting anchor */
-	    inline.createLinkAction = function (event, type) {
-	
-	        var isActive = this.isLinkActive();
-	
-	        var editable = codex.content.currentNode,
-	            storedSelection = codex.toolbar.inline.storedSelection;
-	
-	        if (isActive) {
-	
-	            var selection = window.getSelection(),
-	                anchorNode = selection.anchorNode;
-	
-	            storedSelection = codex.toolbar.inline.saveSelection(editable);
-	
-	            /**
-	             * Changing stored selection. if we want to remove anchor from word
-	             * we should remove anchor from whole word, not only selected part.
-	             * The solution is than we get the length of current link
-	             * Change start position to - end of selection minus length of anchor
-	             */
-	            codex.toolbar.inline.restoreSelection(editable, storedSelection);
-	
-	            codex.toolbar.inline.defaultToolAction('unlink');
-	        } else {
-	
-	            /** Create input and close buttons */
-	            var action = codex.draw.inputForLink();
-	            codex.nodes.inlineToolbar.actions.appendChild(action);
-	
-	            codex.toolbar.inline.closeButtons();
-	            codex.toolbar.inline.showActions();
-	
-	            storedSelection = codex.toolbar.inline.saveSelection(editable);
-	
-	            /**
-	             * focus to input
-	             * Solution: https://developer.mozilla.org/ru/docs/Web/API/HTMLElement/focus
-	             * Prevents event after showing input and when we need to focus an input which is in unexisted form
-	             */
-	            action.focus();
-	            event.preventDefault();
-	
-	            /** Callback to link action */
-	            action.addEventListener('keydown', function (event) {
-	
-	                if (event.keyCode == codex.core.keys.ENTER) {
-	
-	                    codex.toolbar.inline.restoreSelection(editable, storedSelection);
-	                    codex.toolbar.inline.setAnchor(action.value);
-	
-	                    /**
-	                     * Preventing events that will be able to happen
-	                     */
-	                    event.preventDefault();
-	                    event.stopImmediatePropagation();
-	
-	                    codex.toolbar.inline.clearRange();
-	                }
-	            }, false);
-	        }
-	    };
-	
-	    inline.isLinkActive = function () {
-	
-	        var isActive = false;
-	
-	        codex.nodes.inlineToolbar.buttons.childNodes.forEach(function (tool) {
-	            var dataType = tool.dataset.type;
-	
-	            if (dataType == 'link' && tool.classList.contains('hightlighted')) {
-	                isActive = true;
-	            }
-	        });
-	
-	        return isActive;
-	    };
-	
-	    /** default action behavior of tool */
-	    inline.defaultToolAction = function (type) {
-	        document.execCommand(type, false, null);
-	    };
-	
-	    /**
-	     * @private
-	     *
-	     * Sets URL
-	     *
-	     * @param {String} url - URL
-	     */
-	    inline.setAnchor = function (url) {
-	
-	        document.execCommand('createLink', false, url);
-	
-	        /** Close after URL inserting */
-	        codex.toolbar.inline.closeAction();
-	    };
-	
-	    /**
-	     * @private
-	     *
-	     * Saves selection
-	     */
-	    inline.saveSelection = function (containerEl) {
-	
-	        var range = window.getSelection().getRangeAt(0),
-	            preSelectionRange = range.cloneRange(),
-	            start;
-	
-	        preSelectionRange.selectNodeContents(containerEl);
-	        preSelectionRange.setEnd(range.startContainer, range.startOffset);
-	
-	        start = preSelectionRange.toString().length;
-	
-	        return {
-	            start: start,
-	            end: start + range.toString().length
-	        };
-	    };
-	
-	    /**
-	     * @private
-	     *
-	     * Sets to previous selection (Range)
-	     *
-	     * @param {Element} containerEl - editable element where we restore range
-	     * @param {Object} savedSel - range basic information to restore
-	     */
-	    inline.restoreSelection = function (containerEl, savedSel) {
-	
-	        var range = document.createRange(),
-	            charIndex = 0;
-	
-	        range.setStart(containerEl, 0);
-	        range.collapse(true);
-	
-	        var nodeStack = [containerEl],
-	            node,
-	            foundStart = false,
-	            stop = false,
-	            nextCharIndex;
-	
-	        while (!stop && (node = nodeStack.pop())) {
-	
-	            if (node.nodeType == 3) {
-	
-	                nextCharIndex = charIndex + node.length;
-	
-	                if (!foundStart && savedSel.start >= charIndex && savedSel.start <= nextCharIndex) {
-	                    range.setStart(node, savedSel.start - charIndex);
-	                    foundStart = true;
-	                }
-	                if (foundStart && savedSel.end >= charIndex && savedSel.end <= nextCharIndex) {
-	                    range.setEnd(node, savedSel.end - charIndex);
-	                    stop = true;
-	                }
-	                charIndex = nextCharIndex;
-	            } else {
-	                var i = node.childNodes.length;
-	                while (i--) {
-	                    nodeStack.push(node.childNodes[i]);
-	                }
-	            }
-	        }
-	
-	        var sel = window.getSelection();
-	        sel.removeAllRanges();
-	        sel.addRange(range);
-	    };
-	
-	    /**
-	     * @private
-	     *
-	     * Removes all ranges from window selection
-	     */
-	    inline.clearRange = function () {
-	        var selection = window.getSelection();
-	        selection.removeAllRanges();
-	    };
-	
-	    /**
-	     * @private
-	     *
-	     * sets or removes hightlight
-	     */
-	    inline.hightlight = function (tool) {
-	        var dataType = tool.dataset.type;
-	
-	        if (document.queryCommandState(dataType)) {
-	            codex.toolbar.inline.setButtonHighlighted(tool);
-	        } else {
-	            codex.toolbar.inline.removeButtonsHighLight(tool);
-	        }
-	
-	        /**
+	         * saving selection that need for execCommand for styling
 	         *
-	         * hightlight for anchors
 	         */
-	        var selection = window.getSelection(),
-	            tag = selection.anchorNode.parentNode;
+	        inline.storedSelection = null;
 	
-	        if (tag.tagName == 'A' && dataType == 'link') {
-	            codex.toolbar.inline.setButtonHighlighted(tool);
-	        }
-	    };
+	        /**
+	         * @protected
+	         *
+	         * Open inline toobar
+	         */
+	        inline.show = function () {
 	
-	    /**
-	     * @private
-	     *
-	     * Mark button if text is already executed
-	     */
-	    inline.setButtonHighlighted = function (button) {
-	        button.classList.add('hightlighted');
+	                var currentNode = editor.content.currentNode,
+	                    tool = currentNode.dataset.tool,
+	                    plugin;
 	
-	        /** At link tool we also change icon */
-	        if (button.dataset.type == 'link') {
-	            var icon = button.childNodes[0];
-	            icon.classList.remove('ce-icon-link');
-	            icon.classList.add('ce-icon-unlink');
-	        }
-	    };
+	                /**
+	                 * tool allowed to open inline toolbar
+	                 */
+	                plugin = editor.tools[tool];
 	
-	    /**
-	     * @private
-	     *
-	     * Removes hightlight
-	     */
-	    inline.removeButtonsHighLight = function (button) {
-	        button.classList.remove('hightlighted');
+	                if (!plugin.showInlineToolbar) return;
 	
-	        /** At link tool we also change icon */
-	        if (button.dataset.type == 'link') {
-	            var icon = button.childNodes[0];
-	            icon.classList.remove('ce-icon-unlink');
-	            icon.classList.add('ce-icon-link');
-	        }
-	    };
+	                var selectedText = inline.getSelectionText(),
+	                    toolbar = editor.nodes.inlineToolbar.wrapper;
 	
-	    return inline;
+	                if (selectedText.length > 0) {
+	
+	                        /** Move toolbar and open */
+	                        editor.toolbar.inline.move();
+	
+	                        /** Open inline toolbar */
+	                        toolbar.classList.add('opened');
+	
+	                        /** show buttons of inline toolbar */
+	                        editor.toolbar.inline.showButtons();
+	                }
+	        };
+	
+	        /**
+	         * @protected
+	         *
+	         * Closes inline toolbar
+	         */
+	        inline.close = function () {
+	
+	                var toolbar = editor.nodes.inlineToolbar.wrapper;
+	
+	                toolbar.classList.remove('opened');
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Moving toolbar
+	         */
+	        inline.move = function () {
+	
+	                if (!this.wrappersOffset) {
+	
+	                        this.wrappersOffset = this.getWrappersOffset();
+	                }
+	
+	                var coords = this.getSelectionCoords(),
+	                    defaultOffset = 0,
+	                    toolbar = editor.nodes.inlineToolbar.wrapper,
+	                    newCoordinateX,
+	                    newCoordinateY;
+	
+	                if (toolbar.offsetHeight === 0) {
+	
+	                        defaultOffset = 40;
+	                }
+	
+	                newCoordinateX = coords.x - this.wrappersOffset.left;
+	                newCoordinateY = coords.y + window.scrollY - this.wrappersOffset.top - defaultOffset - toolbar.offsetHeight;
+	
+	                toolbar.style.transform = 'translate3D(' + Math.floor(newCoordinateX) + 'px, ' + Math.floor(newCoordinateY) + 'px, 0)';
+	
+	                /** Close everything */
+	                editor.toolbar.inline.closeButtons();
+	                editor.toolbar.inline.closeAction();
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Tool Clicked
+	         */
+	
+	        inline.toolClicked = function (event, type) {
+	
+	                /**
+	                 * For simple tools we use default browser function
+	                 * For more complicated tools, we should write our own behavior
+	                 */
+	                switch (type) {
+	                        case 'createLink':
+	                                editor.toolbar.inline.createLinkAction(event, type);break;
+	                        default:
+	                                editor.toolbar.inline.defaultToolAction(type);break;
+	                }
+	
+	                /**
+	                 * highlight buttons
+	                 * after making some action
+	                 */
+	                editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.toolbar.inline.hightlight);
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Saving wrappers offset in DOM
+	         */
+	        inline.getWrappersOffset = function () {
+	
+	                var wrapper = editor.nodes.wrapper,
+	                    offset = this.getOffset(wrapper);
+	
+	                this.wrappersOffset = offset;
+	                return offset;
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Calculates offset of DOM element
+	         *
+	         * @param el
+	         * @returns {{top: number, left: number}}
+	         */
+	        inline.getOffset = function (el) {
+	
+	                var _x = 0;
+	                var _y = 0;
+	
+	                while (el && !isNaN(el.offsetLeft) && !isNaN(el.offsetTop)) {
+	
+	                        _x += el.offsetLeft + el.clientLeft;
+	                        _y += el.offsetTop + el.clientTop;
+	                        el = el.offsetParent;
+	                }
+	                return { top: _y, left: _x };
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Calculates position of selected text
+	         * @returns {{x: number, y: number}}
+	         */
+	        inline.getSelectionCoords = function () {
+	
+	                var sel = document.selection,
+	                    range;
+	                var x = 0,
+	                    y = 0;
+	
+	                if (sel) {
+	
+	                        if (sel.type != 'Control') {
+	
+	                                range = sel.createRange();
+	                                range.collapse(true);
+	                                x = range.boundingLeft;
+	                                y = range.boundingTop;
+	                        }
+	                } else if (window.getSelection) {
+	
+	                        sel = window.getSelection();
+	
+	                        if (sel.rangeCount) {
+	
+	                                range = sel.getRangeAt(0).cloneRange();
+	                                if (range.getClientRects) {
+	
+	                                        range.collapse(true);
+	                                        var rect = range.getClientRects()[0];
+	
+	                                        if (!rect) {
+	
+	                                                return;
+	                                        }
+	
+	                                        x = rect.left;
+	                                        y = rect.top;
+	                                }
+	                        }
+	                }
+	                return { x: x, y: y };
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Returns selected text as String
+	         * @returns {string}
+	         */
+	        inline.getSelectionText = function () {
+	
+	                var selectedText = '';
+	
+	                // all modern browsers and IE9+
+	                if (window.getSelection) {
+	
+	                        selectedText = window.getSelection().toString();
+	                }
+	
+	                return selectedText;
+	        };
+	
+	        /** Opens buttons block */
+	        inline.showButtons = function () {
+	
+	                var buttons = editor.nodes.inlineToolbar.buttons;
+	
+	                buttons.classList.add('opened');
+	
+	                editor.toolbar.inline.buttonsOpened = true;
+	
+	                /** highlight buttons */
+	                editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.toolbar.inline.hightlight);
+	        };
+	
+	        /** Makes buttons disappear */
+	        inline.closeButtons = function () {
+	
+	                var buttons = editor.nodes.inlineToolbar.buttons;
+	
+	                buttons.classList.remove('opened');
+	
+	                editor.toolbar.inline.buttonsOpened = false;
+	        };
+	
+	        /** Open buttons defined action if exist */
+	        inline.showActions = function () {
+	
+	                var action = editor.nodes.inlineToolbar.actions;
+	
+	                action.classList.add('opened');
+	
+	                editor.toolbar.inline.actionsOpened = true;
+	        };
+	
+	        /** Close actions block */
+	        inline.closeAction = function () {
+	
+	                var action = editor.nodes.inlineToolbar.actions;
+	
+	                action.innerHTML = '';
+	                action.classList.remove('opened');
+	                editor.toolbar.inline.actionsOpened = false;
+	        };
+	
+	        /**
+	        * Callback for keydowns in inline toolbar "Insert link..." input
+	        */
+	        var inlineToolbarAnchorInputKeydown_ = function inlineToolbarAnchorInputKeydown_(event) {
+	
+	                if (event.keyCode != editor.core.keys.ENTER) {
+	
+	                        return;
+	                }
+	
+	                var editable = editor.content.currentNode,
+	                    storedSelection = editor.toolbar.inline.storedSelection;
+	
+	                editor.toolbar.inline.restoreSelection(editable, storedSelection);
+	                editor.toolbar.inline.setAnchor(this.value);
+	
+	                /**
+	                 * Preventing events that will be able to happen
+	                 */
+	                event.preventDefault();
+	                event.stopImmediatePropagation();
+	
+	                editor.toolbar.inline.clearRange();
+	        };
+	
+	        /** Action for link creation or for setting anchor */
+	        inline.createLinkAction = function (event) {
+	
+	                var isActive = this.isLinkActive();
+	
+	                var editable = editor.content.currentNode,
+	                    storedSelection = editor.toolbar.inline.saveSelection(editable);
+	
+	                /** Save globally selection */
+	                editor.toolbar.inline.storedSelection = storedSelection;
+	
+	                if (isActive) {
+	
+	                        /**
+	                         * Changing stored selection. if we want to remove anchor from word
+	                         * we should remove anchor from whole word, not only selected part.
+	                         * The solution is than we get the length of current link
+	                         * Change start position to - end of selection minus length of anchor
+	                         */
+	                        editor.toolbar.inline.restoreSelection(editable, storedSelection);
+	
+	                        editor.toolbar.inline.defaultToolAction('unlink');
+	                } else {
+	
+	                        /** Create input and close buttons */
+	                        var action = editor.draw.inputForLink();
+	
+	                        editor.nodes.inlineToolbar.actions.appendChild(action);
+	
+	                        editor.toolbar.inline.closeButtons();
+	                        editor.toolbar.inline.showActions();
+	
+	                        /**
+	                         * focus to input
+	                         * Solution: https://developer.mozilla.org/ru/docs/Web/API/HTMLElement/focus
+	                         * Prevents event after showing input and when we need to focus an input which is in unexisted form
+	                         */
+	                        action.focus();
+	                        event.preventDefault();
+	
+	                        /** Callback to link action */
+	                        action.addEventListener('keydown', inlineToolbarAnchorInputKeydown_, false);
+	                }
+	        };
+	
+	        inline.isLinkActive = function () {
+	
+	                var isActive = false;
+	
+	                editor.nodes.inlineToolbar.buttons.childNodes.forEach(function (tool) {
+	
+	                        var dataType = tool.dataset.type;
+	
+	                        if (dataType == 'link' && tool.classList.contains('hightlighted')) {
+	
+	                                isActive = true;
+	                        }
+	                });
+	
+	                return isActive;
+	        };
+	
+	        /** default action behavior of tool */
+	        inline.defaultToolAction = function (type) {
+	
+	                document.execCommand(type, false, null);
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Sets URL
+	         *
+	         * @param {String} url - URL
+	         */
+	        inline.setAnchor = function (url) {
+	
+	                document.execCommand('createLink', false, url);
+	
+	                /** Close after URL inserting */
+	                editor.toolbar.inline.closeAction();
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Saves selection
+	         */
+	        inline.saveSelection = function (containerEl) {
+	
+	                var range = window.getSelection().getRangeAt(0),
+	                    preSelectionRange = range.cloneRange(),
+	                    start;
+	
+	                preSelectionRange.selectNodeContents(containerEl);
+	                preSelectionRange.setEnd(range.startContainer, range.startOffset);
+	
+	                start = preSelectionRange.toString().length;
+	
+	                return {
+	                        start: start,
+	                        end: start + range.toString().length
+	                };
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Sets to previous selection (Range)
+	         *
+	         * @param {Element} containerEl - editable element where we restore range
+	         * @param {Object} savedSel - range basic information to restore
+	         */
+	        inline.restoreSelection = function (containerEl, savedSel) {
+	
+	                var range = document.createRange(),
+	                    charIndex = 0;
+	
+	                range.setStart(containerEl, 0);
+	                range.collapse(true);
+	
+	                var nodeStack = [containerEl],
+	                    node,
+	                    foundStart = false,
+	                    stop = false,
+	                    nextCharIndex;
+	
+	                while (!stop && (node = nodeStack.pop())) {
+	
+	                        if (node.nodeType == 3) {
+	
+	                                nextCharIndex = charIndex + node.length;
+	
+	                                if (!foundStart && savedSel.start >= charIndex && savedSel.start <= nextCharIndex) {
+	
+	                                        range.setStart(node, savedSel.start - charIndex);
+	                                        foundStart = true;
+	                                }
+	                                if (foundStart && savedSel.end >= charIndex && savedSel.end <= nextCharIndex) {
+	
+	                                        range.setEnd(node, savedSel.end - charIndex);
+	                                        stop = true;
+	                                }
+	                                charIndex = nextCharIndex;
+	                        } else {
+	
+	                                var i = node.childNodes.length;
+	
+	                                while (i--) {
+	
+	                                        nodeStack.push(node.childNodes[i]);
+	                                }
+	                        }
+	                }
+	
+	                var sel = window.getSelection();
+	
+	                sel.removeAllRanges();
+	                sel.addRange(range);
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Removes all ranges from window selection
+	         */
+	        inline.clearRange = function () {
+	
+	                var selection = window.getSelection();
+	
+	                selection.removeAllRanges();
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * sets or removes hightlight
+	         */
+	        inline.hightlight = function (tool) {
+	
+	                var dataType = tool.dataset.type;
+	
+	                if (document.queryCommandState(dataType)) {
+	
+	                        editor.toolbar.inline.setButtonHighlighted(tool);
+	                } else {
+	
+	                        editor.toolbar.inline.removeButtonsHighLight(tool);
+	                }
+	
+	                /**
+	                 *
+	                 * hightlight for anchors
+	                 */
+	                var selection = window.getSelection(),
+	                    tag = selection.anchorNode.parentNode;
+	
+	                if (tag.tagName == 'A' && dataType == 'link') {
+	
+	                        editor.toolbar.inline.setButtonHighlighted(tool);
+	                }
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Mark button if text is already executed
+	         */
+	        inline.setButtonHighlighted = function (button) {
+	
+	                button.classList.add('hightlighted');
+	
+	                /** At link tool we also change icon */
+	                if (button.dataset.type == 'link') {
+	
+	                        var icon = button.childNodes[0];
+	
+	                        icon.classList.remove('ce-icon-link');
+	                        icon.classList.add('ce-icon-unlink');
+	                }
+	        };
+	
+	        /**
+	         * @private
+	         *
+	         * Removes hightlight
+	         */
+	        inline.removeButtonsHighLight = function (button) {
+	
+	                button.classList.remove('hightlighted');
+	
+	                /** At link tool we also change icon */
+	                if (button.dataset.type == 'link') {
+	
+	                        var icon = button.childNodes[0];
+	
+	                        icon.classList.remove('ce-icon-unlink');
+	                        icon.classList.add('ce-icon-link');
+	                }
+	        };
+	
+	        return inline;
 	}({});
-	
-	inline.init();
-	
-	module.exports = inline;
 
 /***/ },
 /* 11 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
@@ -2864,12 +2927,9 @@ var codex =
 	 * @version 1.0
 	 */
 	
-	var toolbox = function (toolbox) {
+	var editor = codex.editor;
 	
-	        toolbox.init = function () {
-	
-	                __webpack_require__(8);
-	        };
+	module.exports = function (toolbox) {
 	
 	        toolbox.opened = false;
 	
@@ -2877,102 +2937,98 @@ var codex =
 	        toolbox.open = function () {
 	
 	                /** Close setting if toolbox is opened */
-	                if (codex.toolbar.settings.opened) {
+	                if (editor.toolbar.settings.opened) {
 	
-	                        codex.toolbar.settings.close();
+	                        editor.toolbar.settings.close();
 	                }
 	
 	                /** display toolbox */
-	                codex.nodes.toolbox.classList.add('opened');
+	                editor.nodes.toolbox.classList.add('opened');
 	
 	                /** Animate plus button */
-	                codex.nodes.plusButton.classList.add('clicked');
+	                editor.nodes.plusButton.classList.add('clicked');
 	
 	                /** toolbox state */
-	                codex.toolbar.toolbox.opened = true;
+	                editor.toolbar.toolbox.opened = true;
 	        };
 	
 	        /** Closes toolbox */
 	        toolbox.close = function () {
 	
 	                /** Makes toolbox disapear */
-	                codex.nodes.toolbox.classList.remove('opened');
+	                editor.nodes.toolbox.classList.remove('opened');
 	
 	                /** Rotate plus button */
-	                codex.nodes.plusButton.classList.remove('clicked');
+	                editor.nodes.plusButton.classList.remove('clicked');
 	
 	                /** toolbox state */
-	                codex.toolbar.toolbox.opened = false;
+	                editor.toolbar.toolbox.opened = false;
 	        };
 	
 	        toolbox.leaf = function () {
 	
-	                var currentTool = codex.toolbar.current,
-	                    tools = Object.keys(codex.tools),
-	                    barButtons = codex.nodes.toolbarButtons,
-	                    nextToolIndex,
-	                    hiddenToolsAmount = 0,
-	                    toolToSelect;
-	
-	                /** Count toolbox hidden tools */
-	                for (var tool in codex.tools) {
-	
-	                        if (!codex.tools[tool].displayInToolbox) {
-	
-	                                hiddenToolsAmount++;
-	                        }
-	                }
+	                var currentTool = editor.toolbar.current,
+	                    tools = Object.keys(editor.tools),
+	                    barButtons = editor.nodes.toolbarButtons,
+	                    nextToolIndex = 0,
+	                    toolToSelect = void 0,
+	                    visibleTool = void 0,
+	                    tool = void 0;
 	
 	                if (!currentTool) {
 	
 	                        /** Get first tool from object*/
-	                        for (toolToSelect in barButtons) {
-	                                break;
+	                        for (tool in editor.tools) {
+	
+	                                if (editor.tools[tool].displayInToolbox) {
+	
+	                                        break;
+	                                }
+	
+	                                nextToolIndex++;
 	                        }
 	                } else {
 	
 	                        nextToolIndex = tools.indexOf(currentTool) + 1;
+	                        visibleTool = tools[nextToolIndex];
 	
-	                        var toolIsLastInToolbox = nextToolIndex == tools.length - (hiddenToolsAmount - 2);
+	                        while (!editor.tools[visibleTool].displayInToolbox) {
 	
-	                        if (toolIsLastInToolbox) {
+	                                nextToolIndex++;
+	                                visibleTool = tools[nextToolIndex];
 	
-	                                nextToolIndex = 0;
+	                                if (nextToolIndex == tools.length) {
 	
-	                                /** getting first displayed tool */
-	                                for (var tool in codex.tools) {
-	
-	                                        if (codex.tools[tool].displayInToolbox) {
-	
-	                                                break;
-	                                        }
-	
-	                                        nextToolIndex++;
+	                                        nextToolIndex = 0;
+	                                        visibleTool = tools[nextToolIndex];
 	                                }
 	                        }
-	
-	                        toolToSelect = tools[nextToolIndex];
 	                }
 	
+	                toolToSelect = tools[nextToolIndex];
+	
 	                for (var button in barButtons) {
+	
 	                        barButtons[button].classList.remove('selected');
-	                }barButtons[toolToSelect].classList.add('selected');
-	                codex.toolbar.current = toolToSelect;
+	                }
+	
+	                barButtons[toolToSelect].classList.add('selected');
+	                editor.toolbar.current = toolToSelect;
 	        };
 	
 	        /**
 	         * Transforming selected node type into selected toolbar element type
 	         * @param {event} event
 	         */
-	        toolbox.toolClicked = function () {
+	        toolbox.toolClicked = function (event) {
 	
 	                /**
 	                 * UNREPLACEBLE_TOOLS this types of tools are forbidden to replace even they are empty
 	                 */
 	                var UNREPLACEBLE_TOOLS = ['image', 'link', 'list', 'instagram', 'twitter', 'embed'],
-	                    tool = codex.tools[codex.toolbar.current],
-	                    workingNode = codex.content.currentNode,
-	                    currentInputIndex = codex.caret.inputIndex,
+	                    tool = editor.tools[editor.toolbar.current],
+	                    workingNode = editor.content.currentNode,
+	                    currentInputIndex = editor.caret.inputIndex,
 	                    newBlockContent,
 	                    appendCallback,
 	                    blockData;
@@ -2990,11 +3046,11 @@ var codex =
 	                if (workingNode && UNREPLACEBLE_TOOLS.indexOf(workingNode.dataset.tool) === -1 && workingNode.textContent.trim() === '') {
 	
 	                        /** Replace current block */
-	                        codex.content.switchBlock(workingNode, newBlockContent, tool.type);
+	                        editor.content.switchBlock(workingNode, newBlockContent, tool.type);
 	                } else {
 	
 	                        /** Insert new Block from plugin */
-	                        codex.content.insertBlock(blockData);
+	                        editor.content.insertBlock(blockData);
 	
 	                        /** increase input index */
 	                        currentInputIndex++;
@@ -3008,29 +3064,25 @@ var codex =
 	                        appendCallback.call(event);
 	                }
 	
-	                setTimeout(function () {
+	                window.setTimeout(function () {
 	
 	                        /** Set caret to current block */
-	                        codex.caret.setToBlock(currentInputIndex);
+	                        editor.caret.setToBlock(currentInputIndex);
 	                }, 10);
 	
 	                /**
 	                 * Changing current Node
 	                 */
-	                codex.content.workingNodeChanged();
+	                editor.content.workingNodeChanged();
 	
 	                /**
 	                 * Move toolbar when node is changed
 	                 */
-	                codex.toolbar.move();
+	                editor.toolbar.move();
 	        };
 	
 	        return toolbox;
 	}({});
-	
-	toolbox.init();
-	
-	module.exports = toolbox;
 
 /***/ },
 /* 12 */
@@ -4226,237 +4278,247 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
+	var editor = codex.editor;
 	
-	var caret = function (caret) {
-	
-	    /**
-	     * @var {int} InputIndex - editable element in DOM
-	     */
-	    caret.inputIndex = null;
-	
-	    /**
-	     * @var {int} offset - caret position in a text node.
-	     */
-	    caret.offset = null;
-	
-	    /**
-	     * @var {int} focusedNodeIndex - we get index of child node from first-level block
-	     */
-	    caret.focusedNodeIndex = null;
-	
-	    /**
-	     * Creates Document Range and sets caret to the element.
-	     * @protected
-	     * @uses caret.save — if you need to save caret position
-	     * @param {Element} el - Changed Node.
-	     */
-	    caret.set = function (el, index, offset) {
-	
-	        offset = offset || this.offset || 0;
-	        index = index || this.focusedNodeIndex || 0;
-	
-	        var childs = el.childNodes,
-	            nodeToSet;
-	
-	        if (childs.length === 0) {
-	
-	            nodeToSet = el;
-	        } else {
-	
-	            nodeToSet = childs[index];
-	        }
-	
-	        /** If Element is INPUT */
-	        if (el.tagName == 'INPUT') {
-	            el.focus();
-	            return;
-	        }
-	
-	        if (codex.core.isDomNode(nodeToSet)) {
-	
-	            nodeToSet = codex.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
-	        }
-	
-	        var range = document.createRange(),
-	            selection = window.getSelection();
-	
-	        setTimeout(function () {
-	
-	            range.setStart(nodeToSet, offset);
-	            range.setEnd(nodeToSet, offset);
-	
-	            selection.removeAllRanges();
-	            selection.addRange(range);
-	
-	            codex.caret.saveCurrentInputIndex();
-	        }, 20);
-	    };
-	
-	    /**
-	     * @protected
-	     * Updates index of input and saves it in caret object
-	     */
-	    caret.saveCurrentInputIndex = function () {
-	
-	        /** Index of Input that we paste sanitized content */
-	        var selection = window.getSelection(),
-	            inputs = codex.state.inputs,
-	            focusedNode = selection.anchorNode,
-	            focusedNodeHolder;
-	
-	        if (!focusedNode) {
-	            return;
-	        }
-	
-	        /** Looking for parent contentEditable block */
-	        while (focusedNode.contentEditable != 'true') {
-	            focusedNodeHolder = focusedNode.parentNode;
-	            focusedNode = focusedNodeHolder;
-	        }
-	
-	        /** Input index in DOM level */
-	        var editableElementIndex = 0;
-	
-	        while (focusedNode != inputs[editableElementIndex]) {
-	            editableElementIndex++;
-	        }
-	
-	        this.inputIndex = editableElementIndex;
-	    };
-	
-	    /**
-	     * Returns current input index (caret object)
-	     */
-	    caret.getCurrentInputIndex = function () {
-	        return this.inputIndex;
-	    };
-	
-	    /**
-	     * @param {int} index - index of first-level block after that we set caret into next input
-	     */
-	    caret.setToNextBlock = function (index) {
-	
-	        var inputs = codex.state.inputs,
-	            nextInput = inputs[index + 1];
-	
-	        if (!nextInput) {
-	            codex.core.log('We are reached the end');
-	            return;
-	        }
+	module.exports = function (caret) {
 	
 	        /**
-	         * When new Block created or deleted content of input
-	         * We should add some text node to set caret
+	         * @var {int} InputIndex - editable element in DOM
 	         */
-	        if (!nextInput.childNodes.length) {
-	            var emptyTextElement = document.createTextNode('');
-	            nextInput.appendChild(emptyTextElement);
-	        }
-	
-	        codex.caret.inputIndex = index + 1;
-	        codex.caret.set(nextInput, 0, 0);
-	        codex.content.workingNodeChanged(nextInput);
-	    };
-	
-	    /**
-	     * @param {int} index - index of target input.
-	     * Sets caret to input with this index
-	     */
-	    caret.setToBlock = function (index) {
-	
-	        var inputs = codex.state.inputs,
-	            targetInput = inputs[index];
-	
-	        console.assert(targetInput, 'caret.setToBlock: target input does not exists');
-	
-	        if (!targetInput) {
-	            return;
-	        }
+	        caret.inputIndex = null;
 	
 	        /**
-	         * When new Block created or deleted content of input
-	         * We should add some text node to set caret
+	         * @var {int} offset - caret position in a text node.
 	         */
-	        if (!targetInput.childNodes.length) {
-	            var emptyTextElement = document.createTextNode('');
-	            targetInput.appendChild(emptyTextElement);
-	        }
-	
-	        codex.caret.inputIndex = index;
-	        codex.caret.set(targetInput, 0, 0);
-	        codex.content.workingNodeChanged(targetInput);
-	    };
-	
-	    /**
-	     * @param {int} index - index of input
-	     */
-	    caret.setToPreviousBlock = function (index) {
-	
-	        index = index || 0;
-	
-	        var inputs = codex.state.inputs,
-	            previousInput = inputs[index - 1],
-	            lastChildNode,
-	            lengthOfLastChildNode,
-	            emptyTextElement;
-	
-	        if (!previousInput) {
-	            codex.core.log('We are reached first node');
-	            return;
-	        }
-	
-	        lastChildNode = codex.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
-	        lengthOfLastChildNode = lastChildNode.length;
+	        caret.offset = null;
 	
 	        /**
-	         * When new Block created or deleted content of input
-	         * We should add some text node to set caret
+	         * @var {int} focusedNodeIndex - we get index of child node from first-level block
 	         */
-	        if (!previousInput.childNodes.length) {
+	        caret.focusedNodeIndex = null;
 	
-	            emptyTextElement = document.createTextNode('');
-	            previousInput.appendChild(emptyTextElement);
-	        }
-	        codex.caret.inputIndex = index - 1;
-	        codex.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
-	        codex.content.workingNodeChanged(inputs[index - 1]);
-	    };
+	        /**
+	         * Creates Document Range and sets caret to the element.
+	         * @protected
+	         * @uses caret.save — if you need to save caret position
+	         * @param {Element} el - Changed Node.
+	         */
+	        caret.set = function (el, index, offset) {
 	
-	    caret.position = {
+	                offset = offset || caret.offset || 0;
+	                index = index || caret.focusedNodeIndex || 0;
 	
-	        atStart: function atStart() {
+	                var childs = el.childNodes,
+	                    nodeToSet;
 	
-	            var selection = window.getSelection(),
-	                anchorOffset = selection.anchorOffset,
-	                anchorNode = selection.anchorNode,
-	                firstLevelBlock = codex.content.getFirstLevelBlock(anchorNode),
-	                pluginsRender = firstLevelBlock.childNodes[0];
+	                if (childs.length === 0) {
 	
-	            if (!codex.core.isDomNode(anchorNode)) {
-	                anchorNode = anchorNode.parentNode;
-	            }
+	                        nodeToSet = el;
+	                } else {
 	
-	            var isFirstNode = anchorNode === pluginsRender.childNodes[0],
-	                isOffsetZero = anchorOffset === 0;
+	                        nodeToSet = childs[index];
+	                }
 	
-	            return isFirstNode && isOffsetZero;
-	        },
+	                /** If Element is INPUT */
+	                if (el.tagName == 'INPUT') {
 	
-	        atTheEnd: function atTheEnd() {
+	                        el.focus();
+	                        return;
+	                }
 	
-	            var selection = window.getSelection(),
-	                anchorOffset = selection.anchorOffset,
-	                anchorNode = selection.anchorNode;
+	                if (editor.core.isDomNode(nodeToSet)) {
 	
-	            /** Caret is at the end of input */
-	            return !anchorNode || !anchorNode.length || anchorOffset === anchorNode.length;
-	        }
-	    };
+	                        nodeToSet = editor.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
+	                }
 	
-	    return caret;
+	                var range = document.createRange(),
+	                    selection = window.getSelection();
+	
+	                window.setTimeout(function () {
+	
+	                        range.setStart(nodeToSet, offset);
+	                        range.setEnd(nodeToSet, offset);
+	
+	                        selection.removeAllRanges();
+	                        selection.addRange(range);
+	
+	                        editor.caret.saveCurrentInputIndex();
+	                }, 20);
+	        };
+	
+	        /**
+	         * @protected
+	         * Updates index of input and saves it in caret object
+	         */
+	        caret.saveCurrentInputIndex = function () {
+	
+	                /** Index of Input that we paste sanitized content */
+	                var selection = window.getSelection(),
+	                    inputs = editor.state.inputs,
+	                    focusedNode = selection.anchorNode,
+	                    focusedNodeHolder;
+	
+	                if (!focusedNode) {
+	
+	                        return;
+	                }
+	
+	                /** Looking for parent contentEditable block */
+	                while (focusedNode.contentEditable != 'true') {
+	
+	                        focusedNodeHolder = focusedNode.parentNode;
+	                        focusedNode = focusedNodeHolder;
+	                }
+	
+	                /** Input index in DOM level */
+	                var editableElementIndex = 0;
+	
+	                while (focusedNode != inputs[editableElementIndex]) {
+	
+	                        editableElementIndex++;
+	                }
+	
+	                caret.inputIndex = editableElementIndex;
+	        };
+	
+	        /**
+	         * Returns current input index (caret object)
+	         */
+	        caret.getCurrentInputIndex = function () {
+	
+	                return caret.inputIndex;
+	        };
+	
+	        /**
+	         * @param {int} index - index of first-level block after that we set caret into next input
+	         */
+	        caret.setToNextBlock = function (index) {
+	
+	                var inputs = editor.state.inputs,
+	                    nextInput = inputs[index + 1];
+	
+	                if (!nextInput) {
+	
+	                        editor.core.log('We are reached the end');
+	                        return;
+	                }
+	
+	                /**
+	                 * When new Block created or deleted content of input
+	                 * We should add some text node to set caret
+	                 */
+	                if (!nextInput.childNodes.length) {
+	
+	                        var emptyTextElement = document.createTextNode('');
+	
+	                        nextInput.appendChild(emptyTextElement);
+	                }
+	
+	                editor.caret.inputIndex = index + 1;
+	                editor.caret.set(nextInput, 0, 0);
+	                editor.content.workingNodeChanged(nextInput);
+	        };
+	
+	        /**
+	         * @param {int} index - index of target input.
+	         * Sets caret to input with this index
+	         */
+	        caret.setToBlock = function (index) {
+	
+	                var inputs = editor.state.inputs,
+	                    targetInput = inputs[index];
+	
+	                if (!targetInput) {
+	
+	                        return;
+	                }
+	
+	                /**
+	                 * When new Block created or deleted content of input
+	                 * We should add some text node to set caret
+	                 */
+	                if (!targetInput.childNodes.length) {
+	
+	                        var emptyTextElement = document.createTextNode('');
+	
+	                        targetInput.appendChild(emptyTextElement);
+	                }
+	
+	                editor.caret.inputIndex = index;
+	                editor.caret.set(targetInput, 0, 0);
+	                editor.content.workingNodeChanged(targetInput);
+	        };
+	
+	        /**
+	         * @param {int} index - index of input
+	         */
+	        caret.setToPreviousBlock = function (index) {
+	
+	                index = index || 0;
+	
+	                var inputs = editor.state.inputs,
+	                    previousInput = inputs[index - 1],
+	                    lastChildNode,
+	                    lengthOfLastChildNode,
+	                    emptyTextElement;
+	
+	                if (!previousInput) {
+	
+	                        editor.core.log('We are reached first node');
+	                        return;
+	                }
+	
+	                lastChildNode = editor.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
+	                lengthOfLastChildNode = lastChildNode.length;
+	
+	                /**
+	                 * When new Block created or deleted content of input
+	                 * We should add some text node to set caret
+	                 */
+	                if (!previousInput.childNodes.length) {
+	
+	                        emptyTextElement = document.createTextNode('');
+	                        previousInput.appendChild(emptyTextElement);
+	                }
+	                editor.caret.inputIndex = index - 1;
+	                editor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
+	                editor.content.workingNodeChanged(inputs[index - 1]);
+	        };
+	
+	        caret.position = {
+	
+	                atStart: function atStart() {
+	
+	                        var selection = window.getSelection(),
+	                            anchorOffset = selection.anchorOffset,
+	                            anchorNode = selection.anchorNode,
+	                            firstLevelBlock = editor.content.getFirstLevelBlock(anchorNode),
+	                            pluginsRender = firstLevelBlock.childNodes[0];
+	
+	                        if (!editor.core.isDomNode(anchorNode)) {
+	
+	                                anchorNode = anchorNode.parentNode;
+	                        }
+	
+	                        var isFirstNode = anchorNode === pluginsRender.childNodes[0],
+	                            isOffsetZero = anchorOffset === 0;
+	
+	                        return isFirstNode && isOffsetZero;
+	                },
+	
+	                atTheEnd: function atTheEnd() {
+	
+	                        var selection = window.getSelection(),
+	                            anchorOffset = selection.anchorOffset,
+	                            anchorNode = selection.anchorNode;
+	
+	                        /** Caret is at the end of input */
+	                        return !anchorNode || !anchorNode.length || anchorOffset === anchorNode.length;
+	                }
+	        };
+	
+	        return caret;
 	}({});
-	
-	module.exports = caret;
 
 /***/ },
 /* 16 */
@@ -4470,46 +4532,47 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.0
 	 */
+	var editor = codex.editor;
 	
-	var notifications = function (notifications) {
+	module.exports = function (notifications) {
 	
-	    /**
-	     * Error notificator. Shows block with message
-	     * @protected
-	     */
-	    notifications.errorThrown = function (errorMsg, event) {
+	        /**
+	         * Error notificator. Shows block with message
+	         * @protected
+	         */
+	        notifications.errorThrown = function (errorMsg, event) {
 	
-	        codex.notifications.send('This action is not available currently', event.type, false);
-	    };
+	                editor.notifications.send('This action is not available currently', event.type, false);
+	        };
 	
-	    /**
-	     * Appends notification with different types
-	     * @param message {string} - Error or alert message
-	     * @param type {string} - Type of message notification. Ex: Error, Warning, Danger ...
-	     * @param append {boolean} - can be True or False when notification should be inserted after
-	     */
-	    notifications.send = function (message, type, append) {
+	        /**
+	         * Appends notification with different types
+	         * @param message {string} - Error or alert message
+	         * @param type {string} - Type of message notification. Ex: Error, Warning, Danger ...
+	         * @param append {boolean} - can be True or False when notification should be inserted after
+	         */
+	        notifications.send = function (message, type, append) {
 	
-	        var notification = codex.draw.block('div');
+	                var notification = editor.draw.block('div');
 	
-	        notification.textContent = message;
-	        notification.classList.add('ce_notification-item', 'ce_notification-' + type, 'flipInX');
+	                notification.textContent = message;
+	                notification.classList.add('ce_notification-item', 'ce_notification-' + type, 'flipInX');
 	
-	        if (!append) {
-	            codex.nodes.notifications.innerHTML = '';
-	        }
+	                if (!append) {
 	
-	        codex.nodes.notifications.appendChild(notification);
+	                        editor.nodes.notifications.innerHTML = '';
+	                }
 	
-	        setTimeout(function () {
-	            notification.remove();
-	        }, 3000);
-	    };
+	                editor.nodes.notifications.appendChild(notification);
 	
-	    return notifications;
+	                window.setTimeout(function () {
+	
+	                        notification.remove();
+	                }, 3000);
+	        };
+	
+	        return notifications;
 	}({});
-	
-	module.exports = notifications;
 
 /***/ },
 /* 17 */
@@ -4523,13 +4586,14 @@ var codex =
 	 * @author Codex Team
 	 * @version 1.1
 	 */
+	var editor = codex.editor;
 	
-	var parser = function (parser) {
+	module.exports = function (parser) {
 	
 	    /** inserting text */
 	    parser.insertPastedContent = function (blockType, tag) {
 	
-	        codex.content.insertBlock({
+	        editor.content.insertBlock({
 	            type: blockType.type,
 	            block: blockType.render({
 	                text: tag.innerHTML
@@ -4542,13 +4606,11 @@ var codex =
 	     */
 	    parser.isFirstLevelBlock = function (node) {
 	
-	        return node.nodeType == cEditor.core.nodeTypes.TAG && node.classList.contains(cEditor.ui.className.BLOCK_CLASSNAME);
+	        return node.nodeType == editor.core.nodeTypes.TAG && node.classList.contains(editor.ui.className.BLOCK_CLASSNAME);
 	    };
 	
 	    return parser;
 	}({});
-	
-	module.exports = parser;
 
 /***/ },
 /* 18 */
@@ -4562,7 +4624,7 @@ var codex =
 	
 	var janitor = __webpack_require__(19);
 	
-	var sanitizer = function (sanitizer) {
+	module.exports = function (sanitizer) {
 	
 	    /**
 	     * Basic config
@@ -4593,8 +4655,6 @@ var codex =
 	
 	    return sanitizer;
 	}({});
-	
-	module.exports = sanitizer;
 
 /***/ },
 /* 19 */
