@@ -36,7 +36,7 @@ module.exports = (function (draw) {
     /**
      * Comments side bar
      */
-    draw.commentsSidebar = function() {
+    draw.commentsSidebar = function () {
 
         var sidebar = draw.node('DIV', 'ce-comments-sidebar');
 
@@ -44,7 +44,7 @@ module.exports = (function (draw) {
 
     };
 
-    draw.ceBlock = function() {
+    draw.ceBlock = function () {
 
         var block = document.createElement('DIV');
 
@@ -230,6 +230,7 @@ module.exports = (function (draw) {
         toggler.innerHTML = '<i class="ce-icon-newspaper"></i>';
 
         return toggler;
+
     };
 
     /**

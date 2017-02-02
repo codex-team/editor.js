@@ -927,13 +927,13 @@ module.exports = (function (callbacks) {
 
     };
 
-    callbacks.showCommentButtonClicked = function() {
+    callbacks.showCommentButtonClicked = function () {
 
-        var block = codex.content.currentNode;
+        var block = editor.content.currentNode;
 
-        codex.comments.add(block);
+        editor.comments.add(block);
 
-    }
+    };
 
     return callbacks;
 

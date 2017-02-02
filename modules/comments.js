@@ -1,11 +1,11 @@
 
 let editor = codex.editor;
 
-var comments = function(comments) {
+module.exports = function (comments) {
 
     var draw = {
 
-        commentsField: function(blockId) {
+        commentsField: function (blockId) {
 
             var field = editor.draw.node('DIV', 'ce-comments-field');
 
@@ -15,7 +15,7 @@ var comments = function(comments) {
 
         },
 
-        input: function(text) {
+        input: function (text) {
 
             var wrapper     = editor.draw.node('DIV', 'ce-comment'),
                 input       = editor.draw.node('DIV', 'ce-comment__input', {'contentEditable': 'true', 'textContent':text||''}),
@@ -35,19 +35,19 @@ var comments = function(comments) {
 
         },
 
-        comment: function(data) {
+        comment: function (data) {
 
             if (!data.text) return;
 
             var wrapper     = editor.draw.node('DIV', 'ce-comment'),
                 text        = editor.draw.node('DIV', 'ce-comment__text', {'textContent': data.text}),
-                date        = new Date().toLocaleDateString('en-US',{
-                                                                        month: 'short',
-                                                                        day: 'numeric',
-                                                                        hour: 'numeric',
-                                                                        minute: 'numeric',
-                                                                        hour12: false
-                                                                    }),
+                date        = new Date().toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    hour12: false
+                }),
                 time        = editor.draw.node('DIV', 'ce-comment__time', {'textContent': date}),
                 deleteBtn   = editor.draw.node('DIV', 'ce-comment__delete', {'textContent': 'Delete'}),
                 editBtn     = editor.draw.node('DIV', 'ce-comment__edit', {'textContent': 'Edit'});
@@ -71,7 +71,7 @@ var comments = function(comments) {
 
     var callbacks = {
 
-        commentClicked: function(e) {
+        commentClicked: function (e) {
 
             var field   = e.path[2],
                 wrapper = e.path[1],
@@ -80,15 +80,15 @@ var comments = function(comments) {
             if (input.textContent.trim() == '') return;
 
             var comment = draw.comment({
-                            text: input.textContent,
-                            edited: wrapper.dataset.edited
+                text: input.textContent,
+                edited: wrapper.dataset.edited
             });
 
             field.replaceChild(comment, wrapper);
 
         },
 
-        editClicked: function(e) {
+        editClicked: function (e) {
 
 
             var field   = e.path[2],
@@ -101,7 +101,7 @@ var comments = function(comments) {
 
         },
 
-        deleteClicked: function(e) {
+        deleteClicked: function (e) {
 
             var field   = e.path[2],
                 wrapper = e.path[1];
@@ -114,20 +114,20 @@ var comments = function(comments) {
 
     var methods = {
 
-        getCoords: function(block) {
+        getCoords: function (block) {
 
             var rect = block.getBoundingClientRect();
 
             return {
-                x: pageXOffset + rect.left,
-                y: pageYOffset + rect.top
-            }
+                x: window.pageXOffset + rect.left,
+                y: window.pageYOffset + rect.top
+            };
 
         }
 
-    }
+    };
 
-    comments.add = function(block) {
+    comments.add = function (block) {
 
         var blockId = block.dataset.id;
 
@@ -152,5 +152,3 @@ var comments = function(comments) {
     return comments;
 
 }({});
-
-module.exports = comments;

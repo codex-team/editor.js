@@ -135,9 +135,9 @@ module.exports = (function (saver) {
 
     };
 
-    saver.saveComments = function() {
+    saver.saveComments = function () {
 
-        var fields     = codex.nodes.commentsSidebar.querySelectorAll('.ce-comments-field');
+        var fields     = editor.nodes.commentsSidebar.querySelectorAll('.ce-comments-field');
 
         for (var i = 0 ; i < fields.length; i++) {
 
@@ -152,23 +152,24 @@ module.exports = (function (saver) {
                 if (!text) continue;
 
                 var comment = {
-                        edited  : comments[j].dataset.edited,
-                        text    : text.textContent,
-                        time    : time.textContent
+                    edited  : comments[j].dataset.edited,
+                    text    : text.textContent,
+                    time    : time.textContent
                 };
 
 
                 commentsData.push(comment);
+
             }
 
             if (!commentsData.length) continue;
 
             var fieldData = {
-                    blockId  : fields[i].dataset.blockId,
-                    comments : commentsData
+                blockId  : fields[i].dataset.blockId,
+                comments : commentsData
             };
 
-            codex.state.comments.push(fieldData);
+            editor.state.comments.push(fieldData);
 
         }
 

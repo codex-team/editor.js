@@ -82,13 +82,13 @@ module.exports = (function (ui) {
         toolbarContent        = editor.draw.toolbarContent();
         plusButton            = editor.draw.plusButton();
         showSettingsButton    = editor.draw.settingsButton();
-        showCommentButton     = codex.draw.commentButton();
+        showCommentButton     = editor.draw.commentButton();
         showTrashButton       = editor.toolbar.settings.makeRemoveBlockButton();
         blockSettings         = editor.draw.blockSettings();
         blockButtons          = editor.draw.blockButtons();
         toolbox               = editor.draw.toolbox();
         redactor              = editor.draw.redactor();
-        commentsSidebar       = codex.draw.commentsSidebar();
+        commentsSidebar       = editor.draw.commentsSidebar();
 
         /** settings */
         var defaultSettings = editor.draw.defaultSettings(),
