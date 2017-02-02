@@ -320,49 +320,84 @@ module.exports = (function (ui) {
 
             let pluginName,
                 plugin,
+                queue = [],
                 sequence;
-
-            sequence = Promise.resolve();
-
-            sequence.then(function () {
-
-                return editor.tools;
-
-            });
 
             for ( pluginName in editor.tools ) {
 
                 plugin = editor.tools[pluginName];
 
-                if (typeof plugin.prepare != 'function') {
+                if (plugin.prepare && typeof plugin.prepare != 'function' || !plugin.prepare) {
 
                     continue;
 
                 }
 
-                window.console.log('try: %o', pluginName);
-
-                preparePlugin_(sequence, pluginName);
-
-                //
-                sequence.then(function () {
-
-                    return plugin.prepare(plugin.config || {});
-
-                    // window.console.log('Successfully loaded %o', pluginName);
-
-                    // resolve();
-
-                }, function (error) {
-
-                    window.console.log(error);
-
-                });
+                queue.push(plugin);
 
             }
 
+            /** Make a sequence from blocks that have prepare method */
+            sequence = Promise.resolve();
+
             sequence.then(function () {
 
+                return queue;
+
+            })
+
+            .then(function (request) {
+
+                return new Promise (function (continue_, abort_) {
+
+                    request.reduce(function (previousValue, currentValue, index) {
+
+                        return previousValue.then( function () {
+
+                            return new Promise ( function (ahead_, away_) {
+
+                                callPluginsPrepareMethod_( currentValue )
+
+                                    .then( ahead_ )
+
+                                    .then( function () {
+
+                                        if (index == request.length - 1) {
+
+                                            continue_();
+
+                                        }
+
+                                    }).catch(function () {
+
+                                        editor.core.log('Plugin was not loaded', 'warn', currentValue);
+                                        currentValue.available = false;
+
+                                        /** Go ahead even some plugin has problems */
+                                        ahead_();
+
+                                        /** If last plugin has problems then just ignore and continue */
+                                        if (index == request.length - 1) {
+
+                                            continue_();
+
+                                        }
+
+                                    });
+
+                            });
+
+                        });
+
+                    }, Promise.resolve() );
+
+                });
+
+            })
+
+            .then(function () {
+
+                editor.core.log('Basic functionality initialized', 'info');
                 resolve_();
 
             }).catch(function (error) {
@@ -375,9 +410,11 @@ module.exports = (function (ui) {
 
     };
 
-    preparePlugin_ = function () {
+    var callPluginsPrepareMethod_ = function (plugin) {
 
-    }
+        return plugin.prepare( plugin.config || {} );
+
+    };
 
     ui.addBlockHandlers = function (block) {
 
