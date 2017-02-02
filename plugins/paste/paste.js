@@ -37,15 +37,18 @@ var paste = function(paste){
     var analize = function(string) {
 
         var result  = false,
-            content = editor.content.currentNode;
+            content = editor.content.currentNode,
+            plugin  = content.dataset.tool;
 
         paste.patterns.map(function(pattern, i){
 
             if (pattern.regex.test(string)) {
 
                 /** current block is not empty */
-                if (content.textContent.trim()) {
+                if ( content.textContent.trim() && plugin == editor.settings.initialBlockPlugin ) {
+
                     pasteToNewBlock_();
+
                 }
 
                 pattern.callback.call(null, string, pattern);
