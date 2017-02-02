@@ -133,8 +133,8 @@ module.exports = (function (ui) {
         editor.nodes.defaultSettings    = defaultSettings;
         editor.nodes.showSettingsButton = showSettingsButton;
         editor.nodes.showTrashButton    = showTrashButton;
-        codex.nodes.showCommentButton  = showCommentButton;
-        codex.nodes.commentsSidebar    = commentsSidebar;
+        editor.nodes.showCommentButton  = showCommentButton;
+        editor.nodes.commentsSidebar    = commentsSidebar;
 
         editor.nodes.redactor = redactor;
 
@@ -305,7 +305,7 @@ module.exports = (function (ui) {
         /**
          * Clicks to COMMENT button in toolbar
          */
-        codex.nodes.showCommentButton.addEventListener('click', codex.callback.showCommentButtonClicked, false );
+        editor.nodes.showCommentButton.addEventListener('click', editor.callback.showCommentButtonClicked, false );
 
         /**
          *  @deprecated ( but now in use for syncronization );

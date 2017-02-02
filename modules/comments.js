@@ -1,10 +1,13 @@
+
+let editor = codex.editor;
+
 var comments = function(comments) {
 
     var draw = {
 
         commentsField: function(blockId) {
 
-            var field = codex.draw.node('DIV', 'ce-comments-field');
+            var field = editor.draw.node('DIV', 'ce-comments-field');
 
             field.dataset.blockId = blockId;
 
@@ -14,10 +17,10 @@ var comments = function(comments) {
 
         input: function(text) {
 
-            var wrapper     = codex.draw.node('DIV', 'ce-comment'),
-                input       = codex.draw.node('DIV', 'ce-comment__input', {'contentEditable': 'true', 'textContent':text||''}),
-                deleteBtn   = codex.draw.node('DIV', 'ce-comment__delete', {'textContent': 'Delete'}),
-                postBtn     = codex.draw.node('DIV', 'ce-comment__post', {'textContent': text?'Save':'Comment'});
+            var wrapper     = editor.draw.node('DIV', 'ce-comment'),
+                input       = editor.draw.node('DIV', 'ce-comment__input', {'contentEditable': 'true', 'textContent':text||''}),
+                deleteBtn   = editor.draw.node('DIV', 'ce-comment__delete', {'textContent': 'Delete'}),
+                postBtn     = editor.draw.node('DIV', 'ce-comment__post', {'textContent': text?'Save':'Comment'});
 
             postBtn.addEventListener('click', callbacks.commentClicked);
             deleteBtn.addEventListener('click', callbacks.deleteClicked);
@@ -36,8 +39,8 @@ var comments = function(comments) {
 
             if (!data.text) return;
 
-            var wrapper     = codex.draw.node('DIV', 'ce-comment'),
-                text        = codex.draw.node('DIV', 'ce-comment__text', {'textContent': data.text}),
+            var wrapper     = editor.draw.node('DIV', 'ce-comment'),
+                text        = editor.draw.node('DIV', 'ce-comment__text', {'textContent': data.text}),
                 date        = new Date().toLocaleDateString('en-US',{
                                                                         month: 'short',
                                                                         day: 'numeric',
@@ -45,9 +48,9 @@ var comments = function(comments) {
                                                                         minute: 'numeric',
                                                                         hour12: false
                                                                     }),
-                time        = codex.draw.node('DIV', 'ce-comment__time', {'textContent': date}),
-                deleteBtn   = codex.draw.node('DIV', 'ce-comment__delete', {'textContent': 'Delete'}),
-                editBtn     = codex.draw.node('DIV', 'ce-comment__edit', {'textContent': 'Edit'});
+                time        = editor.draw.node('DIV', 'ce-comment__time', {'textContent': date}),
+                deleteBtn   = editor.draw.node('DIV', 'ce-comment__delete', {'textContent': 'Delete'}),
+                editBtn     = editor.draw.node('DIV', 'ce-comment__edit', {'textContent': 'Edit'});
 
             editBtn.addEventListener('click', callbacks.editClicked);
             deleteBtn.addEventListener('click', callbacks.deleteClicked);
@@ -128,7 +131,7 @@ var comments = function(comments) {
 
         var blockId = block.dataset.id;
 
-        var field = codex.nodes.commentsSidebar.querySelector('.ce-comments-field[data-block-id="'+blockId+'"]') ||
+        var field = editor.nodes.commentsSidebar.querySelector('.ce-comments-field[data-block-id="'+blockId+'"]') ||
                     draw.commentsField(blockId);
 
         var comment = draw.input();
@@ -141,7 +144,7 @@ var comments = function(comments) {
 
         field.style.top = blockCoords.y + 'px';
 
-        codex.nodes.commentsSidebar.appendChild(field);
+        editor.nodes.commentsSidebar.appendChild(field);
 
     };
 

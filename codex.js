@@ -26,7 +26,7 @@ module.exports = (function (editor) {
         editor.notifications = require('./modules/notifications');
         editor.parser        = require('./modules/parser');
         editor.sanitizer     = require('./modules/sanitizer');
-        codex.comments      = require('./modules/comments');
+        editor.comments      = require('./modules/comments');
 
     };
 
