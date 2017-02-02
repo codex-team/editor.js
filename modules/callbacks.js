@@ -2,7 +2,7 @@
  * Codex Editor callbacks module
  *
  * @author Codex Team
- * @version 1.3.5
+ * @version 1.3.7
  */
 let editor = codex.editor;
 
@@ -759,28 +759,6 @@ module.exports = (function (callbacks) {
     };
 
     /**
-     * @deprecated
-     *
-     * @param event
-     */
-    callbacks.blockPaste = function (event) {
-
-        var currentInputIndex = editor.caret.getCurrentInputIndex(),
-            node = editor.state.inputs[currentInputIndex];
-
-        window.setTimeout(function () {
-
-            editor.content.sanitize(node);
-
-            event.preventDefault();
-
-        }, 10);
-
-        event.stopImmediatePropagation();
-
-    };
-
-    /**
      * This method is used to observe pasted dirty data.
      *
      * Mutation handlers send to separate observers each mutation (added, changed and so on), which will be
@@ -831,6 +809,13 @@ module.exports = (function (callbacks) {
         /** Prevent default behaviour */
         event.preventDefault();
 
+        /** Allow paste when event target is editable */
+        if (event.target.contentEditable != 'true') {
+
+            return;
+
+        }
+
         /** get html pasted data - dirty data */
         var data = event.clipboardData.getData('text/html') || event.clipboardData.getData('text/plain');
 
@@ -869,7 +854,6 @@ module.exports = (function (callbacks) {
         range.deleteContents();
 
         range.insertNode(fragment);
-        // document.execCommand('insertParagraph', false, "<p>");
 
         /** Preserve the selection */
         if (lastNode) {
