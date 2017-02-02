@@ -70,7 +70,7 @@ var paste = function(paste){
                 text : ''
             })
 
-        }, true);
+        }, false);
 
     };
 
