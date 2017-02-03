@@ -26,6 +26,21 @@
         color: #a1b4ec;
     }
 
+.ce_plugin_header--anchor_input{
+    display: block;
+    padding: 5px;
+    color: #306ac7;
+    line-height: 1.3em;
+    margin-bottom: 1.5em;
+    border: 1px solid #eee;
+    border-radius: 3px;
+    outline: none;
+}
+
+.ce_plugin_header--anchor_input::before {
+    content: '#';
+}
+
 
 /**
 * Empty header placeholder

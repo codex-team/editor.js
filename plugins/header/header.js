@@ -38,11 +38,21 @@ var header = (function(header) {
             new_header.contentEditable = true;
             new_header.setAttribute('data-placeholder', 'Заголовок');
             new_header.dataset.headerData = type;
+            new_header.dataset.anchor = old_header.dataset.anchor;
 
             codex.editor.content.switchBlock(old_header, new_header, 'heading_styled');
 
             /** Close settings after replacing */
             codex.editor.toolbar.settings.close();
+        },
+
+        anchorChanged: function (e, headerBlock) {
+
+            var newAnchor = e.target.textContent;
+
+            if (newAnchor.trim() != '')
+                headerBlock.dataset.anchor = newAnchor;
+
         }
 
     };
@@ -75,7 +85,6 @@ var header = (function(header) {
          */
         tag.dataset.headerData = headerType;
 
-
         if (data && data.text) {
             tag.textContent = data.text;
         }
@@ -83,6 +92,12 @@ var header = (function(header) {
         if (!tag.dataset.headerData) {
             tag.dataset.headerData = 'h2';
         }
+
+        if (data && data.anchor) {
+            var anchor = data.anchor;
+        }
+
+        tag.dataset.anchor = anchor || +new Date();
 
         tag.classList.add('ce-header');
         tag.setAttribute('data-placeholder', 'Заголовок');
@@ -113,7 +128,8 @@ var header = (function(header) {
         var data = {
             "heading-styles": blockContent.dataset.headerData,
             "format": "html",
-            "text": blockContent.textContent || ''
+            "text": blockContent.textContent || '',
+            "anchor": blockContent.dataset.anchor
         };
 
         return data;
@@ -134,7 +150,15 @@ var header = (function(header) {
                 h3: 'Заголовок H3',
                 h4: 'Заголовок H4'
             },
-            selectTypeButton;
+            block  = codex.editor.content.currentNode,
+            headerBlock = block.querySelector('[contenteditable="true"]'),
+            selectTypeButton,
+            anchor = codex.editor.draw.node('SPAN', [ 'ce_plugin_header--anchor_input' ], { contentEditable: true});
+
+        anchor.textContent = headerBlock.dataset.anchor;
+        anchor.addEventListener('blur', function(e){ methods_.anchorChanged(e, headerBlock) });
+        holder.appendChild(anchor);
+
 
         /** Now add type selectors */
         for (var type in types){
