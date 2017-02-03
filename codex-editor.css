@@ -29,7 +29,6 @@
     min-height: 350px;
 }
 
-
 .ce-block__content a {
     color: #186baa;
 }
@@ -388,6 +387,12 @@
 .ce-block--stretched{
     max-width: none;
     padding: 0;
+}
+
+.unavailableBlock {
+    background-color: #f2f3ec;
+    display: block;
+    height: 50px;
 }
 
 /**

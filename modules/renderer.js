@@ -143,7 +143,9 @@ module.exports = (function (renderer) {
     renderer.createBlockFromData = function (blockData) {
 
         /** New parser */
-        var pluginName = blockData.type,
+        var block,
+            ArrayOfCachedData = codex.editor.state.ArrayOfCachedData,
+            pluginName = blockData.type,
             cover      = blockData.cover;
 
         /** Get first key of object that stores plugin name */
@@ -163,8 +165,19 @@ module.exports = (function (renderer) {
 
         }
 
-        /** New Parser */
-        var block = editor.tools[pluginName].render(blockData.data);
+        if ( editor.tools[pluginName].available === false ) {
+
+            block = editor.draw.unavailableBlock(ArrayOfCachedData.length);
+
+            /** Save to restore data of unavailable plugins */
+            ArrayOfCachedData.push(blockData.data);
+
+        } else {
+
+            /** New Parser */
+            block = editor.tools[pluginName].render(blockData.data);
+
+        }
 
         /** is first-level block stretched */
         var stretched = editor.tools[pluginName].isStretched || false;

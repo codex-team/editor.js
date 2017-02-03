@@ -311,6 +311,16 @@ module.exports = (function (draw) {
 
     };
 
+    draw.unavailableBlock = function ( data ) {
+
+        var wrapper = document.createElement('DIV');
+        wrapper.classList.add('unavailableBlock');
+        wrapper.dataset.cacheId = data;
+
+        return wrapper;
+
+    };
+
     return draw;
 
 })({});

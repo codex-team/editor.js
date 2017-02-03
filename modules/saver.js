@@ -105,26 +105,39 @@ module.exports = (function (saver) {
         /** Result saver */
         var blockContent   = block.childNodes[0],
             pluginsContent = blockContent.childNodes[0],
-            savedData      = editor.tools[pluginName].save(pluginsContent),
+            savedData,
+            ArrayOfCachedData = codex.editor.state.ArrayOfCachedData,
+            cacheId,
             output;
 
+        /** If plugin wasn't available then return data from cache */
+        if ( editor.tools[pluginName].available === false ) {
+
+            cacheId = pluginsContent.dataset.cacheId;
+            savedData = ArrayOfCachedData[cacheId];
+
+        } else {
+
+            savedData = editor.tools[pluginName].save(pluginsContent);
+
+            if (editor.tools[pluginName].validate) {
+
+                var result = editor.tools[pluginName].validate(savedData);
+
+                /**
+                 * Do not allow invalid data
+                 */
+                if (!result)
+                    return;
+
+            }
+
+        }
 
         output = {
             type: pluginName,
             data: savedData
         };
-
-        if (editor.tools[pluginName].validate) {
-
-            var result = editor.tools[pluginName].validate(savedData);
-
-            /**
-             * Do not allow invalid data
-             */
-            if (!result)
-                return;
-
-        }
 
         /** Marks Blocks that will be in main page */
         output.cover = block.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);

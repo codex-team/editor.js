@@ -362,13 +362,17 @@ module.exports = (function (ui) {
 
                                     .then( function () {
 
+                                        currentValue.available = true;
+
                                         if (index == request.length - 1) {
 
                                             continue_();
 
                                         }
 
-                                    }).catch(function () {
+                                    })
+
+                                    .catch(function () {
 
                                         editor.core.log('Plugin was not loaded', 'warn', currentValue);
                                         currentValue.available = false;
