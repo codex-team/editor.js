@@ -47,6 +47,48 @@ module.exports = (function (notifications) {
 
     };
 
+    notifications.confirm = function (settings) {
+
+        var confirm   = editor.draw.node('DIV', 'ce-notification-confirm'),
+            message   = editor.draw.node('DIV', 'ce-notification-confirm__message'),
+            okBtn     = editor.draw.node('SPAN', 'ce-notification-confirm__ok-btn'),
+            cancelBtn = editor.draw.node('SPAN', 'ce-notification-confirm__ok-btn');
+
+        message.textContent   = settings.message;
+        okBtn.textContent     = settings.okMsg || 'Ok';
+        cancelBtn.textContent = settings.cancelMsg || 'Cancel';
+
+        okBtn.addEventListener('click', settings.confirm);
+        cancelBtn.addEventListener('click', settings.cancel);
+
+        okBtn.addEventListener('click', function () {
+
+            confirm.remove();
+
+        });
+        cancelBtn.addEventListener('click', function () {
+
+            confirm.remove();
+
+        });
+
+
+
+        confirm.appendChild(message);
+        confirm.appendChild(okBtn);
+        confirm.appendChild(cancelBtn);
+
+
+        if (!settings.append) {
+
+            editor.nodes.notifications.innerHTML = '';
+
+        }
+
+        editor.nodes.notifications.appendChild(confirm);
+
+    };
+
     return notifications;
 
 })({});

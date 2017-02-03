@@ -179,6 +179,23 @@ module.exports = (function (renderer) {
 
     };
 
+    renderer.rerender = function (clear) {
+
+        editor.nodes.redactor.innerHTML = '';
+
+        editor.content.currentNode = null;
+
+        if (clear) {
+
+            editor.ui.addInitialBlock();
+            return;
+
+        }
+
+        renderer.makeBlocksFromData();
+
+    };
+
     return renderer;
 
 })({});

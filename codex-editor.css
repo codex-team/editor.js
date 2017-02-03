@@ -412,6 +412,30 @@
 
 
 /**
+* Notifications
+*/
+.ce-notification-confirm {
+    max-width: 300px;
+    padding: 15px;
+    background: #FFFFFF;
+    border: 1px solid #e7e9f1;
+    box-shadow: 0px 2px 5px 0px rgba(16, 23, 49, 0.05);
+    border-radius: 3px;
+    text-align: right;
+}
+
+.ce-notification-confirm__message {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.ce-notification-confirm__ok-btn,
+.ce-notification-confirm__cancel-btn {
+    padding: 10px;
+    cursor: pointer;
+}
+
+/**
 * Mobile viewport styles
 * =================================
 */

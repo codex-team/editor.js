@@ -32,6 +32,12 @@ module.exports = (function (saver) {
             .then(editor.saver.makeQueue)
 
             .then(function () {
+
+                editor.state.savingDate = +new Date();
+
+            })
+
+            .then(function () {
                 // editor.nodes.textarea.innerHTML = editor.state.html;
             })
 

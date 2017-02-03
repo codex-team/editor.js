@@ -3,7 +3,7 @@ var storage = function () {
     var editor  = codex.editor,
         interval   = null,
         config_ = {
-            saveInterval: 100
+            saveInterval: 1000
         };
 
     if (!window.localStorage) {
@@ -17,10 +17,25 @@ var storage = function () {
 
         config_ = config || config_;
 
-        if (get())
-            editor.state.blocks.items = get();
+        if (get() && editor.state.blocks.savingDate < get().savingDate)
+            editor.notifications.confirm({
+                message: 'В вашем браузере сохранена более актаульная версия',
+                okMsg: 'Показать',
+                cancelMsg: 'Отмена',
+                confirm: function () {
 
-        init(config_.saveInterval);
+                    editor.state.blocks = get();
+                    editor.renderer.rerender();
+                    init(config_.saveInterval);
+
+                },
+                cancel: function () {
+
+                    init(config_.saveInterval);
+
+                }
+
+            });
 
         return Promise.resolve();
 
@@ -38,10 +53,16 @@ var storage = function () {
 
         window.setTimeout(function () {
 
-            var savedData = editor.state.jsonOutput;
-            window.localStorage['codex.editor.savedData'] = JSON.stringify(savedData);
+            var savedBlocks = editor.state.jsonOutput,
+                savingDate   = editor.state.savingDate,
+                data = {
+                    items: savedBlocks,
+                    savingDate : savingDate
+                };
 
-        }, 1000);
+            window.localStorage['codex.editor.savedData'] = JSON.stringify(data);
+
+        }, 500);
 
     };
 
@@ -50,10 +71,9 @@ var storage = function () {
         if (!window.localStorage['codex.editor.savedData'])
             return;
 
-        var data = window.localStorage['codex.editor.savedData'],
-            items = JSON.parse(data);
+        var data = JSON.parse(window.localStorage['codex.editor.savedData']);
 
-        return items;
+        return data;
 
     };
 
