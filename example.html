@@ -48,6 +48,8 @@
 <script src="plugins/paste/patterns.js"></script>
 <link rel="stylesheet" href="plugins/paste/paste.css">
 
+<script src="plugins/localstorage/localstorage.js"></script>
+
 <script>
     codex.editor.start({
         textareaId : "codex_area",
@@ -173,7 +175,12 @@
                 render: embed.render,
                 save: embed.save,
                 validate: embed.validate
-            }
+            },
+            storage: {
+                type: 'storage',
+                prepare: storage.prepare,
+                enableLineBreaks: false,
+            },
         },
         data : {
             items: [],
