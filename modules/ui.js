@@ -348,8 +348,18 @@ module.exports = (function (ui) {
 
             .then(function (request) {
 
+                /** Wait plugins while they not available */
                 return new Promise (function (continue_, abort_) {
 
+                    /**
+                     * pluck each element of queue
+                     * First, send resolved Promise as previous value
+                     * Each plugins "prepare" method returns a Promise, that's why
+                     * reduce current element will not be able to continue while can't get
+                     * a resolved Promise
+                     *
+                     * If last plugin is "prepared" then go to the next stage of initialization
+                     */
                     request.reduce(function (previousValue, currentValue, index) {
 
                         return previousValue.then( function () {
