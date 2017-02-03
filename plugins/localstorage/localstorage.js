@@ -1,3 +1,9 @@
+/**
+ * Storage plugin
+ *
+ * Saves editor data to browser local storage.
+ * And uploads data from local storage if there is newer version
+ */
 var storage = function () {
 
     var editor  = codex.editor,
@@ -17,7 +23,8 @@ var storage = function () {
 
         config_ = config || config_;
 
-        if (get() && editor.state.blocks.savingDate < get().savingDate)
+        if (get() && editor.state.blocks.savingDate < get().savingDate) {
+
             editor.notifications.confirm({
                 message: 'В вашем браузере сохранена более актаульная версия',
                 okMsg: 'Показать',
@@ -37,6 +44,8 @@ var storage = function () {
 
             });
 
+        }
+
         return Promise.resolve();
 
     };
@@ -51,6 +60,7 @@ var storage = function () {
 
         editor.saver.saveBlocks();
 
+        /* Using setTimeout, cause we don't know when blocks are saved  */
         window.setTimeout(function () {
 
             var savedBlocks = editor.state.jsonOutput,

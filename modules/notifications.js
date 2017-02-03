@@ -47,6 +47,21 @@ module.exports = (function (notifications) {
 
     };
 
+    /**
+     *
+     * Appends confirm notification
+     *
+     *  settings = {
+     *      message     - notification message
+     *      okMsg       - confirm button text (default - 'Ok')
+     *      cancelBtn   - cancel button text (default - 'Cancel')
+     *      confirm     - function-handler for confirm
+     *      cancel      - function-handler for cancel
+     *      append      - if false, delete old notifications
+     *  }
+     *
+     * @param settings
+     */
     notifications.confirm = function (settings) {
 
         var confirm   = editor.draw.node('DIV', 'ce-notification-confirm'),
@@ -61,16 +76,8 @@ module.exports = (function (notifications) {
         okBtn.addEventListener('click', settings.confirm);
         cancelBtn.addEventListener('click', settings.cancel);
 
-        okBtn.addEventListener('click', function () {
-
-            confirm.remove();
-
-        });
-        cancelBtn.addEventListener('click', function () {
-
-            confirm.remove();
-
-        });
+        okBtn.addEventListener('click', close.bind(null, confirm));
+        cancelBtn.addEventListener('click', close.bind(null, confirm));
 
 
 
@@ -86,6 +93,12 @@ module.exports = (function (notifications) {
         }
 
         editor.nodes.notifications.appendChild(confirm);
+
+    };
+
+    var close = function (notification) {
+
+        notification.remove();
 
     };
 
