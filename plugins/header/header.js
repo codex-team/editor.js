@@ -50,7 +50,7 @@ var header = (function(header) {
 
         anchorChanged: function (e) {
 
-            var newAnchor = e.target.value;
+            var newAnchor = e.target.value = methods_.rusToTranslit(e.target.value);
 
             if (newAnchor.trim() != '')
                 currentHeader.dataset.anchor = newAnchor;
@@ -75,6 +75,32 @@ var header = (function(header) {
             if (e.keyCode >= 37 && e.keyCode <= 40) {
                 e.stopPropagation();
             }
+
+        },
+
+        rusToTranslit: function (string) {
+
+            var ru = [
+                    'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й',
+                    'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф',
+                    'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ь', 'Ы', 'Ь', 'Э', 'Ю', 'Я'
+                ],
+                en = [
+                    'A', 'B', 'V', 'G', 'D', 'E', 'E', 'Zh', 'Z', 'I', 'Y',
+                    'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F',
+                    'H', 'C', 'Ch', 'Sh', 'Sch', '', 'Y', '', 'E', 'Yu', 'Ya'
+                ];
+
+            for (var i = 0; i < ru.length; i++) {
+
+                string = string.split(ru[i]).join(en[i]);
+                string = string.split(ru[i].toLowerCase()).join(en[i].toLowerCase());
+
+            }
+
+            string = string.replace(/[^0-9a-zA-Z_]+/g, '-');
+
+            return string;
 
         }
 
@@ -187,7 +213,7 @@ var header = (function(header) {
 
         anchor.addEventListener('keydown', methods_.keyDownOnAnchorInput );
         anchor.addEventListener('keyup', methods_.keyUpOnAnchorInput );
-        anchor.addEventListener('change', methods_.anchorChanged );
+        anchor.addEventListener('input', methods_.anchorChanged );
 
         anchorWrapper.appendChild(hash);
         anchorWrapper.appendChild(anchor);
