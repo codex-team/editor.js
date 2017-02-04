@@ -18,29 +18,30 @@
     color: #306ac7;
     cursor: pointer;
     line-height: 1.3em;
+    margin-bottom: 1.5em;
 }
-    .ce_plugin_header--select_button:not(:last-of-type){
-        margin-bottom: 1.5em;
-    }
     .ce_plugin_header--select_button:hover{
         color: #a1b4ec;
     }
 
-.ce_plugin_header--anchor_input{
+.ce_plugin_header--anchor_wrapper{
     display: block;
-    padding: 5px;
-    color: #306ac7;
+
+    color: #707684;
     line-height: 1.3em;
-    margin-bottom: 1.5em;
-    border: 1px solid #eee;
-    border-radius: 3px;
+}
+
+.ce_plugin_header--anchor_input {
+    border: 0;
+    margin-left: 5px;
+    color: #707684;
+    border-bottom: 1px solid #707684;
     outline: none;
 }
 
-.ce_plugin_header--anchor_input::before {
+.ce_plugin_header--anchor_hash::before {
     content: '#';
 }
-
 
 /**
 * Empty header placeholder

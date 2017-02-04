@@ -8,6 +8,8 @@ var header = (function(header) {
     /**
      * @private
      */
+    var currentHeader = null;
+
     var methods_ = {
 
         /**
@@ -46,12 +48,33 @@ var header = (function(header) {
             codex.editor.toolbar.settings.close();
         },
 
-        anchorChanged: function (e, headerBlock) {
+        anchorChanged: function (e) {
 
-            var newAnchor = e.target.textContent;
+            var newAnchor = e.target.value;
 
             if (newAnchor.trim() != '')
-                headerBlock.dataset.anchor = newAnchor;
+                currentHeader.dataset.anchor = newAnchor;
+
+        },
+
+        keyDownOnAnchorInput: function(e) {
+
+            if (e.keyCode == 13) {
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                e.target.blur();
+
+            }
+
+        },
+
+        keyUpOnAnchorInput: function(e) {
+
+            if (e.keyCode >= 37 && e.keyCode <= 40) {
+                e.stopPropagation();
+            }
 
         }
 
@@ -68,6 +91,7 @@ var header = (function(header) {
 
         var availableTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
             tag,
+            anchor = +new Date(),
             headerType = 'h2';
 
 
@@ -94,10 +118,10 @@ var header = (function(header) {
         }
 
         if (data && data.anchor) {
-            var anchor = data.anchor;
+            anchor = data.anchor;
         }
 
-        tag.dataset.anchor = anchor || +new Date();
+        tag.dataset.anchor = anchor;
 
         tag.classList.add('ce-header');
         tag.setAttribute('data-placeholder', 'Заголовок');
@@ -153,12 +177,20 @@ var header = (function(header) {
             block  = codex.editor.content.currentNode,
             headerBlock = block.querySelector('[contenteditable="true"]'),
             selectTypeButton,
-            anchor = codex.editor.draw.node('SPAN', [ 'ce_plugin_header--anchor_input' ], { contentEditable: true});
+            anchorWrapper = codex.editor.draw.node('div', [ 'ce_plugin_header--anchor_wrapper' ], {}),
+            hash   = codex.editor.draw.node('span', [ 'ce_plugin_header--anchor_hash' ], {}),
+            anchor = codex.editor.draw.node('input', [ 'ce_plugin_header--anchor_input' ], { });
 
-        anchor.textContent = headerBlock.dataset.anchor;
-        anchor.addEventListener('blur', function(e){ methods_.anchorChanged(e, headerBlock) });
-        holder.appendChild(anchor);
+        currentHeader = headerBlock;
 
+        anchor.value = headerBlock.dataset.anchor;
+
+        anchor.addEventListener('keydown', methods_.keyDownOnAnchorInput );
+        anchor.addEventListener('keyup', methods_.keyUpOnAnchorInput );
+        anchor.addEventListener('change', methods_.anchorChanged );
+
+        anchorWrapper.appendChild(hash);
+        anchorWrapper.appendChild(anchor);
 
         /** Now add type selectors */
         for (var type in types){
@@ -168,6 +200,10 @@ var header = (function(header) {
             holder.appendChild(selectTypeButton);
 
         }
+
+        holder.appendChild(anchorWrapper);
+
+        anchor.focus();
 
         return holder;
     };
