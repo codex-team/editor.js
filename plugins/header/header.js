@@ -91,7 +91,7 @@ var header = (function(header) {
 
         var availableTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
             tag,
-            anchor = +new Date(),
+            anchor = '',
             headerType = 'h2';
 
 
@@ -179,11 +179,11 @@ var header = (function(header) {
             selectTypeButton,
             anchorWrapper = codex.editor.draw.node('div', [ 'ce_plugin_header--anchor_wrapper' ], {}),
             hash   = codex.editor.draw.node('span', [ 'ce_plugin_header--anchor_hash' ], {}),
-            anchor = codex.editor.draw.node('input', [ 'ce_plugin_header--anchor_input' ], { });
+            anchor = codex.editor.draw.node('input', [ 'ce_plugin_header--anchor_input' ], { placeholder: 'якорь' });
 
         currentHeader = headerBlock;
 
-        anchor.value = headerBlock.dataset.anchor;
+        anchor.value = headerBlock.dataset.anchor || '';
 
         anchor.addEventListener('keydown', methods_.keyDownOnAnchorInput );
         anchor.addEventListener('keyup', methods_.keyUpOnAnchorInput );

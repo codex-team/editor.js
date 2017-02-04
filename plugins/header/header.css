@@ -34,10 +34,20 @@
 .ce_plugin_header--anchor_input {
     border: 0;
     margin-left: 5px;
-    color: #707684;
-    border-bottom: 1px solid #707684;
+    color: #000;
+    border-bottom: 1px solid rgba(112, 118, 132, 0.5);;
     outline: none;
 }
+
+.ce_plugin_header--anchor_input:focus {
+    border-bottom-color: #000;
+}
+
+.ce_plugin_header--anchor_input::-webkit-input-placeholder {color: rgba(112, 118, 132, 0.5);}
+.ce_plugin_header--anchor_input::-moz-placeholder {color: rgba(112, 118, 132, 0.5);}
+.ce_plugin_header--anchor_input:-moz-placeholder {color: rgba(112, 118, 132, 0.5);}
+.ce_plugin_header--anchor_input:-ms-input-placeholder {color: rgba(112, 118, 132, 0.5);}
+
 
 .ce_plugin_header--anchor_hash::before {
     content: '#';
