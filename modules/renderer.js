@@ -180,9 +180,6 @@ module.exports = (function (renderer) {
             */
             block.dataset.inputPosition = toolData.position;
 
-            /** Save to restore data of unavailable plugins */
-            // ArrayOfCachedData.push(tool.data);
-
         } else {
 
             /** New Parser */

@@ -167,7 +167,7 @@ var twitter = (function(twitter) {
 
         return new Promise(function(resolve, reject){
 
-            codex.editor.core.importScript("https://platform.twitter.com/widgets_.js", 'twitter-api').then(function(){
+            codex.editor.core.importScript("https://platform.twitter.com/widgets.js", 'twitter-api').then(function(){
                 resolve();
             }).catch(function(){
                 reject(Error('Twitter API was not loaded'));
