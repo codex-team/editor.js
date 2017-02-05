@@ -39,8 +39,8 @@
         "no-trailing-spaces": 2,
         "no-mixed-spaces-and-tabs": 2,
         "padded-blocks": [2, "always"],
-        "space-before-blocks": 2,
-        "space-before-function-paren": [2, {
+        "space-before-blocks": 1,
+        "space-before-function-paren": [1, {
             "anonymous": "always",
             "named": "never"
         }],
@@ -63,6 +63,7 @@
         "module": true,
         "require": true,
         "window": true,
+        "console" : true,
         "codex": true,
         "VERSION" : true,
         "Promise" : true,

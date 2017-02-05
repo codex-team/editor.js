@@ -311,6 +311,19 @@ module.exports = (function (draw) {
 
     };
 
+    /**
+    * Unavailable plugin block
+    */
+    draw.unavailableBlock = function () {
+
+        var wrapper = document.createElement('DIV');
+
+        wrapper.classList.add('cdx-unavailable-block');
+
+        return wrapper;
+
+    };
+
     return draw;
 
 })({});
