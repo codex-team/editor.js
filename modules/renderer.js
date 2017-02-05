@@ -17,7 +17,7 @@ module.exports = (function (renderer) {
         /**
          * If redactor is empty, add first paragraph to start writing
          */
-        if (!editor.state.blocks.items.length) {
+        if (editor.core.isEmpty(editor.state.blocks) || !editor.state.blocks.items.length) {
 
             editor.ui.addInitialBlock();
             return;
@@ -121,7 +121,10 @@ module.exports = (function (renderer) {
 
         return Promise.resolve().then(function () {
 
-            return blocksList[index];
+            return {
+                tool : blocksList[index],
+                position : index
+            };
 
         });
 
@@ -132,19 +135,22 @@ module.exports = (function (renderer) {
      *
      * @uses render method of each plugin
      *
-     * @param {object} blockData looks like
-     *                            { header : {
-     *                                            text: '',
-     *                                            type: 'H3', ...
-     *                                        }
-     *                            }
-     * @return {object} with type and Element
+     * @param {Object} toolData.tool
+     *                              { header : {
+     *                                                text: '',
+     *                                                type: 'H3', ...
+     *                                            }
+     *                               }
+     * @param {Number} toolData.position - index in input-blocks array
+     * @return {Object} with type and Element
      */
-    renderer.createBlockFromData = function (blockData) {
+    renderer.createBlockFromData = function ( toolData ) {
 
         /** New parser */
-        var pluginName = blockData.type,
-            cover      = blockData.cover;
+        var block,
+            tool = toolData.tool,
+            pluginName = tool.type,
+            cover      = tool.cover;
 
         /** Get first key of object that stores plugin name */
         // for (var pluginName in blockData) break;
@@ -163,8 +169,23 @@ module.exports = (function (renderer) {
 
         }
 
-        /** New Parser */
-        var block = editor.tools[pluginName].render(blockData.data);
+        if ( editor.tools[pluginName].available === false ) {
+
+            block = editor.draw.unavailableBlock();
+
+            block.innerHTML = editor.tools[pluginName].loadingMessage;
+
+            /**
+            * Saver will extract data from initial block data by position in array
+            */
+            block.dataset.inputPosition = toolData.position;
+
+        } else {
+
+            /** New Parser */
+            block = editor.tools[pluginName].render(tool.data);
+
+        }
 
         /** is first-level block stretched */
         var stretched = editor.tools[pluginName].isStretched || false;

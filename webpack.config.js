@@ -63,7 +63,12 @@ module.exports = {
         }),
 
         /** Минифицируем CSS и JS */
-        new webpack.optimize.UglifyJsPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            /** Disable warning messages. Cant disable uglify for 3rd party libs such as html-janitor */
+            compress: {
+                warnings: false
+            }
+        }),
 
         /** Block biuld if errors found */
         new webpack.NoErrorsPlugin(),
