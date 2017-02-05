@@ -78,7 +78,6 @@ module.exports = (function (editor) {
     editor.state = {
         jsonOutput  : [],
         blocks      : [],
-        ArrayOfCachedData : [],
         inputs      : []
     };
 
