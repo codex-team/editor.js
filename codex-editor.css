@@ -410,6 +410,72 @@
     100% { background-position: -56% 0 }
 }
 
+/**
+* Notifications
+*/
+
+.ce_notifications-block {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 10px;
+    transition: height 5s linear;
+}
+
+
+.ce-notification__notification-appending div {
+    animation: notification 100ms infinite ease-in;
+}
+
+@keyframes notification {
+
+    0% { transform: translateY(20px); }
+    100% { transform: translateY(0px);  }
+
+}
+
+
+.ce-notification {
+    width: 250px;
+    margin: 10px 0;
+    padding: 15px;
+    background: #FFFFFF;
+    border: 1px solid #e7e9f1;
+    box-shadow: 0px 2px 5px 0px rgba(16, 23, 49, 0.05);
+    border-radius: 3px;
+    text-align: right;
+}
+
+.ce-notification__message {
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.ce-notification__ok-btn,
+.ce-notification__cancel-btn {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.ce-notification__input {
+    display: block;
+    width: 100%;
+    margin-bottom: 10px;
+    border: none;
+    outline: none;
+    border-bottom: 2px solid #d1d3da;
+}
+
+.ce-notification-error {
+    border: 1px solid rgb(255, 24, 10);
+    box-shadow: 0 2px 5px 0 rgba(255, 24, 10, 0.5);
+}
+
+.ce-notification-warn {
+    border: 1px solid rgb(255, 253, 20);
+    box-shadow: 0 2px 5px 0 rgba(255, 253, 20, 0.5);
+}
+
 
 /**
 * Mobile viewport styles
