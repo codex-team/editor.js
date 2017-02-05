@@ -389,10 +389,14 @@
     padding: 0;
 }
 
-.unavailableBlock {
-    background-color: #f2f3ec;
+.cdx-unavailable-block {
     display: block;
-    height: 50px;
+    margin: 10px 0;
+    padding: 80px;
+    background-color: #fff7f7;
+    text-align: center;
+    border-radius: 3px;
+    color: #ce5f5f;
 }
 
 /**

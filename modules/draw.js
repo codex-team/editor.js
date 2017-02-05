@@ -311,11 +311,14 @@ module.exports = (function (draw) {
 
     };
 
-    draw.unavailableBlock = function ( data ) {
+    /**
+    * Unavailable plugin block
+    */
+    draw.unavailableBlock = function () {
 
         var wrapper = document.createElement('DIV');
-        wrapper.classList.add('unavailableBlock');
-        wrapper.dataset.cacheId = data;
+
+        wrapper.classList.add('cdx-unavailable-block');
 
         return wrapper;
 
