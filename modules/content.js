@@ -848,6 +848,18 @@ module.exports = (function (content) {
 
     };
 
+    content.getEditableWrapper = function (node) {
+
+        while (node && node.contentEditable != 'true') {
+
+            node = node.parentNode;
+
+        }
+
+        return node;
+
+    };
+
     return content;
 
 })({});

@@ -26,7 +26,8 @@
     margin-right: 1.3em;
 }
 
-.ce-list li{
+.ce-list-li{
+    display: list-item;
     background: #fff;
     border: 1px solid #ebeef3;
     border-radius: 3px;

@@ -4,10 +4,10 @@
  */
 var list = (function(list) {
 
-    var baseClass = "tool-list";
+    var baseClass = "ce-list";
 
     var elementClasses = {
-        li  : "tool-list-li"
+        li  : "ce-list-li"
     };
 
     var ui = {
@@ -16,8 +16,10 @@ var list = (function(list) {
 
             var wrapper = this.block(blockType || 'UL', baseClass);
 
-            wrapper.dataset.type = 'UL';
+            wrapper.dataset.type = blockType;
             wrapper.contentEditable = true;
+
+            wrapper.addEventListener('keydown', methods.keyDown);
 
             return wrapper;
 
@@ -67,28 +69,28 @@ var list = (function(list) {
             newEditable.classList.add('ce-list');
 
             codex.editor.content.switchBlock(currentBlock, newEditable, 'list');
+        },
+
+        keyDown: function (e) {
+
+            /* If ctrl+A was pressed, we should select only one list item */
+            if (e.ctrlKey && e.keyCode == 65) {
+
+                e.preventDefault();
+
+                var selection = window.getSelection(),
+                    currentItem = selection.anchorNode,
+                    range = new Range();
+
+                range.selectNode(currentItem);
+
+                selection.removeAllRanges();
+                selection.addRange(range);
+
+
+            }
+
         }
-    };
-
-    /**
-     * Make initial header block
-     * @param {object} JSON with block data
-     * @return {Element} element to append
-     */
-    list.make = function () {
-
-        var tag = ui.make(),
-            li  = ui.block("li", "tool-link-li");
-
-        var br = document.createElement("br");
-
-        li.appendChild(br);
-        tag.appendChild(li);
-
-        tag.classList.add('ce-list');
-
-        return tag;
-
     };
 
     /**
@@ -96,21 +98,29 @@ var list = (function(list) {
      */
     list.render = function (data) {
 
-        var type = data.type == 'ordered' ? 'OL' : 'UL',
-            tag  = ui.make(type);
+        var type = data && data.type == 'ordered' ? 'OL' : 'UL',
+            tag  = ui.make(type),
+            newLi;
 
-        tag.classList.add('ce-list');
+        if (data && data.items) {
 
-        data.items.forEach(function (element, index, array) {
+            data.items.forEach(function (element, index, array) {
 
-            var newLi = ui.block("li", listTool.elementClasses.li);
+                newLi = ui.block('li', elementClasses.li);
 
-            newLi.innerHTML = element;
+                newLi.innerHTML = element;
 
-            tag.dataset.type = data.type;
+                tag.appendChild(newLi);
+
+            });
+
+        } else {
+
+            newLi = ui.block('li', elementClasses.li);
+
             tag.appendChild(newLi);
 
-        });
+        }
 
         return tag;
 
@@ -150,10 +160,9 @@ var list = (function(list) {
 
     };
 
-    list.makeSettings = function(data) {
+    list.makeSettings = function () {
 
-        var holder  = document.createElement('DIV'),
-            selectTypeButton;
+        var holder  = document.createElement('DIV');
 
         /** Add holder classname */
         holder.className = 'ce_plugin_list--settings';
