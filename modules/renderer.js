@@ -144,6 +144,7 @@ module.exports = (function (renderer) {
 
         /** New parser */
         var pluginName = blockData.type,
+            anchor     = blockData.anchor,
             cover      = blockData.cover;
 
         /** Get first key of object that stores plugin name */
@@ -174,7 +175,8 @@ module.exports = (function (renderer) {
             type      : pluginName,
             block     : block,
             stretched : stretched,
-            cover     : cover
+            cover     : cover,
+            anchor    : anchor
         };
 
     };

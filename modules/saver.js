@@ -86,7 +86,8 @@ module.exports = (function (saver) {
 
     saver.makeFormDataFromBlocks = function (block) {
 
-        var pluginName = block.dataset.tool;
+        var pluginName = block.dataset.tool,
+            anchor     = block.dataset.anchor;
 
         /** Check for plugin existance */
         if (!editor.tools[pluginName]) {
@@ -110,8 +111,9 @@ module.exports = (function (saver) {
 
 
         output = {
-            type: pluginName,
-            data: savedData
+            type   : pluginName,
+            anchor : anchor,
+            data   : savedData
         };
 
         if (editor.tools[pluginName].validate) {

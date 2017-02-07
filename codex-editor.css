@@ -168,7 +168,7 @@
 }
 
 /**
-* Settigns pane
+* Settigns panel
 */
 .ce-settings,
 .ce-toolbar__remove-confirmation{
@@ -228,7 +228,7 @@
 
 
 .ce-settings__item,
-.ce-toolbar__remove-confirm
+.ce-toolbar__remove-confirm,
 .ce-toolbar__remove-cancel {
     cursor: pointer;
 }
@@ -248,8 +248,20 @@
 .ce-settings_default{
     padding: 20px;
 }
+.ce-settings__item:not(:last-of-type) {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e7e9f1;
+}
+.ce-settings__item:not(:first-of-type) {
+    padding-top: 20px;
+}
 .ce-settings__item i {
+    min-width: 15px;
     margin-right: 1.3em;
+}
+
+.ce-settings__item i::before {
+    min-width: 15px;
 }
 
 
@@ -277,7 +289,34 @@
     background: #edf0f5;
 }
 
+/** Anchor input */
 
+.ce-settings__anchor-input {
+    max-width: 120px;
+    border: 0;
+    color: #000;
+    font-size: 13.4px;
+    outline: none;
+}
+
+.ce-settings__anchor-input:focus {
+    border-bottom-color: #000;
+}
+
+.ce-settings__anchor-input::-webkit-input-placeholder {color: rgba(112, 118, 132, 0.5);}
+.ce-settings__anchor-input::-moz-placeholder {color: rgba(112, 118, 132, 0.5);}
+.ce-settings__anchor-input:-moz-placeholder {color: rgba(112, 118, 132, 0.5);}
+.ce-settings__anchor-input:-ms-input-placeholder {color: rgba(112, 118, 132, 0.5);}
+
+.ce-settings__anchor-hash {
+    display: inline-block;
+    background-image: url('fonts/codex_editor/icon-hash.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    height: 11px;
+    width: 10px;
+    margin: 0 .2em;
+}
 
 /**
 * Overlayed inline toolbar

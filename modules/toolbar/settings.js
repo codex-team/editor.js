@@ -67,6 +67,7 @@ module.exports = (function (settings) {
         if ( !this.opened ) {
 
             this.open(toolType);
+            anchorMethods.settingsOpened(editor.content.currentNode);
 
         } else {
 
@@ -82,7 +83,8 @@ module.exports = (function (settings) {
     settings.addDefaultSettings = function () {
 
         /** list of default settings */
-        var feedModeToggler;
+        var feedModeToggler,
+            anchorInput;
 
         /** Clear block and append initialized settings */
         editor.nodes.defaultSettings.innerHTML = '';
@@ -90,10 +92,16 @@ module.exports = (function (settings) {
 
         /** Init all default setting buttons */
         feedModeToggler = editor.toolbar.settings.makeFeedModeToggler();
+        anchorInput     = editor.toolbar.settings.makeAnchorInput();
 
         /**
          * Fill defaultSettings
          */
+
+        /**
+         * Input for anchor for block
+         */
+        editor.nodes.defaultSettings.appendChild(anchorInput);
 
         /**
          * Button that enables/disables Feed-mode
@@ -168,13 +176,105 @@ module.exports = (function (settings) {
 
     };
 
+    settings.makeAnchorInput = function () {
+
+        var anchorWrapper = editor.draw.node('div', 'ce-settings__anchor-wrapper ce-settings__item', {}),
+            hash   = editor.draw.node('i', 'ce-settings__anchor-hash', {}),
+            anchor = editor.draw.node('input', 'ce-settings__anchor-input', { placeholder: 'Якорь' });
+
+        anchor.addEventListener('keydown', anchorMethods.keyDownOnAnchorInput );
+        anchor.addEventListener('keyup', anchorMethods.keyUpOnAnchorInput );
+        anchor.addEventListener('input', anchorMethods.anchorChanged );
+        anchor.addEventListener('blur', anchorMethods.anchorChanged );
+
+        anchorWrapper.appendChild(hash);
+        anchorWrapper.appendChild(anchor);
+
+        anchorMethods.input = anchor;
+
+        return anchorWrapper;
+
+    };
+
+    var anchorMethods = {
+
+        input: null,
+        currentNode: null,
+
+        settingsOpened: function (currentBlock) {
+
+            anchorMethods.currentNode = currentBlock;
+            anchorMethods.input.value = anchorMethods.currentNode.dataset.anchor;
+
+        },
+
+        anchorChanged: function (e) {
+
+            var newAnchor = e.target.value = anchorMethods.rusToTranslit(e.target.value);
+
+            if (newAnchor.trim() != '')
+                anchorMethods.currentNode.dataset.anchor = newAnchor;
+
+        },
+
+        keyDownOnAnchorInput: function (e) {
+
+            if (e.keyCode == 13) {
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                e.target.blur();
+
+            }
+
+        },
+
+        keyUpOnAnchorInput: function (e) {
+
+            if (e.keyCode >= 37 && e.keyCode <= 40) {
+
+                e.stopPropagation();
+
+            }
+
+        },
+
+        rusToTranslit: function (string) {
+
+            var ru = [
+                    'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й',
+                    'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф',
+                    'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ь', 'Ы', 'Ь', 'Э', 'Ю', 'Я'
+                ],
+                en = [
+                    'A', 'B', 'V', 'G', 'D', 'E', 'E', 'Zh', 'Z', 'I', 'Y',
+                    'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F',
+                    'H', 'C', 'Ch', 'Sh', 'Sch', '', 'Y', '', 'E', 'Yu', 'Ya'
+                ];
+
+            for (var i = 0; i < ru.length; i++) {
+
+                string = string.split(ru[i]).join(en[i]);
+                string = string.split(ru[i].toLowerCase()).join(en[i].toLowerCase());
+
+            }
+
+            string = string.replace(/[^0-9a-zA-Z_]+/g, '-');
+
+            return string;
+
+        }
+
+    };
+
     /**
      * Here we will draw buttons and add listeners to components
      */
     settings.makeRemoveBlockButton = function () {
 
         var removeBlockWrapper  = editor.draw.node('SPAN', 'ce-toolbar__remove-btn', {}),
-            settingButton = editor.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML : '<i class="ce-icon-trash"></i>' }),
+            settingButton = editor.draw.node('SPAN', 'ce-toolbar__remove-setting', {innerHTML : '<i class="ce-icon-trash"></i>' }),
             actionWrapper = editor.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
             confirmAction = editor.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent : 'Удалить блок' }),
             cancelAction  = editor.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent : 'Отмена' });

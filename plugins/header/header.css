@@ -18,40 +18,13 @@
     color: #306ac7;
     cursor: pointer;
     line-height: 1.3em;
-    margin-bottom: 1.5em;
 }
+    .ce_plugin_header--select_button:not(:last-of-type){
+        margin-bottom: 1.5em;
+    }
     .ce_plugin_header--select_button:hover{
         color: #a1b4ec;
     }
-
-.ce_plugin_header--anchor_wrapper{
-    display: block;
-
-    color: #707684;
-    line-height: 1.3em;
-}
-
-.ce_plugin_header--anchor_input {
-    border: 0;
-    margin-left: 5px;
-    color: #000;
-    border-bottom: 1px solid rgba(112, 118, 132, 0.5);;
-    outline: none;
-}
-
-.ce_plugin_header--anchor_input:focus {
-    border-bottom-color: #000;
-}
-
-.ce_plugin_header--anchor_input::-webkit-input-placeholder {color: rgba(112, 118, 132, 0.5);}
-.ce_plugin_header--anchor_input::-moz-placeholder {color: rgba(112, 118, 132, 0.5);}
-.ce_plugin_header--anchor_input:-moz-placeholder {color: rgba(112, 118, 132, 0.5);}
-.ce_plugin_header--anchor_input:-ms-input-placeholder {color: rgba(112, 118, 132, 0.5);}
-
-
-.ce_plugin_header--anchor_hash::before {
-    content: '#';
-}
 
 /**
 * Empty header placeholder

@@ -8,8 +8,6 @@ var header = (function(header) {
     /**
      * @private
      */
-    var currentHeader = null;
-
     var methods_ = {
 
         /**
@@ -40,69 +38,13 @@ var header = (function(header) {
             new_header.contentEditable = true;
             new_header.setAttribute('data-placeholder', 'Заголовок');
             new_header.dataset.headerData = type;
-            new_header.dataset.anchor = old_header.dataset.anchor;
 
             codex.editor.content.switchBlock(old_header, new_header, 'heading_styled');
 
             /** Close settings after replacing */
             codex.editor.toolbar.settings.close();
-        },
-
-        anchorChanged: function (e) {
-
-            var newAnchor = e.target.value = methods_.rusToTranslit(e.target.value);
-
-            if (newAnchor.trim() != '')
-                currentHeader.dataset.anchor = newAnchor;
 
         },
-
-        keyDownOnAnchorInput: function(e) {
-
-            if (e.keyCode == 13) {
-
-                e.preventDefault();
-                e.stopPropagation();
-
-                e.target.blur();
-
-            }
-
-        },
-
-        keyUpOnAnchorInput: function(e) {
-
-            if (e.keyCode >= 37 && e.keyCode <= 40) {
-                e.stopPropagation();
-            }
-
-        },
-
-        rusToTranslit: function (string) {
-
-            var ru = [
-                    'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й',
-                    'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф',
-                    'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ь', 'Ы', 'Ь', 'Э', 'Ю', 'Я'
-                ],
-                en = [
-                    'A', 'B', 'V', 'G', 'D', 'E', 'E', 'Zh', 'Z', 'I', 'Y',
-                    'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F',
-                    'H', 'C', 'Ch', 'Sh', 'Sch', '', 'Y', '', 'E', 'Yu', 'Ya'
-                ];
-
-            for (var i = 0; i < ru.length; i++) {
-
-                string = string.split(ru[i]).join(en[i]);
-                string = string.split(ru[i].toLowerCase()).join(en[i].toLowerCase());
-
-            }
-
-            string = string.replace(/[^0-9a-zA-Z_]+/g, '-');
-
-            return string;
-
-        }
 
     };
 
@@ -117,7 +59,6 @@ var header = (function(header) {
 
         var availableTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
             tag,
-            anchor = '',
             headerType = 'h2';
 
 
@@ -142,12 +83,6 @@ var header = (function(header) {
         if (!tag.dataset.headerData) {
             tag.dataset.headerData = 'h2';
         }
-
-        if (data && data.anchor) {
-            anchor = data.anchor;
-        }
-
-        tag.dataset.anchor = anchor;
 
         tag.classList.add('ce-header');
         tag.setAttribute('data-placeholder', 'Заголовок');
@@ -178,8 +113,7 @@ var header = (function(header) {
         var data = {
             "heading-styles": blockContent.dataset.headerData,
             "format": "html",
-            "text": blockContent.textContent || '',
-            "anchor": blockContent.dataset.anchor
+            "text": blockContent.textContent || ''
         };
 
         return data;
@@ -200,23 +134,7 @@ var header = (function(header) {
                 h3: 'Заголовок H3',
                 h4: 'Заголовок H4'
             },
-            block  = codex.editor.content.currentNode,
-            headerBlock = block.querySelector('[contenteditable="true"]'),
-            selectTypeButton,
-            anchorWrapper = codex.editor.draw.node('div', [ 'ce_plugin_header--anchor_wrapper' ], {}),
-            hash   = codex.editor.draw.node('span', [ 'ce_plugin_header--anchor_hash' ], {}),
-            anchor = codex.editor.draw.node('input', [ 'ce_plugin_header--anchor_input' ], { placeholder: 'якорь' });
-
-        currentHeader = headerBlock;
-
-        anchor.value = headerBlock.dataset.anchor || '';
-
-        anchor.addEventListener('keydown', methods_.keyDownOnAnchorInput );
-        anchor.addEventListener('keyup', methods_.keyUpOnAnchorInput );
-        anchor.addEventListener('input', methods_.anchorChanged );
-
-        anchorWrapper.appendChild(hash);
-        anchorWrapper.appendChild(anchor);
+            selectTypeButton;
 
         /** Now add type selectors */
         for (var type in types){
@@ -227,11 +145,8 @@ var header = (function(header) {
 
         }
 
-        holder.appendChild(anchorWrapper);
-
-        anchor.focus();
-
         return holder;
+
     };
 
     header.validate = function(data) {
