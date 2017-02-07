@@ -67,7 +67,7 @@ module.exports = (function (settings) {
         if ( !this.opened ) {
 
             this.open(toolType);
-            anchorMethods.settingsOpened(editor.content.currentNode);
+            editor.anchors.settingsOpened(editor.content.currentNode);
 
         } else {
 
@@ -182,89 +182,17 @@ module.exports = (function (settings) {
             hash   = editor.draw.node('i', 'ce-settings__anchor-hash', {}),
             anchor = editor.draw.node('input', 'ce-settings__anchor-input', { placeholder: 'Якорь' });
 
-        anchor.addEventListener('keydown', anchorMethods.keyDownOnAnchorInput );
-        anchor.addEventListener('keyup', anchorMethods.keyUpOnAnchorInput );
-        anchor.addEventListener('input', anchorMethods.anchorChanged );
-        anchor.addEventListener('blur', anchorMethods.anchorChanged );
+        anchor.addEventListener('keydown', editor.anchors.keyDownOnAnchorInput );
+        anchor.addEventListener('keyup', editor.anchors.keyUpOnAnchorInput );
+        anchor.addEventListener('input', editor.anchors.anchorChanged );
+        anchor.addEventListener('blur', editor.anchors.anchorChanged );
 
         anchorWrapper.appendChild(hash);
         anchorWrapper.appendChild(anchor);
 
-        anchorMethods.input = anchor;
+        editor.anchors.input = anchor;
 
         return anchorWrapper;
-
-    };
-
-    var anchorMethods = {
-
-        input: null,
-        currentNode: null,
-
-        settingsOpened: function (currentBlock) {
-
-            anchorMethods.currentNode = currentBlock;
-            anchorMethods.input.value = anchorMethods.currentNode.dataset.anchor;
-
-        },
-
-        anchorChanged: function (e) {
-
-            var newAnchor = e.target.value = anchorMethods.rusToTranslit(e.target.value);
-
-            if (newAnchor.trim() != '')
-                anchorMethods.currentNode.dataset.anchor = newAnchor;
-
-        },
-
-        keyDownOnAnchorInput: function (e) {
-
-            if (e.keyCode == 13) {
-
-                e.preventDefault();
-                e.stopPropagation();
-
-                e.target.blur();
-
-            }
-
-        },
-
-        keyUpOnAnchorInput: function (e) {
-
-            if (e.keyCode >= 37 && e.keyCode <= 40) {
-
-                e.stopPropagation();
-
-            }
-
-        },
-
-        rusToTranslit: function (string) {
-
-            var ru = [
-                    'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й',
-                    'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф',
-                    'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ь', 'Ы', 'Ь', 'Э', 'Ю', 'Я'
-                ],
-                en = [
-                    'A', 'B', 'V', 'G', 'D', 'E', 'E', 'Zh', 'Z', 'I', 'Y',
-                    'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F',
-                    'H', 'C', 'Ch', 'Sh', 'Sch', '', 'Y', '', 'E', 'Yu', 'Ya'
-                ];
-
-            for (var i = 0; i < ru.length; i++) {
-
-                string = string.split(ru[i]).join(en[i]);
-                string = string.split(ru[i].toLowerCase()).join(en[i].toLowerCase());
-
-            }
-
-            string = string.replace(/[^0-9a-zA-Z_]+/g, '-');
-
-            return string;
-
-        }
 
     };
 
