@@ -106,9 +106,37 @@ module.exports = (function (saver) {
         /** Result saver */
         var blockContent   = block.childNodes[0],
             pluginsContent = blockContent.childNodes[0],
-            savedData      = editor.tools[pluginName].save(pluginsContent),
-            output;
+            savedData,
+            position,
+            output,
+            coverFlag = false;
 
+        /** If plugin wasn't available then return data from cache */
+        if ( editor.tools[pluginName].available === false ) {
+
+            position = pluginsContent.dataset.inputPosition;
+
+            savedData = codex.editor.state.blocks.items[position].data;
+            coverFlag = codex.editor.state.blocks.items[position].cover;
+
+        } else {
+
+            savedData = editor.tools[pluginName].save(pluginsContent);
+            coverFlag = block.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
+
+            if (editor.tools[pluginName].validate) {
+
+                var result = editor.tools[pluginName].validate(savedData);
+
+                /**
+                 * Do not allow invalid data
+                 */
+                if (!result)
+                    return;
+
+            }
+
+        }
 
         output = {
             type   : pluginName,
@@ -116,20 +144,8 @@ module.exports = (function (saver) {
             data   : savedData
         };
 
-        if (editor.tools[pluginName].validate) {
-
-            var result = editor.tools[pluginName].validate(savedData);
-
-            /**
-             * Do not allow invalid data
-             */
-            if (!result)
-                return;
-
-        }
-
         /** Marks Blocks that will be in main page */
-        output.cover = block.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
+        output.cover = coverFlag;
 
         editor.state.jsonOutput.push(output);
 

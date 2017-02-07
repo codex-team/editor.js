@@ -131,6 +131,17 @@ module.exports = (function (core) {
     };
 
     /**
+    * Checks passed object for emptiness
+    * @require ES5 - Object.keys
+    * @param {object}
+    */
+    core.isEmpty = function ( obj ) {
+
+        return Object.keys(obj).length === 0;
+
+    };
+
+    /**
      * Native Ajax
      */
     core.ajax = function (data) {
