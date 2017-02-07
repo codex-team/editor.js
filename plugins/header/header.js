@@ -43,7 +43,7 @@ var header = (function(header) {
 
             /** Close settings after replacing */
             codex.editor.toolbar.settings.close();
-        },
+        }
 
     };
 
