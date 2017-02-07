@@ -274,7 +274,7 @@ module.exports = (function (settings) {
     settings.makeRemoveBlockButton = function () {
 
         var removeBlockWrapper  = editor.draw.node('SPAN', 'ce-toolbar__remove-btn', {}),
-            settingButton = editor.draw.node('SPAN', 'ce-toolbar__remove-setting', {innerHTML : '<i class="ce-icon-trash"></i>' }),
+            settingButton = editor.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML : '<i class="ce-icon-trash"></i>' }),
             actionWrapper = editor.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
             confirmAction = editor.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent : 'Удалить блок' }),
             cancelAction  = editor.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent : 'Отмена' });

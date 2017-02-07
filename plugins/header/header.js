@@ -43,7 +43,6 @@ var header = (function(header) {
 
             /** Close settings after replacing */
             codex.editor.toolbar.settings.close();
-
         },
 
     };
@@ -75,6 +74,7 @@ var header = (function(header) {
          * We need it in save method to extract type from HTML to JSON
          */
         tag.dataset.headerData = headerType;
+
 
         if (data && data.text) {
             tag.textContent = data.text;
@@ -146,7 +146,6 @@ var header = (function(header) {
         }
 
         return holder;
-
     };
 
     header.validate = function(data) {
