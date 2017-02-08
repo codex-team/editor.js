@@ -82,14 +82,16 @@ var storage = function () {
 
     var get = function () {
 
-        if (!window.localStorage[LOCAL_STORAGE_KEY+'.savedData'])
+        var savedData = window.localStorage[LOCAL_STORAGE_KEY+'.savedData'],
+            data;
+
+        if (!savedData)
             return;
 
-        var data;
 
         try {
 
-            data = JSON.parse(window.localStorage[LOCAL_STORAGE_KEY + '.savedData']);
+            data = JSON.parse(savedData);
 
         } catch (error) {
 
