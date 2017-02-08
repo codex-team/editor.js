@@ -541,4 +541,8 @@
         font-size: 13px;
     }
 
+    .ce-block--anchor::after {
+        display: none;
+    }
+
 }
