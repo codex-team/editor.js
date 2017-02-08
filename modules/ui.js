@@ -309,44 +309,6 @@ module.exports = (function (ui) {
 
     };
 
-    /**
-     * Initialize plugins before using
-     * Ex. Load scripts or call some internal methods
-     * @return Promise
-     */
-    ui.preparePlugins = function () {
-
-        return new Promise(function (resolve, reject) {
-
-            let pluginName,
-                plugin;
-
-            for ( pluginName in editor.tools ) {
-
-                plugin = editor.tools[pluginName];
-
-                if (typeof plugin.prepare != 'function') {
-
-                    continue;
-
-                }
-
-                plugin.prepare(plugin.config || {}).then(function () {
-
-                    resolve();
-
-                }).catch(function (error) {
-
-                    reject(error);
-
-                });
-
-            }
-
-        });
-
-    };
-
     ui.addBlockHandlers = function (block) {
 
         if (!block) return;

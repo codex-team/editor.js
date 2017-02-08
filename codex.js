@@ -14,6 +14,7 @@ module.exports = (function (editor) {
     var init = function () {
 
         editor.core          = require('./modules/core');
+        editor.tools         = require('./modules/tools');
         editor.ui            = require('./modules/ui');
         editor.transport     = require('./modules/transport');
         editor.renderer      = require('./modules/renderer');
@@ -26,6 +27,7 @@ module.exports = (function (editor) {
         editor.notifications = require('./modules/notifications');
         editor.parser        = require('./modules/parser');
         editor.sanitizer     = require('./modules/sanitizer');
+        editor.anchors       = require('./modules/anchors');
 
     };
 
@@ -75,9 +77,9 @@ module.exports = (function (editor) {
      * Output state
      */
     editor.state = {
-        jsonOutput: [],
-        blocks    : [],
-        inputs    : []
+        jsonOutput  : [],
+        blocks      : [],
+        inputs      : []
     };
 
     /**
@@ -127,7 +129,7 @@ module.exports = (function (editor) {
             .then(editor.ui.make)
             .then(editor.ui.addTools)
             .then(editor.ui.bindEvents)
-            .then(editor.ui.preparePlugins)
+            .then(editor.tools.prepare)
             .then(editor.transport.prepare)
             .then(editor.renderer.makeBlocksFromData)
             .then(editor.ui.saveInputs)
