@@ -494,15 +494,15 @@
 * Notifications
 */
 
-.ce_notifications-block {
+.cdx-notifications-block {
     position: fixed;
     bottom: 0;
     left: 0;
-    padding: 10px;
+    padding: 15px;
 }
 
 
-.ce-notification__notification-appending div {
+.cdx-notification__notification-appending div {
     animation: notification 100ms infinite ease-in;
 }
 
@@ -514,45 +514,64 @@
 }
 
 
-.ce-notification {
+.cdx-notification {
     width: 250px;
-    margin: 10px 0;
+    margin-top: 15px;
     padding: 15px;
-    background: #FFFFFF;
+    background: #fff;
     border: 1px solid #e7e9f1;
     box-shadow: 0px 2px 5px 0px rgba(16, 23, 49, 0.05);
     border-radius: 3px;
-    text-align: right;
+    font-size: 14px;
 }
 
-.ce-notification__message {
-    margin-bottom: 10px;
-    text-align: center;
+.cdx-notification__message {
+    margin-bottom: 15px;
 }
 
-.ce-notification__ok-btn,
-.ce-notification__cancel-btn {
-    padding: 10px;
+.cdx-notification__ok-btn,
+.cdx-notification__cancel-btn {
+    padding: 4px 7px;
     cursor: pointer;
+    background: #4584d8;
+    color: #fff;
+    min-width: 50px;
+    display: inline-block;
+    text-align: center;
+    border-radius: 2px;
 }
 
-.ce-notification__input {
+.cdx-notification__cancel-btn {
+    margin-left: 10px;
+    background: #dae0e8;
+    color: inherit;
+}
+
+.cdx-notification__cancel-btn {
+    background: #cad5e2;
+}
+
+.cdx-notification__ok-btn:hover {
+    background: #3d77c3;
+}
+
+.cdx-notification__input {
     display: block;
     width: 100%;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
     border: none;
     outline: none;
+    padding: 2px 0;
+    font-size: inherit;
     border-bottom: 2px solid #d1d3da;
 }
 
-.ce-notification-error {
-    border: 1px solid rgb(255, 24, 10);
-    box-shadow: 0 2px 5px 0 rgba(255, 24, 10, 0.5);
+.cdx-notification-error {
+    border-left: 4px solid rgb(255, 112, 112);
 }
 
-.ce-notification-warn {
-    border: 1px solid rgb(255, 253, 20);
-    box-shadow: 0 2px 5px 0 rgba(255, 253, 20, 0.5);
+.cdx-notification-warn {
+    border-left: 4px solid rgb(79, 146, 247);
 }
 
 

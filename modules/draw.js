@@ -127,7 +127,7 @@ module.exports = (function (draw) {
 
         var block = document.createElement('div');
 
-        block.classList.add('ce_notifications-block');
+        block.classList.add('cdx-notifications-block');
 
         return block;
 

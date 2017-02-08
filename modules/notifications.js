@@ -4,9 +4,10 @@
  * @author Codex Team
  * @version 1.0
  */
-let editor = codex.editor;
 
 module.exports = (function (notifications) {
+
+    let editor = codex.editor;
 
     var queue = [];
 
@@ -39,7 +40,7 @@ module.exports = (function (notifications) {
      * Appends notification
      *
      *  settings = {
-     *      type        - notification type (reserved types: alert, confirm, prompt). Just add class 'ce-notification-'+type
+     *      type        - notification type (reserved types: alert, confirm, prompt). Just add class 'cdx-notification-'+type
      *      message     - notification message
      *      okMsg       - confirm button text (default - 'Ok')
      *      cancelBtn   - cancel button text (default - 'Cancel'). Only for confirm and prompt types
@@ -68,14 +69,14 @@ module.exports = (function (notifications) {
             settings.type = settings.type || 'alert';
             settings.time = settings.time*1000 || 10000;
 
-            var wrapper = editor.draw.node('DIV', 'ce-notification'),
-                message = editor.draw.node('DIV', 'ce-notification__message'),
-                input = editor.draw.node('INPUT', 'ce-notification__input'),
-                okBtn = editor.draw.node('SPAN', 'ce-notification__ok-btn'),
-                cancelBtn = editor.draw.node('SPAN', 'ce-notification__cancel-btn');
+            var wrapper = editor.draw.node('DIV', 'cdx-notification'),
+                message = editor.draw.node('DIV', 'cdx-notification__message'),
+                input = editor.draw.node('INPUT', 'cdx-notification__input'),
+                okBtn = editor.draw.node('SPAN', 'cdx-notification__ok-btn'),
+                cancelBtn = editor.draw.node('SPAN', 'cdx-notification__cancel-btn');
 
             message.textContent = settings.message;
-            okBtn.textContent = settings.okMsg || 'Ок';
+            okBtn.textContent = settings.okMsg || 'ОК';
             cancelBtn.textContent = settings.cancelMsg || 'Отмена';
 
             okBtn.addEventListener('click', settings.confirm);
@@ -101,7 +102,7 @@ module.exports = (function (notifications) {
 
             }
 
-            wrapper.classList.add('ce-notification-'+settings.type);
+            wrapper.classList.add('cdx-notification-' + settings.type);
             wrapper.dataset.type = settings.type;
 
             notification = wrapper;
@@ -117,11 +118,11 @@ module.exports = (function (notifications) {
             editor.nodes.notifications.appendChild(notification);
             inputField.focus();
 
-            editor.nodes.notifications.classList.add('ce-notification__notification-appending');
+            editor.nodes.notifications.classList.add('cdx-notification__notification-appending');
 
             window.setTimeout(function () {
 
-                editor.nodes.notifications.classList.remove('ce-notification__notification-appending');
+                editor.nodes.notifications.classList.remove('cdx-notification__notification-appending');
 
             }, 100);
 
