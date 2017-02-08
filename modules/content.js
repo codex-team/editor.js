@@ -194,6 +194,11 @@ module.exports = (function (content) {
 
         }
 
+        /**
+         * Saving anchor
+         */
+        newBlock.dataset.anchor = targetBlock.dataset.anchor;
+
         /** Replacing */
         editor.nodes.redactor.replaceChild(newBlock, targetBlock);
 
@@ -232,9 +237,10 @@ module.exports = (function (content) {
             newBlockContent = blockData.block,
             blockType       = blockData.type,
             cover           = blockData.cover,
+            anchor          = blockData.anchor,
             isStretched     = blockData.stretched;
 
-        var newBlock = editor.content.composeNewBlock(newBlockContent, blockType, isStretched);
+        var newBlock = editor.content.composeNewBlock(newBlockContent, blockType, isStretched, anchor);
 
         if (cover === true) {
 
@@ -433,7 +439,7 @@ module.exports = (function (content) {
     /**
      * @private
      */
-    content.composeNewBlock = function (block, tool, isStretched) {
+    content.composeNewBlock = function (block, tool, isStretched, anchor) {
 
         var newBlock     = editor.draw.node('DIV', editor.ui.className.BLOCK_CLASSNAME, {}),
             blockContent = editor.draw.node('DIV', editor.ui.className.BLOCK_CONTENT, {});
@@ -447,7 +453,8 @@ module.exports = (function (content) {
 
         }
 
-        newBlock.dataset.tool = tool;
+        newBlock.dataset.tool   = tool;
+        newBlock.dataset.anchor = anchor || '';
         return newBlock;
 
     };

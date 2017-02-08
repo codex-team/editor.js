@@ -150,6 +150,7 @@ module.exports = (function (renderer) {
         var block,
             tool = toolData.tool,
             pluginName = tool.type,
+            anchor     = toolData.anchor,
             cover      = tool.cover;
 
         /** Get first key of object that stores plugin name */
@@ -195,7 +196,8 @@ module.exports = (function (renderer) {
             type      : pluginName,
             block     : block,
             stretched : stretched,
-            cover     : cover
+            cover     : cover,
+            anchor    : anchor
         };
 
     };

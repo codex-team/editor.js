@@ -27,6 +27,7 @@ module.exports = (function (editor) {
         editor.notifications = require('./modules/notifications');
         editor.parser        = require('./modules/parser');
         editor.sanitizer     = require('./modules/sanitizer');
+        editor.anchors       = require('./modules/anchors');
 
     };
 

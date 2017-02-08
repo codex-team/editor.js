@@ -86,7 +86,8 @@ module.exports = (function (saver) {
 
     saver.makeFormDataFromBlocks = function (block) {
 
-        var pluginName = block.dataset.tool;
+        var pluginName = block.dataset.tool,
+            anchor     = block.dataset.anchor;
 
         /** Check for plugin existance */
         if (!editor.tools[pluginName]) {
@@ -117,6 +118,7 @@ module.exports = (function (saver) {
 
             savedData = codex.editor.state.blocks.items[position].data;
             coverFlag = codex.editor.state.blocks.items[position].cover;
+            anchor    = codex.editor.state.blocks.items[position].anchor;
 
         } else {
 
@@ -138,8 +140,9 @@ module.exports = (function (saver) {
         }
 
         output = {
-            type: pluginName,
-            data: savedData
+            type   : pluginName,
+            anchor : anchor,
+            data   : savedData
         };
 
         /** Marks Blocks that will be in main page */
