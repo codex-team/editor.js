@@ -314,7 +314,7 @@ var image = (function(image) {
 
             setTimeout(function() {
                 codex.editor.toolbar.settings.close();
-            }, 200);
+            }, 1000);
 
         }
     };
@@ -340,7 +340,7 @@ var image = (function(image) {
                 var type = files[0].type.split('/');
 
                 var result = validFileExtensions.some(function(ext) {
-                    return ext == type[1]
+                    return ext == type[1];
                 });
 
                 if (!result) {
@@ -646,7 +646,7 @@ var image = (function(image) {
             currentImageSettings = currentImageWrapper.dataset;
 
         /** Add holder classname */
-        holder.className = 'ce_plugin_image--settings';
+        holder.className = 'ce-image-settings';
 
         /** Now add type selectors */
         for (var type in types){
