@@ -29,7 +29,6 @@
     min-height: 350px;
 }
 
-
 .ce-block__content a {
     color: #186baa;
 }
@@ -144,10 +143,11 @@
 */
 .ce-toolbar__actions{
     position: absolute;
-    right: 10px;
+    right: 15px;
     border-radius: 2px;
-    padding: 4px 5px;
-    background: #f9f9fb;
+    padding: 6px 5px;
+    line-height: 1em;
+    background: #fff;
 }
 
 
@@ -168,7 +168,7 @@
 }
 
 /**
-* Settigns pane
+* Settigns panel
 */
 .ce-settings,
 .ce-toolbar__remove-confirmation{
@@ -181,7 +181,7 @@
     box-shadow: 0px 2px 5px 0px rgba(16, 23, 49, 0.05);
     border-radius: 3px;
     white-space: nowrap;
-    color: #707684;
+    color: #2b2d31;
     font-size: 13.4px;
 
     /* hidden by default */
@@ -226,11 +226,35 @@
 }
 
 
+/**
+* Plugins settings style helper
+*/
+.cdx-plugin-settings--horisontal {
+    display: -webkit-flex;
+    display: -moz-flex;
+    display: -ms-flex;
+    display: -o-flex;
+    display: flex;
+}
+
+.cdx-plugin-settings__item {
+    flex: 1 0 auto;
+    text-align: center;
+}
 
 .ce-settings__item,
-.ce-toolbar__remove-confirm
-.ce-toolbar__remove-cancel {
+.ce-toolbar__remove-confirm,
+.ce-toolbar__remove-cancel,
+.cdx-plugin-settings__item {
+    padding: 15px;
     cursor: pointer;
+    line-height: 1em;
+}
+
+.ce-settings__item:hover,
+.ce-toolbar__remove-cancel:hover,
+.cdx-plugin-settings__item:hover {
+    background: #edf0f5;
 }
 
 .ce-settings.opened,
@@ -239,17 +263,25 @@
 }
 
 .ce-settings_plugin{
-    padding: 20px;
-    border-bottom: 1px solid #E8EAEE;
+    border-bottom: 1px solid #e7e9f1;
 }
+
 .ce-settings_plugin:empty{
     display: none;
 }
-.ce-settings_default{
-    padding: 20px;
+
+.ce-settings__item:not(:last-of-type) {
+    border-bottom: 1px solid #e7e9f1;
 }
+
 .ce-settings__item i {
+    min-width: 16px;
     margin-right: 1.3em;
+}
+
+.ce-settings__item i::before {
+    min-width: 16px;
+    margin: 0;
 }
 
 
@@ -259,25 +291,45 @@
 .ce-toolbar__remove-btn {
     cursor: pointer;
 }
-.ce-toolbar__remove-confirmation{
-    padding: 5px 0;
-}
-.ce-toolbar__remove-confirm,
-.ce-toolbar__remove-cancel{
-    padding: 10px 20px;
-}
+
 .ce-toolbar__remove-confirm{
     color: #ea5c5c;
 }
+
 .ce-toolbar__remove-confirm:hover{
     background: #e23d3d;
     color: #fff;
 }
-.ce-toolbar__remove-cancel:hover{
-    background: #edf0f5;
+
+/** Anchor input */
+.ce-settings__anchor-wrapper:hover {
+    background: none;
 }
 
+.ce-settings__anchor-input {
+    max-width: 100%;
+    border: 0;
+    outline: none;
+    padding: 14px 0;
+    margin: -15px 0;
+    font-size: inherit;
+    color: #000;
+    height: 1em;
+}
 
+.ce-settings__anchor-input::-webkit-input-placeholder {color: rgba(112, 118, 132, 0.5);}
+.ce-settings__anchor-input::-moz-placeholder {color: rgba(112, 118, 132, 0.5);}
+.ce-settings__anchor-input:-moz-placeholder {color: rgba(112, 118, 132, 0.5);}
+.ce-settings__anchor-input:-ms-input-placeholder {color: rgba(112, 118, 132, 0.5);}
+
+.ce-settings__anchor-hash {
+    display: inline-block;
+    background: url('fonts/codex_editor/icon-hash.svg') no-repeat center center;
+    background-size: contain;
+    height: 11px;
+    width: 10px;
+    vertical-align: middle;
+}
 
 /**
 * Overlayed inline toolbar
@@ -353,29 +405,47 @@
 /**
 * Base blocks
 */
-.ce-block{
+.ce-block {
     margin: 0 5px;
     border-radius: 3px;
 }
-.ce-block--focused{
+
+.ce-block--focused {
     background: #f9f9fb;
 }
 
-.ce-block--feed-mode{
+.ce-block--feed-mode {
     position: relative;
 }
+
 .ce-block--feed-mode:before {
     content: '\e81b';
     font-family: "codex_editor";
     display: inline-block;
     position: absolute;
-
     left: 17px;
     top: 13px;
     font-size: 16px;
-    /*color: #ef4a4a;*/
     color: #7d6060;
 }
+
+.ce-block--anchor {
+    position: relative;
+}
+
+.ce-block--anchor::after {
+    display: inline-block;
+    content: "#" attr(data-anchor);
+    color: #868896;
+    position: absolute;
+    left: 17px;
+    top: 13px;
+    max-width: 100px;
+    word-wrap: break-word;
+    font-size: 12px;
+}
+
+
 
 /**
 * Block content holder
@@ -388,6 +458,16 @@
 .ce-block--stretched{
     max-width: none;
     padding: 0;
+}
+
+.cdx-unavailable-block {
+    display: block;
+    margin: 10px 0;
+    padding: 80px;
+    background-color: #fff7f7;
+    text-align: center;
+    border-radius: 3px;
+    color: #ce5f5f;
 }
 
 /**
@@ -408,6 +488,90 @@
 
 @keyframes loading-bar {
     100% { background-position: -56% 0 }
+}
+
+/**
+* Notifications
+*/
+
+.cdx-notifications-block {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 15px;
+}
+
+
+.cdx-notification__notification-appending div {
+    animation: notification 100ms infinite ease-in;
+}
+
+@keyframes notification {
+
+    0% { transform: translateY(20px); }
+    100% { transform: translateY(0px);  }
+
+}
+
+
+.cdx-notification {
+    width: 250px;
+    margin-top: 15px;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #e7e9f1;
+    box-shadow: 0px 2px 5px 0px rgba(16, 23, 49, 0.05);
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+.cdx-notification__message {
+    margin-bottom: 15px;
+}
+
+.cdx-notification__ok-btn,
+.cdx-notification__cancel-btn {
+    padding: 4px 7px;
+    cursor: pointer;
+    background: #4584d8;
+    color: #fff;
+    min-width: 50px;
+    display: inline-block;
+    text-align: center;
+    border-radius: 2px;
+}
+
+.cdx-notification__cancel-btn {
+    margin-left: 10px;
+    background: #dae0e8;
+    color: inherit;
+}
+
+.cdx-notification__cancel-btn {
+    background: #cad5e2;
+}
+
+.cdx-notification__ok-btn:hover {
+    background: #3d77c3;
+}
+
+.cdx-notification__input {
+    display: block;
+    width: 100%;
+    margin-bottom: 15px;
+    border: none;
+    outline: none;
+    padding: 2px 0;
+    font-size: inherit;
+    border-bottom: 2px solid #d1d3da;
+}
+
+.cdx-notification-error {
+    border-left: 4px solid rgb(255, 112, 112);
+}
+
+.cdx-notification-warn {
+    border-left: 4px solid rgb(79, 146, 247);
 }
 
 
@@ -483,6 +647,10 @@
     .ce-toolbar__tools {
         left: 30px;
         font-size: 13px;
+    }
+
+    .ce-block--anchor::after {
+        display: none;
     }
 
 }

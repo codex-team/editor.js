@@ -12,31 +12,32 @@ var storage = function () {
             saveInterval: 1000
         };
 
-    if (!window.localStorage) {
-
-        window.console.warn('LocalStorage is not supported in your browser');
-        return;
-
-    }
-
     var prepare = function (config) {
+
+        if (!window.localStorage) {
+
+            editor.notifications.notification({message:'LocalStorage не поддерживается в вашем браузере', type:'warn'});
+            return;
+
+        }
 
         config_ = config || config_;
 
         if (get() && editor.state.blocks.savingDate < get().savingDate) {
 
-            editor.notifications.confirm({
-                message: 'В вашем браузере сохранена более актаульная версия',
-                okMsg: 'Показать',
-                cancelMsg: 'Отмена',
-                confirm: function () {
+            editor.notifications.notification({
+                type        : 'confirm',
+                message     : 'В вашем браузере сохранена более актаульная версия материала',
+                okMsg       : 'Показать',
+                cancelMsg   : 'Отмена',
+                confirm     : function () {
 
                     editor.state.blocks = get();
                     editor.renderer.rerender();
                     init(config_.saveInterval);
 
                 },
-                cancel: function () {
+                cancel      : function () {
 
                     init(config_.saveInterval);
 

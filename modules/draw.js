@@ -121,19 +121,6 @@ module.exports = (function (draw) {
     };
 
     /**
-     * Block with notifications
-     */
-    draw.alertsHolder = function () {
-
-        var block = document.createElement('div');
-
-        block.classList.add('ce_notifications-block');
-
-        return block;
-
-    };
-
-    /**
      * @todo Desc
      */
     draw.blockButtons = function () {
@@ -308,6 +295,19 @@ module.exports = (function (draw) {
         }
 
         return el;
+
+    };
+
+    /**
+    * Unavailable plugin block
+    */
+    draw.unavailableBlock = function () {
+
+        var wrapper = document.createElement('DIV');
+
+        wrapper.classList.add('cdx-unavailable-block');
+
+        return wrapper;
 
     };
 

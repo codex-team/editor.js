@@ -39,9 +39,9 @@ var quote = (function(quote) {
         },
 
         settings  : {
-            holder  : 'ce_plugin_quote--settings',
+            holder  : 'cdx-plugin-settings--horisontal',
             caption : 'ce_plugin_quote--caption',
-            buttons : 'ce_plugin_quote--select_button',
+            buttons : 'cdx-plugin-settings__item',
             selectedType : 'ce-quote-settings--selected'
         }
     };

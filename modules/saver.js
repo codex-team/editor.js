@@ -92,7 +92,8 @@ module.exports = (function (saver) {
 
     saver.makeFormDataFromBlocks = function (block) {
 
-        var pluginName = block.dataset.tool;
+        var pluginName = block.dataset.tool,
+            anchor     = block.dataset.anchor;
 
         /** Check for plugin existance */
         if (!editor.tools[pluginName]) {
@@ -111,29 +112,47 @@ module.exports = (function (saver) {
         /** Result saver */
         var blockContent   = block.childNodes[0],
             pluginsContent = blockContent.childNodes[0],
-            savedData      = editor.tools[pluginName].save(pluginsContent),
-            output;
+            savedData,
+            position,
+            output,
+            coverFlag = false;
 
+        /** If plugin wasn't available then return data from cache */
+        if ( editor.tools[pluginName].available === false ) {
 
-        output = {
-            type: pluginName,
-            data: savedData
-        };
+            position = pluginsContent.dataset.inputPosition;
 
-        if (editor.tools[pluginName].validate) {
+            savedData = codex.editor.state.blocks.items[position].data;
+            coverFlag = codex.editor.state.blocks.items[position].cover;
+            anchor    = codex.editor.state.blocks.items[position].anchor;
 
-            var result = editor.tools[pluginName].validate(savedData);
+        } else {
 
-            /**
-             * Do not allow invalid data
-             */
-            if (!result)
-                return;
+            savedData = editor.tools[pluginName].save(pluginsContent);
+            coverFlag = block.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
+
+            if (editor.tools[pluginName].validate) {
+
+                var result = editor.tools[pluginName].validate(savedData);
+
+                /**
+                 * Do not allow invalid data
+                 */
+                if (!result)
+                    return;
+
+            }
 
         }
 
+        output = {
+            type   : pluginName,
+            anchor : anchor,
+            data   : savedData
+        };
+
         /** Marks Blocks that will be in main page */
-        output.cover = block.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
+        output.cover = coverFlag;
 
         editor.state.jsonOutput.push(output);
 

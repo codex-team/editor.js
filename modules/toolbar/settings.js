@@ -67,6 +67,7 @@ module.exports = (function (settings) {
         if ( !this.opened ) {
 
             this.open(toolType);
+            editor.anchors.settingsOpened(editor.content.currentNode);
 
         } else {
 
@@ -82,7 +83,8 @@ module.exports = (function (settings) {
     settings.addDefaultSettings = function () {
 
         /** list of default settings */
-        var feedModeToggler;
+        var feedModeToggler,
+            anchorInput;
 
         /** Clear block and append initialized settings */
         editor.nodes.defaultSettings.innerHTML = '';
@@ -90,10 +92,16 @@ module.exports = (function (settings) {
 
         /** Init all default setting buttons */
         feedModeToggler = editor.toolbar.settings.makeFeedModeToggler();
+        anchorInput     = editor.toolbar.settings.makeAnchorInput();
 
         /**
          * Fill defaultSettings
          */
+
+        /**
+         * Input for anchor for block
+         */
+        editor.nodes.defaultSettings.appendChild(anchorInput);
 
         /**
          * Button that enables/disables Feed-mode
@@ -165,6 +173,26 @@ module.exports = (function (settings) {
             return false;
 
         }
+
+    };
+
+    settings.makeAnchorInput = function () {
+
+        var anchorWrapper = editor.draw.node('div', 'ce-settings__anchor-wrapper ce-settings__item', {}),
+            hash   = editor.draw.node('i', 'ce-settings__anchor-hash', {}),
+            anchor = editor.draw.node('input', 'ce-settings__anchor-input', { placeholder: 'Якорь' });
+
+        anchor.addEventListener('keydown', editor.anchors.keyDownOnAnchorInput );
+        anchor.addEventListener('keyup', editor.anchors.keyUpOnAnchorInput );
+        anchor.addEventListener('input', editor.anchors.anchorChanged );
+        anchor.addEventListener('blur', editor.anchors.anchorChanged );
+
+        anchorWrapper.appendChild(hash);
+        anchorWrapper.appendChild(anchor);
+
+        editor.anchors.input = anchor;
+
+        return anchorWrapper;
 
     };
 

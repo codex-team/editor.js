@@ -57,7 +57,6 @@ module.exports = (function (ui) {
             toolbar,
             toolbarContent,
             redactor,
-            notifications,
             blockButtons,
             blockSettings,
             showSettingsButton,
@@ -72,8 +71,7 @@ module.exports = (function (ui) {
         editor.core.insertAfter(editor.nodes.textarea, wrapper);
 
         /** Append block with notifications to the document */
-        notifications = editor.draw.alertsHolder();
-        editor.nodes.notifications = document.body.appendChild(notifications);
+        editor.notifications.createHolder();
 
         /** Make toolbar and content-editable redactor */
         toolbar               = editor.draw.toolbar();
@@ -306,44 +304,6 @@ module.exports = (function (ui) {
             editor.nodes.toolbarButtons[button].addEventListener('click', editor.callback.toolbarButtonClicked, false);
 
         }
-
-    };
-
-    /**
-     * Initialize plugins before using
-     * Ex. Load scripts or call some internal methods
-     * @return Promise
-     */
-    ui.preparePlugins = function () {
-
-        return new Promise(function (resolve, reject) {
-
-            let pluginName,
-                plugin;
-
-            for ( pluginName in editor.tools ) {
-
-                plugin = editor.tools[pluginName];
-
-                if (typeof plugin.prepare != 'function') {
-
-                    continue;
-
-                }
-
-                plugin.prepare(plugin.config || {}).then(function () {
-
-                    resolve();
-
-                }).catch(function (error) {
-
-                    reject(error);
-
-                });
-
-            }
-
-        });
 
     };
 
