@@ -6,24 +6,27 @@
  */
 var storage = function () {
 
-    var editor  = codex.editor,
-        interval   = null,
+    var editor              = codex.editor,
+        LOCAL_STORAGE_KEY   = 'codex.editor',
+        interval            = null,
         config_ = {
-            saveInterval: 1000
+            savingInterval: 1000
         };
 
     var prepare = function (config) {
 
         if (!window.localStorage) {
 
-            editor.notifications.notification({message:'LocalStorage не поддерживается в вашем браузере', type:'warn'});
+            editor.core.log('LocalStorage do not support in your browser');
             return;
 
         }
 
         config_ = config || config_;
 
-        if (get() && editor.state.blocks.savingDate < get().savingDate) {
+        var localData = get();
+
+        if (localData && editor.state.blocks.savingDate < localData.savingDate) {
 
             editor.notifications.notification({
                 type        : 'confirm',
@@ -32,7 +35,7 @@ var storage = function () {
                 cancelMsg   : 'Отмена',
                 confirm     : function () {
 
-                    editor.state.blocks = get();
+                    editor.state.blocks = localData;
                     editor.renderer.rerender();
                     init(config_.saveInterval);
 
@@ -71,7 +74,7 @@ var storage = function () {
                     savingDate : savingDate
                 };
 
-            window.localStorage['codex.editor.savedData'] = JSON.stringify(data);
+            window.localStorage[LOCAL_STORAGE_KEY+'.savedData'] = JSON.stringify(data);
 
         }, 500);
 
@@ -79,10 +82,21 @@ var storage = function () {
 
     var get = function () {
 
-        if (!window.localStorage['codex.editor.savedData'])
+        if (!window.localStorage[LOCAL_STORAGE_KEY+'.savedData'])
             return;
 
-        var data = JSON.parse(window.localStorage['codex.editor.savedData']);
+        var data;
+
+        try {
+
+            data = JSON.parse(window.localStorage[LOCAL_STORAGE_KEY + '.savedData']);
+
+        } catch (error) {
+
+            editor.core.log('Invalid data format');
+            return;
+
+        }
 
         return data;
 
