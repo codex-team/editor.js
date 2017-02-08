@@ -11,19 +11,38 @@ module.exports = (function (notifications) {
 
     var queue = [];
 
-    var addToQueue = function (closeNotification) {
+    var addToQueue = function (settings) {
 
-        queue.push(closeNotification);
+        queue.push(settings);
 
-        if (queue.length > 5) {
+        var index = 0;
 
-            var closeFirst = queue.shift();
+        while ( index < queue.length && queue.length > 5) {
 
-            closeFirst();
+            if (queue[index].type == 'confirm' || queue[index].type == 'prompt') {
+
+                index++;
+                continue;
+
+            }
+
+            queue[index].close();
+            queue.splice(index, 1);
 
         }
 
     };
+
+    notifications.createHolder = function () {
+
+        var holder = editor.draw.node('DIV', 'cdx-notifications-block');
+
+        editor.nodes.notifications = document.body.appendChild(holder);
+
+        return holder;
+
+    };
+
 
     /**
      * Error notificator. Shows block with message
@@ -53,11 +72,51 @@ module.exports = (function (notifications) {
      */
     notifications.notification = function (constructorSettings) {
 
+        /** Private vars and methods */
         var notification = null,
             cancel       = null,
+            type         = null,
+            confirm      = null,
             inputField   = null;
 
-        var create = function (settings) {
+        var confirmHandler = function () {
+
+            close();
+
+            if (typeof confirm !== 'function' ) {
+
+                return;
+
+            }
+
+            if (type == 'prompt') {
+
+                confirm(inputField.value);
+                return;
+
+            }
+
+            confirm();
+
+        };
+
+        var cancelHandler = function () {
+
+            close();
+
+            if (typeof cancel !== 'function' ) {
+
+                return;
+
+            }
+
+            cancel();
+
+        };
+
+
+        /** Public methods */
+        function create(settings) {
 
             if (!(settings && settings.message)) {
 
@@ -79,12 +138,8 @@ module.exports = (function (notifications) {
             okBtn.textContent = settings.okMsg || 'ОК';
             cancelBtn.textContent = settings.cancelMsg || 'Отмена';
 
-            okBtn.addEventListener('click', settings.confirm);
-            cancelBtn.addEventListener('click', settings.cancel);
-
-            okBtn.addEventListener('click', close);
-            cancelBtn.addEventListener('click', close);
-
+            okBtn.addEventListener('click', confirmHandler);
+            cancelBtn.addEventListener('click', cancelHandler);
 
             wrapper.appendChild(message);
 
@@ -106,14 +161,20 @@ module.exports = (function (notifications) {
             wrapper.dataset.type = settings.type;
 
             notification = wrapper;
+            type         = settings.type;
+            confirm      = settings.confirm;
             cancel       = settings.cancel;
             inputField   = input;
 
-            window.setTimeout(close, settings.time);
+            if (settings.type != 'prompt' && settings.type != 'confirm') {
+
+                window.setTimeout(close, settings.time);
+
+            }
 
         };
 
-        var send = function () {
+        function send() {
 
             editor.nodes.notifications.appendChild(notification);
             inputField.focus();
@@ -126,21 +187,16 @@ module.exports = (function (notifications) {
 
             }, 100);
 
-            addToQueue(close);
+            addToQueue({type: type, close: close});
 
         };
 
-        var close = function () {
-
-            if (cancel) {
-
-                cancel();
-
-            }
+        function close() {
 
             notification.remove();
 
         };
+
 
         if (constructorSettings) {
 
