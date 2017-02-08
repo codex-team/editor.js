@@ -17,7 +17,7 @@ var storage = function () {
 
         if (!window.localStorage) {
 
-            editor.core.log('LocalStorage do not support in your browser');
+            editor.core.log('LocalStorage does not supported by your browser');
             return;
 
         }
