@@ -57,7 +57,6 @@ module.exports = (function (ui) {
             toolbar,
             toolbarContent,
             redactor,
-            notifications,
             blockButtons,
             blockSettings,
             showSettingsButton,
@@ -72,8 +71,7 @@ module.exports = (function (ui) {
         editor.core.insertAfter(editor.nodes.textarea, wrapper);
 
         /** Append block with notifications to the document */
-        notifications = editor.draw.alertsHolder();
-        editor.nodes.notifications = document.body.appendChild(notifications);
+        editor.notifications.createHolder();
 
         /** Make toolbar and content-editable redactor */
         toolbar               = editor.draw.toolbar();

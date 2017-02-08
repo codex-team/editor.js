@@ -121,19 +121,6 @@ module.exports = (function (draw) {
     };
 
     /**
-     * Block with notifications
-     */
-    draw.alertsHolder = function () {
-
-        var block = document.createElement('div');
-
-        block.classList.add('ce_notifications-block');
-
-        return block;
-
-    };
-
-    /**
      * @todo Desc
      */
     draw.blockButtons = function () {
