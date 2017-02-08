@@ -128,18 +128,18 @@ var header = (function(header) {
      */
     header.makeSettings = function () {
 
-        var holder  = codex.editor.draw.node('DIV', ['ce_plugin_header--settings'], {} ),
+        var holder  = codex.editor.draw.node('DIV', ['cdx-plugin-settings--horisontal'], {} ),
             types   = {
-                h2: 'Заголовок H2',
-                h3: 'Заголовок H3',
-                h4: 'Заголовок H4'
+                h2: 'H2',
+                h3: 'H3',
+                h4: 'H4'
             },
             selectTypeButton;
 
         /** Now add type selectors */
         for (var type in types){
 
-            selectTypeButton = codex.editor.draw.node('SPAN', ['ce_plugin_header--select_button'], { textContent : types[type] });
+            selectTypeButton = codex.editor.draw.node('SPAN', ['cdx-plugin-settings__item'], { textContent : types[type] });
             methods_.addSelectTypeClickListener(selectTypeButton, type);
             holder.appendChild(selectTypeButton);
 

@@ -134,14 +134,13 @@
         color: #a1b4ec;
     }
 
+.ce-image-settings {
+    padding: 7px 0
+}
 .ce-image-settings__item {
-    margin-bottom: 10px;
+    padding: 7px 15px;
     cursor: pointer;
 }
-
-    .ce-image-settings__item:not(:last-of-type){
-        margin-bottom: 10px;
-    }
 
 .ce-settings-checkbox {
     display: inline-block;

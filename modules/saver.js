@@ -118,6 +118,7 @@ module.exports = (function (saver) {
 
             savedData = codex.editor.state.blocks.items[position].data;
             coverFlag = codex.editor.state.blocks.items[position].cover;
+            anchor    = codex.editor.state.blocks.items[position].anchor;
 
         } else {
 

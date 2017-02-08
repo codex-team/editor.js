@@ -5,15 +5,19 @@
  * @version 1.0
  */
 
+let editor = codex.editor;
+
 module.exports = function (anchors) {
 
     anchors.input       = null;
     anchors.currentNode = null;
 
+    const blockWithAnchorClassName = 'ce-block--anchor';
+
     anchors.settingsOpened = function (currentBlock) {
 
         anchors.currentNode = currentBlock;
-        anchors.input.value = anchors.currentNode.dataset.anchor;
+        anchors.input.value = anchors.currentNode.dataset.anchor || '';
 
     };
 
@@ -21,19 +25,29 @@ module.exports = function (anchors) {
 
         var newAnchor = e.target.value = anchors.rusToTranslit(e.target.value);
 
-        if (newAnchor.trim() != '')
+        if (newAnchor.trim() !== '') {
+
             anchors.currentNode.dataset.anchor = newAnchor;
+            anchors.currentNode.classList.add(blockWithAnchorClassName);
+
+        } else {
+
+            delete anchors.currentNode.dataset.anchor;
+            anchors.currentNode.classList.remove(blockWithAnchorClassName);
+
+        }
 
     };
 
     anchors.keyDownOnAnchorInput = function (e) {
 
-        if (e.keyCode == 13) {
+        if (e.keyCode == editor.core.keys.ENTER) {
 
             e.preventDefault();
             e.stopPropagation();
 
             e.target.blur();
+            editor.toolbar.settings.close();
 
         }
 
@@ -41,7 +55,7 @@ module.exports = function (anchors) {
 
     anchors.keyUpOnAnchorInput = function (e) {
 
-        if (e.keyCode >= 37 && e.keyCode <= 40) {
+        if (e.keyCode >= editor.core.keys.LEFT && e.keyCode <= editor.core.keys.DOWN) {
 
             e.stopPropagation();
 
