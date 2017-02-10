@@ -29,6 +29,7 @@ module.exports = (function (editor) {
         editor.sanitizer     = require('./modules/sanitizer');
         editor.anchors       = require('./modules/anchors');
         editor.listeners     = require('./modules/listeners');
+        editor.destroyer     = require('./modules/destroyer');
 
     };
 

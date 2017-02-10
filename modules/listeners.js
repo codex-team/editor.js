@@ -94,6 +94,16 @@ module.exports = function (listeners) {
 
     };
 
+    listeners.removeAll = function () {
+
+        allListeners.map(function (current) {
+
+            listeners.remove(current.element, current.type, current.handler);
+
+        });
+
+    };
+
     listeners.get = function (element, listenerType, handler) {
 
         if (!element) {
