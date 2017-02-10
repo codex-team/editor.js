@@ -194,6 +194,12 @@ module.exports = (function (content) {
 
         }
 
+        if (targetBlock.classList.contains(editor.ui.className.BLOCK_WITH_ANCHOR)) {
+
+            newBlock.classList.add(editor.ui.className.BLOCK_WITH_ANCHOR);
+
+        }
+
         /**
          * Saving anchor
          */
@@ -245,6 +251,12 @@ module.exports = (function (content) {
         if (cover === true) {
 
             newBlock.classList.add(editor.ui.className.BLOCK_IN_FEED_MODE);
+
+        }
+
+        if (anchor) {
+
+            newBlock.classList.add(editor.ui.className.BLOCK_WITH_ANCHOR);
 
         }
 
