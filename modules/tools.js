@@ -38,6 +38,15 @@ module.exports = (function () {
 
                     }
 
+                    /**
+                    * If no one passed plugins requires preparation, finish prepare() and go ahead
+                    */
+                    if (!pluginsRequiresPreparation.length) {
+
+                        resolve_();
+
+                    }
+
                     return pluginsRequiresPreparation;
 
                 })
