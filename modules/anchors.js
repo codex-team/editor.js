@@ -12,8 +12,6 @@ module.exports = function (anchors) {
     anchors.input       = null;
     anchors.currentNode = null;
 
-    const blockWithAnchorClassName = 'ce-block--anchor';
-
     anchors.settingsOpened = function (currentBlock) {
 
         anchors.currentNode = currentBlock;
@@ -29,11 +27,11 @@ module.exports = function (anchors) {
 
         if (newAnchor.trim() !== '') {
 
-            anchors.currentNode.classList.add(blockWithAnchorClassName);
+            anchors.currentNode.classList.add(editor.ui.className.BLOCK_WITH_ANCHOR);
 
         } else {
 
-            anchors.currentNode.classList.remove(blockWithAnchorClassName);
+            anchors.currentNode.classList.remove(editor.ui.className.BLOCK_WITH_ANCHOR);
 
         }
 
