@@ -10,6 +10,8 @@ var list = (function(list) {
         li  : "cdx-plugin-list__li"
     };
 
+    var LIST_ITEM_TAG = 'LI';
+
     var ui = {
 
         make: function (blockType) {
@@ -83,10 +85,17 @@ var list = (function(list) {
                 e.preventDefault();
 
                 var selection = window.getSelection(),
-                    currentItem = selection.anchorNode,
+                    currentListItem = selection.anchorNode.parentNode,
                     range = new Range();
 
-                range.selectNode(currentItem);
+
+                while (currentListItem&&currentListItem.tagName != LIST_ITEM_TAG) {
+
+                    currentListItem = currentListItem.parentNode;
+
+                }
+
+                range.selectNode(currentListItem);
 
                 selection.removeAllRanges();
                 selection.addRange(range);

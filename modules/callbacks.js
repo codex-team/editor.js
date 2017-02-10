@@ -810,7 +810,7 @@ module.exports = (function (callbacks) {
         event.preventDefault();
 
         /** Allow paste when event target is editable */
-        if (!editor.content.getEditableWrapper(event.target)) {
+        if (!editor.content.getEditableParent(event.target)) {
 
             return;
 

@@ -867,7 +867,7 @@ module.exports = (function (content) {
 
     };
 
-    content.getEditableWrapper = function (node) {
+    content.getEditableParent = function (node) {
 
         while (node && node.contentEditable != 'true') {
 
