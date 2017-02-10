@@ -4,10 +4,10 @@
  */
 var list = (function(list) {
 
-    var baseClass = "ce-list";
+    var baseClass = "cdx-plugin-list";
 
     var elementClasses = {
-        li  : "ce-list-li"
+        li  : "cdx-plugin-list__li"
     };
 
     var ui = {
@@ -38,14 +38,14 @@ var list = (function(list) {
         button: function (buttonType) {
 
             var types = {
-                    unordered: '<i class="ce-icon-list-bullet"></i>Обычный список',
-                    ordered: '<i class="ce-icon-list-numbered"></i>Нумерованный список'
+                    unordered: '<i class="ce-icon-list-bullet"></i>Обычный',
+                    ordered: '<i class="ce-icon-list-numbered"></i>Нумерованный'
                 },
-                button = document.createElement('SPAN');
+                button = document.createElement('DIV');
 
             button.innerHTML = types[buttonType];
 
-            button.className = 'ce_plugin_list--select_button';
+            button.classList.add('cdx-plugin-settings__item');
 
             return button;
         }
@@ -66,7 +66,7 @@ var list = (function(list) {
 
             newEditable.dataset.type = blockType;
             newEditable.innerHTML = oldEditable.innerHTML;
-            newEditable.classList.add('ce-list');
+            newEditable.classList.add('cdx-plugin-list');
 
             codex.editor.content.switchBlock(currentBlock, newEditable, 'list');
         },
@@ -74,7 +74,11 @@ var list = (function(list) {
         keyDown: function (e) {
 
             /* If ctrl+A was pressed, we should select only one list item */
-            if (e.ctrlKey && e.keyCode == 65) {
+
+            var controlKeyPressed = e.ctrlKey || e.metaKey,
+                keyCodeForA = 65;
+
+            if (controlKeyPressed && e.keyCode == keyCodeForA) {
 
                 e.preventDefault();
 
@@ -165,7 +169,7 @@ var list = (function(list) {
         var holder  = document.createElement('DIV');
 
         /** Add holder classname */
-        holder.className = 'ce_plugin_list--settings';
+        holder.className = 'cdx-plugin-list__settings';
 
         var orderedButton = ui.button("ordered"),
             unorderedButton = ui.button("unordered");
