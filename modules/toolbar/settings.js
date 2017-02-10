@@ -4,9 +4,9 @@
  * @version 1.0.4
  */
 
-let editor = codex.editor;
-
 module.exports = (function (settings) {
+
+    let editor = codex.editor;
 
     settings.opened = false;
 
@@ -141,7 +141,7 @@ module.exports = (function (settings) {
         }
 
         setting = editor.draw.node('DIV', editor.ui.className.SETTINGS_ITEM, data);
-        setting.addEventListener('click', editor.toolbar.settings.updateFeedMode, false);
+        editor.listeners.add(setting, 'click', editor.toolbar.settings.updateFeedMode, false);
 
         return setting;
 
@@ -182,10 +182,10 @@ module.exports = (function (settings) {
             hash   = editor.draw.node('i', 'ce-settings__anchor-hash', {}),
             anchor = editor.draw.node('input', 'ce-settings__anchor-input', { placeholder: 'Якорь' });
 
-        anchor.addEventListener('keydown', editor.anchors.keyDownOnAnchorInput );
-        anchor.addEventListener('keyup', editor.anchors.keyUpOnAnchorInput );
-        anchor.addEventListener('input', editor.anchors.anchorChanged );
-        anchor.addEventListener('blur', editor.anchors.anchorChanged );
+        editor.listeners.add(anchor, 'keydown', editor.anchors.keyDownOnAnchorInput );
+        editor.listeners.add(anchor, 'keyup', editor.anchors.keyUpOnAnchorInput );
+        editor.listeners.add(anchor, 'input', editor.anchors.anchorChanged );
+        editor.listeners.add(anchor, 'blur', editor.anchors.anchorChanged );
 
         anchorWrapper.appendChild(hash);
         anchorWrapper.appendChild(anchor);
@@ -207,11 +207,11 @@ module.exports = (function (settings) {
             confirmAction = editor.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent : 'Удалить блок' }),
             cancelAction  = editor.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent : 'Отмена' });
 
-        settingButton.addEventListener('click', editor.toolbar.settings.removeButtonClicked, false);
+        editor.listeners.add(settingButton, 'click', editor.toolbar.settings.removeButtonClicked, false);
 
-        confirmAction.addEventListener('click', editor.toolbar.settings.confirmRemovingRequest, false);
+        editor.listeners.add(confirmAction, 'click', editor.toolbar.settings.confirmRemovingRequest, false);
 
-        cancelAction.addEventListener('click', editor.toolbar.settings.cancelRemovingRequest, false);
+        editor.listeners.add(cancelAction, 'click', editor.toolbar.settings.cancelRemovingRequest, false);
 
         actionWrapper.appendChild(confirmAction);
         actionWrapper.appendChild(cancelAction);

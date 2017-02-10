@@ -5,9 +5,10 @@
  * @author Codex Team
  * @version 1.3.11
  */
-let editor = codex.editor;
 
 module.exports = (function (content) {
+
+    let editor = codex.editor;
 
     /**
      * Links to current active block

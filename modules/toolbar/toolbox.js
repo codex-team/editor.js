@@ -7,9 +7,9 @@
  * @version 1.0
  */
 
-let editor = codex.editor;
-
 module.exports = (function (toolbox) {
+
+    let editor = codex.editor;
 
     toolbox.opened = false;
 

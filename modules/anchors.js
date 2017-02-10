@@ -5,9 +5,9 @@
  * @version 1.0
  */
 
-let editor = codex.editor;
-
 module.exports = function (anchors) {
+
+    let editor = codex.editor;
 
     anchors.input       = null;
     anchors.currentNode = null;

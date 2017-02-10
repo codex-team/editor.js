@@ -28,6 +28,7 @@ module.exports = (function (editor) {
         editor.parser        = require('./modules/parser');
         editor.sanitizer     = require('./modules/sanitizer');
         editor.anchors       = require('./modules/anchors');
+        editor.listeners     = require('./modules/listeners');
 
     };
 

@@ -10,9 +10,10 @@
  * Main tool settings.
  */
 
-let editor = codex.editor;
+var paste = function(paste) {
 
-var paste = function(paste){
+    let editor = codex.editor;
+
     /**
      * Saves data
      * @param event

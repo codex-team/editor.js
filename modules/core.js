@@ -5,9 +5,9 @@
  * @version 1.1.2
  */
 
-let editor = codex.editor;
-
 module.exports = (function (core) {
+
+    let editor = codex.editor;
 
     /**
      * @public

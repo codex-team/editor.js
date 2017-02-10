@@ -138,8 +138,8 @@ module.exports = (function (notifications) {
             okBtn.textContent = settings.okMsg || 'ОК';
             cancelBtn.textContent = settings.cancelMsg || 'Отмена';
 
-            okBtn.addEventListener('click', confirmHandler);
-            cancelBtn.addEventListener('click', cancelHandler);
+            editor.listeners.add(okBtn, 'click', confirmHandler);
+            editor.listeners.add(cancelBtn, 'click', cancelHandler);
 
             wrapper.appendChild(message);
 
