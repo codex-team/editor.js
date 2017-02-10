@@ -25,14 +25,14 @@ module.exports = function (anchors) {
 
         var newAnchor = e.target.value = anchors.rusToTranslit(e.target.value);
 
+        anchors.currentNode.dataset.anchor = newAnchor;
+
         if (newAnchor.trim() !== '') {
 
-            anchors.currentNode.dataset.anchor = newAnchor;
             anchors.currentNode.classList.add(blockWithAnchorClassName);
 
         } else {
 
-            delete anchors.currentNode.dataset.anchor;
             anchors.currentNode.classList.remove(blockWithAnchorClassName);
 
         }
