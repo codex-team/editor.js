@@ -1,32 +1,11 @@
-.ce-list {
+.cdx-plugin-list {
     margin: 0;
     padding: .5em 0;
+    line-height: 1.7em;
 }
 
-.ce_plugin_list--settings{
-    white-space: nowrap;
-}
-
-.ce_plugin_list--select_button{
-    display: block;
-    color: #306ac7;
-    cursor: pointer;
-    line-height: 1.3em;
-}
-    .ce_plugin_list--select_button:not(:last-of-type){
-        margin-bottom: 0.9em;
-    }
-    .ce_plugin_list--select_button:hover{
-        color: #a1b4ec;
-    }
-/**
-* List style settigns icons
-*/
-.ce_plugin_list--select_button i{
-    margin-right: 1.3em;
-}
-
-.ce-list li{
+.cdx-plugin-list__li{
+    display: list-item;
     background: #fff;
     border: 1px solid #ebeef3;
     border-radius: 3px;
@@ -35,3 +14,23 @@
     list-style-position: outside;
     margin-left: 1.1em;
 }
+
+.cdx-plugin-list p {
+    margin: 0.6em 0;
+}
+
+.cdx-plugin-list p:first-of-type {
+    margin-top: 0;
+}
+
+.cdx-plugin-list p:last-of-type {
+    margin-bottom: 0;
+}
+
+/**
+* List style settigns icons
+*/
+.ce_plugin_list--select_button i{
+    margin-right: 1.3em;
+}
+

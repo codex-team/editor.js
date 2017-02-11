@@ -868,6 +868,23 @@ module.exports = (function (content) {
 
     };
 
+    /**
+    * Finds closest Contenteditable parent from Element
+    * @param {Element} node     element looking from
+    * @return {Element} node    contenteditable
+    */
+    content.getEditableParent = function (node) {
+
+        while (node && node.contentEditable != 'true') {
+
+            node = node.parentNode;
+
+        }
+
+        return node;
+
+    };
+
     return content;
 
 })({});
