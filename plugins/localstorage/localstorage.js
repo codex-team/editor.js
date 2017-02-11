@@ -7,15 +7,27 @@
 var storage = function () {
 
     var editor              = codex.editor,
-        LOCAL_STORAGE_KEY   = 'codex.editor',
+        LOCAL_STORAGE_KEY   = 'codex.editor.savedData',
         interval            = null,
         config_ = {
             savingInterval: 1000
         };
 
+    /**
+    * Checks support for localStorage and sessionStorage
+    * @return {bool}
+    */
+    function storageSupported_ () {
+        return typeof(Storage) !== "undefined";
+    }
+
+    /**
+    * Calls on editor initialize
+    * @param {object} config passed form user in codex.editor.start
+    */
     var prepare = function (config) {
 
-        if (!window.localStorage) {
+        if (!storageSupported_) {
 
             editor.core.log('LocalStorage does not supported by your browser');
             return;
@@ -74,7 +86,7 @@ var storage = function () {
                     savingDate : savingDate
                 };
 
-            window.localStorage[LOCAL_STORAGE_KEY+'.savedData'] = JSON.stringify(data);
+            window.localStorage[LOCAL_STORAGE_KEY] = JSON.stringify(data);
 
         }, 500);
 
@@ -82,7 +94,7 @@ var storage = function () {
 
     var get = function () {
 
-        var savedData = window.localStorage[LOCAL_STORAGE_KEY+'.savedData'],
+        var savedData = window.localStorage[LOCAL_STORAGE_KEY],
             data;
 
         if (!savedData)
