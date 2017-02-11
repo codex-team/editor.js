@@ -160,9 +160,8 @@ var header = (function(header_plugin) {
     header_plugin.destroy = function () {
 
         header = null;
-        delete window.header;
 
-    };
+    }
 
     return header_plugin;
 

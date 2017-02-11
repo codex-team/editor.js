@@ -144,7 +144,6 @@ var instagram = (function(instagram_plugin) {
     instagram_plugin.destroy = function () {
 
         instagram = null;
-        delete window.instagram;
 
     };
 

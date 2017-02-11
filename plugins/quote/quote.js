@@ -563,7 +563,6 @@ var quote = (function(quote_plugin) {
     quote_plugin.destroy = function () {
 
         quote = null;
-        delete window.quote;
 
     };
 

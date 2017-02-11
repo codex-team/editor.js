@@ -259,7 +259,6 @@ var twitter = (function(twitter_plugin) {
     twitter_plugin.destroy = function () {
 
         twitter = null;
-        delete window.twitter;
 
     };
 

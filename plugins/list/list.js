@@ -220,8 +220,7 @@ var list = (function(list_plugin) {
 
     list_plugin.destroy = function () {
 
-        list = null
-        delete window.list;
+        list = null;
 
     };
 

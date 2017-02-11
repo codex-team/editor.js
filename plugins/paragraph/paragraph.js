@@ -103,7 +103,6 @@ var paragraph = (function(paragraph_plugin) {
     paragraph_plugin.destroy = function () {
 
         paragraph = null;
-        delete window.paragraph;
 
     };
 
