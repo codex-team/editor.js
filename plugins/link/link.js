@@ -342,6 +342,7 @@ var link = (function(link_plugin) {
     link_plugin.destroy = function () {
 
         link = null;
+        delete window.link;
 
     };
 

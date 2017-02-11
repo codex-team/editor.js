@@ -206,6 +206,7 @@ var embed = function(embed_plugin){
     embed_plugin.destroy = function () {
 
         embed = null;
+        delete window.embed;
 
     };
 

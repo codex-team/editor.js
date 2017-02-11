@@ -78,6 +78,7 @@ var paste = function(paste_plugin) {
     paste_plugin.destroy = function () {
 
         paste = null;
+        delete window.paste;
 
     };
 

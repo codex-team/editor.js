@@ -56,6 +56,7 @@ var code = (function(code_plugin) {
     code_plugin.destroy = function () {
 
         code = null;
+        delete window.code;
 
     };
 

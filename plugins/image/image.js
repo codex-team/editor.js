@@ -693,6 +693,7 @@ var image = (function(image_plugin) {
     image_plugin.destroy = function () {
 
         image = null;
+        delete window.image;
 
     };
 
