@@ -202,13 +202,18 @@ module.exports = (function (renderer) {
 
     };
 
-    renderer.rerender = function (clear) {
+    /**
+     * Clears redactor area and render blocks from editor.state.blocks if makeBlocksFromData param is true
+     *
+     * @param makeBlocksFromData
+     */
+    renderer.rerender = function (makeBlocksFromData) {
 
         editor.nodes.redactor.innerHTML = '';
 
         editor.content.currentNode = null;
 
-        if (clear) {
+        if (makeBlocksFromData) {
 
             editor.ui.addInitialBlock();
             return;
