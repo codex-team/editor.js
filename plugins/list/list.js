@@ -4,10 +4,14 @@
  */
 var list = (function(list) {
 
-    var baseClass = "cdx-plugin-list";
-
-    var elementClasses = {
-        li  : "cdx-plugin-list__li"
+    /**
+    * CSS class names
+    */
+    var elementClasses_ = {
+        pluginWrapper: 'cdx-plugin-list',
+        li:            'cdx-plugin-list__li',
+        settings:      'cdx-plugin-list__settings',
+        settingsItem:  'cdx-plugin-settings__item'
     };
 
     var LIST_ITEM_TAG = 'LI';
@@ -16,12 +20,12 @@ var list = (function(list) {
 
         make: function (blockType) {
 
-            var wrapper = this.block(blockType || 'UL', baseClass);
+            var wrapper = this.block(blockType || 'UL', elementClasses_.pluginWrapper);
 
             wrapper.dataset.type = blockType;
             wrapper.contentEditable = true;
 
-            wrapper.addEventListener('keydown', methods.keyDown);
+            wrapper.addEventListener('keydown', methods_.keyDown);
 
             return wrapper;
 
@@ -47,13 +51,13 @@ var list = (function(list) {
 
             button.innerHTML = types[buttonType];
 
-            button.classList.add('cdx-plugin-settings__item');
+            button.classList.add(elementClasses_.settingsItem);
 
             return button;
         }
     };
 
-    var methods = {
+    var methods_ = {
 
         /**
          * Changes block type => OL or UL
@@ -68,40 +72,55 @@ var list = (function(list) {
 
             newEditable.dataset.type = blockType;
             newEditable.innerHTML = oldEditable.innerHTML;
-            newEditable.classList.add('cdx-plugin-list');
+            newEditable.classList.add(elementClasses_.pluginWrapper);
 
             codex.editor.content.switchBlock(currentBlock, newEditable, 'list');
         },
 
         keyDown: function (e) {
 
-            /* If ctrl+A was pressed, we should select only one list item */
-
             var controlKeyPressed = e.ctrlKey || e.metaKey,
                 keyCodeForA = 65;
 
+            /**
+            * If CTRL+A (CMD+A) was pressed, we should select only one list item,
+            * not all <OL> or <UI>
+            */
             if (controlKeyPressed && e.keyCode == keyCodeForA) {
 
                 e.preventDefault();
 
-                var selection = window.getSelection(),
-                    currentListItem = selection.anchorNode.parentNode,
-                    range = new Range();
-
-
-                while (currentListItem&&currentListItem.tagName != LIST_ITEM_TAG) {
-
-                    currentListItem = currentListItem.parentNode;
-
-                }
-
-                range.selectNode(currentListItem);
-
-                selection.removeAllRanges();
-                selection.addRange(range);
-
+                /**
+                * Select <LI> content
+                */
+                methods_.selectListItem();
 
             }
+
+        },
+
+        /**
+        * Select all content of <LI> with caret
+        */
+        selectListItem : function () {
+
+            var selection = window.getSelection(),
+                currentSelectedNode = selection.anchorNode.parentNode,
+                range = new Range();
+
+            /**
+            * Search for <LI> element
+            */
+            while ( currentSelectedNode && currentSelectedNode.tagName != LIST_ITEM_TAG ) {
+
+                currentSelectedNode = currentSelectedNode.parentNode;
+
+            }
+
+            range.selectNode(currentSelectedNode);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
 
         }
     };
@@ -119,7 +138,7 @@ var list = (function(list) {
 
             data.items.forEach(function (element, index, array) {
 
-                newLi = ui.block('li', elementClasses.li);
+                newLi = ui.block('li', elementClasses_.li);
 
                 newLi.innerHTML = element;
 
@@ -129,7 +148,7 @@ var list = (function(list) {
 
         } else {
 
-            newLi = ui.block('li', elementClasses.li);
+            newLi = ui.block('li', elementClasses_.li);
 
             tag.appendChild(newLi);
 
@@ -142,7 +161,7 @@ var list = (function(list) {
     list.validate = function(data) {
 
         var items = data.items.every(function(item){
-            return item.trim() != '';
+            return item.trim() !== '';
         });
 
         if (!items)
@@ -178,18 +197,18 @@ var list = (function(list) {
         var holder  = document.createElement('DIV');
 
         /** Add holder classname */
-        holder.className = 'cdx-plugin-list__settings';
+        holder.className = elementClasses_.settings;
 
         var orderedButton = ui.button("ordered"),
             unorderedButton = ui.button("unordered");
 
         orderedButton.addEventListener('click', function (event) {
-            methods.changeBlockStyle(event, 'OL');
+            methods_.changeBlockStyle(event, 'OL');
             codex.editor.toolbar.settings.close();
         });
 
         unorderedButton.addEventListener('click', function (event) {
-            methods.changeBlockStyle(event, 'UL');
+            methods_.changeBlockStyle(event, 'UL');
             codex.editor.toolbar.settings.close();
         });
 

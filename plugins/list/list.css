@@ -19,6 +19,14 @@
     margin: 0.6em 0;
 }
 
+.cdx-plugin-list p:first-of-type {
+    margin-top: 0;
+}
+
+.cdx-plugin-list p:last-of-type {
+    margin-bottom: 0;
+}
+
 /**
 * List style settigns icons
 */

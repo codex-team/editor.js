@@ -809,7 +809,7 @@ module.exports = (function (callbacks) {
         /** Prevent default behaviour */
         event.preventDefault();
 
-        /** Allow paste when event target is editable */
+        /** Allow paste when event target placed in Editable element */
         if (!editor.content.getEditableParent(event.target)) {
 
             return;
