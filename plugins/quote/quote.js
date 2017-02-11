@@ -3,7 +3,7 @@
  * Quote plugin
  */
 
-var quote = (function(quote) {
+var quote = (function(quote_plugin) {
 
     /**
      * @private
@@ -401,7 +401,7 @@ var quote = (function(quote) {
 
         if (data && data.size) {
 
-            data.style = quote.config.defaultStyle;
+            data.style = quote_plugin.config.defaultStyle;
 
             /**
              * Supported types
@@ -457,11 +457,11 @@ var quote = (function(quote) {
      *
      * @param data
      */
-    quote.render = function(data) {
+    quote_plugin.render = function(data) {
         return make_(data);
     };
 
-    quote.validate = function(output) {
+    quote_plugin.validate = function(output) {
 
         if (typeof output.text != "string") {
             return;
@@ -470,7 +470,7 @@ var quote = (function(quote) {
         return output;
     };
 
-    quote.save = function(blockContent) {
+    quote_plugin.save = function(blockContent) {
 
         /**
          * Extracts JSON quote data from HTML block
@@ -495,7 +495,7 @@ var quote = (function(quote) {
      *
      * Draws settings
      */
-    quote.makeSettings = function(data) {
+    quote_plugin.makeSettings = function(data) {
 
         var holder  = document.createElement('DIV'),
             types   = {
@@ -517,7 +517,7 @@ var quote = (function(quote) {
 
             selectTypeButton.dataset.style = type;
 
-            if ( type == quote.config.defaultStyle ){
+            if ( type == quote_plugin.config.defaultStyle ){
                 selectTypeButton.classList.add(quoteTools.styles.settings.selectedType);
             }
 
@@ -539,27 +539,33 @@ var quote = (function(quote) {
      * Default path to redactors images
      * @type {null}
      */
-    quote.path = null;
+    quote_plugin.path = null;
 
     /**
      * @public
      *
      * @type {null}
      */
-    quote.config = null;
+    quote_plugin.config = null;
 
     /**
      * @public
      *
      * @param config
      */
-    quote.prepare = function(config) {
+    quote_plugin.prepare = function(config) {
 
-        quote.config = config;
+        quote_plugin.config = config;
 
         return Promise.resolve();
     };
 
-    return quote;
+    quote_plugin.destroy = function () {
+
+        quote = null;
+
+    };
+
+    return quote_plugin;
 
 })({});

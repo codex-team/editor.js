@@ -2,7 +2,7 @@
  * Code Plugin\
  * Creates code tag and adds content to this tag
  */
-var list = (function(list) {
+var list = (function(list_plugin) {
 
     var baseClass = "tool-list";
 
@@ -75,7 +75,7 @@ var list = (function(list) {
      * @param {object} JSON with block data
      * @return {Element} element to append
      */
-    list.make = function () {
+    list_plugin.make = function () {
 
         var tag = ui.make(),
             li  = ui.block("li", "tool-link-li");
@@ -94,7 +94,7 @@ var list = (function(list) {
     /**
      * Method to render HTML block from JSON
      */
-    list.render = function (data) {
+    list_plugin.render = function (data) {
 
         var type = data.type == 'ordered' ? 'OL' : 'UL',
             tag  = ui.make(type);
@@ -116,7 +116,7 @@ var list = (function(list) {
 
     };
 
-    list.validate = function(data) {
+    list_plugin.validate = function(data) {
 
         var items = data.items.every(function(item){
             return item.trim() != '';
@@ -134,7 +134,7 @@ var list = (function(list) {
     /**
      * Method to extract JSON data from HTML block
      */
-    list.save = function (blockContent){
+    list_plugin.save = function (blockContent){
 
         var data = {
             type  : null,
@@ -150,7 +150,7 @@ var list = (function(list) {
 
     };
 
-    list.makeSettings = function(data) {
+    list_plugin.makeSettings = function(data) {
 
         var holder  = document.createElement('DIV'),
             selectTypeButton;
@@ -178,6 +178,12 @@ var list = (function(list) {
 
     };
 
-    return list;
+    list_plugin.destroy = function () {
+
+        list = null;
+
+    };
+
+    return list_plugin;
 
 })({});

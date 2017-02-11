@@ -2,7 +2,7 @@
  * Embed plugin by gohabereg
  * @version 1.0.0
  */
-var embed = function(embed){
+var embed = function(embed_plugin){
 
     var methods = {
 
@@ -122,7 +122,7 @@ var embed = function(embed){
     };
 
 
-    embed.make = function(data, isInternal) {
+    embed_plugin.make = function(data, isInternal) {
 
         if (!data.remote_id)
             return;
@@ -152,7 +152,7 @@ var embed = function(embed){
      * Saving JSON output.
      * Upload data via ajax
      */
-    embed.save = function(blockContent) {
+    embed_plugin.save = function(blockContent) {
 
         if (!blockContent)
             return;
@@ -175,11 +175,11 @@ var embed = function(embed){
     /**
      * Render data
      */
-    embed.render = function(data) {
-        return embed.make(data);
+    embed_plugin.render = function(data) {
+        return embed_plugin.make(data);
     };
 
-    embed.urlPastedCallback = function(url, pattern) {
+    embed_plugin.urlPastedCallback = function(url, pattern) {
 
         var execArray = pattern.regex.exec(url),
             id = methods.getRemoteId(pattern.type, execArray);
@@ -190,10 +190,10 @@ var embed = function(embed){
             thumbnailUrl: url
         };
 
-        embed.make(data, true);
+        embed_plugin.make(data, true);
     };
 
-    embed.validate = function(savedData) {
+    embed_plugin.validate = function(savedData) {
 
         var source = savedData.source,
             execArray = services[source].regex.exec(savedData.thumbnailUrl),
@@ -203,6 +203,12 @@ var embed = function(embed){
 
     };
 
-    return embed;
+    embed_plugin.destroy = function () {
+
+        embed = null;
+
+    };
+
+    return embed_plugin;
 
 }({});

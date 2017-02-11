@@ -66,6 +66,7 @@
                 render: paragraph.render,
                 validate: paragraph.validate,
                 save: paragraph.save,
+                destroy: paragraph.destroy,
                 allowedToPaste: true,
                 showInlineToolbar: true
             },
@@ -77,6 +78,7 @@
                 render: header.render,
                 validate: header.validate,
                 save: header.save,
+                destroy: header.destroy,
                 displayInToolbox: true
             },
             paste: {
@@ -84,6 +86,7 @@
                 prepare: paste.prepare,
                 make: paste.make,
                 save: paste.save,
+                destroy: paste.destroy,
                 enableLineBreaks: false,
                 callbacks: paste.pasted
             },
@@ -96,6 +99,7 @@
                 render: code.render,
                 validate: code.validate,
                 save: code.save,
+                destroy: code.destroy,
                 displayInToolbox: true,
                 enableLineBreaks: true
             },
@@ -108,6 +112,7 @@
                 render: link.render,
                 validate: link.validate,
                 save: link.save,
+                destroy: link.destroy,
                 displayInToolbox: true,
                 enableLineBreaks: true
             },
@@ -120,6 +125,7 @@
                 render: list.render,
                 validate: list.validate,
                 save: list.save,
+                destroy: list.destroy,
                 displayInToolbox: true,
                 showInlineToolbar: true,
                 enableLineBreaks: true
@@ -132,6 +138,7 @@
                 render: quote.render,
                 validate: quote.validate,
                 save: quote.save,
+                destroy: quote.destroy,
                 displayInToolbox: true,
                 enableLineBreaks: true,
                 showInlineToolbar: true,
@@ -148,6 +155,7 @@
                 makeSettings: image.makeSettings,
                 render: image.render,
                 save: image.save,
+                destroy: image.destroy,
                 isStretched: true,
                 showInlineToolbar: true,
                 displayInToolbox: true,
@@ -161,7 +169,8 @@
                 prepare: instagram.prepare,
                 render: instagram.reneder,
                 validate: instagram.validate,
-                save: instagram.save
+                save: instagram.save,
+                destroy: instagram.destroy,
             },
             tweet: {
                 type: 'tweet',
@@ -170,6 +179,7 @@
                 render: twitter.render,
                 validate: twitter.validate,
                 save: twitter.save,
+                destroy: twitter.destroy,
                 showInlineToolbar : true,
                 config : {
                     fetchUrl : ''
@@ -180,6 +190,7 @@
                 make: embed.make,
                 render: embed.render,
                 save: embed.save,
+                destroy: embed.destroy,
                 validate: embed.validate
             }
         },

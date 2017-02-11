@@ -2,7 +2,7 @@
  * Instagram plugin
  * @version 1.0.0
  */
-var instagram = (function(instagram) {
+var instagram = (function(instagram_plugin) {
 
     var methods = {
 
@@ -44,7 +44,7 @@ var instagram = (function(instagram) {
      * Prepare before usage
      * Load important scripts to render embed
      */
-    instagram.prepare = function() {
+    instagram_plugin.prepare = function() {
 
         return new Promise(function(resolve, reject){
 
@@ -86,7 +86,7 @@ var instagram = (function(instagram) {
         return block;
     };
 
-    instagram.validate = function(data) {
+    instagram_plugin.validate = function(data) {
         return true;
     };
 
@@ -94,7 +94,7 @@ var instagram = (function(instagram) {
      * Saving JSON output.
      * Upload data via ajax
      */
-    instagram.save = function(blockContent) {
+    instagram_plugin.save = function(blockContent) {
 
         var data;
 
@@ -110,7 +110,7 @@ var instagram = (function(instagram) {
 
     };
 
-    instagram.validate = function(data) {
+    instagram_plugin.validate = function(data) {
 
         var checkUrl = new RegExp("http?.+instagram.com\/p?.");
 
@@ -123,7 +123,7 @@ var instagram = (function(instagram) {
     /**
      * Render data
      */
-    instagram.render = function(data) {
+    instagram_plugin.render = function(data) {
         return make_(data);
     };
 
@@ -132,7 +132,7 @@ var instagram = (function(instagram) {
      * Using instagram Embed Widgete to render
      * @param url
      */
-    instagram.urlPastedCallback = function(url) {
+    instagram_plugin.urlPastedCallback = function(url) {
         var data = {
             instagram_url: url
         };
@@ -141,7 +141,13 @@ var instagram = (function(instagram) {
 
     };
 
-    return instagram;
+    instagram_plugin.destroy = function () {
+
+        instagram = null;
+
+    };
+
+    return instagram_plugin;
 
 })({});
 

@@ -10,7 +10,7 @@
  * Main tool settings.
  */
 
-var paste = function(paste) {
+var paste = function(paste_plugin) {
 
     let editor = codex.editor;
 
@@ -18,7 +18,7 @@ var paste = function(paste) {
      * Saves data
      * @param event
      */
-    paste.pasted = function(event) {
+    paste_plugin.pasted = function(event) {
 
         var clipBoardData = event.clipboardData || window.clipboardData,
             content = clipBoardData.getData('Text');
@@ -41,7 +41,7 @@ var paste = function(paste) {
             content = editor.content.currentNode,
             plugin  = content.dataset.tool;
 
-        paste.patterns.map(function(pattern, i){
+        paste_plugin.patterns.map(function(pattern, i){
 
             if (pattern.regex.test(string)) {
 
@@ -75,7 +75,13 @@ var paste = function(paste) {
 
     };
 
-    return paste;
+    paste_plugin.destroy = function () {
+
+        paste = null;
+
+    };
+
+    return paste_plugin;
 
 }(paste || {});
 

@@ -3,7 +3,7 @@
 * H e a d e r
 */
 
-var header = (function(header) {
+var header = (function(header_plugin) {
 
     /**
      * @private
@@ -92,14 +92,14 @@ var header = (function(header) {
 
     };
 
-    header.prepareDataForSave = function(data) {
+    header_plugin.prepareDataForSave = function(data) {
 
     };
 
     /**
      * Method to render HTML block from JSON
      */
-    header.render = function (data) {
+    header_plugin.render = function (data) {
 
         return make_(data);
 
@@ -108,7 +108,7 @@ var header = (function(header) {
     /**
      * Method to extract JSON data from HTML block
      */
-    header.save = function (blockContent) {
+    header_plugin.save = function (blockContent) {
 
         var data = {
             "heading-styles": blockContent.dataset.headerData,
@@ -126,7 +126,7 @@ var header = (function(header) {
      *  - - - - - - - - - - - - -
      * @return {Element} element contains all settings
      */
-    header.makeSettings = function () {
+    header_plugin.makeSettings = function () {
 
         var holder  = codex.editor.draw.node('DIV', ['cdx-plugin-settings--horisontal'], {} ),
             types   = {
@@ -148,7 +148,7 @@ var header = (function(header) {
         return holder;
     };
 
-    header.validate = function(data) {
+    header_plugin.validate = function(data) {
 
         if (data.text.trim() === '' || data['heading-styles'].trim() === ''){
             return false;
@@ -157,7 +157,13 @@ var header = (function(header) {
         return true;
     };
 
-    return header;
+    header_plugin.destroy = function () {
+
+        header = null;
+
+    }
+
+    return header_plugin;
 
 })({});
 

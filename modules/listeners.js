@@ -1,72 +1,149 @@
+/**
+ * Codex Editor Listeners module
+ *
+ * @author Codex Team
+ * @version 1.0
+ */
+
+/**
+ * Module-decorator for event listeners assignment
+ */
 module.exports = function (listeners) {
 
     var allListeners = [];
 
-    var search = function (element, listenerType, handler) {
+    /**
+     * Search methods
+     *
+     * byElement, byType and byHandler returns array of suitable listeners
+     * one and all takes element, eventType, and handler and returns first (all) suitable listener
+     *
+     */
+    listeners.search = function () {
 
-        var allListenersOnElement = [];
+        var byElement = function (element, context) {
 
-        for (var i = 0; i < allListeners.length; i++) {
+            var listenersOnElement = [];
 
-            var listener = allListeners[i];
+            context = context || allListeners;
 
-            if (listener.element === element) {
+            for (var i = 0; i < context.length; i++) {
 
-                allListenersOnElement.push(listener);
+                var listener = context[i];
 
-            }
+                if (listener.element === element) {
 
-        }
-
-        if (listenerType) {
-
-            for (i = 0; i < allListenersOnElement.length; i++) {
-
-                var listener = allListenersOnElement[i];
-
-                if (listener.listenerType !== listenerType) {
-
-                    allListenersOnElement.splice(i, 1);
+                    listenersOnElement.push(listener);
 
                 }
 
             }
 
-        }
+            return listenersOnElement;
 
-        if (handler) {
+        };
 
-            for (i = 0; i < allListenersOnElement.length; i++) {
+        var byType = function (eventType, context) {
 
-                var listener = allListenersOnElement[i];
+            var listenersWithType = [];
 
-                if (listener.handler !== handler) {
+            context = context || allListeners;
 
-                    allListenersOnElement.splice(i, 1);
+            for (var i = 0; i < context.length; i++) {
+
+                var listener = context[i];
+
+                if (listener.type === eventType) {
+
+                    listenersWithType.push(listener);
 
                 }
 
             }
 
-        }
+            return listenersWithType;
 
-        return allListenersOnElement;
+        };
 
-    };
+        var byHandler = function (handler, context) {
 
-    listeners.add = function (element, listenerType, handler, isCapture) {
+            var listenersWithHandler = [];
 
-        element.addEventListener(listenerType, handler, isCapture);
+            context = context || allListeners;
+
+            for (var i = 0; i < context.length; i++) {
+
+                var listener = context[i];
+
+                if (listener.handler === handler) {
+
+                    listenersWithHandler.push(listener);
+
+                }
+
+            }
+
+            return listenersWithHandler;
+
+        };
+
+        var one = function (element, eventType, handler) {
+
+            var result = allListeners;
+
+            if (element)
+                result = byElement(element, result);
+
+            if (eventType)
+                result = byType(eventType, result);
+
+            if (handler)
+                result = byHandler(handler, result);
+
+            return result[0];
+
+        };
+
+        var all = function (element, eventType, handler) {
+
+            var result = allListeners;
+
+            if (element)
+                result = byElement(element, result);
+
+            if (eventType)
+                result = byType(eventType, result);
+
+            if (handler)
+                result = byHandler(handler, result);
+
+            return result;
+
+        };
+
+        return {
+            byElement   : byElement,
+            byType      : byType,
+            byHandler   : byHandler,
+            one         : one,
+            all         : all
+        };
+
+    }();
+
+    listeners.add = function (element, eventType, handler, isCapture) {
+
+        element.addEventListener(eventType, handler, isCapture);
 
         var data = {
             element: element,
-            type: listenerType,
+            type: eventType,
             handler: handler
         };
 
-        var alreadyAddedListeners = search(element, listenerType, handler);
+        var alreadyAddedListener = listeners.search.one(element, eventType, handler);
 
-        if (alreadyAddedListeners.length == 0) {
+        if (!alreadyAddedListener) {
 
             allListeners.push(data);
 
@@ -74,11 +151,11 @@ module.exports = function (listeners) {
 
     };
 
-    listeners.remove = function (element, listenerType, handler) {
+    listeners.remove = function (element, eventType, handler) {
 
-        element.removeEventListener(listenerType, handler);
+        element.removeEventListener(eventType, handler);
 
-        var existingListeners = search(element, listenerType, handler);
+        var existingListeners = listeners.search.all(element, eventType, handler);
 
         for (var i = 0; i < existingListeners.length; i++) {
 
@@ -104,15 +181,9 @@ module.exports = function (listeners) {
 
     };
 
-    listeners.get = function (element, listenerType, handler) {
+    listeners.get = function (element, eventType, handler) {
 
-        if (!element) {
-
-            return allListeners;
-
-        }
-
-        return search(element, listenerType, handler);
+        return listeners.search.all(element, eventType, handler);
 
     };
 
