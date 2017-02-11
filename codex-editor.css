@@ -147,6 +147,7 @@
     border-radius: 2px;
     padding: 6px 5px;
     line-height: 1em;
+    font-size: 14px;
     background: #fff;
 }
 
@@ -443,6 +444,7 @@
     max-width: 100px;
     word-wrap: break-word;
     font-size: 12px;
+    line-height: 1.4em;
 }
 
 

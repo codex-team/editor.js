@@ -243,7 +243,11 @@ var link = (function(link) {
     };
 
     link.prepare = function (config) {
+
         link.config = config;
+
+        return Promise.resolve();
+
     };
 
     /**
