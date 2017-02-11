@@ -27,7 +27,7 @@ var storage = function () {
     */
     var prepare = function (config) {
 
-        if (!storageSupported_) {
+        if (!storageSupported_()) {
 
             editor.core.log('LocalStorage does not supported by your browser');
             return;
