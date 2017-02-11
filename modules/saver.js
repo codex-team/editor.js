@@ -34,6 +34,7 @@ module.exports = (function (saver) {
             .then(function () {
 
                 editor.state.savingDate = +new Date();
+                editor.state.hash       = editor.currentHash;
 
             })
 

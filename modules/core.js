@@ -28,6 +28,7 @@ module.exports = (function (core) {
             if (userSettings.data) {
 
                 editor.state.blocks = userSettings.data;
+                editor.currentHash  = userSettings.data.hash || +new Date();
 
             }
 

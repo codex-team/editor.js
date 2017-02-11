@@ -10,6 +10,7 @@ module.exports = (function (editor) {
     'use strict';
 
     editor.version = VERSION;
+    editor.currentHash = null;
 
     var init = function () {
 
@@ -79,6 +80,7 @@ module.exports = (function (editor) {
     editor.state = {
         jsonOutput: [],
         savingDate: null,
+        hash      : null,
         blocks    : [],
         inputs    : []
     };

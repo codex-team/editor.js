@@ -6,9 +6,10 @@
  */
 var storage = function () {
 
-    var editor              = codex.editor,
-        LOCAL_STORAGE_KEY   = 'codex.editor.savedData',
-        interval            = null,
+    var editor               = codex.editor,
+        CURRENT_ARTICLE_HASH = null,
+        LOCAL_STORAGE_KEY    = null,
+        interval             = null,
         config_ = {
             savingInterval: 1000
         };
@@ -34,6 +35,9 @@ var storage = function () {
 
         }
 
+        CURRENT_ARTICLE_HASH = editor.currentHash;
+        LOCAL_STORAGE_KEY    = 'codex.editor.savedData.'+CURRENT_ARTICLE_HASH;
+
         config_ = config || config_;
 
         var localData = get();
@@ -49,16 +53,20 @@ var storage = function () {
 
                     editor.state.blocks = localData;
                     editor.renderer.rerender();
-                    init(config_.saveInterval);
+                    init(config_.savingInterval);
 
                 },
                 cancel      : function () {
 
-                    init(config_.saveInterval);
+                    init(config_.savingInterval);
 
                 }
 
             });
+
+        } else {
+
+            init(config_.savingInterval);
 
         }
 
@@ -66,9 +74,9 @@ var storage = function () {
 
     };
 
-    var init = function (saveInterval) {
+    var init = function (savingInterval) {
 
-        interval = window.setInterval(save, saveInterval);
+        interval = window.setInterval(save, savingInterval);
 
     };
 
