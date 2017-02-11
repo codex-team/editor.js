@@ -238,7 +238,7 @@
     display: flex;
 }
 
-.cdx-plugin-settings__item {
+.cdx-plugin-settings--horisontal .cdx-plugin-settings__item {
     flex: 1 0 auto;
     text-align: center;
 }
@@ -275,7 +275,8 @@
     border-bottom: 1px solid #e7e9f1;
 }
 
-.ce-settings__item i {
+.ce-settings__item i,
+.cdx-plugin-settings__item i {
     min-width: 16px;
     margin-right: 1.3em;
 }

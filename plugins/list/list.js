@@ -4,20 +4,28 @@
  */
 var list = (function(list) {
 
-    var baseClass = "tool-list";
-
-    var elementClasses = {
-        li  : "tool-list-li"
+    /**
+    * CSS class names
+    */
+    var elementClasses_ = {
+        pluginWrapper: 'cdx-plugin-list',
+        li:            'cdx-plugin-list__li',
+        settings:      'cdx-plugin-list__settings',
+        settingsItem:  'cdx-plugin-settings__item'
     };
+
+    var LIST_ITEM_TAG = 'LI';
 
     var ui = {
 
         make: function (blockType) {
 
-            var wrapper = this.block(blockType || 'UL', baseClass);
+            var wrapper = this.block(blockType || 'UL', elementClasses_.pluginWrapper);
 
-            wrapper.dataset.type = 'UL';
+            wrapper.dataset.type = blockType;
             wrapper.contentEditable = true;
+
+            wrapper.addEventListener('keydown', methods_.keyDown);
 
             return wrapper;
 
@@ -36,20 +44,20 @@ var list = (function(list) {
         button: function (buttonType) {
 
             var types = {
-                    unordered: '<i class="ce-icon-list-bullet"></i>Обычный список',
-                    ordered: '<i class="ce-icon-list-numbered"></i>Нумерованный список'
+                    unordered: '<i class="ce-icon-list-bullet"></i>Обычный',
+                    ordered: '<i class="ce-icon-list-numbered"></i>Нумерованный'
                 },
-                button = document.createElement('SPAN');
+                button = document.createElement('DIV');
 
             button.innerHTML = types[buttonType];
 
-            button.className = 'ce_plugin_list--select_button';
+            button.classList.add(elementClasses_.settingsItem);
 
             return button;
         }
     };
 
-    var methods = {
+    var methods_ = {
 
         /**
          * Changes block type => OL or UL
@@ -64,31 +72,57 @@ var list = (function(list) {
 
             newEditable.dataset.type = blockType;
             newEditable.innerHTML = oldEditable.innerHTML;
-            newEditable.classList.add('ce-list');
+            newEditable.classList.add(elementClasses_.pluginWrapper);
 
             codex.editor.content.switchBlock(currentBlock, newEditable, 'list');
+        },
+
+        keyDown: function (e) {
+
+            var controlKeyPressed = e.ctrlKey || e.metaKey,
+                keyCodeForA = 65;
+
+            /**
+            * If CTRL+A (CMD+A) was pressed, we should select only one list item,
+            * not all <OL> or <UI>
+            */
+            if (controlKeyPressed && e.keyCode == keyCodeForA) {
+
+                e.preventDefault();
+
+                /**
+                * Select <LI> content
+                */
+                methods_.selectListItem();
+
+            }
+
+        },
+
+        /**
+        * Select all content of <LI> with caret
+        */
+        selectListItem : function () {
+
+            var selection = window.getSelection(),
+                currentSelectedNode = selection.anchorNode.parentNode,
+                range = new Range();
+
+            /**
+            * Search for <LI> element
+            */
+            while ( currentSelectedNode && currentSelectedNode.tagName != LIST_ITEM_TAG ) {
+
+                currentSelectedNode = currentSelectedNode.parentNode;
+
+            }
+
+            range.selectNode(currentSelectedNode);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+
         }
-    };
-
-    /**
-     * Make initial header block
-     * @param {object} JSON with block data
-     * @return {Element} element to append
-     */
-    list.make = function () {
-
-        var tag = ui.make(),
-            li  = ui.block("li", "tool-link-li");
-
-        var br = document.createElement("br");
-
-        li.appendChild(br);
-        tag.appendChild(li);
-
-        tag.classList.add('ce-list');
-
-        return tag;
-
     };
 
     /**
@@ -96,21 +130,29 @@ var list = (function(list) {
      */
     list.render = function (data) {
 
-        var type = data.type == 'ordered' ? 'OL' : 'UL',
-            tag  = ui.make(type);
+        var type = data && data.type == 'ordered' ? 'OL' : 'UL',
+            tag  = ui.make(type),
+            newLi;
 
-        tag.classList.add('ce-list');
+        if (data && data.items) {
 
-        data.items.forEach(function (element, index, array) {
+            data.items.forEach(function (element, index, array) {
 
-            var newLi = ui.block("li", listTool.elementClasses.li);
+                newLi = ui.block('li', elementClasses_.li);
 
-            newLi.innerHTML = element;
+                newLi.innerHTML = element;
 
-            tag.dataset.type = data.type;
+                tag.appendChild(newLi);
+
+            });
+
+        } else {
+
+            newLi = ui.block('li', elementClasses_.li);
+
             tag.appendChild(newLi);
 
-        });
+        }
 
         return tag;
 
@@ -119,7 +161,7 @@ var list = (function(list) {
     list.validate = function(data) {
 
         var items = data.items.every(function(item){
-            return item.trim() != '';
+            return item.trim() !== '';
         });
 
         if (!items)
@@ -150,24 +192,23 @@ var list = (function(list) {
 
     };
 
-    list.makeSettings = function(data) {
+    list.makeSettings = function () {
 
-        var holder  = document.createElement('DIV'),
-            selectTypeButton;
+        var holder  = document.createElement('DIV');
 
         /** Add holder classname */
-        holder.className = 'ce_plugin_list--settings';
+        holder.className = elementClasses_.settings;
 
         var orderedButton = ui.button("ordered"),
             unorderedButton = ui.button("unordered");
 
         orderedButton.addEventListener('click', function (event) {
-            methods.changeBlockStyle(event, 'OL');
+            methods_.changeBlockStyle(event, 'OL');
             codex.editor.toolbar.settings.close();
         });
 
         unorderedButton.addEventListener('click', function (event) {
-            methods.changeBlockStyle(event, 'UL');
+            methods_.changeBlockStyle(event, 'UL');
             codex.editor.toolbar.settings.close();
         });
 
