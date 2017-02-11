@@ -321,6 +321,13 @@ module.exports = (function (ui) {
          */
         block.addEventListener('keydown', editor.callback.blockKeydown, false);
 
+
+        if (editor.tools[block.dataset.tool].allowRenderOnPaste) {
+
+            block.addEventListener('paste', editor.paste.pasted);
+
+        }
+
         /**
          * Pasting content from another source
          * We have two type of sanitization

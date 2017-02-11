@@ -256,6 +256,14 @@ var twitter = (function(twitter) {
         make_(data);
     };
 
+    twitter.pastePatterns = [
+        {
+            type: 'twitter',
+            regex: /http?.+twitter.com?.+\//,
+            callback: twitter.urlPastedCallback
+        }
+    ];
+
     return twitter;
 
 })({});

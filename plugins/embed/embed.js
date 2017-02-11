@@ -203,6 +203,68 @@ var embed = function(embed){
 
     };
 
+    embed.pastePatterns = [{
+        type: 'vk',
+        regex: /https?:\/\/vk\.com\/.*(?:video)([-0-9]+_[0-9]+)/, ///https?.+vk?.com\/feed\?w=wall\d+_\d+/,
+        callback: embed.urlPastedCallback
+        },
+        {
+            type: 'youtube',
+            regex: /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/,
+            callback: embed.urlPastedCallback
+        },
+        {
+            type: 'vimeo',
+            regex: /(?:http[s]?:\/\/)?(?:www.)?vimeo\.co(?:.+\/([^\/]\d+)(?:#t=[\d]+)?s?$)/,
+            callback: embed.urlPastedCallback
+        },
+        {
+            type: 'coub',
+            regex: /https?:\/\/coub\.com\/view\/([^\/\?\&]+)/,
+            callback: embed.urlPastedCallback
+        },
+        {
+            type: 'vine',
+            regex: /https?:\/\/vine\.co\/v\/([^\/\?\&]+)/,
+            callback: embed.urlPastedCallback
+        },
+        {
+            type: 'imgur',
+            regex: /https?:\/\/(?:i\.)?imgur\.com.*\/([a-zA-Z0-9]+)(?:\.gifv)?/,
+            callback: embed.urlPastedCallback
+        },
+        {
+            type: 'gfycat',
+            regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
+            callback: embed.urlPastedCallback
+        },
+        {
+            type: 'twitch-channel',
+            regex: /https?:\/\/www.twitch.tv\/([^\/\?\&]*)/,
+            callback: embed.urlPastedCallback
+        },
+        {
+            type: 'twitch-video',
+            regex: /https?:\/\/www.twitch.tv\/(?:[^\/\?\&]*\/v|videos)\/([0-9]*)/,
+            callback: embed.urlPastedCallback
+        },
+        {
+            type: 'yandex-music-album',
+            regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)/,
+            callback: embed.urlPastedCallback
+        },
+        {
+            type: 'yandex-music-track',
+            regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)\/track\/([0-9]*)/,
+            callback: embed.urlPastedCallback
+        },
+        {
+            type: 'yandex-music-playlist',
+            regex: /https?:\/\/music.yandex.ru\/users\/([^\/\?\&]*)\/playlists\/([0-9]*)/,
+            callback: embed.urlPastedCallback
+        }];
+
+
     return embed;
 
 }({});

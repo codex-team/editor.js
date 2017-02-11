@@ -67,7 +67,8 @@
                 validate: paragraph.validate,
                 save: paragraph.save,
                 allowedToPaste: true,
-                showInlineToolbar: true
+                showInlineToolbar: true,
+                allowRenderOnPaste: true
             },
             heading_styled: {
                 type: 'heading_styled',
@@ -78,14 +79,6 @@
                 validate: header.validate,
                 save: header.save,
                 displayInToolbox: true
-            },
-            paste: {
-                type: 'paste',
-                prepare: paste.prepare,
-                make: paste.make,
-                save: paste.save,
-                enableLineBreaks: false,
-                callbacks: paste.pasted
             },
             code: {
                 type: 'code',
@@ -152,6 +145,7 @@
                 isStretched: true,
                 showInlineToolbar: true,
                 displayInToolbox: true,
+                renderOnPastePatterns: image.pastePatterns,
                 config: {
                     uploadUrl : '/club/fetch'
                 }
@@ -162,7 +156,8 @@
                 prepare: instagram.prepare,
                 render: instagram.reneder,
                 validate: instagram.validate,
-                save: instagram.save
+                save: instagram.save,
+                renderOnPastePatterns: instagram.pastePatterns,
             },
             tweet: {
                 type: 'tweet',
@@ -172,6 +167,7 @@
                 validate: twitter.validate,
                 save: twitter.save,
                 showInlineToolbar : true,
+                renderOnPastePatterns: twitter.pastePatterns,
                 config : {
                     fetchUrl : ''
                 }
@@ -181,7 +177,8 @@
                 make: embed.make,
                 render: embed.render,
                 save: embed.save,
-                validate: embed.validate
+                validate: embed.validate,
+                renderOnPastePatterns: embed.pastePatterns,
             }
         },
         data : {
