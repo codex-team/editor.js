@@ -141,6 +141,14 @@ var instagram = (function(instagram) {
 
     };
 
+    instagram.pastePatterns = [
+        {
+            type: 'instagram',
+            regex: /http?.+instagram.com\/p\/([a-zA-Z0-9]*)/,
+            callback: instagram.urlPastedCallback
+        }
+    ];
+
     return instagram;
 
 })({});

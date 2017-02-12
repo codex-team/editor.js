@@ -28,6 +28,7 @@ module.exports = (function (editor) {
         editor.parser        = require('./modules/parser');
         editor.sanitizer     = require('./modules/sanitizer');
         editor.anchors       = require('./modules/anchors');
+        editor.paste         = require('./modules/paste');
 
     };
 
@@ -130,6 +131,7 @@ module.exports = (function (editor) {
             .then(editor.ui.addTools)
             .then(editor.ui.bindEvents)
             .then(editor.tools.prepare)
+            .then(editor.paste.prepare)
             .then(editor.transport.prepare)
             .then(editor.renderer.makeBlocksFromData)
             .then(editor.ui.saveInputs)

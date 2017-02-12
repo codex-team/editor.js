@@ -690,6 +690,18 @@ var image = (function(image) {
      */
     image.uploadImageFromUri = uploadingCallbacks_.ByPaste.uploadImageFromUrl;
 
+    image.pastePatterns = [
+        {
+            type: 'image',
+            regex: /(?:([^:\/?#]+):)?(?:\/\/([^\/?#]*))?([^?#]*\.(?:jpe?g|gif|png))(?:\?([^#]*))?(?:#(.*))?/i,
+            callback: image.uploadImageFromUri
+        },
+        {
+            type: 'uploadCare',
+            regex: /^https:\/\/(uploadcare\.cmtt\.ru|ucarecdn\.com|static[0-9]+\.siliconrus\.cmtt\.ru|static[0-9]+\.cmtt\.ru)/i,
+            callback: image.uploadImageFromUri
+        } ];
+
     return image;
 
 })({});

@@ -1,23 +1,45 @@
 /**
- * Paste plugin.
+ * Codex Editor Paste module
  *
- * Listen to clipboard paste event and analize pasted text whit patterns in pattern.js
+ * @author Codex Team
+ * @version 1.0
  */
 
-/**
- * @protected
- *
- * Main tool settings.
- */
+module.exports = function (paste) {
 
-let editor = codex.editor;
+    let editor = codex.editor;
 
-var paste = function(paste){
+    var patterns = [];
+
+    paste.prepare = function () {
+
+        var tools = editor.tools;
+
+        for (var tool in tools) {
+
+            if (!tools[tool].renderOnPastePatterns || !Array.isArray(tools[tool].renderOnPastePatterns)) {
+
+                continue;
+
+            }
+
+            tools[tool].renderOnPastePatterns.map(function (pattern) {
+
+                patterns.push(pattern);
+
+            });
+
+        }
+
+        return Promise.resolve();
+
+    };
+
     /**
      * Saves data
      * @param event
      */
-    paste.pasted = function(event) {
+    paste.pasted = function (event) {
 
         var clipBoardData = event.clipboardData || window.clipboardData,
             content = clipBoardData.getData('Text');
@@ -25,22 +47,27 @@ var paste = function(paste){
         var result = analize(content);
 
         if (result) {
+
             event.preventDefault();
             event.stopImmediatePropagation();
+
         }
+
+        return result;
+
     };
 
     /**
      * Analizes pated string and calls necessary method
      */
 
-    var analize = function(string) {
+    var analize = function (string) {
 
         var result  = false,
             content = editor.content.currentNode,
             plugin  = content.dataset.tool;
 
-        paste.patterns.map(function(pattern, i){
+        patterns.map( function (pattern) {
 
             if (pattern.regex.test(string)) {
 
@@ -51,16 +78,18 @@ var paste = function(paste){
 
                 }
 
-                pattern.callback.call(null, string, pattern);
+                pattern.callback(string, pattern);
                 result = true;
+
             }
+
         });
 
         return result;
 
     };
 
-    var pasteToNewBlock_ = function() {
+    var pasteToNewBlock_ = function () {
 
         /** Create new initial block */
         editor.content.insertBlock({
@@ -74,8 +103,7 @@ var paste = function(paste){
 
     };
 
+
     return paste;
 
-}(paste || {});
-
-
+}({});
