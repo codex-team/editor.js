@@ -203,10 +203,11 @@ var embed = function(embed){
 
     };
 
-    embed.pastePatterns = [{
-        type: 'vk',
-        regex: /https?:\/\/vk\.com\/.*(?:video)([-0-9]+_[0-9]+)/, ///https?.+vk?.com\/feed\?w=wall\d+_\d+/,
-        callback: embed.urlPastedCallback
+    embed.pastePatterns = [
+        {
+            type: 'vk',
+            regex: /https?:\/\/vk\.com\/.*(?:video)([-0-9]+_[0-9]+)/, ///https?.+vk?.com\/feed\?w=wall\d+_\d+/,
+            callback: embed.urlPastedCallback
         },
         {
             type: 'youtube',
@@ -262,7 +263,7 @@ var embed = function(embed){
             type: 'yandex-music-playlist',
             regex: /https?:\/\/music.yandex.ru\/users\/([^\/\?\&]*)\/playlists\/([0-9]*)/,
             callback: embed.urlPastedCallback
-        }];
+        } ];
 
 
     return embed;

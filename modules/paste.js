@@ -17,7 +17,7 @@ module.exports = function (paste) {
 
         for (var tool in tools) {
 
-            if (!tools[tool].renderOnPastePatterns || typeof tools[tool].renderOnPastePatterns !== 'Array') {
+            if (!tools[tool].renderOnPastePatterns || !Array.isArray(tools[tool].renderOnPastePatterns)) {
 
                 continue;
 
@@ -52,6 +52,8 @@ module.exports = function (paste) {
             event.stopImmediatePropagation();
 
         }
+
+        return result;
 
     };
 
