@@ -54,6 +54,7 @@ module.exports = function (destroyer) {
      * 1. Remove all listeners that was added by editor
      * 2. Calls plugins destroy method to remove plugins from storage
      * 3. Remove editor elements from DOM
+     * 4. Remove scripts with editor prefix
      * 4. Delete editor object from storage
      *
      */
@@ -64,6 +65,8 @@ module.exports = function (destroyer) {
         destroyer.destroyPlugins();
 
         destroyer.removeNodes();
+
+        destroyer.destroyScripts();
 
         delete codex.editor;
 
