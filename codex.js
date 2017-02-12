@@ -10,6 +10,7 @@ module.exports = (function (editor) {
     'use strict';
 
     editor.version = VERSION;
+    editor.scriptPrefix = 'cdx-script-';
 
     var init = function () {
 

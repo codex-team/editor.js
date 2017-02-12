@@ -26,7 +26,25 @@ module.exports = function (destroyer) {
 
             }
 
-        };
+        }
+
+    };
+
+    destroyer.destroyScripts = function () {
+
+        var scripts = document.getElementsByTagName('SCRIPT'),
+            regex   = new RegExp(editor.scriptPrefix+'.*');
+
+        for (var i = 0; i < scripts.length; i++) {
+
+            if (regex.test(scripts[i].id)) {
+
+                scripts[i].remove();
+                i--;
+
+            }
+
+        }
 
     };
 
