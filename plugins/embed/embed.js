@@ -2,7 +2,7 @@
  * Embed plugin by gohabereg
  * @version 1.0.0
  */
-var embed = function(embed){
+var embed = function(embed_plugin){
 
     var methods = {
 
@@ -122,7 +122,7 @@ var embed = function(embed){
     };
 
 
-    embed.make = function(data, isInternal) {
+    embed_plugin.make = function(data, isInternal) {
 
         if (!data.remote_id)
             return;
@@ -152,7 +152,7 @@ var embed = function(embed){
      * Saving JSON output.
      * Upload data via ajax
      */
-    embed.save = function(blockContent) {
+    embed_plugin.save = function(blockContent) {
 
         if (!blockContent)
             return;
@@ -175,11 +175,11 @@ var embed = function(embed){
     /**
      * Render data
      */
-    embed.render = function(data) {
-        return embed.make(data);
+    embed_plugin.render = function(data) {
+        return embed_plugin.make(data);
     };
 
-    embed.urlPastedCallback = function(url, pattern) {
+    embed_plugin.urlPastedCallback = function(url, pattern) {
 
         var execArray = pattern.regex.exec(url),
             id = methods.getRemoteId(pattern.type, execArray);
@@ -190,10 +190,10 @@ var embed = function(embed){
             thumbnailUrl: url
         };
 
-        embed.make(data, true);
+        embed_plugin.make(data, true);
     };
 
-    embed.validate = function(savedData) {
+    embed_plugin.validate = function(savedData) {
 
         var source = savedData.source,
             execArray = services[source].regex.exec(savedData.thumbnailUrl),
@@ -203,6 +203,74 @@ var embed = function(embed){
 
     };
 
-    return embed;
+    embed_plugin.pastePatterns = [
+        {
+            type: 'vk',
+            regex: /https?:\/\/vk\.com\/.*(?:video)([-0-9]+_[0-9]+)/, ///https?.+vk?.com\/feed\?w=wall\d+_\d+/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'youtube',
+            regex: /(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'vimeo',
+            regex: /(?:http[s]?:\/\/)?(?:www.)?vimeo\.co(?:.+\/([^\/]\d+)(?:#t=[\d]+)?s?$)/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'coub',
+            regex: /https?:\/\/coub\.com\/view\/([^\/\?\&]+)/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'vine',
+            regex: /https?:\/\/vine\.co\/v\/([^\/\?\&]+)/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'imgur',
+            regex: /https?:\/\/(?:i\.)?imgur\.com.*\/([a-zA-Z0-9]+)(?:\.gifv)?/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'gfycat',
+            regex: /https?:\/\/gfycat\.com(?:\/detail)?\/([a-zA-Z]+)/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'twitch-channel',
+            regex: /https?:\/\/www.twitch.tv\/([^\/\?\&]*)/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'twitch-video',
+            regex: /https?:\/\/www.twitch.tv\/(?:[^\/\?\&]*\/v|videos)\/([0-9]*)/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'yandex-music-album',
+            regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'yandex-music-track',
+            regex: /https?:\/\/music.yandex.ru\/album\/([0-9]*)\/track\/([0-9]*)/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'yandex-music-playlist',
+            regex: /https?:\/\/music.yandex.ru\/users\/([^\/\?\&]*)\/playlists\/([0-9]*)/,
+            callback: embed_plugin.urlPastedCallback
+        } ];
+
+    embed_plugin.destroy = function () {
+
+        embed = null;
+
+    };
+
+    return embed_plugin;
 
 }({});

@@ -85,6 +85,10 @@ var storage = function () {
 
     };
 
+    /**
+     * Saves current editor's data to localStorage with unique article key
+     * Also saves key and expire date
+     */
     var save = function () {
 
         editor.saver.saveBlocks();
@@ -107,6 +111,9 @@ var storage = function () {
 
     };
 
+    /**
+     * Returns last saved data of current article
+     */
     var get = function () {
 
         var savedData = window.localStorage[CURRENT_STORAGE_KEY],
@@ -137,6 +144,9 @@ var storage = function () {
 
     };
 
+    /**
+     * Returns object of articles hash and expire date {articleHash: expireDate}
+     */
     var getKeys = function () {
 
         var savedKeys = localStorage[STORAGE_KEYS],
@@ -162,16 +172,23 @@ var storage = function () {
 
     };
 
+    /**
+     * Saves current article's hash with article's expire date
+     * @param savingDate
+     */
     var saveKey = function (savingDate) {
 
         var keys = getKeys();
 
-        keys[CURRENT_ARTICLE_HASH] = savingDate;
+        keys[CURRENT_ARTICLE_HASH] = savingDate + STORAGE_TIME;
 
         localStorage[STORAGE_KEYS] = JSON.stringify(keys);
 
     };
 
+    /**
+     * Remove articles which storage time has expired
+     */
     var clearKeys = function () {
 
         var keys = getKeys();

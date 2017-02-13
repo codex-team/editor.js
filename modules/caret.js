@@ -4,9 +4,10 @@
  * @author Codex Team
  * @version 1.0
  */
-let editor = codex.editor;
 
 module.exports = (function (caret) {
+
+    let editor = codex.editor;
 
     /**
      * @var {int} InputIndex - editable element in DOM

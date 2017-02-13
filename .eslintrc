@@ -70,7 +70,8 @@
         "MutationObserver": true,
         "FormData": true,
         "XMLHttpRequest": true,
-        "ActiveXObject": true
+        "ActiveXObject": true,
+        "RegExp": true
 
     }
 }

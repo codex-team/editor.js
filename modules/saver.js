@@ -5,9 +5,9 @@
  * @version 1.0.2
  */
 
-let editor = codex.editor;
-
 module.exports = (function (saver) {
+
+    let editor = codex.editor;
 
     /**
      * Saves blocks

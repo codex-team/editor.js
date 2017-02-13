@@ -4,9 +4,10 @@
  * @author Codex Team
  * @version 1.1
  */
-let editor = codex.editor;
 
 module.exports = (function (parser) {
+
+    let editor = codex.editor;
 
     /** inserting text */
     parser.insertPastedContent = function (blockType, tag) {

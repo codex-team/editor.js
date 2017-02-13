@@ -51,10 +51,6 @@
 <script src="plugins/embed/embed.js"></script>
 <link rel="stylesheet" href="plugins/embed/embed.css">
 
-<script src="plugins/paste/paste.js"></script>
-<script src="plugins/paste/patterns.js"></script>
-<link rel="stylesheet" href="plugins/paste/paste.css">
-
 <script src="plugins/localstorage/localstorage.js"></script>
 
 <script>
@@ -68,8 +64,10 @@
                 render: paragraph.render,
                 validate: paragraph.validate,
                 save: paragraph.save,
+                destroy: paragraph.destroy,
                 allowedToPaste: true,
-                showInlineToolbar: true
+                showInlineToolbar: true,
+                allowRenderOnPaste: true
             },
             heading_styled: {
                 type: 'heading_styled',
@@ -79,15 +77,8 @@
                 render: header.render,
                 validate: header.validate,
                 save: header.save,
+                destroy: header.destroy,
                 displayInToolbox: true
-            },
-            paste: {
-                type: 'paste',
-                prepare: paste.prepare,
-                make: paste.make,
-                save: paste.save,
-                enableLineBreaks: false,
-                callbacks: paste.pasted
             },
             code: {
                 type: 'code',
@@ -98,6 +89,7 @@
                 render: code.render,
                 validate: code.validate,
                 save: code.save,
+                destroy: code.destroy,
                 displayInToolbox: true,
                 enableLineBreaks: true
             },
@@ -110,6 +102,7 @@
                 render: link.render,
                 validate: link.validate,
                 save: link.save,
+                destroy: link.destroy,
                 displayInToolbox: true,
                 enableLineBreaks: true
             },
@@ -122,6 +115,7 @@
                 render: list.render,
                 validate: list.validate,
                 save: list.save,
+                destroy: list.destroy,
                 displayInToolbox: true,
                 showInlineToolbar: true,
                 enableLineBreaks: true,
@@ -135,6 +129,7 @@
                 render: quote.render,
                 validate: quote.validate,
                 save: quote.save,
+                destroy: quote.destroy,
                 displayInToolbox: true,
                 enableLineBreaks: true,
                 showInlineToolbar: true,
@@ -151,9 +146,11 @@
                 makeSettings: image.makeSettings,
                 render: image.render,
                 save: image.save,
+                destroy: image.destroy,
                 isStretched: true,
                 showInlineToolbar: true,
                 displayInToolbox: true,
+                renderOnPastePatterns: image.pastePatterns,
                 config: {
                     uploadUrl : '/club/fetch'
                 }
@@ -164,7 +161,9 @@
                 prepare: instagram.prepare,
                 render: instagram.reneder,
                 validate: instagram.validate,
-                save: instagram.save
+                save: instagram.save,
+                destroy: instagram.destroy,
+                renderOnPastePatterns: instagram.pastePatterns,
             },
             tweet: {
                 type: 'tweet',
@@ -173,7 +172,9 @@
                 render: twitter.render,
                 validate: twitter.validate,
                 save: twitter.save,
+                destroy: twitter.destroy,
                 showInlineToolbar : true,
+                renderOnPastePatterns: twitter.pastePatterns,
                 config : {
                     fetchUrl : ''
                 }
@@ -183,12 +184,13 @@
                 make: embed.make,
                 render: embed.render,
                 save: embed.save,
-                validate: embed.validate
+                validate: embed.validate,
+                destroy: embed.destroy,
+                renderOnPastePatterns: embed.pastePatterns,
             },
             storage: {
                 type: 'storage',
                 prepare: storage.prepare,
-                enableLineBreaks: false,
             },
         },
         data : {

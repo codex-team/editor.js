@@ -5,9 +5,9 @@
  * @version 1.0
  */
 
-let editor = codex.editor;
-
 module.exports = (function (renderer) {
+
+    let editor = codex.editor;
 
     /**
      * Asyncronously parses input JSON to redactor blocks

@@ -4,9 +4,10 @@
  * @author Codex Team
  * @version 1.3.7
  */
-let editor = codex.editor;
 
 module.exports = (function (callbacks) {
+
+    let editor = codex.editor;
 
     callbacks.globalKeydown = function (event) {
 
@@ -809,8 +810,11 @@ module.exports = (function (callbacks) {
         /** Prevent default behaviour */
         event.preventDefault();
 
+        var editableParent = editor.content.getEditableParent(event.target),
+            firstLevelBlock = editor.content.getFirstLevelBlock(event.target);
+
         /** Allow paste when event target placed in Editable element */
-        if (!editor.content.getEditableParent(event.target)) {
+        if (!editableParent) {
 
             return;
 
@@ -840,6 +844,13 @@ module.exports = (function (callbacks) {
         while (( node = div.firstChild) ) {
 
             lastNode = fragment.appendChild(node);
+
+        }
+
+
+        if (editor.tools[firstLevelBlock.dataset.tool].allowRenderOnPaste) {
+
+            if (editor.paste.pasted(event)) return;
 
         }
 

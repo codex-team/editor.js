@@ -2,9 +2,9 @@
  * Codex Sanitizer
  */
 
-var janitor = require('html-janitor');
-
 module.exports = (function (sanitizer) {
+
+    var janitor = require('html-janitor');
 
     /**
      * Basic config
