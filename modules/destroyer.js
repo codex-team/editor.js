@@ -32,12 +32,11 @@ module.exports = function (destroyer) {
 
     destroyer.destroyScripts = function () {
 
-        var scripts = document.getElementsByTagName('SCRIPT'),
-            regex   = new RegExp(editor.scriptPrefix+'.*');
+        var scripts = document.getElementsByTagName('SCRIPT');
 
         for (var i = 0; i < scripts.length; i++) {
 
-            if (regex.test(scripts[i].id)) {
+            if (scripts[i].id.indexOf(editor.scriptPrefix) + 1) {
 
                 scripts[i].remove();
                 i--;
