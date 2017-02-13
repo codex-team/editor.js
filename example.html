@@ -51,10 +51,6 @@
 <script src="plugins/embed/embed.js"></script>
 <link rel="stylesheet" href="plugins/embed/embed.css">
 
-<script src="plugins/paste/paste.js"></script>
-<script src="plugins/paste/patterns.js"></script>
-<link rel="stylesheet" href="plugins/paste/paste.css">
-
 <script>
     codex.editor.start({
         textareaId : "codex_area",
@@ -68,7 +64,8 @@
                 save: paragraph.save,
                 destroy: paragraph.destroy,
                 allowedToPaste: true,
-                showInlineToolbar: true
+                showInlineToolbar: true,
+                allowRenderOnPaste: true
             },
             heading_styled: {
                 type: 'heading_styled',
@@ -80,15 +77,6 @@
                 save: header.save,
                 destroy: header.destroy,
                 displayInToolbox: true
-            },
-            paste: {
-                type: 'paste',
-                prepare: paste.prepare,
-                make: paste.make,
-                save: paste.save,
-                destroy: paste.destroy,
-                enableLineBreaks: false,
-                callbacks: paste.pasted
             },
             code: {
                 type: 'code',
@@ -160,6 +148,7 @@
                 isStretched: true,
                 showInlineToolbar: true,
                 displayInToolbox: true,
+                renderOnPastePatterns: image.pastePatterns,
                 config: {
                     uploadUrl : '/club/fetch'
                 }
@@ -172,6 +161,7 @@
                 validate: instagram.validate,
                 save: instagram.save,
                 destroy: instagram.destroy,
+                renderOnPastePatterns: instagram.pastePatterns,
             },
             tweet: {
                 type: 'tweet',
@@ -182,6 +172,7 @@
                 save: twitter.save,
                 destroy: twitter.destroy,
                 showInlineToolbar : true,
+                renderOnPastePatterns: twitter.pastePatterns,
                 config : {
                     fetchUrl : ''
                 }
@@ -192,7 +183,8 @@
                 render: embed.render,
                 save: embed.save,
                 destroy: embed.destroy,
-                validate: embed.validate
+                validate: embed.validate,
+                renderOnPastePatterns: embed.pastePatterns,
             }
         },
         data : {

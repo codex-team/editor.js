@@ -51,17 +51,22 @@ module.exports = function (destroyer) {
     /**
      * Delete editor data from webpage.
      * You should send settings argument with boolean flags:
-     * {
-     *      UI- remove redactor event listeners and DOM nodes
-     *      scripts - remove redactor scripts from DOM
-     *      plugins - remove plugin's objects
-     *      core - remove editor core. You can remove core only if UI and scripts flags is true
+     * @param settings.ui- remove redactor event listeners and DOM nodes
+     * @param settings.scripts - remove redactor scripts from DOM
+     * @param settings.plugins - remove plugin's objects
+     * @param settings.core - remove editor core. You can remove core only if UI and scripts flags is true
      * }
      *
      */
     destroyer.destroy = function (settings) {
 
-        if (settings.UI) {
+        if (!settings || typeof settings !== 'object') {
+
+            return;
+
+        }
+
+        if (settings.ui) {
 
             destroyer.removeNodes();
             editor.listeners.removeAll();
@@ -80,7 +85,7 @@ module.exports = function (destroyer) {
 
         }
 
-        if (settings.UI && settings.scripts && settings.core) {
+        if (settings.ui && settings.scripts && settings.core) {
 
             delete codex.editor;
 

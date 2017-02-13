@@ -256,6 +256,14 @@ var twitter = (function(twitter_plugin) {
         make_(data);
     };
 
+    twitter_plugin.pastePatterns = [
+        {
+            type: 'twitter',
+            regex: /http?.+twitter.com?.+\//,
+            callback: twitter_plugin.urlPastedCallback
+        }
+    ];
+
     twitter_plugin.destroy = function () {
 
         twitter = null;

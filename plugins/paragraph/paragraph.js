@@ -8,7 +8,7 @@ var paragraph = (function(paragraph_plugin) {
     /**
      * @private
      *
-     * Make initial header block
+     * Make initial paragraph block
      * @param {object} JSON with block data
      * @return {Element} element to append
      */
@@ -23,14 +23,6 @@ var paragraph = (function(paragraph_plugin) {
         }
 
         tag.contentEditable = true;
-
-        /**
-         * @uses Paste tool callback.
-         * Function analyzes pasted data
-         * If pasted URL from instagram, twitter or Image
-         * it renders via Social widgets content or uploads image and uses Image tool to render
-         */
-        tag.addEventListener('paste', codex.editor.tools.paste.callbacks, false);
 
         return tag;
 

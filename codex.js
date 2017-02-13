@@ -31,6 +31,7 @@ module.exports = (function (editor) {
         editor.anchors       = require('./modules/anchors');
         editor.listeners     = require('./modules/listeners');
         editor.destroyer     = require('./modules/destroyer');
+        editor.paste         = require('./modules/paste');
 
     };
 
@@ -133,6 +134,7 @@ module.exports = (function (editor) {
             .then(editor.ui.addTools)
             .then(editor.ui.bindEvents)
             .then(editor.tools.prepare)
+            .then(editor.paste.prepare)
             .then(editor.transport.prepare)
             .then(editor.renderer.makeBlocksFromData)
             .then(editor.ui.saveInputs)
