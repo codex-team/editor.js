@@ -8,7 +8,10 @@ var storage = function () {
 
     var editor               = codex.editor,
         CURRENT_ARTICLE_HASH = null,
-        LOCAL_STORAGE_KEY    = null,
+        CURRENT_STORAGE_KEY  = null,
+        STORAGE_KEY          = 'codex.editor.savedData.',
+        STORAGE_KEYS         = 'codex.editor.savedKeys',
+        STORAGE_TIME         = 4*24*60*60*1000, //4 days
         interval             = null,
         config_ = {
             savingInterval: 1000
@@ -36,7 +39,7 @@ var storage = function () {
         }
 
         CURRENT_ARTICLE_HASH = editor.currentHash;
-        LOCAL_STORAGE_KEY    = 'codex.editor.savedData.'+CURRENT_ARTICLE_HASH;
+        CURRENT_STORAGE_KEY    = STORAGE_KEY+CURRENT_ARTICLE_HASH;
 
         config_ = config || config_;
 
@@ -70,6 +73,8 @@ var storage = function () {
 
         }
 
+        clearKeys();
+
         return Promise.resolve();
 
     };
@@ -94,7 +99,9 @@ var storage = function () {
                     savingDate : savingDate
                 };
 
-            window.localStorage[LOCAL_STORAGE_KEY] = JSON.stringify(data);
+            localStorage[CURRENT_STORAGE_KEY] = JSON.stringify(data);
+
+            saveKey(savingDate);
 
         }, 500);
 
@@ -102,7 +109,7 @@ var storage = function () {
 
     var get = function () {
 
-        var savedData = window.localStorage[LOCAL_STORAGE_KEY],
+        var savedData = window.localStorage[CURRENT_STORAGE_KEY],
             data;
 
         if (!savedData)
@@ -127,6 +134,60 @@ var storage = function () {
     var stop = function () {
 
         window.clearInterval(interval);
+
+    };
+
+    var getKeys = function () {
+
+        var savedKeys = localStorage[STORAGE_KEYS],
+            keys      = {};
+
+        if (!savedKeys) {
+
+            return keys;
+
+        }
+
+        try {
+
+            keys = JSON.parse(savedKeys);
+
+        } catch (error) {
+
+            editor.core.log('Invalid data format');
+
+        }
+
+        return keys;
+
+    };
+
+    var saveKey = function (savingDate) {
+
+        var keys = getKeys();
+
+        keys[CURRENT_ARTICLE_HASH] = savingDate;
+
+        localStorage[STORAGE_KEYS] = JSON.stringify(keys);
+
+    };
+
+    var clearKeys = function () {
+
+        var keys = getKeys();
+
+        for (var key in keys) {
+
+            if (keys[key] > +new Date()) {
+                continue;
+            }
+
+            localStorage.removeItem(STORAGE_KEY+key);
+            delete keys[key];
+
+        }
+
+        localStorage[STORAGE_KEYS] = JSON.stringify(keys);
 
     };
 
