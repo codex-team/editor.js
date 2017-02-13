@@ -5,9 +5,9 @@
  * @version 1.1
  */
 
-let editor = codex.editor;
-
 module.exports = (function (ui) {
+
+    let editor = codex.editor;
 
     /**
      * Basic editor classnames
@@ -274,28 +274,28 @@ module.exports = (function (ui) {
         // }, false );
 
         /** All keydowns on Document */
-        document.addEventListener('keydown', editor.callback.globalKeydown, false );
+        editor.listeners.add(document, 'keydown', editor.callback.globalKeydown, false);
 
         /** All keydowns on Redactor zone */
-        editor.nodes.redactor.addEventListener('keydown', editor.callback.redactorKeyDown, false);
+        editor.listeners.add(editor.nodes.redactor, 'keydown', editor.callback.redactorKeyDown, false);
 
         /** All keydowns on Document */
-        document.addEventListener('keyup', editor.callback.globalKeyup, false );
+        editor.listeners.add(document, 'keyup', editor.callback.globalKeyup, false );
 
         /**
          * Mouse click to radactor
          */
-        editor.nodes.redactor.addEventListener('click', editor.callback.redactorClicked, false );
+        editor.listeners.add(editor.nodes.redactor, 'click', editor.callback.redactorClicked, false );
 
         /**
          * Clicks to the Plus button
          */
-        editor.nodes.plusButton.addEventListener('click', editor.callback.plusButtonClicked, false);
+        editor.listeners.add(editor.nodes.plusButton, 'click', editor.callback.plusButtonClicked, false);
 
         /**
          * Clicks to SETTINGS button in toolbar
          */
-        editor.nodes.showSettingsButton.addEventListener('click', editor.callback.showSettingsButtonClicked, false );
+        editor.listeners.add(editor.nodes.showSettingsButton, 'click', editor.callback.showSettingsButtonClicked, false );
 
         /**
          *  @deprecated ( but now in use for syncronization );
@@ -306,7 +306,7 @@ module.exports = (function (ui) {
         /** Bind click listeners on toolbar buttons */
         for (var button in editor.nodes.toolbarButtons) {
 
-            editor.nodes.toolbarButtons[button].addEventListener('click', editor.callback.toolbarButtonClicked, false);
+            editor.listeners.add(editor.nodes.toolbarButtons[button], 'click', editor.callback.toolbarButtonClicked, false);
 
         }
 
@@ -319,7 +319,7 @@ module.exports = (function (ui) {
         /**
          * Block keydowns
          */
-        block.addEventListener('keydown', editor.callback.blockKeydown, false);
+        editor.listeners.add(block, 'keydown', editor.callback.blockKeydown, false);
 
         /**
          * Pasting content from another source
@@ -340,9 +340,9 @@ module.exports = (function (ui) {
          * @example editor.callback.blockPasteViaSanitize(event), the second method.
          *
          */
-        block.addEventListener('paste', editor.callback.blockPasteCallback, false);
+        editor.listeners.add(block, 'paste', editor.callback.blockPasteCallback, false);
 
-        block.addEventListener('mouseup', editor.toolbar.inline.show, false);
+        editor.listeners.add(block, 'mouseup', editor.toolbar.inline.show, false);
 
     };
 
@@ -386,7 +386,7 @@ module.exports = (function (ui) {
 
     ui.setInlineToolbarButtonBehaviour = function (button, type) {
 
-        button.addEventListener('mousedown', function (event) {
+        editor.listeners.add(button, 'mousedown', function (event) {
 
             editor.toolbar.inline.toolClicked(event, type);
 

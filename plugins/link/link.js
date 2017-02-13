@@ -6,7 +6,7 @@
  * Link tool plugin
  */
 
-var link = (function(link) {
+var link = (function(link_plugin) {
 
     var settings = {
         defaultText    : 'Вставьте ссылку ...',
@@ -178,7 +178,7 @@ var link = (function(link) {
                     /* Show loader gif **/
                     block.classList.add(settings.elementClasses.loader);
 
-                    return fetch( link.config.fetchUrl + '?url=' + encodeURI(url) );
+                    return fetch( link_plugin.config.fetchUrl + '?url=' + encodeURI(url) );
                 })
 
                 .then(function (response) {
@@ -242,9 +242,9 @@ var link = (function(link) {
         }
     };
 
-    link.prepare = function (config) {
+    link_plugin.prepare = function (config) {
 
-        link.config = config;
+        link_plugin.config = config;
 
         return Promise.resolve();
 
@@ -255,7 +255,7 @@ var link = (function(link) {
      * @param {object} JSON with block data
      * @return {Element} element to append
      */
-    link.makeNewBlock = function (data) {
+    link_plugin.makeNewBlock = function (data) {
 
         var wrapper = ui.mainBlock(),
             tag     = ui.input();
@@ -278,7 +278,7 @@ var link = (function(link) {
     /**
      * Method to render HTML block from JSON
      */
-    link.render = function (json) {
+    link_plugin.render = function (json) {
 
         if ( json ) {
 
@@ -312,7 +312,7 @@ var link = (function(link) {
 
     };
 
-    link.validate = function (data) {
+    link_plugin.validate = function (data) {
 
         if (data.url.trim() == '' || data.title.trim() == '' || data.description.trim() == '')
             return;
@@ -323,7 +323,7 @@ var link = (function(link) {
     /**
      * Method to extract JSON data from HTML block
      */
-    link.save = function (blockContent){
+    link_plugin.save = function (blockContent){
 
         var linkElement = settings.elementClasses.link;
 
@@ -339,6 +339,12 @@ var link = (function(link) {
 
     };
 
-    return link;
+    link_plugin.destroy = function () {
+
+        link = null;
+
+    };
+
+    return link_plugin;
 
 })({});

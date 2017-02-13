@@ -5,9 +5,10 @@
  * @author Codex Team
  * @version 1.0
  */
-let editor = codex.editor;
 
 module.exports = (function (transport) {
+
+    let editor = codex.editor;
 
     transport.input = null;
 
@@ -21,7 +22,7 @@ module.exports = (function (transport) {
         var input = document.createElement('INPUT');
 
         input.type = 'file';
-        input.addEventListener('change', editor.transport.fileSelected);
+        editor.listeners.add(input, 'change', editor.transport.fileSelected);
 
         editor.transport.input = input;
 

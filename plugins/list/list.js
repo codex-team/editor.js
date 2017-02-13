@@ -2,7 +2,7 @@
  * Code Plugin\
  * Creates code tag and adds content to this tag
  */
-var list = (function(list) {
+var list = (function(list_plugin) {
 
     /**
     * CSS class names
@@ -76,7 +76,6 @@ var list = (function(list) {
 
             codex.editor.content.switchBlock(currentBlock, newEditable, 'list');
         },
-
         keyDown: function (e) {
 
             var controlKeyPressed = e.ctrlKey || e.metaKey,
@@ -117,7 +116,7 @@ var list = (function(list) {
 
             }
 
-            range.selectNode(currentSelectedNode);
+            range.selectNodeContents(currentSelectedNode);
 
             selection.removeAllRanges();
             selection.addRange(range);
@@ -128,7 +127,7 @@ var list = (function(list) {
     /**
      * Method to render HTML block from JSON
      */
-    list.render = function (data) {
+    list_plugin.render = function (data) {
 
         var type = data && data.type == 'ordered' ? 'OL' : 'UL',
             tag  = ui.make(type),
@@ -158,7 +157,7 @@ var list = (function(list) {
 
     };
 
-    list.validate = function(data) {
+    list_plugin.validate = function(data) {
 
         var items = data.items.every(function(item){
             return item.trim() !== '';
@@ -176,7 +175,7 @@ var list = (function(list) {
     /**
      * Method to extract JSON data from HTML block
      */
-    list.save = function (blockContent){
+    list_plugin.save = function (blockContent){
 
         var data = {
             type  : null,
@@ -192,7 +191,7 @@ var list = (function(list) {
 
     };
 
-    list.makeSettings = function () {
+    list_plugin.makeSettings = function () {
 
         var holder  = document.createElement('DIV');
 
@@ -219,6 +218,12 @@ var list = (function(list) {
 
     };
 
-    return list;
+    list_plugin.destroy = function () {
+
+        list = null;
+
+    };
+
+    return list_plugin;
 
 })({});

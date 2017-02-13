@@ -8,9 +8,9 @@
  * @version 1.0
  */
 
-let editor = codex.editor;
-
 module.exports = (function (inline) {
+
+    let editor = codex.editor;
 
     inline.buttonsOpened = null;
     inline.actionsOpened = null;
@@ -363,7 +363,7 @@ module.exports = (function (inline) {
             event.preventDefault();
 
             /** Callback to link action */
-            action.addEventListener('keydown', inlineToolbarAnchorInputKeydown_, false);
+            editor.listeners.add(action, 'keydown', inlineToolbarAnchorInputKeydown_, false);
 
         }
 

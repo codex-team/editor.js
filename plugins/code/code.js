@@ -3,7 +3,7 @@
  * Creates code tag and adds content to this tag
  */
 
-var code = (function(code) {
+var code = (function(code_plugin) {
 
     var baseClass = "ce-code";
 
@@ -28,7 +28,7 @@ var code = (function(code) {
     /**
      * Method to render HTML block from JSON
      */
-    code.render = function (data) {
+    code_plugin.render = function (data) {
 
         return make_(data);
     };
@@ -36,7 +36,7 @@ var code = (function(code) {
     /**
      * Method to extract JSON data from HTML block
      */
-    code.save = function (blockContent){
+    code_plugin.save = function (blockContent) {
 
         var data = {
             text : blockContent.innerHTML
@@ -45,7 +45,7 @@ var code = (function(code) {
 
     };
 
-    code.validate = function(data) {
+    code_plugin.validate = function (data) {
 
         if (data.text.trim() == '')
             return;
@@ -53,6 +53,12 @@ var code = (function(code) {
         return true;
     };
 
-    return code;
+    code_plugin.destroy = function () {
+
+        code = null;
+
+    };
+
+    return code_plugin;
 
 })({});

@@ -10,6 +10,7 @@ module.exports = (function (editor) {
     'use strict';
 
     editor.version = VERSION;
+    editor.scriptPrefix = 'cdx-script-';
 
     var init = function () {
 
@@ -28,6 +29,8 @@ module.exports = (function (editor) {
         editor.parser        = require('./modules/parser');
         editor.sanitizer     = require('./modules/sanitizer');
         editor.anchors       = require('./modules/anchors');
+        editor.listeners     = require('./modules/listeners');
+        editor.destroyer     = require('./modules/destroyer');
         editor.paste         = require('./modules/paste');
 
     };

@@ -5,9 +5,9 @@
  * @version 1.1.2
  */
 
-let editor = codex.editor;
-
 module.exports = (function (core) {
+
+    let editor = codex.editor;
 
     /**
      * @public
@@ -215,8 +215,6 @@ module.exports = (function (core) {
 
         return new Promise(function (resolve, reject) {
 
-            const instancePrefix = 'cdx-script-';
-
             let script;
 
             /** Script is already loaded */
@@ -224,7 +222,7 @@ module.exports = (function (core) {
 
                 reject('Instance name is missed');
 
-            } else if ( document.getElementById(instancePrefix + instanceName) ) {
+            } else if ( document.getElementById(editor.scriptPrefix + instanceName) ) {
 
                 resolve(scriptPath);
 
@@ -233,7 +231,7 @@ module.exports = (function (core) {
             script = document.createElement('SCRIPT');
             script.async = true;
             script.defer = true;
-            script.id = instancePrefix + instanceName;
+            script.id = editor.scriptPrefix + instanceName;
 
             script.onload = function () {
 

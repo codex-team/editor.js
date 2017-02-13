@@ -3,7 +3,7 @@
  * @version 1.0.0
  */
 
-var twitter = (function(twitter) {
+var twitter = (function(twitter_plugin) {
 
     /**
     * User's configuration object
@@ -158,7 +158,7 @@ var twitter = (function(twitter) {
      * Prepare twitter scripts
      * @param {object} config
      */
-    twitter.prepare = function(config) {
+    twitter_plugin.prepare = function(config) {
 
         /**
          * Save configs
@@ -199,11 +199,11 @@ var twitter = (function(twitter) {
         return tweet;
     };
 
-    twitter.validate = function(data) {
+    twitter_plugin.validate = function(data) {
         return true;
     };
 
-    twitter.save = function(blockContent) {
+    twitter_plugin.save = function(blockContent) {
 
         var data,
             caption = blockContent.querySelector('.ce-twitter__caption');
@@ -228,11 +228,11 @@ var twitter = (function(twitter) {
         return data;
     };
 
-    twitter.render = function(data) {
+    twitter_plugin.render = function(data) {
         return make_(data);
     };
 
-    twitter.urlPastedCallback = function(url) {
+    twitter_plugin.urlPastedCallback = function(url) {
 
         var tweetId,
             arr,
@@ -256,15 +256,22 @@ var twitter = (function(twitter) {
         make_(data);
     };
 
-    twitter.pastePatterns = [
+    twitter_plugin.pastePatterns = [
         {
             type: 'twitter',
             regex: /http?.+twitter.com?.+\//,
-            callback: twitter.urlPastedCallback
+            callback: twitter_plugin.urlPastedCallback
         }
     ];
 
-    return twitter;
+    twitter_plugin.destroy = function () {
+
+        twitter = null;
+        delete window.twttr;
+
+    };
+
+    return twitter_plugin;
 
 })({});
 

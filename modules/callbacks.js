@@ -4,9 +4,10 @@
  * @author Codex Team
  * @version 1.3.7
  */
-let editor = codex.editor;
 
 module.exports = (function (callbacks) {
+
+    let editor = codex.editor;
 
     callbacks.globalKeydown = function (event) {
 

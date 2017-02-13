@@ -10,9 +10,9 @@
  * @version 1.0
  */
 
-let editor = codex.editor;
-
 module.exports = (function (toolbar) {
+
+    let editor = codex.editor;
 
     toolbar.settings = require('./settings');
     toolbar.inline   = require('./inline');

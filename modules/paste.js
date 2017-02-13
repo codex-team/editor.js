@@ -103,7 +103,6 @@ module.exports = function (paste) {
 
     };
 
-
     return paste;
 
 }({});
