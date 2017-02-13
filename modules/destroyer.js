@@ -47,27 +47,44 @@ module.exports = function (destroyer) {
 
     };
 
+
     /**
-     * Delete all editor data from webpage:
-     *
-     * 1. Remove all listeners that was added by editor
-     * 2. Calls plugins destroy method to remove plugins from storage
-     * 3. Remove editor elements from DOM
-     * 4. Remove scripts with editor prefix
-     * 4. Delete editor object from storage
+     * Delete editor data from webpage.
+     * You should send settings argument with boolean flags:
+     * {
+     *      UI- remove redactor event listeners and DOM nodes
+     *      scripts - remove redactor scripts from DOM
+     *      plugins - remove plugin's objects
+     *      core - remove editor core. You can remove core only if UI and scripts flags is true
+     * }
      *
      */
-    destroyer.destroy = function () {
+    destroyer.destroy = function (settings) {
 
-        editor.listeners.removeAll();
+        if (settings.UI) {
 
-        destroyer.destroyPlugins();
+            destroyer.removeNodes();
+            editor.listeners.removeAll();
 
-        destroyer.removeNodes();
+        }
 
-        destroyer.destroyScripts();
+        if (settings.scripts) {
 
-        delete codex.editor;
+            destroyer.destroyScripts();
+
+        }
+
+        if (settings.plugins) {
+
+            destroyer.destroyPlugins();
+
+        }
+
+        if (settings.UI && settings.scripts && settings.core) {
+
+            delete codex.editor;
+
+        }
 
     };
 
