@@ -208,12 +208,20 @@ var storage = function () {
 
     };
 
+    var destroy = function () {
+
+        stop();
+        storage = null;
+
+    };
+
     return {
         prepare: prepare,
         init   : init,
         save   : save,
         get    : get,
         stop   : stop,
+        destroy: destroy,
         config : config_
     };
 
