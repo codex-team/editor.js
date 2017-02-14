@@ -4,7 +4,7 @@
  * Saves editor data to browser local storage.
  * And uploads data from local storage if there is newer version
  */
-var storage = function () {
+var localHistoryPlugin = function () {
 
     var editor               = codex.editor,
         CURRENT_ARTICLE_HASH = null,
@@ -211,7 +211,7 @@ var storage = function () {
     var destroy = function () {
 
         stop();
-        storage = null;
+        localHistoryPlugin = null;
 
     };
 

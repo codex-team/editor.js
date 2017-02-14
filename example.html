@@ -51,7 +51,7 @@
 <script src="plugins/embed/embed.js"></script>
 <link rel="stylesheet" href="plugins/embed/embed.css">
 
-<script src="plugins/localstorage/localstorage.js"></script>
+<script src="plugins/localHistory/localHistory.js"></script>
 
 <script>
     codex.editor.start({
@@ -190,8 +190,8 @@
             },
             storage: {
                 type: 'storage',
-                prepare: storage.prepare,
-                destroy: storage.destroy
+                prepare: localHistoryPlugin.prepare,
+                destroy: localHistoryPlugin.destroy
             },
         },
         data : {
