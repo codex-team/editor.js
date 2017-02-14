@@ -203,9 +203,9 @@ module.exports = (function (renderer) {
     };
 
     /**
-     * Clears redactor area and render blocks from editor.state.blocks if makeBlocksFromData param is true
      *
-     * @param makeBlocksFromData
+     * @param {bool} makeBlocksFromData - if true, renders blocks from editor.state.blocks data,
+     *                                    else adds only initial plugin block
      */
     renderer.rerender = function (makeBlocksFromData) {
 
@@ -215,12 +215,12 @@ module.exports = (function (renderer) {
 
         if (makeBlocksFromData) {
 
-            editor.ui.addInitialBlock();
+            renderer.makeBlocksFromData();
             return;
 
         }
 
-        renderer.makeBlocksFromData();
+        editor.ui.addInitialBlock();
 
     };
 
