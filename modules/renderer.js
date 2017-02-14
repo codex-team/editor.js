@@ -203,6 +203,7 @@ module.exports = (function (renderer) {
     };
 
     /**
+     * Clears redactor area and renders blocks again
      *
      * @param {bool} makeBlocksFromData - if true, renders blocks from editor.state.blocks data,
      *                                    else adds only initial plugin block
