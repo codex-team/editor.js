@@ -142,7 +142,7 @@ module.exports = (function () {
 
     var callPluginsPrepareMethod_ = function (plugin) {
 
-        return plugin.prepare( plugin.config || {} );
+        return plugin.prepare( plugin.config || null );
 
     };
 

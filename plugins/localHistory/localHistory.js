@@ -11,10 +11,11 @@ var localHistoryPlugin = function () {
         CURRENT_STORAGE_KEY  = null,
         STORAGE_KEY          = 'codex.editor.savedData.',
         STORAGE_KEYS         = 'codex.editor.savedKeys',
-        STORAGE_TIME         = 4*24*60*60*1000, //4 days
+        STORAGE_TIME         = null,
         interval             = null,
         config_ = {
-            savingInterval: 1000
+            savingInterval: 1000, // ms
+            storageTime: 4 // days
         };
 
     /**
@@ -43,6 +44,10 @@ var localHistoryPlugin = function () {
 
         config_ = config || config_;
 
+        STORAGE_TIME = config_.storageTime*24*60*60*1000;
+
+        clearKeys();
+
         var localData = get();
 
         if (localData && editor.state.blocks.savingDate < localData.savingDate) {
@@ -55,7 +60,7 @@ var localHistoryPlugin = function () {
                 confirm     : function () {
 
                     editor.state.blocks = localData;
-                    editor.renderer.rerender();
+                    editor.renderer.rerender(true);
                     init(config_.savingInterval);
 
                 },
@@ -73,7 +78,6 @@ var localHistoryPlugin = function () {
 
         }
 
-        clearKeys();
 
         return Promise.resolve();
 
