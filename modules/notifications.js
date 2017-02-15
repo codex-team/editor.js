@@ -134,7 +134,7 @@ module.exports = (function (notifications) {
                 okBtn = editor.draw.node('SPAN', 'cdx-notification__ok-btn'),
                 cancelBtn = editor.draw.node('SPAN', 'cdx-notification__cancel-btn');
 
-            message.textContent = settings.message;
+            message.innerHTML = settings.message;
             okBtn.textContent = settings.okMsg || 'ОК';
             cancelBtn.textContent = settings.cancelMsg || 'Отмена';
 
@@ -172,30 +172,28 @@ module.exports = (function (notifications) {
 
             }
 
-        };
+        }
 
         function send() {
 
             editor.nodes.notifications.appendChild(notification);
             inputField.focus();
 
-            editor.nodes.notifications.classList.add('cdx-notification__notification-appending');
-
             window.setTimeout(function () {
 
-                editor.nodes.notifications.classList.remove('cdx-notification__notification-appending');
+                notification.classList.add('cdx-notification--showed');
 
-            }, 100);
+            }, 50);
 
             addToQueue({type: type, close: close});
 
-        };
+        }
 
         function close() {
 
             notification.remove();
 
-        };
+        }
 
 
         if (constructorSettings) {

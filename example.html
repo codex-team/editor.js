@@ -191,12 +191,16 @@
             storage: {
                 type: 'storage',
                 prepare: localHistoryPlugin.prepare,
-                destroy: localHistoryPlugin.destroy
+                destroy: localHistoryPlugin.destroy,
+                config : {
+                    retainDays: 1,
+                    savingInterval : 5000
+                }
             },
         },
         data : {
-            hash: 1486992960067,
-            savingDate: 0,
+            hash: 1487164774474,
+            savingDate: 1487164774474,
             items: [
                 {
                     type : 'paragraph',

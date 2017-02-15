@@ -14,8 +14,8 @@ var localHistoryPlugin = function () {
         STORAGE_TIME         = null,
         interval             = null,
         config_ = {
-            savingInterval: 1000, // ms
-            storageTime: 4 // days
+            savingInterval: 5000, // ms
+            retainDays: 4 // days
         };
 
     /**
@@ -27,8 +27,43 @@ var localHistoryPlugin = function () {
     }
 
     /**
+    * Formats date object
+    * @param {number} timestamp
+    */
+    function formatDate_ ( timestamp ) {
+
+        var date  = new Date(timestamp),
+            hours = date.getHours(),
+            mins  = date.getMinutes(),
+            secs  = date.getSeconds(),
+            now   = new Date();
+
+        hours = hours < 10 ? '0' + hours : hours;
+        mins  = mins  < 10 ? '0' + mins  : mins;
+        secs  = secs  < 10 ? '0' + secs  : secs;
+
+        var localeMonth = function ( month ) {
+
+            if ( isNaN(month) ) return false;
+
+            var lang = navigator.language == 'ru' ? 0 : 1,
+                map  = {
+                    ru : ['Янв','Фев','Мар','Апр','Мая','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'],
+                    en : ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+                };
+
+            return lang ? map.en[month] : map.ru[month];
+
+        };
+
+        return date.getDate() + ' ' + localeMonth(date.getMonth()) + ' ' + date.getFullYear() + ' ' + hours + ':' + mins + ':' + secs;
+    }
+
+    /**
     * Calls on editor initialize
-    * @param {object} config passed form user in codex.editor.start
+    * @param {object} config                    - settings passed form user in codex.editor.start
+    * @param {Number} config.retainDays         - how many days should retain local versions
+    * @param {Number} config.savingInterval     - interval for saving
     */
     var prepare = function (config) {
 
@@ -40,22 +75,29 @@ var localHistoryPlugin = function () {
         }
 
         CURRENT_ARTICLE_HASH = editor.currentHash;
-        CURRENT_STORAGE_KEY    = STORAGE_KEY+CURRENT_ARTICLE_HASH;
+        CURRENT_STORAGE_KEY  = STORAGE_KEY + CURRENT_ARTICLE_HASH;
 
-        config_ = config || config_;
+        if ( config.savingInterval ) config_.savingInterval = config.savingInterval;
+        if ( config.retainDays ) config_.retainDays = config.retainDays;
 
-        STORAGE_TIME = config_.storageTime*24*60*60*1000;
+        STORAGE_TIME = config_.retainDays * 24 * 60 * 60 * 1000;
 
         clearKeys();
 
-        var localData = get();
+        var localData = get(),
+            message,
+            timeStyle = 'margin-top: 0.6em; color: #6e758a;';
 
         if (localData && editor.state.blocks.savingDate < localData.savingDate) {
 
+            message = 'В вашем браузере сохранена более актуальная версия материала, чем на сервере' +
+                      '<div style="' + timeStyle + '">Текущая версия: ' + formatDate_(editor.state.blocks.savingDate) + '</div>' +
+                      '<div style="' + timeStyle + '">Сохраненная версия: ' + formatDate_(localData.savingDate) + '</div>';
+
             editor.notifications.notification({
                 type        : 'confirm',
-                message     : 'В вашем браузере сохранена более актаульная версия материала',
-                okMsg       : 'Показать',
+                message     : message,
+                okMsg       : 'Переключиться',
                 cancelMsg   : 'Отмена',
                 confirm     : function () {
 
