@@ -124,8 +124,8 @@ var embed = function(embed_plugin){
         },
         'codepen': {
             regex: /codepen.io\/([^\/\?\&]*)\/pen\/([^\/\?\&]*)/,
-            html: "<iframe height='400' scrolling='no' src='//codepen.io/<%= remote_id %>' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'></iframe>",
-            height: 400,
+            html: "<iframe height='300' scrolling='no' src='//codepen.io/<%= remote_id %>' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'></iframe>",
+            height: 300,
             width: 600
         }
     };
