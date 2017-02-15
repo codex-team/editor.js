@@ -39,6 +39,9 @@ var embed = function(embed_plugin){
                 case 'yandex-music-playlist':
                     id = execArray[1]+'/'+execArray[2];
                     break;
+                case 'codepen':
+                    id = execArray[1]+'/embed/'+execArray[2];
+                    break;
                 default:
                     id = execArray[1];
             }
@@ -118,6 +121,12 @@ var embed = function(embed_plugin){
             html: "<iframe frameborder=\"0\" style=\"border:none;width:540px;height:400px;\" width=\"540\" height=\"400\" src=\"https://music.yandex.ru/iframe/#playlist/<%= remote_id %>/show/cover/description/\"></iframe>",
             height: 400,
             width: 540
+        },
+        'codepen': {
+            regex: /codepen.io\/([^\/\?\&]*)\/pen\/([^\/\?\&]*)/,
+            html: "<iframe height='400' scrolling='no' src='//codepen.io/<%= remote_id %>' frameborder='no' allowtransparency='true' allowfullscreen='true' style='width: 100%;'></iframe>",
+            height: 400,
+            width: 600
         }
     };
 
@@ -262,6 +271,11 @@ var embed = function(embed_plugin){
         {
             type: 'yandex-music-playlist',
             regex: /https?:\/\/music.yandex.ru\/users\/([^\/\?\&]*)\/playlists\/([0-9]*)/,
+            callback: embed_plugin.urlPastedCallback
+        },
+        {
+            type: 'codepen',
+            regex: /codepen.io\/([^\/\?\&]*)\/pen\/([^\/\?\&]*)/,
             callback: embed_plugin.urlPastedCallback
         } ];
 
