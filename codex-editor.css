@@ -502,6 +502,7 @@
     bottom: 0;
     left: 0;
     padding: 15px;
+    z-index: 9999;
 }
 
 .cdx-notification {
@@ -512,7 +513,6 @@
     box-shadow: 0px 4px 17px 0px rgba(16, 23, 49, 0.12);
     border-radius: 7px;
     font-size: 14px;
-    z-index: 9999;
     transform: translateY(35px);
     transition: transform 150ms ease-in;
     will-change: transform;
