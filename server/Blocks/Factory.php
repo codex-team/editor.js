@@ -18,40 +18,7 @@ class Factory {
             /**
              * allowed datatypes from redactor
              */
-            $allowedBlockNameTypes = [
-
-                'Image' => [
-                    'image_extended'
-                ],
-
-                'Paragraph' => [
-                    'paragraph'
-                ],
-
-                'Link' => [
-                    'link', 'link_embed'
-                ],
-
-                'Quote' => [
-                    'quote_styled'
-                ],
-
-                'Heading' => [
-                    'header', 'heading_styled'
-                ],
-
-                'Instagram' => [
-                    'instagram'
-                ],
-
-                'Tweet' => [
-                    'tweet', 'twitter'
-                ],
-
-                'Embed' => [
-                    'video_extended', 'embed'
-                ]
-            ];
+            $allowedBlockNameTypes = self::getAllowedBlockTypes();
 
             /**
              * Returns correct type name
@@ -85,6 +52,11 @@ class Factory {
         }
 
         return null;
+    }
+
+    public static function getAllowedBlockTypes()
+    {
+        return include ('Config/blockTypes.php');
     }
 
 }

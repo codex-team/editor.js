@@ -12,7 +12,7 @@ class Paragraph extends Base implements HTMLPurifyable {
     public function initialize()
     {
         $this->sanitize();
-        $this->validate();
+        return $this->validate();
     }
 
     /**
@@ -34,7 +34,7 @@ class Paragraph extends Base implements HTMLPurifyable {
         $purifier = new HTMLPurifier($sanitizer);
 
         $this->data['data']['text'] = $purifier->purify($this->data['data']['text']);
-        
+
     }
 
     /**
