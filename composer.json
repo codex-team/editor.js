@@ -1,0 +1,12 @@
+{
+    "name": "behzodqurbonov/codex.editor",
+    "authors": [
+        {
+            "name": "khaydarov",
+            "email": "murod.haydarov@inbox.ru"
+        }
+    ],
+    "require": {
+        "ezyang/htmlpurifier": "dev-master"
+    }
+}

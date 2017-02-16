@@ -5,20 +5,24 @@ namespace CodexEditor\Entry;
 class Structure {
 
     /**
-     * @var array - block classes
+     * @var array - blocks classes
      */
     public $blocks = [];
 
+    /**
+     * Splits json string to separate blocks
+     *
+     */
     public function __construct($json)
     {
         $data  = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            echo 'Oh, give me that shit!!';
+            exit;
         }
 
         if (is_null($data) || count($data) === 0 || !isset($data['data']) || count($data['data']) === 0) {
-            echo 'what the hell?';
+            exit;
         }
 
         $blocks = [];
@@ -38,6 +42,24 @@ class Structure {
         }
 
         $this->blocks = $blocks;
+
+    }
+
+    /**
+     * Returns entry blocks as separate array element
+     *
+     * @return array
+     */
+    public function getEntryData()
+    {
+        /**
+         * $callback {Function} Closure
+         */
+        $callback = function($block) {
+            return $block->getData();
+        };
+
+        return array_map( $callback, $this->blocks);
 
     }
 

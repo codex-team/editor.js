@@ -2,6 +2,9 @@
 
 namespace CodexEditor\Entry\Block;
 
+use HTMLPurifier;
+use CodexEditor\Entry\Block\Interfaces\HTMLPurifyable;
+
 abstract class Base {
 
     /**
@@ -26,6 +29,15 @@ abstract class Base {
     public function __construct($data) {
 
         $this->data = $data;
+
+        if ($this instanceof HTMLPurifyable) {
+
+            $this->sanitizer = \HTMLPurifier_Config::createDefault();
+
+            $this->sanitizer->set('HTML.TargetBlank', true);
+            $this->sanitizer->set('URI.AllowedSchemes', ['http' => true, 'https' => true]);
+            $this->sanitizer->set('AutoFormat.RemoveEmpty', true);
+        }
 
     }
 

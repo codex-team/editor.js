@@ -2,7 +2,10 @@
 
 namespace CodexEditor\Entry\Block;
 
-class Paragraph extends Base {
+use CodexEditor\Entry\Block\Interfaces\HTMLPurifyable;
+use \HTMLPurifier;
+
+class Paragraph extends Base implements HTMLPurifyable {
 
     protected $template = 'text';
 
@@ -19,7 +22,19 @@ class Paragraph extends Base {
      */
     public function sanitize()
     {
-        // Sanitize input data
+        $allowedTags = 'a[href],br,p,strong,b,i,em';
+
+        if ($this->data['type'] === 'text_limited') {
+            $allowedTags = 'a[href],br,p';
+        }
+
+        $sanitizer = clone $this->sanitizer;
+        $sanitizer->set('HTML.Allowed', $allowedTags);
+
+        $purifier = new HTMLPurifier($sanitizer);
+
+        $this->data['data']['text'] = $purifier->purify($this->data['data']['text']);
+        
     }
 
     /**
