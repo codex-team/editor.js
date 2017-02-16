@@ -34,6 +34,12 @@ module.exports = (function (toolbar) {
      */
     toolbar.open = function () {
 
+        if (editor.hideToolbar) {
+
+            return;
+
+        }
+
         editor.nodes.toolbar.classList.add('opened');
         this.opened = true;
 
