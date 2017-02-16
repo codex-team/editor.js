@@ -26,7 +26,8 @@ abstract class Base {
      * Base constructor.
      * @param $data
      */
-    public function __construct($data) {
+    public function __construct($data)
+    {
 
         $this->data = $data;
 
@@ -50,8 +51,15 @@ abstract class Base {
     /** Should be extended by Block Class */
     abstract function sanitize();
 
-    public function getData() {
+    public function getData()
+    {
         return $this->data;
     }
+
+    public static function getAllowedBlockTypes()
+    {
+        return include ('Config/blockTypes.php');
+    }
+
 
 }

@@ -40,7 +40,7 @@ class Structure {
                 }
             }
         }
-
+        
         $this->blocks = $blocks;
 
     }
@@ -56,7 +56,11 @@ class Structure {
          * $callback {Function} Closure
          */
         $callback = function($block) {
-            return $block->getData();
+
+            if ($block) {
+                return $block->getData();
+            }
+
         };
 
         return array_map( $callback, $this->blocks);

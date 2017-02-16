@@ -2,6 +2,8 @@
 
 namespace CodexEditor\Entry;
 
+use CodexEditor\Entry\Block\Base;
+
 class Factory {
 
     /**
@@ -18,7 +20,7 @@ class Factory {
             /**
              * allowed datatypes from redactor
              */
-            $allowedBlockNameTypes = self::getAllowedBlockTypes();
+            $allowedBlockNameTypes = Base::getAllowedBlockTypes();
 
             /**
              * Returns correct type name
@@ -40,7 +42,7 @@ class Factory {
             $blockClass = "CodexEditor\\Entry\\Block\\" . $type;
 
             if (class_exists($blockClass)) {
-
+                
                 /** Call Base Class constructor */
                 $block = new $blockClass($data);
 
@@ -53,10 +55,4 @@ class Factory {
 
         return null;
     }
-
-    public static function getAllowedBlockTypes()
-    {
-        return include ('Config/blockTypes.php');
-    }
-
 }

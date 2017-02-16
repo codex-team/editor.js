@@ -6,6 +6,9 @@
             "email": "murod.haydarov@inbox.ru"
         }
     ],
+    "config": {
+        "vendor-dir":"server/vendor"
+    },
     "require": {
         "ezyang/htmlpurifier": "dev-master"
     }

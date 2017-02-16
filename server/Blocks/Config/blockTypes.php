@@ -17,7 +17,7 @@ return array(
         'quote_styled'
     ),
 
-    'Heading' => array(
+    'Header' => array(
         'header', 'heading_styled'
     ),
 

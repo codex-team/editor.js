@@ -9,7 +9,8 @@ require_once ('./Structure.php');
 require_once ('./Blocks/Base.php');
 require_once ('./Blocks/Factory.php');
 require_once ('./Blocks/Paragraph.php');
-require_once ('../vendor/autoload.php');
+require_once ('./Blocks/Header.php');
+require_once ('./vendor/autoload.php');
 
 use CodexEditor\Entry\Structure;
 

@@ -7,3 +7,4 @@ Thumbs.db
 
 node_modules/*
 /vendor/
+/server/vendor/
