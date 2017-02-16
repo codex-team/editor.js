@@ -41,7 +41,15 @@ module.exports = (function (callbacks) {
 
     callbacks.tabKeyPressed = function (event) {
 
-        if ( !editor.toolbar.opened ) {
+        var blockIsEmpty = !editor.content.currentNode.textContent.trim();
+
+        if (!blockIsEmpty) {
+
+            return;
+
+        }
+
+        if ( !editor.toolbar.opened  ) {
 
             editor.toolbar.open();
 
@@ -361,9 +369,12 @@ module.exports = (function (callbacks) {
         /** Hide plus buttons */
         editor.toolbar.hidePlusButton();
 
-        /** Mark current block */
-        editor.content.markBlock();
+        if (!inputIsEmpty) {
 
+            /** Mark current block */
+            editor.content.markBlock();
+
+        }
 
         if ( isInitialType && inputIsEmpty ) {
 

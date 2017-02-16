@@ -43,6 +43,8 @@ module.exports = (function (core) {
 
             }
 
+            editor.hideToolbar = userSettings.hideToolbar;
+
             editor.nodes.textarea = document.getElementById(userSettings.textareaId || editor.settings.textareaId);
 
             if (typeof editor.nodes.textarea === undefined || editor.nodes.textarea === null) {
