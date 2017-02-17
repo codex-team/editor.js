@@ -6,4 +6,5 @@ Thumbs.db
 /*.sublime-workspace
 
 node_modules/*
-server/vendor/
+vendor/
+node_modules/
