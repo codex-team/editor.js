@@ -13,8 +13,10 @@
 </head>
 <body>
 
-<textarea name="" id="codex_area" cols="30" rows="10" hidden></textarea>
-
+<form action="server/app.php" method="POST" id="entryForm">
+    <textarea name="entry" id="codex_area" cols="30" rows="10" hidden></textarea>
+    <button type="submit" id="sendEntry">Отправить</button>
+</form>
 </body>
 
 <script src="codex-editor.js?v=108"></script>
@@ -201,12 +203,35 @@
                     data : {
                         text : 'Пишите нам на team@ifmo.su'
                     },
-                    anchor: 'Update',
-                },
+                    anchor: 'Update'
+                }
             ],
             count: 2
         }
     });
+</script>
+
+<script>
+
+    var submitBtn = document.getElementById('sendEntry'),
+        entryForm = document.getElementById('entryForm'),
+        editorArea = document.getElementById('codex_area');
+
+    submitBtn.addEventListener('click', function(event) {
+
+        event.preventDefault();
+
+        codex.editor.saver.saveBlocks();
+
+        setTimeout(function() {
+
+            editorArea.innerHTML = JSON.stringify({data: codex.editor.state.jsonOutput});
+            entryForm.submit();
+
+        }, 100);
+
+    }, false);
+
 </script>
 
 </html>
