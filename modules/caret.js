@@ -268,6 +268,20 @@ module.exports = (function (caret) {
         }
     };
 
+    caret.tabBehaviorEmulator = function (type) {
+
+        var tab;
+
+        switch (type) {
+            case 'spaces': tab = '\u00a0\u00a0\u00a0\u00a0'; break;
+            case 'tab': tab = '&#009'; break;
+            default: tab = '';
+        }
+
+        document.execCommand('insertHTML', false, tab);
+
+    };
+
     return caret;
 
 })({});

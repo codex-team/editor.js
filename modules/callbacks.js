@@ -41,7 +41,16 @@ module.exports = (function (callbacks) {
 
     callbacks.tabKeyPressed = function (event) {
 
-        var blockIsEmpty = !editor.content.currentNode.textContent.trim();
+        var blockIsEmpty = !editor.content.currentNode.textContent.trim(),
+            tool = editor.content.getFirstLevelBlock(editor.content.currentNode).dataset.tool;
+
+        if (editor.tools[tool].tabBehavior) {
+
+            event.preventDefault();
+            editor.caret.tabBehaviorEmulator(editor.tools[tool].tabBehavior);
+            return;
+
+        }
 
         if (!blockIsEmpty) {
 

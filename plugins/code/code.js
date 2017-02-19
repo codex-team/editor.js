@@ -7,6 +7,67 @@ var code = (function(code_plugin) {
 
     var baseClass = "ce-code";
 
+
+    var intendWatcher = function () {
+
+        var keys = {
+            brackets: {
+                left: 219,
+                right: 221
+            },
+
+            enter: 13
+        };
+
+        var intendation = {
+
+            set: function (intend) {
+                codex.editor.content.currentNode.dataset.intend = intend;
+            },
+
+            get: function () {
+                return codex.editor.content.currentNode.dataset.intend || 0;
+            }
+
+
+        };
+
+        var keyUp = function (e) {
+
+            var intend = intendation.get();
+
+            var key = e.keyCode;
+
+            if (key == keys.brackets.left && e.shiftKey) {
+                intend++;
+            }
+
+            if (key == keys.brackets.right && e.shiftKey) {
+                intend--;
+            }
+
+            if (key == keys.enter) {
+
+                for (var i = 0; i < intend; i++) {
+
+                    codex.editor.caret.tabBehaviorEmulator(codex.editor.tools.code.tabBehavior);
+
+                }
+
+                console.log('enter: ',intend);
+
+            }
+
+            intendation.set(intend);
+
+        };
+
+        return {
+            keyUp: keyUp
+        };
+
+    }();
+
     /**
      * Make initial header block
      * @param {object} JSON with block data
@@ -21,6 +82,7 @@ var code = (function(code_plugin) {
         }
 
         tag.contentEditable = true;
+        tag.addEventListener('keyup', intendWatcher.keyUp);
 
         return tag;
     };
