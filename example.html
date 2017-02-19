@@ -51,6 +51,9 @@
 <script src="plugins/embed/embed.js"></script>
 <link rel="stylesheet" href="plugins/embed/embed.css">
 
+<script src="plugins/raw/raw.js"></script>
+<link rel="stylesheet" href="plugins/raw/raw.css">
+
 <script>
     codex.editor.start({
         textareaId : "codex_area",
@@ -186,6 +189,16 @@
                 destroy: embed.destroy,
                 validate: embed.validate,
                 renderOnPastePatterns: embed.pastePatterns,
+            },
+            raw: {
+                type: 'raw',
+                displayInToolbox: true,
+                iconClassname: 'raw-plugin-icon',
+                render: raw.render,
+                save: raw.save,
+                validate: raw.validate,
+                destroy: raw.destroy,
+                enableLineBreaks: true
             }
         },
         data : {
@@ -202,11 +215,10 @@
                         text : 'Пишите нам на team@ifmo.su'
                     },
                     anchor: 'Update',
-                },
+                }
             ],
             count: 2
         }
     });
 </script>
-
 </html>

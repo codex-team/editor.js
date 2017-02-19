@@ -1,0 +1,29 @@
+.raw-plugin__input {
+    min-height: 200px;
+    border: 1px solid #ebeef3;
+    background: #fff;
+    border-radius: 3px;
+    margin: 1em auto;
+    padding: 1em;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+
+    font-family: 'monospace', 'monaco', 'consolas', 'courier';
+    line-height: 1.5em;
+    font-size: .8em;
+}
+
+.raw-plugin-icon {
+    display: inline-block;
+    width: 16px;
+    height: 32px;
+    background: #000;
+    -webkit-mask: url(raw-icon.svg) no-repeat center center;
+    mask: url(raw-icon.svg) no-repeat center center;
+    -webkit-mask-size: contain;
+    mask-size: contain;
+}
+
+li:hover .raw-plugin-icon{
+    background: #fff;
+}
