@@ -9,7 +9,7 @@ ul.cdx-plugin-list {
 }
 
 ol.cdx-plugin-list {
-    list-style-type: initial;
+    list-style-type: decimal;
 }
 
 .cdx-plugin-list__li {
