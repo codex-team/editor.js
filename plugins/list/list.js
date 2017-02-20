@@ -184,13 +184,15 @@ var list = (function(list_plugin) {
             type  : null,
             items : []
         },
-        litsItemContent = '';
+        litsItemContent = '',
+        isEmptyItem = false;
 
         for (var index = 0; index < blockContent.childNodes.length; index++){
 
             litsItemContent = blockContent.childNodes[index].innerHTML;
+            isEmptyItem = !blockContent.childNodes[index].textContent.trim();
 
-            if (litsItemContent !== '' && litsItemContent !== '<br>') {
+            if (!isEmptyItem) {
                 data.items.push(litsItemContent);
             }
         }
