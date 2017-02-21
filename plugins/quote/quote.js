@@ -234,19 +234,33 @@ var quote = (function(quote_plugin) {
                 quote ;
 
             /** Simple quote text placed in Blockquote tag*/
-            if ( currentNode.dataset.quoteStyle == 'simple' )
+            if ( currentNode.dataset.quoteStyle == 'simple' ){
+
                 quote = currentNode.innerHTML || '';
-            else
+
+            } else {
+
                 quote = currentNode.querySelector('.' + elementClasses_.quoteText).innerHTML;
 
-            if (job)
-                job = job.textContent || '';
+            }
 
-            if (author)
-                author = author.textContent || '';
+            if (job){
 
-            if (photo)
+                job = job.innerHTML || '';
+
+            }
+
+            if (author){
+
+                author = author.innerHTML || '';
+
+            }
+
+            if (photo){
+
                 photo = photo.dataset.bigUrl;
+
+            }
 
             var data = {
                 style       : currentNode.dataset.quoteStyle,
