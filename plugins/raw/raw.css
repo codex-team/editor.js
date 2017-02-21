@@ -1,4 +1,6 @@
 .raw-plugin__input {
+    display: block;
+    width: 100%;
     min-height: 200px;
     border: 1px solid #ebeef3;
     background: #fff;

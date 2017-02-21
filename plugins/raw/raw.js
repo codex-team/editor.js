@@ -4,10 +4,10 @@ var raw = function (plugin) {
 
     plugin.render = function (data) {
 
-        var input   = editor.draw.node('DIV', 'raw-plugin__input', {contentEditable: true});
+        var input   = editor.draw.node('TEXTAREA', 'raw-plugin__input', {});
 
         if (data && data.html) {
-            input.textContent = data.html;
+            input.value = data.html;
         }
 
         return input;
@@ -17,7 +17,7 @@ var raw = function (plugin) {
     plugin.save = function (block) {
 
         return {
-            html: block.textContent
+            html: block.value
         }
 
     };

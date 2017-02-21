@@ -2,7 +2,7 @@
  * Codex Editor callbacks module
  *
  * @author Codex Team
- * @version 1.3.7
+ * @version 1.3.8
  */
 
 module.exports = (function (callbacks) {
@@ -818,6 +818,15 @@ module.exports = (function (callbacks) {
      */
     callbacks.blockPasteCallback = function (event) {
 
+        /** If area is input or textarea then allow default behaviour */
+        var nativeInputAreas = ['INPUT', 'TEXTAREA'];
+
+        if (nativeInputAreas.indexOf(event.target.tagName) != -1) {
+
+            return;
+
+        }
+
         /** Prevent default behaviour */
         event.preventDefault();
 
@@ -833,12 +842,6 @@ module.exports = (function (callbacks) {
 
         /** get html pasted data - dirty data */
         var data = event.clipboardData.getData('text/html') || event.clipboardData.getData('text/plain');
-
-        if (editor.tools[currentNode.dataset.tool].allowPasteHTML) {
-
-            data = event.clipboardData.getData('text/plain');
-
-        }
 
         /** Temporary DIV that is used to work with childs as arrays item */
         var div     = editor.draw.node('DIV', '', {}),
