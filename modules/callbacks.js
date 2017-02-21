@@ -822,7 +822,7 @@ module.exports = (function (callbacks) {
         event.preventDefault();
 
         var editableParent = editor.content.getEditableParent(event.target),
-            firstLevelBlock = editor.content.getFirstLevelBlock(event.target);
+            currentNode = editor.content.currentNode;
 
         /** Allow paste when event target placed in Editable element */
         if (!editableParent) {
@@ -833,6 +833,12 @@ module.exports = (function (callbacks) {
 
         /** get html pasted data - dirty data */
         var data = event.clipboardData.getData('text/html') || event.clipboardData.getData('text/plain');
+
+        if (editor.tools[currentNode.dataset.tool].allowPasteHTML) {
+
+            data = event.clipboardData.getData('text/plain');
+
+        }
 
         /** Temporary DIV that is used to work with childs as arrays item */
         var div     = editor.draw.node('DIV', '', {}),
@@ -859,7 +865,7 @@ module.exports = (function (callbacks) {
         }
 
 
-        if (editor.tools[firstLevelBlock.dataset.tool].allowRenderOnPaste) {
+        if (editor.tools[currentNode.dataset.tool].allowRenderOnPaste) {
 
             if (editor.paste.pasted(event)) return;
 
