@@ -6,6 +6,8 @@ var raw = function (plugin) {
 
         var input   = editor.draw.node('TEXTAREA', 'raw-plugin__input', {});
 
+        input.placeholder = 'Вставьте HTML код'
+
         if (data && data.html) {
             input.value = data.html;
         }
