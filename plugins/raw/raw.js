@@ -1,4 +1,8 @@
-var raw = function (plugin) {
+/**
+* Plugin for CodeX.Editor
+* Implements RAW-data block
+*/
+var rawPlugin = function (plugin) {
 
     var editor = codex.editor;
 
@@ -6,7 +10,7 @@ var raw = function (plugin) {
 
         var input   = editor.draw.node('TEXTAREA', 'raw-plugin__input', {});
 
-        input.placeholder = 'Вставьте HTML код'
+        input.placeholder = 'Вставьте HTML код';
 
         if (data && data.html) {
             input.value = data.html;
@@ -20,7 +24,7 @@ var raw = function (plugin) {
 
         return {
             html: block.value
-        }
+        };
 
     };
 
@@ -38,7 +42,7 @@ var raw = function (plugin) {
 
     plugin.destroy = function () {
 
-        raw = null;
+        rawPlugin = null;
 
     };
 
