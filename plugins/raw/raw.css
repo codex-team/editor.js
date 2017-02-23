@@ -24,13 +24,11 @@
     display: inline-block;
     width: 16px;
     height: 32px;
-    background: #000;
-    -webkit-mask: url(raw-icon.svg) no-repeat center center;
-    mask: url(raw-icon.svg) no-repeat center center;
-    -webkit-mask-size: contain;
-    mask-size: contain;
+    background: url(raw-icon-black.svg) no-repeat center center;
+    background-size: contain;
 }
 
 li:hover .raw-plugin-icon{
-    background: #fff;
+    background: url(raw-icon-white.svg) no-repeat center center;
+    background-size: contain;
 }
