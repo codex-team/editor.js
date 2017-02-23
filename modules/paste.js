@@ -69,7 +69,10 @@ module.exports = function (paste) {
 
         patterns.map( function (pattern) {
 
-            if (pattern.regex.test(string)) {
+            var execArray = pattern.regex.exec(string),
+                match     = execArray && execArray[0];
+
+            if ( match && match === string.trim()) {
 
                 /** current block is not empty */
                 if ( content.textContent.trim() && plugin == editor.settings.initialBlockPlugin ) {
