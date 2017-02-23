@@ -2,7 +2,7 @@
  * Codex Editor callbacks module
  *
  * @author Codex Team
- * @version 1.3.8
+ * @version 1.3.9
  */
 
 module.exports = (function (callbacks) {
@@ -691,6 +691,21 @@ module.exports = (function (callbacks) {
             selectionLength,
             firstLevelBlocksCount;
 
+        if (isNativeInput(event.target)) {
+
+            /** If input value is empty - remove block */
+            if (event.target.value.trim() == '') {
+
+                block.remove();
+
+            } else {
+
+                return;
+
+            }
+
+        }
+
         if (block.textContent.trim()) {
 
             range           = editor.content.getRange();
@@ -819,9 +834,7 @@ module.exports = (function (callbacks) {
     callbacks.blockPasteCallback = function (event) {
 
         /** If area is input or textarea then allow default behaviour */
-        var nativeInputAreas = ['INPUT', 'TEXTAREA'];
-
-        if (nativeInputAreas.indexOf(event.target.tagName) != -1) {
+        if ( isNativeInput(event.target) ) {
 
             return;
 
@@ -939,6 +952,17 @@ module.exports = (function (callbacks) {
         /** Close toolbox when settings button is active */
         editor.toolbar.toolbox.close();
         editor.toolbar.settings.hideRemoveActions();
+
+    };
+
+    /**
+     * Check block for
+     * @param target
+     */
+    var isNativeInput = function(target) {
+
+        var nativeInputAreas = ['INPUT', 'TEXTAREA'];
+        return (nativeInputAreas.indexOf(target.tagName) != -1);
 
     };
 
