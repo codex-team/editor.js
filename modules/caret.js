@@ -270,15 +270,15 @@ module.exports = (function (caret) {
 
     caret.tabBehaviorEmulator = function (type) {
 
-        var tab;
+        var tabs;
 
         switch (type) {
-            case 'spaces': tab = '\u00a0\u00a0\u00a0\u00a0'; break;
-            case 'tab': tab = '&#009'; break;
-            default: tab = '';
+            case 'spaces': tabs = '\u00a0\u00a0\u00a0\u00a0'; break;
+            case 'tab': tabs = '&#009'; break;
+            default: tabs = '';
         }
 
-        document.execCommand('insertHTML', false, tab);
+        document.execCommand('insertHTML', false, tabs);
 
     };
 

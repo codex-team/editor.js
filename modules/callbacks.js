@@ -42,7 +42,7 @@ module.exports = (function (callbacks) {
     callbacks.tabKeyPressed = function (event) {
 
         var blockIsEmpty = !editor.content.currentNode.textContent.trim(),
-            tool = editor.content.getFirstLevelBlock(editor.content.currentNode).dataset.tool;
+            tool = editor.content.currentNode.dataset.tool;
 
         if (editor.tools[tool].tabBehavior) {
 
@@ -831,7 +831,7 @@ module.exports = (function (callbacks) {
         event.preventDefault();
 
         var editableParent = editor.content.getEditableParent(event.target),
-            firstLevelBlock = editor.content.getFirstLevelBlock(event.target);
+            currentNode = editor.content.currentNode;
 
         /** Allow paste when event target placed in Editable element */
         if (!editableParent) {
@@ -868,7 +868,7 @@ module.exports = (function (callbacks) {
         }
 
 
-        if (editor.tools[firstLevelBlock.dataset.tool].allowRenderOnPaste) {
+        if (editor.tools[currentNode.dataset.tool].allowRenderOnPaste) {
 
             if (editor.paste.pasted(event)) return;
 
