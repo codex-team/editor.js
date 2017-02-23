@@ -2,7 +2,7 @@
  * Codex Editor callbacks module
  *
  * @author Codex Team
- * @version 1.3.9
+ * @version 1.3.10
  */
 
 module.exports = (function (callbacks) {
@@ -854,7 +854,8 @@ module.exports = (function (callbacks) {
         }
 
         /** get html pasted data - dirty data */
-        var data = event.clipboardData.getData('text/html') || event.clipboardData.getData('text/plain');
+        var htmlData  = event.clipboardData.getData('text/html'),
+            plainData = event.clipboardData.getData('text/plain');
 
         /** Temporary DIV that is used to work with childs as arrays item */
         var div     = editor.draw.node('DIV', '', {}),
@@ -865,9 +866,16 @@ module.exports = (function (callbacks) {
         /** Create fragment, that we paste to range after proccesing */
         fragment = document.createDocumentFragment();
 
-        cleanData = cleaner.clean(data);
+        if ( htmlData.trim() != '' ) {
 
-        div.innerHTML = cleanData;
+            cleanData = cleaner.clean(htmlData);
+            div.innerHTML = cleanData;
+
+        } else {
+
+            div.innerText = plainData.toString();
+
+        }
 
         var node, lastNode;
 
@@ -959,7 +967,7 @@ module.exports = (function (callbacks) {
      * Check block for
      * @param target
      */
-    var isNativeInput = function(target) {
+    var isNativeInput = function (target) {
 
         var nativeInputAreas = ['INPUT', 'TEXTAREA'];
         return (nativeInputAreas.indexOf(target.tagName) != -1);
