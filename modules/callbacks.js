@@ -42,13 +42,17 @@ module.exports = (function (callbacks) {
     callbacks.tabKeyPressed = function (event) {
 
 
-        var inputs = editor.content.currentNode.querySelectorAll('textarea, input:not([type="button"]):not([type="submit"]):not([type="reset"]'),
+        var inputs = editor.content.currentNode.querySelectorAll('textarea, input'),
             inputsAreEmpty   = true,
             textContentIsEmpty = !editor.content.currentNode.textContent.trim();
 
         Array.prototype.map.call(inputs, function (input) {
 
-            inputsAreEmpty = inputsAreEmpty && !input.value.trim();
+            if (input.type == 'textarea' || input.type == 'text') {
+
+                inputsAreEmpty = inputsAreEmpty && !input.value.trim();
+
+            }
 
         });
 
