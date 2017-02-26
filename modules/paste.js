@@ -2,7 +2,7 @@
  * Codex Editor Paste module
  *
  * @author Codex Team
- * @version 1.0
+ * @version 1.1.1
  */
 
 module.exports = function (paste) {
@@ -24,6 +24,7 @@ module.exports = function (paste) {
             }
 
             tools[tool].renderOnPastePatterns.map(function (pattern) {
+
 
                 patterns.push(pattern);
 

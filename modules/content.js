@@ -3,7 +3,7 @@
  * Works with DOM
  *
  * @author Codex Team
- * @version 1.3.11
+ * @version 1.3.12
  */
 
 module.exports = (function (content) {
@@ -347,6 +347,7 @@ module.exports = (function (content) {
      */
     content.switchBlock = function (blockToReplace, newBlock, tool) {
 
+        tool = tool || editor.content.currentNode.dataset.tool;
         var newBlockComposed = editor.content.composeNewBlock(newBlock, tool);
 
         /** Replacing */

@@ -2,7 +2,7 @@
  * Codex Editor UI module
  *
  * @author Codex Team
- * @version 1.1
+ * @version 1.1.3
  */
 
 module.exports = (function (ui) {
@@ -178,7 +178,7 @@ module.exports = (function (ui) {
 
             editor.tools[toolName] = tool;
 
-            if (!tool.iconClassname) {
+            if (!tool.iconClassname && tool.displayInToolbox) {
 
                 editor.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', toolName);
                 continue;

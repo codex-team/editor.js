@@ -7,7 +7,7 @@ var embed = function(embed_plugin){
     var methods = {
 
         addInternal: function (content) {
-            codex.editor.content.switchBlock(codex.editor.content.currentNode, content, 'video_extended');
+            codex.editor.content.switchBlock(codex.editor.content.currentNode, content);
 
             var blockContent = codex.editor.content.currentNode.childNodes[0];
             blockContent.classList.add('embed__loader');
