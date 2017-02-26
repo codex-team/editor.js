@@ -71,8 +71,8 @@
                 showInlineToolbar: true,
                 allowRenderOnPaste: true
             },
-            heading_styled: {
-                type: 'heading_styled',
+            header: {
+                type: 'header',
                 iconClassname: 'ce-icon-header',
                 appendCallback: header.appendCallback,
                 makeSettings: header.makeSettings,
@@ -123,8 +123,8 @@
                 enableLineBreaks: true,
                 allowedToPaste: true,
             },
-            quote_styled: {
-                type: 'quote_styled',
+            quote: {
+                type: 'quote',
                 iconClassname: 'ce-icon-quote',
                 makeSettings: quote.makeSettings,
                 prepare: quote.prepare,
@@ -161,7 +161,7 @@
                 type: 'instagram',
                 iconClassname: 'ce-icon-instagram',
                 prepare: instagram.prepare,
-                render: instagram.reneder,
+                render: instagram.render,
                 validate: instagram.validate,
                 save: instagram.save,
                 destroy: instagram.destroy,
@@ -216,9 +216,16 @@
                         text : 'Пишите нам на team@ifmo.su'
                     },
                     anchor: 'Update',
-                }
+                },
+                {
+                    type : 'list',
+                    data : {
+                        type : 'OL',
+                        items : [1,3,4]
+                    },
+                },
             ],
-            count: 2
+            count: 3
         }
     });
 </script>

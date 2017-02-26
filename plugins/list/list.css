@@ -4,7 +4,15 @@
     line-height: 1.7em;
 }
 
-.cdx-plugin-list__li{
+ul.cdx-plugin-list {
+    list-style-type: disc;
+}
+
+ol.cdx-plugin-list {
+    list-style-type: decimal;
+}
+
+.cdx-plugin-list__li {
     display: list-item;
     background: #fff;
     border: 1px solid #ebeef3;
@@ -12,6 +20,7 @@
     margin: .5em;
     padding: .5em;
     list-style-position: outside;
+    list-style-type: inherit;
     margin-left: 1.1em;
 }
 

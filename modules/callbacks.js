@@ -970,6 +970,7 @@ module.exports = (function (callbacks) {
     var isNativeInput = function (target) {
 
         var nativeInputAreas = ['INPUT', 'TEXTAREA'];
+
         return (nativeInputAreas.indexOf(target.tagName) != -1);
 
     };

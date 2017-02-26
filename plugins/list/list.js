@@ -74,7 +74,7 @@ var list = (function(list_plugin) {
             newEditable.innerHTML = oldEditable.innerHTML;
             newEditable.classList.add(elementClasses_.pluginWrapper);
 
-            codex.editor.content.switchBlock(currentBlock, newEditable, 'list');
+            codex.editor.content.switchBlock(currentBlock, newEditable);
         },
         keyDown: function (e) {
 
@@ -129,7 +129,7 @@ var list = (function(list_plugin) {
      */
     list_plugin.render = function (data) {
 
-        var type = data && data.type == 'ordered' ? 'OL' : 'UL',
+        var type = data && (data.type == 'ordered' || data.type == 'OL') ? 'OL' : 'UL',
             tag  = ui.make(type),
             newLi;
 
@@ -139,7 +139,7 @@ var list = (function(list_plugin) {
 
                 newLi = ui.block('li', elementClasses_.li);
 
-                newLi.innerHTML = element;
+                newLi.innerHTML = element || '';
 
                 tag.appendChild(newLi);
 
@@ -159,15 +159,18 @@ var list = (function(list_plugin) {
 
     list_plugin.validate = function(data) {
 
-        var items = data.items.every(function(item){
-            return item.trim() !== '';
+        var isEmpty = data.items.every(function(item){
+            return item.trim() === '';
         });
 
-        if (!items)
+        if (isEmpty){
             return;
+        }
 
-        if (data.type != 'UL' && data.type != 'OL')
+        if (data.type != 'UL' && data.type != 'OL'){
+            console.warn('CodeX Editor List-tool: wrong list type passed %o', data.type);
             return;
+        }
 
         return true;
     };
@@ -180,10 +183,19 @@ var list = (function(list_plugin) {
         var data = {
             type  : null,
             items : []
-        };
+        },
+        litsItemContent = '',
+        isEmptyItem = false;
 
-        for(var index = 0; index < blockContent.childNodes.length; index++)
-            data.items[index] = blockContent.childNodes[index].textContent;
+        for (var index = 0; index < blockContent.childNodes.length; index++){
+
+            litsItemContent = blockContent.childNodes[index].innerHTML;
+            isEmptyItem = !blockContent.childNodes[index].textContent.trim();
+
+            if (!isEmptyItem) {
+                data.items.push(litsItemContent);
+            }
+        }
 
         data.type = blockContent.dataset.type;
 
