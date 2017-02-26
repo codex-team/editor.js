@@ -49,7 +49,7 @@ module.exports = (function (caret) {
         }
 
         /** If Element is INPUT */
-        if (el.tagName == 'INPUT') {
+        if (el.contentEditable != 'true') {
 
             el.focus();
             return;
@@ -155,19 +155,7 @@ module.exports = (function (caret) {
         }
 
         editor.caret.inputIndex = index + 1;
-
-        console.log(nextInput);
-
-        if (nextInput.contentEditable) {
-
-            editor.caret.set(nextInput, 0, 0);
-
-        } else {
-
-            nextInput.focus();
-
-        }
-
+        editor.caret.set(nextInput, 0, 0);
         editor.content.workingNodeChanged(nextInput);
 
     };
@@ -200,18 +188,7 @@ module.exports = (function (caret) {
         }
 
         editor.caret.inputIndex = index;
-
-
-        if (targetInput.contentEditable) {
-
-            editor.caret.set(targetInput, 0, 0);
-
-        } else {
-
-            targetInput.focus();
-
-        }
-
+        editor.caret.set(targetInput, 0, 0);
         editor.content.workingNodeChanged(targetInput);
 
     };
@@ -251,17 +228,7 @@ module.exports = (function (caret) {
 
         }
         editor.caret.inputIndex = index - 1;
-
-        if (previousInput.contentEditable) {
-
-            editor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
-
-        } else {
-
-            previousInput.focus();
-
-        }
-
+        editor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
         editor.content.workingNodeChanged(inputs[index - 1]);
 
     };
