@@ -155,7 +155,19 @@ module.exports = (function (caret) {
         }
 
         editor.caret.inputIndex = index + 1;
-        editor.caret.set(nextInput, 0, 0);
+
+        console.log(nextInput);
+
+        if (nextInput.contentEditable) {
+
+            editor.caret.set(nextInput, 0, 0);
+
+        } else {
+
+            nextInput.focus();
+
+        }
+
         editor.content.workingNodeChanged(nextInput);
 
     };
@@ -188,7 +200,18 @@ module.exports = (function (caret) {
         }
 
         editor.caret.inputIndex = index;
-        editor.caret.set(targetInput, 0, 0);
+
+
+        if (targetInput.contentEditable) {
+
+            editor.caret.set(targetInput, 0, 0);
+
+        } else {
+
+            targetInput.focus();
+
+        }
+
         editor.content.workingNodeChanged(targetInput);
 
     };
@@ -228,7 +251,17 @@ module.exports = (function (caret) {
 
         }
         editor.caret.inputIndex = index - 1;
-        editor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
+
+        if (previousInput.contentEditable) {
+
+            editor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
+
+        } else {
+
+            previousInput.focus();
+
+        }
+
         editor.content.workingNodeChanged(inputs[index - 1]);
 
     };

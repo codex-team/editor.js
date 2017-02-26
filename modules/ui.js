@@ -352,7 +352,7 @@ module.exports = (function (ui) {
         var redactor = editor.nodes.redactor;
 
         /** Save all inputs in global variable state */
-        editor.state.inputs = redactor.querySelectorAll('[contenteditable], input');
+        editor.state.inputs = redactor.querySelectorAll('[contenteditable], input:not([type="button"]):not([type="submit"]):not([type="reset"]), textarea');
 
     };
 

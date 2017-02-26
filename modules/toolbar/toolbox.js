@@ -82,7 +82,7 @@ module.exports = (function (toolbox) {
 
             while (!editor.tools[visibleTool].displayInToolbox) {
 
-                nextToolIndex++;
+                nextToolIndex = (nextToolIndex + 1) % tools.length;
                 visibleTool = tools[nextToolIndex];
 
             }

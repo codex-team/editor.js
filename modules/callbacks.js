@@ -41,7 +41,19 @@ module.exports = (function (callbacks) {
 
     callbacks.tabKeyPressed = function (event) {
 
-        var blockIsEmpty = !editor.content.currentNode.textContent.trim();
+
+        var inputs = editor.content.currentNode.querySelectorAll('textarea, input:not([type="button"]):not([type="submit"]):not([type="reset"]'),
+            inputsAreEmpty   = true,
+            textContentIsEmpty = !editor.content.currentNode.textContent.trim();
+
+        Array.prototype.map.call(inputs, function (input) {
+
+            inputsAreEmpty = inputsAreEmpty && !input.value.trim();
+
+        });
+
+
+        var blockIsEmpty = textContentIsEmpty && inputsAreEmpty;
 
         if (!blockIsEmpty) {
 
