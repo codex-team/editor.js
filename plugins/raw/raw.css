@@ -11,6 +11,7 @@
     box-sizing: border-box;
     white-space: pre;
     outline: none;
+    resize: vertical;
 
     font-family: 'monospace', 'monaco', 'consolas', 'courier';
     line-height: 1.7em;
@@ -28,7 +29,8 @@
     background-size: contain;
 }
 
-li:hover .raw-plugin-icon{
+li:hover .raw-plugin-icon,
+.selected .raw-plugin-icon{
     background: url(raw-icon-white.svg) no-repeat center center;
     background-size: contain;
 }
