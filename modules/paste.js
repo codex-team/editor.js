@@ -2,7 +2,7 @@
  * Codex Editor Paste module
  *
  * @author Codex Team
- * @version 1.0
+ * @version 1.1.1
  */
 
 module.exports = function (paste) {
@@ -24,6 +24,7 @@ module.exports = function (paste) {
             }
 
             tools[tool].renderOnPastePatterns.map(function (pattern) {
+
 
                 patterns.push(pattern);
 
@@ -72,7 +73,7 @@ module.exports = function (paste) {
             var execArray = pattern.regex.exec(string),
                 match     = execArray && execArray[0];
 
-            if ( match && match === string.trim()) {
+            if ( match ) {
 
                 /** current block is not empty */
                 if ( content.textContent.trim() && plugin == editor.settings.initialBlockPlugin ) {

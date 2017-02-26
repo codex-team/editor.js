@@ -8,7 +8,7 @@ var instagram = (function(instagram_plugin) {
 
         render : function(content) {
 
-            codex.editor.content.switchBlock(codex.editor.content.currentNode, content, 'instagram');
+            codex.editor.content.switchBlock(codex.editor.content.currentNode, content);
 
             setTimeout(function() {
                 window.instgrm.Embeds.process();
