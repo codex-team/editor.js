@@ -347,8 +347,8 @@ module.exports = (function (content) {
      */
     content.switchBlock = function (blockToReplace, newBlock, tool) {
 
-        var tool = tool || editor.content.currentNode.dataset.tool,
-            newBlockComposed = editor.content.composeNewBlock(newBlock, tool);
+        tool = tool || editor.content.currentNode.dataset.tool;
+        var newBlockComposed = editor.content.composeNewBlock(newBlock, tool);
 
         /** Replacing */
         editor.content.replaceBlock(blockToReplace, newBlockComposed);

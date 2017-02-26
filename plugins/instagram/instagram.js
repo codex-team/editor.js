@@ -144,7 +144,7 @@ var instagram = (function(instagram_plugin) {
     instagram_plugin.pastePatterns = [
         {
             type: 'instagram',
-            regex: /http?.+instagram.com\/p\/([a-zA-Z0-9]*)/,
+            regex: /http?.+instagram.com\/p\/([a-zA-Z0-9]*)\S*/,
             callback: instagram_plugin.urlPastedCallback
         }
     ];
