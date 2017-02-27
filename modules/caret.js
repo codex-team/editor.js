@@ -49,7 +49,7 @@ module.exports = (function (caret) {
         }
 
         /** If Element is INPUT */
-        if (el.tagName == 'INPUT') {
+        if (el.contentEditable != 'true') {
 
             el.focus();
             return;

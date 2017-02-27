@@ -157,7 +157,7 @@ var quote = (function(quote_plugin) {
             /* make Author contentEditable */
             author.contentEditable = 'true';
 
-            author.textContent = data.cite || '';
+            author.innerHTML = data.cite || '';
 
             /* Appending created components */
             wrapper.dataset.quoteStyle = 'withCaption';
@@ -200,11 +200,11 @@ var quote = (function(quote_plugin) {
 
             /* make author block contentEditable */
             author.contentEditable = 'true';
-            author.textContent = data.cite || '';
+            author.innerHTML = data.cite || '';
 
             /*  Author's position and job */
             job.contentEditable = 'true';
-            job.textContent = data.caption || '';
+            job.innerHTML = data.caption || '';
 
             var authorsWrapper = ui_.makeBlock('DIV', [elementClasses_.withPhoto.authorHolder]);
             authorsWrapper.appendChild(author);
@@ -234,19 +234,33 @@ var quote = (function(quote_plugin) {
                 quote ;
 
             /** Simple quote text placed in Blockquote tag*/
-            if ( currentNode.dataset.quoteStyle == 'simple' )
+            if ( currentNode.dataset.quoteStyle == 'simple' ){
+
                 quote = currentNode.innerHTML || '';
-            else
+
+            } else {
+
                 quote = currentNode.querySelector('.' + elementClasses_.quoteText).innerHTML;
 
-            if (job)
-                job = job.textContent || '';
+            }
 
-            if (author)
-                author = author.textContent || '';
+            if (job){
 
-            if (photo)
+                job = job.innerHTML || '';
+
+            }
+
+            if (author){
+
+                author = author.innerHTML || '';
+
+            }
+
+            if (photo){
+
                 photo = photo.dataset.bigUrl;
+
+            }
 
             var data = {
                 style       : currentNode.dataset.quoteStyle,
