@@ -297,7 +297,7 @@ module.exports = (function (core) {
      */
     var isFormData_ = function (object) {
 
-        return typeof object.__proto__.append === 'function';
+        return object instanceof FormData;
 
     };
 

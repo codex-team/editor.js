@@ -50,6 +50,7 @@ module.exports = (function (transport) {
     transport.fileSelected = function () {
 
         var input       = this,
+            i,
             files       = input.files,
             formData   = new FormData();
 
@@ -59,13 +60,11 @@ module.exports = (function (transport) {
 
         } else {
 
-            files.map = Array.prototype.map;
+            for ( i = 0; i < files.length; i++) {
 
-            files.map(function (file) {
+                formData.append('files[]', files[i], files[i].name);
 
-                formData.append('files[]', file, file.name);
-
-            });
+            }
 
         }
 
