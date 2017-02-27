@@ -86,13 +86,13 @@ module.exports = (function (transport) {
      * Use plugin callbacks
      * @protected
      *
-     * @property {Object} args - can have :
-     *  {String} url - fetch URL
-     *  {Function} beforeSend - before send funcion
-     *  {Function} success - success callback
-     *  {Function} error - on error handler
-     *  {Boolean} multiple - allow select several files
-     *  {String} accept - adds accept attribute
+     * @param {Object} args - can have :
+     * @param {String} args.url - fetch URL
+     * @param {Function} args.beforeSend - function calls before sending ajax
+     * @param {Function} args.success - success callback
+     * @param {Function} args.error - on error handler
+     * @param {Boolean} args.multiple - allow select several files
+     * @param {String} args.accept - adds accept attribute
      */
     transport.selectAndUpload = function (args) {
 
