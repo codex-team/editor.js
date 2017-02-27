@@ -54,7 +54,7 @@ module.exports = (function (transport) {
             files       = input.files,
             formData   = new FormData();
 
-        if (editor.transport.arguments.multiple == false) {
+        if (editor.transport.arguments.multiple === false) {
 
             formData.append('files', files[0], files[0].name);
 
@@ -85,12 +85,20 @@ module.exports = (function (transport) {
     /**
      * Use plugin callbacks
      * @protected
+     *
+     * @property {Object} args - can have :
+     *  {String} url - fetch URL
+     *  {Function} beforeSend - before send funcion
+     *  {Function} success - success callback
+     *  {Function} error - on error handler
+     *  {Boolean} multiple - allow select several files
+     *  {String} accept - adds accept attribute
      */
     transport.selectAndUpload = function (args) {
 
         transport.arguments = args;
 
-        if ( args.multiple == true) {
+        if ( args.multiple === true) {
 
             transport.input.setAttribute('multiple', 'multiple');
 
