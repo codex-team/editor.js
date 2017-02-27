@@ -351,8 +351,20 @@ module.exports = (function (ui) {
 
         var redactor = editor.nodes.redactor;
 
+        editor.state.inputs = [];
+
         /** Save all inputs in global variable state */
-        editor.state.inputs = redactor.querySelectorAll('[contenteditable], input');
+        var inputs = redactor.querySelectorAll('[contenteditable], input, textarea');
+
+        Array.prototype.map.call(inputs, function (current) {
+
+            if (!current.type || current.type == 'text' || current.type == 'textarea') {
+
+                editor.state.inputs.push(current);
+
+            }
+
+        });
 
     };
 
