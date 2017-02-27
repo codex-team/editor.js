@@ -2,7 +2,7 @@
  * Codex Editor Core
  *
  * @author Codex Team
- * @version 1.1.2
+ * @version 1.1.3
  */
 
 module.exports = (function (core) {
@@ -34,12 +34,6 @@ module.exports = (function (core) {
             if (userSettings.initialBlockPlugin) {
 
                 editor.settings.initialBlockPlugin = userSettings.initialBlockPlugin;
-
-            }
-
-            if (userSettings.uploadImagesUrl) {
-
-                editor.settings.uploadImagesUrl = userSettings.uploadImagesUrl;
 
             }
 
@@ -146,9 +140,9 @@ module.exports = (function (core) {
     /**
      * Native Ajax
      */
-    core.ajax = function (data) {
+    core.ajax = function (settings) {
 
-        if (!data || !data.url) {
+        if (!settings || !settings.url) {
 
             return;
 
@@ -156,44 +150,65 @@ module.exports = (function (core) {
 
         var XMLHTTP          = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
             successFunction = function () {},
-            params = '',
-            obj;
+            encodedString,
+            isFormData,
+            prop;
 
-        data.async           = true;
-        data.type            = data.type || 'GET';
-        data.data            = data.data || '';
-        data['content-type'] = data['content-type'] || 'application/json; charset=utf-8';
-        successFunction     = data.success || successFunction ;
+        settings.async           = true;
+        settings.type            = settings.type || 'GET';
+        settings.data            = settings.data || '';
+        settings['content-type'] = settings['content-type'] || 'application/json; charset=utf-8';
+        successFunction     = settings.success || successFunction ;
 
-        if (data.type == 'GET' && data.data) {
+        if (settings.type == 'GET' && settings.data) {
 
-            data.url = /\?/.test(data.url) ? data.url + '&' + data.data : data.url + '?' + data.data;
+            settings.url = /\?/.test(settings.url) ? settings.url + '&' + settings.data : settings.url + '?' + settings.data;
 
         } else {
 
-            for(obj in data.data) {
+            encodedString = '';
+            for(prop in settings.data) {
 
-                params += (obj + '=' + encodeURIComponent(data.data[obj]) + '&');
+                encodedString += (prop + '=' + encodeURIComponent(settings.data[prop]) + '&');
 
             }
 
         }
 
-        if (data.withCredentials) {
+        if (settings.withCredentials) {
 
             XMLHTTP.withCredentials = true;
 
         }
 
-        if (data.beforeSend && typeof data.beforeSend == 'function') {
+        if (settings.beforeSend && typeof settings.beforeSend == 'function') {
 
-            data.beforeSend.call();
+            settings.beforeSend.call();
 
         }
 
-        XMLHTTP.open( data.type, data.url, data.async );
+        XMLHTTP.open( settings.type, settings.url, settings.async );
+
+        /**
+         * If we send FormData, we need no content-type header
+         */
+        isFormData = isFormData_(settings.data);
+
+        if (!isFormData) {
+
+            if (settings.type != 'POST') {
+
+                XMLHTTP.setRequestHeader('Content-type', settings['content-type']);
+
+            } else {
+
+                XMLHTTP.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            }
+
+        }
+
         XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-        XMLHTTP.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
         XMLHTTP.onreadystatechange = function () {
 
@@ -205,7 +220,18 @@ module.exports = (function (core) {
 
         };
 
-        XMLHTTP.send(params);
+        if (isFormData) {
+
+            // Sending FormData
+            XMLHTTP.send(settings.data);
+
+        } else {
+
+            // POST requests
+            XMLHTTP.send(encodedString);
+
+        }
+
 
     };
 
@@ -251,6 +277,17 @@ module.exports = (function (core) {
             document.head.appendChild(script);
 
         });
+
+    };
+
+    /**
+     * Function for checking is it FormData object to send.
+     * @param {Object} object to check
+     * @return boolean
+     */
+    var isFormData_ = function (object) {
+
+        return object instanceof FormData;
 
     };
 
