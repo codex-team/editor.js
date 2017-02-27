@@ -1,2 +1,2 @@
 # codex.editor
-CodeX Editor sources v1.5
+.CodeX Editor sources v1.5
