@@ -25,7 +25,7 @@ module.exports = (function (transport) {
      */
     transport.prepare = function () {
 
-        let input = editor.draw.node( 'INPUT', '', { type : 'file', multiple : 'multiple' } );
+        let input = editor.draw.node( 'INPUT', '', { type : 'file' } );
 
         editor.listeners.add(input, 'change', editor.transport.fileSelected);
         editor.transport.input = input;
@@ -53,7 +53,21 @@ module.exports = (function (transport) {
             files       = input.files,
             formData   = new FormData();
 
-        formData.append('files', files, files.name);
+        if (editor.transport.arguments.multiple == false) {
+
+            formData.append('files', files[0], files[0].name);
+
+        } else {
+
+            files.map = Array.prototype.map;
+
+            files.map(function (file) {
+
+                formData.append('files[]', file, file.name);
+
+            });
+
+        }
 
         editor.core.ajax({
             type : 'POST',
@@ -73,13 +87,19 @@ module.exports = (function (transport) {
      * Use plugin callbacks
      * @protected
      */
-    transport.selectAndUpload = function (args, multiple) {
+    transport.selectAndUpload = function (args) {
 
         transport.arguments = args;
 
-        if ( multiple == false) {
+        if ( args.multiple == true) {
 
-            transport.input.removeAttribute('multiple');
+            transport.input.setAttribute('multiple', 'multiple');
+
+        }
+
+        if ( args.accept ) {
+
+            transport.input.setAttribute('accept', args.accept);
 
         }
 

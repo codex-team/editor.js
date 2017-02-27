@@ -220,7 +220,7 @@ var image = (function(image_plugin) {
      */
     var uploadButtonClicked_ = function(event) {
 
-        let url        = image_plugin.config.uploadUrl,
+        let url        = image_plugin.config.uploadImage,
             beforeSend = uploadingCallbacks_.ByClick.beforeSend,
             success    = uploadingCallbacks_.ByClick.success,
             error      = uploadingCallbacks_.ByClick.error;
@@ -228,10 +228,12 @@ var image = (function(image_plugin) {
         /** Define callbacks */
         codex.editor.transport.selectAndUpload({
             url         : url,
+            multiple    : false,
+            accept      : 'image/*',
             beforeSend  : beforeSend,
             success     : success,
             error       : error
-        }, false);
+        });
     };
 
     var methods_ = {
@@ -418,9 +420,7 @@ var image = (function(image_plugin) {
              */
             uploadImageFromUrl : function(path) {
 
-                var ajaxUrl = image_plugin.config.uploadUrl,
-                    file,
-                    image,
+                var image,
                     current = codex.editor.content.currentNode,
                     beforeSend,
                     success_callback;
@@ -475,7 +475,7 @@ var image = (function(image_plugin) {
 
                 /** Preparing data for XMLHTTP */
                 var data = {
-                    url: image_plugin.config.uploadUrl,
+                    url: image_plugin.config.uploadFromUrl,
                     type: "POST",
                     data : {
                         url: path
