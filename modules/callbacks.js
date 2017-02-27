@@ -2,7 +2,7 @@
  * Codex Editor callbacks module
  *
  * @author Codex Team
- * @version 1.3.7
+ * @version 1.3.10
  */
 
 module.exports = (function (callbacks) {
@@ -41,7 +41,23 @@ module.exports = (function (callbacks) {
 
     callbacks.tabKeyPressed = function (event) {
 
-        var blockIsEmpty = !editor.content.currentNode.textContent.trim();
+
+        var inputs = editor.content.currentNode.querySelectorAll('textarea, input'),
+            inputsAreEmpty   = true,
+            textContentIsEmpty = !editor.content.currentNode.textContent.trim();
+
+        Array.prototype.map.call(inputs, function (input) {
+
+            if (input.type == 'textarea' || input.type == 'text') {
+
+                inputsAreEmpty = inputsAreEmpty && !input.value.trim();
+
+            }
+
+        });
+
+
+        var blockIsEmpty = textContentIsEmpty && inputsAreEmpty;
 
         if (!blockIsEmpty) {
 
@@ -691,6 +707,21 @@ module.exports = (function (callbacks) {
             selectionLength,
             firstLevelBlocksCount;
 
+        if (isNativeInput(event.target)) {
+
+            /** If input value is empty - remove block */
+            if (event.target.value.trim() == '') {
+
+                block.remove();
+
+            } else {
+
+                return;
+
+            }
+
+        }
+
         if (block.textContent.trim()) {
 
             range           = editor.content.getRange();
@@ -818,11 +849,18 @@ module.exports = (function (callbacks) {
      */
     callbacks.blockPasteCallback = function (event) {
 
+        /** If area is input or textarea then allow default behaviour */
+        if ( isNativeInput(event.target) ) {
+
+            return;
+
+        }
+
         /** Prevent default behaviour */
         event.preventDefault();
 
         var editableParent = editor.content.getEditableParent(event.target),
-            firstLevelBlock = editor.content.getFirstLevelBlock(event.target);
+            currentNode = editor.content.currentNode;
 
         /** Allow paste when event target placed in Editable element */
         if (!editableParent) {
@@ -832,7 +870,8 @@ module.exports = (function (callbacks) {
         }
 
         /** get html pasted data - dirty data */
-        var data = event.clipboardData.getData('text/html') || event.clipboardData.getData('text/plain');
+        var htmlData  = event.clipboardData.getData('text/html'),
+            plainData = event.clipboardData.getData('text/plain');
 
         /** Temporary DIV that is used to work with childs as arrays item */
         var div     = editor.draw.node('DIV', '', {}),
@@ -843,9 +882,16 @@ module.exports = (function (callbacks) {
         /** Create fragment, that we paste to range after proccesing */
         fragment = document.createDocumentFragment();
 
-        cleanData = cleaner.clean(data);
+        if ( htmlData.trim() != '' ) {
 
-        div.innerHTML = cleanData;
+            cleanData = cleaner.clean(htmlData);
+            div.innerHTML = cleanData;
+
+        } else {
+
+            div.innerText = plainData.toString();
+
+        }
 
         var node, lastNode;
 
@@ -859,7 +905,7 @@ module.exports = (function (callbacks) {
         }
 
 
-        if (editor.tools[firstLevelBlock.dataset.tool].allowRenderOnPaste) {
+        if (editor.tools[currentNode.dataset.tool].allowRenderOnPaste) {
 
             if (editor.paste.pasted(event)) return;
 
@@ -930,6 +976,18 @@ module.exports = (function (callbacks) {
         /** Close toolbox when settings button is active */
         editor.toolbar.toolbox.close();
         editor.toolbar.settings.hideRemoveActions();
+
+    };
+
+    /**
+     * Check block for
+     * @param target
+     */
+    var isNativeInput = function (target) {
+
+        var nativeInputAreas = ['INPUT', 'TEXTAREA'];
+
+        return (nativeInputAreas.indexOf(target.tagName) != -1);
 
     };
 
