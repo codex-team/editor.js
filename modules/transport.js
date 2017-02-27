@@ -2,14 +2,17 @@
  *
  * Codex.Editor Transport Module
  *
- * @author Codex Team
- * @version 1.0
+ * @copyright 2017 Codex-Team
+ * @version 1.1.0
  */
 
 module.exports = (function (transport) {
 
     let editor = codex.editor;
 
+    /**
+     * @type {null} | {DOMElement} input - keeps input element in memory
+     */
     transport.input = null;
 
     /**
@@ -17,13 +20,14 @@ module.exports = (function (transport) {
      */
     transport.arguments = null;
 
+    /**
+     * Prepares input element where will be files
+     */
     transport.prepare = function () {
 
-        var input = document.createElement('INPUT');
+        let input = editor.draw.node( 'INPUT', '', { type : 'file', multiple : 'multiple' } );
 
-        input.type = 'file';
         editor.listeners.add(input, 'change', editor.transport.fileSelected);
-
         editor.transport.input = input;
 
     };
@@ -32,10 +36,10 @@ module.exports = (function (transport) {
     transport.clearInput = function () {
 
         /** Remove old input */
-        this.input = null;
+        transport.input = null;
 
         /** Prepare new one */
-        this.prepare();
+        transport.prepare();
 
     };
 
@@ -47,16 +51,21 @@ module.exports = (function (transport) {
 
         var input       = this,
             files       = input.files,
-            formdData   = new FormData();
+            formData   = new FormData();
 
-        formdData.append('files', files[0], files[0].name);
+        formData.append('files', files, files.name);
 
-        editor.transport.ajax({
-            data : formdData,
+        editor.core.ajax({
+            type : 'POST',
+            data : formData,
+            url        : editor.transport.arguments.url,
             beforeSend : editor.transport.arguments.beforeSend,
             success    : editor.transport.arguments.success,
             error      : editor.transport.arguments.error
         });
+
+        /** Clear input */
+        transport.clearInput();
 
     };
 
@@ -64,47 +73,17 @@ module.exports = (function (transport) {
      * Use plugin callbacks
      * @protected
      */
-    transport.selectAndUpload = function (args) {
+    transport.selectAndUpload = function (args, multiple) {
 
-        this.arguments = args;
-        this.input.click();
+        transport.arguments = args;
 
-    };
+        if ( multiple == false) {
 
-    /**
-     * Ajax requests module
-     * @todo use core.ajax
-     */
-    transport.ajax = function (params) {
+            transport.input.removeAttribute('multiple');
 
-        var xhr = new XMLHttpRequest(),
-            beforeSend = typeof params.beforeSend == 'function' ? params.beforeSend : function () {},
-            success    = typeof params.success    == 'function' ? params.success : function () {},
-            error      = typeof params.error      == 'function' ? params.error   : function () {};
+        }
 
-        beforeSend();
-
-        xhr.open('POST', editor.settings.uploadImagesUrl, true);
-
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-        xhr.onload = function () {
-
-            if (xhr.status === 200) {
-
-                success(xhr.responseText);
-
-            } else {
-
-                editor.core.log('request error: %o', xhr);
-                error();
-
-            }
-
-        };
-
-        xhr.send(params.data);
-        this.clearInput();
+        transport.input.click();
 
     };
 

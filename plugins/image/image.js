@@ -220,16 +220,18 @@ var image = (function(image_plugin) {
      */
     var uploadButtonClicked_ = function(event) {
 
-        var beforeSend = uploadingCallbacks_.ByClick.beforeSend,
+        let url        = image_plugin.config.uploadUrl,
+            beforeSend = uploadingCallbacks_.ByClick.beforeSend,
             success    = uploadingCallbacks_.ByClick.success,
             error      = uploadingCallbacks_.ByClick.error;
 
         /** Define callbacks */
         codex.editor.transport.selectAndUpload({
-            beforeSend: beforeSend,
-            success: success,
-            error: error
-        });
+            url         : url,
+            beforeSend  : beforeSend,
+            success     : success,
+            error       : error
+        }, false);
     };
 
     var methods_ = {
@@ -272,11 +274,7 @@ var image = (function(image_plugin) {
             /**
              * Save settings in dataset
              */
-            if (img.classList.contains(elementClasses_.imageWrapperBordered)) {
-                wrapper.dataset.bordered = true;
-            } else {
-                wrapper.dataset.bordered = false;
-            }
+            wrapper.dataset.bordered = img.classList.contains(elementClasses_.imageWrapperBordered);
 
             setTimeout(function() {
                 codex.editor.toolbar.settings.close();
@@ -302,15 +300,7 @@ var image = (function(image_plugin) {
 
             clickedSettingsItem.classList.toggle(elementClasses_.toggled);
 
-            if (img.classList.contains(elementClasses_.uploadedImage.stretched)) {
-
-                wrapper.dataset.stretched = true;
-
-            } else {
-
-                wrapper.dataset.stretched = false;
-
-            }
+            wrapper.dataset.stretched = img.classList.contains(elementClasses_.uploadedImage.stretched);
 
             setTimeout(function() {
                 codex.editor.toolbar.settings.close();
