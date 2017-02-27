@@ -2,7 +2,7 @@
  * Codex Editor UI module
  *
  * @author Codex Team
- * @version 1.1.3
+ * @version 1.2.0
  */
 
 module.exports = (function (ui) {
@@ -58,90 +58,54 @@ module.exports = (function (ui) {
      */
     ui.make = function () {
 
-        var wrapper,
-            toolbar,
-            toolbarContent,
-            redactor,
-            blockButtons,
-            blockSettings,
-            showSettingsButton,
-            showTrashButton,
-            toolbox,
-            plusButton;
+        return new Promise(function (resolve) {
 
-        /** Make editor wrapper */
-        wrapper = editor.draw.wrapper();
+            let wrapper  = editor.draw.wrapper(),
+                redactor = editor.draw.redactor(),
+                toolbar  = makeToolBar_();
 
-        /** Append editor wrapper after initial textarea */
-        editor.core.insertAfter(editor.nodes.textarea, wrapper);
+            wrapper.appendChild(toolbar);
+            wrapper.appendChild(redactor);
 
-        /** Append block with notifications to the document */
-        editor.notifications.createHolder();
+            /** Save created ui-elements to static nodes state */
+            editor.nodes.wrapper  = wrapper;
+            editor.nodes.redactor = redactor;
 
-        /** Make toolbar and content-editable redactor */
-        toolbar               = editor.draw.toolbar();
-        toolbarContent        = editor.draw.toolbarContent();
-        plusButton            = editor.draw.plusButton();
-        showSettingsButton    = editor.draw.settingsButton();
-        showTrashButton       = editor.toolbar.settings.makeRemoveBlockButton();
-        blockSettings         = editor.draw.blockSettings();
-        blockButtons          = editor.draw.blockButtons();
-        toolbox               = editor.draw.toolbox();
-        redactor              = editor.draw.redactor();
+            /** Append editor wrapper with redactor zone  after initial textarea */
+            editor.core.insertAfter(editor.nodes.textarea, wrapper);
 
-        /** settings */
-        var defaultSettings = editor.draw.defaultSettings(),
-            pluginSettings  = editor.draw.pluginsSettings();
+            resolve();
 
-        /** Add default and plugins settings */
-        blockSettings.appendChild(pluginSettings);
-        blockSettings.appendChild(defaultSettings);
+        })
 
-        /** Make blocks buttons
-         * This block contains settings button and remove block button
-         */
-        blockButtons.appendChild(showSettingsButton);
-        blockButtons.appendChild(showTrashButton);
-        blockButtons.appendChild(blockSettings);
-
-        /** Append plus button */
-        toolbarContent.appendChild(plusButton);
-
-        /** Appending toolbar tools */
-        toolbarContent.appendChild(toolbox);
-
-        /** Appending first-level block buttons */
-        toolbar.appendChild(blockButtons);
-
-        /** Append toolbarContent to toolbar */
-        toolbar.appendChild(toolbarContent);
-
-        wrapper.appendChild(toolbar);
-
-        wrapper.appendChild(redactor);
-
-        /** Save created ui-elements to static nodes state */
-        editor.nodes.wrapper            = wrapper;
-        editor.nodes.toolbar            = toolbar;
-        editor.nodes.plusButton         = plusButton;
-        editor.nodes.toolbox            = toolbox;
-        editor.nodes.blockSettings      = blockSettings;
-        editor.nodes.pluginSettings     = pluginSettings;
-        editor.nodes.defaultSettings    = defaultSettings;
-        editor.nodes.showSettingsButton = showSettingsButton;
-        editor.nodes.showTrashButton    = showTrashButton;
-
-        editor.nodes.redactor = redactor;
+        /** Add toolbox tools */
+        .then(addTools_)
 
         /** Make container for inline toolbar */
-        editor.ui.makeInlineToolbar();
+        .then(makeInlineToolbar_)
+
+        /** Add inline toolbar tools */
+        .then(addInlineToolbarTools_)
+
+        /** Draw wrapper for notifications */
+        .then(makeNotificationHolder_)
 
         /** fill in default settings */
-        editor.toolbar.settings.addDefaultSettings();
+        .then(editor.toolbar.settings.addDefaultSettings)
+
+        .catch( function () {
+
+            editor.core.log("Can't draw editor interface");
+
+        });
 
     };
 
-    ui.makeInlineToolbar = function () {
+    /**
+     * @private
+     * Draws inline toolbar zone
+     */
+    var makeInlineToolbar_ = function () {
 
         var container = editor.draw.inlineToolbar();
 
@@ -162,11 +126,90 @@ module.exports = (function (ui) {
 
     };
 
+    var makeToolBar_ = function () {
+
+        let toolbar         = editor.draw.toolbar(),
+            blockButtons    = makeToolbarSettings_(),
+            toolbarContent  = makeToolbarContent_();
+
+        /** Appending first-level block buttons */
+        toolbar.appendChild(blockButtons);
+
+        /** Append toolbarContent to toolbar */
+        toolbar.appendChild(toolbarContent);
+
+        /** Make toolbar global */
+        editor.nodes.toolbar = toolbar;
+
+        return toolbar;
+
+    };
+
+    var makeToolbarContent_ = function () {
+
+        let toolbarContent = editor.draw.toolbarContent(),
+            toolbox        = editor.draw.toolbox(),
+            plusButton     = editor.draw.plusButton();
+
+        /** Append plus button */
+        toolbarContent.appendChild(plusButton);
+
+        /** Appending toolbar tools */
+        toolbarContent.appendChild(toolbox);
+
+        /** Make Toolbox and plusButton global */
+        editor.nodes.toolbox    = toolbox;
+        editor.nodes.plusButton = plusButton;
+
+        return toolbarContent;
+
+    };
+
+    var makeToolbarSettings_ = function () {
+
+        let blockSettings       = editor.draw.blockSettings(),
+            blockButtons        = editor.draw.blockButtons(),
+            defaultSettings     = editor.draw.defaultSettings(),
+            showSettingsButton  = editor.draw.settingsButton(),
+            showTrashButton     = editor.toolbar.settings.makeRemoveBlockButton(),
+            pluginSettings      = editor.draw.pluginsSettings();
+
+        /** Add default and plugins settings */
+        blockSettings.appendChild(pluginSettings);
+        blockSettings.appendChild(defaultSettings);
+
+        /**
+         * Make blocks buttons
+         * This block contains settings button and remove block button
+         */
+        blockButtons.appendChild(showSettingsButton);
+        blockButtons.appendChild(showTrashButton);
+        blockButtons.appendChild(blockSettings);
+
+        /** Make BlockSettings, PluginSettings, DefaultSettings global */
+        editor.nodes.blockSettings      = blockSettings;
+        editor.nodes.pluginSettings     = pluginSettings;
+        editor.nodes.defaultSettings    = defaultSettings;
+        editor.nodes.showSettingsButton = showSettingsButton;
+        editor.nodes.showTrashButton    = showTrashButton;
+
+        return blockButtons;
+
+    };
+
+    /** Draw notifications holder */
+    var makeNotificationHolder_ = function () {
+
+        /** Append block with notifications to the document */
+        editor.nodes.notifications = editor.notifications.createHolder();
+
+    };
+
     /**
      * @private
      * Append tools passed in editor.tools
      */
-    ui.addTools = function () {
+    var addTools_ = function () {
 
         var tool,
             toolName,
@@ -209,15 +252,9 @@ module.exports = (function (ui) {
 
         }
 
-        /**
-         * Add inline toolbar tools
-         */
-        editor.ui.addInlineToolbarTools();
-
-
     };
 
-    ui.addInlineToolbarTools = function () {
+    var addInlineToolbarTools_ = function () {
 
         var tools = {
 
@@ -297,12 +334,6 @@ module.exports = (function (ui) {
          */
         editor.listeners.add(editor.nodes.showSettingsButton, 'click', editor.callback.showSettingsButtonClicked, false );
 
-        /**
-         *  @deprecated ( but now in use for syncronization );
-         *  Any redactor changes: keyboard input, mouse cut/paste, drag-n-drop text
-         */
-        // editor.nodes.redactor.addEventListener('input', editor.callback.redactorInputEvent, false );
-
         /** Bind click listeners on toolbar buttons */
         for (var button in editor.nodes.toolbarButtons) {
 
@@ -351,8 +382,20 @@ module.exports = (function (ui) {
 
         var redactor = editor.nodes.redactor;
 
+        editor.state.inputs = [];
+
         /** Save all inputs in global variable state */
-        editor.state.inputs = redactor.querySelectorAll('[contenteditable], input');
+        var inputs = redactor.querySelectorAll('[contenteditable], input, textarea');
+
+        Array.prototype.map.call(inputs, function (current) {
+
+            if (!current.type || current.type == 'text' || current.type == 'textarea') {
+
+                editor.state.inputs.push(current);
+
+            }
+
+        });
 
     };
 

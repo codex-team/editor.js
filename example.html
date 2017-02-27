@@ -51,6 +51,9 @@
 <script src="plugins/embed/embed.js"></script>
 <link rel="stylesheet" href="plugins/embed/embed.css">
 
+<script src="plugins/raw/raw.js"></script>
+<link rel="stylesheet" href="plugins/raw/raw.css">
+
 <script>
     codex.editor.start({
         textareaId : "codex_area",
@@ -187,6 +190,17 @@
                 destroy: embed.destroy,
                 validate: embed.validate,
                 renderOnPastePatterns: embed.pastePatterns,
+            },
+            raw: {
+                type: 'raw',
+                displayInToolbox: true,
+                iconClassname: 'raw-plugin-icon',
+                render: rawPlugin.render,
+                save: rawPlugin.save,
+                validate: rawPlugin.validate,
+                destroy: rawPlugin.destroy,
+                enableLineBreaks: true,
+                allowPasteHTML: true
             }
         },
         data : {
@@ -210,11 +224,10 @@
                         type : 'OL',
                         items : [1,3,4]
                     },
-                },
+                }
             ],
             count: 3
         }
     });
 </script>
-
 </html>

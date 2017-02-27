@@ -46,6 +46,8 @@ module.exports = (function (toolbox) {
         /** toolbox state */
         editor.toolbar.toolbox.opened = false;
 
+        editor.toolbar.current = null;
+
     };
 
     toolbox.leaf = function () {
@@ -75,20 +77,13 @@ module.exports = (function (toolbox) {
 
         } else {
 
-            nextToolIndex = tools.indexOf(currentTool) + 1;
+            nextToolIndex = (tools.indexOf(currentTool) + 1) % tools.length;
             visibleTool = tools[nextToolIndex];
 
             while (!editor.tools[visibleTool].displayInToolbox) {
 
-                nextToolIndex++;
+                nextToolIndex = (nextToolIndex + 1) % tools.length;
                 visibleTool = tools[nextToolIndex];
-
-                if ( nextToolIndex == tools.length ) {
-
-                    nextToolIndex = 0;
-                    visibleTool = tools[nextToolIndex];
-
-                }
 
             }
 
