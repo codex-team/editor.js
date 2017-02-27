@@ -167,19 +167,9 @@ module.exports = (function (core) {
         } else {
 
             encodedString = '';
-            for ( prop in settings.data) {
+            for(prop in settings.data) {
 
-                if (settings.data.hasOwnProperty(prop)) {
-
-                    if (encodedString.length > 0) {
-
-                        encodedString += '&';
-
-                    }
-
-                    encodedString += encodeURI(prop + '=' + settings.data[prop]);
-
-                }
+                encodedString += (prop + '=' + encodeURIComponent(settings.data[prop]) + '&');
 
             }
 
