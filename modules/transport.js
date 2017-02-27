@@ -3,7 +3,7 @@
  * Codex.Editor Transport Module
  *
  * @copyright 2017 Codex-Team
- * @version 1.1.0
+ * @version 1.2.0
  */
 
 module.exports = (function (transport) {

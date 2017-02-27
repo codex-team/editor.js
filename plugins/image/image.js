@@ -2,7 +2,7 @@
  * Image plugin for codex-editor
  * @author CodeX Team <team@ifmo.su>
  *
- * @version 1.2.0
+ * @version 1.3.0
  */
 var image = (function(image_plugin) {
 

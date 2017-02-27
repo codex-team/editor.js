@@ -2,7 +2,7 @@
  * Codex Editor Core
  *
  * @author Codex Team
- * @version 1.1.2
+ * @version 1.1.3
  */
 
 module.exports = (function (core) {
