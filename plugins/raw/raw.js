@@ -12,8 +12,8 @@ var rawPlugin = function (plugin) {
 
         input.placeholder = 'Вставьте HTML код';
 
-        if (data && data.html) {
-            input.value = data.html;
+        if (data && data.raw) {
+            input.value = data.raw;
         }
 
         return input;
@@ -23,7 +23,7 @@ var rawPlugin = function (plugin) {
     plugin.save = function (block) {
 
         return {
-            html: block.value
+            raw: block.value
         };
 
     };
