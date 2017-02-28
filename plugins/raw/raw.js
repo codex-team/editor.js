@@ -30,7 +30,7 @@ var rawPlugin = function (plugin) {
 
     plugin.validate = function (data) {
 
-        if (data.html.trim() === '') {
+        if (data.raw.trim() === '') {
 
             return;
 
