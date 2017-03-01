@@ -56,7 +56,7 @@ module.exports = (function (ui) {
      *
      * Making main interface
      */
-    ui.make = function () {
+    ui.prepare = function () {
 
         return new Promise(function (resolve) {
 

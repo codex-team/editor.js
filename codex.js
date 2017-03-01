@@ -128,7 +128,7 @@ module.exports = (function (editor) {
         editor.core.prepare(userSettings)
 
         // If all ok, make UI, bind events and parse initial-content
-            .then(editor.ui.make)
+            .then(editor.ui.prepare)
             .then(editor.tools.prepare)
             .then(editor.paste.prepare)
             .then(editor.transport.prepare)
