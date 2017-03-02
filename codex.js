@@ -37,13 +37,11 @@ module.exports = (function (editor) {
 
     /**
      * @public
-     *
      * holds initial settings
      */
     editor.settings = {
         tools     : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
         textareaId: 'codex-editor',
-        uploadImagesUrl: '/editor/transport/',
 
         // Type of block showing on empty editor
         initialBlockPlugin: 'paragraph'
@@ -130,8 +128,7 @@ module.exports = (function (editor) {
         editor.core.prepare(userSettings)
 
         // If all ok, make UI, bind events and parse initial-content
-            .then(editor.ui.make)
-            .then(editor.ui.bindEvents)
+            .then(editor.ui.prepare)
             .then(editor.tools.prepare)
             .then(editor.paste.prepare)
             .then(editor.transport.prepare)
