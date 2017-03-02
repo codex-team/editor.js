@@ -35,16 +35,6 @@ module.exports = (function (ui) {
         BLOCK_HIGHLIGHTED : 'ce-block--focused',
 
         /**
-         * @const {String} - highlights covered blocks
-         */
-        BLOCK_IN_FEED_MODE : 'ce-block--feed-mode',
-
-        /**
-         * @const {String} - Block with anchor
-         */
-        BLOCK_WITH_ANCHOR : 'ce-block--anchor',
-
-        /**
          * @const {String} - for all default settings
          */
         SETTINGS_ITEM : 'ce-settings__item'
@@ -295,8 +285,6 @@ module.exports = (function (ui) {
             editor.ui.setInlineToolbarButtonBehaviour(toolButton, tool.command);
 
         }
-
-        editor.toolbar.settings.addDefaultSettings();
 
     };
 

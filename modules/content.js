@@ -150,27 +150,6 @@ module.exports = (function (content) {
 
         }
 
-        /**
-         * Check is this block was in feed
-         * If true, than set switched block also covered
-         */
-        if (targetBlock.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE)) {
-
-            newBlock.classList.add(editor.ui.className.BLOCK_IN_FEED_MODE);
-
-        }
-
-        if (targetBlock.classList.contains(editor.ui.className.BLOCK_WITH_ANCHOR)) {
-
-            newBlock.classList.add(editor.ui.className.BLOCK_WITH_ANCHOR);
-
-        }
-
-        /**
-         * Saving anchor
-         */
-        newBlock.dataset.anchor = targetBlock.dataset.anchor;
-
         /** Replacing */
         editor.nodes.redactor.replaceChild(newBlock, targetBlock);
 
@@ -192,7 +171,7 @@ module.exports = (function (content) {
     };
 
     /**
-     * @private
+     * @protected
      *
      * Inserts new block to redactor
      * Wrapps block into a DIV with BLOCK_CLASSNAME class
@@ -208,23 +187,9 @@ module.exports = (function (content) {
         var workingBlock    = editor.content.currentNode,
             newBlockContent = blockData.block,
             blockType       = blockData.type,
-            cover           = blockData.cover,
-            anchor          = blockData.anchor,
             isStretched     = blockData.stretched;
 
-        var newBlock = composeNewBlock_(newBlockContent, blockType, isStretched, anchor);
-
-        if (cover === true) {
-
-            newBlock.classList.add(editor.ui.className.BLOCK_IN_FEED_MODE);
-
-        }
-
-        if (anchor) {
-
-            newBlock.classList.add(editor.ui.className.BLOCK_WITH_ANCHOR);
-
-        }
+        var newBlock = composeNewBlock_(newBlockContent, blockType, isStretched);
 
         if (workingBlock) {
 
@@ -421,11 +386,10 @@ module.exports = (function (content) {
      * @param {Element} block - current plugins render
      * @param {String} tool - plugins name
      * @param {Boolean} isStretched - make stretched block or not
-     * @param {String} anchor - adds anchors
      *
      * @description adds necessary information to wrap new created block by first-level holder
      */
-    var composeNewBlock_ = function (block, tool, isStretched, anchor) {
+    var composeNewBlock_ = function (block, tool, isStretched) {
 
         var newBlock     = editor.draw.node('DIV', editor.ui.className.BLOCK_CLASSNAME, {}),
             blockContent = editor.draw.node('DIV', editor.ui.className.BLOCK_CONTENT, {});
@@ -440,7 +404,6 @@ module.exports = (function (content) {
         }
 
         newBlock.dataset.tool   = tool;
-        newBlock.dataset.anchor = anchor || '';
         return newBlock;
 
     };

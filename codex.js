@@ -28,7 +28,6 @@ module.exports = (function (editor) {
         editor.notifications = require('./modules/notifications');
         editor.parser        = require('./modules/parser');
         editor.sanitizer     = require('./modules/sanitizer');
-        editor.anchors       = require('./modules/anchors');
         editor.listeners     = require('./modules/listeners');
         editor.destroyer     = require('./modules/destroyer');
         editor.paste         = require('./modules/paste');
