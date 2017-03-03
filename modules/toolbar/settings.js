@@ -13,8 +13,6 @@ module.exports = (function (settings) {
     settings.setting = null;
     settings.actions = null;
 
-    settings.cover = null;
-
     /**
      * Append and open settings
      */
@@ -27,7 +25,7 @@ module.exports = (function (settings) {
         if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings ) {
 
             editor.core.log(`Plugin «${toolType}» has no settings`, 'warn');
-            // editor.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
+            editor.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
 
         } else {
 
@@ -42,7 +40,6 @@ module.exports = (function (settings) {
 
         /** Open settings block */
         editor.nodes.blockSettings.classList.add('opened');
-        editor.toolbar.settings.addDefaultSettings();
         this.opened = true;
 
     };
@@ -67,132 +64,12 @@ module.exports = (function (settings) {
         if ( !this.opened ) {
 
             this.open(toolType);
-            editor.anchors.settingsOpened(editor.content.currentNode);
 
         } else {
 
             this.close();
 
         }
-
-    };
-
-    /**
-     * This function adds default core settings
-     */
-    settings.addDefaultSettings = function () {
-
-        /** list of default settings */
-        var feedModeToggler,
-            anchorInput;
-
-        /** Clear block and append initialized settings */
-        editor.nodes.defaultSettings.innerHTML = '';
-
-
-        /** Init all default setting buttons */
-        feedModeToggler = editor.toolbar.settings.makeFeedModeToggler();
-        anchorInput     = editor.toolbar.settings.makeAnchorInput();
-
-        /**
-         * Fill defaultSettings
-         */
-
-        /**
-         * Input for anchor for block
-         */
-        editor.nodes.defaultSettings.appendChild(anchorInput);
-
-        /**
-         * Button that enables/disables Feed-mode
-         * Feed-mode means that block will be showed in articles-feed like cover
-         */
-        editor.nodes.defaultSettings.appendChild(feedModeToggler);
-
-    };
-
-    /**
-     * Cover setting.
-     * This tune highlights block, so that it may be used for showing target block on main page
-     * Draw different setting when block is marked for main page
-     * If TRUE, then we show button that removes this selection
-     * Also defined setting "Click" events will be listened and have separate callbacks
-     *
-     * @return {Element} node/button that we place in default settings block
-     */
-    settings.makeFeedModeToggler = function () {
-
-        var isFeedModeActivated = editor.toolbar.settings.isFeedModeActivated(),
-            setting,
-            data;
-
-        if (!isFeedModeActivated) {
-
-            data = {
-                innerHTML : '<i class="ce-icon-newspaper"></i>Вывести в ленте'
-            };
-
-        } else {
-
-            data = {
-                innerHTML : '<i class="ce-icon-newspaper"></i>Не выводить в ленте'
-            };
-
-        }
-
-        setting = editor.draw.node('DIV', editor.ui.className.SETTINGS_ITEM, data);
-        editor.listeners.add(setting, 'click', editor.toolbar.settings.updateFeedMode, false);
-
-        return setting;
-
-    };
-
-    /**
-     * Updates Feed-mode
-     */
-    settings.updateFeedMode = function () {
-
-        var currentNode = editor.content.currentNode;
-
-        currentNode.classList.toggle(editor.ui.className.BLOCK_IN_FEED_MODE);
-
-        editor.toolbar.settings.close();
-
-    };
-
-    settings.isFeedModeActivated = function () {
-
-        var currentBlock = editor.content.currentNode;
-
-        if (currentBlock) {
-
-            return currentBlock.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
-
-        } else {
-
-            return false;
-
-        }
-
-    };
-
-    settings.makeAnchorInput = function () {
-
-        var anchorWrapper = editor.draw.node('div', 'ce-settings__anchor-wrapper ce-settings__item', {}),
-            hash   = editor.draw.node('i', 'ce-settings__anchor-hash', {}),
-            anchor = editor.draw.node('input', 'ce-settings__anchor-input', { placeholder: 'Якорь' });
-
-        editor.listeners.add(anchor, 'keydown', editor.anchors.keyDownOnAnchorInput );
-        editor.listeners.add(anchor, 'keyup', editor.anchors.keyUpOnAnchorInput );
-        editor.listeners.add(anchor, 'input', editor.anchors.anchorChanged );
-        editor.listeners.add(anchor, 'blur', editor.anchors.anchorChanged );
-
-        anchorWrapper.appendChild(hash);
-        anchorWrapper.appendChild(anchor);
-
-        editor.anchors.input = anchor;
-
-        return anchorWrapper;
 
     };
 
