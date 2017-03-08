@@ -149,9 +149,7 @@ module.exports = (function (renderer) {
         /** New parser */
         var block,
             tool = toolData.tool,
-            pluginName = tool.type,
-            anchor     = tool.anchor,
-            cover      = tool.cover;
+            pluginName = tool.type;
 
         /** Get first key of object that stores plugin name */
         // for (var pluginName in blockData) break;
@@ -195,9 +193,7 @@ module.exports = (function (renderer) {
         return {
             type      : pluginName,
             block     : block,
-            stretched : stretched,
-            cover     : cover,
-            anchor    : anchor
+            stretched : stretched
         };
 
     };

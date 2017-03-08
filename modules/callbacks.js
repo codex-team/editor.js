@@ -1,63 +1,91 @@
 /**
- * Codex Editor callbacks module
+ * @module Codex Editor Callbacks module
+ * @description Module works with editor added Elements
  *
  * @author Codex Team
- * @version 1.3.10
+ * @version 1.3.12
  */
 
 module.exports = (function (callbacks) {
 
     let editor = codex.editor;
 
+    /**
+     * used by UI module
+     * @description Routes all keydowns on document
+     * @param {Object} event
+     */
     callbacks.globalKeydown = function (event) {
 
         switch (event.keyCode) {
-            case editor.core.keys.ENTER : editor.callback.enterKeyPressed(event);     break;
+            case editor.core.keys.ENTER : enterKeyPressed_(event);     break;
         }
 
     };
 
+    /**
+     * used by UI module
+     * @description Routes all keydowns on redactors area
+     * @param {Object} event
+     */
     callbacks.redactorKeyDown = function (event) {
 
         switch (event.keyCode) {
-            case editor.core.keys.TAB   : editor.callback.tabKeyPressed(event);                     break;
-            case editor.core.keys.ENTER : editor.callback.enterKeyPressedOnRedactorZone(event);     break;
-            case editor.core.keys.ESC   : editor.callback.escapeKeyPressed(event);                  break;
-            default                    : editor.callback.defaultKeyPressed(event);                 break;
+            case editor.core.keys.TAB   : tabKeyPressedOnRedactorsZone_(event);                     break;
+            case editor.core.keys.ENTER : enterKeyPressedOnRedactorsZone_(event);                   break;
+            case editor.core.keys.ESC   : escapeKeyPressedOnRedactorsZone_(event);                  break;
+            default                     : defaultKeyPressedOnRedactorsZone_(event);                 break;
         }
 
     };
 
+    /**
+     * used by UI module
+     * @description Routes all keyup events
+     * @param {Object} event
+     */
     callbacks.globalKeyup = function (event) {
 
         switch (event.keyCode) {
             case editor.core.keys.UP    :
             case editor.core.keys.LEFT  :
             case editor.core.keys.RIGHT :
-            case editor.core.keys.DOWN  : editor.callback.arrowKeyPressed(event); break;
+            case editor.core.keys.DOWN  : arrowKeyPressed_(event); break;
         }
 
     };
 
-    callbacks.tabKeyPressed = function (event) {
+    /**
+     * @param {Object} event
+     * @private
+     *
+     * Handles behaviour when tab pressed
+     * @description if Content is empty show toolbox (if it is closed) or leaf tools
+     * uses Toolbars toolbox module to handle the situation
+     */
+    var tabKeyPressedOnRedactorsZone_ = function (event) {
 
+        /**
+         * Wait for solution. Would like to know the behaviour
+         * @todo Add spaces
+         */
+        event.preventDefault();
 
-        var inputs = editor.content.currentNode.querySelectorAll('textarea, input'),
-            inputsAreEmpty   = true,
+        var nativeInputs = editor.content.currentNode.querySelectorAll('textarea, input'),
+            nativeInputsAreEmpty   = true,
             textContentIsEmpty = !editor.content.currentNode.textContent.trim();
 
-        Array.prototype.map.call(inputs, function (input) {
+        Array.prototype.map.call(nativeInputs, function (input) {
 
             if (input.type == 'textarea' || input.type == 'text') {
 
-                inputsAreEmpty = inputsAreEmpty && !input.value.trim();
+                nativeInputsAreEmpty = nativeInputsAreEmpty && !input.value.trim();
 
             }
 
         });
 
-
-        var blockIsEmpty = textContentIsEmpty && inputsAreEmpty;
+        var blockIsEmpty = textContentIsEmpty && nativeInputsAreEmpty;
 
         if (!blockIsEmpty) {
 
@@ -81,14 +109,14 @@ module.exports = (function (callbacks) {
 
         }
 
-        event.preventDefault();
-
     };
 
     /**
-    * @param {Event} event
-    */
-    callbacks.enterKeyPressed = function () {
+     * Handles global EnterKey Press
+     * @see enterPressedOnBlock_
+     * @param {Object} event
+     */
+    var enterKeyPressed_ = function () {
 
         if (editor.content.editorAreaHightlighted) {
 
@@ -98,17 +126,44 @@ module.exports = (function (callbacks) {
              */
             editor.caret.inputIndex = -1;
 
-            editor.callback.enterPressedOnBlock();
+            enterPressedOnBlock_();
 
         }
 
     };
 
     /**
-     * ENTER key handler
-     * Makes new paragraph block
+     * Callback for enter key pressing in first-level block area
+     *
+     * @param {Event} event
+     * @private
+     *
+     * @description Inserts new block with initial type from settings
      */
-    callbacks.enterKeyPressedOnRedactorZone = function (event) {
+    var enterPressedOnBlock_ = function () {
+
+        var NEW_BLOCK_TYPE  = editor.settings.initialBlockPlugin;
+
+        editor.content.insertBlock({
+            type  : NEW_BLOCK_TYPE,
+            block : editor.tools[NEW_BLOCK_TYPE].render()
+        }, true );
+
+        editor.toolbar.move();
+        editor.toolbar.open();
+
+    };
+
+
+    /**
+     * ENTER key handler
+     *
+     * @param {Object} event
+     * @private
+     *
+     * @description Makes new block with initial type from settings
+     */
+    var enterKeyPressedOnRedactorsZone_ = function (event) {
 
         if (event.target.contentEditable == 'true') {
 
@@ -240,7 +295,14 @@ module.exports = (function (callbacks) {
 
     };
 
-    callbacks.escapeKeyPressed = function (event) {
+    /**
+     * Escape behaviour
+     * @param event
+     * @private
+     *
+     * @description Closes toolbox and toolbar. Prevents default behaviour
+     */
+    var escapeKeyPressedOnRedactorsZone_ = function (event) {
 
         /** Close all toolbar */
         editor.toolbar.close();
@@ -253,9 +315,12 @@ module.exports = (function (callbacks) {
     };
 
     /**
-    * @param {Event} event
-    */
-    callbacks.arrowKeyPressed = function () {
+     * @param {Event} event
+     * @private
+     *
+     * closes and moves toolbar
+     */
+    var arrowKeyPressed_ = function (event) {
 
         editor.content.workingNodeChanged();
 
@@ -266,9 +331,13 @@ module.exports = (function (callbacks) {
     };
 
     /**
-    * @param {Event} event
-    */
-    callbacks.defaultKeyPressed = function () {
+     * @private
+     * @param {Event} event
+     *
+     * @description Closes all opened bars from toolbar.
+     * If block is mark, clears highlightning
+     */
+    var defaultKeyPressedOnRedactorsZone_ = function () {
 
         editor.toolbar.close();
 
@@ -281,20 +350,30 @@ module.exports = (function (callbacks) {
 
     };
 
+    /**
+     * Handler when clicked on redactors area
+     *
+     * @protected
+     * @param event
+     *
+     * @description Detects clicked area. If it is first-level block area, marks as detected and
+     * on next enter press will be inserted new block
+     * Otherwise, save carets position (input index) and put caret to the editable zone.
+     *
+     * @see detectWhenClickedOnFirstLevelBlockArea_
+     *
+     */
     callbacks.redactorClicked = function (event) {
 
-        callbacks.detectWhenClickedOnFirstLevelBlockArea();
+        detectWhenClickedOnFirstLevelBlockArea_();
 
         editor.content.workingNodeChanged(event.target);
-
         editor.ui.saveInputs();
 
         var selectedText = editor.toolbar.inline.getSelectionText(),
             firstLevelBlock;
 
-        /**
-         * If selection range took off, then we hide inline toolbar
-         */
+        /** If selection range took off, then we hide inline toolbar */
         if (selectedText.length === 0) {
 
             editor.toolbar.inline.close();
@@ -317,10 +396,6 @@ module.exports = (function (callbacks) {
 
             /** If we have any inputs */
             if (editor.state.inputs.length) {
-
-                /**
-                * @todo Refactor
-                */
 
                 /** getting firstlevel parent of input */
                 firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
@@ -356,19 +431,7 @@ module.exports = (function (callbacks) {
 
             }
 
-            /**
-             * Move toolbar to the right position and open
-             */
-            editor.toolbar.move();
-            editor.toolbar.open();
-
         } else {
-
-            /**
-             * Move toolbar to the new position and open
-             */
-            editor.toolbar.move();
-            editor.toolbar.open();
 
             /** Close all panels */
             editor.toolbar.settings.close();
@@ -376,6 +439,11 @@ module.exports = (function (callbacks) {
 
         }
 
+        /**
+         * Move toolbar and open
+         */
+        editor.toolbar.move();
+        editor.toolbar.open();
 
         var inputIsEmpty = !editor.content.currentNode.textContent.trim(),
             currentNodeType = editor.content.currentNode.dataset.tool,
@@ -404,12 +472,15 @@ module.exports = (function (callbacks) {
 
     /**
      * This method allows to define, is caret in contenteditable element or not.
-     * Otherwise, if we get TEXT node from range container, that will means we have input index.
+     *
+     * @private
+     *
+     * @description Otherwise, if we get TEXT node from range container, that will means we have input index.
      * In this case we use default browsers behaviour (if plugin allows that) or overwritten action.
      * Therefore, to be sure that we've clicked first-level block area, we should have currentNode, which always
      * specifies to the first-level block. Other cases we just ignore.
      */
-    callbacks.detectWhenClickedOnFirstLevelBlockArea = function () {
+    var detectWhenClickedOnFirstLevelBlockArea_ = function () {
 
         var selection  = window.getSelection(),
             anchorNode = selection.anchorNode,
@@ -453,7 +524,7 @@ module.exports = (function (callbacks) {
             }
 
             /** If editable element founded, flag is "TRUE", Therefore we return "FALSE" */
-            editor.content.editorAreaHightlighted = flag ? false : true;
+            editor.content.editorAreaHightlighted = !flag;
 
         }
 
@@ -461,7 +532,11 @@ module.exports = (function (callbacks) {
 
     /**
      * Toolbar button click handler
-     * @param this - cursor to the button
+     *
+     * @param {Object} event - cursor to the button
+     * @protected
+     *
+     * @description gets current tool and calls render method
      */
     callbacks.toolbarButtonClicked = function (event) {
 
@@ -474,7 +549,9 @@ module.exports = (function (callbacks) {
 
     };
 
-    /** Show or Hide toolbox when plus button is clicked */
+    /**
+     * Show or Hide toolbox when plus button is clicked
+     */
     callbacks.plusButtonClicked = function () {
 
         if (!editor.nodes.toolbox.classList.contains('opened')) {
@@ -491,25 +568,33 @@ module.exports = (function (callbacks) {
 
     /**
      * Block handlers for KeyDown events
+     *
+     * @protected
+     * @param {Object} event
+     *
+     * Handles keydowns on block
+     * @see blockRightOrDownArrowPressed_
+     * @see backspacePressed_
+     * @see blockLeftOrUpArrowPressed_
      */
     callbacks.blockKeydown = function (event) {
 
-        let block = this; // event.target input
+        let block = event.target; // event.target is input
 
         switch (event.keyCode) {
 
             case editor.core.keys.DOWN:
             case editor.core.keys.RIGHT:
-                editor.callback.blockRightOrDownArrowPressed();
+                blockRightOrDownArrowPressed_(event);
                 break;
 
             case editor.core.keys.BACKSPACE:
-                editor.callback.backspacePressed(block, event);
+                backspacePressed_(block, event);
                 break;
 
             case editor.core.keys.UP:
             case editor.core.keys.LEFT:
-                editor.callback.blockLeftOrUpArrowPressed();
+                blockLeftOrUpArrowPressed_(event);
                 break;
 
         }
@@ -518,8 +603,15 @@ module.exports = (function (callbacks) {
 
     /**
      * RIGHT or DOWN keydowns on block
+     *
+     * @param {Object} event
+     * @private
+     *
+     * @description watches the selection and gets closest editable element.
+     * Uses method getDeepestTextNodeFromPosition to get the last node of next block
+     * Sets caret if it is contenteditable
      */
-    callbacks.blockRightOrDownArrowPressed = function () {
+    var blockRightOrDownArrowPressed_ = function (event) {
 
         var selection   = window.getSelection(),
             inputs      = editor.state.inputs,
@@ -598,8 +690,16 @@ module.exports = (function (callbacks) {
 
     /**
      * LEFT or UP keydowns on block
+     *
+     * @param {Object} event
+     * @private
+     *
+     * watches the selection and gets closest editable element.
+     * Uses method getDeepestTextNodeFromPosition to get the last node of previous block
+     * Sets caret if it is contenteditable
+     *
      */
-    callbacks.blockLeftOrUpArrowPressed = function () {
+    var blockLeftOrUpArrowPressed_ = function (event) {
 
         var selection   = window.getSelection(),
             inputs      = editor.state.inputs,
@@ -683,31 +783,25 @@ module.exports = (function (callbacks) {
     };
 
     /**
-     * Callback for enter key pressing in first-level block area
-     * @param {Event} event
+     * Handles backspace keydown
+     *
+     * @param {Element} block
+     * @param {Object} event
+     * @private
+     *
+     * @description if block is empty, delete the block and set caret to the previous block
+     * If block is not empty, try to merge two blocks - current and previous
+     * But it we try'n to remove first block, then we should set caret to the next block, not previous.
+     * If we removed the last block, create new one
      */
-    callbacks.enterPressedOnBlock = function () {
-
-        var NEW_BLOCK_TYPE  = editor.settings.initialBlockPlugin;
-
-        editor.content.insertBlock({
-            type  : NEW_BLOCK_TYPE,
-            block : editor.tools[NEW_BLOCK_TYPE].render()
-        }, true );
-
-        editor.toolbar.move();
-        editor.toolbar.open();
-
-    };
-
-    callbacks.backspacePressed = function (block, event) {
+    var backspacePressed_ = function (block, event) {
 
         var currentInputIndex = editor.caret.getCurrentInputIndex(),
             range,
             selectionLength,
             firstLevelBlocksCount;
 
-        if (isNativeInput(event.target)) {
+        if (isNativeInput_(event.target)) {
 
             /** If input value is empty - remove block */
             if (event.target.value.trim() == '') {
@@ -841,16 +935,17 @@ module.exports = (function (callbacks) {
     /**
      * This method prevents default behaviour.
      *
-     * We get from clipboard pasted data, sanitize, make a fragment that contains of this sanitized nodes.
+     * @param {Object} event
+     * @protected
+     *
+     * @description We get from clipboard pasted data, sanitize, make a fragment that contains of this sanitized nodes.
      * Firstly, we need to memorize the caret position. We can do that by getting the range of selection.
      * After all, we insert clear fragment into caret placed position. Then, we should move the caret to the last node
-     *
-     * @param event
      */
     callbacks.blockPasteCallback = function (event) {
 
         /** If area is input or textarea then allow default behaviour */
-        if ( isNativeInput(event.target) ) {
+        if ( isNativeInput_(event.target) ) {
 
             return;
 
@@ -937,6 +1032,7 @@ module.exports = (function (callbacks) {
     };
 
     /**
+     * @deprecated
      * Sends all mutations to paste handler
      */
     callbacks.handleMutationsOnPaste = function (mutations) {
@@ -959,9 +1055,14 @@ module.exports = (function (callbacks) {
     };
 
     /**
+     * used by UI module
      * Clicks on block settings button
+     *
+     * @param {Object} event
+     * @protected
+     * @description Opens toolbar settings
      */
-    callbacks.showSettingsButtonClicked = function () {
+    callbacks.showSettingsButtonClicked = function (event) {
 
         /**
          * Get type of current block
@@ -980,10 +1081,13 @@ module.exports = (function (callbacks) {
     };
 
     /**
-     * Check block for
+     * Check block
      * @param target
+     * @private
+     *
+     * @description Checks target is it native input
      */
-    var isNativeInput = function (target) {
+    var isNativeInput_ = function (target) {
 
         var nativeInputAreas = ['INPUT', 'TEXTAREA'];
 
