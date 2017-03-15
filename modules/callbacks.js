@@ -896,43 +896,6 @@ module.exports = (function (callbacks) {
     };
 
     /**
-     * This method is used to observe pasted dirty data.
-     *
-     * Mutation handlers send to separate observers each mutation (added, changed and so on), which will be
-     * passed from handler that sanitizes and replaces data.
-     *
-     * Probably won't be used
-     *
-     * @deprecated
-     *
-     * @param event
-     * @private
-     */
-    callbacks._blockPasteCallback = function () {
-
-        var currentInputIndex = editor.caret.getCurrentInputIndex();
-
-        /**
-         * create an observer instance
-         */
-        var observer = new MutationObserver(editor.callback.handleMutationsOnPaste);
-
-        /**
-         * configuration of the observer:
-         */
-        var config = {
-            attributes: true,
-            childList: false,
-            characterData: false,
-            subtree : true
-        };
-
-        // pass in the target node, as well as the observer options
-        observer.observe(editor.state.inputs[currentInputIndex], config);
-
-    };
-
-    /**
      * This method prevents default behaviour.
      *
      * @param {Object} event
@@ -970,7 +933,7 @@ module.exports = (function (callbacks) {
 
         /** Temporary DIV that is used to work with childs as arrays item */
         var div     = editor.draw.node('DIV', '', {}),
-            cleaner = new editor.sanitizer.init(editor.sanitizer.Config.BASIC),
+            cleaner = new editor.sanitizer.init(),
             cleanData,
             fragment;
 
@@ -1028,29 +991,6 @@ module.exports = (function (callbacks) {
             selection.addRange(range);
 
         }
-
-    };
-
-    /**
-     * @deprecated
-     * Sends all mutations to paste handler
-     */
-    callbacks.handleMutationsOnPaste = function (mutations) {
-
-        var self = this;
-
-        /**
-         * Calling function with context of this function.
-         * Also, we should sanitize pasted or changed data one time and ignore
-         * changings which makes sanitize method.
-         * For that, we need to send Context, MutationObserver.__proto__ that contains
-         * observer disconnect method.
-         */
-        mutations.forEach(function (mutation) {
-
-            editor.content.paste.call(self, mutation);
-
-        });
 
     };
 

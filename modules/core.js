@@ -37,6 +37,12 @@ module.exports = (function (core) {
 
             }
 
+            if (userSettings.sanitizer) {
+
+                editor.settings.sanitizer = userSettings.sanitizer;
+
+            }
+
             editor.hideToolbar = userSettings.hideToolbar;
 
             editor.nodes.holder = document.getElementById(userSettings.holderId || editor.settings.holderId);
