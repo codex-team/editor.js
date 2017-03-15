@@ -40,7 +40,7 @@ module.exports = (function (editor) {
      */
     editor.settings = {
         tools     : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
-        textareaId: 'codex-editor',
+        holderId  : 'codex-editor',
 
         // Type of block showing on empty editor
         initialBlockPlugin: 'paragraph'
@@ -52,7 +52,7 @@ module.exports = (function (editor) {
      * Static nodes
      */
     editor.nodes = {
-        textarea          : null,
+        holder            : null,
         wrapper           : null,
         toolbar           : null,
         inlineToolbar     : {
@@ -92,10 +92,9 @@ module.exports = (function (editor) {
     /**
      * Initialization
      * @uses Promise cEditor.core.prepare
-     * @param {} userSettings are :
-     *          - tools [],
-     *          - textareaId String
-     *          ...
+     * @param {Object} userSettings
+     * @param {Array}  userSettings.tools       list of plugins
+     * @param {String} userSettings.holderId    Element's id to append editor
      *
      * Load user defined tools
      * Tools must contain this important objects :

@@ -13,7 +13,7 @@
 </head>
 <body>
 
-<textarea name="" id="codex_area" cols="30" rows="10" hidden></textarea>
+<div id="codex-editor"></div>
 
 </body>
 
@@ -56,7 +56,7 @@
 
 <script>
     codex.editor.start({
-        textareaId : "codex_area",
+        holderId : "codex-editor",
         initialBlockPlugin : 'paragraph',
         hideToolbar: false,
         tools : {
