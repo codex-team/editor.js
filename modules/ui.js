@@ -61,8 +61,8 @@ module.exports = (function (ui) {
             editor.nodes.wrapper  = wrapper;
             editor.nodes.redactor = redactor;
 
-            /** Append editor wrapper with redactor zone  after initial textarea */
-            editor.core.insertAfter(editor.nodes.textarea, wrapper);
+            /** Append editor wrapper with redactor zone into holder */
+            editor.nodes.holder.appendChild(wrapper);
 
             resolve();
 
