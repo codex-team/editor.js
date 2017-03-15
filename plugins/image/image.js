@@ -2,7 +2,7 @@
  * Image plugin for codex-editor
  * @author CodeX Team <team@ifmo.su>
  *
- * @version 1.2.0
+ * @version 1.3.0
  */
 var image = (function(image_plugin) {
 
@@ -220,15 +220,19 @@ var image = (function(image_plugin) {
      */
     var uploadButtonClicked_ = function(event) {
 
-        var beforeSend = uploadingCallbacks_.ByClick.beforeSend,
+        var url        = image_plugin.config.uploadImage,
+            beforeSend = uploadingCallbacks_.ByClick.beforeSend,
             success    = uploadingCallbacks_.ByClick.success,
             error      = uploadingCallbacks_.ByClick.error;
 
         /** Define callbacks */
         codex.editor.transport.selectAndUpload({
-            beforeSend: beforeSend,
-            success: success,
-            error: error
+            url         : url,
+            multiple    : false,
+            accept      : 'image/*',
+            beforeSend  : beforeSend,
+            success     : success,
+            error       : error
         });
     };
 
@@ -272,11 +276,7 @@ var image = (function(image_plugin) {
             /**
              * Save settings in dataset
              */
-            if (img.classList.contains(elementClasses_.imageWrapperBordered)) {
-                wrapper.dataset.bordered = true;
-            } else {
-                wrapper.dataset.bordered = false;
-            }
+            wrapper.dataset.bordered = img.classList.contains(elementClasses_.imageWrapperBordered);
 
             setTimeout(function() {
                 codex.editor.toolbar.settings.close();
@@ -302,15 +302,7 @@ var image = (function(image_plugin) {
 
             clickedSettingsItem.classList.toggle(elementClasses_.toggled);
 
-            if (img.classList.contains(elementClasses_.uploadedImage.stretched)) {
-
-                wrapper.dataset.stretched = true;
-
-            } else {
-
-                wrapper.dataset.stretched = false;
-
-            }
+            wrapper.dataset.stretched = img.classList.contains(elementClasses_.uploadedImage.stretched);
 
             setTimeout(function() {
                 codex.editor.toolbar.settings.close();
@@ -369,7 +361,7 @@ var image = (function(image_plugin) {
 
                     var newImage = make_(data);
 
-                    codex.editor.content.switchBlock(image.holder, newImage, 'image_extended');
+                    codex.editor.content.switchBlock(image.holder, newImage);
                     newImage.classList.add(elementClasses_.imagePreview);
 
                     /**
@@ -414,7 +406,7 @@ var image = (function(image_plugin) {
                 var oldHolder = image.holder;
                 var form = ui_.makeForm();
 
-                codex.editor.content.switchBlock(oldHolder, form, 'image_extended');
+                codex.editor.content.switchBlock(oldHolder, form);
 
             }
         },
@@ -428,9 +420,7 @@ var image = (function(image_plugin) {
              */
             uploadImageFromUrl : function(path) {
 
-                var ajaxUrl = image_plugin.config.uploadUrl,
-                    file,
-                    image,
+                var image,
                     current = codex.editor.content.currentNode,
                     beforeSend,
                     success_callback;
@@ -479,13 +469,13 @@ var image = (function(image_plugin) {
 
                     var img = image.querySelector('img');
 
-                    codex.editor.content.switchBlock(codex.editor.content.currentNode, image, 'image_extended');
+                    codex.editor.content.switchBlock(codex.editor.content.currentNode, image);
 
                 };
 
                 /** Preparing data for XMLHTTP */
                 var data = {
-                    url: image_plugin.config.uploadUrl,
+                    url: image_plugin.config.uploadFromUrl,
                     type: "POST",
                     data : {
                         url: path

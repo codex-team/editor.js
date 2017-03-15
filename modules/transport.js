@@ -2,14 +2,17 @@
  *
  * Codex.Editor Transport Module
  *
- * @author Codex Team
- * @version 1.0
+ * @copyright 2017 Codex-Team
+ * @version 1.2.0
  */
 
 module.exports = (function (transport) {
 
     let editor = codex.editor;
 
+    /**
+     * @type {null} | {DOMElement} input - keeps input element in memory
+     */
     transport.input = null;
 
     /**
@@ -17,13 +20,14 @@ module.exports = (function (transport) {
      */
     transport.arguments = null;
 
+    /**
+     * Prepares input element where will be files
+     */
     transport.prepare = function () {
 
-        var input = document.createElement('INPUT');
+        let input = editor.draw.node( 'INPUT', '', { type : 'file' } );
 
-        input.type = 'file';
         editor.listeners.add(input, 'change', editor.transport.fileSelected);
-
         editor.transport.input = input;
 
     };
@@ -32,10 +36,10 @@ module.exports = (function (transport) {
     transport.clearInput = function () {
 
         /** Remove old input */
-        this.input = null;
+        transport.input = null;
 
         /** Prepare new one */
-        this.prepare();
+        transport.prepare();
 
     };
 
@@ -46,65 +50,67 @@ module.exports = (function (transport) {
     transport.fileSelected = function () {
 
         var input       = this,
+            i,
             files       = input.files,
-            formdData   = new FormData();
+            formData   = new FormData();
 
-        formdData.append('files', files[0], files[0].name);
+        if (editor.transport.arguments.multiple === false) {
 
-        editor.transport.ajax({
-            data : formdData,
+            formData.append('files', files[0], files[0].name);
+
+        } else {
+
+            for ( i = 0; i < files.length; i++) {
+
+                formData.append('files[]', files[i], files[i].name);
+
+            }
+
+        }
+
+        editor.core.ajax({
+            type : 'POST',
+            data : formData,
+            url        : editor.transport.arguments.url,
             beforeSend : editor.transport.arguments.beforeSend,
             success    : editor.transport.arguments.success,
             error      : editor.transport.arguments.error
         });
+
+        /** Clear input */
+        transport.clearInput();
 
     };
 
     /**
      * Use plugin callbacks
      * @protected
+     *
+     * @param {Object} args - can have :
+     * @param {String} args.url - fetch URL
+     * @param {Function} args.beforeSend - function calls before sending ajax
+     * @param {Function} args.success - success callback
+     * @param {Function} args.error - on error handler
+     * @param {Boolean} args.multiple - allow select several files
+     * @param {String} args.accept - adds accept attribute
      */
     transport.selectAndUpload = function (args) {
 
-        this.arguments = args;
-        this.input.click();
+        transport.arguments = args;
 
-    };
+        if ( args.multiple === true) {
 
-    /**
-     * Ajax requests module
-     * @todo use core.ajax
-     */
-    transport.ajax = function (params) {
+            transport.input.setAttribute('multiple', 'multiple');
 
-        var xhr = new XMLHttpRequest(),
-            beforeSend = typeof params.beforeSend == 'function' ? params.beforeSend : function () {},
-            success    = typeof params.success    == 'function' ? params.success : function () {},
-            error      = typeof params.error      == 'function' ? params.error   : function () {};
+        }
 
-        beforeSend();
+        if ( args.accept ) {
 
-        xhr.open('POST', editor.settings.uploadImagesUrl, true);
+            transport.input.setAttribute('accept', args.accept);
 
-        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        }
 
-        xhr.onload = function () {
-
-            if (xhr.status === 200) {
-
-                success(xhr.responseText);
-
-            } else {
-
-                editor.core.log('request error: %o', xhr);
-                error();
-
-            }
-
-        };
-
-        xhr.send(params.data);
-        this.clearInput();
+        transport.input.click();
 
     };
 

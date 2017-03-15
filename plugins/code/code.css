@@ -1,5 +1,7 @@
 .ce-code {
     display: block;
+    width: 100%;
+    min-height: 100px;
     border: 1px solid #ebeef3;
     border-radius: 3px;
     background: #fdfdff !important;
@@ -13,6 +15,9 @@
     line-height: 1.5em;
     color: #325179;
     font-size: .8em;
+
+    resize: vertical;
+    outline: none;
 }
 
 

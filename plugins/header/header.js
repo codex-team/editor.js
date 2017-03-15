@@ -39,7 +39,7 @@ var header = (function(header_plugin) {
             new_header.setAttribute('data-placeholder', 'Заголовок');
             new_header.dataset.headerData = type;
 
-            codex.editor.content.switchBlock(old_header, new_header, 'heading_styled');
+            codex.editor.content.switchBlock(old_header, new_header);
 
             /** Close settings after replacing */
             codex.editor.toolbar.settings.close();

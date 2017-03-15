@@ -86,8 +86,7 @@ module.exports = (function (saver) {
 
     saver.makeFormDataFromBlocks = function (block) {
 
-        var pluginName = block.dataset.tool,
-            anchor     = block.dataset.anchor;
+        var pluginName = block.dataset.tool;
 
         /** Check for plugin existance */
         if (!editor.tools[pluginName]) {
@@ -108,22 +107,17 @@ module.exports = (function (saver) {
             pluginsContent = blockContent.childNodes[0],
             savedData,
             position,
-            output,
-            coverFlag = false;
+            output;
 
         /** If plugin wasn't available then return data from cache */
         if ( editor.tools[pluginName].available === false ) {
 
             position = pluginsContent.dataset.inputPosition;
-
             savedData = codex.editor.state.blocks.items[position].data;
-            coverFlag = codex.editor.state.blocks.items[position].cover;
-            anchor    = codex.editor.state.blocks.items[position].anchor;
 
         } else {
 
             savedData = editor.tools[pluginName].save(pluginsContent);
-            coverFlag = block.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE);
 
             if (editor.tools[pluginName].validate) {
 
@@ -141,12 +135,8 @@ module.exports = (function (saver) {
 
         output = {
             type   : pluginName,
-            anchor : anchor,
             data   : savedData
         };
-
-        /** Marks Blocks that will be in main page */
-        output.cover = coverFlag;
 
         editor.state.jsonOutput.push(output);
 

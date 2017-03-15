@@ -2,8 +2,12 @@
  * Codex Editor Content Module
  * Works with DOM
  *
+ * @module Codex Editor content module
+ *
  * @author Codex Team
- * @version 1.3.11
+ * @version 1.3.13
+ *
+ * @description Module works with Elements that have been appended to the main DOM
  */
 
 module.exports = (function (content) {
@@ -23,6 +27,7 @@ module.exports = (function (content) {
     content.editorAreaHightlighted = null;
 
     /**
+     * @deprecated
      * Synchronizes redactor with original textarea
      */
     content.sync = function () {
@@ -37,56 +42,9 @@ module.exports = (function (content) {
     };
 
     /**
-     * @deprecated
-     */
-    content.getNodeFocused = function () {
-
-        var selection = window.getSelection(),
-            focused;
-
-        if (selection.anchorNode === null) {
-
-            return null;
-
-        }
-
-        if ( selection.anchorNode.nodeType == editor.core.nodeTypes.TAG ) {
-
-            focused = selection.anchorNode;
-
-        } else {
-
-            focused = selection.focusNode.parentElement;
-
-        }
-
-        if ( !editor.parser.isFirstLevelBlock(focused) ) {
-
-            /** Iterate with parent nodes to find first-level*/
-            var parent = focused.parentNode;
-
-            while (parent && !editor.parser.isFirstLevelBlock(parent)) {
-
-                parent = parent.parentNode;
-
-            }
-
-            focused = parent;
-
-        }
-
-        if (focused != editor.nodes.redactor) {
-
-            return focused;
-
-        }
-
-        return null;
-
-    };
-
-    /**
      * Appends background to the block
+     *
+     * @description add CSS class to highlight visually first-level block area
      */
     content.markBlock = function () {
 
@@ -96,6 +54,8 @@ module.exports = (function (content) {
 
     /**
      * Clear background
+     *
+     * @description clears styles that highlights block
      */
     content.clearMark = function () {
 
@@ -108,10 +68,13 @@ module.exports = (function (content) {
     };
 
     /**
-     * @private
-     *
      * Finds first-level block
+     *
      * @param {Element} node - selected or clicked in redactors area node
+     * @protected
+     *
+     * @description looks for first-level block.
+     * gets parent while node is not first-level
      */
     content.getFirstLevelBlock = function (node) {
 
@@ -142,7 +105,9 @@ module.exports = (function (content) {
     /**
      * Trigger this event when working node changed
      * @param {Element} targetNode - first-level of this node will be current
-     * If targetNode is first-level then we set it as current else we look for parents to find first-level
+     * @protected
+     *
+     * @description If targetNode is first-level then we set it as current else we look for parents to find first-level
      */
     content.workingNodeChanged = function (targetNode) {
 
@@ -185,27 +150,6 @@ module.exports = (function (content) {
 
         }
 
-        /**
-         * Check is this block was in feed
-         * If true, than set switched block also covered
-         */
-        if (targetBlock.classList.contains(editor.ui.className.BLOCK_IN_FEED_MODE)) {
-
-            newBlock.classList.add(editor.ui.className.BLOCK_IN_FEED_MODE);
-
-        }
-
-        if (targetBlock.classList.contains(editor.ui.className.BLOCK_WITH_ANCHOR)) {
-
-            newBlock.classList.add(editor.ui.className.BLOCK_WITH_ANCHOR);
-
-        }
-
-        /**
-         * Saving anchor
-         */
-        newBlock.dataset.anchor = targetBlock.dataset.anchor;
-
         /** Replacing */
         editor.nodes.redactor.replaceChild(newBlock, targetBlock);
 
@@ -227,7 +171,7 @@ module.exports = (function (content) {
     };
 
     /**
-     * @private
+     * @protected
      *
      * Inserts new block to redactor
      * Wrapps block into a DIV with BLOCK_CLASSNAME class
@@ -243,23 +187,9 @@ module.exports = (function (content) {
         var workingBlock    = editor.content.currentNode,
             newBlockContent = blockData.block,
             blockType       = blockData.type,
-            cover           = blockData.cover,
-            anchor          = blockData.anchor,
             isStretched     = blockData.stretched;
 
-        var newBlock = editor.content.composeNewBlock(newBlockContent, blockType, isStretched, anchor);
-
-        if (cover === true) {
-
-            newBlock.classList.add(editor.ui.className.BLOCK_IN_FEED_MODE);
-
-        }
-
-        if (anchor) {
-
-            newBlock.classList.add(editor.ui.className.BLOCK_WITH_ANCHOR);
-
-        }
+        var newBlock = composeNewBlock_(newBlockContent, blockType, isStretched);
 
         if (workingBlock) {
 
@@ -347,7 +277,8 @@ module.exports = (function (content) {
      */
     content.switchBlock = function (blockToReplace, newBlock, tool) {
 
-        var newBlockComposed = editor.content.composeNewBlock(newBlock, tool);
+        tool = tool || editor.content.currentNode.dataset.tool;
+        var newBlockComposed = composeNewBlock_(newBlock, tool);
 
         /** Replacing */
         editor.content.replaceBlock(blockToReplace, newBlockComposed);
@@ -359,7 +290,8 @@ module.exports = (function (content) {
 
     /**
      * Iterates between child noted and looking for #text node on deepest level
-     * @private
+     * @protected
+     *
      * @param {Element} block - node where find
      * @param {int} postiton - starting postion
      *      Example: childNodex.length to find from the end
@@ -451,8 +383,13 @@ module.exports = (function (content) {
 
     /**
      * @private
+     * @param {Element} block - current plugins render
+     * @param {String} tool - plugins name
+     * @param {Boolean} isStretched - make stretched block or not
+     *
+     * @description adds necessary information to wrap new created block by first-level holder
      */
-    content.composeNewBlock = function (block, tool, isStretched, anchor) {
+    var composeNewBlock_ = function (block, tool, isStretched) {
 
         var newBlock     = editor.draw.node('DIV', editor.ui.className.BLOCK_CLASSNAME, {}),
             blockContent = editor.draw.node('DIV', editor.ui.className.BLOCK_CONTENT, {});
@@ -467,13 +404,13 @@ module.exports = (function (content) {
         }
 
         newBlock.dataset.tool   = tool;
-        newBlock.dataset.anchor = anchor || '';
         return newBlock;
 
     };
 
     /**
      * Returns Range object of current selection
+     * @protected
      */
     content.getRange = function () {
 
@@ -485,8 +422,12 @@ module.exports = (function (content) {
 
     /**
      * Divides block in two blocks (after and before caret)
-     * @private
-     * @param {Int} inputIndex - target input index
+     *
+     * @protected
+     * @param {int} inputIndex - target input index
+     *
+     * @description splits current input content to the separate blocks
+     * When enter is pressed among the words, that text will be splited.
      */
     content.splitBlock = function (inputIndex) {
 
@@ -593,6 +534,12 @@ module.exports = (function (content) {
     /**
      * Merges two blocks — current and target
      * If target index is not exist, then previous will be as target
+     *
+     * @protected
+     * @param {int} currentInputIndex
+     * @param {int} targetInputIndex
+     *
+     * @description gets two inputs indexes and merges into one
      */
     content.mergeBlocks = function (currentInputIndex, targetInputIndex) {
 
@@ -621,7 +568,7 @@ module.exports = (function (content) {
     };
 
     /**
-     * @private
+     * @deprecated
      *
      * Callback for HTML Mutations
      * @param {Array} mutation - Mutation Record
@@ -644,7 +591,7 @@ module.exports = (function (content) {
     };
 
     /**
-     * @private
+     * @deprecated
      *
      * gets only text/plain content of node
      * @param {Element} target - HTML node
@@ -679,7 +626,7 @@ module.exports = (function (content) {
     };
 
     /**
-     * @private
+     * @deprecated
      *
      * Sanitizes HTML content
      * @param {Element} target - inserted element

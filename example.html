@@ -51,6 +51,9 @@
 <script src="plugins/embed/embed.js"></script>
 <link rel="stylesheet" href="plugins/embed/embed.css">
 
+<script src="plugins/raw/raw.js"></script>
+<link rel="stylesheet" href="plugins/raw/raw.css">
+
 <script>
     codex.editor.start({
         holderId : "codex-editor",
@@ -68,8 +71,8 @@
                 showInlineToolbar: true,
                 allowRenderOnPaste: true
             },
-            heading_styled: {
-                type: 'heading_styled',
+            header: {
+                type: 'header',
                 iconClassname: 'ce-icon-header',
                 appendCallback: header.appendCallback,
                 makeSettings: header.makeSettings,
@@ -120,8 +123,8 @@
                 enableLineBreaks: true,
                 allowedToPaste: true,
             },
-            quote_styled: {
-                type: 'quote_styled',
+            quote: {
+                type: 'quote',
                 iconClassname: 'ce-icon-quote',
                 makeSettings: quote.makeSettings,
                 prepare: quote.prepare,
@@ -151,14 +154,15 @@
                 displayInToolbox: true,
                 renderOnPastePatterns: image.pastePatterns,
                 config: {
-                    uploadUrl : '/club/fetch'
+                    uploadImage : '/writing/uploadImage',
+                    uploadFromUrl : '/club/fetch'
                 }
             },
             instagram: {
                 type: 'instagram',
                 iconClassname: 'ce-icon-instagram',
                 prepare: instagram.prepare,
-                render: instagram.reneder,
+                render: instagram.render,
                 validate: instagram.validate,
                 save: instagram.save,
                 destroy: instagram.destroy,
@@ -186,6 +190,17 @@
                 destroy: embed.destroy,
                 validate: embed.validate,
                 renderOnPastePatterns: embed.pastePatterns,
+            },
+            raw: {
+                type: 'raw',
+                displayInToolbox: true,
+                iconClassname: 'raw-plugin-icon',
+                render: rawPlugin.render,
+                save: rawPlugin.save,
+                validate: rawPlugin.validate,
+                destroy: rawPlugin.destroy,
+                enableLineBreaks: true,
+                allowPasteHTML: true
             }
         },
         data : {
@@ -200,20 +215,18 @@
                     type : 'paragraph',
                     data : {
                         text : 'Пишите нам на team@ifmo.su'
-                    },
-                    anchor: 'Update',
+                    }
                 },
                 {
                     type : 'list',
                     data : {
                         type : 'OL',
                         items : [1,3,4]
-                    },
-                },
+                    }
+                }
             ],
             count: 3
         }
     });
 </script>
-
 </html>
