@@ -128,6 +128,7 @@ module.exports = (function (editor) {
         // If all ok, make UI, bind events and parse initial-content
             .then(editor.ui.prepare)
             .then(editor.tools.prepare)
+            .then(editor.sanitizer.prepare)
             .then(editor.paste.prepare)
             .then(editor.transport.prepare)
             .then(editor.renderer.makeBlocksFromData)

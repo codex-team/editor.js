@@ -59,6 +59,11 @@
         holderId : "codex-editor",
         initialBlockPlugin : 'paragraph',
         hideToolbar: false,
+        sanitizer : {
+            tags : {
+                p : {}
+            }
+        },
         tools : {
             paragraph: {
                 type: 'paragraph',
