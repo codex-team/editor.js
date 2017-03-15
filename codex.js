@@ -40,7 +40,7 @@ module.exports = (function (editor) {
      */
     editor.settings = {
         tools     : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
-        textareaId: 'codex-editor',
+        holderId  : 'codex-editor',
 
         // Type of block showing on empty editor
         initialBlockPlugin: 'paragraph'
