@@ -37,13 +37,19 @@ module.exports = (function (core) {
 
             }
 
+            if (userSettings.sanitizer) {
+
+                editor.settings.sanitizer = userSettings.sanitizer;
+
+            }
+
             editor.hideToolbar = userSettings.hideToolbar;
 
-            editor.nodes.textarea = document.getElementById(userSettings.textareaId || editor.settings.textareaId);
+            editor.nodes.holder = document.getElementById(userSettings.holderId || editor.settings.holderId);
 
-            if (typeof editor.nodes.textarea === undefined || editor.nodes.textarea === null) {
+            if (typeof editor.nodes.holder === undefined || editor.nodes.holder === null) {
 
-                reject(Error("Textarea wasn't found by ID: #" + userSettings.textareaId));
+                reject(Error("Holder wasn't found by ID: #" + userSettings.holderId));
 
             } else {
 

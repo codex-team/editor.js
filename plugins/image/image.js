@@ -220,7 +220,7 @@ var image = (function(image_plugin) {
      */
     var uploadButtonClicked_ = function(event) {
 
-        let url        = image_plugin.config.uploadImage,
+        var url        = image_plugin.config.uploadImage,
             beforeSend = uploadingCallbacks_.ByClick.beforeSend,
             success    = uploadingCallbacks_.ByClick.success,
             error      = uploadingCallbacks_.ByClick.error;

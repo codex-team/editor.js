@@ -28,7 +28,6 @@ module.exports = (function (editor) {
         editor.notifications = require('./modules/notifications');
         editor.parser        = require('./modules/parser');
         editor.sanitizer     = require('./modules/sanitizer');
-        editor.anchors       = require('./modules/anchors');
         editor.listeners     = require('./modules/listeners');
         editor.destroyer     = require('./modules/destroyer');
         editor.paste         = require('./modules/paste');
@@ -37,13 +36,11 @@ module.exports = (function (editor) {
 
     /**
      * @public
-     *
      * holds initial settings
      */
     editor.settings = {
         tools     : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
-        textareaId: 'codex-editor',
-        uploadImagesUrl: '/editor/transport/',
+        holderId  : 'codex-editor',
 
         // Type of block showing on empty editor
         initialBlockPlugin: 'paragraph'
@@ -55,7 +52,7 @@ module.exports = (function (editor) {
      * Static nodes
      */
     editor.nodes = {
-        textarea          : null,
+        holder            : null,
         wrapper           : null,
         toolbar           : null,
         inlineToolbar     : {
@@ -95,10 +92,9 @@ module.exports = (function (editor) {
     /**
      * Initialization
      * @uses Promise cEditor.core.prepare
-     * @param {} userSettings are :
-     *          - tools [],
-     *          - textareaId String
-     *          ...
+     * @param {Object} userSettings
+     * @param {Array}  userSettings.tools       list of plugins
+     * @param {String} userSettings.holderId    Element's id to append editor
      *
      * Load user defined tools
      * Tools must contain this important objects :
@@ -130,9 +126,9 @@ module.exports = (function (editor) {
         editor.core.prepare(userSettings)
 
         // If all ok, make UI, bind events and parse initial-content
-            .then(editor.ui.make)
-            .then(editor.ui.bindEvents)
+            .then(editor.ui.prepare)
             .then(editor.tools.prepare)
+            .then(editor.sanitizer.prepare)
             .then(editor.paste.prepare)
             .then(editor.transport.prepare)
             .then(editor.renderer.makeBlocksFromData)
