@@ -6,9 +6,22 @@ var attachesPlugin = function () {
 
     var editor = codex.editor;
 
+    var KBYTE = 1024;
+
+    /**
+     * Default config
+     * Can be redefined with prepare method
+     *
+     * @var sting  config.fetchUrl -- url to your fetch script
+     * @var int    config.maxSize  -- max size of file in kilobytes
+     * @var accept config.accept   -- valid MIME-types. For all MIME-types set value equal false
+     *
+     */
     var config = {
 
-        fetchUrl: '/editor/attaches'
+        fetchUrl: '/editor/attaches',
+        maxSize: 2 * KBYTE,
+        accept: ''
 
     };
 
@@ -24,10 +37,13 @@ var attachesPlugin = function () {
 
         loader: 'attaches-plugin__loader',
 
+        crossButton: 'attaches-plugin__cross-button',
+
         file: {
-            name        : 'attaches-plugin__file-name',
-            extension   : 'attaches-plugin__file-extension',
-            size        : 'attaches-plugin__file-size'
+            name          : 'attaches-plugin__file-name',
+            collapsedName : 'attaches-plugin__file-name--collapsed',
+            extension     : 'attaches-plugin__file-extension',
+            size          : 'attaches-plugin__file-size'
         }
 
     };
@@ -74,17 +90,24 @@ var attachesPlugin = function () {
 
             draw: function () {
 
-                var wrapper = editor.draw.node('div', elementsClasses.defaultFormWrapper),
-                    progress = editor.draw.node('progress', elementsClasses.progressBar);
+                var wrapper     = editor.draw.node('div', elementsClasses.wrapper),
+                    progress    = editor.draw.node('progress', elementsClasses.progressBar),
+                    name        = editor.draw.node('span', elementsClasses.file.name),
+                    crossButton = editor.draw.node('span', elementsClasses.crossButton);
 
                 progress.max = 100;
                 progress.value = 0;
 
-                wrapper.classList.add(elementsClasses.loader);
+                name.textContent = editor.transport.input.files[0].name;
+                name.classList.add(elementsClasses.file.collapsedName);
+
+                crossButton.addEventListener('click', upload.abort);
 
                 ui.progressBar.bar = progress;
 
+                wrapper.appendChild(name);
                 wrapper.appendChild(progress);
+                wrapper.appendChild(crossButton);
 
                 return wrapper;
 
@@ -100,10 +123,53 @@ var attachesPlugin = function () {
 
     };
 
+    /**
+     * Notify about upload errors via codex.editor.notifications
+     *
+     * @param Object error can have `message` property with error message
+     */
+    var notifyError = function (error) {
+
+        error = error || {};
+
+        editor.notifications.notification({
+            type: 'error',
+            message: 'Ошибка во время загрузки файла'+(error.message?': '+error.message:'')
+        });
+
+    };
+
+    /**
+     * Contains validation methods
+     *
+     * TODO: MIME-type validation
+     *
+     */
+    var validation = {
+
+        size: function () {
+
+            var file = editor.transport.input.files[0];
+
+            console.log(file, config);
+
+            if (Math.ceil(file.size / KBYTE) > config.maxSize) {
+
+                return false;
+
+            }
+
+            return true;
+
+        },
+
+    };
 
     var upload = {
 
         current: null,
+
+        aborted: true,
 
         /**
          * Fired codex.editor.transport selectAndUpload methods
@@ -112,10 +178,11 @@ var attachesPlugin = function () {
 
             editor.transport.selectAndUpload({
                 url: config.fetchUrl,
-                success: upload.end,
+                success: upload.success,
                 beforeSend: upload.start,
                 progress: upload.progress,
-                error: upload.error
+                error: upload.error,
+                accept: config.accept
             });
 
         },
@@ -125,6 +192,13 @@ var attachesPlugin = function () {
          * Draws load animation and progress bar
          */
         start:  function () {
+
+            if (!validation.size()) {
+
+                notifyError({message: 'Файл слишком большой'});
+                return false;
+
+            }
 
             var progress = ui.progressBar.draw();
 
@@ -154,17 +228,28 @@ var attachesPlugin = function () {
          *
          * @param response
          */
-        end: function (response) {
+        success: function (response) {
+
+            var data,
+                uploadedFile;
 
             try {
 
-                var data = JSON.parse(response);
+                response = JSON.parse(response);
 
-                data.size = parseInt(data.size / 1024);
+                if (response.status == 'success') {
 
-                var uploadedFile = ui.uploadedFile(data);
+                    data = response.data;
+                    data.size = Math.ceil(data.size / KBYTE) || 1;
 
-                editor.content.switchBlock(upload.current, uploadedFile);
+                    uploadedFile = ui.uploadedFile(data);
+                    editor.content.switchBlock(upload.current, uploadedFile);
+
+                } else {
+
+                    upload.error(response);
+
+                }
 
             } catch (e) {
 
@@ -183,9 +268,23 @@ var attachesPlugin = function () {
 
             var defaultFrom = ui.defaultForm();
 
-            editor.content.switchBlock(upload.content, defaultFrom);
+            editor.content.switchBlock(upload.current, defaultFrom);
 
-            editor.notifications.notification({type: 'error', message: 'Ошибка во время загрузки файла'});
+            if (!upload.aborted) {
+
+                notifyError(error);
+
+            }
+
+            upload.aborted = false;
+
+        },
+
+        abort: function () {
+
+            editor.core.XMLHTTP.abort();
+
+            upload.aborted = true;
 
         }
 
@@ -200,6 +299,8 @@ var attachesPlugin = function () {
     var prepare = function (_config) {
 
         config.fetchUrl = _config.fetchUrl || config.fetchUrl;
+        config.maxSize = _config.maxSize * KBYTE  || config.maxSize;
+        config.accept   = _config.accept   || config.accept;
 
         return Promise.resolve();
 
