@@ -1,0 +1,101 @@
+.attaches-plugin__default-wrapper {
+    position: relative;
+    background: #FEFEFE;
+    border: 2px solid #edeff5;
+    text-align: center;
+    margin: 15px 0;
+    padding: 15px;
+}
+
+.attaches-plugin__default-button {
+    cursor: pointer;
+    font-size: 1em;
+    color: #8990AA;
+}
+
+.attaches-plugin__default-button:hover {
+    color: #393F52;
+}
+
+.attaches-plugin__files-wrapper {
+
+    display:-ms-flexbox;
+    display:flex;
+    -ms-flex-flow: row nowrap;
+    flex-flow: row nowrap;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+
+    position: relative;
+    background: #FEFEFE;
+    border: 2px solid #edeff5;
+    margin: 15px 0;
+    padding: 15px 30px;
+    font-size: 17px;
+}
+
+.attaches-plugin__file-name {
+
+    -ms-flex-positive: 8;
+    flex-grow: 8;
+
+    width: 100%;
+    outline: none;
+    border: 0;
+    font-size: 15px;
+}
+
+.attaches-plugin__file-extension {
+
+    margin: 0 3px;
+    color: #8f9298;
+    font-family: 'monospace', 'monaco', 'consolas', 'courier';
+
+}
+
+.attaches-plugin__file-extension:after {
+    content: ',';
+}
+
+
+.attaches-plugin__file-size {
+
+    margin: 0 3px;
+    color: #8f9298;
+    font-family: 'monospace', 'monaco', 'consolas', 'courier';
+
+}
+
+.attaches-plugin__file-size:after {
+    content: 'КБ';
+    margin-left: 5px;
+}
+
+.attaches-plugin__icon {
+    display: inline-block;
+    width: 16px;
+    height: 32px;
+    background: url(file-icon-black.svg) no-repeat center center;
+    background-size: contain;
+}
+
+li:hover .attaches-plugin__icon ,
+.selected .attaches-plugin__icon {
+    background: url(file-icon-white.svg) no-repeat center center;
+    background-size: contain;
+}
+
+.attaches-plugin__icon--inline {
+    height: 16px;
+    vertical-align: sub;
+}
+
+.attaches-plugin__loader {
+    background-color: transparent;
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 4px, #f5f9ff 4px, #eaedef 8px) !important;
+    background-size: 56px 56px;
+    animation: loading-bar 5s infinite linear;
+}
+@keyframes loading-bar {
+    100% { background-position: -56% 0 }
+}

@@ -149,16 +149,20 @@ module.exports = (function (core) {
         }
 
         var XMLHTTP          = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
-            successFunction = function () {},
+            successFunction, errorFunction, progressFunction,
             encodedString,
             isFormData,
             prop;
+
+        successFunction = errorFunction = progressFunction =  function () {};
 
         settings.async           = true;
         settings.type            = settings.type || 'GET';
         settings.data            = settings.data || '';
         settings['content-type'] = settings['content-type'] || 'application/json; charset=utf-8';
-        successFunction     = settings.success || successFunction ;
+        successFunction          = settings.success || successFunction ;
+        errorFunction            = settings.error   || errorFunction ;
+        progressFunction         = settings.progress || progressFunction ;
 
         if (settings.type == 'GET' && settings.data) {
 
@@ -210,11 +214,16 @@ module.exports = (function (core) {
 
         XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
+        XMLHTTP.upload.onprogress = progressFunction;
+
         XMLHTTP.onreadystatechange = function () {
 
-            if (XMLHTTP.readyState == 4 && XMLHTTP.status == 200) {
+            if (XMLHTTP.readyState == 4) {
 
-                successFunction(XMLHTTP.responseText);
+                if (XMLHTTP.status == 200)
+                    successFunction(XMLHTTP.responseText);
+                else
+                    errorFunction(XMLHTTP.responseText);
 
             }
 

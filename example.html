@@ -54,6 +54,9 @@
 <script src="plugins/raw/raw.js"></script>
 <link rel="stylesheet" href="plugins/raw/raw.css">
 
+<script src="plugins/attaches/attaches.js"></script>
+<link rel="stylesheet" href="plugins/attaches/attaches.css">
+
 <script>
     codex.editor.start({
         textareaId : "codex_area",
@@ -201,6 +204,20 @@
                 destroy: rawPlugin.destroy,
                 enableLineBreaks: true,
                 allowPasteHTML: true
+            },
+            attaches: {
+                type: 'attaches',
+                displayInToolbox: true,
+                iconClassname: 'attaches-plugin__icon',
+                prepare: attachesPlugin.prepare,
+                render: attachesPlugin.render,
+                save: attachesPlugin.save,
+                validate: attachesPlugin.validate,
+                destroy: attachesPlugin.destroy,
+                appendCallback: attachesPlugin.appendCallback,
+                config: {
+                    fetchUrl: ''
+                }
             }
         },
         data : {
