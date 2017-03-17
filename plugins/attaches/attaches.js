@@ -151,8 +151,6 @@ var attachesPlugin = function () {
 
             var file = editor.transport.input.files[0];
 
-            console.log(file, config);
-
             if (Math.ceil(file.size / KBYTE) > config.maxSize) {
 
                 return false;
