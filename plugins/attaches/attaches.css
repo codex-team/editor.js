@@ -1,10 +1,9 @@
 .attaches-plugin__default-wrapper {
-    position: relative;
-    background: #FEFEFE;
-    border: 2px solid #edeff5;
-    text-align: center;
     margin: 15px 0;
     padding: 15px;
+    background: #fefefe;
+    border: 2px solid #edeff5;
+    text-align: center;
 }
 
 .attaches-plugin__default-wrapper--left-align {
@@ -12,35 +11,37 @@
 }
 
 .attaches-plugin__default-button {
-    cursor: pointer;
     font-size: 1em;
-    color: #8990AA;
+    color: #8990aa;
+    cursor: pointer;
 }
 
 .attaches-plugin__default-button:hover {
-    color: #393F52;
+    color: #393f52;
 }
 
 .attaches-plugin__files-wrapper {
-
     display:-ms-flexbox;
     display:flex;
+
     -ms-flex-flow: row nowrap;
     flex-flow: row nowrap;
+
     -ms-flex-pack: start;
     justify-content: flex-start;
+
+    -ms-flex-align: center;
     align-items: center;
 
-    position: relative;
-    background: #FEFEFE;
-    border: 2px solid #edeff5;
+
     margin: 15px 0;
     padding: 15px 20px;
+    background: #fefefe;
+    border: 2px solid #edeff5;
     font-size: 17px;
 }
 
 .attaches-plugin__file-name {
-
     -ms-flex-positive: 8;
     flex-grow: 8;
 
@@ -59,11 +60,9 @@
 
 .attaches-plugin__file-extension,
 .attaches-plugin__file-size {
-
     margin: 0 3px;
     color: #8f9298;
     font-family: 'monospace', 'monaco', 'consolas', 'courier';
-
 }
 
 .attaches-plugin__file-extension:after {
@@ -105,29 +104,26 @@ li:hover .attaches-plugin__icon ,
 }
 
 .attaches-plugin__progress-bar {
-
     width: 100%;
     height: 3px;
     margin: 0 15px;
-
-    background: #E0E1E3;
+    background: #e0e1e3;
     border: 0;
     border-radius: 3px;
-
 }
 
 .attaches-plugin__progress-bar::-webkit-progress-bar {
-    background: #E0E1E3;
+    background: #e0e1e3;
     border-radius: 3px;
 }
 
 .attaches-plugin__progress-bar::-webkit-progress-value {
-    background: #464B4F;
+    background: #464b4f;
     border-radius: 3px;
 }
 
 progress::-moz-progress-bar {
-    background: #464B4F;
+    background: #464b4f;
     border-radius: 3px;
 }
 

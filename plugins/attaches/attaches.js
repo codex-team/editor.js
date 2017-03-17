@@ -245,6 +245,8 @@ var attachesPlugin = function () {
                     uploadedFile = ui.uploadedFile(data);
                     editor.content.switchBlock(upload.current, uploadedFile);
 
+                    uploadedFile.querySelector('input').focus();
+
                 } else {
 
                     upload.error(response);
