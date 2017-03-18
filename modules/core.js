@@ -269,7 +269,7 @@ module.exports = (function (core) {
 
         };
 
-        return {abort: abort};
+        return XMLHTTP;
 
     };
 

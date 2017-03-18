@@ -10,6 +10,13 @@ module.exports = (function (transport) {
 
     let editor = codex.editor;
 
+
+    /**
+     * @private {Object} current XmlHttpRequest instance
+     */
+    var currentRequest = null;
+
+
     /**
      * @type {null} | {DOMElement} input - keeps input element in memory
      */
@@ -68,7 +75,7 @@ module.exports = (function (transport) {
 
         }
 
-        var ajax = editor.core.ajax({
+        currentRequest = editor.core.ajax({
             type : 'POST',
             data : formData,
             url        : editor.transport.arguments.url,
@@ -77,8 +84,6 @@ module.exports = (function (transport) {
             error      : editor.transport.arguments.error,
             progress   : editor.transport.arguments.progress
         });
-
-        transport.abort = ajax.abort;
 
         /** Clear input */
         transport.clearInput();
@@ -118,7 +123,13 @@ module.exports = (function (transport) {
 
     };
 
-    transport.abort = null;
+    transport.abort = function () {
+
+        currentRequest.abort();
+
+        currentRequest = null;
+
+    };
 
     return transport;
 
