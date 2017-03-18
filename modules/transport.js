@@ -68,7 +68,7 @@ module.exports = (function (transport) {
 
         }
 
-        editor.core.ajax({
+        var ajax = editor.core.ajax({
             type : 'POST',
             data : formData,
             url        : editor.transport.arguments.url,
@@ -77,6 +77,8 @@ module.exports = (function (transport) {
             error      : editor.transport.arguments.error,
             progress   : editor.transport.arguments.progress
         });
+
+        transport.abort = ajax.abort;
 
         /** Clear input */
         transport.clearInput();
@@ -115,6 +117,8 @@ module.exports = (function (transport) {
         transport.input.click();
 
     };
+
+    transport.abort = null;
 
     return transport;
 

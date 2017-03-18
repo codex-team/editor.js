@@ -3,7 +3,7 @@
  *
  * @param {String}  config.fetchUrl  - Route for file uploding
  * @param {Nubmer}  config.maxSize   - Maximum allowed file size in KB
- * @param {Nubmer}  config.accept    - Accepted MIME-types. By default, accepts all
+ * @param {String}  config.accept    - Accepted MIME-types. By default, accepts all
  *
  * @author @gohabereg
  * @version 1.0.0
@@ -30,25 +30,25 @@ var cdxAttaches = function () {
     var config = {
 
         fetchUrl: '',
-        maxSize: 2 * KBYTE,
+        maxSize: 2,
         accept: ''
 
     };
 
     var elementsClasses = {
 
-        defaultFormWrapper : 'cdx_attaches__default-wrapper',
-        defaultFormButton  : 'cdx_attaches__default-button',
-        progressBar        : 'cdx_attaches__progress-bar',
-        wrapper            : 'cdx_attaches__files-wrapper',
-        loader             : 'cdx_attaches__loader',
-        crossButton        : 'cdx_attaches__cross-button',
+        defaultFormWrapper : 'cdx-attaches__default-wrapper',
+        defaultFormButton  : 'cdx-attaches__default-button',
+        progressBar        : 'cdx-attaches__progress-bar',
+        wrapper            : 'cdx-attaches__files-wrapper',
+        loader             : 'cdx-attaches__loader',
+        crossButton        : 'cdx-attaches__cross-button',
 
         file: {
-            name          : 'cdx_attaches__file-name',
-            collapsedName : 'cdx_attaches__file-name--collapsed',
-            extension     : 'cdx_attaches__file-extension',
-            size          : 'cdx_attaches__file-size'
+            name          : 'cdx-attaches__file-name',
+            collapsedName : 'cdx-attaches__file-name--collapsed',
+            extension     : 'cdx-attaches__file-extension',
+            size          : 'cdx-attaches__file-size'
         }
 
     };
@@ -61,7 +61,7 @@ var cdxAttaches = function () {
                 button = editor.draw.node('span', elementsClasses.defaultFormButton);
 
             button.addEventListener('click', upload.fire);
-            button.innerHTML = '<i class="cdx_attaches__icon cdx_attaches__icon--inline"></i> Загрузить файл';
+            button.innerHTML = '<i class="cdx-attaches__icon cdx-attaches__icon--inline"></i> Загрузить файл';
 
             wrapper.appendChild(button);
 
@@ -288,7 +288,7 @@ var cdxAttaches = function () {
 
         abort: function () {
 
-            editor.core.XMLHTTP.abort();
+            editor.transport.abort();
 
             upload.aborted = true;
 
@@ -317,7 +317,7 @@ var cdxAttaches = function () {
             config.accept   = _config.accept || config.accept;
 
             if ( !isNaN(_config.maxSize)){
-                config.maxSize  = _config.maxSize * KBYTE;
+                config.maxSize  = _config.maxSize;
             }
 
             resolve();

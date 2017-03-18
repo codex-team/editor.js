@@ -9,8 +9,6 @@ module.exports = (function (core) {
 
     let editor = codex.editor;
 
-    core.XMLHTTP = null;
-
     /**
      * @public
      *
@@ -156,9 +154,8 @@ module.exports = (function (core) {
 
         }
 
-        core.XMLHTTP = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.core.XMLHTTP');
-
-        var encodedString,
+        var XMLHTTP = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
+            encodedString,
             isFormData,
             prop;
 
@@ -185,7 +182,7 @@ module.exports = (function (core) {
 
         if (settings.withCredentials) {
 
-            core.XMLHTTP.withCredentials = true;
+            XMLHTTP.withCredentials = true;
 
         }
 
@@ -199,7 +196,7 @@ module.exports = (function (core) {
 
         }
 
-        core.XMLHTTP.open( settings.type, settings.url, settings.async );
+        XMLHTTP.open( settings.type, settings.url, settings.async );
 
         /**
          * If we send FormData, we need no content-type header
@@ -210,33 +207,33 @@ module.exports = (function (core) {
 
             if (settings.type != 'POST') {
 
-                core.XMLHTTP.setRequestHeader('Content-type', settings['content-type']);
+                XMLHTTP.setRequestHeader('Content-type', settings['content-type']);
 
             } else {
 
-                core.XMLHTTP.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+                XMLHTTP.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 
             }
 
         }
 
-        core.XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
         if (typeof settings.progress == 'function') {
 
-            core.XMLHTTP.upload.onprogress = settings.progress;
+            XMLHTTP.upload.onprogress = settings.progress;
 
         }
 
-        core.XMLHTTP.onreadystatechange = function () {
+        XMLHTTP.onreadystatechange = function () {
 
-            if (core.XMLHTTP.readyState == 4) {
+            if (XMLHTTP.readyState == 4) {
 
-                if (core.XMLHTTP.status == 200) {
+                if (XMLHTTP.status == 200) {
 
                     if (typeof settings.success == 'function') {
 
-                        settings.success(core.XMLHTTP.responseText);
+                        settings.success(XMLHTTP.responseText);
 
                     }
 
@@ -244,7 +241,7 @@ module.exports = (function (core) {
 
                     if (typeof settings.error == 'function') {
 
-                        settings.error(core.XMLHTTP.responseText);
+                        settings.error(XMLHTTP.responseText);
 
                     }
 
@@ -257,15 +254,22 @@ module.exports = (function (core) {
         if (isFormData) {
 
             // Sending FormData
-            core.XMLHTTP.send(settings.data);
+            XMLHTTP.send(settings.data);
 
         } else {
 
             // POST requests
-            core.XMLHTTP.send(encodedString);
+            XMLHTTP.send(encodedString);
 
         }
 
+        var abort = function () {
+
+            XMLHTTP.abort();
+
+        };
+
+        return {abort: abort};
 
     };
 
