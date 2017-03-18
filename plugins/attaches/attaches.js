@@ -1,4 +1,14 @@
-var attachesPlugin = function () {
+/**
+ * Attache-file Plugin for CodeX Editor
+ *
+ * @param {String}  config.fetchUrl  - Route for file uploding
+ * @param {Nubmer}  config.maxSize   - Maximum allowed file size in KB
+ * @param {Nubmer}  config.accept    - Accepted MIME-types. By default, accepts all
+ *
+ * @author @gohabereg
+ * @version 1.0.0
+ */
+var cdxAttaches = function () {
 
     /**
      * Private methods and props
@@ -14,12 +24,12 @@ var attachesPlugin = function () {
      *
      * @var sting  config.fetchUrl -- url to your fetch script
      * @var int    config.maxSize  -- max size of file in kilobytes
-     * @var accept config.accept   -- valid MIME-types. For all MIME-types set value equal false
+     * @var accept config.accept   -- valid MIME-types. By default, accepts all
      *
      */
     var config = {
 
-        fetchUrl: '/editor/attaches',
+        fetchUrl: '',
         maxSize: 2 * KBYTE,
         accept: ''
 
@@ -27,23 +37,18 @@ var attachesPlugin = function () {
 
     var elementsClasses = {
 
-        defaultFormWrapper: 'attaches-plugin__default-wrapper',
-
-        defaultFormButton: 'attaches-plugin__default-button',
-
-        progressBar: 'attaches-plugin__progress-bar',
-
-        wrapper: 'attaches-plugin__files-wrapper',
-
-        loader: 'attaches-plugin__loader',
-
-        crossButton: 'attaches-plugin__cross-button',
+        defaultFormWrapper : 'cdx_attaches__default-wrapper',
+        defaultFormButton  : 'cdx_attaches__default-button',
+        progressBar        : 'cdx_attaches__progress-bar',
+        wrapper            : 'cdx_attaches__files-wrapper',
+        loader             : 'cdx_attaches__loader',
+        crossButton        : 'cdx_attaches__cross-button',
 
         file: {
-            name          : 'attaches-plugin__file-name',
-            collapsedName : 'attaches-plugin__file-name--collapsed',
-            extension     : 'attaches-plugin__file-extension',
-            size          : 'attaches-plugin__file-size'
+            name          : 'cdx_attaches__file-name',
+            collapsedName : 'cdx_attaches__file-name--collapsed',
+            extension     : 'cdx_attaches__file-extension',
+            size          : 'cdx_attaches__file-size'
         }
 
     };
@@ -56,7 +61,7 @@ var attachesPlugin = function () {
                 button = editor.draw.node('span', elementsClasses.defaultFormButton);
 
             button.addEventListener('click', upload.fire);
-            button.innerHTML = '<i class="attaches-plugin__icon attaches-plugin__icon--inline"></i> Загрузить файл';
+            button.innerHTML = '<i class="cdx_attaches__icon cdx_attaches__icon--inline"></i> Загрузить файл';
 
             wrapper.appendChild(button);
 
@@ -66,15 +71,15 @@ var attachesPlugin = function () {
 
         uploadedFile: function (data) {
 
-            var wrapper = editor.draw.node('div', elementsClasses.wrapper),
-                name = editor.draw.node('input', elementsClasses.file.name),
+            var wrapper   = editor.draw.node('div', elementsClasses.wrapper),
+                name      = editor.draw.node('input', elementsClasses.file.name),
                 extension = editor.draw.node('span', elementsClasses.file.extension),
-                size = editor.draw.node('span', elementsClasses.file.size);
+                size      = editor.draw.node('span', elementsClasses.file.size);
 
-            wrapper.dataset.url = data.url;
-            name.value = data.name;
+            wrapper.dataset.url   = data.url;
+            name.value            = data.name;
             extension.textContent = data.extension.toUpperCase();
-            size.textContent = data.size;
+            size.textContent      = data.size;
 
             wrapper.appendChild(name);
             wrapper.appendChild(extension);
@@ -115,6 +120,8 @@ var attachesPlugin = function () {
 
             change: function (value) {
 
+                console.assert( !isNaN(value), 'CodeX Editor Attaches: passed value is not a Number');
+
                 ui.progressBar.bar.value = value;
 
             }
@@ -134,7 +141,7 @@ var attachesPlugin = function () {
 
         editor.notifications.notification({
             type: 'error',
-            message: 'Ошибка во время загрузки файла'+(error.message?': '+error.message:'')
+            message: 'Ошибка во время загрузки файла' + ( error.message ? ': ' + error.message : '' )
         });
 
     };
@@ -151,13 +158,7 @@ var attachesPlugin = function () {
 
             var file = editor.transport.input.files[0];
 
-            if (Math.ceil(file.size / KBYTE) > config.maxSize) {
-
-                return false;
-
-            }
-
-            return true;
+            return Math.ceil(file.size / KBYTE) <= config.maxSize;
 
         },
 
@@ -213,6 +214,11 @@ var attachesPlugin = function () {
          * @param event
          */
         progress: function (event) {
+
+            /** Prevents isNaN value assignment */
+            if (!event.total) {
+                return;
+            }
 
             var value = parseInt(event.loaded / event.total * 100);
 
@@ -294,15 +300,29 @@ var attachesPlugin = function () {
 
    /*
    * Public methods
+   * @param {String} _config.fetchUrl Required
    */
-
     var prepare = function (_config) {
 
-        config.fetchUrl = _config.fetchUrl || config.fetchUrl;
-        config.maxSize = _config.maxSize * KBYTE  || config.maxSize;
-        config.accept   = _config.accept   || config.accept;
+        return new Promise(function(resolve, reject){
 
-        return Promise.resolve();
+            if ( !_config.fetchUrl ){
+
+                reject(Error('fetchUrl is missed'));
+                return;
+
+            }
+
+            config.fetchUrl = _config.fetchUrl;
+            config.accept   = _config.accept || config.accept;
+
+            if ( !isNaN(_config.maxSize)){
+                config.maxSize  = _config.maxSize * KBYTE;
+            }
+
+            resolve();
+
+        });
 
     };
 
@@ -323,12 +343,9 @@ var attachesPlugin = function () {
         var data = {
 
             url: block.dataset.url,
-
-            name: block.querySelector('.'+elementsClasses.file.name).value,
-
-            extension: block.querySelector('.'+elementsClasses.file.extension).textContent,
-
-            size: block.querySelector('.'+elementsClasses.file.size).textContent,
+            name: block.querySelector('.' + elementsClasses.file.name).value,
+            extension: block.querySelector('.' + elementsClasses.file.extension).textContent,
+            size: block.querySelector('.' + elementsClasses.file.size).textContent,
 
         };
 
@@ -368,7 +385,7 @@ var attachesPlugin = function () {
 
     var destroy = function () {
 
-        attachesPlugin = null;
+        cdxAttaches = null;
 
     };
 
@@ -383,7 +400,7 @@ var attachesPlugin = function () {
         render: render,
         save: save,
         validate: validate,
-        destroy:destroy,
+        destroy: destroy,
         appendCallback: appendCallback
     };
 

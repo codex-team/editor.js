@@ -213,15 +213,16 @@
             attaches: {
                 type: 'attaches',
                 displayInToolbox: true,
-                iconClassname: 'attaches-plugin__icon',
-                prepare: attachesPlugin.prepare,
-                render: attachesPlugin.render,
-                save: attachesPlugin.save,
-                validate: attachesPlugin.validate,
-                destroy: attachesPlugin.destroy,
-                appendCallback: attachesPlugin.appendCallback,
+                iconClassname: 'cdx-attaches__icon',
+                prepare: cdxAttaches.prepare,
+                render: cdxAttaches.render,
+                save: cdxAttaches.save,
+                validate: cdxAttaches.validate,
+                destroy: cdxAttaches.destroy,
+                appendCallback: cdxAttaches.appendCallback,
                 config: {
-                    fetchUrl: ''
+                    fetchUrl: '/test',
+                    maxSize: 50000,
                 }
             }
         },

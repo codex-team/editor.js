@@ -1,4 +1,4 @@
-.attaches-plugin__default-wrapper {
+.cdx-attaches__default-wrapper {
     margin: 15px 0;
     padding: 15px;
     background: #fefefe;
@@ -6,21 +6,21 @@
     text-align: center;
 }
 
-.attaches-plugin__default-wrapper--left-align {
+.cdx-attaches__default-wrapper--left-align {
     text-align: left;
 }
 
-.attaches-plugin__default-button {
+.cdx-attaches__default-button {
     font-size: 1em;
     color: #8990aa;
     cursor: pointer;
 }
 
-.attaches-plugin__default-button:hover {
+.cdx-attaches__default-button:hover {
     color: #393f52;
 }
 
-.attaches-plugin__files-wrapper {
+.cdx-attaches__files-wrapper {
     display:-ms-flexbox;
     display:flex;
 
@@ -41,7 +41,7 @@
     font-size: 17px;
 }
 
-.attaches-plugin__file-name {
+.cdx-attaches__file-name {
     -ms-flex-positive: 8;
     flex-grow: 8;
 
@@ -51,30 +51,30 @@
     font-size: 15px;
 }
 
-.attaches-plugin__file-name--collapsed {
+.cdx-attaches__file-name--collapsed {
     width: 100px;
     height: 1.5em;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.attaches-plugin__file-extension,
-.attaches-plugin__file-size {
+.cdx-attaches__file-extension,
+.cdx-attaches__file-size {
     margin: 0 3px;
     color: #8f9298;
     font-family: 'monospace', 'monaco', 'consolas', 'courier';
 }
 
-.attaches-plugin__file-extension:after {
+.cdx-attaches__file-extension:after {
     content: ',';
 }
 
-.attaches-plugin__file-size:after {
+.cdx-attaches__file-size:after {
     content: 'КБ';
     margin-left: 5px;
 }
 
-.attaches-plugin__icon {
+.cdx-attaches__icon {
     display: inline-block;
     width: 16px;
     height: 32px;
@@ -82,18 +82,18 @@
     background-size: contain;
 }
 
-li:hover .attaches-plugin__icon ,
-.selected .attaches-plugin__icon {
+li:hover .cdx-attaches__icon ,
+.selected .cdx-attaches__icon {
     background: url(file-icon-white.svg) no-repeat center center;
     background-size: contain;
 }
 
-.attaches-plugin__icon--inline {
+.cdx-attaches__icon--inline {
     height: 16px;
     vertical-align: sub;
 }
 
-.attaches-plugin__loader {
+.cdx-attaches__loader {
     background-color: transparent;
     background-image: repeating-linear-gradient(-45deg, transparent, transparent 4px, #f5f9ff 4px, #eaedef 8px) !important;
     background-size: 56px 56px;
@@ -103,7 +103,7 @@ li:hover .attaches-plugin__icon ,
     100% { background-position: -56% 0 }
 }
 
-.attaches-plugin__progress-bar {
+.cdx-attaches__progress-bar {
     width: 100%;
     height: 3px;
     margin: 0 15px;
@@ -112,12 +112,12 @@ li:hover .attaches-plugin__icon ,
     border-radius: 3px;
 }
 
-.attaches-plugin__progress-bar::-webkit-progress-bar {
+.cdx-attaches__progress-bar::-webkit-progress-bar {
     background: #e0e1e3;
     border-radius: 3px;
 }
 
-.attaches-plugin__progress-bar::-webkit-progress-value {
+.cdx-attaches__progress-bar::-webkit-progress-value {
     background: #464b4f;
     border-radius: 3px;
 }
@@ -127,7 +127,7 @@ progress::-moz-progress-bar {
     border-radius: 3px;
 }
 
-.attaches-plugin__cross-button {
+.cdx-attaches__cross-button {
     width: 24px;
     height: 24px;
     background: url(cross-icon.svg) no-repeat center center;
