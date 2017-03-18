@@ -263,12 +263,6 @@ module.exports = (function (core) {
 
         }
 
-        var abort = function () {
-
-            XMLHTTP.abort();
-
-        };
-
         return XMLHTTP;
 
     };
