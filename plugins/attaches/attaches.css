@@ -9,7 +9,6 @@
 }
 
 .cdx-attaches__default-button {
-    font-size: 1em;
     color: #8990aa;
     cursor: pointer;
 }
@@ -81,7 +80,7 @@ li:hover .cdx-attaches__icon,
 
 .cdx-attaches__icon--inline {
     height: 16px;
-    vertical-align: sub;
+    vertical-align: text-bottom;
 }
 
 .cdx-attaches__loader {
@@ -112,6 +111,7 @@ li:hover .cdx-attaches__icon,
 .cdx-attaches__progress-bar::-webkit-progress-value {
     background: #414957;
     border-radius: 5px;
+    transition: all 100ms ease-in;
 }
 
 progress::-moz-progress-bar {

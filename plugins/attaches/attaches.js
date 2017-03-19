@@ -59,7 +59,7 @@ var cdxAttaches = function () {
         defaultForm: function () {
 
             var wrapper = editor.draw.node('div', elementsClasses.defaultFormWrapper),
-                button = editor.draw.node('span', elementsClasses.defaultFormButton);
+                button = editor.draw.node('div', elementsClasses.defaultFormButton);
 
             button.addEventListener('click', upload.fire);
             button.innerHTML = '<i class="cdx-attaches__icon cdx-attaches__icon--inline"></i> Загрузить файл';
@@ -169,7 +169,7 @@ var cdxAttaches = function () {
 
         current: null,
 
-        aborted: true,
+        aborted: false,
 
         /**
          * Fired codex.editor.transport selectAndUpload methods
