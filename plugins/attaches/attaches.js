@@ -273,8 +273,6 @@ var cdxAttaches = function () {
          */
         error: function (error) {
 
-            return;
-
             var defaultFrom = ui.defaultForm();
 
             editor.content.switchBlock(upload.current, defaultFrom);
