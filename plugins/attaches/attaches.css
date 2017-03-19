@@ -1,8 +1,10 @@
 .cdx-attaches__default-wrapper {
     margin: 15px 0;
     padding: 15px;
-    background: #fefefe;
-    border: 2px solid #edeff5;
+    background: #fff;
+    border: 1px solid #ebecec;
+    box-shadow: 0 1px 2px 0 rgba(34, 36, 44, 0.03);
+    border-radius: 3px;
     text-align: center;
 }
 
@@ -16,58 +18,51 @@
     color: #393f52;
 }
 
-.cdx-attaches__files-wrapper {
-    display:-ms-flexbox;
-    display:flex;
-
+.cdx-attaches__wrapper {
+    display: -ms-flexbox;
+    display: flex;
     -ms-flex-flow: row nowrap;
     flex-flow: row nowrap;
-
     -ms-flex-pack: start;
     justify-content: flex-start;
-
     -ms-flex-align: center;
     align-items: center;
-
-
-    margin: 15px 0;
+    margin: 10px 0;
     padding: 15px 20px;
-    background: #fefefe;
-    border: 2px solid #edeff5;
-    font-size: 17px;
+    background: #fff;
+    border: 1px solid #ebecec;
+    box-shadow: 0 1px 2px 0 rgba(34, 36, 44, 0.03);
+    border-radius: 3px;
+    font-size: 15px;
 }
 
 .cdx-attaches__file-name {
     -ms-flex-positive: 8;
     flex-grow: 8;
-
     width: 100%;
     outline: none;
     border: 0;
-    font-size: 15px;
+    font-size: inherit;
 }
 
 .cdx-attaches__file-name--collapsed {
-    width: 100px;
-    height: 1.5em;
+    width: 30%;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.cdx-attaches__file-extension,
-.cdx-attaches__file-size {
-    margin: 0 3px;
+.cdx-attaches__extension,
+.cdx-attaches__size {
     color: #8f9298;
-    font-family: 'monospace', 'monaco', 'consolas', 'courier';
 }
 
-.cdx-attaches__file-extension:after {
+.cdx-attaches__extension::after {
     content: ',';
 }
 
-.cdx-attaches__file-size:after {
-    content: 'КБ';
-    margin-left: 5px;
+.cdx-attaches__size::after {
+    content: 'KB';
+    margin-left: 0.2em;
 }
 
 .cdx-attaches__icon {
@@ -78,7 +73,7 @@
     background-size: contain;
 }
 
-li:hover .cdx-attaches__icon ,
+li:hover .cdx-attaches__icon,
 .selected .cdx-attaches__icon {
     background: url(file-icon-white.svg) no-repeat center center;
     background-size: contain;
@@ -95,38 +90,39 @@ li:hover .cdx-attaches__icon ,
     background-size: 56px 56px;
     animation: loading-bar 5s infinite linear;
 }
+
 @keyframes loading-bar {
-    100% { background-position: -56% 0 }
+    100% { background-position: -56% 0; }
 }
 
 .cdx-attaches__progress-bar {
     width: 100%;
     height: 3px;
     margin: 0 15px;
-    background: #e0e1e3;
+    background: #e1e3eb;
     border: 0;
-    border-radius: 3px;
+    border-radius: 5px;
 }
 
 .cdx-attaches__progress-bar::-webkit-progress-bar {
     background: #e0e1e3;
-    border-radius: 3px;
+    border-radius: 5px;
 }
 
 .cdx-attaches__progress-bar::-webkit-progress-value {
-    background: #464b4f;
-    border-radius: 3px;
+    background: #414957;
+    border-radius: 5px;
 }
 
 progress::-moz-progress-bar {
-    background: #464b4f;
-    border-radius: 3px;
+    background: #414957;
+    border-radius: 5px;
 }
 
 .cdx-attaches__cross-button {
-    width: 24px;
-    height: 24px;
-    background: url(cross-icon.svg) no-repeat center center;
+    width: 18px;
+    height: 18px;
+    background: url(cross.svg) no-repeat center center;
     background-size: contain;
     cursor: pointer;
 }

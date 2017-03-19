@@ -39,16 +39,17 @@ var cdxAttaches = function () {
 
         defaultFormWrapper : 'cdx-attaches__default-wrapper',
         defaultFormButton  : 'cdx-attaches__default-button',
+
         progressBar        : 'cdx-attaches__progress-bar',
-        wrapper            : 'cdx-attaches__files-wrapper',
+        wrapper            : 'cdx-attaches__wrapper',
         loader             : 'cdx-attaches__loader',
         crossButton        : 'cdx-attaches__cross-button',
 
         file: {
             name          : 'cdx-attaches__file-name',
             collapsedName : 'cdx-attaches__file-name--collapsed',
-            extension     : 'cdx-attaches__file-extension',
-            size          : 'cdx-attaches__file-size'
+            extension     : 'cdx-attaches__extension',
+            size          : 'cdx-attaches__size'
         }
 
     };
@@ -241,7 +242,7 @@ var cdxAttaches = function () {
 
                 response = JSON.parse(response);
 
-                if (response.status == 'success') {
+                if (response.success) {
 
                     data = response.data;
                     data.size = Math.ceil(data.size / KBYTE) || 1;
@@ -271,6 +272,8 @@ var cdxAttaches = function () {
          * @param error
          */
         error: function (error) {
+
+            return;
 
             var defaultFrom = ui.defaultForm();
 
