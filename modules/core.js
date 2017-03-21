@@ -154,17 +154,16 @@ module.exports = (function (core) {
 
         }
 
-        var XMLHTTP          = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
-            successFunction = function () {},
+        var XMLHTTP = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
             encodedString,
             isFormData,
             prop;
+
 
         settings.async           = true;
         settings.type            = settings.type || 'GET';
         settings.data            = settings.data || '';
         settings['content-type'] = settings['content-type'] || 'application/json; charset=utf-8';
-        successFunction     = settings.success || successFunction ;
 
         if (settings.type == 'GET' && settings.data) {
 
@@ -189,7 +188,11 @@ module.exports = (function (core) {
 
         if (settings.beforeSend && typeof settings.beforeSend == 'function') {
 
-            settings.beforeSend.call();
+            if (settings.beforeSend() === false) {
+
+                return;
+
+            }
 
         }
 
@@ -216,11 +219,33 @@ module.exports = (function (core) {
 
         XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
+        if (typeof settings.progress == 'function') {
+
+            XMLHTTP.upload.onprogress = settings.progress;
+
+        }
+
         XMLHTTP.onreadystatechange = function () {
 
-            if (XMLHTTP.readyState == 4 && XMLHTTP.status == 200) {
+            if (XMLHTTP.readyState == 4) {
 
-                successFunction(XMLHTTP.responseText);
+                if (XMLHTTP.status == 200) {
+
+                    if (typeof settings.success == 'function') {
+
+                        settings.success(XMLHTTP.responseText);
+
+                    }
+
+                } else {
+
+                    if (typeof settings.error == 'function') {
+
+                        settings.error(XMLHTTP.responseText);
+
+                    }
+
+                }
 
             }
 
@@ -238,6 +263,7 @@ module.exports = (function (core) {
 
         }
 
+        return XMLHTTP;
 
     };
 

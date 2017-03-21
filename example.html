@@ -54,6 +54,9 @@
 <script src="plugins/raw/raw.js"></script>
 <link rel="stylesheet" href="plugins/raw/raw.css">
 
+<script src="plugins/attaches/attaches.js"></script>
+<link rel="stylesheet" href="plugins/attaches/attaches.css">
+
 <script>
     codex.editor.start({
         holderId : "codex-editor",
@@ -206,6 +209,21 @@
                 destroy: rawPlugin.destroy,
                 enableLineBreaks: true,
                 allowPasteHTML: true
+            },
+            attaches: {
+                type: 'attaches',
+                displayInToolbox: true,
+                iconClassname: 'cdx-attaches__icon',
+                prepare: cdxAttaches.prepare,
+                render: cdxAttaches.render,
+                save: cdxAttaches.save,
+                validate: cdxAttaches.validate,
+                destroy: cdxAttaches.destroy,
+                appendCallback: cdxAttaches.appendCallback,
+                config: {
+                    fetchUrl: '/test',
+                    maxSize: 50000,
+                }
             }
         },
         data : {

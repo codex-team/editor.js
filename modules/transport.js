@@ -10,6 +10,13 @@ module.exports = (function (transport) {
 
     let editor = codex.editor;
 
+
+    /**
+     * @private {Object} current XmlHttpRequest instance
+     */
+    var currentRequest = null;
+
+
     /**
      * @type {null} | {DOMElement} input - keeps input element in memory
      */
@@ -54,11 +61,7 @@ module.exports = (function (transport) {
             files       = input.files,
             formData   = new FormData();
 
-        if (editor.transport.arguments.multiple === false) {
-
-            formData.append('files', files[0], files[0].name);
-
-        } else {
+        if (editor.transport.arguments.multiple === true) {
 
             for ( i = 0; i < files.length; i++) {
 
@@ -66,15 +69,20 @@ module.exports = (function (transport) {
 
             }
 
+        } else {
+
+            formData.append('files', files[0], files[0].name);
+
         }
 
-        editor.core.ajax({
+        currentRequest = editor.core.ajax({
             type : 'POST',
             data : formData,
             url        : editor.transport.arguments.url,
             beforeSend : editor.transport.arguments.beforeSend,
             success    : editor.transport.arguments.success,
-            error      : editor.transport.arguments.error
+            error      : editor.transport.arguments.error,
+            progress   : editor.transport.arguments.progress
         });
 
         /** Clear input */
@@ -91,6 +99,7 @@ module.exports = (function (transport) {
      * @param {Function} args.beforeSend - function calls before sending ajax
      * @param {Function} args.success - success callback
      * @param {Function} args.error - on error handler
+     * @param {Function} args.progress - xhr onprogress handler
      * @param {Boolean} args.multiple - allow select several files
      * @param {String} args.accept - adds accept attribute
      */
@@ -111,6 +120,14 @@ module.exports = (function (transport) {
         }
 
         transport.input.click();
+
+    };
+
+    transport.abort = function () {
+
+        currentRequest.abort();
+
+        currentRequest = null;
 
     };
 
