@@ -128,7 +128,7 @@ var image = (function(image_plugin) {
          */
         makeImage : function(data, imageTypeClasses, stretched, bordered) {
 
-            var file = data.file,
+            var file = data,
                 text = data.caption,
                 type     = data.type,
                 image    = ui_.image(file, imageTypeClasses),
@@ -348,13 +348,11 @@ var image = (function(image_plugin) {
                         background : false,
                         border   : false,
                         isstretch : false,
-                        file : {
-                            url    : e.target.result,
-                            bigUrl : null,
-                            width  : null,
-                            height : null,
-                            additionalData : null
-                        },
+                        url    : e.target.result,
+                        bigUrl : null,
+                        width  : null,
+                        height : null,
+                        additionalData : null,
                         caption : '',
                         cover : null
                     };
@@ -392,11 +390,11 @@ var image = (function(image_plugin) {
                  */
                 var newImage = image.holder.getElementsByTagName('IMG')[0];
 
-                newImage.src            = parsed.data.file.url;
-                newImage.dataset.bigUrl = parsed.data.file.bigUrl;
-                newImage.dataset.width  = parsed.data.file.width;
-                newImage.dataset.height = parsed.data.file.height;
-                newImage.dataset.additionalData = parsed.data.file.additionalData;
+                newImage.src            = parsed.data.url;
+                newImage.dataset.bigUrl = parsed.data.bigUrl;
+                newImage.dataset.width  = parsed.data.width;
+                newImage.dataset.height = parsed.data.height;
+                newImage.dataset.additionalData = parsed.data.additionalData;
 
             },
 
@@ -433,11 +431,11 @@ var image = (function(image_plugin) {
                     var newImage = image.getElementsByTagName('IMG')[0];
 
                     newImage.dataset.stretched = false;
-                    newImage.dataset.src = imageInfo.file.url;
-                    newImage.dataset.bigUrl = imageInfo.file.bigUrl;
-                    newImage.dataset.width = imageInfo.file.width;
-                    newImage.dataset.height = imageInfo.file.height;
-                    newImage.dataset.additionalData = imageInfo.file.additionalData;
+                    newImage.dataset.src = imageInfo.url;
+                    newImage.dataset.bigUrl = imageInfo.bigUrl;
+                    newImage.dataset.width = imageInfo.width;
+                    newImage.dataset.height = imageInfo.height;
+                    newImage.dataset.additionalData = imageInfo.additionalData;
 
                     image.classList.remove(elementClasses_.imagePreview);
 
@@ -603,13 +601,13 @@ var image = (function(image_plugin) {
             background : false,
             border : content.dataset.bordered === 'true' ? true : false,
             isstretch : content.dataset.stretched === 'true' ? true : false,
-            file : {
+            // file : {
                 url : image.dataset.src || image.src,
                 bigUrl : image.dataset.bigUrl,
                 width  : image.width,
                 height : image.height,
-                additionalData :null
-            },
+                additionalData :null,
+            // },
             caption : caption.innerHTML || '',
             cover : null
         };
