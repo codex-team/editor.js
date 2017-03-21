@@ -200,6 +200,13 @@ var cdxAttaches = function () {
 
             }
 
+            if (upload.current) {
+
+                notifyError({message: 'Дождитесь окончания предыдущей загрузки'});
+                return;
+
+            }
+
             var progress = ui.progressBar.draw();
 
             upload.current = progress;
@@ -264,6 +271,8 @@ var cdxAttaches = function () {
 
             }
 
+            upload.current = null;
+
         },
 
         /**
@@ -285,6 +294,8 @@ var cdxAttaches = function () {
 
             upload.aborted = false;
 
+            upload.current = null;
+
         },
 
         abort: function () {
@@ -292,6 +303,8 @@ var cdxAttaches = function () {
             editor.transport.abort();
 
             upload.aborted = true;
+
+            upload.current = null;
 
         }
 
