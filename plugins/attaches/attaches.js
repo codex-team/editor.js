@@ -21,8 +21,6 @@ var cdxAttaches = function () {
      * Private methods and props
      */
 
-    var editor = codex.editor;
-
     var KBYTE = 1024;
 
     /**
@@ -65,8 +63,8 @@ var cdxAttaches = function () {
 
         defaultForm: function () {
 
-            var wrapper = editor.draw.node('div', elementsClasses.defaultFormWrapper),
-                button = editor.draw.node('div', elementsClasses.defaultFormButton);
+            var wrapper = codex.editor.draw.node('div', elementsClasses.defaultFormWrapper),
+                button = codex.editor.draw.node('div', elementsClasses.defaultFormButton);
 
             button.addEventListener('click', upload.fire);
             button.innerHTML = '<i class="cdx-attaches__icon cdx-attaches__icon--inline"></i> Загрузить файл';
@@ -79,10 +77,10 @@ var cdxAttaches = function () {
 
         uploadedFile: function (data) {
 
-            var wrapper   = editor.draw.node('div', elementsClasses.wrapper),
-                name      = editor.draw.node('input', elementsClasses.file.title),
-                extension = editor.draw.node('span', elementsClasses.file.extension),
-                size      = editor.draw.node('span', elementsClasses.file.size);
+            var wrapper   = codex.editor.draw.node('div', elementsClasses.wrapper),
+                name      = codex.editor.draw.node('input', elementsClasses.file.title),
+                extension = codex.editor.draw.node('span', elementsClasses.file.extension),
+                size      = codex.editor.draw.node('span', elementsClasses.file.size);
 
             wrapper.dataset.url   = data.url;
             wrapper.dataset.name  = data.name;
@@ -104,15 +102,15 @@ var cdxAttaches = function () {
 
             draw: function () {
 
-                var wrapper     = editor.draw.node('div', elementsClasses.wrapper),
-                    progress    = editor.draw.node('progress', elementsClasses.progressBar),
-                    name        = editor.draw.node('span', elementsClasses.file.title),
-                    crossButton = editor.draw.node('span', elementsClasses.crossButton);
+                var wrapper     = codex.editor.draw.node('div', elementsClasses.wrapper),
+                    progress    = codex.editor.draw.node('progress', elementsClasses.progressBar),
+                    name        = codex.editor.draw.node('span', elementsClasses.file.title),
+                    crossButton = codex.editor.draw.node('span', elementsClasses.crossButton);
 
                 progress.max = 100;
                 progress.value = 0;
 
-                name.textContent = editor.transport.input.files[0].name;
+                name.textContent = codex.editor.transport.input.files[0].name;
                 name.classList.add(elementsClasses.file.collapsedName);
 
                 crossButton.addEventListener('click', upload.abort);
@@ -148,7 +146,7 @@ var cdxAttaches = function () {
 
         error = error || {};
 
-        editor.notifications.notification({
+        codex.editor.notifications.notification({
             type: 'error',
             message: 'Ошибка во время загрузки файла' + ( error.message ? ': ' + error.message : '' )
         });
@@ -165,7 +163,7 @@ var cdxAttaches = function () {
 
         size: function () {
 
-            var file = editor.transport.input.files[0];
+            var file = codex.editor.transport.input.files[0];
 
             return Math.ceil(file.size / KBYTE) <= config.maxSize;
 
@@ -184,7 +182,7 @@ var cdxAttaches = function () {
          */
         fire: function () {
 
-            editor.transport.selectAndUpload({
+            codex.editor.transport.selectAndUpload({
                 url: config.fetchUrl,
                 success: upload.success,
                 beforeSend: upload.start,
@@ -219,7 +217,7 @@ var cdxAttaches = function () {
 
             upload.current = progress;
 
-            editor.content.switchBlock(editor.content.currentNode, progress);
+            codex.editor.content.switchBlock(codex.editor.content.currentNode, progress);
 
         },
 
@@ -263,7 +261,7 @@ var cdxAttaches = function () {
                     data.size = Math.ceil(data.size / KBYTE) || 1;
 
                     uploadedFile = ui.uploadedFile(data);
-                    editor.content.switchBlock(upload.current, uploadedFile);
+                    codex.editor.content.switchBlock(upload.current, uploadedFile);
 
                     uploadedFile.querySelector('input').focus();
 
@@ -292,7 +290,7 @@ var cdxAttaches = function () {
 
             var defaultFrom = ui.defaultForm();
 
-            editor.content.switchBlock(upload.current, defaultFrom);
+            codex.editor.content.switchBlock(upload.current, defaultFrom);
 
             if (!upload.aborted) {
 
@@ -308,7 +306,7 @@ var cdxAttaches = function () {
 
         abort: function () {
 
-            editor.transport.abort();
+            codex.editor.transport.abort();
 
             upload.aborted = true;
 
