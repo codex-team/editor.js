@@ -80,10 +80,22 @@ var paragraph = (function(paragraph_plugin) {
      */
     paragraph_plugin.save = function (blockContent){
 
-        var wrappedText = codex.editor.content.wrapTextWithParagraphs(blockContent.innerHTML);
+        var wrappedText = codex.editor.content.wrapTextWithParagraphs(blockContent.innerHTML),
+            sanitizerConfig = {
+                tags : {
+                    p : {},
+                    a: {
+                        href: true,
+                        target: '_blank',
+                        rel: 'nofollow'
+                    },
+                    i: {},
+                    b: {},
+                }
+            };
 
         var data = {
-            "text": wrappedText,
+            "text": codex.editor.sanitizer.clean(wrappedText, sanitizerConfig),
             "format": "html",
             "introText": '<<same>>'
         };

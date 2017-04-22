@@ -941,7 +941,6 @@ module.exports = (function (callbacks) {
 
         if ( htmlData.trim() != '' ) {
 
-            console.log('here');
             cleanData = editor.sanitizer.clean(htmlData);
             div.innerHTML = cleanData;
 

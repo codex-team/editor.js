@@ -51,7 +51,6 @@ module.exports = (function (sanitizer) {
     let init_ = function (userCustomConfig) {
 
         let configuration = userCustomConfig || Config.CUSTOM || Config.BASIC;
-        console.log(configuration);
 
         return new janitor(configuration);
 
@@ -65,7 +64,6 @@ module.exports = (function (sanitizer) {
      */
     sanitizer.clean = function(dirtyString, customConfig) {
 
-        console.log('her');
         let janitorInstance = init_(customConfig);
 
         return janitorInstance.clean(dirtyString);
