@@ -48,6 +48,16 @@ module.exports = (function (sanitizer) {
 
     sanitizer.Config = Config;
 
+    /**
+     *
+     * @param userCustomConfig
+     * @returns {*}
+     * @private
+     *
+     * @description If developer uses editor's API, then he can customize sane restrictions.
+     * Or, sane config can be defined globally in editors initialization. That config will be used everywhere
+     * At least, if there is no config overrides, that API uses BASIC Default configation
+     */
     let init_ = function (userCustomConfig) {
 
         let configuration = userCustomConfig || Config.CUSTOM || Config.BASIC;
