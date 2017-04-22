@@ -26,7 +26,6 @@ var ExtractTextWebpackPlugin    = require('extract-text-webpack-plugin');
 module.exports = {
 
     entry: {
-        "whatwg-fetch": "whatwg-fetch",
         "codex-editor": "./codex"
     },
     output: {
@@ -37,7 +36,7 @@ module.exports = {
     watch: true,
 
     watchOptions: {
-        aggregateTimeOut: 100
+        aggregateTimeOut: 50
     },
 
     devtool: NODE_ENV == 'development' ? "source-map" : null,

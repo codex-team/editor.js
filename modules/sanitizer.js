@@ -48,11 +48,27 @@ module.exports = (function (sanitizer) {
 
     sanitizer.Config = Config;
 
-    sanitizer.init = function () {
+    let init_ = function (userCustomConfig) {
 
-        let configuration = Config.CUSTOM || Config.BASIC;
+        let configuration = userCustomConfig || Config.CUSTOM || Config.BASIC;
+        console.log(configuration);
 
         return new janitor(configuration);
+
+    };
+
+    /**
+     * Cleans string from unwanted tags
+     * @protected
+     * @param {String} dirtyString - taint string
+     * @param {Object} customConfig - allowed tags
+     */
+    sanitizer.clean = function(dirtyString, customConfig) {
+
+        console.log('her');
+        let janitorInstance = init_(customConfig);
+
+        return janitorInstance.clean(dirtyString);
 
     };
 

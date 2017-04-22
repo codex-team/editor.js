@@ -3,7 +3,7 @@
  * @description Module works with editor added Elements
  *
  * @author Codex Team
- * @version 1.3.12
+ * @version 1.4.0
  */
 
 module.exports = (function (callbacks) {
@@ -933,7 +933,6 @@ module.exports = (function (callbacks) {
 
         /** Temporary DIV that is used to work with childs as arrays item */
         var div     = editor.draw.node('DIV', '', {}),
-            cleaner = new editor.sanitizer.init(),
             cleanData,
             fragment;
 
@@ -942,7 +941,8 @@ module.exports = (function (callbacks) {
 
         if ( htmlData.trim() != '' ) {
 
-            cleanData = cleaner.clean(htmlData);
+            console.log('here');
+            cleanData = editor.sanitizer.clean(htmlData);
             div.innerHTML = cleanData;
 
         } else {
