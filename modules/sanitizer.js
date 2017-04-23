@@ -72,7 +72,7 @@ module.exports = (function (sanitizer) {
      * @param {String} dirtyString - taint string
      * @param {Object} customConfig - allowed tags
      */
-    sanitizer.clean = function(dirtyString, customConfig) {
+    sanitizer.clean = function (dirtyString, customConfig) {
 
         let janitorInstance = init_(customConfig);
 

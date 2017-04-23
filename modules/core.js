@@ -145,6 +145,10 @@ module.exports = (function (core) {
 
     /**
      * Native Ajax
+     * @param {String}   settings.url         - request URL
+     * @param {function} settings.beforeSend  - returned value will be passed as context to the Success, Error and Progress callbacks
+     * @param {function} settings.success
+     * @param {function} settings.progress
      */
     core.ajax = function (settings) {
 
@@ -186,9 +190,18 @@ module.exports = (function (core) {
 
         }
 
-        if (settings.beforeSend && typeof settings.beforeSend == 'function') {
+        /**
+         * Value returned in beforeSend funtion will be passed as context to the other response callbacks
+         * If beforeSend returns false, AJAX will be blocked
+         */
+        let responseContext,
+            beforeSendResult;
 
-            if (settings.beforeSend() === false) {
+        if (typeof settings.beforeSend === 'function') {
+
+            beforeSendResult = settings.beforeSend.call();
+
+            if (beforeSendResult === false) {
 
                 return;
 
@@ -205,7 +218,7 @@ module.exports = (function (core) {
 
         if (!isFormData) {
 
-            if (settings.type != 'POST') {
+            if (settings.type !== 'POST') {
 
                 XMLHTTP.setRequestHeader('Content-type', settings['content-type']);
 
@@ -219,29 +232,31 @@ module.exports = (function (core) {
 
         XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-        if (typeof settings.progress == 'function') {
+        responseContext = beforeSendResult || XMLHTTP;
 
-            XMLHTTP.upload.onprogress = settings.progress;
+        if (typeof settings.progress === 'function') {
+
+            XMLHTTP.upload.onprogress = settings.progress.bind(responseContext);
 
         }
 
         XMLHTTP.onreadystatechange = function () {
 
-            if (XMLHTTP.readyState == 4) {
+            if (XMLHTTP.readyState === 4) {
 
-                if (XMLHTTP.status == 200) {
+                if (XMLHTTP.status === 200) {
 
-                    if (typeof settings.success == 'function') {
+                    if (typeof settings.success === 'function') {
 
-                        settings.success(XMLHTTP.responseText);
+                        settings.success.call(responseContext, XMLHTTP.responseText);
 
                     }
 
                 } else {
 
-                    if (typeof settings.error == 'function') {
+                    if (typeof settings.error === 'function') {
 
-                        settings.error(XMLHTTP.responseText);
+                        settings.error.call(responseContext, XMLHTTP.responseText, XMLHTTP.status);
 
                     }
 

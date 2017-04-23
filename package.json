@@ -8,9 +8,6 @@
   },
   "author": "Codex Team",
   "license": "ISC",
-  "dependencies": {
-    "whatwg-fetch": "^2.0.1"
-  },
   "devDependencies": {
     "babel-core": "^6.21.0",
     "babel-loader": "^6.2.10",
