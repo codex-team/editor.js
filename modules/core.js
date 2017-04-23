@@ -338,6 +338,20 @@ module.exports = (function (core) {
 
     };
 
+    /**
+     * Check block
+     * @param target
+     * @description Checks target is it native input
+     */
+    core.isNativeInput = function (target) {
+
+        var nativeInputAreas = ['INPUT', 'TEXTAREA'];
+
+        return (nativeInputAreas.indexOf(target.tagName) != -1);
+
+    };
+
+
     return core;
 
 })({});

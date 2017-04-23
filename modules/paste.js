@@ -107,6 +107,125 @@ module.exports = function (paste) {
 
     };
 
+    /**
+     * This method prevents default behaviour.
+     *
+     * @param {Object} event
+     * @protected
+     *
+     * @description We get from clipboard pasted data, sanitize, make a fragment that contains of this sanitized nodes.
+     * Firstly, we need to memorize the caret position. We can do that by getting the range of selection.
+     * After all, we insert clear fragment into caret placed position. Then, we should move the caret to the last node
+     */
+    paste.blockPasteCallback = function (event) {
+
+
+        if (!needsToHandlePasteEvent(event.target)) {
+
+            return;
+
+        }
+
+        /** get html pasted data - dirty data */
+        var htmlData  = event.clipboardData.getData('text/html'),
+            plainData = event.clipboardData.getData('text/plain');
+
+        /** Temporary DIV that is used to work with text's paragraphs as DOM-elements*/
+        var paragraphs = editor.draw.node('DIV', '', {}),
+            cleanData,
+            wrappedData;
+
+        /** Create fragment, that we paste to range after proccesing */
+        cleanData = editor.sanitizer.clean(htmlData);
+
+        /**
+         * We wrap pasted text with <p> tags to split it logically
+         * @type {string}
+         */
+        wrappedData = editor.content.wrapTextWithParagraphs(cleanData, plainData);
+        paragraphs.innerHTML = wrappedData;
+
+        /**
+         * If there only one paragraph, lets user agent paste it
+         */
+        if (paragraphs.childNodes.length == 1) {
+
+            return;
+
+        }
+
+        /** Prevent default behaviour */
+        event.preventDefault();
+
+        insertPastedParagraphs(paragraphs.childNodes);
+
+    };
+
+    /**
+     * Checks if we should handle paste event on block
+     * @param block
+     *
+     * @return {boolean}
+     */
+    var needsToHandlePasteEvent = function (block) {
+
+        /** If area is input or textarea then allow default behaviour */
+        if ( editor.core.isNativeInput(block) ) {
+
+            return false;
+
+        }
+
+        var editableParent = editor.content.getEditableParent(block);
+
+        /** Allow paste when event target placed in Editable element */
+        if (!editableParent) {
+
+            return false;
+
+        }
+
+        return true;
+
+    };
+
+    var insertPastedParagraphs = function (paragraphs) {
+
+        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin,
+            currentBlockContent = editor.content.currentNode.firstChild.firstChild;
+
+        paragraphs.forEach(function (paragraph, index) {
+
+            /**
+             * If there was no data in working node, replace it with first paragraph of pasted text
+             */
+            if (index == 0 && currentBlockContent.innerHTML.trim() === '') {
+
+                editor.content.switchBlock(editor.content.currentNode, editor.tools[NEW_BLOCK_TYPE].render({
+                    text : paragraph.innerHTML
+                }), NEW_BLOCK_TYPE);
+
+                return;
+
+            }
+
+            editor.content.insertBlock({
+                type  : NEW_BLOCK_TYPE,
+                block : editor.tools[NEW_BLOCK_TYPE].render({
+                    text : paragraph.innerHTML
+                })
+            });
+
+            editor.caret.inputIndex++;
+
+        });
+
+        editor.caret.setToPreviousBlock(editor.caret.getCurrentInputIndex() + 1);
+
+
+    };
+
+
     return paste;
 
 }({});

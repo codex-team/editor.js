@@ -801,7 +801,7 @@ module.exports = (function (callbacks) {
             selectionLength,
             firstLevelBlocksCount;
 
-        if (isNativeInput_(event.target)) {
+        if (editor.core.isNativeInput(event.target)) {
 
             /** If input value is empty - remove block */
             if (event.target.value.trim() == '') {
@@ -896,104 +896,6 @@ module.exports = (function (callbacks) {
     };
 
     /**
-     * This method prevents default behaviour.
-     *
-     * @param {Object} event
-     * @protected
-     *
-     * @description We get from clipboard pasted data, sanitize, make a fragment that contains of this sanitized nodes.
-     * Firstly, we need to memorize the caret position. We can do that by getting the range of selection.
-     * After all, we insert clear fragment into caret placed position. Then, we should move the caret to the last node
-     */
-    callbacks.blockPasteCallback = function (event) {
-
-        /** If area is input or textarea then allow default behaviour */
-        if ( isNativeInput_(event.target) ) {
-
-            return;
-
-        }
-
-        /** Prevent default behaviour */
-        event.preventDefault();
-
-        var editableParent = editor.content.getEditableParent(event.target);
-
-        /** Allow paste when event target placed in Editable element */
-        if (!editableParent) {
-
-            return;
-
-        }
-
-        /** get html pasted data - dirty data */
-        var htmlData  = event.clipboardData.getData('text/html'),
-            plainData = event.clipboardData.getData('text/plain');
-
-
-        /** Temporary DIV that is used to work with childs as arrays item */
-        var div     = editor.draw.node('DIV', '', {}),
-            cleanData,
-            wrappedData;
-
-        /** Create fragment, that we paste to range after proccesing */
-        cleanData = editor.sanitizer.clean(htmlData);
-
-
-        /**
-         * We wrap pasted text with <p> tags to split it logically
-         *
-         * @type {string}
-         */
-        wrappedData = editor.content.wrapTextWithParagraphs(cleanData, plainData);
-        div.innerHTML = wrappedData;
-
-        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin,
-            currentBlockContent = editor.content.currentNode.firstChild.firstChild;
-
-        /**
-         * If there only one paragraph, just insert it
-         */
-        if (div.childNodes.length == 1) {
-
-            editor.caret.insertNode(document.createTextNode(div.firstChild.innerHTML));
-            return;
-
-        }
-
-        div.childNodes.forEach(function (paragraph, index) {
-
-
-            /**
-             * If there was no data in working node, replace it with first paragraph of pasted text
-             */
-            if (index == 0 && currentBlockContent.innerHTML.trim() === '') {
-
-                editor.content.switchBlock(editor.content.currentNode, editor.tools[NEW_BLOCK_TYPE].render({
-                    text : paragraph.innerHTML
-                }), NEW_BLOCK_TYPE);
-
-                return;
-
-            }
-
-            editor.content.insertBlock({
-                type  : NEW_BLOCK_TYPE,
-                block : editor.tools[NEW_BLOCK_TYPE].render({
-                    text : paragraph.innerHTML
-                })
-            });
-
-            editor.caret.inputIndex++;
-
-        });
-
-        editor.caret.setToPreviousBlock(editor.caret.getCurrentInputIndex() + 1);
-
-
-    };
-
-    /**
      * used by UI module
      * Clicks on block settings button
      *
@@ -1016,21 +918,6 @@ module.exports = (function (callbacks) {
         /** Close toolbox when settings button is active */
         editor.toolbar.toolbox.close();
         editor.toolbar.settings.hideRemoveActions();
-
-    };
-
-    /**
-     * Check block
-     * @param target
-     * @private
-     *
-     * @description Checks target is it native input
-     */
-    var isNativeInput_ = function (target) {
-
-        var nativeInputAreas = ['INPUT', 'TEXTAREA'];
-
-        return (nativeInputAreas.indexOf(target.tagName) != -1);
 
     };
 
