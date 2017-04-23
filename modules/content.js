@@ -120,7 +120,7 @@ module.exports = (function (content) {
 
         }
 
-        this.currentNode = this.getFirstLevelBlock(targetNode);
+        content.currentNode = content.getFirstLevelBlock(targetNode);
 
     };
 
@@ -639,10 +639,17 @@ module.exports = (function (content) {
     /**
      * @public
      *
-     * @param [String] htmlString - html content as string
+     * @param {string} htmlData - html content as string
+     * @param {string} plainData - plain text
      * @return {string} - html content as string
      */
-    content.wrapTextWithParagraphs = function (htmlString) {
+    content.wrapTextWithParagraphs = function (htmlData, plainData) {
+
+        if (!htmlData) {
+
+            return '<p>' + plainData.split('\n\n').join('</p><p>') + '</p>';
+
+        }
 
         var wrapper = document.createElement('DIV'),
             newWrapper = document.createElement('DIV'),
@@ -656,7 +663,7 @@ module.exports = (function (content) {
          * Make HTML Element to Wrap Text
          * It allows us to work with input data as HTML content
          */
-        wrapper.innerHTML = htmlString;
+        wrapper.innerHTML = htmlData;
         paragraph = document.createElement('P');
 
         for (i = 0; i < wrapper.childNodes.length; i++) {

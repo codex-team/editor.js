@@ -268,6 +268,31 @@ module.exports = (function (caret) {
         }
     };
 
+
+    /**
+     * Inserts node at the caret location
+     * @param node
+     */
+    caret.insertNode = function (node) {
+
+        var selection, range;
+
+        selection = window.getSelection();
+
+        range = selection.getRangeAt(0);
+        range.deleteContents();
+
+        range.insertNode(node);
+
+        range.setStartAfter(node);
+        range.collapse(true);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+
+    };
+
     return caret;
 
 })({});

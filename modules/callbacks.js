@@ -917,8 +917,7 @@ module.exports = (function (callbacks) {
         /** Prevent default behaviour */
         event.preventDefault();
 
-        var editableParent = editor.content.getEditableParent(event.target),
-            currentNode = editor.content.currentNode;
+        var editableParent = editor.content.getEditableParent(event.target);
 
         /** Allow paste when event target placed in Editable element */
         if (!editableParent) {
@@ -931,65 +930,66 @@ module.exports = (function (callbacks) {
         var htmlData  = event.clipboardData.getData('text/html'),
             plainData = event.clipboardData.getData('text/plain');
 
+
         /** Temporary DIV that is used to work with childs as arrays item */
         var div     = editor.draw.node('DIV', '', {}),
             cleanData,
-            fragment;
+            wrappedData;
 
         /** Create fragment, that we paste to range after proccesing */
-        fragment = document.createDocumentFragment();
+        cleanData = editor.sanitizer.clean(htmlData);
 
-        if ( htmlData.trim() != '' ) {
-
-            cleanData = editor.sanitizer.clean(htmlData);
-            div.innerHTML = cleanData;
-
-        } else {
-
-            div.innerText = plainData.toString();
-
-        }
-
-        var node, lastNode;
 
         /**
-         * and fill in fragment
+         * We wrap pasted text with <p> tags to split it logically
+         *
+         * @type {string}
          */
-        while (( node = div.firstChild) ) {
+        wrappedData = editor.content.wrapTextWithParagraphs(cleanData, plainData);
+        div.innerHTML = wrappedData;
 
-            lastNode = fragment.appendChild(node);
-
-        }
-
-
-        if (editor.tools[currentNode.dataset.tool].allowRenderOnPaste) {
-
-            if (editor.paste.pasted(event)) return;
-
-        }
+        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin,
+            currentBlockContent = editor.content.currentNode.firstChild.firstChild;
 
         /**
-         * work with selection and range
+         * If there only one paragraph, just insert it
          */
-        var selection, range;
+        if (div.childNodes.length == 1) {
 
-        selection = window.getSelection();
-
-        range = selection.getRangeAt(0);
-        range.deleteContents();
-
-        range.insertNode(fragment);
-
-        /** Preserve the selection */
-        if (lastNode) {
-
-            range = range.cloneRange();
-            range.setStartAfter(lastNode);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
+            editor.caret.insertNode(document.createTextNode(div.firstChild.innerHTML));
+            return;
 
         }
+
+        div.childNodes.forEach(function (paragraph, index) {
+
+
+            /**
+             * If there was no data in working node, replace it with first paragraph of pasted text
+             */
+            if (index == 0 && currentBlockContent.innerHTML.trim() === '') {
+
+                editor.content.switchBlock(editor.content.currentNode, editor.tools[NEW_BLOCK_TYPE].render({
+                    text : paragraph.innerHTML
+                }), NEW_BLOCK_TYPE);
+
+                return;
+
+            }
+
+            editor.content.insertBlock({
+                type  : NEW_BLOCK_TYPE,
+                block : editor.tools[NEW_BLOCK_TYPE].render({
+                    text : paragraph.innerHTML
+                })
+            });
+
+            editor.caret.inputIndex++;
+
+        });
+
+        editor.caret.setToPreviousBlock(editor.caret.getCurrentInputIndex() + 1);
+
 
     };
 
