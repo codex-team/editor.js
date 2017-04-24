@@ -199,22 +199,23 @@ module.exports = function (paste) {
 
         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
 
-        paragraphs.forEach(function (paragraph, index) {
+
+        /**
+         * If there was no data in working node, remove it
+         */
+        if (editor.core.isBlockEmpty(editor.content.currentNode)) {
+
+            editor.content.currentNode.remove();
+            editor.caret.setToPreviousBlock(editor.caret.inputIndex);
+
+        }
+
+        paragraphs.forEach(function (paragraph) {
 
             /** Don't allow empty paragraphs */
             if (editor.core.isBlockEmpty(paragraph)) {
 
                 return;
-
-            }
-
-            /**
-             * If there was no data in working node, replace it with first paragraph of pasted text
-             */
-            if (index == 0 && editor.core.isBlockEmpty(editor.content.currentNode)) {
-
-                editor.content.currentNode.remove();
-                editor.caret.setToPreviousBlock(editor.caret.inputIndex);
 
             }
 

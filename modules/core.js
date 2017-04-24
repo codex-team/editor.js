@@ -377,7 +377,7 @@ module.exports = (function (core) {
 
         });
 
-        return textContentIsEmpty && nativeInputsAreEmpty && !(EXCEPTION_TAGS.indexOf(block.tagName) + 1);
+        return textContentIsEmpty && nativeInputsAreEmpty && !EXCEPTION_TAGS.includes(block.tagName);
 
     };
 
