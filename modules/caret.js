@@ -268,6 +268,38 @@ module.exports = (function (caret) {
         }
     };
 
+
+    /**
+     * Inserts node at the caret location
+     * @param {HTMLElement|DocumentFragment} node
+     */
+    caret.insertNode = function (node) {
+
+        var selection, range,
+            lastNode = node;
+
+        if (node.nodeType == editor.core.nodeTypes.DOCUMENT_FRAGMENT) {
+
+            lastNode = node.lastChild;
+
+        }
+
+        selection = window.getSelection();
+
+        range = selection.getRangeAt(0);
+        range.deleteContents();
+
+        range.insertNode(node);
+
+        range.setStartAfter(lastNode);
+        range.collapse(true);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+
+    };
+
     return caret;
 
 })({});

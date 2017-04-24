@@ -71,23 +71,8 @@ module.exports = (function (callbacks) {
          */
         event.preventDefault();
 
-        var nativeInputs = editor.content.currentNode.querySelectorAll('textarea, input'),
-            nativeInputsAreEmpty   = true,
-            textContentIsEmpty = !editor.content.currentNode.textContent.trim();
 
-        Array.prototype.map.call(nativeInputs, function (input) {
-
-            if (input.type == 'textarea' || input.type == 'text') {
-
-                nativeInputsAreEmpty = nativeInputsAreEmpty && !input.value.trim();
-
-            }
-
-        });
-
-        var blockIsEmpty = textContentIsEmpty && nativeInputsAreEmpty;
-
-        if (!blockIsEmpty) {
+        if (!editor.core.isBlockEmpty(editor.content.currentNode)) {
 
             return;
 
@@ -801,7 +786,7 @@ module.exports = (function (callbacks) {
             selectionLength,
             firstLevelBlocksCount;
 
-        if (isNativeInput_(event.target)) {
+        if (editor.core.isNativeInput(event.target)) {
 
             /** If input value is empty - remove block */
             if (event.target.value.trim() == '') {
@@ -896,104 +881,6 @@ module.exports = (function (callbacks) {
     };
 
     /**
-     * This method prevents default behaviour.
-     *
-     * @param {Object} event
-     * @protected
-     *
-     * @description We get from clipboard pasted data, sanitize, make a fragment that contains of this sanitized nodes.
-     * Firstly, we need to memorize the caret position. We can do that by getting the range of selection.
-     * After all, we insert clear fragment into caret placed position. Then, we should move the caret to the last node
-     */
-    callbacks.blockPasteCallback = function (event) {
-
-        /** If area is input or textarea then allow default behaviour */
-        if ( isNativeInput_(event.target) ) {
-
-            return;
-
-        }
-
-        /** Prevent default behaviour */
-        event.preventDefault();
-
-        var editableParent = editor.content.getEditableParent(event.target),
-            currentNode = editor.content.currentNode;
-
-        /** Allow paste when event target placed in Editable element */
-        if (!editableParent) {
-
-            return;
-
-        }
-
-        /** get html pasted data - dirty data */
-        var htmlData  = event.clipboardData.getData('text/html'),
-            plainData = event.clipboardData.getData('text/plain');
-
-        /** Temporary DIV that is used to work with childs as arrays item */
-        var div     = editor.draw.node('DIV', '', {}),
-            cleanData,
-            fragment;
-
-        /** Create fragment, that we paste to range after proccesing */
-        fragment = document.createDocumentFragment();
-
-        if ( htmlData.trim() != '' ) {
-
-            cleanData = editor.sanitizer.clean(htmlData);
-            div.innerHTML = cleanData;
-
-        } else {
-
-            div.innerText = plainData.toString();
-
-        }
-
-        var node, lastNode;
-
-        /**
-         * and fill in fragment
-         */
-        while (( node = div.firstChild) ) {
-
-            lastNode = fragment.appendChild(node);
-
-        }
-
-
-        if (editor.tools[currentNode.dataset.tool].allowRenderOnPaste) {
-
-            if (editor.paste.pasted(event)) return;
-
-        }
-
-        /**
-         * work with selection and range
-         */
-        var selection, range;
-
-        selection = window.getSelection();
-
-        range = selection.getRangeAt(0);
-        range.deleteContents();
-
-        range.insertNode(fragment);
-
-        /** Preserve the selection */
-        if (lastNode) {
-
-            range = range.cloneRange();
-            range.setStartAfter(lastNode);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-
-        }
-
-    };
-
-    /**
      * used by UI module
      * Clicks on block settings button
      *
@@ -1016,21 +903,6 @@ module.exports = (function (callbacks) {
         /** Close toolbox when settings button is active */
         editor.toolbar.toolbox.close();
         editor.toolbar.settings.hideRemoveActions();
-
-    };
-
-    /**
-     * Check block
-     * @param target
-     * @private
-     *
-     * @description Checks target is it native input
-     */
-    var isNativeInput_ = function (target) {
-
-        var nativeInputAreas = ['INPUT', 'TEXTAREA'];
-
-        return (nativeInputAreas.indexOf(target.tagName) != -1);
 
     };
 
