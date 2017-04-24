@@ -197,18 +197,9 @@ module.exports = function (paste) {
      */
     var insertPastedParagraphs = function (paragraphs) {
 
-        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
+        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin,
+            currentNode = editor.content.currentNode;
 
-
-        /**
-         * If there was no data in working node, remove it
-         */
-        if (editor.core.isBlockEmpty(editor.content.currentNode)) {
-
-            editor.content.currentNode.remove();
-            editor.caret.setToPreviousBlock(editor.caret.inputIndex);
-
-        }
 
         paragraphs.forEach(function (paragraph) {
 
@@ -231,6 +222,17 @@ module.exports = function (paste) {
         });
 
         editor.caret.setToPreviousBlock(editor.caret.getCurrentInputIndex() + 1);
+
+
+        /**
+         * If there was no data in working node, remove it
+         */
+        if (editor.core.isBlockEmpty(currentNode)) {
+
+            currentNode.remove();
+            editor.ui.saveInputs();
+
+        }
 
 
     };
