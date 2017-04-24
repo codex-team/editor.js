@@ -243,7 +243,21 @@ module.exports = function (paste) {
 
         if (node.childElementCount) {
 
-            newNode = editor.draw.node('SPAN', '', {innerHTML: node.innerHTML.trim()});
+            newNode = document.createDocumentFragment();
+
+            console.log(node.childNodes);
+
+            node.childNodes.forEach(function (current) {
+
+                if (current instanceof window.Text && current.data.trim() === '') {
+
+                    return;
+
+                }
+
+                newNode.appendChild(current.cloneNode(true));
+
+            });
 
         } else {
 
