@@ -197,13 +197,12 @@ module.exports = function (paste) {
      */
     var insertPastedParagraphs = function (paragraphs) {
 
-        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin,
-            currentBlockContent = editor.content.currentNode.firstChild.firstChild;
+        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
 
         paragraphs.forEach(function (paragraph, index) {
 
             /** Don't allow empty paragraphs */
-            if (paragraph.innerHTML.trim() === '') {
+            if (editor.core.isBlockEmpty(paragraph)) {
 
                 return;
 
@@ -212,13 +211,10 @@ module.exports = function (paste) {
             /**
              * If there was no data in working node, replace it with first paragraph of pasted text
              */
-            if (index == 0 && currentBlockContent.innerHTML.trim() === '') {
+            if (index == 0 && editor.core.isBlockEmpty(editor.content.currentNode)) {
 
-                editor.content.switchBlock(editor.content.currentNode, editor.tools[NEW_BLOCK_TYPE].render({
-                    text : paragraph.innerHTML
-                }), NEW_BLOCK_TYPE);
-
-                return;
+                editor.content.currentNode.remove();
+                editor.caret.setToPreviousBlock(editor.caret.inputIndex);
 
             }
 

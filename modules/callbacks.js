@@ -71,23 +71,8 @@ module.exports = (function (callbacks) {
          */
         event.preventDefault();
 
-        var nativeInputs = editor.content.currentNode.querySelectorAll('textarea, input'),
-            nativeInputsAreEmpty   = true,
-            textContentIsEmpty = !editor.content.currentNode.textContent.trim();
 
-        Array.prototype.map.call(nativeInputs, function (input) {
-
-            if (input.type == 'textarea' || input.type == 'text') {
-
-                nativeInputsAreEmpty = nativeInputsAreEmpty && !input.value.trim();
-
-            }
-
-        });
-
-        var blockIsEmpty = textContentIsEmpty && nativeInputsAreEmpty;
-
-        if (!blockIsEmpty) {
+        if (!editor.core.isBlockEmpty(editor.content.currentNode)) {
 
             return;
 

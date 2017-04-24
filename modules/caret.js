@@ -271,14 +271,14 @@ module.exports = (function (caret) {
 
     /**
      * Inserts node at the caret location
-     * @param node
+     * @param {HTMLElement|DocumentFragment} node
      */
     caret.insertNode = function (node) {
 
         var selection, range,
             lastNode = node;
 
-        if (node instanceof window.DocumentFragment) {
+        if (node.nodeType == editor.core.nodeTypes.DOCUMENT_FRAGMENT) {
 
             lastNode = node.lastChild;
 
