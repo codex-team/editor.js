@@ -245,8 +245,6 @@ module.exports = function (paste) {
 
             newNode = document.createDocumentFragment();
 
-            console.log(node.childNodes);
-
             node.childNodes.forEach(function (current) {
 
                 if (current instanceof window.Text && current.data.trim() === '') {
