@@ -112,7 +112,8 @@ module.exports = (function (core) {
     core.nodeTypes = {
         TAG     : 1,
         TEXT    : 3,
-        COMMENT : 8
+        COMMENT : 8,
+        DOCUMENT_FRAGMENT: 11
     };
 
     /**
@@ -337,6 +338,49 @@ module.exports = (function (core) {
         return object instanceof FormData;
 
     };
+
+    /**
+     * Check block
+     * @param target
+     * @description Checks target is it native input
+     */
+    core.isNativeInput = function (target) {
+
+        var nativeInputAreas = ['INPUT', 'TEXTAREA'];
+
+        return nativeInputAreas.indexOf(target.tagName) != -1;
+
+    };
+
+    /**
+     * Check if block is empty
+     * We should check block textContent, child native inputs and some exceptions like IMG and IFRAME
+     *
+     * @param block
+     * @returns {boolean}
+     */
+    core.isBlockEmpty = function (block) {
+
+        const EXCEPTION_TAGS = ['IMG', 'IFRAME'];
+
+        var nativeInputs         = block.querySelectorAll('textarea, input'),
+            nativeInputsAreEmpty = true,
+            textContentIsEmpty   = !block.textContent.trim();
+
+        Array.prototype.forEach.call(nativeInputs, function (input) {
+
+            if (input.type == 'textarea' || input.type == 'text') {
+
+                nativeInputsAreEmpty = nativeInputsAreEmpty && !input.value.trim();
+
+            }
+
+        });
+
+        return textContentIsEmpty && nativeInputsAreEmpty && !EXCEPTION_TAGS.includes(block.tagName);
+
+    };
+
 
     return core;
 

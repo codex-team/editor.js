@@ -361,7 +361,7 @@ module.exports = (function (ui) {
          * @example editor.callback.blockPasteViaSanitize(event), the second method.
          *
          */
-        editor.listeners.add(block, 'paste', editor.callback.blockPasteCallback, false);
+        editor.listeners.add(block, 'paste', editor.paste.blockPasteCallback, false);
 
         editor.listeners.add(block, 'mouseup', editor.toolbar.inline.show, false);
 
