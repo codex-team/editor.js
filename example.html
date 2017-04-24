@@ -222,21 +222,6 @@
                     maxSize: 50000,
                 }
             },
-            personality: {
-                type             : 'personality',
-                displayInToolbox : true,
-                iconClassname    : 'cdx-personality-icon',
-                prepare          : cdxEditorPersonality.prepare,
-                render           : cdxEditorPersonality.render,
-                save             : cdxEditorPersonality.save,
-                validate         : cdxEditorPersonality.validate,
-                destroy          : cdxEditorPersonality.destroy,
-                enableLineBreaks : true,
-                showInlineToolbar: true,
-                config: {
-                    uploadURL: '/uploadPhoto',
-                }
-            }
         },
         data : {
             items: [
@@ -250,14 +235,6 @@
                     type : 'paragraph',
                     data : {
                         text : 'Пишите нам на team@ifmo.su'
-                    }
-                },
-                {
-                    type : 'personality',
-                    data : {
-                        name : 'Красюк Светлана Ивановна',
-                        cite : 'Заместитель директора по учебно-воспитательной работе (начальная школа)',
-                        url  : 'http://new.school332.ru/user/2'
                     }
                 },
                 {
