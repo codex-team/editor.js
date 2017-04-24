@@ -190,6 +190,11 @@ module.exports = function (paste) {
 
     };
 
+    /**
+     * Inserts new initial plugin blocks with data in paragraphs
+     *
+     * @param {Array} paragraphs - array of paragraphs (<p></p>) whit content, that should be inserted
+     */
     var insertPastedParagraphs = function (paragraphs) {
 
         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin,
@@ -235,7 +240,8 @@ module.exports = function (paste) {
 
     /**
      * Inserts node content at the caret position
-     * @param node
+     *
+     * @param {Node} node - DOM node (could be DocumentFragment), that should be inserted at the caret location
      */
     var emulateUserAgentBehaviour = function (node) {
 
@@ -247,7 +253,7 @@ module.exports = function (paste) {
 
             node.childNodes.forEach(function (current) {
 
-                if (current instanceof window.Text && current.data.trim() === '') {
+                if (!editor.core.isDomNode(current) && current.data.trim() === '') {
 
                     return;
 

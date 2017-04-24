@@ -275,13 +275,14 @@ module.exports = (function (caret) {
      */
     caret.insertNode = function (node) {
 
+        var selection, range,
+            lastNode = node;
+
         if (node instanceof window.DocumentFragment) {
 
-            var lastNode = node.lastChild;
+            lastNode = node.lastChild;
 
         }
-
-        var selection, range;
 
         selection = window.getSelection();
 
@@ -290,7 +291,7 @@ module.exports = (function (caret) {
 
         range.insertNode(node);
 
-        range.setStartAfter(lastNode || node);
+        range.setStartAfter(lastNode);
         range.collapse(true);
 
         selection.removeAllRanges();

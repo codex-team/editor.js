@@ -347,7 +347,7 @@ module.exports = (function (core) {
 
         var nativeInputAreas = ['INPUT', 'TEXTAREA'];
 
-        return (nativeInputAreas.indexOf(target.tagName) != -1);
+        return nativeInputAreas.indexOf(target.tagName) != -1;
 
     };
 
