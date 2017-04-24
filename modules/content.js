@@ -645,7 +645,7 @@ module.exports = (function (content) {
      */
     content.wrapTextWithParagraphs = function (htmlData, plainData) {
 
-        if (!htmlData) {
+        if (!htmlData.trim()) {
 
             return wrapPlainTextWithParagraphs(plainData);
 

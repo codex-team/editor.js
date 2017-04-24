@@ -149,24 +149,11 @@ module.exports = function (paste) {
         paragraphs.innerHTML = wrappedData;
 
         /**
-         * If there only one paragraph, lets user agent paste it
+         * If there only one paragraph, just insert in at the caret location
          */
         if (paragraphs.childNodes.length == 1) {
 
-            var newNode,
-                paragraph = paragraphs.firstChild;
-
-            if (paragraph.childElementCount) {
-
-                newNode = editor.draw.node('SPAN', '', {innerHTML: paragraph.innerHTML.trim()});
-
-            } else {
-
-                newNode = document.createTextNode(paragraph.textContent);
-
-            }
-
-            editor.caret.insertNode(newNode);
+            emulateUserAgentBehaviour(paragraphs.firstChild);
             return;
 
         }
@@ -243,6 +230,28 @@ module.exports = function (paste) {
 
         editor.caret.setToPreviousBlock(editor.caret.getCurrentInputIndex() + 1);
 
+
+    };
+
+    /**
+     * Inserts node content at the caret position
+     * @param node
+     */
+    var emulateUserAgentBehaviour = function (node) {
+
+        var newNode;
+
+        if (node.childElementCount) {
+
+            newNode = editor.draw.node('SPAN', '', {innerHTML: node.innerHTML.trim()});
+
+        } else {
+
+            newNode = document.createTextNode(node.textContent);
+
+        }
+
+        editor.caret.insertNode(newNode);
 
     };
 
