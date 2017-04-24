@@ -647,7 +647,7 @@ module.exports = (function (content) {
 
         if (!htmlData) {
 
-            return '<p>' + plainData.split('\n\n').join('</p><p>') + '</p>';
+            return wrapPlainTextWithParagraphs(plainData);
 
         }
 
@@ -710,6 +710,17 @@ module.exports = (function (content) {
         }
 
         return newWrapper.innerHTML;
+
+    };
+
+    /**
+     * Splits strings on new line and wraps paragraphs with <p> tag
+     * @param plainText
+     * @returns {string}
+     */
+    var wrapPlainTextWithParagraphs = function (plainText) {
+
+        return '<p>' + plainText.split('\n\n').join('</p><p>') + '</p>';
 
     };
 

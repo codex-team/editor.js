@@ -126,6 +126,9 @@ module.exports = function (paste) {
 
         }
 
+        /** Prevent default behaviour */
+        event.preventDefault();
+
         /** get html pasted data - dirty data */
         var htmlData  = event.clipboardData.getData('text/html'),
             plainData = event.clipboardData.getData('text/plain');
@@ -150,12 +153,23 @@ module.exports = function (paste) {
          */
         if (paragraphs.childNodes.length == 1) {
 
+            var newNode,
+                paragraph = paragraphs.firstChild;
+
+            if (paragraph.childElementCount) {
+
+                newNode = editor.draw.node('SPAN', '', {innerHTML: paragraph.innerHTML.trim()});
+
+            } else {
+
+                newNode = document.createTextNode(paragraph.textContent);
+
+            }
+
+            editor.caret.insertNode(newNode);
             return;
 
         }
-
-        /** Prevent default behaviour */
-        event.preventDefault();
 
         insertPastedParagraphs(paragraphs.childNodes);
 
@@ -195,6 +209,13 @@ module.exports = function (paste) {
             currentBlockContent = editor.content.currentNode.firstChild.firstChild;
 
         paragraphs.forEach(function (paragraph, index) {
+
+            /** Don't allow empty paragraphs */
+            if (paragraph.innerHTML.trim() === '') {
+
+                return;
+
+            }
 
             /**
              * If there was no data in working node, replace it with first paragraph of pasted text
