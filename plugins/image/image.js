@@ -359,7 +359,7 @@ var image = (function(image_plugin) {
 
                     var newImage = make_(data);
 
-                    codex.editor.content.switchBlock(image.holder, newImage);
+                    codex.editor.content.switchBlock(image.holder, newImage, 'image');
                     newImage.classList.add(elementClasses_.imagePreview);
 
                     /**
@@ -404,7 +404,7 @@ var image = (function(image_plugin) {
                 var oldHolder = image.holder;
                 var form = ui_.makeForm();
 
-                codex.editor.content.switchBlock(oldHolder, form);
+                codex.editor.content.switchBlock(oldHolder, form, 'image');
 
             }
         },
@@ -467,7 +467,7 @@ var image = (function(image_plugin) {
 
                     var img = image.querySelector('img');
 
-                    codex.editor.content.switchBlock(codex.editor.content.currentNode, image);
+                    codex.editor.content.switchBlock(codex.editor.content.currentNode, image, 'image');
 
                 };
 
