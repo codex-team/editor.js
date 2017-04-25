@@ -36,12 +36,7 @@ module.exports = (function (sanitizer) {
                     href: true,
                     target: '_blank',
                     rel: 'nofollow'
-                },
-                i: {},
-                b: {},
-                strong: {},
-                em: {},
-                span: {}
+                }
             }
         }
     };
