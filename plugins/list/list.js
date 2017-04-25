@@ -74,7 +74,7 @@ var list = (function(list_plugin) {
             newEditable.innerHTML = oldEditable.innerHTML;
             newEditable.classList.add(elementClasses_.pluginWrapper);
 
-            codex.editor.content.switchBlock(currentBlock, newEditable);
+            codex.editor.content.switchBlock(currentBlock, newEditable, 'list');
         },
         keyDown: function (e) {
 

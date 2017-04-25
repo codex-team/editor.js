@@ -217,7 +217,7 @@ var cdxAttaches = function () {
 
             upload.current = progress;
 
-            codex.editor.content.switchBlock(codex.editor.content.currentNode, progress);
+            codex.editor.content.switchBlock(codex.editor.content.currentNode, progress, 'attaches');
 
         },
 
@@ -261,7 +261,7 @@ var cdxAttaches = function () {
                     data.size = Math.ceil(data.size / KBYTE) || 1;
 
                     uploadedFile = ui.uploadedFile(data);
-                    codex.editor.content.switchBlock(upload.current, uploadedFile);
+                    codex.editor.content.switchBlock(upload.current, uploadedFile, 'attaches');
 
                     uploadedFile.querySelector('input').focus();
 
@@ -290,7 +290,7 @@ var cdxAttaches = function () {
 
             var defaultFrom = ui.defaultForm();
 
-            codex.editor.content.switchBlock(upload.current, defaultFrom);
+            codex.editor.content.switchBlock(upload.current, defaultFrom, 'attaches');
 
             if (!upload.aborted) {
 
