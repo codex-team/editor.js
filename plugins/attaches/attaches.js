@@ -21,7 +21,8 @@ var cdxAttaches = function () {
      * Private methods and props
      */
 
-    var KBYTE = 1024;
+    var KBYTE = 1024,
+        fileWrapper = null;
 
     /**
      * Default config
@@ -217,7 +218,7 @@ var cdxAttaches = function () {
 
             upload.current = progress;
 
-            codex.editor.content.switchBlock(codex.editor.content.currentNode, progress, 'attaches');
+            codex.editor.content.switchBlock(fileWrapper, progress, 'attaches');
 
         },
 
@@ -350,7 +351,8 @@ var cdxAttaches = function () {
 
         if (!data) {
 
-            return ui.defaultForm();
+            fileWrapper = ui.defaultForm();
+            return fileWrapper;
 
         }
 
