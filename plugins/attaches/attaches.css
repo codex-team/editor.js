@@ -53,6 +53,7 @@
 .cdx-attaches__extension,
 .cdx-attaches__size {
     color: #8f9298;
+    white-space: nowrap;
 }
 
 .cdx-attaches__extension::after {
