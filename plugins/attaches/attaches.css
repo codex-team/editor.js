@@ -58,6 +58,7 @@
 
 .cdx-attaches__extension::after {
     content: ',';
+    margin-right: 0.2em;
 }
 
 .cdx-attaches__size::after {
