@@ -2,7 +2,7 @@
  * Codex Editor Saver
  *
  * @author Codex Team
- * @version 1.0.2
+ * @version 1.1.0
  */
 
 module.exports = (function (saver) {
@@ -10,135 +10,153 @@ module.exports = (function (saver) {
     let editor = codex.editor;
 
     /**
-     * Saves blocks
-     * @private
+     * @public
+     * Save blocks
      */
-    saver.saveBlocks = function () {
+    saver.save = function () {
 
         /** Save html content of redactor to memory */
         editor.state.html = editor.nodes.redactor.innerHTML;
 
-        /** Empty jsonOutput state */
+        /** Clean jsonOutput state */
         editor.state.jsonOutput = [];
 
-        Promise.resolve()
-
-            .then(function () {
-
-                return editor.nodes.redactor.childNodes;
-
-            })
-            /** Making a sequence from separate blocks */
-            .then(editor.saver.makeQueue)
-
-            .then(function () {
-                // editor.nodes.textarea.innerHTML = editor.state.html;
-            })
-
-            .catch( function (error) {
-
-                editor.core.log(error);
-
-            });
+        return saveBlocks(editor.nodes.redactor.childNodes);
 
     };
-
-    saver.makeQueue = function (blocks) {
-
-        var queue = Promise.resolve();
-
-        for(var index = 0; index < blocks.length; index++) {
-
-            /** Add node to sequence at specified index */
-            editor.saver.getBlockData(queue, blocks, index);
-
-        }
-
-    };
-
-    /** Gets every block and makes From Data */
-    saver.getBlockData = function (queue, blocks, index) {
-
-        queue.then(function () {
-
-            return editor.saver.getNodeAsync(blocks, index);
-
-        })
-
-            .then(editor.saver.makeFormDataFromBlocks);
-
-    };
-
 
     /**
-     * Asynchronously returns block data from blocksList by index
-     * @return Promise to node
+     * @private
+     * Save each block data
+     *
+     * @param blocks
+     * @returns {Promise.<TResult>}
      */
-    saver.getNodeAsync = function (blocksList, index) {
+    let saveBlocks = function (blocks) {
 
-        return Promise.resolve().then(function () {
+        let data = [];
 
-            return blocksList[index];
+        for(let index = 0; index < blocks.length; index++) {
 
-        });
-
-    };
-
-    saver.makeFormDataFromBlocks = function (block) {
-
-        var pluginName = block.dataset.tool;
-
-        /** Check for plugin existance */
-        if (!editor.tools[pluginName]) {
-
-            throw Error(`Plugin «${pluginName}» not found`);
+            /** Add node to sequence at specified index */
+            data.push(getBlockData(blocks[index]));
 
         }
 
-        /** Check for plugin having render method */
-        if (typeof editor.tools[pluginName].save != 'function') {
+        return Promise.all(data)
+            .then(makeOutput)
+            .catch(editor.core.log);
 
-            throw Error(`Plugin «${pluginName}» must have save method`);
+    };
+
+    /** Save and validate block data */
+    let getBlockData = function (block) {
+
+        return saveBlockData(block)
+          .then(validateBlockData)
+          .catch(editor.core.log);
+
+    };
+
+   /**
+    * @private
+    * Call block`s plugin save method and return saved data
+    *
+    * @param block
+    * @returns {Object}
+    */
+    let saveBlockData = function (block) {
+
+        let pluginName = block.dataset.tool;
+
+        /** Check for plugin existence */
+        if (!editor.tools[pluginName]) {
+
+            editor.core.log(`Plugin «${pluginName}» not found`, 'error');
+            return {data: null, pluginName: null};
+
+        }
+
+        /** Check for plugin having save method */
+        if (typeof editor.tools[pluginName].save !== 'function') {
+
+            editor.core.log(`Plugin «${pluginName}» must have save method`, 'error');
+            return {data: null, pluginName: null};
 
         }
 
         /** Result saver */
-        var blockContent   = block.childNodes[0],
+        let blockContent   = block.childNodes[0],
             pluginsContent = blockContent.childNodes[0],
-            savedData,
-            position,
-            output;
+            position = pluginsContent.dataset.inputPosition;
 
         /** If plugin wasn't available then return data from cache */
         if ( editor.tools[pluginName].available === false ) {
 
-            position = pluginsContent.dataset.inputPosition;
-            savedData = codex.editor.state.blocks.items[position].data;
+            return Promise.resolve({data: codex.editor.state.blocks.items[position].data, pluginName});
 
-        } else {
+        }
 
-            savedData = editor.tools[pluginName].save(pluginsContent);
+        return Promise.resolve(pluginsContent)
+            .then(editor.tools[pluginName].save)
+            .then(data => Object({data, pluginName}));
 
-            if (editor.tools[pluginName].validate) {
+    };
 
-                var result = editor.tools[pluginName].validate(savedData);
+   /**
+    * Call plugin`s validate method. Return false if validation failed
+    *
+    * @param data
+    * @param pluginName
+    * @returns {Object|Boolean}
+    */
+    let validateBlockData = function ({data, pluginName}) {
 
-                /**
-                 * Do not allow invalid data
-                 */
-                if (!result)
-                    return;
+        if (!data && !pluginName) {
+
+            return false;
+
+        }
+
+        if (editor.tools[pluginName].validate) {
+
+            let result = editor.tools[pluginName].validate(data);
+
+            /**
+             * Do not allow invalid data
+             */
+            if (!result) {
+
+                return false;
 
             }
 
         }
 
-        output = {
-            type   : pluginName,
-            data   : savedData
-        };
+        return {data, pluginName};
 
-        editor.state.jsonOutput.push(output);
+
+    };
+
+   /**
+    * Compile article output
+    *
+    * @param savedData
+    * @returns {{time: number, version, items: (*|Array)}}
+    */
+    let makeOutput = function (savedData) {
+
+        savedData = savedData.filter(blockData => blockData);
+
+        let items = savedData.map(blockData => Object({type: blockData.pluginName, data: blockData.data}));
+
+        editor.state.jsonOutput = items;
+
+        return {
+            time: +new Date(),
+            version: editor.version,
+            items
+        };
 
     };
 
