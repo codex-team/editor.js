@@ -363,7 +363,11 @@ module.exports = (function (ui) {
          */
         editor.listeners.add(block, 'paste', editor.paste.blockPasteCallback, false);
 
+        /**
+         * Show inline toolbar for selected text
+         */
         editor.listeners.add(block, 'mouseup', editor.toolbar.inline.show, false);
+        editor.listeners.add(block, 'keyup', editor.toolbar.inline.show, false);
 
     };
 
