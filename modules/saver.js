@@ -38,7 +38,6 @@ module.exports = (function (saver) {
 
         for(let index = 0; index < blocks.length; index++) {
 
-            /** Add node to sequence at specified index */
             data.push(getBlockData(blocks[index]));
 
         }
@@ -112,7 +111,7 @@ module.exports = (function (saver) {
     */
     let validateBlockData = function ({data, pluginName}) {
 
-        if (!data && !pluginName) {
+        if (!data || !pluginName) {
 
             return false;
 
