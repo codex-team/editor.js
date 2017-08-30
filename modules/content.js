@@ -741,6 +741,43 @@ module.exports = (function (content) {
 
     };
 
+    content.clear = function () {
+
+        editor.nodes.redactor.innerHTML = '';
+        editor.content.sync();
+        editor.ui.saveInputs();
+        if (editor.state.blocks) editor.state.blocks.items = [];
+
+        editor.content.currentNode = null;
+
+    };
+
+    content.load = function (articleData) {
+
+        var currentContent = editor.state.blocks ? Object.assign({}, editor.state.blocks) : null;
+
+        editor.content.clear();
+
+        if (!currentContent) {
+
+            editor.state.blocks = articleData;
+
+        } else if (!currentContent.items) {
+
+            currentContent.items = articleData.items;
+            editor.state.blocks = currentContent;
+
+        } else {
+
+            currentContent.items = currentContent.items.concat(articleData.items);
+            editor.state.blocks = currentContent;
+
+        }
+
+        editor.renderer.makeBlocksFromData();
+
+    };
+
     return content;
 
 })({});
