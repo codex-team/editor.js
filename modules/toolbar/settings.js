@@ -1,7 +1,7 @@
 /**
  * Toolbar settings
  *
- * @version 1.0.4
+ * @version 1.0.5
  */
 
 module.exports = (function (settings) {
@@ -22,20 +22,19 @@ module.exports = (function (settings) {
          * Append settings content
          * It's stored in tool.settings
          */
-        if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings ) {
+        if ( !editor.tools[toolType] || !editor.tools[toolType].makeSettings ) {
 
-            editor.core.log(`Plugin «${toolType}» has no settings`, 'warn');
-
-        } else {
-
-            /**
-             * Draw settings block
-             */
-            var settingsBlock = editor.tools[toolType].makeSettings();
-
-            editor.nodes.pluginSettings.appendChild(settingsBlock);
+            return;
 
         }
+
+        /**
+         * Draw settings block
+         */
+        var settingsBlock = editor.tools[toolType].makeSettings();
+
+        editor.nodes.pluginSettings.appendChild(settingsBlock);
+
 
         /** Open settings block */
         editor.nodes.blockSettings.classList.add('opened');
