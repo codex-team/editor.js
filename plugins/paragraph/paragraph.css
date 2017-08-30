@@ -6,6 +6,7 @@
     padding: 0.7em 0 !important;
     line-height: 1.7em;
 }
+
 .ce-paragraph:empty::before,
 .ce-paragraph p:empty::before{
     content : attr(data-placeholder);
@@ -15,6 +16,10 @@
 }
 .ce-paragraph:focus::before{
 	opacity: .1;
+}
+
+.toolbar-opened .ce-paragraph::before {
+    content: '';
 }
 
 
