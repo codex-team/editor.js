@@ -753,7 +753,7 @@ module.exports = (function (content) {
         editor.ui.saveInputs();
         if (all) {
 
-            editor.state.blocks = null;
+            editor.state.blocks = {};
 
         } else if (editor.state.blocks) {
 
@@ -774,11 +774,11 @@ module.exports = (function (content) {
     */
     content.load = function (articleData) {
 
-        var currentContent = editor.state.blocks ? Object.assign({}, editor.state.blocks) : null;
+        var currentContent = Object.assign({}, editor.state.blocks);
 
         editor.content.clear();
 
-        if (!currentContent) {
+        if (!Object.keys(currentContent).length) {
 
             editor.state.blocks = articleData;
 
