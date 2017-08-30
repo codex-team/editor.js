@@ -40,6 +40,18 @@ module.exports = (function (toolbar) {
 
         }
 
+        let toolType = editor.content.currentNode.dataset.tool;
+
+        if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings ) {
+
+            editor.nodes.showSettingsButton.classList.add('hide');
+
+        } else {
+
+            editor.nodes.showSettingsButton.classList.remove('hide');
+
+        }
+
         editor.nodes.toolbar.classList.add('opened');
         this.opened = true;
 

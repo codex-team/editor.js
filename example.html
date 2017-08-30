@@ -60,6 +60,7 @@
     codex.editor.start({
         holderId : "codex-editor",
         initialBlockPlugin : 'paragraph',
+        // placeholder: 'Прошлой ночью мне приснилось...',
         hideToolbar: false,
         tools : {
             paragraph: {
@@ -221,9 +222,10 @@
             },
         },
         data : {
+            id: +new Date(),
             items: [
                 {
-                    type : 'paragraph',
+                    type : 'header',
                     data : {
                         text : 'Привет от CodeX'
                     }
@@ -234,13 +236,6 @@
                         text : 'Пишите нам на team@ifmo.su'
                     }
                 },
-                {
-                    type : 'list',
-                    data : {
-                        type : 'OL',
-                        items : [1,3,4]
-                    }
-                }
             ],
             count: 3
         }

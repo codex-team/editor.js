@@ -258,11 +258,6 @@ module.exports = (function (ui) {
                 command : 'italic'
             },
 
-            underline: {
-                icon    : 'ce-icon-underline',
-                command : 'underline'
-            },
-
             link: {
                 icon    : 'ce-icon-link',
                 command : 'createLink'
@@ -410,7 +405,7 @@ module.exports = (function (ui) {
 
         initialBlock = editor.tools[initialBlockType].render();
 
-        initialBlock.setAttribute('data-placeholder', 'Расскажите свою историю...');
+        initialBlock.setAttribute('data-placeholder', editor.settings.placeholder);
 
         editor.content.insertBlock({
             type  : initialBlockType,
