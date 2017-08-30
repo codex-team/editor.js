@@ -45,6 +45,8 @@ module.exports = (function (core) {
 
             editor.hideToolbar = userSettings.hideToolbar;
 
+            editor.settings.placeholder = userSettings.placeholder || '';
+
             editor.nodes.holder = document.getElementById(userSettings.holderId || editor.settings.holderId);
 
             if (typeof editor.nodes.holder === undefined || editor.nodes.holder === null) {

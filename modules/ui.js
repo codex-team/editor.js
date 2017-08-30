@@ -405,9 +405,7 @@ module.exports = (function (ui) {
 
         initialBlock = editor.tools[initialBlockType].render();
 
-        let initialBlockPlaceholder = editor.state.blocks.placeholder || '';
-
-        initialBlock.setAttribute('data-placeholder', initialBlockPlaceholder);
+        initialBlock.setAttribute('data-placeholder', editor.settings.placeholder);
 
         editor.content.insertBlock({
             type  : initialBlockType,
