@@ -741,17 +741,37 @@ module.exports = (function (content) {
 
     };
 
-    content.clear = function () {
+    /**
+    * Clear editors content
+     *
+     * @param {Boolean} all — if true, delete all article data (content, id, etc.)
+    */
+    content.clear = function (all) {
 
         editor.nodes.redactor.innerHTML = '';
         editor.content.sync();
         editor.ui.saveInputs();
-        if (editor.state.blocks) editor.state.blocks.items = [];
+        if (all) {
+
+            editor.state.blocks = null;
+
+        } else if (editor.state.blocks) {
+
+            editor.state.blocks.items = [];
+
+        }
 
         editor.content.currentNode = null;
 
     };
 
+    /**
+    *
+     * Load new data to editor
+     * If editor is not empty, just append articleData.items
+     *
+    * @param articleData.items
+    */
     content.load = function (articleData) {
 
         var currentContent = editor.state.blocks ? Object.assign({}, editor.state.blocks) : null;
