@@ -19,7 +19,7 @@
 }
 
 .toolbar-opened .ce-paragraph::before {
-    content: '';
+    display: none;
 }
 
 
