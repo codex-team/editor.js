@@ -12,6 +12,7 @@ module.exports = (function (toolbox) {
     let editor = codex.editor;
 
     toolbox.opened = false;
+    toolbox.openedOnBlock = null;
 
     /** Shows toolbox */
     toolbox.open = function () {
@@ -22,6 +23,10 @@ module.exports = (function (toolbox) {
             editor.toolbar.settings.close();
 
         }
+
+        /** Add 'toolbar-opened' class for current block **/
+        toolbox.openedOnBlock = editor.content.currentNode;
+        toolbox.openedOnBlock.classList.add('toolbar-opened');
 
         /** display toolbox */
         editor.nodes.toolbox.classList.add('opened');
@@ -37,7 +42,11 @@ module.exports = (function (toolbox) {
     /** Closes toolbox */
     toolbox.close = function () {
 
-        /** Makes toolbox disapear */
+        /** Remove 'toolbar-opened' class from current block **/
+        if (toolbox.openedOnBlock) toolbox.openedOnBlock.classList.remove('toolbar-opened');
+        toolbox.openedOnBlock = null;
+
+        /** Makes toolbox disappear */
         editor.nodes.toolbox.classList.remove('opened');
 
         /** Rotate plus button */
