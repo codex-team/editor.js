@@ -152,6 +152,7 @@ module.exports = (function (saver) {
         editor.state.jsonOutput = items;
 
         return {
+            id: editor.state.blocks.id || null,
             time: +new Date(),
             version: editor.version,
             items
