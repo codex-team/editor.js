@@ -258,11 +258,6 @@ module.exports = (function (ui) {
                 command : 'italic'
             },
 
-            underline: {
-                icon    : 'ce-icon-underline',
-                command : 'underline'
-            },
-
             link: {
                 icon    : 'ce-icon-link',
                 command : 'createLink'
