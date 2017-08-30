@@ -405,7 +405,9 @@ module.exports = (function (ui) {
 
         initialBlock = editor.tools[initialBlockType].render();
 
-        initialBlock.setAttribute('data-placeholder', 'Расскажите свою историю...');
+        let initialBlockPlaceholder = editor.state.blocks.placeholder || '';
+
+        initialBlock.setAttribute('data-placeholder', initialBlockPlaceholder);
 
         editor.content.insertBlock({
             type  : initialBlockType,
