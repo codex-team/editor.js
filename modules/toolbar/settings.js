@@ -25,7 +25,6 @@ module.exports = (function (settings) {
         if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings ) {
 
             editor.core.log(`Plugin «${toolType}» has no settings`, 'warn');
-            editor.nodes.pluginSettings.innerHTML = `Плагин «${toolType}» не имеет настроек`;
 
         } else {
 
