@@ -5,14 +5,16 @@
  * @version 1.1
  */
 
-module.exports = (function (parser) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let parser = {};
+
+    let editor = this;
 
     /** inserting text */
     parser.insertPastedContent = function (blockType, tag) {
 
-        editor.content.insertBlock({
+        editor.modules.content.insertBlock({
             type :  blockType.type,
             block : blockType.render({
                 text : tag.innerHTML
@@ -26,11 +28,11 @@ module.exports = (function (parser) {
      */
     parser.isFirstLevelBlock = function (node) {
 
-        return node.nodeType == editor.core.nodeTypes.TAG &&
-            node.classList.contains(editor.ui.className.BLOCK_CLASSNAME);
+        return node.nodeType == editor.modules.core.nodeTypes.TAG &&
+            node.classList.contains(editor.modules.ui.className.BLOCK_CLASSNAME);
 
     };
 
     return parser;
 
-})({});
+});

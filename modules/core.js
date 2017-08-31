@@ -5,9 +5,11 @@
  * @version 1.1.3
  */
 
-module.exports = (function (core) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let core = {};
+
+    let editor = this;
 
     /**
      * @public
@@ -386,4 +388,4 @@ module.exports = (function (core) {
 
     return core;
 
-})({});
+});

@@ -6,9 +6,11 @@
  * @version 1.4.0
  */
 
-module.exports = (function (callbacks) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let callbacks = {};
+
+    let editor = this;
 
     /**
      * used by UI module
@@ -18,7 +20,7 @@ module.exports = (function (callbacks) {
     callbacks.globalKeydown = function (event) {
 
         switch (event.keyCode) {
-            case editor.core.keys.ENTER : enterKeyPressed_(event);     break;
+            case editor.modules.core.keys.ENTER : enterKeyPressed_(event);     break;
         }
 
     };
@@ -31,9 +33,9 @@ module.exports = (function (callbacks) {
     callbacks.redactorKeyDown = function (event) {
 
         switch (event.keyCode) {
-            case editor.core.keys.TAB   : tabKeyPressedOnRedactorsZone_(event);                     break;
-            case editor.core.keys.ENTER : enterKeyPressedOnRedactorsZone_(event);                   break;
-            case editor.core.keys.ESC   : escapeKeyPressedOnRedactorsZone_(event);                  break;
+            case editor.modules.core.keys.TAB   : tabKeyPressedOnRedactorsZone_(event);                     break;
+            case editor.modules.core.keys.ENTER : enterKeyPressedOnRedactorsZone_(event);                   break;
+            case editor.modules.core.keys.ESC   : escapeKeyPressedOnRedactorsZone_(event);                  break;
             default                     : defaultKeyPressedOnRedactorsZone_(event);                 break;
         }
 
@@ -47,10 +49,10 @@ module.exports = (function (callbacks) {
     callbacks.globalKeyup = function (event) {
 
         switch (event.keyCode) {
-            case editor.core.keys.UP    :
-            case editor.core.keys.LEFT  :
-            case editor.core.keys.RIGHT :
-            case editor.core.keys.DOWN  : arrowKeyPressed_(event); break;
+            case editor.modules.core.keys.UP    :
+            case editor.modules.core.keys.LEFT  :
+            case editor.modules.core.keys.RIGHT :
+            case editor.modules.core.keys.DOWN  : arrowKeyPressed_(event); break;
         }
 
     };
@@ -72,25 +74,25 @@ module.exports = (function (callbacks) {
         event.preventDefault();
 
 
-        if (!editor.core.isBlockEmpty(editor.content.currentNode)) {
+        if (!editor.modules.core.isBlockEmpty(editor.modules.content.currentNode)) {
 
             return;
 
         }
 
-        if ( !editor.toolbar.opened  ) {
+        if ( !editor.modules.toolbar.opened  ) {
 
-            editor.toolbar.open();
+            editor.modules.toolbar.open();
 
         }
 
-        if (editor.toolbar.opened && !editor.toolbar.toolbox.opened) {
+        if (editor.modules.toolbar.opened && !editor.modules.toolbar.toolbox.opened) {
 
-            editor.toolbar.toolbox.open();
+            editor.modules.toolbar.toolbox.open();
 
         } else {
 
-            editor.toolbar.toolbox.leaf();
+            editor.modules.toolbar.toolbox.leaf();
 
         }
 
@@ -103,13 +105,13 @@ module.exports = (function (callbacks) {
      */
     var enterKeyPressed_ = function () {
 
-        if (editor.content.editorAreaHightlighted) {
+        if (editor.modules.content.editorAreaHightlighted) {
 
             /**
              * it means that we lose input index, saved index before is not correct
              * therefore we need to set caret when we insert new block
              */
-            editor.caret.inputIndex = -1;
+            editor.modules.caret.inputIndex = -1;
 
             enterPressedOnBlock_();
 
@@ -129,13 +131,13 @@ module.exports = (function (callbacks) {
 
         var NEW_BLOCK_TYPE  = editor.settings.initialBlockPlugin;
 
-        editor.content.insertBlock({
+        editor.modules.content.insertBlock({
             type  : NEW_BLOCK_TYPE,
             block : editor.tools[NEW_BLOCK_TYPE].render()
         }, true );
 
-        editor.toolbar.move();
-        editor.toolbar.open();
+        editor.modules.toolbar.move();
+        editor.modules.toolbar.open();
 
     };
 
@@ -153,15 +155,15 @@ module.exports = (function (callbacks) {
         if (event.target.contentEditable == 'true') {
 
             /** Update input index */
-            editor.caret.saveCurrentInputIndex();
+            editor.modules.caret.saveCurrentInputIndex();
 
         }
 
-        var currentInputIndex       = editor.caret.getCurrentInputIndex() || 0,
-            workingNode             = editor.content.currentNode,
+        var currentInputIndex       = editor.modules.caret.getCurrentInputIndex() || 0,
+            workingNode             = editor.modules.content.currentNode,
             tool                    = workingNode.dataset.tool,
-            isEnterPressedOnToolbar = editor.toolbar.opened &&
-                                        editor.toolbar.current &&
+            isEnterPressedOnToolbar = editor.modules.toolbar.opened &&
+                                        editor.modules.toolbar.current &&
                                         event.target == editor.state.inputs[currentInputIndex];
 
         /** The list of tools which needs the default browser behaviour */
@@ -177,9 +179,9 @@ module.exports = (function (callbacks) {
 
             event.preventDefault();
 
-            editor.toolbar.toolbox.toolClicked(event);
+            editor.modules.toolbar.toolbox.toolClicked(event);
 
-            editor.toolbar.close();
+            editor.modules.toolbar.close();
 
             /**
              * Stop other listeners callback executions
@@ -205,7 +207,7 @@ module.exports = (function (callbacks) {
 
         var currentSelection = window.getSelection(),
             currentSelectedNode = currentSelection.anchorNode,
-            caretAtTheEndOfText = editor.caret.position.atTheEnd(),
+            caretAtTheEndOfText = editor.modules.caret.position.atTheEnd(),
             isTextNodeHasParentBetweenContenteditable = false;
 
         /**
@@ -213,7 +215,7 @@ module.exports = (function (callbacks) {
          */
         if ( event.shiftKey && !enableLineBreaks ) {
 
-            editor.callback.enterPressedOnBlock(editor.content.currentBlock, event);
+            editor.modules.callback.enterPressedOnBlock(editor.modules.content.currentBlock, event);
             event.preventDefault();
             return;
 
@@ -230,27 +232,27 @@ module.exports = (function (callbacks) {
          * Split blocks when input has several nodes and caret placed in textNode
          */
         if (
-            currentSelectedNode.nodeType == editor.core.nodeTypes.TEXT &&
+            currentSelectedNode.nodeType == editor.modules.core.nodeTypes.TEXT &&
             !isTextNodeHasParentBetweenContenteditable &&
             !caretAtTheEndOfText
         ) {
 
             event.preventDefault();
 
-            editor.core.log('Splitting Text node...');
+            editor.modules.core.log('Splitting Text node...');
 
-            editor.content.splitBlock(currentInputIndex);
+            editor.modules.content.splitBlock(currentInputIndex);
 
             /** Show plus button when next input after split is empty*/
             if (!editor.state.inputs[currentInputIndex + 1].textContent.trim()) {
 
-                editor.toolbar.showPlusButton();
+                editor.modules.toolbar.showPlusButton();
 
             }
 
         } else {
 
-            var islastNode = editor.content.isLastNode(currentSelectedNode);
+            var islastNode = editor.modules.content.isLastNode(currentSelectedNode);
 
             if ( islastNode && caretAtTheEndOfText ) {
 
@@ -258,25 +260,25 @@ module.exports = (function (callbacks) {
                 event.stopPropagation();
                 event.stopImmediatePropagation();
 
-                editor.core.log('ENTER clicked in last textNode. Create new BLOCK');
+                editor.modules.core.log('ENTER clicked in last textNode. Create new BLOCK');
 
-                editor.content.insertBlock({
+                editor.modules.content.insertBlock({
                     type: NEW_BLOCK_TYPE,
-                    block: editor.tools[NEW_BLOCK_TYPE].render()
+                    block: editor.modules.renderer.makeBlockFromData({type: NEW_BLOCK_TYPE})
                 }, true);
 
-                editor.toolbar.move();
-                editor.toolbar.open();
+                editor.modules.toolbar.move();
+                editor.modules.toolbar.open();
 
                 /** Show plus button with empty block */
-                editor.toolbar.showPlusButton();
+                editor.modules.toolbar.showPlusButton();
 
             }
 
         }
 
         /** get all inputs after new appending block */
-        editor.ui.saveInputs();
+        editor.modules.ui.saveInputs();
 
     };
 
@@ -290,10 +292,10 @@ module.exports = (function (callbacks) {
     var escapeKeyPressedOnRedactorsZone_ = function (event) {
 
         /** Close all toolbar */
-        editor.toolbar.close();
+        editor.modules.toolbar.close();
 
         /** Close toolbox */
-        editor.toolbar.toolbox.close();
+        editor.modules.toolbar.toolbox.close();
 
         event.preventDefault();
 
@@ -307,11 +309,11 @@ module.exports = (function (callbacks) {
      */
     var arrowKeyPressed_ = function (event) {
 
-        editor.content.workingNodeChanged();
+        editor.modules.content.workingNodeChanged();
 
         /* Closing toolbar */
-        editor.toolbar.close();
-        editor.toolbar.move();
+        editor.modules.toolbar.close();
+        editor.modules.toolbar.move();
 
     };
 
@@ -324,12 +326,12 @@ module.exports = (function (callbacks) {
      */
     var defaultKeyPressedOnRedactorsZone_ = function () {
 
-        editor.toolbar.close();
+        editor.modules.toolbar.close();
 
-        if (!editor.toolbar.inline.actionsOpened) {
+        if (!editor.modules.toolbar.inline.actionsOpened) {
 
-            editor.toolbar.inline.close();
-            editor.content.clearMark();
+            editor.modules.toolbar.inline.close();
+            editor.modules.content.clearMark();
 
         }
 
@@ -352,27 +354,27 @@ module.exports = (function (callbacks) {
 
         detectWhenClickedOnFirstLevelBlockArea_();
 
-        editor.content.workingNodeChanged(event.target);
-        editor.ui.saveInputs();
+        editor.modules.content.workingNodeChanged(event.target);
+        editor.modules.ui.saveInputs();
 
-        var selectedText = editor.toolbar.inline.getSelectionText(),
+        var selectedText = editor.modules.toolbar.inline.getSelectionText(),
             firstLevelBlock;
 
         /** If selection range took off, then we hide inline toolbar */
         if (selectedText.length === 0) {
 
-            editor.toolbar.inline.close();
+            editor.modules.toolbar.inline.close();
 
         }
 
         /** Update current input index in memory when caret focused into existed input */
         if (event.target.contentEditable == 'true') {
 
-            editor.caret.saveCurrentInputIndex();
+            editor.modules.caret.saveCurrentInputIndex();
 
         }
 
-        if (editor.content.currentNode === null) {
+        if (editor.modules.content.currentNode === null) {
 
             /**
              * If inputs in redactor does not exits, then we put input index 0 not -1
@@ -383,34 +385,34 @@ module.exports = (function (callbacks) {
             if (editor.state.inputs.length) {
 
                 /** getting firstlevel parent of input */
-                firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
+                firstLevelBlock = editor.modules.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
 
             }
 
             /** If input is empty, then we set caret to the last input */
             if (editor.state.inputs.length && editor.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == editor.settings.initialBlockPlugin) {
 
-                editor.caret.setToBlock(indexOfLastInput);
+                editor.modules.caret.setToBlock(indexOfLastInput);
 
             } else {
 
                 /** Create new input when caret clicked in redactors area */
                 var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
 
-                editor.content.insertBlock({
+                editor.modules.content.insertBlock({
                     type  : NEW_BLOCK_TYPE,
-                    block : editor.tools[NEW_BLOCK_TYPE].render()
+                    block : editor.modules.renderer.makeBlockFromData({type: NEW_BLOCK_TYPE})
                 });
 
                 /** If there is no inputs except inserted */
                 if (editor.state.inputs.length === 1) {
 
-                    editor.caret.setToBlock(indexOfLastInput);
+                    editor.modules.caret.setToBlock(indexOfLastInput);
 
                 } else {
 
                     /** Set caret to this appended input */
-                    editor.caret.setToNextBlock(indexOfLastInput);
+                    editor.modules.caret.setToNextBlock(indexOfLastInput);
 
                 }
 
@@ -419,36 +421,36 @@ module.exports = (function (callbacks) {
         } else {
 
             /** Close all panels */
-            editor.toolbar.settings.close();
-            editor.toolbar.toolbox.close();
+            editor.modules.toolbar.settings.close();
+            editor.modules.toolbar.toolbox.close();
 
         }
 
         /**
          * Move toolbar and open
          */
-        editor.toolbar.move();
-        editor.toolbar.open();
+        editor.modules.toolbar.move();
+        editor.modules.toolbar.open();
 
-        var inputIsEmpty = !editor.content.currentNode.textContent.trim(),
-            currentNodeType = editor.content.currentNode.dataset.tool,
+        var inputIsEmpty = !editor.modules.content.currentNode.textContent.trim(),
+            currentNodeType = editor.modules.content.currentNode.dataset.tool,
             isInitialType = currentNodeType == editor.settings.initialBlockPlugin;
 
 
         /** Hide plus buttons */
-        editor.toolbar.hidePlusButton();
+        editor.modules.toolbar.hidePlusButton();
 
         if (!inputIsEmpty) {
 
             /** Mark current block */
-            editor.content.markBlock();
+            editor.modules.content.markBlock();
 
         }
 
         if ( isInitialType && inputIsEmpty ) {
 
             /** Show plus button */
-            editor.toolbar.showPlusButton();
+            editor.modules.toolbar.showPlusButton();
 
         }
 
@@ -473,11 +475,11 @@ module.exports = (function (callbacks) {
 
         if (selection.rangeCount === 0) {
 
-            editor.content.editorAreaHightlighted = true;
+            editor.modules.content.editorAreaHightlighted = true;
 
         } else {
 
-            if (!editor.core.isDomNode(anchorNode)) {
+            if (!editor.modules.core.isDomNode(anchorNode)) {
 
                 anchorNode = anchorNode.parentNode;
 
@@ -509,7 +511,7 @@ module.exports = (function (callbacks) {
             }
 
             /** If editable element founded, flag is "TRUE", Therefore we return "FALSE" */
-            editor.content.editorAreaHightlighted = !flag;
+            editor.modules.content.editorAreaHightlighted = !flag;
 
         }
 
@@ -527,10 +529,10 @@ module.exports = (function (callbacks) {
 
         var button = this;
 
-        editor.toolbar.current = button.dataset.type;
+        editor.modules.toolbar.current = button.dataset.type;
 
-        editor.toolbar.toolbox.toolClicked(event);
-        editor.toolbar.close();
+        editor.modules.toolbar.toolbox.toolClicked(event);
+        editor.modules.toolbar.close();
 
     };
 
@@ -541,11 +543,11 @@ module.exports = (function (callbacks) {
 
         if (!editor.nodes.toolbox.classList.contains('opened')) {
 
-            editor.toolbar.toolbox.open();
+            editor.modules.toolbar.toolbox.open();
 
         } else {
 
-            editor.toolbar.toolbox.close();
+            editor.modules.toolbar.toolbox.close();
 
         }
 
@@ -568,17 +570,17 @@ module.exports = (function (callbacks) {
 
         switch (event.keyCode) {
 
-            case editor.core.keys.DOWN:
-            case editor.core.keys.RIGHT:
+            case editor.modules.core.keys.DOWN:
+            case editor.modules.core.keys.RIGHT:
                 blockRightOrDownArrowPressed_(event);
                 break;
 
-            case editor.core.keys.BACKSPACE:
+            case editor.modules.core.keys.BACKSPACE:
                 backspacePressed_(block, event);
                 break;
 
-            case editor.core.keys.UP:
-            case editor.core.keys.LEFT:
+            case editor.modules.core.keys.UP:
+            case editor.modules.core.keys.LEFT:
                 blockLeftOrUpArrowPressed_(event);
                 break;
 
@@ -633,7 +635,7 @@ module.exports = (function (callbacks) {
          */
         if (!focusedNode.textContent) {
 
-            editor.caret.setToNextBlock(editableElementIndex);
+            editor.modules.caret.setToNextBlock(editableElementIndex);
             return;
 
         }
@@ -651,7 +653,7 @@ module.exports = (function (callbacks) {
 
         if (editor.core.isDomNode(lastChild)) {
 
-            deepestTextnode = editor.content.getDeepestTextNodeFromPosition(lastChild, lastChild.childNodes.length);
+            deepestTextnode = editor.modules.content.getDeepestTextNodeFromPosition(lastChild, lastChild.childNodes.length);
 
         } else {
 
@@ -664,12 +666,12 @@ module.exports = (function (callbacks) {
 
         if ( !caretInLastChild  || !caretAtTheEndOfText ) {
 
-            editor.core.log('arrow [down|right] : caret does not reached the end');
+            editor.modules.core.log('arrow [down|right] : caret does not reached the end');
             return false;
 
         }
 
-        editor.caret.setToNextBlock(editableElementIndex);
+        editor.modules.caret.setToNextBlock(editableElementIndex);
 
     };
 
@@ -739,16 +741,16 @@ module.exports = (function (callbacks) {
          */
         if (!focusedNode.textContent) {
 
-            editor.caret.setToPreviousBlock(editableElementIndex);
+            editor.modules.caret.setToPreviousBlock(editableElementIndex);
             return;
 
         }
 
         firstChild = focusedNode.childNodes[0];
 
-        if (editor.core.isDomNode(firstChild)) {
+        if (editor.modules.core.isDomNode(firstChild)) {
 
-            deepestTextnode = editor.content.getDeepestTextNodeFromPosition(firstChild, 0);
+            deepestTextnode = editor.modules.content.getDeepestTextNodeFromPosition(firstChild, 0);
 
         } else {
 
@@ -761,7 +763,7 @@ module.exports = (function (callbacks) {
 
         if ( caretInFirstChild && caretAtTheBeginning ) {
 
-            editor.caret.setToPreviousBlock(editableElementIndex);
+            editor.modules.caret.setToPreviousBlock(editableElementIndex);
 
         }
 
@@ -781,12 +783,12 @@ module.exports = (function (callbacks) {
      */
     var backspacePressed_ = function (block, event) {
 
-        var currentInputIndex = editor.caret.getCurrentInputIndex(),
+        var currentInputIndex = editor.modules.caret.getCurrentInputIndex(),
             range,
             selectionLength,
             firstLevelBlocksCount;
 
-        if (editor.core.isNativeInput(event.target)) {
+        if (editor.modules.core.isNativeInput(event.target)) {
 
             /** If input value is empty - remove block */
             if (event.target.value.trim() == '') {
@@ -803,12 +805,12 @@ module.exports = (function (callbacks) {
 
         if (block.textContent.trim()) {
 
-            range           = editor.content.getRange();
+            range           = editor.modules.content.getRange();
             selectionLength = range.endOffset - range.startOffset;
 
-            if (editor.caret.position.atStart() && !selectionLength && editor.state.inputs[currentInputIndex - 1]) {
+            if (editor.modules.caret.position.atStart() && !selectionLength && editor.state.inputs[currentInputIndex - 1]) {
 
-                editor.content.mergeBlocks(currentInputIndex);
+                editor.modules.content.mergeBlocks(currentInputIndex);
 
             } else {
 
@@ -833,47 +835,47 @@ module.exports = (function (callbacks) {
         if (firstLevelBlocksCount === 0) {
 
             /** update currentNode variable */
-            editor.content.currentNode = null;
+            editor.modules.content.currentNode = null;
 
             /** Inserting new empty initial block */
-            editor.ui.addInitialBlock();
+            editor.modules.ui.addInitialBlock();
 
             /** Updating inputs state after deleting last block */
-            editor.ui.saveInputs();
+            editor.modules.ui.saveInputs();
 
             /** Set to current appended block */
             window.setTimeout(function () {
 
-                editor.caret.setToPreviousBlock(1);
+                editor.modules.caret.setToPreviousBlock(1);
 
             }, 10);
 
         } else {
 
-            if (editor.caret.inputIndex !== 0) {
+            if (editor.modules.caret.inputIndex !== 0) {
 
                 /** Target block is not first */
-                editor.caret.setToPreviousBlock(editor.caret.inputIndex);
+                editor.modules.caret.setToPreviousBlock(editor.modules.caret.inputIndex);
 
             } else {
 
                 /** If we try to delete first block */
-                editor.caret.setToNextBlock(editor.caret.inputIndex);
+                editor.modules.caret.setToNextBlock(editor.modules.caret.inputIndex);
 
             }
 
         }
 
-        editor.toolbar.move();
+        editor.modules.toolbar.move();
 
-        if (!editor.toolbar.opened) {
+        if (!editor.modules.toolbar.opened) {
 
-            editor.toolbar.open();
+            editor.modules.toolbar.open();
 
         }
 
         /** Updating inputs state */
-        editor.ui.saveInputs();
+        editor.modules.ui.saveInputs();
 
         /** Prevent default browser behaviour */
         event.preventDefault();
@@ -896,16 +898,16 @@ module.exports = (function (callbacks) {
          * ...
          * Type is stored in data-type attribute on block
          */
-        var currentToolType = editor.content.currentNode.dataset.tool;
+        var currentTool = editor.modules.content.currentNode.childNodes[0].childNodes[0].tool;
 
-        editor.toolbar.settings.toggle(currentToolType);
+        editor.modules.toolbar.settings.toggle(currentTool);
 
         /** Close toolbox when settings button is active */
-        editor.toolbar.toolbox.close();
-        editor.toolbar.settings.hideRemoveActions();
+        editor.modules.toolbar.toolbox.close();
+        editor.modules.toolbar.settings.hideRemoveActions();
 
     };
 
     return callbacks;
 
-})({});
+});

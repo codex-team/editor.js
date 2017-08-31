@@ -5,9 +5,11 @@
  * @version 1.0
  */
 
-module.exports = (function (renderer) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let renderer = {};
+
+    let editor = this;
 
     /**
      * Asyncronously parses input JSON to redactor blocks
@@ -17,29 +19,18 @@ module.exports = (function (renderer) {
         /**
          * If redactor is empty, add first paragraph to start writing
          */
-        if (editor.core.isEmpty(editor.state.blocks) || !editor.state.blocks.items.length) {
+        if (editor.modules.core.isEmpty(editor.state.blocks) || !editor.state.blocks.items.length) {
 
-            editor.ui.addInitialBlock();
+            editor.modules.ui.addInitialBlock();
             return;
 
         }
 
-        Promise.resolve()
-
-        /** First, get JSON from state */
-            .then(function () {
-
-                return editor.state.blocks;
-
-            })
-
-            /** Then, start to iterate they */
-            .then(editor.renderer.appendBlocks)
-
+        return renderer.appendBlocks(editor.state.blocks)
             /** Write log if something goes wrong */
             .catch(function (error) {
 
-                editor.core.log('Error while parsing JSON: %o', 'error', error);
+                editor.modules.core.log('Error while parsing JSON: %o', 'error', error);
 
             });
 
@@ -52,20 +43,34 @@ module.exports = (function (renderer) {
      */
     renderer.appendBlocks = function (data) {
 
-        var blocks = data.items;
+        let blocksData = data.items;
 
         /**
          * Sequence of one-by-one blocks appending
          * Uses to save blocks order after async-handler
          */
-        var nodeSequence = Promise.resolve();
+        var blocks = [];
 
-        for (var index = 0; index < blocks.length ; index++ ) {
+        for (var index = 0; index < blocksData.length ; index++ ) {
 
-            /** Add node to sequence at specified index */
-            editor.renderer.appendNodeAtIndex(nodeSequence, blocks, index);
+            blocks.push(Promise.resolve(blocksData[index])
+              .then(makeBlockFromData));
 
         }
+
+        return Promise.all(blocks)
+          .then(elements => {
+
+              elements.forEach(element => {
+
+                  editor.modules.content.insertBlock({
+                      block: element,
+                      type: element.tool.name
+                  });
+
+              });
+
+          });
 
     };
 
@@ -80,14 +85,14 @@ module.exports = (function (renderer) {
         /** first, get node async-aware */
             .then(function () {
 
-                return editor.renderer.getNodeAsync(blocks, index);
+                return editor.modules.renderer.getNodeAsync(blocks, index);
 
             })
 
             /**
              * second, compose editor-block from JSON object
              */
-            .then(editor.renderer.createBlockFromData)
+            .then(editor.modules.renderer.createBlockFromData)
 
             /**
              * now insert block to redactor
@@ -97,7 +102,7 @@ module.exports = (function (renderer) {
                 /**
                  * blockData has 'block', 'type' and 'stretched' information
                  */
-                editor.content.insertBlock(blockData);
+                editor.modules.content.insertBlock(blockData);
 
                 /** Pass created block to next step */
                 return blockData.block;
@@ -107,26 +112,9 @@ module.exports = (function (renderer) {
             /** Log if something wrong with node */
             .catch(function (error) {
 
-                editor.core.log('Node skipped while parsing because %o', 'error', error);
+                editor.modules.core.log('Node skipped while parsing because %o', 'error', error);
 
             });
-
-    };
-
-    /**
-     * Asynchronously returns block data from blocksList by index
-     * @return Promise to node
-     */
-    renderer.getNodeAsync = function (blocksList, index) {
-
-        return Promise.resolve().then(function () {
-
-            return {
-                tool : blocksList[index],
-                position : index
-            };
-
-        });
 
     };
 
@@ -170,7 +158,7 @@ module.exports = (function (renderer) {
 
         if ( editor.tools[pluginName].available === false ) {
 
-            block = editor.draw.unavailableBlock();
+            block = editor.modules.draw.unavailableBlock();
 
             block.innerHTML = editor.tools[pluginName].loadingMessage;
 
@@ -198,6 +186,39 @@ module.exports = (function (renderer) {
 
     };
 
+    function makeBlockFromData(blockData) {
+
+        let toolName = blockData.type,
+            data = blockData.data;
+
+        if (!editor.tools[toolName]) {
+
+            // throw Error(`Plugin «${toolName}» not found`);
+            return;
+
+        }
+
+        let tool = editor.tools[toolName];
+
+        let toolInstance = tool.instance();
+
+        if (typeof toolInstance.render != 'function') {
+
+            // throw Error(`Plugin «${toolName}» must have «render» method`);
+            return;
+
+        }
+
+        let DOMElement = toolInstance.render(data);
+
+        DOMElement.tool = toolInstance;
+
+        return DOMElement;
+
+    }
+
+    renderer.makeBlockFromData = makeBlockFromData;
+
     return renderer;
 
-})({});
+});

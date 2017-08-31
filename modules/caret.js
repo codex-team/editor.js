@@ -5,9 +5,11 @@
  * @version 1.0
  */
 
-module.exports = (function (caret) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let caret = {};
+
+    let editor = this;
 
     /**
      * @var {int} InputIndex - editable element in DOM
@@ -56,9 +58,9 @@ module.exports = (function (caret) {
 
         }
 
-        if (editor.core.isDomNode(nodeToSet)) {
+        if (editor.modules.core.isDomNode(nodeToSet)) {
 
-            nodeToSet = editor.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
+            nodeToSet = editor.modules.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
 
         }
 
@@ -73,7 +75,7 @@ module.exports = (function (caret) {
             selection.removeAllRanges();
             selection.addRange(range);
 
-            editor.caret.saveCurrentInputIndex();
+            editor.modules.caret.saveCurrentInputIndex();
 
         }, 20);
 
@@ -137,7 +139,7 @@ module.exports = (function (caret) {
 
         if (!nextInput) {
 
-            editor.core.log('We are reached the end');
+            editor.modules.core.log('We are reached the end');
             return;
 
         }
@@ -154,9 +156,9 @@ module.exports = (function (caret) {
 
         }
 
-        editor.caret.inputIndex = index + 1;
-        editor.caret.set(nextInput, 0, 0);
-        editor.content.workingNodeChanged(nextInput);
+        editor.modules.caret.inputIndex = index + 1;
+        editor.modules.caret.set(nextInput, 0, 0);
+        editor.modules.content.workingNodeChanged(nextInput);
 
     };
 
@@ -187,9 +189,9 @@ module.exports = (function (caret) {
 
         }
 
-        editor.caret.inputIndex = index;
-        editor.caret.set(targetInput, 0, 0);
-        editor.content.workingNodeChanged(targetInput);
+        editor.modules.caret.inputIndex = index;
+        editor.modules.caret.set(targetInput, 0, 0);
+        editor.modules.content.workingNodeChanged(targetInput);
 
     };
 
@@ -209,12 +211,12 @@ module.exports = (function (caret) {
 
         if (!previousInput) {
 
-            editor.core.log('We are reached first node');
+            editor.modules.core.log('We are reached first node');
             return;
 
         }
 
-        lastChildNode = editor.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
+        lastChildNode = editor.modules.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
         lengthOfLastChildNode = lastChildNode.length;
 
         /**
@@ -227,9 +229,9 @@ module.exports = (function (caret) {
             previousInput.appendChild(emptyTextElement);
 
         }
-        editor.caret.inputIndex = index - 1;
-        editor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
-        editor.content.workingNodeChanged(inputs[index - 1]);
+        editor.modules.caret.inputIndex = index - 1;
+        editor.modules.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
+        editor.modules.content.workingNodeChanged(inputs[index - 1]);
 
     };
 
@@ -240,10 +242,10 @@ module.exports = (function (caret) {
             var selection       = window.getSelection(),
                 anchorOffset    = selection.anchorOffset,
                 anchorNode      = selection.anchorNode,
-                firstLevelBlock = editor.content.getFirstLevelBlock(anchorNode),
+                firstLevelBlock = editor.modules.content.getFirstLevelBlock(anchorNode),
                 pluginsRender   = firstLevelBlock.childNodes[0];
 
-            if (!editor.core.isDomNode(anchorNode)) {
+            if (!editor.modules.core.isDomNode(anchorNode)) {
 
                 anchorNode = anchorNode.parentNode;
 
@@ -278,7 +280,7 @@ module.exports = (function (caret) {
         var selection, range,
             lastNode = node;
 
-        if (node.nodeType == editor.core.nodeTypes.DOCUMENT_FRAGMENT) {
+        if (node.nodeType == editor.modules.core.nodeTypes.DOCUMENT_FRAGMENT) {
 
             lastNode = node.lastChild;
 
@@ -302,4 +304,4 @@ module.exports = (function (caret) {
 
     return caret;
 
-})({});
+});

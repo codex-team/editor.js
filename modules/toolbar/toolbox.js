@@ -7,9 +7,11 @@
  * @version 1.0
  */
 
-module.exports = (function (toolbox) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let toolbox = {};
+
+    let editor = this;
 
     toolbox.opened = false;
     toolbox.openedOnBlock = null;
@@ -18,14 +20,14 @@ module.exports = (function (toolbox) {
     toolbox.open = function () {
 
         /** Close setting if toolbox is opened */
-        if (editor.toolbar.settings.opened) {
+        if (editor.modules.toolbar.settings.opened) {
 
-            editor.toolbar.settings.close();
+            editor.modules.toolbar.settings.close();
 
         }
 
         /** Add 'toolbar-opened' class for current block **/
-        toolbox.openedOnBlock = editor.content.currentNode;
+        toolbox.openedOnBlock = editor.modules.content.currentNode;
         toolbox.openedOnBlock.classList.add('toolbar-opened');
 
         /** display toolbox */
@@ -35,7 +37,7 @@ module.exports = (function (toolbox) {
         editor.nodes.plusButton.classList.add('clicked');
 
         /** toolbox state */
-        editor.toolbar.toolbox.opened = true;
+        editor.modules.toolbar.toolbox.opened = true;
 
     };
 
@@ -53,15 +55,15 @@ module.exports = (function (toolbox) {
         editor.nodes.plusButton.classList.remove('clicked');
 
         /** toolbox state */
-        editor.toolbar.toolbox.opened = false;
+        editor.modules.toolbar.toolbox.opened = false;
 
-        editor.toolbar.current = null;
+        editor.modules.toolbar.current = null;
 
     };
 
     toolbox.leaf = function () {
 
-        let currentTool = editor.toolbar.current,
+        let currentTool = editor.modules.toolbar.current,
             tools       = Object.keys(editor.tools),
             barButtons  = editor.nodes.toolbarButtons,
             nextToolIndex = 0,
@@ -107,7 +109,7 @@ module.exports = (function (toolbox) {
         }
 
         barButtons[toolToSelect].classList.add('selected');
-        editor.toolbar.current = toolToSelect;
+        editor.modules.toolbar.current = toolToSelect;
 
     };
 
@@ -121,15 +123,15 @@ module.exports = (function (toolbox) {
          * UNREPLACEBLE_TOOLS this types of tools are forbidden to replace even they are empty
          */
         var UNREPLACEBLE_TOOLS = ['image', 'link', 'list', 'instagram', 'twitter', 'embed'],
-            tool               = editor.tools[editor.toolbar.current],
-            workingNode        = editor.content.currentNode,
-            currentInputIndex  = editor.caret.inputIndex,
+            tool               = editor.tools[editor.modules.toolbar.current],
+            workingNode        = editor.modules.content.currentNode,
+            currentInputIndex  = editor.modules.caret.inputIndex,
             newBlockContent,
             appendCallback,
             blockData;
 
         /** Make block from plugin */
-        newBlockContent = tool.render();
+        newBlockContent = editor.modules.renderer.makeBlockFromData({type: tool.type});
 
         /** information about block */
         blockData = {
@@ -145,12 +147,12 @@ module.exports = (function (toolbox) {
         ) {
 
             /** Replace current block */
-            editor.content.switchBlock(workingNode, newBlockContent, tool.type);
+            editor.modules.content.switchBlock(workingNode, newBlockContent, tool.type);
 
         } else {
 
             /** Insert new Block from plugin */
-            editor.content.insertBlock(blockData);
+            editor.modules.content.insertBlock(blockData);
 
             /** increase input index */
             currentInputIndex++;
@@ -169,7 +171,7 @@ module.exports = (function (toolbox) {
         window.setTimeout(function () {
 
             /** Set caret to current block */
-            editor.caret.setToBlock(currentInputIndex);
+            editor.modules.caret.setToBlock(currentInputIndex);
 
         }, 10);
 
@@ -177,15 +179,15 @@ module.exports = (function (toolbox) {
         /**
          * Changing current Node
          */
-        editor.content.workingNodeChanged();
+        editor.modules.content.workingNodeChanged();
 
         /**
          * Move toolbar when node is changed
          */
-        editor.toolbar.move();
+        editor.modules.toolbar.move();
 
     };
 
     return toolbox;
 
-})({});
+});

@@ -3,7 +3,7 @@
 */
 module.exports = (function () {
 
-    let editor = codex.editor;
+    let editor = this;
 
     /**
      * Initialize plugins before using
@@ -28,7 +28,7 @@ module.exports = (function () {
 
                         let plugin = allPlugins[pluginName];
 
-                        if (plugin.prepare && typeof plugin.prepare != 'function' || !plugin.prepare) {
+                        if (plugin.prepare && typeof plugin.prepare !== 'function' || !plugin.prepare) {
 
                             continue;
 
@@ -56,7 +56,7 @@ module.exports = (function () {
 
                 .then(function () {
 
-                    editor.core.log('Plugins loaded', 'info');
+                    editor.modules.core.log('Plugins loaded', 'info');
                     resolve_();
 
                 }).catch(function (error) {
@@ -110,7 +110,7 @@ module.exports = (function () {
 
                             .catch(function (error) {
 
-                                editor.core.log(`Plugin «${plugin.type}» was not loaded. Preparation failed because %o`, 'warn', error);
+                                editor.modules.core.log(`Plugin «${plugin.type}» was not loaded. Preparation failed because %o`, 'warn', error);
                                 plugin.available = false;
                                 plugin.loadingMessage = error;
 
@@ -150,4 +150,4 @@ module.exports = (function () {
         prepare: prepare
     };
 
-}());
+});

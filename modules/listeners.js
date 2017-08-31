@@ -8,7 +8,9 @@
 /**
  * Module-decorator for event listeners assignment
  */
-module.exports = function (listeners) {
+module.exports = function () {
+
+    let listeners = {};
 
     var allListeners = [];
 
@@ -189,4 +191,4 @@ module.exports = function (listeners) {
 
     return listeners;
 
-}({});
+};

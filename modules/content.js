@@ -10,9 +10,11 @@
  * @description Module works with Elements that have been appended to the main DOM
  */
 
-module.exports = (function (content) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let content = {};
+
+    let editor = this;
 
     /**
      * Links to current active block
@@ -32,7 +34,7 @@ module.exports = (function (content) {
      */
     content.sync = function () {
 
-        editor.core.log('syncing...');
+        editor.modules.core.log('syncing...');
 
         /**
          * Save redactor content to editor.state
@@ -48,7 +50,7 @@ module.exports = (function (content) {
      */
     content.markBlock = function () {
 
-        editor.content.currentNode.classList.add(editor.ui.className.BLOCK_HIGHLIGHTED);
+        editor.modules.content.currentNode.classList.add(editor.modules.ui.className.BLOCK_HIGHLIGHTED);
 
     };
 
@@ -59,9 +61,9 @@ module.exports = (function (content) {
      */
     content.clearMark = function () {
 
-        if (editor.content.currentNode) {
+        if (editor.modules.content.currentNode) {
 
-            editor.content.currentNode.classList.remove(editor.ui.className.BLOCK_HIGHLIGHTED);
+            editor.modules.content.currentNode.classList.remove(editor.modules.ui.className.BLOCK_HIGHLIGHTED);
 
         }
 
@@ -78,7 +80,7 @@ module.exports = (function (content) {
      */
     content.getFirstLevelBlock = function (node) {
 
-        if (!editor.core.isDomNode(node)) {
+        if (!editor.modules.core.isDomNode(node)) {
 
             node = node.parentNode;
 
@@ -90,7 +92,7 @@ module.exports = (function (content) {
 
         } else {
 
-            while(!node.classList.contains(editor.ui.className.BLOCK_CLASSNAME)) {
+            while(!node.classList.contains(editor.modules.ui.className.BLOCK_CLASSNAME)) {
 
                 node = node.parentNode;
 
@@ -112,7 +114,7 @@ module.exports = (function (content) {
     content.workingNodeChanged = function (targetNode) {
 
         /** Clear background from previous marked block before we change */
-        editor.content.clearMark();
+        editor.modules.content.clearMark();
 
         if (!targetNode) {
 
@@ -138,13 +140,13 @@ module.exports = (function (content) {
 
         if (!targetBlock || !newBlock) {
 
-            editor.core.log('replaceBlock: missed params');
+            editor.modules.core.log('replaceBlock: missed params');
             return;
 
         }
 
         /** If target-block is not a frist-level block, then we iterate parents to find it */
-        while(!targetBlock.classList.contains(editor.ui.className.BLOCK_CLASSNAME)) {
+        while(!targetBlock.classList.contains(editor.modules.ui.className.BLOCK_CLASSNAME)) {
 
             targetBlock = targetBlock.parentNode;
 
@@ -156,17 +158,17 @@ module.exports = (function (content) {
         /**
          * Set new node as current
          */
-        editor.content.workingNodeChanged(newBlock);
+        editor.modules.content.workingNodeChanged(newBlock);
 
         /**
          * Add block handlers
          */
-        editor.ui.addBlockHandlers(newBlock);
+        editor.modules.ui.addBlockHandlers(newBlock);
 
         /**
          * Save changes
          */
-        editor.ui.saveInputs();
+        editor.modules.ui.saveInputs();
 
     };
 
@@ -184,7 +186,7 @@ module.exports = (function (content) {
      */
     content.insertBlock = function ( blockData, needPlaceCaret ) {
 
-        var workingBlock    = editor.content.currentNode,
+        var workingBlock    = editor.modules.content.currentNode,
             newBlockContent = blockData.block,
             blockType       = blockData.type,
             isStretched     = blockData.stretched;
@@ -193,7 +195,7 @@ module.exports = (function (content) {
 
         if (workingBlock) {
 
-            editor.core.insertAfter(workingBlock, newBlock);
+            editor.modules.core.insertAfter(workingBlock, newBlock);
 
         } else {
 
@@ -207,17 +209,17 @@ module.exports = (function (content) {
         /**
          * Block handler
          */
-        editor.ui.addBlockHandlers(newBlock);
+        editor.modules.ui.addBlockHandlers(newBlock);
 
         /**
          * Set new node as current
          */
-        editor.content.workingNodeChanged(newBlock);
+        editor.modules.content.workingNodeChanged(newBlock);
 
         /**
          * Save changes
          */
-        editor.ui.saveInputs();
+        editor.modules.ui.saveInputs();
 
 
         if ( needPlaceCaret ) {
@@ -225,7 +227,7 @@ module.exports = (function (content) {
             /**
              * If we don't know input index then we set default value -1
              */
-            var currentInputIndex = editor.caret.getCurrentInputIndex() || -1;
+            var currentInputIndex = editor.modules.caret.getCurrentInputIndex() || -1;
 
 
             if (currentInputIndex == -1) {
@@ -235,10 +237,10 @@ module.exports = (function (content) {
                     emptyText       = document.createTextNode('');
 
                 editableElement.appendChild(emptyText);
-                editor.caret.set(editableElement, 0, 0);
+                editor.modules.caret.set(editableElement, 0, 0);
 
-                editor.toolbar.move();
-                editor.toolbar.showPlusButton();
+                editor.modules.toolbar.move();
+                editor.modules.toolbar.showPlusButton();
 
 
             } else {
@@ -250,9 +252,9 @@ module.exports = (function (content) {
                 window.setTimeout(function () {
 
                     /** Setting to the new input */
-                    editor.caret.setToNextBlock(currentInputIndex);
-                    editor.toolbar.move();
-                    editor.toolbar.open();
+                    editor.modules.caret.setToNextBlock(currentInputIndex);
+                    editor.modules.toolbar.move();
+                    editor.modules.toolbar.open();
 
                 }, 10);
 
@@ -277,14 +279,14 @@ module.exports = (function (content) {
      */
     content.switchBlock = function (blockToReplace, newBlock, tool) {
 
-        tool = tool || editor.content.currentNode.dataset.tool;
+        tool = tool || editor.modules.content.currentNode.dataset.tool;
         var newBlockComposed = composeNewBlock_(newBlock, tool);
 
         /** Replacing */
-        editor.content.replaceBlock(blockToReplace, newBlockComposed);
+        editor.modules.content.replaceBlock(blockToReplace, newBlockComposed);
 
         /** Save new Inputs when block is changed */
-        editor.ui.saveInputs();
+        editor.modules.ui.saveInputs();
 
     };
 
@@ -314,7 +316,7 @@ module.exports = (function (content) {
 
             node = blockChilds[index];
 
-            if (node.nodeType == editor.core.nodeTypes.TEXT) {
+            if (node.nodeType == editor.modules.core.nodeTypes.TEXT) {
 
                 text = node.textContent.trim();
 
@@ -391,15 +393,15 @@ module.exports = (function (content) {
      */
     var composeNewBlock_ = function (block, tool, isStretched) {
 
-        var newBlock     = editor.draw.node('DIV', editor.ui.className.BLOCK_CLASSNAME, {}),
-            blockContent = editor.draw.node('DIV', editor.ui.className.BLOCK_CONTENT, {});
+        var newBlock     = editor.modules.draw.node('DIV', editor.modules.ui.className.BLOCK_CLASSNAME, {}),
+            blockContent = editor.modules.draw.node('DIV', editor.modules.ui.className.BLOCK_CONTENT, {});
 
         blockContent.appendChild(block);
         newBlock.appendChild(blockContent);
 
         if (isStretched) {
 
-            blockContent.classList.add(editor.ui.className.BLOCK_STRETCHED);
+            blockContent.classList.add(editor.modules.ui.className.BLOCK_STRETCHED);
 
         }
 
@@ -440,7 +442,7 @@ module.exports = (function (content) {
             textAfterCaret,
             textNodeAfterCaret;
 
-        var currentBlock = editor.content.currentNode.querySelector('[contentEditable]');
+        var currentBlock = editor.modules.content.currentNode.querySelector('[contentEditable]');
 
 
         textBeforeCaret     = anchorNodeText.substring(0, caretOffset);
@@ -522,7 +524,7 @@ module.exports = (function (content) {
         /**
          * Make new paragraph with text after caret
          */
-        editor.content.insertBlock({
+        editor.modules.content.insertBlock({
             type  : NEW_BLOCK_TYPE,
             block : editor.tools[NEW_BLOCK_TYPE].render({
                 text : newNode
@@ -597,7 +599,7 @@ module.exports = (function (content) {
             /**
              * Проверяем родителей до тех пор, пока не найдем блок первого уровня
              */
-            if ( node.classList.contains(editor.ui.className.BLOCK_CONTENT) ) {
+            if ( node.classList.contains(editor.modules.ui.className.BLOCK_CONTENT) ) {
 
                 allChecked = true;
 
@@ -749,8 +751,8 @@ module.exports = (function (content) {
     content.clear = function (all) {
 
         editor.nodes.redactor.innerHTML = '';
-        editor.content.sync();
-        editor.ui.saveInputs();
+        editor.modules.content.sync();
+        editor.modules.ui.saveInputs();
         if (all) {
 
             editor.state.blocks = {};
@@ -761,7 +763,7 @@ module.exports = (function (content) {
 
         }
 
-        editor.content.currentNode = null;
+        editor.modules.content.currentNode = null;
 
     };
 
@@ -776,7 +778,7 @@ module.exports = (function (content) {
 
         var currentContent = Object.assign({}, editor.state.blocks);
 
-        editor.content.clear();
+        editor.modules.content.clear();
 
         if (!Object.keys(currentContent).length) {
 
@@ -794,10 +796,10 @@ module.exports = (function (content) {
 
         }
 
-        editor.renderer.makeBlocksFromData();
+        editor.modules.renderer.makeBlocksFromData();
 
     };
 
     return content;
 
-})({});
+});

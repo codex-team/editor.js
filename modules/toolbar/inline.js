@@ -8,9 +8,11 @@
  * @version 1.0
  */
 
-module.exports = (function (inline) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let inline = {};
+
+    let editor = this;
 
     inline.buttonsOpened = null;
     inline.actionsOpened = null;
@@ -29,7 +31,7 @@ module.exports = (function (inline) {
      */
     inline.show = function () {
 
-        var currentNode = editor.content.currentNode,
+        var currentNode = editor.modules.content.currentNode,
             tool = currentNode.dataset.tool,
             plugin;
 
@@ -47,13 +49,13 @@ module.exports = (function (inline) {
         if (selectedText.length > 0) {
 
             /** Move toolbar and open */
-            editor.toolbar.inline.move();
+            editor.modules.toolbar.inline.move();
 
             /** Open inline toolbar */
             toolbar.classList.add('opened');
 
             /** show buttons of inline toolbar */
-            editor.toolbar.inline.showButtons();
+            editor.modules.toolbar.inline.showButtons();
 
         }
 
@@ -103,8 +105,8 @@ module.exports = (function (inline) {
         toolbar.style.transform = `translate3D(${Math.floor(newCoordinateX)}px, ${Math.floor(newCoordinateY)}px, 0)`;
 
         /** Close everything */
-        editor.toolbar.inline.closeButtons();
-        editor.toolbar.inline.closeAction();
+        editor.modules.toolbar.inline.closeButtons();
+        editor.modules.toolbar.inline.closeAction();
 
     };
 
@@ -121,15 +123,15 @@ module.exports = (function (inline) {
          * For more complicated tools, we should write our own behavior
          */
         switch (type) {
-            case 'createLink' : editor.toolbar.inline.createLinkAction(event, type); break;
-            default           : editor.toolbar.inline.defaultToolAction(type); break;
+            case 'createLink' : editor.modules.toolbar.inline.createLinkAction(event, type); break;
+            default           : editor.modules.toolbar.inline.defaultToolAction(type); break;
         }
 
         /**
          * highlight buttons
          * after making some action
          */
-        editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.toolbar.inline.hightlight);
+        editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.modules.toolbar.inline.hightlight);
 
     };
 
@@ -252,10 +254,10 @@ module.exports = (function (inline) {
 
         buttons.classList.add('opened');
 
-        editor.toolbar.inline.buttonsOpened = true;
+        editor.modules.toolbar.inline.buttonsOpened = true;
 
         /** highlight buttons */
-        editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.toolbar.inline.hightlight);
+        editor.nodes.inlineToolbar.buttons.childNodes.forEach(editor.modules.toolbar.inline.hightlight);
 
     };
 
@@ -266,7 +268,7 @@ module.exports = (function (inline) {
 
         buttons.classList.remove('opened');
 
-        editor.toolbar.inline.buttonsOpened = false;
+        editor.modules.toolbar.inline.buttonsOpened = false;
 
     };
 
@@ -277,7 +279,7 @@ module.exports = (function (inline) {
 
         action.classList.add('opened');
 
-        editor.toolbar.inline.actionsOpened = true;
+        editor.modules.toolbar.inline.actionsOpened = true;
 
     };
 
@@ -288,7 +290,7 @@ module.exports = (function (inline) {
 
         action.innerHTML = '';
         action.classList.remove('opened');
-        editor.toolbar.inline.actionsOpened = false;
+        editor.modules.toolbar.inline.actionsOpened = false;
 
     };
 
@@ -304,11 +306,11 @@ module.exports = (function (inline) {
 
         }
 
-        let editable        = editor.content.currentNode,
-            storedSelection = editor.toolbar.inline.storedSelection;
+        let editable        = editor.modules.content.currentNode,
+            storedSelection = editor.modules.toolbar.inline.storedSelection;
 
-        editor.toolbar.inline.restoreSelection(editable, storedSelection);
-        editor.toolbar.inline.setAnchor(this.value);
+        editor.modules.toolbar.inline.restoreSelection(editable, storedSelection);
+        editor.modules.toolbar.inline.setAnchor(this.value);
 
         /**
          * Preventing events that will be able to happen
@@ -316,7 +318,7 @@ module.exports = (function (inline) {
         event.preventDefault();
         event.stopImmediatePropagation();
 
-        editor.toolbar.inline.clearRange();
+        editor.modules.toolbar.inline.clearRange();
 
     };
 
@@ -325,11 +327,11 @@ module.exports = (function (inline) {
 
         var isActive = this.isLinkActive();
 
-        var editable        = editor.content.currentNode,
-            storedSelection = editor.toolbar.inline.saveSelection(editable);
+        var editable        = editor.modules.content.currentNode,
+            storedSelection = editor.modules.toolbar.inline.saveSelection(editable);
 
         /** Save globally selection */
-        editor.toolbar.inline.storedSelection = storedSelection;
+        editor.modules.toolbar.inline.storedSelection = storedSelection;
 
         if (isActive) {
 
@@ -340,9 +342,9 @@ module.exports = (function (inline) {
              * The solution is than we get the length of current link
              * Change start position to - end of selection minus length of anchor
              */
-            editor.toolbar.inline.restoreSelection(editable, storedSelection);
+            editor.modules.toolbar.inline.restoreSelection(editable, storedSelection);
 
-            editor.toolbar.inline.defaultToolAction('unlink');
+            editor.modules.toolbar.inline.defaultToolAction('unlink');
 
         } else {
 
@@ -351,8 +353,8 @@ module.exports = (function (inline) {
 
             editor.nodes.inlineToolbar.actions.appendChild(action);
 
-            editor.toolbar.inline.closeButtons();
-            editor.toolbar.inline.showActions();
+            editor.modules.toolbar.inline.closeButtons();
+            editor.modules.toolbar.inline.showActions();
 
             /**
              * focus to input
@@ -363,7 +365,7 @@ module.exports = (function (inline) {
             event.preventDefault();
 
             /** Callback to link action */
-            editor.listeners.add(action, 'keydown', inlineToolbarAnchorInputKeydown_, false);
+            editor.modules.listeners.add(action, 'keydown', inlineToolbarAnchorInputKeydown_, false);
 
         }
 
@@ -408,7 +410,7 @@ module.exports = (function (inline) {
         document.execCommand('createLink', false, url);
 
         /** Close after URL inserting */
-        editor.toolbar.inline.closeAction();
+        editor.modules.toolbar.inline.closeAction();
 
     };
 
@@ -522,11 +524,11 @@ module.exports = (function (inline) {
 
         if (document.queryCommandState(dataType)) {
 
-            editor.toolbar.inline.setButtonHighlighted(tool);
+            editor.modules.toolbar.inline.setButtonHighlighted(tool);
 
         } else {
 
-            editor.toolbar.inline.removeButtonsHighLight(tool);
+            editor.modules.toolbar.inline.removeButtonsHighLight(tool);
 
         }
 
@@ -539,7 +541,7 @@ module.exports = (function (inline) {
 
         if (tag.tagName == 'A' && dataType == 'link') {
 
-            editor.toolbar.inline.setButtonHighlighted(tool);
+            editor.modules.toolbar.inline.setButtonHighlighted(tool);
 
         }
 
@@ -590,4 +592,4 @@ module.exports = (function (inline) {
 
     return inline;
 
-})({});
+});

@@ -5,7 +5,9 @@
  * @version 1.0.
  */
 
-module.exports = (function (draw) {
+module.exports = (function () {
+
+    let draw = {};
 
     /**
      * Base editor wrapper
@@ -313,4 +315,4 @@ module.exports = (function (draw) {
 
     return draw;
 
-})({});
+});

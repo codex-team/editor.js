@@ -10,13 +10,15 @@
  * @version 1.0
  */
 
-module.exports = (function (toolbar) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let toolbar = {};
 
-    toolbar.settings = require('./settings');
-    toolbar.inline   = require('./inline');
-    toolbar.toolbox  = require('./toolbox');
+    let editor = this;
+
+    toolbar.settings = require('./settings').call(editor);
+    toolbar.inline   = require('./inline').call(editor);
+    toolbar.toolbox  = require('./toolbox').call(editor);
 
     /**
      * Margin between focused node and toolbar
@@ -40,9 +42,9 @@ module.exports = (function (toolbar) {
 
         }
 
-        let toolType = editor.content.currentNode.dataset.tool;
+        let tool = editor.modules.content.currentNode.childNodes[0].childNodes[0].tool;
 
-        if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings ) {
+        if (!editor.tools[tool.name] || !tool.makeSettings || typeof tool.makeSettings !== 'function') {
 
             editor.nodes.showSettingsButton.classList.add('hide');
 
@@ -74,8 +76,8 @@ module.exports = (function (toolbar) {
         }
 
         /** Close toolbox when toolbar is not displayed */
-        editor.toolbar.toolbox.close();
-        editor.toolbar.settings.close();
+        editor.modules.toolbar.toolbox.close();
+        editor.modules.toolbar.settings.close();
 
     };
 
@@ -111,23 +113,23 @@ module.exports = (function (toolbar) {
     toolbar.move = function () {
 
         /** Close Toolbox when we move toolbar */
-        editor.toolbar.toolbox.close();
+        editor.modules.toolbar.toolbox.close();
 
-        if (!editor.content.currentNode) {
+        if (!editor.modules.content.currentNode) {
 
             return;
 
         }
 
-        var newYCoordinate = editor.content.currentNode.offsetTop - (editor.toolbar.defaultToolbarHeight / 2) + editor.toolbar.defaultOffset;
+        var newYCoordinate = editor.modules.content.currentNode.offsetTop - (editor.modules.toolbar.defaultToolbarHeight / 2) + editor.modules.toolbar.defaultOffset;
 
         editor.nodes.toolbar.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
 
         /** Close trash actions */
-        editor.toolbar.settings.hideRemoveActions();
+        editor.modules.toolbar.settings.hideRemoveActions();
 
     };
 
     return toolbar;
 
-})({});
+});

@@ -2,17 +2,19 @@
  * Codex Sanitizer
  */
 
-module.exports = (function (sanitizer) {
+module.exports = (function () {
+
+    let sanitizer = {};
 
     /** HTML Janitor library */
     let janitor = require('html-janitor');
 
     /** Codex Editor */
-    let editor  = codex.editor;
+    let editor  = this;
 
     sanitizer.prepare = function () {
 
-        if (editor.settings.sanitizer && !editor.core.isEmpty(editor.settings.sanitizer)) {
+        if (editor.settings.sanitizer && !editor.modules.core.isEmpty(editor.settings.sanitizer)) {
 
             Config.CUSTOM = editor.settings.sanitizer;
 
@@ -77,4 +79,4 @@ module.exports = (function (sanitizer) {
 
     return sanitizer;
 
-})({});
+});

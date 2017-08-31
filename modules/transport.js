@@ -6,9 +6,11 @@
  * @version 1.2.0
  */
 
-module.exports = (function (transport) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let transport = {};
+
+    let editor = this;
 
 
     /**
@@ -32,10 +34,10 @@ module.exports = (function (transport) {
      */
     transport.prepare = function () {
 
-        let input = editor.draw.node( 'INPUT', '', { type : 'file' } );
+        let input = editor.modules.draw.node( 'INPUT', '', { type : 'file' } );
 
-        editor.listeners.add(input, 'change', editor.transport.fileSelected);
-        editor.transport.input = input;
+        editor.modules.listeners.add(input, 'change', editor.modules.transport.fileSelected);
+        editor.modules.transport.input = input;
 
     };
 
@@ -61,7 +63,7 @@ module.exports = (function (transport) {
             files       = input.files,
             formData   = new FormData();
 
-        if (editor.transport.arguments.multiple === true) {
+        if (editor.modules.transport.arguments.multiple === true) {
 
             for ( i = 0; i < files.length; i++) {
 
@@ -78,11 +80,11 @@ module.exports = (function (transport) {
         currentRequest = editor.core.ajax({
             type : 'POST',
             data : formData,
-            url        : editor.transport.arguments.url,
-            beforeSend : editor.transport.arguments.beforeSend,
-            success    : editor.transport.arguments.success,
-            error      : editor.transport.arguments.error,
-            progress   : editor.transport.arguments.progress
+            url        : editor.modules.transport.arguments.url,
+            beforeSend : editor.modules.transport.arguments.beforeSend,
+            success    : editor.modules.transport.arguments.success,
+            error      : editor.modules.transport.arguments.error,
+            progress   : editor.modules.transport.arguments.progress
         });
 
         /** Clear input */
@@ -133,4 +135,4 @@ module.exports = (function (transport) {
 
     return transport;
 
-})({});
+});

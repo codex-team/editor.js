@@ -5,9 +5,11 @@
  * @version 1.0
  */
 
-module.exports = function (destroyer) {
+module.exports = function () {
 
-    let editor = codex.editor;
+    let destroyer = {};
+
+    let editor = this;
 
     destroyer.removeNodes = function () {
 
@@ -69,7 +71,7 @@ module.exports = function (destroyer) {
         if (settings.ui) {
 
             destroyer.removeNodes();
-            editor.listeners.removeAll();
+            editor.modules.listeners.removeAll();
 
         }
 
@@ -87,7 +89,7 @@ module.exports = function (destroyer) {
 
         if (settings.ui && settings.scripts && settings.core) {
 
-            delete codex.editor;
+            editor = null;
 
         }
 
@@ -95,4 +97,4 @@ module.exports = function (destroyer) {
 
     return destroyer;
 
-}({});
+};

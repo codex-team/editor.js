@@ -4,9 +4,11 @@
  * @version 1.0.5
  */
 
-module.exports = (function (settings) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let settings = {};
+
+    let editor = this;
 
     settings.opened = false;
 
@@ -16,13 +18,13 @@ module.exports = (function (settings) {
     /**
      * Append and open settings
      */
-    settings.open = function (toolType) {
+    settings.open = function (tool) {
 
         /**
          * Append settings content
          * It's stored in tool.settings
          */
-        if ( !editor.tools[toolType] || !editor.tools[toolType].makeSettings ) {
+        if ( !editor.tools[tool.name] || !tool.makeSettings || typeof tool.makeSettings !== 'function') {
 
             return;
 
@@ -31,7 +33,7 @@ module.exports = (function (settings) {
         /**
          * Draw settings block
          */
-        var settingsBlock = editor.tools[toolType].makeSettings();
+        var settingsBlock = tool.makeSettings();
 
         editor.nodes.pluginSettings.appendChild(settingsBlock);
 
@@ -57,11 +59,11 @@ module.exports = (function (settings) {
     /**
      * @param {string} toolType - plugin type
      */
-    settings.toggle = function ( toolType ) {
+    settings.toggle = function ( tool ) {
 
         if ( !this.opened ) {
 
-            this.open(toolType);
+            this.open(tool);
 
         } else {
 
@@ -76,17 +78,17 @@ module.exports = (function (settings) {
      */
     settings.makeRemoveBlockButton = function () {
 
-        var removeBlockWrapper  = editor.draw.node('SPAN', 'ce-toolbar__remove-btn', {}),
-            settingButton = editor.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML : '<i class="ce-icon-trash"></i>' }),
-            actionWrapper = editor.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
-            confirmAction = editor.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent : 'Удалить блок' }),
-            cancelAction  = editor.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent : 'Отмена' });
+        var removeBlockWrapper  = editor.modules.draw.node('SPAN', 'ce-toolbar__remove-btn', {}),
+            settingButton = editor.modules.draw.node('SPAN', 'ce-toolbar__remove-setting', { innerHTML : '<i class="ce-icon-trash"></i>' }),
+            actionWrapper = editor.modules.draw.node('DIV', 'ce-toolbar__remove-confirmation', {}),
+            confirmAction = editor.modules.draw.node('DIV', 'ce-toolbar__remove-confirm', { textContent : 'Удалить блок' }),
+            cancelAction  = editor.modules.draw.node('DIV', 'ce-toolbar__remove-cancel', { textContent : 'Отмена' });
 
-        editor.listeners.add(settingButton, 'click', editor.toolbar.settings.removeButtonClicked, false);
+        editor.modules.listeners.add(settingButton, 'click', editor.modules.toolbar.settings.removeButtonClicked, false);
 
-        editor.listeners.add(confirmAction, 'click', editor.toolbar.settings.confirmRemovingRequest, false);
+        editor.modules.listeners.add(confirmAction, 'click', editor.modules.toolbar.settings.confirmRemovingRequest, false);
 
-        editor.listeners.add(cancelAction, 'click', editor.toolbar.settings.cancelRemovingRequest, false);
+        editor.modules.listeners.add(cancelAction, 'click', editor.modules.toolbar.settings.cancelRemovingRequest, false);
 
         actionWrapper.appendChild(confirmAction);
         actionWrapper.appendChild(cancelAction);
@@ -95,8 +97,8 @@ module.exports = (function (settings) {
         removeBlockWrapper.appendChild(actionWrapper);
 
         /** Save setting */
-        editor.toolbar.settings.setting = settingButton;
-        editor.toolbar.settings.actions = actionWrapper;
+        editor.modules.toolbar.settings.setting = settingButton;
+        editor.modules.toolbar.settings.actions = actionWrapper;
 
         return removeBlockWrapper;
 
@@ -104,32 +106,32 @@ module.exports = (function (settings) {
 
     settings.removeButtonClicked = function () {
 
-        var action = editor.toolbar.settings.actions;
+        var action = editor.modules.toolbar.settings.actions;
 
         if (action.classList.contains('opened')) {
 
-            editor.toolbar.settings.hideRemoveActions();
+            editor.modules.toolbar.settings.hideRemoveActions();
 
         } else {
 
-            editor.toolbar.settings.showRemoveActions();
+            editor.modules.toolbar.settings.showRemoveActions();
 
         }
 
-        editor.toolbar.toolbox.close();
-        editor.toolbar.settings.close();
+        editor.modules.toolbar.toolbox.close();
+        editor.modules.toolbar.settings.close();
 
     };
 
     settings.cancelRemovingRequest = function () {
 
-        editor.toolbar.settings.actions.classList.remove('opened');
+        editor.modules.toolbar.settings.actions.classList.remove('opened');
 
     };
 
     settings.confirmRemovingRequest = function () {
 
-        var currentBlock = editor.content.currentNode,
+        var currentBlock = editor.modules.content.currentNode,
             firstLevelBlocksCount;
 
         currentBlock.remove();
@@ -142,31 +144,31 @@ module.exports = (function (settings) {
         if (firstLevelBlocksCount === 0) {
 
             /** update currentNode variable */
-            editor.content.currentNode = null;
+            editor.modules.content.currentNode = null;
 
             /** Inserting new empty initial block */
-            editor.ui.addInitialBlock();
+            editor.modules.ui.addInitialBlock();
 
         }
 
-        editor.ui.saveInputs();
+        editor.modules.ui.saveInputs();
 
-        editor.toolbar.close();
+        editor.modules.toolbar.close();
 
     };
 
     settings.showRemoveActions = function () {
 
-        editor.toolbar.settings.actions.classList.add('opened');
+        editor.modules.toolbar.settings.actions.classList.add('opened');
 
     };
 
     settings.hideRemoveActions = function () {
 
-        editor.toolbar.settings.actions.classList.remove('opened');
+        editor.modules.toolbar.settings.actions.classList.remove('opened');
 
     };
 
     return settings;
 
-})({});
+});

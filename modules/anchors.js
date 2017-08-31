@@ -5,9 +5,11 @@
  * @version 1.0
  */
 
-module.exports = function (anchors) {
+module.exports = function () {
 
-    let editor = codex.editor;
+    let anchors = {};
+
+    let editor = this;
 
     anchors.input       = null;
     anchors.currentNode = null;
@@ -45,7 +47,7 @@ module.exports = function (anchors) {
             e.stopPropagation();
 
             e.target.blur();
-            editor.toolbar.settings.close();
+            editor.modules.toolbar.settings.close();
 
         }
 
@@ -53,7 +55,7 @@ module.exports = function (anchors) {
 
     anchors.keyUpOnAnchorInput = function (e) {
 
-        if (e.keyCode >= editor.core.keys.LEFT && e.keyCode <= editor.core.keys.DOWN) {
+        if (e.keyCode >= editor.modules.core.keys.LEFT && e.keyCode <= editor.modules.core.keys.DOWN) {
 
             e.stopPropagation();
 
@@ -89,4 +91,4 @@ module.exports = function (anchors) {
 
     return anchors;
 
-}({});
+};

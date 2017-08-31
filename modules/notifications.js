@@ -5,9 +5,11 @@
  * @version 1.0
  */
 
-module.exports = (function (notifications) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let notifications = {};
+
+    let editor = this;
 
     var queue = [];
 
@@ -35,7 +37,7 @@ module.exports = (function (notifications) {
 
     notifications.createHolder = function () {
 
-        var holder = editor.draw.node('DIV', 'cdx-notifications-block');
+        var holder = editor.modules.draw.node('DIV', 'cdx-notifications-block');
 
         editor.nodes.notifications = document.body.appendChild(holder);
 
@@ -50,7 +52,7 @@ module.exports = (function (notifications) {
      */
     notifications.errorThrown = function (errorMsg, event) {
 
-        editor.notifications.notification({message: 'This action is not available currently', type: event.type});
+        editor.modules.notifications.notification({message: 'This action is not available currently', type: event.type});
 
     };
 
@@ -120,7 +122,7 @@ module.exports = (function (notifications) {
 
             if (!(settings && settings.message)) {
 
-                editor.core.log('Can\'t create notification. Message is missed');
+                editor.modules.core.log('Can\'t create notification. Message is missed');
                 return;
 
             }
@@ -128,18 +130,18 @@ module.exports = (function (notifications) {
             settings.type = settings.type || 'alert';
             settings.time = settings.time*1000 || 10000;
 
-            var wrapper = editor.draw.node('DIV', 'cdx-notification'),
-                message = editor.draw.node('DIV', 'cdx-notification__message'),
-                input = editor.draw.node('INPUT', 'cdx-notification__input'),
-                okBtn = editor.draw.node('SPAN', 'cdx-notification__ok-btn'),
-                cancelBtn = editor.draw.node('SPAN', 'cdx-notification__cancel-btn');
+            var wrapper = editor.modules.draw.node('DIV', 'cdx-notification'),
+                message = editor.modules.draw.node('DIV', 'cdx-notification__message'),
+                input = editor.modules.draw.node('INPUT', 'cdx-notification__input'),
+                okBtn = editor.modules.draw.node('SPAN', 'cdx-notification__ok-btn'),
+                cancelBtn = editor.modules.draw.node('SPAN', 'cdx-notification__cancel-btn');
 
             message.textContent = settings.message;
             okBtn.textContent = settings.okMsg || 'ОК';
             cancelBtn.textContent = settings.cancelMsg || 'Отмена';
 
-            editor.listeners.add(okBtn, 'click', confirmHandler);
-            editor.listeners.add(cancelBtn, 'click', cancelHandler);
+            editor.modules.listeners.add(okBtn, 'click', confirmHandler);
+            editor.modules.listeners.add(cancelBtn, 'click', cancelHandler);
 
             wrapper.appendChild(message);
 
@@ -222,4 +224,4 @@ module.exports = (function (notifications) {
 
     return notifications;
 
-})({});
+});

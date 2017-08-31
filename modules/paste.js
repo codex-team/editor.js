@@ -5,9 +5,11 @@
  * @version 1.1.1
  */
 
-module.exports = function (paste) {
+module.exports = function () {
 
-    let editor = codex.editor;
+    let paste = {};
+
+    let editor = this;
 
     var patterns = [];
 
@@ -65,7 +67,7 @@ module.exports = function (paste) {
     var analize = function (string) {
 
         var result  = false,
-            content = editor.content.currentNode,
+            content = editor.modules.content.currentNode,
             plugin  = content.dataset.tool;
 
         patterns.map( function (pattern) {
@@ -96,7 +98,7 @@ module.exports = function (paste) {
     var pasteToNewBlock_ = function () {
 
         /** Create new initial block */
-        editor.content.insertBlock({
+        editor.modules.content.insertBlock({
 
             type : editor.settings.initialBlockPlugin,
             block : editor.tools[editor.settings.initialBlockPlugin].render({
@@ -134,18 +136,18 @@ module.exports = function (paste) {
             plainData = event.clipboardData.getData('text/plain');
 
         /** Temporary DIV that is used to work with text's paragraphs as DOM-elements*/
-        var paragraphs = editor.draw.node('DIV', '', {}),
+        var paragraphs = editor.modules.draw.node('DIV', '', {}),
             cleanData,
             wrappedData;
 
         /** Create fragment, that we paste to range after proccesing */
-        cleanData = editor.sanitizer.clean(htmlData);
+        cleanData = editor.modules.sanitizer.clean(htmlData);
 
         /**
          * We wrap pasted text with <p> tags to split it logically
          * @type {string}
          */
-        wrappedData = editor.content.wrapTextWithParagraphs(cleanData, plainData);
+        wrappedData = editor.modules.content.wrapTextWithParagraphs(cleanData, plainData);
         paragraphs.innerHTML = wrappedData;
 
         /**
@@ -171,13 +173,13 @@ module.exports = function (paste) {
     var needsToHandlePasteEvent = function (block) {
 
         /** If area is input or textarea then allow default behaviour */
-        if ( editor.core.isNativeInput(block) ) {
+        if ( editor.modules.core.isNativeInput(block) ) {
 
             return false;
 
         }
 
-        var editableParent = editor.content.getEditableParent(block);
+        var editableParent = editor.modules.content.getEditableParent(block);
 
         /** Allow paste when event target placed in Editable element */
         if (!editableParent) {
@@ -198,39 +200,39 @@ module.exports = function (paste) {
     var insertPastedParagraphs = function (paragraphs) {
 
         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin,
-            currentNode = editor.content.currentNode;
+            currentNode = editor.modules.content.currentNode;
 
 
         paragraphs.forEach(function (paragraph) {
 
             /** Don't allow empty paragraphs */
-            if (editor.core.isBlockEmpty(paragraph)) {
+            if (editor.modules.core.isBlockEmpty(paragraph)) {
 
                 return;
 
             }
 
-            editor.content.insertBlock({
+            editor.modules.content.insertBlock({
                 type  : NEW_BLOCK_TYPE,
                 block : editor.tools[NEW_BLOCK_TYPE].render({
                     text : paragraph.innerHTML
                 })
             });
 
-            editor.caret.inputIndex++;
+            editor.modules.caret.inputIndex++;
 
         });
 
-        editor.caret.setToPreviousBlock(editor.caret.getCurrentInputIndex() + 1);
+        editor.modules.caret.setToPreviousBlock(editor.modules.caret.getCurrentInputIndex() + 1);
 
 
         /**
          * If there was no data in working node, remove it
          */
-        if (editor.core.isBlockEmpty(currentNode)) {
+        if (editor.modules.core.isBlockEmpty(currentNode)) {
 
             currentNode.remove();
-            editor.ui.saveInputs();
+            editor.modules.ui.saveInputs();
 
         }
 
@@ -252,7 +254,7 @@ module.exports = function (paste) {
 
             node.childNodes.forEach(function (current) {
 
-                if (!editor.core.isDomNode(current) && current.data.trim() === '') {
+                if (!editor.modules.core.isDomNode(current) && current.data.trim() === '') {
 
                     return;
 
@@ -268,11 +270,11 @@ module.exports = function (paste) {
 
         }
 
-        editor.caret.insertNode(newNode);
+        editor.modules.caret.insertNode(newNode);
 
     };
 
 
     return paste;
 
-}({});
+};

@@ -5,9 +5,11 @@
  * @version 1.1.0
  */
 
-module.exports = (function (saver) {
+module.exports = (function () {
 
-    let editor = codex.editor;
+    let saver = {};
+
+    let editor = this;
 
     /**
      * @public
@@ -44,7 +46,7 @@ module.exports = (function (saver) {
 
         return Promise.all(data)
             .then(makeOutput)
-            .catch(editor.core.log);
+            .catch(editor.modules.core.log);
 
     };
 
@@ -53,7 +55,7 @@ module.exports = (function (saver) {
 
         return saveBlockData(block)
           .then(validateBlockData)
-          .catch(editor.core.log);
+          .catch(editor.modules.core.log);
 
     };
 
@@ -66,21 +68,21 @@ module.exports = (function (saver) {
     */
     let saveBlockData = function (block) {
 
-        let pluginName = block.dataset.tool;
+        let tool = block.childNodes[0].childNodes[0].tool;
 
         /** Check for plugin existence */
-        if (!editor.tools[pluginName]) {
+        if (!editor.tools[tool.name]) {
 
-            editor.core.log(`Plugin «${pluginName}» not found`, 'error');
-            return {data: null, pluginName: null};
+            editor.modules.core.log(`Plugin «${tool.name}» not found`, 'error');
+            return {data: null, tool: null};
 
         }
 
         /** Check for plugin having save method */
-        if (typeof editor.tools[pluginName].save !== 'function') {
+        if (typeof tool.save !== 'function') {
 
-            editor.core.log(`Plugin «${pluginName}» must have save method`, 'error');
-            return {data: null, pluginName: null};
+            editor.modules.core.log(`Plugin «${tool.name}» must have save method`, 'error');
+            return {data: null, tool: null};
 
         }
 
@@ -90,15 +92,15 @@ module.exports = (function (saver) {
             position = pluginsContent.dataset.inputPosition;
 
         /** If plugin wasn't available then return data from cache */
-        if ( editor.tools[pluginName].available === false ) {
+        if ( editor.tools[tool.name].available === false ) {
 
-            return Promise.resolve({data: codex.editor.state.blocks.items[position].data, pluginName});
+            return Promise.resolve({data: codex.editor.state.blocks.items[position].data, tool});
 
         }
 
         return Promise.resolve(pluginsContent)
-            .then(editor.tools[pluginName].save)
-            .then(data => Object({data, pluginName}));
+            .then(tool.save)
+            .then(data => Object({data, tool}));
 
     };
 
@@ -106,20 +108,20 @@ module.exports = (function (saver) {
     * Call plugin`s validate method. Return false if validation failed
     *
     * @param data
-    * @param pluginName
+    * @param tool
     * @returns {Object|Boolean}
     */
-    let validateBlockData = function ({data, pluginName}) {
+    let validateBlockData = function ({data, tool}) {
 
-        if (!data || !pluginName) {
+        if (!data || !tool) {
 
             return false;
 
         }
 
-        if (editor.tools[pluginName].validate) {
+        if (tool.validate && typeof tool.validate === 'function') {
 
-            let result = editor.tools[pluginName].validate(data);
+            let result = tool.validate(data);
 
             /**
              * Do not allow invalid data
@@ -132,7 +134,7 @@ module.exports = (function (saver) {
 
         }
 
-        return {data, pluginName};
+        return {data, tool};
 
 
     };
@@ -147,7 +149,7 @@ module.exports = (function (saver) {
 
         savedData = savedData.filter(blockData => blockData);
 
-        let items = savedData.map(blockData => Object({type: blockData.pluginName, data: blockData.data}));
+        let items = savedData.map(blockData => Object({type: blockData.tool.name, data: blockData.data}));
 
         editor.state.jsonOutput = items;
 
@@ -162,4 +164,4 @@ module.exports = (function (saver) {
 
     return saver;
 
-})({});
+});
