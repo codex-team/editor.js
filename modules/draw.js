@@ -6,208 +6,175 @@
  */
 
 module.exports = (function () {
-
-    let draw = {};
+  let draw = {};
 
     /**
      * Base editor wrapper
      */
-    draw.wrapper = function () {
+  draw.wrapper = function () {
+    var wrapper = document.createElement('div');
 
-        var wrapper = document.createElement('div');
+    wrapper.className += 'codex-editor';
 
-        wrapper.className += 'codex-editor';
-
-        return wrapper;
-
-    };
+    return wrapper;
+  };
 
     /**
      * Content-editable holder
      */
-    draw.redactor = function () {
+  draw.redactor = function () {
+    var redactor = document.createElement('div');
 
-        var redactor = document.createElement('div');
+    redactor.className += 'ce-redactor';
 
-        redactor.className += 'ce-redactor';
+    return redactor;
+  };
 
-        return redactor;
+  draw.ceBlock = function () {
+    var block = document.createElement('DIV');
 
-    };
+    block.className += 'ce_block';
 
-    draw.ceBlock = function () {
-
-        var block = document.createElement('DIV');
-
-        block.className += 'ce_block';
-
-        return block;
-
-    };
+    return block;
+  };
 
     /**
      * Empty toolbar with toggler
      */
-    draw.toolbar = function () {
+  draw.toolbar = function () {
+    var bar = document.createElement('div');
 
-        var bar = document.createElement('div');
+    bar.className += 'ce-toolbar';
 
-        bar.className += 'ce-toolbar';
+    return bar;
+  };
 
-        return bar;
+  draw.toolbarContent = function () {
+    var wrapper = document.createElement('DIV');
 
-    };
+    wrapper.classList.add('ce-toolbar__content');
 
-    draw.toolbarContent = function () {
-
-        var wrapper = document.createElement('DIV');
-
-        wrapper.classList.add('ce-toolbar__content');
-
-        return wrapper;
-
-    };
+    return wrapper;
+  };
 
     /**
      * Inline toolbar
      */
-    draw.inlineToolbar = function () {
+  draw.inlineToolbar = function () {
+    var bar = document.createElement('DIV');
 
-        var bar = document.createElement('DIV');
+    bar.className += 'ce-toolbar-inline';
 
-        bar.className += 'ce-toolbar-inline';
-
-        return bar;
-
-    };
+    return bar;
+  };
 
     /**
      * Wrapper for inline toobar buttons
      */
-    draw.inlineToolbarButtons = function () {
+  draw.inlineToolbarButtons = function () {
+    var wrapper = document.createElement('DIV');
 
-        var wrapper = document.createElement('DIV');
+    wrapper.className += 'ce-toolbar-inline__buttons';
 
-        wrapper.className += 'ce-toolbar-inline__buttons';
-
-        return wrapper;
-
-    };
+    return wrapper;
+  };
 
     /**
      * For some actions
      */
-    draw.inlineToolbarActions = function () {
+  draw.inlineToolbarActions = function () {
+    var wrapper = document.createElement('DIV');
 
-        var wrapper = document.createElement('DIV');
+    wrapper.className += 'ce-toolbar-inline__actions';
 
-        wrapper.className += 'ce-toolbar-inline__actions';
+    return wrapper;
+  };
 
-        return wrapper;
+  draw.inputForLink = function () {
+    var input = document.createElement('INPUT');
 
-    };
+    input.type        = 'input';
+    input.className  += 'inputForLink';
+    input.placeholder = 'Вставьте ссылку ...';
+    input.setAttribute('form', 'defaultForm');
 
-    draw.inputForLink = function () {
+    input.setAttribute('autofocus', 'autofocus');
 
-        var input = document.createElement('INPUT');
-
-        input.type        = 'input';
-        input.className  += 'inputForLink';
-        input.placeholder = 'Вставьте ссылку ...';
-        input.setAttribute('form', 'defaultForm');
-
-        input.setAttribute('autofocus', 'autofocus');
-
-        return input;
-
-    };
+    return input;
+  };
 
     /**
      * @todo Desc
      */
-    draw.blockButtons = function () {
+  draw.blockButtons = function () {
+    var block = document.createElement('div');
 
-        var block = document.createElement('div');
+    block.className += 'ce-toolbar__actions';
 
-        block.className += 'ce-toolbar__actions';
-
-        return block;
-
-    };
+    return block;
+  };
 
     /**
      * Block settings panel
      */
-    draw.blockSettings = function () {
+  draw.blockSettings = function () {
+    var settings = document.createElement('div');
 
-        var settings = document.createElement('div');
+    settings.className += 'ce-settings';
 
-        settings.className += 'ce-settings';
+    return settings;
+  };
 
-        return settings;
+  draw.defaultSettings = function () {
+    var div = document.createElement('div');
 
-    };
+    div.classList.add('ce-settings_default');
 
-    draw.defaultSettings = function () {
+    return div;
+  };
 
-        var div = document.createElement('div');
+  draw.pluginsSettings = function () {
+    var div = document.createElement('div');
 
-        div.classList.add('ce-settings_default');
+    div.classList.add('ce-settings_plugin');
 
-        return div;
+    return div;
+  };
 
-    };
+  draw.plusButton = function () {
+    var button = document.createElement('span');
 
-    draw.pluginsSettings = function () {
-
-        var div = document.createElement('div');
-
-        div.classList.add('ce-settings_plugin');
-
-        return div;
-
-    };
-
-    draw.plusButton = function () {
-
-        var button = document.createElement('span');
-
-        button.className = 'ce-toolbar__plus';
+    button.className = 'ce-toolbar__plus';
         // button.innerHTML = '<i class="ce-icon-plus"></i>';
 
-        return button;
-
-    };
+    return button;
+  };
 
     /**
      * Settings button in toolbar
      */
-    draw.settingsButton = function () {
+  draw.settingsButton = function () {
+    var toggler = document.createElement('span');
 
-        var toggler = document.createElement('span');
-
-        toggler.className = 'ce-toolbar__settings-btn';
+    toggler.className = 'ce-toolbar__settings-btn';
 
         /** Toggler button*/
-        toggler.innerHTML = '<i class="ce-icon-cog"></i>';
+    toggler.innerHTML = '<i class="ce-icon-cog"></i>';
 
-        return toggler;
-
-    };
+    return toggler;
+  };
 
     /**
      * Redactor tools wrapper
      */
 
-    draw.toolbox = function () {
+  draw.toolbox = function () {
+    var wrapper = document.createElement('div');
 
-        var wrapper = document.createElement('div');
+    wrapper.className = 'ce-toolbar__tools';
 
-        wrapper.className = 'ce-toolbar__tools';
-
-        return wrapper;
-
-    };
+    return wrapper;
+  };
 
     /**
      * @protected
@@ -218,25 +185,23 @@ module.exports = (function () {
      * @param {String} classname
      * @returns {Element}
      */
-    draw.toolbarButton = function (type, classname) {
+  draw.toolbarButton = function (type, classname) {
+    var button     = document.createElement('li'),
+        toolIcon  = document.createElement('i'),
+        toolTitle = document.createElement('span');
 
-        var button     = document.createElement('li'),
-            toolIcon  = document.createElement('i'),
-            toolTitle = document.createElement('span');
+    button.dataset.type = type;
+    button.setAttribute('title', type);
 
-        button.dataset.type = type;
-        button.setAttribute('title', type);
-
-        toolIcon.classList.add(classname);
-        toolTitle.classList.add('ce_toolbar_tools--title');
+    toolIcon.classList.add(classname);
+    toolTitle.classList.add('ce_toolbar_tools--title');
 
 
-        button.appendChild(toolIcon);
-        button.appendChild(toolTitle);
+    button.appendChild(toolIcon);
+    button.appendChild(toolTitle);
 
-        return button;
-
-    };
+    return button;
+  };
 
     /**
      * @protected
@@ -246,33 +211,29 @@ module.exports = (function () {
      * @param {String} type
      * @param {String} classname
      */
-    draw.toolbarButtonInline = function (type, classname) {
+  draw.toolbarButtonInline = function (type, classname) {
+    var button     = document.createElement('BUTTON'),
+        toolIcon  = document.createElement('I');
 
-        var button     = document.createElement('BUTTON'),
-            toolIcon  = document.createElement('I');
+    button.type = 'button';
+    button.dataset.type = type;
+    toolIcon.classList.add(classname);
 
-        button.type = 'button';
-        button.dataset.type = type;
-        toolIcon.classList.add(classname);
+    button.appendChild(toolIcon);
 
-        button.appendChild(toolIcon);
-
-        return button;
-
-    };
+    return button;
+  };
 
     /**
      * Redactor block
      */
-    draw.block = function (tagName, content) {
+  draw.block = function (tagName, content) {
+    var node = document.createElement(tagName);
 
-        var node = document.createElement(tagName);
+    node.innerHTML = content || '';
 
-        node.innerHTML = content || '';
-
-        return node;
-
-    };
+    return node;
+  };
 
     /**
      * Creates Node with passed tagName and className
@@ -280,39 +241,30 @@ module.exports = (function () {
      * @param {string} className
      * @param {object} properties - allow to assign properties
      */
-    draw.node = function ( tagName, className, properties ) {
+  draw.node = function ( tagName, className, properties ) {
+    var el = document.createElement( tagName );
 
-        var el = document.createElement( tagName );
+    if ( className ) el.className = className;
 
-        if ( className ) el.className = className;
+    if ( properties ) {
+      for (var name in properties) {
+        el[name] = properties[name];
+      }
+    }
 
-        if ( properties ) {
-
-            for (var name in properties) {
-
-                el[name] = properties[name];
-
-            }
-
-        }
-
-        return el;
-
-    };
+    return el;
+  };
 
     /**
     * Unavailable plugin block
     */
-    draw.unavailableBlock = function () {
+  draw.unavailableBlock = function () {
+    var wrapper = document.createElement('DIV');
 
-        var wrapper = document.createElement('DIV');
+    wrapper.classList.add('cdx-unavailable-block');
 
-        wrapper.classList.add('cdx-unavailable-block');
+    return wrapper;
+  };
 
-        return wrapper;
-
-    };
-
-    return draw;
-
+  return draw;
 });

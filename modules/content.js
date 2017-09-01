@@ -11,63 +11,54 @@
  */
 
 module.exports = (function () {
+  let content = {};
 
-    let content = {};
-
-    let editor = this;
+  let editor = this;
 
     /**
      * Links to current active block
      * @type {null | Element}
      */
-    content.currentNode = null;
+  content.currentNode = null;
 
     /**
      * clicked in redactor area
      * @type {null | Boolean}
      */
-    content.editorAreaHightlighted = null;
+  content.editorAreaHightlighted = null;
 
     /**
      * @deprecated
      * Synchronizes redactor with original textarea
      */
-    content.sync = function () {
-
-        editor.modules.core.log('syncing...');
+  content.sync = function () {
+    editor.modules.core.log('syncing...');
 
         /**
          * Save redactor content to editor.state
          */
-        editor.state.html = editor.nodes.redactor.innerHTML;
-
-    };
+    editor.state.html = editor.nodes.redactor.innerHTML;
+  };
 
     /**
      * Appends background to the block
      *
      * @description add CSS class to highlight visually first-level block area
      */
-    content.markBlock = function () {
-
-        editor.modules.content.currentNode.classList.add(editor.modules.ui.className.BLOCK_HIGHLIGHTED);
-
-    };
+  content.markBlock = function () {
+    editor.modules.content.currentNode.classList.add(editor.modules.ui.className.BLOCK_HIGHLIGHTED);
+  };
 
     /**
      * Clear background
      *
      * @description clears styles that highlights block
      */
-    content.clearMark = function () {
-
-        if (editor.modules.content.currentNode) {
-
-            editor.modules.content.currentNode.classList.remove(editor.modules.ui.className.BLOCK_HIGHLIGHTED);
-
-        }
-
-    };
+  content.clearMark = function () {
+    if (editor.modules.content.currentNode) {
+      editor.modules.content.currentNode.classList.remove(editor.modules.ui.className.BLOCK_HIGHLIGHTED);
+    }
+  };
 
     /**
      * Finds first-level block
@@ -78,31 +69,21 @@ module.exports = (function () {
      * @description looks for first-level block.
      * gets parent while node is not first-level
      */
-    content.getFirstLevelBlock = function (node) {
+  content.getFirstLevelBlock = function (node) {
+    if (!editor.modules.core.isDomNode(node)) {
+      node = node.parentNode;
+    }
 
-        if (!editor.modules.core.isDomNode(node)) {
+    if (node === editor.nodes.redactor || node === document.body) {
+      return null;
+    } else {
+      while(!node.classList.contains(editor.modules.ui.className.BLOCK_CLASSNAME)) {
+        node = node.parentNode;
+      }
 
-            node = node.parentNode;
-
-        }
-
-        if (node === editor.nodes.redactor || node === document.body) {
-
-            return null;
-
-        } else {
-
-            while(!node.classList.contains(editor.modules.ui.className.BLOCK_CLASSNAME)) {
-
-                node = node.parentNode;
-
-            }
-
-            return node;
-
-        }
-
-    };
+      return node;
+    }
+  };
 
     /**
      * Trigger this event when working node changed
@@ -111,20 +92,16 @@ module.exports = (function () {
      *
      * @description If targetNode is first-level then we set it as current else we look for parents to find first-level
      */
-    content.workingNodeChanged = function (targetNode) {
-
+  content.workingNodeChanged = function (targetNode) {
         /** Clear background from previous marked block before we change */
-        editor.modules.content.clearMark();
+    editor.modules.content.clearMark();
 
-        if (!targetNode) {
+    if (!targetNode) {
+      return;
+    }
 
-            return;
-
-        }
-
-        content.currentNode = content.getFirstLevelBlock(targetNode);
-
-    };
+    content.currentNode = content.getFirstLevelBlock(targetNode);
+  };
 
     /**
      * Replaces one redactor block with another
@@ -136,41 +113,35 @@ module.exports = (function () {
      * [!] Function does not saves old block content.
      *     You can get it manually and pass with newBlock.innerHTML
      */
-    content.replaceBlock = function (targetBlock, newBlock) {
-
-        if (!targetBlock || !newBlock) {
-
-            editor.modules.core.log('replaceBlock: missed params');
-            return;
-
-        }
+  content.replaceBlock = function (targetBlock, newBlock) {
+    if (!targetBlock || !newBlock) {
+      editor.modules.core.log('replaceBlock: missed params');
+      return;
+    }
 
         /** If target-block is not a frist-level block, then we iterate parents to find it */
-        while(!targetBlock.classList.contains(editor.modules.ui.className.BLOCK_CLASSNAME)) {
-
-            targetBlock = targetBlock.parentNode;
-
-        }
+    while(!targetBlock.classList.contains(editor.modules.ui.className.BLOCK_CLASSNAME)) {
+      targetBlock = targetBlock.parentNode;
+    }
 
         /** Replacing */
-        editor.nodes.redactor.replaceChild(newBlock, targetBlock);
+    editor.nodes.redactor.replaceChild(newBlock, targetBlock);
 
         /**
          * Set new node as current
          */
-        editor.modules.content.workingNodeChanged(newBlock);
+    editor.modules.content.workingNodeChanged(newBlock);
 
         /**
          * Add block handlers
          */
-        editor.modules.ui.addBlockHandlers(newBlock);
+    editor.modules.ui.addBlockHandlers(newBlock);
 
         /**
          * Save changes
          */
-        editor.modules.ui.saveInputs();
-
-    };
+    editor.modules.ui.saveInputs();
+  };
 
     /**
      * @protected
@@ -184,91 +155,75 @@ module.exports = (function () {
      * @param needPlaceCaret     {bool}      pass true to set caret in new block
      *
      */
-    content.insertBlock = function ( blockData, needPlaceCaret ) {
+  content.insertBlock = function ( blockData, needPlaceCaret ) {
+    var workingBlock    = editor.modules.content.currentNode,
+        newBlockContent = blockData.block,
+        blockType       = blockData.type,
+        isStretched     = blockData.stretched;
 
-        var workingBlock    = editor.modules.content.currentNode,
-            newBlockContent = blockData.block,
-            blockType       = blockData.type,
-            isStretched     = blockData.stretched;
+    var newBlock = composeNewBlock_(newBlockContent, blockType, isStretched);
 
-        var newBlock = composeNewBlock_(newBlockContent, blockType, isStretched);
-
-        if (workingBlock) {
-
-            editor.modules.core.insertAfter(workingBlock, newBlock);
-
-        } else {
-
+    if (workingBlock) {
+      editor.modules.core.insertAfter(workingBlock, newBlock);
+    } else {
             /**
              * If redactor is empty, append as first child
              */
-            editor.nodes.redactor.appendChild(newBlock);
-
-        }
+      editor.nodes.redactor.appendChild(newBlock);
+    }
 
         /**
          * Block handler
          */
-        editor.modules.ui.addBlockHandlers(newBlock);
+    editor.modules.ui.addBlockHandlers(newBlock);
 
         /**
          * Set new node as current
          */
-        editor.modules.content.workingNodeChanged(newBlock);
+    editor.modules.content.workingNodeChanged(newBlock);
 
         /**
          * Save changes
          */
-        editor.modules.ui.saveInputs();
+    editor.modules.ui.saveInputs();
 
 
-        if ( needPlaceCaret ) {
-
+    if ( needPlaceCaret ) {
             /**
              * If we don't know input index then we set default value -1
              */
-            var currentInputIndex = editor.modules.caret.getCurrentInputIndex() || -1;
+      var currentInputIndex = editor.modules.caret.getCurrentInputIndex() || -1;
 
 
-            if (currentInputIndex == -1) {
+      if (currentInputIndex == -1) {
+        var editableElement = newBlock.querySelector('[contenteditable]'),
+            emptyText       = document.createTextNode('');
 
+        editableElement.appendChild(emptyText);
+        editor.modules.caret.set(editableElement, 0, 0);
 
-                var editableElement = newBlock.querySelector('[contenteditable]'),
-                    emptyText       = document.createTextNode('');
-
-                editableElement.appendChild(emptyText);
-                editor.modules.caret.set(editableElement, 0, 0);
-
-                editor.modules.toolbar.move();
-                editor.modules.toolbar.showPlusButton();
-
-
-            } else {
-
-                if (currentInputIndex === editor.state.inputs.length - 1)
-                    return;
+        editor.modules.toolbar.move();
+        editor.modules.toolbar.showPlusButton();
+      } else {
+        if (currentInputIndex === editor.state.inputs.length - 1)
+          return;
 
                 /** Timeout for browsers execution */
-                window.setTimeout(function () {
-
+        window.setTimeout(function () {
                     /** Setting to the new input */
-                    editor.modules.caret.setToNextBlock(currentInputIndex);
-                    editor.modules.toolbar.move();
-                    editor.modules.toolbar.open();
-
-                }, 10);
-
-            }
-
-        }
+          editor.modules.caret.setToNextBlock(currentInputIndex);
+          editor.modules.toolbar.move();
+          editor.modules.toolbar.open();
+        }, 10);
+      }
+    }
 
         /**
          * Block is inserted, wait for new click that defined focusing on editors area
          * @type {boolean}
          */
-        content.editorAreaHightlighted = false;
-
-    };
+    content.editorAreaHightlighted = false;
+  };
 
     /**
      * Replaces blocks with saving content
@@ -277,18 +232,16 @@ module.exports = (function () {
      * @param {Element} newNode
      * @param {Element} blockType
      */
-    content.switchBlock = function (blockToReplace, newBlock, tool) {
-
-        tool = tool || editor.modules.content.currentNode.dataset.tool;
-        var newBlockComposed = composeNewBlock_(newBlock, tool);
+  content.switchBlock = function (blockToReplace, newBlock, tool) {
+    tool = tool || editor.modules.content.currentNode.dataset.tool;
+    var newBlockComposed = composeNewBlock_(newBlock, tool);
 
         /** Replacing */
-        editor.modules.content.replaceBlock(blockToReplace, newBlockComposed);
+    editor.modules.content.replaceBlock(blockToReplace, newBlockComposed);
 
         /** Save new Inputs when block is changed */
-        editor.modules.ui.saveInputs();
-
-    };
+    editor.modules.ui.saveInputs();
+  };
 
     /**
      * Iterates between child noted and looking for #text node on deepest level
@@ -301,87 +254,65 @@ module.exports = (function () {
      * @return {Text} block
      * @uses DFS
      */
-    content.getDeepestTextNodeFromPosition = function (block, position) {
-
+  content.getDeepestTextNodeFromPosition = function (block, position) {
         /**
          * Clear Block from empty and useless spaces with trim.
          * Such nodes we should remove
          */
-        var blockChilds = block.childNodes,
-            index,
-            node,
-            text;
+    var blockChilds = block.childNodes,
+        index,
+        node,
+        text;
 
-        for(index = 0; index < blockChilds.length; index++) {
+    for(index = 0; index < blockChilds.length; index++) {
+      node = blockChilds[index];
 
-            node = blockChilds[index];
-
-            if (node.nodeType == editor.modules.core.nodeTypes.TEXT) {
-
-                text = node.textContent.trim();
+      if (node.nodeType == editor.modules.core.nodeTypes.TEXT) {
+        text = node.textContent.trim();
 
                 /** Text is empty. We should remove this child from node before we start DFS
                  * decrease the quantity of childs.
                  */
-                if (text === '') {
-
-                    block.removeChild(node);
-                    position--;
-
-                }
-
-            }
-
+        if (text === '') {
+          block.removeChild(node);
+          position--;
         }
+      }
+    }
 
-        if (block.childNodes.length === 0) {
-
-            return document.createTextNode('');
-
-        }
+    if (block.childNodes.length === 0) {
+      return document.createTextNode('');
+    }
 
         /** Setting default position when we deleted all empty nodes */
-        if ( position < 0 )
-            position = 1;
+    if ( position < 0 )
+      position = 1;
 
-        var lookingFromStart = false;
+    var lookingFromStart = false;
 
         /** For looking from START */
-        if (position === 0) {
+    if (position === 0) {
+      lookingFromStart = true;
+      position = 1;
+    }
 
-            lookingFromStart = true;
-            position = 1;
-
-        }
-
-        while ( position ) {
-
+    while ( position ) {
             /** initial verticle of node. */
-            if ( lookingFromStart ) {
+      if ( lookingFromStart ) {
+        block = block.childNodes[0];
+      } else {
+        block = block.childNodes[position - 1];
+      }
 
-                block = block.childNodes[0];
+      if ( block.nodeType == editor.modules.core.nodeTypes.TAG ) {
+        position = block.childNodes.length;
+      } else if (block.nodeType == editor.modules.core.nodeTypes.TEXT ) {
+        position = 0;
+      }
+    }
 
-            } else {
-
-                block = block.childNodes[position - 1];
-
-            }
-
-            if ( block.nodeType == editor.modules.core.nodeTypes.TAG ) {
-
-                position = block.childNodes.length;
-
-            } else if (block.nodeType == editor.modules.core.nodeTypes.TEXT ) {
-
-                position = 0;
-
-            }
-
-        }
-
-        return block;
-
-    };
+    return block;
+  };
 
     /**
      * @private
@@ -391,36 +322,30 @@ module.exports = (function () {
      *
      * @description adds necessary information to wrap new created block by first-level holder
      */
-    var composeNewBlock_ = function (block, tool, isStretched) {
+  var composeNewBlock_ = function (block, tool, isStretched) {
+    var newBlock     = editor.modules.draw.node('DIV', editor.modules.ui.className.BLOCK_CLASSNAME, {}),
+        blockContent = editor.modules.draw.node('DIV', editor.modules.ui.className.BLOCK_CONTENT, {});
 
-        var newBlock     = editor.modules.draw.node('DIV', editor.modules.ui.className.BLOCK_CLASSNAME, {}),
-            blockContent = editor.modules.draw.node('DIV', editor.modules.ui.className.BLOCK_CONTENT, {});
+    blockContent.appendChild(block);
+    newBlock.appendChild(blockContent);
 
-        blockContent.appendChild(block);
-        newBlock.appendChild(blockContent);
+    if (isStretched) {
+      blockContent.classList.add(editor.modules.ui.className.BLOCK_STRETCHED);
+    }
 
-        if (isStretched) {
-
-            blockContent.classList.add(editor.modules.ui.className.BLOCK_STRETCHED);
-
-        }
-
-        newBlock.dataset.tool   = tool;
-        return newBlock;
-
-    };
+    newBlock.dataset.tool   = tool;
+    return newBlock;
+  };
 
     /**
      * Returns Range object of current selection
      * @protected
      */
-    content.getRange = function () {
+  content.getRange = function () {
+    var selection = window.getSelection().getRangeAt(0);
 
-        var selection = window.getSelection().getRangeAt(0);
-
-        return selection;
-
-    };
+    return selection;
+  };
 
     /**
      * Divides block in two blocks (after and before caret)
@@ -431,108 +356,88 @@ module.exports = (function () {
      * @description splits current input content to the separate blocks
      * When enter is pressed among the words, that text will be splited.
      */
-    content.splitBlock = function (inputIndex) {
+  content.splitBlock = function (inputIndex) {
+    var selection      = window.getSelection(),
+        anchorNode     = selection.anchorNode,
+        anchorNodeText = anchorNode.textContent,
+        caretOffset    = selection.anchorOffset,
+        textBeforeCaret,
+        textNodeBeforeCaret,
+        textAfterCaret,
+        textNodeAfterCaret;
 
-        var selection      = window.getSelection(),
-            anchorNode     = selection.anchorNode,
-            anchorNodeText = anchorNode.textContent,
-            caretOffset    = selection.anchorOffset,
-            textBeforeCaret,
-            textNodeBeforeCaret,
-            textAfterCaret,
-            textNodeAfterCaret;
-
-        var currentBlock = editor.modules.content.currentNode.querySelector('[contentEditable]');
+    var currentBlock = editor.modules.content.currentNode.querySelector('[contentEditable]');
 
 
-        textBeforeCaret     = anchorNodeText.substring(0, caretOffset);
-        textAfterCaret      = anchorNodeText.substring(caretOffset);
+    textBeforeCaret     = anchorNodeText.substring(0, caretOffset);
+    textAfterCaret      = anchorNodeText.substring(caretOffset);
 
-        textNodeBeforeCaret = document.createTextNode(textBeforeCaret);
+    textNodeBeforeCaret = document.createTextNode(textBeforeCaret);
 
-        if (textAfterCaret) {
+    if (textAfterCaret) {
+      textNodeAfterCaret  = document.createTextNode(textAfterCaret);
+    }
 
-            textNodeAfterCaret  = document.createTextNode(textAfterCaret);
+    var previousChilds = [],
+        nextChilds     = [],
+        reachedCurrent = false;
 
+    if (textNodeAfterCaret) {
+      nextChilds.push(textNodeAfterCaret);
+    }
+
+    for ( var i = 0, child; !!(child = currentBlock.childNodes[i]); i++) {
+      if ( child != anchorNode ) {
+        if ( !reachedCurrent ) {
+          previousChilds.push(child);
+        } else {
+          nextChilds.push(child);
         }
-
-        var previousChilds = [],
-            nextChilds     = [],
-            reachedCurrent = false;
-
-        if (textNodeAfterCaret) {
-
-            nextChilds.push(textNodeAfterCaret);
-
-        }
-
-        for ( var i = 0, child; !!(child = currentBlock.childNodes[i]); i++) {
-
-            if ( child != anchorNode ) {
-
-                if ( !reachedCurrent ) {
-
-                    previousChilds.push(child);
-
-                } else {
-
-                    nextChilds.push(child);
-
-                }
-
-            } else {
-
-                reachedCurrent = true;
-
-            }
-
-        }
+      } else {
+        reachedCurrent = true;
+      }
+    }
 
         /** Clear current input */
-        editor.state.inputs[inputIndex].innerHTML = '';
+    editor.state.inputs[inputIndex].innerHTML = '';
 
         /**
          * Append all childs founded before anchorNode
          */
-        var previousChildsLength = previousChilds.length;
+    var previousChildsLength = previousChilds.length;
 
-        for(i = 0; i < previousChildsLength; i++) {
+    for(i = 0; i < previousChildsLength; i++) {
+      editor.state.inputs[inputIndex].appendChild(previousChilds[i]);
+    }
 
-            editor.state.inputs[inputIndex].appendChild(previousChilds[i]);
-
-        }
-
-        editor.state.inputs[inputIndex].appendChild(textNodeBeforeCaret);
+    editor.state.inputs[inputIndex].appendChild(textNodeBeforeCaret);
 
         /**
          * Append text node which is after caret
          */
-        var nextChildsLength = nextChilds.length,
-            newNode          = document.createElement('div');
+    var nextChildsLength = nextChilds.length,
+        newNode          = document.createElement('div');
 
-        for(i = 0; i < nextChildsLength; i++) {
+    for(i = 0; i < nextChildsLength; i++) {
+      newNode.appendChild(nextChilds[i]);
+    }
 
-            newNode.appendChild(nextChilds[i]);
-
-        }
-
-        newNode = newNode.innerHTML;
+    newNode = newNode.innerHTML;
 
         /** This type of block creates when enter is pressed */
-        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
+    var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
 
         /**
          * Make new paragraph with text after caret
          */
-        editor.modules.content.insertBlock({
-            type  : NEW_BLOCK_TYPE,
-            block : editor.modules.renderer.makeBlockFromData({
-                type: NEW_BLOCK_TYPE,
-                data: {text : newNode}
-            })
-        }, true );
-
-    };
+    editor.modules.content.insertBlock({
+      type  : NEW_BLOCK_TYPE,
+      block : editor.modules.renderer.makeBlockFromData({
+        type: NEW_BLOCK_TYPE,
+        data: {text : newNode}
+      })
+    }, true );
+  };
 
     /**
      * Merges two blocks — current and target
@@ -544,31 +449,23 @@ module.exports = (function () {
      *
      * @description gets two inputs indexes and merges into one
      */
-    content.mergeBlocks = function (currentInputIndex, targetInputIndex) {
-
+  content.mergeBlocks = function (currentInputIndex, targetInputIndex) {
         /** If current input index is zero, then prevent method execution */
-        if (currentInputIndex === 0) {
+    if (currentInputIndex === 0) {
+      return;
+    }
 
-            return;
+    var targetInput,
+        currentInputContent = editor.state.inputs[currentInputIndex].innerHTML;
 
-        }
+    if (!targetInputIndex) {
+      targetInput = editor.state.inputs[currentInputIndex - 1];
+    } else {
+      targetInput = editor.state.inputs[targetInputIndex];
+    }
 
-        var targetInput,
-            currentInputContent = editor.state.inputs[currentInputIndex].innerHTML;
-
-        if (!targetInputIndex) {
-
-            targetInput = editor.state.inputs[currentInputIndex - 1];
-
-        } else {
-
-            targetInput = editor.state.inputs[targetInputIndex];
-
-        }
-
-        targetInput.innerHTML += currentInputContent;
-
-    };
+    targetInput.innerHTML += currentInputContent;
+  };
 
     /**
      * Iterates all right siblings and parents, which has right siblings
@@ -577,67 +474,53 @@ module.exports = (function () {
      * @param {Element} node
      * @return {boolean}
      */
-    content.isLastNode = function (node) {
-
+  content.isLastNode = function (node) {
         // console.log('погнали перебор родителей');
 
-        var allChecked = false;
+    var allChecked = false;
 
-        while ( !allChecked ) {
-
+    while ( !allChecked ) {
             // console.log('Смотрим на %o', node);
             // console.log('Проверим, пустые ли соседи справа');
 
-            if ( !allSiblingsEmpty_(node) ) {
-
+      if ( !allSiblingsEmpty_(node) ) {
                 // console.log('Есть непустые соседи. Узел не последний. Выходим.');
-                return false;
+        return false;
+      }
 
-            }
-
-            node = node.parentNode;
+      node = node.parentNode;
 
             /**
              * Проверяем родителей до тех пор, пока не найдем блок первого уровня
              */
-            if ( node.classList.contains(editor.modules.ui.className.BLOCK_CONTENT) ) {
+      if ( node.classList.contains(editor.modules.ui.className.BLOCK_CONTENT) ) {
+        allChecked = true;
+      }
+    }
 
-                allChecked = true;
-
-            }
-
-        }
-
-        return true;
-
-    };
+    return true;
+  };
 
     /**
      * Checks if all element right siblings is empty
      * @param node
      */
-    var allSiblingsEmpty_ = function (node) {
-
+  var allSiblingsEmpty_ = function (node) {
         /**
          * Нужно убедиться, что после пустого соседа ничего нет
          */
-        var sibling = node.nextSibling;
+    var sibling = node.nextSibling;
 
-        while ( sibling ) {
+    while ( sibling ) {
+      if (sibling.textContent.length) {
+        return false;
+      }
 
-            if (sibling.textContent.length) {
+      sibling = sibling.nextSibling;
+    }
 
-                return false;
-
-            }
-
-            sibling = sibling.nextSibling;
-
-        }
-
-        return true;
-
-    };
+    return true;
+  };
 
     /**
      * @public
@@ -646,127 +529,101 @@ module.exports = (function () {
      * @param {string} plainData - plain text
      * @return {string} - html content as string
      */
-    content.wrapTextWithParagraphs = function (htmlData, plainData) {
+  content.wrapTextWithParagraphs = function (htmlData, plainData) {
+    if (!htmlData.trim()) {
+      return wrapPlainTextWithParagraphs(plainData);
+    }
 
-        if (!htmlData.trim()) {
-
-            return wrapPlainTextWithParagraphs(plainData);
-
-        }
-
-        var wrapper = document.createElement('DIV'),
-            newWrapper = document.createElement('DIV'),
-            i,
-            paragraph,
-            firstLevelBlocks = ['DIV', 'P'],
-            blockTyped,
-            node;
+    var wrapper = document.createElement('DIV'),
+        newWrapper = document.createElement('DIV'),
+        i,
+        paragraph,
+        firstLevelBlocks = ['DIV', 'P'],
+        blockTyped,
+        node;
 
         /**
          * Make HTML Element to Wrap Text
          * It allows us to work with input data as HTML content
          */
-        wrapper.innerHTML = htmlData;
-        paragraph = document.createElement('P');
+    wrapper.innerHTML = htmlData;
+    paragraph = document.createElement('P');
 
-        for (i = 0; i < wrapper.childNodes.length; i++) {
+    for (i = 0; i < wrapper.childNodes.length; i++) {
+      node = wrapper.childNodes[i];
 
-            node = wrapper.childNodes[i];
-
-            blockTyped = firstLevelBlocks.indexOf(node.tagName) != -1;
+      blockTyped = firstLevelBlocks.indexOf(node.tagName) != -1;
 
             /**
              * If node is first-levet
              * we add this node to our new wrapper
              */
-            if ( blockTyped ) {
-
+      if ( blockTyped ) {
                 /**
                  * If we had splitted inline nodes to paragraph before
                  */
-                if ( paragraph.childNodes.length ) {
-
-                    newWrapper.appendChild(paragraph.cloneNode(true));
+        if ( paragraph.childNodes.length ) {
+          newWrapper.appendChild(paragraph.cloneNode(true));
 
                     /** empty paragraph */
-                    paragraph = null;
-                    paragraph = document.createElement('P');
-
-                }
-
-                newWrapper.appendChild(node.cloneNode(true));
-
-            } else {
-
-                /** Collect all inline nodes to one as paragraph */
-                paragraph.appendChild(node.cloneNode(true));
-
-                /** if node is last we should append this node to paragraph and paragraph to new wrapper */
-                if ( i == wrapper.childNodes.length - 1 ) {
-
-                    newWrapper.appendChild(paragraph.cloneNode(true));
-
-                }
-
-            }
-
+          paragraph = null;
+          paragraph = document.createElement('P');
         }
 
-        return newWrapper.innerHTML;
+        newWrapper.appendChild(node.cloneNode(true));
+      } else {
+                /** Collect all inline nodes to one as paragraph */
+        paragraph.appendChild(node.cloneNode(true));
 
-    };
+                /** if node is last we should append this node to paragraph and paragraph to new wrapper */
+        if ( i == wrapper.childNodes.length - 1 ) {
+          newWrapper.appendChild(paragraph.cloneNode(true));
+        }
+      }
+    }
+
+    return newWrapper.innerHTML;
+  };
 
     /**
      * Splits strings on new line and wraps paragraphs with <p> tag
      * @param plainText
      * @returns {string}
      */
-    var wrapPlainTextWithParagraphs = function (plainText) {
-
-        return '<p>' + plainText.split('\n\n').join('</p><p>') + '</p>';
-
-    };
+  var wrapPlainTextWithParagraphs = function (plainText) {
+    return '<p>' + plainText.split('\n\n').join('</p><p>') + '</p>';
+  };
 
     /**
     * Finds closest Contenteditable parent from Element
     * @param {Element} node     element looking from
     * @return {Element} node    contenteditable
     */
-    content.getEditableParent = function (node) {
+  content.getEditableParent = function (node) {
+    while (node && node.contentEditable != 'true') {
+      node = node.parentNode;
+    }
 
-        while (node && node.contentEditable != 'true') {
-
-            node = node.parentNode;
-
-        }
-
-        return node;
-
-    };
+    return node;
+  };
 
     /**
     * Clear editors content
      *
      * @param {Boolean} all — if true, delete all article data (content, id, etc.)
     */
-    content.clear = function (all) {
+  content.clear = function (all) {
+    editor.nodes.redactor.innerHTML = '';
+    editor.modules.content.sync();
+    editor.modules.ui.saveInputs();
+    if (all) {
+      editor.state.blocks = {};
+    } else if (editor.state.blocks) {
+      editor.state.blocks.items = [];
+    }
 
-        editor.nodes.redactor.innerHTML = '';
-        editor.modules.content.sync();
-        editor.modules.ui.saveInputs();
-        if (all) {
-
-            editor.state.blocks = {};
-
-        } else if (editor.state.blocks) {
-
-            editor.state.blocks.items = [];
-
-        }
-
-        editor.modules.content.currentNode = null;
-
-    };
+    editor.modules.content.currentNode = null;
+  };
 
     /**
     *
@@ -775,32 +632,23 @@ module.exports = (function () {
      *
     * @param articleData.items
     */
-    content.load = function (articleData) {
+  content.load = function (articleData) {
+    var currentContent = Object.assign({}, editor.state.blocks);
 
-        var currentContent = Object.assign({}, editor.state.blocks);
+    editor.modules.content.clear();
 
-        editor.modules.content.clear();
+    if (!Object.keys(currentContent).length) {
+      editor.state.blocks = articleData;
+    } else if (!currentContent.items) {
+      currentContent.items = articleData.items;
+      editor.state.blocks = currentContent;
+    } else {
+      currentContent.items = currentContent.items.concat(articleData.items);
+      editor.state.blocks = currentContent;
+    }
 
-        if (!Object.keys(currentContent).length) {
+    editor.modules.renderer.makeBlocksFromData();
+  };
 
-            editor.state.blocks = articleData;
-
-        } else if (!currentContent.items) {
-
-            currentContent.items = articleData.items;
-            editor.state.blocks = currentContent;
-
-        } else {
-
-            currentContent.items = currentContent.items.concat(articleData.items);
-            editor.state.blocks = currentContent;
-
-        }
-
-        editor.modules.renderer.makeBlocksFromData();
-
-    };
-
-    return content;
-
+  return content;
 });

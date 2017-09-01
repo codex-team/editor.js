@@ -8,186 +8,154 @@
  */
 
 module.exports = (function () {
+  let toolbox = {};
 
-    let toolbox = {};
+  let editor = this;
 
-    let editor = this;
-
-    toolbox.opened = false;
-    toolbox.openedOnBlock = null;
+  toolbox.opened = false;
+  toolbox.openedOnBlock = null;
 
     /** Shows toolbox */
-    toolbox.open = function () {
-
+  toolbox.open = function () {
         /** Close setting if toolbox is opened */
-        if (editor.modules.toolbar.settings.opened) {
-
-            editor.modules.toolbar.settings.close();
-
-        }
+    if (editor.modules.toolbar.settings.opened) {
+      editor.modules.toolbar.settings.close();
+    }
 
         /** Add 'toolbar-opened' class for current block **/
-        toolbox.openedOnBlock = editor.modules.content.currentNode;
-        toolbox.openedOnBlock.classList.add('toolbar-opened');
+    toolbox.openedOnBlock = editor.modules.content.currentNode;
+    toolbox.openedOnBlock.classList.add('toolbar-opened');
 
         /** display toolbox */
-        editor.nodes.toolbox.classList.add('opened');
+    editor.nodes.toolbox.classList.add('opened');
 
         /** Animate plus button */
-        editor.nodes.plusButton.classList.add('clicked');
+    editor.nodes.plusButton.classList.add('clicked');
 
         /** toolbox state */
-        editor.modules.toolbar.toolbox.opened = true;
-
-    };
+    editor.modules.toolbar.toolbox.opened = true;
+  };
 
     /** Closes toolbox */
-    toolbox.close = function () {
-
+  toolbox.close = function () {
         /** Remove 'toolbar-opened' class from current block **/
-        if (toolbox.openedOnBlock) toolbox.openedOnBlock.classList.remove('toolbar-opened');
-        toolbox.openedOnBlock = null;
+    if (toolbox.openedOnBlock) toolbox.openedOnBlock.classList.remove('toolbar-opened');
+    toolbox.openedOnBlock = null;
 
         /** Makes toolbox disappear */
-        editor.nodes.toolbox.classList.remove('opened');
+    editor.nodes.toolbox.classList.remove('opened');
 
         /** Rotate plus button */
-        editor.nodes.plusButton.classList.remove('clicked');
+    editor.nodes.plusButton.classList.remove('clicked');
 
         /** toolbox state */
-        editor.modules.toolbar.toolbox.opened = false;
+    editor.modules.toolbar.toolbox.opened = false;
 
-        editor.modules.toolbar.current = null;
+    editor.modules.toolbar.current = null;
+  };
 
-    };
+  toolbox.leaf = function () {
+    let currentTool = editor.modules.toolbar.current,
+        tools       = Object.keys(editor.tools),
+        barButtons  = editor.nodes.toolbarButtons,
+        nextToolIndex = 0,
+        toolToSelect,
+        visibleTool,
+        tool;
 
-    toolbox.leaf = function () {
-
-        let currentTool = editor.modules.toolbar.current,
-            tools       = Object.keys(editor.tools),
-            barButtons  = editor.nodes.toolbarButtons,
-            nextToolIndex = 0,
-            toolToSelect,
-            visibleTool,
-            tool;
-
-        if ( !currentTool ) {
-
+    if ( !currentTool ) {
             /** Get first tool from object*/
-            for(tool in editor.tools) {
-
-                if (editor.tools[tool].displayInToolbox) {
-
-                    break;
-
-                }
-
-                nextToolIndex ++;
-
-            }
-
-        } else {
-
-            nextToolIndex = (tools.indexOf(currentTool) + 1) % tools.length;
-            visibleTool = tools[nextToolIndex];
-
-            while (!editor.tools[visibleTool].displayInToolbox) {
-
-                nextToolIndex = (nextToolIndex + 1) % tools.length;
-                visibleTool = tools[nextToolIndex];
-
-            }
-
+      for(tool in editor.tools) {
+        if (editor.tools[tool].displayInToolbox) {
+          break;
         }
 
-        toolToSelect = tools[nextToolIndex];
+        nextToolIndex ++;
+      }
+    } else {
+      nextToolIndex = (tools.indexOf(currentTool) + 1) % tools.length;
+      visibleTool = tools[nextToolIndex];
 
-        for ( var button in barButtons ) {
+      while (!editor.tools[visibleTool].displayInToolbox) {
+        nextToolIndex = (nextToolIndex + 1) % tools.length;
+        visibleTool = tools[nextToolIndex];
+      }
+    }
 
-            barButtons[button].classList.remove('selected');
+    toolToSelect = tools[nextToolIndex];
 
-        }
+    for ( var button in barButtons ) {
+      barButtons[button].classList.remove('selected');
+    }
 
-        barButtons[toolToSelect].classList.add('selected');
-        editor.modules.toolbar.current = toolToSelect;
-
-    };
+    barButtons[toolToSelect].classList.add('selected');
+    editor.modules.toolbar.current = toolToSelect;
+  };
 
     /**
      * Transforming selected node type into selected toolbar element type
      * @param {event} event
      */
-    toolbox.toolClicked = function (event) {
-
+  toolbox.toolClicked = function (event) {
         /**
          * UNREPLACEBLE_TOOLS this types of tools are forbidden to replace even they are empty
          */
-        var UNREPLACEBLE_TOOLS = ['image', 'link', 'list', 'instagram', 'twitter', 'embed'],
-            tool               = editor.tools[editor.modules.toolbar.current],
-            workingNode        = editor.modules.content.currentNode,
-            currentInputIndex  = editor.modules.caret.inputIndex,
-            newBlockContent,
-            appendCallback,
-            blockData;
+    var UNREPLACEBLE_TOOLS = ['image', 'link', 'list', 'instagram', 'twitter', 'embed'],
+        tool               = editor.tools[editor.modules.toolbar.current],
+        workingNode        = editor.modules.content.currentNode,
+        currentInputIndex  = editor.modules.caret.inputIndex,
+        newBlockContent,
+        appendCallback,
+        blockData;
 
         /** Make block from plugin */
-        newBlockContent = editor.modules.renderer.makeBlockFromData({type: tool.type});
+    newBlockContent = editor.modules.renderer.makeBlockFromData({type: tool.type});
 
         /** information about block */
-        blockData = {
-            block     : newBlockContent,
-            type      : tool.type,
-            stretched : false
-        };
+    blockData = {
+      block     : newBlockContent,
+      type      : tool.type,
+      stretched : false
+    };
 
-        if (
+    if (
             workingNode &&
             UNREPLACEBLE_TOOLS.indexOf(workingNode.dataset.tool) === -1 &&
             workingNode.textContent.trim() === ''
         ) {
-
             /** Replace current block */
-            editor.modules.content.switchBlock(workingNode, newBlockContent, tool.type);
-
-        } else {
-
+      editor.modules.content.switchBlock(workingNode, newBlockContent, tool.type);
+    } else {
             /** Insert new Block from plugin */
-            editor.modules.content.insertBlock(blockData);
+      editor.modules.content.insertBlock(blockData);
 
             /** increase input index */
-            currentInputIndex++;
-
-        }
+      currentInputIndex++;
+    }
 
         /** Fire tool append callback  */
-        appendCallback = tool.appendCallback;
+    appendCallback = tool.appendCallback;
 
-        if (appendCallback && typeof appendCallback == 'function') {
+    if (appendCallback && typeof appendCallback == 'function') {
+      appendCallback.call(event);
+    }
 
-            appendCallback.call(event);
-
-        }
-
-        window.setTimeout(function () {
-
+    window.setTimeout(function () {
             /** Set caret to current block */
-            editor.modules.caret.setToBlock(currentInputIndex);
-
-        }, 10);
+      editor.modules.caret.setToBlock(currentInputIndex);
+    }, 10);
 
 
         /**
          * Changing current Node
          */
-        editor.modules.content.workingNodeChanged();
+    editor.modules.content.workingNodeChanged();
 
         /**
          * Move toolbar when node is changed
          */
-        editor.modules.toolbar.move();
+    editor.modules.toolbar.move();
+  };
 
-    };
-
-    return toolbox;
-
+  return toolbox;
 });

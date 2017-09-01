@@ -6,97 +6,94 @@
  */
 
 module.exports = (function (userSettings) {
+  'use strict';
 
-    'use strict';
+  let self = this;
 
-    let self = this;
-
-    self.version = VERSION;
-    self.scriptPrefix = 'cdx-script-';
-
+  self.version = VERSION;
+  self.scriptPrefix = 'cdx-script-';
 
 
-    self.modules = {
-        core: require('./modules/core'),
-        tools: require('./modules/tools'),
-        ui: require('./modules/ui'),
-        transport: require('./modules/transport'),
-        renderer: require('./modules/renderer'),
-        saver: require('./modules/saver'),
-        content: require('./modules/content'),
-        toolbar: require('./modules/toolbar/toolbar'),
-        callback: require('./modules/callbacks'),
-        draw: require('./modules/draw'),
-        caret: require('./modules/caret'),
-        notifications: require('./modules/notifications'),
-        parser: require('./modules/parser'),
-        sanitizer: require('./modules/sanitizer'),
-        listeners: require('./modules/listeners'),
-        destroyer: require('./modules/destroyer'),
-        paste: require('./modules/paste'),
-    };
 
-    for (let module in self.modules) {
+  self.modules = {
+    core: require('./modules/core'),
+    tools: require('./modules/tools'),
+    ui: require('./modules/ui'),
+    transport: require('./modules/transport'),
+    renderer: require('./modules/renderer'),
+    saver: require('./modules/saver'),
+    content: require('./modules/content'),
+    toolbar: require('./modules/toolbar/toolbar'),
+    callback: require('./modules/callbacks'),
+    draw: require('./modules/draw'),
+    caret: require('./modules/caret'),
+    notifications: require('./modules/notifications'),
+    parser: require('./modules/parser'),
+    sanitizer: require('./modules/sanitizer'),
+    listeners: require('./modules/listeners'),
+    destroyer: require('./modules/destroyer'),
+    paste: require('./modules/paste'),
+  };
 
-        self.modules[module] = self.modules[module].call(self);
-
-    }
+  for (let module in self.modules) {
+    self.modules[module] = self.modules[module].call(self);
+  }
 
 
     /**
      * @public
      * holds initial settings
      */
-    self.settings = {
-        tools     : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
-        holderId  : 'codex-editor',
+  self.settings = {
+    tools     : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
+    holderId  : 'codex-editor',
 
         // Type of block showing on empty editor
-        initialBlockPlugin: 'paragraph'
-    };
+    initialBlockPlugin: 'paragraph'
+  };
 
     /**
      * public
      *
      * Static nodes
      */
-    self.nodes = {
-        holder            : null,
-        wrapper           : null,
-        toolbar           : null,
-        inlineToolbar     : {
-            wrapper : null,
-            buttons : null,
-            actions : null
-        },
-        toolbox           : null,
-        notifications     : null,
-        plusButton        : null,
-        showSettingsButton: null,
-        showTrashButton   : null,
-        blockSettings     : null,
-        pluginSettings    : null,
-        defaultSettings   : null,
-        toolbarButtons    : {}, // { type : DomEl, ... }
-        redactor          : null
-    };
+  self.nodes = {
+    holder            : null,
+    wrapper           : null,
+    toolbar           : null,
+    inlineToolbar     : {
+      wrapper : null,
+      buttons : null,
+      actions : null
+    },
+    toolbox           : null,
+    notifications     : null,
+    plusButton        : null,
+    showSettingsButton: null,
+    showTrashButton   : null,
+    blockSettings     : null,
+    pluginSettings    : null,
+    defaultSettings   : null,
+    toolbarButtons    : {}, // { type : DomEl, ... }
+    redactor          : null
+  };
 
     /**
      * @public
      *
      * Output state
      */
-    self.state = {
-        jsonOutput  : [],
-        blocks      : [],
-        inputs      : []
-    };
+  self.state = {
+    jsonOutput  : [],
+    blocks      : [],
+    inputs      : []
+  };
 
     /**
     * @public
     * Editor plugins
     */
-    self.tools = {};
+  self.tools = {};
 
     /**
      * Initialization
@@ -128,9 +125,8 @@ module.exports = (function (userSettings) {
      *   -  displayInToolbox : true,
      *   -  enableLineBreaks : false
      */
-    self.start = function (userSettings_) {
-
-        self.modules.core.prepare(userSettings_)
+  self.start = function (userSettings_) {
+    self.modules.core.prepare(userSettings_)
 
         // If all ok, make UI, bind events and parse initial-content
             .then(self.modules.ui.prepare)
@@ -141,15 +137,11 @@ module.exports = (function (userSettings) {
             .then(self.modules.renderer.makeBlocksFromData)
             .then(self.modules.ui.saveInputs)
             .catch(function (error) {
-
-                self.modules.core.log('Initialization failed with error: %o', 'warn', error);
-
+              self.modules.core.log('Initialization failed with error: %o', 'warn', error);
             });
+  };
 
-    };
+  self.start(userSettings);
 
-    self.start(userSettings);
-
-    return {save: self.modules.saver.save};
-
+  return {save: self.modules.saver.save};
 });
