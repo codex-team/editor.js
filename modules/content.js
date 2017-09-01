@@ -367,11 +367,11 @@ module.exports = (function () {
 
             }
 
-            if ( block.nodeType == editor.core.nodeTypes.TAG ) {
+            if ( block.nodeType == editor.modules.core.nodeTypes.TAG ) {
 
                 position = block.childNodes.length;
 
-            } else if (block.nodeType == editor.core.nodeTypes.TEXT ) {
+            } else if (block.nodeType == editor.modules.core.nodeTypes.TEXT ) {
 
                 position = 0;
 
@@ -526,8 +526,9 @@ module.exports = (function () {
          */
         editor.modules.content.insertBlock({
             type  : NEW_BLOCK_TYPE,
-            block : editor.tools[NEW_BLOCK_TYPE].render({
-                text : newNode
+            block : editor.modules.renderer.makeBlockFromData({
+                type: NEW_BLOCK_TYPE,
+                data: {text : newNode}
             })
         }, true );
 

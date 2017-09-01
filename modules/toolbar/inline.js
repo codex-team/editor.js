@@ -300,7 +300,7 @@ module.exports = (function () {
     */
     let inlineToolbarAnchorInputKeydown_ = function (event) {
 
-        if (event.keyCode != editor.core.keys.ENTER) {
+        if (event.keyCode != editor.modules.core.keys.ENTER) {
 
             return;
 
@@ -349,7 +349,7 @@ module.exports = (function () {
         } else {
 
             /** Create input and close buttons */
-            var action = editor.draw.inputForLink();
+            var action = editor.modules.draw.inputForLink();
 
             editor.nodes.inlineToolbar.actions.appendChild(action);
 

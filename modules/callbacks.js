@@ -651,7 +651,7 @@ module.exports = (function () {
 
         lastChild = focusedNode.childNodes[focusedNode.childNodes.length - 1 ];
 
-        if (editor.core.isDomNode(lastChild)) {
+        if (editor.modules.core.isDomNode(lastChild)) {
 
             deepestTextnode = editor.modules.content.getDeepestTextNodeFromPosition(lastChild, lastChild.childNodes.length);
 
