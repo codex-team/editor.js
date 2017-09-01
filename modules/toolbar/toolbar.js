@@ -10,124 +10,98 @@
  * @version 1.0
  */
 
-module.exports = (function (toolbar) {
+module.exports = (function () {
+  let toolbar = {};
 
-    let editor = codex.editor;
+  let editor = this;
 
-    toolbar.settings = require('./settings');
-    toolbar.inline   = require('./inline');
-    toolbar.toolbox  = require('./toolbox');
+  toolbar.settings = require('./settings').call(editor);
+  toolbar.inline   = require('./inline').call(editor);
+  toolbar.toolbox  = require('./toolbox').call(editor);
 
     /**
      * Margin between focused node and toolbar
      */
-    toolbar.defaultToolbarHeight = 49;
+  toolbar.defaultToolbarHeight = 49;
 
-    toolbar.defaultOffset = 34;
+  toolbar.defaultOffset = 34;
 
-    toolbar.opened = false;
+  toolbar.opened = false;
 
+  toolbar.current = null;
+
+    /**
+     * @protected
+     */
+  toolbar.open = function () {
+    if (editor.hideToolbar) {
+      return;
+    }
+
+    let tool = editor.modules.content.currentNode.childNodes[0].childNodes[0].tool;
+
+    if (!editor.tools[tool.name] || !tool.makeSettings || typeof tool.makeSettings !== 'function') {
+      editor.nodes.showSettingsButton.classList.add('hide');
+    } else {
+      editor.nodes.showSettingsButton.classList.remove('hide');
+    }
+
+    editor.nodes.toolbar.classList.add('opened');
+    this.opened = true;
+  };
+
+    /**
+     * @protected
+     */
+  toolbar.close = function () {
+    editor.nodes.toolbar.classList.remove('opened');
+
+    toolbar.opened  = false;
     toolbar.current = null;
 
-    /**
-     * @protected
-     */
-    toolbar.open = function () {
-
-        if (editor.hideToolbar) {
-
-            return;
-
-        }
-
-        let toolType = editor.content.currentNode.dataset.tool;
-
-        if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings ) {
-
-            editor.nodes.showSettingsButton.classList.add('hide');
-
-        } else {
-
-            editor.nodes.showSettingsButton.classList.remove('hide');
-
-        }
-
-        editor.nodes.toolbar.classList.add('opened');
-        this.opened = true;
-
-    };
-
-    /**
-     * @protected
-     */
-    toolbar.close = function () {
-
-        editor.nodes.toolbar.classList.remove('opened');
-
-        toolbar.opened  = false;
-        toolbar.current = null;
-
-        for (var button in editor.nodes.toolbarButtons) {
-
-            editor.nodes.toolbarButtons[button].classList.remove('selected');
-
-        }
+    for (var button in editor.nodes.toolbarButtons) {
+      editor.nodes.toolbarButtons[button].classList.remove('selected');
+    }
 
         /** Close toolbox when toolbar is not displayed */
-        editor.toolbar.toolbox.close();
-        editor.toolbar.settings.close();
+    editor.modules.toolbar.toolbox.close();
+    editor.modules.toolbar.settings.close();
+  };
 
-    };
+  toolbar.toggle = function () {
+    if ( !this.opened ) {
+      this.open();
+    } else {
+      this.close();
+    }
+  };
 
-    toolbar.toggle = function () {
+  toolbar.hidePlusButton = function () {
+    editor.nodes.plusButton.classList.add('hide');
+  };
 
-        if ( !this.opened ) {
-
-            this.open();
-
-        } else {
-
-            this.close();
-
-        }
-
-    };
-
-    toolbar.hidePlusButton = function () {
-
-        editor.nodes.plusButton.classList.add('hide');
-
-    };
-
-    toolbar.showPlusButton = function () {
-
-        editor.nodes.plusButton.classList.remove('hide');
-
-    };
+  toolbar.showPlusButton = function () {
+    editor.nodes.plusButton.classList.remove('hide');
+  };
 
     /**
      * Moving toolbar to the specified node
      */
-    toolbar.move = function () {
-
+  toolbar.move = function () {
         /** Close Toolbox when we move toolbar */
-        editor.toolbar.toolbox.close();
+    editor.modules.toolbar.toolbox.close();
 
-        if (!editor.content.currentNode) {
+    if (!editor.modules.content.currentNode) {
+      return;
+    }
 
-            return;
+    var newYCoordinate = editor.modules.content.currentNode.offsetTop - (editor.modules.toolbar.defaultToolbarHeight / 2) + editor.modules.toolbar.defaultOffset;
 
-        }
-
-        var newYCoordinate = editor.content.currentNode.offsetTop - (editor.toolbar.defaultToolbarHeight / 2) + editor.toolbar.defaultOffset;
-
-        editor.nodes.toolbar.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
+    editor.nodes.toolbar.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
 
         /** Close trash actions */
-        editor.toolbar.settings.hideRemoveActions();
+    editor.modules.toolbar.settings.hideRemoveActions();
+  };
 
-    };
-
-    return toolbar;
-
-})({});
+  return toolbar;
+});

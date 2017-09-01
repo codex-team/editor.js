@@ -2,84 +2,65 @@
 * Module working with plugins
 */
 module.exports = (function () {
-
-    let editor = codex.editor;
+  let editor = this;
 
     /**
      * Initialize plugins before using
      * Ex. Load scripts or call some internal methods
      * @return Promise
      */
-    function prepare() {
-
-        return new Promise(function (resolve_, reject_) {
-
-            Promise.resolve()
+  function prepare() {
+    return new Promise(function (resolve_, reject_) {
+      Promise.resolve()
 
                 /**
                 * Compose a sequence of plugins that requires preparation
                 */
                 .then(function () {
+                  let pluginsRequiresPreparation = [],
+                      allPlugins = editor.tools;
 
-                    let pluginsRequiresPreparation = [],
-                        allPlugins = editor.tools;
+                  for ( let pluginName in allPlugins ) {
+                    let plugin = allPlugins[pluginName];
 
-                    for ( let pluginName in allPlugins ) {
-
-                        let plugin = allPlugins[pluginName];
-
-                        if (plugin.prepare && typeof plugin.prepare != 'function' || !plugin.prepare) {
-
-                            continue;
-
-                        }
-
-                        pluginsRequiresPreparation.push(plugin);
-
+                    if (plugin.prepare && typeof plugin.prepare !== 'function' || !plugin.prepare) {
+                      continue;
                     }
+
+                    pluginsRequiresPreparation.push(plugin);
+                  }
 
                     /**
                     * If no one passed plugins requires preparation, finish prepare() and go ahead
                     */
-                    if (!pluginsRequiresPreparation.length) {
+                  if (!pluginsRequiresPreparation.length) {
+                    resolve_();
+                  }
 
-                        resolve_();
-
-                    }
-
-                    return pluginsRequiresPreparation;
-
+                  return pluginsRequiresPreparation;
                 })
 
                 /** Wait plugins while they prepares */
                 .then(waitAllPluginsPreparation_)
 
                 .then(function () {
-
-                    editor.core.log('Plugins loaded', 'info');
-                    resolve_();
-
+                  editor.modules.core.log('Plugins loaded', 'info');
+                  resolve_();
                 }).catch(function (error) {
-
-                    reject_(error);
-
+                  reject_(error);
                 });
-
-        });
-
-    }
+    });
+  }
 
     /**
     * @param {array} plugins - list of tools that requires preparation
     * @return {Promise} resolved while all plugins will be ready or failed
     */
-    function waitAllPluginsPreparation_(plugins) {
-
+  function waitAllPluginsPreparation_(plugins) {
         /**
         * @calls allPluginsProcessed__ when all plugins prepared or failed
         */
-        return new Promise (function (allPluginsProcessed__) {
-
+    return new Promise (function (allPluginsProcessed__) {
             /**
              * pluck each element from queue
              * First, send resolved Promise as previous value
@@ -89,65 +70,46 @@ module.exports = (function () {
              *
              * If last plugin is "prepared" then go to the next stage of initialization
              */
-            plugins.reduce(function (previousValue, plugin, iteration) {
-
-                return previousValue.then(function () {
-
+      plugins.reduce(function (previousValue, plugin, iteration) {
+        return previousValue.then(function () {
                     /**
                     * Wait till plugins prepared
                     * @calls pluginIsReady__ when plugin is ready or failed
                     */
-                    return new Promise ( function (pluginIsReady__) {
-
-                        callPluginsPrepareMethod_( plugin )
+          return new Promise ( function (pluginIsReady__) {
+            callPluginsPrepareMethod_( plugin )
 
                             .then( pluginIsReady__ )
                             .then( function () {
-
-                                plugin.available = true;
-
+                              plugin.available = true;
                             })
 
                             .catch(function (error) {
-
-                                editor.core.log(`Plugin «${plugin.type}» was not loaded. Preparation failed because %o`, 'warn', error);
-                                plugin.available = false;
-                                plugin.loadingMessage = error;
+                              editor.modules.core.log(`Plugin «${plugin.type}» was not loaded. Preparation failed because %o`, 'warn', error);
+                              plugin.available = false;
+                              plugin.loadingMessage = error;
 
                                 /** Go ahead even some plugin has problems */
-                                pluginIsReady__();
-
+                              pluginIsReady__();
                             })
 
                             .then(function () {
-
                                 /** If last plugin has problems then just ignore and continue */
-                                if (iteration == plugins.length - 1) {
-
-                                    allPluginsProcessed__();
-
-                                }
-
+                              if (iteration == plugins.length - 1) {
+                                allPluginsProcessed__();
+                              }
                             });
-
-                    });
-
-                });
-
-            }, Promise.resolve() );
-
+          });
         });
+      }, Promise.resolve() );
+    });
+  }
 
-    }
+  var callPluginsPrepareMethod_ = function (plugin) {
+    return plugin.prepare( plugin.config || {} );
+  };
 
-    var callPluginsPrepareMethod_ = function (plugin) {
-
-        return plugin.prepare( plugin.config || {} );
-
-    };
-
-    return {
-        prepare: prepare
-    };
-
-}());
+  return {
+    prepare: prepare
+  };
+});

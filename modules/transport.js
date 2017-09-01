@@ -6,89 +6,78 @@
  * @version 1.2.0
  */
 
-module.exports = (function (transport) {
+module.exports = (function () {
+  let transport = {};
 
-    let editor = codex.editor;
+  let editor = this;
 
 
     /**
      * @private {Object} current XmlHttpRequest instance
      */
-    var currentRequest = null;
+  var currentRequest = null;
 
 
     /**
      * @type {null} | {DOMElement} input - keeps input element in memory
      */
-    transport.input = null;
+  transport.input = null;
 
     /**
      * @property {Object} arguments - keep plugin settings and defined callbacks
      */
-    transport.arguments = null;
+  transport.arguments = null;
 
     /**
      * Prepares input element where will be files
      */
-    transport.prepare = function () {
+  transport.prepare = function () {
+    let input = editor.modules.draw.node( 'INPUT', '', { type : 'file' } );
 
-        let input = editor.draw.node( 'INPUT', '', { type : 'file' } );
-
-        editor.listeners.add(input, 'change', editor.transport.fileSelected);
-        editor.transport.input = input;
-
-    };
+    editor.modules.listeners.add(input, 'change', editor.modules.transport.fileSelected);
+    editor.modules.transport.input = input;
+  };
 
     /** Clear input when files is uploaded */
-    transport.clearInput = function () {
-
+  transport.clearInput = function () {
         /** Remove old input */
-        transport.input = null;
+    transport.input = null;
 
         /** Prepare new one */
-        transport.prepare();
-
-    };
+    transport.prepare();
+  };
 
     /**
      * Callback for file selection
      * @param {Event} event
      */
-    transport.fileSelected = function () {
+  transport.fileSelected = function () {
+    var input       = this,
+        i,
+        files       = input.files,
+        formData   = new FormData();
 
-        var input       = this,
-            i,
-            files       = input.files,
-            formData   = new FormData();
+    if (editor.modules.transport.arguments.multiple === true) {
+      for ( i = 0; i < files.length; i++) {
+        formData.append('files[]', files[i], files[i].name);
+      }
+    } else {
+      formData.append('files', files[0], files[0].name);
+    }
 
-        if (editor.transport.arguments.multiple === true) {
-
-            for ( i = 0; i < files.length; i++) {
-
-                formData.append('files[]', files[i], files[i].name);
-
-            }
-
-        } else {
-
-            formData.append('files', files[0], files[0].name);
-
-        }
-
-        currentRequest = editor.core.ajax({
-            type : 'POST',
-            data : formData,
-            url        : editor.transport.arguments.url,
-            beforeSend : editor.transport.arguments.beforeSend,
-            success    : editor.transport.arguments.success,
-            error      : editor.transport.arguments.error,
-            progress   : editor.transport.arguments.progress
-        });
+    currentRequest = editor.core.ajax({
+      type : 'POST',
+      data : formData,
+      url        : editor.modules.transport.arguments.url,
+      beforeSend : editor.modules.transport.arguments.beforeSend,
+      success    : editor.modules.transport.arguments.success,
+      error      : editor.modules.transport.arguments.error,
+      progress   : editor.modules.transport.arguments.progress
+    });
 
         /** Clear input */
-        transport.clearInput();
-
-    };
+    transport.clearInput();
+  };
 
     /**
      * Use plugin callbacks
@@ -103,34 +92,25 @@ module.exports = (function (transport) {
      * @param {Boolean} args.multiple - allow select several files
      * @param {String} args.accept - adds accept attribute
      */
-    transport.selectAndUpload = function (args) {
+  transport.selectAndUpload = function (args) {
+    transport.arguments = args;
 
-        transport.arguments = args;
+    if ( args.multiple === true) {
+      transport.input.setAttribute('multiple', 'multiple');
+    }
 
-        if ( args.multiple === true) {
+    if ( args.accept ) {
+      transport.input.setAttribute('accept', args.accept);
+    }
 
-            transport.input.setAttribute('multiple', 'multiple');
+    transport.input.click();
+  };
 
-        }
+  transport.abort = function () {
+    currentRequest.abort();
 
-        if ( args.accept ) {
+    currentRequest = null;
+  };
 
-            transport.input.setAttribute('accept', args.accept);
-
-        }
-
-        transport.input.click();
-
-    };
-
-    transport.abort = function () {
-
-        currentRequest.abort();
-
-        currentRequest = null;
-
-    };
-
-    return transport;
-
-})({});
+  return transport;
+});

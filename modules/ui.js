@@ -5,68 +5,66 @@
  * @version 1.2.0
  */
 
-module.exports = (function (ui) {
+module.exports = (function () {
+  let ui = {};
 
-    let editor = codex.editor;
+  let editor = this;
 
     /**
      * Basic editor classnames
      */
-    ui.className = {
+  ui.className = {
 
         /**
          * @const {string} BLOCK_CLASSNAME - redactor blocks name
          */
-        BLOCK_CLASSNAME : 'ce-block',
+    BLOCK_CLASSNAME : 'ce-block',
 
         /**
          * @const {String} wrapper for plugins content
          */
-        BLOCK_CONTENT : 'ce-block__content',
+    BLOCK_CONTENT : 'ce-block__content',
 
         /**
          * @const {String} BLOCK_STRETCHED - makes block stretched
          */
-        BLOCK_STRETCHED : 'ce-block--stretched',
+    BLOCK_STRETCHED : 'ce-block--stretched',
 
         /**
          * @const {String} BLOCK_HIGHLIGHTED - adds background
          */
-        BLOCK_HIGHLIGHTED : 'ce-block--focused',
+    BLOCK_HIGHLIGHTED : 'ce-block--focused',
 
         /**
          * @const {String} - for all default settings
          */
-        SETTINGS_ITEM : 'ce-settings__item'
+    SETTINGS_ITEM : 'ce-settings__item'
 
-    };
+  };
 
     /**
      * @protected
      *
      * Making main interface
      */
-    ui.prepare = function () {
+  ui.prepare = function () {
+    return new Promise(function (resolve) {
+      let wrapper  = editor.modules.draw.wrapper(),
+          redactor = editor.modules.draw.redactor(),
+          toolbar  = makeToolBar_();
 
-        return new Promise(function (resolve) {
-
-            let wrapper  = editor.draw.wrapper(),
-                redactor = editor.draw.redactor(),
-                toolbar  = makeToolBar_();
-
-            wrapper.appendChild(toolbar);
-            wrapper.appendChild(redactor);
+      wrapper.appendChild(toolbar);
+      wrapper.appendChild(redactor);
 
             /** Save created ui-elements to static nodes state */
-            editor.nodes.wrapper  = wrapper;
-            editor.nodes.redactor = redactor;
+      editor.nodes.wrapper  = wrapper;
+      editor.nodes.redactor = redactor;
 
             /** Append editor wrapper with redactor zone into holder */
-            editor.nodes.holder.appendChild(wrapper);
+      editor.nodes.holder.appendChild(wrapper);
 
-            resolve();
-
-        })
+      resolve();
+    })
 
         /** Add toolbox tools */
         .then(addTools_)
@@ -83,259 +81,226 @@ module.exports = (function (ui) {
         /** Add eventlisteners to redactor elements */
         .then(bindEvents_)
 
-        .catch( function () {
-
-            editor.core.log("Can't draw editor interface");
-
+        .catch( function (e) {
+          editor.modules.core.log("Can't draw editor interface %o", 'warn', e);
         });
-
-    };
+  };
 
     /**
      * @private
      * Draws inline toolbar zone
      */
-    var makeInlineToolbar_ = function () {
-
-        var container = editor.draw.inlineToolbar();
+  var makeInlineToolbar_ = function () {
+    var container = editor.modules.draw.inlineToolbar();
 
         /** Append to redactor new inline block */
-        editor.nodes.inlineToolbar.wrapper = container;
+    editor.nodes.inlineToolbar.wrapper = container;
 
         /** Draw toolbar buttons */
-        editor.nodes.inlineToolbar.buttons = editor.draw.inlineToolbarButtons();
+    editor.nodes.inlineToolbar.buttons = editor.modules.draw.inlineToolbarButtons();
 
         /** Buttons action or settings */
-        editor.nodes.inlineToolbar.actions = editor.draw.inlineToolbarActions();
+    editor.nodes.inlineToolbar.actions = editor.modules.draw.inlineToolbarActions();
 
         /** Append to inline toolbar buttons as part of it */
-        editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.buttons);
-        editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.actions);
+    editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.buttons);
+    editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.actions);
 
-        editor.nodes.wrapper.appendChild(editor.nodes.inlineToolbar.wrapper);
+    editor.nodes.wrapper.appendChild(editor.nodes.inlineToolbar.wrapper);
+  };
 
-    };
-
-    var makeToolBar_ = function () {
-
-        let toolbar         = editor.draw.toolbar(),
-            blockButtons    = makeToolbarSettings_(),
-            toolbarContent  = makeToolbarContent_();
+  var makeToolBar_ = function () {
+    let toolbar         = editor.modules.draw.toolbar(),
+        blockButtons    = makeToolbarSettings_(),
+        toolbarContent  = makeToolbarContent_();
 
         /** Appending first-level block buttons */
-        toolbar.appendChild(blockButtons);
+    toolbar.appendChild(blockButtons);
 
         /** Append toolbarContent to toolbar */
-        toolbar.appendChild(toolbarContent);
+    toolbar.appendChild(toolbarContent);
 
         /** Make toolbar global */
-        editor.nodes.toolbar = toolbar;
+    editor.nodes.toolbar = toolbar;
 
-        return toolbar;
+    return toolbar;
+  };
 
-    };
-
-    var makeToolbarContent_ = function () {
-
-        let toolbarContent = editor.draw.toolbarContent(),
-            toolbox        = editor.draw.toolbox(),
-            plusButton     = editor.draw.plusButton();
+  var makeToolbarContent_ = function () {
+    let toolbarContent = editor.modules.draw.toolbarContent(),
+        toolbox        = editor.modules.draw.toolbox(),
+        plusButton     = editor.modules.draw.plusButton();
 
         /** Append plus button */
-        toolbarContent.appendChild(plusButton);
+    toolbarContent.appendChild(plusButton);
 
         /** Appending toolbar tools */
-        toolbarContent.appendChild(toolbox);
+    toolbarContent.appendChild(toolbox);
 
         /** Make Toolbox and plusButton global */
-        editor.nodes.toolbox    = toolbox;
-        editor.nodes.plusButton = plusButton;
+    editor.nodes.toolbox    = toolbox;
+    editor.nodes.plusButton = plusButton;
 
-        return toolbarContent;
+    return toolbarContent;
+  };
 
-    };
-
-    var makeToolbarSettings_ = function () {
-
-        let blockSettings       = editor.draw.blockSettings(),
-            blockButtons        = editor.draw.blockButtons(),
-            defaultSettings     = editor.draw.defaultSettings(),
-            showSettingsButton  = editor.draw.settingsButton(),
-            showTrashButton     = editor.toolbar.settings.makeRemoveBlockButton(),
-            pluginSettings      = editor.draw.pluginsSettings();
+  var makeToolbarSettings_ = function () {
+    let blockSettings       = editor.modules.draw.blockSettings(),
+        blockButtons        = editor.modules.draw.blockButtons(),
+        defaultSettings     = editor.modules.draw.defaultSettings(),
+        showSettingsButton  = editor.modules.draw.settingsButton(),
+        showTrashButton     = editor.modules.toolbar.settings.makeRemoveBlockButton(),
+        pluginSettings      = editor.modules.draw.pluginsSettings();
 
         /** Add default and plugins settings */
-        blockSettings.appendChild(pluginSettings);
-        blockSettings.appendChild(defaultSettings);
+    blockSettings.appendChild(pluginSettings);
+    blockSettings.appendChild(defaultSettings);
 
         /**
          * Make blocks buttons
          * This block contains settings button and remove block button
          */
-        blockButtons.appendChild(showSettingsButton);
-        blockButtons.appendChild(showTrashButton);
-        blockButtons.appendChild(blockSettings);
+    blockButtons.appendChild(showSettingsButton);
+    blockButtons.appendChild(showTrashButton);
+    blockButtons.appendChild(blockSettings);
 
         /** Make BlockSettings, PluginSettings, DefaultSettings global */
-        editor.nodes.blockSettings      = blockSettings;
-        editor.nodes.pluginSettings     = pluginSettings;
-        editor.nodes.defaultSettings    = defaultSettings;
-        editor.nodes.showSettingsButton = showSettingsButton;
-        editor.nodes.showTrashButton    = showTrashButton;
+    editor.nodes.blockSettings      = blockSettings;
+    editor.nodes.pluginSettings     = pluginSettings;
+    editor.nodes.defaultSettings    = defaultSettings;
+    editor.nodes.showSettingsButton = showSettingsButton;
+    editor.nodes.showTrashButton    = showTrashButton;
 
-        return blockButtons;
-
-    };
+    return blockButtons;
+  };
 
     /** Draw notifications holder */
-    var makeNotificationHolder_ = function () {
-
+  var makeNotificationHolder_ = function () {
         /** Append block with notifications to the document */
-        editor.nodes.notifications = editor.notifications.createHolder();
-
-    };
+    editor.nodes.notifications = editor.modules.notifications.createHolder();
+  };
 
     /**
      * @private
      * Append tools passed in editor.tools
      */
-    var addTools_ = function () {
+  var addTools_ = function () {
+    var tool,
+        toolName,
+        toolButton;
 
-        var tool,
-            toolName,
-            toolButton;
+    for ( toolName in editor.settings.tools ) {
+      tool = editor.settings.tools[toolName];
 
-        for ( toolName in editor.settings.tools ) {
+      editor.tools[toolName] = tool;
+      let toolInstance = tool.instance();
 
-            tool = editor.settings.tools[toolName];
+      if (!tool.iconClassname && tool.displayInToolbox) {
+        editor.modules.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', toolName);
+        continue;
+      }
 
-            editor.tools[toolName] = tool;
+      if (typeof toolInstance.render != 'function') {
+        editor.modules.core.log('render method missed. Tool %o skipped', 'warn', toolName);
+        continue;
+      }
 
-            if (!tool.iconClassname && tool.displayInToolbox) {
-
-                editor.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', toolName);
-                continue;
-
-            }
-
-            if (typeof tool.render != 'function') {
-
-                editor.core.log('render method missed. Tool %o skipped', 'warn', toolName);
-                continue;
-
-            }
-
-            if (!tool.displayInToolbox) {
-
-                continue;
-
-            } else {
-
+      if (!tool.displayInToolbox) {
+        continue;
+      } else {
                 /** if tools is for toolbox */
-                toolButton = editor.draw.toolbarButton(toolName, tool.iconClassname);
+        toolButton = editor.modules.draw.toolbarButton(toolName, tool.iconClassname);
 
-                editor.nodes.toolbox.appendChild(toolButton);
+        editor.nodes.toolbox.appendChild(toolButton);
 
-                editor.nodes.toolbarButtons[toolName] = toolButton;
+        editor.nodes.toolbarButtons[toolName] = toolButton;
+      }
+    }
+  };
 
-            }
+  var addInlineToolbarTools_ = function () {
+    var tools = {
 
-        }
+      bold: {
+        icon    : 'ce-icon-bold',
+        command : 'bold'
+      },
 
+      italic: {
+        icon    : 'ce-icon-italic',
+        command : 'italic'
+      },
+
+      link: {
+        icon    : 'ce-icon-link',
+        command : 'createLink'
+      }
     };
 
-    var addInlineToolbarTools_ = function () {
+    var toolButton,
+        tool;
 
-        var tools = {
+    for(var name in tools) {
+      tool = tools[name];
 
-            bold: {
-                icon    : 'ce-icon-bold',
-                command : 'bold'
-            },
+      toolButton = editor.modules.draw.toolbarButtonInline(name, tool.icon);
 
-            italic: {
-                icon    : 'ce-icon-italic',
-                command : 'italic'
-            },
-
-            link: {
-                icon    : 'ce-icon-link',
-                command : 'createLink'
-            }
-        };
-
-        var toolButton,
-            tool;
-
-        for(var name in tools) {
-
-            tool = tools[name];
-
-            toolButton = editor.draw.toolbarButtonInline(name, tool.icon);
-
-            editor.nodes.inlineToolbar.buttons.appendChild(toolButton);
+      editor.nodes.inlineToolbar.buttons.appendChild(toolButton);
             /**
              * Add callbacks to this buttons
              */
-            editor.ui.setInlineToolbarButtonBehaviour(toolButton, tool.command);
-
-        }
-
-    };
+      editor.modules.ui.setInlineToolbarButtonBehaviour(toolButton, tool.command);
+    }
+  };
 
     /**
      * @private
      * Bind editor UI events
      */
-    var bindEvents_ = function () {
-
-        editor.core.log('ui.bindEvents fired', 'info');
+  var bindEvents_ = function () {
+    editor.modules.core.log('ui.bindEvents fired', 'info');
 
         // window.addEventListener('error', function (errorMsg, url, lineNumber) {
         //     editor.notifications.errorThrown(errorMsg, event);
         // }, false );
 
         /** All keydowns on Document */
-        editor.listeners.add(document, 'keydown', editor.callback.globalKeydown, false);
+    editor.modules.listeners.add(document, 'keydown', editor.modules.callback.globalKeydown, false);
 
         /** All keydowns on Redactor zone */
-        editor.listeners.add(editor.nodes.redactor, 'keydown', editor.callback.redactorKeyDown, false);
+    editor.modules.listeners.add(editor.nodes.redactor, 'keydown', editor.modules.callback.redactorKeyDown, false);
 
         /** All keydowns on Document */
-        editor.listeners.add(document, 'keyup', editor.callback.globalKeyup, false );
+    editor.modules.listeners.add(document, 'keyup', editor.modules.callback.globalKeyup, false );
 
         /**
          * Mouse click to radactor
          */
-        editor.listeners.add(editor.nodes.redactor, 'click', editor.callback.redactorClicked, false );
+    editor.modules.listeners.add(editor.nodes.redactor, 'click', editor.modules.callback.redactorClicked, false );
 
         /**
          * Clicks to the Plus button
          */
-        editor.listeners.add(editor.nodes.plusButton, 'click', editor.callback.plusButtonClicked, false);
+    editor.modules.listeners.add(editor.nodes.plusButton, 'click', editor.modules.callback.plusButtonClicked, false);
 
         /**
          * Clicks to SETTINGS button in toolbar
          */
-        editor.listeners.add(editor.nodes.showSettingsButton, 'click', editor.callback.showSettingsButtonClicked, false );
+    editor.modules.listeners.add(editor.nodes.showSettingsButton, 'click', editor.modules.callback.showSettingsButtonClicked, false );
 
         /** Bind click listeners on toolbar buttons */
-        for (var button in editor.nodes.toolbarButtons) {
+    for (var button in editor.nodes.toolbarButtons) {
+      editor.modules.listeners.add(editor.nodes.toolbarButtons[button], 'click', editor.modules.callback.toolbarButtonClicked, false);
+    }
+  };
 
-            editor.listeners.add(editor.nodes.toolbarButtons[button], 'click', editor.callback.toolbarButtonClicked, false);
-
-        }
-
-    };
-
-    ui.addBlockHandlers = function (block) {
-
-        if (!block) return;
+  ui.addBlockHandlers = function (block) {
+    if (!block) return;
 
         /**
          * Block keydowns
          */
-        editor.listeners.add(block, 'keydown', editor.callback.blockKeydown, false);
+    editor.modules.listeners.add(block, 'keydown', editor.modules.callback.blockKeydown, false);
 
         /**
          * Pasting content from another source
@@ -356,76 +321,60 @@ module.exports = (function (ui) {
          * @example editor.callback.blockPasteViaSanitize(event), the second method.
          *
          */
-        editor.listeners.add(block, 'paste', editor.paste.blockPasteCallback, false);
+    editor.modules.listeners.add(block, 'paste', editor.modules.paste.blockPasteCallback, false);
 
         /**
          * Show inline toolbar for selected text
          */
-        editor.listeners.add(block, 'mouseup', editor.toolbar.inline.show, false);
-        editor.listeners.add(block, 'keyup', editor.toolbar.inline.show, false);
-
-    };
+    editor.modules.listeners.add(block, 'mouseup', editor.modules.toolbar.inline.show, false);
+    editor.modules.listeners.add(block, 'keyup', editor.modules.toolbar.inline.show, false);
+  };
 
     /** getting all contenteditable elements */
-    ui.saveInputs = function () {
+  ui.saveInputs = function () {
+    var redactor = editor.nodes.redactor;
 
-        var redactor = editor.nodes.redactor;
-
-        editor.state.inputs = [];
+    editor.state.inputs = [];
 
         /** Save all inputs in global variable state */
-        var inputs = redactor.querySelectorAll('[contenteditable], input, textarea');
+    var inputs = redactor.querySelectorAll('[contenteditable], input, textarea');
 
-        Array.prototype.map.call(inputs, function (current) {
-
-            if (!current.type || current.type == 'text' || current.type == 'textarea') {
-
-                editor.state.inputs.push(current);
-
-            }
-
-        });
-
-    };
+    Array.prototype.map.call(inputs, function (current) {
+      if (!current.type || current.type == 'text' || current.type == 'textarea') {
+        editor.state.inputs.push(current);
+      }
+    });
+  };
 
     /**
      * Adds first initial block on empty redactor
      */
-    ui.addInitialBlock = function () {
+  ui.addInitialBlock = function () {
+    var initialBlockType = editor.settings.initialBlockPlugin,
+        initialBlock;
 
-        var initialBlockType = editor.settings.initialBlockPlugin,
-            initialBlock;
+    if ( !editor.tools[initialBlockType] ) {
+      editor.modules.core.log('Plugin %o was not implemented and can\'t be used as initial block', 'warn', initialBlockType);
+      return;
+    }
 
-        if ( !editor.tools[initialBlockType] ) {
+    initialBlock = editor.modules.renderer.makeBlockFromData({type: initialBlockType});
 
-            editor.core.log('Plugin %o was not implemented and can\'t be used as initial block', 'warn', initialBlockType);
-            return;
+    initialBlock.setAttribute('data-placeholder', editor.settings.placeholder);
 
-        }
+    editor.modules.content.insertBlock({
+      type  : initialBlockType,
+      block : initialBlock
+    });
 
-        initialBlock = editor.tools[initialBlockType].render();
+    editor.modules.content.workingNodeChanged(initialBlock);
+  };
 
-        initialBlock.setAttribute('data-placeholder', editor.settings.placeholder);
+  ui.setInlineToolbarButtonBehaviour = function (button, type) {
+    editor.modules.listeners.add(button, 'mousedown', function (event) {
+      editor.modules.toolbar.inline.toolClicked(event, type);
+    }, false);
+  };
 
-        editor.content.insertBlock({
-            type  : initialBlockType,
-            block : initialBlock
-        });
-
-        editor.content.workingNodeChanged(initialBlock);
-
-    };
-
-    ui.setInlineToolbarButtonBehaviour = function (button, type) {
-
-        editor.listeners.add(button, 'mousedown', function (event) {
-
-            editor.toolbar.inline.toolClicked(event, type);
-
-        }, false);
-
-    };
-
-    return ui;
-
-})({});
+  return ui;
+});

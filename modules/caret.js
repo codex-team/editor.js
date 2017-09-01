@@ -5,24 +5,25 @@
  * @version 1.0
  */
 
-module.exports = (function (caret) {
+module.exports = (function () {
+  let caret = {};
 
-    let editor = codex.editor;
+  let editor = this;
 
     /**
      * @var {int} InputIndex - editable element in DOM
      */
-    caret.inputIndex = null;
+  caret.inputIndex = null;
 
     /**
      * @var {int} offset - caret position in a text node.
      */
-    caret.offset = null;
+  caret.offset = null;
 
     /**
      * @var {int} focusedNodeIndex - we get index of child node from first-level block
      */
-    caret.focusedNodeIndex = null;
+  caret.focusedNodeIndex = null;
 
     /**
      * Creates Document Range and sets caret to the element.
@@ -30,276 +31,224 @@ module.exports = (function (caret) {
      * @uses caret.save — if you need to save caret position
      * @param {Element} el - Changed Node.
      */
-    caret.set = function ( el, index, offset) {
+  caret.set = function ( el, index, offset) {
+    offset = offset || caret.offset || 0;
+    index  = index  || caret.focusedNodeIndex || 0;
 
-        offset = offset || caret.offset || 0;
-        index  = index  || caret.focusedNodeIndex || 0;
+    var childs = el.childNodes,
+        nodeToSet;
 
-        var childs = el.childNodes,
-            nodeToSet;
-
-        if ( childs.length === 0 ) {
-
-            nodeToSet = el;
-
-        } else {
-
-            nodeToSet = childs[index];
-
-        }
+    if ( childs.length === 0 ) {
+      nodeToSet = el;
+    } else {
+      nodeToSet = childs[index];
+    }
 
         /** If Element is INPUT */
-        if (el.contentEditable != 'true') {
+    if (el.contentEditable != 'true') {
+      el.focus();
+      return;
+    }
 
-            el.focus();
-            return;
+    if (editor.modules.core.isDomNode(nodeToSet)) {
+      nodeToSet = editor.modules.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
+    }
 
-        }
+    var range     = document.createRange(),
+        selection = window.getSelection();
 
-        if (editor.core.isDomNode(nodeToSet)) {
+    window.setTimeout(function () {
+      range.setStart(nodeToSet, offset);
+      range.setEnd(nodeToSet, offset);
 
-            nodeToSet = editor.content.getDeepestTextNodeFromPosition(nodeToSet, nodeToSet.childNodes.length);
+      selection.removeAllRanges();
+      selection.addRange(range);
 
-        }
-
-        var range     = document.createRange(),
-            selection = window.getSelection();
-
-        window.setTimeout(function () {
-
-            range.setStart(nodeToSet, offset);
-            range.setEnd(nodeToSet, offset);
-
-            selection.removeAllRanges();
-            selection.addRange(range);
-
-            editor.caret.saveCurrentInputIndex();
-
-        }, 20);
-
-    };
+      editor.modules.caret.saveCurrentInputIndex();
+    }, 20);
+  };
 
     /**
      * @protected
      * Updates index of input and saves it in caret object
      */
-    caret.saveCurrentInputIndex = function () {
-
+  caret.saveCurrentInputIndex = function () {
         /** Index of Input that we paste sanitized content */
-        var selection   = window.getSelection(),
-            inputs      = editor.state.inputs,
-            focusedNode = selection.anchorNode,
-            focusedNodeHolder;
+    var selection   = window.getSelection(),
+        inputs      = editor.state.inputs,
+        focusedNode = selection.anchorNode,
+        focusedNodeHolder;
 
-        if (!focusedNode) {
-
-            return;
-
-        }
+    if (!focusedNode) {
+      return;
+    }
 
         /** Looking for parent contentEditable block */
-        while (focusedNode.contentEditable != 'true') {
-
-            focusedNodeHolder = focusedNode.parentNode;
-            focusedNode       = focusedNodeHolder;
-
-        }
+    while (focusedNode.contentEditable != 'true') {
+      focusedNodeHolder = focusedNode.parentNode;
+      focusedNode       = focusedNodeHolder;
+    }
 
         /** Input index in DOM level */
-        var editableElementIndex = 0;
+    var editableElementIndex = 0;
 
-        while (focusedNode != inputs[editableElementIndex]) {
+    while (focusedNode != inputs[editableElementIndex]) {
+      editableElementIndex ++;
+    }
 
-            editableElementIndex ++;
-
-        }
-
-        caret.inputIndex = editableElementIndex;
-
-    };
+    caret.inputIndex = editableElementIndex;
+  };
 
     /**
      * Returns current input index (caret object)
      */
-    caret.getCurrentInputIndex = function () {
-
-        return caret.inputIndex;
-
-    };
+  caret.getCurrentInputIndex = function () {
+    return caret.inputIndex;
+  };
 
     /**
      * @param {int} index - index of first-level block after that we set caret into next input
      */
-    caret.setToNextBlock = function (index) {
+  caret.setToNextBlock = function (index) {
+    var inputs = editor.state.inputs,
+        nextInput = inputs[index + 1];
 
-        var inputs = editor.state.inputs,
-            nextInput = inputs[index + 1];
-
-        if (!nextInput) {
-
-            editor.core.log('We are reached the end');
-            return;
-
-        }
+    if (!nextInput) {
+      editor.modules.core.log('We are reached the end');
+      return;
+    }
 
         /**
          * When new Block created or deleted content of input
          * We should add some text node to set caret
          */
-        if (!nextInput.childNodes.length) {
+    if (!nextInput.childNodes.length) {
+      var emptyTextElement = document.createTextNode('');
 
-            var emptyTextElement = document.createTextNode('');
+      nextInput.appendChild(emptyTextElement);
+    }
 
-            nextInput.appendChild(emptyTextElement);
-
-        }
-
-        editor.caret.inputIndex = index + 1;
-        editor.caret.set(nextInput, 0, 0);
-        editor.content.workingNodeChanged(nextInput);
-
-    };
+    editor.modules.caret.inputIndex = index + 1;
+    editor.modules.caret.set(nextInput, 0, 0);
+    editor.modules.content.workingNodeChanged(nextInput);
+  };
 
     /**
      * @param {int} index - index of target input.
      * Sets caret to input with this index
      */
-    caret.setToBlock = function (index) {
+  caret.setToBlock = function (index) {
+    var inputs = editor.state.inputs,
+        targetInput = inputs[index];
 
-        var inputs = editor.state.inputs,
-            targetInput = inputs[index];
-
-        if ( !targetInput ) {
-
-            return;
-
-        }
+    if ( !targetInput ) {
+      return;
+    }
 
         /**
          * When new Block created or deleted content of input
          * We should add some text node to set caret
          */
-        if (!targetInput.childNodes.length) {
+    if (!targetInput.childNodes.length) {
+      var emptyTextElement = document.createTextNode('');
 
-            var emptyTextElement = document.createTextNode('');
+      targetInput.appendChild(emptyTextElement);
+    }
 
-            targetInput.appendChild(emptyTextElement);
-
-        }
-
-        editor.caret.inputIndex = index;
-        editor.caret.set(targetInput, 0, 0);
-        editor.content.workingNodeChanged(targetInput);
-
-    };
+    editor.modules.caret.inputIndex = index;
+    editor.modules.caret.set(targetInput, 0, 0);
+    editor.modules.content.workingNodeChanged(targetInput);
+  };
 
     /**
      * @param {int} index - index of input
      */
-    caret.setToPreviousBlock = function (index) {
+  caret.setToPreviousBlock = function (index) {
+    index = index || 0;
 
-        index = index || 0;
-
-        var inputs = editor.state.inputs,
-            previousInput = inputs[index - 1],
-            lastChildNode,
-            lengthOfLastChildNode,
-            emptyTextElement;
+    var inputs = editor.state.inputs,
+        previousInput = inputs[index - 1],
+        lastChildNode,
+        lengthOfLastChildNode,
+        emptyTextElement;
 
 
-        if (!previousInput) {
+    if (!previousInput) {
+      editor.modules.core.log('We are reached first node');
+      return;
+    }
 
-            editor.core.log('We are reached first node');
-            return;
-
-        }
-
-        lastChildNode = editor.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
-        lengthOfLastChildNode = lastChildNode.length;
+    lastChildNode = editor.modules.content.getDeepestTextNodeFromPosition(previousInput, previousInput.childNodes.length);
+    lengthOfLastChildNode = lastChildNode.length;
 
         /**
          * When new Block created or deleted content of input
          * We should add some text node to set caret
          */
-        if (!previousInput.childNodes.length) {
+    if (!previousInput.childNodes.length) {
+      emptyTextElement = document.createTextNode('');
+      previousInput.appendChild(emptyTextElement);
+    }
+    editor.modules.caret.inputIndex = index - 1;
+    editor.modules.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
+    editor.modules.content.workingNodeChanged(inputs[index - 1]);
+  };
 
-            emptyTextElement = document.createTextNode('');
-            previousInput.appendChild(emptyTextElement);
+  caret.position = {
 
-        }
-        editor.caret.inputIndex = index - 1;
-        editor.caret.set(previousInput, previousInput.childNodes.length - 1, lengthOfLastChildNode);
-        editor.content.workingNodeChanged(inputs[index - 1]);
+    atStart : function () {
+      var selection       = window.getSelection(),
+          anchorOffset    = selection.anchorOffset,
+          anchorNode      = selection.anchorNode,
+          firstLevelBlock = editor.modules.content.getFirstLevelBlock(anchorNode),
+          pluginsRender   = firstLevelBlock.childNodes[0];
 
-    };
+      if (!editor.modules.core.isDomNode(anchorNode)) {
+        anchorNode = anchorNode.parentNode;
+      }
 
-    caret.position = {
+      var isFirstNode  = anchorNode === pluginsRender.childNodes[0],
+          isOffsetZero = anchorOffset === 0;
 
-        atStart : function () {
+      return isFirstNode && isOffsetZero;
+    },
 
-            var selection       = window.getSelection(),
-                anchorOffset    = selection.anchorOffset,
-                anchorNode      = selection.anchorNode,
-                firstLevelBlock = editor.content.getFirstLevelBlock(anchorNode),
-                pluginsRender   = firstLevelBlock.childNodes[0];
-
-            if (!editor.core.isDomNode(anchorNode)) {
-
-                anchorNode = anchorNode.parentNode;
-
-            }
-
-            var isFirstNode  = anchorNode === pluginsRender.childNodes[0],
-                isOffsetZero = anchorOffset === 0;
-
-            return isFirstNode && isOffsetZero;
-
-        },
-
-        atTheEnd : function () {
-
-            var selection    = window.getSelection(),
-                anchorOffset = selection.anchorOffset,
-                anchorNode   = selection.anchorNode;
+    atTheEnd : function () {
+      var selection    = window.getSelection(),
+          anchorOffset = selection.anchorOffset,
+          anchorNode   = selection.anchorNode;
 
             /** Caret is at the end of input */
-            return !anchorNode || !anchorNode.length || anchorOffset === anchorNode.length;
-
-        }
-    };
+      return !anchorNode || !anchorNode.length || anchorOffset === anchorNode.length;
+    }
+  };
 
 
     /**
      * Inserts node at the caret location
      * @param {HTMLElement|DocumentFragment} node
      */
-    caret.insertNode = function (node) {
+  caret.insertNode = function (node) {
+    var selection, range,
+        lastNode = node;
 
-        var selection, range,
-            lastNode = node;
+    if (node.nodeType == editor.modules.core.nodeTypes.DOCUMENT_FRAGMENT) {
+      lastNode = node.lastChild;
+    }
 
-        if (node.nodeType == editor.core.nodeTypes.DOCUMENT_FRAGMENT) {
+    selection = window.getSelection();
 
-            lastNode = node.lastChild;
+    range = selection.getRangeAt(0);
+    range.deleteContents();
 
-        }
+    range.insertNode(node);
 
-        selection = window.getSelection();
+    range.setStartAfter(lastNode);
+    range.collapse(true);
 
-        range = selection.getRangeAt(0);
-        range.deleteContents();
+    selection.removeAllRanges();
+    selection.addRange(range);
+  };
 
-        range.insertNode(node);
-
-        range.setStartAfter(lastNode);
-        range.collapse(true);
-
-        selection.removeAllRanges();
-        selection.addRange(range);
-
-
-    };
-
-    return caret;
-
-})({});
+  return caret;
+});

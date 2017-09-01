@@ -5,89 +5,95 @@
  * @author Codex Team
  */
 
-module.exports = (function (editor) {
+module.exports = (function (userSettings) {
+  'use strict';
 
-    'use strict';
+  let self = this;
 
-    editor.version = VERSION;
-    editor.scriptPrefix = 'cdx-script-';
+  self.version = VERSION;
+  self.scriptPrefix = 'cdx-script-';
 
-    var init = function () {
 
-        editor.core          = require('./modules/core');
-        editor.tools         = require('./modules/tools');
-        editor.ui            = require('./modules/ui');
-        editor.transport     = require('./modules/transport');
-        editor.renderer      = require('./modules/renderer');
-        editor.saver         = require('./modules/saver');
-        editor.content       = require('./modules/content');
-        editor.toolbar       = require('./modules/toolbar/toolbar');
-        editor.callback      = require('./modules/callbacks');
-        editor.draw          = require('./modules/draw');
-        editor.caret         = require('./modules/caret');
-        editor.notifications = require('./modules/notifications');
-        editor.parser        = require('./modules/parser');
-        editor.sanitizer     = require('./modules/sanitizer');
-        editor.listeners     = require('./modules/listeners');
-        editor.destroyer     = require('./modules/destroyer');
-        editor.paste         = require('./modules/paste');
 
-    };
+  self.modules = {
+    core: require('./modules/core'),
+    tools: require('./modules/tools'),
+    ui: require('./modules/ui'),
+    transport: require('./modules/transport'),
+    renderer: require('./modules/renderer'),
+    saver: require('./modules/saver'),
+    content: require('./modules/content'),
+    toolbar: require('./modules/toolbar/toolbar'),
+    callback: require('./modules/callbacks'),
+    draw: require('./modules/draw'),
+    caret: require('./modules/caret'),
+    notifications: require('./modules/notifications'),
+    parser: require('./modules/parser'),
+    sanitizer: require('./modules/sanitizer'),
+    listeners: require('./modules/listeners'),
+    destroyer: require('./modules/destroyer'),
+    paste: require('./modules/paste'),
+  };
+
+  for (let module in self.modules) {
+    self.modules[module] = self.modules[module].call(self);
+  }
+
 
     /**
      * @public
      * holds initial settings
      */
-    editor.settings = {
-        tools     : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
-        holderId  : 'codex-editor',
+  self.settings = {
+    tools     : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
+    holderId  : 'codex-editor',
 
         // Type of block showing on empty editor
-        initialBlockPlugin: 'paragraph'
-    };
+    initialBlockPlugin: 'paragraph'
+  };
 
     /**
      * public
      *
      * Static nodes
      */
-    editor.nodes = {
-        holder            : null,
-        wrapper           : null,
-        toolbar           : null,
-        inlineToolbar     : {
-            wrapper : null,
-            buttons : null,
-            actions : null
-        },
-        toolbox           : null,
-        notifications     : null,
-        plusButton        : null,
-        showSettingsButton: null,
-        showTrashButton   : null,
-        blockSettings     : null,
-        pluginSettings    : null,
-        defaultSettings   : null,
-        toolbarButtons    : {}, // { type : DomEl, ... }
-        redactor          : null
-    };
+  self.nodes = {
+    holder            : null,
+    wrapper           : null,
+    toolbar           : null,
+    inlineToolbar     : {
+      wrapper : null,
+      buttons : null,
+      actions : null
+    },
+    toolbox           : null,
+    notifications     : null,
+    plusButton        : null,
+    showSettingsButton: null,
+    showTrashButton   : null,
+    blockSettings     : null,
+    pluginSettings    : null,
+    defaultSettings   : null,
+    toolbarButtons    : {}, // { type : DomEl, ... }
+    redactor          : null
+  };
 
     /**
      * @public
      *
      * Output state
      */
-    editor.state = {
-        jsonOutput  : [],
-        blocks      : [],
-        inputs      : []
-    };
+  self.state = {
+    jsonOutput  : [],
+    blocks      : [],
+    inputs      : []
+  };
 
     /**
     * @public
     * Editor plugins
     */
-    editor.tools = {};
+  self.tools = {};
 
     /**
      * Initialization
@@ -119,28 +125,23 @@ module.exports = (function (editor) {
      *   -  displayInToolbox : true,
      *   -  enableLineBreaks : false
      */
-    editor.start = function (userSettings) {
-
-        init();
-
-        editor.core.prepare(userSettings)
+  self.start = function (userSettings_) {
+    self.modules.core.prepare(userSettings_)
 
         // If all ok, make UI, bind events and parse initial-content
-            .then(editor.ui.prepare)
-            .then(editor.tools.prepare)
-            .then(editor.sanitizer.prepare)
-            .then(editor.paste.prepare)
-            .then(editor.transport.prepare)
-            .then(editor.renderer.makeBlocksFromData)
-            .then(editor.ui.saveInputs)
+            .then(self.modules.ui.prepare)
+            // .then(self.modules.tools.prepare)
+            .then(self.modules.sanitizer.prepare)
+            .then(self.modules.paste.prepare)
+            .then(self.modules.transport.prepare)
+            .then(self.modules.renderer.makeBlocksFromData)
+            .then(self.modules.ui.saveInputs)
             .catch(function (error) {
-
-                editor.core.log('Initialization failed with error: %o', 'warn', error);
-
+              self.modules.core.log('Initialization failed with error: %o', 'warn', error);
             });
+  };
 
-    };
+  self.start(userSettings);
 
-    return editor;
-
-})({});
+  return {save: self.modules.saver.save};
+});

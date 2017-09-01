@@ -5,47 +5,34 @@
  * @version 1.0
  */
 
-module.exports = function (destroyer) {
+module.exports = function () {
+  let destroyer = {};
 
-    let editor = codex.editor;
+  let editor = this;
 
-    destroyer.removeNodes = function () {
+  destroyer.removeNodes = function () {
+    editor.nodes.wrapper.remove();
+    editor.nodes.notifications.remove();
+  };
 
-        editor.nodes.wrapper.remove();
-        editor.nodes.notifications.remove();
+  destroyer.destroyPlugins = function () {
+    for (var tool in editor.tools) {
+      if (typeof editor.tools[tool].destroy === 'function') {
+        editor.tools[tool].destroy();
+      }
+    }
+  };
 
-    };
+  destroyer.destroyScripts = function () {
+    var scripts = document.getElementsByTagName('SCRIPT');
 
-    destroyer.destroyPlugins = function () {
-
-        for (var tool in editor.tools) {
-
-            if (typeof editor.tools[tool].destroy === 'function') {
-
-                editor.tools[tool].destroy();
-
-            }
-
-        }
-
-    };
-
-    destroyer.destroyScripts = function () {
-
-        var scripts = document.getElementsByTagName('SCRIPT');
-
-        for (var i = 0; i < scripts.length; i++) {
-
-            if (scripts[i].id.indexOf(editor.scriptPrefix) + 1) {
-
-                scripts[i].remove();
-                i--;
-
-            }
-
-        }
-
-    };
+    for (var i = 0; i < scripts.length; i++) {
+      if (scripts[i].id.indexOf(editor.scriptPrefix) + 1) {
+        scripts[i].remove();
+        i--;
+      }
+    }
+  };
 
 
     /**
@@ -58,41 +45,28 @@ module.exports = function (destroyer) {
      * }
      *
      */
-    destroyer.destroy = function (settings) {
+  destroyer.destroy = function (settings) {
+    if (!settings || typeof settings !== 'object') {
+      return;
+    }
 
-        if (!settings || typeof settings !== 'object') {
+    if (settings.ui) {
+      destroyer.removeNodes();
+      editor.modules.listeners.removeAll();
+    }
 
-            return;
+    if (settings.scripts) {
+      destroyer.destroyScripts();
+    }
 
-        }
+    if (settings.plugins) {
+      destroyer.destroyPlugins();
+    }
 
-        if (settings.ui) {
+    if (settings.ui && settings.scripts && settings.core) {
+      editor = null;
+    }
+  };
 
-            destroyer.removeNodes();
-            editor.listeners.removeAll();
-
-        }
-
-        if (settings.scripts) {
-
-            destroyer.destroyScripts();
-
-        }
-
-        if (settings.plugins) {
-
-            destroyer.destroyPlugins();
-
-        }
-
-        if (settings.ui && settings.scripts && settings.core) {
-
-            delete codex.editor;
-
-        }
-
-    };
-
-    return destroyer;
-
-}({});
+  return destroyer;
+};

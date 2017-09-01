@@ -5,32 +5,28 @@
  * @version 1.1
  */
 
-module.exports = (function (parser) {
+module.exports = (function () {
+  let parser = {};
 
-    let editor = codex.editor;
+  let editor = this;
 
     /** inserting text */
-    parser.insertPastedContent = function (blockType, tag) {
-
-        editor.content.insertBlock({
-            type :  blockType.type,
-            block : blockType.render({
-                text : tag.innerHTML
-            })
-        });
-
-    };
+  parser.insertPastedContent = function (blockType, tag) {
+    editor.modules.content.insertBlock({
+      type :  blockType.type,
+      block : blockType.render({
+        text : tag.innerHTML
+      })
+    });
+  };
 
     /**
      * Check DOM node for display style: separated block or child-view
      */
-    parser.isFirstLevelBlock = function (node) {
+  parser.isFirstLevelBlock = function (node) {
+    return node.nodeType == editor.modules.core.nodeTypes.TAG &&
+            node.classList.contains(editor.modules.ui.className.BLOCK_CLASSNAME);
+  };
 
-        return node.nodeType == editor.core.nodeTypes.TAG &&
-            node.classList.contains(editor.ui.className.BLOCK_CLASSNAME);
-
-    };
-
-    return parser;
-
-})({});
+  return parser;
+});

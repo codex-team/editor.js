@@ -3,61 +3,36 @@
 * Creates DIV tag and adds content to this tag
 */
 
-var paragraph = (function(paragraph_plugin) {
+let paragraph = function () {
 
-    /**
-     * @private
-     *
-     * Make initial paragraph block
-     * @param {object} JSON with block data
-     * @return {Element} element to append
-     */
+    const name = 'paragraph';
 
-    var make_ = function (data) {
-
-        /** Create Empty DIV */
-        var tag = codex.editor.draw.node('DIV', ['ce-paragraph'], {});
-
-        if (data && data.text) {
-            tag.innerHTML = data.text;
-        }
-
-        tag.contentEditable = true;
-
-        return tag;
-
-    };
-
-    /**
-     * @private
-     *
-     * Handles input data for save
-     * @param data
-     */
-    var prepareDataForSave_ = function(data) {
-
-    };
-
-    /**
-     * @public
-     *
-     * Plugins should have prepare method
-     * @param config
-     */
-    paragraph_plugin.prepare = function(config) {
-
-    };
+    let paragraphElement = null;
 
     /*
      * @public
      *
      * Method to render HTML block from JSON
      */
-    paragraph_plugin.render = function (data) {
+    function render(data) {
 
-        return make_(data);
+        /** Create Empty DIV */
+        paragraphElement = document.createElement('div');
 
-    };
+        paragraphElement.classList.add('ce-paragraph');
+
+        if (data && data.text) {
+
+            paragraphElement.innerHTML = data.text;
+
+        }
+
+        paragraphElement.contentEditable = true;
+
+        return paragraphElement;
+
+
+    }
 
     /**
      * @public
@@ -65,22 +40,23 @@ var paragraph = (function(paragraph_plugin) {
      * Check output data for validity.
      * Should be defined by developer
      */
-    paragraph_plugin.validate = function(output) {
+    function validate(output) {
 
         if (output.text === '')
             return;
 
         return output;
-    };
+
+    }
 
     /**
      * @public
      *
      * Method to extract JSON data from HTML block
      */
-    paragraph_plugin.save = function (blockContent){
+    function save() {
 
-        var wrappedText = codex.editor.content.wrapTextWithParagraphs(blockContent.innerHTML),
+        let wrappedText = paragraphElement.innerHTML, // codex.editor.content.wrapTextWithParagraphs(blockContent.innerHTML),
             sanitizerConfig = {
                 tags : {
                     p : {},
@@ -94,22 +70,17 @@ var paragraph = (function(paragraph_plugin) {
                 }
             };
 
-        var data = {
-            "text": codex.editor.sanitizer.clean(wrappedText, sanitizerConfig),
-            "format": "html",
-            "introText": '<<same>>'
+        let data = {
+            'text': wrappedText, // codex.editor.sanitizer.clean(wrappedText, sanitizerConfig),
+            'format': 'html',
+            'introText': '<<same>>'
         };
 
         return data;
 
-    };
+    }
 
-    paragraph_plugin.destroy = function () {
 
-        paragraph = null;
+    return {name, render, save, validate};
 
-    };
-
-    return paragraph_plugin;
-
-})({});
+};
