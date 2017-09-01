@@ -1,0 +1,3 @@
+plugins:
+    postcss-smart-import: {}
+    postcss-cssnext: {}
