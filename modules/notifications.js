@@ -174,6 +174,9 @@ module.exports = (function (notifications) {
 
         };
 
+        /**
+        * Show notification block
+        */
         function send() {
 
             editor.nodes.notifications.appendChild(notification);
@@ -191,6 +194,9 @@ module.exports = (function (notifications) {
 
         };
 
+        /**
+        *  Remove notification block
+        */
         function close() {
 
             notification.remove();
