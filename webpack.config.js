@@ -26,11 +26,11 @@ var ExtractTextWebpackPlugin    = require('extract-text-webpack-plugin');
 module.exports = {
 
     entry: {
-        "codex-editor": "./codex"
+        'codex-editor': './codex'
     },
     output: {
-        filename: "[name].js",
-        library: ["codex","editor"]
+        filename: '[name].js',
+        library: [ 'CodexEditor' ]
     },
 
     watch: true,
@@ -39,17 +39,17 @@ module.exports = {
         aggregateTimeOut: 50
     },
 
-    devtool: NODE_ENV == 'development' ? "source-map" : null,
+    devtool: NODE_ENV == 'development' ? 'source-map' : null,
 
     resolve : {
-        fallback: path.join(__dirname, "node_modules"),
-        modulesDirectories : ['./node_modules', './modules'],
+        fallback: path.join(__dirname, 'node_modules'),
+        modulesDirectories : [ './modules' ],
         extensions : ['', '.js', '.json']
     },
 
     resolveLoader : {
-        modulesDirectories: ['./node_modules'],
-        moduleTemplates: ["*-webpack-loader", "*-web-loader", "*-loader", "*"],
+        modulesDirectories: [ './node_modules' ],
+        moduleTemplates: ['*-webpack-loader', '*-web-loader', '*-loader', '*'],
         extensions: ['', '.js']
     },
 
@@ -62,12 +62,12 @@ module.exports = {
         }),
 
         /** Минифицируем CSS и JS */
-        new webpack.optimize.UglifyJsPlugin({
+        // new webpack.optimize.UglifyJsPlugin({
             /** Disable warning messages. Cant disable uglify for 3rd party libs such as html-janitor */
-            compress: {
-                warnings: false
-            }
-        }),
+            // compress: {
+            //     warnings: false
+            // }
+        // }),
 
         /** Block biuld if errors found */
         new webpack.NoErrorsPlugin(),
@@ -76,23 +76,23 @@ module.exports = {
 
     module : {
 
-        loaders : [{
+        loaders : [ {
             test : /\.js$/,
-            exclude: /(node_modules)/,
+            exclude: /node_modules/,
             loader : 'babel',
             query: {
-                presets: [__dirname + '/node_modules/babel-preset-es2015']
+                presets: [ __dirname + '/node_modules/babel-preset-es2015' ]
             }
         },
         {
             test : /\.js$/,
             loader: 'eslint-loader?fix=true',
-            exclude: /(node_modules)/
+            exclude: /node_modules/
         },
         {
             test : /\.css$/,
-            exclude: /(node_modules)/,
+            exclude: /node_modules/,
             loader: ExtractTextWebpackPlugin.extract('style-loader', 'css-loader')
-        }]
+        } ]
     }
 };
