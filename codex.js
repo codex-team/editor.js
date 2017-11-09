@@ -1,8 +1,10 @@
 /**
- *
  * Codex Editor
  *
- * @author Codex Team
+ *
+ *
+ *
+ * @author CodeX Team
  */
 module.exports = class CodexEditor {
 
@@ -24,36 +26,18 @@ module.exports = class CodexEditor {
      * @param config
      *
      * @property this.configuration - editor instance configuration
-     * @property this.instances - editor module instances
+     * @property this.moduleInstances - editor module instances
      */
     constructor(config) {
 
         'use strict';
 
         this.configuration = config;
-        this.instances = [];
+        this.moduleInstances = [];
 
-        let modules = [
-                'core',
-                'tools',
-                'transport',
-                'renderer',
-                'saver',
-                'content',
-                'toolbar/toolbar',
-                'callbacks',
-                'draw',
-                'caret',
-                'notifications',
-                'parser',
-                'sanitizer',
-                'listeners',
-                'destroyer',
-                'paste'
-            ],
-            modulePath = './modules/';
+        this.eventsDispatcher = new Events();
 
-        this.init(modulePath);
+        this.init();
 
     }
 
@@ -61,39 +45,81 @@ module.exports = class CodexEditor {
      * Initializes modules:
      *  First: requiring modules from path
      *  Second: memorizing the instances
-     *
-     *  @param {String} module name
-     *  @param {String} module path
      */
-    init(path) {
+    init() {
 
-        let core            = require('./modules/core'),
-            tools           = require('./modules/tools'),
-            transport       = require('./modules/transport'),
-            renderer        = require('./modules/renderer'),
-            saver           = require('./modules/saver'),
-            content         = require('./modules/content'),
-            toolbar         = require('./modules/toolbar/toolbar'),
-            callbacks       = require('./modules/callbacks'),
-            draw            = require('./modules/draw'),
-            caret           = require('./modules/caret'),
-            notifications   = require('./modules/notifications'),
-            parser          = require('./modules/parser'),
-            sanitizer       = require('./modules/sanitizer'),
-            listeners       = require('./modules/listeners'),
-            destroyer       = require('./modules/destroyer'),
-            paste           = require('./modules/paste');
+        let core            = require('./src/modules/core');
+            // tools           = require('./src/modules/tools'),
+            // transport       = require('./src/modules/transport'),
+            // renderer        = require('./src/modules/renderer'),
+            // saver           = require('./src/modules/saver'),
+            // content         = require('./src/modules/content'),
+            // toolbar         = require('./src/modules/toolbar/toolbar'),
+            // callbacks       = require('./src/modules/callbacks'),
+            // draw            = require('./src/modules/draw'),
+            // caret           = require('./src/modules/caret'),
+            // notifications   = require('./src/modules/notifications'),
+            // parser          = require('./src/modules/parser'),
+            // sanitizer       = require('./src/modules/sanitizer'),
+            // listeners       = require('./src/modules/listeners'),
+            // destroyer       = require('./src/modules/destroyer'),
+            // paste           = require('./src/modules/paste');
 
-        this.instances['core'] = core;
-        this.instances['tools'] = tools;
-
-
-        console.log('Class', this);
+        this.moduleInstances['core']            = new core({ eventDispatcher : this.eventsDispatcher});
+        // this.moduleInstances['tools']           = tools;
+        // this.moduleInstances['transport']       = transport;
+        // this.moduleInstances['renderer']        = renderer;
+        // this.moduleInstances['saver']           = saver;
+        // this.moduleInstances['content']         = content;
+        // this.moduleInstances['toolbar']         = toolbar;
+        // this.moduleInstances['callbacks']       = callbacks;
+        // this.moduleInstances['draw']            = draw;
+        // this.moduleInstances['caret']           = caret;
+        // this.moduleInstances['notifications']   = notifications;
+        // this.moduleInstances['parser']          = parser;
+        // this.moduleInstances['sanitizer']       = sanitizer;
+        // this.moduleInstances['listeners']       = listeners;
+        // this.moduleInstances['destroyer']       = destroyer;
+        // this.moduleInstances['paste']           = paste;
 
     }
 
 
 };
+
+class Events {
+
+    constructor() {
+
+        this.subscribers = {};
+
+    }
+
+    on(eventName, callback) {
+
+        if (!(eventName in this.subscribers)) {
+
+            this.subscribers[eventName] = [];
+
+        }
+
+        // group by events
+        this.subscribers[eventName].push(callback);
+
+    }
+
+    emit(eventName, data) {
+
+        this.subscribers[eventName].reduce(function (previousData, currentHandler) {
+
+            currentHandler(previousData);
+            return previousData;
+
+        }, data);
+
+    }
+
+}
 // module.exports = (function (editor) {
 //
 //     'use strict';
