@@ -15,10 +15,29 @@ module.exports = class CodexEditor {
 
     }
 
-    /** Editor script prefixes */
-    static get scriptPrefix() {
+    /**
+     * Setting for configuration
+     * @param config
+     */
+    set configuration(config = {}) {
 
-        return 'cdx-script-';
+        this._configuration.holderId = config.holderId;
+        this._configuration.placeholder = config.placeholder || 'write your story...';
+        this._configuration.sanitizer = config.sanitizer || {
+
+        };
+
+        this._configuration.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
+
+    }
+
+    /**
+     * Returns private property
+     * @returns {{}|*}
+     */
+    get configuration() {
+
+        return this._configuration;
 
     }
 
@@ -31,6 +50,9 @@ module.exports = class CodexEditor {
     constructor(config) {
 
         'use strict';
+
+        /** Privates */
+        this._configuration = {};
 
         this.configuration = config;
         this.moduleInstances = [];
@@ -48,8 +70,8 @@ module.exports = class CodexEditor {
      */
     init() {
 
-        let core            = require('./src/modules/core');
-            // tools           = require('./src/modules/tools'),
+        let Core            = require('./src/modules/core'),
+            Tools           = require('./src/modules/tools');
             // transport       = require('./src/modules/transport'),
             // renderer        = require('./src/modules/renderer'),
             // saver           = require('./src/modules/saver'),
@@ -65,25 +87,47 @@ module.exports = class CodexEditor {
             // destroyer       = require('./src/modules/destroyer'),
             // paste           = require('./src/modules/paste');
 
-        this.moduleInstances['core']            = new core({ eventDispatcher : this.eventsDispatcher});
-        // this.moduleInstances['tools']           = tools;
-        // this.moduleInstances['transport']       = transport;
-        // this.moduleInstances['renderer']        = renderer;
-        // this.moduleInstances['saver']           = saver;
-        // this.moduleInstances['content']         = content;
-        // this.moduleInstances['toolbar']         = toolbar;
-        // this.moduleInstances['callbacks']       = callbacks;
-        // this.moduleInstances['draw']            = draw;
-        // this.moduleInstances['caret']           = caret;
-        // this.moduleInstances['notifications']   = notifications;
-        // this.moduleInstances['parser']          = parser;
-        // this.moduleInstances['sanitizer']       = sanitizer;
-        // this.moduleInstances['listeners']       = listeners;
-        // this.moduleInstances['destroyer']       = destroyer;
-        // this.moduleInstances['paste']           = paste;
+        let moduleList = {
+            'core' : Core,
+            'tools' : Tools
+        };
+
+        for(let moduleName in moduleList) {
+
+            let modules = [];
+
+            for(let moduleExtends in moduleList) {
+
+                if (moduleExtends === moduleName) {
+
+                    continue;
+
+                }
+                modules.push(moduleList[moduleExtends]);
+
+            }
+
+            this.moduleInstances[moduleName] = new moduleList[moduleName]({
+                modules : modules,
+                config  : this.configuration,
+                state   : this.state,
+                nodes   : this.nodes
+            });
+
+        }
+
+        // this.moduleInstances['core'].prepare();
+        Promise.resolve()
+            .then(this.moduleInstances['core'].prepare.bind(this.moduleInstances['core']));
+            // .then(this.moduleInstances['ui'].prepare)
+            // .then(this.moduleInstances['tools'.prepare])
+            // .catch(function (error) {
+            //
+            //     console.log('Error occured', error);
+            //
+            // });
 
     }
-
 
 };
 
@@ -112,8 +156,9 @@ class Events {
 
         this.subscribers[eventName].reduce(function (previousData, currentHandler) {
 
-            currentHandler(previousData);
-            return previousData;
+            let newData = currentHandler(previousData);
+
+            return newData ? newData : previousData;
 
         }, data);
 

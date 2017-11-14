@@ -4,26 +4,80 @@
  * @author Codex Team
  * @version 1.1.3
  */
-
 module.exports = class Core {
 
-    constructor({ eventDispatcher}) {
+    /** Editor script prefixes */
+    static get scriptPrefix() {
 
-        this.eventDispatcher = eventDispatcher;
-        this.data = [1, 2, 3];
-        this.init();
+        return 'cdx-script-';
 
     }
 
-    init() {
+    constructor(Editor) {
 
-        this.eventDispatcher.on('Editor proccessing...', function (data) {
+        this.Editor = Editor;
 
-            console.log('Function fired when editor started proccess');
+        this.sanitizer = null;
+        this.state = {};
+
+    }
+
+    prepare() {
+
+        let self = this;
+
+        return new Promise(function (resolve, reject) {
+
+            if (typeof self.Editor.config.holderId === undefined ) {
+
+                reject(Error("Holder wasn't found by ID: #" + userSettings.holderId));
+
+            } else {
+
+                resolve();
+
+            }
+
+            resolve();
 
         });
 
-        this.eventDispatcher.emit('Editor proccessing...', this.data);
+    }
+
+    /**
+     * Core custom logger
+     *
+     * @param msg
+     * @param type
+     * @param args
+     */
+    log(msg, type, args) {
+
+        type = type || 'log';
+
+        if (!args) {
+
+            args  = msg || 'undefined';
+            msg  = '[codex-editor]:      %o';
+
+        } else {
+
+            msg  = '[codex-editor]:      ' + msg;
+
+        }
+
+        try{
+
+            if ( 'console' in window && window.console[ type ] ) {
+
+                if ( args ) window.console[ type ]( msg, args );
+                else window.console[ type ]( msg );
+
+            }
+
+        } catch(e) {
+            // do nothing
+        }
 
     }
 
@@ -83,38 +137,6 @@ module.exports = class Core {
 //             }
 //
 //         });
-//
-//     };
-//
-//     /**
-//      * Logging method
-//      * @param type = ['log', 'info', 'warn']
-//      */
-//     core.log = function (msg, type, arg) {
-//
-//         type = type || 'log';
-//
-//         if (!arg) {
-//
-//             arg  = msg || 'undefined';
-//             msg  = '[codex-editor]:      %o';
-//
-//         } else {
-//
-//             msg  = '[codex-editor]:      ' + msg;
-//
-//         }
-//
-//         try{
-//
-//             if ( 'console' in window && window.console[ type ] ) {
-//
-//                 if ( arg ) window.console[ type ]( msg, arg );
-//                 else window.console[ type ]( msg );
-//
-//             }
-//
-//         }catch(e) {}
 //
 //     };
 //

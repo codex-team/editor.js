@@ -41,9 +41,8 @@ var CodexEditor =
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ({
-
-/***/ 0:
+/******/ ([
+/* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -61,23 +60,33 @@ var CodexEditor =
 	 * @author CodeX Team
 	 */
 	module.exports = function () {
-	    _createClass(CodexEditor, null, [{
-	        key: 'version',
+	    _createClass(CodexEditor, [{
+	        key: 'configuration',
 	
 	
-	        /** Editor version */
-	        get: function get() {
+	        /**
+	         * Setting for configuration
+	         * @param config
+	         */
+	        set: function set() {
+	            var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	
-	            return ("1.7.8");
+	
+	            this._configuration.holderId = config.holderId;
+	            this._configuration.placeholder = config.placeholder || 'write your story...';
+	            this._configuration.sanitizer = config.sanitizer || {};
+	
+	            this._configuration.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
 	        }
 	
-	        /** Editor script prefixes */
-	
-	    }, {
-	        key: 'scriptPrefix',
+	        /**
+	         * Returns private property
+	         * @returns {{}|*}
+	         */
+	        ,
 	        get: function get() {
 	
-	            return 'cdx-script-';
+	            return this._configuration;
 	        }
 	
 	        /**
@@ -87,13 +96,26 @@ var CodexEditor =
 	         * @property this.moduleInstances - editor module instances
 	         */
 	
+	    }], [{
+	        key: 'version',
+	
+	
+	        /** Editor version */
+	        get: function get() {
+	
+	            return ("1.7.8");
+	        }
 	    }]);
 	
 	    function CodexEditor(config) {
 	
 	        'use strict';
 	
+	        /** Privates */
+	
 	        _classCallCheck(this, CodexEditor);
+	
+	        this._configuration = {};
 	
 	        this.configuration = config;
 	        this.moduleInstances = [];
@@ -114,8 +136,8 @@ var CodexEditor =
 	        key: 'init',
 	        value: function init() {
 	
-	            var core = __webpack_require__(21);
-	            // tools           = require('./src/modules/tools'),
+	            var Core = __webpack_require__(1),
+	                Tools = __webpack_require__(2);
 	            // transport       = require('./src/modules/transport'),
 	            // renderer        = require('./src/modules/renderer'),
 	            // saver           = require('./src/modules/saver'),
@@ -131,22 +153,41 @@ var CodexEditor =
 	            // destroyer       = require('./src/modules/destroyer'),
 	            // paste           = require('./src/modules/paste');
 	
-	            this.moduleInstances['core'] = new core({ eventDispatcher: this.eventsDispatcher });
-	            // this.moduleInstances['tools']           = tools;
-	            // this.moduleInstances['transport']       = transport;
-	            // this.moduleInstances['renderer']        = renderer;
-	            // this.moduleInstances['saver']           = saver;
-	            // this.moduleInstances['content']         = content;
-	            // this.moduleInstances['toolbar']         = toolbar;
-	            // this.moduleInstances['callbacks']       = callbacks;
-	            // this.moduleInstances['draw']            = draw;
-	            // this.moduleInstances['caret']           = caret;
-	            // this.moduleInstances['notifications']   = notifications;
-	            // this.moduleInstances['parser']          = parser;
-	            // this.moduleInstances['sanitizer']       = sanitizer;
-	            // this.moduleInstances['listeners']       = listeners;
-	            // this.moduleInstances['destroyer']       = destroyer;
-	            // this.moduleInstances['paste']           = paste;
+	            var moduleList = {
+	                'core': Core,
+	                'tools': Tools
+	            };
+	
+	            for (var moduleName in moduleList) {
+	
+	                var modules = [];
+	
+	                for (var moduleExtends in moduleList) {
+	
+	                    if (moduleExtends === moduleName) {
+	
+	                        continue;
+	                    }
+	                    modules.push(moduleList[moduleExtends]);
+	                }
+	
+	                this.moduleInstances[moduleName] = new moduleList[moduleName]({
+	                    modules: modules,
+	                    config: this.configuration,
+	                    state: this.state,
+	                    nodes: this.nodes
+	                });
+	            }
+	
+	            // this.moduleInstances['core'].prepare();
+	            Promise.resolve().then(this.moduleInstances['core'].prepare.bind(this.moduleInstances['core']));
+	            // .then(this.moduleInstances['ui'].prepare)
+	            // .then(this.moduleInstances['tools'.prepare])
+	            // .catch(function (error) {
+	            //
+	            //     console.log('Error occured', error);
+	            //
+	            // });
 	        }
 	    }]);
 	
@@ -178,8 +219,9 @@ var CodexEditor =
 	
 	            this.subscribers[eventName].reduce(function (previousData, currentHandler) {
 	
-	                currentHandler(previousData);
-	                return previousData;
+	                var newData = currentHandler(previousData);
+	
+	                return newData ? newData : previousData;
 	            }, data);
 	        }
 	    }]);
@@ -327,8 +369,7 @@ var CodexEditor =
 	// })({});
 
 /***/ }),
-
-/***/ 21:
+/* 1 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -343,28 +384,83 @@ var CodexEditor =
 	 * @author Codex Team
 	 * @version 1.1.3
 	 */
-	
 	module.exports = function () {
-	    function Core(_ref) {
-	        var eventDispatcher = _ref.eventDispatcher;
+	    _createClass(Core, null, [{
+	        key: 'scriptPrefix',
 	
+	
+	        /** Editor script prefixes */
+	        get: function get() {
+	
+	            return 'cdx-script-';
+	        }
+	    }]);
+	
+	    function Core(Editor) {
 	        _classCallCheck(this, Core);
 	
-	        this.eventDispatcher = eventDispatcher;
-	        this.data = [1, 2, 3];
-	        this.init();
+	        this.Editor = Editor;
+	
+	        this.sanitizer = null;
+	        this.state = {};
 	    }
 	
 	    _createClass(Core, [{
-	        key: 'init',
-	        value: function init() {
+	        key: 'prepare',
+	        value: function prepare() {
 	
-	            this.eventDispatcher.on('Editor proccessing...', function (data) {
+	            console.log(this);
+	            var self = this;
 	
-	                console.log('Function fired when editor started proccess');
+	            return new Promise(function (resolve, reject) {
+	
+	                console.log(self);
+	                // if (typeof editor.nodes.holder === undefined || editor.nodes.holder === null) {
+	                //
+	                //     reject(Error("Holder wasn't found by ID: #" + userSettings.holderId));
+	                //
+	                // } else {
+	                //
+	                //     resolve();
+	                //
+	                // }
+	                //
+	                // resolve();
 	            });
+	        }
 	
-	            this.eventDispatcher.emit('Editor proccessing...', this.data);
+	        /**
+	         * Core custom logger
+	         *
+	         * @param msg
+	         * @param type
+	         * @param args
+	         */
+	
+	    }, {
+	        key: 'log',
+	        value: function log(msg, type, args) {
+	
+	            type = type || 'log';
+	
+	            if (!args) {
+	
+	                args = msg || 'undefined';
+	                msg = '[codex-editor]:      %o';
+	            } else {
+	
+	                msg = '[codex-editor]:      ' + msg;
+	            }
+	
+	            try {
+	
+	                if ('console' in window && window.console[type]) {
+	
+	                    if (args) window.console[type](msg, args);else window.console[type](msg);
+	                }
+	            } catch (e) {
+	                // do nothing
+	            }
 	        }
 	    }]);
 	
@@ -425,38 +521,6 @@ var CodexEditor =
 	//             }
 	//
 	//         });
-	//
-	//     };
-	//
-	//     /**
-	//      * Logging method
-	//      * @param type = ['log', 'info', 'warn']
-	//      */
-	//     core.log = function (msg, type, arg) {
-	//
-	//         type = type || 'log';
-	//
-	//         if (!arg) {
-	//
-	//             arg  = msg || 'undefined';
-	//             msg  = '[codex-editor]:      %o';
-	//
-	//         } else {
-	//
-	//             msg  = '[codex-editor]:      ' + msg;
-	//
-	//         }
-	//
-	//         try{
-	//
-	//             if ( 'console' in window && window.console[ type ] ) {
-	//
-	//                 if ( arg ) window.console[ type ]( msg, arg );
-	//                 else window.console[ type ]( msg );
-	//
-	//             }
-	//
-	//         }catch(e) {}
 	//
 	//     };
 	//
@@ -753,7 +817,182 @@ var CodexEditor =
 	//
 	// })({});
 
-/***/ })
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
 
-/******/ });
+	"use strict";
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	module.exports = function () {
+	    function Tools() {
+	        _classCallCheck(this, Tools);
+	    }
+	
+	    _createClass(Tools, [{
+	        key: "prepare",
+	        value: function prepare() {}
+	    }]);
+	
+	    return Tools;
+	}();
+	// /**
+	// * Module working with plugins
+	// */
+	// module.exports = (function () {
+	//
+	//     let editor = codex.editor;
+	//
+	//     /**
+	//      * Initialize plugins before using
+	//      * Ex. Load scripts or call some internal methods
+	//      * @return Promise
+	//      */
+	//     function prepare() {
+	//
+	//         return new Promise(function (resolve_, reject_) {
+	//
+	//             Promise.resolve()
+	//
+	//                 /**
+	//                 * Compose a sequence of plugins that requires preparation
+	//                 */
+	//                 .then(function () {
+	//
+	//                     let pluginsRequiresPreparation = [],
+	//                         allPlugins = editor.tools;
+	//
+	//                     for ( let pluginName in allPlugins ) {
+	//
+	//                         let plugin = allPlugins[pluginName];
+	//
+	//                         if (plugin.prepare && typeof plugin.prepare != 'function' || !plugin.prepare) {
+	//
+	//                             continue;
+	//
+	//                         }
+	//
+	//                         pluginsRequiresPreparation.push(plugin);
+	//
+	//                     }
+	//
+	//                     /**
+	//                     * If no one passed plugins requires preparation, finish prepare() and go ahead
+	//                     */
+	//                     if (!pluginsRequiresPreparation.length) {
+	//
+	//                         resolve_();
+	//
+	//                     }
+	//
+	//                     return pluginsRequiresPreparation;
+	//
+	//                 })
+	//
+	//                 /** Wait plugins while they prepares */
+	//                 .then(waitAllPluginsPreparation_)
+	//
+	//                 .then(function () {
+	//
+	//                     editor.core.log('Plugins loaded', 'info');
+	//                     resolve_();
+	//
+	//                 }).catch(function (error) {
+	//
+	//                     reject_(error);
+	//
+	//                 });
+	//
+	//         });
+	//
+	//     }
+	//
+	//     /**
+	//     * @param {array} plugins - list of tools that requires preparation
+	//     * @return {Promise} resolved while all plugins will be ready or failed
+	//     */
+	//     function waitAllPluginsPreparation_(plugins) {
+	//
+	//         /**
+	//         * @calls allPluginsProcessed__ when all plugins prepared or failed
+	//         */
+	//         return new Promise (function (allPluginsProcessed__) {
+	//
+	//             /**
+	//              * pluck each element from queue
+	//              * First, send resolved Promise as previous value
+	//              * Each plugins "prepare" method returns a Promise, that's why
+	//              * reduce current element will not be able to continue while can't get
+	//              * a resolved Promise
+	//              *
+	//              * If last plugin is "prepared" then go to the next stage of initialization
+	//              */
+	//             plugins.reduce(function (previousValue, plugin, iteration) {
+	//
+	//                 return previousValue.then(function () {
+	//
+	//                     /**
+	//                     * Wait till plugins prepared
+	//                     * @calls pluginIsReady__ when plugin is ready or failed
+	//                     */
+	//                     return new Promise ( function (pluginIsReady__) {
+	//
+	//                         callPluginsPrepareMethod_( plugin )
+	//
+	//                             .then( pluginIsReady__ )
+	//                             .then( function () {
+	//
+	//                                 plugin.available = true;
+	//
+	//                             })
+	//
+	//                             .catch(function (error) {
+	//
+	//                                 editor.core.log(`Plugin «${plugin.type}» was not loaded. Preparation failed because %o`, 'warn', error);
+	//                                 plugin.available = false;
+	//                                 plugin.loadingMessage = error;
+	//
+	//                                 /** Go ahead even some plugin has problems */
+	//                                 pluginIsReady__();
+	//
+	//                             })
+	//
+	//                             .then(function () {
+	//
+	//                                 /** If last plugin has problems then just ignore and continue */
+	//                                 if (iteration == plugins.length - 1) {
+	//
+	//                                     allPluginsProcessed__();
+	//
+	//                                 }
+	//
+	//                             });
+	//
+	//                     });
+	//
+	//                 });
+	//
+	//             }, Promise.resolve() );
+	//
+	//         });
+	//
+	//     }
+	//
+	//     var callPluginsPrepareMethod_ = function (plugin) {
+	//
+	//         return plugin.prepare( plugin.config || {} );
+	//
+	//     };
+	//
+	//     return {
+	//         prepare: prepare
+	//     };
+	//
+	// }());
+
+/***/ })
+/******/ ]);
 //# sourceMappingURL=codex-editor.js.map
