@@ -70,7 +70,7 @@ module.exports = {
         // }),
 
         /** Block biuld if errors found */
-        new webpack.NoErrorsPlugin(),
+        // new webpack.NoErrorsPlugin(),
 
     ],
 

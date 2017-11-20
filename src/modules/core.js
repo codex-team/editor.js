@@ -22,6 +22,12 @@ module.exports = class Core {
 
     }
 
+    /**
+     * @public
+     *
+     * Editor preparing method
+     * @return Promise
+     */
     prepare() {
 
         let self = this;
@@ -81,64 +87,150 @@ module.exports = class Core {
 
     }
 
+    /**
+     * Native Ajax
+     * @param {String}   settings.url         - request URL
+     * @param {function} settings.beforeSend  - returned value will be passed as context to the Success, Error and Progress callbacks
+     * @param {function} settings.success
+     * @param {function} settings.progress
+     */
+    ajax(settings) {
+
+        if (!settings || !settings.url) {
+
+            return;
+
+        }
+
+        var XMLHTTP = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
+            encodedString,
+            isFormData,
+            prop;
+
+
+        settings.async           = true;
+        settings.type            = settings.type || 'GET';
+        settings.data            = settings.data || '';
+        settings['content-type'] = settings['content-type'] || 'application/json; charset=utf-8';
+
+        if (settings.type == 'GET' && settings.data) {
+
+            settings.url = /\?/.test(settings.url) ? settings.url + '&' + settings.data : settings.url + '?' + settings.data;
+
+        } else {
+
+            encodedString = '';
+            for(prop in settings.data) {
+
+                encodedString += (prop + '=' + encodeURIComponent(settings.data[prop]) + '&');
+
+            }
+
+        }
+
+        if (settings.withCredentials) {
+
+            XMLHTTP.withCredentials = true;
+
+        }
+
+        /**
+         * Value returned in beforeSend funtion will be passed as context to the other response callbacks
+         * If beforeSend returns false, AJAX will be blocked
+         */
+        let responseContext,
+            beforeSendResult;
+
+        if (typeof settings.beforeSend === 'function') {
+
+            beforeSendResult = settings.beforeSend.call();
+
+            if (beforeSendResult === false) {
+
+                return;
+
+            }
+
+        }
+
+        XMLHTTP.open( settings.type, settings.url, settings.async );
+
+        /**
+         * If we send FormData, we need no content-type header
+         */
+        isFormData = isFormData_(settings.data);
+
+        if (!isFormData) {
+
+            if (settings.type !== 'POST') {
+
+                XMLHTTP.setRequestHeader('Content-type', settings['content-type']);
+
+            } else {
+
+                XMLHTTP.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+            }
+
+        }
+
+        XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+        responseContext = beforeSendResult || XMLHTTP;
+
+        if (typeof settings.progress === 'function') {
+
+            XMLHTTP.upload.onprogress = settings.progress.bind(responseContext);
+
+        }
+
+        XMLHTTP.onreadystatechange = function () {
+
+            if (XMLHTTP.readyState === 4) {
+
+                if (XMLHTTP.status === 200) {
+
+                    if (typeof settings.success === 'function') {
+
+                        settings.success.call(responseContext, XMLHTTP.responseText);
+
+                    }
+
+                } else {
+
+                    if (typeof settings.error === 'function') {
+
+                        settings.error.call(responseContext, XMLHTTP.responseText, XMLHTTP.status);
+
+                    }
+
+                }
+
+            }
+
+        };
+
+        if (isFormData) {
+
+            // Sending FormData
+            XMLHTTP.send(settings.data);
+
+        } else {
+
+            // POST requests
+            XMLHTTP.send(encodedString);
+
+        }
+
+        return XMLHTTP;
+
+    }
+
 };
 // module.exports = (function (core) {
 //
 //     let editor = codex.editor;
 //
-//     /**
-//      * @public
-//      *
-//      * Editor preparing method
-//      * @return Promise
-//      */
-//     core.prepare = function (userSettings) {
-//
-//         return new Promise(function (resolve, reject) {
-//
-//             if ( userSettings ) {
-//
-//                 editor.settings.tools = userSettings.tools || editor.settings.tools;
-//
-//             }
-//
-//             if (userSettings.data) {
-//
-//                 editor.state.blocks = userSettings.data;
-//
-//             }
-//
-//             if (userSettings.initialBlockPlugin) {
-//
-//                 editor.settings.initialBlockPlugin = userSettings.initialBlockPlugin;
-//
-//             }
-//
-//             if (userSettings.sanitizer) {
-//
-//                 editor.settings.sanitizer = userSettings.sanitizer;
-//
-//             }
-//
-//             editor.hideToolbar = userSettings.hideToolbar;
-//
-//             editor.settings.placeholder = userSettings.placeholder || '';
-//
-//             editor.nodes.holder = document.getElementById(userSettings.holderId || editor.settings.holderId);
-//
-//             if (typeof editor.nodes.holder === undefined || editor.nodes.holder === null) {
-//
-//                 reject(Error("Holder wasn't found by ID: #" + userSettings.holderId));
-//
-//             } else {
-//
-//                 resolve();
-//
-//             }
-//
-//         });
-//
-//     };
 //
 //     /**
 //      * @protected
@@ -188,145 +280,6 @@ module.exports = class Core {
 //     core.isEmpty = function ( obj ) {
 //
 //         return Object.keys(obj).length === 0;
-//
-//     };
-//
-//     /**
-//      * Native Ajax
-//      * @param {String}   settings.url         - request URL
-//      * @param {function} settings.beforeSend  - returned value will be passed as context to the Success, Error and Progress callbacks
-//      * @param {function} settings.success
-//      * @param {function} settings.progress
-//      */
-//     core.ajax = function (settings) {
-//
-//         if (!settings || !settings.url) {
-//
-//             return;
-//
-//         }
-//
-//         var XMLHTTP = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
-//             encodedString,
-//             isFormData,
-//             prop;
-//
-//
-//         settings.async           = true;
-//         settings.type            = settings.type || 'GET';
-//         settings.data            = settings.data || '';
-//         settings['content-type'] = settings['content-type'] || 'application/json; charset=utf-8';
-//
-//         if (settings.type == 'GET' && settings.data) {
-//
-//             settings.url = /\?/.test(settings.url) ? settings.url + '&' + settings.data : settings.url + '?' + settings.data;
-//
-//         } else {
-//
-//             encodedString = '';
-//             for(prop in settings.data) {
-//
-//                 encodedString += (prop + '=' + encodeURIComponent(settings.data[prop]) + '&');
-//
-//             }
-//
-//         }
-//
-//         if (settings.withCredentials) {
-//
-//             XMLHTTP.withCredentials = true;
-//
-//         }
-//
-//         /**
-//          * Value returned in beforeSend funtion will be passed as context to the other response callbacks
-//          * If beforeSend returns false, AJAX will be blocked
-//          */
-//         let responseContext,
-//             beforeSendResult;
-//
-//         if (typeof settings.beforeSend === 'function') {
-//
-//             beforeSendResult = settings.beforeSend.call();
-//
-//             if (beforeSendResult === false) {
-//
-//                 return;
-//
-//             }
-//
-//         }
-//
-//         XMLHTTP.open( settings.type, settings.url, settings.async );
-//
-//         /**
-//          * If we send FormData, we need no content-type header
-//          */
-//         isFormData = isFormData_(settings.data);
-//
-//         if (!isFormData) {
-//
-//             if (settings.type !== 'POST') {
-//
-//                 XMLHTTP.setRequestHeader('Content-type', settings['content-type']);
-//
-//             } else {
-//
-//                 XMLHTTP.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-//
-//             }
-//
-//         }
-//
-//         XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-//
-//         responseContext = beforeSendResult || XMLHTTP;
-//
-//         if (typeof settings.progress === 'function') {
-//
-//             XMLHTTP.upload.onprogress = settings.progress.bind(responseContext);
-//
-//         }
-//
-//         XMLHTTP.onreadystatechange = function () {
-//
-//             if (XMLHTTP.readyState === 4) {
-//
-//                 if (XMLHTTP.status === 200) {
-//
-//                     if (typeof settings.success === 'function') {
-//
-//                         settings.success.call(responseContext, XMLHTTP.responseText);
-//
-//                     }
-//
-//                 } else {
-//
-//                     if (typeof settings.error === 'function') {
-//
-//                         settings.error.call(responseContext, XMLHTTP.responseText, XMLHTTP.status);
-//
-//                     }
-//
-//                 }
-//
-//             }
-//
-//         };
-//
-//         if (isFormData) {
-//
-//             // Sending FormData
-//             XMLHTTP.send(settings.data);
-//
-//         } else {
-//
-//             // POST requests
-//             XMLHTTP.send(encodedString);
-//
-//         }
-//
-//         return XMLHTTP;
 //
 //     };
 //

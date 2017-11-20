@@ -1,14 +1,96 @@
+/**
+ * Module UI
+ *
+ * @type {UI}
+ */
+let className = {
+
+    /**
+     * @const {string} BLOCK_CLASSNAME - redactor blocks name
+     */
+    BLOCK_CLASSNAME : 'ce-block',
+
+    /**
+     * @const {String} wrapper for plugins content
+     */
+    BLOCK_CONTENT : 'ce-block__content',
+
+    /**
+     * @const {String} BLOCK_STRETCHED - makes block stretched
+     */
+    BLOCK_STRETCHED : 'ce-block--stretched',
+
+    /**
+     * @const {String} BLOCK_HIGHLIGHTED - adds background
+     */
+    BLOCK_HIGHLIGHTED : 'ce-block--focused',
+
+    /**
+     * @const {String} - for all default settings
+     */
+    SETTINGS_ITEM : 'ce-settings__item'
+};
+
+let CSS_ = {
+    editorWrapper : 'codex-editor',
+    editorZone    : 'ce-redactor'
+};
+
 module.exports = class UI {
 
     constructor(Editor) {
+
         this.Editor = Editor;
+
+        this.modules = this.Editor.modules;
+
     }
 
+    /**
+     * @protected
+     *
+     * Making main interface
+     */
     prepare() {
 
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
+
+            let wrapper  = this.modules.dom.make('DIV', [ CSS_.editorWrapper ], {}),
+                redactor = this.modules.dom.make('DIV', [ CSS_.editorZone ], {}),
+                toolbar  = makeToolBar_();
+
+            wrapper.appendChild(toolbar);
+            wrapper.appendChild(redactor);
+
+            /** Save created ui-elements to static nodes state */
+            editor.nodes.wrapper  = wrapper;
+            editor.nodes.redactor = redactor;
+
+            /** Append editor wrapper with redactor zone into holder */
+            editor.nodes.holder.appendChild(wrapper);
 
             resolve();
+
+        })
+
+        /** Add toolbox tools */
+        .then(addTools_)
+
+        /** Make container for inline toolbar */
+        .then(makeInlineToolbar_)
+
+        /** Add inline toolbar tools */
+        .then(addInlineToolbarTools_)
+
+        /** Draw wrapper for notifications */
+        .then(makeNotificationHolder_)
+
+        /** Add eventlisteners to redactor elements */
+        .then(bindEvents_)
+
+        .catch( function () {
+
+            editor.core.log("Can't draw editor interface");
 
         });
 
@@ -29,82 +111,9 @@ module.exports = class UI {
 //     /**
 //      * Basic editor classnames
 //      */
-//     ui.className = {
-//
-//         /**
-//          * @const {string} BLOCK_CLASSNAME - redactor blocks name
-//          */
-//         BLOCK_CLASSNAME : 'ce-block',
-//
-//         /**
-//          * @const {String} wrapper for plugins content
-//          */
-//         BLOCK_CONTENT : 'ce-block__content',
-//
-//         /**
-//          * @const {String} BLOCK_STRETCHED - makes block stretched
-//          */
-//         BLOCK_STRETCHED : 'ce-block--stretched',
-//
-//         /**
-//          * @const {String} BLOCK_HIGHLIGHTED - adds background
-//          */
-//         BLOCK_HIGHLIGHTED : 'ce-block--focused',
-//
-//         /**
-//          * @const {String} - for all default settings
-//          */
-//         SETTINGS_ITEM : 'ce-settings__item'
-//
-//     };
-//
-//     /**
-//      * @protected
-//      *
-//      * Making main interface
-//      */
 //     ui.prepare = function () {
 //
-//         return new Promise(function (resolve) {
-//
-//             let wrapper  = editor.draw.wrapper(),
-//                 redactor = editor.draw.redactor(),
-//                 toolbar  = makeToolBar_();
-//
-//             wrapper.appendChild(toolbar);
-//             wrapper.appendChild(redactor);
-//
-//             /** Save created ui-elements to static nodes state */
-//             editor.nodes.wrapper  = wrapper;
-//             editor.nodes.redactor = redactor;
-//
-//             /** Append editor wrapper with redactor zone into holder */
-//             editor.nodes.holder.appendChild(wrapper);
-//
-//             resolve();
-//
-//         })
-//
-//         /** Add toolbox tools */
-//         .then(addTools_)
-//
-//         /** Make container for inline toolbar */
-//         .then(makeInlineToolbar_)
-//
-//         /** Add inline toolbar tools */
-//         .then(addInlineToolbarTools_)
-//
-//         /** Draw wrapper for notifications */
-//         .then(makeNotificationHolder_)
-//
-//         /** Add eventlisteners to redactor elements */
-//         .then(bindEvents_)
-//
-//         .catch( function () {
-//
-//             editor.core.log("Can't draw editor interface");
-//
-//         });
+
 //
 //     };
 //

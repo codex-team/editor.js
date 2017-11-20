@@ -24,7 +24,9 @@ module.exports = class CodexEditor {
         this._configuration.holderId = config.holderId;
         this._configuration.placeholder = config.placeholder || 'write your story...';
         this._configuration.sanitizer = config.sanitizer || {
-
+            p: true,
+            b: true,
+            a: true
         };
 
         this._configuration.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
@@ -59,7 +61,9 @@ module.exports = class CodexEditor {
 
         this.eventsDispatcher = new Events();
 
-        this.init();
+        return Promise.resolve()
+            .then(() => this.init())
+            .then(() => this.prepare());
 
     }
 
@@ -70,8 +74,9 @@ module.exports = class CodexEditor {
      */
     init() {
 
-        let Core            = require('./src/modules/core'),
-            Tools           = require('./src/modules/tools');
+        let Dom             = require('./src/modules/dom'),
+            Core            = require('./src/modules/core'),
+            Ui              = require('./src/modules/ui');
             // transport       = require('./src/modules/transport'),
             // renderer        = require('./src/modules/renderer'),
             // saver           = require('./src/modules/saver'),
@@ -88,13 +93,14 @@ module.exports = class CodexEditor {
             // paste           = require('./src/modules/paste');
 
         let moduleList = {
-            'core' : Core,
-            'tools' : Tools
+            'dom'   : Dom,
+            'core'  : Core,
+            'ui'    : Ui
         };
 
         for(let moduleName in moduleList) {
 
-            let modules = [];
+            let modules = {};
 
             for(let moduleExtends in moduleList) {
 
@@ -103,7 +109,7 @@ module.exports = class CodexEditor {
                     continue;
 
                 }
-                modules.push(moduleList[moduleExtends]);
+                modules[moduleExtends] = moduleList[moduleExtends];
 
             }
 
@@ -116,16 +122,30 @@ module.exports = class CodexEditor {
 
         }
 
-        // this.moduleInstances['core'].prepare();
-        Promise.resolve()
-            .then(this.moduleInstances['core'].prepare.bind(this.moduleInstances['core']));
-            // .then(this.moduleInstances['ui'].prepare)
-            // .then(this.moduleInstances['tools'.prepare])
-            // .catch(function (error) {
-            //
-            //     console.log('Error occured', error);
-            //
-            // });
+    }
+
+    /**
+     * @param module - module instance
+     * @returns {*}
+     */
+    prepare(module) {
+
+        function prepareDecorator(module) {
+
+            return module.prepare();
+
+        }
+
+        return Promise.resolve()
+            .then(prepareDecorator(this.moduleInstances['core']))
+            .then(prepareDecorator(this.moduleInstances['ui']));
+        // .then(this.moduleInstances['tools'.prepare])
+        // .catch(function (error) {
+        //
+        //     console.log('Error occured', error);
+        //
+        // });
+
 
     }
 
