@@ -36,6 +36,26 @@ export default class Dom {
     }
 
     /**
+     * Append one or several elements to the parent
+     *
+     * @param  {Element} parent    - where to append
+     * @param  {Element|Element[]} - element ore elements list
+     */
+    static append(parent, elements) {
+
+        if ( Array.isArray(elements) ) {
+
+            elements.forEach( el => parent.appendChild(el) );
+
+        } else {
+
+            parent.appendChild(elements);
+
+        }
+
+    }
+
+    /**
      * Selector Decorator
      *
      * Returns first match

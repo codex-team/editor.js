@@ -218,7 +218,7 @@ module.exports = class CodexEditor {
             /**
              * Skip module with passed name
              */
-            if (moduleName == name) {
+            if (moduleName === name) {
 
                 continue;
 

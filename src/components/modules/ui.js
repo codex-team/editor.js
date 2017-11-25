@@ -125,14 +125,14 @@ module.exports = class UI {
              */
             this.nodes.wrapper  = $.make('div', CSS.editorWrapper);
             this.nodes.redactor = $.make('div', CSS.editorZone);
-                // toolbar  = makeToolBar_();
 
-            // wrapper.appendChild(toolbar);
             this.nodes.wrapper.appendChild(this.nodes.redactor);
-            /**
-             * Append editor wrapper with redactor zone into holder
-             */
             this.nodes.holder.appendChild(this.nodes.wrapper);
+
+            /**
+             * Make toolbar
+             */
+            this.Editor.Toolbar.make();
 
             resolve();
 
@@ -153,7 +153,9 @@ module.exports = class UI {
         /** Add eventlisteners to redactor elements */
         // .then(bindEvents_)
 
-        .catch( function () {
+        .catch(e => {
+
+            console.error(e);
 
             // editor.core.log("Can't draw editor interface");
 
@@ -179,102 +181,6 @@ module.exports = class UI {
 //     ui.prepare = function () {
 //
 
-//
-//     };
-//
-//     /**
-//      * @private
-//      * Draws inline toolbar zone
-//      */
-//     var makeInlineToolbar_ = function () {
-//
-//         var container = editor.draw.inlineToolbar();
-//
-//         /** Append to redactor new inline block */
-//         editor.nodes.inlineToolbar.wrapper = container;
-//
-//         /** Draw toolbar buttons */
-//         editor.nodes.inlineToolbar.buttons = editor.draw.inlineToolbarButtons();
-//
-//         /** Buttons action or settings */
-//         editor.nodes.inlineToolbar.actions = editor.draw.inlineToolbarActions();
-//
-//         /** Append to inline toolbar buttons as part of it */
-//         editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.buttons);
-//         editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.actions);
-//
-//         editor.nodes.wrapper.appendChild(editor.nodes.inlineToolbar.wrapper);
-//
-//     };
-//
-//     var makeToolBar_ = function () {
-//
-//         let toolbar         = editor.draw.toolbar(),
-//             blockButtons    = makeToolbarSettings_(),
-//             toolbarContent  = makeToolbarContent_();
-//
-//         /** Appending first-level block buttons */
-//         toolbar.appendChild(blockButtons);
-//
-//         /** Append toolbarContent to toolbar */
-//         toolbar.appendChild(toolbarContent);
-//
-//         /** Make toolbar global */
-//         editor.nodes.toolbar = toolbar;
-//
-//         return toolbar;
-//
-//     };
-//
-//     var makeToolbarContent_ = function () {
-//
-//         let toolbarContent = editor.draw.toolbarContent(),
-//             toolbox        = editor.draw.toolbox(),
-//             plusButton     = editor.draw.plusButton();
-//
-//         /** Append plus button */
-//         toolbarContent.appendChild(plusButton);
-//
-//         /** Appending toolbar tools */
-//         toolbarContent.appendChild(toolbox);
-//
-//         /** Make Toolbox and plusButton global */
-//         editor.nodes.toolbox    = toolbox;
-//         editor.nodes.plusButton = plusButton;
-//
-//         return toolbarContent;
-//
-//     };
-//
-//     var makeToolbarSettings_ = function () {
-//
-//         let blockSettings       = editor.draw.blockSettings(),
-//             blockButtons        = editor.draw.blockButtons(),
-//             defaultSettings     = editor.draw.defaultSettings(),
-//             showSettingsButton  = editor.draw.settingsButton(),
-//             showTrashButton     = editor.toolbar.settings.makeRemoveBlockButton(),
-//             pluginSettings      = editor.draw.pluginsSettings();
-//
-//         /** Add default and plugins settings */
-//         blockSettings.appendChild(pluginSettings);
-//         blockSettings.appendChild(defaultSettings);
-//
-//         /**
-//          * Make blocks buttons
-//          * This block contains settings button and remove block button
-//          */
-//         blockButtons.appendChild(showSettingsButton);
-//         blockButtons.appendChild(showTrashButton);
-//         blockButtons.appendChild(blockSettings);
-//
-//         /** Make BlockSettings, PluginSettings, DefaultSettings global */
-//         editor.nodes.blockSettings      = blockSettings;
-//         editor.nodes.pluginSettings     = pluginSettings;
-//         editor.nodes.defaultSettings    = defaultSettings;
-//         editor.nodes.showSettingsButton = showSettingsButton;
-//         editor.nodes.showTrashButton    = showTrashButton;
-//
-//         return blockButtons;
 //
 //     };
 //

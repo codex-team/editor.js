@@ -18,29 +18,6 @@ module.exports = (function (draw) {
     };
 
     /**
-     * Empty toolbar with toggler
-     */
-    draw.toolbar = function () {
-
-        var bar = document.createElement('div');
-
-        bar.className += 'ce-toolbar';
-
-        return bar;
-
-    };
-
-    draw.toolbarContent = function () {
-
-        var wrapper = document.createElement('DIV');
-
-        wrapper.classList.add('ce-toolbar__content');
-
-        return wrapper;
-
-    };
-
-    /**
      * Inline toolbar
      */
     draw.inlineToolbar = function () {
@@ -91,93 +68,6 @@ module.exports = (function (draw) {
         input.setAttribute('autofocus', 'autofocus');
 
         return input;
-
-    };
-
-    /**
-     * @todo Desc
-     */
-    draw.blockButtons = function () {
-
-        var block = document.createElement('div');
-
-        block.className += 'ce-toolbar__actions';
-
-        return block;
-
-    };
-
-    /**
-     * Block settings panel
-     */
-    draw.blockSettings = function () {
-
-        var settings = document.createElement('div');
-
-        settings.className += 'ce-settings';
-
-        return settings;
-
-    };
-
-    draw.defaultSettings = function () {
-
-        var div = document.createElement('div');
-
-        div.classList.add('ce-settings_default');
-
-        return div;
-
-    };
-
-    draw.pluginsSettings = function () {
-
-        var div = document.createElement('div');
-
-        div.classList.add('ce-settings_plugin');
-
-        return div;
-
-    };
-
-    draw.plusButton = function () {
-
-        var button = document.createElement('span');
-
-        button.className = 'ce-toolbar__plus';
-        // button.innerHTML = '<i class="ce-icon-plus"></i>';
-
-        return button;
-
-    };
-
-    /**
-     * Settings button in toolbar
-     */
-    draw.settingsButton = function () {
-
-        var toggler = document.createElement('span');
-
-        toggler.className = 'ce-toolbar__settings-btn';
-
-        /** Toggler button*/
-        toggler.innerHTML = '<i class="ce-icon-cog"></i>';
-
-        return toggler;
-
-    };
-
-    /**
-     * Redactor tools wrapper
-     */
-
-    draw.toolbox = function () {
-
-        var wrapper = document.createElement('div');
-
-        wrapper.className = 'ce-toolbar__tools';
-
-        return wrapper;
 
     };
 
