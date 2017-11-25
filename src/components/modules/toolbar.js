@@ -26,6 +26,18 @@ import $ from '../dom';
  * | [Header] [Image] [List] [Quote] ...   |
  * |_______________________________________|
  *
+ *
+ * Settings Panel — is an Element with block settings:
+ *
+ *   ____ Settings Panel ____
+ *  | ...................... |
+ *  | .   Tool Settings    . |
+ *  | ...................... |
+ *  | .  Default Settings  . |
+ *  | ...................... |
+ *  |________________________|
+ *
+ *
  * @class
  * @classdesc Toolbar module
  *
@@ -35,6 +47,11 @@ import $ from '../dom';
  * @property {Element} nodes.actions        - Zone with Block Settings and Remove Button
  * @property {Element} nodes.plusButton     - Button that opens or closes Toolbox
  * @property {Element} nodes.toolbox        - Container for tools
+ * @property {Element} nodes.settingsToggler - open/close Settings Panel button
+ * @property {Element} nodes.removeBlockButton - Remove Block button
+ * @property {Element} nodes.settings          - Settings Panel
+ * @property {Element} nodes.pluginSettings    - Plugin Settings section of Settings Panel
+ * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
  */
 class Toolbar {
 
@@ -156,14 +173,6 @@ class Toolbar {
 
     /**
      * Panel with block settings with 2 sections:
-     *
-     *   ____ Settings Panel ____
-     *  | ...................... |
-     *  | .   Tool Settings    . |
-     *  | ...................... |
-     *  | .  Default Settings  . |
-     *  | ...................... |
-     *  |________________________|
      *
      * @return {Element}
      */
