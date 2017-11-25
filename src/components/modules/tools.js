@@ -22,6 +22,8 @@
  * @property {EditorConfig} this.config - Editor config
  *
  */
+let util = require('../util');
+
 module.exports = class Tools {
 
     static get name() {
@@ -65,8 +67,6 @@ module.exports = class Tools {
         this.config = config;
         this.toolInstances = [];
 
-        this.util = require('../util');
-
     }
 
     /**
@@ -81,21 +81,27 @@ module.exports = class Tools {
 
         }
 
-        let plugins = this.getListOfPrepareFunctions();
+        let sequenceData = this.getListOfPrepareFunctions();
 
-        return this.util.sequence(plugins, this.success, this.fallback);
+        if (sequenceData.length === 0) {
+
+            return Promise.resolve();
+
+        }
+
+        return util.sequence(sequenceData, this.success, this.fallback);
 
     }
 
-    success(tool) {
+    success(data) {
 
-        console.log('Success!', tool);
+        console.log('Success!', data);
 
     }
 
-    fallback(tool) {
+    fallback(data) {
 
-        console.log('Module is not available', tool);
+        console.log('Module is not available', data);
 
     }
 
@@ -106,23 +112,20 @@ module.exports = class Tools {
      */
     getListOfPrepareFunctions() {
 
-        let toolConfig = this.defaultConfig;
         let toolPreparationList = [];
 
         for(let tool in this.config.tools) {
 
-            let toolClass = this.config.tools[tool],
-                toolName = toolClass.name.toLowerCase();
-
-            if (toolName in this.config.toolsConfig) {
-
-                toolConfig = this.config.toolsConfig[toolName];
-
-            }
+            let toolClass = this.config.tools[tool];
 
             if (toolClass.prepare && typeof toolClass.prepare === 'function') {
 
-                toolPreparationList.push(toolClass.prepare.bind(toolConfig));
+                toolPreparationList.push({
+                    function : toolClass.prepare,
+                    data : {
+                        toolName : tool
+                    }
+                });
 
             }
 
@@ -143,6 +146,28 @@ module.exports = class Tools {
     }
 
 };
+// let toolConfig = this.defaultConfig;
+// let toolPreparationList = [];
+//
+// for(let tool in this.config.tools) {
+//
+//     let toolClass = this.config.tools[tool],
+//         toolName = toolClass.name.toLowerCase();
+//
+//     if (toolName in this.config.toolsConfig) {
+//
+//         toolConfig = this.config.toolsConfig[toolName];
+//
+//     }
+//
+//     if (toolClass.prepare && typeof toolClass.prepare === 'function') {
+//
+//         toolPreparationList.push(toolClass.prepare.bind(toolConfig));
+//
+//     }
+//
+// }
+
 // /**
 // * Module working with plugins
 // */

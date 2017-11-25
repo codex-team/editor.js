@@ -4994,6 +4994,8 @@ var CodexEditor =
 	 * @property {EditorConfig} this.config - Editor config
 	 *
 	 */
+	var util = __webpack_require__(23);
+	
 	module.exports = function () {
 	    _createClass(Tools, [{
 	        key: 'state',
@@ -5046,8 +5048,6 @@ var CodexEditor =
 	
 	        this.config = config;
 	        this.toolInstances = [];
-	
-	        this.util = __webpack_require__(23);
 	    }
 	
 	    /**
@@ -5065,21 +5065,26 @@ var CodexEditor =
 	                return Promise.reject("Can't start without tools");
 	            }
 	
-	            var plugins = this.getListOfPrepareFunctions();
+	            var sequenceData = this.getListOfPrepareFunctions();
 	
-	            return this.util.sequence(plugins, this.success, this.fallback);
+	            if (sequenceData.length === 0) {
+	
+	                return Promise.resolve();
+	            }
+	
+	            return util.sequence(sequenceData, this.success, this.fallback);
 	        }
 	    }, {
 	        key: 'success',
-	        value: function success(tool) {
+	        value: function success(data) {
 	
-	            console.log('Success!', tool);
+	            console.log('Success!', data);
 	        }
 	    }, {
 	        key: 'fallback',
-	        value: function fallback(tool) {
+	        value: function fallback(data) {
 	
-	            console.log('Module is not available', tool);
+	            console.log('Module is not available', data);
 	        }
 	
 	        /**
@@ -5092,22 +5097,20 @@ var CodexEditor =
 	        key: 'getListOfPrepareFunctions',
 	        value: function getListOfPrepareFunctions() {
 	
-	            var toolConfig = this.defaultConfig;
 	            var toolPreparationList = [];
 	
 	            for (var tool in this.config.tools) {
 	
-	                var toolClass = this.config.tools[tool],
-	                    toolName = toolClass.name.toLowerCase();
-	
-	                if (toolName in this.config.toolsConfig) {
-	
-	                    toolConfig = this.config.toolsConfig[toolName];
-	                }
+	                var toolClass = this.config.tools[tool];
 	
 	                if (toolClass.prepare && typeof toolClass.prepare === 'function') {
 	
-	                    toolPreparationList.push(toolClass.prepare.bind(toolConfig));
+	                    toolPreparationList.push({
+	                        function: toolClass.prepare,
+	                        data: {
+	                            toolName: tool
+	                        }
+	                    });
 	                }
 	            }
 	
@@ -5129,6 +5132,28 @@ var CodexEditor =
 	
 	    return Tools;
 	}();
+	// let toolConfig = this.defaultConfig;
+	// let toolPreparationList = [];
+	//
+	// for(let tool in this.config.tools) {
+	//
+	//     let toolClass = this.config.tools[tool],
+	//         toolName = toolClass.name.toLowerCase();
+	//
+	//     if (toolName in this.config.toolsConfig) {
+	//
+	//         toolConfig = this.config.toolsConfig[toolName];
+	//
+	//     }
+	//
+	//     if (toolClass.prepare && typeof toolClass.prepare === 'function') {
+	//
+	//         toolPreparationList.push(toolClass.prepare.bind(toolConfig));
+	//
+	//     }
+	//
+	// }
+	
 	// /**
 	// * Module working with plugins
 	// */
@@ -5844,64 +5869,66 @@ var CodexEditor =
 	
 	
 	        /**
+	         * @typedef {Object} ChainData
+	         * @property {Object} data - data that will be called with success or fallback
+	         * @property {Function} function - function's that must be called asynchronically
+	         */
+	
+	        /**
 	         * Fires a promise sequence asyncronically
 	         *
-	         * @param chain
-	         * @param success
-	         * @param fallback
+	         * @param {Array} chains - list or ChainData's
+	         * @param {Function} success - success callback
+	         * @param {Function} fallback - callback that fires in case of errors
+	         *
 	         * @return {Promise}
 	         */
-	        value: function sequence(chain, success, fallback) {
+	        value: function sequence(chains, success, fallback) {
 	
 	            return new Promise(function (resolve, reject) {
 	
-	                if (chain.length === 0) {
+	                /**
+	                 * pluck each element from queue
+	                 * First, send resolved Promise as previous value
+	                 * Each plugins "prepare" method returns a Promise, that's why
+	                 * reduce current element will not be able to continue while can't get
+	                 * a resolved Promise
+	                 */
+	                chains.reduce(function (previousValue, currentValue, iteration) {
 	
-	                    resolve();
-	                } else {
+	                    return previousValue.then(function () {
+	                        return waitNextBlock(currentValue, success, fallback);
+	                    }).then(function () {
 	
-	                    /**
-	                     * pluck each element from queue
-	                     * First, send resolved Promise as previous value
-	                     * Each plugins "prepare" method returns a Promise, that's why
-	                     * reduce current element will not be able to continue while can't get
-	                     * a resolved Promise
-	                     */
-	                    chain.reduce(function (previousBlock, currentBlock, iteration) {
+	                        // finished
+	                        if (iteration == chains.length - 1) {
 	
-	                        return previousBlock.then(function () {
-	                            return waitNextBlock(currentBlock, success, fallback);
-	                        }).then(function () {
-	
-	                            // finished
-	                            if (iteration == chain.length - 1) {
-	
-	                                resolve();
-	                            }
-	                        });
-	                    }, Promise.resolve());
-	                }
+	                            resolve();
+	                        }
+	                    });
+	                }, Promise.resolve());
 	            });
 	
 	            /**
 	             * Decorator
 	             *
-	             * @param {Function} block
+	             * @param {ChainData} chainData
+	             *
 	             * @param {Function} success
 	             * @param {Function} fallback
 	             *
 	             * @return {Promise}
 	             */
-	            function waitNextBlock(block, success, fallback) {
+	            function waitNextBlock(chainData, success, fallback) {
 	
 	                return new Promise(function (resolve, reject) {
 	
-	                    block().then(function () {
+	                    chainData.function().then(function () {
 	
-	                        success.call(null, block);
-	                    }).then(resolve).catch(function (error) {
+	                        success.call(null, chainData.data);
+	                    }).then(resolve).catch(function () {
 	
-	                        fallback(error);
+	                        fallback(chainData.data);
 	
 	                        // anyway, go ahead even plugin is not available
 	                        resolve();

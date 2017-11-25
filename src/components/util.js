@@ -4,74 +4,74 @@
 module.exports = class Util {
 
     /**
+     * @typedef {Object} ChainData
+     * @property {Object} data - data that will be called with success or fallback
+     * @property {Function} function - function's that must be called asynchronically
+     */
+
+    /**
      * Fires a promise sequence asyncronically
      *
-     * @param chain
-     * @param success
-     * @param fallback
+     * @param {Array} chains - list or ChainData's
+     * @param {Function} success - success callback
+     * @param {Function} fallback - callback that fires in case of errors
+     *
      * @return {Promise}
      */
-    static sequence(chain, success, fallback) {
+    static sequence(chains, success, fallback) {
 
         return new Promise(function (resolve, reject) {
 
-            if (chain.length === 0) {
+            /**
+             * pluck each element from queue
+             * First, send resolved Promise as previous value
+             * Each plugins "prepare" method returns a Promise, that's why
+             * reduce current element will not be able to continue while can't get
+             * a resolved Promise
+             */
+            chains.reduce(function (previousValue, currentValue, iteration) {
 
-                resolve();
+                return previousValue
+                    .then(() => waitNextBlock(currentValue, success, fallback))
+                    .then(() => {
 
-            } else {
+                        // finished
+                        if (iteration == chains.length - 1) {
 
-                /**
-                 * pluck each element from queue
-                 * First, send resolved Promise as previous value
-                 * Each plugins "prepare" method returns a Promise, that's why
-                 * reduce current element will not be able to continue while can't get
-                 * a resolved Promise
-                 */
-                chain.reduce(function (previousBlock, currentBlock, iteration) {
+                            resolve();
 
-                    return previousBlock
-                        .then(() => waitNextBlock(currentBlock, success, fallback))
-                        .then(() => {
+                        }
 
-                            // finished
-                            if (iteration == chain.length - 1) {
+                    });
 
-                                resolve();
-
-                            }
-
-                        });
-
-                }, Promise.resolve());
-
-            }
+            }, Promise.resolve());
 
         });
 
         /**
          * Decorator
          *
-         * @param {Function} block
+         * @param {ChainData} chainData
+         *
          * @param {Function} success
          * @param {Function} fallback
          *
          * @return {Promise}
          */
-        function waitNextBlock(block, success, fallback) {
+        function waitNextBlock(chainData, success, fallback) {
 
             return new Promise(function (resolve, reject) {
 
-                block()
+                chainData.function()
                     .then(() => {
 
-                        success.call(null, block);
+                        success.call(null, chainData.data);
 
                     })
                     .then(resolve)
-                    .catch(function (error) {
+                    .catch(function () {
 
-                        fallback(error);
+                        fallback(chainData.data);
 
                         // anyway, go ahead even plugin is not available
                         resolve();
