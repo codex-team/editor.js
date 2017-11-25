@@ -23,12 +23,28 @@ const VERSION  = process.env.VERSION || pkg.version;
 var webpack                     = require('webpack');
 var ExtractTextWebpackPlugin    = require('extract-text-webpack-plugin');
 
+var fs = require('fs');
+
+/**
+ * Available CodeX Editor modules placed in components/modules folder
+ * They will required automatically.
+ * Folders and files starting with '_' will be skipped
+ * @type {Array}
+ */
+var editorModules = fs.readdirSync('./src/components/modules').filter( name => /.js$/.test(name) && name.substring(0,1) !== '_' );
+
+editorModules.forEach( name => {
+    console.log('Require modules/' + name);
+});
+
+
 module.exports = {
 
     entry: {
-        'codex-editor': './codex'
+        'codex-editor': './src/codex'
     },
     output: {
+        path: path.resolve(__dirname, 'build'),
         filename: '[name].js',
         library: [ 'CodexEditor' ]
     },
@@ -58,7 +74,8 @@ module.exports = {
         /** Pass variables into modules */
         new webpack.DefinePlugin({
             NODE_ENV: JSON.stringify(NODE_ENV),
-            VERSION: JSON.stringify(VERSION)
+            VERSION: JSON.stringify(VERSION),
+            editorModules: JSON.stringify(editorModules)
         }),
 
         /** Минифицируем CSS и JS */

@@ -1,4 +1,4 @@
-/**
+    /**
  * Module UI
  *
  * @type {UI}
@@ -36,6 +36,20 @@ let CSS_ = {
     editorZone    : 'ce-redactor'
 };
 
+
+/**
+ * @class
+ *
+ * @classdesc Makes CodeX Editor UI:
+ *                <codex-editor>
+ *                    <ce-redactor />
+ *                    <ce-toolbar />
+ *                    <ce-inline-toolbar />
+ *                </codex-editor>
+ *
+ * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
+ * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
+ */
 module.exports = class UI {
 
     /**
@@ -46,26 +60,24 @@ module.exports = class UI {
 
         return 'ui';
 
-    };
+    }
 
-    constructor(Editor) {
+    /**
+     * @constructor
+     *
+     * @param  {EditorConfig} config
+     */
+    constructor( config ) {
 
-        this.wrapper = null;
-
-        // this.Editor = Editor;
-        //
-        // this.modules = this.Editor.modules;
-
-
+        this.config = config;
+        this.Editor = null;
 
     }
 
 
     /**
-     * @param Editor
-     * @param Editor.modules {@link Tools#list}
-     * @param Editor.config {@link CodexEditor#configuration}
-     * @param Editor
+     * Editor modules setter
+     * @param {object} Editor - available editor modules
      */
     set state(Editor) {
 
@@ -80,11 +92,7 @@ module.exports = class UI {
      */
     prepare() {
 
-
-
         console.log('ui prepare fired');
-
-        this.wrapper = document.createElement('div');
 
         return;
 

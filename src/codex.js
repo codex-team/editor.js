@@ -17,14 +17,16 @@
  * ...
  */
 
+'use strict';
+
 /**
- * All Editor components
+ * Require Editor modules places in components/modules dir
  */
-const modules = [
-    require('./src/modules/dom'),
-    require('./src/modules/core'),
-    require('./src/modules/ui')
-];
+let modules = editorModules.map( module => {
+
+    return require('./components/modules/' + module );
+
+});
 
 /**
  * @class
@@ -50,9 +52,6 @@ module.exports = class CodexEditor {
      *
      */
     constructor(config) {
-
-        'use strict';
-
 
         /**
          * Configuration object
@@ -139,9 +138,17 @@ module.exports = class CodexEditor {
 
         modules.forEach( Module => {
 
-            this.moduleInstances[Module.name] = new Module({
-                config : this.configuration
-            });
+            try {
+
+                this.moduleInstances[Module.name] = new Module({
+                    config : this.configuration
+                });
+
+            } catch ( e ) {
+
+                console.log('Module %o skipped because %o', Module, e);
+
+            }
 
         });
 
@@ -202,7 +209,6 @@ module.exports = class CodexEditor {
         let prepareDecorator = module => module.prepare();
 
         return Promise.resolve()
-            .then(prepareDecorator(this.moduleInstances['core']))
             .then(prepareDecorator(this.moduleInstances['ui']))
             .catch(function (error) {
 
