@@ -100,6 +100,8 @@ module.exports = class Tools {
         this.toolsAvailable = {};
         this.toolsUnavailable = {};
 
+        this._list = [];
+
     }
 
     /**
@@ -205,6 +207,51 @@ module.exports = class Tools {
     getTools() {
 
         return this.toolInstances;
+
+    }
+
+    /**
+     * Return tool`a instance
+     *
+     * @param {String} tool — tool name
+     * @param {Object} data — initial data
+     */
+    construct(tool, data) {
+
+        let plugin = this.toolClasses[tool],
+            config = this.config.toolsConfig[tool];
+
+        let instance = new plugin(data, config);
+
+        return instance;
+
+    }
+
+    /**
+     * Insert tool instance for private list
+     *
+     * @param {Object} instance — tool instance
+     * @param {Number} index — tool index
+     */
+    add(instance, index) {
+
+        this._list[index] = instance;
+
+    }
+
+    /**
+     * Get tool instance by html element
+     *
+     * @param el
+     * @returns {*}
+     */
+    getByElement(el) {
+
+        let index = el.dataset.toolId;
+
+        if (!index) return null;
+
+        return this._list[index];
 
     }
 

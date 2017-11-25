@@ -74,7 +74,7 @@ var CodexEditor =
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var modules = (["eventDispatcher.js","tools.js","ui.js"]).map(function (module) {
+	var modules = (["content.js","eventDispatcher.js","renderer.js","tools.js","ui.js"]).map(function (module) {
 	
 	    return __webpack_require__(1)("./" + module);
 	});
@@ -406,40 +406,40 @@ var CodexEditor =
 		"./_callbacks.js": 3,
 		"./_caret": 4,
 		"./_caret.js": 4,
-		"./_content": 5,
-		"./_content.js": 5,
-		"./_destroyer": 6,
-		"./_destroyer.js": 6,
-		"./_listeners": 7,
-		"./_listeners.js": 7,
-		"./_notifications": 8,
-		"./_notifications.js": 8,
-		"./_parser": 9,
-		"./_parser.js": 9,
-		"./_paste": 10,
-		"./_paste.js": 10,
-		"./_renderer": 11,
-		"./_renderer.js": 11,
-		"./_sanitizer": 12,
-		"./_sanitizer.js": 12,
-		"./_saver": 14,
-		"./_saver.js": 14,
-		"./_transport": 15,
-		"./_transport.js": 15,
+		"./_destroyer": 5,
+		"./_destroyer.js": 5,
+		"./_listeners": 6,
+		"./_listeners.js": 6,
+		"./_notifications": 7,
+		"./_notifications.js": 7,
+		"./_parser": 8,
+		"./_parser.js": 8,
+		"./_paste": 9,
+		"./_paste.js": 9,
+		"./_sanitizer": 10,
+		"./_sanitizer.js": 10,
+		"./_saver": 12,
+		"./_saver.js": 12,
+		"./_transport": 13,
+		"./_transport.js": 13,
+		"./content": 14,
+		"./content.js": 14,
 		"./eventDispatcher": 16,
 		"./eventDispatcher.js": 16,
-		"./toolbar/inline": 17,
-		"./toolbar/inline.js": 17,
-		"./toolbar/settings": 18,
-		"./toolbar/settings.js": 18,
-		"./toolbar/toolbar": 19,
-		"./toolbar/toolbar.js": 19,
-		"./toolbar/toolbox": 20,
-		"./toolbar/toolbox.js": 20,
-		"./tools": 21,
-		"./tools.js": 21,
-		"./ui": 22,
-		"./ui.js": 22
+		"./renderer": 17,
+		"./renderer.js": 17,
+		"./toolbar/inline": 19,
+		"./toolbar/inline.js": 19,
+		"./toolbar/settings": 20,
+		"./toolbar/settings.js": 20,
+		"./toolbar/toolbar": 21,
+		"./toolbar/toolbar.js": 21,
+		"./toolbar/toolbox": 22,
+		"./toolbar/toolbox.js": 22,
+		"./tools": 23,
+		"./tools.js": 23,
+		"./ui": 24,
+		"./ui.js": 24
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -1654,736 +1654,6 @@ var CodexEditor =
 
 	'use strict';
 	
-	/**
-	 * Codex Editor Content Module
-	 * Works with DOM
-	 *
-	 * @module Codex Editor content module
-	 *
-	 * @author Codex Team
-	 * @version 1.3.13
-	 *
-	 * @description Module works with Elements that have been appended to the main DOM
-	 */
-	
-	module.exports = function (content) {
-	
-	    var editor = codex.editor;
-	
-	    /**
-	     * Links to current active block
-	     * @type {null | Element}
-	     */
-	    content.currentNode = null;
-	
-	    /**
-	     * clicked in redactor area
-	     * @type {null | Boolean}
-	     */
-	    content.editorAreaHightlighted = null;
-	
-	    /**
-	     * @deprecated
-	     * Synchronizes redactor with original textarea
-	     */
-	    content.sync = function () {
-	
-	        editor.core.log('syncing...');
-	
-	        /**
-	         * Save redactor content to editor.state
-	         */
-	        editor.state.html = editor.nodes.redactor.innerHTML;
-	    };
-	
-	    /**
-	     * Appends background to the block
-	     *
-	     * @description add CSS class to highlight visually first-level block area
-	     */
-	    content.markBlock = function () {
-	
-	        editor.content.currentNode.classList.add(editor.ui.className.BLOCK_HIGHLIGHTED);
-	    };
-	
-	    /**
-	     * Clear background
-	     *
-	     * @description clears styles that highlights block
-	     */
-	    content.clearMark = function () {
-	
-	        if (editor.content.currentNode) {
-	
-	            editor.content.currentNode.classList.remove(editor.ui.className.BLOCK_HIGHLIGHTED);
-	        }
-	    };
-	
-	    /**
-	     * Finds first-level block
-	     *
-	     * @param {Element} node - selected or clicked in redactors area node
-	     * @protected
-	     *
-	     * @description looks for first-level block.
-	     * gets parent while node is not first-level
-	     */
-	    content.getFirstLevelBlock = function (node) {
-	
-	        if (!editor.core.isDomNode(node)) {
-	
-	            node = node.parentNode;
-	        }
-	
-	        if (node === editor.nodes.redactor || node === document.body) {
-	
-	            return null;
-	        } else {
-	
-	            while (!node.classList.contains(editor.ui.className.BLOCK_CLASSNAME)) {
-	
-	                node = node.parentNode;
-	            }
-	
-	            return node;
-	        }
-	    };
-	
-	    /**
-	     * Trigger this event when working node changed
-	     * @param {Element} targetNode - first-level of this node will be current
-	     * @protected
-	     *
-	     * @description If targetNode is first-level then we set it as current else we look for parents to find first-level
-	     */
-	    content.workingNodeChanged = function (targetNode) {
-	
-	        /** Clear background from previous marked block before we change */
-	        editor.content.clearMark();
-	
-	        if (!targetNode) {
-	
-	            return;
-	        }
-	
-	        content.currentNode = content.getFirstLevelBlock(targetNode);
-	    };
-	
-	    /**
-	     * Replaces one redactor block with another
-	     * @protected
-	     * @param {Element} targetBlock - block to replace. Mostly currentNode.
-	     * @param {Element} newBlock
-	     * @param {string} newBlockType - type of new block; we need to store it to data-attribute
-	     *
-	     * [!] Function does not saves old block content.
-	     *     You can get it manually and pass with newBlock.innerHTML
-	     */
-	    content.replaceBlock = function (targetBlock, newBlock) {
-	
-	        if (!targetBlock || !newBlock) {
-	
-	            editor.core.log('replaceBlock: missed params');
-	            return;
-	        }
-	
-	        /** If target-block is not a frist-level block, then we iterate parents to find it */
-	        while (!targetBlock.classList.contains(editor.ui.className.BLOCK_CLASSNAME)) {
-	
-	            targetBlock = targetBlock.parentNode;
-	        }
-	
-	        /** Replacing */
-	        editor.nodes.redactor.replaceChild(newBlock, targetBlock);
-	
-	        /**
-	         * Set new node as current
-	         */
-	        editor.content.workingNodeChanged(newBlock);
-	
-	        /**
-	         * Add block handlers
-	         */
-	        editor.ui.addBlockHandlers(newBlock);
-	
-	        /**
-	         * Save changes
-	         */
-	        editor.ui.saveInputs();
-	    };
-	
-	    /**
-	     * @protected
-	     *
-	     * Inserts new block to redactor
-	     * Wrapps block into a DIV with BLOCK_CLASSNAME class
-	     *
-	     * @param blockData          {object}
-	     * @param blockData.block    {Element}   element with block content
-	     * @param blockData.type     {string}    block plugin
-	     * @param needPlaceCaret     {bool}      pass true to set caret in new block
-	     *
-	     */
-	    content.insertBlock = function (blockData, needPlaceCaret) {
-	
-	        var workingBlock = editor.content.currentNode,
-	            newBlockContent = blockData.block,
-	            blockType = blockData.type,
-	            isStretched = blockData.stretched;
-	
-	        var newBlock = composeNewBlock_(newBlockContent, blockType, isStretched);
-	
-	        if (workingBlock) {
-	
-	            editor.core.insertAfter(workingBlock, newBlock);
-	        } else {
-	
-	            /**
-	             * If redactor is empty, append as first child
-	             */
-	            editor.nodes.redactor.appendChild(newBlock);
-	        }
-	
-	        /**
-	         * Block handler
-	         */
-	        editor.ui.addBlockHandlers(newBlock);
-	
-	        /**
-	         * Set new node as current
-	         */
-	        editor.content.workingNodeChanged(newBlock);
-	
-	        /**
-	         * Save changes
-	         */
-	        editor.ui.saveInputs();
-	
-	        if (needPlaceCaret) {
-	
-	            /**
-	             * If we don't know input index then we set default value -1
-	             */
-	            var currentInputIndex = editor.caret.getCurrentInputIndex() || -1;
-	
-	            if (currentInputIndex == -1) {
-	
-	                var editableElement = newBlock.querySelector('[contenteditable]'),
-	                    emptyText = document.createTextNode('');
-	
-	                editableElement.appendChild(emptyText);
-	                editor.caret.set(editableElement, 0, 0);
-	
-	                editor.toolbar.move();
-	                editor.toolbar.showPlusButton();
-	            } else {
-	
-	                if (currentInputIndex === editor.state.inputs.length - 1) return;
-	
-	                /** Timeout for browsers execution */
-	                window.setTimeout(function () {
-	
-	                    /** Setting to the new input */
-	                    editor.caret.setToNextBlock(currentInputIndex);
-	                    editor.toolbar.move();
-	                    editor.toolbar.open();
-	                }, 10);
-	            }
-	        }
-	
-	        /**
-	         * Block is inserted, wait for new click that defined focusing on editors area
-	         * @type {boolean}
-	         */
-	        content.editorAreaHightlighted = false;
-	    };
-	
-	    /**
-	     * Replaces blocks with saving content
-	     * @protected
-	     * @param {Element} noteToReplace
-	     * @param {Element} newNode
-	     * @param {Element} blockType
-	     */
-	    content.switchBlock = function (blockToReplace, newBlock, tool) {
-	
-	        tool = tool || editor.content.currentNode.dataset.tool;
-	        var newBlockComposed = composeNewBlock_(newBlock, tool);
-	
-	        /** Replacing */
-	        editor.content.replaceBlock(blockToReplace, newBlockComposed);
-	
-	        /** Save new Inputs when block is changed */
-	        editor.ui.saveInputs();
-	    };
-	
-	    /**
-	     * Iterates between child noted and looking for #text node on deepest level
-	     * @protected
-	     *
-	     * @param {Element} block - node where find
-	     * @param {int} postiton - starting postion
-	     *      Example: childNodex.length to find from the end
-	     *               or 0 to find from the start
-	     * @return {Text} block
-	     * @uses DFS
-	     */
-	    content.getDeepestTextNodeFromPosition = function (block, position) {
-	
-	        /**
-	         * Clear Block from empty and useless spaces with trim.
-	         * Such nodes we should remove
-	         */
-	        var blockChilds = block.childNodes,
-	            index,
-	            node,
-	            text;
-	
-	        for (index = 0; index < blockChilds.length; index++) {
-	
-	            node = blockChilds[index];
-	
-	            if (node.nodeType == editor.core.nodeTypes.TEXT) {
-	
-	                text = node.textContent.trim();
-	
-	                /** Text is empty. We should remove this child from node before we start DFS
-	                 * decrease the quantity of childs.
-	                 */
-	                if (text === '') {
-	
-	                    block.removeChild(node);
-	                    position--;
-	                }
-	            }
-	        }
-	
-	        if (block.childNodes.length === 0) {
-	
-	            return document.createTextNode('');
-	        }
-	
-	        /** Setting default position when we deleted all empty nodes */
-	        if (position < 0) position = 1;
-	
-	        var lookingFromStart = false;
-	
-	        /** For looking from START */
-	        if (position === 0) {
-	
-	            lookingFromStart = true;
-	            position = 1;
-	        }
-	
-	        while (position) {
-	
-	            /** initial verticle of node. */
-	            if (lookingFromStart) {
-	
-	                block = block.childNodes[0];
-	            } else {
-	
-	                block = block.childNodes[position - 1];
-	            }
-	
-	            if (block.nodeType == editor.core.nodeTypes.TAG) {
-	
-	                position = block.childNodes.length;
-	            } else if (block.nodeType == editor.core.nodeTypes.TEXT) {
-	
-	                position = 0;
-	            }
-	        }
-	
-	        return block;
-	    };
-	
-	    /**
-	     * @private
-	     * @param {Element} block - current plugins render
-	     * @param {String} tool - plugins name
-	     * @param {Boolean} isStretched - make stretched block or not
-	     *
-	     * @description adds necessary information to wrap new created block by first-level holder
-	     */
-	    var composeNewBlock_ = function composeNewBlock_(block, tool, isStretched) {
-	
-	        var newBlock = editor.draw.node('DIV', editor.ui.className.BLOCK_CLASSNAME, {}),
-	            blockContent = editor.draw.node('DIV', editor.ui.className.BLOCK_CONTENT, {});
-	
-	        blockContent.appendChild(block);
-	        newBlock.appendChild(blockContent);
-	
-	        if (isStretched) {
-	
-	            blockContent.classList.add(editor.ui.className.BLOCK_STRETCHED);
-	        }
-	
-	        newBlock.dataset.tool = tool;
-	        return newBlock;
-	    };
-	
-	    /**
-	     * Returns Range object of current selection
-	     * @protected
-	     */
-	    content.getRange = function () {
-	
-	        var selection = window.getSelection().getRangeAt(0);
-	
-	        return selection;
-	    };
-	
-	    /**
-	     * Divides block in two blocks (after and before caret)
-	     *
-	     * @protected
-	     * @param {int} inputIndex - target input index
-	     *
-	     * @description splits current input content to the separate blocks
-	     * When enter is pressed among the words, that text will be splited.
-	     */
-	    content.splitBlock = function (inputIndex) {
-	
-	        var selection = window.getSelection(),
-	            anchorNode = selection.anchorNode,
-	            anchorNodeText = anchorNode.textContent,
-	            caretOffset = selection.anchorOffset,
-	            textBeforeCaret,
-	            textNodeBeforeCaret,
-	            textAfterCaret,
-	            textNodeAfterCaret;
-	
-	        var currentBlock = editor.content.currentNode.querySelector('[contentEditable]');
-	
-	        textBeforeCaret = anchorNodeText.substring(0, caretOffset);
-	        textAfterCaret = anchorNodeText.substring(caretOffset);
-	
-	        textNodeBeforeCaret = document.createTextNode(textBeforeCaret);
-	
-	        if (textAfterCaret) {
-	
-	            textNodeAfterCaret = document.createTextNode(textAfterCaret);
-	        }
-	
-	        var previousChilds = [],
-	            nextChilds = [],
-	            reachedCurrent = false;
-	
-	        if (textNodeAfterCaret) {
-	
-	            nextChilds.push(textNodeAfterCaret);
-	        }
-	
-	        for (var i = 0, child; !!(child = currentBlock.childNodes[i]); i++) {
-	
-	            if (child != anchorNode) {
-	
-	                if (!reachedCurrent) {
-	
-	                    previousChilds.push(child);
-	                } else {
-	
-	                    nextChilds.push(child);
-	                }
-	            } else {
-	
-	                reachedCurrent = true;
-	            }
-	        }
-	
-	        /** Clear current input */
-	        editor.state.inputs[inputIndex].innerHTML = '';
-	
-	        /**
-	         * Append all childs founded before anchorNode
-	         */
-	        var previousChildsLength = previousChilds.length;
-	
-	        for (i = 0; i < previousChildsLength; i++) {
-	
-	            editor.state.inputs[inputIndex].appendChild(previousChilds[i]);
-	        }
-	
-	        editor.state.inputs[inputIndex].appendChild(textNodeBeforeCaret);
-	
-	        /**
-	         * Append text node which is after caret
-	         */
-	        var nextChildsLength = nextChilds.length,
-	            newNode = document.createElement('div');
-	
-	        for (i = 0; i < nextChildsLength; i++) {
-	
-	            newNode.appendChild(nextChilds[i]);
-	        }
-	
-	        newNode = newNode.innerHTML;
-	
-	        /** This type of block creates when enter is pressed */
-	        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
-	
-	        /**
-	         * Make new paragraph with text after caret
-	         */
-	        editor.content.insertBlock({
-	            type: NEW_BLOCK_TYPE,
-	            block: editor.tools[NEW_BLOCK_TYPE].render({
-	                text: newNode
-	            })
-	        }, true);
-	    };
-	
-	    /**
-	     * Merges two blocks — current and target
-	     * If target index is not exist, then previous will be as target
-	     *
-	     * @protected
-	     * @param {int} currentInputIndex
-	     * @param {int} targetInputIndex
-	     *
-	     * @description gets two inputs indexes and merges into one
-	     */
-	    content.mergeBlocks = function (currentInputIndex, targetInputIndex) {
-	
-	        /** If current input index is zero, then prevent method execution */
-	        if (currentInputIndex === 0) {
-	
-	            return;
-	        }
-	
-	        var targetInput,
-	            currentInputContent = editor.state.inputs[currentInputIndex].innerHTML;
-	
-	        if (!targetInputIndex) {
-	
-	            targetInput = editor.state.inputs[currentInputIndex - 1];
-	        } else {
-	
-	            targetInput = editor.state.inputs[targetInputIndex];
-	        }
-	
-	        targetInput.innerHTML += currentInputContent;
-	    };
-	
-	    /**
-	     * Iterates all right siblings and parents, which has right siblings
-	     * while it does not reached the first-level block
-	     *
-	     * @param {Element} node
-	     * @return {boolean}
-	     */
-	    content.isLastNode = function (node) {
-	
-	        // console.log('погнали перебор родителей');
-	
-	        var allChecked = false;
-	
-	        while (!allChecked) {
-	
-	            // console.log('Смотрим на %o', node);
-	            // console.log('Проверим, пустые ли соседи справа');
-	
-	            if (!allSiblingsEmpty_(node)) {
-	
-	                // console.log('Есть непустые соседи. Узел не последний. Выходим.');
-	                return false;
-	            }
-	
-	            node = node.parentNode;
-	
-	            /**
-	             * Проверяем родителей до тех пор, пока не найдем блок первого уровня
-	             */
-	            if (node.classList.contains(editor.ui.className.BLOCK_CONTENT)) {
-	
-	                allChecked = true;
-	            }
-	        }
-	
-	        return true;
-	    };
-	
-	    /**
-	     * Checks if all element right siblings is empty
-	     * @param node
-	     */
-	    var allSiblingsEmpty_ = function allSiblingsEmpty_(node) {
-	
-	        /**
-	         * Нужно убедиться, что после пустого соседа ничего нет
-	         */
-	        var sibling = node.nextSibling;
-	
-	        while (sibling) {
-	
-	            if (sibling.textContent.length) {
-	
-	                return false;
-	            }
-	
-	            sibling = sibling.nextSibling;
-	        }
-	
-	        return true;
-	    };
-	
-	    /**
-	     * @public
-	     *
-	     * @param {string} htmlData - html content as string
-	     * @param {string} plainData - plain text
-	     * @return {string} - html content as string
-	     */
-	    content.wrapTextWithParagraphs = function (htmlData, plainData) {
-	
-	        if (!htmlData.trim()) {
-	
-	            return wrapPlainTextWithParagraphs(plainData);
-	        }
-	
-	        var wrapper = document.createElement('DIV'),
-	            newWrapper = document.createElement('DIV'),
-	            i,
-	            paragraph,
-	            firstLevelBlocks = ['DIV', 'P'],
-	            blockTyped,
-	            node;
-	
-	        /**
-	         * Make HTML Element to Wrap Text
-	         * It allows us to work with input data as HTML content
-	         */
-	        wrapper.innerHTML = htmlData;
-	        paragraph = document.createElement('P');
-	
-	        for (i = 0; i < wrapper.childNodes.length; i++) {
-	
-	            node = wrapper.childNodes[i];
-	
-	            blockTyped = firstLevelBlocks.indexOf(node.tagName) != -1;
-	
-	            /**
-	             * If node is first-levet
-	             * we add this node to our new wrapper
-	             */
-	            if (blockTyped) {
-	
-	                /**
-	                 * If we had splitted inline nodes to paragraph before
-	                 */
-	                if (paragraph.childNodes.length) {
-	
-	                    newWrapper.appendChild(paragraph.cloneNode(true));
-	
-	                    /** empty paragraph */
-	                    paragraph = null;
-	                    paragraph = document.createElement('P');
-	                }
-	
-	                newWrapper.appendChild(node.cloneNode(true));
-	            } else {
-	
-	                /** Collect all inline nodes to one as paragraph */
-	                paragraph.appendChild(node.cloneNode(true));
-	
-	                /** if node is last we should append this node to paragraph and paragraph to new wrapper */
-	                if (i == wrapper.childNodes.length - 1) {
-	
-	                    newWrapper.appendChild(paragraph.cloneNode(true));
-	                }
-	            }
-	        }
-	
-	        return newWrapper.innerHTML;
-	    };
-	
-	    /**
-	     * Splits strings on new line and wraps paragraphs with <p> tag
-	     * @param plainText
-	     * @returns {string}
-	     */
-	    var wrapPlainTextWithParagraphs = function wrapPlainTextWithParagraphs(plainText) {
-	
-	        if (!plainText) return '';
-	
-	        return '<p>' + plainText.split('\n\n').join('</p><p>') + '</p>';
-	    };
-	
-	    /**
-	    * Finds closest Contenteditable parent from Element
-	    * @param {Element} node     element looking from
-	    * @return {Element} node    contenteditable
-	    */
-	    content.getEditableParent = function (node) {
-	
-	        while (node && node.contentEditable != 'true') {
-	
-	            node = node.parentNode;
-	        }
-	
-	        return node;
-	    };
-	
-	    /**
-	    * Clear editors content
-	     *
-	     * @param {Boolean} all — if true, delete all article data (content, id, etc.)
-	    */
-	    content.clear = function (all) {
-	
-	        editor.nodes.redactor.innerHTML = '';
-	        editor.content.sync();
-	        editor.ui.saveInputs();
-	        if (all) {
-	
-	            editor.state.blocks = {};
-	        } else if (editor.state.blocks) {
-	
-	            editor.state.blocks.items = [];
-	        }
-	
-	        editor.content.currentNode = null;
-	    };
-	
-	    /**
-	    *
-	     * Load new data to editor
-	     * If editor is not empty, just append articleData.items
-	     *
-	    * @param articleData.items
-	    */
-	    content.load = function (articleData) {
-	
-	        var currentContent = Object.assign({}, editor.state.blocks);
-	
-	        editor.content.clear();
-	
-	        if (!Object.keys(currentContent).length) {
-	
-	            editor.state.blocks = articleData;
-	        } else if (!currentContent.items) {
-	
-	            currentContent.items = articleData.items;
-	            editor.state.blocks = currentContent;
-	        } else {
-	
-	            currentContent.items = currentContent.items.concat(articleData.items);
-	            editor.state.blocks = currentContent;
-	        }
-	
-	        editor.renderer.makeBlocksFromData();
-	    };
-	
-	    return content;
-	}({});
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
 	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	/**
@@ -2471,7 +1741,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -2643,7 +1913,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -2856,7 +2126,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -2895,7 +2165,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -3147,199 +2417,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	/**
-	 * Codex Editor Renderer Module
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
-	
-	module.exports = function (renderer) {
-	
-	    var editor = codex.editor;
-	
-	    /**
-	     * Asyncronously parses input JSON to redactor blocks
-	     */
-	    renderer.makeBlocksFromData = function () {
-	
-	        /**
-	         * If redactor is empty, add first paragraph to start writing
-	         */
-	        if (editor.core.isEmpty(editor.state.blocks) || !editor.state.blocks.items.length) {
-	
-	            editor.ui.addInitialBlock();
-	            return;
-	        }
-	
-	        Promise.resolve()
-	
-	        /** First, get JSON from state */
-	        .then(function () {
-	
-	            return editor.state.blocks;
-	        })
-	
-	        /** Then, start to iterate they */
-	        .then(editor.renderer.appendBlocks)
-	
-	        /** Write log if something goes wrong */
-	        .catch(function (error) {
-	
-	            editor.core.log('Error while parsing JSON: %o', 'error', error);
-	        });
-	    };
-	
-	    /**
-	     * Parses JSON to blocks
-	     * @param {object} data
-	     * @return Primise -> nodeList
-	     */
-	    renderer.appendBlocks = function (data) {
-	
-	        var blocks = data.items;
-	
-	        /**
-	         * Sequence of one-by-one blocks appending
-	         * Uses to save blocks order after async-handler
-	         */
-	        var nodeSequence = Promise.resolve();
-	
-	        for (var index = 0; index < blocks.length; index++) {
-	
-	            /** Add node to sequence at specified index */
-	            editor.renderer.appendNodeAtIndex(nodeSequence, blocks, index);
-	        }
-	    };
-	
-	    /**
-	     * Append node at specified index
-	     */
-	    renderer.appendNodeAtIndex = function (nodeSequence, blocks, index) {
-	
-	        /** We need to append node to sequence */
-	        nodeSequence
-	
-	        /** first, get node async-aware */
-	        .then(function () {
-	
-	            return editor.renderer.getNodeAsync(blocks, index);
-	        })
-	
-	        /**
-	         * second, compose editor-block from JSON object
-	         */
-	        .then(editor.renderer.createBlockFromData)
-	
-	        /**
-	         * now insert block to redactor
-	         */
-	        .then(function (blockData) {
-	
-	            /**
-	             * blockData has 'block', 'type' and 'stretched' information
-	             */
-	            editor.content.insertBlock(blockData);
-	
-	            /** Pass created block to next step */
-	            return blockData.block;
-	        })
-	
-	        /** Log if something wrong with node */
-	        .catch(function (error) {
-	
-	            editor.core.log('Node skipped while parsing because %o', 'error', error);
-	        });
-	    };
-	
-	    /**
-	     * Asynchronously returns block data from blocksList by index
-	     * @return Promise to node
-	     */
-	    renderer.getNodeAsync = function (blocksList, index) {
-	
-	        return Promise.resolve().then(function () {
-	
-	            return {
-	                tool: blocksList[index],
-	                position: index
-	            };
-	        });
-	    };
-	
-	    /**
-	     * Creates editor block by JSON-data
-	     *
-	     * @uses render method of each plugin
-	     *
-	     * @param {Object} toolData.tool
-	     *                              { header : {
-	     *                                                text: '',
-	     *                                                type: 'H3', ...
-	     *                                            }
-	     *                               }
-	     * @param {Number} toolData.position - index in input-blocks array
-	     * @return {Object} with type and Element
-	     */
-	    renderer.createBlockFromData = function (toolData) {
-	
-	        /** New parser */
-	        var block,
-	            tool = toolData.tool,
-	            pluginName = tool.type;
-	
-	        /** Get first key of object that stores plugin name */
-	        // for (var pluginName in blockData) break;
-	
-	        /** Check for plugin existance */
-	        if (!editor.tools[pluginName]) {
-	
-	            throw Error('Plugin \xAB' + pluginName + '\xBB not found');
-	        }
-	
-	        /** Check for plugin having render method */
-	        if (typeof editor.tools[pluginName].render != 'function') {
-	
-	            throw Error('Plugin \xAB' + pluginName + '\xBB must have \xABrender\xBB method');
-	        }
-	
-	        if (editor.tools[pluginName].available === false) {
-	
-	            block = editor.draw.unavailableBlock();
-	
-	            block.innerHTML = editor.tools[pluginName].loadingMessage;
-	
-	            /**
-	            * Saver will extract data from initial block data by position in array
-	            */
-	            block.dataset.inputPosition = toolData.position;
-	        } else {
-	
-	            /** New Parser */
-	            block = editor.tools[pluginName].render(tool.data);
-	        }
-	
-	        /** is first-level block stretched */
-	        var stretched = editor.tools[pluginName].isStretched || false;
-	
-	        /** Retrun type and block */
-	        return {
-	            type: pluginName,
-	            block: block,
-	            stretched: stretched
-	        };
-	    };
-	
-	    return renderer;
-	}({});
-
-/***/ }),
-/* 12 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3351,7 +2429,7 @@ var CodexEditor =
 	module.exports = function (sanitizer) {
 	
 	    /** HTML Janitor library */
-	    var janitor = __webpack_require__(13);
+	    var janitor = __webpack_require__(11);
 	
 	    /** Codex Editor */
 	    var editor = codex.editor;
@@ -3421,7 +2499,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 13 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -3612,7 +2690,7 @@ var CodexEditor =
 
 
 /***/ }),
-/* 14 */
+/* 12 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -3772,7 +2850,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 15 */
+/* 13 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -3902,6 +2980,1131 @@ var CodexEditor =
 	}({});
 
 /***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Codex Editor Content Module
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Works with DOM
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @class Content
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @classdesc Class works provides COdex Editor appearance logic
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Codex Team
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @version 2.0.0
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+	
+	var _dom = __webpack_require__(15);
+	
+	var _dom2 = _interopRequireDefault(_dom);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	module.exports = function () {
+	    _createClass(Content, null, [{
+	        key: 'name',
+	
+	
+	        /**
+	         * Module key name
+	         * @returns {string}
+	         */
+	        get: function get() {
+	
+	            return 'Content';
+	        }
+	
+	        /**
+	         * @constructor
+	         *
+	         * @param {EditorConfig} config
+	         */
+	
+	    }]);
+	
+	    function Content(config) {
+	        _classCallCheck(this, Content);
+	
+	        this.config = config;
+	        this.Editor = null;
+	
+	        this.CSS = {
+	            block: 'ce-block',
+	            content: 'ce-block__content',
+	            stretched: 'ce-block--stretched',
+	            highlighted: 'ce-block--highlighted'
+	        };
+	
+	        this._currentNode = null;
+	        this._currentIndex = 0;
+	    }
+	
+	    /**
+	     * Editor modules setter
+	     * @param {object} Editor
+	     */
+	
+	
+	    _createClass(Content, [{
+	        key: 'composeBlock_',
+	
+	
+	        /**
+	         * @private
+	         * @param pluginHTML
+	         * @param {Boolean} isStretched - make stretched block or not
+	         *
+	         * @description adds necessary information to wrap new created block by first-level holder
+	         */
+	        value: function composeBlock_(pluginHTML) {
+	            var isStretched = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+	
+	
+	            var block = _dom2.default.make('DIV', this.CSS.block),
+	                blockContent = _dom2.default.make('DIV', this.CSS.content);
+	
+	            blockContent.appendChild(pluginHTML);
+	            block.appendChild(blockContent);
+	
+	            if (isStretched) {
+	
+	                blockContent.classList.add(this.CSS.stretched);
+	            }
+	
+	            block.dataset.toolId = this._currentIndex++;
+	
+	            return block;
+	        }
+	    }, {
+	        key: 'getFirstLevelBlock',
+	
+	
+	        /**
+	         * Finds first-level block
+	         * @description looks for first-level block.
+	         * gets parent while node is not first-level
+	         *
+	         * @param {Element} node - selected or clicked in redactors area node
+	         * @protected
+	         *
+	         */
+	        value: function getFirstLevelBlock(node) {
+	
+	            if (!_dom2.default.isNode(node)) {
+	
+	                node = node.parentNode;
+	            }
+	
+	            if (node === this.Editor.ui.nodes.redactor || node === document.body) {
+	
+	                return null;
+	            } else {
+	
+	                while (!node.classList.contains(this.CSS.block)) {
+	
+	                    node = node.parentNode;
+	                }
+	
+	                return node;
+	            }
+	        }
+	    }, {
+	        key: 'insertBlock',
+	
+	
+	        /**
+	         * Insert new block to working area
+	         *
+	         * @param {HTMLElement} tool
+	         *
+	         * @returns {Number} tool index
+	         *
+	         */
+	        value: function insertBlock(tool) {
+	
+	            var newBlock = this.composeBlock_(tool);
+	
+	            if (this.currentNode) {
+	
+	                this.currentNode.insertAdjacentElement('afterend', newBlock);
+	            } else {
+	
+	                /**
+	                 * If redactor is empty, append as first child
+	                 */
+	                this.Editor.ui.nodes.redactor.appendChild(newBlock);
+	            }
+	
+	            /**
+	             * Set new node as current
+	             */
+	            this.currentNode = newBlock;
+	
+	            return newBlock.dataset.toolId;
+	        }
+	    }, {
+	        key: 'state',
+	        set: function set(Editor) {
+	
+	            this.Editor = Editor;
+	        }
+	
+	        /**
+	         * Get current working node
+	         *
+	         * @returns {null|HTMLElement}
+	         */
+	
+	    }, {
+	        key: 'currentNode',
+	        get: function get() {
+	
+	            return this._currentNode;
+	        }
+	
+	        /**
+	         * Set working node. Working node should be first level block, so we find it before set one to _currentNode property
+	         *
+	         * @param {HTMLElement} node
+	         */
+	        ,
+	        set: function set(node) {
+	
+	            var firstLevelBlock = this.getFirstLevelBlock(node);
+	
+	            this._currentNode = firstLevelBlock;
+	        }
+	    }]);
+	
+	    return Content;
+	}();
+	
+	// module.exports = (function (content) {
+	//
+	//     let editor = codex.editor;
+	//
+	//     /**
+	//      * Links to current active block
+	//      * @type {null | Element}
+	//      */
+	//     content.currentNode = null;
+	//
+	//     /**
+	//      * clicked in redactor area
+	//      * @type {null | Boolean}
+	//      */
+	//     content.editorAreaHightlighted = null;
+	//
+	//     /**
+	//      * @deprecated
+	//      * Synchronizes redactor with original textarea
+	//      */
+	//     content.sync = function () {
+	//
+	//         editor.core.log('syncing...');
+	//
+	//         /**
+	//          * Save redactor content to editor.state
+	//          */
+	//         editor.state.html = editor.nodes.redactor.innerHTML;
+	//
+	//     };
+	//
+	//     /**
+	//      * Appends background to the block
+	//      *
+	//      * @description add CSS class to highlight visually first-level block area
+	//      */
+	//     content.markBlock = function () {
+	//
+	//         editor.content.currentNode.classList.add(editor.ui.className.BLOCK_HIGHLIGHTED);
+	//
+	//     };
+	//
+	//     /**
+	//      * Clear background
+	//      *
+	//      * @description clears styles that highlights block
+	//      */
+	//     content.clearMark = function () {
+	//
+	//         if (editor.content.currentNode) {
+	//
+	//             editor.content.currentNode.classList.remove(editor.ui.className.BLOCK_HIGHLIGHTED);
+	//
+	//         }
+	//
+	//     };
+	//
+	//     /**
+	//      * Finds first-level block
+	//      *
+	//      * @param {Element} node - selected or clicked in redactors area node
+	//      * @protected
+	//      *
+	//      * @description looks for first-level block.
+	//      * gets parent while node is not first-level
+	//      */
+	//     content.getFirstLevelBlock = function (node) {
+	//
+	//         if (!editor.core.isDomNode(node)) {
+	//
+	//             node = node.parentNode;
+	//
+	//         }
+	//
+	//         if (node === editor.nodes.redactor || node === document.body) {
+	//
+	//             return null;
+	//
+	//         } else {
+	//
+	//             while(!node.classList.contains(editor.ui.className.BLOCK_CLASSNAME)) {
+	//
+	//                 node = node.parentNode;
+	//
+	//             }
+	//
+	//             return node;
+	//
+	//         }
+	//
+	//     };
+	//
+	//     /**
+	//      * Trigger this event when working node changed
+	//      * @param {Element} targetNode - first-level of this node will be current
+	//      * @protected
+	//      *
+	//      * @description If targetNode is first-level then we set it as current else we look for parents to find first-level
+	//      */
+	//     content.workingNodeChanged = function (targetNode) {
+	//
+	//         /** Clear background from previous marked block before we change */
+	//         editor.content.clearMark();
+	//
+	//         if (!targetNode) {
+	//
+	//             return;
+	//
+	//         }
+	//
+	//         content.currentNode = content.getFirstLevelBlock(targetNode);
+	//
+	//     };
+	//
+	//     /**
+	//      * Replaces one redactor block with another
+	//      * @protected
+	//      * @param {Element} targetBlock - block to replace. Mostly currentNode.
+	//      * @param {Element} newBlock
+	//      * @param {string} newBlockType - type of new block; we need to store it to data-attribute
+	//      *
+	//      * [!] Function does not saves old block content.
+	//      *     You can get it manually and pass with newBlock.innerHTML
+	//      */
+	//     content.replaceBlock = function (targetBlock, newBlock) {
+	//
+	//         if (!targetBlock || !newBlock) {
+	//
+	//             editor.core.log('replaceBlock: missed params');
+	//             return;
+	//
+	//         }
+	//
+	//         /** If target-block is not a frist-level block, then we iterate parents to find it */
+	//         while(!targetBlock.classList.contains(editor.ui.className.BLOCK_CLASSNAME)) {
+	//
+	//             targetBlock = targetBlock.parentNode;
+	//
+	//         }
+	//
+	//         /** Replacing */
+	//         editor.nodes.redactor.replaceChild(newBlock, targetBlock);
+	//
+	//         /**
+	//          * Set new node as current
+	//          */
+	//         editor.content.workingNodeChanged(newBlock);
+	//
+	//         /**
+	//          * Add block handlers
+	//          */
+	//         editor.ui.addBlockHandlers(newBlock);
+	//
+	//         /**
+	//          * Save changes
+	//          */
+	//         editor.ui.saveInputs();
+	//
+	//     };
+	//
+	//     /**
+	//      * @protected
+	//      *
+	//      * Inserts new block to redactor
+	//      * Wrapps block into a DIV with BLOCK_CLASSNAME class
+	//      *
+	//      * @param blockData          {object}
+	//      * @param blockData.block    {Element}   element with block content
+	//      * @param blockData.type     {string}    block plugin
+	//      * @param needPlaceCaret     {bool}      pass true to set caret in new block
+	//      *
+	//      */
+	//     content.insertBlock = function ( blockData, needPlaceCaret ) {
+	//
+	//         var workingBlock    = editor.content.currentNode,
+	//             newBlockContent = blockData.block,
+	//             blockType       = blockData.type,
+	//             isStretched     = blockData.stretched;
+	//
+	//         var newBlock = composeNewBlock_(newBlockContent, blockType, isStretched);
+	//
+	//         if (workingBlock) {
+	//
+	//             editor.core.insertAfter(workingBlock, newBlock);
+	//
+	//         } else {
+	//
+	//             /**
+	//              * If redactor is empty, append as first child
+	//              */
+	//             editor.nodes.redactor.appendChild(newBlock);
+	//
+	//         }
+	//
+	//         /**
+	//          * Block handler
+	//          */
+	//         editor.ui.addBlockHandlers(newBlock);
+	//
+	//         /**
+	//          * Set new node as current
+	//          */
+	//         editor.content.workingNodeChanged(newBlock);
+	//
+	//         /**
+	//          * Save changes
+	//          */
+	//         editor.ui.saveInputs();
+	//
+	//
+	//         if ( needPlaceCaret ) {
+	//
+	//             /**
+	//              * If we don't know input index then we set default value -1
+	//              */
+	//             var currentInputIndex = editor.caret.getCurrentInputIndex() || -1;
+	//
+	//
+	//             if (currentInputIndex == -1) {
+	//
+	//
+	//                 var editableElement = newBlock.querySelector('[contenteditable]'),
+	//                     emptyText       = document.createTextNode('');
+	//
+	//                 editableElement.appendChild(emptyText);
+	//                 editor.caret.set(editableElement, 0, 0);
+	//
+	//                 editor.toolbar.move();
+	//                 editor.toolbar.showPlusButton();
+	//
+	//
+	//             } else {
+	//
+	//                 if (currentInputIndex === editor.state.inputs.length - 1)
+	//                     return;
+	//
+	//                 /** Timeout for browsers execution */
+	//                 window.setTimeout(function () {
+	//
+	//                     /** Setting to the new input */
+	//                     editor.caret.setToNextBlock(currentInputIndex);
+	//                     editor.toolbar.move();
+	//                     editor.toolbar.open();
+	//
+	//                 }, 10);
+	//
+	//             }
+	//
+	//         }
+	//
+	//         /**
+	//          * Block is inserted, wait for new click that defined focusing on editors area
+	//          * @type {boolean}
+	//          */
+	//         content.editorAreaHightlighted = false;
+	//
+	//     };
+	//
+	//     /**
+	//      * Replaces blocks with saving content
+	//      * @protected
+	//      * @param {Element} noteToReplace
+	//      * @param {Element} newNode
+	//      * @param {Element} blockType
+	//      */
+	//     content.switchBlock = function (blockToReplace, newBlock, tool) {
+	//
+	//         tool = tool || editor.content.currentNode.dataset.tool;
+	//         var newBlockComposed = composeNewBlock_(newBlock, tool);
+	//
+	//         /** Replacing */
+	//         editor.content.replaceBlock(blockToReplace, newBlockComposed);
+	//
+	//         /** Save new Inputs when block is changed */
+	//         editor.ui.saveInputs();
+	//
+	//     };
+	//
+	//     /**
+	//      * Iterates between child noted and looking for #text node on deepest level
+	//      * @protected
+	//      *
+	//      * @param {Element} block - node where find
+	//      * @param {int} postiton - starting postion
+	//      *      Example: childNodex.length to find from the end
+	//      *               or 0 to find from the start
+	//      * @return {Text} block
+	//      * @uses DFS
+	//      */
+	//     content.getDeepestTextNodeFromPosition = function (block, position) {
+	//
+	//         /**
+	//          * Clear Block from empty and useless spaces with trim.
+	//          * Such nodes we should remove
+	//          */
+	//         var blockChilds = block.childNodes,
+	//             index,
+	//             node,
+	//             text;
+	//
+	//         for(index = 0; index < blockChilds.length; index++) {
+	//
+	//             node = blockChilds[index];
+	//
+	//             if (node.nodeType == editor.core.nodeTypes.TEXT) {
+	//
+	//                 text = node.textContent.trim();
+	//
+	//                 /** Text is empty. We should remove this child from node before we start DFS
+	//                  * decrease the quantity of childs.
+	//                  */
+	//                 if (text === '') {
+	//
+	//                     block.removeChild(node);
+	//                     position--;
+	//
+	//                 }
+	//
+	//             }
+	//
+	//         }
+	//
+	//         if (block.childNodes.length === 0) {
+	//
+	//             return document.createTextNode('');
+	//
+	//         }
+	//
+	//         /** Setting default position when we deleted all empty nodes */
+	//         if ( position < 0 )
+	//             position = 1;
+	//
+	//         var lookingFromStart = false;
+	//
+	//         /** For looking from START */
+	//         if (position === 0) {
+	//
+	//             lookingFromStart = true;
+	//             position = 1;
+	//
+	//         }
+	//
+	//         while ( position ) {
+	//
+	//             /** initial verticle of node. */
+	//             if ( lookingFromStart ) {
+	//
+	//                 block = block.childNodes[0];
+	//
+	//             } else {
+	//
+	//                 block = block.childNodes[position - 1];
+	//
+	//             }
+	//
+	//             if ( block.nodeType == editor.core.nodeTypes.TAG ) {
+	//
+	//                 position = block.childNodes.length;
+	//
+	//             } else if (block.nodeType == editor.core.nodeTypes.TEXT ) {
+	//
+	//                 position = 0;
+	//
+	//             }
+	//
+	//         }
+	//
+	//         return block;
+	//
+	//     };
+	//
+	//     /**
+	//      * @private
+	//      * @param {Element} block - current plugins render
+	//      * @param {String} tool - plugins name
+	//      * @param {Boolean} isStretched - make stretched block or not
+	//      *
+	//      * @description adds necessary information to wrap new created block by first-level holder
+	//      */
+	//     var composeNewBlock_ = function (block, tool, isStretched) {
+	//
+	//         var newBlock     = editor.draw.node('DIV', editor.ui.className.BLOCK_CLASSNAME, {}),
+	//             blockContent = editor.draw.node('DIV', editor.ui.className.BLOCK_CONTENT, {});
+	//
+	//         blockContent.appendChild(block);
+	//         newBlock.appendChild(blockContent);
+	//
+	//         if (isStretched) {
+	//
+	//             blockContent.classList.add(editor.ui.className.BLOCK_STRETCHED);
+	//
+	//         }
+	//
+	//         newBlock.dataset.tool   = tool;
+	//         return newBlock;
+	//
+	//     };
+	//
+	//     /**
+	//      * Returns Range object of current selection
+	//      * @protected
+	//      */
+	//     content.getRange = function () {
+	//
+	//         var selection = window.getSelection().getRangeAt(0);
+	//
+	//         return selection;
+	//
+	//     };
+	//
+	//     /**
+	//      * Divides block in two blocks (after and before caret)
+	//      *
+	//      * @protected
+	//      * @param {int} inputIndex - target input index
+	//      *
+	//      * @description splits current input content to the separate blocks
+	//      * When enter is pressed among the words, that text will be splited.
+	//      */
+	//     content.splitBlock = function (inputIndex) {
+	//
+	//         var selection      = window.getSelection(),
+	//             anchorNode     = selection.anchorNode,
+	//             anchorNodeText = anchorNode.textContent,
+	//             caretOffset    = selection.anchorOffset,
+	//             textBeforeCaret,
+	//             textNodeBeforeCaret,
+	//             textAfterCaret,
+	//             textNodeAfterCaret;
+	//
+	//         var currentBlock = editor.content.currentNode.querySelector('[contentEditable]');
+	//
+	//
+	//         textBeforeCaret     = anchorNodeText.substring(0, caretOffset);
+	//         textAfterCaret      = anchorNodeText.substring(caretOffset);
+	//
+	//         textNodeBeforeCaret = document.createTextNode(textBeforeCaret);
+	//
+	//         if (textAfterCaret) {
+	//
+	//             textNodeAfterCaret  = document.createTextNode(textAfterCaret);
+	//
+	//         }
+	//
+	//         var previousChilds = [],
+	//             nextChilds     = [],
+	//             reachedCurrent = false;
+	//
+	//         if (textNodeAfterCaret) {
+	//
+	//             nextChilds.push(textNodeAfterCaret);
+	//
+	//         }
+	//
+	//         for ( var i = 0, child; !!(child = currentBlock.childNodes[i]); i++) {
+	//
+	//             if ( child != anchorNode ) {
+	//
+	//                 if ( !reachedCurrent ) {
+	//
+	//                     previousChilds.push(child);
+	//
+	//                 } else {
+	//
+	//                     nextChilds.push(child);
+	//
+	//                 }
+	//
+	//             } else {
+	//
+	//                 reachedCurrent = true;
+	//
+	//             }
+	//
+	//         }
+	//
+	//         /** Clear current input */
+	//         editor.state.inputs[inputIndex].innerHTML = '';
+	//
+	//         /**
+	//          * Append all childs founded before anchorNode
+	//          */
+	//         var previousChildsLength = previousChilds.length;
+	//
+	//         for(i = 0; i < previousChildsLength; i++) {
+	//
+	//             editor.state.inputs[inputIndex].appendChild(previousChilds[i]);
+	//
+	//         }
+	//
+	//         editor.state.inputs[inputIndex].appendChild(textNodeBeforeCaret);
+	//
+	//         /**
+	//          * Append text node which is after caret
+	//          */
+	//         var nextChildsLength = nextChilds.length,
+	//             newNode          = document.createElement('div');
+	//
+	//         for(i = 0; i < nextChildsLength; i++) {
+	//
+	//             newNode.appendChild(nextChilds[i]);
+	//
+	//         }
+	//
+	//         newNode = newNode.innerHTML;
+	//
+	//         /** This type of block creates when enter is pressed */
+	//         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
+	//
+	//         /**
+	//          * Make new paragraph with text after caret
+	//          */
+	//         editor.content.insertBlock({
+	//             type  : NEW_BLOCK_TYPE,
+	//             block : editor.tools[NEW_BLOCK_TYPE].render({
+	//                 text : newNode
+	//             })
+	//         }, true );
+	//
+	//     };
+	//
+	//     /**
+	//      * Merges two blocks — current and target
+	//      * If target index is not exist, then previous will be as target
+	//      *
+	//      * @protected
+	//      * @param {int} currentInputIndex
+	//      * @param {int} targetInputIndex
+	//      *
+	//      * @description gets two inputs indexes and merges into one
+	//      */
+	//     content.mergeBlocks = function (currentInputIndex, targetInputIndex) {
+	//
+	//         /** If current input index is zero, then prevent method execution */
+	//         if (currentInputIndex === 0) {
+	//
+	//             return;
+	//
+	//         }
+	//
+	//         var targetInput,
+	//             currentInputContent = editor.state.inputs[currentInputIndex].innerHTML;
+	//
+	//         if (!targetInputIndex) {
+	//
+	//             targetInput = editor.state.inputs[currentInputIndex - 1];
+	//
+	//         } else {
+	//
+	//             targetInput = editor.state.inputs[targetInputIndex];
+	//
+	//         }
+	//
+	//         targetInput.innerHTML += currentInputContent;
+	//
+	//     };
+	//
+	//     /**
+	//      * Iterates all right siblings and parents, which has right siblings
+	//      * while it does not reached the first-level block
+	//      *
+	//      * @param {Element} node
+	//      * @return {boolean}
+	//      */
+	//     content.isLastNode = function (node) {
+	//
+	//         // console.log('погнали перебор родителей');
+	//
+	//         var allChecked = false;
+	//
+	//         while ( !allChecked ) {
+	//
+	//             // console.log('Смотрим на %o', node);
+	//             // console.log('Проверим, пустые ли соседи справа');
+	//
+	//             if ( !allSiblingsEmpty_(node) ) {
+	//
+	//                 // console.log('Есть непустые соседи. Узел не последний. Выходим.');
+	//                 return false;
+	//
+	//             }
+	//
+	//             node = node.parentNode;
+	//
+	//             /**
+	//              * Проверяем родителей до тех пор, пока не найдем блок первого уровня
+	//              */
+	//             if ( node.classList.contains(editor.ui.className.BLOCK_CONTENT) ) {
+	//
+	//                 allChecked = true;
+	//
+	//             }
+	//
+	//         }
+	//
+	//         return true;
+	//
+	//     };
+	//
+	//     /**
+	//      * Checks if all element right siblings is empty
+	//      * @param node
+	//      */
+	//     var allSiblingsEmpty_ = function (node) {
+	//
+	//         /**
+	//          * Нужно убедиться, что после пустого соседа ничего нет
+	//          */
+	//         var sibling = node.nextSibling;
+	//
+	//         while ( sibling ) {
+	//
+	//             if (sibling.textContent.length) {
+	//
+	//                 return false;
+	//
+	//             }
+	//
+	//             sibling = sibling.nextSibling;
+	//
+	//         }
+	//
+	//         return true;
+	//
+	//     };
+	//
+	//     /**
+	//      * @public
+	//      *
+	//      * @param {string} htmlData - html content as string
+	//      * @param {string} plainData - plain text
+	//      * @return {string} - html content as string
+	//      */
+	//     content.wrapTextWithParagraphs = function (htmlData, plainData) {
+	//
+	//         if (!htmlData.trim()) {
+	//
+	//             return wrapPlainTextWithParagraphs(plainData);
+	//
+	//         }
+	//
+	//         var wrapper = document.createElement('DIV'),
+	//             newWrapper = document.createElement('DIV'),
+	//             i,
+	//             paragraph,
+	//             firstLevelBlocks = ['DIV', 'P'],
+	//             blockTyped,
+	//             node;
+	//
+	//         /**
+	//          * Make HTML Element to Wrap Text
+	//          * It allows us to work with input data as HTML content
+	//          */
+	//         wrapper.innerHTML = htmlData;
+	//         paragraph = document.createElement('P');
+	//
+	//         for (i = 0; i < wrapper.childNodes.length; i++) {
+	//
+	//             node = wrapper.childNodes[i];
+	//
+	//             blockTyped = firstLevelBlocks.indexOf(node.tagName) != -1;
+	//
+	//             /**
+	//              * If node is first-levet
+	//              * we add this node to our new wrapper
+	//              */
+	//             if ( blockTyped ) {
+	//
+	//                 /**
+	//                  * If we had splitted inline nodes to paragraph before
+	//                  */
+	//                 if ( paragraph.childNodes.length ) {
+	//
+	//                     newWrapper.appendChild(paragraph.cloneNode(true));
+	//
+	//                     /** empty paragraph */
+	//                     paragraph = null;
+	//                     paragraph = document.createElement('P');
+	//
+	//                 }
+	//
+	//                 newWrapper.appendChild(node.cloneNode(true));
+	//
+	//             } else {
+	//
+	//                 /** Collect all inline nodes to one as paragraph */
+	//                 paragraph.appendChild(node.cloneNode(true));
+	//
+	//                 /** if node is last we should append this node to paragraph and paragraph to new wrapper */
+	//                 if ( i == wrapper.childNodes.length - 1 ) {
+	//
+	//                     newWrapper.appendChild(paragraph.cloneNode(true));
+	//
+	//                 }
+	//
+	//             }
+	//
+	//         }
+	//
+	//         return newWrapper.innerHTML;
+	//
+	//     };
+	//
+	//     /**
+	//      * Splits strings on new line and wraps paragraphs with <p> tag
+	//      * @param plainText
+	//      * @returns {string}
+	//      */
+	//     var wrapPlainTextWithParagraphs = function (plainText) {
+	//
+	//         if (!plainText) return '';
+	//
+	//         return '<p>' + plainText.split('\n\n').join('</p><p>') + '</p>';
+	//
+	//     };
+	//
+	//     /**
+	//     * Finds closest Contenteditable parent from Element
+	//     * @param {Element} node     element looking from
+	//     * @return {Element} node    contenteditable
+	//     */
+	//     content.getEditableParent = function (node) {
+	//
+	//         while (node && node.contentEditable != 'true') {
+	//
+	//             node = node.parentNode;
+	//
+	//         }
+	//
+	//         return node;
+	//
+	//     };
+	//
+	//     /**
+	//     * Clear editors content
+	//      *
+	//      * @param {Boolean} all — if true, delete all article data (content, id, etc.)
+	//     */
+	//     content.clear = function (all) {
+	//
+	//         editor.nodes.redactor.innerHTML = '';
+	//         editor.content.sync();
+	//         editor.ui.saveInputs();
+	//         if (all) {
+	//
+	//             editor.state.blocks = {};
+	//
+	//         } else if (editor.state.blocks) {
+	//
+	//             editor.state.blocks.items = [];
+	//
+	//         }
+	//
+	//         editor.content.currentNode = null;
+	//
+	//     };
+	//
+	//     /**
+	//     *
+	//      * Load new data to editor
+	//      * If editor is not empty, just append articleData.items
+	//      *
+	//     * @param articleData.items
+	//     */
+	//     content.load = function (articleData) {
+	//
+	//         var currentContent = Object.assign({}, editor.state.blocks);
+	//
+	//         editor.content.clear();
+	//
+	//         if (!Object.keys(currentContent).length) {
+	//
+	//             editor.state.blocks = articleData;
+	//
+	//         } else if (!currentContent.items) {
+	//
+	//             currentContent.items = articleData.items;
+	//             editor.state.blocks = currentContent;
+	//
+	//         } else {
+	//
+	//             currentContent.items = currentContent.items.concat(articleData.items);
+	//             editor.state.blocks = currentContent;
+	//
+	//         }
+	//
+	//         editor.renderer.makeBlocksFromData();
+	//
+	//     };
+	//
+	//     return content;
+	//
+	// })({});
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/**
+	 * DOM manupulations helper
+	 */
+	var Dom = function () {
+	    function Dom() {
+	        _classCallCheck(this, Dom);
+	    }
+	
+	    _createClass(Dom, null, [{
+	        key: 'make',
+	
+	
+	        /**
+	         * Helper for making Elements with classname and attributes
+	         *
+	         * @param  {string} tagName           - new Element tag name
+	         * @param  {array|string} classNames  - list or name of CSS classname(s)
+	         * @param  {Object} attributes        - any attributes
+	         * @return {Element}
+	         */
+	        value: function make(tagName) {
+	            var classNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+	            var attributes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+	
+	
+	            var el = document.createElement(tagName);
+	
+	            if (Array.isArray(classNames)) {
+	                var _el$classList;
+	
+	                (_el$classList = el.classList).add.apply(_el$classList, _toConsumableArray(classNames));
+	            } else if (classNames) {
+	
+	                el.classList.add(classNames);
+	            }
+	
+	            for (var attrName in attributes) {
+	
+	                el[attrName] = attributes[attrName];
+	            }
+	
+	            return el;
+	        }
+	
+	        /**
+	         * Selector Decorator
+	         *
+	         * Returns first match
+	         *
+	         * @param {Element} el - element we searching inside. Default - DOM Document
+	         * @param {String} selector - searching string
+	         *
+	         * @returns {Element}
+	         */
+	
+	    }, {
+	        key: 'find',
+	        value: function find() {
+	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+	            var selector = arguments[1];
+	
+	
+	            return el.querySelector(selector);
+	        }
+	
+	        /**
+	         * Selector Decorator.
+	         *
+	         * Returns all matches
+	         *
+	         * @param {Element} el - element we searching inside. Default - DOM Document
+	         * @param {String} selector - searching string
+	         * @returns {NodeList}
+	         */
+	
+	    }, {
+	        key: 'findAll',
+	        value: function findAll() {
+	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+	            var selector = arguments[1];
+	
+	
+	            return el.querySelectorAll(selector);
+	        }
+	    }, {
+	        key: 'isNode',
+	        value: function isNode(node) {
+	
+	            return node && (typeof node === 'undefined' ? 'undefined' : _typeof(node)) === 'object' && node.nodeType && node.nodeType === Dom.nodeTypes.TAG;
+	        }
+	    }, {
+	        key: 'nodeTypes',
+	        get: function get() {
+	
+	            return {
+	                TAG: 1,
+	                TEXT: 3,
+	                COMMENT: 8,
+	                DOCUMENT_FRAGMENT: 11
+	            };
+	        }
+	    }]);
+	
+	    return Dom;
+	}();
+	
+	exports.default = Dom;
+	;
+
+/***/ }),
 /* 16 */
 /***/ (function(module, exports) {
 
@@ -3948,6 +4151,400 @@ var CodexEditor =
 
 /***/ }),
 /* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Codex Editor Renderer Module
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author Codex Team
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @version 1.0
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+	
+	var _util = __webpack_require__(18);
+	
+	var _util2 = _interopRequireDefault(_util);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	module.exports = function () {
+	
+	    /**
+	     * @constructor
+	     *
+	     * @param {EditorConfig} config
+	     */
+	    function Renderer(config) {
+	        _classCallCheck(this, Renderer);
+	
+	        this.config = config;
+	        this.Editor = null;
+	    }
+	
+	    /**
+	     * Editor modules setter
+	     *
+	     * @param {Object} Editor
+	     */
+	
+	
+	    _createClass(Renderer, [{
+	        key: 'render',
+	
+	
+	        /**
+	         *
+	         * Make plugin blocks from array of plugin`s data
+	         *
+	         * @param {Object[]} items
+	         */
+	        value: function render(items) {
+	
+	            var chainData = [];
+	
+	            for (var i = 0; i < items.length; i++) {
+	
+	                chainData.push({
+	                    function: this.makeBlock_.bind(this, items[i])
+	                });
+	            }
+	
+	            _util2.default.sequence(chainData);
+	        }
+	
+	        /**
+	         * Get plugin instance, insert block to working zone and add plugin instance to Editor.Tools
+	         *
+	         * @param {Object} item
+	         * @returns {Promise.<T>}
+	         * @private
+	         */
+	
+	    }, {
+	        key: 'makeBlock_',
+	        value: function makeBlock_(item) {
+	
+	            var tool = item.type,
+	                data = item.data;
+	
+	            var instance = this.Editor.Tools.construct(tool, data),
+	                index = this.Editor.Content.insertBlock(instance.html);
+	
+	            this.Editor.Tools.add(instance, index);
+	
+	            return Promise.resolve();
+	        }
+	    }, {
+	        key: 'state',
+	        set: function set(Editor) {
+	
+	            this.Editor = Editor;
+	        }
+	    }]);
+	
+	    return Renderer;
+	}();
+	
+	// module.exports = (function (renderer) {
+	//
+	//     let editor = codex.editor;
+	//
+	//     /**
+	//      * Asyncronously parses input JSON to redactor blocks
+	//      */
+	//     renderer.makeBlocksFromData = function () {
+	//
+	//         /**
+	//          * If redactor is empty, add first paragraph to start writing
+	//          */
+	//         if (editor.core.isEmpty(editor.state.blocks) || !editor.state.blocks.items.length) {
+	//
+	//             editor.ui.addInitialBlock();
+	//             return;
+	//
+	//         }
+	//
+	//         Promise.resolve()
+	//
+	//         /** First, get JSON from state */
+	//             .then(function () {
+	//
+	//                 return editor.state.blocks;
+	//
+	//             })
+	//
+	//             /** Then, start to iterate they */
+	//             .then(editor.renderer.appendBlocks)
+	//
+	//             /** Write log if something goes wrong */
+	//             .catch(function (error) {
+	//
+	//                 editor.core.log('Error while parsing JSON: %o', 'error', error);
+	//
+	//             });
+	//
+	//     };
+	//
+	//     /**
+	//      * Parses JSON to blocks
+	//      * @param {object} data
+	//      * @return Promise -> nodeList
+	//      */
+	//     renderer.appendBlocks = function (data) {
+	//
+	//         var blocks = data.items;
+	//
+	//         /**
+	//          * Sequence of one-by-one blocks appending
+	//          * Uses to save blocks order after async-handler
+	//          */
+	//         var nodeSequence = Promise.resolve();
+	//
+	//         for (var index = 0; index < blocks.length ; index++ ) {
+	//
+	//             /** Add node to sequence at specified index */
+	//             editor.renderer.appendNodeAtIndex(nodeSequence, blocks, index);
+	//
+	//         }
+	//
+	//     };
+	//
+	//     /**
+	//      * Append node at specified index
+	//      */
+	//     renderer.appendNodeAtIndex = function (nodeSequence, blocks, index) {
+	//
+	//         /** We need to append node to sequence */
+	//         nodeSequence
+	//
+	//         /** first, get node async-aware */
+	//             .then(function () {
+	//
+	//                 return editor.renderer.getNodeAsync(blocks, index);
+	//
+	//             })
+	//
+	//             /**
+	//              * second, compose editor-block from JSON object
+	//              */
+	//             .then(editor.renderer.createBlockFromData)
+	//
+	//             /**
+	//              * now insert block to redactor
+	//              */
+	//             .then(function (blockData) {
+	//
+	//                 /**
+	//                  * blockData has 'block', 'type' and 'stretched' information
+	//                  */
+	//                 editor.content.insertBlock(blockData);
+	//
+	//                 /** Pass created block to next step */
+	//                 return blockData.block;
+	//
+	//             })
+	//
+	//             /** Log if something wrong with node */
+	//             .catch(function (error) {
+	//
+	//                 editor.core.log('Node skipped while parsing because %o', 'error', error);
+	//
+	//             });
+	//
+	//     };
+	//
+	//     /**
+	//      * Asynchronously returns block data from blocksList by index
+	//      * @return Promise to node
+	//      */
+	//     renderer.getNodeAsync = function (blocksList, index) {
+	//
+	//         return Promise.resolve().then(function () {
+	//
+	//             return {
+	//                 tool : blocksList[index],
+	//                 position : index
+	//             };
+	//
+	//         });
+	//
+	//     };
+	//
+	//     /**
+	//      * Creates editor block by JSON-data
+	//      *
+	//      * @uses render method of each plugin
+	//      *
+	//      * @param {Object} toolData.tool
+	//      *                              { header : {
+	//      *                                                text: '',
+	//      *                                                type: 'H3', ...
+	//      *                                            }
+	//      *                               }
+	//      * @param {Number} toolData.position - index in input-blocks array
+	//      * @return {Object} with type and Element
+	//      */
+	//     renderer.createBlockFromData = function ( toolData ) {
+	//
+	//         /** New parser */
+	//         var block,
+	//             tool = toolData.tool,
+	//             pluginName = tool.type;
+	//
+	//         /** Get first key of object that stores plugin name */
+	//         // for (var pluginName in blockData) break;
+	//
+	//         /** Check for plugin existance */
+	//         if (!editor.tools[pluginName]) {
+	//
+	//             throw Error(`Plugin «${pluginName}» not found`);
+	//
+	//         }
+	//
+	//         /** Check for plugin having render method */
+	//         if (typeof editor.tools[pluginName].render != 'function') {
+	//
+	//             throw Error(`Plugin «${pluginName}» must have «render» method`);
+	//
+	//         }
+	//
+	//         if ( editor.tools[pluginName].available === false ) {
+	//
+	//             block = editor.draw.unavailableBlock();
+	//
+	//             block.innerHTML = editor.tools[pluginName].loadingMessage;
+	//
+	//             /**
+	//             * Saver will extract data from initial block data by position in array
+	//             */
+	//             block.dataset.inputPosition = toolData.position;
+	//
+	//         } else {
+	//
+	//             /** New Parser */
+	//             block = editor.tools[pluginName].render(tool.data);
+	//
+	//         }
+	//
+	//         /** is first-level block stretched */
+	//         var stretched = editor.tools[pluginName].isStretched || false;
+	//
+	//         /** Retrun type and block */
+	//         return {
+	//             type      : pluginName,
+	//             block     : block,
+	//             stretched : stretched
+	//         };
+	//
+	//     };
+	//
+	//     return renderer;
+	//
+	// })({});
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/**
+	 * Codex Editor Util
+	 */
+	module.exports = function () {
+	    function Util() {
+	        _classCallCheck(this, Util);
+	    }
+	
+	    _createClass(Util, null, [{
+	        key: "sequence",
+	
+	
+	        /**
+	         * @typedef {Object} ChainData
+	         * @property {Object} data - data that will be passed to the success or fallback
+	         * @property {Function} function - function's that must be called asynchronically
+	         */
+	
+	        /**
+	         * Fires a promise sequence asyncronically
+	         *
+	         * @param {Object[]} chains - list or ChainData's
+	         * @param {Function} success - success callback
+	         * @param {Function} fallback - callback that fires in case of errors
+	         *
+	         * @return {Promise}
+	         */
+	        value: function sequence(chains) {
+	            var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+	            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+	
+	
+	            return new Promise(function (resolve, reject) {
+	
+	                /**
+	                 * pluck each element from queue
+	                 * First, send resolved Promise as previous value
+	                 * Each plugins "prepare" method returns a Promise, that's why
+	                 * reduce current element will not be able to continue while can't get
+	                 * a resolved Promise
+	                 */
+	                chains.reduce(function (previousValue, currentValue, iteration) {
+	
+	                    return previousValue.then(function () {
+	                        return waitNextBlock(currentValue, success, fallback);
+	                    }).then(function () {
+	
+	                        // finished
+	                        if (iteration == chains.length - 1) {
+	
+	                            resolve();
+	                        }
+	                    });
+	                }, Promise.resolve());
+	            });
+	
+	            /**
+	             * Decorator
+	             *
+	             * @param {ChainData} chainData
+	             *
+	             * @param {Function} success
+	             * @param {Function} fallback
+	             *
+	             * @return {Promise}
+	             */
+	            function waitNextBlock(chainData, success, fallback) {
+	
+	                return new Promise(function (resolve, reject) {
+	
+	                    chainData.function().then(function () {
+	
+	                        success(chainData.data);
+	                    }).then(resolve).catch(function () {
+	
+	                        fallback(chainData.data);
+	
+	                        // anyway, go ahead even it falls
+	                        resolve();
+	                    });
+	                });
+	            }
+	        }
+	    }]);
+	
+	    return Util;
+	}();
+
+/***/ }),
+/* 19 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -4496,7 +5093,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -4658,7 +5255,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4679,9 +5276,9 @@ var CodexEditor =
 	
 	    var editor = codex.editor;
 	
-	    toolbar.settings = __webpack_require__(18);
-	    toolbar.inline = __webpack_require__(17);
-	    toolbar.toolbox = __webpack_require__(20);
+	    toolbar.settings = __webpack_require__(20);
+	    toolbar.inline = __webpack_require__(19);
+	    toolbar.toolbox = __webpack_require__(22);
 	
 	    /**
 	     * Margin between focused node and toolbar
@@ -4784,7 +5381,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -4961,7 +5558,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5004,7 +5601,7 @@ var CodexEditor =
 	 * @property {Object} toolsClasses - all classes
 	 * @property {EditorConfig} config - Editor config
 	 */
-	var util = __webpack_require__(23);
+	var util = __webpack_require__(18);
 	
 	module.exports = function () {
 	    _createClass(Tools, [{
@@ -5085,6 +5682,8 @@ var CodexEditor =
 	        this.toolClasses = {};
 	        this.toolsAvailable = {};
 	        this.toolsUnavailable = {};
+	
+	        this._list = [];
 	    }
 	
 	    /**
@@ -5197,20 +5796,71 @@ var CodexEditor =
 	
 	            return this.toolInstances;
 	        }
+	
+	        /**
+	         * Return tool`a instance
+	         *
+	         * @param {String} tool — tool name
+	         * @param {Object} data — initial data
+	         */
+	
+	    }, {
+	        key: 'construct',
+	        value: function construct(tool, data) {
+	
+	            var plugin = this.toolClasses[tool],
+	                config = this.config.toolsConfig[tool];
+	
+	            var instance = new plugin(data, config);
+	
+	            return instance;
+	        }
+	
+	        /**
+	         * Insert tool instance for private list
+	         *
+	         * @param {Object} instance — tool instance
+	         * @param {Number} index — tool index
+	         */
+	
+	    }, {
+	        key: 'add',
+	        value: function add(instance, index) {
+	
+	            this._list[index] = instance;
+	        }
+	
+	        /**
+	         * Get tool instance by html element
+	         *
+	         * @param el
+	         * @returns {*}
+	         */
+	
+	    }, {
+	        key: 'getByElement',
+	        value: function getByElement(el) {
+	
+	            var index = el.dataset.toolId;
+	
+	            if (!index) return null;
+	
+	            return this._list[index];
+	        }
 	    }]);
 	
 	    return Tools;
 	}();
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _dom = __webpack_require__(24);
+	var _dom = __webpack_require__(15);
 	
 	var _dom2 = _interopRequireDefault(_dom);
 	
@@ -5748,206 +6398,6 @@ var CodexEditor =
 	//     return ui;
 	//
 	// })({});
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	/**
-	 * Codex Editor Util
-	 */
-	module.exports = function () {
-	    function Util() {
-	        _classCallCheck(this, Util);
-	    }
-	
-	    _createClass(Util, null, [{
-	        key: "sequence",
-	
-	
-	        /**
-	         * @typedef {Object} ChainData
-	         * @property {Object} data - data that will be passed to the success or fallback
-	         * @property {Function} function - function's that must be called asynchronically
-	         */
-	
-	        /**
-	         * Fires a promise sequence asyncronically
-	         *
-	         * @param {Object[]} chains - list or ChainData's
-	         * @param {Function} success - success callback
-	         * @param {Function} fallback - callback that fires in case of errors
-	         *
-	         * @return {Promise}
-	         */
-	        value: function sequence(chains, success, fallback) {
-	
-	            return new Promise(function (resolve, reject) {
-	
-	                /**
-	                 * pluck each element from queue
-	                 * First, send resolved Promise as previous value
-	                 * Each plugins "prepare" method returns a Promise, that's why
-	                 * reduce current element will not be able to continue while can't get
-	                 * a resolved Promise
-	                 */
-	                chains.reduce(function (previousValue, currentValue, iteration) {
-	
-	                    return previousValue.then(function () {
-	                        return waitNextBlock(currentValue, success, fallback);
-	                    }).then(function () {
-	
-	                        // finished
-	                        if (iteration == chains.length - 1) {
-	
-	                            resolve();
-	                        }
-	                    });
-	                }, Promise.resolve());
-	            });
-	
-	            /**
-	             * Decorator
-	             *
-	             * @param {ChainData} chainData
-	             *
-	             * @param {Function} success
-	             * @param {Function} fallback
-	             *
-	             * @return {Promise}
-	             */
-	            function waitNextBlock(chainData, success, fallback) {
-	
-	                return new Promise(function (resolve, reject) {
-	
-	                    chainData.function().then(function () {
-	
-	                        success(chainData.data);
-	                    }).then(resolve).catch(function () {
-	
-	                        fallback(chainData.data);
-	
-	                        // anyway, go ahead even it falls
-	                        resolve();
-	                    });
-	                });
-	            }
-	        }
-	    }]);
-	
-	    return Util;
-	}();
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	/**
-	 * DOM manupulations helper
-	 */
-	var Dom = function () {
-	    function Dom() {
-	        _classCallCheck(this, Dom);
-	    }
-	
-	    _createClass(Dom, null, [{
-	        key: "make",
-	
-	
-	        /**
-	         * Helper for making Elements with classname and attributes
-	         *
-	         * @param  {string} tagName           - new Element tag name
-	         * @param  {array|string} classNames  - list or name of CSS classname(s)
-	         * @param  {Object} attributes        - any attributes
-	         * @return {Element}
-	         */
-	        value: function make(tagName, classNames, attributes) {
-	
-	            var el = document.createElement(tagName);
-	
-	            if (Array.isArray(classNames)) {
-	                var _el$classList;
-	
-	                (_el$classList = el.classList).add.apply(_el$classList, _toConsumableArray(classNames));
-	            } else if (classNames) {
-	
-	                el.classList.add(classNames);
-	            }
-	
-	            for (var attrName in attributes) {
-	
-	                el[attrName] = attributes[attrName];
-	            }
-	
-	            return el;
-	        }
-	
-	        /**
-	         * Selector Decorator
-	         *
-	         * Returns first match
-	         *
-	         * @param {Element} el - element we searching inside. Default - DOM Document
-	         * @param {String} selector - searching string
-	         *
-	         * @returns {Element}
-	         */
-	
-	    }, {
-	        key: "find",
-	        value: function find() {
-	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
-	            var selector = arguments[1];
-	
-	
-	            return el.querySelector(selector);
-	        }
-	
-	        /**
-	         * Selector Decorator.
-	         *
-	         * Returns all matches
-	         *
-	         * @param {Element} el - element we searching inside. Default - DOM Document
-	         * @param {String} selector - searching string
-	         * @returns {NodeList}
-	         */
-	
-	    }, {
-	        key: "findAll",
-	        value: function findAll() {
-	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
-	            var selector = arguments[1];
-	
-	
-	            return el.querySelectorAll(selector);
-	        }
-	    }]);
-	
-	    return Dom;
-	}();
-	
-	exports.default = Dom;
-	;
 
 /***/ })
 /******/ ]);

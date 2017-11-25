@@ -57,44 +57,13 @@
 <link rel="stylesheet" href="../build/codex-editor.css?v=11000">
 
 <script>
-
-    class Quote {
-
-        static prepare() {
-            return new Promise(function(resolve, reject) {
-
-                window.setTimeout(function() {
-                    resolve();
-                }, 1000);
-            });
-        }
-
-        render() {
-            console.log("Quote rendering");
-        }
-
-        save() {
-            console.log("Quote saving");
-        }
-
-    }
-
-    class AnotherTool {
-
-        static prepare() {
-            return Promise.reject();
-        }
-
-    }
-
     codex = {};
     codex.editor = 1;
     var editor = new CodexEditor({
         holderId : 'codex-editor',
         inittialBlock : 'paragraph',
         tools: {
-            quote: Quote,
-            anotherTool : AnotherTool
+            paragraph: Paragraph,
         },
         toolsConfig: {
             quote: {
@@ -108,6 +77,20 @@
 
     console.log(editor);
 
+    var items = [
+                    {
+                        type : 'paragraph',
+                        data : {
+                            text : 'Привет от CodeX'
+                        }
+                    },
+                    {
+                        type : 'paragraph',
+                        data : {
+                            text : 'Пишите нам на team@ifmo.su'
+                        }
+                    },
+                ];
 
 
 //    var editor2 = new CodexEditor({

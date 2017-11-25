@@ -18,7 +18,7 @@ module.exports = class Util {
      *
      * @return {Promise}
      */
-    static sequence(chains, success, fallback) {
+    static sequence(chains, success = () => {}, fallback = () => {}) {
 
         return new Promise(function (resolve, reject) {
 
