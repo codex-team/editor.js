@@ -13,10 +13,16 @@ class Paragraph {
 
     constructor(data={}) {
 
-        this.CLASS = 'ce-paragraph';
+        this.CSS = {
+            wrapper: 'ce-paragraph'
+        };
+
+        this._data = {};
+
+        this.data = data;
 
         this.element = this.render();
-        this.data = data;
+
 
     }
 
@@ -24,7 +30,7 @@ class Paragraph {
 
         let div = document.createElement('DIV');
 
-        div.classList.add(this.CLASS);
+        div.classList.add(this.CSS.wrapper);
         div.contentEditable = true;
 
         return div;
@@ -53,15 +59,17 @@ class Paragraph {
 
         let text = this.element.innerHTML;
 
-        return {
-            'text': text,
-        };
+        this._data.text = text;
+
+        return this._data;
 
     }
 
     set data(data) {
 
-        this.element.innerHTML = data.text || '';
+        Object.assign(this._data, data);
+
+        this.element.innerHTML = this._data.text || '';
 
     }
 
