@@ -106,7 +106,7 @@ var CodexEditor =
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var modules = (["eventDispatcher.js","toolbar.js","tools.js","ui.js"]).map(function (module) {
+	var modules = (["events.js","toolbar.js","tools.js","ui.js"]).map(function (module) {
 	
 	    return __webpack_require__(1)("./" + module);
 	});
@@ -211,7 +211,15 @@ var CodexEditor =
 	
 	                try {
 	
-	                    _this2.moduleInstances[Module.name] = new Module({
+	                    /**
+	                     * We use class name provided by displayName property
+	                     *
+	                     * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
+	                     * To prevent this, we use 'babel-plugin-class-display-name' plugin
+	                     * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
+	                     */
+	
+	                    _this2.moduleInstances[Module.displayName] = new Module({
 	                        config: _this2.configuration
 	                    });
 	                } catch (e) {
@@ -279,7 +287,7 @@ var CodexEditor =
 	                return module.prepare();
 	            };
 	
-	            return Promise.resolve().then(prepareDecorator(this.moduleInstances.ui)).then(prepareDecorator(this.moduleInstances.Tools)).catch(function (error) {
+	            return Promise.resolve().then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.Tools)).catch(function (error) {
 	
 	                console.log('Error occured', error);
 	            });
@@ -458,8 +466,8 @@ var CodexEditor =
 		"./_saver.js": 14,
 		"./_transport": 15,
 		"./_transport.js": 15,
-		"./eventDispatcher": 16,
-		"./eventDispatcher.js": 16,
+		"./events": 16,
+		"./events.js": 16,
 		"./toolbar": 17,
 		"./toolbar.js": 17,
 		"./toolbar/inline": 19,
@@ -3939,7 +3947,7 @@ var CodexEditor =
 /* 16 */
 /***/ function(module, exports) {
 
-	'use strict';
+	"use strict";
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -3954,9 +3962,9 @@ var CodexEditor =
 	 *
 	 * @version 1.0.0
 	 */
-	module.exports = function () {
+	var Events = function () {
 	    _createClass(Events, [{
-	        key: 'state',
+	        key: "state",
 	
 	
 	        /**
@@ -3975,18 +3983,6 @@ var CodexEditor =
 	         * @property {Object} subscribers - all subscribers grouped by event name
 	         */
 	
-	    }], [{
-	        key: 'name',
-	
-	
-	        /**
-	         * Module key name
-	         * @returns {string}
-	         */
-	        get: function get() {
-	
-	            return 'Events';
-	        }
 	    }]);
 	
 	    function Events() {
@@ -4003,7 +3999,7 @@ var CodexEditor =
 	
 	
 	    _createClass(Events, [{
-	        key: 'on',
+	        key: "on",
 	        value: function on(eventName, callback) {
 	
 	            if (!(eventName in this.subscribers)) {
@@ -4021,7 +4017,7 @@ var CodexEditor =
 	         */
 	
 	    }, {
-	        key: 'emit',
+	        key: "emit",
 	        value: function emit(eventName, data) {
 	
 	            this.subscribers[eventName].reduce(function (previousData, currentHandler) {
@@ -4037,7 +4033,7 @@ var CodexEditor =
 	         */
 	
 	    }, {
-	        key: 'destroy',
+	        key: "destroy",
 	        value: function destroy() {
 	
 	            this.Editor = null;
@@ -4047,6 +4043,11 @@ var CodexEditor =
 	
 	    return Events;
 	}();
+	
+	Events.displayName = "Events";
+	
+	
+	module.exports = Events;
 
 /***/ },
 /* 17 */
@@ -4118,19 +4119,10 @@ var CodexEditor =
 	 * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
 	 */
 	var Toolbar = function () {
-	  _createClass(Toolbar, null, [{
-	    key: 'name',
-	    get: function get() {
 	
-	      return 'Toolbar';
-	    }
-	
-	    /**
-	     * @constructor
-	     */
-	
-	  }]);
-	
+	  /**
+	   * @constructor
+	   */
 	  function Toolbar() {
 	    _classCallCheck(this, Toolbar);
 	
@@ -4232,7 +4224,7 @@ var CodexEditor =
 	      /**
 	       * Append toolbar to the Editor
 	       */
-	      _dom2.default.append(this.Editor.ui.nodes.wrapper, this.nodes.wrapper);
+	      _dom2.default.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
 	    }
 	
 	    /**
@@ -4279,6 +4271,9 @@ var CodexEditor =
 	
 	  return Toolbar;
 	}();
+	
+	Toolbar.displayName = 'Toolbar';
+	
 	
 	module.exports = Toolbar;
 
@@ -4406,6 +4401,7 @@ var CodexEditor =
 	    return Dom;
 	}();
 	
+	Dom.displayName = "Dom";
 	exports.default = Dom;
 	;
 
@@ -5469,7 +5465,7 @@ var CodexEditor =
 	 */
 	var util = __webpack_require__(24);
 	
-	module.exports = function () {
+	var Tools = function () {
 	    _createClass(Tools, [{
 	        key: 'available',
 	
@@ -5530,12 +5526,6 @@ var CodexEditor =
 	         * @param {ToolsConfig} config
 	         */
 	
-	    }], [{
-	        key: 'name',
-	        get: function get() {
-	
-	            return 'Tools';
-	        }
 	    }]);
 	
 	    function Tools(_ref) {
@@ -5664,6 +5654,11 @@ var CodexEditor =
 	
 	    return Tools;
 	}();
+	
+	Tools.displayName = 'Tools';
+	
+	
+	module.exports = Tools;
 
 /***/ },
 /* 24 */
@@ -5831,28 +5826,13 @@ var CodexEditor =
 	 * @property {Element} nodes.wrapper  - <codex-editor>
 	 * @property {Element} nodes.redactor - <ce-redactor>
 	 */
-	module.exports = function () {
-	  _createClass(UI, null, [{
-	    key: 'name',
+	var UI = function () {
 	
-	
-	    /**
-	     * Module key name
-	     * @returns {string}
-	     */
-	    get: function get() {
-	
-	      return 'ui';
-	    }
-	
-	    /**
-	     * @constructor
-	     *
-	     * @param  {EditorConfig} config
-	     */
-	
-	  }]);
-	
+	  /**
+	   * @constructor
+	   *
+	   * @param  {EditorConfig} config
+	   */
 	  function UI(_ref) {
 	    var config = _ref.config;
 	
@@ -5949,6 +5929,12 @@ var CodexEditor =
 	
 	  return UI;
 	}();
+	
+	UI.displayName = 'UI';
+	
+	
+	module.exports = UI;
+	
 	// /**
 	//  * Codex Editor UI module
 	//  *

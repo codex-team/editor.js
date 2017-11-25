@@ -98,7 +98,8 @@ module.exports = {
             exclude: /node_modules/,
             loader : 'babel',
             query: {
-                presets: [ __dirname + '/node_modules/babel-preset-es2015' ]
+                presets: [ __dirname + '/node_modules/babel-preset-es2015' ],
+                plugins: ['class-display-name']
             }
         },
         {
