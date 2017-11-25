@@ -2,7 +2,7 @@
  * Codex Editor Core
  *
  * @author Codex Team
- * @version 1.1.3
+ * @version 2.0.0
  */
 module.exports = class Core {
 

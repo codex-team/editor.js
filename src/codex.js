@@ -26,11 +26,14 @@
  *                 }
  *            });
  *
- * - tools constist of object with key that is type/name of class constructor
+ * - tools is an object: {
+ *       pluginName: PluginClass,
+ *       .....
+ *   }
  * - toolsConfig is an additional configuration that uses Codex Editor API
- *      iconClassname - the name of icon class. Icon will be shown in toolbox
+ *      iconClassname - CSS classname of toobox icon
  *      displayInToolbox - if you want to see your Tool in toolbox hided in "plus" button, than set "True". By default : "False"
- *      enableLineBreaks - by default enter pastes new block that set as initialblock, but if you set this property "True", you break the lines
+ *      enableLineBreaks - by default enter creates new block that set as initialblock, but if you set this property "True", enter will break the lines in current block
  *
  * @author CodeX-Team <https://ifmo.su>
  *
@@ -115,7 +118,7 @@ module.exports = class CodexEditor {
 
     /**
      * Setting for configuration
-     * @param {object} config
+     * @param {Object} config
      */
     set configuration(config = {}) {
 

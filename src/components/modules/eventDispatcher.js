@@ -5,8 +5,28 @@
  *    - {Function} on - appends subscriber to the event. If event doesn't exist - creates new one
  *    - {Function} emit - fires all subscribers with data
  *
+ * @version 1.0.0
  */
 module.exports = class Events {
+
+    /**
+     * Module key name
+     * @returns {string}
+     */
+    static get name() {
+        return 'Events';
+    }
+
+    /**
+     * @param Editor
+     * @param Editor.modules {@link CodexEditor#moduleInstances}
+     * @param Editor.config {@link CodexEditor#configuration}
+     */
+    set state(Editor) {
+
+        this.Editor = Editor;
+
+    }
 
     /**
      * @constructor
@@ -16,6 +36,7 @@ module.exports = class Events {
     constructor() {
 
         this.subscribers = {};
+        this.Editor = null;
 
     }
 
@@ -50,6 +71,15 @@ module.exports = class Events {
 
         }, data);
 
+    }
+
+    /**
+     * Destroyer
+     */
+    destroy() {
+
+        this.Editor = null;
+        this.subscribers = null;
     }
 
 };
