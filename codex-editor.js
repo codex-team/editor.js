@@ -59,28 +59,208 @@ var CodexEditor =
 	 *
 	 * @author CodeX Team
 	 */
+	
+	/**
+	 * @typedef {CodexEditor} CodexEditor - editor class
+	 */
+	
+	/**
+	 * @typedef {Object} EditorConfig
+	 * @property {String} holderId - Element to append Editor
+	 * ...
+	 */
+	
+	/**
+	 * All Editor components
+	 */
+	var modules = [__webpack_require__(1), __webpack_require__(2), __webpack_require__(3)];
+	
+	/**
+	 * @class
+	 *
+	 * @classdesc CodeX Editor base class
+	 *
+	 * @property this.config - all settings
+	 * @property this.moduleInstances - constructed editor components
+	 *
+	 * @type {CodexEditor}
+	 */
 	module.exports = function () {
+	    _createClass(CodexEditor, null, [{
+	        key: 'version',
+	
+	
+	        /** Editor version */
+	        get: function get() {
+	
+	            return ("2.0.0");
+	        }
+	
+	        /**
+	         * @param {EditorConfig} config - user configuration
+	         *
+	         */
+	
+	    }]);
+	
+	    function CodexEditor(config) {
+	
+	        'use strict';
+	
+	        /**
+	         * Configuration object
+	         */
+	
+	        var _this = this;
+	
+	        _classCallCheck(this, CodexEditor);
+	
+	        this.config = {};
+	
+	        /**
+	         * Editor Components
+	         */
+	        this.moduleInstances = {};
+	
+	        Promise.resolve().then(function () {
+	
+	            _this.configuration = config;
+	        }).then(function () {
+	            return _this.init();
+	        }).then(function () {
+	            return _this.start();
+	        }).then(function () {
+	
+	            console.log('CodeX Editor is ready');
+	        }).catch(function (error) {
+	
+	            console.log('CodeX Editor does not ready beecause of %o', error);
+	        });
+	    }
+	
+	    /**
+	     * Setting for configuration
+	     * @param {object} config
+	     */
+	
+	
 	    _createClass(CodexEditor, [{
-	        key: 'configuration',
+	        key: 'init',
 	
 	
 	        /**
-	         * Setting for configuration
-	         * @param config
+	         * Initializes modules:
+	         *  - make and save instances
+	         *  - configure
 	         */
+	        value: function init() {
+	
+	            /**
+	             * Make modules instances and save it to the @property this.moduleInstances
+	             */
+	            this.constructModules();
+	
+	            /**
+	             * Modules configuration
+	             */
+	            this.configureModules();
+	        }
+	
+	        /**
+	         * Make modules instances and save it to the @property this.moduleInstances
+	         */
+	
+	    }, {
+	        key: 'constructModules',
+	        value: function constructModules() {
+	            var _this2 = this;
+	
+	            modules.forEach(function (Module) {
+	
+	                _this2.moduleInstances[Module.name] = new Module({
+	                    config: _this2.configuration
+	                });
+	            });
+	        }
+	
+	        /**
+	         * Modules instances configuration:
+	         *  - pass other modules to the 'state' property
+	         *  - ...
+	         */
+	
+	    }, {
+	        key: 'configureModules',
+	        value: function configureModules() {
+	
+	            for (var name in this.moduleInstances) {
+	
+	                /**
+	                 * Module does not need self-instance
+	                 */
+	                this.moduleInstances[name].state = this.getModulesDiff(name);
+	            }
+	        }
+	
+	        /**
+	         * Return modules without passed name
+	         */
+	
+	    }, {
+	        key: 'getModulesDiff',
+	        value: function getModulesDiff(name) {
+	
+	            var modules = {};
+	
+	            for (var moduleName in this.moduleInstances) {
+	
+	                /**
+	                 * Skip module with passed name
+	                 */
+	                if (moduleName == name) {
+	
+	                    continue;
+	                }
+	                modules[moduleName] = this.moduleInstances[moduleName];
+	            }
+	
+	            return modules;
+	        }
+	
+	        /**
+	         * Start Editor!
+	         *
+	         * @return {Promise}
+	         */
+	
+	    }, {
+	        key: 'start',
+	        value: function start() {
+	
+	            var prepareDecorator = function prepareDecorator(module) {
+	                return module.prepare();
+	            };
+	
+	            return Promise.resolve().then(prepareDecorator(this.moduleInstances['core'])).then(prepareDecorator(this.moduleInstances['ui'])).catch(function (error) {
+	
+	                console.log('Error occured', error);
+	            });
+	        }
+	    }, {
+	        key: 'configuration',
 	        set: function set() {
 	            var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 	
 	
-	            this._configuration.holderId = config.holderId;
-	            this._configuration.placeholder = config.placeholder || 'write your story...';
-	            this._configuration.sanitizer = config.sanitizer || {
+	            this.config.holderId = config.holderId;
+	            this.config.placeholder = config.placeholder || 'write your story...';
+	            this.config.sanitizer = config.sanitizer || {
 	                p: true,
 	                b: true,
 	                a: true
 	            };
 	
-	            this._configuration.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
+	            this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
 	        }
 	
 	        /**
@@ -90,170 +270,13 @@ var CodexEditor =
 	        ,
 	        get: function get() {
 	
-	            return this._configuration;
-	        }
-	
-	        /**
-	         * @param config
-	         *
-	         * @property this.configuration - editor instance configuration
-	         * @property this.moduleInstances - editor module instances
-	         */
-	
-	    }], [{
-	        key: 'version',
-	
-	
-	        /** Editor version */
-	        get: function get() {
-	
-	            return ("2.0.0");
-	        }
-	    }]);
-	
-	    function CodexEditor(config) {
-	
-	        'use strict';
-	
-	        /** Privates */
-	
-	        var _this = this;
-	
-	        _classCallCheck(this, CodexEditor);
-	
-	        this._configuration = {};
-	
-	        this.configuration = config;
-	        this.moduleInstances = [];
-	
-	        this.eventsDispatcher = new Events();
-	
-	        return Promise.resolve().then(function () {
-	            return _this.init();
-	        }).then(function () {
-	            return _this.prepare();
-	        });
-	    }
-	
-	    /**
-	     * Initializes modules:
-	     *  First: requiring modules from path
-	     *  Second: memorizing the instances
-	     */
-	
-	
-	    _createClass(CodexEditor, [{
-	        key: 'init',
-	        value: function init() {
-	
-	            var Dom = __webpack_require__(1),
-	                Core = __webpack_require__(2),
-	                Ui = __webpack_require__(3);
-	            // transport       = require('./src/modules/transport'),
-	            // renderer        = require('./src/modules/renderer'),
-	            // saver           = require('./src/modules/saver'),
-	            // content         = require('./src/modules/content'),
-	            // toolbar         = require('./src/modules/toolbar/toolbar'),
-	            // callbacks       = require('./src/modules/callbacks'),
-	            // draw            = require('./src/modules/draw'),
-	            // caret           = require('./src/modules/caret'),
-	            // notifications   = require('./src/modules/notifications'),
-	            // parser          = require('./src/modules/parser'),
-	            // sanitizer       = require('./src/modules/sanitizer'),
-	            // listeners       = require('./src/modules/listeners'),
-	            // destroyer       = require('./src/modules/destroyer'),
-	            // paste           = require('./src/modules/paste');
-	
-	            var moduleList = {
-	                'dom': Dom,
-	                'core': Core,
-	                'ui': Ui
-	            };
-	
-	            for (var moduleName in moduleList) {
-	
-	                var modules = {};
-	
-	                for (var moduleExtends in moduleList) {
-	
-	                    if (moduleExtends === moduleName) {
-	
-	                        continue;
-	                    }
-	                    modules[moduleExtends] = moduleList[moduleExtends];
-	                }
-	
-	                this.moduleInstances[moduleName] = new moduleList[moduleName]({
-	                    modules: modules,
-	                    config: this.configuration,
-	                    state: this.state,
-	                    nodes: this.nodes
-	                });
-	            }
-	        }
-	
-	        /**
-	         * @param module - module instance
-	         * @returns {*}
-	         */
-	
-	    }, {
-	        key: 'prepare',
-	        value: function prepare(module) {
-	
-	            function prepareDecorator(module) {
-	
-	                return module.prepare();
-	            }
-	
-	            return Promise.resolve().then(prepareDecorator(this.moduleInstances['core'])).then(prepareDecorator(this.moduleInstances['ui']));
-	            // .then(this.moduleInstances['tools'.prepare])
-	            // .catch(function (error) {
-	            //
-	            //     console.log('Error occured', error);
-	            //
-	            // });
-	
+	            return this.config;
 	        }
 	    }]);
 	
 	    return CodexEditor;
 	}();
 	
-	var Events = function () {
-	    function Events() {
-	        _classCallCheck(this, Events);
-	
-	        this.subscribers = {};
-	    }
-	
-	    _createClass(Events, [{
-	        key: 'on',
-	        value: function on(eventName, callback) {
-	
-	            if (!(eventName in this.subscribers)) {
-	
-	                this.subscribers[eventName] = [];
-	            }
-	
-	            // group by events
-	            this.subscribers[eventName].push(callback);
-	        }
-	    }, {
-	        key: 'emit',
-	        value: function emit(eventName, data) {
-	
-	            this.subscribers[eventName].reduce(function (previousData, currentHandler) {
-	
-	                var newData = currentHandler(previousData);
-	
-	                return newData ? newData : previousData;
-	            }, data);
-	        }
-	    }]);
-	
-	    return Events;
-	}();
 	// module.exports = (function (editor) {
 	//
 	//     'use strict';
@@ -398,7 +421,7 @@ var CodexEditor =
 /* 1 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -410,7 +433,7 @@ var CodexEditor =
 	    }
 	
 	    _createClass(Dom, [{
-	        key: "make",
+	        key: 'make',
 	
 	
 	        /**
@@ -451,7 +474,7 @@ var CodexEditor =
 	         */
 	
 	    }, {
-	        key: "find",
+	        key: 'find',
 	        value: function find() {
 	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
 	            var selector = arguments[1];
@@ -471,13 +494,39 @@ var CodexEditor =
 	         */
 	
 	    }, {
-	        key: "findAll",
+	        key: 'findAll',
 	        value: function findAll() {
 	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
 	            var selector = arguments[1];
 	
 	
 	            return el.querySelectorAll(selector);
+	        }
+	    }, {
+	        key: 'state',
+	
+	
+	        /**
+	         * @param Editor
+	         * @param Editor.modules {@link Tools#list}
+	         * @param Editor.config {@link CodexEditor#configuration}
+	         * @param Editor
+	         */
+	        set: function set(Editor) {
+	
+	            this.Editor = Editor;
+	        }
+	    }], [{
+	        key: 'name',
+	
+	
+	        /**
+	         * Module key name
+	         * @returns {string}
+	         */
+	        get: function get() {
+	
+	            return 'dom';
 	        }
 	    }]);
 	
@@ -489,8 +538,6 @@ var CodexEditor =
 /***/ (function(module, exports) {
 
 	'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -504,6 +551,18 @@ var CodexEditor =
 	 */
 	module.exports = function () {
 	    _createClass(Core, null, [{
+	        key: 'name',
+	
+	
+	        /**
+	         * Module key name
+	         * @returns {string}
+	         */
+	        get: function get() {
+	
+	            return 'core';
+	        }
+	    }, {
 	        key: 'scriptPrefix',
 	
 	
@@ -512,43 +571,73 @@ var CodexEditor =
 	
 	            return 'cdx-script-';
 	        }
+	
+	        /**
+	         *
+	         * @param Editor
+	         * @param Editor.modules {@link Tools#list}
+	         * @param Editor.config {@link CodexEditor#configuration}
+	         */
+	
 	    }]);
 	
-	    function Core(Editor) {
+	    function Core(config) {
 	        _classCallCheck(this, Core);
 	
-	        this.Editor = Editor;
+	        // this.Editor.modules.toolbar;
 	
-	        this.sanitizer = null;
-	        this.state = {};
+	        this.Editor = null;
+	
+	        // console.log(this.Editor);
+	
+	
+	        // this.toolbar = modules.toolbar;
+	
+	        // this.sanitizer = null;
+	        // this.state = {};
 	    }
 	
 	    /**
-	     * @public
-	     *
-	     * Editor preparing method
-	     * @return Promise
+	     * @param Editor
+	     * @param Editor.modules {@link Tools#list}
+	     * @param Editor.config {@link CodexEditor#configuration}
+	     * @param Editor
 	     */
 	
 	
 	    _createClass(Core, [{
 	        key: 'prepare',
+	
+	
+	        /**
+	         * @public
+	         *
+	         * Editor preparing method
+	         * @return Promise
+	         */
 	        value: function prepare() {
 	
-	            var self = this;
+	            // let self = this;
 	
-	            return new Promise(function (resolve, reject) {
+	            console.log('Core prepare fired');
 	
-	                if (_typeof(self.Editor.config.holderId) === undefined) {
+	            /**
+	             * Обращение к другому модулю
+	             */
+	            console.log(this.Editor.ui.wrapper);
 	
-	                    reject(Error("Holder wasn't found by ID: #" + userSettings.holderId));
-	                } else {
+	            return;
 	
-	                    resolve();
-	                }
-	
-	                resolve();
-	            });
+	            /**
+	             return new Promise(function (resolve, reject) {
+	                 if (typeof self.Editor.config.holderId === undefined ) {
+	                     reject(Error("Holder wasn't found by ID: #" + userSettings.holderId));
+	                 } else {
+	                     resolve();
+	                 }
+	                 resolve();
+	             });
+	              */
 	        }
 	
 	        /**
@@ -704,6 +793,12 @@ var CodexEditor =
 	            }
 	
 	            return XMLHTTP;
+	        }
+	    }, {
+	        key: 'state',
+	        set: function set(Editor) {
+	
+	            this.Editor = Editor;
 	        }
 	    }]);
 	
@@ -917,24 +1012,55 @@ var CodexEditor =
 	};
 	
 	module.exports = function () {
+	    _createClass(UI, null, [{
+	        key: 'name',
+	
+	
+	        /**
+	         * Module key name
+	         * @returns {string}
+	         */
+	        get: function get() {
+	
+	            return 'ui';
+	        }
+	    }]);
+	
 	    function UI(Editor) {
 	        _classCallCheck(this, UI);
 	
-	        this.Editor = Editor;
+	        this.wrapper = null;
 	
-	        this.modules = this.Editor.modules;
+	        // this.Editor = Editor;
+	        //
+	        // this.modules = this.Editor.modules;
+	
 	    }
 	
 	    /**
-	     * @protected
-	     *
-	     * Making main interface
+	     * @param Editor
+	     * @param Editor.modules {@link Tools#list}
+	     * @param Editor.config {@link CodexEditor#configuration}
+	     * @param Editor
 	     */
 	
 	
 	    _createClass(UI, [{
 	        key: 'prepare',
+	
+	
+	        /**
+	         * @protected
+	         *
+	         * Making main interface
+	         */
 	        value: function prepare() {
+	
+	            console.log('ui prepare fired');
+	
+	            this.wrapper = document.createElement('div');
+	
+	            return;
 	
 	            return new Promise(function (resolve, reject) {
 	
@@ -972,6 +1098,12 @@ var CodexEditor =
 	
 	                editor.core.log("Can't draw editor interface");
 	            });
+	        }
+	    }, {
+	        key: 'state',
+	        set: function set(Editor) {
+	
+	            this.Editor = Editor;
 	        }
 	    }]);
 	

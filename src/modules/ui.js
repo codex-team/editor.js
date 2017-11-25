@@ -38,11 +38,38 @@ let CSS_ = {
 
 module.exports = class UI {
 
+    /**
+     * Module key name
+     * @returns {string}
+     */
+    static get name() {
+
+        return 'ui';
+
+    };
+
     constructor(Editor) {
 
-        this.Editor = Editor;
+        this.wrapper = null;
 
-        this.modules = this.Editor.modules;
+        // this.Editor = Editor;
+        //
+        // this.modules = this.Editor.modules;
+
+
+
+    }
+
+
+    /**
+     * @param Editor
+     * @param Editor.modules {@link Tools#list}
+     * @param Editor.config {@link CodexEditor#configuration}
+     * @param Editor
+     */
+    set state(Editor) {
+
+        this.Editor = Editor;
 
     }
 
@@ -52,6 +79,14 @@ module.exports = class UI {
      * Making main interface
      */
     prepare() {
+
+
+
+        console.log('ui prepare fired');
+
+        this.wrapper = document.createElement('div');
+
+        return;
 
         return new Promise(function (resolve, reject) {
 

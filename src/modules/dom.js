@@ -1,6 +1,29 @@
 module.exports = class Dom {
 
     /**
+     * Module key name
+     * @returns {string}
+     */
+    static get name() {
+
+        return 'dom';
+
+    };
+
+
+    /**
+     * @param Editor
+     * @param Editor.modules {@link Tools#list}
+     * @param Editor.config {@link CodexEditor#configuration}
+     * @param Editor
+     */
+    set state(Editor) {
+
+        this.Editor = Editor;
+
+    }
+
+    /**
      * Draws element with class and properties
      *
      * @param {String} el - Element name

@@ -6,6 +6,16 @@
  */
 module.exports = class Core {
 
+    /**
+     * Module key name
+     * @returns {string}
+     */
+    static get name() {
+
+        return 'core';
+
+    };
+
     /** Editor script prefixes */
     static get scriptPrefix() {
 
@@ -13,12 +23,39 @@ module.exports = class Core {
 
     }
 
-    constructor(Editor) {
+
+
+    /**
+     *
+     * @param Editor
+     * @param Editor.modules {@link Tools#list}
+     * @param Editor.config {@link CodexEditor#configuration}
+     */
+    constructor(config) {
+
+        // this.Editor.modules.toolbar;
+
+        this.Editor = null;
+
+        // console.log(this.Editor);
+
+
+        // this.toolbar = modules.toolbar;
+
+        // this.sanitizer = null;
+        // this.state = {};
+
+    }
+
+    /**
+     * @param Editor
+     * @param Editor.modules {@link Tools#list}
+     * @param Editor.config {@link CodexEditor#configuration}
+     * @param Editor
+     */
+    set state(Editor) {
 
         this.Editor = Editor;
-
-        this.sanitizer = null;
-        this.state = {};
 
     }
 
@@ -30,7 +67,19 @@ module.exports = class Core {
      */
     prepare() {
 
-        let self = this;
+        // let self = this;
+
+        console.log('Core prepare fired');
+
+        /**
+         * Обращение к другому модулю
+         */
+        console.log(this.Editor.ui.wrapper);
+
+
+        return;
+
+        /**
 
         return new Promise(function (resolve, reject) {
 
@@ -47,6 +96,8 @@ module.exports = class Core {
             resolve();
 
         });
+
+         */
 
     }
 
