@@ -19,6 +19,7 @@
  *
  * @property {String} this.name - name of this module
  * @property {Array} this.toolInstances - list of tool instances
+ * @property {EditorConfig} this.config - Editor config
  *
  */
 module.exports = class Tools {
@@ -59,12 +60,13 @@ module.exports = class Tools {
      *
      * @param {ToolsConfig} config
      */
-    constructor(config) {
+    constructor({ config }) {
 
         this.config = config;
-
         this.availabPlugins = {};
         this.toolInstances = [];
+
+        this.util = require('../util');
 
     }
 
@@ -74,13 +76,13 @@ module.exports = class Tools {
      */
     prepare() {
 
-        let toolConfig = this.defaultConfig;
-
         if (!this.config.hasOwnProperty('tools')) {
 
             return false;
 
         }
+
+        let plugins = this.getListOfPrepareFunctions();
 
         /**
          * Preparation Decorator
@@ -93,6 +95,7 @@ module.exports = class Tools {
             return new Promise(function (resolve, reject) {
 
                 toolBindedPreparationFunction()
+
                     .then(resolve)
                     .catch(function (error) {
 
@@ -108,26 +111,6 @@ module.exports = class Tools {
         }
 
         return new Promise(function (resolvePreparation, rejectPreparation) {
-
-            let toolPreparationList = [];
-
-            for(let tool of this.config.tools) {
-
-                let toolName = tool.name;
-
-                if (toolName in this.config.toolsConfig) {
-
-                    toolConfig = this.config.toolsConfig[toolName];
-
-                }
-
-                if (tool.prepare && typeof tool.prepare === 'function') {
-
-                    toolPreparationList.push(tool.prepare.bind(toolConfig));
-
-                }
-
-            }
 
             // continue editor initialization if non of tools doesn't need preparation
             if (toolPreparationList.length === 0) {
@@ -172,6 +155,39 @@ module.exports = class Tools {
         //
         //     this.toolInstances.push(new toolClass(toolConfig));
         // }
+
+    }
+
+    /**
+     * Binds prepare function of plugins with user or default config
+     *
+     * @return {Array} list of functions that needs to be fired sequently
+     */
+    getListOfPrepareFunctions() {
+
+        let toolConfig = this.defaultConfig;
+        let toolPreparationList = [];
+
+        for(let tool in this.config.tools) {
+
+            let toolClass = this.config.tools[tool],
+                toolName = toolClass.name.toLowerCase();
+
+            if (toolName in this.config.toolsConfig) {
+
+                toolConfig = this.config.toolsConfig[toolName];
+
+            }
+
+            if (toolClass.prepare && typeof toolClass.prepare === 'function') {
+
+                toolPreparationList.push(toolClass.prepare.bind(toolConfig));
+
+            }
+
+        }
+
+        return toolPreparationList;
 
     }
 

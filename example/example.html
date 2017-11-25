@@ -60,6 +60,10 @@
 
     class Quote {
 
+        static prepare() {
+            return Promise.resolve();
+        }
+
         render() {
             console.log("Quote rendering");
         }
@@ -70,7 +74,6 @@
 
     }
 
-    console.log("This is Quote", Quote);
     codex = {};
     codex.editor = 1;
     var editor = new CodexEditor({

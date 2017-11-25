@@ -43,7 +43,7 @@ var CodexEditor =
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	/**
 	 * Codex Editor
@@ -247,7 +247,7 @@ var CodexEditor =
 	                return module.prepare();
 	            };
 	
-	            return Promise.resolve().then(prepareDecorator(this.moduleInstances['ui'])).catch(function (error) {
+	            return Promise.resolve().then(prepareDecorator(this.moduleInstances['ui'])).then(prepareDecorator(this.moduleInstances['tools'])).catch(function (error) {
 	
 	                console.log('Error occured', error);
 	            });
@@ -267,6 +267,8 @@ var CodexEditor =
 	            };
 	
 	            this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
+	            this.config.tools = config.tools || {};
+	            this.config.toolsConfig = config.toolsConfig || {};
 	        }
 	
 	        /**
@@ -367,36 +369,6 @@ var CodexEditor =
 	//     */
 	//     editor.tools = {};
 	//
-	//     /**
-	//      * Initialization
-	//      * @uses Promise cEditor.core.prepare
-	//      * @param {Object} userSettings
-	//      * @param {Array}  userSettings.tools       list of plugins
-	//      * @param {String} userSettings.holderId    Element's id to append editor
-	//      *
-	//      * Load user defined tools
-	//      * Tools must contain this important objects :
-	//      *  @param {String} type - this is a type of plugin. It can be used as plugin name
-	//      *  @param {String} iconClassname - this a icon in toolbar
-	//      *  @param {Object} make - what should plugin do, when it is clicked
-	//      *  @param {Object} appendCallback - callback after clicking
-	//      *  @param {Element} settings - what settings does it have
-	//      *  @param {Object} render - plugin get JSON, and should return HTML
-	//      *  @param {Object} save - plugin gets HTML content, returns JSON
-	//      *  @param {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
-	//      *  @param {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
-	//      *
-	//      * @example
-	//      *   -  type             : 'header',
-	//      *   -  iconClassname    : 'ce-icon-header',
-	//      *   -  make             : headerTool.make,
-	//      *   -  appendCallback   : headerTool.appendCallback,
-	//      *   -  settings         : headerTool.makeSettings(),
-	//      *   -  render           : headerTool.render,
-	//      *   -  save             : headerTool.save,
-	//      *   -  displayInToolbox : true,
-	//      *   -  enableLineBreaks : false
-	//      */
 	//     editor.start = function (userSettings) {
 	//
 	//         init();
@@ -423,9 +395,9 @@ var CodexEditor =
 	//
 	// })({});
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var map = {
 		"./_anchors": 2,
@@ -483,9 +455,9 @@ var CodexEditor =
 	webpackContext.id = 1;
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -563,9 +535,9 @@ var CodexEditor =
 	    return anchors;
 	}({});
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -1392,9 +1364,9 @@ var CodexEditor =
 	    return callbacks;
 	}({});
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -1676,9 +1648,9 @@ var CodexEditor =
 	    return caret;
 	}({});
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -2406,9 +2378,9 @@ var CodexEditor =
 	    return content;
 	}({});
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -2498,9 +2470,9 @@ var CodexEditor =
 	    return destroyer;
 	}({});
 
-/***/ },
+/***/ }),
 /* 7 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	
@@ -2670,9 +2642,9 @@ var CodexEditor =
 	    return listeners;
 	}({});
 
-/***/ },
+/***/ }),
 /* 8 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -2883,9 +2855,9 @@ var CodexEditor =
 	    return notifications;
 	}({});
 
-/***/ },
+/***/ }),
 /* 9 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	
@@ -2922,9 +2894,9 @@ var CodexEditor =
 	    return parser;
 	}({});
 
-/***/ },
+/***/ }),
 /* 10 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -3174,9 +3146,9 @@ var CodexEditor =
 	    return paste;
 	}({});
 
-/***/ },
+/***/ }),
 /* 11 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -3366,9 +3338,9 @@ var CodexEditor =
 	    return renderer;
 	}({});
 
-/***/ },
+/***/ }),
 /* 12 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -3448,9 +3420,9 @@ var CodexEditor =
 	    return sanitizer;
 	}({});
 
-/***/ },
+/***/ }),
 /* 13 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
 	  if (true) {
@@ -3639,9 +3611,9 @@ var CodexEditor =
 	}));
 
 
-/***/ },
+/***/ }),
 /* 14 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -3799,9 +3771,9 @@ var CodexEditor =
 	    return saver;
 	}({});
 
-/***/ },
+/***/ }),
 /* 15 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -3929,9 +3901,9 @@ var CodexEditor =
 	    return transport;
 	}({});
 
-/***/ },
+/***/ }),
 /* 16 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	"use strict";
 	
@@ -3974,9 +3946,9 @@ var CodexEditor =
 	    return Events;
 	}();
 
-/***/ },
+/***/ }),
 /* 17 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -4523,9 +4495,9 @@ var CodexEditor =
 	    return inline;
 	}({});
 
-/***/ },
+/***/ }),
 /* 18 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -4685,9 +4657,9 @@ var CodexEditor =
 	    return settings;
 	}({});
 
-/***/ },
+/***/ }),
 /* 19 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -4811,9 +4783,9 @@ var CodexEditor =
 	    return toolbar;
 	}({});
 
-/***/ },
+/***/ }),
 /* 20 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -4988,24 +4960,218 @@ var CodexEditor =
 	    return toolbox;
 	}({});
 
-/***/ },
+/***/ }),
 /* 21 */
-/***/ function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
+	/**
+	 * @module Codex Editor Tools Submodule
+	 *
+	 * Creates Instances from Plugins and binds external config to the instances
+	 */
+	
+	/**
+	 * Load user defined tools
+	 * Tools must contain the following important objects:
+	 *
+	 * @typedef {Object} ToolsConfig
+	 * @property {String} iconClassname - this a icon in toolbar
+	 * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
+	 * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
+	 */
+	
+	/**
+	 * Class properties:
+	 *
+	 * @property {String} this.name - name of this module
+	 * @property {Array} this.toolInstances - list of tool instances
+	 * @property {EditorConfig} this.config - Editor config
+	 *
+	 */
 	module.exports = function () {
-	    function Tools() {
+	    _createClass(Tools, [{
+	        key: 'state',
+	
+	
+	        /**
+	         * @param Editor
+	         * @param Editor.modules {@link CodexEditor#moduleInstances}
+	         * @param Editor.config {@link CodexEditor#configuration}
+	         */
+	        set: function set(Editor) {
+	
+	            this.Editor = Editor;
+	        }
+	
+	        /**
+	         * If config wasn't passed by user
+	         * @return {ToolsConfig}
+	         */
+	
+	    }, {
+	        key: 'defaultConfig',
+	        get: function get() {
+	
+	            return {
+	                iconClassName: 'default-icon',
+	                displayInToolbox: false,
+	                enableLineBreaks: false
+	            };
+	        }
+	
+	        /**
+	         * @constructor
+	         *
+	         * @param {ToolsConfig} config
+	         */
+	
+	    }], [{
+	        key: 'name',
+	        get: function get() {
+	
+	            return 'tools';
+	        }
+	    }]);
+	
+	    function Tools(_ref) {
+	        var config = _ref.config;
+	
 	        _classCallCheck(this, Tools);
+	
+	        this.config = config;
+	        this.availabPlugins = {};
+	        this.toolInstances = [];
+	
+	        this.util = __webpack_require__(23);
 	    }
 	
+	    /**
+	     * Creates instances via passed or default configuration
+	     * @return {boolean}
+	     */
+	
+	
 	    _createClass(Tools, [{
-	        key: "prepare",
-	        value: function prepare() {}
+	        key: 'prepare',
+	        value: function prepare() {
+	
+	            if (!this.config.hasOwnProperty('tools')) {
+	
+	                return false;
+	            }
+	
+	            var plugins = this.getListOfPrepareFunctions();
+	
+	            /**
+	             * Preparation Decorator
+	             *
+	             * @param toolBindedPreparationFunction
+	             * @return {Promise}
+	             */
+	            function waitNextToolPreparation(toolBindedPreparationFunction) {
+	
+	                return new Promise(function (resolve, reject) {
+	
+	                    toolBindedPreparationFunction().then(resolve).catch(function (error) {
+	
+	                        console.log('Plugin is not available because of ', error);
+	
+	                        // anyway, go ahead even plugin is not available
+	                        resolve();
+	                    });
+	                });
+	            }
+	
+	            return new Promise(function (resolvePreparation, rejectPreparation) {
+	
+	                // continue editor initialization if non of tools doesn't need preparation
+	                if (toolPreparationList.length === 0) {
+	
+	                    resolvePreparation();
+	                } else {
+	
+	                    toolPreparationList.reduce(function (previousToolPrepared, currentToolReadyToPreparation, iteration) {
+	
+	                        return previousToolPrepared.then(function () {
+	                            return waitNextToolPreparation(currentToolReadyToPreparation);
+	                        }).then(function () {
+	
+	                            if (iteration == toolPreparationList.length - 1) {
+	
+	                                resolvePreparation();
+	                            }
+	                        });
+	                    }, Promise.resolve());
+	                }
+	            });
+	
+	            /**
+	             * - getting class and config
+	             * - push to the toolinstnaces property created instances
+	             */
+	            // for(let tool in this.config.tools) {
+	            //     let toolClass = this.config.tools[tool],
+	            //         toolConfig;
+	            //
+	            //     if (tool in this.config.toolConfig) {
+	            //         toolConfig = this.config.toolConfig[tool];
+	            //     } else {
+	            //         toolConfig = this.defaultConfig;
+	            //     }
+	            //
+	            //     this.toolInstances.push(new toolClass(toolConfig));
+	            // }
+	        }
+	
+	        /**
+	         * Binds prepare function of plugins with user or default config
+	         *
+	         * @return {Array} list of functions that needs to be fired sequently
+	         */
+	
+	    }, {
+	        key: 'getListOfPrepareFunctions',
+	        value: function getListOfPrepareFunctions() {
+	
+	            var toolConfig = this.defaultConfig;
+	            var toolPreparationList = [];
+	
+	            for (var tool in this.config.tools) {
+	
+	                var toolClass = this.config.tools[tool],
+	                    toolName = toolClass.name.toLowerCase();
+	
+	                if (toolName in this.config.toolsConfig) {
+	
+	                    toolConfig = this.config.toolsConfig[toolName];
+	                }
+	
+	                if (toolClass.prepare && typeof toolClass.prepare === 'function') {
+	
+	                    toolPreparationList.push(toolClass.prepare.bind(toolConfig));
+	                }
+	            }
+	
+	            return toolPreparationList;
+	        }
+	
+	        /**
+	         * Returns all tools
+	         * @return {Array}
+	         */
+	
+	    }, {
+	        key: 'getTools',
+	        value: function getTools() {
+	
+	            return this.toolInstances;
+	        }
 	    }]);
 	
 	    return Tools;
@@ -5164,9 +5330,9 @@ var CodexEditor =
 	//
 	// }());
 
-/***/ },
+/***/ }),
 /* 22 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -5681,6 +5847,32 @@ var CodexEditor =
 	//
 	// })({});
 
-/***/ }
+/***/ }),
+/* 23 */
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/**
+	 * Codex Editor Util
+	 */
+	module.exports = function () {
+	  function Util() {
+	    _classCallCheck(this, Util);
+	  }
+	
+	  _createClass(Util, null, [{
+	    key: "sequence",
+	    value: function sequence(chain, success, fallback) {}
+	  }]);
+	
+	  return Util;
+	}();
+
+/***/ })
 /******/ ]);
 //# sourceMappingURL=codex-editor.js.map

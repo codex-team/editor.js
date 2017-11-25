@@ -99,6 +99,8 @@ module.exports = class CodexEditor {
         };
 
         this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
+        this.config.tools = config.tools || {};
+        this.config.toolsConfig = config.toolsConfig || {};
 
     }
 
