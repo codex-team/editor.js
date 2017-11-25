@@ -210,7 +210,7 @@ module.exports = class CodexEditor {
 
         return Promise.resolve()
             .then(prepareDecorator(this.moduleInstances.ui))
-            .then(prepareDecorator(this.moduleInstances.tools))
+            .then(prepareDecorator(this.moduleInstances.Tools))
 
             .catch(function (error) {
 

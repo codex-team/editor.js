@@ -61,7 +61,12 @@
     class Quote {
 
         static prepare() {
-            return Promise.resolve();
+            return new Promise(function(resolve, reject) {
+
+                window.setTimeout(function() {
+                    resolve();
+                }, 1000);
+            });
         }
 
         render() {
@@ -74,13 +79,22 @@
 
     }
 
+    class AnotherTool {
+
+        static prepare() {
+            return Promise.reject();
+        }
+
+    }
+
     codex = {};
     codex.editor = 1;
     var editor = new CodexEditor({
         holderId : 'codex-editor',
         inittialBlock : 'paragraph',
         tools: {
-            quote: Quote
+            quote: Quote,
+            anotherTool : AnotherTool
         },
         toolsConfig: {
             quote: {

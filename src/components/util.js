@@ -5,14 +5,14 @@ module.exports = class Util {
 
     /**
      * @typedef {Object} ChainData
-     * @property {Object} data - data that will be called with success or fallback
+     * @property {Object} data - data that will be passed to the success or fallback
      * @property {Function} function - function's that must be called asynchronically
      */
 
     /**
      * Fires a promise sequence asyncronically
      *
-     * @param {Array} chains - list or ChainData's
+     * @param {Object[]} chains - list or ChainData's
      * @param {Function} success - success callback
      * @param {Function} fallback - callback that fires in case of errors
      *
@@ -65,7 +65,7 @@ module.exports = class Util {
                 chainData.function()
                     .then(() => {
 
-                        success.call(null, chainData.data);
+                        success(chainData.data);
 
                     })
                     .then(resolve)
@@ -73,7 +73,7 @@ module.exports = class Util {
 
                         fallback(chainData.data);
 
-                        // anyway, go ahead even plugin is not available
+                        // anyway, go ahead even it falls
                         resolve();
 
                     });

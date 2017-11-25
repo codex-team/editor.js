@@ -15,12 +15,22 @@
  */
 
 /**
+ * @typedef {Object} Tool
+ * @property render
+ * @property save
+ * @property settings
+ * @property validate
+ */
+
+/**
  * Class properties:
  *
  * @property {String} this.name - name of this module
- * @property {Array} this.toolInstances - list of tool instances
+ * @property {Object[]} this.toolInstances - list of tool instances
+ * @property {Tools[]} this.available - available Tools
+ * @property {Tools[]} this.unavailable - unavailable Tools
+ * @property {Object} this.toolsClasses - all classes
  * @property {EditorConfig} this.config - Editor config
- *
  */
 let util = require('../util');
 
@@ -28,7 +38,27 @@ module.exports = class Tools {
 
     static get name() {
 
-        return 'tools';
+        return 'Tools';
+
+    }
+
+    /**
+     * Returns available Tools
+     * @return {Tool[]}
+     */
+    get available() {
+
+        return this.toolsAvailable;
+
+    }
+
+    /**
+     * Returns unavailable Tools
+     * @return {Tool[]}
+     */
+    get unavailable() {
+
+        return this.toolsUnavailable;
 
     }
 
@@ -65,7 +95,10 @@ module.exports = class Tools {
     constructor({ config }) {
 
         this.config = config;
-        this.toolInstances = [];
+
+        this.toolClasses = {};
+        this.toolsAvailable = {};
+        this.toolsUnavailable = {};
 
     }
 
@@ -75,9 +108,17 @@ module.exports = class Tools {
      */
     prepare() {
 
+        let self = this;
+
         if (!this.config.hasOwnProperty('tools')) {
 
             return Promise.reject("Can't start without tools");
+
+        }
+
+        for(let toolName in this.config.tools) {
+
+            this.toolClasses[toolName] = this.config.tools[toolName];
 
         }
 
@@ -89,41 +130,36 @@ module.exports = class Tools {
 
         }
 
-        return util.sequence(sequenceData, this.success, this.fallback);
+        return util.sequence(sequenceData, function (data) {
 
-    }
+            self.toolsAvailable[data.toolName] = self.toolClasses[data.toolName];
 
-    success(data) {
+        }, function (data) {
 
-        console.log('Success!', data);
+            self.toolsUnavailable[data.toolName] = self.toolClasses[data.toolName];
 
-    }
-
-    fallback(data) {
-
-        console.log('Module is not available', data);
+        });
 
     }
 
     /**
      * Binds prepare function of plugins with user or default config
-     *
      * @return {Array} list of functions that needs to be fired sequently
      */
     getListOfPrepareFunctions() {
 
         let toolPreparationList = [];
 
-        for(let tool in this.config.tools) {
+        for(let toolName in this.toolClasses) {
 
-            let toolClass = this.config.tools[tool];
+            let toolClass = this.toolClasses[toolName];
 
-            if (toolClass.prepare && typeof toolClass.prepare === 'function') {
+            if (typeof toolClass.prepare === 'function') {
 
                 toolPreparationList.push({
                     function : toolClass.prepare,
                     data : {
-                        toolName : tool
+                        toolName
                     }
                 });
 

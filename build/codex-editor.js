@@ -247,7 +247,7 @@ var CodexEditor =
 	                return module.prepare();
 	            };
 	
-	            return Promise.resolve().then(prepareDecorator(this.moduleInstances.ui)).then(prepareDecorator(this.moduleInstances.tools)).catch(function (error) {
+	            return Promise.resolve().then(prepareDecorator(this.moduleInstances.ui)).then(prepareDecorator(this.moduleInstances.Tools)).catch(function (error) {
 	
 	                console.log('Error occured', error);
 	            });
@@ -4987,25 +4987,59 @@ var CodexEditor =
 	 */
 	
 	/**
+	 * @typedef {Object} Tool
+	 * @property render
+	 * @property save
+	 * @property settings
+	 * @property validate
+	 */
+	
+	/**
 	 * Class properties:
 	 *
 	 * @property {String} this.name - name of this module
-	 * @property {Array} this.toolInstances - list of tool instances
+	 * @property {Object[]} this.toolInstances - list of tool instances
+	 * @property {Tools[]} this.available - available Tools
+	 * @property {Tools[]} this.unavailable - unavailable Tools
+	 * @property {Object} this.toolsClasses - all classes
 	 * @property {EditorConfig} this.config - Editor config
-	 *
 	 */
 	var util = __webpack_require__(23);
 	
 	module.exports = function () {
 	    _createClass(Tools, [{
-	        key: 'state',
+	        key: 'available',
 	
+	
+	        /**
+	         * Returns available Tools
+	         * @return {Tool[]}
+	         */
+	        get: function get() {
+	
+	            return this.toolsAvailable;
+	        }
+	
+	        /**
+	         * Returns unavailable Tools
+	         * @return {Tool[]}
+	         */
+	
+	    }, {
+	        key: 'unavailable',
+	        get: function get() {
+	
+	            return this.toolsUnavailable;
+	        }
 	
 	        /**
 	         * @param Editor
 	         * @param Editor.modules {@link CodexEditor#moduleInstances}
 	         * @param Editor.config {@link CodexEditor#configuration}
 	         */
+	
+	    }, {
+	        key: 'state',
 	        set: function set(Editor) {
 	
 	            this.Editor = Editor;
@@ -5037,7 +5071,7 @@ var CodexEditor =
 	        key: 'name',
 	        get: function get() {
 	
-	            return 'tools';
+	            return 'Tools';
 	        }
 	    }]);
 	
@@ -5047,7 +5081,10 @@ var CodexEditor =
 	        _classCallCheck(this, Tools);
 	
 	        this.config = config;
-	        this.toolInstances = [];
+	
+	        this.toolClasses = {};
+	        this.toolsAvailable = {};
+	        this.toolsUnavailable = {};
 	    }
 	
 	    /**
@@ -5060,9 +5097,16 @@ var CodexEditor =
 	        key: 'prepare',
 	        value: function prepare() {
 	
+	            var self = this;
+	
 	            if (!this.config.hasOwnProperty('tools')) {
 	
 	                return Promise.reject("Can't start without tools");
+	            }
+	
+	            for (var toolName in this.config.tools) {
+	
+	                this.toolClasses[toolName] = this.config.tools[toolName];
 	            }
 	
 	            var sequenceData = this.getListOfPrepareFunctions();
@@ -5072,24 +5116,17 @@ var CodexEditor =
 	                return Promise.resolve();
 	            }
 	
-	            return util.sequence(sequenceData, this.success, this.fallback);
-	        }
-	    }, {
-	        key: 'success',
-	        value: function success(data) {
+	            return util.sequence(sequenceData, function (data) {
 	
-	            console.log('Success!', data);
-	        }
-	    }, {
-	        key: 'fallback',
-	        value: function fallback(data) {
+	                self.toolsAvailable[data.toolName] = self.toolClasses[data.toolName];
+	            }, function (data) {
 	
-	            console.log('Module is not available', data);
+	                self.toolsUnavailable[data.toolName] = self.toolClasses[data.toolName];
+	            });
 	        }
 	
 	        /**
 	         * Binds prepare function of plugins with user or default config
-	         *
 	         * @return {Array} list of functions that needs to be fired sequently
 	         */
 	
@@ -5099,16 +5136,16 @@ var CodexEditor =
 	
 	            var toolPreparationList = [];
 	
-	            for (var tool in this.config.tools) {
+	            for (var toolName in this.toolClasses) {
 	
-	                var toolClass = this.config.tools[tool];
+	                var toolClass = this.toolClasses[toolName];
 	
-	                if (toolClass.prepare && typeof toolClass.prepare === 'function') {
+	                if (typeof toolClass.prepare === 'function') {
 	
 	                    toolPreparationList.push({
 	                        function: toolClass.prepare,
 	                        data: {
-	                            toolName: tool
+	                            toolName: toolName
 	                        }
 	                    });
 	                }
@@ -5870,14 +5907,14 @@ var CodexEditor =
 	
 	        /**
 	         * @typedef {Object} ChainData
-	         * @property {Object} data - data that will be called with success or fallback
+	         * @property {Object} data - data that will be passed to the success or fallback
 	         * @property {Function} function - function's that must be called asynchronically
 	         */
 	
 	        /**
 	         * Fires a promise sequence asyncronically
 	         *
-	         * @param {Array} chains - list or ChainData's
+	         * @param {Object[]} chains - list or ChainData's
 	         * @param {Function} success - success callback
 	         * @param {Function} fallback - callback that fires in case of errors
 	         *
@@ -5925,12 +5962,12 @@ var CodexEditor =
 	
 	                    chainData.function().then(function () {
 	
-	                        success.call(null, chainData.data);
+	                        success(chainData.data);
 	                    }).then(resolve).catch(function () {
 	
 	                        fallback(chainData.data);
 	
-	                        // anyway, go ahead even plugin is not available
+	                        // anyway, go ahead even it falls
 	                        resolve();
 	                    });
 	                });
