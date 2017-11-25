@@ -2,7 +2,7 @@
  * Codex Editor Core
  *
  * @author Codex Team
- * @version 1.1.3
+ * @version 2.0.0
  */
 module.exports = class Core {
 
@@ -22,8 +22,6 @@ module.exports = class Core {
         return 'cdx-script-';
 
     }
-
-
 
     /**
      *
@@ -49,7 +47,7 @@ module.exports = class Core {
 
     /**
      * @param Editor
-     * @param Editor.modules {@link Tools#list}
+     * @param Editor.modules {@link CodexEditor#moduleInstances}
      * @param Editor.config {@link CodexEditor#configuration}
      * @param Editor
      */

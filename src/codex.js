@@ -1,10 +1,42 @@
 /**
  * Codex Editor
  *
+ * Short Description (눈_눈;)
+ * @version 2.0.0
  *
+ * How to start?
+ * Example:
+ *           new CodexEditor({
+ *                holderId : 'codex-editor',
+ *                initialBlock : 'paragraph',
+ *                placeholder : 'Write your story....',
+ *                tools: {
+ *                    quote: Quote,
+ *                    anotherTool : AnotherTool
+ *                },
+ *                toolsConfig: {
+ *                     quote: {
+ *                        iconClassname : 'quote-icon',
+ *                        displayInToolbox : true,
+ *                        enableLineBreaks : true
+ *                     },
+ *                     anotherTool: {
+ *                        iconClassname : 'tool-icon'
+ *                     }
+ *                 }
+ *            });
  *
+ * - tools is an object: {
+ *       pluginName: PluginClass,
+ *       .....
+ *   }
+ * - toolsConfig is an additional configuration that uses Codex Editor API
+ *      iconClassname - CSS classname of toolbox icon
+ *      displayInToolbox - if you want to see your Tool in toolbox hided in "plus" button, than set "True". By default : "False"
+ *      enableLineBreaks - by default enter creates new block that set as initialblock, but if you set this property "True", enter will break the lines in current block
  *
- * @author CodeX Team
+ * @author CodeX-Team <https://ifmo.su>
+ *
  */
 
 /**
@@ -86,7 +118,7 @@ module.exports = class CodexEditor {
 
     /**
      * Setting for configuration
-     * @param {object} config
+     * @param {Object} config
      */
     set configuration(config = {}) {
 
@@ -99,6 +131,8 @@ module.exports = class CodexEditor {
         };
 
         this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
+        this.config.tools = config.tools || {};
+        this.config.toolsConfig = config.toolsConfig || {};
 
     }
 
@@ -197,8 +231,6 @@ module.exports = class CodexEditor {
 
     }
 
-
-
     /**
      * Start Editor!
      *
@@ -210,12 +242,13 @@ module.exports = class CodexEditor {
 
         return Promise.resolve()
             .then(prepareDecorator(this.moduleInstances.ui))
+            .then(prepareDecorator(this.moduleInstances.Tools))
+
             .catch(function (error) {
 
                 console.log('Error occured', error);
 
             });
-
 
     }
 
@@ -305,36 +338,6 @@ module.exports = class CodexEditor {
 //     */
 //     editor.tools = {};
 //
-//     /**
-//      * Initialization
-//      * @uses Promise cEditor.core.prepare
-//      * @param {Object} userSettings
-//      * @param {Array}  userSettings.tools       list of plugins
-//      * @param {String} userSettings.holderId    Element's id to append editor
-//      *
-//      * Load user defined tools
-//      * Tools must contain this important objects :
-//      *  @param {String} type - this is a type of plugin. It can be used as plugin name
-//      *  @param {String} iconClassname - this a icon in toolbar
-//      *  @param {Object} make - what should plugin do, when it is clicked
-//      *  @param {Object} appendCallback - callback after clicking
-//      *  @param {Element} settings - what settings does it have
-//      *  @param {Object} render - plugin get JSON, and should return HTML
-//      *  @param {Object} save - plugin gets HTML content, returns JSON
-//      *  @param {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
-//      *  @param {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
-//      *
-//      * @example
-//      *   -  type             : 'header',
-//      *   -  iconClassname    : 'ce-icon-header',
-//      *   -  make             : headerTool.make,
-//      *   -  appendCallback   : headerTool.appendCallback,
-//      *   -  settings         : headerTool.makeSettings(),
-//      *   -  render           : headerTool.render,
-//      *   -  save             : headerTool.save,
-//      *   -  displayInToolbox : true,
-//      *   -  enableLineBreaks : false
-//      */
 //     editor.start = function (userSettings) {
 //
 //         init();
