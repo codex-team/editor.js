@@ -74,7 +74,7 @@ var CodexEditor =
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var modules = (["eventDispatcher.js","tools.js","ui.js"]).map(function (module) {
+	var modules = (["eventDispatcher.js","toolbar.js","tools.js","ui.js"]).map(function (module) {
 	
 	    return __webpack_require__(1)("./" + module);
 	});
@@ -223,7 +223,7 @@ var CodexEditor =
 	                /**
 	                 * Skip module with passed name
 	                 */
-	                if (moduleName == name) {
+	                if (moduleName === name) {
 	
 	                    continue;
 	                }
@@ -456,18 +456,20 @@ var CodexEditor =
 		"./_transport.js": 15,
 		"./eventDispatcher": 16,
 		"./eventDispatcher.js": 16,
-		"./toolbar/inline": 17,
-		"./toolbar/inline.js": 17,
-		"./toolbar/settings": 18,
-		"./toolbar/settings.js": 18,
-		"./toolbar/toolbar": 19,
-		"./toolbar/toolbar.js": 19,
-		"./toolbar/toolbox": 20,
-		"./toolbar/toolbox.js": 20,
-		"./tools": 21,
-		"./tools.js": 21,
-		"./ui": 22,
-		"./ui.js": 22
+		"./toolbar": 17,
+		"./toolbar.js": 17,
+		"./toolbar/inline": 19,
+		"./toolbar/inline.js": 19,
+		"./toolbar/settings": 20,
+		"./toolbar/settings.js": 20,
+		"./toolbar/toolbar": 21,
+		"./toolbar/toolbar.js": 21,
+		"./toolbar/toolbox": 22,
+		"./toolbar/toolbox.js": 22,
+		"./tools": 23,
+		"./tools.js": 23,
+		"./ui": 24,
+		"./ui.js": 24
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -3976,6 +3978,358 @@ var CodexEditor =
 
 /***/ },
 /* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * DOM manipulations
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+	
+	
+	var _dom = __webpack_require__(18);
+	
+	var _dom2 = _interopRequireDefault(_dom);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/**
+	 *
+	 * «Toolbar» is the node that moves up/down over current block
+	 *
+	 *  ______________________________________ Toolbar ____________________________________________
+	 * |                                                                                           |
+	 * |  ..................... Content ....................   ......... Block Actions ..........  |
+	 * |  .                                                .   .                                .  |
+	 * |  .                                                .   . [Open Settings] [Remove Block] .  |
+	 * |  .  [Plus Button]  [Toolbox: {Tool1}, {Tool2}]    .   .                                .  |
+	 * |  .                                                .   .        [Settings Panel]        .  |
+	 * |  ..................................................   ..................................  |
+	 * |                                                                                           |
+	 * |___________________________________________________________________________________________|
+	 *
+	 *
+	 * Toolbox — its an Element contains tools buttons. Can be shown by Plus Button.
+	 *
+	 *  _______________ Toolbox _______________
+	 * |                                       |
+	 * | [Header] [Image] [List] [Quote] ...   |
+	 * |_______________________________________|
+	 *
+	 * @class
+	 * @classdesc Toolbar module
+	 *
+	 * @property {Object} nodes
+	 * @property {Element} nodes.wrapper        - Toolbar main element
+	 * @property {Element} nodes.content        - Zone with Plus button and toolbox.
+	 * @property {Element} nodes.actions        - Zone with Block Settings and Remove Button
+	 * @property {Element} nodes.plusButton     - Button that opens or closes Toolbox
+	 * @property {Element} nodes.toolbox        - Container for tools
+	 */
+	var Toolbar = function () {
+	  _createClass(Toolbar, null, [{
+	    key: 'name',
+	    get: function get() {
+	
+	      return 'Toolbar';
+	    }
+	
+	    /**
+	     * @constructor
+	     */
+	
+	  }]);
+	
+	  function Toolbar() {
+	    _classCallCheck(this, Toolbar);
+	
+	    this.Editor = null;
+	
+	    this.nodes = {
+	      wrapper: null,
+	      content: null,
+	      actions: null,
+	
+	      // Content Zone
+	      plusButton: null,
+	      toolbox: null,
+	
+	      // Actions Zone
+	      settingsToggler: null,
+	      removeBlockButton: null,
+	      settings: null,
+	
+	      // Settings Zone: Plugin Settings and Default Settings
+	      pluginSettings: null,
+	      defaultSettings: null
+	    };
+	
+	    this.CSS = {
+	      toolbar: 'ce-toolbar',
+	      content: 'ce-toolbar__content',
+	      actions: 'ce-toolbar__actions',
+	
+	      // Content Zone
+	      toolbox: 'ce-toolbar__toolbox',
+	      plusButton: 'ce-toolbar__plus',
+	
+	      // Actions Zone
+	      settingsToggler: 'ce-toolbar__settings-btn',
+	      removeBlockButton: 'ce-toolbar__remove-btn',
+	
+	      // Settings Panel
+	      settings: 'ce-settings',
+	      defaultSettings: 'ce-settings_default',
+	      pluginSettings: 'ce-settings_plugin'
+	    };
+	  }
+	
+	  /**
+	   * Editor modules setter
+	   * @param {object} Editor - available editor modules
+	   */
+	
+	
+	  _createClass(Toolbar, [{
+	    key: 'make',
+	
+	
+	    /**
+	     * Makes toolbar
+	     */
+	    value: function make() {
+	      var _this = this;
+	
+	      this.nodes.wrapper = _dom2.default.make('div', this.CSS.toolbar);
+	
+	      /**
+	       * Make Content Zone and Actions Zone
+	       */
+	      ['content', 'actions'].forEach(function (el) {
+	
+	        _this.nodes[el] = _dom2.default.make('div', _this.CSS[el]);
+	        _dom2.default.append(_this.nodes.wrapper, _this.nodes[el]);
+	      });
+	
+	      /**
+	       * Fill Content Zone:
+	       *  - Plus Button
+	       *  - Toolbox
+	       */
+	      ['plusButton', 'toolbox'].forEach(function (el) {
+	
+	        _this.nodes[el] = _dom2.default.make('div', _this.CSS[el]);
+	        _dom2.default.append(_this.nodes.content, _this.nodes[el]);
+	      });
+	
+	      /**
+	       * Fill Actions Zone:
+	       *  - Settings Toggler
+	       *  - Remove Block Button
+	       *  - Settings Panel
+	       */
+	      this.nodes.settingsToggler = _dom2.default.make('span', this.CSS.settingsToggler);
+	      this.nodes.removeBlockButton = this.makeRemoveBlockButton();
+	
+	      _dom2.default.append(this.nodes.actions, [this.nodes.settingsToggler, this.nodes.removeBlockButton]);
+	
+	      /**
+	       * Make and append Settings Panel
+	       */
+	      this.makeBlockSettingsPanel();
+	
+	      /**
+	       * Append toolbar to the Editor
+	       */
+	      _dom2.default.append(this.Editor.ui.nodes.wrapper, this.nodes.wrapper);
+	    }
+	
+	    /**
+	     * Panel with block settings with 2 sections:
+	     *
+	     *   ____ Settings Panel ____
+	     *  | ...................... |
+	     *  | .   Tool Settings    . |
+	     *  | ...................... |
+	     *  | .  Default Settings  . |
+	     *  | ...................... |
+	     *  |________________________|
+	     *
+	     * @return {Element}
+	     */
+	
+	  }, {
+	    key: 'makeBlockSettingsPanel',
+	    value: function makeBlockSettingsPanel() {
+	
+	      this.nodes.settings = _dom2.default.make('div', this.CSS.settings);
+	
+	      this.nodes.pluginSettings = _dom2.default.make('div', this.CSS.pluginSettings);
+	      this.nodes.defaultSettings = _dom2.default.make('div', this.CSS.defaultSettings);
+	
+	      _dom2.default.append(this.nodes.settings, [this.nodes.pluginSettings, this.nodes.defaultSettings]);
+	      _dom2.default.append(this.nodes.actions, this.nodes.settings);
+	    }
+	
+	    /**
+	     * Makes Remove Block button, and confirmation panel
+	     * @return {Element} wrapper with button and panel
+	     */
+	
+	  }, {
+	    key: 'makeRemoveBlockButton',
+	    value: function makeRemoveBlockButton() {
+	
+	      /**
+	       * @todo  add confirmation panel and handlers
+	       * @see  {@link settings#makeRemoveBlockButton}
+	       */
+	      return _dom2.default.make('span', this.CSS.removeBlockButton);
+	    }
+	  }, {
+	    key: 'state',
+	    set: function set(Editor) {
+	
+	      this.Editor = Editor;
+	    }
+	  }]);
+	
+	  return Toolbar;
+	}();
+	
+	module.exports = Toolbar;
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/**
+	 * DOM manupulations helper
+	 */
+	var Dom = function () {
+	    function Dom() {
+	        _classCallCheck(this, Dom);
+	    }
+	
+	    _createClass(Dom, null, [{
+	        key: "make",
+	
+	
+	        /**
+	         * Helper for making Elements with classname and attributes
+	         *
+	         * @param  {string} tagName           - new Element tag name
+	         * @param  {array|string} classNames  - list or name of CSS classname(s)
+	         * @param  {Object} attributes        - any attributes
+	         * @return {Element}
+	         */
+	        value: function make(tagName, classNames, attributes) {
+	
+	            var el = document.createElement(tagName);
+	
+	            if (Array.isArray(classNames)) {
+	                var _el$classList;
+	
+	                (_el$classList = el.classList).add.apply(_el$classList, _toConsumableArray(classNames));
+	            } else if (classNames) {
+	
+	                el.classList.add(classNames);
+	            }
+	
+	            for (var attrName in attributes) {
+	
+	                el[attrName] = attributes[attrName];
+	            }
+	
+	            return el;
+	        }
+	
+	        /**
+	         * Append one or several elements to the parent
+	         *
+	         * @param  {Element} parent    - where to append
+	         * @param  {Element|Element[]} - element ore elements list
+	         */
+	
+	    }, {
+	        key: "append",
+	        value: function append(parent, elements) {
+	
+	            if (Array.isArray(elements)) {
+	
+	                elements.forEach(function (el) {
+	                    return parent.appendChild(el);
+	                });
+	            } else {
+	
+	                parent.appendChild(elements);
+	            }
+	        }
+	
+	        /**
+	         * Selector Decorator
+	         *
+	         * Returns first match
+	         *
+	         * @param {Element} el - element we searching inside. Default - DOM Document
+	         * @param {String} selector - searching string
+	         *
+	         * @returns {Element}
+	         */
+	
+	    }, {
+	        key: "find",
+	        value: function find() {
+	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+	            var selector = arguments[1];
+	
+	
+	            return el.querySelector(selector);
+	        }
+	
+	        /**
+	         * Selector Decorator.
+	         *
+	         * Returns all matches
+	         *
+	         * @param {Element} el - element we searching inside. Default - DOM Document
+	         * @param {String} selector - searching string
+	         * @returns {NodeList}
+	         */
+	
+	    }, {
+	        key: "findAll",
+	        value: function findAll() {
+	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+	            var selector = arguments[1];
+	
+	
+	            return el.querySelectorAll(selector);
+	        }
+	    }]);
+	
+	    return Dom;
+	}();
+	
+	exports.default = Dom;
+	;
+
+/***/ },
+/* 19 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4524,7 +4878,7 @@ var CodexEditor =
 	}({});
 
 /***/ },
-/* 18 */
+/* 20 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4686,7 +5040,7 @@ var CodexEditor =
 	}({});
 
 /***/ },
-/* 19 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4707,9 +5061,9 @@ var CodexEditor =
 	
 	    var editor = codex.editor;
 	
-	    toolbar.settings = __webpack_require__(18);
-	    toolbar.inline = __webpack_require__(17);
-	    toolbar.toolbox = __webpack_require__(20);
+	    toolbar.settings = __webpack_require__(20);
+	    toolbar.inline = __webpack_require__(19);
+	    toolbar.toolbox = __webpack_require__(22);
 	
 	    /**
 	     * Margin between focused node and toolbar
@@ -4812,7 +5166,7 @@ var CodexEditor =
 	}({});
 
 /***/ },
-/* 20 */
+/* 22 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -4989,7 +5343,7 @@ var CodexEditor =
 	}({});
 
 /***/ },
-/* 21 */
+/* 23 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -5165,14 +5519,14 @@ var CodexEditor =
 	// }());
 
 /***/ },
-/* 22 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _dom = __webpack_require__(23);
+	var _dom = __webpack_require__(18);
 	
 	var _dom2 = _interopRequireDefault(_dom);
 	
@@ -5309,14 +5663,14 @@ var CodexEditor =
 	         */
 	        _this.nodes.wrapper = _dom2.default.make('div', CSS.editorWrapper);
 	        _this.nodes.redactor = _dom2.default.make('div', CSS.editorZone);
-	        // toolbar  = makeToolBar_();
 	
-	        // wrapper.appendChild(toolbar);
 	        _this.nodes.wrapper.appendChild(_this.nodes.redactor);
-	        /**
-	         * Append editor wrapper with redactor zone into holder
-	         */
 	        _this.nodes.holder.appendChild(_this.nodes.wrapper);
+	
+	        /**
+	         * Make toolbar
+	         */
+	        _this.Editor.Toolbar.make();
 	
 	        resolve();
 	      })
@@ -5336,10 +5690,11 @@ var CodexEditor =
 	      /** Add eventlisteners to redactor elements */
 	      // .then(bindEvents_)
 	
-	      .catch(function () {
+	      .catch(function (e) {
+	
+	        console.error(e);
 	
 	        // editor.core.log("Can't draw editor interface");
-	
 	      });
 	    }
 	  }, {
@@ -5369,102 +5724,6 @@ var CodexEditor =
 	//     ui.prepare = function () {
 	//
 	
-	//
-	//     };
-	//
-	//     /**
-	//      * @private
-	//      * Draws inline toolbar zone
-	//      */
-	//     var makeInlineToolbar_ = function () {
-	//
-	//         var container = editor.draw.inlineToolbar();
-	//
-	//         /** Append to redactor new inline block */
-	//         editor.nodes.inlineToolbar.wrapper = container;
-	//
-	//         /** Draw toolbar buttons */
-	//         editor.nodes.inlineToolbar.buttons = editor.draw.inlineToolbarButtons();
-	//
-	//         /** Buttons action or settings */
-	//         editor.nodes.inlineToolbar.actions = editor.draw.inlineToolbarActions();
-	//
-	//         /** Append to inline toolbar buttons as part of it */
-	//         editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.buttons);
-	//         editor.nodes.inlineToolbar.wrapper.appendChild(editor.nodes.inlineToolbar.actions);
-	//
-	//         editor.nodes.wrapper.appendChild(editor.nodes.inlineToolbar.wrapper);
-	//
-	//     };
-	//
-	//     var makeToolBar_ = function () {
-	//
-	//         let toolbar         = editor.draw.toolbar(),
-	//             blockButtons    = makeToolbarSettings_(),
-	//             toolbarContent  = makeToolbarContent_();
-	//
-	//         /** Appending first-level block buttons */
-	//         toolbar.appendChild(blockButtons);
-	//
-	//         /** Append toolbarContent to toolbar */
-	//         toolbar.appendChild(toolbarContent);
-	//
-	//         /** Make toolbar global */
-	//         editor.nodes.toolbar = toolbar;
-	//
-	//         return toolbar;
-	//
-	//     };
-	//
-	//     var makeToolbarContent_ = function () {
-	//
-	//         let toolbarContent = editor.draw.toolbarContent(),
-	//             toolbox        = editor.draw.toolbox(),
-	//             plusButton     = editor.draw.plusButton();
-	//
-	//         /** Append plus button */
-	//         toolbarContent.appendChild(plusButton);
-	//
-	//         /** Appending toolbar tools */
-	//         toolbarContent.appendChild(toolbox);
-	//
-	//         /** Make Toolbox and plusButton global */
-	//         editor.nodes.toolbox    = toolbox;
-	//         editor.nodes.plusButton = plusButton;
-	//
-	//         return toolbarContent;
-	//
-	//     };
-	//
-	//     var makeToolbarSettings_ = function () {
-	//
-	//         let blockSettings       = editor.draw.blockSettings(),
-	//             blockButtons        = editor.draw.blockButtons(),
-	//             defaultSettings     = editor.draw.defaultSettings(),
-	//             showSettingsButton  = editor.draw.settingsButton(),
-	//             showTrashButton     = editor.toolbar.settings.makeRemoveBlockButton(),
-	//             pluginSettings      = editor.draw.pluginsSettings();
-	//
-	//         /** Add default and plugins settings */
-	//         blockSettings.appendChild(pluginSettings);
-	//         blockSettings.appendChild(defaultSettings);
-	//
-	//         /**
-	//          * Make blocks buttons
-	//          * This block contains settings button and remove block button
-	//          */
-	//         blockButtons.appendChild(showSettingsButton);
-	//         blockButtons.appendChild(showTrashButton);
-	//         blockButtons.appendChild(blockSettings);
-	//
-	//         /** Make BlockSettings, PluginSettings, DefaultSettings global */
-	//         editor.nodes.blockSettings      = blockSettings;
-	//         editor.nodes.pluginSettings     = pluginSettings;
-	//         editor.nodes.defaultSettings    = defaultSettings;
-	//         editor.nodes.showSettingsButton = showSettingsButton;
-	//         editor.nodes.showTrashButton    = showTrashButton;
-	//
-	//         return blockButtons;
 	//
 	//     };
 	//
@@ -5710,111 +5969,6 @@ var CodexEditor =
 	//     return ui;
 	//
 	// })({});
-
-/***/ },
-/* 23 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	/**
-	 * DOM manupulations helper
-	 */
-	var Dom = function () {
-	    function Dom() {
-	        _classCallCheck(this, Dom);
-	    }
-	
-	    _createClass(Dom, null, [{
-	        key: "make",
-	
-	
-	        /**
-	         * Helper for making Elements with classname and attributes
-	         *
-	         * @param  {string} tagName           - new Element tag name
-	         * @param  {array|string} classNames  - list or name of CSS classname(s)
-	         * @param  {Object} attributes        - any attributes
-	         * @return {Element}
-	         */
-	        value: function make(tagName, classNames, attributes) {
-	
-	            var el = document.createElement(tagName);
-	
-	            if (Array.isArray(classNames)) {
-	                var _el$classList;
-	
-	                (_el$classList = el.classList).add.apply(_el$classList, _toConsumableArray(classNames));
-	            } else if (classNames) {
-	
-	                el.classList.add(classNames);
-	            }
-	
-	            for (var attrName in attributes) {
-	
-	                el[attrName] = attributes[attrName];
-	            }
-	
-	            return el;
-	        }
-	
-	        /**
-	         * Selector Decorator
-	         *
-	         * Returns first match
-	         *
-	         * @param {Element} el - element we searching inside. Default - DOM Document
-	         * @param {String} selector - searching string
-	         *
-	         * @returns {Element}
-	         */
-	
-	    }, {
-	        key: "find",
-	        value: function find() {
-	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
-	            var selector = arguments[1];
-	
-	
-	            return el.querySelector(selector);
-	        }
-	
-	        /**
-	         * Selector Decorator.
-	         *
-	         * Returns all matches
-	         *
-	         * @param {Element} el - element we searching inside. Default - DOM Document
-	         * @param {String} selector - searching string
-	         * @returns {NodeList}
-	         */
-	
-	    }, {
-	        key: "findAll",
-	        value: function findAll() {
-	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
-	            var selector = arguments[1];
-	
-	
-	            return el.querySelectorAll(selector);
-	        }
-	    }]);
-	
-	    return Dom;
-	}();
-	
-	exports.default = Dom;
-	;
 
 /***/ }
 /******/ ]);
