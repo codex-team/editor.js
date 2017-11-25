@@ -4997,12 +4997,12 @@ var CodexEditor =
 	/**
 	 * Class properties:
 	 *
-	 * @property {String} this.name - name of this module
-	 * @property {Object[]} this.toolInstances - list of tool instances
-	 * @property {Tools[]} this.available - available Tools
-	 * @property {Tools[]} this.unavailable - unavailable Tools
-	 * @property {Object} this.toolsClasses - all classes
-	 * @property {EditorConfig} this.config - Editor config
+	 * @property {String} name - name of this module
+	 * @property {Object[]} toolInstances - list of tool instances
+	 * @property {Tools[]} available - available Tools
+	 * @property {Tools[]} unavailable - unavailable Tools
+	 * @property {Object} toolsClasses - all classes
+	 * @property {EditorConfig} config - Editor config
 	 */
 	var util = __webpack_require__(23);
 	
@@ -5096,6 +5096,7 @@ var CodexEditor =
 	    _createClass(Tools, [{
 	        key: 'prepare',
 	        value: function prepare() {
+	            var _this = this;
 	
 	            var self = this;
 	
@@ -5109,19 +5110,28 @@ var CodexEditor =
 	                this.toolClasses[toolName] = this.config.tools[toolName];
 	            }
 	
+	            /**
+	             * getting classes that has prepare method
+	             */
 	            var sequenceData = this.getListOfPrepareFunctions();
 	
+	            /**
+	             * if sequence data contains nothing then resolve current chain and run other module prepare
+	             */
 	            if (sequenceData.length === 0) {
 	
 	                return Promise.resolve();
 	            }
 	
+	            /**
+	             * to see how it works {@link Util#sequence}
+	             */
 	            return util.sequence(sequenceData, function (data) {
 	
-	                self.toolsAvailable[data.toolName] = self.toolClasses[data.toolName];
+	                _this.success(data);
 	            }, function (data) {
 	
-	                self.toolsUnavailable[data.toolName] = self.toolClasses[data.toolName];
+	                _this.fallback(data);
 	            });
 	        }
 	
@@ -5155,6 +5165,28 @@ var CodexEditor =
 	        }
 	
 	        /**
+	         * @param {ChainData.data} data - append tool to available list
+	         */
+	
+	    }, {
+	        key: 'success',
+	        value: function success(data) {
+	
+	            this.toolsAvailable[data.toolName] = this.toolClasses[data.toolName];
+	        }
+	
+	        /**
+	         * @param {ChainData.data} data - append tool to unavailable list
+	         */
+	
+	    }, {
+	        key: 'fallback',
+	        value: function fallback(data) {
+	
+	            this.toolsUnavailable[data.toolName] = this.toolClasses[data.toolName];
+	        }
+	
+	        /**
 	         * Returns all tools
 	         * @return {Array}
 	         */
@@ -5169,172 +5201,6 @@ var CodexEditor =
 	
 	    return Tools;
 	}();
-	// let toolConfig = this.defaultConfig;
-	// let toolPreparationList = [];
-	//
-	// for(let tool in this.config.tools) {
-	//
-	//     let toolClass = this.config.tools[tool],
-	//         toolName = toolClass.name.toLowerCase();
-	//
-	//     if (toolName in this.config.toolsConfig) {
-	//
-	//         toolConfig = this.config.toolsConfig[toolName];
-	//
-	//     }
-	//
-	//     if (toolClass.prepare && typeof toolClass.prepare === 'function') {
-	//
-	//         toolPreparationList.push(toolClass.prepare.bind(toolConfig));
-	//
-	//     }
-	//
-	// }
-	
-	// /**
-	// * Module working with plugins
-	// */
-	// module.exports = (function () {
-	//
-	//     let editor = codex.editor;
-	//
-	//     /**
-	//      * Initialize plugins before using
-	//      * Ex. Load scripts or call some internal methods
-	//      * @return Promise
-	//      */
-	//     function prepare() {
-	//
-	//         return new Promise(function (resolve_, reject_) {
-	//
-	//             Promise.resolve()
-	//
-	//                 /**
-	//                 * Compose a sequence of plugins that requires preparation
-	//                 */
-	//                 .then(function () {
-	//
-	//                     let pluginsRequiresPreparation = [],
-	//                         allPlugins = editor.tools;
-	//
-	//                     for ( let pluginName in allPlugins ) {
-	//
-	//                         let plugin = allPlugins[pluginName];
-	//
-	//                         if (plugin.prepare && typeof plugin.prepare != 'function' || !plugin.prepare) {
-	//
-	//                             continue;
-	//
-	//                         }
-	//
-	//                         pluginsRequiresPreparation.push(plugin);
-	//
-	//                     }
-	//
-	//                     /**
-	//                     * If no one passed plugins requires preparation, finish prepare() and go ahead
-	//                     */
-	//                     if (!pluginsRequiresPreparation.length) {
-	//
-	//                         resolve_();
-	//
-	//                     }
-	//
-	//                     return pluginsRequiresPreparation;
-	//
-	//                 })
-	//
-	//                 /** Wait plugins while they prepares */
-	//                 .then(waitAllPluginsPreparation_)
-	//
-	//                 .then(function () {
-	//
-	//                     editor.core.log('Plugins loaded', 'info');
-	//                     resolve_();
-	//
-	//                 }).catch(function (error) {
-	//
-	//                     reject_(error);
-	//
-	//                 });
-	//
-	//         });
-	//
-	//     }
-	//
-	//     /**
-	//     * @param {array} plugins - list of tools that requires preparation
-	//     * @return {Promise} resolved while all plugins will be ready or failed
-	//     */
-	//     function waitAllPluginsPreparation_(plugins) {
-	//
-	//         /**
-	//         * @calls allPluginsProcessed__ when all plugins prepared or failed
-	//         */
-	//         return new Promise (function (allPluginsProcessed__) {
-	//
-	//             plugins.reduce(function (previousValue, plugin, iteration) {
-	//
-	//                 return previousValue.then(function () {
-	//
-	//                     /**
-	//                     * Wait till plugins prepared
-	//                     * @calls pluginIsReady__ when plugin is ready or failed
-	//                     */
-	//                     return new Promise ( function (pluginIsReady__) {
-	//
-	//                         callPluginsPrepareMethod_( plugin )
-	//
-	//                             .then( pluginIsReady__ )
-	//                             .then( function () {
-	//
-	//                                 plugin.available = true;
-	//
-	//                             })
-	//
-	//                             .catch(function (error) {
-	//
-	//                                 editor.core.log(`Plugin «${plugin.type}» was not loaded. Preparation failed because %o`, 'warn', error);
-	//                                 plugin.available = false;
-	//                                 plugin.loadingMessage = error;
-	//
-	//                                 /** Go ahead even some plugin has problems */
-	//                                 pluginIsReady__();
-	//
-	//                             })
-	//
-	//                             .then(function () {
-	//
-	//                                 /** If last plugin has problems then just ignore and continue */
-	//                                 if (iteration == plugins.length - 1) {
-	//
-	//                                     allPluginsProcessed__();
-	//
-	//                                 }
-	//
-	//                             });
-	//
-	//                     });
-	//
-	//                 });
-	//
-	//             }, Promise.resolve() );
-	//
-	//         });
-	//
-	//     }
-	//
-	//     var callPluginsPrepareMethod_ = function (plugin) {
-	//
-	//         return plugin.prepare( plugin.config || {} );
-	//
-	//     };
-	//
-	//     return {
-	//         prepare: prepare
-	//     };
-	//
-	// }());
 
 /***/ }),
 /* 22 */
