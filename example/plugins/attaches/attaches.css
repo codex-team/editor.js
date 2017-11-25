@@ -1,0 +1,130 @@
+.cdx-attaches__default-wrapper {
+    margin: 15px 0;
+    padding: 15px;
+    background: #fff;
+    border: 1px solid #ebecec;
+    box-shadow: 0 1px 2px 0 rgba(34, 36, 44, 0.03);
+    border-radius: 3px;
+    text-align: center;
+}
+
+.cdx-attaches__default-button {
+    color: #8990aa;
+    cursor: pointer;
+}
+
+.cdx-attaches__default-button:hover {
+    color: #393f52;
+}
+
+.cdx-attaches__wrapper {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-flow: row nowrap;
+    flex-flow: row nowrap;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    -ms-flex-align: center;
+    align-items: center;
+    margin: 10px 0;
+    padding: 15px 20px;
+    background: #fff;
+    border: 1px solid #ebecec;
+    box-shadow: 0 1px 2px 0 rgba(34, 36, 44, 0.03);
+    border-radius: 3px;
+    font-size: 15px;
+}
+
+.cdx-attaches__file-name {
+    -ms-flex-positive: 8;
+    flex-grow: 8;
+    width: 100%;
+    outline: none;
+    border: 0;
+    font-size: inherit;
+}
+
+.cdx-attaches__file-name--collapsed {
+    width: 30%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cdx-attaches__extension,
+.cdx-attaches__size {
+    color: #8f9298;
+    white-space: nowrap;
+}
+
+.cdx-attaches__extension::after {
+    content: ',';
+    margin-right: 0.2em;
+}
+
+.cdx-attaches__size::after {
+    content: 'KB';
+    margin-left: 0.2em;
+}
+
+.cdx-attaches__icon {
+    display: inline-block;
+    width: 16px;
+    height: 32px;
+    background: url(file-icon-black.svg) no-repeat center center;
+    background-size: contain;
+}
+
+li:hover .cdx-attaches__icon,
+.selected .cdx-attaches__icon {
+    background: url(file-icon-white.svg) no-repeat center center;
+    background-size: contain;
+}
+
+.cdx-attaches__icon--inline {
+    height: 16px;
+    vertical-align: text-bottom;
+}
+
+.cdx-attaches__loader {
+    background-color: transparent;
+    background-image: repeating-linear-gradient(-45deg, transparent, transparent 4px, #f5f9ff 4px, #eaedef 8px) !important;
+    background-size: 56px 56px;
+    animation: loading-bar 5s infinite linear;
+}
+
+@keyframes loading-bar {
+    100% { background-position: -56% 0; }
+}
+
+.cdx-attaches__progress-bar {
+    width: 100%;
+    height: 3px;
+    margin: 0 15px;
+    background: #e1e3eb;
+    border: 0;
+    border-radius: 5px;
+}
+
+.cdx-attaches__progress-bar::-webkit-progress-bar {
+    background: #e0e1e3;
+    border-radius: 5px;
+}
+
+.cdx-attaches__progress-bar::-webkit-progress-value {
+    background: #414957;
+    border-radius: 5px;
+    transition: all 100ms ease-in;
+}
+
+progress::-moz-progress-bar {
+    background: #414957;
+    border-radius: 5px;
+}
+
+.cdx-attaches__cross-button {
+    width: 18px;
+    height: 18px;
+    background: url(cross.svg) no-repeat center center;
+    background-size: contain;
+    cursor: pointer;
+}
