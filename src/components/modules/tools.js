@@ -63,7 +63,6 @@ module.exports = class Tools {
     constructor({ config }) {
 
         this.config = config;
-        this.availabPlugins = {};
         this.toolInstances = [];
 
         this.util = require('../util');
@@ -78,83 +77,25 @@ module.exports = class Tools {
 
         if (!this.config.hasOwnProperty('tools')) {
 
-            return false;
+            return Promise.reject("Can't start without tools");
 
         }
 
         let plugins = this.getListOfPrepareFunctions();
 
-        /**
-         * Preparation Decorator
-         *
-         * @param toolBindedPreparationFunction
-         * @return {Promise}
-         */
-        function waitNextToolPreparation(toolBindedPreparationFunction) {
+        return this.util.sequence(plugins, this.success, this.fallback);
 
-            return new Promise(function (resolve, reject) {
+    }
 
-                toolBindedPreparationFunction()
+    success(tool) {
 
-                    .then(resolve)
-                    .catch(function (error) {
+        console.log('Success!', tool);
 
-                        console.log('Plugin is not available because of ', error);
+    }
 
-                        // anyway, go ahead even plugin is not available
-                        resolve();
+    fallback(tool) {
 
-                    });
-
-            });
-
-        }
-
-        return new Promise(function (resolvePreparation, rejectPreparation) {
-
-            // continue editor initialization if non of tools doesn't need preparation
-            if (toolPreparationList.length === 0) {
-
-                resolvePreparation();
-
-            } else {
-
-                toolPreparationList.reduce(function (previousToolPrepared, currentToolReadyToPreparation, iteration) {
-
-                    return previousToolPrepared
-                        .then(() => waitNextToolPreparation(currentToolReadyToPreparation))
-                        .then(() => {
-
-                            if (iteration == toolPreparationList.length - 1) {
-
-                                resolvePreparation();
-
-                            }
-
-                        });
-
-                }, Promise.resolve());
-
-            }
-
-        });
-
-        /**
-         * - getting class and config
-         * - push to the toolinstnaces property created instances
-         */
-        // for(let tool in this.config.tools) {
-        //     let toolClass = this.config.tools[tool],
-        //         toolConfig;
-        //
-        //     if (tool in this.config.toolConfig) {
-        //         toolConfig = this.config.toolConfig[tool];
-        //     } else {
-        //         toolConfig = this.defaultConfig;
-        //     }
-        //
-        //     this.toolInstances.push(new toolClass(toolConfig));
-        // }
+        console.log('Module is not available', tool);
 
     }
 
@@ -284,15 +225,6 @@ module.exports = class Tools {
 //         */
 //         return new Promise (function (allPluginsProcessed__) {
 //
-//             /**
-//              * pluck each element from queue
-//              * First, send resolved Promise as previous value
-//              * Each plugins "prepare" method returns a Promise, that's why
-//              * reduce current element will not be able to continue while can't get
-//              * a resolved Promise
-//              *
-//              * If last plugin is "prepared" then go to the next stage of initialization
-//              */
 //             plugins.reduce(function (previousValue, plugin, iteration) {
 //
 //                 return previousValue.then(function () {
