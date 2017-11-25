@@ -31,7 +31,7 @@
  *       .....
  *   }
  * - toolsConfig is an additional configuration that uses Codex Editor API
- *      iconClassname - CSS classname of toobox icon
+ *      iconClassname - CSS classname of toolbox icon
  *      displayInToolbox - if you want to see your Tool in toolbox hided in "plus" button, than set "True". By default : "False"
  *      enableLineBreaks - by default enter creates new block that set as initialblock, but if you set this property "True", enter will break the lines in current block
  *
