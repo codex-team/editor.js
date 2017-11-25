@@ -1,5 +1,5 @@
 
-class Events {
+module.exports = class Events {
 
     constructor() {
 
@@ -32,4 +32,4 @@ class Events {
 
     }
 
-}
+};
