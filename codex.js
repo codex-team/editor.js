@@ -6,6 +6,36 @@
  *
  * @author CodeX Team
  */
+
+/**
+ * @typedef {CodexEditor} CodexEditor - editor class
+ */
+
+/**
+ * @typedef {Object} EditorConfig
+ * @property {String} holderId - Element to append Editor
+ * ...
+ */
+
+/**
+ * All Editor components
+ */
+const modules = [
+    require('./src/modules/dom'),
+    require('./src/modules/core'),
+    require('./src/modules/ui')
+];
+
+/**
+ * @class
+ *
+ * @classdesc CodeX Editor base class
+ *
+ * @property this.config - all settings
+ * @property this.moduleInstances - constructed editor components
+ *
+ * @type {CodexEditor}
+ */
 module.exports = class CodexEditor {
 
     /** Editor version */
@@ -16,18 +46,60 @@ module.exports = class CodexEditor {
     }
 
     /**
+     * @param {EditorConfig} config - user configuration
+     *
+     */
+    constructor(config) {
+
+        'use strict';
+
+
+        /**
+         * Configuration object
+         */
+        this.config = {};
+
+        /**
+         * Editor Components
+         */
+        this.moduleInstances = {};
+
+        Promise.resolve()
+            .then(() => {
+
+                this.configuration = config;
+
+            })
+            .then(() => this.init())
+            .then(() => this.start())
+            .then(() => {
+
+                console.log('CodeX Editor is ready');
+
+            })
+            .catch(error => {
+
+                console.log('CodeX Editor does not ready beecause of %o', error);
+
+            });
+
+    }
+
+    /**
      * Setting for configuration
-     * @param config
+     * @param {object} config
      */
     set configuration(config = {}) {
 
-        this._configuration.holderId = config.holderId;
-        this._configuration.placeholder = config.placeholder || 'write your story...';
-        this._configuration.sanitizer = config.sanitizer || {
-
+        this.config.holderId = config.holderId;
+        this.config.placeholder = config.placeholder || 'write your story...';
+        this.config.sanitizer = config.sanitizer || {
+            p: true,
+            b: true,
+            a: true
         };
 
-        this._configuration.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
+        this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
 
     }
 
@@ -37,134 +109,112 @@ module.exports = class CodexEditor {
      */
     get configuration() {
 
-        return this._configuration;
-
-    }
-
-    /**
-     * @param config
-     *
-     * @property this.configuration - editor instance configuration
-     * @property this.moduleInstances - editor module instances
-     */
-    constructor(config) {
-
-        'use strict';
-
-        /** Privates */
-        this._configuration = {};
-
-        this.configuration = config;
-        this.moduleInstances = [];
-
-        this.eventsDispatcher = new Events();
-
-        this.init();
+        return this.config;
 
     }
 
     /**
      * Initializes modules:
-     *  First: requiring modules from path
-     *  Second: memorizing the instances
+     *  - make and save instances
+     *  - configure
      */
     init() {
 
-        let Core            = require('./src/modules/core'),
-            Tools           = require('./src/modules/tools');
-            // transport       = require('./src/modules/transport'),
-            // renderer        = require('./src/modules/renderer'),
-            // saver           = require('./src/modules/saver'),
-            // content         = require('./src/modules/content'),
-            // toolbar         = require('./src/modules/toolbar/toolbar'),
-            // callbacks       = require('./src/modules/callbacks'),
-            // draw            = require('./src/modules/draw'),
-            // caret           = require('./src/modules/caret'),
-            // notifications   = require('./src/modules/notifications'),
-            // parser          = require('./src/modules/parser'),
-            // sanitizer       = require('./src/modules/sanitizer'),
-            // listeners       = require('./src/modules/listeners'),
-            // destroyer       = require('./src/modules/destroyer'),
-            // paste           = require('./src/modules/paste');
+        /**
+         * Make modules instances and save it to the @property this.moduleInstances
+         */
+        this.constructModules();
 
-        let moduleList = {
-            'core' : Core,
-            'tools' : Tools
-        };
+        /**
+         * Modules configuration
+         */
+        this.configureModules();
 
-        for(let moduleName in moduleList) {
+    }
 
-            let modules = [];
+    /**
+     * Make modules instances and save it to the @property this.moduleInstances
+     */
+    constructModules() {
 
-            for(let moduleExtends in moduleList) {
+        modules.forEach( Module => {
 
-                if (moduleExtends === moduleName) {
-
-                    continue;
-
-                }
-                modules.push(moduleList[moduleExtends]);
-
-            }
-
-            this.moduleInstances[moduleName] = new moduleList[moduleName]({
-                modules : modules,
-                config  : this.configuration,
-                state   : this.state,
-                nodes   : this.nodes
+            this.moduleInstances[Module.name] = new Module({
+                config : this.configuration
             });
+
+        });
+
+    }
+
+    /**
+     * Modules instances configuration:
+     *  - pass other modules to the 'state' property
+     *  - ...
+     */
+    configureModules() {
+
+        for(let name in this.moduleInstances) {
+
+            /**
+             * Module does not need self-instance
+             */
+            this.moduleInstances[name].state = this.getModulesDiff( name );
 
         }
 
-        // this.moduleInstances['core'].prepare();
-        Promise.resolve()
-            .then(this.moduleInstances['core'].prepare.bind(this.moduleInstances['core']));
-            // .then(this.moduleInstances['ui'].prepare)
-            // .then(this.moduleInstances['tools'.prepare])
-            // .catch(function (error) {
-            //
-            //     console.log('Error occured', error);
-            //
-            // });
+    }
+
+    /**
+     * Return modules without passed name
+     */
+    getModulesDiff( name ) {
+
+        let modules = {};
+
+        for(let moduleName in this.moduleInstances) {
+
+            /**
+             * Skip module with passed name
+             */
+            if (moduleName == name) {
+
+                continue;
+
+            }
+            modules[moduleName] = this.moduleInstances[moduleName];
+
+        }
+
+        return modules;
+
+    }
+
+
+
+    /**
+     * Start Editor!
+     *
+     * @return {Promise}
+     */
+    start() {
+
+        let prepareDecorator = module => module.prepare();
+
+        return Promise.resolve()
+            .then(prepareDecorator(this.moduleInstances['core']))
+            .then(prepareDecorator(this.moduleInstances['ui']))
+            .catch(function (error) {
+
+                console.log('Error occured', error);
+
+            });
+
 
     }
 
 };
 
-class Events {
-
-    constructor() {
-
-        this.subscribers = {};
-
-    }
-
-    on(eventName, callback) {
-
-        if (!(eventName in this.subscribers)) {
-
-            this.subscribers[eventName] = [];
-
-        }
-
-        // group by events
-        this.subscribers[eventName].push(callback);
-
-    }
-
-    emit(eventName, data) {
-
-        this.subscribers[eventName].reduce(function (previousData, currentHandler) {
-
-            let newData = currentHandler(previousData);
-
-            return newData ? newData : previousData;
-
-        }, data);
-
-    }
-
-}
 // module.exports = (function (editor) {
 //
 //     'use strict';

@@ -2,6 +2,7 @@
     /** Enable ES6 features */
     "parserOptions": {
         "ecmaVersion": 6,
+        "sourceType": "module"
     },
     "rules": {
 

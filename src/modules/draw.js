@@ -7,32 +7,6 @@
 
 module.exports = (function (draw) {
 
-    /**
-     * Base editor wrapper
-     */
-    draw.wrapper = function () {
-
-        var wrapper = document.createElement('div');
-
-        wrapper.className += 'codex-editor';
-
-        return wrapper;
-
-    };
-
-    /**
-     * Content-editable holder
-     */
-    draw.redactor = function () {
-
-        var redactor = document.createElement('div');
-
-        redactor.className += 'ce-redactor';
-
-        return redactor;
-
-    };
-
     draw.ceBlock = function () {
 
         var block = document.createElement('DIV');
