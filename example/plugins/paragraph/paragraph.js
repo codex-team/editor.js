@@ -1,6 +1,6 @@
 /**
  * @class Paragraph
- * Paragraph plugin for CodexEditor
+ * @classdesc Paragraph plugin for CodexEditor
  *
  * @author CodeX Team (team@ifmo.su)
  * @copyright CodeX Team 2017
@@ -10,6 +10,8 @@
  *
  * @typedef {Object} ParagraphData
  * @property {String} text — HTML content to insert to paragraph element
+ *
+ * TODO: sanitize data while saving
  *
  */
 
@@ -31,7 +33,7 @@ export default class Paragraph {
      *
      * @param {ParagraphData} data — initial plugin content
      */
-    constructor(data={}) {
+    constructor(data = {}) {
 
         this._CSS = {
             wrapper: 'ce-paragraph'
