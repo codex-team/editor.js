@@ -24,7 +24,9 @@
 module.exports = class Tools {
 
     static get name() {
+
         return 'tools';
+
     }
 
     /**
@@ -33,7 +35,9 @@ module.exports = class Tools {
      * @param Editor.config {@link CodexEditor#configuration}
      */
     set state(Editor) {
+
         this.Editor = Editor;
+
     }
 
     /**
@@ -41,11 +45,13 @@ module.exports = class Tools {
      * @return {ToolsConfig}
      */
     get defaultConfig() {
+
         return {
             iconClassName : 'default-icon',
             displayInToolbox : false,
             enableLineBreaks : false
-        }
+        };
+
     }
 
     /**
@@ -54,10 +60,12 @@ module.exports = class Tools {
      * @param {ToolsConfig} config
      */
     constructor(config) {
+
         this.config = config;
 
         this.availabPlugins = {};
         this.toolInstances = [];
+
     }
 
     /**
@@ -69,7 +77,9 @@ module.exports = class Tools {
         let toolConfig = this.defaultConfig;
 
         if (!this.config.hasOwnProperty('tools')) {
+
             return false;
+
         }
 
         /**
@@ -80,32 +90,41 @@ module.exports = class Tools {
          */
         function waitNextToolPreparation(toolBindedPreparationFunction) {
 
-            return new Promise(function(resolve, reject) {
+            return new Promise(function (resolve, reject) {
+
                 toolBindedPreparationFunction()
                     .then(resolve)
-                    .catch(function(error) {
+                    .catch(function (error) {
+
                         console.log('Plugin is not available because of ', error);
 
                         // anyway, go ahead even plugin is not available
                         resolve();
+
                     });
+
             });
 
         }
 
-        return new Promise(function(resolvePreparation, rejectPreparation) {
+        return new Promise(function (resolvePreparation, rejectPreparation) {
 
             let toolPreparationList = [];
+
             for(let tool of this.config.tools) {
 
                 let toolName = tool.name;
 
                 if (toolName in this.config.toolsConfig) {
+
                     toolConfig = this.config.toolsConfig[toolName];
+
                 }
 
                 if (tool.prepare && typeof tool.prepare === 'function') {
+
                     toolPreparationList.push(tool.prepare.bind(toolConfig));
+
                 }
 
             }
@@ -117,14 +136,16 @@ module.exports = class Tools {
 
             } else {
 
-                toolPreparationList.reduce(function(previousToolPrepared, currentToolReadyToPreparation, iteration) {
+                toolPreparationList.reduce(function (previousToolPrepared, currentToolReadyToPreparation, iteration) {
 
                     return previousToolPrepared
                         .then(() => waitNextToolPreparation(currentToolReadyToPreparation))
                         .then(() => {
 
                             if (iteration == toolPreparationList.length - 1) {
+
                                 resolvePreparation();
+
                             }
 
                         });
@@ -159,7 +180,9 @@ module.exports = class Tools {
      * @return {Array}
      */
     getTools() {
+
         return this.toolInstances;
+
     }
 
 };
