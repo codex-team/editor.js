@@ -56,6 +56,7 @@ module.exports = class Tools {
     constructor(config) {
         this.config = config;
 
+        this.availabPlugins = {};
         this.toolInstances = [];
     }
 
@@ -69,6 +70,27 @@ module.exports = class Tools {
 
         if (!this.config.hasOwnProperty('tools')) {
             return false;
+        }
+
+        /**
+         * Preparation Decorator
+         *
+         * @param toolBindedPreparationFunction
+         * @return {Promise}
+         */
+        function waitNextToolPreparation(toolBindedPreparationFunction) {
+
+            return new Promise(function(resolve, reject) {
+                toolBindedPreparationFunction()
+                    .then(resolve)
+                    .catch(function(error) {
+                        console.log('Plugin is not available because of ', error);
+
+                        // anyway, go ahead even plugin is not available
+                        resolve();
+                    });
+            });
+
         }
 
         return new Promise(function(resolvePreparation, rejectPreparation) {
@@ -86,12 +108,30 @@ module.exports = class Tools {
                     toolPreparationList.push(tool.prepare.bind(toolConfig));
                 }
 
-
             }
 
-            Promise.all(toolPreparationList)
-                .then(resolvePreparation)
-                .catch(rejectPreparation);
+            // continue editor initialization if non of tools doesn't need preparation
+            if (toolPreparationList.length === 0) {
+
+                resolvePreparation();
+
+            } else {
+
+                toolPreparationList.reduce(function(previousToolPrepared, currentToolReadyToPreparation, iteration) {
+
+                    return previousToolPrepared
+                        .then(() => waitNextToolPreparation(currentToolReadyToPreparation))
+                        .then(() => {
+
+                            if (iteration == toolPreparationList.length - 1) {
+                                resolvePreparation();
+                            }
+
+                        });
+
+                }, Promise.resolve());
+
+            }
 
         });
 
