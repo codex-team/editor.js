@@ -130,7 +130,7 @@ module.exports = class Content {
 
         } else {
 
-            while(!node.classList.contains(this.CSS.block)) {
+            while(node.classList && !node.classList.contains(this.CSS.block)) {
 
                 node = node.parentNode;
 

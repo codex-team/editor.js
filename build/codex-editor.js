@@ -3104,7 +3104,7 @@ var CodexEditor =
 	                return null;
 	            } else {
 	
-	                while (!node.classList.contains(this.CSS.block)) {
+	                while (node.classList && !node.classList.contains(this.CSS.block)) {
 	
 	                    node = node.parentNode;
 	                }
@@ -4016,7 +4016,7 @@ var CodexEditor =
 	         * @return {Element}
 	         */
 	        value: function make(tagName) {
-	            var classNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
+	            var classNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 	            var attributes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 	
 	
@@ -4083,18 +4083,7 @@ var CodexEditor =
 	        key: 'isNode',
 	        value: function isNode(node) {
 	
-	            return node && (typeof node === 'undefined' ? 'undefined' : _typeof(node)) === 'object' && node.nodeType && node.nodeType === Dom.nodeTypes.TAG;
-	        }
-	    }, {
-	        key: 'nodeTypes',
-	        get: function get() {
-	
-	            return {
-	                TAG: 1,
-	                TEXT: 3,
-	                COMMENT: 8,
-	                DOCUMENT_FRAGMENT: 11
-	            };
+	            return node && (typeof node === 'undefined' ? 'undefined' : _typeof(node)) === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
 	        }
 	    }]);
 	

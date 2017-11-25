@@ -3,17 +3,6 @@
  */
 export default class Dom {
 
-    static get nodeTypes() {
-
-        return {
-            TAG     : 1,
-            TEXT    : 3,
-            COMMENT : 8,
-            DOCUMENT_FRAGMENT: 11
-        };
-
-    }
-
     /**
      * Helper for making Elements with classname and attributes
      *
@@ -22,7 +11,7 @@ export default class Dom {
      * @param  {Object} attributes        - any attributes
      * @return {Element}
      */
-    static make(tagName, classNames='', attributes={}) {
+    static make(tagName, classNames = null, attributes = {}) {
 
         var el = document.createElement(tagName);
 
@@ -79,7 +68,7 @@ export default class Dom {
 
     static isNode(node) {
 
-        return node && typeof node === 'object' && node.nodeType && node.nodeType === Dom.nodeTypes.TAG;
+        return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
 
     }
 };
