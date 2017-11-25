@@ -14,7 +14,9 @@ module.exports = class Events {
      * @returns {string}
      */
     static get name() {
+
         return 'Events';
+
     }
 
     /**
@@ -80,6 +82,7 @@ module.exports = class Events {
 
         this.Editor = null;
         this.subscribers = null;
+
     }
 
 };
