@@ -25,12 +25,12 @@
 /**
  * Class properties:
  *
- * @property {String} this.name - name of this module
- * @property {Object[]} this.toolInstances - list of tool instances
- * @property {Tools[]} this.available - available Tools
- * @property {Tools[]} this.unavailable - unavailable Tools
- * @property {Object} this.toolsClasses - all classes
- * @property {EditorConfig} this.config - Editor config
+ * @property {String} name - name of this module
+ * @property {Object[]} toolInstances - list of tool instances
+ * @property {Tools[]} available - available Tools
+ * @property {Tools[]} unavailable - unavailable Tools
+ * @property {Object} toolsClasses - all classes
+ * @property {EditorConfig} config - Editor config
  */
 let util = require('../util');
 
