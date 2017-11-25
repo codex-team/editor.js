@@ -54,6 +54,7 @@
 /**
  * Require Editor modules places in components/modules dir
  */
+// eslint-disable-next-line
 let modules = editorModules.map( module => {
 
     return require('./components/modules/' + module );
@@ -219,7 +220,7 @@ module.exports = class CodexEditor {
      */
     getModulesDiff( name ) {
 
-        let modules = {};
+        let diff = {};
 
         for(let moduleName in this.moduleInstances) {
 
@@ -231,11 +232,11 @@ module.exports = class CodexEditor {
                 continue;
 
             }
-            modules[moduleName] = this.moduleInstances[moduleName];
+            diff[moduleName] = this.moduleInstances[moduleName];
 
         }
 
-        return modules;
+        return diff;
 
     }
 

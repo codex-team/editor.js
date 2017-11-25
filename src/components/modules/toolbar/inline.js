@@ -121,8 +121,10 @@ module.exports = (function (inline) {
          * For more complicated tools, we should write our own behavior
          */
         switch (type) {
+
             case 'createLink' : editor.toolbar.inline.createLinkAction(event, type); break;
             default           : editor.toolbar.inline.defaultToolAction(type); break;
+
         }
 
         /**

@@ -52,12 +52,12 @@ module.exports = (function (saver) {
     let getBlockData = function (block) {
 
         return saveBlockData(block)
-          .then(validateBlockData)
-          .catch(editor.core.log);
+            .then(validateBlockData)
+            .catch(editor.core.log);
 
     };
 
-   /**
+    /**
     * @private
     * Call block`s plugin save method and return saved data
     *
@@ -102,7 +102,7 @@ module.exports = (function (saver) {
 
     };
 
-   /**
+    /**
     * Call plugin`s validate method. Return false if validation failed
     *
     * @param data
@@ -137,7 +137,7 @@ module.exports = (function (saver) {
 
     };
 
-   /**
+    /**
     * Compile article output
     *
     * @param savedData

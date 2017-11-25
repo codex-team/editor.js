@@ -18,7 +18,9 @@ module.exports = (function (callbacks) {
     callbacks.globalKeydown = function (event) {
 
         switch (event.keyCode) {
+
             case editor.core.keys.ENTER : enterKeyPressed_(event);     break;
+
         }
 
     };
@@ -31,10 +33,12 @@ module.exports = (function (callbacks) {
     callbacks.redactorKeyDown = function (event) {
 
         switch (event.keyCode) {
+
             case editor.core.keys.TAB   : tabKeyPressedOnRedactorsZone_(event);                     break;
             case editor.core.keys.ENTER : enterKeyPressedOnRedactorsZone_(event);                   break;
             case editor.core.keys.ESC   : escapeKeyPressedOnRedactorsZone_(event);                  break;
             default                     : defaultKeyPressedOnRedactorsZone_(event);                 break;
+
         }
 
     };
@@ -47,10 +51,12 @@ module.exports = (function (callbacks) {
     callbacks.globalKeyup = function (event) {
 
         switch (event.keyCode) {
+
             case editor.core.keys.UP    :
             case editor.core.keys.LEFT  :
             case editor.core.keys.RIGHT :
             case editor.core.keys.DOWN  : arrowKeyPressed_(event); break;
+
         }
 
     };
