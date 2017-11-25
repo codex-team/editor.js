@@ -57,17 +57,7 @@ import $ from '../dom';
  * @property {Element} nodes.wrapper  - <codex-editor>
  * @property {Element} nodes.redactor - <ce-redactor>
  */
-module.exports = class UI {
-
-    /**
-     * Module key name
-     * @returns {string}
-     */
-    static get name() {
-
-        return 'ui';
-
-    }
+class UI {
 
     /**
      * @constructor
@@ -163,7 +153,11 @@ module.exports = class UI {
 
     }
 
-};
+}
+
+module.exports = UI;
+
+
 // /**
 //  * Codex Editor UI module
 //  *
