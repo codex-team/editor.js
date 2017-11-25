@@ -23,8 +23,6 @@ module.exports = class Core {
 
     }
 
-
-
     /**
      *
      * @param Editor
@@ -49,7 +47,7 @@ module.exports = class Core {
 
     /**
      * @param Editor
-     * @param Editor.modules {@link Tools#list}
+     * @param Editor.modules {@link CodexEditor#moduleInstances}
      * @param Editor.config {@link CodexEditor#configuration}
      * @param Editor
      */

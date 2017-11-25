@@ -53,21 +53,39 @@
 <!--<script src="plugins/attaches/attaches.js"></script>-->
 <!--<link rel="stylesheet" href="plugins/attaches/attaches.css">-->
 
-<script src="codex-editor.js?v=108"></script>
-<link rel="stylesheet" href="codex-editor.css?v=11000">
+<script src="../build/codex-editor.js?v=108"></script>
+<link rel="stylesheet" href="../build/codex-editor.css?v=11000">
 
 <script>
+
+    class Quote {
+
+        render() {
+            console.log("Quote rendering");
+        }
+
+        save() {
+            console.log("Quote saving");
+        }
+
+    }
+
+    console.log("This is Quote", Quote);
     codex = {};
     codex.editor = 1;
     var editor = new CodexEditor({
         holderId : 'codex-editor',
         inittialBlock : 'paragraph',
-//        tools: {
-//            quote: Quote
-//        },
-//        toolsConfig: {
-//            quote: {}
-//        }
+        tools: {
+            quote: Quote
+        },
+        toolsConfig: {
+            quote: {
+                iconClassname : 'quote-icon',
+                displayInToolbox : true,
+                enableLineBreaks : true
+            }
+        }
     });
 
 

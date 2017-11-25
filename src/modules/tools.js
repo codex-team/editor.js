@@ -1,12 +1,125 @@
+/**
+ * @module Codex Editor Tools Submodule
+ *
+ * Creates Instances from Plugins and binds external config to the instances
+ */
+
+/**
+ * Load user defined tools
+ * Tools must contain the following important objects:
+ *
+ * @typedef {Object} ToolsConfig
+ * @property {String} iconClassname - this a icon in toolbar
+ * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
+ * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
+ */
+
+/**
+ * Class properties:
+ *
+ * @property {String} this.name - name of this module
+ * @property {Array} this.toolInstances - list of tool instances
+ *
+ */
 module.exports = class Tools {
 
-    constructor() {
-        
+    static get name() {
+        return 'tools';
+    }
+
+    /**
+     * @param Editor
+     * @param Editor.modules {@link CodexEditor#moduleInstances}
+     * @param Editor.config {@link CodexEditor#configuration}
+     */
+    set state(Editor) {
+        this.Editor = Editor;
+    }
+
+    /**
+     * If config wasn't passed by user
+     * @return {ToolsConfig}
+     */
+    get defaultConfig() {
+        return {
+            iconClassName : 'default-icon',
+            displayInToolbox : false,
+            enableLineBreaks : false
+        }
+    }
+
+    /**
+     * @constructor
+     *
+     * @param {ToolsConfig} config
+     */
+    constructor(config) {
+        this.config = config;
+
+        this.toolInstances = [];
+    }
+
+    /**
+     * Creates instances via passed or default configuration
+     * @return {boolean}
+     */
+    prepare() {
+
+        let toolConfig = this.defaultConfig;
+
+        if (!this.config.hasOwnProperty('tools')) {
+            return false;
+        }
+
+        return new Promise(function(resolvePreparation, rejectPreparation) {
+
+            let toolPreparationList = [];
+            for(let tool of this.config.tools) {
+
+                let toolName = tool.name;
+
+                if (toolName in this.config.toolsConfig) {
+                    toolConfig = this.config.toolsConfig[toolName];
+                }
+
+                if (tool.prepare && typeof tool.prepare === 'function') {
+                    toolPreparationList.push(tool.prepare.bind(toolConfig));
+                }
+
+
+            }
+
+            Promise.all(toolPreparationList)
+                .then(resolvePreparation)
+                .catch(rejectPreparation);
+
+        });
+
+        /**
+         * - getting class and config
+         * - push to the toolinstnaces property created instances
+         */
+        // for(let tool in this.config.tools) {
+        //     let toolClass = this.config.tools[tool],
+        //         toolConfig;
+        //
+        //     if (tool in this.config.toolConfig) {
+        //         toolConfig = this.config.toolConfig[tool];
+        //     } else {
+        //         toolConfig = this.defaultConfig;
+        //     }
+        //
+        //     this.toolInstances.push(new toolClass(toolConfig));
+        // }
 
     }
 
-    prepare() {
-
+    /**
+     * Returns all tools
+     * @return {Array}
+     */
+    getTools() {
+        return this.toolInstances;
     }
 
 };
