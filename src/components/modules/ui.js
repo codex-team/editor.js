@@ -1,40 +1,43 @@
-    /**
+/**
  * Module UI
  *
  * @type {UI}
  */
-let className = {
+// let className = {
 
     /**
      * @const {string} BLOCK_CLASSNAME - redactor blocks name
      */
-    BLOCK_CLASSNAME : 'ce-block',
+    // BLOCK_CLASSNAME : 'ce-block',
 
     /**
      * @const {String} wrapper for plugins content
      */
-    BLOCK_CONTENT : 'ce-block__content',
+    // BLOCK_CONTENT : 'ce-block__content',
 
     /**
      * @const {String} BLOCK_STRETCHED - makes block stretched
      */
-    BLOCK_STRETCHED : 'ce-block--stretched',
+    // BLOCK_STRETCHED : 'ce-block--stretched',
 
     /**
      * @const {String} BLOCK_HIGHLIGHTED - adds background
      */
-    BLOCK_HIGHLIGHTED : 'ce-block--focused',
+    // BLOCK_HIGHLIGHTED : 'ce-block--focused',
 
     /**
      * @const {String} - for all default settings
      */
-    SETTINGS_ITEM : 'ce-settings__item'
-};
+    // SETTINGS_ITEM : 'ce-settings__item'
+// };
 
-let CSS_ = {
+let CSS = {
     editorWrapper : 'codex-editor',
     editorZone    : 'ce-redactor'
 };
+
+
+import $ from '../dom';
 
 
 /**
@@ -49,6 +52,10 @@ let CSS_ = {
  *
  * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
  * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
+ * @property {Object} nodes          -
+ * @property {Element} nodes.wrapper  - element where we need to append redactor
+ * @property {Element} nodes.wrapper  - <codex-editor>
+ * @property {Element} nodes.redactor - <ce-redactor>
  */
 module.exports = class UI {
 
@@ -67,10 +74,16 @@ module.exports = class UI {
      *
      * @param  {EditorConfig} config
      */
-    constructor( config ) {
+    constructor({ config }) {
 
         this.config = config;
         this.Editor = null;
+
+        this.nodes = {
+            holder: null,
+            wrapper: null,
+            redactor: null
+        };
 
     }
 
@@ -92,48 +105,57 @@ module.exports = class UI {
      */
     prepare() {
 
-        console.log('ui prepare fired');
+        return new Promise( (resolve, reject) => {
 
-        return;
+            /**
+             * Element where we need to append CodeX Editor
+             * @type {Element}
+             */
+            this.nodes.holder = document.getElementById(this.config.holderId);
 
-        return new Promise(function (resolve, reject) {
+            if (!this.nodes.holder) {
 
-            let wrapper  = this.modules.dom.make('DIV', [ CSS_.editorWrapper ], {}),
-                redactor = this.modules.dom.make('DIV', [ CSS_.editorZone ], {}),
-                toolbar  = makeToolBar_();
+                reject(Error("Holder wasn't found by ID: #" + this.config.holderId));
+                return;
 
-            wrapper.appendChild(toolbar);
-            wrapper.appendChild(redactor);
+            }
 
-            /** Save created ui-elements to static nodes state */
-            editor.nodes.wrapper  = wrapper;
-            editor.nodes.redactor = redactor;
+            /**
+             * Create and save main UI elements
+             */
+            this.nodes.wrapper  = $.make('div', CSS.editorWrapper);
+            this.nodes.redactor = $.make('div', CSS.editorZone);
+                // toolbar  = makeToolBar_();
 
-            /** Append editor wrapper with redactor zone into holder */
-            editor.nodes.holder.appendChild(wrapper);
+            // wrapper.appendChild(toolbar);
+            this.nodes.wrapper.appendChild(this.nodes.redactor);
+            /**
+             * Append editor wrapper with redactor zone into holder
+             */
+            this.nodes.holder.appendChild(this.nodes.wrapper);
 
             resolve();
 
         })
 
         /** Add toolbox tools */
-        .then(addTools_)
+        // .then(addTools_)
 
         /** Make container for inline toolbar */
-        .then(makeInlineToolbar_)
+        // .then(makeInlineToolbar_)
 
         /** Add inline toolbar tools */
-        .then(addInlineToolbarTools_)
+        // .then(addInlineToolbarTools_)
 
         /** Draw wrapper for notifications */
-        .then(makeNotificationHolder_)
+        // .then(makeNotificationHolder_)
 
         /** Add eventlisteners to redactor elements */
-        .then(bindEvents_)
+        // .then(bindEvents_)
 
         .catch( function () {
 
-            editor.core.log("Can't draw editor interface");
+            // editor.core.log("Can't draw editor interface");
 
         });
 

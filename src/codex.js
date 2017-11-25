@@ -209,7 +209,7 @@ module.exports = class CodexEditor {
         let prepareDecorator = module => module.prepare();
 
         return Promise.resolve()
-            .then(prepareDecorator(this.moduleInstances['ui']))
+            .then(prepareDecorator(this.moduleInstances.ui))
             .catch(function (error) {
 
                 console.log('Error occured', error);

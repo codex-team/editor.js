@@ -247,7 +247,7 @@ var CodexEditor =
 	                return module.prepare();
 	            };
 	
-	            return Promise.resolve().then(prepareDecorator(this.moduleInstances['ui'])).catch(function (error) {
+	            return Promise.resolve().then(prepareDecorator(this.moduleInstances.ui)).catch(function (error) {
 	
 	                console.log('Error occured', error);
 	            });
@@ -5166,50 +5166,56 @@ var CodexEditor =
 
 /***/ },
 /* 22 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
+	var _dom = __webpack_require__(23);
+	
+	var _dom2 = _interopRequireDefault(_dom);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	/**
-	* Module UI
-	*
-	* @type {UI}
-	*/
-	var className = {
+	 * Module UI
+	 *
+	 * @type {UI}
+	 */
+	// let className = {
 	
-	    /**
-	     * @const {string} BLOCK_CLASSNAME - redactor blocks name
-	     */
-	    BLOCK_CLASSNAME: 'ce-block',
+	/**
+	 * @const {string} BLOCK_CLASSNAME - redactor blocks name
+	 */
+	// BLOCK_CLASSNAME : 'ce-block',
 	
-	    /**
-	     * @const {String} wrapper for plugins content
-	     */
-	    BLOCK_CONTENT: 'ce-block__content',
+	/**
+	 * @const {String} wrapper for plugins content
+	 */
+	// BLOCK_CONTENT : 'ce-block__content',
 	
-	    /**
-	     * @const {String} BLOCK_STRETCHED - makes block stretched
-	     */
-	    BLOCK_STRETCHED: 'ce-block--stretched',
+	/**
+	 * @const {String} BLOCK_STRETCHED - makes block stretched
+	 */
+	// BLOCK_STRETCHED : 'ce-block--stretched',
 	
-	    /**
-	     * @const {String} BLOCK_HIGHLIGHTED - adds background
-	     */
-	    BLOCK_HIGHLIGHTED: 'ce-block--focused',
+	/**
+	 * @const {String} BLOCK_HIGHLIGHTED - adds background
+	 */
+	// BLOCK_HIGHLIGHTED : 'ce-block--focused',
 	
-	    /**
-	     * @const {String} - for all default settings
-	     */
-	    SETTINGS_ITEM: 'ce-settings__item'
-	};
+	/**
+	 * @const {String} - for all default settings
+	 */
+	// SETTINGS_ITEM : 'ce-settings__item'
+	// };
 	
-	var CSS_ = {
-	    editorWrapper: 'codex-editor',
-	    editorZone: 'ce-redactor'
+	var CSS = {
+	  editorWrapper: 'codex-editor',
+	  editorZone: 'ce-redactor'
 	};
 	
 	/**
@@ -5224,103 +5230,127 @@ var CodexEditor =
 	 *
 	 * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
 	 * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
+	 * @property {Object} nodes          -
+	 * @property {Element} nodes.wrapper  - element where we need to append redactor
+	 * @property {Element} nodes.wrapper  - <codex-editor>
+	 * @property {Element} nodes.redactor - <ce-redactor>
 	 */
 	module.exports = function () {
-	    _createClass(UI, null, [{
-	        key: 'name',
+	  _createClass(UI, null, [{
+	    key: 'name',
 	
 	
-	        /**
-	         * Module key name
-	         * @returns {string}
-	         */
-	        get: function get() {
+	    /**
+	     * Module key name
+	     * @returns {string}
+	     */
+	    get: function get() {
 	
-	            return 'ui';
-	        }
-	
-	        /**
-	         * @constructor
-	         *
-	         * @param  {EditorConfig} config
-	         */
-	
-	    }]);
-	
-	    function UI(config) {
-	        _classCallCheck(this, UI);
-	
-	        this.config = config;
-	        this.Editor = null;
+	      return 'ui';
 	    }
 	
 	    /**
-	     * Editor modules setter
-	     * @param {object} Editor - available editor modules
+	     * @constructor
+	     *
+	     * @param  {EditorConfig} config
 	     */
 	
+	  }]);
 	
-	    _createClass(UI, [{
-	        key: 'prepare',
+	  function UI(_ref) {
+	    var config = _ref.config;
 	
+	    _classCallCheck(this, UI);
+	
+	    this.config = config;
+	    this.Editor = null;
+	
+	    this.nodes = {
+	      holder: null,
+	      wrapper: null,
+	      redactor: null
+	    };
+	  }
+	
+	  /**
+	   * Editor modules setter
+	   * @param {object} Editor - available editor modules
+	   */
+	
+	
+	  _createClass(UI, [{
+	    key: 'prepare',
+	
+	
+	    /**
+	     * @protected
+	     *
+	     * Making main interface
+	     */
+	    value: function prepare() {
+	      var _this = this;
+	
+	      return new Promise(function (resolve, reject) {
 	
 	        /**
-	         * @protected
-	         *
-	         * Making main interface
+	         * Element where we need to append CodeX Editor
+	         * @type {Element}
 	         */
-	        value: function prepare() {
+	        _this.nodes.holder = document.getElementById(_this.config.holderId);
 	
-	            console.log('ui prepare fired');
+	        if (!_this.nodes.holder) {
 	
-	            return;
-	
-	            return new Promise(function (resolve, reject) {
-	
-	                var wrapper = this.modules.dom.make('DIV', [CSS_.editorWrapper], {}),
-	                    redactor = this.modules.dom.make('DIV', [CSS_.editorZone], {}),
-	                    toolbar = makeToolBar_();
-	
-	                wrapper.appendChild(toolbar);
-	                wrapper.appendChild(redactor);
-	
-	                /** Save created ui-elements to static nodes state */
-	                editor.nodes.wrapper = wrapper;
-	                editor.nodes.redactor = redactor;
-	
-	                /** Append editor wrapper with redactor zone into holder */
-	                editor.nodes.holder.appendChild(wrapper);
-	
-	                resolve();
-	            })
-	
-	            /** Add toolbox tools */
-	            .then(addTools_)
-	
-	            /** Make container for inline toolbar */
-	            .then(makeInlineToolbar_)
-	
-	            /** Add inline toolbar tools */
-	            .then(addInlineToolbarTools_)
-	
-	            /** Draw wrapper for notifications */
-	            .then(makeNotificationHolder_)
-	
-	            /** Add eventlisteners to redactor elements */
-	            .then(bindEvents_).catch(function () {
-	
-	                editor.core.log("Can't draw editor interface");
-	            });
+	          reject(Error("Holder wasn't found by ID: #" + _this.config.holderId));
+	          return;
 	        }
-	    }, {
-	        key: 'state',
-	        set: function set(Editor) {
 	
-	            this.Editor = Editor;
-	        }
-	    }]);
+	        /**
+	         * Create and save main UI elements
+	         */
+	        _this.nodes.wrapper = _dom2.default.make('div', CSS.editorWrapper);
+	        _this.nodes.redactor = _dom2.default.make('div', CSS.editorZone);
+	        // toolbar  = makeToolBar_();
 	
-	    return UI;
+	        // wrapper.appendChild(toolbar);
+	        _this.nodes.wrapper.appendChild(_this.nodes.redactor);
+	        /**
+	         * Append editor wrapper with redactor zone into holder
+	         */
+	        _this.nodes.holder.appendChild(_this.nodes.wrapper);
+	
+	        resolve();
+	      })
+	
+	      /** Add toolbox tools */
+	      // .then(addTools_)
+	
+	      /** Make container for inline toolbar */
+	      // .then(makeInlineToolbar_)
+	
+	      /** Add inline toolbar tools */
+	      // .then(addInlineToolbarTools_)
+	
+	      /** Draw wrapper for notifications */
+	      // .then(makeNotificationHolder_)
+	
+	      /** Add eventlisteners to redactor elements */
+	      // .then(bindEvents_)
+	
+	      .catch(function () {
+	
+	        // editor.core.log("Can't draw editor interface");
+	
+	      });
+	    }
+	  }, {
+	    key: 'state',
+	    set: function set(Editor) {
+	
+	      this.Editor = Editor;
+	    }
+	  }]);
+	
+	  return UI;
 	}();
 	// /**
 	//  * Codex Editor UI module
@@ -5680,6 +5710,111 @@ var CodexEditor =
 	//     return ui;
 	//
 	// })({});
+
+/***/ },
+/* 23 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	/**
+	 * DOM manupulations helper
+	 */
+	var Dom = function () {
+	    function Dom() {
+	        _classCallCheck(this, Dom);
+	    }
+	
+	    _createClass(Dom, null, [{
+	        key: "make",
+	
+	
+	        /**
+	         * Helper for making Elements with classname and attributes
+	         *
+	         * @param  {string} tagName           - new Element tag name
+	         * @param  {array|string} classNames  - list or name of CSS classname(s)
+	         * @param  {Object} attributes        - any attributes
+	         * @return {Element}
+	         */
+	        value: function make(tagName, classNames, attributes) {
+	
+	            var el = document.createElement(tagName);
+	
+	            if (Array.isArray(classNames)) {
+	                var _el$classList;
+	
+	                (_el$classList = el.classList).add.apply(_el$classList, _toConsumableArray(classNames));
+	            } else if (classNames) {
+	
+	                el.classList.add(classNames);
+	            }
+	
+	            for (var attrName in attributes) {
+	
+	                el[attrName] = attributes[attrName];
+	            }
+	
+	            return el;
+	        }
+	
+	        /**
+	         * Selector Decorator
+	         *
+	         * Returns first match
+	         *
+	         * @param {Element} el - element we searching inside. Default - DOM Document
+	         * @param {String} selector - searching string
+	         *
+	         * @returns {Element}
+	         */
+	
+	    }, {
+	        key: "find",
+	        value: function find() {
+	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+	            var selector = arguments[1];
+	
+	
+	            return el.querySelector(selector);
+	        }
+	
+	        /**
+	         * Selector Decorator.
+	         *
+	         * Returns all matches
+	         *
+	         * @param {Element} el - element we searching inside. Default - DOM Document
+	         * @param {String} selector - searching string
+	         * @returns {NodeList}
+	         */
+	
+	    }, {
+	        key: "findAll",
+	        value: function findAll() {
+	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+	            var selector = arguments[1];
+	
+	
+	            return el.querySelectorAll(selector);
+	        }
+	    }]);
+	
+	    return Dom;
+	}();
+	
+	exports.default = Dom;
+	;
 
 /***/ }
 /******/ ]);
