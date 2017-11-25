@@ -11,8 +11,6 @@
  * @typedef {Object} ParagraphData
  * @property {String} text — HTML content to insert to paragraph element
  *
- * TODO: sanitize data while saving
- *
  */
 
 export default class Paragraph {
@@ -96,6 +94,8 @@ export default class Paragraph {
 
     /**
      * Get current plugin`s data
+     *
+     * @todo sanitize data while saving
      *
      * @returns {ParagraphData} Current data
      */
