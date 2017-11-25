@@ -1,54 +1,37 @@
-module.exports = class Dom {
+/**
+ * DOM manupulations helper
+ */
+export default class Dom {
 
     /**
-     * Module key name
-     * @returns {string}
-     */
-    static get name() {
-
-        return 'dom';
-
-    };
-
-
-    /**
-     * @param Editor
-     * @param Editor.modules {@link Tools#list}
-     * @param Editor.config {@link CodexEditor#configuration}
-     * @param Editor
-     */
-    set state(Editor) {
-
-        this.Editor = Editor;
-
-    }
-
-    /**
-     * Draws element with class and properties
+     * Helper for making Elements with classname and attributes
      *
-     * @param {String} el - Element name
-     * @param {Array} classList - array of CSS classes
-     * @param {Object} properties - list of objects/properties
-     *
-     * @returns {Element}
+     * @param  {string} tagName           - new Element tag name
+     * @param  {array|string} classNames  - list or name of CSS classname(s)
+     * @param  {Object} attributes        - any attributes
+     * @return {Element}
      */
-    make(el, classList, properties) {
+    static make(tagName, classNames, attributes) {
 
-        let element = document.createElement(el);
+        var el = document.createElement(tagName);
 
-        classList.forEach(function (className) {
+        if ( Array.isArray(classNames) ) {
 
-            element.classList.add(className);
+            el.classList.add(...classNames);
 
-        });
+        } else if( classNames ) {
 
-        for(property in properties) {
-
-            element.property = properties[property];
+            el.classList.add(classNames);
 
         }
 
-        return element;
+        for (let attrName in attributes) {
+
+            el[attrName] = attributes[attrName];
+
+        }
+
+        return el;
 
     }
 
@@ -62,7 +45,7 @@ module.exports = class Dom {
      *
      * @returns {Element}
      */
-    find(el = document, selector) {
+    static find(el = document, selector) {
 
         return el.querySelector(selector);
 
@@ -77,7 +60,7 @@ module.exports = class Dom {
      * @param {String} selector - searching string
      * @returns {NodeList}
      */
-    findAll(el = document, selector) {
+    static findAll(el = document, selector) {
 
         return el.querySelectorAll(selector);
 
