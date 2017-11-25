@@ -1,10 +1,39 @@
 /**
  * Codex Editor
  *
+ * Short Description (눈_눈;)
+ * @version 2.0.0
  *
+ * How to start?
+ * Example:
+ *           new CodexEditor({
+ *                holderId : 'codex-editor',
+ *                initialBlock : 'paragraph',
+ *                placeholder : 'Write your story....',
+ *                tools: {
+ *                    quote: Quote,
+ *                    anotherTool : AnotherTool
+ *                },
+ *                toolsConfig: {
+ *                     quote: {
+ *                        iconClassname : 'quote-icon',
+ *                        displayInToolbox : true,
+ *                        enableLineBreaks : true
+ *                     },
+ *                     anotherTool: {
+ *                        iconClassname : 'tool-icon'
+ *                     }
+ *                 }
+ *            });
  *
+ * - tools constist of object with key that is type/name of class constructor
+ * - toolsConfig is an additional configuration that uses Codex Editor API
+ *      iconClassname - the name of icon class. Icon will be shown in toolbox
+ *      displayInToolbox - if you want to see your Tool in toolbox hided in "plus" button, than set "True". By default : "False"
+ *      enableLineBreaks - by default enter pastes new block that set as initialblock, but if you set this property "True", you break the lines
  *
- * @author CodeX Team
+ * @author CodeX-Team <https://ifmo.su>
+ *
  */
 
 /**
