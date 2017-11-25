@@ -74,7 +74,7 @@ var CodexEditor =
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var modules = (["eventDispatcher.js","tools.js","ui.js"]).map(function (module) {
+	var modules = editorModules.map(function (module) {
 	
 	    return __webpack_require__(1)("./" + module);
 	});
@@ -247,7 +247,7 @@ var CodexEditor =
 	                return module.prepare();
 	            };
 	
-	            return Promise.resolve().then(prepareDecorator(this.moduleInstances.ui)).then(prepareDecorator(this.moduleInstances.Tools)).catch(function (error) {
+	            return Promise.resolve().then(prepareDecorator(this.moduleInstances['ui'])).then(prepareDecorator(this.moduleInstances['tools'])).catch(function (error) {
 	
 	                console.log('Error occured', error);
 	            });
@@ -267,8 +267,6 @@ var CodexEditor =
 	            };
 	
 	            this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
-	            this.config.tools = config.tools || {};
-	            this.config.toolsConfig = config.toolsConfig || {};
 	        }
 	
 	        /**
@@ -4962,7 +4960,7 @@ var CodexEditor =
 
 /***/ }),
 /* 21 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
@@ -4987,59 +4985,22 @@ var CodexEditor =
 	 */
 	
 	/**
-	 * @typedef {Object} Tool
-	 * @property render
-	 * @property save
-	 * @property settings
-	 * @property validate
-	 */
-	
-	/**
 	 * Class properties:
 	 *
-	 * @property {String} name - name of this module
-	 * @property {Object[]} toolInstances - list of tool instances
-	 * @property {Tools[]} available - available Tools
-	 * @property {Tools[]} unavailable - unavailable Tools
-	 * @property {Object} toolsClasses - all classes
-	 * @property {EditorConfig} config - Editor config
+	 * @property {String} this.name - name of this module
+	 * @property {Array} this.toolInstances - list of tool instances
+	 *
 	 */
-	var util = __webpack_require__(23);
-	
 	module.exports = function () {
 	    _createClass(Tools, [{
-	        key: 'available',
+	        key: 'state',
 	
-	
-	        /**
-	         * Returns available Tools
-	         * @return {Tool[]}
-	         */
-	        get: function get() {
-	
-	            return this.toolsAvailable;
-	        }
-	
-	        /**
-	         * Returns unavailable Tools
-	         * @return {Tool[]}
-	         */
-	
-	    }, {
-	        key: 'unavailable',
-	        get: function get() {
-	
-	            return this.toolsUnavailable;
-	        }
 	
 	        /**
 	         * @param Editor
 	         * @param Editor.modules {@link CodexEditor#moduleInstances}
 	         * @param Editor.config {@link CodexEditor#configuration}
 	         */
-	
-	    }, {
-	        key: 'state',
 	        set: function set(Editor) {
 	
 	            this.Editor = Editor;
@@ -5071,20 +5032,17 @@ var CodexEditor =
 	        key: 'name',
 	        get: function get() {
 	
-	            return 'Tools';
+	            return 'tools';
 	        }
 	    }]);
 	
-	    function Tools(_ref) {
-	        var config = _ref.config;
-	
+	    function Tools(config) {
 	        _classCallCheck(this, Tools);
 	
 	        this.config = config;
 	
-	        this.toolClasses = {};
-	        this.toolsAvailable = {};
-	        this.toolsUnavailable = {};
+	        this.availabPlugins = {};
+	        this.toolInstances = [];
 	    }
 	
 	    /**
@@ -5096,94 +5054,112 @@ var CodexEditor =
 	    _createClass(Tools, [{
 	        key: 'prepare',
 	        value: function prepare() {
-	            var _this = this;
 	
-	            var self = this;
+	            var toolConfig = this.defaultConfig;
 	
 	            if (!this.config.hasOwnProperty('tools')) {
 	
-	                return Promise.reject("Can't start without tools");
-	            }
-	
-	            for (var toolName in this.config.tools) {
-	
-	                this.toolClasses[toolName] = this.config.tools[toolName];
+	                return false;
 	            }
 	
 	            /**
-	             * getting classes that has prepare method
+	             * Preparation Decorator
+	             *
+	             * @param toolBindedPreparationFunction
+	             * @return {Promise}
 	             */
-	            var sequenceData = this.getListOfPrepareFunctions();
+	            function waitNextToolPreparation(toolBindedPreparationFunction) {
 	
-	            /**
-	             * if sequence data contains nothing then resolve current chain and run other module prepare
-	             */
-	            if (sequenceData.length === 0) {
+	                return new Promise(function (resolve, reject) {
 	
-	                return Promise.resolve();
-	            }
+	                    toolBindedPreparationFunction().then(resolve).catch(function (error) {
 	
-	            /**
-	             * to see how it works {@link Util#sequence}
-	             */
-	            return util.sequence(sequenceData, function (data) {
+	                        console.log('Plugin is not available because of ', error);
 	
-	                _this.success(data);
-	            }, function (data) {
-	
-	                _this.fallback(data);
-	            });
-	        }
-	
-	        /**
-	         * Binds prepare function of plugins with user or default config
-	         * @return {Array} list of functions that needs to be fired sequently
-	         */
-	
-	    }, {
-	        key: 'getListOfPrepareFunctions',
-	        value: function getListOfPrepareFunctions() {
-	
-	            var toolPreparationList = [];
-	
-	            for (var toolName in this.toolClasses) {
-	
-	                var toolClass = this.toolClasses[toolName];
-	
-	                if (typeof toolClass.prepare === 'function') {
-	
-	                    toolPreparationList.push({
-	                        function: toolClass.prepare,
-	                        data: {
-	                            toolName: toolName
-	                        }
+	                        // anyway, go ahead even plugin is not available
+	                        resolve();
 	                    });
-	                }
+	                });
 	            }
 	
-	            return toolPreparationList;
-	        }
+	            return new Promise(function (resolvePreparation, rejectPreparation) {
 	
-	        /**
-	         * @param {ChainData.data} data - append tool to available list
-	         */
+	                var toolPreparationList = [];
 	
-	    }, {
-	        key: 'success',
-	        value: function success(data) {
+	                var _iteratorNormalCompletion = true;
+	                var _didIteratorError = false;
+	                var _iteratorError = undefined;
 	
-	            this.toolsAvailable[data.toolName] = this.toolClasses[data.toolName];
-	        }
+	                try {
+	                    for (var _iterator = this.config.tools[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	                        var tool = _step.value;
 	
-	        /**
-	         * @param {ChainData.data} data - append tool to unavailable list
-	         */
 	
-	    }, {
-	        key: 'fallback',
-	        value: function fallback(data) {
+	                        var toolName = tool.name;
 	
-	            this.toolsUnavailable[data.toolName] = this.toolClasses[data.toolName];
+	                        if (toolName in this.config.toolsConfig) {
+	
+	                            toolConfig = this.config.toolsConfig[toolName];
+	                        }
+	
+	                        if (tool.prepare && typeof tool.prepare === 'function') {
+	
+	                            toolPreparationList.push(tool.prepare.bind(toolConfig));
+	                        }
+	                    }
+	
+	                    // continue editor initialization if non of tools doesn't need preparation
+	                } catch (err) {
+	                    _didIteratorError = true;
+	                    _iteratorError = err;
+	                } finally {
+	                    try {
+	                        if (!_iteratorNormalCompletion && _iterator.return) {
+	                            _iterator.return();
+	                        }
+	                    } finally {
+	                        if (_didIteratorError) {
+	                            throw _iteratorError;
+	                        }
+	                    }
+	                }
+	
+	                if (toolPreparationList.length === 0) {
+	
+	                    resolvePreparation();
+	                } else {
+	
+	                    toolPreparationList.reduce(function (previousToolPrepared, currentToolReadyToPreparation, iteration) {
+	
+	                        return previousToolPrepared.then(function () {
+	                            return waitNextToolPreparation(currentToolReadyToPreparation);
+	                        }).then(function () {
+	
+	                            if (iteration == toolPreparationList.length - 1) {
+	
+	                                resolvePreparation();
+	                            }
+	                        });
+	                    }, Promise.resolve());
+	                }
+	            });
+	
+	            /**
+	             * - getting class and config
+	             * - push to the toolinstnaces property created instances
+	             */
+	            // for(let tool in this.config.tools) {
+	            //     let toolClass = this.config.tools[tool],
+	            //         toolConfig;
+	            //
+	            //     if (tool in this.config.toolConfig) {
+	            //         toolConfig = this.config.toolConfig[tool];
+	            //     } else {
+	            //         toolConfig = this.defaultConfig;
+	            //     }
+	            //
+	            //     this.toolInstances.push(new toolClass(toolConfig));
+	            // }
 	        }
 	
 	        /**
@@ -5201,59 +5177,206 @@ var CodexEditor =
 	
 	    return Tools;
 	}();
+	// /**
+	// * Module working with plugins
+	// */
+	// module.exports = (function () {
+	//
+	//     let editor = codex.editor;
+	//
+	//     /**
+	//      * Initialize plugins before using
+	//      * Ex. Load scripts or call some internal methods
+	//      * @return Promise
+	//      */
+	//     function prepare() {
+	//
+	//         return new Promise(function (resolve_, reject_) {
+	//
+	//             Promise.resolve()
+	//
+	//                 /**
+	//                 * Compose a sequence of plugins that requires preparation
+	//                 */
+	//                 .then(function () {
+	//
+	//                     let pluginsRequiresPreparation = [],
+	//                         allPlugins = editor.tools;
+	//
+	//                     for ( let pluginName in allPlugins ) {
+	//
+	//                         let plugin = allPlugins[pluginName];
+	//
+	//                         if (plugin.prepare && typeof plugin.prepare != 'function' || !plugin.prepare) {
+	//
+	//                             continue;
+	//
+	//                         }
+	//
+	//                         pluginsRequiresPreparation.push(plugin);
+	//
+	//                     }
+	//
+	//                     /**
+	//                     * If no one passed plugins requires preparation, finish prepare() and go ahead
+	//                     */
+	//                     if (!pluginsRequiresPreparation.length) {
+	//
+	//                         resolve_();
+	//
+	//                     }
+	//
+	//                     return pluginsRequiresPreparation;
+	//
+	//                 })
+	//
+	//                 /** Wait plugins while they prepares */
+	//                 .then(waitAllPluginsPreparation_)
+	//
+	//                 .then(function () {
+	//
+	//                     editor.core.log('Plugins loaded', 'info');
+	//                     resolve_();
+	//
+	//                 }).catch(function (error) {
+	//
+	//                     reject_(error);
+	//
+	//                 });
+	//
+	//         });
+	//
+	//     }
+	//
+	//     /**
+	//     * @param {array} plugins - list of tools that requires preparation
+	//     * @return {Promise} resolved while all plugins will be ready or failed
+	//     */
+	//     function waitAllPluginsPreparation_(plugins) {
+	//
+	//         /**
+	//         * @calls allPluginsProcessed__ when all plugins prepared or failed
+	//         */
+	//         return new Promise (function (allPluginsProcessed__) {
+	//
+	//             /**
+	//              * pluck each element from queue
+	//              * First, send resolved Promise as previous value
+	//              * Each plugins "prepare" method returns a Promise, that's why
+	//              * reduce current element will not be able to continue while can't get
+	//              * a resolved Promise
+	//              *
+	//              * If last plugin is "prepared" then go to the next stage of initialization
+	//              */
+	//             plugins.reduce(function (previousValue, plugin, iteration) {
+	//
+	//                 return previousValue.then(function () {
+	//
+	//                     /**
+	//                     * Wait till plugins prepared
+	//                     * @calls pluginIsReady__ when plugin is ready or failed
+	//                     */
+	//                     return new Promise ( function (pluginIsReady__) {
+	//
+	//                         callPluginsPrepareMethod_( plugin )
+	//
+	//                             .then( pluginIsReady__ )
+	//                             .then( function () {
+	//
+	//                                 plugin.available = true;
+	//
+	//                             })
+	//
+	//                             .catch(function (error) {
+	//
+	//                                 editor.core.log(`Plugin «${plugin.type}» was not loaded. Preparation failed because %o`, 'warn', error);
+	//                                 plugin.available = false;
+	//                                 plugin.loadingMessage = error;
+	//
+	//                                 /** Go ahead even some plugin has problems */
+	//                                 pluginIsReady__();
+	//
+	//                             })
+	//
+	//                             .then(function () {
+	//
+	//                                 /** If last plugin has problems then just ignore and continue */
+	//                                 if (iteration == plugins.length - 1) {
+	//
+	//                                     allPluginsProcessed__();
+	//
+	//                                 }
+	//
+	//                             });
+	//
+	//                     });
+	//
+	//                 });
+	//
+	//             }, Promise.resolve() );
+	//
+	//         });
+	//
+	//     }
+	//
+	//     var callPluginsPrepareMethod_ = function (plugin) {
+	//
+	//         return plugin.prepare( plugin.config || {} );
+	//
+	//     };
+	//
+	//     return {
+	//         prepare: prepare
+	//     };
+	//
+	// }());
 
 /***/ }),
 /* 22 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
 	'use strict';
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _dom = __webpack_require__(24);
-	
-	var _dom2 = _interopRequireDefault(_dom);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	/**
-	 * Module UI
-	 *
-	 * @type {UI}
-	 */
-	// let className = {
+	* Module UI
+	*
+	* @type {UI}
+	*/
+	var className = {
 	
-	/**
-	 * @const {string} BLOCK_CLASSNAME - redactor blocks name
-	 */
-	// BLOCK_CLASSNAME : 'ce-block',
+	    /**
+	     * @const {string} BLOCK_CLASSNAME - redactor blocks name
+	     */
+	    BLOCK_CLASSNAME: 'ce-block',
 	
-	/**
-	 * @const {String} wrapper for plugins content
-	 */
-	// BLOCK_CONTENT : 'ce-block__content',
+	    /**
+	     * @const {String} wrapper for plugins content
+	     */
+	    BLOCK_CONTENT: 'ce-block__content',
 	
-	/**
-	 * @const {String} BLOCK_STRETCHED - makes block stretched
-	 */
-	// BLOCK_STRETCHED : 'ce-block--stretched',
+	    /**
+	     * @const {String} BLOCK_STRETCHED - makes block stretched
+	     */
+	    BLOCK_STRETCHED: 'ce-block--stretched',
 	
-	/**
-	 * @const {String} BLOCK_HIGHLIGHTED - adds background
-	 */
-	// BLOCK_HIGHLIGHTED : 'ce-block--focused',
+	    /**
+	     * @const {String} BLOCK_HIGHLIGHTED - adds background
+	     */
+	    BLOCK_HIGHLIGHTED: 'ce-block--focused',
 	
-	/**
-	 * @const {String} - for all default settings
-	 */
-	// SETTINGS_ITEM : 'ce-settings__item'
-	// };
+	    /**
+	     * @const {String} - for all default settings
+	     */
+	    SETTINGS_ITEM: 'ce-settings__item'
+	};
 	
-	var CSS = {
-	  editorWrapper: 'codex-editor',
-	  editorZone: 'ce-redactor'
+	var CSS_ = {
+	    editorWrapper: 'codex-editor',
+	    editorZone: 'ce-redactor'
 	};
 	
 	/**
@@ -5268,127 +5391,103 @@ var CodexEditor =
 	 *
 	 * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
 	 * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
-	 * @property {Object} nodes          -
-	 * @property {Element} nodes.wrapper  - element where we need to append redactor
-	 * @property {Element} nodes.wrapper  - <codex-editor>
-	 * @property {Element} nodes.redactor - <ce-redactor>
 	 */
 	module.exports = function () {
-	  _createClass(UI, null, [{
-	    key: 'name',
+	    _createClass(UI, null, [{
+	        key: 'name',
 	
-	
-	    /**
-	     * Module key name
-	     * @returns {string}
-	     */
-	    get: function get() {
-	
-	      return 'ui';
-	    }
-	
-	    /**
-	     * @constructor
-	     *
-	     * @param  {EditorConfig} config
-	     */
-	
-	  }]);
-	
-	  function UI(_ref) {
-	    var config = _ref.config;
-	
-	    _classCallCheck(this, UI);
-	
-	    this.config = config;
-	    this.Editor = null;
-	
-	    this.nodes = {
-	      holder: null,
-	      wrapper: null,
-	      redactor: null
-	    };
-	  }
-	
-	  /**
-	   * Editor modules setter
-	   * @param {object} Editor - available editor modules
-	   */
-	
-	
-	  _createClass(UI, [{
-	    key: 'prepare',
-	
-	
-	    /**
-	     * @protected
-	     *
-	     * Making main interface
-	     */
-	    value: function prepare() {
-	      var _this = this;
-	
-	      return new Promise(function (resolve, reject) {
 	
 	        /**
-	         * Element where we need to append CodeX Editor
-	         * @type {Element}
+	         * Module key name
+	         * @returns {string}
 	         */
-	        _this.nodes.holder = document.getElementById(_this.config.holderId);
+	        get: function get() {
 	
-	        if (!_this.nodes.holder) {
-	
-	          reject(Error("Holder wasn't found by ID: #" + _this.config.holderId));
-	          return;
+	            return 'ui';
 	        }
 	
 	        /**
-	         * Create and save main UI elements
+	         * @constructor
+	         *
+	         * @param  {EditorConfig} config
 	         */
-	        _this.nodes.wrapper = _dom2.default.make('div', CSS.editorWrapper);
-	        _this.nodes.redactor = _dom2.default.make('div', CSS.editorZone);
-	        // toolbar  = makeToolBar_();
 	
-	        // wrapper.appendChild(toolbar);
-	        _this.nodes.wrapper.appendChild(_this.nodes.redactor);
+	    }]);
+	
+	    function UI(config) {
+	        _classCallCheck(this, UI);
+	
+	        this.config = config;
+	        this.Editor = null;
+	    }
+	
+	    /**
+	     * Editor modules setter
+	     * @param {object} Editor - available editor modules
+	     */
+	
+	
+	    _createClass(UI, [{
+	        key: 'prepare',
+	
+	
 	        /**
-	         * Append editor wrapper with redactor zone into holder
+	         * @protected
+	         *
+	         * Making main interface
 	         */
-	        _this.nodes.holder.appendChild(_this.nodes.wrapper);
+	        value: function prepare() {
 	
-	        resolve();
-	      })
+	            console.log('ui prepare fired');
 	
-	      /** Add toolbox tools */
-	      // .then(addTools_)
+	            return;
 	
-	      /** Make container for inline toolbar */
-	      // .then(makeInlineToolbar_)
+	            return new Promise(function (resolve, reject) {
 	
-	      /** Add inline toolbar tools */
-	      // .then(addInlineToolbarTools_)
+	                var wrapper = this.modules.dom.make('DIV', [CSS_.editorWrapper], {}),
+	                    redactor = this.modules.dom.make('DIV', [CSS_.editorZone], {}),
+	                    toolbar = makeToolBar_();
 	
-	      /** Draw wrapper for notifications */
-	      // .then(makeNotificationHolder_)
+	                wrapper.appendChild(toolbar);
+	                wrapper.appendChild(redactor);
 	
-	      /** Add eventlisteners to redactor elements */
-	      // .then(bindEvents_)
+	                /** Save created ui-elements to static nodes state */
+	                editor.nodes.wrapper = wrapper;
+	                editor.nodes.redactor = redactor;
 	
-	      .catch(function () {
+	                /** Append editor wrapper with redactor zone into holder */
+	                editor.nodes.holder.appendChild(wrapper);
 	
-	        // editor.core.log("Can't draw editor interface");
+	                resolve();
+	            })
 	
-	      });
-	    }
-	  }, {
-	    key: 'state',
-	    set: function set(Editor) {
+	            /** Add toolbox tools */
+	            .then(addTools_)
 	
-	      this.Editor = Editor;
-	    }
-	  }]);
+	            /** Make container for inline toolbar */
+	            .then(makeInlineToolbar_)
 	
-	  return UI;
+	            /** Add inline toolbar tools */
+	            .then(addInlineToolbarTools_)
+	
+	            /** Draw wrapper for notifications */
+	            .then(makeNotificationHolder_)
+	
+	            /** Add eventlisteners to redactor elements */
+	            .then(bindEvents_).catch(function () {
+	
+	                editor.core.log("Can't draw editor interface");
+	            });
+	        }
+	    }, {
+	        key: 'state',
+	        set: function set(Editor) {
+	
+	            this.Editor = Editor;
+	        }
+	    }]);
+	
+	    return UI;
 	}();
 	// /**
 	//  * Codex Editor UI module
@@ -5748,206 +5847,6 @@ var CodexEditor =
 	//     return ui;
 	//
 	// })({});
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	/**
-	 * Codex Editor Util
-	 */
-	module.exports = function () {
-	    function Util() {
-	        _classCallCheck(this, Util);
-	    }
-	
-	    _createClass(Util, null, [{
-	        key: "sequence",
-	
-	
-	        /**
-	         * @typedef {Object} ChainData
-	         * @property {Object} data - data that will be passed to the success or fallback
-	         * @property {Function} function - function's that must be called asynchronically
-	         */
-	
-	        /**
-	         * Fires a promise sequence asyncronically
-	         *
-	         * @param {Object[]} chains - list or ChainData's
-	         * @param {Function} success - success callback
-	         * @param {Function} fallback - callback that fires in case of errors
-	         *
-	         * @return {Promise}
-	         */
-	        value: function sequence(chains, success, fallback) {
-	
-	            return new Promise(function (resolve, reject) {
-	
-	                /**
-	                 * pluck each element from queue
-	                 * First, send resolved Promise as previous value
-	                 * Each plugins "prepare" method returns a Promise, that's why
-	                 * reduce current element will not be able to continue while can't get
-	                 * a resolved Promise
-	                 */
-	                chains.reduce(function (previousValue, currentValue, iteration) {
-	
-	                    return previousValue.then(function () {
-	                        return waitNextBlock(currentValue, success, fallback);
-	                    }).then(function () {
-	
-	                        // finished
-	                        if (iteration == chains.length - 1) {
-	
-	                            resolve();
-	                        }
-	                    });
-	                }, Promise.resolve());
-	            });
-	
-	            /**
-	             * Decorator
-	             *
-	             * @param {ChainData} chainData
-	             *
-	             * @param {Function} success
-	             * @param {Function} fallback
-	             *
-	             * @return {Promise}
-	             */
-	            function waitNextBlock(chainData, success, fallback) {
-	
-	                return new Promise(function (resolve, reject) {
-	
-	                    chainData.function().then(function () {
-	
-	                        success(chainData.data);
-	                    }).then(resolve).catch(function () {
-	
-	                        fallback(chainData.data);
-	
-	                        // anyway, go ahead even it falls
-	                        resolve();
-	                    });
-	                });
-	            }
-	        }
-	    }]);
-	
-	    return Util;
-	}();
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	/**
-	 * DOM manupulations helper
-	 */
-	var Dom = function () {
-	    function Dom() {
-	        _classCallCheck(this, Dom);
-	    }
-	
-	    _createClass(Dom, null, [{
-	        key: "make",
-	
-	
-	        /**
-	         * Helper for making Elements with classname and attributes
-	         *
-	         * @param  {string} tagName           - new Element tag name
-	         * @param  {array|string} classNames  - list or name of CSS classname(s)
-	         * @param  {Object} attributes        - any attributes
-	         * @return {Element}
-	         */
-	        value: function make(tagName, classNames, attributes) {
-	
-	            var el = document.createElement(tagName);
-	
-	            if (Array.isArray(classNames)) {
-	                var _el$classList;
-	
-	                (_el$classList = el.classList).add.apply(_el$classList, _toConsumableArray(classNames));
-	            } else if (classNames) {
-	
-	                el.classList.add(classNames);
-	            }
-	
-	            for (var attrName in attributes) {
-	
-	                el[attrName] = attributes[attrName];
-	            }
-	
-	            return el;
-	        }
-	
-	        /**
-	         * Selector Decorator
-	         *
-	         * Returns first match
-	         *
-	         * @param {Element} el - element we searching inside. Default - DOM Document
-	         * @param {String} selector - searching string
-	         *
-	         * @returns {Element}
-	         */
-	
-	    }, {
-	        key: "find",
-	        value: function find() {
-	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
-	            var selector = arguments[1];
-	
-	
-	            return el.querySelector(selector);
-	        }
-	
-	        /**
-	         * Selector Decorator.
-	         *
-	         * Returns all matches
-	         *
-	         * @param {Element} el - element we searching inside. Default - DOM Document
-	         * @param {String} selector - searching string
-	         * @returns {NodeList}
-	         */
-	
-	    }, {
-	        key: "findAll",
-	        value: function findAll() {
-	            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
-	            var selector = arguments[1];
-	
-	
-	            return el.querySelectorAll(selector);
-	        }
-	    }]);
-	
-	    return Dom;
-	}();
-	
-	exports.default = Dom;
-	;
 
 /***/ })
 /******/ ]);
