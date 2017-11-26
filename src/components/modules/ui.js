@@ -160,9 +160,22 @@ class UI {
 
     loadStyles() {
 
+        /**
+         * Load CSS
+         */
         let styles = require('../../styles/main.css');
 
-        console.log('styles: %o', styles);
+        /**
+         * Make tag
+         */
+        let tag = $.make('style', null, {
+            textContent: styles.toString()
+        });
+
+        /**
+         * Append styles
+         */
+        $.append(document.head, tag);
 
     }
 
