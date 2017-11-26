@@ -5116,8 +5116,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // };
 
 var CSS = {
-    editorWrapper: 'codex-editor',
-    editorZone: 'ce-redactor'
+  editorWrapper: 'codex-editor',
+  editorZone: 'ce-redactor'
 };
 
 /**
@@ -5139,119 +5139,132 @@ var CSS = {
  */
 var UI = function () {
 
+  /**
+   * @constructor
+   *
+   * @param  {EditorConfig} config
+   */
+  function UI(_ref) {
+    var config = _ref.config;
+
+    _classCallCheck(this, UI);
+
+    this.config = config;
+    this.Editor = null;
+
+    this.nodes = {
+      holder: null,
+      wrapper: null,
+      redactor: null
+    };
+  }
+
+  /**
+   * Editor modules setter
+   * @param {object} Editor - available editor modules
+   */
+
+
+  _createClass(UI, [{
+    key: 'prepare',
+
+
     /**
-     * @constructor
+     * @protected
      *
-     * @param  {EditorConfig} config
+     * Making main interface
      */
-    function UI(_ref) {
-        var config = _ref.config;
+    value: function prepare() {
+      var _this = this;
 
-        _classCallCheck(this, UI);
-
-        this.config = config;
-        this.Editor = null;
-
-        this.nodes = {
-            holder: null,
-            wrapper: null,
-            redactor: null
-        };
-    }
-
-    /**
-     * Editor modules setter
-     * @param {object} Editor - available editor modules
-     */
-
-
-    _createClass(UI, [{
-        key: 'prepare',
-
+      return new Promise(function (resolve, reject) {
 
         /**
-         * @protected
-         *
-         * Making main interface
+         * Element where we need to append CodeX Editor
+         * @type {Element}
          */
-        value: function prepare() {
-            var _this = this;
+        _this.nodes.holder = document.getElementById(_this.config.holderId);
 
-            return new Promise(function (resolve, reject) {
+        if (!_this.nodes.holder) {
 
-                /**
-                 * Element where we need to append CodeX Editor
-                 * @type {Element}
-                 */
-                _this.nodes.holder = document.getElementById(_this.config.holderId);
-
-                if (!_this.nodes.holder) {
-
-                    reject(Error("Holder wasn't found by ID: #" + _this.config.holderId));
-                    return;
-                }
-
-                /**
-                 * Create and save main UI elements
-                 */
-                _this.nodes.wrapper = _dom2.default.make('div', CSS.editorWrapper);
-                _this.nodes.redactor = _dom2.default.make('div', CSS.editorZone);
-
-                _this.nodes.wrapper.appendChild(_this.nodes.redactor);
-                _this.nodes.holder.appendChild(_this.nodes.wrapper);
-
-                /**
-                 * Make toolbar
-                 */
-                _this.Editor.Toolbar.make();
-
-                /**
-                 * Load and append CSS
-                 */
-                _this.loadStyles();
-
-                resolve();
-            })
-
-            /** Add toolbox tools */
-            // .then(addTools_)
-
-            /** Make container for inline toolbar */
-            // .then(makeInlineToolbar_)
-
-            /** Add inline toolbar tools */
-            // .then(addInlineToolbarTools_)
-
-            /** Draw wrapper for notifications */
-            // .then(makeNotificationHolder_)
-
-            /** Add eventlisteners to redactor elements */
-            // .then(bindEvents_)
-
-            .catch(function (e) {
-
-                console.error(e);
-
-                // editor.core.log("Can't draw editor interface");
-            });
+          reject(Error("Holder wasn't found by ID: #" + _this.config.holderId));
+          return;
         }
-    }, {
-        key: 'loadStyles',
-        value: function loadStyles() {
 
-            var styles = __webpack_require__(26);
+        /**
+         * Create and save main UI elements
+         */
+        _this.nodes.wrapper = _dom2.default.make('div', CSS.editorWrapper);
+        _this.nodes.redactor = _dom2.default.make('div', CSS.editorZone);
 
-            console.log('styles: %o', styles);
-        }
-    }, {
-        key: 'state',
-        set: function set(Editor) {
+        _this.nodes.wrapper.appendChild(_this.nodes.redactor);
+        _this.nodes.holder.appendChild(_this.nodes.wrapper);
 
-            this.Editor = Editor;
-        }
-    }]);
+        /**
+         * Make toolbar
+         */
+        _this.Editor.Toolbar.make();
 
-    return UI;
+        /**
+         * Load and append CSS
+         */
+        _this.loadStyles();
+
+        resolve();
+      })
+
+      /** Add toolbox tools */
+      // .then(addTools_)
+
+      /** Make container for inline toolbar */
+      // .then(makeInlineToolbar_)
+
+      /** Add inline toolbar tools */
+      // .then(addInlineToolbarTools_)
+
+      /** Draw wrapper for notifications */
+      // .then(makeNotificationHolder_)
+
+      /** Add eventlisteners to redactor elements */
+      // .then(bindEvents_)
+
+      .catch(function (e) {
+
+        console.error(e);
+
+        // editor.core.log("Can't draw editor interface");
+      });
+    }
+  }, {
+    key: 'loadStyles',
+    value: function loadStyles() {
+
+      /**
+       * Load CSS
+       */
+      var styles = __webpack_require__(26);
+
+      /**
+       * Make tag
+       */
+      var tag = _dom2.default.make('style', null, {
+        textContent: styles.toString()
+      });
+
+      /**
+       * Append styles
+       */
+      _dom2.default.append(document.head, tag);
+    }
+  }, {
+    key: 'state',
+    set: function set(Editor) {
+
+      this.Editor = Editor;
+    }
+  }]);
+
+  return UI;
 }();
 
 UI.displayName = 'UI';
@@ -6282,7 +6295,7 @@ exports = module.exports = __webpack_require__(27)(undefined);
 
 
 // module
-exports.push([module.i, "/**\n* Editor wrapper\n*/\n.codex-editor{\n    position: relative;\n}\n.codex-editor .hide {\n        display: none;\n    }\n/**\n* Working zone - redactor\n*/\n.ce-redactor{\n    position: relative;\n    padding-bottom: 120px;\n    min-height: 350px;\n}\n.ce-block__content a {\n    color: #186baa;\n}\n/*.ce-redactor * {\n    box-sizing: border-box;\n}*/\n/**\n* Remove outlines from inputs\n*/\n.ce-redactor [contenteditable]{\n    outline: none !important;\n}\n/**\n* Toolbar\n*/\n.ce-toolbar{\n    position: absolute;\n    z-index: 2;\n    width: 100%;\n\n    /* hidden by default */\n    display: none;\n}\n.ce-toolbar.opened{\n    display: block;\n}\n.ce-toolbar__content {\n        position: relative;\n        max-width: 600px;\n        margin: 0 auto;\n    }\n/**\n* Plus button\n*/\n.ce-toolbar__plus{\n    position: absolute;\n    background-position: center center;\n    background-repeat: no-repeat;\n    text-align: center;\n    transition: -webkit-transform 100ms ease;\n    transition: transform 100ms ease;\n    transition: transform 100ms ease, -webkit-transform 100ms ease;\n    will-change: transform;\n\n    margin-left: -50px;\n}\n.ce-toolbar__plus.clicked{\n    -webkit-transform: rotate(45deg);\n            transform: rotate(45deg);\n}\n/**\n* Tools list\n*/\n.ce-toolbar__tools{\n    position: absolute;\n    top: 0;\n    left: 0;\n\n    /* hidden by default */\n    opacity: 0;\n    visibility: hidden;\n    -webkit-transform: translateX(-100px);\n            transform: translateX(-100px);\n    transition: all 150ms cubic-bezier(0.600, -0.280, 0.735, 0.045);\n}\n.ce-toolbar__tools.opened{\n    opacity: 1;\n    visibility: visible;\n    -webkit-transform: none;\n            transform: none;\n}\n.ce-toolbar__plus,\n.ce-toolbar__tools li {\n    display: inline-block;\n    width: 32px;\n    height: 32px;\n    background-color: #eff2f5;\n    /*box-shadow: 0 0 0 1px #6d748c;*/\n    margin-right: 17px;\n    border-radius: 16px;\n    text-align: center;\n    vertical-align: top;\n    cursor: pointer;\n    font-size: 14px;\n\n    will-change: transform, margin-right;\n    transition: margin 200ms ease-out, -webkit-transform 200ms cubic-bezier(0.600, -0.280, 0.735, 0.045);\n    transition: transform 200ms cubic-bezier(0.600, -0.280, 0.735, 0.045), margin 200ms ease-out;\n    transition: transform 200ms cubic-bezier(0.600, -0.280, 0.735, 0.045), margin 200ms ease-out, -webkit-transform 200ms cubic-bezier(0.600, -0.280, 0.735, 0.045);\n}\n.ce-toolbar__tools li i{\n    line-height: 32px;\n}\n.ce-toolbar__tools li:hover,\n.ce-toolbar__tools .selected{\n    background: #383b5d;\n    box-shadow: none;\n    color: #fff;\n}\n/* animation for tools opening */\n.ce-toolbar__tools li{\n    -webkit-transform: rotate(-180deg) scale(.7);\n            transform: rotate(-180deg) scale(.7);\n    margin-right: -15px;\n}\n.ce-toolbar__tools.opened li{\n    -webkit-transform: none;\n            transform: none;\n    margin-right: 17px;\n}\n/**\n* Toolbar right zone with SETTINGS and DELETE\n*/\n.ce-toolbar__actions{\n    position: absolute;\n    right: 15px;\n    border-radius: 2px;\n    padding: 6px 5px;\n    line-height: 1em;\n    font-size: 14px;\n    background: #fff;\n}\n/**\n* Settings button\n*/\n.ce-toolbar__settings-btn{\n    margin-right: .3em;\n    cursor: pointer;\n}\n.ce-toolbar__settings-btn,\n.ce-toolbar__remove-btn{\n    color: #5e6475;\n}\n.ce-toolbar__settings-btn:hover,\n.ce-toolbar__remove-btn:hover{\n    color: #272b35\n}\n/**\n* Settigns panel\n*/\n.ce-settings,\n.ce-toolbar__remove-confirmation{\n    position: absolute;\n    right: 0;\n    margin-top: 10px;\n    min-width: 200px;\n    background: #FFFFFF;\n    border: 1px solid #e7e9f1;\n    box-shadow: 0px 2px 5px 0px rgba(16, 23, 49, 0.05);\n    border-radius: 3px;\n    white-space: nowrap;\n    color: #2b2d31;\n    font-size: 13.4px;\n\n    /* hidden by default */\n    display: none;\n}\n/**\n* Settings and remove-confirmation corner\n*/\n.ce-settings:before,\n.ce-toolbar__remove-confirmation:before,\n.ce-settings:after,\n.ce-toolbar__remove-confirmation:after{\n    content: \"\";\n    position: absolute;\n    top: -14px;\n    right: 10px;\n    border-style: solid;\n}\n.ce-settings:before,\n.ce-toolbar__remove-confirmation:before {\n    margin: -2px -1px 0;\n    border-width: 8px;\n    border-color: transparent transparent #e7e9f1 transparent;\n}\n.ce-settings:after,\n.ce-toolbar__remove-confirmation:after {\n    border-width: 7px;\n    border-color: transparent transparent #fff transparent;\n}\n.ce-settings:before,\n.ce-settings:after{\n    right: 31px;\n}\n.ce-toolbar__remove-confirmation:before,\n.ce-toolbar__remove-confirmation:after{\n    right: 10px;\n}\n.ce-toolbar__remove-confirmation{\n    right: -3px;\n}\n/**\n* Plugins settings style helper\n*/\n.cdx-plugin-settings--horisontal {\n    display: -moz-flex;\n    display: -ms-flex;\n    display: -o-flex;\n    display: -webkit-box;\n    display: -ms-flexbox;\n    display: flex;\n}\n.cdx-plugin-settings--horisontal .cdx-plugin-settings__item {\n    -webkit-box-flex: 1;\n        -ms-flex: 1 0 auto;\n            flex: 1 0 auto;\n    text-align: center;\n}\n.ce-settings__item,\n.ce-toolbar__remove-confirm,\n.ce-toolbar__remove-cancel,\n.cdx-plugin-settings__item {\n    padding: 15px;\n    cursor: pointer;\n    line-height: 1em;\n}\n.ce-settings__item:hover,\n.ce-toolbar__remove-cancel:hover,\n.cdx-plugin-settings__item:hover {\n    background: #edf0f5;\n}\n.ce-settings.opened,\n.ce-toolbar__remove-confirmation.opened{\n    display: block;\n}\n.ce-settings_plugin{\n    border-bottom: 1px solid #e7e9f1;\n}\n.ce-settings_plugin:empty{\n    display: none;\n}\n.ce-settings__item:not(:last-of-type) {\n    border-bottom: 1px solid #e7e9f1;\n}\n.ce-settings__item i,\n.cdx-plugin-settings__item i {\n    min-width: 16px;\n    margin-right: 1.3em;\n}\n.ce-settings__item i::before {\n    min-width: 16px;\n    margin: 0;\n}\n/**\n * Trash button\n */\n.ce-toolbar__remove-btn {\n    cursor: pointer;\n}\n.ce-toolbar__remove-confirm{\n    color: #ea5c5c;\n}\n.ce-toolbar__remove-confirm:hover{\n    background: #e23d3d;\n    color: #fff;\n}\n/** Anchor input */\n.ce-settings__anchor-wrapper:hover {\n    background: none;\n}\n.ce-settings__anchor-input {\n    max-width: 100%;\n    border: 0;\n    outline: none;\n    padding: 14px 0;\n    margin: -15px 0;\n    font-size: inherit;\n    color: #000;\n    height: 1em;\n}\n.ce-settings__anchor-input::-webkit-input-placeholder {color: rgba(112, 118, 132, 0.5);}\n.ce-settings__anchor-input::-moz-placeholder {color: rgba(112, 118, 132, 0.5);}\n.ce-settings__anchor-input:-moz-placeholder {color: rgba(112, 118, 132, 0.5);}\n.ce-settings__anchor-input:-ms-input-placeholder {color: rgba(112, 118, 132, 0.5);}\n.ce-settings__anchor-hash {\n    display: inline-block;\n    background-size: contain;\n    height: 11px;\n    width: 10px;\n    vertical-align: middle;\n}\n/**\n* Overlayed inline toolbar\n*/\n.ce-toolbar-inline{\n    position: absolute;\n    left: 0;\n    top: 0;\n    z-index: 3;\n    background: #242533;\n    border-radius: 3px;\n    padding: 0 5px;\n    margin-top: -.5em;\n\n    will-change: transform;\n    transition: -webkit-transform .2s cubic-bezier(0.600, -0.280, 0.735, 0.045);\n    transition: transform .2s cubic-bezier(0.600, -0.280, 0.735, 0.045);\n    transition: transform .2s cubic-bezier(0.600, -0.280, 0.735, 0.045), -webkit-transform .2s cubic-bezier(0.600, -0.280, 0.735, 0.045);\n\n    color: #fff;\n\n    /* hidden by default */\n    display: none;\n}\n.ce-toolbar-inline.opened {\n    display: block;\n}\n.ce-toolbar-inline__buttons{\n}\n.ce-toolbar-inline__buttons button{\n    background: none;\n    border: 0;\n    margin: 0 !important;\n    height: auto !important;\n    padding: 13px 9px;\n    line-height: 1em;\n    color: inherit;\n    font-size: 12px;\n    cursor: pointer;\n}\n.ce-toolbar-inline__buttons button:hover{\n    background: #171827;\n    color: #428bff;\n}\n.ce-toolbar-inline__actions{\n    position: absolute;\n    left: 0;\n    top: 0;\n    bottom: 0;\n    right: 0;\n    border-radius: 3px;\n    background: #242533;\n    display: none;\n}\n.ce-toolbar-inline__actions.opened{\n        display: block;\n    }\n.ce-toolbar-inline__actions input{\n        background: transparent !important;\n        border : 0 !important;\n        box-sizing: border-box !important;\n        padding: 12px;\n        font-size: 13px;\n        width: 100%;\n        color: #fff;\n        outline: none;\n    }\n.ce-toolbar-inline__actions input::-moz-placeholder{ color: #afb4c3  !important;}\n.ce-toolbar-inline__actions input::-webkit-input-placeholder{ color: #afb4c3 !important;}\n/**\n* Base blocks\n*/\n.ce-block {\n    margin: 0 5px;\n    border-radius: 3px;\n}\n.ce-block--focused {\n    background: #f9f9fb;\n}\n.ce-block--feed-mode {\n    position: relative;\n}\n.ce-block--feed-mode:before {\n    content: '\\E81B';\n    font-family: \"codex_editor\";\n    display: inline-block;\n    position: absolute;\n    left: 17px;\n    top: 13px;\n    font-size: 16px;\n    color: #7d6060;\n}\n.ce-block--anchor {\n    position: relative;\n}\n.ce-block--anchor::after {\n    display: inline-block;\n    content: \"#\" attr(data-anchor);\n    color: #868896;\n    position: absolute;\n    left: 17px;\n    top: 13px;\n    max-width: 100px;\n    word-wrap: break-word;\n    font-size: 12px;\n    line-height: 1.4em;\n}\n/**\n* Block content holder\n*/\n.ce-block__content{\n    max-width: 600px;\n    margin: 0 auto;\n    padding: 1px;\n}\n.ce-block--stretched{\n    max-width: none;\n    padding: 0;\n}\n.cdx-unavailable-block {\n    display: block;\n    margin: 10px 0;\n    padding: 80px;\n    background-color: #fff7f7;\n    text-align: center;\n    border-radius: 3px;\n    color: #ce5f5f;\n}\n/**\n* Typographycs\n*/\n.ce-redactor p{\n    margin: 0;\n}\n/**\n* Loading bar class\n*/\n.ce-redactor__loader {\n    background-image: repeating-linear-gradient(-45deg, transparent, transparent 4px, #f5f9ff 4px, #eaedef 8px) !important;\n    background-size: 56px 56px;\n    -webkit-animation: loading-bar 600ms infinite linear;\n            animation: loading-bar 600ms infinite linear;\n}\n@-webkit-keyframes loading-bar {\n    100% { background-position: -56% 0 }\n}\n@keyframes loading-bar {\n    100% { background-position: -56% 0 }\n}\n/**\n* Notifications\n*/\n.cdx-notifications-block {\n    position: fixed;\n    bottom: 0;\n    left: 0;\n    padding: 15px;\n}\n.cdx-notification__notification-appending div {\n    -webkit-animation: notification 100ms infinite ease-in;\n            animation: notification 100ms infinite ease-in;\n}\n@-webkit-keyframes notification {\n\n    0% { -webkit-transform: translateY(20px); transform: translateY(20px); }\n    100% { -webkit-transform: translateY(0px); transform: translateY(0px);  }\n\n}\n@keyframes notification {\n\n    0% { -webkit-transform: translateY(20px); transform: translateY(20px); }\n    100% { -webkit-transform: translateY(0px); transform: translateY(0px);  }\n\n}\n.cdx-notification {\n    width: 250px;\n    margin-top: 15px;\n    padding: 15px;\n    background: #fff;\n    border: 1px solid #e7e9f1;\n    box-shadow: 0px 2px 5px 0px rgba(16, 23, 49, 0.05);\n    border-radius: 3px;\n    font-size: 14px;\n}\n.cdx-notification__message {\n    margin-bottom: 15px;\n}\n.cdx-notification__ok-btn,\n.cdx-notification__cancel-btn {\n    padding: 4px 7px;\n    cursor: pointer;\n    background: #4584d8;\n    color: #fff;\n    min-width: 50px;\n    display: inline-block;\n    text-align: center;\n    border-radius: 2px;\n}\n.cdx-notification__cancel-btn {\n    margin-left: 10px;\n    background: #dae0e8;\n    color: inherit;\n}\n.cdx-notification__cancel-btn {\n    background: #cad5e2;\n}\n.cdx-notification__ok-btn:hover {\n    background: #3d77c3;\n}\n.cdx-notification__input {\n    display: block;\n    width: 100%;\n    margin-bottom: 15px;\n    border: none;\n    outline: none;\n    padding: 2px 0;\n    font-size: inherit;\n    border-bottom: 2px solid #d1d3da;\n}\n.cdx-notification-error {\n    border-left: 4px solid rgb(255, 112, 112);\n}\n.cdx-notification-warn {\n    border-left: 4px solid rgb(79, 146, 247);\n}\n/**\n* Mobile viewport styles\n* =================================\n*/\n@media all and (max-width: 1000px){\n\n    .ce-block{\n        margin: 0;\n    }\n    .ce-block__content,\n    .ce-toolbar__content\n    {\n        padding: 0 25px;\n    }\n\n    .ce-toolbar {\n        margin-top: 5px;\n    }\n\n    .ce-toolbar__actions {\n        right: 0;\n        top: -10px;\n        font-size: 14px;\n        line-height: 18px;\n    }\n\n    .ce-toolbar__settings-btn {\n        display: block;\n        margin-bottom: 3px;\n    }\n\n    .ce-toolbar__plus {\n        margin-left: -25px;\n    }\n\n    .ce-toolbar__plus,\n    .ce-toolbar__tools li {\n        width: 22px;\n        height: 22px;\n    }\n\n    .ce-toolbar__tools li i {\n        line-height: 22px;\n    }\n\n    .ce-toolbar__tools {\n        left: 30px;\n        font-size: 13px;\n    }\n\n    .ce-block--anchor::after {\n        display: none;\n    }\n\n}", ""]);
+exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor{\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 10px;\n}\n.codex-editor .hide {\n        display: none;\n    }\n", ""]);
 
 // exports
 

@@ -1,0 +1,12 @@
+/**
+* Editor wrapper
+*/
+.codex-editor{
+    position: relative;
+    border: 1px solid #ccc;
+    padding: 10px;
+
+    .hide {
+        display: none;
+    }
+}
