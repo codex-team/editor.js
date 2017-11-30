@@ -7,7 +7,7 @@
 
 import Util from '../util';
 
-module.exports = class Renderer {
+class Renderer {
 
     /**
      * @constructor
@@ -74,7 +74,9 @@ module.exports = class Renderer {
 
     }
 
-};
+}
+
+module.exports = Renderer;
 
 // module.exports = (function (renderer) {
 //

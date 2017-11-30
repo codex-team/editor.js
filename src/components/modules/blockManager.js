@@ -1,14 +1,12 @@
 /**
  * @class BlockManager
  * @classdesc Manage editor`s blocks storage and appearance
- *
- *
  */
 
 import Block from '../block';
 import Util from '../util';
 
-module.exports = class BlockManager {
+class BlockManager {
 
     /**
      * @constructor
@@ -20,7 +18,7 @@ module.exports = class BlockManager {
         this.config = config;
         this.Editor = null;
         this._blocks = null;
-        this._currentBloсkIndex = -1;
+        this._currentBlockIndex = -1;
 
     }
 
@@ -36,7 +34,7 @@ module.exports = class BlockManager {
     }
 
     /**
-     * Should be called after Editor.ui preparation
+     * Should be called after Editor.UI preparation
      * Define this._blocks property
      *
      * @returns {Promise}
@@ -45,7 +43,7 @@ module.exports = class BlockManager {
 
         return new Promise(resolve => {
 
-            let blocks = new Blocks(this.Editor.ui.nodes.redactor);
+            let blocks = new Blocks(this.Editor.UI.nodes.redactor);
 
             /**
              * We need to use Proxy to overload set/get [] operator.
@@ -83,7 +81,7 @@ module.exports = class BlockManager {
         let toolInstance = this.Editor.Tools.construct(toolName, data),
             block = new Block(toolInstance);
 
-        this._blocks[++this._currentBloсkIndex] = block;
+        this._blocks[++this._currentBlockIndex] = block;
 
     }
 
@@ -115,7 +113,7 @@ module.exports = class BlockManager {
      */
     get currentBlock() {
 
-        return this._blocks[this._currentBloсkIndex];
+        return this._blocks[this._currentBlockIndex];
 
     }
 
@@ -126,7 +124,7 @@ module.exports = class BlockManager {
      */
     get currentNode() {
 
-        return this._blocks.nodes[this._currentBloсkIndex];
+        return this._blocks.nodes[this._currentBlockIndex];
 
     }
 
@@ -141,7 +139,7 @@ module.exports = class BlockManager {
 
         let nodes = this._blocks.nodes;
 
-        this._currentBloсkIndex = nodes.indexOf(element);
+        this._currentBlockIndex = nodes.indexOf(element);
 
     }
 
@@ -351,3 +349,5 @@ class Blocks {
     }
 
 }
+
+module.exports = BlockManager;

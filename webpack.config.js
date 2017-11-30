@@ -20,8 +20,8 @@ const VERSION  = process.env.VERSION || pkg.version;
  * Plugins for bundle
  * @type {webpack}
  */
-var webpack                     = require('webpack');
-var ExtractTextWebpackPlugin    = require('extract-text-webpack-plugin');
+var webpack              = require('webpack');
+var ExtractTextPlugin    = require('extract-text-webpack-plugin');
 
 var fs = require('fs');
 
@@ -52,22 +52,25 @@ module.exports = {
     watch: true,
 
     watchOptions: {
-        aggregateTimeOut: 50
+        aggregateTimeout: 50
     },
 
     devtool: NODE_ENV == 'development' ? 'source-map' : null,
 
+    /**
+     * Tell webpack what directories should be searched when resolving modules.
+     */
     resolve : {
-        fallback: path.join(__dirname, 'node_modules'),
-        modulesDirectories : [ './modules' ],
-        extensions : ['', '.js', '.json']
+        // fallback: path.join(__dirname, 'node_modules'),
+        modules : [ path.join(__dirname, "src"),  "node_modules"]
     },
+    //
 
-    resolveLoader : {
-        modulesDirectories: [ './node_modules' ],
-        moduleTemplates: ['*-webpack-loader', '*-web-loader', '*-loader', '*'],
-        extensions: ['', '.js']
-    },
+    // resolveLoader : {
+        // modules: [ path.resolve(__dirname, "src"), "node_modules" ],
+        // moduleTemplates: ['*-webpack-loader', '*-web-loader', '*-loader', '*'],
+        // extensions: ['.js']
+    // },
 
     plugins: [
 
@@ -92,24 +95,47 @@ module.exports = {
     ],
 
     module : {
-
-        loaders : [ {
-            test : /\.js$/,
-            exclude: /node_modules/,
-            loader : 'babel',
-            query: {
-                presets: [ __dirname + '/node_modules/babel-preset-es2015' ]
+        rules : [
+            {
+                test : /\.js$/,
+                exclude: /node_modules/,
+                use : {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: [ __dirname + '/node_modules/babel-preset-es2015' ],
+                        plugins: ['class-display-name']
+                    }
+                }
+            },
+            {
+                test : /\.js$/,
+                use: 'eslint-loader?fix=true',
+                exclude: /node_modules/
+            },
+            {
+                test: /\.css$/,
+                exclude: /node_modules/,
+                use: [
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            // minimize: 1,
+                            importLoaders: 1
+                        }
+                    },
+                    'postcss-loader'
+                ]
+                // use: ExtractTextPlugin.extract([
+                //     {
+                //         loader: 'css-loader',
+                //         options: {
+                //             // minimize: 1,
+                //             importLoaders: 1
+                //         }
+                //     },
+                //     'postcss-loader'
+                // ])
             }
-        },
-        {
-            test : /\.js$/,
-            loader: 'eslint-loader?fix=true',
-            exclude: /node_modules/
-        },
-        {
-            test : /\.css$/,
-            exclude: /node_modules/,
-            loader: ExtractTextWebpackPlugin.extract('style-loader', 'css-loader')
-        } ]
+        ]
     }
 };

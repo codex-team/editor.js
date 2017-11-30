@@ -55,12 +55,6 @@ import $ from '../dom';
  */
 class Toolbar {
 
-    static get name() {
-
-        return 'Toolbar';
-
-    }
-
     /**
      * @constructor
      */
@@ -167,7 +161,7 @@ class Toolbar {
         /**
          * Append toolbar to the Editor
          */
-        $.append(this.Editor.ui.nodes.wrapper, this.nodes.wrapper);
+        $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
 
     }
 

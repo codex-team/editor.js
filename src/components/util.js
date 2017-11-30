@@ -20,7 +20,7 @@ module.exports = class Util {
      */
     static sequence(chains, success = () => {}, fallback = () => {}) {
 
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
 
             /**
              * pluck each element from queue
@@ -60,7 +60,7 @@ module.exports = class Util {
          */
         function waitNextBlock(chainData, success, fallback) {
 
-            return new Promise(function (resolve, reject) {
+            return new Promise(function (resolve) {
 
                 chainData.function()
                     .then(() => {

@@ -7,17 +7,7 @@
  *
  * @version 1.0.0
  */
-module.exports = class Events {
-
-    /**
-     * Module key name
-     * @returns {string}
-     */
-    static get name() {
-
-        return 'Events';
-
-    }
+class Events {
 
     /**
      * @param Editor
@@ -85,4 +75,6 @@ module.exports = class Events {
 
     }
 
-};
+}
+
+module.exports = Events;

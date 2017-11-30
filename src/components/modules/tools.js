@@ -36,13 +36,7 @@
  */
 let util = require('../util');
 
-module.exports = class Tools {
-
-    static get name() {
-
-        return 'Tools';
-
-    }
+class Tools {
 
     /**
      * Returns available Tools
@@ -109,8 +103,6 @@ module.exports = class Tools {
      * @return {boolean}
      */
     prepare() {
-
-        let self = this;
 
         if (!this.config.hasOwnProperty('tools')) {
 
@@ -230,4 +222,6 @@ module.exports = class Tools {
 
     }
 
-};
+}
+
+module.exports = Tools;

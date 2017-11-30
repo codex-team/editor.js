@@ -5,30 +5,30 @@
  */
 // let className = {
 
-    /**
+/**
      * @const {string} BLOCK_CLASSNAME - redactor blocks name
      */
-    // BLOCK_CLASSNAME : 'ce-block',
+// BLOCK_CLASSNAME : 'ce-block',
 
-    /**
+/**
      * @const {String} wrapper for plugins content
      */
-    // BLOCK_CONTENT : 'ce-block__content',
+// BLOCK_CONTENT : 'ce-block__content',
 
-    /**
+/**
      * @const {String} BLOCK_STRETCHED - makes block stretched
      */
-    // BLOCK_STRETCHED : 'ce-block--stretched',
+// BLOCK_STRETCHED : 'ce-block--stretched',
 
-    /**
+/**
      * @const {String} BLOCK_HIGHLIGHTED - adds background
      */
-    // BLOCK_HIGHLIGHTED : 'ce-block--focused',
+// BLOCK_HIGHLIGHTED : 'ce-block--focused',
 
-    /**
+/**
      * @const {String} - for all default settings
      */
-    // SETTINGS_ITEM : 'ce-settings__item'
+// SETTINGS_ITEM : 'ce-settings__item'
 // };
 
 let CSS = {
@@ -57,17 +57,7 @@ import $ from '../dom';
  * @property {Element} nodes.wrapper  - <codex-editor>
  * @property {Element} nodes.redactor - <ce-redactor>
  */
-module.exports = class UI {
-
-    /**
-     * Module key name
-     * @returns {string}
-     */
-    static get name() {
-
-        return 'ui';
-
-    }
+class UI {
 
     /**
      * @constructor
@@ -134,6 +124,11 @@ module.exports = class UI {
              */
             this.Editor.Toolbar.make();
 
+            /**
+             * Load and append CSS
+             */
+            this.loadStyles();
+
             resolve();
 
         })
@@ -153,17 +148,42 @@ module.exports = class UI {
         /** Add eventlisteners to redactor elements */
         // .then(bindEvents_)
 
-        .catch(e => {
+            .catch(e => {
 
-            console.error(e);
+                console.error(e);
 
             // editor.core.log("Can't draw editor interface");
 
-        });
+            });
 
     }
 
-};
+    loadStyles() {
+
+        /**
+         * Load CSS
+         */
+        let styles = require('../../styles/main.css');
+
+        /**
+         * Make tag
+         */
+        let tag = $.make('style', null, {
+            textContent: styles.toString()
+        });
+
+        /**
+         * Append styles
+         */
+        $.append(document.head, tag);
+
+    }
+
+}
+
+module.exports = UI;
+
+
 // /**
 //  * Codex Editor UI module
 //  *

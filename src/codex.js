@@ -54,6 +54,7 @@
 /**
  * Require Editor modules places in components/modules dir
  */
+// eslint-disable-next-line
 let modules = editorModules.map( module => {
 
     return require('./components/modules/' + module );
@@ -174,7 +175,15 @@ module.exports = class CodexEditor {
 
             try {
 
-                this.moduleInstances[Module.name] = new Module({
+                /**
+                 * We use class name provided by displayName property
+                 *
+                 * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
+                 * To prevent this, we use 'babel-plugin-class-display-name' plugin
+                 * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
+                 */
+
+                this.moduleInstances[Module.displayName] = new Module({
                     config : this.configuration
                 });
 
@@ -211,7 +220,7 @@ module.exports = class CodexEditor {
      */
     getModulesDiff( name ) {
 
-        let modules = {};
+        let diff = {};
 
         for(let moduleName in this.moduleInstances) {
 
@@ -223,11 +232,11 @@ module.exports = class CodexEditor {
                 continue;
 
             }
-            modules[moduleName] = this.moduleInstances[moduleName];
+            diff[moduleName] = this.moduleInstances[moduleName];
 
         }
 
-        return modules;
+        return diff;
 
     }
 
@@ -241,7 +250,7 @@ module.exports = class CodexEditor {
         let prepareDecorator = module => module.prepare();
 
         return Promise.resolve()
-            .then(prepareDecorator(this.moduleInstances.ui))
+            .then(prepareDecorator(this.moduleInstances.UI))
             .then(prepareDecorator(this.moduleInstances.Tools))
             .then(prepareDecorator(this.moduleInstances.BlockManager))
 
