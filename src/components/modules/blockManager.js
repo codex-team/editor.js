@@ -6,18 +6,9 @@
  */
 
 import Block from '../block';
+import Util from '../util';
 
 module.exports = class BlockManager {
-
-    /**
-     * Module key name
-     * @returns {string}
-     */
-    static get name() {
-
-        return 'BlockManager';
-
-    }
 
     /**
      * @constructor
@@ -106,7 +97,7 @@ module.exports = class BlockManager {
      */
     getBlock(element) {
 
-        let nodes = Array.prototype.slice.call(this._blocks.workingArea.children),
+        let nodes = this._blocks.nodes,
             index = nodes.indexOf(element);
 
         if (index >= 0) {
@@ -119,30 +110,36 @@ module.exports = class BlockManager {
 
     /**
      * Get current Block instance
+     *
+     * @return {Block}
      */
     get currentBlock() {
 
-        return this._blocks.workingArea.children[this._currentBlcokIndex];
+        return this._blocks[this._currentBlcokIndex];
 
     }
 
     /**
      * Get working html element
+     *
+     * @return {HTMLElement}
      */
     get currentNode() {
 
-        return this._blocks.workingArea.children[this._currentBlcokIndex];
+        return this._blocks.nodes[this._currentBlcokIndex];
 
     }
 
     /**
      * Set _currentBlockIndex to passed block
      *
+     * @todo get first level block before searching
+     *
      * @param {HTMLElement} element
      */
     set currentNode(element) {
 
-        let nodes = Array.prototype.slice.call(this._blocks.workingArea.children);
+        let nodes = this._blocks.nodes;
 
         this._currentBlcokIndex = nodes.indexOf(element);
 
@@ -151,7 +148,7 @@ module.exports = class BlockManager {
     /**
      * Get array of Block instances
      *
-     * @returns {Array}
+     * @returns {Block[]} {@link Blocks#array}
      */
     get blocks() {
 
@@ -289,11 +286,22 @@ class Blocks {
     /**
      * Get Block instances array
      *
-     * @returns {Array}
+     * @returns {Block[]}
      */
     get array() {
 
         return this._blocks;
+
+    }
+
+    /**
+     * Get blocks html elements array
+     *
+     * @returns {HTMLElement[]}
+     */
+    get nodes() {
+
+        return Util.array(this.workingArea.children);
 
     }
 

@@ -4168,32 +4168,21 @@ var CodexEditor =
 	
 	var _block2 = _interopRequireDefault(_block);
 	
+	var _util = __webpack_require__(20);
+	
+	var _util2 = _interopRequireDefault(_util);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	module.exports = function () {
-	    _createClass(BlockManager, null, [{
-	        key: 'name',
 	
-	
-	        /**
-	         * Module key name
-	         * @returns {string}
-	         */
-	        get: function get() {
-	
-	            return 'BlockManager';
-	        }
-	
-	        /**
-	         * @constructor
-	         *
-	         * @param {EditorConfig} config
-	         */
-	
-	    }]);
-	
+	    /**
+	     * @constructor
+	     *
+	     * @param {EditorConfig} config
+	     */
 	    function BlockManager(_ref) {
 	        var config = _ref.config;
 	
@@ -4282,7 +4271,7 @@ var CodexEditor =
 	        key: 'getBlock',
 	        value: function getBlock(element) {
 	
-	            var nodes = Array.prototype.slice.call(this._blocks.workingArea.children),
+	            var nodes = this._blocks.nodes,
 	                index = nodes.indexOf(element);
 	
 	            if (index >= 0) {
@@ -4293,6 +4282,8 @@ var CodexEditor =
 	
 	        /**
 	         * Get current Block instance
+	         *
+	         * @return {Block}
 	         */
 	
 	    }, {
@@ -4305,29 +4296,33 @@ var CodexEditor =
 	        key: 'currentBlock',
 	        get: function get() {
 	
-	            return this._blocks.workingArea.children[this._currentBlcokIndex];
+	            return this._blocks[this._currentBlcokIndex];
 	        }
 	
 	        /**
 	         * Get working html element
+	         *
+	         * @return {HTMLElement}
 	         */
 	
 	    }, {
 	        key: 'currentNode',
 	        get: function get() {
 	
-	            return this._blocks.workingArea.children[this._currentBlcokIndex];
+	            return this._blocks.nodes[this._currentBlcokIndex];
 	        }
 	
 	        /**
 	         * Set _currentBlockIndex to passed block
+	         *
+	         * @todo get first level block before searching
 	         *
 	         * @param {HTMLElement} element
 	         */
 	        ,
 	        set: function set(element) {
 	
-	            var nodes = Array.prototype.slice.call(this._blocks.workingArea.children);
+	            var nodes = this._blocks.nodes;
 	
 	            this._currentBlcokIndex = nodes.indexOf(element);
 	        }
@@ -4335,7 +4330,7 @@ var CodexEditor =
 	        /**
 	         * Get array of Block instances
 	         *
-	         * @returns {Array}
+	         * @returns {Block[]} {@link Blocks#array}
 	         */
 	
 	    }, {
@@ -4487,7 +4482,7 @@ var CodexEditor =
 	        /**
 	         * Get Block instances array
 	         *
-	         * @returns {Array}
+	         * @returns {Block[]}
 	         */
 	
 	    }, {
@@ -4495,6 +4490,19 @@ var CodexEditor =
 	        get: function get() {
 	
 	            return this._blocks;
+	        }
+	
+	        /**
+	         * Get blocks html elements array
+	         *
+	         * @returns {HTMLElement[]}
+	         */
+	
+	    }, {
+	        key: 'nodes',
+	        get: function get() {
+	
+	            return _util2.default.array(this.workingArea.children);
 	        }
 	
 	        /**
@@ -4801,21 +4809,30 @@ var CodexEditor =
 	         * @param {Object[]} items
 	         */
 	        value: function render(items) {
+	            var _this = this;
 	
 	            var chainData = [];
 	
-	            for (var i = 0; i < items.length; i++) {
+	            var _loop = function _loop(i) {
 	
 	                chainData.push({
-	                    function: this.makeBlock_.bind(this, items[i])
+	                    function: function _function() {
+	                        return _this._makeBlock(items[i]);
+	                    }
 	                });
+	            };
+	
+	            for (var i = 0; i < items.length; i++) {
+	                _loop(i);
 	            }
 	
 	            _util2.default.sequence(chainData);
 	        }
 	
 	        /**
-	         * Get plugin instance, insert block to working zone and add plugin instance to Editor.Tools
+	         * Get plugin instance
+	         * Add plugin instance to BlockManager
+	         * Insert block to working zone
 	         *
 	         * @param {Object} item
 	         * @returns {Promise.<T>}
@@ -4823,8 +4840,8 @@ var CodexEditor =
 	         */
 	
 	    }, {
-	        key: 'makeBlock_',
-	        value: function makeBlock_(item) {
+	        key: '_makeBlock',
+	        value: function _makeBlock(item) {
 	
 	            var tool = item.type,
 	                data = item.data;
@@ -5133,6 +5150,21 @@ var CodexEditor =
 	                    });
 	                });
 	            }
+	        }
+	
+	        /**
+	         * Make array from array-like collection
+	         *
+	         * @param {*} collection
+	         *
+	         * @return {Array}
+	         */
+	
+	    }, {
+	        key: "array",
+	        value: function array(collection) {
+	
+	            return Array.prototype.slice.call(collection);
 	        }
 	    }]);
 	

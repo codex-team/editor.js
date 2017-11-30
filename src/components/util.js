@@ -84,4 +84,17 @@ module.exports = class Util {
 
     }
 
+    /**
+     * Make array from array-like collection
+     *
+     * @param {*} collection
+     *
+     * @return {Array}
+     */
+    static array(collection) {
+
+        return Array.prototype.slice.call(collection);
+
+    }
+
 };

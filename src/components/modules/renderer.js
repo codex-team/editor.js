@@ -45,7 +45,7 @@ module.exports = class Renderer {
         for (let i = 0; i < items.length; i++) {
 
             chainData.push({
-                function: this.makeBlock_.bind(this, items[i])
+                function: () => this._makeBlock(items[i])
             });
 
         }
@@ -55,13 +55,15 @@ module.exports = class Renderer {
     }
 
     /**
-     * Get plugin instance, insert block to working zone and add plugin instance to Editor.Tools
+     * Get plugin instance
+     * Add plugin instance to BlockManager
+     * Insert block to working zone
      *
      * @param {Object} item
      * @returns {Promise.<T>}
      * @private
      */
-    makeBlock_(item) {
+    _makeBlock(item) {
 
         let tool = item.type,
             data = item.data;
