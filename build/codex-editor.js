@@ -4191,7 +4191,7 @@ var CodexEditor =
 	        this.config = config;
 	        this.Editor = null;
 	        this._blocks = null;
-	        this._currentBlcokIndex = -1;
+	        this._currentBloсkIndex = -1;
 	    }
 	
 	    /**
@@ -4255,7 +4255,7 @@ var CodexEditor =
 	            var toolInstance = this.Editor.Tools.construct(toolName, data),
 	                block = new _block2.default(toolInstance);
 	
-	            this._blocks[++this._currentBlcokIndex] = block;
+	            this._blocks[++this._currentBloсkIndex] = block;
 	        }
 	
 	        /**
@@ -4296,7 +4296,7 @@ var CodexEditor =
 	        key: 'currentBlock',
 	        get: function get() {
 	
-	            return this._blocks[this._currentBlcokIndex];
+	            return this._blocks[this._currentBloсkIndex];
 	        }
 	
 	        /**
@@ -4309,7 +4309,7 @@ var CodexEditor =
 	        key: 'currentNode',
 	        get: function get() {
 	
-	            return this._blocks.nodes[this._currentBlcokIndex];
+	            return this._blocks.nodes[this._currentBloсkIndex];
 	        }
 	
 	        /**
@@ -4324,7 +4324,7 @@ var CodexEditor =
 	
 	            var nodes = this._blocks.nodes;
 	
-	            this._currentBlcokIndex = nodes.indexOf(element);
+	            this._currentBloсkIndex = nodes.indexOf(element);
 	        }
 	
 	        /**
@@ -4402,6 +4402,7 @@ var CodexEditor =
 	
 	            if (index > this.length) {
 	
+	                // @todo decide how to handle this case
 	                return;
 	            }
 	
@@ -4600,7 +4601,7 @@ var CodexEditor =
 	            content: 'ce-block__content'
 	        };
 	
-	        this._html = this._compose();
+	        this._html = this.compose();
 	    }
 	
 	    /**
@@ -4612,8 +4613,8 @@ var CodexEditor =
 	
 	
 	    _createClass(Block, [{
-	        key: '_compose',
-	        value: function _compose() {
+	        key: 'compose',
+	        value: function compose() {
 	
 	            var wrapper = _dom2.default.make('div', this.CSS.wrapper),
 	                content = _dom2.default.make('div', this.CSS.content);
@@ -4817,7 +4818,7 @@ var CodexEditor =
 	
 	                chainData.push({
 	                    function: function _function() {
-	                        return _this._makeBlock(items[i]);
+	                        return _this.makeBlock(items[i]);
 	                    }
 	                });
 	            };
@@ -4840,8 +4841,8 @@ var CodexEditor =
 	         */
 	
 	    }, {
-	        key: '_makeBlock',
-	        value: function _makeBlock(item) {
+	        key: 'makeBlock',
+	        value: function makeBlock(item) {
 	
 	            var tool = item.type,
 	                data = item.data;

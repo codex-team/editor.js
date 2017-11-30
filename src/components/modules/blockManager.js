@@ -20,7 +20,7 @@ module.exports = class BlockManager {
         this.config = config;
         this.Editor = null;
         this._blocks = null;
-        this._currentBlcokIndex = -1;
+        this._currentBloсkIndex = -1;
 
     }
 
@@ -83,7 +83,7 @@ module.exports = class BlockManager {
         let toolInstance = this.Editor.Tools.construct(toolName, data),
             block = new Block(toolInstance);
 
-        this._blocks[++this._currentBlcokIndex] = block;
+        this._blocks[++this._currentBloсkIndex] = block;
 
     }
 
@@ -115,7 +115,7 @@ module.exports = class BlockManager {
      */
     get currentBlock() {
 
-        return this._blocks[this._currentBlcokIndex];
+        return this._blocks[this._currentBloсkIndex];
 
     }
 
@@ -126,7 +126,7 @@ module.exports = class BlockManager {
      */
     get currentNode() {
 
-        return this._blocks.nodes[this._currentBlcokIndex];
+        return this._blocks.nodes[this._currentBloсkIndex];
 
     }
 
@@ -141,7 +141,7 @@ module.exports = class BlockManager {
 
         let nodes = this._blocks.nodes;
 
-        this._currentBlcokIndex = nodes.indexOf(element);
+        this._currentBloсkIndex = nodes.indexOf(element);
 
     }
 
@@ -210,6 +210,7 @@ class Blocks {
 
         if (index > this.length) {
 
+            // @todo decide how to handle this case
             return;
 
         }

@@ -45,7 +45,7 @@ module.exports = class Renderer {
         for (let i = 0; i < items.length; i++) {
 
             chainData.push({
-                function: () => this._makeBlock(items[i])
+                function: () => this.makeBlock(items[i])
             });
 
         }
@@ -63,7 +63,7 @@ module.exports = class Renderer {
      * @returns {Promise.<T>}
      * @private
      */
-    _makeBlock(item) {
+    makeBlock(item) {
 
         let tool = item.type,
             data = item.data;

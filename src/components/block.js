@@ -27,7 +27,7 @@ export default class Block {
             content: 'ce-block__content'
         };
 
-        this._html = this._compose();
+        this._html = this.compose();
 
     }
 
@@ -37,7 +37,7 @@ export default class Block {
      * @returns {HTMLDivElement}
      * @private
      */
-    _compose() {
+    compose() {
 
         let wrapper = $.make('div', this.CSS.wrapper),
             content = $.make('div', this.CSS.content);
