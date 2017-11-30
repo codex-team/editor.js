@@ -15,6 +15,8 @@
  */
 
 /**
+ * @todo update according to current API
+ *
  * @typedef {Object} Tool
  * @property render
  * @property save
@@ -99,8 +101,6 @@ module.exports = class Tools {
         this.toolClasses = {};
         this.toolsAvailable = {};
         this.toolsUnavailable = {};
-
-        this._list = [];
 
     }
 
@@ -215,6 +215,9 @@ module.exports = class Tools {
      *
      * @param {String} tool — tool name
      * @param {Object} data — initial data
+     *
+     * @todo throw exceptions if tool doesnt exist
+     *
      */
     construct(tool, data) {
 
@@ -224,34 +227,6 @@ module.exports = class Tools {
         let instance = new plugin(data, config);
 
         return instance;
-
-    }
-
-    /**
-     * Insert tool instance for private list
-     *
-     * @param {Object} instance — tool instance
-     * @param {Number} index — tool index
-     */
-    add(instance, index) {
-
-        this._list[index] = instance;
-
-    }
-
-    /**
-     * Get tool instance by html element
-     *
-     * @param el
-     * @returns {*}
-     */
-    getByElement(el) {
-
-        let index = el.dataset.toolId;
-
-        if (!index) return null;
-
-        return this._list[index];
 
     }
 

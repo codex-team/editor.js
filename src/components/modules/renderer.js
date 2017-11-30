@@ -66,11 +66,7 @@ module.exports = class Renderer {
         let tool = item.type,
             data = item.data;
 
-        let instance = this.Editor.Tools.construct(tool, data),
-            index = this.Editor.Content.insertBlock(instance.html);
-
-
-        this.Editor.Tools.add(instance, index);
+        this.Editor.BlockManager.insert(tool, data);
 
         return Promise.resolve();
 

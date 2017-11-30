@@ -17,8 +17,8 @@
 
 </body>
 
-<!--<script src="plugins/paragraph/paragraph.js?v=100"></script>-->
-<!--<link rel="stylesheet" href="plugins/paragraph/paragraph.css">-->
+<script src="plugins/paragraph/paragraph.js?v=100"></script>
+<link rel="stylesheet" href="plugins/paragraph/paragraph.css">
 
 <!--<script src="plugins/header/header.js"></script>-->
 <!--<link rel="stylesheet" href="plugins/header/header.css">-->
@@ -71,25 +71,24 @@
                 displayInToolbox : true,
                 enableLineBreaks : true
             }
+        },
+        data: {
+            items: [
+                {
+                    type : 'paragraph',
+                    data : {
+                        text : 'Привет от CodeX'
+                    }
+                },
+                {
+                    type : 'paragraph',
+                    data : {
+                        text : 'Пишите нам на team@ifmo.su'
+                    }
+                },
+            ]
         }
     });
-
-    console.log(editor);
-
-    var items = [
-                    {
-                        type : 'paragraph',
-                        data : {
-                            text : 'Привет от CodeX'
-                        }
-                    },
-                    {
-                        type : 'paragraph',
-                        data : {
-                            text : 'Пишите нам на team@ifmo.su'
-                        }
-                    },
-                ];
 
 //    var editor2 = new CodexEditor({
 //        holderId : 'cdx',

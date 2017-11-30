@@ -243,6 +243,7 @@ module.exports = class CodexEditor {
         return Promise.resolve()
             .then(prepareDecorator(this.moduleInstances.ui))
             .then(prepareDecorator(this.moduleInstances.Tools))
+            .then(prepareDecorator(this.moduleInstances.BlockManager))
 
             .catch(function (error) {
 

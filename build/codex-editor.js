@@ -106,7 +106,7 @@ var CodexEditor =
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var modules = (["content.js","eventDispatcher.js","renderer.js","toolbar.js","tools.js","ui.js"]).map(function (module) {
+	var modules = (["blockManager.js","eventDispatcher.js","renderer.js","toolbar.js","tools.js","ui.js"]).map(function (module) {
 	
 	    return __webpack_require__(1)("./" + module);
 	});
@@ -279,7 +279,7 @@ var CodexEditor =
 	                return module.prepare();
 	            };
 	
-	            return Promise.resolve().then(prepareDecorator(this.moduleInstances.ui)).then(prepareDecorator(this.moduleInstances.Tools)).catch(function (error) {
+	            return Promise.resolve().then(prepareDecorator(this.moduleInstances.ui)).then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.BlockManager)).catch(function (error) {
 	
 	                console.log('Error occured', error);
 	            });
@@ -438,42 +438,44 @@ var CodexEditor =
 		"./_callbacks.js": 3,
 		"./_caret": 4,
 		"./_caret.js": 4,
-		"./_destroyer": 5,
-		"./_destroyer.js": 5,
-		"./_listeners": 6,
-		"./_listeners.js": 6,
-		"./_notifications": 7,
-		"./_notifications.js": 7,
-		"./_parser": 8,
-		"./_parser.js": 8,
-		"./_paste": 9,
-		"./_paste.js": 9,
-		"./_sanitizer": 10,
-		"./_sanitizer.js": 10,
-		"./_saver": 12,
-		"./_saver.js": 12,
-		"./_transport": 13,
-		"./_transport.js": 13,
-		"./content": 14,
-		"./content.js": 14,
-		"./eventDispatcher": 16,
-		"./eventDispatcher.js": 16,
-		"./renderer": 17,
-		"./renderer.js": 17,
-		"./toolbar": 19,
-		"./toolbar.js": 19,
-		"./toolbar/inline": 20,
-		"./toolbar/inline.js": 20,
-		"./toolbar/settings": 21,
-		"./toolbar/settings.js": 21,
-		"./toolbar/toolbar": 22,
-		"./toolbar/toolbar.js": 22,
-		"./toolbar/toolbox": 23,
-		"./toolbar/toolbox.js": 23,
-		"./tools": 24,
-		"./tools.js": 24,
-		"./ui": 25,
-		"./ui.js": 25
+		"./_content": 5,
+		"./_content.js": 5,
+		"./_destroyer": 7,
+		"./_destroyer.js": 7,
+		"./_listeners": 8,
+		"./_listeners.js": 8,
+		"./_notifications": 9,
+		"./_notifications.js": 9,
+		"./_parser": 10,
+		"./_parser.js": 10,
+		"./_paste": 11,
+		"./_paste.js": 11,
+		"./_sanitizer": 12,
+		"./_sanitizer.js": 12,
+		"./_saver": 14,
+		"./_saver.js": 14,
+		"./_transport": 15,
+		"./_transport.js": 15,
+		"./blockManager": 16,
+		"./blockManager.js": 16,
+		"./eventDispatcher": 18,
+		"./eventDispatcher.js": 18,
+		"./renderer": 19,
+		"./renderer.js": 19,
+		"./toolbar": 21,
+		"./toolbar.js": 21,
+		"./toolbar/inline": 22,
+		"./toolbar/inline.js": 22,
+		"./toolbar/settings": 23,
+		"./toolbar/settings.js": 23,
+		"./toolbar/toolbar": 24,
+		"./toolbar/toolbar.js": 24,
+		"./toolbar/toolbox": 25,
+		"./toolbar/toolbox.js": 25,
+		"./tools": 26,
+		"./tools.js": 26,
+		"./ui": 27,
+		"./ui.js": 27
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -1684,1337 +1686,6 @@ var CodexEditor =
 
 /***/ }),
 /* 5 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-	
-	/**
-	 * Codex Editor Destroyer module
-	 *
-	 * @auhor Codex Team
-	 * @version 1.0
-	 */
-	
-	module.exports = function (destroyer) {
-	
-	    var editor = codex.editor;
-	
-	    destroyer.removeNodes = function () {
-	
-	        editor.nodes.wrapper.remove();
-	        editor.nodes.notifications.remove();
-	    };
-	
-	    destroyer.destroyPlugins = function () {
-	
-	        for (var tool in editor.tools) {
-	
-	            if (typeof editor.tools[tool].destroy === 'function') {
-	
-	                editor.tools[tool].destroy();
-	            }
-	        }
-	    };
-	
-	    destroyer.destroyScripts = function () {
-	
-	        var scripts = document.getElementsByTagName('SCRIPT');
-	
-	        for (var i = 0; i < scripts.length; i++) {
-	
-	            if (scripts[i].id.indexOf(editor.scriptPrefix) + 1) {
-	
-	                scripts[i].remove();
-	                i--;
-	            }
-	        }
-	    };
-	
-	    /**
-	     * Delete editor data from webpage.
-	     * You should send settings argument with boolean flags:
-	     * @param settings.ui- remove redactor event listeners and DOM nodes
-	     * @param settings.scripts - remove redactor scripts from DOM
-	     * @param settings.plugins - remove plugin's objects
-	     * @param settings.core - remove editor core. You can remove core only if UI and scripts flags is true
-	     * }
-	     *
-	     */
-	    destroyer.destroy = function (settings) {
-	
-	        if (!settings || (typeof settings === 'undefined' ? 'undefined' : _typeof(settings)) !== 'object') {
-	
-	            return;
-	        }
-	
-	        if (settings.ui) {
-	
-	            destroyer.removeNodes();
-	            editor.listeners.removeAll();
-	        }
-	
-	        if (settings.scripts) {
-	
-	            destroyer.destroyScripts();
-	        }
-	
-	        if (settings.plugins) {
-	
-	            destroyer.destroyPlugins();
-	        }
-	
-	        if (settings.ui && settings.scripts && settings.core) {
-	
-	            delete codex.editor;
-	        }
-	    };
-	
-	    return destroyer;
-	}({});
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	
-	/**
-	 * Codex Editor Listeners module
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
-	
-	/**
-	 * Module-decorator for event listeners assignment
-	 */
-	module.exports = function (listeners) {
-	
-	    var allListeners = [];
-	
-	    /**
-	     * Search methods
-	     *
-	     * byElement, byType and byHandler returns array of suitable listeners
-	     * one and all takes element, eventType, and handler and returns first (all) suitable listener
-	     *
-	     */
-	    listeners.search = function () {
-	
-	        var byElement = function byElement(element, context) {
-	
-	            var listenersOnElement = [];
-	
-	            context = context || allListeners;
-	
-	            for (var i = 0; i < context.length; i++) {
-	
-	                var listener = context[i];
-	
-	                if (listener.element === element) {
-	
-	                    listenersOnElement.push(listener);
-	                }
-	            }
-	
-	            return listenersOnElement;
-	        };
-	
-	        var byType = function byType(eventType, context) {
-	
-	            var listenersWithType = [];
-	
-	            context = context || allListeners;
-	
-	            for (var i = 0; i < context.length; i++) {
-	
-	                var listener = context[i];
-	
-	                if (listener.type === eventType) {
-	
-	                    listenersWithType.push(listener);
-	                }
-	            }
-	
-	            return listenersWithType;
-	        };
-	
-	        var byHandler = function byHandler(handler, context) {
-	
-	            var listenersWithHandler = [];
-	
-	            context = context || allListeners;
-	
-	            for (var i = 0; i < context.length; i++) {
-	
-	                var listener = context[i];
-	
-	                if (listener.handler === handler) {
-	
-	                    listenersWithHandler.push(listener);
-	                }
-	            }
-	
-	            return listenersWithHandler;
-	        };
-	
-	        var one = function one(element, eventType, handler) {
-	
-	            var result = allListeners;
-	
-	            if (element) result = byElement(element, result);
-	
-	            if (eventType) result = byType(eventType, result);
-	
-	            if (handler) result = byHandler(handler, result);
-	
-	            return result[0];
-	        };
-	
-	        var all = function all(element, eventType, handler) {
-	
-	            var result = allListeners;
-	
-	            if (element) result = byElement(element, result);
-	
-	            if (eventType) result = byType(eventType, result);
-	
-	            if (handler) result = byHandler(handler, result);
-	
-	            return result;
-	        };
-	
-	        return {
-	            byElement: byElement,
-	            byType: byType,
-	            byHandler: byHandler,
-	            one: one,
-	            all: all
-	        };
-	    }();
-	
-	    listeners.add = function (element, eventType, handler, isCapture) {
-	
-	        element.addEventListener(eventType, handler, isCapture);
-	
-	        var data = {
-	            element: element,
-	            type: eventType,
-	            handler: handler
-	        };
-	
-	        var alreadyAddedListener = listeners.search.one(element, eventType, handler);
-	
-	        if (!alreadyAddedListener) {
-	
-	            allListeners.push(data);
-	        }
-	    };
-	
-	    listeners.remove = function (element, eventType, handler) {
-	
-	        element.removeEventListener(eventType, handler);
-	
-	        var existingListeners = listeners.search.all(element, eventType, handler);
-	
-	        for (var i = 0; i < existingListeners.length; i++) {
-	
-	            var index = allListeners.indexOf(existingListeners[i]);
-	
-	            if (index > 0) {
-	
-	                allListeners.splice(index, 1);
-	            }
-	        }
-	    };
-	
-	    listeners.removeAll = function () {
-	
-	        allListeners.map(function (current) {
-	
-	            listeners.remove(current.element, current.type, current.handler);
-	        });
-	    };
-	
-	    listeners.get = function (element, eventType, handler) {
-	
-	        return listeners.search.all(element, eventType, handler);
-	    };
-	
-	    return listeners;
-	}({});
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	/**
-	 * Codex Editor Notification Module
-	 *
-	 * @author Codex Team
-	 * @version 1.0
-	 */
-	
-	module.exports = function (notifications) {
-	
-	    var editor = codex.editor;
-	
-	    var queue = [];
-	
-	    var addToQueue = function addToQueue(settings) {
-	
-	        queue.push(settings);
-	
-	        var index = 0;
-	
-	        while (index < queue.length && queue.length > 5) {
-	
-	            if (queue[index].type == 'confirm' || queue[index].type == 'prompt') {
-	
-	                index++;
-	                continue;
-	            }
-	
-	            queue[index].close();
-	            queue.splice(index, 1);
-	        }
-	    };
-	
-	    notifications.createHolder = function () {
-	
-	        var holder = editor.draw.node('DIV', 'cdx-notifications-block');
-	
-	        editor.nodes.notifications = document.body.appendChild(holder);
-	
-	        return holder;
-	    };
-	
-	    /**
-	     * Error notificator. Shows block with message
-	     * @protected
-	     */
-	    notifications.errorThrown = function (errorMsg, event) {
-	
-	        editor.notifications.notification({ message: 'This action is not available currently', type: event.type });
-	    };
-	
-	    /**
-	     *
-	     * Appends notification
-	     *
-	     *  settings = {
-	     *      type        - notification type (reserved types: alert, confirm, prompt). Just add class 'cdx-notification-'+type
-	     *      message     - notification message
-	     *      okMsg       - confirm button text (default - 'Ok')
-	     *      cancelBtn   - cancel button text (default - 'Cancel'). Only for confirm and prompt types
-	     *      confirm     - function-handler for ok button click
-	     *      cancel      - function-handler for cancel button click. Only for confirm and prompt types
-	     *      time        - time (in seconds) after which notification will close (default - 10s)
-	     *  }
-	     *
-	     * @param settings
-	     */
-	    notifications.notification = function (constructorSettings) {
-	
-	        /** Private vars and methods */
-	        var notification = null,
-	            cancel = null,
-	            type = null,
-	            confirm = null,
-	            inputField = null;
-	
-	        var confirmHandler = function confirmHandler() {
-	
-	            close();
-	
-	            if (typeof confirm !== 'function') {
-	
-	                return;
-	            }
-	
-	            if (type == 'prompt') {
-	
-	                confirm(inputField.value);
-	                return;
-	            }
-	
-	            confirm();
-	        };
-	
-	        var cancelHandler = function cancelHandler() {
-	
-	            close();
-	
-	            if (typeof cancel !== 'function') {
-	
-	                return;
-	            }
-	
-	            cancel();
-	        };
-	
-	        /** Public methods */
-	        function create(settings) {
-	
-	            if (!(settings && settings.message)) {
-	
-	                editor.core.log('Can\'t create notification. Message is missed');
-	                return;
-	            }
-	
-	            settings.type = settings.type || 'alert';
-	            settings.time = settings.time * 1000 || 10000;
-	
-	            var wrapper = editor.draw.node('DIV', 'cdx-notification'),
-	                message = editor.draw.node('DIV', 'cdx-notification__message'),
-	                input = editor.draw.node('INPUT', 'cdx-notification__input'),
-	                okBtn = editor.draw.node('SPAN', 'cdx-notification__ok-btn'),
-	                cancelBtn = editor.draw.node('SPAN', 'cdx-notification__cancel-btn');
-	
-	            message.textContent = settings.message;
-	            okBtn.textContent = settings.okMsg || 'ОК';
-	            cancelBtn.textContent = settings.cancelMsg || 'Отмена';
-	
-	            editor.listeners.add(okBtn, 'click', confirmHandler);
-	            editor.listeners.add(cancelBtn, 'click', cancelHandler);
-	
-	            wrapper.appendChild(message);
-	
-	            if (settings.type == 'prompt') {
-	
-	                wrapper.appendChild(input);
-	            }
-	
-	            wrapper.appendChild(okBtn);
-	
-	            if (settings.type == 'prompt' || settings.type == 'confirm') {
-	
-	                wrapper.appendChild(cancelBtn);
-	            }
-	
-	            wrapper.classList.add('cdx-notification-' + settings.type);
-	            wrapper.dataset.type = settings.type;
-	
-	            notification = wrapper;
-	            type = settings.type;
-	            confirm = settings.confirm;
-	            cancel = settings.cancel;
-	            inputField = input;
-	
-	            if (settings.type != 'prompt' && settings.type != 'confirm') {
-	
-	                window.setTimeout(close, settings.time);
-	            }
-	        };
-	
-	        /**
-	        * Show notification block
-	        */
-	        function send() {
-	
-	            editor.nodes.notifications.appendChild(notification);
-	            inputField.focus();
-	
-	            editor.nodes.notifications.classList.add('cdx-notification__notification-appending');
-	
-	            window.setTimeout(function () {
-	
-	                editor.nodes.notifications.classList.remove('cdx-notification__notification-appending');
-	            }, 100);
-	
-	            addToQueue({ type: type, close: close });
-	        };
-	
-	        /**
-	        *  Remove notification block
-	        */
-	        function close() {
-	
-	            notification.remove();
-	        };
-	
-	        if (constructorSettings) {
-	
-	            create(constructorSettings);
-	            send();
-	        }
-	
-	        return {
-	            create: create,
-	            send: send,
-	            close: close
-	        };
-	    };
-	
-	    notifications.clear = function () {
-	
-	        editor.nodes.notifications.innerHTML = '';
-	        queue = [];
-	    };
-	
-	    return notifications;
-	}({});
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-	"use strict";
-	
-	/**
-	 * Codex Editor Parser Module
-	 *
-	 * @author Codex Team
-	 * @version 1.1
-	 */
-	
-	module.exports = function (parser) {
-	
-	    var editor = codex.editor;
-	
-	    /** inserting text */
-	    parser.insertPastedContent = function (blockType, tag) {
-	
-	        editor.content.insertBlock({
-	            type: blockType.type,
-	            block: blockType.render({
-	                text: tag.innerHTML
-	            })
-	        });
-	    };
-	
-	    /**
-	     * Check DOM node for display style: separated block or child-view
-	     */
-	    parser.isFirstLevelBlock = function (node) {
-	
-	        return node.nodeType == editor.core.nodeTypes.TAG && node.classList.contains(editor.ui.className.BLOCK_CLASSNAME);
-	    };
-	
-	    return parser;
-	}({});
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	/**
-	 * Codex Editor Paste module
-	 *
-	 * @author Codex Team
-	 * @version 1.1.1
-	 */
-	
-	module.exports = function (paste) {
-	
-	    var editor = codex.editor;
-	
-	    var patterns = [];
-	
-	    paste.prepare = function () {
-	
-	        var tools = editor.tools;
-	
-	        for (var tool in tools) {
-	
-	            if (!tools[tool].renderOnPastePatterns || !Array.isArray(tools[tool].renderOnPastePatterns)) {
-	
-	                continue;
-	            }
-	
-	            tools[tool].renderOnPastePatterns.map(function (pattern) {
-	
-	                patterns.push(pattern);
-	            });
-	        }
-	
-	        return Promise.resolve();
-	    };
-	
-	    /**
-	     * Saves data
-	     * @param event
-	     */
-	    paste.pasted = function (event) {
-	
-	        var clipBoardData = event.clipboardData || window.clipboardData,
-	            content = clipBoardData.getData('Text');
-	
-	        var result = analize(content);
-	
-	        if (result) {
-	
-	            event.preventDefault();
-	            event.stopImmediatePropagation();
-	        }
-	
-	        return result;
-	    };
-	
-	    /**
-	     * Analizes pated string and calls necessary method
-	     */
-	
-	    var analize = function analize(string) {
-	
-	        var result = false,
-	            content = editor.content.currentNode,
-	            plugin = content.dataset.tool;
-	
-	        patterns.map(function (pattern) {
-	
-	            var execArray = pattern.regex.exec(string),
-	                match = execArray && execArray[0];
-	
-	            if (match && match === string.trim()) {
-	
-	                /** current block is not empty */
-	                if (content.textContent.trim() && plugin == editor.settings.initialBlockPlugin) {
-	
-	                    pasteToNewBlock_();
-	                }
-	
-	                pattern.callback(string, pattern);
-	                result = true;
-	            }
-	        });
-	
-	        return result;
-	    };
-	
-	    var pasteToNewBlock_ = function pasteToNewBlock_() {
-	
-	        /** Create new initial block */
-	        editor.content.insertBlock({
-	
-	            type: editor.settings.initialBlockPlugin,
-	            block: editor.tools[editor.settings.initialBlockPlugin].render({
-	                text: ''
-	            })
-	
-	        }, false);
-	    };
-	
-	    /**
-	     * This method prevents default behaviour.
-	     *
-	     * @param {Object} event
-	     * @protected
-	     *
-	     * @description We get from clipboard pasted data, sanitize, make a fragment that contains of this sanitized nodes.
-	     * Firstly, we need to memorize the caret position. We can do that by getting the range of selection.
-	     * After all, we insert clear fragment into caret placed position. Then, we should move the caret to the last node
-	     */
-	    paste.blockPasteCallback = function (event) {
-	
-	        if (!needsToHandlePasteEvent(event.target)) {
-	
-	            return;
-	        }
-	
-	        /** Prevent default behaviour */
-	        event.preventDefault();
-	
-	        /** get html pasted data - dirty data */
-	        var htmlData = event.clipboardData.getData('text/html'),
-	            plainData = event.clipboardData.getData('text/plain');
-	
-	        /** Temporary DIV that is used to work with text's paragraphs as DOM-elements*/
-	        var paragraphs = editor.draw.node('DIV', '', {}),
-	            cleanData,
-	            wrappedData;
-	
-	        /** Create fragment, that we paste to range after proccesing */
-	        cleanData = editor.sanitizer.clean(htmlData);
-	
-	        /**
-	         * We wrap pasted text with <p> tags to split it logically
-	         * @type {string}
-	         */
-	        wrappedData = editor.content.wrapTextWithParagraphs(cleanData, plainData);
-	        paragraphs.innerHTML = wrappedData;
-	
-	        /**
-	         * If there only one paragraph, just insert in at the caret location
-	         */
-	        if (paragraphs.childNodes.length == 1) {
-	
-	            emulateUserAgentBehaviour(paragraphs.firstChild);
-	            return;
-	        }
-	
-	        insertPastedParagraphs(paragraphs.childNodes);
-	    };
-	
-	    /**
-	     * Checks if we should handle paste event on block
-	     * @param block
-	     *
-	     * @return {boolean}
-	     */
-	    var needsToHandlePasteEvent = function needsToHandlePasteEvent(block) {
-	
-	        /** If area is input or textarea then allow default behaviour */
-	        if (editor.core.isNativeInput(block)) {
-	
-	            return false;
-	        }
-	
-	        var editableParent = editor.content.getEditableParent(block);
-	
-	        /** Allow paste when event target placed in Editable element */
-	        if (!editableParent) {
-	
-	            return false;
-	        }
-	
-	        return true;
-	    };
-	
-	    /**
-	     * Inserts new initial plugin blocks with data in paragraphs
-	     *
-	     * @param {Array} paragraphs - array of paragraphs (<p></p>) whit content, that should be inserted
-	     */
-	    var insertPastedParagraphs = function insertPastedParagraphs(paragraphs) {
-	
-	        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin,
-	            currentNode = editor.content.currentNode;
-	
-	        paragraphs.forEach(function (paragraph) {
-	
-	            /** Don't allow empty paragraphs */
-	            if (editor.core.isBlockEmpty(paragraph)) {
-	
-	                return;
-	            }
-	
-	            editor.content.insertBlock({
-	                type: NEW_BLOCK_TYPE,
-	                block: editor.tools[NEW_BLOCK_TYPE].render({
-	                    text: paragraph.innerHTML
-	                })
-	            });
-	
-	            editor.caret.inputIndex++;
-	        });
-	
-	        editor.caret.setToPreviousBlock(editor.caret.getCurrentInputIndex() + 1);
-	
-	        /**
-	         * If there was no data in working node, remove it
-	         */
-	        if (editor.core.isBlockEmpty(currentNode)) {
-	
-	            currentNode.remove();
-	            editor.ui.saveInputs();
-	        }
-	    };
-	
-	    /**
-	     * Inserts node content at the caret position
-	     *
-	     * @param {Node} node - DOM node (could be DocumentFragment), that should be inserted at the caret location
-	     */
-	    var emulateUserAgentBehaviour = function emulateUserAgentBehaviour(node) {
-	
-	        var newNode;
-	
-	        if (node.childElementCount) {
-	
-	            newNode = document.createDocumentFragment();
-	
-	            node.childNodes.forEach(function (current) {
-	
-	                if (!editor.core.isDomNode(current) && current.data.trim() === '') {
-	
-	                    return;
-	                }
-	
-	                newNode.appendChild(current.cloneNode(true));
-	            });
-	        } else {
-	
-	            newNode = document.createTextNode(node.textContent);
-	        }
-	
-	        editor.caret.insertNode(newNode);
-	    };
-	
-	    return paste;
-	}({});
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	/**
-	 * Codex Sanitizer
-	 */
-	
-	module.exports = function (sanitizer) {
-	
-	    /** HTML Janitor library */
-	    var janitor = __webpack_require__(11);
-	
-	    /** Codex Editor */
-	    var editor = codex.editor;
-	
-	    sanitizer.prepare = function () {
-	
-	        if (editor.settings.sanitizer && !editor.core.isEmpty(editor.settings.sanitizer)) {
-	
-	            Config.CUSTOM = editor.settings.sanitizer;
-	        }
-	    };
-	
-	    /**
-	     * Basic config
-	     */
-	    var Config = {
-	
-	        /** User configuration */
-	        CUSTOM: null,
-	
-	        BASIC: {
-	
-	            tags: {
-	                p: {},
-	                a: {
-	                    href: true,
-	                    target: '_blank',
-	                    rel: 'nofollow'
-	                }
-	            }
-	        }
-	    };
-	
-	    sanitizer.Config = Config;
-	
-	    /**
-	     *
-	     * @param userCustomConfig
-	     * @returns {*}
-	     * @private
-	     *
-	     * @description If developer uses editor's API, then he can customize sane restrictions.
-	     * Or, sane config can be defined globally in editors initialization. That config will be used everywhere
-	     * At least, if there is no config overrides, that API uses BASIC Default configation
-	     */
-	    var init_ = function init_(userCustomConfig) {
-	
-	        var configuration = userCustomConfig || Config.CUSTOM || Config.BASIC;
-	
-	        return new janitor(configuration);
-	    };
-	
-	    /**
-	     * Cleans string from unwanted tags
-	     * @protected
-	     * @param {String} dirtyString - taint string
-	     * @param {Object} customConfig - allowed tags
-	     */
-	    sanitizer.clean = function (dirtyString, customConfig) {
-	
-	        var janitorInstance = init_(customConfig);
-	
-	        return janitorInstance.clean(dirtyString);
-	    };
-	
-	    return sanitizer;
-	}({});
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
-	  if (true) {
-	    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-	  } else if (typeof exports === 'object') {
-	    module.exports = factory();
-	  } else {
-	    root.HTMLJanitor = factory();
-	  }
-	}(this, function () {
-	
-	  /**
-	   * @param {Object} config.tags Dictionary of allowed tags.
-	   * @param {boolean} config.keepNestedBlockElements Default false.
-	   */
-	  function HTMLJanitor(config) {
-	
-	    var tagDefinitions = config['tags'];
-	    var tags = Object.keys(tagDefinitions);
-	
-	    var validConfigValues = tags
-	      .map(function(k) { return typeof tagDefinitions[k]; })
-	      .every(function(type) { return type === 'object' || type === 'boolean' || type === 'function'; });
-	
-	    if(!validConfigValues) {
-	      throw new Error("The configuration was invalid");
-	    }
-	
-	    this.config = config;
-	  }
-	
-	  // TODO: not exhaustive?
-	  var blockElementNames = ['P', 'LI', 'TD', 'TH', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'PRE'];
-	  function isBlockElement(node) {
-	    return blockElementNames.indexOf(node.nodeName) !== -1;
-	  }
-	
-	  var inlineElementNames = ['A', 'B', 'STRONG', 'I', 'EM', 'SUB', 'SUP', 'U', 'STRIKE'];
-	  function isInlineElement(node) {
-	    return inlineElementNames.indexOf(node.nodeName) !== -1;
-	  }
-	
-	  HTMLJanitor.prototype.clean = function (html) {
-	    var sandbox = document.createElement('div');
-	    sandbox.innerHTML = html;
-	
-	    this._sanitize(sandbox);
-	
-	    return sandbox.innerHTML;
-	  };
-	
-	  HTMLJanitor.prototype._sanitize = function (parentNode) {
-	    var treeWalker = createTreeWalker(parentNode);
-	    var node = treeWalker.firstChild();
-	    if (!node) { return; }
-	
-	    do {
-	      // Ignore nodes that have already been sanitized
-	      if (node._sanitized) {
-	        continue;
-	      }
-	
-	      if (node.nodeType === Node.TEXT_NODE) {
-	        // If this text node is just whitespace and the previous or next element
-	        // sibling is a block element, remove it
-	        // N.B.: This heuristic could change. Very specific to a bug with
-	        // `contenteditable` in Firefox: http://jsbin.com/EyuKase/1/edit?js,output
-	        // FIXME: make this an option?
-	        if (node.data.trim() === ''
-	            && ((node.previousElementSibling && isBlockElement(node.previousElementSibling))
-	                 || (node.nextElementSibling && isBlockElement(node.nextElementSibling)))) {
-	          parentNode.removeChild(node);
-	          this._sanitize(parentNode);
-	          break;
-	        } else {
-	          continue;
-	        }
-	      }
-	
-	      // Remove all comments
-	      if (node.nodeType === Node.COMMENT_NODE) {
-	        parentNode.removeChild(node);
-	        this._sanitize(parentNode);
-	        break;
-	      }
-	
-	      var isInline = isInlineElement(node);
-	      var containsBlockElement;
-	      if (isInline) {
-	        containsBlockElement = Array.prototype.some.call(node.childNodes, isBlockElement);
-	      }
-	
-	      // Block elements should not be nested (e.g. <li><p>...); if
-	      // they are, we want to unwrap the inner block element.
-	      var isNotTopContainer = !! parentNode.parentNode;
-	      var isNestedBlockElement =
-	            isBlockElement(parentNode) &&
-	            isBlockElement(node) &&
-	            isNotTopContainer;
-	
-	      var nodeName = node.nodeName.toLowerCase();
-	
-	      var allowedAttrs = getAllowedAttrs(this.config, nodeName, node);
-	
-	      var isInvalid = isInline && containsBlockElement;
-	
-	      // Drop tag entirely according to the whitelist *and* if the markup
-	      // is invalid.
-	      if (isInvalid || shouldRejectNode(node, allowedAttrs)
-	          || (!this.config.keepNestedBlockElements && isNestedBlockElement)) {
-	        // Do not keep the inner text of SCRIPT/STYLE elements.
-	        if (! (node.nodeName === 'SCRIPT' || node.nodeName === 'STYLE')) {
-	          while (node.childNodes.length > 0) {
-	            parentNode.insertBefore(node.childNodes[0], node);
-	          }
-	        }
-	        parentNode.removeChild(node);
-	
-	        this._sanitize(parentNode);
-	        break;
-	      }
-	
-	      // Sanitize attributes
-	      for (var a = 0; a < node.attributes.length; a += 1) {
-	        var attr = node.attributes[a];
-	
-	        if (shouldRejectAttr(attr, allowedAttrs, node)) {
-	          node.removeAttribute(attr.name);
-	          // Shift the array to continue looping.
-	          a = a - 1;
-	        }
-	      }
-	
-	      // Sanitize children
-	      this._sanitize(node);
-	
-	      // Mark node as sanitized so it's ignored in future runs
-	      node._sanitized = true;
-	    } while ((node = treeWalker.nextSibling()));
-	  };
-	
-	  function createTreeWalker(node) {
-	    return document.createTreeWalker(node,
-	                                     NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT,
-	                                     null, false);
-	  }
-	
-	  function getAllowedAttrs(config, nodeName, node){
-	    if (typeof config.tags[nodeName] === 'function') {
-	      return config.tags[nodeName](node);
-	    } else {
-	      return config.tags[nodeName];
-	    }
-	  }
-	
-	  function shouldRejectNode(node, allowedAttrs){
-	    if (typeof allowedAttrs === 'undefined') {
-	      return true;
-	    } else if (typeof allowedAttrs === 'boolean') {
-	      return !allowedAttrs;
-	    }
-	
-	    return false;
-	  }
-	
-	  function shouldRejectAttr(attr, allowedAttrs, node){
-	    var attrName = attr.name.toLowerCase();
-	
-	    if (allowedAttrs === true){
-	      return false;
-	    } else if (typeof allowedAttrs[attrName] === 'function'){
-	      return !allowedAttrs[attrName](attr.value, node);
-	    } else if (typeof allowedAttrs[attrName] === 'undefined'){
-	      return true;
-	    } else if (allowedAttrs[attrName] === false) {
-	      return true;
-	    } else if (typeof allowedAttrs[attrName] === 'string') {
-	      return (allowedAttrs[attrName] !== attr.value);
-	    }
-	
-	    return false;
-	  }
-	
-	  return HTMLJanitor;
-	
-	}));
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	/**
-	 * Codex Editor Saver
-	 *
-	 * @author Codex Team
-	 * @version 1.1.0
-	 */
-	
-	module.exports = function (saver) {
-	
-	    var editor = codex.editor;
-	
-	    /**
-	     * @public
-	     * Save blocks
-	     */
-	    saver.save = function () {
-	
-	        /** Save html content of redactor to memory */
-	        editor.state.html = editor.nodes.redactor.innerHTML;
-	
-	        /** Clean jsonOutput state */
-	        editor.state.jsonOutput = [];
-	
-	        return saveBlocks(editor.nodes.redactor.childNodes);
-	    };
-	
-	    /**
-	     * @private
-	     * Save each block data
-	     *
-	     * @param blocks
-	     * @returns {Promise.<TResult>}
-	     */
-	    var saveBlocks = function saveBlocks(blocks) {
-	
-	        var data = [];
-	
-	        for (var index = 0; index < blocks.length; index++) {
-	
-	            data.push(getBlockData(blocks[index]));
-	        }
-	
-	        return Promise.all(data).then(makeOutput).catch(editor.core.log);
-	    };
-	
-	    /** Save and validate block data */
-	    var getBlockData = function getBlockData(block) {
-	
-	        return saveBlockData(block).then(validateBlockData).catch(editor.core.log);
-	    };
-	
-	    /**
-	     * @private
-	     * Call block`s plugin save method and return saved data
-	     *
-	     * @param block
-	     * @returns {Object}
-	     */
-	    var saveBlockData = function saveBlockData(block) {
-	
-	        var pluginName = block.dataset.tool;
-	
-	        /** Check for plugin existence */
-	        if (!editor.tools[pluginName]) {
-	
-	            editor.core.log('Plugin \xAB' + pluginName + '\xBB not found', 'error');
-	            return { data: null, pluginName: null };
-	        }
-	
-	        /** Check for plugin having save method */
-	        if (typeof editor.tools[pluginName].save !== 'function') {
-	
-	            editor.core.log('Plugin \xAB' + pluginName + '\xBB must have save method', 'error');
-	            return { data: null, pluginName: null };
-	        }
-	
-	        /** Result saver */
-	        var blockContent = block.childNodes[0],
-	            pluginsContent = blockContent.childNodes[0],
-	            position = pluginsContent.dataset.inputPosition;
-	
-	        /** If plugin wasn't available then return data from cache */
-	        if (editor.tools[pluginName].available === false) {
-	
-	            return Promise.resolve({ data: codex.editor.state.blocks.items[position].data, pluginName: pluginName });
-	        }
-	
-	        return Promise.resolve(pluginsContent).then(editor.tools[pluginName].save).then(function (data) {
-	            return Object({ data: data, pluginName: pluginName });
-	        });
-	    };
-	
-	    /**
-	     * Call plugin`s validate method. Return false if validation failed
-	     *
-	     * @param data
-	     * @param pluginName
-	     * @returns {Object|Boolean}
-	     */
-	    var validateBlockData = function validateBlockData(_ref) {
-	        var data = _ref.data,
-	            pluginName = _ref.pluginName;
-	
-	
-	        if (!data || !pluginName) {
-	
-	            return false;
-	        }
-	
-	        if (editor.tools[pluginName].validate) {
-	
-	            var result = editor.tools[pluginName].validate(data);
-	
-	            /**
-	             * Do not allow invalid data
-	             */
-	            if (!result) {
-	
-	                return false;
-	            }
-	        }
-	
-	        return { data: data, pluginName: pluginName };
-	    };
-	
-	    /**
-	     * Compile article output
-	     *
-	     * @param savedData
-	     * @returns {{time: number, version, items: (*|Array)}}
-	     */
-	    var makeOutput = function makeOutput(savedData) {
-	
-	        savedData = savedData.filter(function (blockData) {
-	            return blockData;
-	        });
-	
-	        var items = savedData.map(function (blockData) {
-	            return Object({ type: blockData.pluginName, data: blockData.data });
-	        });
-	
-	        editor.state.jsonOutput = items;
-	
-	        return {
-	            id: editor.state.blocks.id || null,
-	            time: +new Date(),
-	            version: editor.version,
-	            items: items
-	        };
-	    };
-	
-	    return saver;
-	}({});
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-	'use strict';
-	
-	/**
-	 *
-	 * Codex.Editor Transport Module
-	 *
-	 * @copyright 2017 Codex-Team
-	 * @version 1.2.0
-	 */
-	
-	module.exports = function (transport) {
-	
-	    var editor = codex.editor;
-	
-	    /**
-	     * @private {Object} current XmlHttpRequest instance
-	     */
-	    var currentRequest = null;
-	
-	    /**
-	     * @type {null} | {DOMElement} input - keeps input element in memory
-	     */
-	    transport.input = null;
-	
-	    /**
-	     * @property {Object} arguments - keep plugin settings and defined callbacks
-	     */
-	    transport.arguments = null;
-	
-	    /**
-	     * Prepares input element where will be files
-	     */
-	    transport.prepare = function () {
-	
-	        var input = editor.draw.node('INPUT', '', { type: 'file' });
-	
-	        editor.listeners.add(input, 'change', editor.transport.fileSelected);
-	        editor.transport.input = input;
-	    };
-	
-	    /** Clear input when files is uploaded */
-	    transport.clearInput = function () {
-	
-	        /** Remove old input */
-	        transport.input = null;
-	
-	        /** Prepare new one */
-	        transport.prepare();
-	    };
-	
-	    /**
-	     * Callback for file selection
-	     * @param {Event} event
-	     */
-	    transport.fileSelected = function () {
-	
-	        var input = this,
-	            i,
-	            files = input.files,
-	            formData = new FormData();
-	
-	        if (editor.transport.arguments.multiple === true) {
-	
-	            for (i = 0; i < files.length; i++) {
-	
-	                formData.append('files[]', files[i], files[i].name);
-	            }
-	        } else {
-	
-	            formData.append('files', files[0], files[0].name);
-	        }
-	
-	        currentRequest = editor.core.ajax({
-	            type: 'POST',
-	            data: formData,
-	            url: editor.transport.arguments.url,
-	            beforeSend: editor.transport.arguments.beforeSend,
-	            success: editor.transport.arguments.success,
-	            error: editor.transport.arguments.error,
-	            progress: editor.transport.arguments.progress
-	        });
-	
-	        /** Clear input */
-	        transport.clearInput();
-	    };
-	
-	    /**
-	     * Use plugin callbacks
-	     * @protected
-	     *
-	     * @param {Object} args - can have :
-	     * @param {String} args.url - fetch URL
-	     * @param {Function} args.beforeSend - function calls before sending ajax
-	     * @param {Function} args.success - success callback
-	     * @param {Function} args.error - on error handler
-	     * @param {Function} args.progress - xhr onprogress handler
-	     * @param {Boolean} args.multiple - allow select several files
-	     * @param {String} args.accept - adds accept attribute
-	     */
-	    transport.selectAndUpload = function (args) {
-	
-	        transport.arguments = args;
-	
-	        if (args.multiple === true) {
-	
-	            transport.input.setAttribute('multiple', 'multiple');
-	        }
-	
-	        if (args.accept) {
-	
-	            transport.input.setAttribute('accept', args.accept);
-	        }
-	
-	        transport.input.click();
-	    };
-	
-	    transport.abort = function () {
-	
-	        currentRequest.abort();
-	
-	        currentRequest = null;
-	    };
-	
-	    return transport;
-	}({});
-
-/***/ }),
-/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3030,7 +1701,7 @@ var CodexEditor =
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @version 2.0.0
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 	
-	var _dom = __webpack_require__(15);
+	var _dom = __webpack_require__(6);
 	
 	var _dom2 = _interopRequireDefault(_dom);
 	
@@ -4012,7 +2683,7 @@ var CodexEditor =
 	// })({});
 
 /***/ }),
-/* 15 */
+/* 6 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -4150,7 +2821,1822 @@ var CodexEditor =
 	;
 
 /***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+	
+	/**
+	 * Codex Editor Destroyer module
+	 *
+	 * @auhor Codex Team
+	 * @version 1.0
+	 */
+	
+	module.exports = function (destroyer) {
+	
+	    var editor = codex.editor;
+	
+	    destroyer.removeNodes = function () {
+	
+	        editor.nodes.wrapper.remove();
+	        editor.nodes.notifications.remove();
+	    };
+	
+	    destroyer.destroyPlugins = function () {
+	
+	        for (var tool in editor.tools) {
+	
+	            if (typeof editor.tools[tool].destroy === 'function') {
+	
+	                editor.tools[tool].destroy();
+	            }
+	        }
+	    };
+	
+	    destroyer.destroyScripts = function () {
+	
+	        var scripts = document.getElementsByTagName('SCRIPT');
+	
+	        for (var i = 0; i < scripts.length; i++) {
+	
+	            if (scripts[i].id.indexOf(editor.scriptPrefix) + 1) {
+	
+	                scripts[i].remove();
+	                i--;
+	            }
+	        }
+	    };
+	
+	    /**
+	     * Delete editor data from webpage.
+	     * You should send settings argument with boolean flags:
+	     * @param settings.ui- remove redactor event listeners and DOM nodes
+	     * @param settings.scripts - remove redactor scripts from DOM
+	     * @param settings.plugins - remove plugin's objects
+	     * @param settings.core - remove editor core. You can remove core only if UI and scripts flags is true
+	     * }
+	     *
+	     */
+	    destroyer.destroy = function (settings) {
+	
+	        if (!settings || (typeof settings === 'undefined' ? 'undefined' : _typeof(settings)) !== 'object') {
+	
+	            return;
+	        }
+	
+	        if (settings.ui) {
+	
+	            destroyer.removeNodes();
+	            editor.listeners.removeAll();
+	        }
+	
+	        if (settings.scripts) {
+	
+	            destroyer.destroyScripts();
+	        }
+	
+	        if (settings.plugins) {
+	
+	            destroyer.destroyPlugins();
+	        }
+	
+	        if (settings.ui && settings.scripts && settings.core) {
+	
+	            delete codex.editor;
+	        }
+	    };
+	
+	    return destroyer;
+	}({});
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	/**
+	 * Codex Editor Listeners module
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
+	
+	/**
+	 * Module-decorator for event listeners assignment
+	 */
+	module.exports = function (listeners) {
+	
+	    var allListeners = [];
+	
+	    /**
+	     * Search methods
+	     *
+	     * byElement, byType and byHandler returns array of suitable listeners
+	     * one and all takes element, eventType, and handler and returns first (all) suitable listener
+	     *
+	     */
+	    listeners.search = function () {
+	
+	        var byElement = function byElement(element, context) {
+	
+	            var listenersOnElement = [];
+	
+	            context = context || allListeners;
+	
+	            for (var i = 0; i < context.length; i++) {
+	
+	                var listener = context[i];
+	
+	                if (listener.element === element) {
+	
+	                    listenersOnElement.push(listener);
+	                }
+	            }
+	
+	            return listenersOnElement;
+	        };
+	
+	        var byType = function byType(eventType, context) {
+	
+	            var listenersWithType = [];
+	
+	            context = context || allListeners;
+	
+	            for (var i = 0; i < context.length; i++) {
+	
+	                var listener = context[i];
+	
+	                if (listener.type === eventType) {
+	
+	                    listenersWithType.push(listener);
+	                }
+	            }
+	
+	            return listenersWithType;
+	        };
+	
+	        var byHandler = function byHandler(handler, context) {
+	
+	            var listenersWithHandler = [];
+	
+	            context = context || allListeners;
+	
+	            for (var i = 0; i < context.length; i++) {
+	
+	                var listener = context[i];
+	
+	                if (listener.handler === handler) {
+	
+	                    listenersWithHandler.push(listener);
+	                }
+	            }
+	
+	            return listenersWithHandler;
+	        };
+	
+	        var one = function one(element, eventType, handler) {
+	
+	            var result = allListeners;
+	
+	            if (element) result = byElement(element, result);
+	
+	            if (eventType) result = byType(eventType, result);
+	
+	            if (handler) result = byHandler(handler, result);
+	
+	            return result[0];
+	        };
+	
+	        var all = function all(element, eventType, handler) {
+	
+	            var result = allListeners;
+	
+	            if (element) result = byElement(element, result);
+	
+	            if (eventType) result = byType(eventType, result);
+	
+	            if (handler) result = byHandler(handler, result);
+	
+	            return result;
+	        };
+	
+	        return {
+	            byElement: byElement,
+	            byType: byType,
+	            byHandler: byHandler,
+	            one: one,
+	            all: all
+	        };
+	    }();
+	
+	    listeners.add = function (element, eventType, handler, isCapture) {
+	
+	        element.addEventListener(eventType, handler, isCapture);
+	
+	        var data = {
+	            element: element,
+	            type: eventType,
+	            handler: handler
+	        };
+	
+	        var alreadyAddedListener = listeners.search.one(element, eventType, handler);
+	
+	        if (!alreadyAddedListener) {
+	
+	            allListeners.push(data);
+	        }
+	    };
+	
+	    listeners.remove = function (element, eventType, handler) {
+	
+	        element.removeEventListener(eventType, handler);
+	
+	        var existingListeners = listeners.search.all(element, eventType, handler);
+	
+	        for (var i = 0; i < existingListeners.length; i++) {
+	
+	            var index = allListeners.indexOf(existingListeners[i]);
+	
+	            if (index > 0) {
+	
+	                allListeners.splice(index, 1);
+	            }
+	        }
+	    };
+	
+	    listeners.removeAll = function () {
+	
+	        allListeners.map(function (current) {
+	
+	            listeners.remove(current.element, current.type, current.handler);
+	        });
+	    };
+	
+	    listeners.get = function (element, eventType, handler) {
+	
+	        return listeners.search.all(element, eventType, handler);
+	    };
+	
+	    return listeners;
+	}({});
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * Codex Editor Notification Module
+	 *
+	 * @author Codex Team
+	 * @version 1.0
+	 */
+	
+	module.exports = function (notifications) {
+	
+	    var editor = codex.editor;
+	
+	    var queue = [];
+	
+	    var addToQueue = function addToQueue(settings) {
+	
+	        queue.push(settings);
+	
+	        var index = 0;
+	
+	        while (index < queue.length && queue.length > 5) {
+	
+	            if (queue[index].type == 'confirm' || queue[index].type == 'prompt') {
+	
+	                index++;
+	                continue;
+	            }
+	
+	            queue[index].close();
+	            queue.splice(index, 1);
+	        }
+	    };
+	
+	    notifications.createHolder = function () {
+	
+	        var holder = editor.draw.node('DIV', 'cdx-notifications-block');
+	
+	        editor.nodes.notifications = document.body.appendChild(holder);
+	
+	        return holder;
+	    };
+	
+	    /**
+	     * Error notificator. Shows block with message
+	     * @protected
+	     */
+	    notifications.errorThrown = function (errorMsg, event) {
+	
+	        editor.notifications.notification({ message: 'This action is not available currently', type: event.type });
+	    };
+	
+	    /**
+	     *
+	     * Appends notification
+	     *
+	     *  settings = {
+	     *      type        - notification type (reserved types: alert, confirm, prompt). Just add class 'cdx-notification-'+type
+	     *      message     - notification message
+	     *      okMsg       - confirm button text (default - 'Ok')
+	     *      cancelBtn   - cancel button text (default - 'Cancel'). Only for confirm and prompt types
+	     *      confirm     - function-handler for ok button click
+	     *      cancel      - function-handler for cancel button click. Only for confirm and prompt types
+	     *      time        - time (in seconds) after which notification will close (default - 10s)
+	     *  }
+	     *
+	     * @param settings
+	     */
+	    notifications.notification = function (constructorSettings) {
+	
+	        /** Private vars and methods */
+	        var notification = null,
+	            cancel = null,
+	            type = null,
+	            confirm = null,
+	            inputField = null;
+	
+	        var confirmHandler = function confirmHandler() {
+	
+	            close();
+	
+	            if (typeof confirm !== 'function') {
+	
+	                return;
+	            }
+	
+	            if (type == 'prompt') {
+	
+	                confirm(inputField.value);
+	                return;
+	            }
+	
+	            confirm();
+	        };
+	
+	        var cancelHandler = function cancelHandler() {
+	
+	            close();
+	
+	            if (typeof cancel !== 'function') {
+	
+	                return;
+	            }
+	
+	            cancel();
+	        };
+	
+	        /** Public methods */
+	        function create(settings) {
+	
+	            if (!(settings && settings.message)) {
+	
+	                editor.core.log('Can\'t create notification. Message is missed');
+	                return;
+	            }
+	
+	            settings.type = settings.type || 'alert';
+	            settings.time = settings.time * 1000 || 10000;
+	
+	            var wrapper = editor.draw.node('DIV', 'cdx-notification'),
+	                message = editor.draw.node('DIV', 'cdx-notification__message'),
+	                input = editor.draw.node('INPUT', 'cdx-notification__input'),
+	                okBtn = editor.draw.node('SPAN', 'cdx-notification__ok-btn'),
+	                cancelBtn = editor.draw.node('SPAN', 'cdx-notification__cancel-btn');
+	
+	            message.textContent = settings.message;
+	            okBtn.textContent = settings.okMsg || 'ОК';
+	            cancelBtn.textContent = settings.cancelMsg || 'Отмена';
+	
+	            editor.listeners.add(okBtn, 'click', confirmHandler);
+	            editor.listeners.add(cancelBtn, 'click', cancelHandler);
+	
+	            wrapper.appendChild(message);
+	
+	            if (settings.type == 'prompt') {
+	
+	                wrapper.appendChild(input);
+	            }
+	
+	            wrapper.appendChild(okBtn);
+	
+	            if (settings.type == 'prompt' || settings.type == 'confirm') {
+	
+	                wrapper.appendChild(cancelBtn);
+	            }
+	
+	            wrapper.classList.add('cdx-notification-' + settings.type);
+	            wrapper.dataset.type = settings.type;
+	
+	            notification = wrapper;
+	            type = settings.type;
+	            confirm = settings.confirm;
+	            cancel = settings.cancel;
+	            inputField = input;
+	
+	            if (settings.type != 'prompt' && settings.type != 'confirm') {
+	
+	                window.setTimeout(close, settings.time);
+	            }
+	        };
+	
+	        /**
+	        * Show notification block
+	        */
+	        function send() {
+	
+	            editor.nodes.notifications.appendChild(notification);
+	            inputField.focus();
+	
+	            editor.nodes.notifications.classList.add('cdx-notification__notification-appending');
+	
+	            window.setTimeout(function () {
+	
+	                editor.nodes.notifications.classList.remove('cdx-notification__notification-appending');
+	            }, 100);
+	
+	            addToQueue({ type: type, close: close });
+	        };
+	
+	        /**
+	        *  Remove notification block
+	        */
+	        function close() {
+	
+	            notification.remove();
+	        };
+	
+	        if (constructorSettings) {
+	
+	            create(constructorSettings);
+	            send();
+	        }
+	
+	        return {
+	            create: create,
+	            send: send,
+	            close: close
+	        };
+	    };
+	
+	    notifications.clear = function () {
+	
+	        editor.nodes.notifications.innerHTML = '';
+	        queue = [];
+	    };
+	
+	    return notifications;
+	}({});
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+	"use strict";
+	
+	/**
+	 * Codex Editor Parser Module
+	 *
+	 * @author Codex Team
+	 * @version 1.1
+	 */
+	
+	module.exports = function (parser) {
+	
+	    var editor = codex.editor;
+	
+	    /** inserting text */
+	    parser.insertPastedContent = function (blockType, tag) {
+	
+	        editor.content.insertBlock({
+	            type: blockType.type,
+	            block: blockType.render({
+	                text: tag.innerHTML
+	            })
+	        });
+	    };
+	
+	    /**
+	     * Check DOM node for display style: separated block or child-view
+	     */
+	    parser.isFirstLevelBlock = function (node) {
+	
+	        return node.nodeType == editor.core.nodeTypes.TAG && node.classList.contains(editor.ui.className.BLOCK_CLASSNAME);
+	    };
+	
+	    return parser;
+	}({});
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * Codex Editor Paste module
+	 *
+	 * @author Codex Team
+	 * @version 1.1.1
+	 */
+	
+	module.exports = function (paste) {
+	
+	    var editor = codex.editor;
+	
+	    var patterns = [];
+	
+	    paste.prepare = function () {
+	
+	        var tools = editor.tools;
+	
+	        for (var tool in tools) {
+	
+	            if (!tools[tool].renderOnPastePatterns || !Array.isArray(tools[tool].renderOnPastePatterns)) {
+	
+	                continue;
+	            }
+	
+	            tools[tool].renderOnPastePatterns.map(function (pattern) {
+	
+	                patterns.push(pattern);
+	            });
+	        }
+	
+	        return Promise.resolve();
+	    };
+	
+	    /**
+	     * Saves data
+	     * @param event
+	     */
+	    paste.pasted = function (event) {
+	
+	        var clipBoardData = event.clipboardData || window.clipboardData,
+	            content = clipBoardData.getData('Text');
+	
+	        var result = analize(content);
+	
+	        if (result) {
+	
+	            event.preventDefault();
+	            event.stopImmediatePropagation();
+	        }
+	
+	        return result;
+	    };
+	
+	    /**
+	     * Analizes pated string and calls necessary method
+	     */
+	
+	    var analize = function analize(string) {
+	
+	        var result = false,
+	            content = editor.content.currentNode,
+	            plugin = content.dataset.tool;
+	
+	        patterns.map(function (pattern) {
+	
+	            var execArray = pattern.regex.exec(string),
+	                match = execArray && execArray[0];
+	
+	            if (match && match === string.trim()) {
+	
+	                /** current block is not empty */
+	                if (content.textContent.trim() && plugin == editor.settings.initialBlockPlugin) {
+	
+	                    pasteToNewBlock_();
+	                }
+	
+	                pattern.callback(string, pattern);
+	                result = true;
+	            }
+	        });
+	
+	        return result;
+	    };
+	
+	    var pasteToNewBlock_ = function pasteToNewBlock_() {
+	
+	        /** Create new initial block */
+	        editor.content.insertBlock({
+	
+	            type: editor.settings.initialBlockPlugin,
+	            block: editor.tools[editor.settings.initialBlockPlugin].render({
+	                text: ''
+	            })
+	
+	        }, false);
+	    };
+	
+	    /**
+	     * This method prevents default behaviour.
+	     *
+	     * @param {Object} event
+	     * @protected
+	     *
+	     * @description We get from clipboard pasted data, sanitize, make a fragment that contains of this sanitized nodes.
+	     * Firstly, we need to memorize the caret position. We can do that by getting the range of selection.
+	     * After all, we insert clear fragment into caret placed position. Then, we should move the caret to the last node
+	     */
+	    paste.blockPasteCallback = function (event) {
+	
+	        if (!needsToHandlePasteEvent(event.target)) {
+	
+	            return;
+	        }
+	
+	        /** Prevent default behaviour */
+	        event.preventDefault();
+	
+	        /** get html pasted data - dirty data */
+	        var htmlData = event.clipboardData.getData('text/html'),
+	            plainData = event.clipboardData.getData('text/plain');
+	
+	        /** Temporary DIV that is used to work with text's paragraphs as DOM-elements*/
+	        var paragraphs = editor.draw.node('DIV', '', {}),
+	            cleanData,
+	            wrappedData;
+	
+	        /** Create fragment, that we paste to range after proccesing */
+	        cleanData = editor.sanitizer.clean(htmlData);
+	
+	        /**
+	         * We wrap pasted text with <p> tags to split it logically
+	         * @type {string}
+	         */
+	        wrappedData = editor.content.wrapTextWithParagraphs(cleanData, plainData);
+	        paragraphs.innerHTML = wrappedData;
+	
+	        /**
+	         * If there only one paragraph, just insert in at the caret location
+	         */
+	        if (paragraphs.childNodes.length == 1) {
+	
+	            emulateUserAgentBehaviour(paragraphs.firstChild);
+	            return;
+	        }
+	
+	        insertPastedParagraphs(paragraphs.childNodes);
+	    };
+	
+	    /**
+	     * Checks if we should handle paste event on block
+	     * @param block
+	     *
+	     * @return {boolean}
+	     */
+	    var needsToHandlePasteEvent = function needsToHandlePasteEvent(block) {
+	
+	        /** If area is input or textarea then allow default behaviour */
+	        if (editor.core.isNativeInput(block)) {
+	
+	            return false;
+	        }
+	
+	        var editableParent = editor.content.getEditableParent(block);
+	
+	        /** Allow paste when event target placed in Editable element */
+	        if (!editableParent) {
+	
+	            return false;
+	        }
+	
+	        return true;
+	    };
+	
+	    /**
+	     * Inserts new initial plugin blocks with data in paragraphs
+	     *
+	     * @param {Array} paragraphs - array of paragraphs (<p></p>) whit content, that should be inserted
+	     */
+	    var insertPastedParagraphs = function insertPastedParagraphs(paragraphs) {
+	
+	        var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin,
+	            currentNode = editor.content.currentNode;
+	
+	        paragraphs.forEach(function (paragraph) {
+	
+	            /** Don't allow empty paragraphs */
+	            if (editor.core.isBlockEmpty(paragraph)) {
+	
+	                return;
+	            }
+	
+	            editor.content.insertBlock({
+	                type: NEW_BLOCK_TYPE,
+	                block: editor.tools[NEW_BLOCK_TYPE].render({
+	                    text: paragraph.innerHTML
+	                })
+	            });
+	
+	            editor.caret.inputIndex++;
+	        });
+	
+	        editor.caret.setToPreviousBlock(editor.caret.getCurrentInputIndex() + 1);
+	
+	        /**
+	         * If there was no data in working node, remove it
+	         */
+	        if (editor.core.isBlockEmpty(currentNode)) {
+	
+	            currentNode.remove();
+	            editor.ui.saveInputs();
+	        }
+	    };
+	
+	    /**
+	     * Inserts node content at the caret position
+	     *
+	     * @param {Node} node - DOM node (could be DocumentFragment), that should be inserted at the caret location
+	     */
+	    var emulateUserAgentBehaviour = function emulateUserAgentBehaviour(node) {
+	
+	        var newNode;
+	
+	        if (node.childElementCount) {
+	
+	            newNode = document.createDocumentFragment();
+	
+	            node.childNodes.forEach(function (current) {
+	
+	                if (!editor.core.isDomNode(current) && current.data.trim() === '') {
+	
+	                    return;
+	                }
+	
+	                newNode.appendChild(current.cloneNode(true));
+	            });
+	        } else {
+	
+	            newNode = document.createTextNode(node.textContent);
+	        }
+	
+	        editor.caret.insertNode(newNode);
+	    };
+	
+	    return paste;
+	}({});
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	/**
+	 * Codex Sanitizer
+	 */
+	
+	module.exports = function (sanitizer) {
+	
+	    /** HTML Janitor library */
+	    var janitor = __webpack_require__(13);
+	
+	    /** Codex Editor */
+	    var editor = codex.editor;
+	
+	    sanitizer.prepare = function () {
+	
+	        if (editor.settings.sanitizer && !editor.core.isEmpty(editor.settings.sanitizer)) {
+	
+	            Config.CUSTOM = editor.settings.sanitizer;
+	        }
+	    };
+	
+	    /**
+	     * Basic config
+	     */
+	    var Config = {
+	
+	        /** User configuration */
+	        CUSTOM: null,
+	
+	        BASIC: {
+	
+	            tags: {
+	                p: {},
+	                a: {
+	                    href: true,
+	                    target: '_blank',
+	                    rel: 'nofollow'
+	                }
+	            }
+	        }
+	    };
+	
+	    sanitizer.Config = Config;
+	
+	    /**
+	     *
+	     * @param userCustomConfig
+	     * @returns {*}
+	     * @private
+	     *
+	     * @description If developer uses editor's API, then he can customize sane restrictions.
+	     * Or, sane config can be defined globally in editors initialization. That config will be used everywhere
+	     * At least, if there is no config overrides, that API uses BASIC Default configation
+	     */
+	    var init_ = function init_(userCustomConfig) {
+	
+	        var configuration = userCustomConfig || Config.CUSTOM || Config.BASIC;
+	
+	        return new janitor(configuration);
+	    };
+	
+	    /**
+	     * Cleans string from unwanted tags
+	     * @protected
+	     * @param {String} dirtyString - taint string
+	     * @param {Object} customConfig - allowed tags
+	     */
+	    sanitizer.clean = function (dirtyString, customConfig) {
+	
+	        var janitorInstance = init_(customConfig);
+	
+	        return janitorInstance.clean(dirtyString);
+	    };
+	
+	    return sanitizer;
+	}({});
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports === 'object') {
+	    module.exports = factory();
+	  } else {
+	    root.HTMLJanitor = factory();
+	  }
+	}(this, function () {
+	
+	  /**
+	   * @param {Object} config.tags Dictionary of allowed tags.
+	   * @param {boolean} config.keepNestedBlockElements Default false.
+	   */
+	  function HTMLJanitor(config) {
+	
+	    var tagDefinitions = config['tags'];
+	    var tags = Object.keys(tagDefinitions);
+	
+	    var validConfigValues = tags
+	      .map(function(k) { return typeof tagDefinitions[k]; })
+	      .every(function(type) { return type === 'object' || type === 'boolean' || type === 'function'; });
+	
+	    if(!validConfigValues) {
+	      throw new Error("The configuration was invalid");
+	    }
+	
+	    this.config = config;
+	  }
+	
+	  // TODO: not exhaustive?
+	  var blockElementNames = ['P', 'LI', 'TD', 'TH', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'PRE'];
+	  function isBlockElement(node) {
+	    return blockElementNames.indexOf(node.nodeName) !== -1;
+	  }
+	
+	  var inlineElementNames = ['A', 'B', 'STRONG', 'I', 'EM', 'SUB', 'SUP', 'U', 'STRIKE'];
+	  function isInlineElement(node) {
+	    return inlineElementNames.indexOf(node.nodeName) !== -1;
+	  }
+	
+	  HTMLJanitor.prototype.clean = function (html) {
+	    var sandbox = document.createElement('div');
+	    sandbox.innerHTML = html;
+	
+	    this._sanitize(sandbox);
+	
+	    return sandbox.innerHTML;
+	  };
+	
+	  HTMLJanitor.prototype._sanitize = function (parentNode) {
+	    var treeWalker = createTreeWalker(parentNode);
+	    var node = treeWalker.firstChild();
+	    if (!node) { return; }
+	
+	    do {
+	      // Ignore nodes that have already been sanitized
+	      if (node._sanitized) {
+	        continue;
+	      }
+	
+	      if (node.nodeType === Node.TEXT_NODE) {
+	        // If this text node is just whitespace and the previous or next element
+	        // sibling is a block element, remove it
+	        // N.B.: This heuristic could change. Very specific to a bug with
+	        // `contenteditable` in Firefox: http://jsbin.com/EyuKase/1/edit?js,output
+	        // FIXME: make this an option?
+	        if (node.data.trim() === ''
+	            && ((node.previousElementSibling && isBlockElement(node.previousElementSibling))
+	                 || (node.nextElementSibling && isBlockElement(node.nextElementSibling)))) {
+	          parentNode.removeChild(node);
+	          this._sanitize(parentNode);
+	          break;
+	        } else {
+	          continue;
+	        }
+	      }
+	
+	      // Remove all comments
+	      if (node.nodeType === Node.COMMENT_NODE) {
+	        parentNode.removeChild(node);
+	        this._sanitize(parentNode);
+	        break;
+	      }
+	
+	      var isInline = isInlineElement(node);
+	      var containsBlockElement;
+	      if (isInline) {
+	        containsBlockElement = Array.prototype.some.call(node.childNodes, isBlockElement);
+	      }
+	
+	      // Block elements should not be nested (e.g. <li><p>...); if
+	      // they are, we want to unwrap the inner block element.
+	      var isNotTopContainer = !! parentNode.parentNode;
+	      var isNestedBlockElement =
+	            isBlockElement(parentNode) &&
+	            isBlockElement(node) &&
+	            isNotTopContainer;
+	
+	      var nodeName = node.nodeName.toLowerCase();
+	
+	      var allowedAttrs = getAllowedAttrs(this.config, nodeName, node);
+	
+	      var isInvalid = isInline && containsBlockElement;
+	
+	      // Drop tag entirely according to the whitelist *and* if the markup
+	      // is invalid.
+	      if (isInvalid || shouldRejectNode(node, allowedAttrs)
+	          || (!this.config.keepNestedBlockElements && isNestedBlockElement)) {
+	        // Do not keep the inner text of SCRIPT/STYLE elements.
+	        if (! (node.nodeName === 'SCRIPT' || node.nodeName === 'STYLE')) {
+	          while (node.childNodes.length > 0) {
+	            parentNode.insertBefore(node.childNodes[0], node);
+	          }
+	        }
+	        parentNode.removeChild(node);
+	
+	        this._sanitize(parentNode);
+	        break;
+	      }
+	
+	      // Sanitize attributes
+	      for (var a = 0; a < node.attributes.length; a += 1) {
+	        var attr = node.attributes[a];
+	
+	        if (shouldRejectAttr(attr, allowedAttrs, node)) {
+	          node.removeAttribute(attr.name);
+	          // Shift the array to continue looping.
+	          a = a - 1;
+	        }
+	      }
+	
+	      // Sanitize children
+	      this._sanitize(node);
+	
+	      // Mark node as sanitized so it's ignored in future runs
+	      node._sanitized = true;
+	    } while ((node = treeWalker.nextSibling()));
+	  };
+	
+	  function createTreeWalker(node) {
+	    return document.createTreeWalker(node,
+	                                     NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT,
+	                                     null, false);
+	  }
+	
+	  function getAllowedAttrs(config, nodeName, node){
+	    if (typeof config.tags[nodeName] === 'function') {
+	      return config.tags[nodeName](node);
+	    } else {
+	      return config.tags[nodeName];
+	    }
+	  }
+	
+	  function shouldRejectNode(node, allowedAttrs){
+	    if (typeof allowedAttrs === 'undefined') {
+	      return true;
+	    } else if (typeof allowedAttrs === 'boolean') {
+	      return !allowedAttrs;
+	    }
+	
+	    return false;
+	  }
+	
+	  function shouldRejectAttr(attr, allowedAttrs, node){
+	    var attrName = attr.name.toLowerCase();
+	
+	    if (allowedAttrs === true){
+	      return false;
+	    } else if (typeof allowedAttrs[attrName] === 'function'){
+	      return !allowedAttrs[attrName](attr.value, node);
+	    } else if (typeof allowedAttrs[attrName] === 'undefined'){
+	      return true;
+	    } else if (allowedAttrs[attrName] === false) {
+	      return true;
+	    } else if (typeof allowedAttrs[attrName] === 'string') {
+	      return (allowedAttrs[attrName] !== attr.value);
+	    }
+	
+	    return false;
+	  }
+	
+	  return HTMLJanitor;
+	
+	}));
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 * Codex Editor Saver
+	 *
+	 * @author Codex Team
+	 * @version 1.1.0
+	 */
+	
+	module.exports = function (saver) {
+	
+	    var editor = codex.editor;
+	
+	    /**
+	     * @public
+	     * Save blocks
+	     */
+	    saver.save = function () {
+	
+	        /** Save html content of redactor to memory */
+	        editor.state.html = editor.nodes.redactor.innerHTML;
+	
+	        /** Clean jsonOutput state */
+	        editor.state.jsonOutput = [];
+	
+	        return saveBlocks(editor.nodes.redactor.childNodes);
+	    };
+	
+	    /**
+	     * @private
+	     * Save each block data
+	     *
+	     * @param blocks
+	     * @returns {Promise.<TResult>}
+	     */
+	    var saveBlocks = function saveBlocks(blocks) {
+	
+	        var data = [];
+	
+	        for (var index = 0; index < blocks.length; index++) {
+	
+	            data.push(getBlockData(blocks[index]));
+	        }
+	
+	        return Promise.all(data).then(makeOutput).catch(editor.core.log);
+	    };
+	
+	    /** Save and validate block data */
+	    var getBlockData = function getBlockData(block) {
+	
+	        return saveBlockData(block).then(validateBlockData).catch(editor.core.log);
+	    };
+	
+	    /**
+	     * @private
+	     * Call block`s plugin save method and return saved data
+	     *
+	     * @param block
+	     * @returns {Object}
+	     */
+	    var saveBlockData = function saveBlockData(block) {
+	
+	        var pluginName = block.dataset.tool;
+	
+	        /** Check for plugin existence */
+	        if (!editor.tools[pluginName]) {
+	
+	            editor.core.log('Plugin \xAB' + pluginName + '\xBB not found', 'error');
+	            return { data: null, pluginName: null };
+	        }
+	
+	        /** Check for plugin having save method */
+	        if (typeof editor.tools[pluginName].save !== 'function') {
+	
+	            editor.core.log('Plugin \xAB' + pluginName + '\xBB must have save method', 'error');
+	            return { data: null, pluginName: null };
+	        }
+	
+	        /** Result saver */
+	        var blockContent = block.childNodes[0],
+	            pluginsContent = blockContent.childNodes[0],
+	            position = pluginsContent.dataset.inputPosition;
+	
+	        /** If plugin wasn't available then return data from cache */
+	        if (editor.tools[pluginName].available === false) {
+	
+	            return Promise.resolve({ data: codex.editor.state.blocks.items[position].data, pluginName: pluginName });
+	        }
+	
+	        return Promise.resolve(pluginsContent).then(editor.tools[pluginName].save).then(function (data) {
+	            return Object({ data: data, pluginName: pluginName });
+	        });
+	    };
+	
+	    /**
+	     * Call plugin`s validate method. Return false if validation failed
+	     *
+	     * @param data
+	     * @param pluginName
+	     * @returns {Object|Boolean}
+	     */
+	    var validateBlockData = function validateBlockData(_ref) {
+	        var data = _ref.data,
+	            pluginName = _ref.pluginName;
+	
+	
+	        if (!data || !pluginName) {
+	
+	            return false;
+	        }
+	
+	        if (editor.tools[pluginName].validate) {
+	
+	            var result = editor.tools[pluginName].validate(data);
+	
+	            /**
+	             * Do not allow invalid data
+	             */
+	            if (!result) {
+	
+	                return false;
+	            }
+	        }
+	
+	        return { data: data, pluginName: pluginName };
+	    };
+	
+	    /**
+	     * Compile article output
+	     *
+	     * @param savedData
+	     * @returns {{time: number, version, items: (*|Array)}}
+	     */
+	    var makeOutput = function makeOutput(savedData) {
+	
+	        savedData = savedData.filter(function (blockData) {
+	            return blockData;
+	        });
+	
+	        var items = savedData.map(function (blockData) {
+	            return Object({ type: blockData.pluginName, data: blockData.data });
+	        });
+	
+	        editor.state.jsonOutput = items;
+	
+	        return {
+	            id: editor.state.blocks.id || null,
+	            time: +new Date(),
+	            version: editor.version,
+	            items: items
+	        };
+	    };
+	
+	    return saver;
+	}({});
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+	'use strict';
+	
+	/**
+	 *
+	 * Codex.Editor Transport Module
+	 *
+	 * @copyright 2017 Codex-Team
+	 * @version 1.2.0
+	 */
+	
+	module.exports = function (transport) {
+	
+	    var editor = codex.editor;
+	
+	    /**
+	     * @private {Object} current XmlHttpRequest instance
+	     */
+	    var currentRequest = null;
+	
+	    /**
+	     * @type {null} | {DOMElement} input - keeps input element in memory
+	     */
+	    transport.input = null;
+	
+	    /**
+	     * @property {Object} arguments - keep plugin settings and defined callbacks
+	     */
+	    transport.arguments = null;
+	
+	    /**
+	     * Prepares input element where will be files
+	     */
+	    transport.prepare = function () {
+	
+	        var input = editor.draw.node('INPUT', '', { type: 'file' });
+	
+	        editor.listeners.add(input, 'change', editor.transport.fileSelected);
+	        editor.transport.input = input;
+	    };
+	
+	    /** Clear input when files is uploaded */
+	    transport.clearInput = function () {
+	
+	        /** Remove old input */
+	        transport.input = null;
+	
+	        /** Prepare new one */
+	        transport.prepare();
+	    };
+	
+	    /**
+	     * Callback for file selection
+	     * @param {Event} event
+	     */
+	    transport.fileSelected = function () {
+	
+	        var input = this,
+	            i,
+	            files = input.files,
+	            formData = new FormData();
+	
+	        if (editor.transport.arguments.multiple === true) {
+	
+	            for (i = 0; i < files.length; i++) {
+	
+	                formData.append('files[]', files[i], files[i].name);
+	            }
+	        } else {
+	
+	            formData.append('files', files[0], files[0].name);
+	        }
+	
+	        currentRequest = editor.core.ajax({
+	            type: 'POST',
+	            data: formData,
+	            url: editor.transport.arguments.url,
+	            beforeSend: editor.transport.arguments.beforeSend,
+	            success: editor.transport.arguments.success,
+	            error: editor.transport.arguments.error,
+	            progress: editor.transport.arguments.progress
+	        });
+	
+	        /** Clear input */
+	        transport.clearInput();
+	    };
+	
+	    /**
+	     * Use plugin callbacks
+	     * @protected
+	     *
+	     * @param {Object} args - can have :
+	     * @param {String} args.url - fetch URL
+	     * @param {Function} args.beforeSend - function calls before sending ajax
+	     * @param {Function} args.success - success callback
+	     * @param {Function} args.error - on error handler
+	     * @param {Function} args.progress - xhr onprogress handler
+	     * @param {Boolean} args.multiple - allow select several files
+	     * @param {String} args.accept - adds accept attribute
+	     */
+	    transport.selectAndUpload = function (args) {
+	
+	        transport.arguments = args;
+	
+	        if (args.multiple === true) {
+	
+	            transport.input.setAttribute('multiple', 'multiple');
+	        }
+	
+	        if (args.accept) {
+	
+	            transport.input.setAttribute('accept', args.accept);
+	        }
+	
+	        transport.input.click();
+	    };
+	
+	    transport.abort = function () {
+	
+	        currentRequest.abort();
+	
+	        currentRequest = null;
+	    };
+	
+	    return transport;
+	}({});
+
+/***/ }),
 /* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @class BlockManager
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @classdesc Manage editor`s blocks storage and appearance
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+	
+	var _block = __webpack_require__(17);
+	
+	var _block2 = _interopRequireDefault(_block);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	module.exports = function () {
+	    _createClass(BlockManager, null, [{
+	        key: 'name',
+	
+	
+	        /**
+	         * Module key name
+	         * @returns {string}
+	         */
+	        get: function get() {
+	
+	            return 'BlockManager';
+	        }
+	
+	        /**
+	         * @constructor
+	         *
+	         * @param {EditorConfig} config
+	         */
+	
+	    }]);
+	
+	    function BlockManager(_ref) {
+	        var config = _ref.config;
+	
+	        _classCallCheck(this, BlockManager);
+	
+	        this.config = config;
+	        this.Editor = null;
+	        this._blocks = null;
+	        this._currentBlcokIndex = -1;
+	    }
+	
+	    /**
+	     * Editor modules setting
+	     *
+	     * @param Editor
+	     */
+	
+	
+	    _createClass(BlockManager, [{
+	        key: 'prepare',
+	
+	
+	        /**
+	         * Should be called after Editor.ui preparation
+	         * Define this._blocks property
+	         *
+	         * @returns {Promise}
+	         */
+	        value: function prepare() {
+	            var _this = this;
+	
+	            return new Promise(function (resolve) {
+	
+	                var blocks = new Blocks(_this.Editor.ui.nodes.redactor);
+	
+	                /**
+	                 * We need to use Proxy to overload set/get [] operator.
+	                 * So we can use array-like syntax to access blocks
+	                 *
+	                 * @example
+	                 * this._blocks[0] = new Block(...);
+	                 *
+	                 * block = this._blocks[0];
+	                 *
+	                 * @todo proxy the enumerate method
+	                 *
+	                 * @type {Proxy}
+	                 * @private
+	                 */
+	                _this._blocks = new Proxy(blocks, {
+	                    set: Blocks.set,
+	                    get: Blocks.get
+	                });
+	
+	                resolve();
+	            });
+	        }
+	
+	        /**
+	         * Insert new block into _blocks
+	         *
+	         * @param {String} toolName — plugin name
+	         * @param {Object} data — plugin data
+	         */
+	
+	    }, {
+	        key: 'insert',
+	        value: function insert(toolName, data) {
+	
+	            var toolInstance = this.Editor.Tools.construct(toolName, data),
+	                block = new _block2.default(toolInstance);
+	
+	            this._blocks[++this._currentBlcokIndex] = block;
+	        }
+	
+	        /**
+	         * Get Block instance by html element
+	         *
+	         * @todo get first level block before searching
+	         *
+	         * @param {HTMLElement} element
+	         * @returns {Block}
+	         */
+	
+	    }, {
+	        key: 'getBlock',
+	        value: function getBlock(element) {
+	
+	            var nodes = Array.prototype.slice.call(this._blocks.workingArea.children),
+	                index = nodes.indexOf(element);
+	
+	            if (index >= 0) {
+	
+	                return this._blocks[index];
+	            }
+	        }
+	
+	        /**
+	         * Get current Block instance
+	         */
+	
+	    }, {
+	        key: 'state',
+	        set: function set(Editor) {
+	
+	            this.Editor = Editor;
+	        }
+	    }, {
+	        key: 'currentBlock',
+	        get: function get() {
+	
+	            return this._blocks.workingArea.children[this._currentBlcokIndex];
+	        }
+	
+	        /**
+	         * Get working html element
+	         */
+	
+	    }, {
+	        key: 'currentNode',
+	        get: function get() {
+	
+	            return this._blocks.workingArea.children[this._currentBlcokIndex];
+	        }
+	
+	        /**
+	         * Set _currentBlockIndex to passed block
+	         *
+	         * @param {HTMLElement} element
+	         */
+	        ,
+	        set: function set(element) {
+	
+	            var nodes = Array.prototype.slice.call(this._blocks.workingArea.children);
+	
+	            this._currentBlcokIndex = nodes.indexOf(element);
+	        }
+	
+	        /**
+	         * Get array of Block instances
+	         *
+	         * @returns {Array}
+	         */
+	
+	    }, {
+	        key: 'blocks',
+	        get: function get() {
+	
+	            return this._blocks.array;
+	        }
+	    }]);
+	
+	    return BlockManager;
+	}();
+	
+	/**
+	 * @class Blocks
+	 * @classdesc Class to work with Block instances array
+	 *
+	 * @private
+	 *
+	 * @property {HTMLElement} workingArea — editor`s working node
+	 *
+	 */
+	
+	var Blocks = function () {
+	
+	    /**
+	     * @constructor
+	     *
+	     * @param {HTMLElement} workingArea — editor`s working node
+	     */
+	    function Blocks(workingArea) {
+	        _classCallCheck(this, Blocks);
+	
+	        this._blocks = [];
+	        this.workingArea = workingArea;
+	    }
+	
+	    /**
+	     * Push back new Block
+	     *
+	     * @param {Block} block
+	     */
+	
+	
+	    _createClass(Blocks, [{
+	        key: 'push',
+	        value: function push(block) {
+	
+	            this._blocks.push(block);
+	            this.workingArea.appendChild(block.html);
+	        }
+	
+	        /**
+	         * Insert new Block at passed index
+	         *
+	         * @param {Number} index — index to insert Block
+	         * @param {Block} block — Block to insert
+	         */
+	
+	    }, {
+	        key: 'insert',
+	        value: function insert(index, block) {
+	
+	            if (!this.length) {
+	
+	                this.push(block);
+	                return;
+	            }
+	
+	            if (index > this.length) {
+	
+	                return;
+	            }
+	
+	            this._blocks[index] = block;
+	
+	            if (index > 0) {
+	
+	                var previousBlock = this._blocks[index - 1];
+	
+	                previousBlock.html.insertAdjacentElement('afterend', block.html);
+	            } else {
+	
+	                var nextBlock = this._blocks[index + 1];
+	
+	                nextBlock.html.insertAdjacentElement('beforebegin', block.html);
+	            }
+	        }
+	
+	        /**
+	         * Insert Block after passed target
+	         *
+	         * @todo decide if this method is necessary
+	         *
+	         * @param {Block} targetBlock — target after wich Block should be inserted
+	         * @param {Block} newBlock — Block to insert
+	         */
+	
+	    }, {
+	        key: 'insertAfter',
+	        value: function insertAfter(targetBlock, newBlock) {
+	
+	            var index = this._blocks.indexOf(targetBlock);
+	
+	            this.insert(index + 1, newBlock);
+	        }
+	
+	        /**
+	         * Get Block by index
+	         *
+	         * @param {Number} index — Block index
+	         * @returns {Block}
+	         */
+	
+	    }, {
+	        key: 'get',
+	        value: function get(index) {
+	
+	            return this._blocks[index];
+	        }
+	
+	        /**
+	         * Return index of passed Block
+	         *
+	         * @param {Block} block
+	         * @returns {Number}
+	         */
+	
+	    }, {
+	        key: 'indexOf',
+	        value: function indexOf(block) {
+	
+	            return this._blocks.indexOf(block);
+	        }
+	
+	        /**
+	         * Get length of Block instances array
+	         *
+	         * @returns {Number}
+	         */
+	
+	    }, {
+	        key: 'length',
+	        get: function get() {
+	
+	            return this._blocks.length;
+	        }
+	
+	        /**
+	         * Get Block instances array
+	         *
+	         * @returns {Array}
+	         */
+	
+	    }, {
+	        key: 'array',
+	        get: function get() {
+	
+	            return this._blocks;
+	        }
+	
+	        /**
+	         * Proxy trap to implement array-like setter
+	         *
+	         * @example
+	         * blocks[0] = new Block(...)
+	         *
+	         * @param {Blocks} instance — Blocks instance
+	         * @param {Number|String} index — block index
+	         * @param {Block} block — Block to set
+	         * @returns {Boolean}
+	         */
+	
+	    }], [{
+	        key: 'set',
+	        value: function set(instance, index, block) {
+	
+	            if (isNaN(Number(index))) {
+	
+	                return false;
+	            }
+	
+	            instance.insert(index, block);
+	
+	            return true;
+	        }
+	
+	        /**
+	         * Proxy trap to implement array-like getter
+	         *
+	         * @param {Blocks} instance — Blocks instance
+	         * @param {Number|String} index — Block index
+	         * @returns {Block|*}
+	         */
+	
+	    }, {
+	        key: 'get',
+	        value: function get(instance, index) {
+	
+	            if (isNaN(Number(index))) {
+	
+	                return instance[index];
+	            }
+	
+	            return instance.get(index);
+	        }
+	    }]);
+
+	    return Blocks;
+	}();
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @class Block
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @property {Tool} tool — current block tool (Paragraph, for example)
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @property {Object} CSS — block`s css classes
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+	
+	var _dom = __webpack_require__(6);
+	
+	var _dom2 = _interopRequireDefault(_dom);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Block = function () {
+	
+	    /**
+	     * @constructor
+	     *
+	     * @param {Object} tool — current block plugin`s instance
+	     */
+	    function Block(tool) {
+	        _classCallCheck(this, Block);
+	
+	        this.tool = tool;
+	
+	        this.CSS = {
+	            wrapper: 'ce-block',
+	            content: 'ce-block__content'
+	        };
+	
+	        this._html = this._compose();
+	    }
+	
+	    /**
+	     * Make default block wrappers and put tool`s content there
+	     *
+	     * @returns {HTMLDivElement}
+	     * @private
+	     */
+	
+	
+	    _createClass(Block, [{
+	        key: '_compose',
+	        value: function _compose() {
+	
+	            var wrapper = _dom2.default.make('div', this.CSS.wrapper),
+	                content = _dom2.default.make('div', this.CSS.content);
+	
+	            content.appendChild(this.tool.html);
+	            wrapper.appendChild(content);
+	
+	            return wrapper;
+	        }
+	
+	        /**
+	         * Get block`s HTML
+	         *
+	         * @returns {HTMLDivElement}
+	         */
+	
+	    }, {
+	        key: 'html',
+	        get: function get() {
+	
+	            return this._html;
+	        }
+	    }]);
+	
+	    return Block;
+	}();
+	
+	exports.default = Block;
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -4263,7 +4749,7 @@ var CodexEditor =
 	}();
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4275,7 +4761,7 @@ var CodexEditor =
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @version 1.0
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 	
-	var _util = __webpack_require__(18);
+	var _util = __webpack_require__(20);
 	
 	var _util2 = _interopRequireDefault(_util);
 	
@@ -4343,10 +4829,7 @@ var CodexEditor =
 	            var tool = item.type,
 	                data = item.data;
 	
-	            var instance = this.Editor.Tools.construct(tool, data),
-	                index = this.Editor.Content.insertBlock(instance.html);
-	
-	            this.Editor.Tools.add(instance, index);
+	            this.Editor.BlockManager.insert(tool, data);
 	
 	            return Promise.resolve();
 	        }
@@ -4559,7 +5042,7 @@ var CodexEditor =
 	// })({});
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -4657,7 +5140,7 @@ var CodexEditor =
 	}();
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -4667,7 +5150,7 @@ var CodexEditor =
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 	
 	
-	var _dom = __webpack_require__(15);
+	var _dom = __webpack_require__(6);
 	
 	var _dom2 = _interopRequireDefault(_dom);
 	
@@ -4891,7 +5374,7 @@ var CodexEditor =
 	module.exports = Toolbar;
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -5440,7 +5923,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -5602,7 +6085,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5623,9 +6106,9 @@ var CodexEditor =
 	
 	    var editor = codex.editor;
 	
-	    toolbar.settings = __webpack_require__(21);
-	    toolbar.inline = __webpack_require__(20);
-	    toolbar.toolbox = __webpack_require__(23);
+	    toolbar.settings = __webpack_require__(23);
+	    toolbar.inline = __webpack_require__(22);
+	    toolbar.toolbox = __webpack_require__(25);
 	
 	    /**
 	     * Margin between focused node and toolbar
@@ -5728,7 +6211,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -5905,7 +6388,7 @@ var CodexEditor =
 	}({});
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5931,6 +6414,8 @@ var CodexEditor =
 	 */
 	
 	/**
+	 * @todo update according to current API
+	 *
 	 * @typedef {Object} Tool
 	 * @property render
 	 * @property save
@@ -5948,7 +6433,7 @@ var CodexEditor =
 	 * @property {Object} toolsClasses - all classes
 	 * @property {EditorConfig} config - Editor config
 	 */
-	var util = __webpack_require__(18);
+	var util = __webpack_require__(20);
 	
 	module.exports = function () {
 	    _createClass(Tools, [{
@@ -6029,8 +6514,6 @@ var CodexEditor =
 	        this.toolClasses = {};
 	        this.toolsAvailable = {};
 	        this.toolsUnavailable = {};
-	
-	        this._list = [];
 	    }
 	
 	    /**
@@ -6149,6 +6632,9 @@ var CodexEditor =
 	         *
 	         * @param {String} tool — tool name
 	         * @param {Object} data — initial data
+	         *
+	         * @todo throw exceptions if tool doesnt exist
+	         *
 	         */
 	
 	    }, {
@@ -6162,52 +6648,20 @@ var CodexEditor =
 	
 	            return instance;
 	        }
-	
-	        /**
-	         * Insert tool instance for private list
-	         *
-	         * @param {Object} instance — tool instance
-	         * @param {Number} index — tool index
-	         */
-	
-	    }, {
-	        key: 'add',
-	        value: function add(instance, index) {
-	
-	            this._list[index] = instance;
-	        }
-	
-	        /**
-	         * Get tool instance by html element
-	         *
-	         * @param el
-	         * @returns {*}
-	         */
-	
-	    }, {
-	        key: 'getByElement',
-	        value: function getByElement(el) {
-	
-	            var index = el.dataset.toolId;
-	
-	            if (!index) return null;
-	
-	            return this._list[index];
-	        }
 	    }]);
 	
 	    return Tools;
 	}();
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
-	var _dom = __webpack_require__(15);
+	var _dom = __webpack_require__(6);
 	
 	var _dom2 = _interopRequireDefault(_dom);
 	
