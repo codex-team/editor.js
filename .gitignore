@@ -12,3 +12,5 @@ node_modules/*
 plugins/personality/
 
 npm-debug.log
+
+build/__tmp_babel_helpers.js

@@ -52,7 +52,7 @@ module.exports = {
     watch: true,
 
     watchOptions: {
-        aggregateTimeOut: 50
+        aggregateTimeout: 50
     },
 
     devtool: NODE_ENV == 'development' ? 'source-map' : null,
@@ -131,14 +131,25 @@ module.exports = {
                     loader: 'babel-loader',
                     options: {
                         presets: [ __dirname + '/node_modules/babel-preset-es2015' ],
-                        plugins: ['class-display-name']
+                        plugins: [
+                            /**
+                             * Babel transforms some awesome ES6 features to ES5 with extra code, such as Class, JSX.
+                             * This plugin makes all generated extra codes to one module which significantly reduces the bundle code size.
+                             *
+                             * {@link https://github.com/brianZeng/babel-plugin-transform-helper}
+                             */
+                            ['babel-plugin-transform-helper', {
+                                helperFilename:'build/__tmp_babel_helpers.js'
+                            }],
+                            'class-display-name',
+                        ]
                     }
                 }
             },
             {
                 test : /\.js$/,
                 use: 'eslint-loader?fix=true',
-                exclude: /node_modules/
+                exclude: /(node_modules|build)/ // dont need to look in '/build' to prevent analyse __tmp_babel_helper.js
             },
             {
                 test: /\.css$/,
