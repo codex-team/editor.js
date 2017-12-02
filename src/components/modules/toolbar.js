@@ -1,9 +1,4 @@
 /**
- * DOM manipulations
- */
-import $ from '../dom';
-
-/**
  *
  * «Toolbar» is the node that moves up/down over current block
  *

@@ -52,7 +52,7 @@ module.exports = {
     watch: true,
 
     watchOptions: {
-        aggregateTimeOut: 50
+        aggregateTimeout: 50
     },
 
     devtool: NODE_ENV == 'development' ? 'source-map' : null,
@@ -62,7 +62,11 @@ module.exports = {
      */
     resolve : {
         // fallback: path.join(__dirname, 'node_modules'),
-        modules : [ path.join(__dirname, "src"),  "node_modules"]
+        modules : [ path.join(__dirname, "src"),  "node_modules"],
+        alias: {
+          'utils': path.resolve(__dirname + '/src/components/', './utils'),
+          'dom': path.resolve(__dirname + '/src/components/', './dom'),
+        }
     },
     //
 
@@ -80,6 +84,30 @@ module.exports = {
             VERSION: JSON.stringify(VERSION),
             editorModules: JSON.stringify(editorModules)
         }),
+
+        /**
+         * Automatically load global visible modules
+         * instead of having to import/require them everywhere.
+         */
+        new webpack.ProvidePlugin({
+          '_': 'utils',
+          '$': 'dom'
+        }),
+
+        /**
+         * Setting up a dynamic requires that we use to autoload Editor Modules from 'components/modules' dir
+         * {@link https://webpack.js.org/plugins/context-replacement-plugin/}
+         */
+        new webpack.ContextReplacementPlugin(
+            /src\/components\/modules/,
+            false, // newContentRecursive=false because we dont need to include folders
+            new RegExp(
+                '[^_]' + // dont match names started with '_'
+                `(${editorModules.join('|')})` + // module names pattern: (events.js|ui.js|...)
+                '$' // at the end of path
+            )
+        ),
+
 
         /** Минифицируем CSS и JS */
         // new webpack.optimize.UglifyJsPlugin({
@@ -103,14 +131,25 @@ module.exports = {
                     loader: 'babel-loader',
                     options: {
                         presets: [ __dirname + '/node_modules/babel-preset-es2015' ],
-                        plugins: ['class-display-name']
+                        plugins: [
+                            /**
+                             * Babel transforms some awesome ES6 features to ES5 with extra code, such as Class, JSX.
+                             * This plugin makes all generated extra codes to one module which significantly reduces the bundle code size.
+                             *
+                             * {@link https://github.com/brianZeng/babel-plugin-transform-helper}
+                             */
+                            ['babel-plugin-transform-helper', {
+                                helperFilename:'build/__tmp_babel_helpers.js'
+                            }],
+                            'class-display-name',
+                        ]
                     }
                 }
             },
             {
                 test : /\.js$/,
                 use: 'eslint-loader?fix=true',
-                exclude: /node_modules/
+                exclude: /(node_modules|build)/ // dont need to look in '/build' to prevent analyse __tmp_babel_helper.js
             },
             {
                 test: /\.css$/,

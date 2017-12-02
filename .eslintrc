@@ -72,7 +72,9 @@
         "FormData": true,
         "XMLHttpRequest": true,
         "ActiveXObject": true,
-        "RegExp": true
+        "RegExp": true,
+        "$": true,
+        "_": true
 
     }
 }

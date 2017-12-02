@@ -36,10 +36,6 @@ let CSS = {
     editorZone    : 'ce-redactor'
 };
 
-
-import $ from '../dom';
-
-
 /**
  * @class
  *
