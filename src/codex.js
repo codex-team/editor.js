@@ -55,11 +55,7 @@
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-let modules = editorModules.map( module => {
-
-    return require('./components/modules/' + module );
-
-});
+let modules = editorModules.map( module => require('./components/modules/' + module ));
 
 /**
  * @class

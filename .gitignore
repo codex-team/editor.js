@@ -10,3 +10,5 @@ node_modules/*
 /uploads/
 
 plugins/personality/
+
+npm-debug.log

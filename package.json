@@ -4,7 +4,7 @@
   "description": "Codex Editor. Native JS, based on API and Open Source",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --progress  --display-error-details --display-entrypoints --display-reasons"
+    "build": "webpack --progress  --display-error-details --display-entrypoints --display-reasons --verbose"
   },
   "author": "Codex Team",
   "license": "ISC",

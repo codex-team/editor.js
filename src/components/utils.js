@@ -20,7 +20,7 @@ module.exports = class Util {
      */
     static sequence(chains, success, fallback) {
 
-        return new Promise(function (resolve, reject) {
+        return new Promise(function (resolve) {
 
             /**
              * pluck each element from queue
@@ -36,7 +36,7 @@ module.exports = class Util {
                     .then(() => {
 
                         // finished
-                        if (iteration == chains.length - 1) {
+                        if (iteration === chains.length - 1) {
 
                             resolve();
 
@@ -53,25 +53,25 @@ module.exports = class Util {
          *
          * @param {ChainData} chainData
          *
-         * @param {Function} success
-         * @param {Function} fallback
+         * @param {Function} successCallback
+         * @param {Function} fallbackCallback
          *
          * @return {Promise}
          */
-        function waitNextBlock(chainData, success, fallback) {
+        function waitNextBlock(chainData, successCallback, fallbackCallback) {
 
-            return new Promise(function (resolve, reject) {
+            return new Promise(function (resolve) {
 
                 chainData.function()
                     .then(() => {
 
-                        success(chainData.data);
+                        successCallback(chainData.data);
 
                     })
                     .then(resolve)
                     .catch(function () {
 
-                        fallback(chainData.data);
+                        fallbackCallback(chainData.data);
 
                         // anyway, go ahead even it falls
                         resolve();
