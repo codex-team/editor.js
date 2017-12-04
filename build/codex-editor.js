@@ -61,7 +61,7 @@ var CodexEditor =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -70,8 +70,6 @@ var CodexEditor =
 
 "use strict";
 
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 exports.createClass = function () {
   function defineProperties(target, props) {
@@ -93,26 +91,118 @@ exports.interopRequireDefault = function (obj) {
   };
 };
 
-exports.toConsumableArray = function (arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  } else {
-    return Array.from(arr);
-  }
-};
-
-exports.typeof = typeof Symbol === "function" && _typeof(Symbol.iterator) === "symbol" ? function (obj) {
-  return typeof obj === "undefined" ? "undefined" : _typeof(obj);
-} : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
-};
-
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Codex Editor Util
+ */
+module.exports = function () {
+    function Util() {
+        __webpack_require__(0).classCallCheck(this, Util);
+    }
+
+    __webpack_require__(0).createClass(Util, null, [{
+        key: "sequence",
+
+
+        /**
+         * @typedef {Object} ChainData
+         * @property {Object} data - data that will be passed to the success or fallback
+         * @property {Function} function - function's that must be called asynchronically
+         */
+
+        /**
+         * Fires a promise sequence asyncronically
+         *
+         * @param {Object[]} chains - list or ChainData's
+         * @param {Function} success - success callback
+         * @param {Function} fallback - callback that fires in case of errors
+         *
+         * @return {Promise}
+         */
+        value: function sequence(chains) {
+            var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
+
+            return new Promise(function (resolve) {
+
+                /**
+                 * pluck each element from queue
+                 * First, send resolved Promise as previous value
+                 * Each plugins "prepare" method returns a Promise, that's why
+                 * reduce current element will not be able to continue while can't get
+                 * a resolved Promise
+                 */
+                chains.reduce(function (previousValue, currentValue, iteration) {
+
+                    return previousValue.then(function () {
+                        return waitNextBlock(currentValue, success, fallback);
+                    }).then(function () {
+
+                        // finished
+                        if (iteration === chains.length - 1) {
+
+                            resolve();
+                        }
+                    });
+                }, Promise.resolve());
+            });
+
+            /**
+             * Decorator
+             *
+             * @param {ChainData} chainData
+             *
+             * @param {Function} successCallback
+             * @param {Function} fallbackCallback
+             *
+             * @return {Promise}
+             */
+            function waitNextBlock(chainData, successCallback, fallbackCallback) {
+
+                return new Promise(function (resolve) {
+
+                    chainData.function().then(function () {
+
+                        successCallback(chainData.data);
+                    }).then(resolve).catch(function () {
+
+                        fallbackCallback(chainData.data);
+
+                        // anyway, go ahead even it falls
+                        resolve();
+                    });
+                });
+            }
+        }
+
+        /**
+         * Make array from array-like collection
+         *
+         * @param {*} collection
+         *
+         * @return {Array}
+         */
+
+    }, {
+        key: "array",
+        value: function array(collection) {
+
+            return Array.prototype.slice.call(collection);
+        }
+    }]);
+
+    return Util;
+}();
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -244,7 +334,7 @@ module.exports = function () {
 }();
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -307,7 +397,7 @@ module.exports = function () {
 // eslint-disable-next-line
 
 var modules = ["blockManager.js","events.js","renderer.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-    return __webpack_require__(3)("./" + module);
+    return __webpack_require__(4)("./" + module);
 });
 
 /**
@@ -635,15 +725,15 @@ module.exports = function () {
 // })({});
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./blockManager.js": 4,
-	"./events.js": 6,
-	"./renderer.js": 7,
-	"./toolbar.js": 8,
-	"./tools.js": 9,
+	"./blockManager.js": 5,
+	"./events.js": 7,
+	"./renderer.js": 8,
+	"./toolbar.js": 9,
+	"./tools.js": 10,
 	"./ui.js": 11
 };
 function webpackContext(req) {
@@ -660,16 +750,16 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 3;
+webpackContext.id = 4;
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(_) {
 
-var _block = __webpack_require__(5);
+var _block = __webpack_require__(6);
 
 var _block2 = __webpack_require__(0).interopRequireDefault(_block);
 
@@ -687,8 +777,22 @@ var BlockManager = function () {
 
         this.config = config;
         this.Editor = null;
+
+        /**
+         * Proxy for Blocks instance {@link Blocks}
+         *
+         * @type {Proxy}
+         * @private
+         */
         this._blocks = null;
-        this._currentBlockIndex = -1;
+
+        /**
+         * Index of current working block
+         *
+         * @type {number}
+         * @private
+         */
+        this.currentBlockIndex = -1;
     }
 
     /**
@@ -752,7 +856,7 @@ var BlockManager = function () {
             var toolInstance = this.Editor.Tools.construct(toolName, data),
                 block = new _block2.default(toolInstance);
 
-            this._blocks[++this._currentBlockIndex] = block;
+            this._blocks[++this.currentBlockIndex] = block;
         }
 
         /**
@@ -769,7 +873,7 @@ var BlockManager = function () {
             var toolInstance = this.Editor.Tools.construct(toolName, data),
                 block = new _block2.default(toolInstance);
 
-            this._blocks.insert(this._currentBlockIndex, block, true);
+            this._blocks.insert(this.currentBlockIndex, block, true);
         }
 
         /**
@@ -810,7 +914,7 @@ var BlockManager = function () {
         key: 'currentBlock',
         get: function get() {
 
-            return this._blocks[this._currentBlockIndex];
+            return this._blocks[this.currentBlockIndex];
         }
 
         /**
@@ -823,11 +927,11 @@ var BlockManager = function () {
         key: 'currentNode',
         get: function get() {
 
-            return this._blocks.nodes[this._currentBlockIndex];
+            return this._blocks.nodes[this.currentBlockIndex];
         }
 
         /**
-         * Set _currentBlockIndex to passed block
+         * Set currentBlockIndex to passed block
          *
          * @todo get first level block before searching
          *
@@ -838,7 +942,7 @@ var BlockManager = function () {
 
             var nodes = this._blocks.nodes;
 
-            this._currentBlockIndex = nodes.indexOf(element);
+            this.currentBlockIndex = nodes.indexOf(element);
         }
 
         /**
@@ -884,7 +988,7 @@ var Blocks = function () {
     function Blocks(workingArea) {
         __webpack_require__(0).classCallCheck(this, Blocks);
 
-        this._blocks = [];
+        this.blocks = [];
         this.workingArea = workingArea;
     }
 
@@ -899,7 +1003,7 @@ var Blocks = function () {
         key: 'push',
         value: function push(block) {
 
-            this._blocks.push(block);
+            this.blocks.push(block);
             this.workingArea.appendChild(block.html);
         }
 
@@ -930,23 +1034,29 @@ var Blocks = function () {
 
             if (replace) {
 
-                this._blocks[index].html.remove();
+                this.blocks[index].html.remove();
             }
 
             var deleteCount = replace ? 1 : 0;
 
-            this._blocks.splice(index, deleteCount, block);
+            this.blocks.splice(index, deleteCount, block);
 
             if (index > 0) {
 
-                var previousBlock = this._blocks[index - 1];
+                var previousBlock = this.blocks[index - 1];
 
                 previousBlock.html.insertAdjacentElement('afterend', block.html);
             } else {
 
-                var nextBlock = this._blocks[index + 1];
+                var nextBlock = this.blocks[index + 1];
 
-                nextBlock.html.insertAdjacentElement('beforebegin', block.html);
+                if (nextBlock) {
+
+                    nextBlock.html.insertAdjacentElement('beforebegin', block.html);
+                } else {
+
+                    this.workingArea.appendChild(block.html);
+                }
             }
         }
 
@@ -963,7 +1073,7 @@ var Blocks = function () {
         key: 'insertAfter',
         value: function insertAfter(targetBlock, newBlock) {
 
-            var index = this._blocks.indexOf(targetBlock);
+            var index = this.blocks.indexOf(targetBlock);
 
             this.insert(index + 1, newBlock);
         }
@@ -979,7 +1089,7 @@ var Blocks = function () {
         key: 'get',
         value: function get(index) {
 
-            return this._blocks[index];
+            return this.blocks[index];
         }
 
         /**
@@ -993,7 +1103,7 @@ var Blocks = function () {
         key: 'indexOf',
         value: function indexOf(block) {
 
-            return this._blocks.indexOf(block);
+            return this.blocks.indexOf(block);
         }
 
         /**
@@ -1006,7 +1116,7 @@ var Blocks = function () {
         key: 'length',
         get: function get() {
 
-            return this._blocks.length;
+            return this.blocks.length;
         }
 
         /**
@@ -1019,7 +1129,7 @@ var Blocks = function () {
         key: 'array',
         get: function get() {
 
-            return this._blocks;
+            return this.blocks;
         }
 
         /**
@@ -1089,10 +1199,10 @@ Blocks.displayName = 'Blocks';
 
 
 module.exports = BlockManager;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1172,10 +1282,10 @@ var Block = function () {
 
 Block.displayName = 'Block';
 exports.default = Block;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1278,7 +1388,7 @@ Events.displayName = "Events";
 module.exports = Events;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1576,10 +1686,10 @@ module.exports = Renderer;
 //     return renderer;
 //
 // })({});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1793,10 +1903,10 @@ Toolbar.displayName = 'Toolbar';
 
 
 module.exports = Toolbar;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2053,117 +2163,7 @@ Tools.displayName = 'Tools';
 
 
 module.exports = Tools;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Codex Editor Util
- */
-module.exports = function () {
-    function Util() {
-        __webpack_require__(0).classCallCheck(this, Util);
-    }
-
-    __webpack_require__(0).createClass(Util, null, [{
-        key: "sequence",
-
-
-        /**
-         * @typedef {Object} ChainData
-         * @property {Object} data - data that will be passed to the success or fallback
-         * @property {Function} function - function's that must be called asynchronically
-         */
-
-        /**
-         * Fires a promise sequence asyncronically
-         *
-         * @param {Object[]} chains - list or ChainData's
-         * @param {Function} success - success callback
-         * @param {Function} fallback - callback that fires in case of errors
-         *
-         * @return {Promise}
-         */
-        value: function sequence(chains) {
-            var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
-
-
-            return new Promise(function (resolve) {
-
-                /**
-                 * pluck each element from queue
-                 * First, send resolved Promise as previous value
-                 * Each plugins "prepare" method returns a Promise, that's why
-                 * reduce current element will not be able to continue while can't get
-                 * a resolved Promise
-                 */
-                chains.reduce(function (previousValue, currentValue, iteration) {
-
-                    return previousValue.then(function () {
-                        return waitNextBlock(currentValue, success, fallback);
-                    }).then(function () {
-
-                        // finished
-                        if (iteration === chains.length - 1) {
-
-                            resolve();
-                        }
-                    });
-                }, Promise.resolve());
-            });
-
-            /**
-             * Decorator
-             *
-             * @param {ChainData} chainData
-             *
-             * @param {Function} successCallback
-             * @param {Function} fallbackCallback
-             *
-             * @return {Promise}
-             */
-            function waitNextBlock(chainData, successCallback, fallbackCallback) {
-
-                return new Promise(function (resolve) {
-
-                    chainData.function().then(function () {
-
-                        successCallback(chainData.data);
-                    }).then(resolve).catch(function () {
-
-                        fallbackCallback(chainData.data);
-
-                        // anyway, go ahead even it falls
-                        resolve();
-                    });
-                });
-            }
-        }
-
-        /**
-         * Make array from array-like collection
-         *
-         * @param {*} collection
-         *
-         * @return {Array}
-         */
-
-    }, {
-        key: "array",
-        value: function array(collection) {
-
-            return Array.prototype.slice.call(collection);
-        }
-    }]);
-
-    return Util;
-}();
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 11 */
@@ -2625,7 +2625,7 @@ module.exports = UI;
 //     return ui;
 //
 // })({});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
 /* 12 */

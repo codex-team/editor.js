@@ -16,8 +16,22 @@ class BlockManager {
 
         this.config = config;
         this.Editor = null;
+
+        /**
+         * Proxy for Blocks instance {@link Blocks}
+         *
+         * @type {Proxy}
+         * @private
+         */
         this._blocks = null;
-        this._currentBlockIndex = -1;
+
+        /**
+         * Index of current working block
+         *
+         * @type {number}
+         * @private
+         */
+        this.currentBlockIndex = -1;
 
     }
 
@@ -80,7 +94,7 @@ class BlockManager {
         let toolInstance = this.Editor.Tools.construct(toolName, data),
             block = new Block(toolInstance);
 
-        this._blocks[++this._currentBlockIndex] = block;
+        this._blocks[++this.currentBlockIndex] = block;
 
     }
 
@@ -95,7 +109,7 @@ class BlockManager {
         let toolInstance = this.Editor.Tools.construct(toolName, data),
             block = new Block(toolInstance);
 
-        this._blocks.insert(this._currentBlockIndex, block, true);
+        this._blocks.insert(this.currentBlockIndex, block, true);
 
     }
 
@@ -127,7 +141,7 @@ class BlockManager {
      */
     get currentBlock() {
 
-        return this._blocks[this._currentBlockIndex];
+        return this._blocks[this.currentBlockIndex];
 
     }
 
@@ -138,12 +152,12 @@ class BlockManager {
      */
     get currentNode() {
 
-        return this._blocks.nodes[this._currentBlockIndex];
+        return this._blocks.nodes[this.currentBlockIndex];
 
     }
 
     /**
-     * Set _currentBlockIndex to passed block
+     * Set currentBlockIndex to passed block
      *
      * @todo get first level block before searching
      *
@@ -153,7 +167,7 @@ class BlockManager {
 
         let nodes = this._blocks.nodes;
 
-        this._currentBlockIndex = nodes.indexOf(element);
+        this.currentBlockIndex = nodes.indexOf(element);
 
     }
 
@@ -188,7 +202,7 @@ class Blocks {
      */
     constructor(workingArea) {
 
-        this._blocks = [];
+        this.blocks = [];
         this.workingArea = workingArea;
 
     }
@@ -200,7 +214,7 @@ class Blocks {
      */
     push(block) {
 
-        this._blocks.push(block);
+        this.blocks.push(block);
         this.workingArea.appendChild(block.html);
 
     }
@@ -229,25 +243,33 @@ class Blocks {
 
         if (replace) {
 
-            this._blocks[index].html.remove();
+            this.blocks[index].html.remove();
 
         }
 
         let deleteCount = replace ? 1 : 0;
 
-        this._blocks.splice(index, deleteCount, block);
+        this.blocks.splice(index, deleteCount, block);
 
         if (index > 0) {
 
-            let previousBlock = this._blocks[index - 1];
+            let previousBlock = this.blocks[index - 1];
 
             previousBlock.html.insertAdjacentElement('afterend', block.html);
 
         } else {
 
-            let nextBlock = this._blocks[index + 1];
+            let nextBlock = this.blocks[index + 1];
 
-            nextBlock.html.insertAdjacentElement('beforebegin', block.html);
+            if (nextBlock) {
+
+                nextBlock.html.insertAdjacentElement('beforebegin', block.html);
+
+            } else {
+
+                this.workingArea.appendChild(block.html);
+
+            }
 
         }
 
@@ -263,7 +285,7 @@ class Blocks {
      */
     insertAfter(targetBlock, newBlock) {
 
-        let index = this._blocks.indexOf(targetBlock);
+        let index = this.blocks.indexOf(targetBlock);
 
         this.insert(index + 1, newBlock);
 
@@ -277,7 +299,7 @@ class Blocks {
      */
     get(index) {
 
-        return this._blocks[index];
+        return this.blocks[index];
 
     }
 
@@ -289,7 +311,7 @@ class Blocks {
      */
     indexOf(block) {
 
-        return this._blocks.indexOf(block);
+        return this.blocks.indexOf(block);
 
     }
 
@@ -300,7 +322,7 @@ class Blocks {
      */
     get length() {
 
-        return this._blocks.length;
+        return this.blocks.length;
 
     }
 
@@ -311,7 +333,7 @@ class Blocks {
      */
     get array() {
 
-        return this._blocks;
+        return this.blocks;
 
     }
 
