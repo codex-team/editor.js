@@ -74,6 +74,8 @@
         "ActiveXObject": true,
         "RegExp": true,
         "Node": true,
-        "Proxy": true
+        "Proxy": true,
+        "$": true,
+        "_": true
     }
 }

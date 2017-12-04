@@ -5,8 +5,6 @@
  * @version 1.0
  */
 
-import Util from '../util';
-
 class Renderer {
 
     /**
@@ -50,7 +48,7 @@ class Renderer {
 
         }
 
-        Util.sequence(chainData);
+        _.sequence(chainData);
 
     }
 

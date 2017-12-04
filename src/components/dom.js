@@ -1,7 +1,7 @@
 /**
  * DOM manupulations helper
  */
-export default class Dom {
+module.exports = class Dom {
 
     /**
      * Helper for making Elements with classname and attributes

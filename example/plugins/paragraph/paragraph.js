@@ -13,7 +13,7 @@
  *
  */
 
-export default class Paragraph {
+class Paragraph {
 
     /**
      * Get the name of the plugin

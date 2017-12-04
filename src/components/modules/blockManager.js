@@ -4,7 +4,6 @@
  */
 
 import Block from '../block';
-import Util from '../util';
 
 class BlockManager {
 
@@ -300,7 +299,7 @@ class Blocks {
      */
     get nodes() {
 
-        return Util.array(this.workingArea.children);
+        return _.array(this.workingArea.children);
 
     }
 

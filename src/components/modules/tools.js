@@ -34,7 +34,6 @@
  * @property {Object} toolsClasses - all classes
  * @property {EditorConfig} config - Editor config
  */
-let util = require('../util');
 
 class Tools {
 
@@ -133,7 +132,7 @@ class Tools {
         /**
          * to see how it works {@link Util#sequence}
          */
-        return util.sequence(sequenceData, (data) => {
+        return _.sequence(sequenceData, (data) => {
 
             this.success(data);
 
