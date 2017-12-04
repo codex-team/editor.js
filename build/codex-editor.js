@@ -224,6 +224,14 @@ module.exports = function () {
 
             return el.querySelectorAll(selector);
         }
+
+        /**
+         * Check if object is DOM node
+         *
+         * @param {Object} node
+         * @returns {boolean}
+         */
+
     }, {
         key: 'isNode',
         value: function isNode(node) {
@@ -748,6 +756,23 @@ var BlockManager = function () {
         }
 
         /**
+         * Replace current working block
+         *
+         * @param {String} toolName — plugin name
+         * @param {Object} data — plugin data
+         */
+
+    }, {
+        key: 'replace',
+        value: function replace(toolName, data) {
+
+            var toolInstance = this.Editor.Tools.construct(toolName, data),
+                block = new _block2.default(toolInstance);
+
+            this._blocks.insert(this._currentBlockIndex, block, true);
+        }
+
+        /**
          * Get Block instance by html element
          *
          * @todo get first level block before searching
@@ -831,13 +856,7 @@ var BlockManager = function () {
     }]);
 
     return BlockManager;
-}(); /**
-      * @class BlockManager
-      * @classdesc Manage editor`s blocks storage and appearance
-      */
-
-BlockManager.displayName = 'BlockManager';
-;
+}();
 
 /**
  * @class Blocks
@@ -848,6 +867,12 @@ BlockManager.displayName = 'BlockManager';
  * @property {HTMLElement} workingArea — editor`s working node
  *
  */
+/**
+ * @class BlockManager
+ * @classdesc Manage editor`s blocks storage and appearance
+ */
+
+BlockManager.displayName = 'BlockManager';
 
 var Blocks = function () {
 
@@ -883,11 +908,14 @@ var Blocks = function () {
          *
          * @param {Number} index — index to insert Block
          * @param {Block} block — Block to insert
+         * @param {Boolean} replace — it true, replace block on given index
          */
 
     }, {
         key: 'insert',
         value: function insert(index, block) {
+            var replace = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
 
             if (!this.length) {
 
@@ -897,11 +925,17 @@ var Blocks = function () {
 
             if (index > this.length) {
 
-                // @todo decide how to handle this case
-                return;
+                index = this.length;
             }
 
-            this._blocks[index] = block;
+            if (replace) {
+
+                this._blocks[index].html.remove();
+            }
+
+            var deleteCount = replace ? 1 : 0;
+
+            this._blocks.splice(index, deleteCount, block);
 
             if (index > 0) {
 
@@ -1062,15 +1096,21 @@ module.exports = BlockManager;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function($) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _dom = __webpack_require__(1);
-
-var _dom2 = __webpack_require__(0).interopRequireDefault(_dom);
+/**
+ *
+ * @class Block
+ * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
+ *
+ * @property {Tool} tool — current block tool (Paragraph, for example)
+ * @property {Object} CSS — block`s css classes
+ *
+ */
 
 var Block = function () {
 
@@ -1104,8 +1144,8 @@ var Block = function () {
         key: 'compose',
         value: function compose() {
 
-            var wrapper = _dom2.default.make('div', this.CSS.wrapper),
-                content = _dom2.default.make('div', this.CSS.content);
+            var wrapper = $.make('div', this.CSS.wrapper),
+                content = $.make('div', this.CSS.content);
 
             content.appendChild(this.tool.html);
             wrapper.appendChild(content);
@@ -1128,18 +1168,11 @@ var Block = function () {
     }]);
 
     return Block;
-}(); /**
-      *
-      * @class Block
-      * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
-      *
-      * @property {Tool} tool — current block tool (Paragraph, for example)
-      * @property {Object} CSS — block`s css classes
-      *
-      */
+}();
 
 Block.displayName = 'Block';
 exports.default = Block;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 6 */
@@ -1255,7 +1288,7 @@ module.exports = Events;
  * Codex Editor Renderer Module
  *
  * @author Codex Team
- * @version 1.0
+ * @version 2.0.0
  */
 
 var Renderer = function () {
@@ -1298,7 +1331,7 @@ var Renderer = function () {
 
                 chainData.push({
                     function: function _function() {
-                        return _this.makeBlock(items[i]);
+                        return _this.insertBlock(items[i]);
                     }
                 });
             };
@@ -1321,8 +1354,8 @@ var Renderer = function () {
          */
 
     }, {
-        key: "makeBlock",
-        value: function makeBlock(item) {
+        key: "insertBlock",
+        value: function insertBlock(item) {
 
             var tool = item.type,
                 data = item.data;

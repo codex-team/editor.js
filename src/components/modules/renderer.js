@@ -2,7 +2,7 @@
  * Codex Editor Renderer Module
  *
  * @author Codex Team
- * @version 1.0
+ * @version 2.0.0
  */
 
 class Renderer {
@@ -43,7 +43,7 @@ class Renderer {
         for (let i = 0; i < items.length; i++) {
 
             chainData.push({
-                function: () => this.makeBlock(items[i])
+                function: () => this.insertBlock(items[i])
             });
 
         }
@@ -61,7 +61,7 @@ class Renderer {
      * @returns {Promise.<T>}
      * @private
      */
-    makeBlock(item) {
+    insertBlock(item) {
 
         let tool = item.type,
             data = item.data;

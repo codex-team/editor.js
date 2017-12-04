@@ -85,6 +85,21 @@ class BlockManager {
     }
 
     /**
+     * Replace current working block
+     *
+     * @param {String} toolName — plugin name
+     * @param {Object} data — plugin data
+     */
+    replace(toolName, data) {
+
+        let toolInstance = this.Editor.Tools.construct(toolName, data),
+            block = new Block(toolInstance);
+
+        this._blocks.insert(this._currentBlockIndex, block, true);
+
+    }
+
+    /**
      * Get Block instance by html element
      *
      * @todo get first level block before searching
@@ -153,7 +168,7 @@ class BlockManager {
 
     }
 
-};
+}
 
 /**
  * @class Blocks
@@ -195,8 +210,9 @@ class Blocks {
      *
      * @param {Number} index — index to insert Block
      * @param {Block} block — Block to insert
+     * @param {Boolean} replace — it true, replace block on given index
      */
-    insert(index, block) {
+    insert(index, block, replace = false) {
 
         if (!this.length) {
 
@@ -207,12 +223,19 @@ class Blocks {
 
         if (index > this.length) {
 
-            // @todo decide how to handle this case
-            return;
+            index = this.length;
 
         }
 
-        this._blocks[index] = block;
+        if (replace) {
+
+            this._blocks[index].html.remove();
+
+        }
+
+        let deleteCount = replace ? 1 : 0;
+
+        this._blocks.splice(index, deleteCount, block);
 
         if (index > 0) {
 

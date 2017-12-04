@@ -9,8 +9,6 @@
  */
 
 
-import $ from './dom';
-
 export default class Block {
 
     /**

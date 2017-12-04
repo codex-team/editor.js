@@ -86,6 +86,12 @@ module.exports = class Dom {
 
     }
 
+    /**
+     * Check if object is DOM node
+     *
+     * @param {Object} node
+     * @returns {boolean}
+     */
     static isNode(node) {
 
         return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
