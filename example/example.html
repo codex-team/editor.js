@@ -17,8 +17,8 @@
 
 </body>
 
-<!--<script src="plugins/paragraph/paragraph.js?v=100"></script>-->
-<!--<link rel="stylesheet" href="plugins/paragraph/paragraph.css">-->
+<script src="plugins/paragraph/paragraph.js?v=100"></script>
+<link rel="stylesheet" href="plugins/paragraph/paragraph.css">
 
 <!--<script src="plugins/header/header.js"></script>-->
 <!--<link rel="stylesheet" href="plugins/header/header.css">-->
@@ -56,44 +56,13 @@
 <script src="../build/codex-editor.js?v=108"></script>
 
 <script>
-
-    class Quote {
-
-        static prepare() {
-            return new Promise(function(resolve, reject) {
-
-                window.setTimeout(function() {
-                    resolve();
-                }, 1000);
-            });
-        }
-
-        render() {
-            console.log("Quote rendering");
-        }
-
-        save() {
-            console.log("Quote saving");
-        }
-
-    }
-
-    class AnotherTool {
-
-        static prepare() {
-            return Promise.reject();
-        }
-
-    }
-
     codex = {};
     codex.editor = 1;
     var editor = new CodexEditor({
         holderId : 'codex-editor',
         initialBlock : 'paragraph',
         tools: {
-            quote: Quote,
-            anotherTool : AnotherTool
+            paragraph: Paragraph,
         },
         toolsConfig: {
             quote: {
@@ -101,6 +70,22 @@
                 displayInToolbox : true,
                 enableLineBreaks : true
             }
+        },
+        data: {
+            items: [
+                {
+                    type : 'paragraph',
+                    data : {
+                        text : 'Привет от CodeX'
+                    }
+                },
+                {
+                    type : 'paragraph',
+                    data : {
+                        text : 'Пишите нам на team@ifmo.su'
+                    }
+                },
+            ]
         }
     });
 

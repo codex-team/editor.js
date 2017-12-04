@@ -11,7 +11,7 @@ module.exports = class Dom {
      * @param  {Object} attributes        - any attributes
      * @return {Element}
      */
-    static make(tagName, classNames, attributes) {
+    static make(tagName, classNames = null, attributes = {}) {
 
         var el = document.createElement(tagName);
 
@@ -83,6 +83,18 @@ module.exports = class Dom {
     static findAll(el = document, selector) {
 
         return el.querySelectorAll(selector);
+
+    }
+
+    /**
+     * Check if object is DOM node
+     *
+     * @param {Object} node
+     * @returns {boolean}
+     */
+    static isNode(node) {
+
+        return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
 
     }
 

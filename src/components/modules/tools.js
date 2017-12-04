@@ -15,6 +15,8 @@
  */
 
 /**
+ * @todo update according to current API
+ *
  * @typedef {Object} Tool
  * @property render
  * @property save
@@ -196,6 +198,26 @@ class Tools {
     getTools() {
 
         return this.toolInstances;
+
+    }
+
+    /**
+     * Return tool`a instance
+     *
+     * @param {String} tool — tool name
+     * @param {Object} data — initial data
+     *
+     * @todo throw exceptions if tool doesnt exist
+     *
+     */
+    construct(tool, data) {
+
+        let plugin = this.toolClasses[tool],
+            config = this.config.toolsConfig[tool];
+
+        let instance = new plugin(data, config);
+
+        return instance;
 
     }
 

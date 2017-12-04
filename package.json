@@ -38,5 +38,6 @@
     "postcss-nesting": "^4.2.1",
     "postcss-smart-import": "^0.7.5",
     "webpack": "^3.8.1"
-  }
+  },
+  "dependencies": {}
 }

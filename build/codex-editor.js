@@ -61,7 +61,7 @@ var CodexEditor =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -72,29 +72,137 @@ var CodexEditor =
 
 
 exports.createClass = function () {
-
-    function defineProperties(target, props) {
-
-        for (var i = 0; i < props.length; i++) {
-
-            var descriptor = props[i];
-
-            descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ('value' in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-
-        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
-}();exports.classCallCheck = function (instance, Constructor) {
-
-    if (!(instance instanceof Constructor)) {
-
-        throw new TypeError('Cannot call a class as a function');
+  function defineProperties(target, props) {
+    for (var i = 0; i < props.length; i++) {
+      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
     }
+  }return function (Constructor, protoProps, staticProps) {
+    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+  };
+}();exports.classCallCheck = function (instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+};
+
+exports.interopRequireDefault = function (obj) {
+  return obj && obj.__esModule ? obj : {
+    default: obj
+  };
 };
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/**
+ * Codex Editor Util
+ */
+module.exports = function () {
+    function Util() {
+        __webpack_require__(0).classCallCheck(this, Util);
+    }
+
+    __webpack_require__(0).createClass(Util, null, [{
+        key: "sequence",
+
+
+        /**
+         * @typedef {Object} ChainData
+         * @property {Object} data - data that will be passed to the success or fallback
+         * @property {Function} function - function's that must be called asynchronically
+         */
+
+        /**
+         * Fires a promise sequence asyncronically
+         *
+         * @param {Object[]} chains - list or ChainData's
+         * @param {Function} success - success callback
+         * @param {Function} fallback - callback that fires in case of errors
+         *
+         * @return {Promise}
+         */
+        value: function sequence(chains) {
+            var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
+
+            return new Promise(function (resolve) {
+
+                /**
+                 * pluck each element from queue
+                 * First, send resolved Promise as previous value
+                 * Each plugins "prepare" method returns a Promise, that's why
+                 * reduce current element will not be able to continue while can't get
+                 * a resolved Promise
+                 */
+                chains.reduce(function (previousValue, currentValue, iteration) {
+
+                    return previousValue.then(function () {
+                        return waitNextBlock(currentValue, success, fallback);
+                    }).then(function () {
+
+                        // finished
+                        if (iteration === chains.length - 1) {
+
+                            resolve();
+                        }
+                    });
+                }, Promise.resolve());
+            });
+
+            /**
+             * Decorator
+             *
+             * @param {ChainData} chainData
+             *
+             * @param {Function} successCallback
+             * @param {Function} fallbackCallback
+             *
+             * @return {Promise}
+             */
+            function waitNextBlock(chainData, successCallback, fallbackCallback) {
+
+                return new Promise(function (resolve) {
+
+                    chainData.function().then(function () {
+
+                        successCallback(chainData.data);
+                    }).then(resolve).catch(function () {
+
+                        fallbackCallback(chainData.data);
+
+                        // anyway, go ahead even it falls
+                        resolve();
+                    });
+                });
+            }
+        }
+
+        /**
+         * Make array from array-like collection
+         *
+         * @param {*} collection
+         *
+         * @return {Array}
+         */
+
+    }, {
+        key: "array",
+        value: function array(collection) {
+
+            return Array.prototype.slice.call(collection);
+        }
+    }]);
+
+    return Util;
+}();
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -109,7 +217,7 @@ module.exports = function () {
     }
 
     __webpack_require__(0).createClass(Dom, null, [{
-        key: "make",
+        key: 'make',
 
 
         /**
@@ -120,7 +228,10 @@ module.exports = function () {
          * @param  {Object} attributes        - any attributes
          * @return {Element}
          */
-        value: function make(tagName, classNames, attributes) {
+        value: function make(tagName) {
+            var classNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var attributes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
 
             var el = document.createElement(tagName);
 
@@ -149,7 +260,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "append",
+        key: 'append',
         value: function append(parent, elements) {
 
             if (Array.isArray(elements)) {
@@ -175,7 +286,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "find",
+        key: 'find',
         value: function find() {
             var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
             var selector = arguments[1];
@@ -195,7 +306,7 @@ module.exports = function () {
          */
 
     }, {
-        key: "findAll",
+        key: 'findAll',
         value: function findAll() {
             var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
             var selector = arguments[1];
@@ -203,13 +314,27 @@ module.exports = function () {
 
             return el.querySelectorAll(selector);
         }
+
+        /**
+         * Check if object is DOM node
+         *
+         * @param {Object} node
+         * @returns {boolean}
+         */
+
+    }, {
+        key: 'isNode',
+        value: function isNode(node) {
+
+            return node && (typeof node === 'undefined' ? 'undefined' : __webpack_require__(0).typeof(node)) === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
+        }
     }]);
 
     return Dom;
 }();
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -271,8 +396,8 @@ module.exports = function () {
  */
 // eslint-disable-next-line
 
-var modules = ["events.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-    return __webpack_require__(3)("./" + module);
+var modules = ["blockManager.js","events.js","renderer.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+    return __webpack_require__(4)("./" + module);
 });
 
 /**
@@ -451,7 +576,7 @@ module.exports = function () {
                 return module.prepare();
             };
 
-            return Promise.resolve().then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.Tools)).catch(function (error) {
+            return Promise.resolve().then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.BlockManager)).catch(function (error) {
 
                 console.log('Error occured', error);
             });
@@ -600,14 +725,16 @@ module.exports = function () {
 // })({});
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./events.js": 4,
-	"./toolbar.js": 5,
-	"./tools.js": 6,
-	"./ui.js": 8
+	"./blockManager.js": 5,
+	"./events.js": 7,
+	"./renderer.js": 8,
+	"./toolbar.js": 9,
+	"./tools.js": 10,
+	"./ui.js": 11
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -623,10 +750,542 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 3;
+webpackContext.id = 4;
 
 /***/ }),
-/* 4 */
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(_) {
+
+var _block = __webpack_require__(6);
+
+var _block2 = __webpack_require__(0).interopRequireDefault(_block);
+
+var BlockManager = function () {
+
+    /**
+     * @constructor
+     *
+     * @param {EditorConfig} config
+     */
+    function BlockManager(_ref) {
+        var config = _ref.config;
+
+        __webpack_require__(0).classCallCheck(this, BlockManager);
+
+        this.config = config;
+        this.Editor = null;
+
+        /**
+         * Proxy for Blocks instance {@link Blocks}
+         *
+         * @type {Proxy}
+         * @private
+         */
+        this._blocks = null;
+
+        /**
+         * Index of current working block
+         *
+         * @type {number}
+         * @private
+         */
+        this.currentBlockIndex = -1;
+    }
+
+    /**
+     * Editor modules setting
+     *
+     * @param Editor
+     */
+
+
+    __webpack_require__(0).createClass(BlockManager, [{
+        key: 'prepare',
+
+
+        /**
+         * Should be called after Editor.UI preparation
+         * Define this._blocks property
+         *
+         * @returns {Promise}
+         */
+        value: function prepare() {
+            var _this = this;
+
+            return new Promise(function (resolve) {
+
+                var blocks = new Blocks(_this.Editor.UI.nodes.redactor);
+
+                /**
+                 * We need to use Proxy to overload set/get [] operator.
+                 * So we can use array-like syntax to access blocks
+                 *
+                 * @example
+                 * this._blocks[0] = new Block(...);
+                 *
+                 * block = this._blocks[0];
+                 *
+                 * @todo proxy the enumerate method
+                 *
+                 * @type {Proxy}
+                 * @private
+                 */
+                _this._blocks = new Proxy(blocks, {
+                    set: Blocks.set,
+                    get: Blocks.get
+                });
+
+                resolve();
+            });
+        }
+
+        /**
+         * Insert new block into _blocks
+         *
+         * @param {String} toolName — plugin name
+         * @param {Object} data — plugin data
+         */
+
+    }, {
+        key: 'insert',
+        value: function insert(toolName, data) {
+
+            var toolInstance = this.Editor.Tools.construct(toolName, data),
+                block = new _block2.default(toolInstance);
+
+            this._blocks[++this.currentBlockIndex] = block;
+        }
+
+        /**
+         * Replace current working block
+         *
+         * @param {String} toolName — plugin name
+         * @param {Object} data — plugin data
+         */
+
+    }, {
+        key: 'replace',
+        value: function replace(toolName, data) {
+
+            var toolInstance = this.Editor.Tools.construct(toolName, data),
+                block = new _block2.default(toolInstance);
+
+            this._blocks.insert(this.currentBlockIndex, block, true);
+        }
+
+        /**
+         * Get Block instance by html element
+         *
+         * @todo get first level block before searching
+         *
+         * @param {HTMLElement} element
+         * @returns {Block}
+         */
+
+    }, {
+        key: 'getBlock',
+        value: function getBlock(element) {
+
+            var nodes = this._blocks.nodes,
+                index = nodes.indexOf(element);
+
+            if (index >= 0) {
+
+                return this._blocks[index];
+            }
+        }
+
+        /**
+         * Get current Block instance
+         *
+         * @return {Block}
+         */
+
+    }, {
+        key: 'state',
+        set: function set(Editor) {
+
+            this.Editor = Editor;
+        }
+    }, {
+        key: 'currentBlock',
+        get: function get() {
+
+            return this._blocks[this.currentBlockIndex];
+        }
+
+        /**
+         * Get working html element
+         *
+         * @return {HTMLElement}
+         */
+
+    }, {
+        key: 'currentNode',
+        get: function get() {
+
+            return this._blocks.nodes[this.currentBlockIndex];
+        }
+
+        /**
+         * Set currentBlockIndex to passed block
+         *
+         * @todo get first level block before searching
+         *
+         * @param {HTMLElement} element
+         */
+        ,
+        set: function set(element) {
+
+            var nodes = this._blocks.nodes;
+
+            this.currentBlockIndex = nodes.indexOf(element);
+        }
+
+        /**
+         * Get array of Block instances
+         *
+         * @returns {Block[]} {@link Blocks#array}
+         */
+
+    }, {
+        key: 'blocks',
+        get: function get() {
+
+            return this._blocks.array;
+        }
+    }]);
+
+    return BlockManager;
+}();
+
+/**
+ * @class Blocks
+ * @classdesc Class to work with Block instances array
+ *
+ * @private
+ *
+ * @property {HTMLElement} workingArea — editor`s working node
+ *
+ */
+/**
+ * @class BlockManager
+ * @classdesc Manage editor`s blocks storage and appearance
+ */
+
+BlockManager.displayName = 'BlockManager';
+
+var Blocks = function () {
+
+    /**
+     * @constructor
+     *
+     * @param {HTMLElement} workingArea — editor`s working node
+     */
+    function Blocks(workingArea) {
+        __webpack_require__(0).classCallCheck(this, Blocks);
+
+        this.blocks = [];
+        this.workingArea = workingArea;
+    }
+
+    /**
+     * Push back new Block
+     *
+     * @param {Block} block
+     */
+
+
+    __webpack_require__(0).createClass(Blocks, [{
+        key: 'push',
+        value: function push(block) {
+
+            this.blocks.push(block);
+            this.workingArea.appendChild(block.html);
+        }
+
+        /**
+         * Insert new Block at passed index
+         *
+         * @param {Number} index — index to insert Block
+         * @param {Block} block — Block to insert
+         * @param {Boolean} replace — it true, replace block on given index
+         */
+
+    }, {
+        key: 'insert',
+        value: function insert(index, block) {
+            var replace = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+
+            if (!this.length) {
+
+                this.push(block);
+                return;
+            }
+
+            if (index > this.length) {
+
+                index = this.length;
+            }
+
+            if (replace) {
+
+                this.blocks[index].html.remove();
+            }
+
+            var deleteCount = replace ? 1 : 0;
+
+            this.blocks.splice(index, deleteCount, block);
+
+            if (index > 0) {
+
+                var previousBlock = this.blocks[index - 1];
+
+                previousBlock.html.insertAdjacentElement('afterend', block.html);
+            } else {
+
+                var nextBlock = this.blocks[index + 1];
+
+                if (nextBlock) {
+
+                    nextBlock.html.insertAdjacentElement('beforebegin', block.html);
+                } else {
+
+                    this.workingArea.appendChild(block.html);
+                }
+            }
+        }
+
+        /**
+         * Insert Block after passed target
+         *
+         * @todo decide if this method is necessary
+         *
+         * @param {Block} targetBlock — target after wich Block should be inserted
+         * @param {Block} newBlock — Block to insert
+         */
+
+    }, {
+        key: 'insertAfter',
+        value: function insertAfter(targetBlock, newBlock) {
+
+            var index = this.blocks.indexOf(targetBlock);
+
+            this.insert(index + 1, newBlock);
+        }
+
+        /**
+         * Get Block by index
+         *
+         * @param {Number} index — Block index
+         * @returns {Block}
+         */
+
+    }, {
+        key: 'get',
+        value: function get(index) {
+
+            return this.blocks[index];
+        }
+
+        /**
+         * Return index of passed Block
+         *
+         * @param {Block} block
+         * @returns {Number}
+         */
+
+    }, {
+        key: 'indexOf',
+        value: function indexOf(block) {
+
+            return this.blocks.indexOf(block);
+        }
+
+        /**
+         * Get length of Block instances array
+         *
+         * @returns {Number}
+         */
+
+    }, {
+        key: 'length',
+        get: function get() {
+
+            return this.blocks.length;
+        }
+
+        /**
+         * Get Block instances array
+         *
+         * @returns {Block[]}
+         */
+
+    }, {
+        key: 'array',
+        get: function get() {
+
+            return this.blocks;
+        }
+
+        /**
+         * Get blocks html elements array
+         *
+         * @returns {HTMLElement[]}
+         */
+
+    }, {
+        key: 'nodes',
+        get: function get() {
+
+            return _.array(this.workingArea.children);
+        }
+
+        /**
+         * Proxy trap to implement array-like setter
+         *
+         * @example
+         * blocks[0] = new Block(...)
+         *
+         * @param {Blocks} instance — Blocks instance
+         * @param {Number|String} index — block index
+         * @param {Block} block — Block to set
+         * @returns {Boolean}
+         */
+
+    }], [{
+        key: 'set',
+        value: function set(instance, index, block) {
+
+            if (isNaN(Number(index))) {
+
+                return false;
+            }
+
+            instance.insert(index, block);
+
+            return true;
+        }
+
+        /**
+         * Proxy trap to implement array-like getter
+         *
+         * @param {Blocks} instance — Blocks instance
+         * @param {Number|String} index — Block index
+         * @returns {Block|*}
+         */
+
+    }, {
+        key: 'get',
+        value: function get(instance, index) {
+
+            if (isNaN(Number(index))) {
+
+                return instance[index];
+            }
+
+            return instance.get(index);
+        }
+    }]);
+
+    return Blocks;
+}();
+
+Blocks.displayName = 'Blocks';
+
+
+module.exports = BlockManager;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+/**
+ *
+ * @class Block
+ * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
+ *
+ * @property {Tool} tool — current block tool (Paragraph, for example)
+ * @property {Object} CSS — block`s css classes
+ *
+ */
+
+var Block = function () {
+
+    /**
+     * @constructor
+     *
+     * @param {Object} tool — current block plugin`s instance
+     */
+    function Block(tool) {
+        __webpack_require__(0).classCallCheck(this, Block);
+
+        this.tool = tool;
+
+        this.CSS = {
+            wrapper: 'ce-block',
+            content: 'ce-block__content'
+        };
+
+        this._html = this.compose();
+    }
+
+    /**
+     * Make default block wrappers and put tool`s content there
+     *
+     * @returns {HTMLDivElement}
+     * @private
+     */
+
+
+    __webpack_require__(0).createClass(Block, [{
+        key: 'compose',
+        value: function compose() {
+
+            var wrapper = $.make('div', this.CSS.wrapper),
+                content = $.make('div', this.CSS.content);
+
+            content.appendChild(this.tool.html);
+            wrapper.appendChild(content);
+
+            return wrapper;
+        }
+
+        /**
+         * Get block`s HTML
+         *
+         * @returns {HTMLDivElement}
+         */
+
+    }, {
+        key: 'html',
+        get: function get() {
+
+            return this._html;
+        }
+    }]);
+
+    return Block;
+}();
+
+Block.displayName = 'Block';
+exports.default = Block;
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -729,7 +1388,308 @@ Events.displayName = "Events";
 module.exports = Events;
 
 /***/ }),
-/* 5 */
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(_) {
+
+/**
+ * Codex Editor Renderer Module
+ *
+ * @author Codex Team
+ * @version 2.0.0
+ */
+
+var Renderer = function () {
+
+    /**
+     * @constructor
+     *
+     * @param {EditorConfig} config
+     */
+    function Renderer(config) {
+        __webpack_require__(0).classCallCheck(this, Renderer);
+
+        this.config = config;
+        this.Editor = null;
+    }
+
+    /**
+     * Editor modules setter
+     *
+     * @param {Object} Editor
+     */
+
+
+    __webpack_require__(0).createClass(Renderer, [{
+        key: "render",
+
+
+        /**
+         *
+         * Make plugin blocks from array of plugin`s data
+         *
+         * @param {Object[]} items
+         */
+        value: function render(items) {
+            var _this = this;
+
+            var chainData = [];
+
+            var _loop = function _loop(i) {
+
+                chainData.push({
+                    function: function _function() {
+                        return _this.insertBlock(items[i]);
+                    }
+                });
+            };
+
+            for (var i = 0; i < items.length; i++) {
+                _loop(i);
+            }
+
+            _.sequence(chainData);
+        }
+
+        /**
+         * Get plugin instance
+         * Add plugin instance to BlockManager
+         * Insert block to working zone
+         *
+         * @param {Object} item
+         * @returns {Promise.<T>}
+         * @private
+         */
+
+    }, {
+        key: "insertBlock",
+        value: function insertBlock(item) {
+
+            var tool = item.type,
+                data = item.data;
+
+            this.Editor.BlockManager.insert(tool, data);
+
+            return Promise.resolve();
+        }
+    }, {
+        key: "state",
+        set: function set(Editor) {
+
+            this.Editor = Editor;
+        }
+    }]);
+
+    return Renderer;
+}();
+
+Renderer.displayName = "Renderer";
+
+
+module.exports = Renderer;
+
+// module.exports = (function (renderer) {
+//
+//     let editor = codex.editor;
+//
+//     /**
+//      * Asyncronously parses input JSON to redactor blocks
+//      */
+//     renderer.makeBlocksFromData = function () {
+//
+//         /**
+//          * If redactor is empty, add first paragraph to start writing
+//          */
+//         if (editor.core.isEmpty(editor.state.blocks) || !editor.state.blocks.items.length) {
+//
+//             editor.ui.addInitialBlock();
+//             return;
+//
+//         }
+//
+//         Promise.resolve()
+//
+//         /** First, get JSON from state */
+//             .then(function () {
+//
+//                 return editor.state.blocks;
+//
+//             })
+//
+//             /** Then, start to iterate they */
+//             .then(editor.renderer.appendBlocks)
+//
+//             /** Write log if something goes wrong */
+//             .catch(function (error) {
+//
+//                 editor.core.log('Error while parsing JSON: %o', 'error', error);
+//
+//             });
+//
+//     };
+//
+//     /**
+//      * Parses JSON to blocks
+//      * @param {object} data
+//      * @return Promise -> nodeList
+//      */
+//     renderer.appendBlocks = function (data) {
+//
+//         var blocks = data.items;
+//
+//         /**
+//          * Sequence of one-by-one blocks appending
+//          * Uses to save blocks order after async-handler
+//          */
+//         var nodeSequence = Promise.resolve();
+//
+//         for (var index = 0; index < blocks.length ; index++ ) {
+//
+//             /** Add node to sequence at specified index */
+//             editor.renderer.appendNodeAtIndex(nodeSequence, blocks, index);
+//
+//         }
+//
+//     };
+//
+//     /**
+//      * Append node at specified index
+//      */
+//     renderer.appendNodeAtIndex = function (nodeSequence, blocks, index) {
+//
+//         /** We need to append node to sequence */
+//         nodeSequence
+//
+//         /** first, get node async-aware */
+//             .then(function () {
+//
+//                 return editor.renderer.getNodeAsync(blocks, index);
+//
+//             })
+//
+//             /**
+//              * second, compose editor-block from JSON object
+//              */
+//             .then(editor.renderer.createBlockFromData)
+//
+//             /**
+//              * now insert block to redactor
+//              */
+//             .then(function (blockData) {
+//
+//                 /**
+//                  * blockData has 'block', 'type' and 'stretched' information
+//                  */
+//                 editor.content.insertBlock(blockData);
+//
+//                 /** Pass created block to next step */
+//                 return blockData.block;
+//
+//             })
+//
+//             /** Log if something wrong with node */
+//             .catch(function (error) {
+//
+//                 editor.core.log('Node skipped while parsing because %o', 'error', error);
+//
+//             });
+//
+//     };
+//
+//     /**
+//      * Asynchronously returns block data from blocksList by index
+//      * @return Promise to node
+//      */
+//     renderer.getNodeAsync = function (blocksList, index) {
+//
+//         return Promise.resolve().then(function () {
+//
+//             return {
+//                 tool : blocksList[index],
+//                 position : index
+//             };
+//
+//         });
+//
+//     };
+//
+//     /**
+//      * Creates editor block by JSON-data
+//      *
+//      * @uses render method of each plugin
+//      *
+//      * @param {Object} toolData.tool
+//      *                              { header : {
+//      *                                                text: '',
+//      *                                                type: 'H3', ...
+//      *                                            }
+//      *                               }
+//      * @param {Number} toolData.position - index in input-blocks array
+//      * @return {Object} with type and Element
+//      */
+//     renderer.createBlockFromData = function ( toolData ) {
+//
+//         /** New parser */
+//         var block,
+//             tool = toolData.tool,
+//             pluginName = tool.type;
+//
+//         /** Get first key of object that stores plugin name */
+//         // for (var pluginName in blockData) break;
+//
+//         /** Check for plugin existance */
+//         if (!editor.tools[pluginName]) {
+//
+//             throw Error(`Plugin «${pluginName}» not found`);
+//
+//         }
+//
+//         /** Check for plugin having render method */
+//         if (typeof editor.tools[pluginName].render != 'function') {
+//
+//             throw Error(`Plugin «${pluginName}» must have «render» method`);
+//
+//         }
+//
+//         if ( editor.tools[pluginName].available === false ) {
+//
+//             block = editor.draw.unavailableBlock();
+//
+//             block.innerHTML = editor.tools[pluginName].loadingMessage;
+//
+//             /**
+//             * Saver will extract data from initial block data by position in array
+//             */
+//             block.dataset.inputPosition = toolData.position;
+//
+//         } else {
+//
+//             /** New Parser */
+//             block = editor.tools[pluginName].render(tool.data);
+//
+//         }
+//
+//         /** is first-level block stretched */
+//         var stretched = editor.tools[pluginName].isStretched || false;
+//
+//         /** Retrun type and block */
+//         return {
+//             type      : pluginName,
+//             block     : block,
+//             stretched : stretched
+//         };
+//
+//     };
+//
+//     return renderer;
+//
+// })({});
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+/***/ }),
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -943,10 +1903,10 @@ Toolbar.displayName = 'Toolbar';
 
 
 module.exports = Toolbar;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 6 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -969,6 +1929,8 @@ module.exports = Toolbar;
  */
 
 /**
+ * @todo update according to current API
+ *
  * @typedef {Object} Tool
  * @property render
  * @property save
@@ -1170,6 +2132,28 @@ var Tools = function () {
 
             return this.toolInstances;
         }
+
+        /**
+         * Return tool`a instance
+         *
+         * @param {String} tool — tool name
+         * @param {Object} data — initial data
+         *
+         * @todo throw exceptions if tool doesnt exist
+         *
+         */
+
+    }, {
+        key: 'construct',
+        value: function construct(tool, data) {
+
+            var plugin = this.toolClasses[tool],
+                config = this.config.toolsConfig[tool];
+
+            var instance = new plugin(data, config);
+
+            return instance;
+        }
     }]);
 
     return Tools;
@@ -1179,102 +2163,10 @@ Tools.displayName = 'Tools';
 
 
 module.exports = Tools;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Codex Editor Util
- */
-module.exports = function () {
-    function Util() {
-        __webpack_require__(0).classCallCheck(this, Util);
-    }
-
-    __webpack_require__(0).createClass(Util, null, [{
-        key: "sequence",
-
-
-        /**
-         * @typedef {Object} ChainData
-         * @property {Object} data - data that will be passed to the success or fallback
-         * @property {Function} function - function's that must be called asynchronically
-         */
-
-        /**
-         * Fires a promise sequence asyncronically
-         *
-         * @param {Object[]} chains - list or ChainData's
-         * @param {Function} success - success callback
-         * @param {Function} fallback - callback that fires in case of errors
-         *
-         * @return {Promise}
-         */
-        value: function sequence(chains, success, fallback) {
-
-            return new Promise(function (resolve) {
-
-                /**
-                 * pluck each element from queue
-                 * First, send resolved Promise as previous value
-                 * Each plugins "prepare" method returns a Promise, that's why
-                 * reduce current element will not be able to continue while can't get
-                 * a resolved Promise
-                 */
-                chains.reduce(function (previousValue, currentValue, iteration) {
-
-                    return previousValue.then(function () {
-                        return waitNextBlock(currentValue, success, fallback);
-                    }).then(function () {
-
-                        // finished
-                        if (iteration === chains.length - 1) {
-
-                            resolve();
-                        }
-                    });
-                }, Promise.resolve());
-            });
-
-            /**
-             * Decorator
-             *
-             * @param {ChainData} chainData
-             *
-             * @param {Function} successCallback
-             * @param {Function} fallbackCallback
-             *
-             * @return {Promise}
-             */
-            function waitNextBlock(chainData, successCallback, fallbackCallback) {
-
-                return new Promise(function (resolve) {
-
-                    chainData.function().then(function () {
-
-                        successCallback(chainData.data);
-                    }).then(resolve).catch(function () {
-
-                        fallbackCallback(chainData.data);
-
-                        // anyway, go ahead even it falls
-                        resolve();
-                    });
-                });
-            }
-        }
-    }]);
-
-    return Util;
-}();
-
-/***/ }),
-/* 8 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1441,7 +2333,7 @@ var UI = function () {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(9);
+      var styles = __webpack_require__(12);
 
       /**
        * Make tag
@@ -1733,13 +2625,13 @@ module.exports = UI;
 //     return ui;
 //
 // })({});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 9 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(10)(undefined);
+exports = module.exports = __webpack_require__(13)(undefined);
 // imports
 
 
@@ -1750,7 +2642,7 @@ exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n
 
 
 /***/ }),
-/* 10 */
+/* 13 */
 /***/ (function(module, exports) {
 
 /*
