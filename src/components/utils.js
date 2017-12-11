@@ -1,7 +1,7 @@
 /**
  * Codex Editor Util
  */
-module.exports = class Util {
+export default class Util {
 
     /**
      * @typedef {Object} ChainData

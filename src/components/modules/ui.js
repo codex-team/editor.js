@@ -46,6 +46,7 @@ let CSS = {
  *                    <ce-inline-toolbar />
  *                </codex-editor>
  *
+ * @typedef {UI} UI
  * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
  * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
  * @property {Object} nodes          -
@@ -53,7 +54,8 @@ let CSS = {
  * @property {Element} nodes.wrapper  - <codex-editor>
  * @property {Element} nodes.redactor - <ce-redactor>
  */
-class UI {
+
+export default class UI extends Module {
 
     /**
      * @constructor
@@ -62,25 +64,13 @@ class UI {
      */
     constructor({ config }) {
 
-        this.config = config;
-        this.Editor = null;
+        super(config);
 
         this.nodes = {
             holder: null,
             wrapper: null,
             redactor: null
         };
-
-    }
-
-
-    /**
-     * Editor modules setter
-     * @param {object} Editor - available editor modules
-     */
-    set state(Editor) {
-
-        this.Editor = Editor;
 
     }
 
@@ -176,9 +166,6 @@ class UI {
     }
 
 }
-
-module.exports = UI;
-
 
 // /**
 //  * Codex Editor UI module

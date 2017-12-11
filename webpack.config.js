@@ -21,8 +21,10 @@ const VERSION  = process.env.VERSION || pkg.version;
  * @type {webpack}
  */
 var webpack              = require('webpack');
-var ExtractTextPlugin    = require('extract-text-webpack-plugin');
 
+/**
+ * File system
+ */
 var fs = require('fs');
 
 /**
@@ -86,15 +88,6 @@ module.exports = {
         }),
 
         /**
-         * Automatically load global visible modules
-         * instead of having to import/require them everywhere.
-         */
-        new webpack.ProvidePlugin({
-          '_': 'utils',
-          '$': 'dom'
-        }),
-
-        /**
          * Setting up a dynamic requires that we use to autoload Editor Modules from 'components/modules' dir
          * {@link https://webpack.js.org/plugins/context-replacement-plugin/}
          */
@@ -107,6 +100,16 @@ module.exports = {
                 '$' // at the end of path
             )
         ),
+
+        /**
+         * Automatically load global visible modules
+         * instead of having to import/require them everywhere.
+         */
+        new webpack.ProvidePlugin({
+          '_': 'utils',
+          '$': 'dom',
+          'Module': './../__module',
+        }),
 
 
         /** Минифицируем CSS и JS */
@@ -133,14 +136,20 @@ module.exports = {
                         presets: [ __dirname + '/node_modules/babel-preset-es2015' ],
                         plugins: [
                             /**
+                             * Dont need to use «.default» after «export default Class Ui {}»
+                             * @see  {@link https://github.com/59naga/babel-plugin-add-module-exports}
+                             */
+                            'add-module-exports',
+                            /**
                              * Babel transforms some awesome ES6 features to ES5 with extra code, such as Class, JSX.
                              * This plugin makes all generated extra codes to one module which significantly reduces the bundle code size.
                              *
                              * {@link https://github.com/brianZeng/babel-plugin-transform-helper}
+                             * @since 11 dec 2017 - removed due to plugin does not supports class inheritance
                              */
-                            ['babel-plugin-transform-helper', {
-                                helperFilename:'build/__tmp_babel_helpers.js'
-                            }],
+                            // ['babel-plugin-transform-helper', {
+                            //     helperFilename:'build/__tmp_babel_helpers.js'
+                            // }],
                             'class-display-name',
                         ]
                     }
@@ -164,16 +173,6 @@ module.exports = {
                     },
                     'postcss-loader'
                 ]
-                // use: ExtractTextPlugin.extract([
-                //     {
-                //         loader: 'css-loader',
-                //         options: {
-                //             // minimize: 1,
-                //             importLoaders: 1
-                //         }
-                //     },
-                //     'postcss-loader'
-                // ])
             }
         ]
     }

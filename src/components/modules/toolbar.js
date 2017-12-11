@@ -36,6 +36,7 @@
  * @class
  * @classdesc Toolbar module
  *
+ * @typedef {Toolbar} Toolbar
  * @property {Object} nodes
  * @property {Element} nodes.wrapper        - Toolbar main element
  * @property {Element} nodes.content        - Zone with Plus button and toolbox.
@@ -48,14 +49,14 @@
  * @property {Element} nodes.pluginSettings    - Plugin Settings section of Settings Panel
  * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
  */
-class Toolbar {
+export default class Toolbar extends Module {
 
     /**
      * @constructor
      */
-    constructor() {
+    constructor(config) {
 
-        this.Editor = null;
+        super(config);
 
         this.nodes = {
             wrapper : null,
@@ -94,16 +95,6 @@ class Toolbar {
             defaultSettings: 'ce-settings_default',
             pluginSettings: 'ce-settings_plugin',
         };
-
-    }
-
-    /**
-     * Editor modules setter
-     * @param {object} Editor - available editor modules
-     */
-    set state(Editor) {
-
-        this.Editor = Editor;
 
     }
 
@@ -192,5 +183,3 @@ class Toolbar {
     }
 
 }
-
-module.exports = Toolbar;

@@ -15,7 +15,8 @@
     "codex",
     "_",
     "$",
-    "editorModules"
+    "editorModules",
+    "Module"
   ],
 
   // Allow ES6.
