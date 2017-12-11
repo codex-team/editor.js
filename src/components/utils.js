@@ -18,7 +18,7 @@ export default class Util {
      *
      * @return {Promise}
      */
-    static sequence(chains, success, fallback) {
+    static sequence(chains, success = () => {}, fallback = () => {}) {
 
         return new Promise(function (resolve) {
 
@@ -81,6 +81,19 @@ export default class Util {
             });
 
         }
+
+    }
+
+    /**
+     * Make array from array-like collection
+     *
+     * @param {*} collection
+     *
+     * @return {Array}
+     */
+    static array(collection) {
+
+        return Array.prototype.slice.call(collection);
 
     }
 

@@ -15,6 +15,8 @@
  */
 
 /**
+ * @todo update according to current API
+ *
  * @typedef {Object} Tool
  * @property render
  * @property save
@@ -25,6 +27,7 @@
 /**
  * Class properties:
  *
+ * @typedef {Tool} Tool
  * @property {String} name - name of this module
  * @property {Object[]} toolInstances - list of tool instances
  * @property {Tools[]} available - available Tools
@@ -185,6 +188,26 @@ export default class Tools extends Module {
     getTools() {
 
         return this.toolInstances;
+
+    }
+
+    /**
+     * Return tool`a instance
+     *
+     * @param {String} tool — tool name
+     * @param {Object} data — initial data
+     *
+     * @todo throw exceptions if tool doesnt exist
+     *
+     */
+    construct(tool, data) {
+
+        let plugin = this.toolClasses[tool],
+            config = this.config.toolsConfig[tool];
+
+        let instance = new plugin(data, config);
+
+        return instance;
 
     }
 

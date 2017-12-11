@@ -13,7 +13,7 @@
  *
  */
 
-export default class Paragraph {
+class Paragraph {
 
     /**
      * Get the name of the plugin
@@ -39,9 +39,8 @@ export default class Paragraph {
 
         this._data = {};
 
-        this.data = data;
-
         this._element = this._render();
+        this.data = data;
 
 
     }
