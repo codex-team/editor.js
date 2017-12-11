@@ -12,8 +12,7 @@ export default class Module {
     /**
      * @constructor
      *
-     * @param  {[type]} config [description]
-     * @return {[type]}        [description]
+     * @param  {EditorConfig} config
      */
     constructor(config) {
 
@@ -30,7 +29,10 @@ export default class Module {
 
     /**
      * Editor modules setter
-     * @param {object} Editor - available editor modules
+     *
+     * @param Editor
+     * @param Editor.modules {@link CodexEditor#moduleInstances}
+     * @param Editor.config {@link CodexEditor#configuration}
      */
     set state(Editor) {
 
