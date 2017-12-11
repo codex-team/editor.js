@@ -4,7 +4,7 @@
  * @author Codex Team
  * @version 2.0.0
  */
-module.exports = class Core {
+export default class Core {
 
     /**
      * Module key name

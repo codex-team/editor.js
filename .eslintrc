@@ -73,6 +73,7 @@
         "XMLHttpRequest": true,
         "ActiveXObject": true,
         "RegExp": true,
+        "Module": true,
         "Node": true,
         "Proxy": true,
         "$": true,

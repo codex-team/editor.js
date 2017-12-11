@@ -27,6 +27,7 @@
 /**
  * Class properties:
  *
+ * @typedef {Tool} Tool
  * @property {String} name - name of this module
  * @property {Object[]} toolInstances - list of tool instances
  * @property {Tools[]} available - available Tools
@@ -35,7 +36,7 @@
  * @property {EditorConfig} config - Editor config
  */
 
-class Tools {
+export default class Tools extends Module {
 
     /**
      * Returns available Tools
@@ -54,17 +55,6 @@ class Tools {
     get unavailable() {
 
         return this.toolsUnavailable;
-
-    }
-
-    /**
-     * @param Editor
-     * @param Editor.modules {@link CodexEditor#moduleInstances}
-     * @param Editor.config {@link CodexEditor#configuration}
-     */
-    set state(Editor) {
-
-        this.Editor = Editor;
 
     }
 
@@ -89,7 +79,7 @@ class Tools {
      */
     constructor({ config }) {
 
-        this.config = config;
+        super(config);
 
         this.toolClasses = {};
         this.toolsAvailable = {};
@@ -222,5 +212,3 @@ class Tools {
     }
 
 }
-
-module.exports = Tools;

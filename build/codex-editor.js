@@ -71,25 +71,147 @@ var CodexEditor =
 "use strict";
 
 
-exports.createClass = function () {
-  function defineProperties(target, props) {
-    for (var i = 0; i < props.length; i++) {
-      var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-    }
-  }return function (Constructor, protoProps, staticProps) {
-    if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-  };
-}();exports.classCallCheck = function (instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-};
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-exports.interopRequireDefault = function (obj) {
-  return obj && obj.__esModule ? obj : {
-    default: obj
-  };
-};
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * DOM manupulations helper
+ */
+var Dom = function () {
+    function Dom() {
+        _classCallCheck(this, Dom);
+    }
+
+    _createClass(Dom, null, [{
+        key: 'make',
+
+
+        /**
+         * Helper for making Elements with classname and attributes
+         *
+         * @param  {string} tagName           - new Element tag name
+         * @param  {array|string} classNames  - list or name of CSS classname(s)
+         * @param  {Object} attributes        - any attributes
+         * @return {Element}
+         */
+        value: function make(tagName) {
+            var classNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
+            var attributes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+
+
+            var el = document.createElement(tagName);
+
+            if (Array.isArray(classNames)) {
+                var _el$classList;
+
+                (_el$classList = el.classList).add.apply(_el$classList, _toConsumableArray(classNames));
+            } else if (classNames) {
+
+                el.classList.add(classNames);
+            }
+
+            for (var attrName in attributes) {
+
+                el[attrName] = attributes[attrName];
+            }
+
+            return el;
+        }
+
+        /**
+         * Append one or several elements to the parent
+         *
+         * @param  {Element} parent    - where to append
+         * @param  {Element|Element[]} - element ore elements list
+         */
+
+    }, {
+        key: 'append',
+        value: function append(parent, elements) {
+
+            if (Array.isArray(elements)) {
+
+                elements.forEach(function (el) {
+                    return parent.appendChild(el);
+                });
+            } else {
+
+                parent.appendChild(elements);
+            }
+        }
+
+        /**
+         * Selector Decorator
+         *
+         * Returns first match
+         *
+         * @param {Element} el - element we searching inside. Default - DOM Document
+         * @param {String} selector - searching string
+         *
+         * @returns {Element}
+         */
+
+    }, {
+        key: 'find',
+        value: function find() {
+            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+            var selector = arguments[1];
+
+
+            return el.querySelector(selector);
+        }
+
+        /**
+         * Selector Decorator.
+         *
+         * Returns all matches
+         *
+         * @param {Element} el - element we searching inside. Default - DOM Document
+         * @param {String} selector - searching string
+         * @returns {NodeList}
+         */
+
+    }, {
+        key: 'findAll',
+        value: function findAll() {
+            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
+            var selector = arguments[1];
+
+
+            return el.querySelectorAll(selector);
+        }
+
+        /**
+         * Check if object is DOM node
+         *
+         * @param {Object} node
+         * @returns {boolean}
+         */
+
+    }, {
+        key: 'isNode',
+        value: function isNode(node) {
+
+            return node && (typeof node === 'undefined' ? 'undefined' : _typeof(node)) === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
+        }
+    }]);
+
+    return Dom;
+}();
+
+Dom.displayName = 'Dom';
+exports.default = Dom;
+;
+module.exports = exports['default'];
 
 /***/ }),
 /* 1 */
@@ -98,15 +220,88 @@ exports.interopRequireDefault = function (obj) {
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @abstract
+ * @class      Module
+ * @classdesc  All modules inherites from this class.
+ *
+ * @typedef {Module} Module
+ * @property {Object} config - Editor user settings
+ * @property {Object} Editor - List of Editor modules
+ */
+var Module = function () {
+
+    /**
+     * @constructor
+     *
+     * @param  {[type]} config [description]
+     * @return {[type]}        [description]
+     */
+    function Module(config) {
+        _classCallCheck(this, Module);
+
+        if (new.target === Module) {
+
+            throw new TypeError('Constructors for abstract class Module are not allowed.');
+        }
+
+        this.config = config;
+        this.Editor = null;
+    }
+
+    /**
+     * Editor modules setter
+     * @param {object} Editor - available editor modules
+     */
+
+
+    _createClass(Module, [{
+        key: 'state',
+        set: function set(Editor) {
+
+            this.Editor = Editor;
+        }
+    }]);
+
+    return Module;
+}();
+
+Module.displayName = 'Module';
+exports.default = Module;
+module.exports = exports['default'];
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 /**
  * Codex Editor Util
  */
-module.exports = function () {
+var Util = function () {
     function Util() {
-        __webpack_require__(0).classCallCheck(this, Util);
+        _classCallCheck(this, Util);
     }
 
-    __webpack_require__(0).createClass(Util, null, [{
+    _createClass(Util, null, [{
         key: "sequence",
 
 
@@ -201,137 +396,10 @@ module.exports = function () {
     return Util;
 }();
 
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * DOM manupulations helper
- */
-module.exports = function () {
-    function Dom() {
-        __webpack_require__(0).classCallCheck(this, Dom);
-    }
-
-    __webpack_require__(0).createClass(Dom, null, [{
-        key: 'make',
-
-
-        /**
-         * Helper for making Elements with classname and attributes
-         *
-         * @param  {string} tagName           - new Element tag name
-         * @param  {array|string} classNames  - list or name of CSS classname(s)
-         * @param  {Object} attributes        - any attributes
-         * @return {Element}
-         */
-        value: function make(tagName) {
-            var classNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
-            var attributes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
-
-            var el = document.createElement(tagName);
-
-            if (Array.isArray(classNames)) {
-                var _el$classList;
-
-                (_el$classList = el.classList).add.apply(_el$classList, __webpack_require__(0).toConsumableArray(classNames));
-            } else if (classNames) {
-
-                el.classList.add(classNames);
-            }
-
-            for (var attrName in attributes) {
-
-                el[attrName] = attributes[attrName];
-            }
-
-            return el;
-        }
-
-        /**
-         * Append one or several elements to the parent
-         *
-         * @param  {Element} parent    - where to append
-         * @param  {Element|Element[]} - element ore elements list
-         */
-
-    }, {
-        key: 'append',
-        value: function append(parent, elements) {
-
-            if (Array.isArray(elements)) {
-
-                elements.forEach(function (el) {
-                    return parent.appendChild(el);
-                });
-            } else {
-
-                parent.appendChild(elements);
-            }
-        }
-
-        /**
-         * Selector Decorator
-         *
-         * Returns first match
-         *
-         * @param {Element} el - element we searching inside. Default - DOM Document
-         * @param {String} selector - searching string
-         *
-         * @returns {Element}
-         */
-
-    }, {
-        key: 'find',
-        value: function find() {
-            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
-            var selector = arguments[1];
-
-
-            return el.querySelector(selector);
-        }
-
-        /**
-         * Selector Decorator.
-         *
-         * Returns all matches
-         *
-         * @param {Element} el - element we searching inside. Default - DOM Document
-         * @param {String} selector - searching string
-         * @returns {NodeList}
-         */
-
-    }, {
-        key: 'findAll',
-        value: function findAll() {
-            var el = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : document;
-            var selector = arguments[1];
-
-
-            return el.querySelectorAll(selector);
-        }
-
-        /**
-         * Check if object is DOM node
-         *
-         * @param {Object} node
-         * @returns {boolean}
-         */
-
-    }, {
-        key: 'isNode',
-        value: function isNode(node) {
-
-            return node && (typeof node === 'undefined' ? 'undefined' : __webpack_require__(0).typeof(node)) === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
-        }
-    }]);
-
-    return Dom;
-}();
+Util.displayName = "Util";
+exports.default = Util;
+;
+module.exports = exports["default"];
 
 /***/ }),
 /* 3 */
@@ -396,6 +464,10 @@ module.exports = function () {
  */
 // eslint-disable-next-line
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var modules = ["blockManager.js","events.js","renderer.js","toolbar.js","tools.js","ui.js"].map(function (module) {
     return __webpack_require__(4)("./" + module);
 });
@@ -411,7 +483,7 @@ var modules = ["blockManager.js","events.js","renderer.js","toolbar.js","tools.j
  * @type {CodexEditor}
  */
 module.exports = function () {
-    __webpack_require__(0).createClass(CodexEditor, null, [{
+    _createClass(CodexEditor, null, [{
         key: 'version',
 
 
@@ -431,7 +503,7 @@ module.exports = function () {
     function CodexEditor(config) {
         var _this = this;
 
-        __webpack_require__(0).classCallCheck(this, CodexEditor);
+        _classCallCheck(this, CodexEditor);
 
         /**
          * Configuration object
@@ -465,7 +537,7 @@ module.exports = function () {
      */
 
 
-    __webpack_require__(0).createClass(CodexEditor, [{
+    _createClass(CodexEditor, [{
         key: 'init',
 
 
@@ -759,9 +831,18 @@ webpackContext.id = 4;
 "use strict";
 /* WEBPACK VAR INJECTION */(function(_) {
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @class BlockManager
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @classdesc Manage editor`s blocks storage and appearance
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
 var _block = __webpack_require__(6);
 
-var _block2 = __webpack_require__(0).interopRequireDefault(_block);
+var _block2 = _interopRequireDefault(_block);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var BlockManager = function () {
 
@@ -773,7 +854,7 @@ var BlockManager = function () {
     function BlockManager(_ref) {
         var config = _ref.config;
 
-        __webpack_require__(0).classCallCheck(this, BlockManager);
+        _classCallCheck(this, BlockManager);
 
         this.config = config;
         this.Editor = null;
@@ -802,7 +883,7 @@ var BlockManager = function () {
      */
 
 
-    __webpack_require__(0).createClass(BlockManager, [{
+    _createClass(BlockManager, [{
         key: 'prepare',
 
 
@@ -971,10 +1052,7 @@ var BlockManager = function () {
  * @property {HTMLElement} workingArea — editor`s working node
  *
  */
-/**
- * @class BlockManager
- * @classdesc Manage editor`s blocks storage and appearance
- */
+
 
 BlockManager.displayName = 'BlockManager';
 
@@ -986,7 +1064,7 @@ var Blocks = function () {
      * @param {HTMLElement} workingArea — editor`s working node
      */
     function Blocks(workingArea) {
-        __webpack_require__(0).classCallCheck(this, Blocks);
+        _classCallCheck(this, Blocks);
 
         this.blocks = [];
         this.workingArea = workingArea;
@@ -999,7 +1077,7 @@ var Blocks = function () {
      */
 
 
-    __webpack_require__(0).createClass(Blocks, [{
+    _createClass(Blocks, [{
         key: 'push',
         value: function push(block) {
 
@@ -1199,7 +1277,7 @@ Blocks.displayName = 'Blocks';
 
 
 module.exports = BlockManager;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
 /* 6 */
@@ -1211,6 +1289,10 @@ module.exports = BlockManager;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  *
@@ -1230,7 +1312,7 @@ var Block = function () {
      * @param {Object} tool — current block plugin`s instance
      */
     function Block(tool) {
-        __webpack_require__(0).classCallCheck(this, Block);
+        _classCallCheck(this, Block);
 
         this.tool = tool;
 
@@ -1250,7 +1332,7 @@ var Block = function () {
      */
 
 
-    __webpack_require__(0).createClass(Block, [{
+    _createClass(Block, [{
         key: 'compose',
         value: function compose() {
 
@@ -1282,14 +1364,27 @@ var Block = function () {
 
 Block.displayName = 'Block';
 exports.default = Block;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
 /* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  * @module eventDispatcher
@@ -1299,35 +1394,24 @@ exports.default = Block;
  *    - {Function} emit - fires all subscribers with data
  *
  * @version 1.0.0
+ *
+ * @typedef {Events} Events
+ * @property {Object} subscribers - all subscribers grouped by event name
  */
-var Events = function () {
-    __webpack_require__(0).createClass(Events, [{
-        key: "state",
+var Events = function (_Module) {
+    _inherits(Events, _Module);
 
-
-        /**
-         * @param Editor
-         * @param Editor.modules {@link CodexEditor#moduleInstances}
-         * @param Editor.config {@link CodexEditor#configuration}
-         */
-        set: function set(Editor) {
-
-            this.Editor = Editor;
-        }
-
-        /**
-         * @constructor
-         *
-         * @property {Object} subscribers - all subscribers grouped by event name
-         */
-
-    }]);
-
+    /**
+     * @constructor
+     */
     function Events() {
-        __webpack_require__(0).classCallCheck(this, Events);
+        _classCallCheck(this, Events);
 
-        this.subscribers = {};
-        this.Editor = null;
+        var _this = _possibleConstructorReturn(this, (Events.__proto__ || Object.getPrototypeOf(Events)).call(this));
+
+        _this.subscribers = {};
+
+        return _this;
     }
 
     /**
@@ -1336,7 +1420,7 @@ var Events = function () {
      */
 
 
-    __webpack_require__(0).createClass(Events, [{
+    _createClass(Events, [{
         key: "on",
         value: function on(eventName, callback) {
 
@@ -1380,12 +1464,12 @@ var Events = function () {
     }]);
 
     return Events;
-}();
+}(Module);
 
 Events.displayName = "Events";
-
-
-module.exports = Events;
+exports.default = Events;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 8 */
@@ -1393,6 +1477,10 @@ module.exports = Events;
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(_) {
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
  * Codex Editor Renderer Module
@@ -1409,7 +1497,7 @@ var Renderer = function () {
      * @param {EditorConfig} config
      */
     function Renderer(config) {
-        __webpack_require__(0).classCallCheck(this, Renderer);
+        _classCallCheck(this, Renderer);
 
         this.config = config;
         this.Editor = null;
@@ -1422,7 +1510,7 @@ var Renderer = function () {
      */
 
 
-    __webpack_require__(0).createClass(Renderer, [{
+    _createClass(Renderer, [{
         key: "render",
 
 
@@ -1686,14 +1774,26 @@ module.exports = Renderer;
 //     return renderer;
 //
 // })({});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($) {
+/* WEBPACK VAR INJECTION */(function(Module, $) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  *
@@ -1733,6 +1833,7 @@ module.exports = Renderer;
  * @class
  * @classdesc Toolbar module
  *
+ * @typedef {Toolbar} Toolbar
  * @property {Object} nodes
  * @property {Element} nodes.wrapper        - Toolbar main element
  * @property {Element} nodes.content        - Zone with Plus button and toolbox.
@@ -1745,17 +1846,18 @@ module.exports = Renderer;
  * @property {Element} nodes.pluginSettings    - Plugin Settings section of Settings Panel
  * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
  */
-var Toolbar = function () {
+var Toolbar = function (_Module) {
+  _inherits(Toolbar, _Module);
 
   /**
    * @constructor
    */
-  function Toolbar() {
-    __webpack_require__(0).classCallCheck(this, Toolbar);
+  function Toolbar(config) {
+    _classCallCheck(this, Toolbar);
 
-    this.Editor = null;
+    var _this = _possibleConstructorReturn(this, (Toolbar.__proto__ || Object.getPrototypeOf(Toolbar)).call(this, config));
 
-    this.nodes = {
+    _this.nodes = {
       wrapper: null,
       content: null,
       actions: null,
@@ -1774,7 +1876,7 @@ var Toolbar = function () {
       defaultSettings: null
     };
 
-    this.CSS = {
+    _this.CSS = {
       toolbar: 'ce-toolbar',
       content: 'ce-toolbar__content',
       actions: 'ce-toolbar__actions',
@@ -1792,23 +1894,19 @@ var Toolbar = function () {
       defaultSettings: 'ce-settings_default',
       pluginSettings: 'ce-settings_plugin'
     };
+
+    return _this;
   }
 
   /**
-   * Editor modules setter
-   * @param {object} Editor - available editor modules
+   * Makes toolbar
    */
 
 
-  __webpack_require__(0).createClass(Toolbar, [{
+  _createClass(Toolbar, [{
     key: 'make',
-
-
-    /**
-     * Makes toolbar
-     */
     value: function make() {
-      var _this = this;
+      var _this2 = this;
 
       this.nodes.wrapper = $.make('div', this.CSS.toolbar);
 
@@ -1817,8 +1915,8 @@ var Toolbar = function () {
        */
       ['content', 'actions'].forEach(function (el) {
 
-        _this.nodes[el] = $.make('div', _this.CSS[el]);
-        $.append(_this.nodes.wrapper, _this.nodes[el]);
+        _this2.nodes[el] = $.make('div', _this2.CSS[el]);
+        $.append(_this2.nodes.wrapper, _this2.nodes[el]);
       });
 
       /**
@@ -1828,8 +1926,8 @@ var Toolbar = function () {
        */
       ['plusButton', 'toolbox'].forEach(function (el) {
 
-        _this.nodes[el] = $.make('div', _this.CSS[el]);
-        $.append(_this.nodes.content, _this.nodes[el]);
+        _this2.nodes[el] = $.make('div', _this2.CSS[el]);
+        $.append(_this2.nodes.content, _this2.nodes[el]);
       });
 
       /**
@@ -1888,29 +1986,34 @@ var Toolbar = function () {
        */
       return $.make('span', this.CSS.removeBlockButton);
     }
-  }, {
-    key: 'state',
-    set: function set(Editor) {
-
-      this.Editor = Editor;
-    }
   }]);
 
   return Toolbar;
-}();
+}(Module);
 
 Toolbar.displayName = 'Toolbar';
-
-
-module.exports = Toolbar;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+exports.default = Toolbar;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(0)))
 
 /***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(_) {
+/* WEBPACK VAR INJECTION */(function(Module, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  * @module Codex Editor Tools Submodule
@@ -1941,6 +2044,7 @@ module.exports = Toolbar;
 /**
  * Class properties:
  *
+ * @typedef {Tool} Tool
  * @property {String} name - name of this module
  * @property {Object[]} toolInstances - list of tool instances
  * @property {Tools[]} available - available Tools
@@ -1949,8 +2053,10 @@ module.exports = Toolbar;
  * @property {EditorConfig} config - Editor config
  */
 
-var Tools = function () {
-    __webpack_require__(0).createClass(Tools, [{
+var Tools = function (_Module) {
+    _inherits(Tools, _Module);
+
+    _createClass(Tools, [{
         key: 'available',
 
 
@@ -1973,19 +2079,6 @@ var Tools = function () {
         get: function get() {
 
             return this.toolsUnavailable;
-        }
-
-        /**
-         * @param Editor
-         * @param Editor.modules {@link CodexEditor#moduleInstances}
-         * @param Editor.config {@link CodexEditor#configuration}
-         */
-
-    }, {
-        key: 'state',
-        set: function set(Editor) {
-
-            this.Editor = Editor;
         }
 
         /**
@@ -2015,13 +2108,15 @@ var Tools = function () {
     function Tools(_ref) {
         var config = _ref.config;
 
-        __webpack_require__(0).classCallCheck(this, Tools);
+        _classCallCheck(this, Tools);
 
-        this.config = config;
+        var _this = _possibleConstructorReturn(this, (Tools.__proto__ || Object.getPrototypeOf(Tools)).call(this, config));
 
-        this.toolClasses = {};
-        this.toolsAvailable = {};
-        this.toolsUnavailable = {};
+        _this.toolClasses = {};
+        _this.toolsAvailable = {};
+        _this.toolsUnavailable = {};
+
+        return _this;
     }
 
     /**
@@ -2030,10 +2125,10 @@ var Tools = function () {
      */
 
 
-    __webpack_require__(0).createClass(Tools, [{
+    _createClass(Tools, [{
         key: 'prepare',
         value: function prepare() {
-            var _this = this;
+            var _this2 = this;
 
             if (!this.config.hasOwnProperty('tools')) {
 
@@ -2063,10 +2158,10 @@ var Tools = function () {
              */
             return _.sequence(sequenceData, function (data) {
 
-                _this.success(data);
+                _this2.success(data);
             }, function (data) {
 
-                _this.fallback(data);
+                _this2.fallback(data);
             });
         }
 
@@ -2157,20 +2252,31 @@ var Tools = function () {
     }]);
 
     return Tools;
-}();
+}(Module);
 
 Tools.displayName = 'Tools';
-
-
-module.exports = Tools;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+exports.default = Tools;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(2)))
 
 /***/ }),
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($) {
+/* WEBPACK VAR INJECTION */(function(Module, $) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
  * Module UI
@@ -2220,6 +2326,7 @@ var CSS = {
  *                    <ce-inline-toolbar />
  *                </codex-editor>
  *
+ * @typedef {UI} UI
  * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
  * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
  * @property {Object} nodes          -
@@ -2228,7 +2335,8 @@ var CSS = {
  * @property {Element} nodes.redactor - <ce-redactor>
  */
 
-var UI = function () {
+var UI = function (_Module) {
+  _inherits(UI, _Module);
 
   /**
    * @constructor
@@ -2238,35 +2346,30 @@ var UI = function () {
   function UI(_ref) {
     var config = _ref.config;
 
-    __webpack_require__(0).classCallCheck(this, UI);
+    _classCallCheck(this, UI);
 
-    this.config = config;
-    this.Editor = null;
+    var _this = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, config));
 
-    this.nodes = {
+    _this.nodes = {
       holder: null,
       wrapper: null,
       redactor: null
     };
+
+    return _this;
   }
 
   /**
-   * Editor modules setter
-   * @param {object} Editor - available editor modules
+   * @protected
+   *
+   * Making main interface
    */
 
 
-  __webpack_require__(0).createClass(UI, [{
+  _createClass(UI, [{
     key: 'prepare',
-
-
-    /**
-     * @protected
-     *
-     * Making main interface
-     */
     value: function prepare() {
-      var _this = this;
+      var _this2 = this;
 
       return new Promise(function (resolve, reject) {
 
@@ -2274,32 +2377,32 @@ var UI = function () {
          * Element where we need to append CodeX Editor
          * @type {Element}
          */
-        _this.nodes.holder = document.getElementById(_this.config.holderId);
+        _this2.nodes.holder = document.getElementById(_this2.config.holderId);
 
-        if (!_this.nodes.holder) {
+        if (!_this2.nodes.holder) {
 
-          reject(Error("Holder wasn't found by ID: #" + _this.config.holderId));
+          reject(Error("Holder wasn't found by ID: #" + _this2.config.holderId));
           return;
         }
 
         /**
          * Create and save main UI elements
          */
-        _this.nodes.wrapper = $.make('div', CSS.editorWrapper);
-        _this.nodes.redactor = $.make('div', CSS.editorZone);
+        _this2.nodes.wrapper = $.make('div', CSS.editorWrapper);
+        _this2.nodes.redactor = $.make('div', CSS.editorZone);
 
-        _this.nodes.wrapper.appendChild(_this.nodes.redactor);
-        _this.nodes.holder.appendChild(_this.nodes.wrapper);
+        _this2.nodes.wrapper.appendChild(_this2.nodes.redactor);
+        _this2.nodes.holder.appendChild(_this2.nodes.wrapper);
 
         /**
          * Make toolbar
          */
-        _this.Editor.Toolbar.make();
+        _this2.Editor.Toolbar.make();
 
         /**
          * Load and append CSS
          */
-        _this.loadStyles();
+        _this2.loadStyles();
 
         resolve();
       })
@@ -2347,21 +2450,10 @@ var UI = function () {
        */
       $.append(document.head, tag);
     }
-  }, {
-    key: 'state',
-    set: function set(Editor) {
-
-      this.Editor = Editor;
-    }
   }]);
 
   return UI;
-}();
-
-UI.displayName = 'UI';
-
-
-module.exports = UI;
+}(Module);
 
 // /**
 //  * Codex Editor UI module
@@ -2625,7 +2717,12 @@ module.exports = UI;
 //     return ui;
 //
 // })({});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+
+UI.displayName = 'UI';
+exports.default = UI;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(0)))
 
 /***/ }),
 /* 12 */

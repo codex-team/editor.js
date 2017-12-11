@@ -6,29 +6,20 @@
  *    - {Function} emit - fires all subscribers with data
  *
  * @version 1.0.0
+ *
+ * @typedef {Events} Events
+ * @property {Object} subscribers - all subscribers grouped by event name
  */
-class Events {
-
-    /**
-     * @param Editor
-     * @param Editor.modules {@link CodexEditor#moduleInstances}
-     * @param Editor.config {@link CodexEditor#configuration}
-     */
-    set state(Editor) {
-
-        this.Editor = Editor;
-
-    }
+export default class Events extends Module {
 
     /**
      * @constructor
-     *
-     * @property {Object} subscribers - all subscribers grouped by event name
      */
     constructor() {
 
+        super();
+
         this.subscribers = {};
-        this.Editor = null;
 
     }
 
@@ -76,5 +67,3 @@ class Events {
     }
 
 }
-
-module.exports = Events;

@@ -5,7 +5,7 @@
  * @version 1.0.
  */
 
-module.exports = (function (draw) {
+export default (function (draw) {
 
     draw.ceBlock = function () {
 

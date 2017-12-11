@@ -11,8 +11,8 @@
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-class-display-name": "^2.1.0",
-    "babel-plugin-transform-helper": "0.0.6",
     "babel-polyfill": "^6.26.0",
     "babel-preset-es2015": "^6.24.1",
     "babel-runtime": "^6.26.0",
