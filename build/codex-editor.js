@@ -75,6 +75,196 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * @abstract
+ * @class      Module
+ * @classdesc  All modules inherites from this class.
+ *
+ * @typedef {Module} Module
+ * @property {Object} config - Editor user settings
+ * @property {Object} Editor - List of Editor modules
+ */
+var Module = function () {
+
+    /**
+     * @constructor
+     *
+     * @param  {EditorConfig} config
+     */
+    function Module(config) {
+        _classCallCheck(this, Module);
+
+        if (new.target === Module) {
+
+            throw new TypeError('Constructors for abstract class Module are not allowed.');
+        }
+
+        this.config = config;
+        this.Editor = null;
+    }
+
+    /**
+     * Editor modules setter
+     *
+     * @param Editor
+     * @param Editor.modules {@link CodexEditor#moduleInstances}
+     * @param Editor.config {@link CodexEditor#configuration}
+     */
+
+
+    _createClass(Module, [{
+        key: 'state',
+        set: function set(Editor) {
+
+            this.Editor = Editor;
+        }
+    }]);
+
+    return Module;
+}();
+
+Module.displayName = 'Module';
+exports.default = Module;
+module.exports = exports['default'];
+
+/***/ }),
+/* 1 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Codex Editor Util
+ */
+var Util = function () {
+    function Util() {
+        _classCallCheck(this, Util);
+    }
+
+    _createClass(Util, null, [{
+        key: "sequence",
+
+
+        /**
+         * @typedef {Object} ChainData
+         * @property {Object} data - data that will be passed to the success or fallback
+         * @property {Function} function - function's that must be called asynchronically
+         */
+
+        /**
+         * Fires a promise sequence asyncronically
+         *
+         * @param {Object[]} chains - list or ChainData's
+         * @param {Function} success - success callback
+         * @param {Function} fallback - callback that fires in case of errors
+         *
+         * @return {Promise}
+         */
+        value: function sequence(chains) {
+            var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
+
+            return new Promise(function (resolve) {
+
+                /**
+                 * pluck each element from queue
+                 * First, send resolved Promise as previous value
+                 * Each plugins "prepare" method returns a Promise, that's why
+                 * reduce current element will not be able to continue while can't get
+                 * a resolved Promise
+                 */
+                chains.reduce(function (previousValue, currentValue, iteration) {
+
+                    return previousValue.then(function () {
+                        return waitNextBlock(currentValue, success, fallback);
+                    }).then(function () {
+
+                        // finished
+                        if (iteration === chains.length - 1) {
+
+                            resolve();
+                        }
+                    });
+                }, Promise.resolve());
+            });
+
+            /**
+             * Decorator
+             *
+             * @param {ChainData} chainData
+             *
+             * @param {Function} successCallback
+             * @param {Function} fallbackCallback
+             *
+             * @return {Promise}
+             */
+            function waitNextBlock(chainData, successCallback, fallbackCallback) {
+
+                return new Promise(function (resolve) {
+
+                    chainData.function().then(function () {
+
+                        successCallback(chainData.data);
+                    }).then(resolve).catch(function () {
+
+                        fallbackCallback(chainData.data);
+
+                        // anyway, go ahead even it falls
+                        resolve();
+                    });
+                });
+            }
+        }
+
+        /**
+         * Make array from array-like collection
+         *
+         * @param {*} collection
+         *
+         * @return {Array}
+         */
+
+    }, {
+        key: "array",
+        value: function array(collection) {
+
+            return Array.prototype.slice.call(collection);
+        }
+    }]);
+
+    return Util;
+}();
+
+Util.displayName = "Util";
+exports.default = Util;
+;
+module.exports = exports["default"];
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -214,194 +404,6 @@ exports.default = Dom;
 module.exports = exports['default'];
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * @abstract
- * @class      Module
- * @classdesc  All modules inherites from this class.
- *
- * @typedef {Module} Module
- * @property {Object} config - Editor user settings
- * @property {Object} Editor - List of Editor modules
- */
-var Module = function () {
-
-    /**
-     * @constructor
-     *
-     * @param  {[type]} config [description]
-     * @return {[type]}        [description]
-     */
-    function Module(config) {
-        _classCallCheck(this, Module);
-
-        if (new.target === Module) {
-
-            throw new TypeError('Constructors for abstract class Module are not allowed.');
-        }
-
-        this.config = config;
-        this.Editor = null;
-    }
-
-    /**
-     * Editor modules setter
-     * @param {object} Editor - available editor modules
-     */
-
-
-    _createClass(Module, [{
-        key: 'state',
-        set: function set(Editor) {
-
-            this.Editor = Editor;
-        }
-    }]);
-
-    return Module;
-}();
-
-Module.displayName = 'Module';
-exports.default = Module;
-module.exports = exports['default'];
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Codex Editor Util
- */
-var Util = function () {
-    function Util() {
-        _classCallCheck(this, Util);
-    }
-
-    _createClass(Util, null, [{
-        key: "sequence",
-
-
-        /**
-         * @typedef {Object} ChainData
-         * @property {Object} data - data that will be passed to the success or fallback
-         * @property {Function} function - function's that must be called asynchronically
-         */
-
-        /**
-         * Fires a promise sequence asyncronically
-         *
-         * @param {Object[]} chains - list or ChainData's
-         * @param {Function} success - success callback
-         * @param {Function} fallback - callback that fires in case of errors
-         *
-         * @return {Promise}
-         */
-        value: function sequence(chains) {
-            var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
-
-
-            return new Promise(function (resolve) {
-
-                /**
-                 * pluck each element from queue
-                 * First, send resolved Promise as previous value
-                 * Each plugins "prepare" method returns a Promise, that's why
-                 * reduce current element will not be able to continue while can't get
-                 * a resolved Promise
-                 */
-                chains.reduce(function (previousValue, currentValue, iteration) {
-
-                    return previousValue.then(function () {
-                        return waitNextBlock(currentValue, success, fallback);
-                    }).then(function () {
-
-                        // finished
-                        if (iteration === chains.length - 1) {
-
-                            resolve();
-                        }
-                    });
-                }, Promise.resolve());
-            });
-
-            /**
-             * Decorator
-             *
-             * @param {ChainData} chainData
-             *
-             * @param {Function} successCallback
-             * @param {Function} fallbackCallback
-             *
-             * @return {Promise}
-             */
-            function waitNextBlock(chainData, successCallback, fallbackCallback) {
-
-                return new Promise(function (resolve) {
-
-                    chainData.function().then(function () {
-
-                        successCallback(chainData.data);
-                    }).then(resolve).catch(function () {
-
-                        fallbackCallback(chainData.data);
-
-                        // anyway, go ahead even it falls
-                        resolve();
-                    });
-                });
-            }
-        }
-
-        /**
-         * Make array from array-like collection
-         *
-         * @param {*} collection
-         *
-         * @return {Array}
-         */
-
-    }, {
-        key: "array",
-        value: function array(collection) {
-
-            return Array.prototype.slice.call(collection);
-        }
-    }]);
-
-    return Util;
-}();
-
-Util.displayName = "Util";
-exports.default = Util;
-;
-module.exports = exports["default"];
-
-/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -453,7 +455,8 @@ module.exports = exports["default"];
 
 /**
  * @typedef {Object} EditorConfig
- * @property {String} holderId - Element to append Editor
+ * @property {String} holderId  - Element to append Editor
+ * @property {Array} data       - Blocks list in JSON-format
  * ...
  */
 
@@ -643,12 +646,19 @@ module.exports = function () {
     }, {
         key: 'start',
         value: function start() {
+            var _this3 = this;
 
             var prepareDecorator = function prepareDecorator(module) {
                 return module.prepare();
             };
 
-            return Promise.resolve().then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.BlockManager)).catch(function (error) {
+            return Promise.resolve().then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.Tools)).then(function () {
+
+                if (_this3.config.data && _this3.config.data.items) {
+
+                    _this3.moduleInstances.Renderer.render(_this3.config.data.items);
+                }
+            }).then(prepareDecorator(this.moduleInstances.BlockManager)).catch(function (error) {
 
                 console.log('Error occured', error);
             });
@@ -670,6 +680,7 @@ module.exports = function () {
             this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
             this.config.tools = config.tools || {};
             this.config.toolsConfig = config.toolsConfig || {};
+            this.config.data = config.data || [];
         }
 
         /**
@@ -1277,7 +1288,7 @@ Blocks.displayName = 'Blocks';
 
 
 module.exports = BlockManager;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 6 */
@@ -1365,7 +1376,7 @@ var Block = function () {
 Block.displayName = 'Block';
 exports.default = Block;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
 /* 7 */
@@ -1469,7 +1480,7 @@ var Events = function (_Module) {
 Events.displayName = "Events";
 exports.default = Events;
 module.exports = exports["default"];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
 /* 8 */
@@ -1774,7 +1785,7 @@ module.exports = Renderer;
 //     return renderer;
 //
 // })({});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 9 */
@@ -1994,7 +2005,7 @@ var Toolbar = function (_Module) {
 Toolbar.displayName = 'Toolbar';
 exports.default = Toolbar;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
 /* 10 */
@@ -2257,7 +2268,7 @@ var Tools = function (_Module) {
 Tools.displayName = 'Tools';
 exports.default = Tools;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
 /* 11 */
@@ -2330,7 +2341,7 @@ var CSS = {
  * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
  * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
  * @property {Object} nodes          -
- * @property {Element} nodes.wrapper  - element where we need to append redactor
+ * @property {Element} nodes.holder  - element where we need to append redactor
  * @property {Element} nodes.wrapper  - <codex-editor>
  * @property {Element} nodes.redactor - <ce-redactor>
  */
@@ -2398,7 +2409,6 @@ var UI = function (_Module) {
          * Make toolbar
          */
         _this2.Editor.Toolbar.make();
-
         /**
          * Load and append CSS
          */
@@ -2722,7 +2732,7 @@ var UI = function (_Module) {
 UI.displayName = 'UI';
 exports.default = UI;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
 /* 12 */

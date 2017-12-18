@@ -45,7 +45,8 @@
 
 /**
  * @typedef {Object} EditorConfig
- * @property {String} holderId - Element to append Editor
+ * @property {String} holderId  - Element to append Editor
+ * @property {Array} data       - Blocks list in JSON-format
  * ...
  */
 
@@ -130,6 +131,7 @@ module.exports = class CodexEditor {
         this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
         this.config.tools = config.tools || {};
         this.config.toolsConfig = config.toolsConfig || {};
+        this.config.data = config.data || [];
 
     }
 
@@ -248,6 +250,15 @@ module.exports = class CodexEditor {
         return Promise.resolve()
             .then(prepareDecorator(this.moduleInstances.UI))
             .then(prepareDecorator(this.moduleInstances.Tools))
+            .then(() => {
+
+                if (this.config.data && this.config.data.items) {
+
+                    this.moduleInstances.Renderer.render(this.config.data.items);
+
+                }
+
+            })
             .then(prepareDecorator(this.moduleInstances.BlockManager))
 
             .catch(function (error) {
