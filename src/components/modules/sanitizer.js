@@ -1,7 +1,7 @@
 /**
- * Codex Sanitizer
+ * CodeX Sanitizer
  *
- * @module Sanitizer module
+ * @module Sanitizer
  * Clears HTML from taint tags
  *
  * @version 2.0.0
@@ -9,12 +9,11 @@
  * @usage
  *  Module can be used within two ways:
  *     1) When you have an instance
- *         - this.moduleInstance['Sanitizer'].clean(yourDirtyString);
+ *         - this.Editor.Sanitizer.clean(yourTaintString);
  *     2) As static method
- *         - CodexEditor.Sanitizer.clean(yourDirtyString, yourCustomConfiguration);
+ *         - CodexEditor.Sanitizer.clean(yourTaintString, yourCustomConfiguration);
  *
- *
- * Look up the SanitizerConfig object as example to make your custom restrictions
+ * @link SanitizerConfig
  */
 
 
@@ -48,7 +47,7 @@ export default class Sanitizer extends Module {
         super(config);
 
         // default config
-        this.instantConfig = {};
+        this.defaultConfig = null;
         this.janitorInstance = null;
 
         /** Custom configuration */
@@ -70,7 +69,7 @@ export default class Sanitizer extends Module {
      */
     set sanitizerInstance(library) {
 
-        this.janitorInstance = new library(this.instanceConfig);
+        this.janitorInstance = new library(this.defaultConfig);
 
     }
 
@@ -82,7 +81,7 @@ export default class Sanitizer extends Module {
 
         if (_.isEmpty(config)) {
 
-            this.instanceConfig = {
+            this.defaultConfig = {
                 tags: {
                     p: {},
                     a: {
@@ -95,7 +94,7 @@ export default class Sanitizer extends Module {
 
         } else {
 
-            this.instanceConfig = config;
+            this.defaultConfig = config;
 
         }
 

@@ -1734,9 +1734,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
- * Codex Sanitizer
+ * CodeX Sanitizer
  *
- * @module Sanitizer module
+ * @module Sanitizer
  * Clears HTML from taint tags
  *
  * @version 2.0.0
@@ -1744,12 +1744,11 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @usage
  *  Module can be used within two ways:
  *     1) When you have an instance
- *         - this.moduleInstance['Sanitizer'].clean(yourDirtyString);
+ *         - this.Editor.Sanitizer.clean(yourTaintString);
  *     2) As static method
- *         - CodexEditor.Sanitizer.clean(yourDirtyString, yourCustomConfiguration);
+ *         - CodexEditor.Sanitizer.clean(yourTaintString, yourCustomConfiguration);
  *
- *
- * Look up the SanitizerConfig object as example to make your custom restrictions
+ * @link SanitizerConfig
  */
 
 /**
@@ -1784,7 +1783,7 @@ var Sanitizer = function (_Module) {
         // default config
         var _this = _possibleConstructorReturn(this, (Sanitizer.__proto__ || Object.getPrototypeOf(Sanitizer)).call(this, config));
 
-        _this.instantConfig = {};
+        _this.defaultConfig = null;
         _this.janitorInstance = null;
 
         /** Custom configuration */
@@ -1838,7 +1837,7 @@ var Sanitizer = function (_Module) {
         key: 'sanitizerInstance',
         set: function set(library) {
 
-            this.janitorInstance = new library(this.instanceConfig);
+            this.janitorInstance = new library(this.defaultConfig);
         }
 
         /**
@@ -1852,7 +1851,7 @@ var Sanitizer = function (_Module) {
 
             if (_.isEmpty(config)) {
 
-                this.instanceConfig = {
+                this.defaultConfig = {
                     tags: {
                         p: {},
                         a: {
@@ -1864,7 +1863,7 @@ var Sanitizer = function (_Module) {
                 };
             } else {
 
-                this.instanceConfig = config;
+                this.defaultConfig = config;
             }
         }
     }], [{
