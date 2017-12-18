@@ -38,7 +38,8 @@ export default class Sanitizer extends Module {
      * Initializes Sanitizer module
      * Sets default configuration if custom not exists
      *
-     * @property {HTMLJanitor} this.janitor - Sanitizer library
+     * @property {SanitizerConfig} this.defaultConfig
+     * @property {HTMLJanitor} this._sanitizerInstance - Sanitizer library
      *
      * @param {SanitizerConfig} config
      */
@@ -48,7 +49,7 @@ export default class Sanitizer extends Module {
 
         // default config
         this.defaultConfig = null;
-        this.janitorInstance = null;
+        this._sanitizerInstance = null;
 
         /** Custom configuration */
         this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
@@ -69,7 +70,7 @@ export default class Sanitizer extends Module {
      */
     set sanitizerInstance(library) {
 
-        this.janitorInstance = new library(this.defaultConfig);
+        this._sanitizerInstance = new library(this.defaultConfig);
 
     }
 
@@ -108,7 +109,7 @@ export default class Sanitizer extends Module {
      */
     clean(taintString) {
 
-        return this.janitorInstance.clean(taintString);
+        return this._sanitizerInstance.clean(taintString);
 
     }
 

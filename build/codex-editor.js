@@ -1773,7 +1773,8 @@ var Sanitizer = function (_Module) {
      * Initializes Sanitizer module
      * Sets default configuration if custom not exists
      *
-     * @property {HTMLJanitor} this.janitor - Sanitizer library
+     * @property {SanitizerConfig} this.defaultConfig
+     * @property {HTMLJanitor} this._sanitizerInstance - Sanitizer library
      *
      * @param {SanitizerConfig} config
      */
@@ -1784,7 +1785,7 @@ var Sanitizer = function (_Module) {
         var _this = _possibleConstructorReturn(this, (Sanitizer.__proto__ || Object.getPrototypeOf(Sanitizer)).call(this, config));
 
         _this.defaultConfig = null;
-        _this.janitorInstance = null;
+        _this._sanitizerInstance = null;
 
         /** Custom configuration */
         _this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
@@ -1818,7 +1819,7 @@ var Sanitizer = function (_Module) {
          */
         value: function clean(taintString) {
 
-            return this.janitorInstance.clean(taintString);
+            return this._sanitizerInstance.clean(taintString);
         }
 
         /**
@@ -1837,7 +1838,7 @@ var Sanitizer = function (_Module) {
         key: 'sanitizerInstance',
         set: function set(library) {
 
-            this.janitorInstance = new library(this.defaultConfig);
+            this._sanitizerInstance = new library(this.defaultConfig);
         }
 
         /**
