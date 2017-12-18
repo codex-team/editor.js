@@ -50,7 +50,7 @@ let CSS = {
  * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
  * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
  * @property {Object} nodes          -
- * @property {Element} nodes.wrapper  - element where we need to append redactor
+ * @property {Element} nodes.holder  - element where we need to append redactor
  * @property {Element} nodes.wrapper  - <codex-editor>
  * @property {Element} nodes.redactor - <ce-redactor>
  */
@@ -109,7 +109,6 @@ export default class UI extends Module {
              * Make toolbar
              */
             this.Editor.Toolbar.make();
-
             /**
              * Load and append CSS
              */
