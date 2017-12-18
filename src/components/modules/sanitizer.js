@@ -2,9 +2,36 @@
  * Codex Sanitizer
  *
  * @module Sanitizer module
- * Clears HTML from dirty tags
+ * Clears HTML from taint tags
  *
  * @version 2.0.0
+ *
+ * @usage
+ *  Module can be used within two ways:
+ *     1) When you have an instance
+ *         - this.moduleInstance['Sanitizer'].clean(yourDirtyString);
+ *     2) As static method
+ *         - CodexEditor.Sanitizer.clean(yourDirtyString, yourCustomConfiguration);
+ *
+ *
+ * Look up the SanitizerConfig object as example to make your custom restrictions
+ */
+
+
+/**
+ * @typedef {Object} SanitizerConfig
+ * @property {Object} tags - define tags restrictions
+ *
+ * @example
+ *
+ * tags : {
+ *     p: true,
+ *     a: {
+ *       href: true,
+ *       rel: "nofollow",
+ *       target: "_blank"
+ *     }
+ * }
  */
 export default class Sanitizer extends Module {
 
@@ -14,55 +41,76 @@ export default class Sanitizer extends Module {
      *
      * @property {HTMLJanitor} this.janitor - Sanitizer library
      *
-     * @param config
+     * @param {SanitizerConfig} config
      */
     constructor(config) {
+
         super(config);
 
         // default config
-        this._config = {};
-        this._janitor = null;
+        this.instantConfig = {};
+        this.janitorInstance = null;
 
         /** Custom configuration */
-        this.sanitizerConfig = config.settings.sanitizer;
+        this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
 
         /** HTML Janitor library */
         this.sanitizerInstance = require('html-janitor');
+
     }
 
     /**
-     * @param library
+     * If developer uses editor's API, then he can customize sanitize restrictions.
+     * Or, sanitizing config can be defined globally in editors initialization. That config will be used everywhere
+     * At least, if there is no config overrides, that API uses Default configuration
      *
-     * @description If developer uses editor's API, then he can customize sane restrictions.
-     * Or, sane config can be defined globally in editors initialization. That config will be used everywhere
-     * At least, if there is no config overrides, that API uses BASIC Default configation
+     * @uses https://www.npmjs.com/package/html-janitor
+     *
+     * @param {HTMLJanitor} library - sanitizer extension
      */
     set sanitizerInstance(library) {
-        this._janitor = new library(this._config);
+
+        this.janitorInstance = new library(this.instanceConfig);
+
     }
 
+    /**
+     * Sets sanitizer configuration. Uses default config if user didn't pass the restriction
+     * @param {SanitizerConfig} config
+     */
     set sanitizerConfig(config) {
 
-        this._config = {
-            tags: {
-                p: {},
-                a: {
-                    href: true,
-                    target: '_blank',
-                    rel: 'nofollow'
+        if (_.isEmpty(config)) {
+
+            this.instanceConfig = {
+                tags: {
+                    p: {},
+                    a: {
+                        href: true,
+                        target: '_blank',
+                        rel: 'nofollow'
+                    }
                 }
-            }
-        };
+            };
+
+        } else {
+
+            this.instanceConfig = config;
+
+        }
 
     }
 
     /**
      * Cleans string from unwanted tags
-     * @param dirtyString
-     * @return {*}
+     * @param {String} taintString - HTML string
+     *
+     * @return {String} clean HTML
      */
-    clean(dirtyString) {
-        return this._janitor.clean(dirtyString);
+    clean(taintString) {
+
+        return this.janitorInstance.clean(taintString);
+
     }
 
     /**
@@ -71,13 +119,17 @@ export default class Sanitizer extends Module {
      *
      * Method allows to use default config
      *
-     * @param {String} dirtyString - taint string
-     * @param {Object} customConfig - allowed tags
+     * @param {String} taintString - taint string
+     * @param {SanitizerConfig} customConfig - allowed tags
+     *
+     * @return {String} clean HTML
      */
-    static clean(dirtyString, customConfig) {
+    static clean(taintString, customConfig) {
+
         let newInstance = Sanitizer(customConfig);
 
-        return newInstance.clean(dirtyString);
+        return newInstance.clean(taintString);
+
     }
 
 }
