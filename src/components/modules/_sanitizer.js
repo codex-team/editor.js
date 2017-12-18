@@ -1,7 +1,35 @@
 /**
  * Codex Sanitizer
+ *
+ * @module Sanitizer module
+ * Clears HTML from dirty tags
+ *
+ * @version 2.0.0
  */
+export default class Sanitizer extends Module {
 
+    /**
+     * Initializes Sanitizer module
+     * Sets default configuration if custom not exists
+     *
+     * @property {HTMLJanitor} this.janitor - Sanitizer library
+     *
+     * @param config
+     */
+    constructor(config) {
+        super(config);
+
+
+        this.janitor = require('html-janitor');
+
+
+    }
+
+    prepare() {
+
+    }
+
+}
 module.exports = (function (sanitizer) {
 
     /** HTML Janitor library */
