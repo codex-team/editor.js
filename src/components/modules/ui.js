@@ -62,7 +62,7 @@ export default class UI extends Module {
      *
      * @param  {EditorConfig} config
      */
-    constructor({ config }) {
+    constructor(config) {
 
         super(config);
 

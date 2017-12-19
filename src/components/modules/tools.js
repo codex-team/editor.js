@@ -15,8 +15,6 @@
  */
 
 /**
- * @todo update according to current API
- *
  * @typedef {Object} Tool
  * @property render
  * @property save
@@ -77,7 +75,7 @@ export default class Tools extends Module {
      *
      * @param {ToolsConfig} config
      */
-    constructor({ config }) {
+    constructor(config) {
 
         super(config);
 
@@ -204,6 +202,12 @@ export default class Tools extends Module {
 
         let plugin = this.toolClasses[tool],
             config = this.config.toolsConfig[tool];
+
+        if (!config) {
+
+            config = this.defaultConfig;
+
+        }
 
         let instance = new plugin(data, config);
 

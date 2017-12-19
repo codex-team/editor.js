@@ -46,8 +46,10 @@
 /**
  * @typedef {Object} EditorConfig
  * @property {String} holderId  - Element to append Editor
- * @property {Array} data       - Blocks list in JSON-format
- * ...
+ * @property {String} initialBlock - Tool name which will be initial
+ * @property {@link Tools#ToolsConfig} tools - list of tools linked to the constructor (function)
+ * @property {Object} toolsConfig - list of configurations
+ * @property {Array} data  - Blocks list in JSON-format
  */
 
 'use strict';

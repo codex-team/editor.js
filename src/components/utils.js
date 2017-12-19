@@ -97,4 +97,16 @@ export default class Util {
 
     }
 
+    /**
+     * Checks if object is empty
+     *
+     * @param {Object} object
+     * @return {boolean}
+     */
+    static isEmpty(object) {
+
+        return Object.keys(object).length === 0 && object.constructor === Object;
+
+    }
+
 };

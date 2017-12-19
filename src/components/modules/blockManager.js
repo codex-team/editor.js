@@ -12,7 +12,7 @@ class BlockManager {
      *
      * @param {EditorConfig} config
      */
-    constructor({ config }) {
+    constructor(config) {
 
         this.config = config;
         this.Editor = null;

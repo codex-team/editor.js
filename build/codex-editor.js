@@ -95,7 +95,10 @@ var Module = function () {
      *
      * @param  {EditorConfig} config
      */
-    function Module(config) {
+    function Module() {
+        var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+            config = _ref.config;
+
         _classCallCheck(this, Module);
 
         if (new.target === Module) {
@@ -243,6 +246,20 @@ var Util = function () {
         value: function array(collection) {
 
             return Array.prototype.slice.call(collection);
+        }
+
+        /**
+         * Checks if object is empty
+         *
+         * @param {Object} object
+         * @return {boolean}
+         */
+
+    }, {
+        key: "isEmpty",
+        value: function isEmpty(object) {
+
+            return Object.keys(object).length === 0 && object.constructor === Object;
         }
     }]);
 
@@ -456,8 +473,10 @@ module.exports = exports['default'];
 /**
  * @typedef {Object} EditorConfig
  * @property {String} holderId  - Element to append Editor
- * @property {Array} data       - Blocks list in JSON-format
- * ...
+ * @property {String} initialBlock - Tool name which will be initial
+ * @property {@link Tools#ToolsConfig} tools - list of tools linked to the constructor (function)
+ * @property {Object} toolsConfig - list of configurations
+ * @property {Array} data  - Blocks list in JSON-format
  */
 
 
@@ -815,6 +834,7 @@ var map = {
 	"./blockManager.js": 5,
 	"./events.js": 7,
 	"./renderer.js": 8,
+	"./sanitizer.js": 9,
 	"./toolbar.js": 11,
 	"./tools.js": 12,
 	"./ui.js": 13
@@ -862,9 +882,7 @@ var BlockManager = function () {
      *
      * @param {EditorConfig} config
      */
-    function BlockManager(_ref) {
-        var config = _ref.config;
-
+    function BlockManager(config) {
         _classCallCheck(this, BlockManager);
 
         this.config = config;
@@ -1415,10 +1433,10 @@ var Events = function (_Module) {
     /**
      * @constructor
      */
-    function Events() {
+    function Events(config) {
         _classCallCheck(this, Events);
 
-        var _this = _possibleConstructorReturn(this, (Events.__proto__ || Object.getPrototypeOf(Events)).call(this));
+        var _this = _possibleConstructorReturn(this, (Events.__proto__ || Object.getPrototypeOf(Events)).call(this, config));
 
         _this.subscribers = {};
 
@@ -1514,7 +1532,6 @@ var Renderer = function (_Module) {
 
     /**
      * @constructor
-     *
      * @param {EditorConfig} config
      */
     function Renderer(config) {
@@ -1524,10 +1541,34 @@ var Renderer = function (_Module) {
     }
 
     /**
+     * @typedef {Object} RendererItems
+     * @property {String} type - tool name
+     * @property {Object} data - tool data
+     */
+
+    /**
+     * @example
      *
+     * items: [
+     * {
+     *    type : 'paragraph',
+     *    data : {
+     *        text : 'Hello from Codex!'
+     *    }
+     * },
+     * {
+     *   type : 'paragraph',
+     *   data : {
+     *        text : 'Leave feedback if you like it!'
+     *   }
+     * },
+     * ]
+     *
+     */
+
+    /**
      * Make plugin blocks from array of plugin`s data
-     *
-     * @param {Object[]} items
+     * @param {RendererItems[]} items
      */
 
 
@@ -1784,8 +1825,372 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 9 */,
-/* 10 */,
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * CodeX Sanitizer
+ *
+ * @module Sanitizer
+ * Clears HTML from taint tags
+ *
+ * @version 2.0.0
+ *
+ * @example
+ *  Module can be used within two ways:
+ *     1) When you have an instance
+ *         - this.Editor.Sanitizer.clean(yourTaintString);
+ *     2) As static method
+ *         - CodexEditor.Sanitizer.clean(yourTaintString, yourCustomConfiguration);
+ *
+ * {@link SanitizerConfig}
+ */
+
+/**
+ * @typedef {Object} SanitizerConfig
+ * @property {Object} tags - define tags restrictions
+ *
+ * @example
+ *
+ * tags : {
+ *     p: true,
+ *     a: {
+ *       href: true,
+ *       rel: "nofollow",
+ *       target: "_blank"
+ *     }
+ * }
+ */
+var Sanitizer = function (_Module) {
+    _inherits(Sanitizer, _Module);
+
+    /**
+     * Initializes Sanitizer module
+     * Sets default configuration if custom not exists
+     *
+     * @property {SanitizerConfig} this.defaultConfig
+     * @property {HTMLJanitor} this._sanitizerInstance - Sanitizer library
+     *
+     * @param {SanitizerConfig} config
+     */
+    function Sanitizer(config) {
+        _classCallCheck(this, Sanitizer);
+
+        // default config
+        var _this = _possibleConstructorReturn(this, (Sanitizer.__proto__ || Object.getPrototypeOf(Sanitizer)).call(this, config));
+
+        _this.defaultConfig = null;
+        _this._sanitizerInstance = null;
+
+        /** Custom configuration */
+        _this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
+
+        /** HTML Janitor library */
+        _this.sanitizerInstance = __webpack_require__(10);
+
+        return _this;
+    }
+
+    /**
+     * If developer uses editor's API, then he can customize sanitize restrictions.
+     * Or, sanitizing config can be defined globally in editors initialization. That config will be used everywhere
+     * At least, if there is no config overrides, that API uses Default configuration
+     *
+     * @uses https://www.npmjs.com/package/html-janitor
+     *
+     * @param {HTMLJanitor} library - sanitizer extension
+     */
+
+
+    _createClass(Sanitizer, [{
+        key: 'clean',
+
+
+        /**
+         * Cleans string from unwanted tags
+         * @param {String} taintString - HTML string
+         *
+         * @return {String} clean HTML
+         */
+        value: function clean(taintString) {
+
+            return this._sanitizerInstance.clean(taintString);
+        }
+
+        /**
+         * Cleans string from unwanted tags
+         * @static
+         *
+         * Method allows to use default config
+         *
+         * @param {String} taintString - taint string
+         * @param {SanitizerConfig} customConfig - allowed tags
+         *
+         * @return {String} clean HTML
+         */
+
+    }, {
+        key: 'sanitizerInstance',
+        set: function set(library) {
+
+            this._sanitizerInstance = new library(this.defaultConfig);
+        }
+
+        /**
+         * Sets sanitizer configuration. Uses default config if user didn't pass the restriction
+         * @param {SanitizerConfig} config
+         */
+
+    }, {
+        key: 'sanitizerConfig',
+        set: function set(config) {
+
+            if (_.isEmpty(config)) {
+
+                this.defaultConfig = {
+                    tags: {
+                        p: {},
+                        a: {
+                            href: true,
+                            target: '_blank',
+                            rel: 'nofollow'
+                        }
+                    }
+                };
+            } else {
+
+                this.defaultConfig = config;
+            }
+        }
+    }], [{
+        key: 'clean',
+        value: function clean(taintString, customConfig) {
+
+            var newInstance = Sanitizer(customConfig);
+
+            return newInstance.clean(taintString);
+        }
+    }]);
+
+    return Sanitizer;
+}(Module);
+
+Sanitizer.displayName = 'Sanitizer';
+exports.default = Sanitizer;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
+				__WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.HTMLJanitor = factory();
+  }
+}(this, function () {
+
+  /**
+   * @param {Object} config.tags Dictionary of allowed tags.
+   * @param {boolean} config.keepNestedBlockElements Default false.
+   */
+  function HTMLJanitor(config) {
+
+    var tagDefinitions = config['tags'];
+    var tags = Object.keys(tagDefinitions);
+
+    var validConfigValues = tags
+      .map(function(k) { return typeof tagDefinitions[k]; })
+      .every(function(type) { return type === 'object' || type === 'boolean' || type === 'function'; });
+
+    if(!validConfigValues) {
+      throw new Error("The configuration was invalid");
+    }
+
+    this.config = config;
+  }
+
+  // TODO: not exhaustive?
+  var blockElementNames = ['P', 'LI', 'TD', 'TH', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'PRE'];
+  function isBlockElement(node) {
+    return blockElementNames.indexOf(node.nodeName) !== -1;
+  }
+
+  var inlineElementNames = ['A', 'B', 'STRONG', 'I', 'EM', 'SUB', 'SUP', 'U', 'STRIKE'];
+  function isInlineElement(node) {
+    return inlineElementNames.indexOf(node.nodeName) !== -1;
+  }
+
+  HTMLJanitor.prototype.clean = function (html) {
+    var sandbox = document.createElement('div');
+    sandbox.innerHTML = html;
+
+    this._sanitize(sandbox);
+
+    return sandbox.innerHTML;
+  };
+
+  HTMLJanitor.prototype._sanitize = function (parentNode) {
+    var treeWalker = createTreeWalker(parentNode);
+    var node = treeWalker.firstChild();
+    if (!node) { return; }
+
+    do {
+      // Ignore nodes that have already been sanitized
+      if (node._sanitized) {
+        continue;
+      }
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        // If this text node is just whitespace and the previous or next element
+        // sibling is a block element, remove it
+        // N.B.: This heuristic could change. Very specific to a bug with
+        // `contenteditable` in Firefox: http://jsbin.com/EyuKase/1/edit?js,output
+        // FIXME: make this an option?
+        if (node.data.trim() === ''
+            && ((node.previousElementSibling && isBlockElement(node.previousElementSibling))
+                 || (node.nextElementSibling && isBlockElement(node.nextElementSibling)))) {
+          parentNode.removeChild(node);
+          this._sanitize(parentNode);
+          break;
+        } else {
+          continue;
+        }
+      }
+
+      // Remove all comments
+      if (node.nodeType === Node.COMMENT_NODE) {
+        parentNode.removeChild(node);
+        this._sanitize(parentNode);
+        break;
+      }
+
+      var isInline = isInlineElement(node);
+      var containsBlockElement;
+      if (isInline) {
+        containsBlockElement = Array.prototype.some.call(node.childNodes, isBlockElement);
+      }
+
+      // Block elements should not be nested (e.g. <li><p>...); if
+      // they are, we want to unwrap the inner block element.
+      var isNotTopContainer = !! parentNode.parentNode;
+      var isNestedBlockElement =
+            isBlockElement(parentNode) &&
+            isBlockElement(node) &&
+            isNotTopContainer;
+
+      var nodeName = node.nodeName.toLowerCase();
+
+      var allowedAttrs = getAllowedAttrs(this.config, nodeName, node);
+
+      var isInvalid = isInline && containsBlockElement;
+
+      // Drop tag entirely according to the whitelist *and* if the markup
+      // is invalid.
+      if (isInvalid || shouldRejectNode(node, allowedAttrs)
+          || (!this.config.keepNestedBlockElements && isNestedBlockElement)) {
+        // Do not keep the inner text of SCRIPT/STYLE elements.
+        if (! (node.nodeName === 'SCRIPT' || node.nodeName === 'STYLE')) {
+          while (node.childNodes.length > 0) {
+            parentNode.insertBefore(node.childNodes[0], node);
+          }
+        }
+        parentNode.removeChild(node);
+
+        this._sanitize(parentNode);
+        break;
+      }
+
+      // Sanitize attributes
+      for (var a = 0; a < node.attributes.length; a += 1) {
+        var attr = node.attributes[a];
+
+        if (shouldRejectAttr(attr, allowedAttrs, node)) {
+          node.removeAttribute(attr.name);
+          // Shift the array to continue looping.
+          a = a - 1;
+        }
+      }
+
+      // Sanitize children
+      this._sanitize(node);
+
+      // Mark node as sanitized so it's ignored in future runs
+      node._sanitized = true;
+    } while ((node = treeWalker.nextSibling()));
+  };
+
+  function createTreeWalker(node) {
+    return document.createTreeWalker(node,
+                                     NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT,
+                                     null, false);
+  }
+
+  function getAllowedAttrs(config, nodeName, node){
+    if (typeof config.tags[nodeName] === 'function') {
+      return config.tags[nodeName](node);
+    } else {
+      return config.tags[nodeName];
+    }
+  }
+
+  function shouldRejectNode(node, allowedAttrs){
+    if (typeof allowedAttrs === 'undefined') {
+      return true;
+    } else if (typeof allowedAttrs === 'boolean') {
+      return !allowedAttrs;
+    }
+
+    return false;
+  }
+
+  function shouldRejectAttr(attr, allowedAttrs, node){
+    var attrName = attr.name.toLowerCase();
+
+    if (allowedAttrs === true){
+      return false;
+    } else if (typeof allowedAttrs[attrName] === 'function'){
+      return !allowedAttrs[attrName](attr.value, node);
+    } else if (typeof allowedAttrs[attrName] === 'undefined'){
+      return true;
+    } else if (allowedAttrs[attrName] === false) {
+      return true;
+    } else if (typeof allowedAttrs[attrName] === 'string') {
+      return (allowedAttrs[attrName] !== attr.value);
+    }
+
+    return false;
+  }
+
+  return HTMLJanitor;
+
+}));
+
+
+/***/ }),
 /* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2041,8 +2446,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  */
 
 /**
- * @todo update according to current API
- *
  * @typedef {Object} Tool
  * @property render
  * @property save
@@ -2114,9 +2517,7 @@ var Tools = function (_Module) {
 
     }]);
 
-    function Tools(_ref) {
-        var config = _ref.config;
-
+    function Tools(config) {
         _classCallCheck(this, Tools);
 
         var _this = _possibleConstructorReturn(this, (Tools.__proto__ || Object.getPrototypeOf(Tools)).call(this, config));
@@ -2254,6 +2655,11 @@ var Tools = function (_Module) {
             var plugin = this.toolClasses[tool],
                 config = this.config.toolsConfig[tool];
 
+            if (!config) {
+
+                config = this.defaultConfig;
+            }
+
             var instance = new plugin(data, config);
 
             return instance;
@@ -2352,9 +2758,7 @@ var UI = function (_Module) {
    *
    * @param  {EditorConfig} config
    */
-  function UI(_ref) {
-    var config = _ref.config;
-
+  function UI(config) {
     _classCallCheck(this, UI);
 
     var _this = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, config));

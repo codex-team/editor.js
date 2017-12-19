@@ -14,7 +14,7 @@ export default class Module {
      *
      * @param  {EditorConfig} config
      */
-    constructor(config) {
+    constructor({ config } = {}) {
 
         if (new.target === Module) {
 

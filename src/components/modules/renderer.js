@@ -10,7 +10,6 @@ export default class Renderer extends Module {
 
     /**
      * @constructor
-     *
      * @param {EditorConfig} config
      */
     constructor(config) {
@@ -20,10 +19,34 @@ export default class Renderer extends Module {
     }
 
     /**
+     * @typedef {Object} RendererItems
+     * @property {String} type - tool name
+     * @property {Object} data - tool data
+     */
+
+    /**
+     * @example
      *
+     * items: [
+     * {
+     *    type : 'paragraph',
+     *    data : {
+     *        text : 'Hello from Codex!'
+     *    }
+     * },
+     * {
+     *   type : 'paragraph',
+     *   data : {
+     *        text : 'Leave feedback if you like it!'
+     *   }
+     * },
+     * ]
+     *
+     */
+
+    /**
      * Make plugin blocks from array of plugin`s data
-     *
-     * @param {Object[]} items
+     * @param {RendererItems[]} items
      */
     render(items) {
 
