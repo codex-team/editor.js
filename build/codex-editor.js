@@ -471,7 +471,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var modules = ["blockManager.js","events.js","renderer.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+var modules = ["blockManager.js","events.js","renderer.js","sanitizer.js","toolbar.js","tools.js","ui.js"].map(function (module) {
     return __webpack_require__(4)("./" + module);
 });
 
@@ -815,9 +815,9 @@ var map = {
 	"./blockManager.js": 5,
 	"./events.js": 7,
 	"./renderer.js": 8,
-	"./toolbar.js": 9,
-	"./tools.js": 10,
-	"./ui.js": 11
+	"./toolbar.js": 11,
+	"./tools.js": 12,
+	"./ui.js": 13
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1487,20 +1487,30 @@ module.exports = exports["default"];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(_) {
+/* WEBPACK VAR INJECTION */(function(Module, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 /**
  * Codex Editor Renderer Module
  *
- * @author Codex Team
+ * @module Renderer
+ * @author CodeX Team
+ *
  * @version 2.0.0
  */
-
-var Renderer = function () {
+var Renderer = function (_Module) {
+    _inherits(Renderer, _Module);
 
     /**
      * @constructor
@@ -1510,29 +1520,21 @@ var Renderer = function () {
     function Renderer(config) {
         _classCallCheck(this, Renderer);
 
-        this.config = config;
-        this.Editor = null;
+        return _possibleConstructorReturn(this, (Renderer.__proto__ || Object.getPrototypeOf(Renderer)).call(this, config));
     }
 
     /**
-     * Editor modules setter
      *
-     * @param {Object} Editor
+     * Make plugin blocks from array of plugin`s data
+     *
+     * @param {Object[]} items
      */
 
 
     _createClass(Renderer, [{
         key: "render",
-
-
-        /**
-         *
-         * Make plugin blocks from array of plugin`s data
-         *
-         * @param {Object[]} items
-         */
         value: function render(items) {
-            var _this = this;
+            var _this2 = this;
 
             var chainData = [];
 
@@ -1540,7 +1542,7 @@ var Renderer = function () {
 
                 chainData.push({
                     function: function _function() {
-                        return _this.insertBlock(items[i]);
+                        return _this2.insertBlock(items[i]);
                     }
                 });
             };
@@ -1573,21 +1575,10 @@ var Renderer = function () {
 
             return Promise.resolve();
         }
-    }, {
-        key: "state",
-        set: function set(Editor) {
-
-            this.Editor = Editor;
-        }
     }]);
 
     return Renderer;
-}();
-
-Renderer.displayName = "Renderer";
-
-
-module.exports = Renderer;
+}(Module);
 
 // module.exports = (function (renderer) {
 //
@@ -1785,10 +1776,17 @@ module.exports = Renderer;
 //     return renderer;
 //
 // })({});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+
+
+Renderer.displayName = "Renderer";
+exports.default = Renderer;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 9 */
+/* 9 */,
+/* 10 */,
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2008,7 +2006,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2271,7 +2269,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2446,7 +2444,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(12);
+      var styles = __webpack_require__(14);
 
       /**
        * Make tag
@@ -2735,10 +2733,10 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(13)(undefined);
+exports = module.exports = __webpack_require__(15)(undefined);
 // imports
 
 
@@ -2749,7 +2747,7 @@ exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n
 
 
 /***/ }),
-/* 13 */
+/* 15 */
 /***/ (function(module, exports) {
 
 /*

@@ -1,11 +1,12 @@
 /**
  * Codex Editor Renderer Module
  *
- * @author Codex Team
+ * @module Renderer
+ * @author CodeX Team
+ *
  * @version 2.0.0
  */
-
-class Renderer {
+export default class Renderer extends Module {
 
     /**
      * @constructor
@@ -14,19 +15,7 @@ class Renderer {
      */
     constructor(config) {
 
-        this.config = config;
-        this.Editor = null;
-
-    }
-
-    /**
-     * Editor modules setter
-     *
-     * @param {Object} Editor
-     */
-    set state(Editor) {
-
-        this.Editor = Editor;
+        super(config);
 
     }
 
@@ -73,8 +62,6 @@ class Renderer {
     }
 
 }
-
-module.exports = Renderer;
 
 // module.exports = (function (renderer) {
 //
