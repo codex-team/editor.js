@@ -827,12 +827,12 @@ module.exports = function () {
 
 var map = {
 	"./blockManager.js": 5,
-	"./events.js": 6,
-	"./renderer.js": 7,
-	"./sanitizer.js": 8,
-	"./toolbar.js": 10,
-	"./tools.js": 11,
-	"./ui.js": 12
+	"./events.js": 7,
+	"./renderer.js": 8,
+	"./sanitizer.js": 9,
+	"./toolbar.js": 11,
+	"./tools.js": 12,
+	"./ui.js": 13
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -862,7 +862,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * @classdesc Manage editor`s blocks storage and appearance
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
-var _block = __webpack_require__(15);
+var _block = __webpack_require__(6);
 
 var _block2 = _interopRequireDefault(_block);
 
@@ -1310,6 +1310,94 @@ module.exports = BlockManager;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ *
+ * @class Block
+ * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
+ *
+ * @property {Tool} tool — current block tool (Paragraph, for example)
+ * @property {Object} CSS — block`s css classes
+ *
+ */
+
+var Block = function () {
+
+    /**
+     * @constructor
+     *
+     * @param {Object} tool — current block plugin`s instance
+     */
+    function Block(tool) {
+        _classCallCheck(this, Block);
+
+        this.tool = tool;
+
+        this.CSS = {
+            wrapper: 'ce-block',
+            content: 'ce-block__content'
+        };
+
+        this._html = this.compose();
+    }
+
+    /**
+     * Make default block wrappers and put tool`s content there
+     *
+     * @returns {HTMLDivElement}
+     * @private
+     */
+
+
+    _createClass(Block, [{
+        key: 'compose',
+        value: function compose() {
+
+            var wrapper = $.make('div', this.CSS.wrapper),
+                content = $.make('div', this.CSS.content);
+
+            content.appendChild(this.tool.html);
+            wrapper.appendChild(content);
+
+            return wrapper;
+        }
+
+        /**
+         * Get block`s HTML
+         *
+         * @returns {HTMLDivElement}
+         */
+
+    }, {
+        key: 'html',
+        get: function get() {
+
+            return this._html;
+        }
+    }]);
+
+    return Block;
+}();
+
+Block.displayName = 'Block';
+exports.default = Block;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(Module) {
 
 Object.defineProperty(exports, "__esModule", {
@@ -1410,7 +1498,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1715,7 +1803,7 @@ module.exports = Renderer;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1741,14 +1829,14 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  *
  * @version 2.0.0
  *
- * @usage
+ * @example
  *  Module can be used within two ways:
  *     1) When you have an instance
  *         - this.Editor.Sanitizer.clean(yourTaintString);
  *     2) As static method
  *         - CodexEditor.Sanitizer.clean(yourTaintString, yourCustomConfiguration);
  *
- * @link SanitizerConfig
+ * {@link SanitizerConfig}
  */
 
 /**
@@ -1791,7 +1879,7 @@ var Sanitizer = function (_Module) {
         _this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
 
         /** HTML Janitor library */
-        _this.sanitizerInstance = __webpack_require__(9);
+        _this.sanitizerInstance = __webpack_require__(10);
 
         return _this;
     }
@@ -1886,7 +1974,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -2081,7 +2169,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (roo
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2301,7 +2389,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2564,7 +2652,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2739,7 +2827,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(13);
+      var styles = __webpack_require__(14);
 
       /**
        * Make tag
@@ -3028,10 +3116,10 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(14)(undefined);
+exports = module.exports = __webpack_require__(15)(undefined);
 // imports
 
 
@@ -3042,7 +3130,7 @@ exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports) {
 
 /*
@@ -3122,94 +3210,6 @@ function toComment(sourceMap) {
 	return '/*# ' + data + ' */';
 }
 
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function($) {
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- *
- * @class Block
- * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
- *
- * @property {Tool} tool — current block tool (Paragraph, for example)
- * @property {Object} CSS — block`s css classes
- *
- */
-
-var Block = function () {
-
-    /**
-     * @constructor
-     *
-     * @param {Object} tool — current block plugin`s instance
-     */
-    function Block(tool) {
-        _classCallCheck(this, Block);
-
-        this.tool = tool;
-
-        this.CSS = {
-            wrapper: 'ce-block',
-            content: 'ce-block__content'
-        };
-
-        this._html = this.compose();
-    }
-
-    /**
-     * Make default block wrappers and put tool`s content there
-     *
-     * @returns {HTMLDivElement}
-     * @private
-     */
-
-
-    _createClass(Block, [{
-        key: 'compose',
-        value: function compose() {
-
-            var wrapper = $.make('div', this.CSS.wrapper),
-                content = $.make('div', this.CSS.content);
-
-            content.appendChild(this.tool.html);
-            wrapper.appendChild(content);
-
-            return wrapper;
-        }
-
-        /**
-         * Get block`s HTML
-         *
-         * @returns {HTMLDivElement}
-         */
-
-    }, {
-        key: 'html',
-        get: function get() {
-
-            return this._html;
-        }
-    }]);
-
-    return Block;
-}();
-
-Block.displayName = 'Block';
-exports.default = Block;
-module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ })
 /******/ ]);

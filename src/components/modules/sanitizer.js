@@ -6,14 +6,14 @@
  *
  * @version 2.0.0
  *
- * @usage
+ * @example
  *  Module can be used within two ways:
  *     1) When you have an instance
  *         - this.Editor.Sanitizer.clean(yourTaintString);
  *     2) As static method
  *         - CodexEditor.Sanitizer.clean(yourTaintString, yourCustomConfiguration);
  *
- * @link SanitizerConfig
+ * {@link SanitizerConfig}
  */
 
 
