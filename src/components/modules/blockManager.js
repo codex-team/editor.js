@@ -1,21 +1,21 @@
 /**
  * @class BlockManager
  * @classdesc Manage editor`s blocks storage and appearance
+ *
+ * @module BlockManager
  */
 
 import Block from '../block';
 
-class BlockManager {
+export default class BlockManager extends Module {
 
     /**
      * @constructor
-     *
      * @param {EditorConfig} config
      */
     constructor(config) {
 
-        this.config = config;
-        this.Editor = null;
+        super(config);
 
         /**
          * Proxy for Blocks instance {@link Blocks}
@@ -393,5 +393,3 @@ class Blocks {
     }
 
 }
-
-module.exports = BlockManager;

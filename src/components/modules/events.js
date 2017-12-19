@@ -57,10 +57,10 @@ export default class Events extends Module {
 
     /**
      * Destroyer
+     * clears subsribers list
      */
     destroy() {
 
-        this.Editor = null;
         this.subscribers = null;
 
     }
