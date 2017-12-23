@@ -81,6 +81,8 @@ export default class Toolbar extends Module {
             content: 'ce-toolbar__content',
             actions: 'ce-toolbar__actions',
 
+            toolbarOpened: 'ce-toolbar--opened',
+
             // Content Zone
             plusButton: 'ce-toolbar__plus',
 
@@ -121,6 +123,8 @@ export default class Toolbar extends Module {
          */
         this.nodes.plusButton = $.make('div', this.CSS.plusButton);
         $.append(this.nodes.content, this.nodes.plusButton);
+        this.nodes.plusButton.addEventListener('click', event => this.plusButtonClicked(event), false);
+
 
         /**
          * Make a Toolbox
@@ -178,6 +182,63 @@ export default class Toolbar extends Module {
          * @see  {@link settings#makeRemoveBlockButton}
          */
         return $.make('span', this.CSS.removeBlockButton);
+
+    }
+
+    /**
+     * Move Toolbar to the Current Block
+     */
+    move() {
+
+        /** Close Toolbox when we move toolbar */
+        this.Editor.Toolbox.close();
+
+        let currentNode = this.Editor.BlockManager.currentNode;
+
+        /**
+         * If no one Block selected as a Current
+         */
+        if (!currentNode) {
+
+            return;
+
+        }
+
+        /**
+         * @todo Compute dynamically on prepare
+         * @type {number}
+         */
+        const defaultToolbarHeight = 49;
+        const defaultOffset = 34;
+
+        var newYCoordinate = currentNode.offsetTop - (defaultToolbarHeight / 2) + defaultOffset;
+
+        this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
+
+        /** Close trash actions */
+        // editor.toolbar.settings.hideRemoveActions();
+
+    }
+
+    open() {
+
+        this.nodes.wrapper.classList.add(this.CSS.toolbarOpened);
+
+    }
+
+    close() {
+
+        this.nodes.wrapper.classList.remove(this.CSS.toolbarOpened);
+
+    }
+
+    /**
+     * Handler for Plus Button
+     * @param {MouseEvent} event
+     */
+    plusButtonClicked(event) {
+
+        this.Editor.Toolbox.toggle();
 
     }
 

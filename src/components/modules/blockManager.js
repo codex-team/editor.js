@@ -180,7 +180,22 @@ class BlockManager {
 
         let nodes = this._blocks.nodes;
 
+        /**
+         * Update current Block's index
+         * @type {number}
+         */
         this.currentBlockIndex = nodes.indexOf(element);
+
+        /**
+         * Remove previous selected Block's state
+         */
+        this._blocks.array.forEach( block => block.selected = false);
+
+        /**
+         * Mark current Block as selected
+         * @type {boolean}
+         */
+        this.currentBlock.selected = true;
 
     }
 
@@ -192,6 +207,38 @@ class BlockManager {
     get blocks() {
 
         return this._blocks.array;
+
+    }
+
+    /**
+     * 1) Find first-level Block from passed child Node
+     * 2) Mark it as current
+     *
+     *  @param {Element|Text} childNode - look ahead from this node.
+     *  @throws Error  - when passed Node is not included at the Block
+     */
+    setCurrentBlockByChildNode(childNode) {
+
+        /**
+         * If node is Text TextNode
+         */
+        if (!$.isElement(childNode)) {
+
+            childNode = childNode.parentNode;
+
+        }
+
+        let parentFirstLevelBlock = childNode.closest(`.${Block.CSS.wrapper}`);
+
+        if (parentFirstLevelBlock) {
+
+            this.currentNode = parentFirstLevelBlock;
+
+        } else {
+
+            throw new Error('Can not find a Block from this child Node');
+
+        }
 
     }
 

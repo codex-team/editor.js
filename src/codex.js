@@ -45,13 +45,30 @@
 
 /**
  * @typedef {Object} EditorConfig
- * @property {String} holderId  - Element to append Editor
- * @property {Array} data       - Blocks list in JSON-format
- * @property {Object} tools     - Map for used Tools in format { name : Class, ... }
+ * @property {String} holderId           - Element to append Editor
+ * @property {Array} data                - Blocks list in JSON-format
+ * @property {Object} tools              - Map for used Tools in format { name : Class, ... }
+ * @property {String} initialBlockTool   - This Tool will be added by default
+ * @property {String} placeholder        - First Block placeholder
+ * @property {Object} sanitizer          - @todo fill desc
+ * @property {Boolean} hideToolbar       - @todo fill desc
+ * @property {Object} toolsConfig        - @todo fill desc
  * ...
  */
 
+/**
+ * Dynamically imported utils
+ *
+ * @typedef {Dom}   $      - {@link components/dom.js}
+ * @typedef {Util}  _      - {@link components/utils.js}
+ */
+
 'use strict';
+
+/**
+ * Apply polyfills
+ */
+import 'components/polyfills';
 
 /**
  * Require Editor modules places in components/modules dir
@@ -86,6 +103,7 @@ module.exports = class CodexEditor {
 
         /**
          * Configuration object
+         * @type {EditorConfig}
          */
         this.config = {};
 
@@ -124,9 +142,9 @@ module.exports = class CodexEditor {
 
     /**
      * Setting for configuration
-     * @param {Object} config
+     * @param {EditorConfig} config
      */
-    set configuration(config = {}) {
+    set configuration(config) {
 
         this.config.holderId = config.holderId;
         this.config.placeholder = config.placeholder || 'write your story...';
@@ -141,11 +159,20 @@ module.exports = class CodexEditor {
         this.config.toolsConfig = config.toolsConfig || {};
         this.config.data = config.data || [];
 
+        /**
+         * If initial Block's Tool was not passed, use the first Tool in config.tools
+         */
+        if (!config.initialBlockTool) {
+
+            for (this.config.initialBlockTool in this.config.tools) break;
+
+        }
+
     }
 
     /**
      * Returns private property
-     * @returns {{}|*}
+     * @returns {EditorConfig}
      */
     get configuration() {
 

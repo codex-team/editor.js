@@ -5,4 +5,14 @@
      */
     --bg-light: #eff2f5;
 
+    /**
+     * Block content width
+     */
+    --content-width: 650px;
+
+    /**
+     * Toolbar Plus Button and Toolbox buttons height and width
+     */
+    --toolbar-buttons-size: 34px;
+
 }

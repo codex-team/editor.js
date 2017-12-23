@@ -1,3 +1,13 @@
+/**
+ * @class Toolbox
+ * @classdesc Holder for Tools
+ *
+ * @typedef {Toolbox} Toolbox
+ * @property {Boolean} opened - opening state
+ * @property {Object} nodes   - Toolbox nodes
+ * @property {Object} CSS     - CSS class names
+ *
+ */
 export default class Toolbox extends Module {
 
     /**
@@ -9,13 +19,20 @@ export default class Toolbox extends Module {
 
         this.CSS = {
             toolbox: 'cdx-toolbox',
-            toolboxButton: 'cdx-toolbox__button'
+            toolboxButton: 'cdx-toolbox__button',
+            toolboxOpened: 'cdx-toolbox--opened',
         };
 
         this.nodes = {
             toolbox: null,
             buttons: []
         };
+
+        /**
+         * Opening state
+         * @type {boolean}
+         */
+        this.opened = false;
 
     }
 
@@ -158,6 +175,43 @@ export default class Toolbox extends Module {
          * Move toolbar when node is changed
          */
         // editor.toolbar.move();
+
+    }
+
+    /**
+     * Open Toolbox with Tools
+     */
+    open() {
+
+        this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
+        this.opened = true;
+
+    }
+
+    /**
+     * Close Toolbox
+     */
+    close() {
+
+        this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
+        this.opened = false;
+
+    }
+
+    /**
+     * Close Toolbox
+     */
+    toggle() {
+
+        if (!this.opened) {
+
+            this.open();
+
+        } else {
+
+            this.close();
+
+        }
 
     }
 
