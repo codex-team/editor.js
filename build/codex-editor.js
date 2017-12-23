@@ -221,10 +221,10 @@ var Util = function () {
 
                     chainData.function().then(function () {
 
-                        successCallback(chainData.data);
+                        successCallback(chainData.data || {});
                     }).then(resolve).catch(function () {
 
-                        fallbackCallback(chainData.data);
+                        fallbackCallback(chainData.data || {});
 
                         // anyway, go ahead even it falls
                         resolve();
@@ -425,7 +425,7 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/**
+/* WEBPACK VAR INJECTION */(function(_) {/**
  * Codex Editor
  *
  * Short Description (눈_눈;)
@@ -546,7 +546,7 @@ module.exports = function () {
             return _this.start();
         }).then(function () {
 
-            console.log('CodeX Editor is ready');
+            console.log('CodeX Editor is ready!');
         }).catch(function (error) {
 
             console.log('CodeX Editor does not ready beecause of %o', error);
@@ -601,7 +601,6 @@ module.exports = function () {
                      * To prevent this, we use 'babel-plugin-class-display-name' plugin
                      * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
                      */
-
                     _this2.moduleInstances[Module.displayName] = new Module({
                         config: _this2.configuration
                     });
@@ -659,28 +658,98 @@ module.exports = function () {
         /**
          * Start Editor!
          *
+         * Get list of modules that needs to be prepared and return a sequence (Promise)
          * @return {Promise}
          */
 
     }, {
         key: 'start',
         value: function start() {
+
+            var modulePreparationList = this.modulePreparationList();
+
+            return _.sequence(modulePreparationList).catch(function (error) {
+
+                _.log('Error occured', error);
+            });
+        }
+
+        /**
+         * Create a sequence with modules that needs to be prepared consistently
+         * @return {[*,*,*,*]}
+         */
+
+    }, {
+        key: 'modulePreparationList',
+        value: function modulePreparationList() {
             var _this3 = this;
 
-            var prepareDecorator = function prepareDecorator(module) {
-                return module.prepare();
+            /**
+             * Initlai block type
+             * Uses in case when there is no items passed
+             * @type {{type: (*), data: {text: null}}}
+             */
+            var initialBlock = {
+                type: this.config.initialBlock,
+                data: {
+                    text: null
+                }
             };
 
-            return Promise.resolve().then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.Tools)).then(function () {
+            /**
+             * Chain that will be passed alternately
+             * Returns {@link utils#ChainData}
+             */
+            var chainData = [{
+                /**
+                 * First: Call UI module preparation method
+                 */
+                function: function _function() {
 
-                if (_this3.config.data && _this3.config.data.items) {
-
-                    _this3.moduleInstances.Renderer.render(_this3.config.data.items);
+                    return _this3.moduleInstances.UI.prepare();
                 }
-            }).then(prepareDecorator(this.moduleInstances.BlockManager)).catch(function (error) {
+            }, {
+                /**
+                 * Second: Call Tools module preparation method
+                 */
+                function: function _function() {
 
-                console.log('Error occured', error);
-            });
+                    return _this3.moduleInstances.Tools.prepare();
+                }
+            }, {
+                /**
+                 * Third: Call BlockManager module preparation method
+                 */
+                function: function _function() {
+
+                    return _this3.moduleInstances.BlockManager.prepare();
+                }
+            }, {
+                /**
+                 * Fourth: Render data
+                 *
+                 * If no items was passed by user, then use default which is 'paragraph' or passed initialBlock
+                 * {@link EditorConfig#initialBlock}
+                 */
+                function: function _function() {
+
+                    if (_.isEmpty(_this3.config.data)) {
+
+                        _this3.config.data = {};
+                        _this3.config.data.items = [initialBlock];
+                    } else {
+
+                        if (_this3.config.data.items.length === 0) {
+
+                            _this3.config.data.items = [initialBlock];
+                        }
+                    }
+
+                    return _this3.moduleInstances.Renderer.render(_this3.config.data.items);
+                }
+            }];
+
+            return chainData;
         }
     }, {
         key: 'configuration',
@@ -690,6 +759,7 @@ module.exports = function () {
 
             this.config.holderId = config.holderId;
             this.config.placeholder = config.placeholder || 'write your story...';
+            this.config.initialBlock = config.initialBlock || 'paragraph';
             this.config.sanitizer = config.sanitizer || {
                 p: true,
                 b: true,
@@ -825,6 +895,7 @@ module.exports = function () {
 //     return editor;
 //
 // })({});
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 4 */
@@ -1589,7 +1660,7 @@ var Renderer = function (_Module) {
                 _loop(i);
             }
 
-            _.sequence(chainData);
+            return _.sequence(chainData);
         }
 
         /**
@@ -1921,12 +1992,20 @@ var Sanitizer = function (_Module) {
         /**
          * Cleans string from unwanted tags
          * @param {String} taintString - HTML string
-         *
+         * @param {Object} customConfig - custom sanitizer configuration. Method uses default if param is empty
          * @return {String} clean HTML
          */
         value: function clean(taintString) {
+            var customConfig = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-            return this._sanitizerInstance.clean(taintString);
+
+            if (_.isEmpty(customConfig)) {
+
+                return this._sanitizerInstance.clean(taintString);
+            } else {
+
+                return Sanitizer.clean(taintString, customConfig);
+            }
         }
 
         /**

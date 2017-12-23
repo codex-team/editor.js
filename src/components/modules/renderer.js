@@ -60,7 +60,7 @@ export default class Renderer extends Module {
 
         }
 
-        _.sequence(chainData);
+        return _.sequence(chainData);
 
     }
 

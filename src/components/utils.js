@@ -65,13 +65,13 @@ export default class Util {
                 chainData.function()
                     .then(() => {
 
-                        successCallback(chainData.data);
+                        successCallback(chainData.data || {});
 
                     })
                     .then(resolve)
                     .catch(function () {
 
-                        fallbackCallback(chainData.data);
+                        fallbackCallback(chainData.data || {});
 
                         // anyway, go ahead even it falls
                         resolve();

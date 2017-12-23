@@ -105,7 +105,7 @@ module.exports = class CodexEditor {
             .then(() => this.start())
             .then(() => {
 
-                console.log('CodeX Editor is ready');
+                console.log('CodeX Editor is ready!');
 
             })
             .catch(error => {
@@ -124,6 +124,7 @@ module.exports = class CodexEditor {
 
         this.config.holderId = config.holderId;
         this.config.placeholder = config.placeholder || 'write your story...';
+        this.config.initialBlock = config.initialBlock || 'paragraph';
         this.config.sanitizer = config.sanitizer || {
             p: true,
             b: true,
@@ -182,7 +183,6 @@ module.exports = class CodexEditor {
                  * To prevent this, we use 'babel-plugin-class-display-name' plugin
                  * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
                  */
-
                 this.moduleInstances[Module.displayName] = new Module({
                     config : this.configuration
                 });
@@ -243,31 +243,106 @@ module.exports = class CodexEditor {
     /**
      * Start Editor!
      *
+     * Get list of modules that needs to be prepared and return a sequence (Promise)
      * @return {Promise}
      */
     start() {
 
-        let prepareDecorator = module => module.prepare();
+        let modulePreparationList = this.modulePreparationList();
 
-        return Promise.resolve()
-            .then(prepareDecorator(this.moduleInstances.UI))
-            .then(prepareDecorator(this.moduleInstances.Tools))
-            .then(() => {
-
-                if (this.config.data && this.config.data.items) {
-
-                    this.moduleInstances.Renderer.render(this.config.data.items);
-
-                }
-
-            })
-            .then(prepareDecorator(this.moduleInstances.BlockManager))
-
+        return _.sequence(modulePreparationList)
             .catch(function (error) {
 
-                console.log('Error occured', error);
+                _.log('Error occured', error);
 
             });
+
+    }
+
+    /**
+     * Create a sequence with modules that needs to be prepared consistently
+     * @return {[*,*,*,*]}
+     */
+    modulePreparationList() {
+
+        /**
+         * Initlai block type
+         * Uses in case when there is no items passed
+         * @type {{type: (*), data: {text: null}}}
+         */
+        let initialBlock = {
+            type : this.config.initialBlock,
+            data : {
+                text : null
+            }
+        };
+
+        /**
+         * Chain that will be passed alternately
+         * Returns {@link utils#ChainData}
+         */
+        let chainData = [
+            {
+                /**
+                 * First: Call UI module preparation method
+                 */
+                function: () => {
+
+                    return this.moduleInstances.UI.prepare();
+
+                }
+            },
+            {
+                /**
+                 * Second: Call Tools module preparation method
+                 */
+                function: () => {
+
+                    return this.moduleInstances.Tools.prepare();
+
+                }
+            },
+            {
+                /**
+                 * Third: Call BlockManager module preparation method
+                 */
+                function: () => {
+
+                    return this.moduleInstances.BlockManager.prepare();
+
+                }
+            },
+            {
+                /**
+                 * Fourth: Render data
+                 *
+                 * If no items was passed by user, then use default which is 'paragraph' or passed initialBlock
+                 * {@link EditorConfig#initialBlock}
+                 */
+                function: () => {
+
+                    if (_.isEmpty(this.config.data)) {
+
+                        this.config.data = {};
+                        this.config.data.items = [ initialBlock ];
+
+                    } else {
+
+                        if (this.config.data.items.length === 0) {
+
+                            this.config.data.items = [ initialBlock ];
+
+                        }
+
+                    }
+
+                    return this.moduleInstances.Renderer.render(this.config.data.items);
+
+                }
+            }
+        ];
+
+        return chainData;
 
     }
 
