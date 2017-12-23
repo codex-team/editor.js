@@ -15,10 +15,9 @@ export default class Events extends Module {
     /**
      * @constructor
      */
-    constructor() {
+    constructor(config) {
 
-        super();
-
+        super(config);
         this.subscribers = {};
 
     }
@@ -58,10 +57,10 @@ export default class Events extends Module {
 
     /**
      * Destroyer
+     * clears subsribers list
      */
     destroy() {
 
-        this.Editor = null;
         this.subscribers = null;
 
     }

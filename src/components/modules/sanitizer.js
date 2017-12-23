@@ -104,12 +104,21 @@ export default class Sanitizer extends Module {
     /**
      * Cleans string from unwanted tags
      * @param {String} taintString - HTML string
-     *
+     * @param {Object} customConfig - custom sanitizer configuration. Method uses default if param is empty
      * @return {String} clean HTML
      */
-    clean(taintString) {
+    clean(taintString, customConfig = {}) {
 
-        return this._sanitizerInstance.clean(taintString);
+        if (_.isEmpty(customConfig)) {
+
+            return this._sanitizerInstance.clean(taintString);
+
+        } else {
+
+            return Sanitizer.clean(taintString, customConfig);
+
+        }
+
 
     }
 

@@ -12,21 +12,13 @@
  * @property {String} iconClassname - this a icon in toolbar
  * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
  * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
+ * @property render @todo add description
+ * @property save @todo add description
+ * @property settings @todo add description
+ * @property validate - method that validates output data before saving
  */
 
 /**
- * @todo update according to current API
- *
- * @typedef {Object} Tool
- * @property render
- * @property save
- * @property settings
- * @property validate
- */
-
-/**
- * Class properties:
- *
  * @typedef {Tool} Tool
  * @property {String} name - name of this module
  * @property {Object[]} toolInstances - list of tool instances
@@ -77,7 +69,7 @@ export default class Tools extends Module {
      *
      * @param {ToolsConfig} config
      */
-    constructor({ config }) {
+    constructor(config) {
 
         super(config);
 
@@ -204,6 +196,12 @@ export default class Tools extends Module {
 
         let plugin = this.toolClasses[tool],
             config = this.config.toolsConfig[tool];
+
+        if (!config) {
+
+            config = this.defaultConfig;
+
+        }
 
         let instance = new plugin(data, config);
 

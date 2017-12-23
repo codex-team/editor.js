@@ -46,8 +46,10 @@
 /**
  * @typedef {Object} EditorConfig
  * @property {String} holderId  - Element to append Editor
- * @property {Array} data       - Blocks list in JSON-format
- * ...
+ * @property {String} initialBlock - Tool name which will be initial
+ * @property {Object} tools - list of tools. The object value must be function (constructor) so that CodexEditor could make an instance
+ * @property {@link Tools#ToolsConfig} toolsConfig - tools configuration
+ * @property {Array} data  - Blocks list in JSON-format
  */
 
 'use strict';
