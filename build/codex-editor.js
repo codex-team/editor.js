@@ -685,18 +685,6 @@ module.exports = function () {
             var _this3 = this;
 
             /**
-             * Initlai block type
-             * Uses in case when there is no items passed
-             * @type {{type: (*), data: {text: null}}}
-             */
-            var initialBlock = {
-                type: this.config.initialBlock,
-                data: {
-                    text: null
-                }
-            };
-
-            /**
              * Chain that will be passed alternately
              * Returns {@link utils#ChainData}
              */
@@ -745,6 +733,18 @@ module.exports = function () {
             var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
 
+            /**
+             * Initlai block type
+             * Uses in case when there is no items passed
+             * @type {{type: (*), data: {text: null}}}
+             */
+            var initialBlock = {
+                type: this.config.initialBlock,
+                data: {
+                    text: null
+                }
+            };
+
             this.config.holderId = config.holderId;
             this.config.placeholder = config.placeholder || 'write your story...';
             this.config.sanitizer = config.sanitizer || {
@@ -768,11 +768,6 @@ module.exports = function () {
             } else {
 
                 if (!this.config.data.items || this.config.data.items.length === 0) {
-
-                    this.config.data.items = [initialBlock];
-                }
-
-                if (this.config.data.items.length === 0) {
 
                     this.config.data.items = [initialBlock];
                 }

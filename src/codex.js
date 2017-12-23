@@ -122,6 +122,18 @@ module.exports = class CodexEditor {
      */
     set configuration(config = {}) {
 
+        /**
+         * Initlai block type
+         * Uses in case when there is no items passed
+         * @type {{type: (*), data: {text: null}}}
+         */
+        let initialBlock = {
+            type : this.config.initialBlock,
+            data : {
+                text : null
+            }
+        };
+
         this.config.holderId = config.holderId;
         this.config.placeholder = config.placeholder || 'write your story...';
         this.config.sanitizer = config.sanitizer || {
@@ -146,12 +158,6 @@ module.exports = class CodexEditor {
         } else {
 
             if (!this.config.data.items || this.config.data.items.length === 0) {
-
-                this.config.data.items = [ initialBlock ];
-
-            }
-
-            if (this.config.data.items.length === 0) {
 
                 this.config.data.items = [ initialBlock ];
 
@@ -287,18 +293,6 @@ module.exports = class CodexEditor {
      * @return {[*,*,*,*]}
      */
     modulePreparationList() {
-
-        /**
-         * Initlai block type
-         * Uses in case when there is no items passed
-         * @type {{type: (*), data: {text: null}}}
-         */
-        let initialBlock = {
-            type : this.config.initialBlock,
-            data : {
-                text : null
-            }
-        };
 
         /**
          * Chain that will be passed alternately
