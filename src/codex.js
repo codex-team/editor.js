@@ -124,7 +124,6 @@ module.exports = class CodexEditor {
 
         this.config.holderId = config.holderId;
         this.config.placeholder = config.placeholder || 'write your story...';
-        this.config.initialBlock = config.initialBlock || 'paragraph';
         this.config.sanitizer = config.sanitizer || {
             p: true,
             b: true,
@@ -134,7 +133,31 @@ module.exports = class CodexEditor {
         this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
         this.config.tools = config.tools || {};
         this.config.toolsConfig = config.toolsConfig || {};
-        this.config.data = config.data || [];
+        this.config.data = config.data || {};
+
+        /**
+         * Initialize items to pass data to the Renderer
+         */
+        if (_.isEmpty(this.config.data)) {
+
+            this.config.data = {};
+            this.config.data.items = [ initialBlock ];
+
+        } else {
+
+            if (!this.config.data.items || this.config.data.items.length === 0) {
+
+                this.config.data.items = [ initialBlock ];
+
+            }
+
+            if (this.config.data.items.length === 0) {
+
+                this.config.data.items = [ initialBlock ];
+
+            }
+
+        }
 
     }
 
@@ -320,21 +343,6 @@ module.exports = class CodexEditor {
                  * {@link EditorConfig#initialBlock}
                  */
                 function: () => {
-
-                    if (_.isEmpty(this.config.data)) {
-
-                        this.config.data = {};
-                        this.config.data.items = [ initialBlock ];
-
-                    } else {
-
-                        if (this.config.data.items.length === 0) {
-
-                            this.config.data.items = [ initialBlock ];
-
-                        }
-
-                    }
 
                     return this.moduleInstances.Renderer.render(this.config.data.items);
 
