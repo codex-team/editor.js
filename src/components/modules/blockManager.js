@@ -5,6 +5,11 @@
 
 import Block from '../block';
 
+/**
+ * @typedef {BlockManager} BlockManager
+ * @property {Number} currentBlockIndex - Index of current working block
+ * @property {Proxy} _blocks - Proxy for Blocks instance {@link Blocks}
+ */
 class BlockManager {
 
     /**
@@ -89,12 +94,16 @@ class BlockManager {
      * @param {String} toolName — plugin name
      * @param {Object} data — plugin data
      */
-    insert(toolName, data) {
+    insert(toolName, data = {}) {
 
         let toolInstance = this.Editor.Tools.construct(toolName, data),
             block = new Block(toolInstance);
 
         this._blocks[++this.currentBlockIndex] = block;
+
+        /**
+         * @todo fire Tool's appendCallback
+         */
 
     }
 
@@ -104,12 +113,16 @@ class BlockManager {
      * @param {String} toolName — plugin name
      * @param {Object} data — plugin data
      */
-    replace(toolName, data) {
+    replace(toolName, data = {}) {
 
         let toolInstance = this.Editor.Tools.construct(toolName, data),
             block = new Block(toolInstance);
 
         this._blocks.insert(this.currentBlockIndex, block, true);
+
+        /**
+         * @todo fire Tool's appendCallback
+         */
 
     }
 

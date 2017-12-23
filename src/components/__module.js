@@ -1,7 +1,7 @@
 /**
  * @abstract
  * @class      Module
- * @classdesc  All modules inherites from this class.
+ * @classdesc  All modules inherits from this class.
  *
  * @typedef {Module} Module
  * @property {Object} config - Editor user settings
@@ -22,7 +22,14 @@ export default class Module {
 
         }
 
+        /**
+         * @type {EditorConfig}
+         */
         this.config = config;
+
+        /**
+         * @type {EditorComponents}
+         */
         this.Editor = null;
 
     }

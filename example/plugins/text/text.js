@@ -1,5 +1,5 @@
 /**
- * @class Paragraph
+ * @class Text
  * @classdesc Paragraph plugin for CodexEditor
  *
  * @author CodeX Team (team@ifmo.su)
@@ -8,23 +8,12 @@
  * @version 2.0.0
  *
  *
- * @typedef {Object} ParagraphData
- * @property {String} text — HTML content to insert to paragraph element
+ * @typedef {Object} TextData
+ * @property {String} text — HTML content to insert to text element
  *
  */
 
-class Paragraph {
-
-    /**
-     * Get the name of the plugin
-     *
-     * @returns {string} The plugin name
-     */
-    static get name() {
-
-        return 'paragraph';
-
-    }
+class Text {
 
     /**
      * Pass true to display this tool in the Editor's Toolbox
@@ -44,19 +33,19 @@ class Paragraph {
      */
     static get iconClassName() {
 
-        return 'cdx-paragraph-icon';
+        return 'cdx-text-icon';
 
     }
 
     /**
      * Render plugin`s html and set initial content
      *
-     * @param {ParagraphData} data — initial plugin content
+     * @param {TextData} data — initial plugin content
      */
     constructor(data = {}) {
 
         this._CSS = {
-            wrapper: 'ce-paragraph'
+            wrapper: 'ce-text'
         };
 
         this._data = {};
@@ -87,7 +76,7 @@ class Paragraph {
     /**
      * Check if saved text is empty
      *
-     * @param {ParagraphData} savedData — data received from plugins`s element
+     * @param {TextData} savedData — data received from plugins`s element
      * @returns {boolean} false if saved text is empty, true otherwise
      */
     validate(savedData) {
@@ -118,7 +107,7 @@ class Paragraph {
      *
      * @todo sanitize data while saving
      *
-     * @returns {ParagraphData} Current data
+     * @returns {TextData} Current data
      */
     get data() {
 
@@ -133,7 +122,7 @@ class Paragraph {
     /**
      * Set new data for plugin
      *
-     * @param {ParagraphData} data — data to set
+     * @param {TextData} data — data to set
      */
     set data(data) {
 

@@ -58,4 +58,53 @@ export default class Block {
 
     }
 
+    /**
+     * Check block for emptyness
+     *
+     * @return {Boolean}
+     */
+    get isEmpty() {
+
+        /**
+         * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
+         * That Tools are not empty
+         */
+        if (this.tool.contentless) {
+
+            return false;
+
+        }
+
+        let emptyText = this._html.textContent.trim().length === 0,
+            emptyMedia = !this.hasMedia;
+
+        return emptyText && emptyMedia;
+
+    }
+
+    /**
+     * Check if block has a media content such as images, iframes and other
+     * @return {Boolean}
+     */
+    get hasMedia() {
+
+        /**
+         * This tags represents media-content
+         * @type {string[]}
+         */
+        const mediaTags = [
+            'img',
+            'iframe',
+            'video',
+            'audio',
+            'source',
+            'input',
+            'textarea',
+            'twitterwidget'
+        ];
+
+        return !!this._html.querySelector(mediaTags.join(','));
+
+    }
+
 }

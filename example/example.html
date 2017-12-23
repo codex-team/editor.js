@@ -22,8 +22,8 @@
 
 </body>
 
-<script src="plugins/paragraph/paragraph.js?v=100"></script>
-<link rel="stylesheet" href="plugins/paragraph/paragraph.css">
+<script src="plugins/text/text.js?v=100"></script>
+<link rel="stylesheet" href="plugins/text/text.css">
 
 <!--<script src="plugins/header/header.js"></script>-->
 <!--<link rel="stylesheet" href="plugins/header/header.css">-->
@@ -67,7 +67,7 @@
         holderId : 'codex-editor',
         initialBlock : 'paragraph',
         tools: {
-            paragraph: Paragraph,
+            text: Text,
         },
         toolsConfig: {
             quote: {
@@ -79,13 +79,13 @@
         data: {
             items: [
                 {
-                    type : 'paragraph',
+                    type : 'text',
                     data : {
                         text : 'Привет от CodeX'
                     }
                 },
                 {
-                    type : 'paragraph',
+                    type : 'text',
                     data : {
                         text : 'Пишите нам на team@ifmo.su'
                     }
@@ -100,17 +100,17 @@
 //    });
 //    codex.editor.start({
 //        holderId : "codex-editor",
-//        initialBlockPlugin : 'paragraph',
+//        initialBlockPlugin : 'text',
 //        // placeholder: 'Прошлой ночью мне приснилось...',
 //        hideToolbar: false,
 //        tools : {
-//            paragraph: {
-//                type: 'paragraph',
-//                iconClassname: 'ce-icon-paragraph',
-//                render: paragraph.render,
-//                validate: paragraph.validate,
-//                save: paragraph.save,
-//                destroy: paragraph.destroy,
+//            text: {
+//                type: 'text',
+//                iconClassname: 'ce-icon-text',
+//                render: text.render,
+//                validate: text.validate,
+//                save: text.save,
+//                destroy: text.destroy,
 //                allowedToPaste: true,
 //                showInlineToolbar: true,
 //                allowRenderOnPaste: true
@@ -272,7 +272,7 @@
 //                    }
 //                },
 //                {
-//                    type : 'paragraph',
+//                    type : 'text',
 //                    data : {
 //                        text : 'Пишите нам на team@ifmo.su'
 //                    }

@@ -50,13 +50,13 @@ export default class Toolbox extends Module {
      * Append Tool to the Toolbox
      *
      * @param {string} toolName  - tool name
-     * @param {Class}  tool      - tool class
+     * @param {Tool}  tool      - tool class
      */
     addTool(toolName, tool) {
 
         if (!tool.iconClassName && tool.displayInToolbox) {
 
-            _.log('Toolbar icon ClassName is missed. Tool %o skipped', 'warn', tool);
+            _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
             return;
 
         }
@@ -80,10 +80,14 @@ export default class Toolbox extends Module {
 
         }
 
-        /** if tools is for toolbox */
         let button = $.make('li', [this.CSS.toolboxButton, tool.iconClassName], {
             title: toolName
         });
+
+        /**
+         * Save tool's name in the button data-name
+         */
+        button.dataset.name = toolName;
 
         $.append(this.nodes.toolbox, button);
 
@@ -94,9 +98,9 @@ export default class Toolbox extends Module {
          * @todo add event with module Listeners
          */
         // this.Editor.Listeners.add();
-        button.addEventListener('click', () => {
+        button.addEventListener('click', event => {
 
-            this.buttonClicked();
+            this.buttonClicked(event);
 
         }, false);
 
@@ -104,19 +108,56 @@ export default class Toolbox extends Module {
 
     /**
      * Toolbox button click listener
-     * Replace current block with new or append new below
+     * 1) if block is empty -> replace
+     * 2) if block is not empty -> add new block below
      *
+     * @param {MouseEvent} event
      */
-    buttonClicked() {
+    buttonClicked(event) {
 
-        // var button = this;
+        let toolButton = event.target,
+            toolName = toolButton.dataset.name,
+            tool = this.Editor.Tools.toolClasses[toolName];
 
-        // editor.toolbar.current = button.dataset.type;
-        //
-        // editor.toolbar.toolbox.toolClicked(event);
-        // editor.toolbar.close();
+        /**
+         * @type {Block}
+         */
+        let currentBlock = this.Editor.BlockManager.currentBlock;
 
-        alert('Tool clicked');
+        /**
+         * We do replace if:
+         * - block is empty
+         * - block is not irreplaceable
+         * @type {Array}
+         */
+        if (!tool.irreplaceable && currentBlock.isEmpty) {
+
+            this.Editor.BlockManager.replace(toolName);
+
+        } else {
+
+            this.Editor.BlockManager.insert(toolName);
+
+        }
+
+        /**
+         * @todo set caret to the new block
+         */
+
+        // window.setTimeout(function () {
+
+        /** Set caret to current block */
+        // editor.caret.setToBlock(currentInputIndex);
+
+        // }, 10);
+
+        /**
+         * @todo Move toolbar to the new Block
+         */
+        /**
+         * Move toolbar when node is changed
+         */
+        // editor.toolbar.move();
 
     }
 

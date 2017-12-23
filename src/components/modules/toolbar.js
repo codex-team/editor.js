@@ -122,6 +122,9 @@ export default class Toolbar extends Module {
         this.nodes.plusButton = $.make('div', this.CSS.plusButton);
         $.append(this.nodes.content, this.nodes.plusButton);
 
+        /**
+         * Make a Toolbox
+         */
         this.Editor.Toolbox.make();
 
         /**

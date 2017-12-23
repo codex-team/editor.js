@@ -47,6 +47,7 @@
  * @typedef {Object} EditorConfig
  * @property {String} holderId  - Element to append Editor
  * @property {Array} data       - Blocks list in JSON-format
+ * @property {Object} tools     - Map for used Tools in format { name : Class, ... }
  * ...
  */
 
@@ -89,7 +90,14 @@ module.exports = class CodexEditor {
         this.config = {};
 
         /**
-         * Editor Components
+         * @typedef {Object} EditorComponents
+         * @property {BlockManager} BlockManager
+         * @property {Tools} Tools
+         * @property {Events} Events
+         * @property {UI} UI
+         * @property {Toolbar} Toolbar
+         * @property {Toolbox} Toolbox
+         * @property {Renderer} Renderer
          */
         this.moduleInstances = {};
 
@@ -180,7 +188,6 @@ module.exports = class CodexEditor {
                  * To prevent this, we use 'babel-plugin-class-display-name' plugin
                  * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
                  */
-
                 this.moduleInstances[Module.displayName] = new Module({
                     config : this.configuration
                 });
@@ -305,11 +312,11 @@ module.exports = class CodexEditor {
 //      * holds initial settings
 //      */
 //     editor.settings = {
-//         tools     : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
+//         tools     : ['text', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
 //         holderId  : 'codex-editor',
 //
 //         // Type of block showing on empty editor
-//         initialBlockPlugin: 'paragraph'
+//         initialBlockPlugin: 'text'
 //     };
 //
 //     /**
