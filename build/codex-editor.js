@@ -474,8 +474,8 @@ module.exports = exports['default'];
  * @typedef {Object} EditorConfig
  * @property {String} holderId  - Element to append Editor
  * @property {String} initialBlock - Tool name which will be initial
- * @property {@link Tools#ToolsConfig} tools - list of tools linked to the constructor (function)
- * @property {Object} toolsConfig - list of configurations
+ * @property {Object} tools - list of tools. The object value must be function (constructor) so that CodexEditor could make an instance
+ * @property {@link Tools#ToolsConfig} toolsConfig - tools configuration
  * @property {Array} data  - Blocks list in JSON-format
  */
 
@@ -917,22 +917,15 @@ var BlockManager = function (_Module) {
     }
 
     /**
-     * Editor modules setting
+     * Should be called after Editor.UI preparation
+     * Define this._blocks property
      *
-     * @param Editor
+     * @returns {Promise}
      */
 
 
     _createClass(BlockManager, [{
         key: 'prepare',
-
-
-        /**
-         * Should be called after Editor.UI preparation
-         * Define this._blocks property
-         *
-         * @returns {Promise}
-         */
         value: function prepare() {
             var _this2 = this;
 
@@ -1025,12 +1018,6 @@ var BlockManager = function (_Module) {
          * @return {Block}
          */
 
-    }, {
-        key: 'state',
-        set: function set(Editor) {
-
-            this.Editor = Editor;
-        }
     }, {
         key: 'currentBlock',
         get: function get() {
@@ -2453,19 +2440,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @property {String} iconClassname - this a icon in toolbar
  * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
  * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
+ * @property render @todo add description
+ * @property save @todo add description
+ * @property settings @todo add description
+ * @property validate - method that validates output data before saving
  */
 
 /**
- * @typedef {Object} Tool
- * @property render
- * @property save
- * @property settings
- * @property validate
- */
-
-/**
- * Class properties:
- *
  * @typedef {Tool} Tool
  * @property {String} name - name of this module
  * @property {Object[]} toolInstances - list of tool instances

@@ -36,17 +36,6 @@ export default class BlockManager extends Module {
     }
 
     /**
-     * Editor modules setting
-     *
-     * @param Editor
-     */
-    set state(Editor) {
-
-        this.Editor = Editor;
-
-    }
-
-    /**
      * Should be called after Editor.UI preparation
      * Define this._blocks property
      *
