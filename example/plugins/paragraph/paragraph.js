@@ -27,6 +27,28 @@ class Paragraph {
     }
 
     /**
+     * Pass true to display this tool in the Editor's Toolbox
+     *
+     * @returns {boolean}
+     */
+    static get displayInToolbox() {
+
+        return true;
+
+    }
+
+    /**
+     * Class for the Toolbox icon
+     *
+     * @returns {string}
+     */
+    static get iconClassName() {
+
+        return 'cdx-paragraph-icon';
+
+    }
+
+    /**
      * Render plugin`s html and set initial content
      *
      * @param {ParagraphData} data — initial plugin content

@@ -27,11 +27,10 @@
 /**
  * Class properties:
  *
- * @typedef {Tool} Tool
- * @property {String} name - name of this module
+ * @typedef {Tools} Tools
  * @property {Object[]} toolInstances - list of tool instances
- * @property {Tools[]} available - available Tools
- * @property {Tools[]} unavailable - unavailable Tools
+ * @property {Tools[]} toolsAvailable - available Tools
+ * @property {Tools[]} toolsUnavailable - unavailable Tools
  * @property {Object} toolsClasses - all classes
  * @property {EditorConfig} config - Editor config
  */
@@ -89,7 +88,7 @@ export default class Tools extends Module {
 
     /**
      * Creates instances via passed or default configuration
-     * @return {boolean}
+     * @return {Promise}
      */
     prepare() {
 
@@ -154,6 +153,13 @@ export default class Tools extends Module {
                         toolName
                     }
                 });
+
+            } else {
+
+                /**
+                 * If tool has not prepare method, mark it as available by default
+                 */
+                this.toolsAvailable[toolName] = toolClass;
 
             }
 

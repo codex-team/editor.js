@@ -65,7 +65,6 @@ export default class Toolbar extends Module {
 
             // Content Zone
             plusButton : null,
-            toolbox : null,
 
             // Actions Zone
             settingsToggler : null,
@@ -83,7 +82,6 @@ export default class Toolbar extends Module {
             actions: 'ce-toolbar__actions',
 
             // Content Zone
-            toolbox: 'ce-toolbar__toolbox',
             plusButton: 'ce-toolbar__plus',
 
             // Actions Zone
@@ -121,12 +119,10 @@ export default class Toolbar extends Module {
          *  - Plus Button
          *  - Toolbox
          */
-        ['plusButton', 'toolbox'].forEach( el => {
+        this.nodes.plusButton = $.make('div', this.CSS.plusButton);
+        $.append(this.nodes.content, this.nodes.plusButton);
 
-            this.nodes[el] = $.make('div', this.CSS[el]);
-            $.append(this.nodes.content, this.nodes[el]);
-
-        });
+        this.Editor.Toolbox.make();
 
         /**
          * Fill Actions Zone:

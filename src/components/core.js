@@ -99,42 +99,6 @@ export default class Core {
 
     }
 
-    /**
-     * Core custom logger
-     *
-     * @param msg
-     * @param type
-     * @param args
-     */
-    log(msg, type, args) {
-
-        type = type || 'log';
-
-        if (!args) {
-
-            args  = msg || 'undefined';
-            msg  = '[codex-editor]:      %o';
-
-        } else {
-
-            msg  = '[codex-editor]:      ' + msg;
-
-        }
-
-        try{
-
-            if ( 'console' in window && window.console[ type ] ) {
-
-                if ( args ) window.console[ type ]( msg, args );
-                else window.console[ type ]( msg );
-
-            }
-
-        } catch(e) {
-            // do nothing
-        }
-
-    }
 
     /**
      * Native Ajax

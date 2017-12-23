@@ -1,0 +1,22 @@
+.cdx-toolbox {
+    &__button {
+        display: inline-block;
+        list-style: none;
+        margin: 0;
+        background: #007978;
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
+        overflow: hidden;
+
+        &::before {
+            content: attr(title);
+            font-size: 30px;
+            letter-spacing: 1em;
+            font-variant-caps: all-small-caps;
+            padding-left: 8px;
+            line-height: 26px;
+            color: #fff;
+        }
+    }
+}

@@ -142,129 +142,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Codex Editor Util
- */
-var Util = function () {
-    function Util() {
-        _classCallCheck(this, Util);
-    }
-
-    _createClass(Util, null, [{
-        key: "sequence",
-
-
-        /**
-         * @typedef {Object} ChainData
-         * @property {Object} data - data that will be passed to the success or fallback
-         * @property {Function} function - function's that must be called asynchronically
-         */
-
-        /**
-         * Fires a promise sequence asyncronically
-         *
-         * @param {Object[]} chains - list or ChainData's
-         * @param {Function} success - success callback
-         * @param {Function} fallback - callback that fires in case of errors
-         *
-         * @return {Promise}
-         */
-        value: function sequence(chains) {
-            var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
-
-
-            return new Promise(function (resolve) {
-
-                /**
-                 * pluck each element from queue
-                 * First, send resolved Promise as previous value
-                 * Each plugins "prepare" method returns a Promise, that's why
-                 * reduce current element will not be able to continue while can't get
-                 * a resolved Promise
-                 */
-                chains.reduce(function (previousValue, currentValue, iteration) {
-
-                    return previousValue.then(function () {
-                        return waitNextBlock(currentValue, success, fallback);
-                    }).then(function () {
-
-                        // finished
-                        if (iteration === chains.length - 1) {
-
-                            resolve();
-                        }
-                    });
-                }, Promise.resolve());
-            });
-
-            /**
-             * Decorator
-             *
-             * @param {ChainData} chainData
-             *
-             * @param {Function} successCallback
-             * @param {Function} fallbackCallback
-             *
-             * @return {Promise}
-             */
-            function waitNextBlock(chainData, successCallback, fallbackCallback) {
-
-                return new Promise(function (resolve) {
-
-                    chainData.function().then(function () {
-
-                        successCallback(chainData.data);
-                    }).then(resolve).catch(function () {
-
-                        fallbackCallback(chainData.data);
-
-                        // anyway, go ahead even it falls
-                        resolve();
-                    });
-                });
-            }
-        }
-
-        /**
-         * Make array from array-like collection
-         *
-         * @param {*} collection
-         *
-         * @return {Array}
-         */
-
-    }, {
-        key: "array",
-        value: function array(collection) {
-
-            return Array.prototype.slice.call(collection);
-        }
-    }]);
-
-    return Util;
-}();
-
-Util.displayName = "Util";
-exports.default = Util;
-;
-module.exports = exports["default"];
-
-/***/ }),
-/* 2 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -404,6 +281,163 @@ exports.default = Dom;
 module.exports = exports['default'];
 
 /***/ }),
+/* 2 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Codex Editor Util
+ */
+var Util = function () {
+    function Util() {
+        _classCallCheck(this, Util);
+    }
+
+    _createClass(Util, null, [{
+        key: 'log',
+
+
+        /**
+         * Custom logger
+         *
+         * @param {string} msg  - message
+         * @param {string} type - logging type 'log'|'warn'|'error'|'info'
+         * @param {*} args      - argument to log with a message
+         */
+        value: function log(msg, type, args) {
+
+            type = type || 'log';
+
+            if (!args) {
+
+                args = msg || 'undefined';
+                msg = '[codex-editor]:      %o';
+            } else {
+
+                msg = '[codex-editor]:      ' + msg;
+            }
+
+            try {
+
+                if ('console' in window && window.console[type]) {
+
+                    if (args) window.console[type](msg, args);else window.console[type](msg);
+                }
+            } catch (e) {
+                // do nothing
+            }
+        }
+
+        /**
+         * @typedef {Object} ChainData
+         * @property {Object} data - data that will be passed to the success or fallback
+         * @property {Function} function - function's that must be called asynchronically
+         */
+
+        /**
+         * Fires a promise sequence asyncronically
+         *
+         * @param {Object[]} chains - list or ChainData's
+         * @param {Function} success - success callback
+         * @param {Function} fallback - callback that fires in case of errors
+         *
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'sequence',
+        value: function sequence(chains) {
+            var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
+
+            return new Promise(function (resolve) {
+
+                /**
+                 * pluck each element from queue
+                 * First, send resolved Promise as previous value
+                 * Each plugins "prepare" method returns a Promise, that's why
+                 * reduce current element will not be able to continue while can't get
+                 * a resolved Promise
+                 */
+                chains.reduce(function (previousValue, currentValue, iteration) {
+
+                    return previousValue.then(function () {
+                        return waitNextBlock(currentValue, success, fallback);
+                    }).then(function () {
+
+                        // finished
+                        if (iteration === chains.length - 1) {
+
+                            resolve();
+                        }
+                    });
+                }, Promise.resolve());
+            });
+
+            /**
+             * Decorator
+             *
+             * @param {ChainData} chainData
+             *
+             * @param {Function} successCallback
+             * @param {Function} fallbackCallback
+             *
+             * @return {Promise}
+             */
+            function waitNextBlock(chainData, successCallback, fallbackCallback) {
+
+                return new Promise(function (resolve) {
+
+                    chainData.function().then(function () {
+
+                        successCallback(chainData.data);
+                    }).then(resolve).catch(function () {
+
+                        fallbackCallback(chainData.data);
+
+                        // anyway, go ahead even it falls
+                        resolve();
+                    });
+                });
+            }
+        }
+
+        /**
+         * Make array from array-like collection
+         *
+         * @param {*} collection
+         *
+         * @return {Array}
+         */
+
+    }, {
+        key: 'array',
+        value: function array(collection) {
+
+            return Array.prototype.slice.call(collection);
+        }
+    }]);
+
+    return Util;
+}();
+
+Util.displayName = 'Util';
+exports.default = Util;
+;
+module.exports = exports['default'];
+
+/***/ }),
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -471,7 +505,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var modules = ["blockManager.js","events.js","renderer.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+var modules = ["blockManager.js","events.js","renderer.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
     return __webpack_require__(4)("./" + module);
 });
 
@@ -652,7 +686,7 @@ module.exports = function () {
                 return module.prepare();
             };
 
-            return Promise.resolve().then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.Tools)).then(function () {
+            return Promise.resolve().then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.UI)).then(function () {
 
                 if (_this3.config.data && _this3.config.data.items) {
 
@@ -816,8 +850,9 @@ var map = {
 	"./events.js": 7,
 	"./renderer.js": 8,
 	"./toolbar.js": 9,
-	"./tools.js": 10,
-	"./ui.js": 11
+	"./toolbox.js": 10,
+	"./tools.js": 11,
+	"./ui.js": 12
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1288,7 +1323,7 @@ Blocks.displayName = 'Blocks';
 
 
 module.exports = BlockManager;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
 /* 6 */
@@ -1376,7 +1411,7 @@ var Block = function () {
 Block.displayName = 'Block';
 exports.default = Block;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
 /* 7 */
@@ -1785,7 +1820,7 @@ module.exports = Renderer;
 //     return renderer;
 //
 // })({});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
 /* 9 */
@@ -1875,7 +1910,6 @@ var Toolbar = function (_Module) {
 
       // Content Zone
       plusButton: null,
-      toolbox: null,
 
       // Actions Zone
       settingsToggler: null,
@@ -1893,7 +1927,6 @@ var Toolbar = function (_Module) {
       actions: 'ce-toolbar__actions',
 
       // Content Zone
-      toolbox: 'ce-toolbar__toolbox',
       plusButton: 'ce-toolbar__plus',
 
       // Actions Zone
@@ -1935,11 +1968,10 @@ var Toolbar = function (_Module) {
        *  - Plus Button
        *  - Toolbox
        */
-      ['plusButton', 'toolbox'].forEach(function (el) {
+      this.nodes.plusButton = $.make('div', this.CSS.plusButton);
+      $.append(this.nodes.content, this.nodes.plusButton);
 
-        _this2.nodes[el] = $.make('div', _this2.CSS[el]);
-        $.append(_this2.nodes.content, _this2.nodes[el]);
-      });
+      this.Editor.Toolbox.make();
 
       /**
        * Fill Actions Zone:
@@ -2005,10 +2037,169 @@ var Toolbar = function (_Module) {
 Toolbar.displayName = 'Toolbar';
 exports.default = Toolbar;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
 /* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module, $, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Toolbox = function (_Module) {
+    _inherits(Toolbox, _Module);
+
+    /**
+     * @constructor
+     */
+    function Toolbox(config) {
+        _classCallCheck(this, Toolbox);
+
+        var _this = _possibleConstructorReturn(this, (Toolbox.__proto__ || Object.getPrototypeOf(Toolbox)).call(this, config));
+
+        _this.CSS = {
+            toolbox: 'cdx-toolbox',
+            toolboxButton: 'cdx-toolbox__button'
+        };
+
+        _this.nodes = {
+            toolbox: null,
+            buttons: []
+        };
+
+        return _this;
+    }
+
+    /**
+     * Makes the Toolbox
+     */
+
+
+    _createClass(Toolbox, [{
+        key: 'make',
+        value: function make() {
+
+            this.nodes.toolbox = $.make('div', this.CSS.toolbox);
+            $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
+
+            this.addTools();
+        }
+
+        /**
+         * Iterates available tools and appends them to the Toolbox
+         */
+
+    }, {
+        key: 'addTools',
+        value: function addTools() {
+
+            var tools = this.Editor.Tools.toolsAvailable;
+
+            for (var toolName in tools) {
+
+                this.addTool(toolName, tools[toolName]);
+            }
+        }
+
+        /**
+         * Append Tool to the Toolbox
+         *
+         * @param {string} toolName  - tool name
+         * @param {Class}  tool      - tool class
+         */
+
+    }, {
+        key: 'addTool',
+        value: function addTool(toolName, tool) {
+            var _this2 = this;
+
+            if (!tool.iconClassName && tool.displayInToolbox) {
+
+                _.log('Toolbar icon ClassName is missed. Tool %o skipped', 'warn', tool);
+                return;
+            }
+
+            /**
+             * @todo Add checkup for the render method
+             */
+            // if (typeof tool.render !== 'function') {
+            //
+            //     _.log('render method missed. Tool %o skipped', 'warn', tool);
+            //     return;
+            //
+            // }
+
+            /**
+             * Skip tools that pass 'displayInToolbox=false'
+             */
+            if (!tool.displayInToolbox) {
+
+                return;
+            }
+
+            /** if tools is for toolbox */
+            var button = $.make('li', [this.CSS.toolboxButton, tool.iconClassName], {
+                title: toolName
+            });
+
+            $.append(this.nodes.toolbox, button);
+
+            this.nodes.toolbox.appendChild(button);
+            this.nodes.buttons.push(button);
+
+            /**
+             * @todo add event with module Listeners
+             */
+            // this.Editor.Listeners.add();
+            button.addEventListener('click', function () {
+
+                _this2.buttonClicked();
+            }, false);
+        }
+
+        /**
+         * Toolbox button click listener
+         * Replace current block with new or append new below
+         *
+         */
+
+    }, {
+        key: 'buttonClicked',
+        value: function buttonClicked() {
+
+            // var button = this;
+
+            // editor.toolbar.current = button.dataset.type;
+            //
+            // editor.toolbar.toolbox.toolClicked(event);
+            // editor.toolbar.close();
+
+            alert('Tool clicked');
+        }
+    }]);
+
+    return Toolbox;
+}(Module);
+
+Toolbox.displayName = 'Toolbox';
+exports.default = Toolbox;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2)))
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2055,11 +2246,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * Class properties:
  *
- * @typedef {Tool} Tool
- * @property {String} name - name of this module
+ * @typedef {Tools} Tools
  * @property {Object[]} toolInstances - list of tool instances
- * @property {Tools[]} available - available Tools
- * @property {Tools[]} unavailable - unavailable Tools
+ * @property {Tools[]} toolsAvailable - available Tools
+ * @property {Tools[]} toolsUnavailable - unavailable Tools
  * @property {Object} toolsClasses - all classes
  * @property {EditorConfig} config - Editor config
  */
@@ -2132,7 +2322,7 @@ var Tools = function (_Module) {
 
     /**
      * Creates instances via passed or default configuration
-     * @return {boolean}
+     * @return {Promise}
      */
 
 
@@ -2199,6 +2389,12 @@ var Tools = function (_Module) {
                             toolName: toolName
                         }
                     });
+                } else {
+
+                    /**
+                     * If tool has not prepare method, mark it as available by default
+                     */
+                    this.toolsAvailable[toolName] = toolClass;
                 }
             }
 
@@ -2268,10 +2464,10 @@ var Tools = function (_Module) {
 Tools.displayName = 'Tools';
 exports.default = Tools;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2417,9 +2613,6 @@ var UI = function (_Module) {
         resolve();
       })
 
-      /** Add toolbox tools */
-      // .then(addTools_)
-
       /** Make container for inline toolbar */
       // .then(makeInlineToolbar_)
 
@@ -2446,7 +2639,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(12);
+      var styles = __webpack_require__(13);
 
       /**
        * Make tag
@@ -2493,54 +2686,6 @@ var UI = function (_Module) {
 //
 //     };
 //
-//     /**
-//      * @private
-//      * Append tools passed in editor.tools
-//      */
-//     var addTools_ = function () {
-//
-//         var tool,
-//             toolName,
-//             toolButton;
-//
-//         for ( toolName in editor.settings.tools ) {
-//
-//             tool = editor.settings.tools[toolName];
-//
-//             editor.tools[toolName] = tool;
-//
-//             if (!tool.iconClassname && tool.displayInToolbox) {
-//
-//                 editor.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', toolName);
-//                 continue;
-//
-//             }
-//
-//             if (typeof tool.render != 'function') {
-//
-//                 editor.core.log('render method missed. Tool %o skipped', 'warn', toolName);
-//                 continue;
-//
-//             }
-//
-//             if (!tool.displayInToolbox) {
-//
-//                 continue;
-//
-//             } else {
-//
-//                 /** if tools is for toolbox */
-//                 toolButton = editor.draw.toolbarButton(toolName, tool.iconClassname);
-//
-//                 editor.nodes.toolbox.appendChild(toolButton);
-//
-//                 editor.nodes.toolbarButtons[toolName] = toolButton;
-//
-//             }
-//
-//         }
-//
-//     };
 //
 //     var addInlineToolbarTools_ = function () {
 //
@@ -2732,24 +2877,24 @@ var UI = function (_Module) {
 UI.displayName = 'UI';
 exports.default = UI;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(13)(undefined);
+exports = module.exports = __webpack_require__(14)(undefined);
 // imports
-
+exports.i(__webpack_require__(15), "");
 
 // module
-exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor{\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 10px;\n}\n.codex-editor .hide {\n        display: none;\n    }\n", ""]);
+exports.push([module.i, "\n:root {\n\n    /**\n     * Toolbar buttons\n     */\n\n}/**\n* Editor wrapper\n*/.codex-editor{\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 10px;\n}.codex-editor .hide {\n        display: none;\n    }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports) {
 
 /*
@@ -2828,6 +2973,20 @@ function toComment(sourceMap) {
 
 	return '/*# ' + data + ' */';
 }
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(14)(undefined);
+// imports
+
+
+// module
+exports.push([module.i, ".cdx-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #007978;\n        width: 30px;\n        height: 30px;\n        border-radius: 30px;\n        overflow: hidden\n    }\n    .cdx-toolbox__button::before {\n        content: attr(title);\n        font-size: 30px;\n        letter-spacing: 1em;\n        -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                font-feature-settings: \"smcp\", \"c2sc\";\n        font-variant-caps: all-small-caps;\n        padding-left: 8px;\n        line-height: 26px;\n        color: #fff;\n}", ""]);
+
+// exports
 
 
 /***/ })

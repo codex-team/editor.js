@@ -118,9 +118,6 @@ export default class UI extends Module {
 
         })
 
-        /** Add toolbox tools */
-        // .then(addTools_)
-
         /** Make container for inline toolbar */
         // .then(makeInlineToolbar_)
 
@@ -194,54 +191,6 @@ export default class UI extends Module {
 //
 //     };
 //
-//     /**
-//      * @private
-//      * Append tools passed in editor.tools
-//      */
-//     var addTools_ = function () {
-//
-//         var tool,
-//             toolName,
-//             toolButton;
-//
-//         for ( toolName in editor.settings.tools ) {
-//
-//             tool = editor.settings.tools[toolName];
-//
-//             editor.tools[toolName] = tool;
-//
-//             if (!tool.iconClassname && tool.displayInToolbox) {
-//
-//                 editor.core.log('Toolbar icon classname missed. Tool %o skipped', 'warn', toolName);
-//                 continue;
-//
-//             }
-//
-//             if (typeof tool.render != 'function') {
-//
-//                 editor.core.log('render method missed. Tool %o skipped', 'warn', toolName);
-//                 continue;
-//
-//             }
-//
-//             if (!tool.displayInToolbox) {
-//
-//                 continue;
-//
-//             } else {
-//
-//                 /** if tools is for toolbox */
-//                 toolButton = editor.draw.toolbarButton(toolName, tool.iconClassname);
-//
-//                 editor.nodes.toolbox.appendChild(toolButton);
-//
-//                 editor.nodes.toolbarButtons[toolName] = toolButton;
-//
-//             }
-//
-//         }
-//
-//     };
 //
 //     var addInlineToolbarTools_ = function () {
 //

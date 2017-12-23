@@ -248,8 +248,8 @@ module.exports = class CodexEditor {
         let prepareDecorator = module => module.prepare();
 
         return Promise.resolve()
-            .then(prepareDecorator(this.moduleInstances.UI))
             .then(prepareDecorator(this.moduleInstances.Tools))
+            .then(prepareDecorator(this.moduleInstances.UI))
             .then(() => {
 
                 if (this.config.data && this.config.data.items) {
