@@ -316,7 +316,7 @@ module.exports = class CodexEditor {
                 /**
                  * Fourth: Render data
                  *
-                 * If no items was passed by user, then use default which is 'paragraph' or passed initialBlock
+                 * If no items was passed by user, then use default block which is 'paragraph' or passed initialBlock
                  * {@link EditorConfig#initialBlock}
                  */
                 function: () => {

@@ -728,7 +728,7 @@ module.exports = function () {
                 /**
                  * Fourth: Render data
                  *
-                 * If no items was passed by user, then use default which is 'paragraph' or passed initialBlock
+                 * If no items was passed by user, then use default block which is 'paragraph' or passed initialBlock
                  * {@link EditorConfig#initialBlock}
                  */
                 function: function _function() {
@@ -2843,8 +2843,6 @@ var UI = function (_Module) {
   }
 
   /**
-   * @protected
-   *
    * Making main interface
    */
 
