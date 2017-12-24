@@ -7,15 +7,20 @@
 
 import Block from '../block';
 
+/**
+ * @typedef {BlockManager} BlockManager
+ * @property {Number} currentBlockIndex - Index of current working block
+ * @property {Proxy} _blocks - Proxy for Blocks instance {@link Blocks}
+ */
 export default class BlockManager extends Module {
 
     /**
      * @constructor
      * @param {EditorConfig} config
      */
-    constructor(config) {
+    constructor({config}) {
 
-        super(config);
+        super({config});
 
         /**
          * Proxy for Blocks instance {@link Blocks}
@@ -73,15 +78,37 @@ export default class BlockManager extends Module {
     }
 
     /**
+     * Creates Block instance by tool name
+     *
+     * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
+     * @param {Object} data - constructor params
+     *
+     * @return {Block}
+     */
+    composeBlock(toolName, data) {
+
+        let toolInstance = this.Editor.Tools.construct(toolName, data),
+            block = new Block(toolInstance);
+
+        /**
+         * Apply callback before inserting html
+         */
+        block.call('appendCallback', {});
+
+        return block;
+
+    }
+
+    /**
      * Insert new block into _blocks
      *
      * @param {String} toolName — plugin name
      * @param {Object} data — plugin data
      */
-    insert(toolName, data) {
+    insert(toolName, data = {}) {
 
-        let toolInstance = this.Editor.Tools.construct(toolName, data),
-            block = new Block(toolInstance);
+
+        let block = this.composeBlock(toolName, data);
 
         this._blocks[++this.currentBlockIndex] = block;
 
@@ -93,10 +120,9 @@ export default class BlockManager extends Module {
      * @param {String} toolName — plugin name
      * @param {Object} data — plugin data
      */
-    replace(toolName, data) {
+    replace(toolName, data = {}) {
 
-        let toolInstance = this.Editor.Tools.construct(toolName, data),
-            block = new Block(toolInstance);
+        let block = this.composeBlock(toolName, data);
 
         this._blocks.insert(this.currentBlockIndex, block, true);
 
@@ -156,7 +182,22 @@ export default class BlockManager extends Module {
 
         let nodes = this._blocks.nodes;
 
+        /**
+         * Update current Block's index
+         * @type {number}
+         */
         this.currentBlockIndex = nodes.indexOf(element);
+
+        /**
+         * Remove previous selected Block's state
+         */
+        this._blocks.array.forEach( block => block.selected = false);
+
+        /**
+         * Mark current Block as selected
+         * @type {boolean}
+         */
+        this.currentBlock.selected = true;
 
     }
 
@@ -168,6 +209,38 @@ export default class BlockManager extends Module {
     get blocks() {
 
         return this._blocks.array;
+
+    }
+
+    /**
+     * 1) Find first-level Block from passed child Node
+     * 2) Mark it as current
+     *
+     *  @param {Element|Text} childNode - look ahead from this node.
+     *  @throws Error  - when passed Node is not included at the Block
+     */
+    setCurrentBlockByChildNode(childNode) {
+
+        /**
+         * If node is Text TextNode
+         */
+        if (!$.isElement(childNode)) {
+
+            childNode = childNode.parentNode;
+
+        }
+
+        let parentFirstLevelBlock = childNode.closest(`.${Block.CSS.wrapper}`);
+
+        if (parentFirstLevelBlock) {
+
+            this.currentNode = parentFirstLevelBlock;
+
+        } else {
+
+            throw new Error('Can not find a Block from this child Node');
+
+        }
 
     }
 

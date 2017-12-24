@@ -15,9 +15,9 @@ export default class Events extends Module {
     /**
      * @constructor
      */
-    constructor(config) {
+    constructor({config}) {
 
-        super(config);
+        super({config});
         this.subscribers = {};
 
     }

@@ -1,0 +1,12 @@
+.ce-block {
+  border: 1px dotted #ccc;
+  margin: 2px 0;
+
+  &--selected {
+    background-color: var(--bg-light);
+  }
+  &__content {
+    max-width: var(--content-width);
+    margin: 0 auto;
+  }
+}

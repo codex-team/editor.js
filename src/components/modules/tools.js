@@ -5,10 +5,9 @@
  */
 
 /**
- * Load user defined tools
- * Tools must contain the following important objects:
+ * Each Tool must contain the following important objects:
  *
- * @typedef {Object} ToolsConfig
+ * @typedef {Object} ToolConfig {@link docs/tools.md}
  * @property {String} iconClassname - this a icon in toolbar
  * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
  * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
@@ -19,15 +18,28 @@
  */
 
 /**
- * @typedef {Tool} Tool
- * @property {String} name - name of this module
- * @property {Object[]} toolInstances - list of tool instances
- * @property {Tools[]} available - available Tools
- * @property {Tools[]} unavailable - unavailable Tools
+ * @typedef {Function} Tool {@link docs/tools.md}
+ * @property {Boolean}      displayInToolbox      - By default, tools won't be added in the Toolbox. Pass true to add.
+ * @property {String}       iconClassName         - CSS class name for the Toolbox button
+ * @property {Boolean}      irreplaceable         - Toolbox behaviour: replace or add new block below
+ * @property render
+ * @property save
+ * @property settings
+ * @property validate
+ *
+ * @todo update according to current API
+ * @todo describe Tool in the {@link docs/tools.md}
+ */
+
+/**
+ * Class properties:
+ *
+ * @typedef {Tools} Tools
+ * @property {Tools[]} toolsAvailable - available Tools
+ * @property {Tools[]} toolsUnavailable - unavailable Tools
  * @property {Object} toolsClasses - all classes
  * @property {EditorConfig} config - Editor config
  */
-
 export default class Tools extends Module {
 
     /**
@@ -51,15 +63,18 @@ export default class Tools extends Module {
     }
 
     /**
-     * If config wasn't passed by user
-     * @return {ToolsConfig}
+     * Static getter for default Tool config fields
+     *
+     * @usage Tools.defaultConfig.displayInToolbox
+     * @return {ToolConfig}
      */
-    get defaultConfig() {
+    static get defaultConfig() {
 
         return {
-            iconClassName : 'default-icon',
+            iconClassName : '',
             displayInToolbox : false,
-            enableLineBreaks : false
+            enableLineBreaks : false,
+            irreplaceable : false
         };
 
     }
@@ -67,21 +82,38 @@ export default class Tools extends Module {
     /**
      * @constructor
      *
-     * @param {ToolsConfig} config
+     * @param {EditorConfig} config
      */
-    constructor(config) {
+    constructor({config}) {
 
-        super(config);
+        super({config});
 
+        /**
+         * Map {name: Class, ...} where:
+         *  name — block type name in JSON. Got from EditorConfig.tools keys
+         * @type {Object}
+         */
         this.toolClasses = {};
+
+        /**
+         * Available tools list
+         * {name: Class, ...}
+         * @type {Object}
+         */
         this.toolsAvailable = {};
+
+        /**
+         * Tools that rejected a prepare method
+         * {name: Class, ... }
+         * @type {Object}
+         */
         this.toolsUnavailable = {};
 
     }
 
     /**
      * Creates instances via passed or default configuration
-     * @return {boolean}
+     * @return {Promise}
      */
     prepare() {
 
@@ -128,7 +160,7 @@ export default class Tools extends Module {
 
     /**
      * Binds prepare function of plugins with user or default config
-     * @return {Array} list of functions that needs to be fired sequently
+     * @return {Array} list of functions that needs to be fired sequentially
      */
     getListOfPrepareFunctions() {
 
@@ -146,6 +178,13 @@ export default class Tools extends Module {
                         toolName
                     }
                 });
+
+            } else {
+
+                /**
+                 * If Tool hasn't a prepare method, mark it as available
+                 */
+                this.toolsAvailable[toolName] = toolClass;
 
             }
 
@@ -174,16 +213,6 @@ export default class Tools extends Module {
     }
 
     /**
-     * Returns all tools
-     * @return {Array}
-     */
-    getTools() {
-
-        return this.toolInstances;
-
-    }
-
-    /**
      * Return tool`a instance
      *
      * @param {String} tool — tool name
@@ -206,6 +235,17 @@ export default class Tools extends Module {
         let instance = new plugin(data, config);
 
         return instance;
+
+    }
+
+    /**
+     * Check if passed Tool is an instance of Initial Block Tool
+     * @param {Tool} tool - Tool to check
+     * @return {Boolean}
+     */
+    isInitial(tool) {
+
+        return tool instanceof this.available[this.config.initialBlock];
 
     }
 

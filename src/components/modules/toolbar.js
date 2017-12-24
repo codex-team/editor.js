@@ -54,9 +54,9 @@ export default class Toolbar extends Module {
     /**
      * @constructor
      */
-    constructor(config) {
+    constructor({config}) {
 
-        super(config);
+        super({config});
 
         this.nodes = {
             wrapper : null,
@@ -65,7 +65,6 @@ export default class Toolbar extends Module {
 
             // Content Zone
             plusButton : null,
-            toolbox : null,
 
             // Actions Zone
             settingsToggler : null,
@@ -77,14 +76,25 @@ export default class Toolbar extends Module {
             defaultSettings: null,
         };
 
-        this.CSS = {
+    }
+
+    /**
+     * CSS styles
+     * @return {Object}
+     * @constructor
+     */
+    static get CSS() {
+
+        return {
             toolbar: 'ce-toolbar',
             content: 'ce-toolbar__content',
             actions: 'ce-toolbar__actions',
 
+            toolbarOpened: 'ce-toolbar--opened',
+
             // Content Zone
-            toolbox: 'ce-toolbar__toolbox',
             plusButton: 'ce-toolbar__plus',
+            plusButtonHidden: 'ce-toolbar__plus--hidden',
 
             // Actions Zone
             settingsToggler: 'ce-toolbar__settings-btn',
@@ -103,14 +113,14 @@ export default class Toolbar extends Module {
      */
     make() {
 
-        this.nodes.wrapper = $.make('div', this.CSS.toolbar);
+        this.nodes.wrapper = $.make('div', Toolbar.CSS.toolbar);
 
         /**
          * Make Content Zone and Actions Zone
          */
         ['content',  'actions'].forEach( el => {
 
-            this.nodes[el] = $.make('div', this.CSS[el]);
+            this.nodes[el] = $.make('div', Toolbar.CSS[el]);
             $.append(this.nodes.wrapper, this.nodes[el]);
 
         });
@@ -121,12 +131,15 @@ export default class Toolbar extends Module {
          *  - Plus Button
          *  - Toolbox
          */
-        ['plusButton', 'toolbox'].forEach( el => {
+        this.nodes.plusButton = $.make('div', Toolbar.CSS.plusButton);
+        $.append(this.nodes.content, this.nodes.plusButton);
+        this.nodes.plusButton.addEventListener('click', event => this.plusButtonClicked(event), false);
 
-            this.nodes[el] = $.make('div', this.CSS[el]);
-            $.append(this.nodes.content, this.nodes[el]);
 
-        });
+        /**
+         * Make a Toolbox
+         */
+        this.Editor.Toolbox.make();
 
         /**
          * Fill Actions Zone:
@@ -134,7 +147,7 @@ export default class Toolbar extends Module {
          *  - Remove Block Button
          *  - Settings Panel
          */
-        this.nodes.settingsToggler  = $.make('span', this.CSS.settingsToggler);
+        this.nodes.settingsToggler  = $.make('span', Toolbar.CSS.settingsToggler);
         this.nodes.removeBlockButton = this.makeRemoveBlockButton();
 
         $.append(this.nodes.actions, [this.nodes.settingsToggler, this.nodes.removeBlockButton]);
@@ -158,10 +171,10 @@ export default class Toolbar extends Module {
      */
     makeBlockSettingsPanel() {
 
-        this.nodes.settings = $.make('div', this.CSS.settings);
+        this.nodes.settings = $.make('div', Toolbar.CSS.settings);
 
-        this.nodes.pluginSettings = $.make('div', this.CSS.pluginSettings);
-        this.nodes.defaultSettings = $.make('div', this.CSS.defaultSettings);
+        this.nodes.pluginSettings = $.make('div', Toolbar.CSS.pluginSettings);
+        this.nodes.defaultSettings = $.make('div', Toolbar.CSS.defaultSettings);
 
         $.append(this.nodes.settings, [this.nodes.pluginSettings, this.nodes.defaultSettings]);
         $.append(this.nodes.actions, this.nodes.settings);
@@ -178,7 +191,83 @@ export default class Toolbar extends Module {
          * @todo  add confirmation panel and handlers
          * @see  {@link settings#makeRemoveBlockButton}
          */
-        return $.make('span', this.CSS.removeBlockButton);
+        return $.make('span', Toolbar.CSS.removeBlockButton);
+
+    }
+
+    /**
+     * Move Toolbar to the Current Block
+     */
+    move() {
+
+        /** Close Toolbox when we move toolbar */
+        this.Editor.Toolbox.close();
+
+        let currentNode = this.Editor.BlockManager.currentNode;
+
+        /**
+         * If no one Block selected as a Current
+         */
+        if (!currentNode) {
+
+            return;
+
+        }
+
+        /**
+         * @todo Compute dynamically on prepare
+         * @type {number}
+         */
+        const defaultToolbarHeight = 49;
+        const defaultOffset = 34;
+
+        var newYCoordinate = currentNode.offsetTop - (defaultToolbarHeight / 2) + defaultOffset;
+
+        this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
+
+        /** Close trash actions */
+        // editor.toolbar.settings.hideRemoveActions();
+
+    }
+
+    /**
+     * Open Toolbar with Plus Button
+     */
+    open() {
+
+        this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
+
+    }
+
+    /**
+     * Close the Toolbar
+     */
+    close() {
+
+        this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
+
+    }
+
+    /**
+     * Plus Button public methods
+     * @return {{hide: function(): void, show: function(): void}}
+     */
+    get plusButton() {
+
+        return {
+            hide: () => this.nodes.plusButton.classList.add(Toolbar.CSS.plusButtonHidden),
+            show: () => this.nodes.plusButton.classList.remove(Toolbar.CSS.plusButtonHidden)
+        };
+
+    }
+
+    /**
+     * Handler for Plus Button
+     * @param {MouseEvent} event
+     */
+    plusButtonClicked(event) {
+
+        this.Editor.Toolbox.toggle();
 
     }
 

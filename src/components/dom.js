@@ -92,7 +92,7 @@ export default class Dom {
      * @param {Object} node
      * @returns {boolean}
      */
-    static isNode(node) {
+    static isElement(node) {
 
         return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
 

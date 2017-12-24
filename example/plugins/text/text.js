@@ -1,5 +1,5 @@
 /**
- * @class Paragraph
+ * @class Text
  * @classdesc Paragraph plugin for CodexEditor
  *
  * @author CodeX Team (team@ifmo.su)
@@ -8,50 +8,62 @@
  * @version 2.0.0
  *
  *
- * @typedef {Object} ParagraphData
- * @property {String} text — HTML content to insert to paragraph element
+ * @typedef {Object} TextData
+ * @property {String} text — HTML content to insert to text element
  *
  */
 
-class Paragraph {
+class Text {
 
     /**
-     * Get the name of the plugin
+     * Pass true to display this tool in the Editor's Toolbox
      *
-     * @returns {string} The plugin name
+     * @returns {boolean}
      */
-    static get name() {
+    static get displayInToolbox() {
 
-        return 'paragraph';
+        return true;
+
+    }
+
+    /**
+     * Class for the Toolbox icon
+     *
+     * @returns {string}
+     */
+    static get iconClassName() {
+
+        return 'cdx-text-icon';
 
     }
 
     /**
      * Render plugin`s html and set initial content
      *
-     * @param {ParagraphData} data — initial plugin content
+     * @param {TextData} data — initial plugin content
      */
     constructor(data = {}) {
 
         this._CSS = {
-            wrapper: 'ce-paragraph'
+            wrapper: 'ce-text'
         };
 
         this._data = {};
+        this._element = this.draw();
 
-        this._element = this._render();
         this.data = data;
-
-
     }
 
     /**
-     * Create div element and add needed css classes
-     *
-     * @returns {HTMLDivElement} Created DIV element
-     * @private
+     * Method fires before rendered data appended to the editors area
      */
-    _render() {
+    appendCallback() {
+
+        console.log("text appended");
+
+    }
+
+    draw() {
 
         let div = document.createElement('DIV');
 
@@ -59,13 +71,22 @@ class Paragraph {
         div.contentEditable = true;
 
         return div;
+    }
+
+    /**
+     * Create div element and add needed css classes
+     * @returns {HTMLDivElement} Created DIV element
+     */
+    render() {
+
+        return this._element;
 
     }
 
     /**
      * Check if saved text is empty
      *
-     * @param {ParagraphData} savedData — data received from plugins`s element
+     * @param {TextData} savedData — data received from plugins`s element
      * @returns {boolean} false if saved text is empty, true otherwise
      */
     validate(savedData) {
@@ -82,12 +103,11 @@ class Paragraph {
 
     /**
      * Get plugin`s element HTMLDivElement
-     *
      * @returns {HTMLDivElement} Plugin`s element
      */
-    get html() {
+    save() {
 
-        return this._element;
+        return this.data;
 
     }
 
@@ -96,7 +116,7 @@ class Paragraph {
      *
      * @todo sanitize data while saving
      *
-     * @returns {ParagraphData} Current data
+     * @returns {TextData} Current data
      */
     get data() {
 
@@ -111,7 +131,7 @@ class Paragraph {
     /**
      * Set new data for plugin
      *
-     * @param {ParagraphData} data — data to set
+     * @param {TextData} data — data to set
      */
     set data(data) {
 

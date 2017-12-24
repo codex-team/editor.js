@@ -8,7 +8,7 @@
  * Example:
  *           new CodexEditor({
  *                holderId : 'codex-editor',
- *                initialBlock : 'paragraph',
+ *                initialBlock : 'text',
  *                placeholder : 'Write your story....',
  *                tools: {
  *                    quote: Quote,
@@ -45,14 +45,29 @@
 
 /**
  * @typedef {Object} EditorConfig
- * @property {String} holderId  - Element to append Editor
- * @property {String} initialBlock - Tool name which will be initial
- * @property {Object} tools - list of tools. The object value must be function (constructor) so that CodexEditor could make an instance
- * @property {@link Tools#ToolsConfig} toolsConfig - tools configuration
- * @property {Array} data  - Blocks list in JSON-format
+ * @property {String} holderId           - Element to append Editor
+ * @property {Array} data                - Blocks list in JSON-format
+ * @property {Object} tools              - Map for used Tools in format { name : Class, ... }
+ * @property {String} initialBlock       - This Tool will be added by default
+ * @property {String} placeholder        - First Block placeholder
+ * @property {Object} sanitizer          - @todo fill desc
+ * @property {Boolean} hideToolbar       - @todo fill desc
+ * @property {Object} toolsConfig        - tools configuration {@link Tools#ToolsConfig}
+ */
+
+/**
+ * Dynamically imported utils
+ *
+ * @typedef {Dom}   $      - {@link components/dom.js}
+ * @typedef {Util}  _      - {@link components/utils.js}
  */
 
 'use strict';
+
+/**
+ * Apply polyfills
+ */
+import 'components/polyfills';
 
 /**
  * Require Editor modules places in components/modules dir
@@ -87,11 +102,19 @@ module.exports = class CodexEditor {
 
         /**
          * Configuration object
+         * @type {EditorConfig}
          */
         this.config = {};
 
         /**
-         * Editor Components
+         * @typedef {Object} EditorComponents
+         * @property {BlockManager} BlockManager
+         * @property {Tools} Tools
+         * @property {Events} Events
+         * @property {UI} UI
+         * @property {Toolbar} Toolbar
+         * @property {Toolbox} Toolbox
+         * @property {Renderer} Renderer
          */
         this.moduleInstances = {};
 
@@ -105,12 +128,12 @@ module.exports = class CodexEditor {
             .then(() => this.start())
             .then(() => {
 
-                console.log('CodeX Editor is ready');
+                console.log('CodeX Editor is ready!');
 
             })
             .catch(error => {
 
-                console.log('CodeX Editor does not ready beecause of %o', error);
+                console.log('CodeX Editor does not ready because of %o', error);
 
             });
 
@@ -118,9 +141,19 @@ module.exports = class CodexEditor {
 
     /**
      * Setting for configuration
-     * @param {Object} config
+     * @param {EditorConfig} config
      */
-    set configuration(config = {}) {
+    set configuration(config) {
+
+        /**
+         * Initlai block type
+         * Uses in case when there is no items passed
+         * @type {{type: (*), data: {text: null}}}
+         */
+        let initialBlock = {
+            type : config.initialBlock,
+            data : {}
+        };
 
         this.config.holderId = config.holderId;
         this.config.placeholder = config.placeholder || 'write your story...';
@@ -133,13 +166,44 @@ module.exports = class CodexEditor {
         this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
         this.config.tools = config.tools || {};
         this.config.toolsConfig = config.toolsConfig || {};
-        this.config.data = config.data || [];
+        this.config.data = config.data || {};
+
+        /**
+         * Initialize items to pass data to the Renderer
+         */
+        if (_.isEmpty(this.config.data)) {
+
+            this.config.data = {};
+            this.config.data.items = [ initialBlock ];
+
+        } else {
+
+            if (!this.config.data.items || this.config.data.items.length === 0) {
+
+                this.config.data.items = [ initialBlock ];
+
+            }
+
+        }
+
+        /**
+         * If initial Block's Tool was not passed, use the first Tool in config.tools
+         */
+        if (!config.initialBlock) {
+
+            for (this.config.initialBlock in this.config.tools) break;
+
+        } else {
+
+            this.config.initialBlock = config.initialBlock;
+
+        }
 
     }
 
     /**
      * Returns private property
-     * @returns {{}|*}
+     * @returns {EditorConfig}
      */
     get configuration() {
 
@@ -182,7 +246,6 @@ module.exports = class CodexEditor {
                  * To prevent this, we use 'babel-plugin-class-display-name' plugin
                  * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
                  */
-
                 this.moduleInstances[Module.displayName] = new Module({
                     config : this.configuration
                 });
@@ -243,6 +306,7 @@ module.exports = class CodexEditor {
     /**
      * Start Editor!
      *
+     * Get list of modules that needs to be prepared and return a sequence (Promise)
      * @return {Promise}
      */
     start() {
@@ -250,22 +314,13 @@ module.exports = class CodexEditor {
         let prepareDecorator = module => module.prepare();
 
         return Promise.resolve()
-            .then(prepareDecorator(this.moduleInstances.UI))
             .then(prepareDecorator(this.moduleInstances.Tools))
+            .then(prepareDecorator(this.moduleInstances.UI))
+            .then(prepareDecorator(this.moduleInstances.BlockManager))
             .then(() => {
 
-                if (this.config.data && this.config.data.items) {
+                return this.moduleInstances.Renderer.render(this.config.data.items);
 
-                    this.moduleInstances.Renderer.render(this.config.data.items);
-
-                }
-
-            })
-            .then(prepareDecorator(this.moduleInstances.BlockManager))
-
-            .catch(function (error) {
-
-                console.log('Error occured', error);
 
             });
 
@@ -307,11 +362,11 @@ module.exports = class CodexEditor {
 //      * holds initial settings
 //      */
 //     editor.settings = {
-//         tools     : ['paragraph', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
+//         tools     : ['text', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
 //         holderId  : 'codex-editor',
 //
 //         // Type of block showing on empty editor
-//         initialBlockPlugin: 'paragraph'
+//         initialBlockPlugin: 'text'
 //     };
 //
 //     /**

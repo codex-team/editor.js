@@ -1,0 +1,44 @@
+.ce-toolbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 100ms ease;
+  will-change: opacity, transform;
+
+  &--opened {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &__content {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    position: relative;
+  }
+  &__plus {
+    position: absolute;
+    left: calc(-var(--toolbar-buttons-size) - 10px);
+    display: inline-block;
+    background-color: var(--bg-light);
+    width: var(--toolbar-buttons-size);
+    height: var(--toolbar-buttons-size);
+    line-height: 34px;
+    text-align: center;
+    border-radius: 50%;
+
+    &::after {
+      content: '+';
+      font-size: 26px;
+      display: block;
+      margin-top: -2px;
+      margin-right: -2px;
+    }
+
+    &--hidden {
+      display: none;
+    }
+  }
+}

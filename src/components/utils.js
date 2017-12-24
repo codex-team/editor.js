@@ -4,6 +4,43 @@
 export default class Util {
 
     /**
+     * Custom logger
+     *
+     * @param {string} msg  - message
+     * @param {string} type - logging type 'log'|'warn'|'error'|'info'
+     * @param {*} args      - argument to log with a message
+     */
+    static log(msg, type, args) {
+
+        type = type || 'log';
+
+        if (!args) {
+
+            args  = msg || 'undefined';
+            msg  = '[codex-editor]:      %o';
+
+        } else {
+
+            msg  = '[codex-editor]:      ' + msg;
+
+        }
+
+        try{
+
+            if ( 'console' in window && window.console[ type ] ) {
+
+                if ( args ) window.console[ type ]( msg, args );
+                else window.console[ type ]( msg );
+
+            }
+
+        } catch(e) {
+            // do nothing
+        }
+
+    }
+
+    /**
      * @typedef {Object} ChainData
      * @property {Object} data - data that will be passed to the success or fallback
      * @property {Function} function - function's that must be called asynchronically
@@ -65,13 +102,13 @@ export default class Util {
                 chainData.function()
                     .then(() => {
 
-                        successCallback(chainData.data);
+                        successCallback(chainData.data || {});
 
                     })
                     .then(resolve)
                     .catch(function () {
 
-                        fallbackCallback(chainData.data);
+                        fallbackCallback(chainData.data || {});
 
                         // anyway, go ahead even it falls
                         resolve();

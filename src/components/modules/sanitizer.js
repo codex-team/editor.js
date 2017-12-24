@@ -43,9 +43,9 @@ export default class Sanitizer extends Module {
      *
      * @param {SanitizerConfig} config
      */
-    constructor(config) {
+    constructor({config}) {
 
-        super(config);
+        super({config});
 
         // default config
         this.defaultConfig = null;
