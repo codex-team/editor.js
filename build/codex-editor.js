@@ -530,7 +530,7 @@ var Block = function () {
         }
 
         /**
-         * Calls Tools method
+         * Calls Tool's method
          *
          * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
          *
@@ -543,7 +543,7 @@ var Block = function () {
         value: function call(methodName, params) {
 
             /**
-             * call tool's method with the instance context
+             * call Tool's method with the instance context
              */
             if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
 
