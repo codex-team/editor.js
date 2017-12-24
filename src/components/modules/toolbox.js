@@ -17,12 +17,6 @@ export default class Toolbox extends Module {
 
         super(config);
 
-        this.CSS = {
-            toolbox: 'cdx-toolbox',
-            toolboxButton: 'cdx-toolbox__button',
-            toolboxOpened: 'cdx-toolbox--opened',
-        };
-
         this.nodes = {
             toolbox: null,
             buttons: []
@@ -37,11 +31,25 @@ export default class Toolbox extends Module {
     }
 
     /**
+     * CSS styles
+     * @return {{toolbox: string, toolboxButton: string, toolboxOpened: string}}
+     */
+    static get CSS() {
+
+        return  {
+            toolbox: 'cdx-toolbox',
+            toolboxButton: 'cdx-toolbox__button',
+            toolboxOpened: 'cdx-toolbox--opened',
+        };
+
+    }
+
+    /**
      * Makes the Toolbox
      */
     make() {
 
-        this.nodes.toolbox = $.make('div', this.CSS.toolbox);
+        this.nodes.toolbox = $.make('div', Toolbox.CSS.toolbox);
         $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
 
         this.addTools();
@@ -71,7 +79,7 @@ export default class Toolbox extends Module {
      */
     addTool(toolName, tool) {
 
-        if (!tool.iconClassName && tool.displayInToolbox) {
+        if (tool.displayInToolbox && !tool.iconClassName) {
 
             _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
             return;
@@ -97,7 +105,7 @@ export default class Toolbox extends Module {
 
         }
 
-        let button = $.make('li', [this.CSS.toolboxButton, tool.iconClassName], {
+        let button = $.make('li', [Toolbox.CSS.toolboxButton, tool.iconClassName], {
             title: toolName
         });
 
@@ -169,12 +177,9 @@ export default class Toolbox extends Module {
         // }, 10);
 
         /**
-         * @todo Move toolbar to the new Block
-         */
-        /**
          * Move toolbar when node is changed
          */
-        // editor.toolbar.move();
+        this.Editor.Toolbar.move();
 
     }
 
@@ -183,7 +188,7 @@ export default class Toolbox extends Module {
      */
     open() {
 
-        this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
+        this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpened);
         this.opened = true;
 
     }
@@ -193,7 +198,7 @@ export default class Toolbox extends Module {
      */
     close() {
 
-        this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
+        this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpened);
         this.opened = false;
 
     }

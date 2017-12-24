@@ -228,4 +228,15 @@ export default class Tools extends Module {
 
     }
 
+    /**
+     * Check if passed Tool is an instance of Initial Block Tool
+     * @param {Tool} tool - Tool to check
+     * @return {Boolean}
+     */
+    isInitial(tool) {
+
+        return tool instanceof this.available[this.config.initialBlock];
+
+    }
+
 }

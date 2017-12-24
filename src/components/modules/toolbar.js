@@ -76,7 +76,16 @@ export default class Toolbar extends Module {
             defaultSettings: null,
         };
 
-        this.CSS = {
+    }
+
+    /**
+     * CSS styles
+     * @return {Object}
+     * @constructor
+     */
+    static get CSS() {
+
+        return {
             toolbar: 'ce-toolbar',
             content: 'ce-toolbar__content',
             actions: 'ce-toolbar__actions',
@@ -85,6 +94,7 @@ export default class Toolbar extends Module {
 
             // Content Zone
             plusButton: 'ce-toolbar__plus',
+            plusButtonHidden: 'ce-toolbar__plus--hidden',
 
             // Actions Zone
             settingsToggler: 'ce-toolbar__settings-btn',
@@ -103,14 +113,14 @@ export default class Toolbar extends Module {
      */
     make() {
 
-        this.nodes.wrapper = $.make('div', this.CSS.toolbar);
+        this.nodes.wrapper = $.make('div', Toolbar.CSS.toolbar);
 
         /**
          * Make Content Zone and Actions Zone
          */
         ['content',  'actions'].forEach( el => {
 
-            this.nodes[el] = $.make('div', this.CSS[el]);
+            this.nodes[el] = $.make('div', Toolbar.CSS[el]);
             $.append(this.nodes.wrapper, this.nodes[el]);
 
         });
@@ -121,7 +131,7 @@ export default class Toolbar extends Module {
          *  - Plus Button
          *  - Toolbox
          */
-        this.nodes.plusButton = $.make('div', this.CSS.plusButton);
+        this.nodes.plusButton = $.make('div', Toolbar.CSS.plusButton);
         $.append(this.nodes.content, this.nodes.plusButton);
         this.nodes.plusButton.addEventListener('click', event => this.plusButtonClicked(event), false);
 
@@ -137,7 +147,7 @@ export default class Toolbar extends Module {
          *  - Remove Block Button
          *  - Settings Panel
          */
-        this.nodes.settingsToggler  = $.make('span', this.CSS.settingsToggler);
+        this.nodes.settingsToggler  = $.make('span', Toolbar.CSS.settingsToggler);
         this.nodes.removeBlockButton = this.makeRemoveBlockButton();
 
         $.append(this.nodes.actions, [this.nodes.settingsToggler, this.nodes.removeBlockButton]);
@@ -161,10 +171,10 @@ export default class Toolbar extends Module {
      */
     makeBlockSettingsPanel() {
 
-        this.nodes.settings = $.make('div', this.CSS.settings);
+        this.nodes.settings = $.make('div', Toolbar.CSS.settings);
 
-        this.nodes.pluginSettings = $.make('div', this.CSS.pluginSettings);
-        this.nodes.defaultSettings = $.make('div', this.CSS.defaultSettings);
+        this.nodes.pluginSettings = $.make('div', Toolbar.CSS.pluginSettings);
+        this.nodes.defaultSettings = $.make('div', Toolbar.CSS.defaultSettings);
 
         $.append(this.nodes.settings, [this.nodes.pluginSettings, this.nodes.defaultSettings]);
         $.append(this.nodes.actions, this.nodes.settings);
@@ -181,7 +191,7 @@ export default class Toolbar extends Module {
          * @todo  add confirmation panel and handlers
          * @see  {@link settings#makeRemoveBlockButton}
          */
-        return $.make('span', this.CSS.removeBlockButton);
+        return $.make('span', Toolbar.CSS.removeBlockButton);
 
     }
 
@@ -220,15 +230,34 @@ export default class Toolbar extends Module {
 
     }
 
+    /**
+     * Open Toolbar with Plus Button
+     */
     open() {
 
-        this.nodes.wrapper.classList.add(this.CSS.toolbarOpened);
+        this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
 
     }
 
+    /**
+     * Close the Toolbar
+     */
     close() {
 
-        this.nodes.wrapper.classList.remove(this.CSS.toolbarOpened);
+        this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
+
+    }
+
+    /**
+     * Plus Button public methods
+     * @return {{hide: function(): void, show: function(): void}}
+     */
+    get plusButton() {
+
+        return {
+            hide: () => this.nodes.plusButton.classList.add(Toolbar.CSS.plusButtonHidden),
+            show: () => this.nodes.plusButton.classList.remove(Toolbar.CSS.plusButtonHidden)
+        };
 
     }
 

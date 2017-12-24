@@ -204,18 +204,18 @@ export default class UI extends Module {
      * @param {MouseEvent} event
      *
      * @description
-     * 1. Save clicked node as a current {@link BlockManager#currentNode}
+     * 1. Save clicked Block as a current {@link BlockManager#currentNode}
      *      it uses for the following:
-     *      - add CSS modifier for the selected block
-     *      - on Enter press, we make a new block under that
+     *      - add CSS modifier for the selected Block
+     *      - on Enter press, we make a new Block under that
      *
      * 2. Move and show the Toolbar
      *
      * 3. Set a Caret
      *
-     * 4. By clicks on the editor's bottom zone:
-     *      - if last block is empty, set caret to this
-     *      - otherwise, add a new empty block and set a caret to that
+     * 4. By clicks on the Editor's bottom zone:
+     *      - if last Block is empty, set a Caret to this
+     *      - otherwise, add a new empty Block and set a Caret to that
      *
      * 5. Hide the Inline Toolbar
      *
@@ -234,7 +234,7 @@ export default class UI extends Module {
             this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
 
         /**
-         * If clicked outside first-level Blocks, set caret to the last empty Block
+         * If clicked outside first-level Blocks, set Caret to the last empty Block
          */
 
         } catch (e) {
@@ -332,23 +332,25 @@ export default class UI extends Module {
         //     isInitialType = currentNodeType == editor.settings.initialBlockPlugin;
         //
         //
-        // /** Hide plus buttons */
-        // editor.toolbar.hidePlusButton();
-        //
-        // if (!inputIsEmpty) {
-        //
-        //     /** Mark current block */
-        //     editor.content.markBlock();
-        //
-        // }
-        //
-        // if ( isInitialType && inputIsEmpty ) {
-        //
-        //     /** Show plus button */
-        //     editor.toolbar.showPlusButton();
-        //
-        // }
 
+        /**
+         * Hide the Plus Button
+         * */
+        this.Editor.Toolbar.plusButton.hide();
+
+        /**
+         * Show the Plus Button if:
+         * - Block is an initial-block (Text)
+         * - Block is empty
+         */
+        let isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool),
+            isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
+
+        if (isInitialBlock && isEmptyBlock) {
+
+            this.Editor.Toolbar.plusButton.show();
+
+        }
 
     }
 

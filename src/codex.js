@@ -48,7 +48,7 @@
  * @property {String} holderId           - Element to append Editor
  * @property {Array} data                - Blocks list in JSON-format
  * @property {Object} tools              - Map for used Tools in format { name : Class, ... }
- * @property {String} initialBlockTool   - This Tool will be added by default
+ * @property {String} initialBlock       - This Tool will be added by default
  * @property {String} placeholder        - First Block placeholder
  * @property {Object} sanitizer          - @todo fill desc
  * @property {Boolean} hideToolbar       - @todo fill desc
@@ -162,9 +162,13 @@ module.exports = class CodexEditor {
         /**
          * If initial Block's Tool was not passed, use the first Tool in config.tools
          */
-        if (!config.initialBlockTool) {
+        if (!config.initialBlock) {
 
-            for (this.config.initialBlockTool in this.config.tools) break;
+            for (this.config.initialBlock in this.config.tools) break;
+
+        } else {
+
+            this.config.initialBlock = config.initialBlock;
 
         }
 

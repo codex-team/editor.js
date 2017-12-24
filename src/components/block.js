@@ -27,7 +27,6 @@ export default class Block {
     /**
      * CSS classes for the Block
      * @return {{wrapper: string, content: string}}
-     * @constructor
      */
     static get CSS() {
 
@@ -69,7 +68,7 @@ export default class Block {
     }
 
     /**
-     * Check block for emptyness
+     * Check block for emptiness
      *
      * @return {Boolean}
      */

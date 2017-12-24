@@ -32,7 +32,7 @@ export default class Caret extends Module {
         }
 
         /**
-         * If last block is empty and it is an initialBlockTool, set to that.
+         * If last block is empty and it is an initialBlock, set to that.
          * Otherwise, append new empty block and set to that
          */
         if (lastBlock.isEmpty) {
@@ -41,9 +41,7 @@ export default class Caret extends Module {
 
         } else {
 
-            console.log(this.config.initialBlockTool);
-
-            this.Editor.BlockManager.insert(this.config.initialBlockTool);
+            this.Editor.BlockManager.insert(this.config.initialBlock);
 
         }
 

@@ -487,7 +487,6 @@ var Block = function () {
     /**
      * CSS classes for the Block
      * @return {{wrapper: string, content: string}}
-     * @constructor
      */
 
 
@@ -526,7 +525,7 @@ var Block = function () {
         }
 
         /**
-         * Check block for emptyness
+         * Check block for emptiness
          *
          * @return {Boolean}
          */
@@ -663,7 +662,7 @@ module.exports = exports['default'];
  * @property {String} holderId           - Element to append Editor
  * @property {Array} data                - Blocks list in JSON-format
  * @property {Object} tools              - Map for used Tools in format { name : Class, ... }
- * @property {String} initialBlockTool   - This Tool will be added by default
+ * @property {String} initialBlock       - This Tool will be added by default
  * @property {String} placeholder        - First Block placeholder
  * @property {Object} sanitizer          - @todo fill desc
  * @property {Boolean} hideToolbar       - @todo fill desc
@@ -913,11 +912,14 @@ module.exports = function () {
             /**
              * If initial Block's Tool was not passed, use the first Tool in config.tools
              */
-            if (!config.initialBlockTool) {
+            if (!config.initialBlock) {
 
-                for (this.config.initialBlockTool in this.config.tools) {
+                for (this.config.initialBlock in this.config.tools) {
                     break;
                 }
+            } else {
+
+                this.config.initialBlock = config.initialBlock;
             }
         }
 
@@ -1681,7 +1683,7 @@ var Caret = function (_Module) {
             }
 
             /**
-             * If last block is empty and it is an initialBlockTool, set to that.
+             * If last block is empty and it is an initialBlock, set to that.
              * Otherwise, append new empty block and set to that
              */
             if (lastBlock.isEmpty) {
@@ -1689,9 +1691,7 @@ var Caret = function (_Module) {
                 this.set(lastBlock.html);
             } else {
 
-                console.log(this.config.initialBlockTool);
-
-                this.Editor.BlockManager.insert(this.config.initialBlockTool);
+                this.Editor.BlockManager.insert(this.config.initialBlock);
             }
 
             /**
@@ -2271,47 +2271,34 @@ var Toolbar = function (_Module) {
       defaultSettings: null
     };
 
-    _this.CSS = {
-      toolbar: 'ce-toolbar',
-      content: 'ce-toolbar__content',
-      actions: 'ce-toolbar__actions',
-
-      toolbarOpened: 'ce-toolbar--opened',
-
-      // Content Zone
-      plusButton: 'ce-toolbar__plus',
-
-      // Actions Zone
-      settingsToggler: 'ce-toolbar__settings-btn',
-      removeBlockButton: 'ce-toolbar__remove-btn',
-
-      // Settings Panel
-      settings: 'ce-settings',
-      defaultSettings: 'ce-settings_default',
-      pluginSettings: 'ce-settings_plugin'
-    };
-
     return _this;
   }
 
   /**
-   * Makes toolbar
+   * CSS styles
+   * @return {Object}
+   * @constructor
    */
 
 
   _createClass(Toolbar, [{
     key: 'make',
+
+
+    /**
+     * Makes toolbar
+     */
     value: function make() {
       var _this2 = this;
 
-      this.nodes.wrapper = $.make('div', this.CSS.toolbar);
+      this.nodes.wrapper = $.make('div', Toolbar.CSS.toolbar);
 
       /**
        * Make Content Zone and Actions Zone
        */
       ['content', 'actions'].forEach(function (el) {
 
-        _this2.nodes[el] = $.make('div', _this2.CSS[el]);
+        _this2.nodes[el] = $.make('div', Toolbar.CSS[el]);
         $.append(_this2.nodes.wrapper, _this2.nodes[el]);
       });
 
@@ -2320,7 +2307,7 @@ var Toolbar = function (_Module) {
        *  - Plus Button
        *  - Toolbox
        */
-      this.nodes.plusButton = $.make('div', this.CSS.plusButton);
+      this.nodes.plusButton = $.make('div', Toolbar.CSS.plusButton);
       $.append(this.nodes.content, this.nodes.plusButton);
       this.nodes.plusButton.addEventListener('click', function (event) {
         return _this2.plusButtonClicked(event);
@@ -2337,7 +2324,7 @@ var Toolbar = function (_Module) {
        *  - Remove Block Button
        *  - Settings Panel
        */
-      this.nodes.settingsToggler = $.make('span', this.CSS.settingsToggler);
+      this.nodes.settingsToggler = $.make('span', Toolbar.CSS.settingsToggler);
       this.nodes.removeBlockButton = this.makeRemoveBlockButton();
 
       $.append(this.nodes.actions, [this.nodes.settingsToggler, this.nodes.removeBlockButton]);
@@ -2363,10 +2350,10 @@ var Toolbar = function (_Module) {
     key: 'makeBlockSettingsPanel',
     value: function makeBlockSettingsPanel() {
 
-      this.nodes.settings = $.make('div', this.CSS.settings);
+      this.nodes.settings = $.make('div', Toolbar.CSS.settings);
 
-      this.nodes.pluginSettings = $.make('div', this.CSS.pluginSettings);
-      this.nodes.defaultSettings = $.make('div', this.CSS.defaultSettings);
+      this.nodes.pluginSettings = $.make('div', Toolbar.CSS.pluginSettings);
+      this.nodes.defaultSettings = $.make('div', Toolbar.CSS.defaultSettings);
 
       $.append(this.nodes.settings, [this.nodes.pluginSettings, this.nodes.defaultSettings]);
       $.append(this.nodes.actions, this.nodes.settings);
@@ -2385,7 +2372,7 @@ var Toolbar = function (_Module) {
        * @todo  add confirmation panel and handlers
        * @see  {@link settings#makeRemoveBlockButton}
        */
-      return $.make('span', this.CSS.removeBlockButton);
+      return $.make('span', Toolbar.CSS.removeBlockButton);
     }
 
     /**
@@ -2423,29 +2410,84 @@ var Toolbar = function (_Module) {
       /** Close trash actions */
       // editor.toolbar.settings.hideRemoveActions();
     }
+
+    /**
+     * Open Toolbar with Plus Button
+     */
+
   }, {
     key: 'open',
     value: function open() {
 
-      this.nodes.wrapper.classList.add(this.CSS.toolbarOpened);
+      this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
     }
+
+    /**
+     * Close the Toolbar
+     */
+
   }, {
     key: 'close',
     value: function close() {
 
-      this.nodes.wrapper.classList.remove(this.CSS.toolbarOpened);
+      this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
     }
+
+    /**
+     * Plus Button public methods
+     * @return {{hide: function(): void, show: function(): void}}
+     */
+
+  }, {
+    key: 'plusButtonClicked',
+
 
     /**
      * Handler for Plus Button
      * @param {MouseEvent} event
      */
-
-  }, {
-    key: 'plusButtonClicked',
     value: function plusButtonClicked(event) {
 
       this.Editor.Toolbox.toggle();
+    }
+  }, {
+    key: 'plusButton',
+    get: function get() {
+      var _this3 = this;
+
+      return {
+        hide: function hide() {
+          return _this3.nodes.plusButton.classList.add(Toolbar.CSS.plusButtonHidden);
+        },
+        show: function show() {
+          return _this3.nodes.plusButton.classList.remove(Toolbar.CSS.plusButtonHidden);
+        }
+      };
+    }
+  }], [{
+    key: 'CSS',
+    get: function get() {
+
+      return {
+        toolbar: 'ce-toolbar',
+        content: 'ce-toolbar__content',
+        actions: 'ce-toolbar__actions',
+
+        toolbarOpened: 'ce-toolbar--opened',
+
+        // Content Zone
+        plusButton: 'ce-toolbar__plus',
+        plusButtonHidden: 'ce-toolbar__plus--hidden',
+
+        // Actions Zone
+        settingsToggler: 'ce-toolbar__settings-btn',
+        removeBlockButton: 'ce-toolbar__remove-btn',
+
+        // Settings Panel
+        settings: 'ce-settings',
+        defaultSettings: 'ce-settings_default',
+        pluginSettings: 'ce-settings_plugin'
+      };
     }
   }]);
 
@@ -2497,12 +2539,6 @@ var Toolbox = function (_Module) {
 
         var _this = _possibleConstructorReturn(this, (Toolbox.__proto__ || Object.getPrototypeOf(Toolbox)).call(this, config));
 
-        _this.CSS = {
-            toolbox: 'cdx-toolbox',
-            toolboxButton: 'cdx-toolbox__button',
-            toolboxOpened: 'cdx-toolbox--opened'
-        };
-
         _this.nodes = {
             toolbox: null,
             buttons: []
@@ -2518,15 +2554,21 @@ var Toolbox = function (_Module) {
     }
 
     /**
-     * Makes the Toolbox
+     * CSS styles
+     * @return {{toolbox: string, toolboxButton: string, toolboxOpened: string}}
      */
 
 
     _createClass(Toolbox, [{
         key: 'make',
+
+
+        /**
+         * Makes the Toolbox
+         */
         value: function make() {
 
-            this.nodes.toolbox = $.make('div', this.CSS.toolbox);
+            this.nodes.toolbox = $.make('div', Toolbox.CSS.toolbox);
             $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
 
             this.addTools();
@@ -2560,7 +2602,7 @@ var Toolbox = function (_Module) {
         value: function addTool(toolName, tool) {
             var _this2 = this;
 
-            if (!tool.iconClassName && tool.displayInToolbox) {
+            if (tool.displayInToolbox && !tool.iconClassName) {
 
                 _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
                 return;
@@ -2584,7 +2626,7 @@ var Toolbox = function (_Module) {
                 return;
             }
 
-            var button = $.make('li', [this.CSS.toolboxButton, tool.iconClassName], {
+            var button = $.make('li', [Toolbox.CSS.toolboxButton, tool.iconClassName], {
                 title: toolName
             });
 
@@ -2655,12 +2697,9 @@ var Toolbox = function (_Module) {
             // }, 10);
 
             /**
-             * @todo Move toolbar to the new Block
-             */
-            /**
              * Move toolbar when node is changed
              */
-            // editor.toolbar.move();
+            this.Editor.Toolbar.move();
         }
 
         /**
@@ -2671,7 +2710,7 @@ var Toolbox = function (_Module) {
         key: 'open',
         value: function open() {
 
-            this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
+            this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpened);
             this.opened = true;
         }
 
@@ -2683,7 +2722,7 @@ var Toolbox = function (_Module) {
         key: 'close',
         value: function close() {
 
-            this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
+            this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpened);
             this.opened = false;
         }
 
@@ -2702,6 +2741,16 @@ var Toolbox = function (_Module) {
 
                 this.close();
             }
+        }
+    }], [{
+        key: 'CSS',
+        get: function get() {
+
+            return {
+                toolbox: 'cdx-toolbox',
+                toolboxButton: 'cdx-toolbox__button',
+                toolboxOpened: 'cdx-toolbox--opened'
+            };
         }
     }]);
 
@@ -2980,6 +3029,19 @@ var Tools = function (_Module) {
 
             return instance;
         }
+
+        /**
+         * Check if passed Tool is an instance of Initial Block Tool
+         * @param {Tool} tool - Tool to check
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'isInitial',
+        value: function isInitial(tool) {
+
+            return tool instanceof this.available[this.config.initialBlock];
+        }
     }]);
 
     return Tools;
@@ -3232,18 +3294,18 @@ var UI = function (_Module) {
      * @param {MouseEvent} event
      *
      * @description
-     * 1. Save clicked node as a current {@link BlockManager#currentNode}
+     * 1. Save clicked Block as a current {@link BlockManager#currentNode}
      *      it uses for the following:
-     *      - add CSS modifier for the selected block
-     *      - on Enter press, we make a new block under that
+     *      - add CSS modifier for the selected Block
+     *      - on Enter press, we make a new Block under that
      *
      * 2. Move and show the Toolbar
      *
      * 3. Set a Caret
      *
-     * 4. By clicks on the editor's bottom zone:
-     *      - if last block is empty, set caret to this
-     *      - otherwise, add a new empty block and set a caret to that
+     * 4. By clicks on the Editor's bottom zone:
+     *      - if last Block is empty, set a Caret to this
+     *      - otherwise, add a new empty Block and set a Caret to that
      *
      * 5. Hide the Inline Toolbar
      *
@@ -3265,7 +3327,7 @@ var UI = function (_Module) {
         this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
 
         /**
-         * If clicked outside first-level Blocks, set caret to the last empty Block
+         * If clicked outside first-level Blocks, set Caret to the last empty Block
          */
       } catch (e) {
 
@@ -3357,23 +3419,24 @@ var UI = function (_Module) {
       //     isInitialType = currentNodeType == editor.settings.initialBlockPlugin;
       //
       //
-      // /** Hide plus buttons */
-      // editor.toolbar.hidePlusButton();
-      //
-      // if (!inputIsEmpty) {
-      //
-      //     /** Mark current block */
-      //     editor.content.markBlock();
-      //
-      // }
-      //
-      // if ( isInitialType && inputIsEmpty ) {
-      //
-      //     /** Show plus button */
-      //     editor.toolbar.showPlusButton();
-      //
-      // }
 
+      /**
+       * Hide the Plus Button
+       * */
+      this.Editor.Toolbar.plusButton.hide();
+
+      /**
+       * Show the Plus Button if:
+       * - Block is an initial-block (Text)
+       * - Block is empty
+       */
+      var isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool),
+          isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
+
+      if (isInitialBlock && isEmptyBlock) {
+
+        this.Editor.Toolbar.plusButton.show();
+      }
     }
   }, {
     key: 'CSS',
@@ -3619,7 +3682,7 @@ exports = module.exports = __webpack_require__(16)(undefined);
 
 
 // module
-exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n    /**\n     * Block content width\n     */\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 10px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  opacity: 0;\n  visibility: hidden;\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n}\n.ce-toolbar--opened {\n    opacity: 1;\n    visibility: visible;\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-34px - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    width: 34px;\n    height: 34px;\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n    content: '+';\n    font-size: 26px;\n    display: block;\n    margin-top: -2px;\n    margin-right: -2px;\n\n}\n.cdx-toolbox {\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.cdx-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.cdx-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        width: 34px;\n        height: 34px;\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px\n    }\n.cdx-toolbox__button::before {\n    content: attr(title);\n    font-size: 22px;\n    font-weight: 500;\n    letter-spacing: 1em;\n    -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n            font-feature-settings: \"smcp\", \"c2sc\";\n    font-variant-caps: all-small-caps;\n    padding-left: 11.5px;\n    margin-top: -1px;\n    display: inline-block;\n\n}\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0;\n}\n.ce-block--selected {\n    background-color: #eff2f5;\n  }\n.ce-block__content {\n    max-width: 650px;\n    margin: 0 auto;\n  }\n", ""]);
+exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n    /**\n     * Block content width\n     */\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 10px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  opacity: 0;\n  visibility: hidden;\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n}\n.ce-toolbar--opened {\n    opacity: 1;\n    visibility: visible;\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-34px - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    width: 34px;\n    height: 34px;\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n    content: '+';\n    font-size: 26px;\n    display: block;\n    margin-top: -2px;\n    margin-right: -2px;\n\n}\n.ce-toolbar__plus--hidden {\n      display: none;\n\n}\n.cdx-toolbox {\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.cdx-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.cdx-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        width: 34px;\n        height: 34px;\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px\n    }\n.cdx-toolbox__button::before {\n    content: attr(title);\n    font-size: 22px;\n    font-weight: 500;\n    letter-spacing: 1em;\n    -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n            font-feature-settings: \"smcp\", \"c2sc\";\n    font-variant-caps: all-small-caps;\n    padding-left: 11.5px;\n    margin-top: -1px;\n    display: inline-block;\n\n}\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0;\n}\n.ce-block--selected {\n    background-color: #eff2f5;\n  }\n.ce-block__content {\n    max-width: 650px;\n    margin: 0 auto;\n  }\n", ""]);
 
 // exports
 
