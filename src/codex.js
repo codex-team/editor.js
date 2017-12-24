@@ -152,9 +152,7 @@ module.exports = class CodexEditor {
          */
         let initialBlock = {
             type : config.initialBlock,
-            data : {
-                text : null
-            }
+            data : {}
         };
 
         this.config.holderId = config.holderId;

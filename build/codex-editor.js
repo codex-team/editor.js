@@ -937,9 +937,7 @@ module.exports = function () {
              */
             var initialBlock = {
                 type: config.initialBlock,
-                data: {
-                    text: null
-                }
+                data: {}
             };
 
             this.config.holderId = config.holderId;
