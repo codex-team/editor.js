@@ -77,6 +77,14 @@ export default class BlockManager extends Module {
 
     }
 
+    /**
+     * Creates Block instance by tool name
+     *
+     * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
+     * @param {Object} data - constructor params
+     *
+     * @return {Block}
+     */
     composeBlock(toolName, data) {
 
         let toolInstance = this.Editor.Tools.construct(toolName, data),

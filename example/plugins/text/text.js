@@ -54,6 +54,9 @@ class Text {
         this.data = data;
     }
 
+    /**
+     * Method fires before rendered data appended to the editors area
+     */
     appendCallback() {
 
         console.log("text appended");

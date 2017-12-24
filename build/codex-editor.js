@@ -520,19 +520,22 @@ var Block = function () {
         value: function compose() {
 
             var wrapper = $.make('div', Block.CSS.wrapper),
-                content = $.make('div', Block.CSS.content);
+                content = $.make('div', Block.CSS.content),
+                pluginsContent = this.tool.render();
 
-            content.appendChild(this.tool.render());
+            content.appendChild(pluginsContent);
             wrapper.appendChild(content);
 
             return wrapper;
         }
 
         /**
-         * Calls Tool method
+         * Calls Tools method
          *
-         * @param methodName
-         * @param params
+         * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
+         *
+         * @param {String} methodName
+         * @param {Object} params
          */
 
     }, {
@@ -540,7 +543,7 @@ var Block = function () {
         value: function call(methodName, params) {
 
             /**
-             * call tool method in instance context
+             * call tool's method with the instance context
              */
             if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
 
@@ -1271,6 +1274,16 @@ var BlockManager = function (_Module) {
                 resolve();
             });
         }
+
+        /**
+         * Creates Block instance by tool name
+         *
+         * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
+         * @param {Object} data - constructor params
+         *
+         * @return {Block}
+         */
+
     }, {
         key: 'composeBlock',
         value: function composeBlock(toolName, data) {
