@@ -95,7 +95,10 @@ var Module = function () {
    *
    * @param  {EditorConfig} config
    */
-  function Module(config) {
+  function Module() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        config = _ref.config;
+
     _classCallCheck(this, Module);
 
     if (new.target === Module) {
@@ -434,6 +437,20 @@ var Util = function () {
 
             return Array.prototype.slice.call(collection);
         }
+
+        /**
+         * Checks if object is empty
+         *
+         * @param {Object} object
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isEmpty',
+        value: function isEmpty(object) {
+
+            return Object.keys(object).length === 0 && object.constructor === Object;
+        }
     }]);
 
     return Util;
@@ -666,8 +683,7 @@ module.exports = exports['default'];
  * @property {String} placeholder        - First Block placeholder
  * @property {Object} sanitizer          - @todo fill desc
  * @property {Boolean} hideToolbar       - @todo fill desc
- * @property {Object} toolsConfig        - @todo fill desc
- * ...
+ * @property {Object} toolsConfig        - tools configuration {@link Tools#ToolsConfig}
  */
 
 /**
@@ -760,7 +776,7 @@ module.exports = function () {
             console.log('CodeX Editor is ready');
         }).catch(function (error) {
 
-            console.log('CodeX Editor does not ready beecause of %o', error);
+            console.log('CodeX Editor does not ready because of %o', error);
         });
     }
 
@@ -1109,12 +1125,13 @@ webpackContext.id = 6;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($, _) {
+/* WEBPACK VAR INJECTION */(function(Module, $, _) {
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @class BlockManager
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @classdesc Manage editor`s blocks storage and appearance
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _block = __webpack_require__(3);
 
@@ -1124,16 +1141,25 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @class BlockManager
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @classdesc Manage editor`s blocks storage and appearance
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @module BlockManager
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 /**
  * @typedef {BlockManager} BlockManager
  * @property {Number} currentBlockIndex - Index of current working block
  * @property {Proxy} _blocks - Proxy for Blocks instance {@link Blocks}
  */
-var BlockManager = function () {
+var BlockManager = function (_Module) {
+    _inherits(BlockManager, _Module);
 
     /**
      * @constructor
-     *
      * @param {EditorConfig} config
      */
     function BlockManager(_ref) {
@@ -1141,16 +1167,15 @@ var BlockManager = function () {
 
         _classCallCheck(this, BlockManager);
 
-        this.config = config;
-        this.Editor = null;
-
         /**
          * Proxy for Blocks instance {@link Blocks}
          *
          * @type {Proxy}
          * @private
          */
-        this._blocks = null;
+        var _this = _possibleConstructorReturn(this, (BlockManager.__proto__ || Object.getPrototypeOf(BlockManager)).call(this, { config: config }));
+
+        _this._blocks = null;
 
         /**
          * Index of current working block
@@ -1158,32 +1183,27 @@ var BlockManager = function () {
          * @type {number}
          * @private
          */
-        this.currentBlockIndex = -1;
+        _this.currentBlockIndex = -1;
+
+        return _this;
     }
 
     /**
-     * Editor modules setting
+     * Should be called after Editor.UI preparation
+     * Define this._blocks property
      *
-     * @param Editor
+     * @returns {Promise}
      */
 
 
     _createClass(BlockManager, [{
         key: 'prepare',
-
-
-        /**
-         * Should be called after Editor.UI preparation
-         * Define this._blocks property
-         *
-         * @returns {Promise}
-         */
         value: function prepare() {
-            var _this = this;
+            var _this2 = this;
 
             return new Promise(function (resolve) {
 
-                var blocks = new Blocks(_this.Editor.UI.nodes.redactor);
+                var blocks = new Blocks(_this2.Editor.UI.nodes.redactor);
 
                 /**
                  * We need to use Proxy to overload set/get [] operator.
@@ -1199,7 +1219,7 @@ var BlockManager = function () {
                  * @type {Proxy}
                  * @private
                  */
-                _this._blocks = new Proxy(blocks, {
+                _this2._blocks = new Proxy(blocks, {
                     set: Blocks.set,
                     get: Blocks.get
                 });
@@ -1314,12 +1334,6 @@ var BlockManager = function () {
             }
         }
     }, {
-        key: 'state',
-        set: function set(Editor) {
-
-            this.Editor = Editor;
-        }
-    }, {
         key: 'currentBlock',
         get: function get() {
 
@@ -1386,7 +1400,7 @@ var BlockManager = function () {
     }]);
 
     return BlockManager;
-}();
+}(Module);
 
 /**
  * @class Blocks
@@ -1400,6 +1414,7 @@ var BlockManager = function () {
 
 
 BlockManager.displayName = 'BlockManager';
+exports.default = BlockManager;
 
 var Blocks = function () {
 
@@ -1619,10 +1634,8 @@ var Blocks = function () {
 }();
 
 Blocks.displayName = 'Blocks';
-
-
-module.exports = BlockManager;
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1), __webpack_require__(2)))
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2)))
 
 /***/ }),
 /* 8 */
@@ -1660,7 +1673,7 @@ var Caret = function (_Module) {
 
         _classCallCheck(this, Caret);
 
-        return _possibleConstructorReturn(this, (Caret.__proto__ || Object.getPrototypeOf(Caret)).call(this, config));
+        return _possibleConstructorReturn(this, (Caret.__proto__ || Object.getPrototypeOf(Caret)).call(this, { config: config }));
     }
 
     /**
@@ -1800,10 +1813,12 @@ var Events = function (_Module) {
     /**
      * @constructor
      */
-    function Events() {
+    function Events(_ref) {
+        var config = _ref.config;
+
         _classCallCheck(this, Events);
 
-        var _this = _possibleConstructorReturn(this, (Events.__proto__ || Object.getPrototypeOf(Events)).call(this));
+        var _this = _possibleConstructorReturn(this, (Events.__proto__ || Object.getPrototypeOf(Events)).call(this, { config: config }));
 
         _this.subscribers = {};
 
@@ -1848,13 +1863,13 @@ var Events = function (_Module) {
 
         /**
          * Destroyer
+         * clears subsribers list
          */
 
     }, {
         key: "destroy",
         value: function destroy() {
 
-            this.Editor = null;
             this.subscribers = null;
         }
     }]);
@@ -1872,52 +1887,79 @@ module.exports = exports["default"];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(_) {
+/* WEBPACK VAR INJECTION */(function(Module, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
 /**
  * Codex Editor Renderer Module
  *
- * @author Codex Team
+ * @module Renderer
+ * @author CodeX Team
+ *
  * @version 2.0.0
  */
-
-var Renderer = function () {
+var Renderer = function (_Module) {
+    _inherits(Renderer, _Module);
 
     /**
      * @constructor
-     *
      * @param {EditorConfig} config
      */
-    function Renderer(config) {
+    function Renderer(_ref) {
+        var config = _ref.config;
+
         _classCallCheck(this, Renderer);
 
-        this.config = config;
-        this.Editor = null;
+        return _possibleConstructorReturn(this, (Renderer.__proto__ || Object.getPrototypeOf(Renderer)).call(this, { config: config }));
     }
 
     /**
-     * Editor modules setter
+     * @typedef {Object} RendererItems
+     * @property {String} type - tool name
+     * @property {Object} data - tool data
+     */
+
+    /**
+     * @example
      *
-     * @param {Object} Editor
+     * items: [
+     * {
+     *    type : 'paragraph',
+     *    data : {
+     *        text : 'Hello from Codex!'
+     *    }
+     * },
+     * {
+     *   type : 'paragraph',
+     *   data : {
+     *        text : 'Leave feedback if you like it!'
+     *   }
+     * },
+     * ]
+     *
+     */
+
+    /**
+     * Make plugin blocks from array of plugin`s data
+     * @param {RendererItems[]} items
      */
 
 
     _createClass(Renderer, [{
         key: "render",
-
-
-        /**
-         *
-         * Make plugin blocks from array of plugin`s data
-         *
-         * @param {Object[]} items
-         */
         value: function render(items) {
-            var _this = this;
+            var _this2 = this;
 
             var chainData = [];
 
@@ -1925,7 +1967,7 @@ var Renderer = function () {
 
                 chainData.push({
                     function: function _function() {
-                        return _this.insertBlock(items[i]);
+                        return _this2.insertBlock(items[i]);
                     }
                 });
             };
@@ -1958,21 +2000,10 @@ var Renderer = function () {
 
             return Promise.resolve();
         }
-    }, {
-        key: "state",
-        set: function set(Editor) {
-
-            this.Editor = Editor;
-        }
     }]);
 
     return Renderer;
-}();
-
-Renderer.displayName = "Renderer";
-
-
-module.exports = Renderer;
+}(Module);
 
 // module.exports = (function (renderer) {
 //
@@ -2170,7 +2201,12 @@ module.exports = Renderer;
 //     return renderer;
 //
 // })({});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+
+
+Renderer.displayName = "Renderer";
+exports.default = Renderer;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
 /* 11 */
@@ -2248,10 +2284,12 @@ var Toolbar = function (_Module) {
   /**
    * @constructor
    */
-  function Toolbar(config) {
+  function Toolbar(_ref) {
+    var config = _ref.config;
+
     _classCallCheck(this, Toolbar);
 
-    var _this = _possibleConstructorReturn(this, (Toolbar.__proto__ || Object.getPrototypeOf(Toolbar)).call(this, config));
+    var _this = _possibleConstructorReturn(this, (Toolbar.__proto__ || Object.getPrototypeOf(Toolbar)).call(this, { config: config }));
 
     _this.nodes = {
       wrapper: null,
@@ -2534,10 +2572,12 @@ var Toolbox = function (_Module) {
     /**
      * @constructor
      */
-    function Toolbox(config) {
+    function Toolbox(_ref) {
+        var config = _ref.config;
+
         _classCallCheck(this, Toolbox);
 
-        var _this = _possibleConstructorReturn(this, (Toolbox.__proto__ || Object.getPrototypeOf(Toolbox)).call(this, config));
+        var _this = _possibleConstructorReturn(this, (Toolbox.__proto__ || Object.getPrototypeOf(Toolbox)).call(this, { config: config }));
 
         _this.nodes = {
             toolbox: null,
@@ -2791,9 +2831,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * Each Tool must contain the following important objects:
  *
  * @typedef {Object} ToolConfig {@link docs/tools.md}
- * @property {String} iconClassname
- * @property {Boolean} displayInToolbox
- * @property {Boolean} enableLineBreaks
+ * @property {String} iconClassname - this a icon in toolbar
+ * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
+ * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
+ * @property render @todo add description
+ * @property save @todo add description
+ * @property settings @todo add description
+ * @property validate - method that validates output data before saving
  */
 
 /**
@@ -2884,7 +2928,7 @@ var Tools = function (_Module) {
          *  name — block type name in JSON. Got from EditorConfig.tools keys
          * @type {Object}
          */
-        var _this = _possibleConstructorReturn(this, (Tools.__proto__ || Object.getPrototypeOf(Tools)).call(this, config));
+        var _this = _possibleConstructorReturn(this, (Tools.__proto__ || Object.getPrototypeOf(Tools)).call(this, { config: config }));
 
         _this.toolClasses = {};
 
@@ -3025,6 +3069,11 @@ var Tools = function (_Module) {
             var plugin = this.toolClasses[tool],
                 config = this.config.toolsConfig[tool];
 
+            if (!config) {
+
+                config = this.defaultConfig;
+            }
+
             var instance = new plugin(data, config);
 
             return instance;
@@ -3139,7 +3188,7 @@ var UI = function (_Module) {
 
     _classCallCheck(this, UI);
 
-    var _this = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, config));
+    var _this = _possibleConstructorReturn(this, (UI.__proto__ || Object.getPrototypeOf(UI)).call(this, { config: config }));
 
     _this.nodes = {
       holder: null,

@@ -52,8 +52,7 @@
  * @property {String} placeholder        - First Block placeholder
  * @property {Object} sanitizer          - @todo fill desc
  * @property {Boolean} hideToolbar       - @todo fill desc
- * @property {Object} toolsConfig        - @todo fill desc
- * ...
+ * @property {Object} toolsConfig        - tools configuration {@link Tools#ToolsConfig}
  */
 
 /**
@@ -134,7 +133,7 @@ module.exports = class CodexEditor {
             })
             .catch(error => {
 
-                console.log('CodeX Editor does not ready beecause of %o', error);
+                console.log('CodeX Editor does not ready because of %o', error);
 
             });
 

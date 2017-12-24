@@ -11,7 +11,7 @@ export default class Caret extends Module {
      */
     constructor({config}) {
 
-        super(config);
+        super({config});
 
     }
 

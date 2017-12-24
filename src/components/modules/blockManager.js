@@ -1,6 +1,8 @@
 /**
  * @class BlockManager
  * @classdesc Manage editor`s blocks storage and appearance
+ *
+ * @module BlockManager
  */
 
 import Block from '../block';
@@ -10,17 +12,15 @@ import Block from '../block';
  * @property {Number} currentBlockIndex - Index of current working block
  * @property {Proxy} _blocks - Proxy for Blocks instance {@link Blocks}
  */
-class BlockManager {
+export default class BlockManager extends Module {
 
     /**
      * @constructor
-     *
      * @param {EditorConfig} config
      */
-    constructor({ config }) {
+    constructor({config}) {
 
-        this.config = config;
-        this.Editor = null;
+        super({config});
 
         /**
          * Proxy for Blocks instance {@link Blocks}
@@ -37,17 +37,6 @@ class BlockManager {
          * @private
          */
         this.currentBlockIndex = -1;
-
-    }
-
-    /**
-     * Editor modules setting
-     *
-     * @param Editor
-     */
-    set state(Editor) {
-
-        this.Editor = Editor;
 
     }
 
@@ -453,5 +442,3 @@ class Blocks {
     }
 
 }
-
-module.exports = BlockManager;

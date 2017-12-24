@@ -1,40 +1,52 @@
 /**
  * Codex Editor Renderer Module
  *
- * @author Codex Team
+ * @module Renderer
+ * @author CodeX Team
+ *
  * @version 2.0.0
  */
-
-class Renderer {
+export default class Renderer extends Module {
 
     /**
      * @constructor
-     *
      * @param {EditorConfig} config
      */
-    constructor(config) {
+    constructor({config}) {
 
-        this.config = config;
-        this.Editor = null;
+        super({config});
 
     }
 
     /**
-     * Editor modules setter
-     *
-     * @param {Object} Editor
+     * @typedef {Object} RendererItems
+     * @property {String} type - tool name
+     * @property {Object} data - tool data
      */
-    set state(Editor) {
-
-        this.Editor = Editor;
-
-    }
 
     /**
+     * @example
      *
+     * items: [
+     * {
+     *    type : 'paragraph',
+     *    data : {
+     *        text : 'Hello from Codex!'
+     *    }
+     * },
+     * {
+     *   type : 'paragraph',
+     *   data : {
+     *        text : 'Leave feedback if you like it!'
+     *   }
+     * },
+     * ]
+     *
+     */
+
+    /**
      * Make plugin blocks from array of plugin`s data
-     *
-     * @param {Object[]} items
+     * @param {RendererItems[]} items
      */
     render(items) {
 
@@ -73,8 +85,6 @@ class Renderer {
     }
 
 }
-
-module.exports = Renderer;
 
 // module.exports = (function (renderer) {
 //

@@ -8,9 +8,13 @@
  * Each Tool must contain the following important objects:
  *
  * @typedef {Object} ToolConfig {@link docs/tools.md}
- * @property {String} iconClassname
- * @property {Boolean} displayInToolbox
- * @property {Boolean} enableLineBreaks
+ * @property {String} iconClassname - this a icon in toolbar
+ * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
+ * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
+ * @property render @todo add description
+ * @property save @todo add description
+ * @property settings @todo add description
+ * @property validate - method that validates output data before saving
  */
 
 /**
@@ -80,9 +84,9 @@ export default class Tools extends Module {
      *
      * @param {EditorConfig} config
      */
-    constructor({ config }) {
+    constructor({config}) {
 
-        super(config);
+        super({config});
 
         /**
          * Map {name: Class, ...} where:
@@ -221,6 +225,12 @@ export default class Tools extends Module {
 
         let plugin = this.toolClasses[tool],
             config = this.config.toolsConfig[tool];
+
+        if (!config) {
+
+            config = this.defaultConfig;
+
+        }
 
         let instance = new plugin(data, config);
 

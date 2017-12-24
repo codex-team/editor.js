@@ -54,9 +54,9 @@ export default class Toolbar extends Module {
     /**
      * @constructor
      */
-    constructor(config) {
+    constructor({config}) {
 
-        super(config);
+        super({config});
 
         this.nodes = {
             wrapper : null,
