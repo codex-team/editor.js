@@ -12,9 +12,9 @@ export default class Renderer extends Module {
      * @constructor
      * @param {EditorConfig} config
      */
-    constructor(config) {
+    constructor({config}) {
 
-        super(config);
+        super({config});
 
     }
 

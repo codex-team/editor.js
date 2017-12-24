@@ -2,9 +2,10 @@
 * Empty paragraph placeholder
 */
 
-.ce-paragraph {
-    padding: 0.7em 0 !important;
-    line-height: 1.7em;
+.ce-text {
+    padding: 15px 0 !important;
+    line-height: 1.6em;
+    outline: none;
 }
 
 .ce-paragraph:empty::before,
