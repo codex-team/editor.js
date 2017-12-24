@@ -8,7 +8,7 @@
  * Example:
  *           new CodexEditor({
  *                holderId : 'codex-editor',
- *                initialBlock : 'paragraph',
+ *                initialBlock : 'text',
  *                placeholder : 'Write your story....',
  *                tools: {
  *                    quote: Quote,
@@ -151,7 +151,7 @@ module.exports = class CodexEditor {
          * @type {{type: (*), data: {text: null}}}
          */
         let initialBlock = {
-            type : this.config.initialBlock,
+            type : config.initialBlock,
             data : {
                 text : null
             }
@@ -322,6 +322,7 @@ module.exports = class CodexEditor {
             .then(() => {
 
                 return this.moduleInstances.Renderer.render(this.config.data.items);
+
 
             });
 

@@ -49,10 +49,30 @@ export default class Block {
         let wrapper = $.make('div', Block.CSS.wrapper),
             content = $.make('div', Block.CSS.content);
 
-        content.appendChild(this.tool.html);
+        content.appendChild(this.tool.render());
         wrapper.appendChild(content);
 
         return wrapper;
+
+    }
+
+    /**
+     * Calls Tool method
+     *
+     * @param methodName
+     * @param params
+     */
+    call(methodName, params) {
+
+        /**
+         * call tool method in instance context
+         */
+        if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+
+            this.tool[methodName].call(this.tool, params);
+
+        }
+
 
     }
 

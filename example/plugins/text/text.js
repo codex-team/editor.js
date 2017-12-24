@@ -49,20 +49,18 @@ class Text {
         };
 
         this._data = {};
+        this._element = this.draw();
 
-        this._element = this._render();
         this.data = data;
+    }
 
+    appendCallback() {
+
+        console.log("text appended");
 
     }
 
-    /**
-     * Create div element and add needed css classes
-     *
-     * @returns {HTMLDivElement} Created DIV element
-     * @private
-     */
-    _render() {
+    draw() {
 
         let div = document.createElement('DIV');
 
@@ -70,6 +68,15 @@ class Text {
         div.contentEditable = true;
 
         return div;
+    }
+
+    /**
+     * Create div element and add needed css classes
+     * @returns {HTMLDivElement} Created DIV element
+     */
+    render() {
+
+        return this._element;
 
     }
 
@@ -93,12 +100,11 @@ class Text {
 
     /**
      * Get plugin`s element HTMLDivElement
-     *
      * @returns {HTMLDivElement} Plugin`s element
      */
-    get html() {
+    save() {
 
-        return this._element;
+        return this.data;
 
     }
 

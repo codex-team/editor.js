@@ -1,7 +1,7 @@
-# CodeX Editor Tools
+# CodeX Editor Renderer
 
-`Renderer` is class that is responsible for rendering JSON data to HTML.
+`Renderer` is a class that is responsible for rendering JSON data to HTML.
  
- Inside it uses BlockManager to compose block list bounded to the Tool instance. 
+ Inside it uses BlockManager to compose block's list bounded to the Tool instance. 
  
  ## Methods

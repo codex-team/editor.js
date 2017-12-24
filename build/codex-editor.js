@@ -522,10 +522,30 @@ var Block = function () {
             var wrapper = $.make('div', Block.CSS.wrapper),
                 content = $.make('div', Block.CSS.content);
 
-            content.appendChild(this.tool.html);
+            content.appendChild(this.tool.render());
             wrapper.appendChild(content);
 
             return wrapper;
+        }
+
+        /**
+         * Calls Tool method
+         *
+         * @param methodName
+         * @param params
+         */
+
+    }, {
+        key: 'call',
+        value: function call(methodName, params) {
+
+            /**
+             * call tool method in instance context
+             */
+            if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+
+                this.tool[methodName].call(this.tool, params);
+            }
         }
 
         /**
@@ -639,7 +659,7 @@ module.exports = exports['default'];
  * Example:
  *           new CodexEditor({
  *                holderId : 'codex-editor',
- *                initialBlock : 'paragraph',
+ *                initialBlock : 'text',
  *                placeholder : 'Write your story....',
  *                tools: {
  *                    quote: Quote,
@@ -913,7 +933,7 @@ module.exports = function () {
              * @type {{type: (*), data: {text: null}}}
              */
             var initialBlock = {
-                type: this.config.initialBlock,
+                type: config.initialBlock,
                 data: {
                     text: null
                 }
@@ -1251,6 +1271,20 @@ var BlockManager = function (_Module) {
                 resolve();
             });
         }
+    }, {
+        key: 'composeBlock',
+        value: function composeBlock(toolName, data) {
+
+            var toolInstance = this.Editor.Tools.construct(toolName, data),
+                block = new _block2.default(toolInstance);
+
+            /**
+             * Apply callback before inserting html
+             */
+            block.call('appendCallback', {});
+
+            return block;
+        }
 
         /**
          * Insert new block into _blocks
@@ -1265,14 +1299,9 @@ var BlockManager = function (_Module) {
             var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
 
-            var toolInstance = this.Editor.Tools.construct(toolName, data),
-                block = new _block2.default(toolInstance);
+            var block = this.composeBlock(toolName, data);
 
             this._blocks[++this.currentBlockIndex] = block;
-
-            /**
-             * @todo fire Tool's appendCallback
-             */
         }
 
         /**
@@ -1288,14 +1317,9 @@ var BlockManager = function (_Module) {
             var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
 
-            var toolInstance = this.Editor.Tools.construct(toolName, data),
-                block = new _block2.default(toolInstance);
+            var block = this.composeBlock(toolName, data);
 
             this._blocks.insert(this.currentBlockIndex, block, true);
-
-            /**
-             * @todo fire Tool's appendCallback
-             */
         }
 
         /**
