@@ -8,7 +8,7 @@
  * Example:
  *           new CodexEditor({
  *                holderId : 'codex-editor',
- *                initialBlock : 'paragraph',
+ *                initialBlock : 'text',
  *                placeholder : 'Write your story....',
  *                tools: {
  *                    quote: Quote,
@@ -128,7 +128,7 @@ module.exports = class CodexEditor {
             .then(() => this.start())
             .then(() => {
 
-                console.log('CodeX Editor is ready');
+                console.log('CodeX Editor is ready!');
 
             })
             .catch(error => {
@@ -145,6 +145,16 @@ module.exports = class CodexEditor {
      */
     set configuration(config) {
 
+        /**
+         * Initlai block type
+         * Uses in case when there is no items passed
+         * @type {{type: (*), data: {text: null}}}
+         */
+        let initialBlock = {
+            type : config.initialBlock,
+            data : {}
+        };
+
         this.config.holderId = config.holderId;
         this.config.placeholder = config.placeholder || 'write your story...';
         this.config.sanitizer = config.sanitizer || {
@@ -156,7 +166,25 @@ module.exports = class CodexEditor {
         this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
         this.config.tools = config.tools || {};
         this.config.toolsConfig = config.toolsConfig || {};
-        this.config.data = config.data || [];
+        this.config.data = config.data || {};
+
+        /**
+         * Initialize items to pass data to the Renderer
+         */
+        if (_.isEmpty(this.config.data)) {
+
+            this.config.data = {};
+            this.config.data.items = [ initialBlock ];
+
+        } else {
+
+            if (!this.config.data.items || this.config.data.items.length === 0) {
+
+                this.config.data.items = [ initialBlock ];
+
+            }
+
+        }
 
         /**
          * If initial Block's Tool was not passed, use the first Tool in config.tools
@@ -278,6 +306,7 @@ module.exports = class CodexEditor {
     /**
      * Start Editor!
      *
+     * Get list of modules that needs to be prepared and return a sequence (Promise)
      * @return {Promise}
      */
     start() {
@@ -287,20 +316,11 @@ module.exports = class CodexEditor {
         return Promise.resolve()
             .then(prepareDecorator(this.moduleInstances.Tools))
             .then(prepareDecorator(this.moduleInstances.UI))
+            .then(prepareDecorator(this.moduleInstances.BlockManager))
             .then(() => {
 
-                if (this.config.data && this.config.data.items) {
+                return this.moduleInstances.Renderer.render(this.config.data.items);
 
-                    this.moduleInstances.Renderer.render(this.config.data.items);
-
-                }
-
-            })
-            .then(prepareDecorator(this.moduleInstances.BlockManager))
-
-            .catch(function (error) {
-
-                console.log('Error occured', error);
 
             });
 

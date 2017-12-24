@@ -71,8 +71,6 @@ export default class UI extends Module {
     }
 
     /**
-     * @protected
-     *
      * Making main interface
      */
     prepare() {

@@ -47,12 +47,35 @@ export default class Block {
     compose() {
 
         let wrapper = $.make('div', Block.CSS.wrapper),
-            content = $.make('div', Block.CSS.content);
+            content = $.make('div', Block.CSS.content),
+            pluginsContent = this.tool.render();
 
-        content.appendChild(this.tool.html);
+        content.appendChild(pluginsContent);
         wrapper.appendChild(content);
 
         return wrapper;
+
+    }
+
+    /**
+     * Calls Tool's method
+     *
+     * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
+     *
+     * @param {String} methodName
+     * @param {Object} params
+     */
+    call(methodName, params) {
+
+        /**
+         * call Tool's method with the instance context
+         */
+        if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+
+            this.tool[methodName].call(this.tool, params);
+
+        }
+
 
     }
 

@@ -78,6 +78,28 @@ export default class BlockManager extends Module {
     }
 
     /**
+     * Creates Block instance by tool name
+     *
+     * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
+     * @param {Object} data - constructor params
+     *
+     * @return {Block}
+     */
+    composeBlock(toolName, data) {
+
+        let toolInstance = this.Editor.Tools.construct(toolName, data),
+            block = new Block(toolInstance);
+
+        /**
+         * Apply callback before inserting html
+         */
+        block.call('appendCallback', {});
+
+        return block;
+
+    }
+
+    /**
      * Insert new block into _blocks
      *
      * @param {String} toolName — plugin name
@@ -85,14 +107,10 @@ export default class BlockManager extends Module {
      */
     insert(toolName, data = {}) {
 
-        let toolInstance = this.Editor.Tools.construct(toolName, data),
-            block = new Block(toolInstance);
+
+        let block = this.composeBlock(toolName, data);
 
         this._blocks[++this.currentBlockIndex] = block;
-
-        /**
-         * @todo fire Tool's appendCallback
-         */
 
     }
 
@@ -104,14 +122,9 @@ export default class BlockManager extends Module {
      */
     replace(toolName, data = {}) {
 
-        let toolInstance = this.Editor.Tools.construct(toolName, data),
-            block = new Block(toolInstance);
+        let block = this.composeBlock(toolName, data);
 
         this._blocks.insert(this.currentBlockIndex, block, true);
-
-        /**
-         * @todo fire Tool's appendCallback
-         */
 
     }
 
