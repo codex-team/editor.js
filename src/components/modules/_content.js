@@ -118,7 +118,7 @@ module.exports = class Content {
      */
     getFirstLevelBlock(node) {
 
-        if (!$.isNode(node)) {
+        if (!$.isElement(node)) {
 
             node = node.parentNode;
 

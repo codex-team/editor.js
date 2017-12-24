@@ -27,7 +27,10 @@
             "objectsInArrays": true,
             "arraysInArrays": true
         }],
-        "quotes": [2, "single", "avoid-escape"],
+        "quotes": [2, "single", {
+            "avoidEscape": true,
+            "allowTemplateLiterals": true
+        }],
         "eqeqeq": 0,
         "brace-style": [2, "1tbs"],
         "comma-spacing": [2, {
@@ -75,7 +78,9 @@
         "RegExp": true,
         "Module": true,
         "Node": true,
+        "Element": true,
         "Proxy": true,
+        "Symbol": true,
         "$": true,
         "_": true
     }
