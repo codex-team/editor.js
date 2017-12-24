@@ -37,9 +37,9 @@ export default class Toolbox extends Module {
     static get CSS() {
 
         return  {
-            toolbox: 'cdx-toolbox',
-            toolboxButton: 'cdx-toolbox__button',
-            toolboxOpened: 'cdx-toolbox--opened',
+            toolbox: 'ce-toolbox',
+            toolboxButton: 'ce-toolbox__button',
+            toolboxOpened: 'ce-toolbox--opened',
         };
 
     }
