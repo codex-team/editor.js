@@ -1,29 +1,64 @@
 /**
  * Codex Editor Saver
  *
+ * @module Saver
  * @author Codex Team
  * @version 2.0.0
  */
 
 /**
  * Saver class properties:
- * @property {DOMElement} html - Editor HTML content
+ * @property {Element} html - Editor HTML content
  * @property {String} json - Editor JSON output
  */
+
 export default class Saver extends Module {
 
     /**
      * @constructor
      * @param config
      */
-    constructor(config) {
-        super(config);
+    constructor({config}) {
 
-        this.html = '';
-        this.json = {};
+        super({config});
+
+        this.output = null;
+        this.blocksData = [];
+
     }
 
     save() {
+
+        let blocks = this.Editor.BlockManager.blocks,
+            chainData = [];
+
+        blocks.forEach((block) => {
+
+            chainData.push({
+                function: () => this.saveBlock(block)
+            });
+
+        });
+
+        return _.sequence(chainData)
+            .then(() => this.makeOutput());
+
+    }
+
+    saveBlock(block) {
+
+        this.blocksData.push(block.data);
+        return Promise.resolve();
+
+    }
+
+    makeOutput() {
+
+        return this.output = {
+            time: +new Date(),
+            data : this.blocksData,
+            version: VERSION,
+        };
 
     }
 

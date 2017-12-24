@@ -8,7 +8,6 @@
  *
  */
 
-
 export default class Block {
 
     /**
@@ -87,6 +86,26 @@ export default class Block {
     get html() {
 
         return this._html;
+
+    }
+
+    /**
+     * Get block's JSON data
+     * @return {{}}
+     */
+    get data() {
+
+        let outputData = this.tool.save();
+
+        if (this.tool.validate(outputData)) {
+
+            return outputData;
+
+        } else {
+
+            return {};
+
+        }
 
     }
 
