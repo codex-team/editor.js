@@ -79,9 +79,8 @@ export default class Block {
     }
 
     /**
-     * Get block`s HTML
-     *
-     * @returns {HTMLDivElement}
+     * Get Block`s HTML
+     * @returns {HTMLElement}
      */
     get html() {
 
@@ -90,23 +89,29 @@ export default class Block {
     }
 
     /**
-     * Get block's JSON data
-     * @return {{}}
+     * Get Block's JSON data
+     * @return {Object}
      */
     get data() {
 
         let outputData = this.tool.save();
 
-        if (this.tool.validate(outputData)) {
+        if (this.tool.validate && this.tool.validate instanceof Function ) {
 
-            return outputData;
+            if ( this.tool.validate(outputData) ) {
 
-        } else {
+                return outputData;
 
-            return {};
+            } else {
+
+                _.log("Data %s, doesn't pass the validation, tool %s", outputData. this.tool.name );
+
+            }
+
 
         }
 
+        return outputData;
     }
 
     /**

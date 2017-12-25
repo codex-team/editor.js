@@ -27,6 +27,10 @@ export default class Saver extends Module {
 
     }
 
+    /**
+     * @todo need documentation
+     * @return {Promise.<TResult>|*}
+     */
     save() {
 
         let blocks = this.Editor.BlockManager.blocks,
