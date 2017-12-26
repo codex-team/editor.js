@@ -51,14 +51,9 @@ export default class Saver extends Module {
 
         });
 
-        console.time('[CodeXEditor saving]:');
         return Promise.all(chainData)
             .then((allExtractedData) => this.makeOutput(allExtractedData))
             .then((outputData) => {
-
-                console.group('Saving process:');
-                console.timeEnd('[CodeXEditor saving]:');
-                console.groupEnd();
 
                 return outputData;
 
@@ -73,9 +68,26 @@ export default class Saver extends Module {
      */
     makeOutput(allExtractedData) {
 
+        let items = [],
+            totalTime = 0;
+
+        console.groupCollapsed('[CodexEditor saving]:');
+
+        allExtractedData.forEach((extraction, index) => {
+
+            /** Group process info */
+            console.log(`\"${extraction.processInfo.tool}\" extraction info`, extraction);
+            totalTime += extraction.processInfo.time;
+            items.push(extraction.data);
+
+        });
+
+        console.log('Total', totalTime);
+        console.groupEnd();
+
         return {
             time    : +new Date(),
-            items   : allExtractedData,
+            items   : items,
             version : VERSION,
         };
 

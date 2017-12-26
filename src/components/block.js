@@ -113,19 +113,23 @@ export default class Block {
 
         let extractedBlock = this.tool.save(this.pluginsContent);
 
-        /** Start counting the time execution */
-        console.time(`Extracting time`);
+        /** Measuring execution time*/
+        let measuringStart = window.performance.now(),
+            measuringEnd;
 
         return Promise.resolve(extractedBlock)
             .then((finishedExtraction) => {
 
-                /** Group tool saving execution time */
-                console.group(`${this.name} Extraction:`);
-                console.log(`Extracting data by '${this.name}' Tool`, finishedExtraction);
-                console.timeEnd(`Extracting time`);
-                console.groupEnd(`${this.name} Extraction:`);
+                /** measure promise execution */
+                measuringEnd = window.performance.now();
 
-                return finishedExtraction;
+                return {
+                    data: finishedExtraction,
+                    processInfo : {
+                        tool : this.name,
+                        time : measuringEnd - measuringStart
+                    }
+                };
 
             })
             .catch(function (error) {

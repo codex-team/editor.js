@@ -590,18 +590,22 @@ var Block = function () {
 
             var extractedBlock = this.tool.save(this.pluginsContent);
 
-            /** Start counting the time execution */
-            console.time('Extracting time');
+            /** Measuring execution time*/
+            var measuringStart = window.performance.now(),
+                measuringEnd = void 0;
 
             return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
 
-                /** Group tool saving execution time */
-                console.group(_this.name + ' Extraction:');
-                console.log('Extracting data by \'' + _this.name + '\' Tool', finishedExtraction);
-                console.timeEnd('Extracting time');
-                console.groupEnd(_this.name + ' Extraction:');
+                /** measure promise execution */
+                measuringEnd = window.performance.now();
 
-                return finishedExtraction;
+                return {
+                    data: finishedExtraction,
+                    processInfo: {
+                        tool: _this.name,
+                        time: measuringEnd - measuringStart
+                    }
+                };
             }).catch(function (error) {
 
                 _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
@@ -2617,14 +2621,9 @@ var Saver = function (_Module) {
                 chainData.push(block.data);
             });
 
-            console.time('[CodeXEditor saving]:');
             return Promise.all(chainData).then(function (allExtractedData) {
                 return _this2.makeOutput(allExtractedData);
             }).then(function (outputData) {
-
-                console.group('Saving process:');
-                console.timeEnd('[CodeXEditor saving]:');
-                console.groupEnd();
 
                 return outputData;
             });
@@ -2640,9 +2639,25 @@ var Saver = function (_Module) {
         key: 'makeOutput',
         value: function makeOutput(allExtractedData) {
 
+            var items = [],
+                totalTime = 0;
+
+            console.groupCollapsed('[CodexEditor saving]:');
+
+            allExtractedData.forEach(function (extraction, index) {
+
+                /** Group process info */
+                console.log('"' + extraction.processInfo.tool + '" extraction info', extraction);
+                totalTime += extraction.processInfo.time;
+                items.push(extraction.data);
+            });
+
+            console.log('Total', totalTime);
+            console.groupEnd();
+
             return {
                 time: +new Date(),
-                items: allExtractedData,
+                items: items,
                 version: "2.0.0"
             };
         }
