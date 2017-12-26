@@ -534,7 +534,7 @@ var Block = function () {
 
 
         /**
-         * Make default block wrappers and put Tool`s content there
+         * Make default Block wrappers and put Tool`s content there
          * @returns {HTMLDivElement}
          */
         value: function compose() {

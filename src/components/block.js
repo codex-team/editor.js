@@ -47,7 +47,7 @@ export default class Block {
     }
 
     /**
-     * Make default block wrappers and put Tool`s content there
+     * Make default Block wrappers and put Tool`s content there
      * @returns {HTMLDivElement}
      */
     compose() {
