@@ -7,6 +7,15 @@
  */
 
 /**
+ * @typedef {Object} SavedData
+ * @property {Date} time - saving proccess time
+ * @property {Object} items - extracted data
+ * @property {String} version - CodexEditor version
+ */
+
+/**
+ * @classdesc This method reduces all blocks asyncronically and calls Block's save method to extract data
+ *
  * Saver class properties:
  * @property {Element} html - Editor HTML content
  * @property {String} json - Editor JSON output
@@ -28,8 +37,8 @@ export default class Saver extends Module {
     }
 
     /**
-     * @todo need documentation
-     * @return {Promise.<TResult>|*}
+     * Composes new chain of Promises to fire them alternatelly
+     * @return {SavedData}
      */
     save() {
 
@@ -38,30 +47,27 @@ export default class Saver extends Module {
 
         blocks.forEach((block) => {
 
-            chainData.push({
-                function: () => this.saveBlock(block)
-            });
+            chainData.push(block.data);
 
         });
 
-        return _.sequence(chainData)
-            .then(() => this.makeOutput());
+        return Promise.all(chainData)
+            .then((allExtractedData) => this.makeOutput(allExtractedData));
+
 
     }
 
-    saveBlock(block) {
+    /**
+     * Creates output object with saved data, time and version of editor
+     * @param {Object} allExtractedData
+     * @return {SavedData}
+     */
+    makeOutput(allExtractedData) {
 
-        this.blocksData.push(block.data);
-        return Promise.resolve();
-
-    }
-
-    makeOutput() {
-
-        return this.output = {
-            time: +new Date(),
-            data : this.blocksData,
-            version: VERSION,
+        return {
+            time    : +new Date(),
+            items   : allExtractedData,
+            version : VERSION,
         };
 
     }

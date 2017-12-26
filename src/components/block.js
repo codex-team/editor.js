@@ -8,17 +8,24 @@
  *
  */
 
+/**
+ * @classdesc Abstract Block class that contains block information, tool and tool class instance
+ *
+ * @property this.tool - Tool instance
+ * @property this.html - Returns HTML content of plugin
+ * @property this.firstLevelBlock - Div element that wraps block content with plugin content. Has `ce-block` CSS class
+ * @property this.blockContent - Div element that wraps plugins content. Has `ce-block__content` CSS class
+ * @property this.pluginsContent - HTML content that returns Tool's render function
+ */
 export default class Block {
 
     /**
      * @constructor
-     *
      * @param {Object} tool — current block plugin`s instance
      */
     constructor(tool) {
 
         this.tool = tool;
-
         this._html = this.compose();
 
     }
@@ -39,20 +46,18 @@ export default class Block {
 
     /**
      * Make default block wrappers and put tool`s content there
-     *
      * @returns {HTMLDivElement}
-     * @private
      */
     compose() {
 
-        let wrapper = $.make('div', Block.CSS.wrapper),
-            content = $.make('div', Block.CSS.content),
-            pluginsContent = this.tool.render();
+        this.firstLevelBlock = $.make('div', Block.CSS.wrapper);
+        this.blockContent    = $.make('div', Block.CSS.content);
+        this.pluginsContent  = this.tool.render();
 
-        content.appendChild(pluginsContent);
-        wrapper.appendChild(content);
+        this.blockContent.appendChild(this.pluginsContent);
+        this.firstLevelBlock.appendChild(this.blockContent);
 
-        return wrapper;
+        return this.firstLevelBlock;
 
     }
 
@@ -89,29 +94,73 @@ export default class Block {
     }
 
     /**
-     * Get Block's JSON data
+     *
      * @return {Object}
      */
     get data() {
 
-        let outputData = this.tool.save();
+        return this.extractData();
 
-        if (this.tool.validate && this.tool.validate instanceof Function ) {
+    }
 
-            if ( this.tool.validate(outputData) ) {
+    /**
+     * Get Block's JSON data
+     * @return {Object}
+     */
+    extractData() {
 
-                return outputData;
+        let self = this;
+
+        return new Promise(function (resolve) {
+
+            let extractedBlock = self.tool.save(self.pluginsContent);
+
+            if (_.isPromise(extractedBlock)) {
+
+                extractedBlock
+                    .then(self.validateData)
+                    .then(resolve)
+                    .catch(function (error) {
+
+                        _.log(`Saving proccess for ${this.tool.name} tool failed due to the ${error}`, 'log', 'red');
+
+                    });
 
             } else {
 
-                _.log("Data %s, doesn't pass the validation, tool %s", outputData. this.tool.name );
+                resolve(extractedBlock);
 
             }
 
 
+        });
+
+    }
+
+    /**
+     * Uses Tool's validation method to validate output data
+     * @param {Object} data
+     *
+     * @returns {Boolean} valid
+     */
+    validateData(data) {
+
+        let isValid = true;
+
+        if (this.tool.validate && this.tool.validate instanceof Function) {
+
+            isValid = this.tool.validate(data);
+
         }
 
-        return outputData;
+        if (!isValid) {
+
+            return false;
+
+        }
+
+        return data;
+
     }
 
     /**

@@ -105,7 +105,7 @@ class Text {
      * Get plugin`s element HTMLDivElement
      * @returns {HTMLDivElement} Plugin`s element
      */
-    save() {
+    save(block) {
 
         return this.data;
 

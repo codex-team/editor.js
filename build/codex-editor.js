@@ -302,6 +302,19 @@ var Util = function () {
 
             return Object.keys(object).length === 0 && object.constructor === Object;
         }
+
+        /**
+         * Check if passed object is a Promise
+         * @param  {*}  object - object to check
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'isPromise',
+        value: function isPromise(object) {
+
+            return Promise.resolve(object) === object;
+        }
     }]);
 
     return Util;
@@ -466,7 +479,7 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($) {
+/* WEBPACK VAR INJECTION */(function($, _) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -486,18 +499,25 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  */
 
+/**
+ * @classdesc Abstract Block class that contains block information, tool and tool class instance
+ *
+ * @property this.tool - Tool instance
+ * @property this.html - Returns HTML content of plugin
+ * @property this.firstLevelBlock - Div element that wraps block content with plugin content. Has `ce-block` CSS class
+ * @property this.blockContent - Div element that wraps plugins content. Has `ce-block__content` CSS class
+ * @property this.pluginsContent - HTML content that returns Tool's render function
+ */
 var Block = function () {
 
     /**
      * @constructor
-     *
      * @param {Object} tool — current block plugin`s instance
      */
     function Block(tool) {
         _classCallCheck(this, Block);
 
         this.tool = tool;
-
         this._html = this.compose();
     }
 
@@ -513,20 +533,18 @@ var Block = function () {
 
         /**
          * Make default block wrappers and put tool`s content there
-         *
          * @returns {HTMLDivElement}
-         * @private
          */
         value: function compose() {
 
-            var wrapper = $.make('div', Block.CSS.wrapper),
-                content = $.make('div', Block.CSS.content),
-                pluginsContent = this.tool.render();
+            this.firstLevelBlock = $.make('div', Block.CSS.wrapper);
+            this.blockContent = $.make('div', Block.CSS.content);
+            this.pluginsContent = this.tool.render();
 
-            content.appendChild(pluginsContent);
-            wrapper.appendChild(content);
+            this.blockContent.appendChild(this.pluginsContent);
+            this.firstLevelBlock.appendChild(this.blockContent);
 
-            return wrapper;
+            return this.firstLevelBlock;
         }
 
         /**
@@ -552,9 +570,69 @@ var Block = function () {
         }
 
         /**
-         * Get block`s HTML
+         * Get Block`s HTML
+         * @returns {HTMLElement}
+         */
+
+    }, {
+        key: 'extractData',
+
+
+        /**
+         * Get Block's JSON data
+         * @return {Object}
+         */
+        value: function extractData() {
+
+            var self = this;
+
+            return new Promise(function (resolve) {
+
+                var extractedBlock = self.tool.save(self.pluginsContent);
+
+                if (_.isPromise(extractedBlock)) {
+
+                    extractedBlock.then(self.validateData).then(resolve).catch(function (error) {
+
+                        _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
+                    });
+                } else {
+
+                    resolve(extractedBlock);
+                }
+            });
+        }
+
+        /**
+         * Uses Tool's validation method to validate output data
+         * @param {Object} data
          *
-         * @returns {HTMLDivElement}
+         * @returns {Boolean} valid
+         */
+
+    }, {
+        key: 'validateData',
+        value: function validateData(data) {
+
+            var isValid = true;
+
+            if (this.tool.validate && this.tool.validate instanceof Function) {
+
+                isValid = this.tool.validate(data);
+            }
+
+            if (!isValid) {
+
+                return false;
+            }
+
+            return data;
+        }
+
+        /**
+         * Check block for emptiness
+         *
+         * @return {Boolean}
          */
 
     }, {
@@ -565,31 +643,16 @@ var Block = function () {
         }
 
         /**
-         * Get block's JSON data
-         * @return {{}}
+         *
+         * @return {Object}
          */
 
     }, {
         key: 'data',
         get: function get() {
 
-            var outputData = this.tool.save();
-
-            if (this.tool.validate(outputData)) {
-
-                return outputData;
-            } else {
-
-                return {};
-            }
+            return this.extractData();
         }
-
-        /**
-         * Check block for emptiness
-         *
-         * @return {Boolean}
-         */
-
     }, {
         key: 'isEmpty',
         get: function get() {
@@ -665,7 +728,7 @@ var Block = function () {
 Block.displayName = 'Block';
 exports.default = Block;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
 /* 4 */
@@ -2471,7 +2534,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (roo
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, _) {
+/* WEBPACK VAR INJECTION */(function(Module) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -2489,16 +2552,31 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * Codex Editor Saver
  *
  * @module Saver
- *
  * @author Codex Team
  * @version 2.0.0
  */
+
+/**
+ * @typedef {Object} SavedData
+ * @property {Date} time - saving proccess time
+ * @property {Object} items - extracted data
+ * @property {String} version - CodexEditor version
+ */
+
+/**
+ * @classdesc This method reduces all blocks asyncronically and calls Block's save method to extract data
+ *
+ * Saver class properties:
+ * @property {Element} html - Editor HTML content
+ * @property {String} json - Editor JSON output
+ */
+
 var Saver = function (_Module) {
     _inherits(Saver, _Module);
 
     /**
      * @constructor
-     * @param {EditorConfig} config
+     * @param config
      */
     function Saver(_ref) {
         var config = _ref.config;
@@ -2513,6 +2591,12 @@ var Saver = function (_Module) {
         return _this;
     }
 
+    /**
+     * Composes new chain of Promises to fire them alternatelly
+     * @return {SavedData}
+     */
+
+
     _createClass(Saver, [{
         key: "save",
         value: function save() {
@@ -2523,31 +2607,27 @@ var Saver = function (_Module) {
 
             blocks.forEach(function (block) {
 
-                chainData.push({
-                    function: function _function() {
-                        return _this2.saveBlock(block);
-                    }
-                });
+                chainData.push(block.data);
             });
 
-            return _.sequence(chainData).then(function () {
-                return _this2.makeOutput();
+            return Promise.all(chainData).then(function (allExtractedData) {
+                return _this2.makeOutput(allExtractedData);
             });
         }
-    }, {
-        key: "saveBlock",
-        value: function saveBlock(block) {
 
-            this.blocksData.push(block.data);
-            return Promise.resolve();
-        }
+        /**
+         * Creates output object with saved data, time and version of editor
+         * @param {Object} allExtractedData
+         * @return {SavedData}
+         */
+
     }, {
         key: "makeOutput",
-        value: function makeOutput() {
+        value: function makeOutput(allExtractedData) {
 
-            return this.output = {
+            return {
                 time: +new Date(),
-                data: this.blocksData,
+                items: allExtractedData,
                 version: "2.0.0"
             };
         }
@@ -2719,7 +2799,7 @@ var Saver = function (_Module) {
 Saver.displayName = "Saver";
 exports.default = Saver;
 module.exports = exports["default"];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
 /* 14 */
