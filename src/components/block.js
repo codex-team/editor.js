@@ -9,7 +9,7 @@
  */
 
 /**
- * @classdesc Abstract Block class that contains block information, tool and tool class instance
+ * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  *
  * @property tool - Tool instance
  * @property html - Returns HTML content of plugin
@@ -124,11 +124,9 @@ export default class Block {
                 measuringEnd = window.performance.now();
 
                 return {
+                    tool: this.name,
                     data: finishedExtraction,
-                    processInfo : {
-                        tool : this.name,
-                        time : measuringEnd - measuringStart
-                    }
+                    time : measuringEnd - measuringStart
                 };
 
             })

@@ -103,6 +103,7 @@ class Text {
 
     /**
      * Get plugin`s element HTMLDivElement
+     * @param {HTMLDivElement} block - returned self content
      * @returns {HTMLDivElement} Plugin`s element
      */
     save(block) {

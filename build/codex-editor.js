@@ -500,7 +500,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 
 /**
- * @classdesc Abstract Block class that contains block information, tool and tool class instance
+ * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  *
  * @property tool - Tool instance
  * @property html - Returns HTML content of plugin
@@ -600,11 +600,9 @@ var Block = function () {
                 measuringEnd = window.performance.now();
 
                 return {
+                    tool: _this.name,
                     data: finishedExtraction,
-                    processInfo: {
-                        tool: _this.name,
-                        time: measuringEnd - measuringStart
-                    }
+                    time: measuringEnd - measuringStart
                 };
             }).catch(function (error) {
 
@@ -2647,8 +2645,8 @@ var Saver = function (_Module) {
             allExtractedData.forEach(function (extraction, index) {
 
                 /** Group process info */
-                console.log('"' + extraction.processInfo.tool + '" extraction info', extraction);
-                totalTime += extraction.processInfo.time;
+                console.log('\xAB' + extraction.tool + '\xBB saving info', extraction);
+                totalTime += extraction.time;
                 items.push(extraction.data);
             });
 

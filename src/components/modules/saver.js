@@ -76,8 +76,8 @@ export default class Saver extends Module {
         allExtractedData.forEach((extraction, index) => {
 
             /** Group process info */
-            console.log(`\"${extraction.processInfo.tool}\" extraction info`, extraction);
-            totalTime += extraction.processInfo.time;
+            console.log(`«${extraction.tool}» saving info`, extraction);
+            totalTime += extraction.time;
             items.push(extraction.data);
 
         });
