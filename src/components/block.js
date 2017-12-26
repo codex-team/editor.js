@@ -11,21 +11,23 @@
 /**
  * @classdesc Abstract Block class that contains block information, tool and tool class instance
  *
- * @property this.tool - Tool instance
- * @property this.html - Returns HTML content of plugin
- * @property this.firstLevelBlock - Div element that wraps block content with plugin content. Has `ce-block` CSS class
- * @property this.blockContent - Div element that wraps plugins content. Has `ce-block__content` CSS class
- * @property this.pluginsContent - HTML content that returns Tool's render function
+ * @property tool - Tool instance
+ * @property html - Returns HTML content of plugin
+ * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+ * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property pluginsContent - HTML content that returns by Tool's render function
  */
 export default class Block {
 
     /**
      * @constructor
-     * @param {Object} tool — current block plugin`s instance
+     * @param {String} toolName - Tool name that passed on initialization
+     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
      */
-    constructor(tool) {
+    constructor(toolName, toolInstance) {
 
-        this.tool = tool;
+        this.name = toolName;
+        this.tool = toolInstance;
         this._html = this.compose();
 
     }
@@ -45,19 +47,19 @@ export default class Block {
     }
 
     /**
-     * Make default block wrappers and put tool`s content there
+     * Make default block wrappers and put Tool`s content there
      * @returns {HTMLDivElement}
      */
     compose() {
 
-        this.firstLevelBlock = $.make('div', Block.CSS.wrapper);
-        this.blockContent    = $.make('div', Block.CSS.content);
+        this.wrapper = $.make('div', Block.CSS.wrapper);
+        this.contentNode    = $.make('div', Block.CSS.content);
         this.pluginsContent  = this.tool.render();
 
-        this.blockContent.appendChild(this.pluginsContent);
-        this.firstLevelBlock.appendChild(this.blockContent);
+        this.contentNode.appendChild(this.pluginsContent);
+        this.wrapper.appendChild(this.contentNode);
 
-        return this.firstLevelBlock;
+        return this.wrapper;
 
     }
 
@@ -80,7 +82,6 @@ export default class Block {
 
         }
 
-
     }
 
     /**
@@ -94,60 +95,61 @@ export default class Block {
     }
 
     /**
-     *
+     * Get Block's JSON data
      * @return {Object}
      */
     get data() {
 
-        return this.extractData();
+        return this.save();
 
     }
 
     /**
-     * Get Block's JSON data
+     * Extracts data from Block
+     * Groups Tool's save processing time
      * @return {Object}
      */
-    extractData() {
+    save() {
 
-        let self = this;
+        let extractedBlock = this.tool.save(this.pluginsContent);
 
-        return new Promise(function (resolve) {
+        /** Start counting the time execution */
+        console.time(`Extracting time`);
 
-            let extractedBlock = self.tool.save(self.pluginsContent);
+        return Promise.resolve(extractedBlock)
+            .then((finishedExtraction) => {
 
-            if (_.isPromise(extractedBlock)) {
+                /** Group tool saving execution time */
+                console.group(`${this.name} Extraction:`);
+                console.log(`Extracting data by '${this.name}' Tool`, finishedExtraction);
+                console.timeEnd(`Extracting time`);
+                console.groupEnd(`${this.name} Extraction:`);
 
-                extractedBlock
-                    .then(self.validateData)
-                    .then(resolve)
-                    .catch(function (error) {
+                return finishedExtraction;
 
-                        _.log(`Saving proccess for ${this.tool.name} tool failed due to the ${error}`, 'log', 'red');
+            })
+            .catch(function (error) {
 
-                    });
+                _.log(`Saving proccess for ${this.tool.name} tool failed due to the ${error}`, 'log', 'red');
 
-            } else {
-
-                resolve(extractedBlock);
-
-            }
-
-
-        });
+            });
 
     }
 
     /**
-     * Uses Tool's validation method to validate output data
-     * @param {Object} data
+     * Uses Tool's validation method to check the correctness of output data
+     * Tool's validation method is optional
      *
-     * @returns {Boolean} valid
+     * @description Method also can return data if it passed the validation
+     *
+     * @param {Object} data
+     * @returns {Boolean|Object} valid
      */
     validateData(data) {
 
         let isValid = true;
 
-        if (this.tool.validate && this.tool.validate instanceof Function) {
+        if (this.tool.validate instanceof Function) {
 
             isValid = this.tool.validate(data);
 
@@ -165,7 +167,6 @@ export default class Block {
 
     /**
      * Check block for emptiness
-     *
      * @return {Boolean}
      */
     get isEmpty() {

@@ -502,22 +502,24 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 /**
  * @classdesc Abstract Block class that contains block information, tool and tool class instance
  *
- * @property this.tool - Tool instance
- * @property this.html - Returns HTML content of plugin
- * @property this.firstLevelBlock - Div element that wraps block content with plugin content. Has `ce-block` CSS class
- * @property this.blockContent - Div element that wraps plugins content. Has `ce-block__content` CSS class
- * @property this.pluginsContent - HTML content that returns Tool's render function
+ * @property tool - Tool instance
+ * @property html - Returns HTML content of plugin
+ * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+ * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property pluginsContent - HTML content that returns by Tool's render function
  */
 var Block = function () {
 
     /**
      * @constructor
-     * @param {Object} tool — current block plugin`s instance
+     * @param {String} toolName - Tool name that passed on initialization
+     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
      */
-    function Block(tool) {
+    function Block(toolName, toolInstance) {
         _classCallCheck(this, Block);
 
-        this.tool = tool;
+        this.name = toolName;
+        this.tool = toolInstance;
         this._html = this.compose();
     }
 
@@ -532,19 +534,19 @@ var Block = function () {
 
 
         /**
-         * Make default block wrappers and put tool`s content there
+         * Make default block wrappers and put Tool`s content there
          * @returns {HTMLDivElement}
          */
         value: function compose() {
 
-            this.firstLevelBlock = $.make('div', Block.CSS.wrapper);
-            this.blockContent = $.make('div', Block.CSS.content);
+            this.wrapper = $.make('div', Block.CSS.wrapper);
+            this.contentNode = $.make('div', Block.CSS.content);
             this.pluginsContent = this.tool.render();
 
-            this.blockContent.appendChild(this.pluginsContent);
-            this.firstLevelBlock.appendChild(this.blockContent);
+            this.contentNode.appendChild(this.pluginsContent);
+            this.wrapper.appendChild(this.contentNode);
 
-            return this.firstLevelBlock;
+            return this.wrapper;
         }
 
         /**
@@ -575,39 +577,45 @@ var Block = function () {
          */
 
     }, {
-        key: 'extractData',
+        key: 'save',
 
 
         /**
-         * Get Block's JSON data
+         * Extracts data from Block
+         * Groups Tool's save processing time
          * @return {Object}
          */
-        value: function extractData() {
+        value: function save() {
+            var _this = this;
 
-            var self = this;
+            var extractedBlock = this.tool.save(this.pluginsContent);
 
-            return new Promise(function (resolve) {
+            /** Start counting the time execution */
+            console.time('Extracting time');
 
-                var extractedBlock = self.tool.save(self.pluginsContent);
+            return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
 
-                if (_.isPromise(extractedBlock)) {
+                /** Group tool saving execution time */
+                console.group(_this.name + ' Extraction:');
+                console.log('Extracting data by \'' + _this.name + '\' Tool', finishedExtraction);
+                console.timeEnd('Extracting time');
+                console.groupEnd(_this.name + ' Extraction:');
 
-                    extractedBlock.then(self.validateData).then(resolve).catch(function (error) {
+                return finishedExtraction;
+            }).catch(function (error) {
 
-                        _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
-                    });
-                } else {
-
-                    resolve(extractedBlock);
-                }
+                _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
             });
         }
 
         /**
-         * Uses Tool's validation method to validate output data
-         * @param {Object} data
+         * Uses Tool's validation method to check the correctness of output data
+         * Tool's validation method is optional
          *
-         * @returns {Boolean} valid
+         * @description Method also can return data if it passed the validation
+         *
+         * @param {Object} data
+         * @returns {Boolean|Object} valid
          */
 
     }, {
@@ -616,7 +624,7 @@ var Block = function () {
 
             var isValid = true;
 
-            if (this.tool.validate && this.tool.validate instanceof Function) {
+            if (this.tool.validate instanceof Function) {
 
                 isValid = this.tool.validate(data);
             }
@@ -631,7 +639,6 @@ var Block = function () {
 
         /**
          * Check block for emptiness
-         *
          * @return {Boolean}
          */
 
@@ -643,7 +650,7 @@ var Block = function () {
         }
 
         /**
-         *
+         * Get Block's JSON data
          * @return {Object}
          */
 
@@ -651,7 +658,7 @@ var Block = function () {
         key: 'data',
         get: function get() {
 
-            return this.extractData();
+            return this.save();
         }
     }, {
         key: 'isEmpty',
@@ -1371,7 +1378,7 @@ var BlockManager = function (_Module) {
         value: function composeBlock(toolName, data) {
 
             var toolInstance = this.Editor.Tools.construct(toolName, data),
-                block = new _block2.default(toolInstance);
+                block = new _block2.default(toolName, toolInstance);
 
             /**
              * Apply callback before inserting html
@@ -2564,9 +2571,9 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  */
 
 /**
- * @classdesc This method reduces all blocks asyncronically and calls Block's save method to extract data
+ * @classdesc This method reduces all Blocks asyncronically and calls Block's save method to extract data
  *
- * Saver class properties:
+ * @typedef {Saver} Saver
  * @property {Element} html - Editor HTML content
  * @property {String} json - Editor JSON output
  */
@@ -2598,7 +2605,7 @@ var Saver = function (_Module) {
 
 
     _createClass(Saver, [{
-        key: "save",
+        key: 'save',
         value: function save() {
             var _this2 = this;
 
@@ -2610,8 +2617,16 @@ var Saver = function (_Module) {
                 chainData.push(block.data);
             });
 
+            console.time('[CodeXEditor saving]:');
             return Promise.all(chainData).then(function (allExtractedData) {
                 return _this2.makeOutput(allExtractedData);
+            }).then(function (outputData) {
+
+                console.group('Saving process:');
+                console.timeEnd('[CodeXEditor saving]:');
+                console.groupEnd();
+
+                return outputData;
             });
         }
 
@@ -2622,7 +2637,7 @@ var Saver = function (_Module) {
          */
 
     }, {
-        key: "makeOutput",
+        key: 'makeOutput',
         value: function makeOutput(allExtractedData) {
 
             return {
@@ -2796,9 +2811,9 @@ var Saver = function (_Module) {
 // })({});
 
 
-Saver.displayName = "Saver";
+Saver.displayName = 'Saver';
 exports.default = Saver;
-module.exports = exports["default"];
+module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),

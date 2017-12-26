@@ -14,9 +14,9 @@
  */
 
 /**
- * @classdesc This method reduces all blocks asyncronically and calls Block's save method to extract data
+ * @classdesc This method reduces all Blocks asyncronically and calls Block's save method to extract data
  *
- * Saver class properties:
+ * @typedef {Saver} Saver
  * @property {Element} html - Editor HTML content
  * @property {String} json - Editor JSON output
  */
@@ -51,9 +51,18 @@ export default class Saver extends Module {
 
         });
 
+        console.time('[CodeXEditor saving]:');
         return Promise.all(chainData)
-            .then((allExtractedData) => this.makeOutput(allExtractedData));
+            .then((allExtractedData) => this.makeOutput(allExtractedData))
+            .then((outputData) => {
 
+                console.group('Saving process:');
+                console.timeEnd('[CodeXEditor saving]:');
+                console.groupEnd();
+
+                return outputData;
+
+            });
 
     }
 
