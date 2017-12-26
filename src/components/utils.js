@@ -146,4 +146,15 @@ export default class Util {
 
     }
 
+    /**
+     * Check if passed object is a Promise
+     * @param  {*}  object - object to check
+     * @return {Boolean}
+     */
+    static isPromise(object) {
+
+        return Promise.resolve(object) === object;
+
+    }
+
 };

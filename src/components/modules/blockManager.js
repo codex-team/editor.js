@@ -88,7 +88,7 @@ export default class BlockManager extends Module {
     composeBlock(toolName, data) {
 
         let toolInstance = this.Editor.Tools.construct(toolName, data),
-            block = new Block(toolInstance);
+            block = new Block(toolName, toolInstance);
 
         /**
          * Apply callback before inserting html

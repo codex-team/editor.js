@@ -302,6 +302,19 @@ var Util = function () {
 
             return Object.keys(object).length === 0 && object.constructor === Object;
         }
+
+        /**
+         * Check if passed object is a Promise
+         * @param  {*}  object - object to check
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'isPromise',
+        value: function isPromise(object) {
+
+            return Promise.resolve(object) === object;
+        }
     }]);
 
     return Util;
@@ -466,7 +479,7 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($) {
+/* WEBPACK VAR INJECTION */(function($, _) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -486,18 +499,27 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  */
 
+/**
+ * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
+ *
+ * @property tool - Tool instance
+ * @property html - Returns HTML content of plugin
+ * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+ * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property pluginsContent - HTML content that returns by Tool's render function
+ */
 var Block = function () {
 
     /**
      * @constructor
-     *
-     * @param {Object} tool — current block plugin`s instance
+     * @param {String} toolName - Tool name that passed on initialization
+     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
      */
-    function Block(tool) {
+    function Block(toolName, toolInstance) {
         _classCallCheck(this, Block);
 
-        this.tool = tool;
-
+        this.name = toolName;
+        this.tool = toolInstance;
         this._html = this.compose();
     }
 
@@ -512,21 +534,19 @@ var Block = function () {
 
 
         /**
-         * Make default block wrappers and put tool`s content there
-         *
+         * Make default Block wrappers and put Tool`s content there
          * @returns {HTMLDivElement}
-         * @private
          */
         value: function compose() {
 
-            var wrapper = $.make('div', Block.CSS.wrapper),
-                content = $.make('div', Block.CSS.content),
-                pluginsContent = this.tool.render();
+            this.wrapper = $.make('div', Block.CSS.wrapper);
+            this.contentNode = $.make('div', Block.CSS.content);
+            this.pluginsContent = this.tool.render();
 
-            content.appendChild(pluginsContent);
-            wrapper.appendChild(content);
+            this.contentNode.appendChild(this.pluginsContent);
+            this.wrapper.appendChild(this.contentNode);
 
-            return wrapper;
+            return this.wrapper;
         }
 
         /**
@@ -552,9 +572,76 @@ var Block = function () {
         }
 
         /**
-         * Get block`s HTML
+         * Get Block`s HTML
+         * @returns {HTMLElement}
+         */
+
+    }, {
+        key: 'save',
+
+
+        /**
+         * Extracts data from Block
+         * Groups Tool's save processing time
+         * @return {Object}
+         */
+        value: function save() {
+            var _this = this;
+
+            var extractedBlock = this.tool.save(this.pluginsContent);
+
+            /** Measuring execution time*/
+            var measuringStart = window.performance.now(),
+                measuringEnd = void 0;
+
+            return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
+
+                /** measure promise execution */
+                measuringEnd = window.performance.now();
+
+                return {
+                    tool: _this.name,
+                    data: finishedExtraction,
+                    time: measuringEnd - measuringStart
+                };
+            }).catch(function (error) {
+
+                _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
+            });
+        }
+
+        /**
+         * Uses Tool's validation method to check the correctness of output data
+         * Tool's validation method is optional
          *
-         * @returns {HTMLDivElement}
+         * @description Method also can return data if it passed the validation
+         *
+         * @param {Object} data
+         * @returns {Boolean|Object} valid
+         */
+
+    }, {
+        key: 'validateData',
+        value: function validateData(data) {
+
+            var isValid = true;
+
+            if (this.tool.validate instanceof Function) {
+
+                isValid = this.tool.validate(data);
+            }
+
+            if (!isValid) {
+
+                return false;
+            }
+
+            return data;
+        }
+
+        /**
+         * Check block for emptiness
+         * @return {Boolean}
          */
 
     }, {
@@ -565,11 +652,16 @@ var Block = function () {
         }
 
         /**
-         * Check block for emptiness
-         *
-         * @return {Boolean}
+         * Get Block's JSON data
+         * @return {Object}
          */
 
+    }, {
+        key: 'data',
+        get: function get() {
+
+            return this.save();
+        }
     }, {
         key: 'isEmpty',
         get: function get() {
@@ -645,7 +737,7 @@ var Block = function () {
 Block.displayName = 'Block';
 exports.default = Block;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
 /* 4 */
@@ -732,7 +824,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["blockManager.js","caret.js","events.js","renderer.js","sanitizer.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
+var modules = ["blockManager.js","caret.js","events.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
     return __webpack_require__(6)("./" + module);
 });
 
@@ -1144,10 +1236,11 @@ var map = {
 	"./events.js": 9,
 	"./renderer.js": 10,
 	"./sanitizer.js": 11,
-	"./toolbar.js": 13,
-	"./toolbox.js": 14,
-	"./tools.js": 15,
-	"./ui.js": 16
+	"./saver.js": 13,
+	"./toolbar.js": 14,
+	"./toolbox.js": 15,
+	"./tools.js": 16,
+	"./ui.js": 17
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1287,7 +1380,7 @@ var BlockManager = function (_Module) {
         value: function composeBlock(toolName, data) {
 
             var toolInstance = this.Editor.Tools.construct(toolName, data),
-                block = new _block2.default(toolInstance);
+                block = new _block2.default(toolName, toolInstance);
 
             /**
              * Apply callback before inserting html
@@ -2450,6 +2543,297 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (roo
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Codex Editor Saver
+ *
+ * @module Saver
+ * @author Codex Team
+ * @version 2.0.0
+ */
+
+/**
+ * @typedef {Object} SavedData
+ * @property {Date} time - saving proccess time
+ * @property {Object} items - extracted data
+ * @property {String} version - CodexEditor version
+ */
+
+/**
+ * @classdesc This method reduces all Blocks asyncronically and calls Block's save method to extract data
+ *
+ * @typedef {Saver} Saver
+ * @property {Element} html - Editor HTML content
+ * @property {String} json - Editor JSON output
+ */
+
+var Saver = function (_Module) {
+    _inherits(Saver, _Module);
+
+    /**
+     * @constructor
+     * @param config
+     */
+    function Saver(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, Saver);
+
+        var _this = _possibleConstructorReturn(this, (Saver.__proto__ || Object.getPrototypeOf(Saver)).call(this, { config: config }));
+
+        _this.output = null;
+        _this.blocksData = [];
+
+        return _this;
+    }
+
+    /**
+     * Composes new chain of Promises to fire them alternatelly
+     * @return {SavedData}
+     */
+
+
+    _createClass(Saver, [{
+        key: 'save',
+        value: function save() {
+            var _this2 = this;
+
+            var blocks = this.Editor.BlockManager.blocks,
+                chainData = [];
+
+            blocks.forEach(function (block) {
+
+                chainData.push(block.data);
+            });
+
+            return Promise.all(chainData).then(function (allExtractedData) {
+                return _this2.makeOutput(allExtractedData);
+            }).then(function (outputData) {
+
+                return outputData;
+            });
+        }
+
+        /**
+         * Creates output object with saved data, time and version of editor
+         * @param {Object} allExtractedData
+         * @return {SavedData}
+         */
+
+    }, {
+        key: 'makeOutput',
+        value: function makeOutput(allExtractedData) {
+
+            var items = [],
+                totalTime = 0;
+
+            console.groupCollapsed('[CodexEditor saving]:');
+
+            allExtractedData.forEach(function (extraction, index) {
+
+                /** Group process info */
+                console.log('\xAB' + extraction.tool + '\xBB saving info', extraction);
+                totalTime += extraction.time;
+                items.push(extraction.data);
+            });
+
+            console.log('Total', totalTime);
+            console.groupEnd();
+
+            return {
+                time: +new Date(),
+                items: items,
+                version: "2.0.0"
+            };
+        }
+    }]);
+
+    return Saver;
+}(Module);
+
+// module.exports = (function (saver) {
+//
+//     let editor = codex.editor;
+//
+//     /**
+//      * @public
+//      * Save blocks
+//      */
+//     saver.save = function () {
+//
+//         /** Save html content of redactor to memory */
+//         editor.state.html = editor.nodes.redactor.innerHTML;
+//
+//         /** Clean jsonOutput state */
+//         editor.state.jsonOutput = [];
+//
+//         return saveBlocks(editor.nodes.redactor.childNodes);
+//
+//     };
+//
+//     /**
+//      * @private
+//      * Save each block data
+//      *
+//      * @param blocks
+//      * @returns {Promise.<TResult>}
+//      */
+//     let saveBlocks = function (blocks) {
+//
+//         let data = [];
+//
+//         for(let index = 0; index < blocks.length; index++) {
+//
+//             data.push(getBlockData(blocks[index]));
+//
+//         }
+//
+//         return Promise.all(data)
+//             .then(makeOutput)
+//             .catch(editor.core.log);
+//
+//     };
+//
+//     /** Save and validate block data */
+//     let getBlockData = function (block) {
+//
+//         return saveBlockData(block)
+//             .then(validateBlockData)
+//             .catch(editor.core.log);
+//
+//     };
+//
+//     /**
+//     * @private
+//     * Call block`s plugin save method and return saved data
+//     *
+//     * @param block
+//     * @returns {Object}
+//     */
+//     let saveBlockData = function (block) {
+//
+//         let pluginName = block.dataset.tool;
+//
+//         /** Check for plugin existence */
+//         if (!editor.tools[pluginName]) {
+//
+//             editor.core.log(`Plugin «${pluginName}» not found`, 'error');
+//             return {data: null, pluginName: null};
+//
+//         }
+//
+//         /** Check for plugin having save method */
+//         if (typeof editor.tools[pluginName].save !== 'function') {
+//
+//             editor.core.log(`Plugin «${pluginName}» must have save method`, 'error');
+//             return {data: null, pluginName: null};
+//
+//         }
+//
+//         /** Result saver */
+//         let blockContent   = block.childNodes[0],
+//             pluginsContent = blockContent.childNodes[0],
+//             position = pluginsContent.dataset.inputPosition;
+//
+//         /** If plugin wasn't available then return data from cache */
+//         if ( editor.tools[pluginName].available === false ) {
+//
+//             return Promise.resolve({data: codex.editor.state.blocks.items[position].data, pluginName});
+//
+//         }
+//
+//         return Promise.resolve(pluginsContent)
+//             .then(editor.tools[pluginName].save)
+//             .then(data => Object({data, pluginName}));
+//
+//     };
+//
+//     /**
+//     * Call plugin`s validate method. Return false if validation failed
+//     *
+//     * @param data
+//     * @param pluginName
+//     * @returns {Object|Boolean}
+//     */
+//     let validateBlockData = function ({data, pluginName}) {
+//
+//         if (!data || !pluginName) {
+//
+//             return false;
+//
+//         }
+//
+//         if (editor.tools[pluginName].validate) {
+//
+//             let result = editor.tools[pluginName].validate(data);
+//
+//             /**
+//              * Do not allow invalid data
+//              */
+//             if (!result) {
+//
+//                 return false;
+//
+//             }
+//
+//         }
+//
+//         return {data, pluginName};
+//
+//
+//     };
+//
+//     /**
+//     * Compile article output
+//     *
+//     * @param savedData
+//     * @returns {{time: number, version, items: (*|Array)}}
+//     */
+//     let makeOutput = function (savedData) {
+//
+//         savedData = savedData.filter(blockData => blockData);
+//
+//         let items = savedData.map(blockData => Object({type: blockData.pluginName, data: blockData.data}));
+//
+//         editor.state.jsonOutput = items;
+//
+//         return {
+//             id: editor.state.blocks.id || null,
+//             time: +new Date(),
+//             version: editor.version,
+//             items
+//         };
+//
+//     };
+//
+//     return saver;
+//
+// })({});
+
+
+Saver.displayName = 'Saver';
+exports.default = Saver;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(Module, $) {
 
 Object.defineProperty(exports, "__esModule", {
@@ -2775,7 +3159,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3040,7 +3424,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3339,7 +3723,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3540,7 +3924,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(17);
+      var styles = __webpack_require__(18);
 
       /**
        * Make tag
@@ -3958,10 +4342,10 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(18)(undefined);
+exports = module.exports = __webpack_require__(19)(undefined);
 // imports
 
 
@@ -3972,7 +4356,7 @@ exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n
 
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports) {
 
 /*

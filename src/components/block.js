@@ -8,18 +8,26 @@
  *
  */
 
-
+/**
+ * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
+ *
+ * @property tool - Tool instance
+ * @property html - Returns HTML content of plugin
+ * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+ * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property pluginsContent - HTML content that returns by Tool's render function
+ */
 export default class Block {
 
     /**
      * @constructor
-     *
-     * @param {Object} tool — current block plugin`s instance
+     * @param {String} toolName - Tool name that passed on initialization
+     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
      */
-    constructor(tool) {
+    constructor(toolName, toolInstance) {
 
-        this.tool = tool;
-
+        this.name = toolName;
+        this.tool = toolInstance;
         this._html = this.compose();
 
     }
@@ -39,21 +47,19 @@ export default class Block {
     }
 
     /**
-     * Make default block wrappers and put tool`s content there
-     *
+     * Make default Block wrappers and put Tool`s content there
      * @returns {HTMLDivElement}
-     * @private
      */
     compose() {
 
-        let wrapper = $.make('div', Block.CSS.wrapper),
-            content = $.make('div', Block.CSS.content),
-            pluginsContent = this.tool.render();
+        this.wrapper = $.make('div', Block.CSS.wrapper);
+        this.contentNode    = $.make('div', Block.CSS.content);
+        this.pluginsContent  = this.tool.render();
 
-        content.appendChild(pluginsContent);
-        wrapper.appendChild(content);
+        this.contentNode.appendChild(this.pluginsContent);
+        this.wrapper.appendChild(this.contentNode);
 
-        return wrapper;
+        return this.wrapper;
 
     }
 
@@ -76,13 +82,11 @@ export default class Block {
 
         }
 
-
     }
 
     /**
-     * Get block`s HTML
-     *
-     * @returns {HTMLDivElement}
+     * Get Block`s HTML
+     * @returns {HTMLElement}
      */
     get html() {
 
@@ -91,8 +95,80 @@ export default class Block {
     }
 
     /**
-     * Check block for emptiness
+     * Get Block's JSON data
+     * @return {Object}
+     */
+    get data() {
+
+        return this.save();
+
+    }
+
+    /**
+     * Extracts data from Block
+     * Groups Tool's save processing time
+     * @return {Object}
+     */
+    save() {
+
+        let extractedBlock = this.tool.save(this.pluginsContent);
+
+        /** Measuring execution time*/
+        let measuringStart = window.performance.now(),
+            measuringEnd;
+
+        return Promise.resolve(extractedBlock)
+            .then((finishedExtraction) => {
+
+                /** measure promise execution */
+                measuringEnd = window.performance.now();
+
+                return {
+                    tool: this.name,
+                    data: finishedExtraction,
+                    time : measuringEnd - measuringStart
+                };
+
+            })
+            .catch(function (error) {
+
+                _.log(`Saving proccess for ${this.tool.name} tool failed due to the ${error}`, 'log', 'red');
+
+            });
+
+    }
+
+    /**
+     * Uses Tool's validation method to check the correctness of output data
+     * Tool's validation method is optional
      *
+     * @description Method also can return data if it passed the validation
+     *
+     * @param {Object} data
+     * @returns {Boolean|Object} valid
+     */
+    validateData(data) {
+
+        let isValid = true;
+
+        if (this.tool.validate instanceof Function) {
+
+            isValid = this.tool.validate(data);
+
+        }
+
+        if (!isValid) {
+
+            return false;
+
+        }
+
+        return data;
+
+    }
+
+    /**
+     * Check block for emptiness
      * @return {Boolean}
      */
     get isEmpty() {
