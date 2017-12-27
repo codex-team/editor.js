@@ -16,6 +16,42 @@ export default class Caret extends Module {
     }
 
     /**
+     * Creates Document Range and sets caret to the element.
+     * @param {Element} element - target node.
+     * @param {Number} offset - offset
+     */
+    set( element, offset = 0) {
+
+        /** If Element is INPUT */
+        if ($.isNativeInput(element)) {
+
+            element.focus();
+            return;
+
+        }
+
+        let nodeToSet = $.getDeepestTextNode(element, true);
+
+        /** if found deepest node is native input */
+        if ($.isNativeInput(nodeToSet)) {
+
+            nodeToSet.focus();
+            return;
+
+        }
+
+        let range     = document.createRange(),
+            selection = window.getSelection();
+
+        range.setStart(nodeToSet, offset);
+        range.setEnd(nodeToSet, offset);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+    };
+
+    /**
      * Set Caret to the last Block
      *
      * If last block is not empty, append another empty block
@@ -90,20 +126,20 @@ export default class Caret extends Module {
 
     }
 
-    /**
-     * Set caret to the passed Node
-     * @param {Element} node - content-editable Element
-     */
-    set(node) {
-
-        /**
-         * @todo add working with Selection
-         * tmp: work with textContent
-         */
-
-        node.textContent += '|';
-
-    }
+    // /**
+    //  * Set caret to the passed Node
+    //  * @param {Element} node - content-editable Element
+    //  */
+    // set(node) {
+    //
+    //     /**
+    //      * @todo add working with Selection
+    //      * tmp: work with textContent
+    //      */
+    //
+    //     node.textContent += '|';
+    //
+    // }
 
 
 }

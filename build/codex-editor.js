@@ -200,6 +200,15 @@ var Util = function () {
         }
 
         /**
+         * Returns basic keycodes as constants
+         * @return {{}}
+         */
+
+    }, {
+        key: 'sequence',
+
+
+        /**
          * @typedef {Object} ChainData
          * @property {Object} data - data that will be passed to the success or fallback
          * @property {Function} function - function's that must be called asynchronically
@@ -214,9 +223,6 @@ var Util = function () {
          *
          * @return {Promise}
          */
-
-    }, {
-        key: 'sequence',
         value: function sequence(chains) {
             var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
             var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
@@ -315,6 +321,57 @@ var Util = function () {
 
             return Promise.resolve(object) === object;
         }
+
+        /**
+         * Check if passed element is contenteditable
+         * @param element
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isContentEditable',
+        value: function isContentEditable(element) {
+
+            return element.contentEditable === 'true';
+        }
+    }, {
+        key: 'keyCodes',
+        get: function get() {
+
+            return {
+                BACKSPACE: 8,
+                TAB: 9,
+                ENTER: 13,
+                SHIFT: 16,
+                CTRL: 17,
+                ALT: 18,
+                ESC: 27,
+                SPACE: 32,
+                LEFT: 37,
+                UP: 38,
+                DOWN: 40,
+                RIGHT: 39,
+                DELETE: 46,
+                META: 91
+            };
+        }
+
+        /**
+         * Returns basic nodetypes as contants
+         * @return {{TAG: number, TEXT: number, COMMENT: number, DOCUMENT_FRAGMENT: number}}
+         */
+
+    }, {
+        key: 'nodeTypes',
+        get: function get() {
+
+            return {
+                TAG: 1,
+                TEXT: 3,
+                COMMENT: 8,
+                DOCUMENT_FRAGMENT: 11
+            };
+        }
     }]);
 
     return Util;
@@ -345,7 +402,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * DOM manupulations helper
+ * DOM manipulations helper
  */
 var Dom = function () {
     function Dom() {
@@ -386,6 +443,20 @@ var Dom = function () {
             }
 
             return el;
+        }
+
+        /**
+         * Creates text Node with content
+         *
+         * @param {String} content - text content
+         * @return {Text}
+         */
+
+    }, {
+        key: 'text',
+        value: function text(content) {
+
+            return document.createTextNode(content);
         }
 
         /**
@@ -452,6 +523,52 @@ var Dom = function () {
         }
 
         /**
+         * Search for deepest node
+         *
+         * @param {Element} node - start Node
+         * @param {Boolean} atLast - find last text node
+         * @return {*}
+         */
+
+    }, {
+        key: 'getDeepestTextNode',
+        value: function getDeepestTextNode(node) {
+            var atLast = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+
+            if (node.childNodes.length === 0) {
+
+                /**
+                 * We need to return empty text node
+                 * But caret will not be placed in empty textNode, so we need textNode with zero-width char
+                 */
+                if (this.isElement(node)) {
+
+                    /** and it is not native input */
+                    if (!this.isNativeInput(node)) {
+
+                        var emptyTextNode = this.text('\u200B');
+
+                        node.appendChild(emptyTextNode);
+                    }
+                }
+
+                return node;
+            }
+
+            var childsLength = node.childNodes.length,
+                last = childsLength - 1;
+
+            if (atLast) {
+
+                return this.getDeepestTextNode(node.childNodes[last], atLast);
+            } else {
+
+                return this.getDeepestTextNode(node.childNodes[0], false);
+            }
+        }
+
+        /**
          * Check if object is DOM node
          *
          * @param {Object} node
@@ -463,6 +580,96 @@ var Dom = function () {
         value: function isElement(node) {
 
             return node && (typeof node === 'undefined' ? 'undefined' : _typeof(node)) === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
+        }
+
+        /**
+         * Checks target if it is native input
+         * @param {Element|*} target - HTML element or string
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isNativeInput',
+        value: function isNativeInput(target) {
+
+            var nativeInputs = ['INPUT', 'TEXTAREA'];
+
+            return nativeInputs.indexOf(target.tagName) !== -1;
+        }
+    }, {
+        key: 'isEmpty',
+        value: function isEmpty(node) {
+            var _this = this;
+
+            var treeWalker = [],
+                stack = [];
+
+            treeWalker.push(node);
+
+            while (treeWalker.length > 0) {
+
+                if (node && node.childNodes.length === 0) {
+
+                    stack.push(node);
+                }
+
+                while (node && node.nextSibling) {
+
+                    node = node.nextSibling;
+
+                    if (!node) continue;
+
+                    if (node.childNodes.length === 0) {
+
+                        stack.push(node);
+                    }
+
+                    treeWalker.push(node);
+                }
+
+                node = treeWalker.shift();
+
+                if (!node) continue;
+
+                node = node.firstChild;
+                treeWalker.push(node);
+            }
+
+            var isEmpty = true;
+
+            stack.forEach(function (node) {
+
+                if (_this.isElement(node)) {
+
+                    if (_this.isNativeInput(node)) {
+
+                        node = node.value;
+
+                        if (node.trim()) {
+
+                            isEmpty = false;
+                        }
+                    } else {
+
+                        node = node.textContent.replace('\u200B', '');
+
+                        if (node.trim()) {
+
+                            isEmpty = false;
+                        }
+                    }
+                } else {
+
+                    node = node.textContent.replace('\u200B', '');
+
+                    if (node.trim()) {
+
+                        isEmpty = false;
+                    }
+                }
+            });
+
+            return isEmpty;
         }
     }]);
 
@@ -1263,7 +1470,7 @@ webpackContext.id = 6;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, $, _) {
+/* WEBPACK VAR INJECTION */(function(Module, _, $) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1382,12 +1589,81 @@ var BlockManager = function (_Module) {
             var toolInstance = this.Editor.Tools.construct(toolName, data),
                 block = new _block2.default(toolName, toolInstance);
 
+            this.bindEvents(block);
+
             /**
              * Apply callback before inserting html
              */
             block.call('appendCallback', {});
 
             return block;
+        }
+
+        /**
+         * Bind Events
+         * @param {Object} block
+         */
+
+    }, {
+        key: 'bindEvents',
+        value: function bindEvents(block) {
+            var _this3 = this;
+
+            /** contentNode click handler */
+            block.wrapper.addEventListener('click', function (event) {
+                return _this3.wrapperClicked(event);
+            }, false);
+
+            /** keydown on block */
+            block.pluginsContent.addEventListener('keydown', function (event) {
+                return _this3.keyDownOnBlock(event);
+            }, false);
+        }
+
+        /**
+         * Highlight clicked block
+         * @param {MouseEvent} event
+         */
+
+    }, {
+        key: 'wrapperClicked',
+        value: function wrapperClicked(event) {
+
+            this.setCurrentBlockByChildNode(event.target);
+        }
+
+        /**
+         *
+         * @param {MouseEvent} event
+         */
+
+    }, {
+        key: 'keyDownOnBlock',
+        value: function keyDownOnBlock(event) {
+
+            switch (event.keyCode) {
+
+                case _.keyCodes.ENTER:
+                    this.enterPressedOnPluginsContent(event);
+                    break;
+                case _.keyCodes.DOWN:
+                case _.keyCodes.RIGHT:
+                    this.blockRightOrDownArrowPressed(event);
+                    break;
+
+            }
+        }
+
+        /**
+         *
+         * @param event
+         */
+
+    }, {
+        key: 'blockRightOrDownArrowPressed',
+        value: function blockRightOrDownArrowPressed(event) {
+
+            console.log(this.getNextBlock());
         }
 
         /**
@@ -1406,6 +1682,8 @@ var BlockManager = function (_Module) {
             var block = this.composeBlock(toolName, data);
 
             this._blocks[++this.currentBlockIndex] = block;
+
+            this.Editor.Caret.set(block.pluginsContent);
         }
 
         /**
@@ -1424,6 +1702,42 @@ var BlockManager = function (_Module) {
             var block = this.composeBlock(toolName, data);
 
             this._blocks.insert(this.currentBlockIndex, block, true);
+        }
+
+        /**
+         *
+         * @return {*}
+         */
+
+    }, {
+        key: 'getLastBlock',
+        value: function getLastBlock() {
+
+            return this._blocks[this._blocks.length - 1];
+        }
+
+        /**
+         *
+         * @param index
+         * @return {*}
+         */
+
+    }, {
+        key: 'getBlockByIndex',
+        value: function getBlockByIndex(index) {
+
+            return this._blocks[index];
+        }
+    }, {
+        key: 'getNextBlock',
+        value: function getNextBlock() {
+
+            if (this.currentBlockIndex + 1 > this._blocks.length - 1) {
+
+                return null;
+            }
+
+            return this._blocks[this.currentBlockIndex + 1];
         }
 
         /**
@@ -1554,6 +1868,13 @@ var BlockManager = function (_Module) {
     return BlockManager;
 }(Module);
 
+BlockManager.displayName = 'BlockManager';
+exports.default = BlockManager;
+
+var BlockMethods = function BlockMethods() {
+    _classCallCheck(this, BlockMethods);
+};
+
 /**
  * @class Blocks
  * @classdesc Class to work with Block instances array
@@ -1565,8 +1886,7 @@ var BlockManager = function (_Module) {
  */
 
 
-BlockManager.displayName = 'BlockManager';
-exports.default = BlockManager;
+BlockMethods.displayName = 'BlockMethods';
 
 var Blocks = function () {
 
@@ -1787,14 +2107,14 @@ var Blocks = function () {
 
 Blocks.displayName = 'Blocks';
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2)))
 
 /***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module) {
+/* WEBPACK VAR INJECTION */(function(Module, $) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1829,14 +2149,52 @@ var Caret = function (_Module) {
     }
 
     /**
-     * Set Caret to the last Block
-     *
-     * If last block is not empty, append another empty block
+     * Creates Document Range and sets caret to the element.
+     * @param {Element} element - target node.
+     * @param {Number} offset - offset
      */
 
 
     _createClass(Caret, [{
-        key: 'setToTheLastBlock',
+        key: "set",
+        value: function set(element) {
+            var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+
+            /** If Element is INPUT */
+            if ($.isNativeInput(element)) {
+
+                element.focus();
+                return;
+            }
+
+            var nodeToSet = $.getDeepestTextNode(element, true);
+
+            /** if found deepest node is native input */
+            if ($.isNativeInput(nodeToSet)) {
+
+                nodeToSet.focus();
+                return;
+            }
+
+            var range = document.createRange(),
+                selection = window.getSelection();
+
+            range.setStart(nodeToSet, offset);
+            range.setEnd(nodeToSet, offset);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    }, {
+        key: "setToTheLastBlock",
+
+
+        /**
+         * Set Caret to the last Block
+         *
+         * If last block is not empty, append another empty block
+         */
         value: function setToTheLastBlock() {
 
             var blocks = this.Editor.BlockManager.blocks,
@@ -1902,31 +2260,31 @@ var Caret = function (_Module) {
             //     }
         }
 
-        /**
-         * Set caret to the passed Node
-         * @param {Element} node - content-editable Element
-         */
+        // /**
+        //  * Set caret to the passed Node
+        //  * @param {Element} node - content-editable Element
+        //  */
+        // set(node) {
+        //
+        //     /**
+        //      * @todo add working with Selection
+        //      * tmp: work with textContent
+        //      */
+        //
+        //     node.textContent += '|';
+        //
+        // }
 
-    }, {
-        key: 'set',
-        value: function set(node) {
 
-            /**
-             * @todo add working with Selection
-             * tmp: work with textContent
-             */
-
-            node.textContent += '|';
-        }
     }]);
 
     return Caret;
 }(Module);
 
-Caret.displayName = 'Caret';
+Caret.displayName = "Caret";
 exports.default = Caret;
-module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
 /* 9 */
@@ -3987,6 +4345,13 @@ var UI = function (_Module) {
 
       var clickedNode = event.target;
 
+      console.log('click', clickedNode);
+      if (clickedNode.classList.contains(this.CSS.editorZone)) {
+
+        this.clickedOnRedactorZone(event);
+        return;
+      }
+
       /**
        * Select clicked Block as Current
        */
@@ -4104,6 +4469,24 @@ var UI = function (_Module) {
       if (isInitialBlock && isEmptyBlock) {
 
         this.Editor.Toolbar.plusButton.show();
+      }
+    }
+  }, {
+    key: 'clickedOnRedactorZone',
+    value: function clickedOnRedactorZone(event) {
+
+      var lastBlock = this.Editor.BlockManager.getLastBlock(),
+          pluginsContent = lastBlock.pluginsContent;
+
+      /**
+       * If last block has text content, then insert new Block after
+       */
+      if (!$.isEmpty(pluginsContent)) {
+
+        this.Editor.BlockManager.insert(this.config.initialBlock, {});
+      } else {
+
+        this.Editor.Caret.set(pluginsContent);
       }
     }
   }, {
@@ -4350,7 +4733,7 @@ exports = module.exports = __webpack_require__(19)(undefined);
 
 
 // module
-exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n    /**\n     * Block content width\n     */\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 10px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  opacity: 0;\n  visibility: hidden;\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n}\n.ce-toolbar--opened {\n    opacity: 1;\n    visibility: visible;\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-34px - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    width: 34px;\n    height: 34px;\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n    content: '+';\n    font-size: 26px;\n    display: block;\n    margin-top: -2px;\n    margin-right: -2px;\n\n}\n.ce-toolbar__plus--hidden {\n      display: none;\n\n}\n.ce-toolbox {\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        width: 34px;\n        height: 34px;\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px\n    }\n.ce-toolbox__button::before {\n    content: attr(title);\n    font-size: 22px;\n    font-weight: 500;\n    letter-spacing: 1em;\n    -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n            font-feature-settings: \"smcp\", \"c2sc\";\n    font-variant-caps: all-small-caps;\n    padding-left: 11.5px;\n    margin-top: -1px;\n    display: inline-block;\n\n}\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0;\n}\n.ce-block--selected {\n    background-color: #eff2f5;\n  }\n.ce-block__content {\n    max-width: 650px;\n    margin: 0 auto;\n  }\n", ""]);
+exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n    /**\n     * Block content width\n     */\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 10px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-34px - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    width: 34px;\n    height: 34px;\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n    content: '+';\n    font-size: 26px;\n    display: block;\n    margin-top: -2px;\n    margin-right: -2px;\n\n}\n.ce-toolbar__plus--hidden {\n      display: none;\n\n}\n.ce-toolbox {\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        width: 34px;\n        height: 34px;\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px\n    }\n.ce-toolbox__button::before {\n    content: attr(title);\n    font-size: 22px;\n    font-weight: 500;\n    letter-spacing: 1em;\n    -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n            font-feature-settings: \"smcp\", \"c2sc\";\n    font-variant-caps: all-small-caps;\n    padding-left: 11.5px;\n    margin-top: -1px;\n    display: inline-block;\n\n}\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0;\n}\n.ce-block--selected {\n    background-color: #eff2f5;\n  }\n.ce-block__content {\n    max-width: 650px;\n    margin: 0 auto;\n  }\n", ""]);
 
 // exports
 

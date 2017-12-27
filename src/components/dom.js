@@ -1,5 +1,5 @@
 /**
- * DOM manupulations helper
+ * DOM manipulations helper
  */
 export default class Dom {
 
@@ -32,6 +32,18 @@ export default class Dom {
         }
 
         return el;
+
+    }
+
+    /**
+     * Creates text Node with content
+     *
+     * @param {String} content - text content
+     * @return {Text}
+     */
+    static text(content) {
+
+        return document.createTextNode(content);
 
     }
 
@@ -87,6 +99,54 @@ export default class Dom {
     }
 
     /**
+     * Search for deepest node
+     *
+     * @param {Element} node - start Node
+     * @param {Boolean} atLast - find last text node
+     * @return {*}
+     */
+    static getDeepestTextNode(node, atLast = false) {
+
+        if (node.childNodes.length === 0) {
+
+            /**
+             * We need to return empty text node
+             * But caret will not be placed in empty textNode, so we need textNode with zero-width char
+             */
+            if (this.isElement(node)) {
+
+                /** and it is not native input */
+                if (!this.isNativeInput(node)) {
+
+                    let emptyTextNode = this.text('\u200B');
+
+                    node.appendChild(emptyTextNode);
+
+                }
+
+
+            }
+
+            return node;
+
+        }
+
+        let childsLength = node.childNodes.length,
+            last = childsLength - 1;
+
+        if (atLast) {
+
+            return this.getDeepestTextNode(node.childNodes[last], atLast);
+
+        } else {
+
+            return this.getDeepestTextNode(node.childNodes[0], false);
+
+        }
+
+    }
+
+    /**
      * Check if object is DOM node
      *
      * @param {Object} node
@@ -95,6 +155,108 @@ export default class Dom {
     static isElement(node) {
 
         return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
+
+    }
+
+    /**
+     * Checks target if it is native input
+     * @param {Element|*} target - HTML element or string
+     * @return {boolean}
+     */
+    static isNativeInput(target) {
+
+        let nativeInputs = [
+            'INPUT',
+            'TEXTAREA'
+        ];
+
+        return nativeInputs.indexOf(target.tagName) !== -1;
+
+    }
+
+    static isEmpty(node) {
+
+        let treeWalker = [],
+            stack = [];
+
+        treeWalker.push(node);
+
+        while ( treeWalker.length > 0 ) {
+
+            if (node && node.childNodes.length === 0) {
+
+                stack.push(node);
+
+            }
+
+            while ( node && node.nextSibling ) {
+
+                node = node.nextSibling;
+
+                if (!node) continue;
+
+                if (node.childNodes.length === 0) {
+
+                    stack.push(node);
+
+                }
+
+                treeWalker.push(node);
+
+            }
+
+            node = treeWalker.shift();
+
+            if (!node) continue;
+
+            node = node.firstChild;
+            treeWalker.push(node);
+
+        }
+
+        let isEmpty = true;
+
+        stack.forEach( (node) => {
+
+            if ( this.isElement(node) ) {
+
+                if ( this.isNativeInput(node) ) {
+
+                    node = node.value;
+
+                    if ( node.trim() ) {
+
+                        isEmpty = false;
+
+                    }
+
+                } else {
+
+                    node = node.textContent.replace('\u200B', '');
+
+                    if ( node.trim() ) {
+
+                        isEmpty = false;
+
+                    }
+
+                }
+
+            } else {
+
+                node = node.textContent.replace('\u200B', '');
+
+                if ( node.trim() ) {
+
+                    isEmpty = false;
+
+                }
+
+            }
+
+        });
+
+        return isEmpty;
 
     }
 

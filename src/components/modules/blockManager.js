@@ -90,12 +90,68 @@ export default class BlockManager extends Module {
         let toolInstance = this.Editor.Tools.construct(toolName, data),
             block = new Block(toolName, toolInstance);
 
+        this.bindEvents(block);
+
         /**
          * Apply callback before inserting html
          */
         block.call('appendCallback', {});
 
         return block;
+
+    }
+
+    /**
+     * Bind Events
+     * @param {Object} block
+     */
+    bindEvents(block) {
+
+        /** contentNode click handler */
+        block.wrapper.addEventListener('click', (event) => this.wrapperClicked(event), false);
+
+        /** keydown on block */
+        block.pluginsContent.addEventListener('keydown', (event) => this.keyDownOnBlock(event), false);
+
+    }
+
+    /**
+     * Highlight clicked block
+     * @param {MouseEvent} event
+     */
+    wrapperClicked(event) {
+
+        this.setCurrentBlockByChildNode(event.target);
+
+    }
+
+    /**
+     *
+     * @param {MouseEvent} event
+     */
+    keyDownOnBlock(event) {
+
+        switch(event.keyCode) {
+
+            case _.keyCodes.ENTER:
+                this.enterPressedOnPluginsContent(event);
+                break;
+            case _.keyCodes.DOWN:
+            case _.keyCodes.RIGHT:
+                this.blockRightOrDownArrowPressed(event);
+                break;
+
+        }
+
+    }
+
+    /**
+     *
+     * @param event
+     */
+    blockRightOrDownArrowPressed(event) {
+
+        console.log(this.getNextBlock());
 
     }
 
@@ -112,6 +168,8 @@ export default class BlockManager extends Module {
 
         this._blocks[++this.currentBlockIndex] = block;
 
+        this.Editor.Caret.set(block.pluginsContent);
+
     }
 
     /**
@@ -125,6 +183,39 @@ export default class BlockManager extends Module {
         let block = this.composeBlock(toolName, data);
 
         this._blocks.insert(this.currentBlockIndex, block, true);
+
+    }
+
+    /**
+     *
+     * @return {*}
+     */
+    getLastBlock() {
+
+        return this._blocks[this._blocks.length - 1];
+
+    }
+
+    /**
+     *
+     * @param index
+     * @return {*}
+     */
+    getBlockByIndex(index) {
+
+        return this._blocks[index];
+
+    }
+
+    getNextBlock() {
+
+        if (this.currentBlockIndex + 1 > this._blocks.length - 1) {
+
+            return null;
+
+        }
+
+        return this._blocks[this.currentBlockIndex + 1];
 
     }
 
@@ -243,6 +334,12 @@ export default class BlockManager extends Module {
         }
 
     }
+
+}
+
+class BlockMethods {
+
+
 
 }
 

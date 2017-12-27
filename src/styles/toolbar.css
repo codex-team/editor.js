@@ -3,14 +3,16 @@
   left: 0;
   right: 0;
   top: 0;
-  opacity: 0;
-  visibility: hidden;
+  /*opacity: 0;*/
+  /*visibility: hidden;*/
   transition: opacity 100ms ease;
   will-change: opacity, transform;
+  display: none;
 
   &--opened {
-    opacity: 1;
-    visibility: visible;
+    display: block;
+    /*opacity: 1;*/
+    /*visibility: visible;*/
   }
 
   &__content {
