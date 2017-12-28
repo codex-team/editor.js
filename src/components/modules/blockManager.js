@@ -159,24 +159,18 @@ export default class BlockManager extends Module {
             lastTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, true),
             textNodeLength = lastTextNode.length;
 
-        console.log('here right');
-        console.log(Selection.getSelectionAnchorNode());
-        console.log(lastTextNode);
-
         if (Selection.getSelectionAnchorNode() !== lastTextNode) {
 
             return;
 
         }
 
-        console.log(lastTextNode);
         if (Selection.getSelectionAnchorOffset() === textNodeLength) {
 
             let nextBlock = this.getNextBlock();
 
             if (!nextBlock) return;
 
-            // this.currentNode = nextBlock.pluginsContent;
             this.Editor.Caret.set( nextBlock.pluginsContent );
 
         }
@@ -188,10 +182,6 @@ export default class BlockManager extends Module {
         let currentBlock = this.currentBlock,
             firstTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, false),
             textNodeLength = firstTextNode.length;
-
-        console.log('here left');
-        console.log(Selection.getSelectionAnchorNode());
-        console.log(firstTextNode);
 
         if (Selection.getSelectionAnchorNode() !== firstTextNode) {
 

@@ -631,25 +631,45 @@ var Dom = function () {
         key: 'checkNodeEmpty',
         value: function checkNodeEmpty(node) {
 
+            var nodeText = void 0;
+
             if (this.isElement(node) && this.isNativeInput(node)) {
 
-                node = node.value;
+                nodeText = node.value;
 
-                if (node.trim()) {
+                if (nodeText.trim()) {
 
                     return false;
                 }
             } else {
 
-                node = node.textContent.replace('\u200B', '');
+                nodeText = node.textContent.replace('\u200B', '');
 
-                if (node.trim()) {
+                if (nodeText.trim()) {
 
                     return false;
                 }
             }
 
             return true;
+        }
+
+        /**
+         * checks node if it is doesn't have child node
+         * @param {Node} node
+         * @return {*|boolean}
+         */
+
+    }, {
+        key: 'isLeaf',
+        value: function isLeaf(node) {
+
+            if (!node) {
+
+                return false;
+            }
+
+            return node.childNodes.length === 0;
         }
 
         /**
@@ -677,7 +697,7 @@ var Dom = function () {
 
             while (treeWalker.length > 0) {
 
-                if (node && node.childNodes.length === 0) {
+                if (this.isLeaf(node)) {
 
                     stack.push(node);
                 }
@@ -687,11 +707,6 @@ var Dom = function () {
                     node = node.nextSibling;
 
                     if (!node) continue;
-
-                    if (node.childNodes.length === 0) {
-
-                        stack.push(node);
-                    }
 
                     treeWalker.push(node);
                 }
@@ -1711,23 +1726,17 @@ var BlockManager = function (_Module) {
                 lastTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, true),
                 textNodeLength = lastTextNode.length;
 
-            console.log('here right');
-            console.log(_Selection2.default.getSelectionAnchorNode());
-            console.log(lastTextNode);
-
             if (_Selection2.default.getSelectionAnchorNode() !== lastTextNode) {
 
                 return;
             }
 
-            console.log(lastTextNode);
             if (_Selection2.default.getSelectionAnchorOffset() === textNodeLength) {
 
                 var nextBlock = this.getNextBlock();
 
                 if (!nextBlock) return;
 
-                // this.currentNode = nextBlock.pluginsContent;
                 this.Editor.Caret.set(nextBlock.pluginsContent);
             }
         }
@@ -1738,10 +1747,6 @@ var BlockManager = function (_Module) {
             var currentBlock = this.currentBlock,
                 firstTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, false),
                 textNodeLength = firstTextNode.length;
-
-            console.log('here left');
-            console.log(_Selection2.default.getSelectionAnchorNode());
-            console.log(firstTextNode);
 
             if (_Selection2.default.getSelectionAnchorNode() !== firstTextNode) {
 

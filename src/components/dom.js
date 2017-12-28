@@ -13,7 +13,7 @@ export default class Dom {
      */
     static make(tagName, classNames = null, attributes = {}) {
 
-        var el = document.createElement(tagName);
+        let el = document.createElement(tagName);
 
         if ( Array.isArray(classNames) ) {
 
@@ -184,11 +184,13 @@ export default class Dom {
      */
     static checkNodeEmpty(node) {
 
+        let nodeText;
+
         if ( this.isElement(node) && this.isNativeInput(node) ) {
 
-            node = node.value;
+            nodeText = node.value;
 
-            if ( node.trim() ) {
+            if ( nodeText.trim() ) {
 
                 return false;
 
@@ -197,9 +199,9 @@ export default class Dom {
 
         } else {
 
-            node = node.textContent.replace('\u200B', '');
+            nodeText = node.textContent.replace('\u200B', '');
 
-            if ( node.trim() ) {
+            if ( nodeText.trim() ) {
 
                 return false;
 
@@ -208,6 +210,23 @@ export default class Dom {
         }
 
         return true;
+
+    }
+
+    /**
+     * checks node if it is doesn't have child node
+     * @param {Node} node
+     * @return {*|boolean}
+     */
+    static isLeaf(node) {
+
+        if (!node) {
+
+            return false;
+
+        }
+
+        return node.childNodes.length === 0;
 
     }
 
@@ -233,7 +252,7 @@ export default class Dom {
 
         while ( treeWalker.length > 0 ) {
 
-            if (node && node.childNodes.length === 0) {
+            if ( this.isLeaf(node) ) {
 
                 stack.push(node);
 
@@ -244,12 +263,6 @@ export default class Dom {
                 node = node.nextSibling;
 
                 if (!node) continue;
-
-                if (node.childNodes.length === 0) {
-
-                    stack.push(node);
-
-                }
 
                 treeWalker.push(node);
 
