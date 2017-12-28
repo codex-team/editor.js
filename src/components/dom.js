@@ -174,6 +174,49 @@ export default class Dom {
 
     }
 
+    /**
+     * Checks node if it is empty
+     * It must be node without childNodes
+     * @param {Node} node
+     *
+     * @return {Boolean} true if it is empty
+     */
+    static checkNodeEmpty(node) {
+
+        if ( this.isElement(node) && this.isNativeInput(node) ) {
+
+            node = node.value;
+
+            if ( node.trim() ) {
+
+                return false;
+
+            }
+
+
+        } else {
+
+            node = node.textContent.replace('\u200B', '');
+
+            if ( node.trim() ) {
+
+                return false;
+
+            }
+
+        }
+
+        return true;
+
+    }
+
+    /**
+     * breadth-first search
+     *
+     * Pushes to stack all DOM leafs and checks for emptiness
+     * @param {Node} node
+     * @return {boolean}
+     */
     static isEmpty(node) {
 
         let treeWalker = [],
@@ -214,49 +257,7 @@ export default class Dom {
 
         }
 
-        let isEmpty = true;
-
-        stack.forEach( (node) => {
-
-            if ( this.isElement(node) ) {
-
-                if ( this.isNativeInput(node) ) {
-
-                    node = node.value;
-
-                    if ( node.trim() ) {
-
-                        isEmpty = false;
-
-                    }
-
-                } else {
-
-                    node = node.textContent.replace('\u200B', '');
-
-                    if ( node.trim() ) {
-
-                        isEmpty = false;
-
-                    }
-
-                }
-
-            } else {
-
-                node = node.textContent.replace('\u200B', '');
-
-                if ( node.trim() ) {
-
-                    isEmpty = false;
-
-                }
-
-            }
-
-        });
-
-        return isEmpty;
+        return stack.every( this.checkNodeEmpty );
 
     }
 

@@ -596,10 +596,51 @@ var Dom = function () {
 
             return nativeInputs.indexOf(target.tagName) !== -1;
         }
+
+        /**
+         * Checks node if it is empty
+         * It must be node without childNodes
+         * @param {Node} node
+         *
+         * @return {Boolean} true if it is empty
+         */
+
+    }, {
+        key: 'checkNodeEmpty',
+        value: function checkNodeEmpty(node) {
+
+            if (this.isElement(node) && this.isNativeInput(node)) {
+
+                node = node.value;
+
+                if (node.trim()) {
+
+                    return false;
+                }
+            } else {
+
+                node = node.textContent.replace('\u200B', '');
+
+                if (node.trim()) {
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /**
+         * breadth-first search
+         *
+         * Pushes to stack all DOM leafs and checks for emptiness
+         * @param {Node} node
+         * @return {boolean}
+         */
+
     }, {
         key: 'isEmpty',
         value: function isEmpty(node) {
-            var _this = this;
 
             var treeWalker = [],
                 stack = [];
@@ -635,41 +676,7 @@ var Dom = function () {
                 treeWalker.push(node);
             }
 
-            var isEmpty = true;
-
-            stack.forEach(function (node) {
-
-                if (_this.isElement(node)) {
-
-                    if (_this.isNativeInput(node)) {
-
-                        node = node.value;
-
-                        if (node.trim()) {
-
-                            isEmpty = false;
-                        }
-                    } else {
-
-                        node = node.textContent.replace('\u200B', '');
-
-                        if (node.trim()) {
-
-                            isEmpty = false;
-                        }
-                    }
-                } else {
-
-                    node = node.textContent.replace('\u200B', '');
-
-                    if (node.trim()) {
-
-                        isEmpty = false;
-                    }
-                }
-            });
-
-            return isEmpty;
+            return stack.every(this.checkNodeEmpty);
         }
     }]);
 
