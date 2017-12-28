@@ -3,6 +3,8 @@
  * @classdesc Manage editor`s blocks storage and appearance
  *
  * @module BlockManager
+ *
+ * @version 2.0.0
  */
 
 import Block from '../block';
@@ -111,7 +113,10 @@ export default class BlockManager extends Module {
         /** contentNode click handler */
         block.wrapper.addEventListener('click', (event) => this.wrapperClicked(event), false);
 
-        /** keydown on block */
+        /**
+         * keydown on block
+         * @todo move to the keydown module
+         */
         block.pluginsContent.addEventListener('keydown', (event) => this.keyDownOnBlock(event), false);
 
     }
@@ -127,7 +132,7 @@ export default class BlockManager extends Module {
     }
 
     /**
-     *
+     * @todo move to the keydown module
      * @param {MouseEvent} event
      */
     keyDownOnBlock(event) {
@@ -151,7 +156,7 @@ export default class BlockManager extends Module {
     }
 
     /**
-     *
+     * @todo Refactor method when code above will be moved to the keydown module
      */
     blockRightOrDownArrowPressed() {
 
@@ -171,12 +176,15 @@ export default class BlockManager extends Module {
 
             if (!nextBlock) return;
 
-            this.Editor.Caret.set( nextBlock.pluginsContent );
+            this.Editor.Caret.setToBlock( nextBlock );
 
         }
 
     }
 
+    /**
+     * @todo Refactor method when code above will be moved to the keydown module
+     */
     blockLeftOrUpArrowPressed() {
 
         let currentBlock = this.currentBlock,
@@ -195,8 +203,7 @@ export default class BlockManager extends Module {
 
             if (!previousBlock) return;
 
-            // this.currentNode = previousBlock.pluginsContent;
-            this.Editor.Caret.set( previousBlock.pluginsContent, textNodeLength, true );
+            this.Editor.Caret.setToBlock( previousBlock, textNodeLength, true );
 
         }
 
@@ -214,8 +221,7 @@ export default class BlockManager extends Module {
         let block = this.composeBlock(toolName, data);
 
         this._blocks[++this.currentBlockIndex] = block;
-
-        this.Editor.Caret.set(block.pluginsContent);
+        this.Editor.Caret.setToBlock(block);
 
     }
 
@@ -335,7 +341,7 @@ export default class BlockManager extends Module {
     /**
      * Set currentBlockIndex to passed block
      *
-     * @todo get first level block before searching
+     * @todo get first level block before searching. Use closest function
      *
      * @param {HTMLElement} element
      */
@@ -404,12 +410,6 @@ export default class BlockManager extends Module {
         }
 
     }
-
-}
-
-class BlockMethods {
-
-
 
 }
 

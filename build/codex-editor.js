@@ -1549,6 +1549,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @classdesc Manage editor`s blocks storage and appearance
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 *
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @module BlockManager
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @version 2.0.0
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 /**
@@ -1670,7 +1672,10 @@ var BlockManager = function (_Module) {
                 return _this3.wrapperClicked(event);
             }, false);
 
-            /** keydown on block */
+            /**
+             * keydown on block
+             * @todo move to the keydown module
+             */
             block.pluginsContent.addEventListener('keydown', function (event) {
                 return _this3.keyDownOnBlock(event);
             }, false);
@@ -1689,7 +1694,7 @@ var BlockManager = function (_Module) {
         }
 
         /**
-         *
+         * @todo move to the keydown module
          * @param {MouseEvent} event
          */
 
@@ -1715,7 +1720,7 @@ var BlockManager = function (_Module) {
         }
 
         /**
-         *
+         * @todo Refactor method when code above will be moved to the keydown module
          */
 
     }, {
@@ -1737,9 +1742,14 @@ var BlockManager = function (_Module) {
 
                 if (!nextBlock) return;
 
-                this.Editor.Caret.set(nextBlock.pluginsContent);
+                this.Editor.Caret.setToBlock(nextBlock);
             }
         }
+
+        /**
+         * @todo Refactor method when code above will be moved to the keydown module
+         */
+
     }, {
         key: 'blockLeftOrUpArrowPressed',
         value: function blockLeftOrUpArrowPressed() {
@@ -1759,8 +1769,7 @@ var BlockManager = function (_Module) {
 
                 if (!previousBlock) return;
 
-                // this.currentNode = previousBlock.pluginsContent;
-                this.Editor.Caret.set(previousBlock.pluginsContent, textNodeLength, true);
+                this.Editor.Caret.setToBlock(previousBlock, textNodeLength, true);
             }
         }
 
@@ -1780,8 +1789,7 @@ var BlockManager = function (_Module) {
             var block = this.composeBlock(toolName, data);
 
             this._blocks[++this.currentBlockIndex] = block;
-
-            this.Editor.Caret.set(block.pluginsContent);
+            this.Editor.Caret.setToBlock(block);
         }
 
         /**
@@ -1946,7 +1954,7 @@ var BlockManager = function (_Module) {
         /**
          * Set currentBlockIndex to passed block
          *
-         * @todo get first level block before searching
+         * @todo get first level block before searching. Use closest function
          *
          * @param {HTMLElement} element
          */
@@ -1992,13 +2000,6 @@ var BlockManager = function (_Module) {
     return BlockManager;
 }(Module);
 
-BlockManager.displayName = 'BlockManager';
-exports.default = BlockManager;
-
-var BlockMethods = function BlockMethods() {
-    _classCallCheck(this, BlockMethods);
-};
-
 /**
  * @class Blocks
  * @classdesc Class to work with Block instances array
@@ -2010,7 +2011,8 @@ var BlockMethods = function BlockMethods() {
  */
 
 
-BlockMethods.displayName = 'BlockMethods';
+BlockManager.displayName = 'BlockManager';
+exports.default = BlockManager;
 
 var Blocks = function () {
 
@@ -2260,8 +2262,16 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @class Caret
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @classdesc Contains methods for working Caret
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @typedef {Caret} Caret
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Uses Range methods to manipulate with caret
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @module Caret
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @version 2.0.0
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
+
+/**
+ * @typedef {Caret} Caret
+ */
 
 
 var Caret = function (_Module) {
@@ -2279,19 +2289,27 @@ var Caret = function (_Module) {
     }
 
     /**
-     * Creates Document Range and sets caret to the element.
-     * @param {Element} element - target node.
-     * @param {Number} offset - offset
-     * @param {Boolean} atEnd
+     * Method gets Block instance and puts caret to the text node with offset
+     * There two ways that method applies caret position:
+     *   - first found text node: sets at the beginning, but you can pass an offset
+     *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
+     *
+     * @param {Block} block - Block class
+     * @param {Number} offset - caret offset regarding to the text node
+     * @param {Boolean} atEnd - put caret at the end of the text node or not
      */
 
 
     _createClass(Caret, [{
-        key: 'set',
-        value: function set(element) {
+        key: 'setToBlock',
+        value: function setToBlock(block) {
+            var _this2 = this;
+
             var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
             var atEnd = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
+
+            var element = block.pluginsContent;
 
             /** If Element is INPUT */
             if ($.isNativeInput(element)) {
@@ -2302,7 +2320,7 @@ var Caret = function (_Module) {
 
             var nodeToSet = $.getDeepestTextNode(element, atEnd);
 
-            if (atEnd) {
+            if (atEnd || offset > nodeToSet.length) {
 
                 offset = nodeToSet.length;
             }
@@ -2314,19 +2332,33 @@ var Caret = function (_Module) {
                 return;
             }
 
-            function _set() {
+            _.delay(function () {
+                return _this2.set(nodeToSet, offset);
+            }, 20)();
 
-                var range = document.createRange(),
-                    selection = _Selection2.default.getSelection();
+            this.Editor.BlockManager.currentNode = block.wrapper;
+        }
 
-                range.setStart(nodeToSet, offset);
-                range.setEnd(nodeToSet, offset);
+        /**
+         * Creates Document Range and sets caret to the element with offset
+         * @param {Element} element - target node.
+         * @param {Number} offset - offset
+         */
 
-                selection.removeAllRanges();
-                selection.addRange(range);
-            }
+    }, {
+        key: 'set',
+        value: function set(element) {
+            var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
-            _.delay(_set, 20)();
+
+            var range = document.createRange(),
+                selection = _Selection2.default.getSelection();
+
+            range.setStart(element, offset);
+            range.setEnd(element, offset);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
         }
     }, {
         key: 'setToTheLastBlock',
@@ -2339,13 +2371,9 @@ var Caret = function (_Module) {
          */
         value: function setToTheLastBlock() {
 
-            var blocks = this.Editor.BlockManager.blocks,
-                lastBlock = void 0;
+            var lastBlock = this.Editor.BlockManager.getLastBlock();
 
-            if (blocks.length) {
-
-                lastBlock = blocks[blocks.length - 1];
-            }
+            if (!lastBlock) return;
 
             /**
              * If last block is empty and it is an initialBlock, set to that.
@@ -2353,71 +2381,12 @@ var Caret = function (_Module) {
              */
             if (lastBlock.isEmpty) {
 
-                this.set(lastBlock.html);
+                this.setToBlock(lastBlock);
             } else {
 
                 this.Editor.BlockManager.insert(this.config.initialBlock);
             }
-
-            /**
-             //      * If inputs in redactor does not exits, then we put input index 0 not -1
-             //      */
-            //     var indexOfLastInput = editor.state.inputs.length > 0 ? editor.state.inputs.length - 1 : 0;
-            //
-            //     /** If we have any inputs */
-            //     if (editor.state.inputs.length) {
-            //
-            //         /** getting firstlevel parent of input */
-            //         firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
-            //
-            //     }
-            //
-            //     /** If input is empty, then we set caret to the last input */
-            //     if (editor.state.inputs.length && editor.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == editor.settings.initialBlockPlugin) {
-            //
-            //         editor.caret.setToBlock(indexOfLastInput);
-            //
-            //     } else {
-            //
-            //         /** Create new input when caret clicked in redactors area */
-            //         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
-            //
-            //         editor.content.insertBlock({
-            //             type  : NEW_BLOCK_TYPE,
-            //             block : editor.tools[NEW_BLOCK_TYPE].render()
-            //         });
-            //
-            //         /** If there is no inputs except inserted */
-            //         if (editor.state.inputs.length === 1) {
-            //
-            //             editor.caret.setToBlock(indexOfLastInput);
-            //
-            //         } else {
-            //
-            //             /** Set caret to this appended input */
-            //             editor.caret.setToNextBlock(indexOfLastInput);
-            //
-            //         }
-            //
-            //     }
         }
-
-        // /**
-        //  * Set caret to the passed Node
-        //  * @param {Element} node - content-editable Element
-        //  */
-        // set(node) {
-        //
-        //     /**
-        //      * @todo add working with Selection
-        //      * tmp: work with textContent
-        //      */
-        //
-        //     node.textContent += '|';
-        //
-        // }
-
-
     }]);
 
     return Caret;
