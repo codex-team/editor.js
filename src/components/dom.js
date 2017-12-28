@@ -118,6 +118,7 @@ export default class Dom {
                 /** and it is not native input */
                 if (!this.isNativeInput(node)) {
 
+
                     let emptyTextNode = this.text('\u200B');
 
                     node.appendChild(emptyTextNode);
@@ -170,7 +171,7 @@ export default class Dom {
             'TEXTAREA'
         ];
 
-        return nativeInputs.indexOf(target.tagName) !== -1;
+        return target ? nativeInputs.indexOf(target.tagName) !== -1 : false;
 
     }
 
@@ -222,6 +223,12 @@ export default class Dom {
         let treeWalker = [],
             stack = [];
 
+        if (!node) {
+
+            return false;
+
+        }
+
         treeWalker.push(node);
 
         while ( treeWalker.length > 0 ) {
@@ -257,7 +264,7 @@ export default class Dom {
 
         }
 
-        return stack.every( this.checkNodeEmpty );
+        return stack.every( node => this.checkNodeEmpty(node));
 
     }
 

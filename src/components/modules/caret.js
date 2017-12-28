@@ -4,6 +4,8 @@
  *
  * @typedef {Caret} Caret
  */
+import Selection from '../Selection';
+
 export default class Caret extends Module {
 
     /**
@@ -19,8 +21,9 @@ export default class Caret extends Module {
      * Creates Document Range and sets caret to the element.
      * @param {Element} element - target node.
      * @param {Number} offset - offset
+     * @param {Boolean} atEnd
      */
-    set( element, offset = 0) {
+    set( element, offset = 0, atEnd = false) {
 
         /** If Element is INPUT */
         if ($.isNativeInput(element)) {
@@ -30,7 +33,13 @@ export default class Caret extends Module {
 
         }
 
-        let nodeToSet = $.getDeepestTextNode(element, true);
+        let nodeToSet = $.getDeepestTextNode(element, atEnd);
+
+        if (atEnd) {
+
+            offset = nodeToSet.length;
+
+        }
 
         /** if found deepest node is native input */
         if ($.isNativeInput(nodeToSet)) {
@@ -40,14 +49,20 @@ export default class Caret extends Module {
 
         }
 
-        let range     = document.createRange(),
-            selection = window.getSelection();
+        function _set() {
 
-        range.setStart(nodeToSet, offset);
-        range.setEnd(nodeToSet, offset);
+            let range     = document.createRange(),
+                selection = Selection.getSelection();
 
-        selection.removeAllRanges();
-        selection.addRange(range);
+            range.setStart(nodeToSet, offset);
+            range.setEnd(nodeToSet, offset);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+        }
+
+        _.delay( _set, 20)();
 
     };
 

@@ -208,4 +208,23 @@ export default class Util {
 
     }
 
+    /**
+     * Delays method execution
+     *
+     * @param method
+     * @param timeout
+     */
+    static delay(method, timeout) {
+
+        return function () {
+
+            let context = this,
+                args    = arguments;
+
+            window.setTimeout(() => method.apply(context, args), timeout);
+
+        };
+
+    }
+
 };

@@ -6,6 +6,7 @@
  */
 
 import Block from '../block';
+import Selection from '../Selection';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -138,7 +139,11 @@ export default class BlockManager extends Module {
                 break;
             case _.keyCodes.DOWN:
             case _.keyCodes.RIGHT:
-                this.blockRightOrDownArrowPressed(event);
+                this.blockRightOrDownArrowPressed();
+                break;
+            case _.keyCodes.UP:
+            case _.keyCodes.LEFT:
+                this.blockLeftOrUpArrowPressed();
                 break;
 
         }
@@ -147,11 +152,63 @@ export default class BlockManager extends Module {
 
     /**
      *
-     * @param event
      */
-    blockRightOrDownArrowPressed(event) {
+    blockRightOrDownArrowPressed() {
 
-        console.log(this.getNextBlock());
+        let currentBlock = this.currentBlock,
+            lastTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, true),
+            textNodeLength = lastTextNode.length;
+
+        console.log('here right');
+        console.log(Selection.getSelectionAnchorNode());
+        console.log(lastTextNode);
+
+        if (Selection.getSelectionAnchorNode() !== lastTextNode) {
+
+            return;
+
+        }
+
+        console.log(lastTextNode);
+        if (Selection.getSelectionAnchorOffset() === textNodeLength) {
+
+            let nextBlock = this.getNextBlock();
+
+            if (!nextBlock) return;
+
+            // this.currentNode = nextBlock.pluginsContent;
+            this.Editor.Caret.set( nextBlock.pluginsContent );
+
+        }
+
+    }
+
+    blockLeftOrUpArrowPressed() {
+
+        let currentBlock = this.currentBlock,
+            firstTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, false),
+            textNodeLength = firstTextNode.length;
+
+        console.log('here left');
+        console.log(Selection.getSelectionAnchorNode());
+        console.log(firstTextNode);
+
+        if (Selection.getSelectionAnchorNode() !== firstTextNode) {
+
+            return;
+
+        }
+
+        if (Selection.getSelectionAnchorOffset() === 0) {
+
+            let previousBlock = this.getPreviousBlock();
+
+            if (!previousBlock) return;
+
+            // this.currentNode = previousBlock.pluginsContent;
+            this.Editor.Caret.set( previousBlock.pluginsContent, textNodeLength, true );
+
+        }
 
     }
 
@@ -207,15 +264,38 @@ export default class BlockManager extends Module {
 
     }
 
+    /**
+     * Returns next Block instance
+     * @return {*}
+     */
     getNextBlock() {
 
-        if (this.currentBlockIndex + 1 > this._blocks.length - 1) {
+        let isLastBlock = this.currentBlockIndex === (this._blocks.length - 1);
+
+        if (isLastBlock) {
 
             return null;
 
         }
 
         return this._blocks[this.currentBlockIndex + 1];
+
+    }
+
+    /**
+     * Returns previous Block instance
+     */
+    getPreviousBlock() {
+
+        let isFirstBlock = this.currentBlockIndex === 0;
+
+        if (isFirstBlock) {
+
+            return null;
+
+        }
+
+        return this._blocks[this.currentBlockIndex - 1];
 
     }
 

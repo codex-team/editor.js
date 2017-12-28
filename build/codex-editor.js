@@ -334,6 +334,28 @@ var Util = function () {
 
             return element.contentEditable === 'true';
         }
+
+        /**
+         * Delays method execution
+         *
+         * @param method
+         * @param timeout
+         */
+
+    }, {
+        key: 'delay',
+        value: function delay(method, timeout) {
+
+            return function () {
+
+                var context = this,
+                    args = arguments;
+
+                window.setTimeout(function () {
+                    return method.apply(context, args);
+                }, timeout);
+            };
+        }
     }, {
         key: 'keyCodes',
         get: function get() {
@@ -594,7 +616,7 @@ var Dom = function () {
 
             var nativeInputs = ['INPUT', 'TEXTAREA'];
 
-            return nativeInputs.indexOf(target.tagName) !== -1;
+            return target ? nativeInputs.indexOf(target.tagName) !== -1 : false;
         }
 
         /**
@@ -641,9 +663,15 @@ var Dom = function () {
     }, {
         key: 'isEmpty',
         value: function isEmpty(node) {
+            var _this = this;
 
             var treeWalker = [],
                 stack = [];
+
+            if (!node) {
+
+                return false;
+            }
 
             treeWalker.push(node);
 
@@ -676,7 +704,9 @@ var Dom = function () {
                 treeWalker.push(node);
             }
 
-            return stack.every(this.checkNodeEmpty);
+            return stack.every(function (node) {
+                return _this.checkNodeEmpty(node);
+            });
         }
     }]);
 
@@ -1489,6 +1519,10 @@ var _block = __webpack_require__(3);
 
 var _block2 = _interopRequireDefault(_block);
 
+var _Selection = __webpack_require__(20);
+
+var _Selection2 = _interopRequireDefault(_Selection);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1655,7 +1689,11 @@ var BlockManager = function (_Module) {
                     break;
                 case _.keyCodes.DOWN:
                 case _.keyCodes.RIGHT:
-                    this.blockRightOrDownArrowPressed(event);
+                    this.blockRightOrDownArrowPressed();
+                    break;
+                case _.keyCodes.UP:
+                case _.keyCodes.LEFT:
+                    this.blockLeftOrUpArrowPressed();
                     break;
 
             }
@@ -1663,14 +1701,62 @@ var BlockManager = function (_Module) {
 
         /**
          *
-         * @param event
          */
 
     }, {
         key: 'blockRightOrDownArrowPressed',
-        value: function blockRightOrDownArrowPressed(event) {
+        value: function blockRightOrDownArrowPressed() {
 
-            console.log(this.getNextBlock());
+            var currentBlock = this.currentBlock,
+                lastTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, true),
+                textNodeLength = lastTextNode.length;
+
+            console.log('here right');
+            console.log(_Selection2.default.getSelectionAnchorNode());
+            console.log(lastTextNode);
+
+            if (_Selection2.default.getSelectionAnchorNode() !== lastTextNode) {
+
+                return;
+            }
+
+            console.log(lastTextNode);
+            if (_Selection2.default.getSelectionAnchorOffset() === textNodeLength) {
+
+                var nextBlock = this.getNextBlock();
+
+                if (!nextBlock) return;
+
+                // this.currentNode = nextBlock.pluginsContent;
+                this.Editor.Caret.set(nextBlock.pluginsContent);
+            }
+        }
+    }, {
+        key: 'blockLeftOrUpArrowPressed',
+        value: function blockLeftOrUpArrowPressed() {
+
+            var currentBlock = this.currentBlock,
+                firstTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, false),
+                textNodeLength = firstTextNode.length;
+
+            console.log('here left');
+            console.log(_Selection2.default.getSelectionAnchorNode());
+            console.log(firstTextNode);
+
+            if (_Selection2.default.getSelectionAnchorNode() !== firstTextNode) {
+
+                return;
+            }
+
+            if (_Selection2.default.getSelectionAnchorOffset() === 0) {
+
+                var previousBlock = this.getPreviousBlock();
+
+                if (!previousBlock) return;
+
+                // this.currentNode = previousBlock.pluginsContent;
+                this.Editor.Caret.set(previousBlock.pluginsContent, textNodeLength, true);
+            }
         }
 
         /**
@@ -1735,16 +1821,42 @@ var BlockManager = function (_Module) {
 
             return this._blocks[index];
         }
+
+        /**
+         * Returns next Block instance
+         * @return {*}
+         */
+
     }, {
         key: 'getNextBlock',
         value: function getNextBlock() {
 
-            if (this.currentBlockIndex + 1 > this._blocks.length - 1) {
+            var isLastBlock = this.currentBlockIndex === this._blocks.length - 1;
+
+            if (isLastBlock) {
 
                 return null;
             }
 
             return this._blocks[this.currentBlockIndex + 1];
+        }
+
+        /**
+         * Returns previous Block instance
+         */
+
+    }, {
+        key: 'getPreviousBlock',
+        value: function getPreviousBlock() {
+
+            var isFirstBlock = this.currentBlockIndex === 0;
+
+            if (isFirstBlock) {
+
+                return null;
+            }
+
+            return this._blocks[this.currentBlockIndex - 1];
         }
 
         /**
@@ -2121,7 +2233,7 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, $) {
+/* WEBPACK VAR INJECTION */(function(Module, $, _) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -2129,18 +2241,24 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _Selection = __webpack_require__(20);
+
+var _Selection2 = _interopRequireDefault(_Selection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @class Caret
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @classdesc Contains methods for working Caret
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @typedef {Caret} Caret
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
-/**
- * @class Caret
- * @classdesc Contains methods for working Caret
- *
- * @typedef {Caret} Caret
- */
+
 var Caret = function (_Module) {
     _inherits(Caret, _Module);
 
@@ -2159,13 +2277,15 @@ var Caret = function (_Module) {
      * Creates Document Range and sets caret to the element.
      * @param {Element} element - target node.
      * @param {Number} offset - offset
+     * @param {Boolean} atEnd
      */
 
 
     _createClass(Caret, [{
-        key: "set",
+        key: 'set',
         value: function set(element) {
             var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+            var atEnd = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
 
             /** If Element is INPUT */
@@ -2175,7 +2295,12 @@ var Caret = function (_Module) {
                 return;
             }
 
-            var nodeToSet = $.getDeepestTextNode(element, true);
+            var nodeToSet = $.getDeepestTextNode(element, atEnd);
+
+            if (atEnd) {
+
+                offset = nodeToSet.length;
+            }
 
             /** if found deepest node is native input */
             if ($.isNativeInput(nodeToSet)) {
@@ -2184,17 +2309,22 @@ var Caret = function (_Module) {
                 return;
             }
 
-            var range = document.createRange(),
-                selection = window.getSelection();
+            function _set() {
 
-            range.setStart(nodeToSet, offset);
-            range.setEnd(nodeToSet, offset);
+                var range = document.createRange(),
+                    selection = _Selection2.default.getSelection();
 
-            selection.removeAllRanges();
-            selection.addRange(range);
+                range.setStart(nodeToSet, offset);
+                range.setEnd(nodeToSet, offset);
+
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+
+            _.delay(_set, 20)();
         }
     }, {
-        key: "setToTheLastBlock",
+        key: 'setToTheLastBlock',
 
 
         /**
@@ -2288,10 +2418,10 @@ var Caret = function (_Module) {
     return Caret;
 }(Module);
 
-Caret.displayName = "Caret";
+Caret.displayName = 'Caret';
 exports.default = Caret;
-module.exports = exports["default"];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
 /* 9 */
@@ -4826,6 +4956,73 @@ function toComment(sourceMap) {
 	return '/*# ' + data + ' */';
 }
 
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Working with selection
+ */
+var Selection = function () {
+
+    /**
+     * @constructor
+     */
+    function Selection() {
+        _classCallCheck(this, Selection);
+
+        this.instance = null;
+        this.selection = null;
+    }
+
+    _createClass(Selection, null, [{
+        key: "getSelection",
+        value: function getSelection() {
+
+            return window.getSelection();
+        }
+    }, {
+        key: "getSelectionAnchorNode",
+        value: function getSelectionAnchorNode() {
+
+            var selection = window.getSelection();
+
+            if (selection) {
+
+                return selection.anchorNode;
+            }
+        }
+    }, {
+        key: "getSelectionAnchorOffset",
+        value: function getSelectionAnchorOffset() {
+
+            var selection = window.getSelection();
+
+            if (selection) {
+
+                return selection.anchorOffset;
+            }
+        }
+    }]);
+
+    return Selection;
+}();
+
+Selection.displayName = "Selection";
+exports.default = Selection;
+module.exports = exports["default"];
 
 /***/ })
 /******/ ]);
