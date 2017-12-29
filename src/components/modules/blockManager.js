@@ -158,7 +158,7 @@ export default class BlockManager extends Module {
 
         if (Selection.getSelectionAnchorOffset() === textNodeLength) {
 
-            let nextBlock = this.NextBlock();
+            let nextBlock = this.nextBlock;
 
             if (!nextBlock) return;
 
@@ -184,7 +184,7 @@ export default class BlockManager extends Module {
 
         if (Selection.getSelectionAnchorOffset() === 0) {
 
-            let previousBlock = this.PreviousBlock();
+            let previousBlock = this.previousBlock;
 
             if (!previousBlock) return;
 
@@ -228,7 +228,7 @@ export default class BlockManager extends Module {
      * returns last Block
      * @return {Block}
      */
-    LastBlock() {
+    get lastBlock() {
 
         return this._blocks[this._blocks.length - 1];
 
@@ -242,42 +242,6 @@ export default class BlockManager extends Module {
     getBlockByIndex(index) {
 
         return this._blocks[index];
-
-    }
-
-    /**
-     * Returns next Block instance
-     * @return {Block|null}
-     */
-    NextBlock() {
-
-        let isLastBlock = this.currentBlockIndex === (this._blocks.length - 1);
-
-        if (isLastBlock) {
-
-            return null;
-
-        }
-
-        return this._blocks[this.currentBlockIndex + 1];
-
-    }
-
-    /**
-     * Returns previous Block instance
-     * @return {Block|null}
-     */
-    PreviousBlock() {
-
-        let isFirstBlock = this.currentBlockIndex === 0;
-
-        if (isFirstBlock) {
-
-            return null;
-
-        }
-
-        return this._blocks[this.currentBlockIndex - 1];
 
     }
 
@@ -310,6 +274,42 @@ export default class BlockManager extends Module {
     get currentBlock() {
 
         return this._blocks[this.currentBlockIndex];
+
+    }
+
+    /**
+     * Returns next Block instance
+     * @return {Block|null}
+     */
+    get nextBlock() {
+
+        let isLastBlock = this.currentBlockIndex === (this._blocks.length - 1);
+
+        if (isLastBlock) {
+
+            return null;
+
+        }
+
+        return this._blocks[this.currentBlockIndex + 1];
+
+    }
+
+    /**
+     * Returns previous Block instance
+     * @return {Block|null}
+     */
+    get previousBlock() {
+
+        let isFirstBlock = this.currentBlockIndex === 0;
+
+        if (isFirstBlock) {
+
+            return null;
+
+        }
+
+        return this._blocks[this.currentBlockIndex - 1];
 
     }
 

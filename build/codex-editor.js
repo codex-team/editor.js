@@ -1695,7 +1695,7 @@ var BlockManager = function (_Module) {
 
             if (_Selection2.default.getSelectionAnchorOffset() === textNodeLength) {
 
-                var nextBlock = this.NextBlock();
+                var nextBlock = this.nextBlock;
 
                 if (!nextBlock) return;
 
@@ -1721,7 +1721,7 @@ var BlockManager = function (_Module) {
 
             if (_Selection2.default.getSelectionAnchorOffset() === 0) {
 
-                var previousBlock = this.PreviousBlock();
+                var previousBlock = this.previousBlock;
 
                 if (!previousBlock) return;
 
@@ -1772,61 +1772,17 @@ var BlockManager = function (_Module) {
          */
 
     }, {
-        key: 'LastBlock',
-        value: function LastBlock() {
+        key: 'getBlockByIndex',
 
-            return this._blocks[this._blocks.length - 1];
-        }
 
         /**
          * Returns Block by passed index
          * @param {Number} index
          * @return {Block}
          */
-
-    }, {
-        key: 'getBlockByIndex',
         value: function getBlockByIndex(index) {
 
             return this._blocks[index];
-        }
-
-        /**
-         * Returns next Block instance
-         * @return {Block|null}
-         */
-
-    }, {
-        key: 'NextBlock',
-        value: function NextBlock() {
-
-            var isLastBlock = this.currentBlockIndex === this._blocks.length - 1;
-
-            if (isLastBlock) {
-
-                return null;
-            }
-
-            return this._blocks[this.currentBlockIndex + 1];
-        }
-
-        /**
-         * Returns previous Block instance
-         * @return {Block|null}
-         */
-
-    }, {
-        key: 'PreviousBlock',
-        value: function PreviousBlock() {
-
-            var isFirstBlock = this.currentBlockIndex === 0;
-
-            if (isFirstBlock) {
-
-                return null;
-            }
-
-            return this._blocks[this.currentBlockIndex - 1];
         }
 
         /**
@@ -1889,10 +1845,54 @@ var BlockManager = function (_Module) {
             }
         }
     }, {
+        key: 'lastBlock',
+        get: function get() {
+
+            return this._blocks[this._blocks.length - 1];
+        }
+    }, {
         key: 'currentBlock',
         get: function get() {
 
             return this._blocks[this.currentBlockIndex];
+        }
+
+        /**
+         * Returns next Block instance
+         * @return {Block|null}
+         */
+
+    }, {
+        key: 'nextBlock',
+        get: function get() {
+
+            var isLastBlock = this.currentBlockIndex === this._blocks.length - 1;
+
+            if (isLastBlock) {
+
+                return null;
+            }
+
+            return this._blocks[this.currentBlockIndex + 1];
+        }
+
+        /**
+         * Returns previous Block instance
+         * @return {Block|null}
+         */
+
+    }, {
+        key: 'previousBlock',
+        get: function get() {
+
+            var isFirstBlock = this.currentBlockIndex === 0;
+
+            if (isFirstBlock) {
+
+                return null;
+            }
+
+            return this._blocks[this.currentBlockIndex - 1];
         }
 
         /**
@@ -2328,7 +2328,7 @@ var Caret = function (_Module) {
          */
         value: function setToTheLastBlock() {
 
-            var lastBlock = this.Editor.BlockManager.LastBlock();
+            var lastBlock = this.Editor.BlockManager.lastBlock;
 
             if (!lastBlock) return;
 
@@ -4543,7 +4543,7 @@ var UI = function (_Module) {
     key: 'clickedOnRedactorZone',
     value: function clickedOnRedactorZone(event) {
 
-      var lastBlock = this.Editor.BlockManager.LastBlock(),
+      var lastBlock = this.Editor.BlockManager.lastBlock,
           pluginsContent = lastBlock.pluginsContent;
 
       /**

@@ -94,7 +94,7 @@ export default class Caret extends Module {
      */
     setToTheLastBlock() {
 
-        let lastBlock = this.Editor.BlockManager.LastBlock();
+        let lastBlock = this.Editor.BlockManager.lastBlock;
 
         if (!lastBlock) return;
 
