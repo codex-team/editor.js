@@ -215,7 +215,7 @@ export default class Dom {
     }
 
     /**
-     * breadth-first search
+     * breadth-first search (BFS)
      * {@link https://en.wikipedia.org/wiki/Breadth-first_search}
      *
      * @description Pushes to stack all DOM leafs and checks for emptiness

@@ -131,11 +131,11 @@ export default class BlockManager extends Module {
                 break;
             case _.keyCodes.DOWN:
             case _.keyCodes.RIGHT:
-                this.blockRightOrDownArrowPressed();
+                this.navigateNext();
                 break;
             case _.keyCodes.UP:
             case _.keyCodes.LEFT:
-                this.blockLeftOrUpArrowPressed();
+                this.navigatePrevious();
                 break;
 
         }
@@ -145,7 +145,7 @@ export default class BlockManager extends Module {
     /**
      * @todo Refactor method when code above will be moved to the keydown module
      */
-    blockRightOrDownArrowPressed() {
+    navigateNext() {
 
         let lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
             textNodeLength = lastTextNode.length;
@@ -171,7 +171,7 @@ export default class BlockManager extends Module {
     /**
      * @todo Refactor method when code above will be moved to the keydown module
      */
-    blockLeftOrUpArrowPressed() {
+    navigatePrevious() {
 
         let firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
             textNodeLength = firstTextNode.length;
