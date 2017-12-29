@@ -36,8 +36,7 @@ export default class Dom {
     }
 
     /**
-     * Creates text Node with content
-     *
+     * Creates Text Node with the passed content
      * @param {String} content - text content
      * @return {Text}
      */
@@ -99,32 +98,28 @@ export default class Dom {
     }
 
     /**
-     * Search for deepest node
+     * Search for deepest node which is Leaf.
+     * Leaf is the vertex that doesn't have any child nodes
      *
-     * @param {Element} node - start Node
+     * @description Method recursively goes throw the all Node until it finds the Leaf
+     *
+     * @param {Element} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
      * @param {Boolean} atLast - find last text node
-     * @return {*}
+     * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
      */
-    static getDeepestTextNode(node, atLast = false) {
+    static getDeepestNode(node, atLast = false) {
 
         if (node.childNodes.length === 0) {
 
             /**
-             * We need to return empty text node
+             * We need to return an empty text node
              * But caret will not be placed in empty textNode, so we need textNode with zero-width char
              */
-            if (this.isElement(node)) {
+            if (this.isElement(node) && !this.isNativeInput(node)) {
 
-                /** and it is not native input */
-                if (!this.isNativeInput(node)) {
+                let emptyTextNode = this.text('\u200B');
 
-
-                    let emptyTextNode = this.text('\u200B');
-
-                    node.appendChild(emptyTextNode);
-
-                }
-
+                node.appendChild(emptyTextNode);
 
             }
 
@@ -137,11 +132,11 @@ export default class Dom {
 
         if (atLast) {
 
-            return this.getDeepestTextNode(node.childNodes[last], atLast);
+            return this.getDeepestNode(node.childNodes[last], atLast);
 
         } else {
 
-            return this.getDeepestTextNode(node.childNodes[0], false);
+            return this.getDeepestNode(node.childNodes[0], false);
 
         }
 
@@ -161,8 +156,8 @@ export default class Dom {
 
     /**
      * Checks target if it is native input
-     * @param {Element|*} target - HTML element or string
-     * @return {boolean}
+     * @param {Element|String} target - HTML element or string
+     * @return {Boolean}
      */
     static isNativeInput(target) {
 
@@ -171,18 +166,20 @@ export default class Dom {
             'TEXTAREA'
         ];
 
-        return target ? nativeInputs.indexOf(target.tagName) !== -1 : false;
+        return target ? nativeInputs.includes(target.tagName) : false;
 
     }
 
     /**
      * Checks node if it is empty
-     * It must be node without childNodes
-     * @param {Node} node
      *
+     * @description Method checks simple Node without any childs for emptiness
+     * If you have Node with 2 or more children id depth, you better use {@link Dom#isEmpty} method
+     *
+     * @param {Node} node
      * @return {Boolean} true if it is empty
      */
-    static checkNodeEmpty(node) {
+    static isNodeEmpty(node) {
 
         let nodeText;
 
@@ -190,33 +187,20 @@ export default class Dom {
 
             nodeText = node.value;
 
-            if ( nodeText.trim() ) {
-
-                return false;
-
-            }
-
-
         } else {
 
             nodeText = node.textContent.replace('\u200B', '');
 
-            if ( nodeText.trim() ) {
-
-                return false;
-
-            }
-
         }
 
-        return true;
+        return nodeText.trim().length === 0;
 
     }
 
     /**
-     * checks node if it is doesn't have child node
+     * checks node if it is doesn't have any child nodes
      * @param {Node} node
-     * @return {*|boolean}
+     * @return {boolean}
      */
     static isLeaf(node) {
 
@@ -232,15 +216,17 @@ export default class Dom {
 
     /**
      * breadth-first search
+     * {@link https://en.wikipedia.org/wiki/Breadth-first_search}
      *
-     * Pushes to stack all DOM leafs and checks for emptiness
+     * @description Pushes to stack all DOM leafs and checks for emptiness
+     *
      * @param {Node} node
      * @return {boolean}
      */
     static isEmpty(node) {
 
         let treeWalker = [],
-            stack = [];
+            leafs = [];
 
         if (!node) {
 
@@ -254,7 +240,7 @@ export default class Dom {
 
             if ( this.isLeaf(node) ) {
 
-                stack.push(node);
+                leafs.push(node);
 
             }
 
@@ -277,7 +263,7 @@ export default class Dom {
 
         }
 
-        return stack.every( node => this.checkNodeEmpty(node));
+        return leafs.every( node => this.isNodeEmpty(node));
 
     }
 

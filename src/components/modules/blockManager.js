@@ -110,24 +110,11 @@ export default class BlockManager extends Module {
      */
     bindEvents(block) {
 
-        /** contentNode click handler */
-        block.wrapper.addEventListener('click', (event) => this.wrapperClicked(event), false);
-
         /**
          * keydown on block
          * @todo move to the keydown module
          */
         block.pluginsContent.addEventListener('keydown', (event) => this.keyDownOnBlock(event), false);
-
-    }
-
-    /**
-     * Highlight clicked block
-     * @param {MouseEvent} event
-     */
-    wrapperClicked(event) {
-
-        this.setCurrentBlockByChildNode(event.target);
 
     }
 
@@ -160,8 +147,7 @@ export default class BlockManager extends Module {
      */
     blockRightOrDownArrowPressed() {
 
-        let currentBlock = this.currentBlock,
-            lastTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, true),
+        let lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
             textNodeLength = lastTextNode.length;
 
         if (Selection.getSelectionAnchorNode() !== lastTextNode) {
@@ -172,7 +158,7 @@ export default class BlockManager extends Module {
 
         if (Selection.getSelectionAnchorOffset() === textNodeLength) {
 
-            let nextBlock = this.getNextBlock();
+            let nextBlock = this.NextBlock();
 
             if (!nextBlock) return;
 
@@ -187,8 +173,7 @@ export default class BlockManager extends Module {
      */
     blockLeftOrUpArrowPressed() {
 
-        let currentBlock = this.currentBlock,
-            firstTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, false),
+        let firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
             textNodeLength = firstTextNode.length;
 
         if (Selection.getSelectionAnchorNode() !== firstTextNode) {
@@ -199,7 +184,7 @@ export default class BlockManager extends Module {
 
         if (Selection.getSelectionAnchorOffset() === 0) {
 
-            let previousBlock = this.getPreviousBlock();
+            let previousBlock = this.PreviousBlock();
 
             if (!previousBlock) return;
 
@@ -240,19 +225,19 @@ export default class BlockManager extends Module {
     }
 
     /**
-     *
-     * @return {*}
+     * returns last Block
+     * @return {Block}
      */
-    getLastBlock() {
+    LastBlock() {
 
         return this._blocks[this._blocks.length - 1];
 
     }
 
     /**
-     *
-     * @param index
-     * @return {*}
+     * Returns Block by passed index
+     * @param {Number} index
+     * @return {Block}
      */
     getBlockByIndex(index) {
 
@@ -262,9 +247,9 @@ export default class BlockManager extends Module {
 
     /**
      * Returns next Block instance
-     * @return {*}
+     * @return {Block|null}
      */
-    getNextBlock() {
+    NextBlock() {
 
         let isLastBlock = this.currentBlockIndex === (this._blocks.length - 1);
 
@@ -280,8 +265,9 @@ export default class BlockManager extends Module {
 
     /**
      * Returns previous Block instance
+     * @return {Block|null}
      */
-    getPreviousBlock() {
+    PreviousBlock() {
 
         let isFirstBlock = this.currentBlockIndex === 0;
 

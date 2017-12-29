@@ -47,7 +47,7 @@ export default class Caret extends Module {
 
         }
 
-        let nodeToSet = $.getDeepestTextNode(element, atEnd);
+        let nodeToSet = $.getDeepestNode(element, atEnd);
 
         if (atEnd || offset > nodeToSet.length) {
 
@@ -94,7 +94,7 @@ export default class Caret extends Module {
      */
     setToTheLastBlock() {
 
-        let lastBlock = this.Editor.BlockManager.getLastBlock();
+        let lastBlock = this.Editor.BlockManager.LastBlock();
 
         if (!lastBlock) return;
 

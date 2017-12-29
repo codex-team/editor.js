@@ -377,23 +377,6 @@ var Util = function () {
                 META: 91
             };
         }
-
-        /**
-         * Returns basic nodetypes as contants
-         * @return {{TAG: number, TEXT: number, COMMENT: number, DOCUMENT_FRAGMENT: number}}
-         */
-
-    }, {
-        key: 'nodeTypes',
-        get: function get() {
-
-            return {
-                TAG: 1,
-                TEXT: 3,
-                COMMENT: 8,
-                DOCUMENT_FRAGMENT: 11
-            };
-        }
     }]);
 
     return Util;
@@ -468,8 +451,7 @@ var Dom = function () {
         }
 
         /**
-         * Creates text Node with content
-         *
+         * Creates Text Node with the passed content
          * @param {String} content - text content
          * @return {Text}
          */
@@ -545,34 +527,33 @@ var Dom = function () {
         }
 
         /**
-         * Search for deepest node
+         * Search for deepest node which is Leaf.
+         * Leaf is the vertex that doesn't have any child nodes
          *
-         * @param {Element} node - start Node
+         * @description Method recursively goes throw the all Node until it finds the Leaf
+         *
+         * @param {Element} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
          * @param {Boolean} atLast - find last text node
-         * @return {*}
+         * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
          */
 
     }, {
-        key: 'getDeepestTextNode',
-        value: function getDeepestTextNode(node) {
+        key: 'getDeepestNode',
+        value: function getDeepestNode(node) {
             var atLast = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
 
             if (node.childNodes.length === 0) {
 
                 /**
-                 * We need to return empty text node
+                 * We need to return an empty text node
                  * But caret will not be placed in empty textNode, so we need textNode with zero-width char
                  */
-                if (this.isElement(node)) {
+                if (this.isElement(node) && !this.isNativeInput(node)) {
 
-                    /** and it is not native input */
-                    if (!this.isNativeInput(node)) {
+                    var emptyTextNode = this.text('\u200B');
 
-                        var emptyTextNode = this.text('\u200B');
-
-                        node.appendChild(emptyTextNode);
-                    }
+                    node.appendChild(emptyTextNode);
                 }
 
                 return node;
@@ -583,10 +564,10 @@ var Dom = function () {
 
             if (atLast) {
 
-                return this.getDeepestTextNode(node.childNodes[last], atLast);
+                return this.getDeepestNode(node.childNodes[last], atLast);
             } else {
 
-                return this.getDeepestTextNode(node.childNodes[0], false);
+                return this.getDeepestNode(node.childNodes[0], false);
             }
         }
 
@@ -606,8 +587,8 @@ var Dom = function () {
 
         /**
          * Checks target if it is native input
-         * @param {Element|*} target - HTML element or string
-         * @return {boolean}
+         * @param {Element|String} target - HTML element or string
+         * @return {Boolean}
          */
 
     }, {
@@ -616,48 +597,40 @@ var Dom = function () {
 
             var nativeInputs = ['INPUT', 'TEXTAREA'];
 
-            return target ? nativeInputs.indexOf(target.tagName) !== -1 : false;
+            return target ? nativeInputs.includes(target.tagName) : false;
         }
 
         /**
          * Checks node if it is empty
-         * It must be node without childNodes
-         * @param {Node} node
          *
+         * @description Method checks simple Node without any childs for emptiness
+         * If you have Node with 2 or more children id depth, you better use {@link Dom#isEmpty} method
+         *
+         * @param {Node} node
          * @return {Boolean} true if it is empty
          */
 
     }, {
-        key: 'checkNodeEmpty',
-        value: function checkNodeEmpty(node) {
+        key: 'isNodeEmpty',
+        value: function isNodeEmpty(node) {
 
             var nodeText = void 0;
 
             if (this.isElement(node) && this.isNativeInput(node)) {
 
                 nodeText = node.value;
-
-                if (nodeText.trim()) {
-
-                    return false;
-                }
             } else {
 
                 nodeText = node.textContent.replace('\u200B', '');
-
-                if (nodeText.trim()) {
-
-                    return false;
-                }
             }
 
-            return true;
+            return nodeText.trim().length === 0;
         }
 
         /**
-         * checks node if it is doesn't have child node
+         * checks node if it is doesn't have any child nodes
          * @param {Node} node
-         * @return {*|boolean}
+         * @return {boolean}
          */
 
     }, {
@@ -674,8 +647,10 @@ var Dom = function () {
 
         /**
          * breadth-first search
+         * {@link https://en.wikipedia.org/wiki/Breadth-first_search}
          *
-         * Pushes to stack all DOM leafs and checks for emptiness
+         * @description Pushes to stack all DOM leafs and checks for emptiness
+         *
          * @param {Node} node
          * @return {boolean}
          */
@@ -686,7 +661,7 @@ var Dom = function () {
             var _this = this;
 
             var treeWalker = [],
-                stack = [];
+                leafs = [];
 
             if (!node) {
 
@@ -699,7 +674,7 @@ var Dom = function () {
 
                 if (this.isLeaf(node)) {
 
-                    stack.push(node);
+                    leafs.push(node);
                 }
 
                 while (node && node.nextSibling) {
@@ -719,8 +694,8 @@ var Dom = function () {
                 treeWalker.push(node);
             }
 
-            return stack.every(function (node) {
-                return _this.checkNodeEmpty(node);
+            return leafs.every(function (node) {
+                return _this.isNodeEmpty(node);
             });
         }
     }]);
@@ -1667,11 +1642,6 @@ var BlockManager = function (_Module) {
         value: function bindEvents(block) {
             var _this3 = this;
 
-            /** contentNode click handler */
-            block.wrapper.addEventListener('click', function (event) {
-                return _this3.wrapperClicked(event);
-            }, false);
-
             /**
              * keydown on block
              * @todo move to the keydown module
@@ -1679,18 +1649,6 @@ var BlockManager = function (_Module) {
             block.pluginsContent.addEventListener('keydown', function (event) {
                 return _this3.keyDownOnBlock(event);
             }, false);
-        }
-
-        /**
-         * Highlight clicked block
-         * @param {MouseEvent} event
-         */
-
-    }, {
-        key: 'wrapperClicked',
-        value: function wrapperClicked(event) {
-
-            this.setCurrentBlockByChildNode(event.target);
         }
 
         /**
@@ -1727,8 +1685,7 @@ var BlockManager = function (_Module) {
         key: 'blockRightOrDownArrowPressed',
         value: function blockRightOrDownArrowPressed() {
 
-            var currentBlock = this.currentBlock,
-                lastTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, true),
+            var lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
                 textNodeLength = lastTextNode.length;
 
             if (_Selection2.default.getSelectionAnchorNode() !== lastTextNode) {
@@ -1738,7 +1695,7 @@ var BlockManager = function (_Module) {
 
             if (_Selection2.default.getSelectionAnchorOffset() === textNodeLength) {
 
-                var nextBlock = this.getNextBlock();
+                var nextBlock = this.NextBlock();
 
                 if (!nextBlock) return;
 
@@ -1754,8 +1711,7 @@ var BlockManager = function (_Module) {
         key: 'blockLeftOrUpArrowPressed',
         value: function blockLeftOrUpArrowPressed() {
 
-            var currentBlock = this.currentBlock,
-                firstTextNode = $.getDeepestTextNode(currentBlock.pluginsContent, false),
+            var firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
                 textNodeLength = firstTextNode.length;
 
             if (_Selection2.default.getSelectionAnchorNode() !== firstTextNode) {
@@ -1765,7 +1721,7 @@ var BlockManager = function (_Module) {
 
             if (_Selection2.default.getSelectionAnchorOffset() === 0) {
 
-                var previousBlock = this.getPreviousBlock();
+                var previousBlock = this.PreviousBlock();
 
                 if (!previousBlock) return;
 
@@ -1811,21 +1767,21 @@ var BlockManager = function (_Module) {
         }
 
         /**
-         *
-         * @return {*}
+         * returns last Block
+         * @return {Block}
          */
 
     }, {
-        key: 'getLastBlock',
-        value: function getLastBlock() {
+        key: 'LastBlock',
+        value: function LastBlock() {
 
             return this._blocks[this._blocks.length - 1];
         }
 
         /**
-         *
-         * @param index
-         * @return {*}
+         * Returns Block by passed index
+         * @param {Number} index
+         * @return {Block}
          */
 
     }, {
@@ -1837,12 +1793,12 @@ var BlockManager = function (_Module) {
 
         /**
          * Returns next Block instance
-         * @return {*}
+         * @return {Block|null}
          */
 
     }, {
-        key: 'getNextBlock',
-        value: function getNextBlock() {
+        key: 'NextBlock',
+        value: function NextBlock() {
 
             var isLastBlock = this.currentBlockIndex === this._blocks.length - 1;
 
@@ -1856,11 +1812,12 @@ var BlockManager = function (_Module) {
 
         /**
          * Returns previous Block instance
+         * @return {Block|null}
          */
 
     }, {
-        key: 'getPreviousBlock',
-        value: function getPreviousBlock() {
+        key: 'PreviousBlock',
+        value: function PreviousBlock() {
 
             var isFirstBlock = this.currentBlockIndex === 0;
 
@@ -2318,7 +2275,7 @@ var Caret = function (_Module) {
                 return;
             }
 
-            var nodeToSet = $.getDeepestTextNode(element, atEnd);
+            var nodeToSet = $.getDeepestNode(element, atEnd);
 
             if (atEnd || offset > nodeToSet.length) {
 
@@ -2371,7 +2328,7 @@ var Caret = function (_Module) {
          */
         value: function setToTheLastBlock() {
 
-            var lastBlock = this.Editor.BlockManager.getLastBlock();
+            var lastBlock = this.Editor.BlockManager.LastBlock();
 
             if (!lastBlock) return;
 
@@ -4586,7 +4543,7 @@ var UI = function (_Module) {
     key: 'clickedOnRedactorZone',
     value: function clickedOnRedactorZone(event) {
 
-      var lastBlock = this.Editor.BlockManager.getLastBlock(),
+      var lastBlock = this.Editor.BlockManager.LastBlock(),
           pluginsContent = lastBlock.pluginsContent;
 
       /**

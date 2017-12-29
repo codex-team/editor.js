@@ -66,21 +66,6 @@ export default class Util {
     }
 
     /**
-     * Returns basic nodetypes as contants
-     * @return {{TAG: number, TEXT: number, COMMENT: number, DOCUMENT_FRAGMENT: number}}
-     */
-    static get nodeTypes() {
-
-        return {
-            TAG     : 1,
-            TEXT    : 3,
-            COMMENT : 8,
-            DOCUMENT_FRAGMENT: 11
-        };
-
-    }
-
-    /**
      * @typedef {Object} ChainData
      * @property {Object} data - data that will be passed to the success or fallback
      * @property {Function} function - function's that must be called asynchronically

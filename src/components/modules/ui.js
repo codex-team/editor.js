@@ -362,7 +362,7 @@ export default class UI extends Module {
 
     clickedOnRedactorZone(event) {
 
-        let lastBlock = this.Editor.BlockManager.getLastBlock(),
+        let lastBlock = this.Editor.BlockManager.LastBlock(),
             pluginsContent = lastBlock.pluginsContent;
 
         /**
