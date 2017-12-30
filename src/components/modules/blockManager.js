@@ -330,20 +330,18 @@ export default class BlockManager extends Module {
 
     /**
      * Set currentBlockIndex to passed block
-     *
-     * @todo get first level block before searching. Use closest function
-     *
      * @param {HTMLElement} element
      */
     set currentNode(element) {
 
-        let nodes = this._blocks.nodes;
+        let nodes = this._blocks.nodes,
+            firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`);
 
         /**
          * Update current Block's index
          * @type {number}
          */
-        this.currentBlockIndex = nodes.indexOf(element);
+        this.currentBlockIndex = nodes.indexOf(firstLevelBlock);
 
         /**
          * Remove previous selected Block's state

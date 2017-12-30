@@ -1981,21 +1981,19 @@ var BlockManager = function (_Module) {
 
         /**
          * Set currentBlockIndex to passed block
-         *
-         * @todo get first level block before searching. Use closest function
-         *
          * @param {HTMLElement} element
          */
         ,
         set: function set(element) {
 
-            var nodes = this._blocks.nodes;
+            var nodes = this._blocks.nodes,
+                firstLevelBlock = element.closest('.' + _block2.default.CSS.wrapper);
 
             /**
              * Update current Block's index
              * @type {number}
              */
-            this.currentBlockIndex = nodes.indexOf(element);
+            this.currentBlockIndex = nodes.indexOf(firstLevelBlock);
 
             /**
              * Remove previous selected Block's state

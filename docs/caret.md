@@ -2,25 +2,29 @@
 
 The `Caret` module contains methods working with caret.
 
-Uses[Range](https://developer.mozilla.org/en-US/docs/Web/API/Range) methods to navigate caret
+Uses [Range](https://developer.mozilla.org/en-US/docs/Web/API/Range) methods to navigate caret
 between blocks. 
 
 Caret class implements basic Module class that holds User configuration
 and default CodeXEditor instances
 
-You can read more about Module class[here]()
+You can read more about Module class [here]()
 
 ## Properties
 
 ## Methods
 
+
+### setToBlock
+
 ```javascript
-Caret.setToBlock
+Caret.setToBlock()
 ```
 
-Method gets Block instance and puts caret to the text node with offset
 
-### params
+> Method gets Block instance and puts caret to the text node with offset
+
+#### params
 
 | Param        | Type | Description|
 | -------------|------ |:-------------:|
@@ -29,9 +33,11 @@ Method gets Block instance and puts caret to the text node with offset
 | atEnd        | Boolean | puts caret at the end of last text node|
 
 
+### setToTheLastBlock
+
 ```javascript
-Caret.setToTheLastBlock
+Caret.setToTheLastBlock()
 ```
 
-sets Caret at the end of last Block
+> sets Caret at the end of last Block
 If last block is not empty, inserts another empty Block which is passed as initial
