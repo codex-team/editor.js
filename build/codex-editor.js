@@ -61,7 +61,7 @@ var CodexEditor =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 5);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -646,7 +646,7 @@ var Dom = function () {
         }
 
         /**
-         * breadth-first search
+         * breadth-first search (BFS)
          * {@link https://en.wikipedia.org/wiki/Breadth-first_search}
          *
          * @description Pushes to stack all DOM leafs and checks for emptiness
@@ -978,6 +978,73 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Working with selection
+ */
+var Selection = function () {
+
+    /**
+     * @constructor
+     */
+    function Selection() {
+        _classCallCheck(this, Selection);
+
+        this.instance = null;
+        this.selection = null;
+    }
+
+    _createClass(Selection, null, [{
+        key: "getSelection",
+        value: function getSelection() {
+
+            return window.getSelection();
+        }
+    }, {
+        key: "getSelectionAnchorNode",
+        value: function getSelectionAnchorNode() {
+
+            var selection = window.getSelection();
+
+            if (selection) {
+
+                return selection.anchorNode;
+            }
+        }
+    }, {
+        key: "getSelectionAnchorOffset",
+        value: function getSelectionAnchorOffset() {
+
+            var selection = window.getSelection();
+
+            if (selection) {
+
+                return selection.anchorOffset;
+            }
+        }
+    }]);
+
+    return Selection;
+}();
+
+Selection.displayName = "Selection";
+exports.default = Selection;
+module.exports = exports["default"];
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(_) {/**
  * Codex Editor
  *
@@ -1050,7 +1117,7 @@ module.exports = exports['default'];
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(5);
+__webpack_require__(6);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1059,7 +1126,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 // eslint-disable-next-line
 var modules = ["blockManager.js","caret.js","events.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
-    return __webpack_require__(6)("./" + module);
+    return __webpack_require__(7)("./" + module);
 });
 
 /**
@@ -1434,7 +1501,7 @@ module.exports = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1461,20 +1528,20 @@ if (!Element.prototype.closest) Element.prototype.closest = function (s) {
 };
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./blockManager.js": 7,
-	"./caret.js": 8,
-	"./events.js": 9,
-	"./renderer.js": 10,
-	"./sanitizer.js": 11,
-	"./saver.js": 13,
-	"./toolbar.js": 14,
-	"./toolbox.js": 15,
-	"./tools.js": 16,
-	"./ui.js": 17
+	"./blockManager.js": 8,
+	"./caret.js": 9,
+	"./events.js": 10,
+	"./renderer.js": 11,
+	"./sanitizer.js": 12,
+	"./saver.js": 14,
+	"./toolbar.js": 15,
+	"./toolbox.js": 16,
+	"./tools.js": 17,
+	"./ui.js": 18
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1490,10 +1557,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 6;
+webpackContext.id = 7;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1509,7 +1576,7 @@ var _block = __webpack_require__(3);
 
 var _block2 = _interopRequireDefault(_block);
 
-var _Selection = __webpack_require__(20);
+var _Selection = __webpack_require__(4);
 
 var _Selection2 = _interopRequireDefault(_Selection);
 
@@ -1667,23 +1734,25 @@ var BlockManager = function (_Module) {
                     break;
                 case _.keyCodes.DOWN:
                 case _.keyCodes.RIGHT:
-                    this.blockRightOrDownArrowPressed();
+                    this.navigateNext();
                     break;
                 case _.keyCodes.UP:
                 case _.keyCodes.LEFT:
-                    this.blockLeftOrUpArrowPressed();
+                    this.navigatePrevious();
                     break;
 
             }
         }
 
         /**
-         * @todo Refactor method when code above will be moved to the keydown module
+         * Set's caret to the next Block
+         * Before moving caret, we should check if caret position is at the end of Plugins node
+         * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
          */
 
     }, {
-        key: 'blockRightOrDownArrowPressed',
-        value: function blockRightOrDownArrowPressed() {
+        key: 'navigateNext',
+        value: function navigateNext() {
 
             var lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
                 textNodeLength = lastTextNode.length;
@@ -1704,12 +1773,14 @@ var BlockManager = function (_Module) {
         }
 
         /**
-         * @todo Refactor method when code above will be moved to the keydown module
+         * Set's caret to the previous Block
+         * Before moving caret, we should check if caret position is at the end of Plugins node
+         * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
          */
 
     }, {
-        key: 'blockLeftOrUpArrowPressed',
-        value: function blockLeftOrUpArrowPressed() {
+        key: 'navigatePrevious',
+        value: function navigatePrevious() {
 
             var firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
                 textNodeLength = firstTextNode.length;
@@ -2193,7 +2264,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2)))
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2205,7 +2276,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Selection = __webpack_require__(20);
+var _Selection = __webpack_require__(4);
 
 var _Selection2 = _interopRequireDefault(_Selection);
 
@@ -2323,12 +2394,12 @@ var Caret = function (_Module) {
 
         /**
          * Set Caret to the last Block
-         *
          * If last block is not empty, append another empty block
          */
         value: function setToTheLastBlock() {
 
-            var lastBlock = this.Editor.BlockManager.lastBlock;
+            var lastBlock = this.Editor.BlockManager.lastBlock,
+                pluginsContent = lastBlock.pluginsContent;
 
             if (!lastBlock) return;
 
@@ -2336,7 +2407,7 @@ var Caret = function (_Module) {
              * If last block is empty and it is an initialBlock, set to that.
              * Otherwise, append new empty block and set to that
              */
-            if (lastBlock.isEmpty) {
+            if ($.isEmpty(pluginsContent)) {
 
                 this.setToBlock(lastBlock);
             } else {
@@ -2355,7 +2426,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2461,7 +2532,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2589,7 +2660,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2667,7 +2738,7 @@ var Sanitizer = function (_Module) {
         _this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
 
         /** HTML Janitor library */
-        _this.sanitizerInstance = __webpack_require__(12);
+        _this.sanitizerInstance = __webpack_require__(13);
 
         return _this;
     }
@@ -2770,7 +2841,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -2965,7 +3036,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (roo
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3256,7 +3327,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3585,7 +3656,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3850,7 +3921,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4149,7 +4220,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4350,7 +4421,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(18);
+      var styles = __webpack_require__(19);
 
       /**
        * Make tag
@@ -4412,13 +4483,6 @@ var UI = function (_Module) {
     value: function redactorClicked(event) {
 
       var clickedNode = event.target;
-
-      console.log('click', clickedNode);
-      if (clickedNode.classList.contains(this.CSS.editorZone)) {
-
-        this.clickedOnRedactorZone(event);
-        return;
-      }
 
       /**
        * Select clicked Block as Current
@@ -4537,24 +4601,6 @@ var UI = function (_Module) {
       if (isInitialBlock && isEmptyBlock) {
 
         this.Editor.Toolbar.plusButton.show();
-      }
-    }
-  }, {
-    key: 'clickedOnRedactorZone',
-    value: function clickedOnRedactorZone(event) {
-
-      var lastBlock = this.Editor.BlockManager.lastBlock,
-          pluginsContent = lastBlock.pluginsContent;
-
-      /**
-       * If last block has text content, then insert new Block after
-       */
-      if (!$.isEmpty(pluginsContent)) {
-
-        this.Editor.BlockManager.insert(this.config.initialBlock, {});
-      } else {
-
-        this.Editor.Caret.set(pluginsContent);
       }
     }
   }, {
@@ -4793,10 +4839,10 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(19)(undefined);
+exports = module.exports = __webpack_require__(20)(undefined);
 // imports
 
 
@@ -4807,7 +4853,7 @@ exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 /*
@@ -4887,73 +4933,6 @@ function toComment(sourceMap) {
 	return '/*# ' + data + ' */';
 }
 
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Working with selection
- */
-var Selection = function () {
-
-    /**
-     * @constructor
-     */
-    function Selection() {
-        _classCallCheck(this, Selection);
-
-        this.instance = null;
-        this.selection = null;
-    }
-
-    _createClass(Selection, null, [{
-        key: "getSelection",
-        value: function getSelection() {
-
-            return window.getSelection();
-        }
-    }, {
-        key: "getSelectionAnchorNode",
-        value: function getSelectionAnchorNode() {
-
-            var selection = window.getSelection();
-
-            if (selection) {
-
-                return selection.anchorNode;
-            }
-        }
-    }, {
-        key: "getSelectionAnchorOffset",
-        value: function getSelectionAnchorOffset() {
-
-            var selection = window.getSelection();
-
-            if (selection) {
-
-                return selection.anchorOffset;
-            }
-        }
-    }]);
-
-    return Selection;
-}();
-
-Selection.displayName = "Selection";
-exports.default = Selection;
-module.exports = exports["default"];
 
 /***/ })
 /******/ ]);

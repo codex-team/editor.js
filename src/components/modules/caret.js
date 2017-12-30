@@ -89,12 +89,12 @@ export default class Caret extends Module {
 
     /**
      * Set Caret to the last Block
-     *
      * If last block is not empty, append another empty block
      */
     setToTheLastBlock() {
 
-        let lastBlock = this.Editor.BlockManager.lastBlock;
+        let lastBlock = this.Editor.BlockManager.lastBlock,
+            pluginsContent = lastBlock.pluginsContent;
 
         if (!lastBlock) return;
 
@@ -102,7 +102,7 @@ export default class Caret extends Module {
          * If last block is empty and it is an initialBlock, set to that.
          * Otherwise, append new empty block and set to that
          */
-        if (lastBlock.isEmpty) {
+        if ($.isEmpty(pluginsContent)) {
 
             this.setToBlock(lastBlock);
 

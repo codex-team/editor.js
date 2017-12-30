@@ -143,7 +143,9 @@ export default class BlockManager extends Module {
     }
 
     /**
-     * @todo Refactor method when code above will be moved to the keydown module
+     * Set's caret to the next Block
+     * Before moving caret, we should check if caret position is at the end of Plugins node
+     * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
      */
     navigateNext() {
 
@@ -169,7 +171,9 @@ export default class BlockManager extends Module {
     }
 
     /**
-     * @todo Refactor method when code above will be moved to the keydown module
+     * Set's caret to the previous Block
+     * Before moving caret, we should check if caret position is at the end of Plugins node
+     * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
      */
     navigatePrevious() {
 

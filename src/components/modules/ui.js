@@ -224,14 +224,6 @@ export default class UI extends Module {
 
         let clickedNode = event.target;
 
-        console.log('click', clickedNode);
-        if ( clickedNode.classList.contains(this.CSS.editorZone) ) {
-
-            this.clickedOnRedactorZone(event);
-            return;
-
-        }
-
         /**
          * Select clicked Block as Current
          */
@@ -355,26 +347,6 @@ export default class UI extends Module {
         if (isInitialBlock && isEmptyBlock) {
 
             this.Editor.Toolbar.plusButton.show();
-
-        }
-
-    }
-
-    clickedOnRedactorZone(event) {
-
-        let lastBlock = this.Editor.BlockManager.lastBlock,
-            pluginsContent = lastBlock.pluginsContent;
-
-        /**
-         * If last block has text content, then insert new Block after
-         */
-        if (!$.isEmpty(pluginsContent)) {
-
-            this.Editor.BlockManager.insert(this.config.initialBlock, {});
-
-        } else {
-
-            this.Editor.Caret.set(pluginsContent);
 
         }
 
