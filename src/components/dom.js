@@ -263,7 +263,7 @@ export default class Dom {
 
         }
 
-        return leafs.every( node => this.isNodeEmpty(node));
+        return leafs.every( leaf => this.isNodeEmpty(leaf)) ;
 
     }
 

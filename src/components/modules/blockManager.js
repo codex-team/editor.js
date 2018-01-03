@@ -152,13 +152,13 @@ export default class BlockManager extends Module {
         let lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
             textNodeLength = lastTextNode.length;
 
-        if (Selection.getSelectionAnchorNode() !== lastTextNode) {
+        if (Selection.getAnchorNode() !== lastTextNode) {
 
             return;
 
         }
 
-        if (Selection.getSelectionAnchorOffset() === textNodeLength) {
+        if (Selection.getAnchorOffset() === textNodeLength) {
 
             let nextBlock = this.nextBlock;
 
@@ -180,13 +180,13 @@ export default class BlockManager extends Module {
         let firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
             textNodeLength = firstTextNode.length;
 
-        if (Selection.getSelectionAnchorNode() !== firstTextNode) {
+        if (Selection.getAnchorNode() !== firstTextNode) {
 
             return;
 
         }
 
-        if (Selection.getSelectionAnchorOffset() === 0) {
+        if (Selection.getAnchorOffset() === 0) {
 
             let previousBlock = this.previousBlock;
 
@@ -251,16 +251,14 @@ export default class BlockManager extends Module {
 
     /**
      * Get Block instance by html element
-     *
-     * @todo get first level block before searching
-     *
      * @param {HTMLElement} element
      * @returns {Block}
      */
     getBlock(element) {
 
         let nodes = this._blocks.nodes,
-            index = nodes.indexOf(element);
+            firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`),
+            index = nodes.indexOf(firstLevelBlock);
 
         if (index >= 0) {
 

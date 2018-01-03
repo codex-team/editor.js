@@ -694,8 +694,8 @@ var Dom = function () {
                 treeWalker.push(node);
             }
 
-            return leafs.every(function (node) {
-                return _this.isNodeEmpty(node);
+            return leafs.every(function (leaf) {
+                return _this.isNodeEmpty(leaf);
             });
         }
     }]);
@@ -909,7 +909,7 @@ var Block = function () {
                 return false;
             }
 
-            var emptyText = this._html.textContent.trim().length === 0,
+            var emptyText = $.isEmpty(this.pluginsContent),
                 emptyMedia = !this.hasMedia;
 
             return emptyText && emptyMedia;
@@ -1003,15 +1003,29 @@ var Selection = function () {
         this.selection = null;
     }
 
+    /**
+     * Returns window Selection
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+     * @return {Selection}
+     */
+
+
     _createClass(Selection, null, [{
-        key: "getSelection",
-        value: function getSelection() {
+        key: "get",
+        value: function get() {
 
             return window.getSelection();
         }
+
+        /**
+         * Returns selected anchor
+         * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
+         * @return {Node}
+         */
+
     }, {
-        key: "getSelectionAnchorNode",
-        value: function getSelectionAnchorNode() {
+        key: "getAnchorNode",
+        value: function getAnchorNode() {
 
             var selection = window.getSelection();
 
@@ -1020,9 +1034,16 @@ var Selection = function () {
                 return selection.anchorNode;
             }
         }
+
+        /**
+         * Returns selection offset according to the anchor node
+         * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
+         * @return {Number}
+         */
+
     }, {
-        key: "getSelectionAnchorOffset",
-        value: function getSelectionAnchorOffset() {
+        key: "getAnchorOffset",
+        value: function getAnchorOffset() {
 
             var selection = window.getSelection();
 
@@ -1757,12 +1778,12 @@ var BlockManager = function (_Module) {
             var lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
                 textNodeLength = lastTextNode.length;
 
-            if (_Selection2.default.getSelectionAnchorNode() !== lastTextNode) {
+            if (_Selection2.default.getAnchorNode() !== lastTextNode) {
 
                 return;
             }
 
-            if (_Selection2.default.getSelectionAnchorOffset() === textNodeLength) {
+            if (_Selection2.default.getAnchorOffset() === textNodeLength) {
 
                 var nextBlock = this.nextBlock;
 
@@ -1785,12 +1806,12 @@ var BlockManager = function (_Module) {
             var firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
                 textNodeLength = firstTextNode.length;
 
-            if (_Selection2.default.getSelectionAnchorNode() !== firstTextNode) {
+            if (_Selection2.default.getAnchorNode() !== firstTextNode) {
 
                 return;
             }
 
-            if (_Selection2.default.getSelectionAnchorOffset() === 0) {
+            if (_Selection2.default.getAnchorOffset() === 0) {
 
                 var previousBlock = this.previousBlock;
 
@@ -1858,9 +1879,6 @@ var BlockManager = function (_Module) {
 
         /**
          * Get Block instance by html element
-         *
-         * @todo get first level block before searching
-         *
          * @param {HTMLElement} element
          * @returns {Block}
          */
@@ -1870,7 +1888,8 @@ var BlockManager = function (_Module) {
         value: function getBlock(element) {
 
             var nodes = this._blocks.nodes,
-                index = nodes.indexOf(element);
+                firstLevelBlock = element.closest('.' + _block2.default.CSS.wrapper),
+                index = nodes.indexOf(firstLevelBlock);
 
             if (index >= 0) {
 
@@ -2378,7 +2397,7 @@ var Caret = function (_Module) {
 
 
             var range = document.createRange(),
-                selection = _Selection2.default.getSelection();
+                selection = _Selection2.default.get();
 
             range.setStart(element, offset);
             range.setEnd(element, offset);
@@ -2396,8 +2415,7 @@ var Caret = function (_Module) {
          */
         value: function setToTheLastBlock() {
 
-            var lastBlock = this.Editor.BlockManager.lastBlock,
-                pluginsContent = lastBlock.pluginsContent;
+            var lastBlock = this.Editor.BlockManager.lastBlock;
 
             if (!lastBlock) return;
 
@@ -2405,7 +2423,7 @@ var Caret = function (_Module) {
              * If last block is empty and it is an initialBlock, set to that.
              * Otherwise, append new empty block and set to that
              */
-            if ($.isEmpty(pluginsContent)) {
+            if (lastBlock.isEmpty) {
 
                 this.setToBlock(lastBlock);
             } else {
@@ -4230,21 +4248,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _block = __webpack_require__(3);
-
-var _block2 = _interopRequireDefault(_block);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Module UI
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @type {UI}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Module UI
+ *
+ * @type {UI}
+ */
 // let className = {
 
 /**
@@ -4272,6 +4286,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
      */
 // SETTINGS_ITEM : 'ce-settings__item'
 // };
+
+// import Block from '../block';
 
 /**
  * @class

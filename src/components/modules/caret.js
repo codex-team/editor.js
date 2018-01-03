@@ -77,7 +77,7 @@ export default class Caret extends Module {
     set( element, offset = 0) {
 
         let range     = document.createRange(),
-            selection = Selection.getSelection();
+            selection = Selection.get();
 
         range.setStart(element, offset);
         range.setEnd(element, offset);
@@ -93,8 +93,7 @@ export default class Caret extends Module {
      */
     setToTheLastBlock() {
 
-        let lastBlock = this.Editor.BlockManager.lastBlock,
-            pluginsContent = lastBlock.pluginsContent;
+        let lastBlock = this.Editor.BlockManager.lastBlock;
 
         if (!lastBlock) return;
 
@@ -102,7 +101,7 @@ export default class Caret extends Module {
          * If last block is empty and it is an initialBlock, set to that.
          * Otherwise, append new empty block and set to that
          */
-        if ($.isEmpty(pluginsContent)) {
+        if (lastBlock.isEmpty) {
 
             this.setToBlock(lastBlock);
 

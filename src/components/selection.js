@@ -13,13 +13,23 @@ export default class Selection {
 
     }
 
-    static getSelection() {
+    /**
+     * Returns window Selection
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+     * @return {Selection}
+     */
+    static get() {
 
         return window.getSelection();
 
     }
 
-    static getSelectionAnchorNode() {
+    /**
+     * Returns selected anchor
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
+     * @return {Node}
+     */
+    static getAnchorNode() {
 
         let selection = window.getSelection();
 
@@ -31,7 +41,12 @@ export default class Selection {
 
     }
 
-    static getSelectionAnchorOffset() {
+    /**
+     * Returns selection offset according to the anchor node
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
+     * @return {Number}
+     */
+    static getAnchorOffset() {
 
         let selection = window.getSelection();
 
