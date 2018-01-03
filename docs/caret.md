@@ -1,8 +1,6 @@
 # CodeX Editor Caret Module
 
-The `Caret` module contains methods working with caret.
-
-Uses [Range](https://developer.mozilla.org/en-US/docs/Web/API/Range) methods to navigate caret
+The `Caret` module contains methods working with caret. Uses [Range](https://developer.mozilla.org/en-US/docs/Web/API/Range) methods to navigate caret
 between blocks. 
 
 Caret class implements basic Module class that holds User configuration
@@ -18,7 +16,7 @@ You can read more about Module class [here]()
 ### setToBlock
 
 ```javascript
-Caret.setToBlock()
+Caret.setToBlock(block, offset, atEnd)
 ```
 
 
