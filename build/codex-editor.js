@@ -2377,6 +2377,9 @@ var Caret = function (_Module) {
                 return;
             }
 
+            /**
+             * @todo try to fix via Promises or use querySelectorAll to not to use timeout
+             */
             _.delay(function () {
                 return _this2.set(nodeToSet, offset);
             }, 20)();
