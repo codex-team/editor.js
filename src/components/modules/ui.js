@@ -31,7 +31,7 @@
 // SETTINGS_ITEM : 'ce-settings__item'
 // };
 
-import Block from '../block';
+// import Block from '../block';
 
 /**
  * @class

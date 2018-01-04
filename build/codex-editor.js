@@ -200,6 +200,15 @@ var Util = function () {
         }
 
         /**
+         * Returns basic keycodes as constants
+         * @return {{}}
+         */
+
+    }, {
+        key: 'sequence',
+
+
+        /**
          * @typedef {Object} ChainData
          * @property {Object} data - data that will be passed to the success or fallback
          * @property {Function} function - function's that must be called asynchronically
@@ -214,9 +223,6 @@ var Util = function () {
          *
          * @return {Promise}
          */
-
-    }, {
-        key: 'sequence',
         value: function sequence(chains) {
             var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
             var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
@@ -315,6 +321,62 @@ var Util = function () {
 
             return Promise.resolve(object) === object;
         }
+
+        /**
+         * Check if passed element is contenteditable
+         * @param element
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isContentEditable',
+        value: function isContentEditable(element) {
+
+            return element.contentEditable === 'true';
+        }
+
+        /**
+         * Delays method execution
+         *
+         * @param method
+         * @param timeout
+         */
+
+    }, {
+        key: 'delay',
+        value: function delay(method, timeout) {
+
+            return function () {
+
+                var context = this,
+                    args = arguments;
+
+                window.setTimeout(function () {
+                    return method.apply(context, args);
+                }, timeout);
+            };
+        }
+    }, {
+        key: 'keyCodes',
+        get: function get() {
+
+            return {
+                BACKSPACE: 8,
+                TAB: 9,
+                ENTER: 13,
+                SHIFT: 16,
+                CTRL: 17,
+                ALT: 18,
+                ESC: 27,
+                SPACE: 32,
+                LEFT: 37,
+                UP: 38,
+                DOWN: 40,
+                RIGHT: 39,
+                DELETE: 46,
+                META: 91
+            };
+        }
     }]);
 
     return Util;
@@ -345,7 +407,7 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * DOM manupulations helper
+ * DOM manipulations helper
  */
 var Dom = function () {
     function Dom() {
@@ -386,6 +448,19 @@ var Dom = function () {
             }
 
             return el;
+        }
+
+        /**
+         * Creates Text Node with the passed content
+         * @param {String} content - text content
+         * @return {Text}
+         */
+
+    }, {
+        key: 'text',
+        value: function text(content) {
+
+            return document.createTextNode(content);
         }
 
         /**
@@ -452,6 +527,51 @@ var Dom = function () {
         }
 
         /**
+         * Search for deepest node which is Leaf.
+         * Leaf is the vertex that doesn't have any child nodes
+         *
+         * @description Method recursively goes throw the all Node until it finds the Leaf
+         *
+         * @param {Element} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
+         * @param {Boolean} atLast - find last text node
+         * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
+         */
+
+    }, {
+        key: 'getDeepestNode',
+        value: function getDeepestNode(node) {
+            var atLast = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+
+            if (node.childNodes.length === 0) {
+
+                /**
+                 * We need to return an empty text node
+                 * But caret will not be placed in empty textNode, so we need textNode with zero-width char
+                 */
+                if (this.isElement(node) && !this.isNativeInput(node)) {
+
+                    var emptyTextNode = this.text('\u200B');
+
+                    node.appendChild(emptyTextNode);
+                }
+
+                return node;
+            }
+
+            var childsLength = node.childNodes.length,
+                last = childsLength - 1;
+
+            if (atLast) {
+
+                return this.getDeepestNode(node.childNodes[last], atLast);
+            } else {
+
+                return this.getDeepestNode(node.childNodes[0], false);
+            }
+        }
+
+        /**
          * Check if object is DOM node
          *
          * @param {Object} node
@@ -463,6 +583,120 @@ var Dom = function () {
         value: function isElement(node) {
 
             return node && (typeof node === 'undefined' ? 'undefined' : _typeof(node)) === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
+        }
+
+        /**
+         * Checks target if it is native input
+         * @param {Element|String} target - HTML element or string
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'isNativeInput',
+        value: function isNativeInput(target) {
+
+            var nativeInputs = ['INPUT', 'TEXTAREA'];
+
+            return target ? nativeInputs.includes(target.tagName) : false;
+        }
+
+        /**
+         * Checks node if it is empty
+         *
+         * @description Method checks simple Node without any childs for emptiness
+         * If you have Node with 2 or more children id depth, you better use {@link Dom#isEmpty} method
+         *
+         * @param {Node} node
+         * @return {Boolean} true if it is empty
+         */
+
+    }, {
+        key: 'isNodeEmpty',
+        value: function isNodeEmpty(node) {
+
+            var nodeText = void 0;
+
+            if (this.isElement(node) && this.isNativeInput(node)) {
+
+                nodeText = node.value;
+            } else {
+
+                nodeText = node.textContent.replace('\u200B', '');
+            }
+
+            return nodeText.trim().length === 0;
+        }
+
+        /**
+         * checks node if it is doesn't have any child nodes
+         * @param {Node} node
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isLeaf',
+        value: function isLeaf(node) {
+
+            if (!node) {
+
+                return false;
+            }
+
+            return node.childNodes.length === 0;
+        }
+
+        /**
+         * breadth-first search (BFS)
+         * {@link https://en.wikipedia.org/wiki/Breadth-first_search}
+         *
+         * @description Pushes to stack all DOM leafs and checks for emptiness
+         *
+         * @param {Node} node
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isEmpty',
+        value: function isEmpty(node) {
+            var _this = this;
+
+            var treeWalker = [],
+                leafs = [];
+
+            if (!node) {
+
+                return false;
+            }
+
+            treeWalker.push(node);
+
+            while (treeWalker.length > 0) {
+
+                if (this.isLeaf(node)) {
+
+                    leafs.push(node);
+                }
+
+                while (node && node.nextSibling) {
+
+                    node = node.nextSibling;
+
+                    if (!node) continue;
+
+                    treeWalker.push(node);
+                }
+
+                node = treeWalker.shift();
+
+                if (!node) continue;
+
+                node = node.firstChild;
+                treeWalker.push(node);
+            }
+
+            return leafs.every(function (leaf) {
+                return _this.isNodeEmpty(leaf);
+            });
         }
     }]);
 
@@ -479,7 +713,7 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($, _) {
+
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -490,254 +724,77 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- *
- * @class Block
- * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
- *
- * @property {Tool} tool — current block tool (Paragraph, for example)
- * @property {Object} CSS — block`s css classes
- *
+ * Working with selection
  */
-
-/**
- * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
- *
- * @property tool - Tool instance
- * @property html - Returns HTML content of plugin
- * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
- * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
- * @property pluginsContent - HTML content that returns by Tool's render function
- */
-var Block = function () {
+var Selection = function () {
 
     /**
      * @constructor
-     * @param {String} toolName - Tool name that passed on initialization
-     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
      */
-    function Block(toolName, toolInstance) {
-        _classCallCheck(this, Block);
+    function Selection() {
+        _classCallCheck(this, Selection);
 
-        this.name = toolName;
-        this.tool = toolInstance;
-        this._html = this.compose();
+        this.instance = null;
+        this.selection = null;
     }
 
     /**
-     * CSS classes for the Block
-     * @return {{wrapper: string, content: string}}
+     * Returns window Selection
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+     * @return {Selection}
      */
 
 
-    _createClass(Block, [{
-        key: 'compose',
+    _createClass(Selection, null, [{
+        key: "get",
+        value: function get() {
 
-
-        /**
-         * Make default Block wrappers and put Tool`s content there
-         * @returns {HTMLDivElement}
-         */
-        value: function compose() {
-
-            this.wrapper = $.make('div', Block.CSS.wrapper);
-            this.contentNode = $.make('div', Block.CSS.content);
-            this.pluginsContent = this.tool.render();
-
-            this.contentNode.appendChild(this.pluginsContent);
-            this.wrapper.appendChild(this.contentNode);
-
-            return this.wrapper;
+            return window.getSelection();
         }
 
         /**
-         * Calls Tool's method
-         *
-         * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
-         *
-         * @param {String} methodName
-         * @param {Object} params
+         * Returns selected anchor
+         * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
+         * @return {Node}
          */
 
     }, {
-        key: 'call',
-        value: function call(methodName, params) {
+        key: "getAnchorNode",
+        value: function getAnchorNode() {
 
-            /**
-             * call Tool's method with the instance context
-             */
-            if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+            var selection = window.getSelection();
 
-                this.tool[methodName].call(this.tool, params);
+            if (selection) {
+
+                return selection.anchorNode;
             }
         }
 
         /**
-         * Get Block`s HTML
-         * @returns {HTMLElement}
+         * Returns selection offset according to the anchor node
+         * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
+         * @return {Number}
          */
 
     }, {
-        key: 'save',
+        key: "getAnchorOffset",
+        value: function getAnchorOffset() {
 
+            var selection = window.getSelection();
 
-        /**
-         * Extracts data from Block
-         * Groups Tool's save processing time
-         * @return {Object}
-         */
-        value: function save() {
-            var _this = this;
+            if (selection) {
 
-            var extractedBlock = this.tool.save(this.pluginsContent);
-
-            /** Measuring execution time*/
-            var measuringStart = window.performance.now(),
-                measuringEnd = void 0;
-
-            return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
-
-                /** measure promise execution */
-                measuringEnd = window.performance.now();
-
-                return {
-                    tool: _this.name,
-                    data: finishedExtraction,
-                    time: measuringEnd - measuringStart
-                };
-            }).catch(function (error) {
-
-                _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
-            });
-        }
-
-        /**
-         * Uses Tool's validation method to check the correctness of output data
-         * Tool's validation method is optional
-         *
-         * @description Method also can return data if it passed the validation
-         *
-         * @param {Object} data
-         * @returns {Boolean|Object} valid
-         */
-
-    }, {
-        key: 'validateData',
-        value: function validateData(data) {
-
-            var isValid = true;
-
-            if (this.tool.validate instanceof Function) {
-
-                isValid = this.tool.validate(data);
+                return selection.anchorOffset;
             }
-
-            if (!isValid) {
-
-                return false;
-            }
-
-            return data;
-        }
-
-        /**
-         * Check block for emptiness
-         * @return {Boolean}
-         */
-
-    }, {
-        key: 'html',
-        get: function get() {
-
-            return this._html;
-        }
-
-        /**
-         * Get Block's JSON data
-         * @return {Object}
-         */
-
-    }, {
-        key: 'data',
-        get: function get() {
-
-            return this.save();
-        }
-    }, {
-        key: 'isEmpty',
-        get: function get() {
-
-            /**
-             * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
-             * That Tools are not empty
-             */
-            if (this.tool.contentless) {
-
-                return false;
-            }
-
-            var emptyText = this._html.textContent.trim().length === 0,
-                emptyMedia = !this.hasMedia;
-
-            return emptyText && emptyMedia;
-        }
-
-        /**
-         * Check if block has a media content such as images, iframes and other
-         * @return {Boolean}
-         */
-
-    }, {
-        key: 'hasMedia',
-        get: function get() {
-
-            /**
-             * This tags represents media-content
-             * @type {string[]}
-             */
-            var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
-
-            return !!this._html.querySelector(mediaTags.join(','));
-        }
-
-        /**
-         * Set selected state
-         * @param {Boolean} state - 'true' to select, 'false' to remove selection
-         */
-
-    }, {
-        key: 'selected',
-        set: function set(state) {
-
-            /**
-             * We don't need to mark Block as Selected when it is not empty
-             */
-            if (state === true && !this.isEmpty) {
-
-                this._html.classList.add(Block.CSS.selected);
-            } else {
-
-                this._html.classList.remove(Block.CSS.selected);
-            }
-        }
-    }], [{
-        key: 'CSS',
-        get: function get() {
-
-            return {
-                wrapper: 'ce-block',
-                content: 'ce-block__content',
-                selected: 'ce-block--selected'
-            };
         }
     }]);
 
-    return Block;
+    return Selection;
 }();
 
-Block.displayName = 'Block';
-exports.default = Block;
-module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
+Selection.displayName = "Selection";
+exports.default = Selection;
+module.exports = exports["default"];
 
 /***/ }),
 /* 4 */
@@ -1232,15 +1289,15 @@ if (!Element.prototype.closest) Element.prototype.closest = function (s) {
 
 var map = {
 	"./blockManager.js": 7,
-	"./caret.js": 8,
-	"./events.js": 9,
-	"./renderer.js": 10,
-	"./sanitizer.js": 11,
-	"./saver.js": 13,
-	"./toolbar.js": 14,
-	"./toolbox.js": 15,
-	"./tools.js": 16,
-	"./ui.js": 17
+	"./caret.js": 9,
+	"./events.js": 10,
+	"./renderer.js": 11,
+	"./sanitizer.js": 12,
+	"./saver.js": 14,
+	"./toolbar.js": 15,
+	"./toolbox.js": 16,
+	"./tools.js": 17,
+	"./ui.js": 18
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1263,7 +1320,7 @@ webpackContext.id = 6;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, $, _) {
+/* WEBPACK VAR INJECTION */(function(Module, _, $) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1271,9 +1328,13 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _block = __webpack_require__(3);
+var _block = __webpack_require__(8);
 
 var _block2 = _interopRequireDefault(_block);
+
+var _Selection = __webpack_require__(3);
+
+var _Selection2 = _interopRequireDefault(_Selection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1286,6 +1347,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @classdesc Manage editor`s blocks storage and appearance
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 *
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 * @module BlockManager
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @version 2.0.0
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 /**
@@ -1382,12 +1445,115 @@ var BlockManager = function (_Module) {
             var toolInstance = this.Editor.Tools.construct(toolName, data),
                 block = new _block2.default(toolName, toolInstance);
 
+            this.bindEvents(block);
+
             /**
              * Apply callback before inserting html
              */
             block.call('appendCallback', {});
 
             return block;
+        }
+
+        /**
+         * Bind Events
+         * @param {Object} block
+         */
+
+    }, {
+        key: 'bindEvents',
+        value: function bindEvents(block) {
+            var _this3 = this;
+
+            /**
+             * keydown on block
+             * @todo move to the keydown module
+             */
+            block.pluginsContent.addEventListener('keydown', function (event) {
+                return _this3.keyDownOnBlock(event);
+            }, false);
+        }
+
+        /**
+         * @todo move to the keydown module
+         * @param {MouseEvent} event
+         */
+
+    }, {
+        key: 'keyDownOnBlock',
+        value: function keyDownOnBlock(event) {
+
+            switch (event.keyCode) {
+
+                case _.keyCodes.ENTER:
+                    this.enterPressedOnPluginsContent(event);
+                    break;
+                case _.keyCodes.DOWN:
+                case _.keyCodes.RIGHT:
+                    this.navigateNext();
+                    break;
+                case _.keyCodes.UP:
+                case _.keyCodes.LEFT:
+                    this.navigatePrevious();
+                    break;
+
+            }
+        }
+
+        /**
+         * Set's caret to the next Block
+         * Before moving caret, we should check if caret position is at the end of Plugins node
+         * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+         */
+
+    }, {
+        key: 'navigateNext',
+        value: function navigateNext() {
+
+            var lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
+                textNodeLength = lastTextNode.length;
+
+            if (_Selection2.default.getAnchorNode() !== lastTextNode) {
+
+                return;
+            }
+
+            if (_Selection2.default.getAnchorOffset() === textNodeLength) {
+
+                var nextBlock = this.nextBlock;
+
+                if (!nextBlock) return;
+
+                this.Editor.Caret.setToBlock(nextBlock);
+            }
+        }
+
+        /**
+         * Set's caret to the previous Block
+         * Before moving caret, we should check if caret position is at the end of Plugins node
+         * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+         */
+
+    }, {
+        key: 'navigatePrevious',
+        value: function navigatePrevious() {
+
+            var firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
+                textNodeLength = firstTextNode.length;
+
+            if (_Selection2.default.getAnchorNode() !== firstTextNode) {
+
+                return;
+            }
+
+            if (_Selection2.default.getAnchorOffset() === 0) {
+
+                var previousBlock = this.previousBlock;
+
+                if (!previousBlock) return;
+
+                this.Editor.Caret.setToBlock(previousBlock, textNodeLength, true);
+            }
         }
 
         /**
@@ -1406,6 +1572,7 @@ var BlockManager = function (_Module) {
             var block = this.composeBlock(toolName, data);
 
             this._blocks[++this.currentBlockIndex] = block;
+            this.Editor.Caret.setToBlock(block);
         }
 
         /**
@@ -1427,10 +1594,26 @@ var BlockManager = function (_Module) {
         }
 
         /**
+         * returns last Block
+         * @return {Block}
+         */
+
+    }, {
+        key: 'getBlockByIndex',
+
+
+        /**
+         * Returns Block by passed index
+         * @param {Number} index
+         * @return {Block}
+         */
+        value: function getBlockByIndex(index) {
+
+            return this._blocks[index];
+        }
+
+        /**
          * Get Block instance by html element
-         *
-         * @todo get first level block before searching
-         *
          * @param {HTMLElement} element
          * @returns {Block}
          */
@@ -1440,7 +1623,8 @@ var BlockManager = function (_Module) {
         value: function getBlock(element) {
 
             var nodes = this._blocks.nodes,
-                index = nodes.indexOf(element);
+                firstLevelBlock = element.closest('.' + _block2.default.CSS.wrapper),
+                index = nodes.indexOf(firstLevelBlock);
 
             if (index >= 0) {
 
@@ -1486,10 +1670,54 @@ var BlockManager = function (_Module) {
             }
         }
     }, {
+        key: 'lastBlock',
+        get: function get() {
+
+            return this._blocks[this._blocks.length - 1];
+        }
+    }, {
         key: 'currentBlock',
         get: function get() {
 
             return this._blocks[this.currentBlockIndex];
+        }
+
+        /**
+         * Returns next Block instance
+         * @return {Block|null}
+         */
+
+    }, {
+        key: 'nextBlock',
+        get: function get() {
+
+            var isLastBlock = this.currentBlockIndex === this._blocks.length - 1;
+
+            if (isLastBlock) {
+
+                return null;
+            }
+
+            return this._blocks[this.currentBlockIndex + 1];
+        }
+
+        /**
+         * Returns previous Block instance
+         * @return {Block|null}
+         */
+
+    }, {
+        key: 'previousBlock',
+        get: function get() {
+
+            var isFirstBlock = this.currentBlockIndex === 0;
+
+            if (isFirstBlock) {
+
+                return null;
+            }
+
+            return this._blocks[this.currentBlockIndex - 1];
         }
 
         /**
@@ -1507,21 +1735,19 @@ var BlockManager = function (_Module) {
 
         /**
          * Set currentBlockIndex to passed block
-         *
-         * @todo get first level block before searching
-         *
          * @param {HTMLElement} element
          */
         ,
         set: function set(element) {
 
-            var nodes = this._blocks.nodes;
+            var nodes = this._blocks.nodes,
+                firstLevelBlock = element.closest('.' + _block2.default.CSS.wrapper);
 
             /**
              * Update current Block's index
              * @type {number}
              */
-            this.currentBlockIndex = nodes.indexOf(element);
+            this.currentBlockIndex = nodes.indexOf(firstLevelBlock);
 
             /**
              * Remove previous selected Block's state
@@ -1787,14 +2013,14 @@ var Blocks = function () {
 
 Blocks.displayName = 'Blocks';
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2)))
 
 /***/ }),
 /* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module) {
+/* WEBPACK VAR INJECTION */(function($, _) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1804,16 +2030,295 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+/**
+ *
+ * @class Block
+ * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
+ *
+ * @property {Tool} tool — current block tool (Paragraph, for example)
+ * @property {Object} CSS — block`s css classes
+ *
+ */
 
 /**
- * @class Caret
- * @classdesc Contains methods for working Caret
+ * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  *
+ * @property tool - Tool instance
+ * @property html - Returns HTML content of plugin
+ * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+ * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property pluginsContent - HTML content that returns by Tool's render function
+ */
+var Block = function () {
+
+    /**
+     * @constructor
+     * @param {String} toolName - Tool name that passed on initialization
+     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
+     */
+    function Block(toolName, toolInstance) {
+        _classCallCheck(this, Block);
+
+        this.name = toolName;
+        this.tool = toolInstance;
+        this._html = this.compose();
+    }
+
+    /**
+     * CSS classes for the Block
+     * @return {{wrapper: string, content: string}}
+     */
+
+
+    _createClass(Block, [{
+        key: 'compose',
+
+
+        /**
+         * Make default Block wrappers and put Tool`s content there
+         * @returns {HTMLDivElement}
+         */
+        value: function compose() {
+
+            this.wrapper = $.make('div', Block.CSS.wrapper);
+            this.contentNode = $.make('div', Block.CSS.content);
+            this.pluginsContent = this.tool.render();
+
+            this.contentNode.appendChild(this.pluginsContent);
+            this.wrapper.appendChild(this.contentNode);
+
+            return this.wrapper;
+        }
+
+        /**
+         * Calls Tool's method
+         *
+         * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
+         *
+         * @param {String} methodName
+         * @param {Object} params
+         */
+
+    }, {
+        key: 'call',
+        value: function call(methodName, params) {
+
+            /**
+             * call Tool's method with the instance context
+             */
+            if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+
+                this.tool[methodName].call(this.tool, params);
+            }
+        }
+
+        /**
+         * Get Block`s HTML
+         * @returns {HTMLElement}
+         */
+
+    }, {
+        key: 'save',
+
+
+        /**
+         * Extracts data from Block
+         * Groups Tool's save processing time
+         * @return {Object}
+         */
+        value: function save() {
+            var _this = this;
+
+            var extractedBlock = this.tool.save(this.pluginsContent);
+
+            /** Measuring execution time*/
+            var measuringStart = window.performance.now(),
+                measuringEnd = void 0;
+
+            return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
+
+                /** measure promise execution */
+                measuringEnd = window.performance.now();
+
+                return {
+                    tool: _this.name,
+                    data: finishedExtraction,
+                    time: measuringEnd - measuringStart
+                };
+            }).catch(function (error) {
+
+                _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
+            });
+        }
+
+        /**
+         * Uses Tool's validation method to check the correctness of output data
+         * Tool's validation method is optional
+         *
+         * @description Method also can return data if it passed the validation
+         *
+         * @param {Object} data
+         * @returns {Boolean|Object} valid
+         */
+
+    }, {
+        key: 'validateData',
+        value: function validateData(data) {
+
+            var isValid = true;
+
+            if (this.tool.validate instanceof Function) {
+
+                isValid = this.tool.validate(data);
+            }
+
+            if (!isValid) {
+
+                return false;
+            }
+
+            return data;
+        }
+
+        /**
+         * Check block for emptiness
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'html',
+        get: function get() {
+
+            return this._html;
+        }
+
+        /**
+         * Get Block's JSON data
+         * @return {Object}
+         */
+
+    }, {
+        key: 'data',
+        get: function get() {
+
+            return this.save();
+        }
+    }, {
+        key: 'isEmpty',
+        get: function get() {
+
+            /**
+             * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
+             * That Tools are not empty
+             */
+            if (this.tool.contentless) {
+
+                return false;
+            }
+
+            var emptyText = $.isEmpty(this.pluginsContent),
+                emptyMedia = !this.hasMedia;
+
+            return emptyText && emptyMedia;
+        }
+
+        /**
+         * Check if block has a media content such as images, iframes and other
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'hasMedia',
+        get: function get() {
+
+            /**
+             * This tags represents media-content
+             * @type {string[]}
+             */
+            var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
+
+            return !!this._html.querySelector(mediaTags.join(','));
+        }
+
+        /**
+         * Set selected state
+         * @param {Boolean} state - 'true' to select, 'false' to remove selection
+         */
+
+    }, {
+        key: 'selected',
+        set: function set(state) {
+
+            /**
+             * We don't need to mark Block as Selected when it is not empty
+             */
+            if (state === true && !this.isEmpty) {
+
+                this._html.classList.add(Block.CSS.selected);
+            } else {
+
+                this._html.classList.remove(Block.CSS.selected);
+            }
+        }
+    }], [{
+        key: 'CSS',
+        get: function get() {
+
+            return {
+                wrapper: 'ce-block',
+                content: 'ce-block__content',
+                selected: 'ce-block--selected'
+            };
+        }
+    }]);
+
+    return Block;
+}();
+
+Block.displayName = 'Block';
+exports.default = Block;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module, $, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Selection = __webpack_require__(3);
+
+var _Selection2 = _interopRequireDefault(_Selection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @class Caret
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @classdesc Contains methods for working Caret
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Uses Range methods to manipulate with caret
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @module Caret
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @version 2.0.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+/**
  * @typedef {Caret} Caret
  */
+
+
 var Caret = function (_Module) {
     _inherits(Caret, _Module);
 
@@ -1829,23 +2334,93 @@ var Caret = function (_Module) {
     }
 
     /**
-     * Set Caret to the last Block
+     * Method gets Block instance and puts caret to the text node with offset
+     * There two ways that method applies caret position:
+     *   - first found text node: sets at the beginning, but you can pass an offset
+     *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
      *
-     * If last block is not empty, append another empty block
+     * @param {Block} block - Block class
+     * @param {Number} offset - caret offset regarding to the text node
+     * @param {Boolean} atEnd - put caret at the end of the text node or not
      */
 
 
     _createClass(Caret, [{
+        key: 'setToBlock',
+        value: function setToBlock(block) {
+            var _this2 = this;
+
+            var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+            var atEnd = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+
+            var element = block.pluginsContent;
+
+            /** If Element is INPUT */
+            if ($.isNativeInput(element)) {
+
+                element.focus();
+                return;
+            }
+
+            var nodeToSet = $.getDeepestNode(element, atEnd);
+
+            if (atEnd || offset > nodeToSet.length) {
+
+                offset = nodeToSet.length;
+            }
+
+            /** if found deepest node is native input */
+            if ($.isNativeInput(nodeToSet)) {
+
+                nodeToSet.focus();
+                return;
+            }
+
+            /**
+             * @todo try to fix via Promises or use querySelectorAll to not to use timeout
+             */
+            _.delay(function () {
+                return _this2.set(nodeToSet, offset);
+            }, 20)();
+
+            this.Editor.BlockManager.currentNode = block.wrapper;
+        }
+
+        /**
+         * Creates Document Range and sets caret to the element with offset
+         * @param {Element} element - target node.
+         * @param {Number} offset - offset
+         */
+
+    }, {
+        key: 'set',
+        value: function set(element) {
+            var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+
+            var range = document.createRange(),
+                selection = _Selection2.default.get();
+
+            range.setStart(element, offset);
+            range.setEnd(element, offset);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+    }, {
         key: 'setToTheLastBlock',
+
+
+        /**
+         * Set Caret to the last Block
+         * If last block is not empty, append another empty block
+         */
         value: function setToTheLastBlock() {
 
-            var blocks = this.Editor.BlockManager.blocks,
-                lastBlock = void 0;
+            var lastBlock = this.Editor.BlockManager.lastBlock;
 
-            if (blocks.length) {
-
-                lastBlock = blocks[blocks.length - 1];
-            }
+            if (!lastBlock) return;
 
             /**
              * If last block is empty and it is an initialBlock, set to that.
@@ -1853,70 +2428,11 @@ var Caret = function (_Module) {
              */
             if (lastBlock.isEmpty) {
 
-                this.set(lastBlock.html);
+                this.setToBlock(lastBlock);
             } else {
 
                 this.Editor.BlockManager.insert(this.config.initialBlock);
             }
-
-            /**
-             //      * If inputs in redactor does not exits, then we put input index 0 not -1
-             //      */
-            //     var indexOfLastInput = editor.state.inputs.length > 0 ? editor.state.inputs.length - 1 : 0;
-            //
-            //     /** If we have any inputs */
-            //     if (editor.state.inputs.length) {
-            //
-            //         /** getting firstlevel parent of input */
-            //         firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
-            //
-            //     }
-            //
-            //     /** If input is empty, then we set caret to the last input */
-            //     if (editor.state.inputs.length && editor.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == editor.settings.initialBlockPlugin) {
-            //
-            //         editor.caret.setToBlock(indexOfLastInput);
-            //
-            //     } else {
-            //
-            //         /** Create new input when caret clicked in redactors area */
-            //         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
-            //
-            //         editor.content.insertBlock({
-            //             type  : NEW_BLOCK_TYPE,
-            //             block : editor.tools[NEW_BLOCK_TYPE].render()
-            //         });
-            //
-            //         /** If there is no inputs except inserted */
-            //         if (editor.state.inputs.length === 1) {
-            //
-            //             editor.caret.setToBlock(indexOfLastInput);
-            //
-            //         } else {
-            //
-            //             /** Set caret to this appended input */
-            //             editor.caret.setToNextBlock(indexOfLastInput);
-            //
-            //         }
-            //
-            //     }
-        }
-
-        /**
-         * Set caret to the passed Node
-         * @param {Element} node - content-editable Element
-         */
-
-    }, {
-        key: 'set',
-        value: function set(node) {
-
-            /**
-             * @todo add working with Selection
-             * tmp: work with textContent
-             */
-
-            node.textContent += '|';
         }
     }]);
 
@@ -1926,10 +2442,10 @@ var Caret = function (_Module) {
 Caret.displayName = 'Caret';
 exports.default = Caret;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2035,7 +2551,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2163,7 +2679,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2241,7 +2757,7 @@ var Sanitizer = function (_Module) {
         _this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
 
         /** HTML Janitor library */
-        _this.sanitizerInstance = __webpack_require__(12);
+        _this.sanitizerInstance = __webpack_require__(13);
 
         return _this;
     }
@@ -2344,7 +2860,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -2539,7 +3055,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (roo
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2830,7 +3346,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3159,7 +3675,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3424,7 +3940,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3723,7 +4239,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3735,21 +4251,17 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _block = __webpack_require__(3);
-
-var _block2 = _interopRequireDefault(_block);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Module UI
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @type {UI}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Module UI
+ *
+ * @type {UI}
+ */
 // let className = {
 
 /**
@@ -3777,6 +4289,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
      */
 // SETTINGS_ITEM : 'ce-settings__item'
 // };
+
+// import Block from '../block';
 
 /**
  * @class
@@ -3924,7 +4438,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(18);
+      var styles = __webpack_require__(19);
 
       /**
        * Make tag
@@ -4342,21 +4856,21 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(19)(undefined);
+exports = module.exports = __webpack_require__(20)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n    /**\n     * Block content width\n     */\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 10px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  opacity: 0;\n  visibility: hidden;\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n}\n.ce-toolbar--opened {\n    opacity: 1;\n    visibility: visible;\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-34px - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    width: 34px;\n    height: 34px;\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n    content: '+';\n    font-size: 26px;\n    display: block;\n    margin-top: -2px;\n    margin-right: -2px;\n\n}\n.ce-toolbar__plus--hidden {\n      display: none;\n\n}\n.ce-toolbox {\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        width: 34px;\n        height: 34px;\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px\n    }\n.ce-toolbox__button::before {\n    content: attr(title);\n    font-size: 22px;\n    font-weight: 500;\n    letter-spacing: 1em;\n    -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n            font-feature-settings: \"smcp\", \"c2sc\";\n    font-variant-caps: all-small-caps;\n    padding-left: 11.5px;\n    margin-top: -1px;\n    display: inline-block;\n\n}\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0;\n}\n.ce-block--selected {\n    background-color: #eff2f5;\n  }\n.ce-block__content {\n    max-width: 650px;\n    margin: 0 auto;\n  }\n", ""]);
+exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n    /**\n     * Block content width\n     */\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 10px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-34px - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    width: 34px;\n    height: 34px;\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n    content: '+';\n    font-size: 26px;\n    display: block;\n    margin-top: -2px;\n    margin-right: -2px;\n\n}\n.ce-toolbar__plus--hidden {\n      display: none;\n\n}\n.ce-toolbox {\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        width: 34px;\n        height: 34px;\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px\n    }\n.ce-toolbox__button::before {\n    content: attr(title);\n    font-size: 22px;\n    font-weight: 500;\n    letter-spacing: 1em;\n    -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n            font-feature-settings: \"smcp\", \"c2sc\";\n    font-variant-caps: all-small-caps;\n    padding-left: 11.5px;\n    margin-top: -1px;\n    display: inline-block;\n\n}\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0;\n}\n.ce-block--selected {\n    background-color: #eff2f5;\n  }\n.ce-block__content {\n    max-width: 650px;\n    margin: 0 auto;\n  }\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 /*
