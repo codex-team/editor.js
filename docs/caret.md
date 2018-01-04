@@ -4,7 +4,7 @@ The `Caret` module contains methods working with caret. Uses [Range](https://dev
 between blocks. 
 
 Caret class implements basic Module class that holds User configuration
-and default CodeXEditor instances
+and default CodeX Editor instances
 
 You can read more about Module class [here]()
 
@@ -12,13 +12,11 @@ You can read more about Module class [here]()
 
 ## Methods
 
-
 ### setToBlock
 
 ```javascript
 Caret.setToBlock(block, offset, atEnd)
 ```
-
 
 > Method gets Block instance and puts caret to the text node with offset
 
