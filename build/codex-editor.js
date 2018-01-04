@@ -61,7 +61,7 @@ var CodexEditor =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -713,271 +713,6 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function($, _) {
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- *
- * @class Block
- * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
- *
- * @property {Tool} tool — current block tool (Paragraph, for example)
- * @property {Object} CSS — block`s css classes
- *
- */
-
-/**
- * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
- *
- * @property tool - Tool instance
- * @property html - Returns HTML content of plugin
- * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
- * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
- * @property pluginsContent - HTML content that returns by Tool's render function
- */
-var Block = function () {
-
-    /**
-     * @constructor
-     * @param {String} toolName - Tool name that passed on initialization
-     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
-     */
-    function Block(toolName, toolInstance) {
-        _classCallCheck(this, Block);
-
-        this.name = toolName;
-        this.tool = toolInstance;
-        this._html = this.compose();
-    }
-
-    /**
-     * CSS classes for the Block
-     * @return {{wrapper: string, content: string}}
-     */
-
-
-    _createClass(Block, [{
-        key: 'compose',
-
-
-        /**
-         * Make default Block wrappers and put Tool`s content there
-         * @returns {HTMLDivElement}
-         */
-        value: function compose() {
-
-            this.wrapper = $.make('div', Block.CSS.wrapper);
-            this.contentNode = $.make('div', Block.CSS.content);
-            this.pluginsContent = this.tool.render();
-
-            this.contentNode.appendChild(this.pluginsContent);
-            this.wrapper.appendChild(this.contentNode);
-
-            return this.wrapper;
-        }
-
-        /**
-         * Calls Tool's method
-         *
-         * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
-         *
-         * @param {String} methodName
-         * @param {Object} params
-         */
-
-    }, {
-        key: 'call',
-        value: function call(methodName, params) {
-
-            /**
-             * call Tool's method with the instance context
-             */
-            if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
-
-                this.tool[methodName].call(this.tool, params);
-            }
-        }
-
-        /**
-         * Get Block`s HTML
-         * @returns {HTMLElement}
-         */
-
-    }, {
-        key: 'save',
-
-
-        /**
-         * Extracts data from Block
-         * Groups Tool's save processing time
-         * @return {Object}
-         */
-        value: function save() {
-            var _this = this;
-
-            var extractedBlock = this.tool.save(this.pluginsContent);
-
-            /** Measuring execution time*/
-            var measuringStart = window.performance.now(),
-                measuringEnd = void 0;
-
-            return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
-
-                /** measure promise execution */
-                measuringEnd = window.performance.now();
-
-                return {
-                    tool: _this.name,
-                    data: finishedExtraction,
-                    time: measuringEnd - measuringStart
-                };
-            }).catch(function (error) {
-
-                _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
-            });
-        }
-
-        /**
-         * Uses Tool's validation method to check the correctness of output data
-         * Tool's validation method is optional
-         *
-         * @description Method also can return data if it passed the validation
-         *
-         * @param {Object} data
-         * @returns {Boolean|Object} valid
-         */
-
-    }, {
-        key: 'validateData',
-        value: function validateData(data) {
-
-            var isValid = true;
-
-            if (this.tool.validate instanceof Function) {
-
-                isValid = this.tool.validate(data);
-            }
-
-            if (!isValid) {
-
-                return false;
-            }
-
-            return data;
-        }
-
-        /**
-         * Check block for emptiness
-         * @return {Boolean}
-         */
-
-    }, {
-        key: 'html',
-        get: function get() {
-
-            return this._html;
-        }
-
-        /**
-         * Get Block's JSON data
-         * @return {Object}
-         */
-
-    }, {
-        key: 'data',
-        get: function get() {
-
-            return this.save();
-        }
-    }, {
-        key: 'isEmpty',
-        get: function get() {
-
-            /**
-             * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
-             * That Tools are not empty
-             */
-            if (this.tool.contentless) {
-
-                return false;
-            }
-
-            var emptyText = $.isEmpty(this.pluginsContent),
-                emptyMedia = !this.hasMedia;
-
-            return emptyText && emptyMedia;
-        }
-
-        /**
-         * Check if block has a media content such as images, iframes and other
-         * @return {Boolean}
-         */
-
-    }, {
-        key: 'hasMedia',
-        get: function get() {
-
-            /**
-             * This tags represents media-content
-             * @type {string[]}
-             */
-            var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
-
-            return !!this._html.querySelector(mediaTags.join(','));
-        }
-
-        /**
-         * Set selected state
-         * @param {Boolean} state - 'true' to select, 'false' to remove selection
-         */
-
-    }, {
-        key: 'selected',
-        set: function set(state) {
-
-            /**
-             * We don't need to mark Block as Selected when it is not empty
-             */
-            if (state === true && !this.isEmpty) {
-
-                this._html.classList.add(Block.CSS.selected);
-            } else {
-
-                this._html.classList.remove(Block.CSS.selected);
-            }
-        }
-    }], [{
-        key: 'CSS',
-        get: function get() {
-
-            return {
-                wrapper: 'ce-block',
-                content: 'ce-block__content',
-                selected: 'ce-block--selected'
-            };
-        }
-    }]);
-
-    return Block;
-}();
-
-Block.displayName = 'Block';
-exports.default = Block;
-module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
@@ -1062,7 +797,7 @@ exports.default = Selection;
 module.exports = exports["default"];
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1138,7 +873,7 @@ module.exports = exports["default"];
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(6);
+__webpack_require__(5);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1147,7 +882,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 // eslint-disable-next-line
 var modules = ["blockManager.js","caret.js","events.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
-    return __webpack_require__(7)("./" + module);
+    return __webpack_require__(6)("./" + module);
 });
 
 /**
@@ -1522,7 +1257,7 @@ module.exports = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1549,11 +1284,11 @@ if (!Element.prototype.closest) Element.prototype.closest = function (s) {
 };
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./blockManager.js": 8,
+	"./blockManager.js": 7,
 	"./caret.js": 9,
 	"./events.js": 10,
 	"./renderer.js": 11,
@@ -1578,10 +1313,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 7;
+webpackContext.id = 6;
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1593,11 +1328,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _block = __webpack_require__(3);
+var _block = __webpack_require__(8);
 
 var _block2 = _interopRequireDefault(_block);
 
-var _Selection = __webpack_require__(4);
+var _Selection = __webpack_require__(3);
 
 var _Selection2 = _interopRequireDefault(_Selection);
 
@@ -2281,6 +2016,271 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2)))
 
 /***/ }),
+/* 8 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ *
+ * @class Block
+ * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
+ *
+ * @property {Tool} tool — current block tool (Paragraph, for example)
+ * @property {Object} CSS — block`s css classes
+ *
+ */
+
+/**
+ * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
+ *
+ * @property tool - Tool instance
+ * @property html - Returns HTML content of plugin
+ * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+ * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property pluginsContent - HTML content that returns by Tool's render function
+ */
+var Block = function () {
+
+    /**
+     * @constructor
+     * @param {String} toolName - Tool name that passed on initialization
+     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
+     */
+    function Block(toolName, toolInstance) {
+        _classCallCheck(this, Block);
+
+        this.name = toolName;
+        this.tool = toolInstance;
+        this._html = this.compose();
+    }
+
+    /**
+     * CSS classes for the Block
+     * @return {{wrapper: string, content: string}}
+     */
+
+
+    _createClass(Block, [{
+        key: 'compose',
+
+
+        /**
+         * Make default Block wrappers and put Tool`s content there
+         * @returns {HTMLDivElement}
+         */
+        value: function compose() {
+
+            this.wrapper = $.make('div', Block.CSS.wrapper);
+            this.contentNode = $.make('div', Block.CSS.content);
+            this.pluginsContent = this.tool.render();
+
+            this.contentNode.appendChild(this.pluginsContent);
+            this.wrapper.appendChild(this.contentNode);
+
+            return this.wrapper;
+        }
+
+        /**
+         * Calls Tool's method
+         *
+         * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
+         *
+         * @param {String} methodName
+         * @param {Object} params
+         */
+
+    }, {
+        key: 'call',
+        value: function call(methodName, params) {
+
+            /**
+             * call Tool's method with the instance context
+             */
+            if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+
+                this.tool[methodName].call(this.tool, params);
+            }
+        }
+
+        /**
+         * Get Block`s HTML
+         * @returns {HTMLElement}
+         */
+
+    }, {
+        key: 'save',
+
+
+        /**
+         * Extracts data from Block
+         * Groups Tool's save processing time
+         * @return {Object}
+         */
+        value: function save() {
+            var _this = this;
+
+            var extractedBlock = this.tool.save(this.pluginsContent);
+
+            /** Measuring execution time*/
+            var measuringStart = window.performance.now(),
+                measuringEnd = void 0;
+
+            return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
+
+                /** measure promise execution */
+                measuringEnd = window.performance.now();
+
+                return {
+                    tool: _this.name,
+                    data: finishedExtraction,
+                    time: measuringEnd - measuringStart
+                };
+            }).catch(function (error) {
+
+                _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
+            });
+        }
+
+        /**
+         * Uses Tool's validation method to check the correctness of output data
+         * Tool's validation method is optional
+         *
+         * @description Method also can return data if it passed the validation
+         *
+         * @param {Object} data
+         * @returns {Boolean|Object} valid
+         */
+
+    }, {
+        key: 'validateData',
+        value: function validateData(data) {
+
+            var isValid = true;
+
+            if (this.tool.validate instanceof Function) {
+
+                isValid = this.tool.validate(data);
+            }
+
+            if (!isValid) {
+
+                return false;
+            }
+
+            return data;
+        }
+
+        /**
+         * Check block for emptiness
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'html',
+        get: function get() {
+
+            return this._html;
+        }
+
+        /**
+         * Get Block's JSON data
+         * @return {Object}
+         */
+
+    }, {
+        key: 'data',
+        get: function get() {
+
+            return this.save();
+        }
+    }, {
+        key: 'isEmpty',
+        get: function get() {
+
+            /**
+             * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
+             * That Tools are not empty
+             */
+            if (this.tool.contentless) {
+
+                return false;
+            }
+
+            var emptyText = $.isEmpty(this.pluginsContent),
+                emptyMedia = !this.hasMedia;
+
+            return emptyText && emptyMedia;
+        }
+
+        /**
+         * Check if block has a media content such as images, iframes and other
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'hasMedia',
+        get: function get() {
+
+            /**
+             * This tags represents media-content
+             * @type {string[]}
+             */
+            var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
+
+            return !!this._html.querySelector(mediaTags.join(','));
+        }
+
+        /**
+         * Set selected state
+         * @param {Boolean} state - 'true' to select, 'false' to remove selection
+         */
+
+    }, {
+        key: 'selected',
+        set: function set(state) {
+
+            /**
+             * We don't need to mark Block as Selected when it is not empty
+             */
+            if (state === true && !this.isEmpty) {
+
+                this._html.classList.add(Block.CSS.selected);
+            } else {
+
+                this._html.classList.remove(Block.CSS.selected);
+            }
+        }
+    }], [{
+        key: 'CSS',
+        get: function get() {
+
+            return {
+                wrapper: 'ce-block',
+                content: 'ce-block__content',
+                selected: 'ce-block--selected'
+            };
+        }
+    }]);
+
+    return Block;
+}();
+
+Block.displayName = 'Block';
+exports.default = Block;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
+
+/***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2293,7 +2293,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Selection = __webpack_require__(4);
+var _Selection = __webpack_require__(3);
 
 var _Selection2 = _interopRequireDefault(_Selection);
 
