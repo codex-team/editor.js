@@ -83,10 +83,9 @@ export default class Listeners extends Module {
     }
 
     /**
-     * Search methods
-     *
-     * byElement, byType and byHandler returns array of suitable listeners
-     * one and all takes element, eventType, and handler and returns first (all) suitable listener
+     * Search method: looks for listener by passed element
+     * @param {Element} element - searching element
+     * @returns {Array} listeners that found on element
      */
     findByElement(element) {
 
@@ -108,6 +107,11 @@ export default class Listeners extends Module {
 
     }
 
+    /**
+     * Search method: looks for listener by passed event type
+     * @param {String} eventType
+     * @return {Array} listeners that found on element
+     */
     findByType(eventType) {
 
         let listenersWithType = [];
@@ -128,6 +132,11 @@ export default class Listeners extends Module {
 
     }
 
+    /**
+     * Search method: looks for listener by passed handler
+     * @param {Function} handler
+     * @return {Array} listeners that found on element
+     */
     findByHandler(handler) {
 
         let listenersWithHandler = [];
@@ -148,40 +157,51 @@ export default class Listeners extends Module {
 
     }
 
+    /**
+     * @param {Element} element
+     * @param {String} eventType
+     * @param {Function} handler
+     * @return {Element|null}
+     */
     findOne(element, eventType, handler) {
 
-        let foundListeners = [];
+        let foundListeners = this.findAll(element, eventType, handler);
 
-        if (element)
-            foundListeners = this.byElement(element);
-
-        if (eventType)
-            foundListeners = foundListeners.concat(this.byType(eventType));
-
-        if (handler)
-            foundListeners = foundListeners.concat(this.byHandler(handler));
-
-        return foundListeners[0];
+        return foundListeners.length > 0 ? foundListeners[0] : null;
 
     }
 
+    /**
+     * @param {Element} element
+     * @param {String} eventType
+     * @param {Function} handler
+     * @return {Array}
+     */
     findAll(element, eventType, handler) {
 
-        let foundListeners = [];
+        let foundAllListeners,
+            foundByElements = [],
+            foundByEventType = [],
+            foundByHandler = [];
 
         if (element)
-            foundListeners = this.byElement(element);
+            foundByElements = this.findByElement(element);
 
         if (eventType)
-            foundListeners = foundListeners.concat(this.byType(eventType));
+            foundByEventType = this.findByType(eventType);
 
         if (handler)
-            foundListeners = foundListeners.concat(this.byHandler(handler));
+            foundByHandler = this.findByHandler(handler);
 
-        return foundListeners;
+        foundAllListeners = foundByElements.concat(foundByEventType, foundByHandler);
+
+        return foundAllListeners;
 
     }
 
+    /**
+     * Removes all listeners
+     */
     removeAll() {
 
         this.allListeners.map( (current) => {

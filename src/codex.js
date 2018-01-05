@@ -52,7 +52,7 @@
  * @property {String} placeholder        - First Block placeholder
  * @property {Object} sanitizer          - @todo fill desc
  * @property {Boolean} hideToolbar       - @todo fill desc
- * @property {Object} toolsConfig        - tools configuration {@link Tools#ToolsConfig}
+ * @property {Object} toolsConfig        - tools configuration {@link tools#ToolConfig}
  */
 
 /**

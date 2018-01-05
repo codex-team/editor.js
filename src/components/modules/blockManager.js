@@ -127,7 +127,7 @@ export default class BlockManager extends Module {
         switch(event.keyCode) {
 
             case _.keyCodes.ENTER:
-                this.enterPressedOnPluginsContent(event);
+                // this.enterPressedOnPluginsContent(event);
                 break;
             case _.keyCodes.DOWN:
             case _.keyCodes.RIGHT:

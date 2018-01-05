@@ -855,7 +855,7 @@ module.exports = exports["default"];
  * @property {String} placeholder        - First Block placeholder
  * @property {Object} sanitizer          - @todo fill desc
  * @property {Boolean} hideToolbar       - @todo fill desc
- * @property {Object} toolsConfig        - tools configuration {@link Tools#ToolsConfig}
+ * @property {Object} toolsConfig        - tools configuration {@link tools#ToolConfig}
  */
 
 /**
@@ -1487,7 +1487,7 @@ var BlockManager = function (_Module) {
             switch (event.keyCode) {
 
                 case _.keyCodes.ENTER:
-                    this.enterPressedOnPluginsContent(event);
+                    // this.enterPressedOnPluginsContent(event);
                     break;
                 case _.keyCodes.DOWN:
                 case _.keyCodes.RIGHT:
@@ -2667,10 +2667,9 @@ var Listeners = function (_Module) {
         }
 
         /**
-         * Search methods
-         *
-         * byElement, byType and byHandler returns array of suitable listeners
-         * one and all takes element, eventType, and handler and returns first (all) suitable listener
+         * Search method: looks for listener by passed element
+         * @param {Element} element - searching element
+         * @returns {Array} listeners that found on element
          */
 
     }, {
@@ -2691,6 +2690,13 @@ var Listeners = function (_Module) {
 
             return listenersOnElement;
         }
+
+        /**
+         * Search method: looks for listener by passed event type
+         * @param {String} eventType
+         * @return {Array} listeners that found on element
+         */
+
     }, {
         key: "findByType",
         value: function findByType(eventType) {
@@ -2709,6 +2715,13 @@ var Listeners = function (_Module) {
 
             return listenersWithType;
         }
+
+        /**
+         * Search method: looks for listener by passed handler
+         * @param {Function} handler
+         * @return {Array} listeners that found on element
+         */
+
     }, {
         key: "findByHandler",
         value: function findByHandler(handler) {
@@ -2727,34 +2740,54 @@ var Listeners = function (_Module) {
 
             return listenersWithHandler;
         }
+
+        /**
+         * @param {Element} element
+         * @param {String} eventType
+         * @param {Function} handler
+         * @return {Element|null}
+         */
+
     }, {
         key: "findOne",
         value: function findOne(element, eventType, handler) {
 
-            var foundListeners = [];
+            var foundListeners = this.findAll(element, eventType, handler);
 
-            if (element) foundListeners = this.byElement(element);
-
-            if (eventType) foundListeners = foundListeners.concat(this.byType(eventType));
-
-            if (handler) foundListeners = foundListeners.concat(this.byHandler(handler));
-
-            return foundListeners[0];
+            return foundListeners.length > 0 ? foundListeners[0] : null;
         }
+
+        /**
+         * @param {Element} element
+         * @param {String} eventType
+         * @param {Function} handler
+         * @return {Array}
+         */
+
     }, {
         key: "findAll",
         value: function findAll(element, eventType, handler) {
 
-            var foundListeners = [];
+            var foundAllListeners = void 0,
+                foundByElements = [],
+                foundByEventType = [],
+                foundByHandler = [];
 
-            if (element) foundListeners = this.byElement(element);
+            if (element) foundByElements = this.findByElement(element);
 
-            if (eventType) foundListeners = foundListeners.concat(this.byType(eventType));
+            if (eventType) foundByEventType = this.findByType(eventType);
 
-            if (handler) foundListeners = foundListeners.concat(this.byHandler(handler));
+            if (handler) foundByHandler = this.findByHandler(handler);
 
-            return foundListeners;
+            foundAllListeners = foundByElements.concat(foundByEventType, foundByHandler);
+
+            return foundAllListeners;
         }
+
+        /**
+         * Removes all listeners
+         */
+
     }, {
         key: "removeAll",
         value: function removeAll() {
