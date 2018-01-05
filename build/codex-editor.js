@@ -824,7 +824,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["blockManager.js","caret.js","events.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
+var modules = ["blockManager.js","caret.js","events.js","keyboard.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
     return __webpack_require__(6)("./" + module);
 });
 
@@ -1234,13 +1234,14 @@ var map = {
 	"./blockManager.js": 7,
 	"./caret.js": 8,
 	"./events.js": 9,
-	"./renderer.js": 10,
-	"./sanitizer.js": 11,
-	"./saver.js": 13,
-	"./toolbar.js": 14,
-	"./toolbox.js": 15,
-	"./tools.js": 16,
-	"./ui.js": 17
+	"./keyboard.js": 10,
+	"./renderer.js": 11,
+	"./sanitizer.js": 12,
+	"./saver.js": 14,
+	"./toolbar.js": 15,
+	"./toolbox.js": 16,
+	"./tools.js": 17,
+	"./ui.js": 18
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1406,6 +1407,37 @@ var BlockManager = function (_Module) {
             var block = this.composeBlock(toolName, data);
 
             this._blocks[++this.currentBlockIndex] = block;
+        }
+
+        /**
+         *
+         */
+
+    }, {
+        key: 'split',
+        value: function split() {
+
+            var selection = window.getSelection();
+            var range = new Range();
+
+            console.log(selection.focusNode);
+            range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
+            range.setEnd(selection.focusNode, selection.focusNode.length);
+
+            // console.log(range.extractContents());
+            // console.log('+');
+
+            this.insert('text', range.extractContents());
+        }
+
+        /**
+         *
+         */
+
+    }, {
+        key: 'merge',
+        value: function merge(targetBlock) {
+            var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
         }
 
         /**
@@ -2039,6 +2071,82 @@ module.exports = exports["default"];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Keyboard = function (_Module) {
+    _inherits(Keyboard, _Module);
+
+    function Keyboard(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, Keyboard);
+
+        var _this = _possibleConstructorReturn(this, (Keyboard.__proto__ || Object.getPrototypeOf(Keyboard)).call(this, { config: config }));
+
+        document.body.addEventListener('keydown', _this.keyBoardListener.bind(_this));
+
+        return _this;
+    }
+
+    _createClass(Keyboard, [{
+        key: 'keyBoardListener',
+        value: function keyBoardListener(event) {
+
+            // let currentBlock = this.Editor.blockManager.currentBlock;
+            // let selection = window.getSelection();
+            // let range = new Range();
+
+            // console.log(selection.focusNode);
+            // range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
+            // range.setEnd(selection.focusNode, selection.focusNode.length);
+
+            switch (event.keyCode) {
+
+                case 8:
+                    console.log('backspace pressed');
+                    this.Editor.BlockManager.merge(undefined, range.extractContents());
+                    break;
+                case 13:
+                    console.log('enter pressed');
+                    // console.log(range.extractContents());
+                    // let op = range.extractContents;
+
+                    // console.log(op);
+
+                    this.Editor.BlockManager.split();
+                    break;
+                default:
+                    break;
+
+            }
+        }
+    }]);
+
+    return Keyboard;
+}(Module);
+
+Keyboard.displayName = 'Keyboard';
+exports.default = Keyboard;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(Module, _) {
 
 Object.defineProperty(exports, "__esModule", {
@@ -2163,7 +2271,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2241,7 +2349,7 @@ var Sanitizer = function (_Module) {
         _this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
 
         /** HTML Janitor library */
-        _this.sanitizerInstance = __webpack_require__(12);
+        _this.sanitizerInstance = __webpack_require__(13);
 
         return _this;
     }
@@ -2344,7 +2452,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -2539,7 +2647,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (roo
 
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2830,7 +2938,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3159,7 +3267,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3424,7 +3532,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3723,7 +3831,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3924,7 +4032,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(18);
+      var styles = __webpack_require__(19);
 
       /**
        * Make tag
@@ -4342,10 +4450,10 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(19)(undefined);
+exports = module.exports = __webpack_require__(20)(undefined);
 // imports
 
 
@@ -4356,7 +4464,7 @@ exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n
 
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports) {
 
 /*

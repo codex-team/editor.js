@@ -107,10 +107,35 @@ export default class BlockManager extends Module {
      */
     insert(toolName, data = {}) {
 
-
         let block = this.composeBlock(toolName, data);
 
         this._blocks[++this.currentBlockIndex] = block;
+
+    }
+
+    /**
+     *
+     */
+    split() {
+
+        let selection = window.getSelection();
+        let range = new Range();
+
+        console.log(selection.focusNode);
+        range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
+        range.setEnd(selection.focusNode, selection.focusNode.length);
+
+        // console.log(range.extractContents());
+        // console.log('+');
+
+        this.insert('text', range.extractContents());
+
+    }
+
+    /**
+     *
+     */
+    merge(targetBlock, data = {}) {
 
     }
 
