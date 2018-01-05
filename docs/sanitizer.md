@@ -1,6 +1,6 @@
 # CodeX Editor Sanitizer Module
 
-The `Sanitizer` module represents a set via methods that clears taint string.
+The `Sanitizer` module represents a set of methods that clears taint strings.
 Uses lightweight npm package with simple API [html-janitor](https://www.npmjs.com/package/html-janitor)
  
 Sanitizer class implements basic Module class that holds User configuration
@@ -10,18 +10,18 @@ You can read more about Module class [here]()
 
 ## Properties
 
-Default Editor sanitizer configuration according to the html-janitor API
+Default Editor Sanitizer configuration according to the html-janitor API
 ```javascript
 defaultConfig
 ```
 
-Custom User configuration which passed on editor initialization. Data type must be according to the html-janitor API
+Custom User configuration which passed on Editor initialization. Data type must be according to the html-janitor API
 ```javascript
 sanitizerConfig
 ```
 
 
-Property that holds an instance used in module
+Property that holds an instance used in Module
 ```javascript
 sanitizerInstance
 ```
