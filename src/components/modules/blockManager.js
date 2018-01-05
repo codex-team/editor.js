@@ -126,9 +126,9 @@ export default class BlockManager extends Module {
 
         switch(event.keyCode) {
 
-            case _.keyCodes.ENTER:
-                this.enterPressedOnPluginsContent(event);
-                break;
+            // case _.keyCodes.ENTER:
+            // this.enterPressedOnPluginsContent(event);
+            // break;
             case _.keyCodes.DOWN:
             case _.keyCodes.RIGHT:
                 this.navigateNext();
@@ -210,25 +210,6 @@ export default class BlockManager extends Module {
 
         this._blocks[++this.currentBlockIndex] = block;
         this.Editor.Caret.setToBlock(block);
-
-    }
-
-    /**
-     * Split blocks when "enter" pressed
-     *
-     * @param {String} toolName — plugin name
-     * @param {Object} data — plugin data
-     */
-    split(toolName, data) {
-
-        this.insert(toolName, data);
-
-    }
-
-    /**
-     *
-     */
-    merge(targetBlock, data = {}) {
 
     }
 

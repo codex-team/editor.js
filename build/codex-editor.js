@@ -1486,9 +1486,9 @@ var BlockManager = function (_Module) {
 
             switch (event.keyCode) {
 
-                case _.keyCodes.ENTER:
-                    this.enterPressedOnPluginsContent(event);
-                    break;
+                // case _.keyCodes.ENTER:
+                // this.enterPressedOnPluginsContent(event);
+                // break;
                 case _.keyCodes.DOWN:
                 case _.keyCodes.RIGHT:
                     this.navigateNext();
@@ -1574,30 +1574,6 @@ var BlockManager = function (_Module) {
 
             this._blocks[++this.currentBlockIndex] = block;
             this.Editor.Caret.setToBlock(block);
-        }
-
-        /**
-         * Split blocks when "enter" pressed
-         *
-         * @param {String} toolName — plugin name
-         * @param {Object} data — plugin data
-         */
-
-    }, {
-        key: 'split',
-        value: function split(toolName, data) {
-
-            this.insert(toolName, data);
-        }
-
-        /**
-         *
-         */
-
-    }, {
-        key: 'merge',
-        value: function merge(targetBlock) {
-            var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
         }
 
         /**
@@ -2580,7 +2556,7 @@ module.exports = exports["default"];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module) {
+/* WEBPACK VAR INJECTION */(function(Module, $) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -2613,14 +2589,6 @@ var Keyboard = function (_Module) {
         key: 'keyBoardListener',
         value: function keyBoardListener(event) {
 
-            // let currentBlock = this.Editor.blockManager.currentBlock;
-            // let selection = window.getSelection();
-            // let range = new Range();
-
-            // console.log(selection.focusNode);
-            // range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-            // range.setEnd(selection.focusNode, selection.focusNode.length);
-
             switch (event.keyCode) {
 
                 case 8:
@@ -2635,8 +2603,14 @@ var Keyboard = function (_Module) {
                     var selection = window.getSelection();
                     var range = new Range();
 
+                    var cnt = this.Editor.BlockManager.currentBlock.pluginsContent,
+                        last = $.getDeepestNode(cnt, true);
+
                     range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-                    range.setEnd(selection.focusNode, selection.focusNode.length);
+                    range.setEnd(last, last.length);
+
+                    selection.removeAllRanges();
+                    selection.addRange(range);
 
                     var fragm = range.extractContents();
                     var div = document.createElement('div');
@@ -2662,7 +2636,7 @@ var Keyboard = function (_Module) {
 Keyboard.displayName = 'Keyboard';
 exports.default = Keyboard;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
 /* 12 */

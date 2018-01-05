@@ -10,14 +10,6 @@ export default class Keyboard extends Module {
 
     keyBoardListener(event) {
 
-        // let currentBlock = this.Editor.blockManager.currentBlock;
-        // let selection = window.getSelection();
-        // let range = new Range();
-
-        // console.log(selection.focusNode);
-        // range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-        // range.setEnd(selection.focusNode, selection.focusNode.length);
-
         switch(event.keyCode) {
 
             case (8):
@@ -32,8 +24,14 @@ export default class Keyboard extends Module {
                 let selection = window.getSelection();
                 let range = new Range();
 
+                let cnt = this.Editor.BlockManager.currentBlock.pluginsContent,
+                    last = $.getDeepestNode(cnt, true);
+
                 range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-                range.setEnd(selection.focusNode, selection.focusNode.length);
+                range.setEnd(last, last.length);
+
+                selection.removeAllRanges();
+                selection.addRange(range);
 
                 let fragm = range.extractContents();
                 let div = document.createElement('div');
