@@ -41,6 +41,31 @@ export default class Util {
     }
 
     /**
+     * Returns basic keycodes as constants
+     * @return {{}}
+     */
+    static get keyCodes() {
+
+        return {
+            BACKSPACE: 8,
+            TAB: 9,
+            ENTER: 13,
+            SHIFT: 16,
+            CTRL: 17,
+            ALT: 18,
+            ESC: 27,
+            SPACE: 32,
+            LEFT: 37,
+            UP: 38,
+            DOWN: 40,
+            RIGHT: 39,
+            DELETE: 46,
+            META: 91
+        };
+
+    }
+
+    /**
      * @typedef {Object} ChainData
      * @property {Object} data - data that will be passed to the success or fallback
      * @property {Function} function - function's that must be called asynchronically
@@ -154,6 +179,36 @@ export default class Util {
     static isPromise(object) {
 
         return Promise.resolve(object) === object;
+
+    }
+
+    /**
+     * Check if passed element is contenteditable
+     * @param element
+     * @return {boolean}
+     */
+    static isContentEditable(element) {
+
+        return element.contentEditable === 'true';
+
+    }
+
+    /**
+     * Delays method execution
+     *
+     * @param method
+     * @param timeout
+     */
+    static delay(method, timeout) {
+
+        return function () {
+
+            let context = this,
+                args    = arguments;
+
+            window.setTimeout(() => method.apply(context, args), timeout);
+
+        };
 
     }
 

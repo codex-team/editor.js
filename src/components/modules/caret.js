@@ -2,8 +2,18 @@
  * @class Caret
  * @classdesc Contains methods for working Caret
  *
+ * Uses Range methods to manipulate with caret
+ *
+ * @module Caret
+ *
+ * @version 2.0.0
+ */
+
+/**
  * @typedef {Caret} Caret
  */
+import Selection from '../Selection';
+
 export default class Caret extends Module {
 
     /**
@@ -16,20 +26,79 @@ export default class Caret extends Module {
     }
 
     /**
-     * Set Caret to the last Block
+     * Method gets Block instance and puts caret to the text node with offset
+     * There two ways that method applies caret position:
+     *   - first found text node: sets at the beginning, but you can pass an offset
+     *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
      *
+     * @param {Block} block - Block class
+     * @param {Number} offset - caret offset regarding to the text node
+     * @param {Boolean} atEnd - put caret at the end of the text node or not
+     */
+    setToBlock(block, offset = 0, atEnd = false) {
+
+        let element = block.pluginsContent;
+
+        /** If Element is INPUT */
+        if ($.isNativeInput(element)) {
+
+            element.focus();
+            return;
+
+        }
+
+        let nodeToSet = $.getDeepestNode(element, atEnd);
+
+        if (atEnd || offset > nodeToSet.length) {
+
+            offset = nodeToSet.length;
+
+        }
+
+        /** if found deepest node is native input */
+        if ($.isNativeInput(nodeToSet)) {
+
+            nodeToSet.focus();
+            return;
+
+        }
+
+        /**
+         * @todo try to fix via Promises or use querySelectorAll to not to use timeout
+         */
+        _.delay( () => this.set(nodeToSet, offset), 20)();
+
+        this.Editor.BlockManager.currentNode = block.wrapper;
+
+    }
+
+    /**
+     * Creates Document Range and sets caret to the element with offset
+     * @param {Element} element - target node.
+     * @param {Number} offset - offset
+     */
+    set( element, offset = 0) {
+
+        let range     = document.createRange(),
+            selection = Selection.get();
+
+        range.setStart(element, offset);
+        range.setEnd(element, offset);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+    };
+
+    /**
+     * Set Caret to the last Block
      * If last block is not empty, append another empty block
      */
     setToTheLastBlock() {
 
-        let blocks = this.Editor.BlockManager.blocks,
-            lastBlock;
+        let lastBlock = this.Editor.BlockManager.lastBlock;
 
-        if (blocks.length) {
-
-            lastBlock = blocks[blocks.length - 1];
-
-        }
+        if (!lastBlock) return;
 
         /**
          * If last block is empty and it is an initialBlock, set to that.
@@ -37,7 +106,7 @@ export default class Caret extends Module {
          */
         if (lastBlock.isEmpty) {
 
-            this.set(lastBlock.html);
+            this.setToBlock(lastBlock);
 
         } else {
 
@@ -45,65 +114,6 @@ export default class Caret extends Module {
 
         }
 
-
-        /**
-         //      * If inputs in redactor does not exits, then we put input index 0 not -1
-         //      */
-        //     var indexOfLastInput = editor.state.inputs.length > 0 ? editor.state.inputs.length - 1 : 0;
-        //
-        //     /** If we have any inputs */
-        //     if (editor.state.inputs.length) {
-        //
-        //         /** getting firstlevel parent of input */
-        //         firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
-        //
-        //     }
-        //
-        //     /** If input is empty, then we set caret to the last input */
-        //     if (editor.state.inputs.length && editor.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == editor.settings.initialBlockPlugin) {
-        //
-        //         editor.caret.setToBlock(indexOfLastInput);
-        //
-        //     } else {
-        //
-        //         /** Create new input when caret clicked in redactors area */
-        //         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
-        //
-        //         editor.content.insertBlock({
-        //             type  : NEW_BLOCK_TYPE,
-        //             block : editor.tools[NEW_BLOCK_TYPE].render()
-        //         });
-        //
-        //         /** If there is no inputs except inserted */
-        //         if (editor.state.inputs.length === 1) {
-        //
-        //             editor.caret.setToBlock(indexOfLastInput);
-        //
-        //         } else {
-        //
-        //             /** Set caret to this appended input */
-        //             editor.caret.setToNextBlock(indexOfLastInput);
-        //
-        //         }
-        //
-        //     }
-
     }
-
-    /**
-     * Set caret to the passed Node
-     * @param {Element} node - content-editable Element
-     */
-    set(node) {
-
-        /**
-         * @todo add working with Selection
-         * tmp: work with textContent
-         */
-
-        node.textContent += '|';
-
-    }
-
 
 }

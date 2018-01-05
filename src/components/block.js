@@ -183,7 +183,7 @@ export default class Block {
 
         }
 
-        let emptyText = this._html.textContent.trim().length === 0,
+        let emptyText = $.isEmpty(this.pluginsContent),
             emptyMedia = !this.hasMedia;
 
         return emptyText && emptyMedia;

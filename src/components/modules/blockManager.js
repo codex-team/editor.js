@@ -3,9 +3,12 @@
  * @classdesc Manage editor`s blocks storage and appearance
  *
  * @module BlockManager
+ *
+ * @version 2.0.0
  */
 
 import Block from '../block';
+import Selection from '../Selection';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -90,12 +93,108 @@ export default class BlockManager extends Module {
         let toolInstance = this.Editor.Tools.construct(toolName, data),
             block = new Block(toolName, toolInstance);
 
+        this.bindEvents(block);
+
         /**
          * Apply callback before inserting html
          */
         block.call('appendCallback', {});
 
         return block;
+
+    }
+
+    /**
+     * Bind Events
+     * @param {Object} block
+     */
+    bindEvents(block) {
+
+        /**
+         * keydown on block
+         * @todo move to the keydown module
+         */
+        block.pluginsContent.addEventListener('keydown', (event) => this.keyDownOnBlock(event), false);
+
+    }
+
+    /**
+     * @todo move to the keydown module
+     * @param {MouseEvent} event
+     */
+    keyDownOnBlock(event) {
+
+        switch(event.keyCode) {
+
+            case _.keyCodes.ENTER:
+                this.enterPressedOnPluginsContent(event);
+                break;
+            case _.keyCodes.DOWN:
+            case _.keyCodes.RIGHT:
+                this.navigateNext();
+                break;
+            case _.keyCodes.UP:
+            case _.keyCodes.LEFT:
+                this.navigatePrevious();
+                break;
+
+        }
+
+    }
+
+    /**
+     * Set's caret to the next Block
+     * Before moving caret, we should check if caret position is at the end of Plugins node
+     * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+     */
+    navigateNext() {
+
+        let lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
+            textNodeLength = lastTextNode.length;
+
+        if (Selection.getAnchorNode() !== lastTextNode) {
+
+            return;
+
+        }
+
+        if (Selection.getAnchorOffset() === textNodeLength) {
+
+            let nextBlock = this.nextBlock;
+
+            if (!nextBlock) return;
+
+            this.Editor.Caret.setToBlock( nextBlock );
+
+        }
+
+    }
+
+    /**
+     * Set's caret to the previous Block
+     * Before moving caret, we should check if caret position is at the end of Plugins node
+     * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+     */
+    navigatePrevious() {
+
+        let firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
+            textNodeLength = firstTextNode.length;
+
+        if (Selection.getAnchorNode() !== firstTextNode) {
+
+            return;
+
+        }
+
+        if (Selection.getAnchorOffset() === 0) {
+
+            let previousBlock = this.previousBlock;
+
+            if (!previousBlock) return;
+
+            this.Editor.Caret.setToBlock( previousBlock, textNodeLength, true );
+
+        }
 
     }
 
@@ -110,6 +209,7 @@ export default class BlockManager extends Module {
         let block = this.composeBlock(toolName, data);
 
         this._blocks[++this.currentBlockIndex] = block;
+        this.Editor.Caret.setToBlock(block);
 
     }
 
@@ -147,17 +247,36 @@ export default class BlockManager extends Module {
     }
 
     /**
+     * returns last Block
+     * @return {Block}
+     */
+    get lastBlock() {
+
+        return this._blocks[this._blocks.length - 1];
+
+    }
+
+    /**
+     * Returns Block by passed index
+     * @param {Number} index
+     * @return {Block}
+     */
+    getBlockByIndex(index) {
+
+        return this._blocks[index];
+
+    }
+
+    /**
      * Get Block instance by html element
-     *
-     * @todo get first level block before searching
-     *
      * @param {HTMLElement} element
      * @returns {Block}
      */
     getBlock(element) {
 
         let nodes = this._blocks.nodes,
-            index = nodes.indexOf(element);
+            firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`),
+            index = nodes.indexOf(firstLevelBlock);
 
         if (index >= 0) {
 
@@ -179,6 +298,42 @@ export default class BlockManager extends Module {
     }
 
     /**
+     * Returns next Block instance
+     * @return {Block|null}
+     */
+    get nextBlock() {
+
+        let isLastBlock = this.currentBlockIndex === (this._blocks.length - 1);
+
+        if (isLastBlock) {
+
+            return null;
+
+        }
+
+        return this._blocks[this.currentBlockIndex + 1];
+
+    }
+
+    /**
+     * Returns previous Block instance
+     * @return {Block|null}
+     */
+    get previousBlock() {
+
+        let isFirstBlock = this.currentBlockIndex === 0;
+
+        if (isFirstBlock) {
+
+            return null;
+
+        }
+
+        return this._blocks[this.currentBlockIndex - 1];
+
+    }
+
+    /**
      * Get working html element
      *
      * @return {HTMLElement}
@@ -191,20 +346,18 @@ export default class BlockManager extends Module {
 
     /**
      * Set currentBlockIndex to passed block
-     *
-     * @todo get first level block before searching
-     *
      * @param {HTMLElement} element
      */
     set currentNode(element) {
 
-        let nodes = this._blocks.nodes;
+        let nodes = this._blocks.nodes,
+            firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`);
 
         /**
          * Update current Block's index
          * @type {number}
          */
-        this.currentBlockIndex = nodes.indexOf(element);
+        this.currentBlockIndex = nodes.indexOf(firstLevelBlock);
 
         /**
          * Remove previous selected Block's state
