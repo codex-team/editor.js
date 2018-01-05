@@ -881,7 +881,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["blockManager.js","caret.js","events.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
+var modules = ["blockManager.js","caret.js","events.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
     return __webpack_require__(6)("./" + module);
 });
 
@@ -1291,13 +1291,14 @@ var map = {
 	"./blockManager.js": 7,
 	"./caret.js": 9,
 	"./events.js": 10,
-	"./renderer.js": 11,
-	"./sanitizer.js": 12,
-	"./saver.js": 14,
-	"./toolbar.js": 15,
-	"./toolbox.js": 16,
-	"./tools.js": 17,
-	"./ui.js": 18
+	"./listeners.js": 11,
+	"./renderer.js": 12,
+	"./sanitizer.js": 13,
+	"./saver.js": 15,
+	"./toolbar.js": 16,
+	"./toolbox.js": 17,
+	"./tools.js": 18,
+	"./ui.js": 19
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1469,9 +1470,9 @@ var BlockManager = function (_Module) {
              * keydown on block
              * @todo move to the keydown module
              */
-            block.pluginsContent.addEventListener('keydown', function (event) {
+            this.Editor.Listeners.on(block.pluginsContent, 'keydown', function (event) {
                 return _this3.keyDownOnBlock(event);
-            }, false);
+            });
         }
 
         /**
@@ -2555,6 +2556,230 @@ module.exports = exports["default"];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Codex Editor Listeners module
+ *
+ * @module Listeners
+ *
+ * Module-decorator for event listeners assignment
+ *
+ * @author Codex Team
+ * @version 2.0.0
+ */
+
+/**
+ * @typedef {Listeners} Listeners
+ * @property {Array} allListeners
+ */
+
+var Listeners = function (_Module) {
+    _inherits(Listeners, _Module);
+
+    /**
+     * @constructor
+     * @param {EditorConfig} config
+     */
+    function Listeners(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, Listeners);
+
+        var _this = _possibleConstructorReturn(this, (Listeners.__proto__ || Object.getPrototypeOf(Listeners)).call(this, { config: config }));
+
+        _this.allListeners = [];
+
+        return _this;
+    }
+
+    /**
+     * Assigns event listener on element
+     *
+     * @param {Element} element - DOM element that needs to be listened
+     * @param {String} eventType - event type
+     * @param {Function} handler - method that will be fired on event
+     * @param {Boolean} useCapture - use event bubbling
+     */
+
+
+    _createClass(Listeners, [{
+        key: "on",
+        value: function on(element, eventType, handler) {
+            var useCapture = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+
+            var assignedEventData = {
+                element: element,
+                eventType: eventType,
+                handler: handler,
+                useCapture: useCapture
+            };
+
+            var alreadyExist = this.findOne(element, eventType, handler);
+
+            if (alreadyExist) return;
+
+            this.allListeners.push(assignedEventData);
+            element.addEventListener(eventType, handler, useCapture);
+        }
+
+        /**
+         * Removes event listener from element
+         *
+         * @param {Element} element - DOM element that we removing listener
+         * @param {String} eventType - event type
+         * @param {Function} handler - remove handler, if element listens several handlers on the same event type
+         * @param {Boolean} useCapture - use event bubbling
+         */
+
+    }, {
+        key: "off",
+        value: function off(element, eventType, handler) {
+            var useCapture = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+
+            var existingListeners = this.findAll(element, eventType, handler);
+
+            for (var i = 0; i < existingListeners.length; i++) {
+
+                var index = this.allListeners.indexOf(existingListeners[i]);
+
+                if (index > 0) {
+
+                    this.allListeners.splice(index, 1);
+                }
+            }
+
+            element.removeEventListener(eventType, handler, useCapture);
+        }
+
+        /**
+         * Search methods
+         *
+         * byElement, byType and byHandler returns array of suitable listeners
+         * one and all takes element, eventType, and handler and returns first (all) suitable listener
+         */
+
+    }, {
+        key: "findByElement",
+        value: function findByElement(element) {
+
+            var listenersOnElement = [];
+
+            for (var i = 0; i < this.allListeners.length; i++) {
+
+                var listener = this.allListeners[i];
+
+                if (listener.element === element) {
+
+                    listenersOnElement.push(listener);
+                }
+            }
+
+            return listenersOnElement;
+        }
+    }, {
+        key: "findByType",
+        value: function findByType(eventType) {
+
+            var listenersWithType = [];
+
+            for (var i = 0; i < this.allListeners.length; i++) {
+
+                var listener = this.allListeners[i];
+
+                if (listener.type === eventType) {
+
+                    listenersWithType.push(listener);
+                }
+            }
+
+            return listenersWithType;
+        }
+    }, {
+        key: "findByHandler",
+        value: function findByHandler(handler) {
+
+            var listenersWithHandler = [];
+
+            for (var i = 0; i < this.allListeners.length; i++) {
+
+                var listener = this.allListeners[i];
+
+                if (listener.handler === handler) {
+
+                    listenersWithHandler.push(listener);
+                }
+            }
+
+            return listenersWithHandler;
+        }
+    }, {
+        key: "findOne",
+        value: function findOne(element, eventType, handler) {
+
+            var foundListeners = [];
+
+            if (element) foundListeners = this.byElement(element);
+
+            if (eventType) foundListeners = foundListeners.concat(this.byType(eventType));
+
+            if (handler) foundListeners = foundListeners.concat(this.byHandler(handler));
+
+            return foundListeners[0];
+        }
+    }, {
+        key: "findAll",
+        value: function findAll(element, eventType, handler) {
+
+            var foundListeners = [];
+
+            if (element) foundListeners = this.byElement(element);
+
+            if (eventType) foundListeners = foundListeners.concat(this.byType(eventType));
+
+            if (handler) foundListeners = foundListeners.concat(this.byHandler(handler));
+
+            return foundListeners;
+        }
+    }, {
+        key: "removeAll",
+        value: function removeAll() {
+            var _this2 = this;
+
+            this.allListeners.map(function (current) {
+
+                _this2.off(current.element, current.type, current.handler);
+            });
+        }
+    }]);
+
+    return Listeners;
+}(Module);
+
+Listeners.displayName = "Listeners";
+exports.default = Listeners;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(Module, _) {
 
 Object.defineProperty(exports, "__esModule", {
@@ -2679,7 +2904,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2757,7 +2982,7 @@ var Sanitizer = function (_Module) {
         _this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
 
         /** HTML Janitor library */
-        _this.sanitizerInstance = __webpack_require__(13);
+        _this.sanitizerInstance = __webpack_require__(14);
 
         return _this;
     }
@@ -2860,7 +3085,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -3055,7 +3280,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (roo
 
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3346,7 +3571,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3675,7 +3900,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3940,7 +4165,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4239,7 +4464,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4438,7 +4663,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(19);
+      var styles = __webpack_require__(20);
 
       /**
        * Make tag
@@ -4856,10 +5081,10 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(20)(undefined);
+exports = module.exports = __webpack_require__(21)(undefined);
 // imports
 
 
@@ -4870,7 +5095,7 @@ exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n
 
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports) {
 
 /*
