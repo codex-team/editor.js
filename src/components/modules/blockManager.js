@@ -114,21 +114,14 @@ export default class BlockManager extends Module {
     }
 
     /**
+     * Split blocks when "enter" pressed
      *
+     * @param {String} toolName — plugin name
+     * @param {Object} data — plugin data
      */
-    split() {
+    split(toolName, data) {
 
-        let selection = window.getSelection();
-        let range = new Range();
-
-        console.log(selection.focusNode);
-        range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-        range.setEnd(selection.focusNode, selection.focusNode.length);
-
-        // console.log(range.extractContents());
-        // console.log('+');
-
-        this.insert('text', range.extractContents());
+        this.insert(toolName, data);
 
     }
 

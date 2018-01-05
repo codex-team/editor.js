@@ -1410,24 +1410,17 @@ var BlockManager = function (_Module) {
         }
 
         /**
+         * Split blocks when "enter" pressed
          *
+         * @param {String} toolName — plugin name
+         * @param {Object} data — plugin data
          */
 
     }, {
         key: 'split',
-        value: function split() {
+        value: function split(toolName, data) {
 
-            var selection = window.getSelection();
-            var range = new Range();
-
-            console.log(selection.focusNode);
-            range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-            range.setEnd(selection.focusNode, selection.focusNode.length);
-
-            // console.log(range.extractContents());
-            // console.log('+');
-
-            this.insert('text', range.extractContents());
+            this.insert(toolName, data);
         }
 
         /**
@@ -2116,16 +2109,29 @@ var Keyboard = function (_Module) {
 
                 case 8:
                     console.log('backspace pressed');
-                    this.Editor.BlockManager.merge(undefined, range.extractContents());
+                    // this.Editor.BlockManager.merge(undefined, range.extractContents());
                     break;
                 case 13:
                     console.log('enter pressed');
-                    // console.log(range.extractContents());
-                    // let op = range.extractContents;
 
-                    // console.log(op);
+                    event.preventDefault();
 
-                    this.Editor.BlockManager.split();
+                    var selection = window.getSelection();
+                    var range = new Range();
+
+                    range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
+                    range.setEnd(selection.focusNode, selection.focusNode.length);
+
+                    var fragm = range.extractContents();
+                    var div = document.createElement('div');
+
+                    div.appendChild(fragm.cloneNode(true));
+
+                    var data = {
+                        text: div.innerHTML
+                    };
+
+                    this.Editor.BlockManager.split('text', data);
                     break;
                 default:
                     break;

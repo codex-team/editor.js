@@ -22,16 +22,29 @@ export default class Keyboard extends Module {
 
             case (8):
                 console.log('backspace pressed');
-                this.Editor.BlockManager.merge(undefined, range.extractContents());
+                // this.Editor.BlockManager.merge(undefined, range.extractContents());
                 break;
             case (13):
                 console.log('enter pressed');
-                // console.log(range.extractContents());
-                // let op = range.extractContents;
 
-                // console.log(op);
+                event.preventDefault();
 
-                this.Editor.BlockManager.split();
+                let selection = window.getSelection();
+                let range = new Range();
+
+                range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
+                range.setEnd(selection.focusNode, selection.focusNode.length);
+
+                let fragm = range.extractContents();
+                let div = document.createElement('div');
+
+                div.appendChild(fragm.cloneNode(true));
+
+                let data = {
+                    text: div.innerHTML,
+                };
+
+                this.Editor.BlockManager.split('text', data);
                 break;
             default:
                 break;
