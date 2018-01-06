@@ -206,9 +206,11 @@ export default class Listeners extends Module {
 
         this.allListeners.map( (current) => {
 
-            this.off(current.element, current.type, current.handler);
+            current.element.removeEventListener(current.eventType, current.handler);
 
         });
+
+        this.allListeners = [];
 
     }
 

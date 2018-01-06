@@ -2791,12 +2791,13 @@ var Listeners = function (_Module) {
     }, {
         key: "removeAll",
         value: function removeAll() {
-            var _this2 = this;
 
             this.allListeners.map(function (current) {
 
-                _this2.off(current.element, current.type, current.handler);
+                current.element.removeEventListener(current.eventType, current.handler);
             });
+
+            this.allListeners = [];
         }
     }]);
 
