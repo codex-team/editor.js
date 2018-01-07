@@ -2593,40 +2593,59 @@ var Keyboard = function (_Module) {
 
                 case 8:
                     console.log('backspace pressed');
-                    // this.Editor.BlockManager.merge(undefined, range.extractContents());
+
+                    var selection = window.getSelection();
+
+                    if (!selection.isCollapsed || selection.anchorOffset != 0) {
+
+                        break;
+                    }
+
+                    event.preventDefault();
+                    console.log('+');
+
+                    this.Editor.BlockManager.Blocks.insert(this.Editor.BlockManager.currentBlockIndex - 1, 'text', this.getDataFromRange());
                     break;
+
                 case 13:
                     console.log('enter pressed');
 
                     event.preventDefault();
 
-                    var selection = window.getSelection();
-                    var range = new Range();
-
-                    var cnt = this.Editor.BlockManager.currentBlock.pluginsContent,
-                        last = $.getDeepestNode(cnt, true);
-
-                    range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-                    range.setEnd(last, last.length);
-
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-
-                    var fragm = range.extractContents();
-                    var div = document.createElement('div');
-
-                    div.appendChild(fragm.cloneNode(true));
-
-                    var data = {
-                        text: div.innerHTML
-                    };
-
-                    this.Editor.BlockManager.split('text', data);
+                    this.Editor.BlockManager.insert('text', this.getDataFromRange());
                     break;
+
                 default:
                     break;
 
             }
+        }
+    }, {
+        key: 'getDataFromRange',
+        value: function getDataFromRange() {
+
+            var selection = window.getSelection();
+            var range = new Range();
+
+            var cnt = this.Editor.BlockManager.currentBlock.pluginsContent,
+                last = $.getDeepestNode(cnt, true);
+
+            range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
+            range.setEnd(last, last.length);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            var fragm = range.extractContents();
+            var div = document.createElement('div');
+
+            div.appendChild(fragm.cloneNode(true));
+
+            var data = {
+                text: div.innerHTML
+            };
+
+            return data;
         }
     }]);
 
