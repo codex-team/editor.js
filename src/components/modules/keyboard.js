@@ -26,7 +26,7 @@ export default class Keyboard extends Module {
                 event.preventDefault();
                 console.log('+');
 
-                this.Editor.BlockManager.Blocks.insert(this.Editor.BlockManager.currentBlockIndex - 1, 'text', this.getDataFromRange());
+                // this.Editor.BlockManager.Blocks.insert(this.Editor.BlockManager.currentBlockIndex - 1, 'text', this.getDataFromRange());
                 break;
 
             case (13):
