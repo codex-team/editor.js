@@ -1468,7 +1468,7 @@ var BlockManager = function (_Module) {
             var _this3 = this;
 
             this.Editor.Listeners.on(block.pluginsContent, 'keydown', function (event) {
-                return _this3.Editor.Keyboard.keyboardListener(event);
+                return _this3.Editor.Keyboard.blockKeydownsListener(event);
             });
         }
 
@@ -2628,8 +2628,8 @@ var Keyboard = function (_Module) {
 
 
     _createClass(Keyboard, [{
-        key: 'keyboardListener',
-        value: function keyboardListener(event) {
+        key: 'blockKeydownsListener',
+        value: function blockKeydownsListener(event) {
 
             switch (event.keyCode) {
 

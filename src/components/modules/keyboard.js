@@ -27,7 +27,7 @@ export default class Keyboard extends Module {
      *
      * @param {KeyboardEvent} event
      */
-    keyboardListener(event) {
+    blockKeydownsListener(event) {
 
         switch(event.keyCode) {
 

@@ -110,7 +110,7 @@ export default class BlockManager extends Module {
      */
     bindEvents(block) {
 
-        this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.Keyboard.keyboardListener(event));
+        this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.Keyboard.blockKeydownsListener(event));
 
     }
 
