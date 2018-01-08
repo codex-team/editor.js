@@ -1576,7 +1576,7 @@ var BlockManager = function (_Module) {
         }
 
         /**
-         * Insert extract content form current block to below current block
+         * Insert extract content form current block to block that is below
          */
 
     }, {
@@ -2456,7 +2456,7 @@ var Caret = function (_Module) {
         }
 
         /**
-         * Extract fragment of content current block form caret position
+         * Extract content fragment of current block form caret position
          */
 
     }, {
@@ -2466,8 +2466,8 @@ var Caret = function (_Module) {
             var selection = _Selection2.default.get(),
                 range = new Range();
 
-            var cnt = this.Editor.BlockManager.currentBlock.pluginsContent,
-                lastNode = $.getDeepestNode(cnt, true);
+            var pluginsContent = this.Editor.BlockManager.currentBlock.pluginsContent,
+                lastNode = $.getDeepestNode(pluginsContent, true);
 
             range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
             range.setEnd(lastNode, lastNode.length);
@@ -2606,12 +2606,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Selection = __webpack_require__(3);
-
-var _Selection2 = _interopRequireDefault(_Selection);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -2648,7 +2642,7 @@ var Keyboard = function (_Module) {
         }
 
         /**
-         * handler processes special keyboard keys
+         * Handler on Editor for keyboard keys
          *
          * @param {KeyDown} event
          */

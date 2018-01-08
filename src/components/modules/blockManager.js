@@ -212,7 +212,7 @@ export default class BlockManager extends Module {
     }
 
     /**
-     * Insert extract content form current block to below current block
+     * Insert extract content form current block to block that is below
      */
     split() {
 

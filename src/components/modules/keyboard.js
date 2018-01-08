@@ -1,5 +1,3 @@
-import Selection from '../Selection';
-
 export default class Keyboard extends Module {
 
     constructor({config}) {
@@ -24,7 +22,7 @@ export default class Keyboard extends Module {
     }
 
     /**
-     * handler processes special keyboard keys
+     * Handler on Editor for keyboard keys
      *
      * @param {KeyDown} event
      */
