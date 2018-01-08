@@ -125,6 +125,9 @@ export default class Caret extends Module {
             range = new Range();
 
         let pluginsContent = this.Editor.BlockManager.currentBlock.pluginsContent,
+            /**
+             * Second argument is true because we need to find last deepest text node
+             */
             lastNode = $.getDeepestNode(pluginsContent, true);
 
         range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);

@@ -93,6 +93,8 @@ export default class BlockManager extends Module {
         let toolInstance = this.Editor.Tools.construct(toolName, data),
             block = new Block(toolName, toolInstance);
 
+        this.bindEvents(block);
+
         /**
          * Apply callback before inserting html
          */
@@ -108,35 +110,7 @@ export default class BlockManager extends Module {
      */
     bindEvents(block) {
 
-        /**
-         * keydown on block
-         * @todo move to the keydown module
-         */
-        this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.keyDownOnBlock(event));
-
-    }
-
-    /**
-     * @todo move to the keydown module
-     * @param {MouseEvent} event
-     */
-    keyDownOnBlock(event) {
-
-        switch(event.keyCode) {
-
-            case _.keyCodes.ENTER:
-                // this.enterPressedOnPluginsContent(event);
-                break;
-            case _.keyCodes.DOWN:
-            case _.keyCodes.RIGHT:
-                this.navigateNext();
-                break;
-            case _.keyCodes.UP:
-            case _.keyCodes.LEFT:
-                this.navigatePrevious();
-                break;
-
-        }
+        this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.Keyboard.keyboardListener(event));
 
     }
 
@@ -212,15 +186,18 @@ export default class BlockManager extends Module {
     }
 
     /**
-     * Insert extract content form current block to block that is below
+     * Create new block below current block and insert extracted content form current block to new block
      */
     split() {
 
         let extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition(),
             wrapper = $.make('div');
 
-        wrapper.append(extractedFragment.cloneNode(true));
+        wrapper.append(extractedFragment);
 
+        /**
+         * @todo make object in accordance with the plugin
+         */
         let data = {
             text: wrapper.innerHTML,
         };

@@ -1,5 +1,23 @@
+/**
+ * @class Keyboard
+ * @classdesc Сlass to handle the keystrokes
+ *
+ * @module Keyboard
+ *
+ * @author CodeX Team (team@ifmo.su)
+ * @copyright CodeX Team 2017
+ * @license The MIT License (MIT)
+ * @version 2.0.0
+ */
+
+/**
+ * @typedef {Keyboard} Keyboard
+ */
 export default class Keyboard extends Module {
 
+    /**
+     * @constructor
+     */
     constructor({config}) {
 
         super({config});
@@ -7,24 +25,9 @@ export default class Keyboard extends Module {
     }
 
     /**
-     * Should be called after Editor.BlockManager preparation
+     * Handler on Editor for keyboard keys at keydown event
      *
-     * @returns {Listener}
-     */
-    prepare() {
-
-        this.Editor.Listeners.on(document.body, 'keydown', event => {
-
-            this.keyboardListener(event);
-
-        });
-
-    }
-
-    /**
-     * Handler on Editor for keyboard keys
-     *
-     * @param {KeyDown} event
+     * @param {KeyboardEvent} event
      */
     keyboardListener(event) {
 
@@ -64,19 +67,25 @@ export default class Keyboard extends Module {
     }
 
     /**
-     * Insert new block with data below current block
+     * Handle pressing enter key
      *
      * @param {KeyDown} event
      */
     enterPressed(event) {
 
+        /**
+         * @todo check settings of "allowLinebreaks" plugin
+         */
         event.preventDefault();
+        /**
+         * Insert new block with data below current block
+         */
         this.Editor.BlockManager.split();
 
     }
 
     /**
-     * Hand right and down keyboard keys
+     * Handle right and down keyboard keys
      */
     arrowRightAndDownPressed() {
 
@@ -85,7 +94,7 @@ export default class Keyboard extends Module {
     }
 
     /**
-     * Hand left and up keyboard keys
+     * Handle left and up keyboard keys
      */
     arrowLeftAndUpPressed() {
 

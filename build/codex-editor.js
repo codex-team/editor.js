@@ -1070,7 +1070,9 @@ module.exports = function () {
                 return module.prepare();
             };
 
-            return Promise.resolve().then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.BlockManager)).then(prepareDecorator(this.moduleInstances.Keyboard)).then(function () {
+            return Promise.resolve().then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.BlockManager))
+            // .then(prepareDecorator(this.moduleInstances.Keyboard))
+            .then(function () {
 
                 return _this3.moduleInstances.Renderer.render(_this3.config.data.items);
             });
@@ -1322,7 +1324,7 @@ webpackContext.id = 6;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, _, $) {
+/* WEBPACK VAR INJECTION */(function(Module, $, _) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1447,6 +1449,8 @@ var BlockManager = function (_Module) {
             var toolInstance = this.Editor.Tools.construct(toolName, data),
                 block = new _block2.default(toolName, toolInstance);
 
+            this.bindEvents(block);
+
             /**
              * Apply callback before inserting html
              */
@@ -1465,39 +1469,9 @@ var BlockManager = function (_Module) {
         value: function bindEvents(block) {
             var _this3 = this;
 
-            /**
-             * keydown on block
-             * @todo move to the keydown module
-             */
             this.Editor.Listeners.on(block.pluginsContent, 'keydown', function (event) {
-                return _this3.keyDownOnBlock(event);
+                return _this3.Editor.Keyboard.keyboardListener(event);
             });
-        }
-
-        /**
-         * @todo move to the keydown module
-         * @param {MouseEvent} event
-         */
-
-    }, {
-        key: 'keyDownOnBlock',
-        value: function keyDownOnBlock(event) {
-
-            switch (event.keyCode) {
-
-                case _.keyCodes.ENTER:
-                    // this.enterPressedOnPluginsContent(event);
-                    break;
-                case _.keyCodes.DOWN:
-                case _.keyCodes.RIGHT:
-                    this.navigateNext();
-                    break;
-                case _.keyCodes.UP:
-                case _.keyCodes.LEFT:
-                    this.navigatePrevious();
-                    break;
-
-            }
         }
 
         /**
@@ -1576,7 +1550,7 @@ var BlockManager = function (_Module) {
         }
 
         /**
-         * Insert extract content form current block to block that is below
+         * Create new block below current block and insert extracted content form current block to new block
          */
 
     }, {
@@ -1586,8 +1560,11 @@ var BlockManager = function (_Module) {
             var extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition(),
                 wrapper = $.make('div');
 
-            wrapper.append(extractedFragment.cloneNode(true));
+            wrapper.append(extractedFragment);
 
+            /**
+             * @todo make object in accordance with the plugin
+             */
             var data = {
                 text: wrapper.innerHTML
             };
@@ -2033,7 +2010,7 @@ var Blocks = function () {
 
 Blocks.displayName = 'Blocks';
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
 /* 8 */
@@ -2467,7 +2444,11 @@ var Caret = function (_Module) {
                 range = new Range();
 
             var pluginsContent = this.Editor.BlockManager.currentBlock.pluginsContent,
-                lastNode = $.getDeepestNode(pluginsContent, true);
+
+            /**
+             * Second argument is true because we need to find last deepest text node
+             */
+            lastNode = $.getDeepestNode(pluginsContent, true);
 
             range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
             range.setEnd(lastNode, lastNode.length);
@@ -2612,9 +2593,27 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+/**
+ * @class Keyboard
+ * @classdesc Сlass to handle the keystrokes
+ *
+ * @module Keyboard
+ *
+ * @author CodeX Team (team@ifmo.su)
+ * @copyright CodeX Team 2017
+ * @license The MIT License (MIT)
+ * @version 2.0.0
+ */
+
+/**
+ * @typedef {Keyboard} Keyboard
+ */
 var Keyboard = function (_Module) {
     _inherits(Keyboard, _Module);
 
+    /**
+     * @constructor
+     */
     function Keyboard(_ref) {
         var config = _ref.config;
 
@@ -2624,30 +2623,13 @@ var Keyboard = function (_Module) {
     }
 
     /**
-     * Should be called after Editor.BlockManager preparation
+     * Handler on Editor for keyboard keys at keydown event
      *
-     * @returns {Listener}
+     * @param {KeyboardEvent} event
      */
 
 
     _createClass(Keyboard, [{
-        key: 'prepare',
-        value: function prepare() {
-            var _this2 = this;
-
-            this.Editor.Listeners.on(document.body, 'keydown', function (event) {
-
-                _this2.keyboardListener(event);
-            });
-        }
-
-        /**
-         * Handler on Editor for keyboard keys
-         *
-         * @param {KeyDown} event
-         */
-
-    }, {
         key: 'keyboardListener',
         value: function keyboardListener(event) {
 
@@ -2686,7 +2668,7 @@ var Keyboard = function (_Module) {
         }
 
         /**
-         * Insert new block with data below current block
+         * Handle pressing enter key
          *
          * @param {KeyDown} event
          */
@@ -2695,12 +2677,18 @@ var Keyboard = function (_Module) {
         key: 'enterPressed',
         value: function enterPressed(event) {
 
+            /**
+             * @todo check settings of "allowLinebreaks" plugin
+             */
             event.preventDefault();
+            /**
+             * Insert new block with data below current block
+             */
             this.Editor.BlockManager.split();
         }
 
         /**
-         * Hand right and down keyboard keys
+         * Handle right and down keyboard keys
          */
 
     }, {
@@ -2711,7 +2699,7 @@ var Keyboard = function (_Module) {
         }
 
         /**
-         * Hand left and up keyboard keys
+         * Handle left and up keyboard keys
          */
 
     }, {
