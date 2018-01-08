@@ -214,6 +214,36 @@ export default class BlockManager extends Module {
     }
 
     /**
+     * Gets data from blocks
+     */
+    split() {
+
+        let selection = Selection.get(),
+            range = new Range();
+
+        let cnt = this.currentBlock.pluginsContent,
+            last = $.getDeepestNode(cnt, true);
+
+        range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
+        range.setEnd(last, last.length);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        let extractedFragment = range.extractContents(),
+            wrapper = $.make('div');
+
+        wrapper.append(extractedFragment.cloneNode(true));
+
+        let data = {
+            text: wrapper.innerHTML,
+        };
+
+        return data;
+
+    }
+
+    /**
      * Replace current working block
      *
      * @param {String} toolName — plugin name

@@ -1,10 +1,12 @@
+import Selection from '../Selection';
+
 export default class Keyboard extends Module {
 
     constructor({config}) {
 
         super({config});
 
-        document.body.addEventListener('keydown', this.keyBoardListener.bind(this));
+        document.body.addEventListener('keydown', event => this.keyBoardListener(event));
 
     }
 
@@ -17,20 +19,43 @@ export default class Keyboard extends Module {
 
         switch(event.keyCode) {
 
-            case (8):
-                console.log('backspace pressed');
+            case _.keyCodes.BACKSPACE:
 
+                _.log('Backspace key pressed');
                 break;
 
-            case (13):
-                console.log('enter pressed');
+            case _.keyCodes.ENTER:
 
+                _.log('Enter key pressed');
                 event.preventDefault();
 
-                this.Editor.BlockManager.insert('text', this.getDataFromRange());
+                this.enterPressed();
+                break;
+
+            case _.keyCodes.DOWN:
+
+                _.log('Down key pressed');
+                break;
+
+            case _.keyCodes.RIGHT:
+
+                _.log('Right key pressed');
+                this.Editor.BlockManager.navigateNext();
+                break;
+
+            case _.keyCodes.UP:
+
+                _.log('Up key pressed');
+                break;
+
+            case _.keyCodes.LEFT:
+
+                _.log('left key pressed');
+                this.Editor.BlockManager.navigatePrevious();
                 break;
 
             default:
+
                 break;
 
         }
@@ -38,32 +63,11 @@ export default class Keyboard extends Module {
     }
 
     /**
-     * Gets data from blocks
+     * Insert new block with data below current block
      */
-    getDataFromRange() {
+    enterPressed() {
 
-        let selection = window.getSelection();
-        let range = new Range();
-
-        let cnt = this.Editor.BlockManager.currentBlock.pluginsContent,
-            last = $.getDeepestNode(cnt, true);
-
-        range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-        range.setEnd(last, last.length);
-
-        selection.removeAllRanges();
-        selection.addRange(range);
-
-        let fragm = range.extractContents();
-        let div = document.createElement('div');
-
-        div.appendChild(fragm.cloneNode(true));
-
-        let data = {
-            text: div.innerHTML,
-        };
-
-        return data;
+        this.Editor.BlockManager.insert('text', this.Editor.BlockManager.split());
 
     }
 

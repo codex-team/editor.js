@@ -1577,6 +1577,38 @@ var BlockManager = function (_Module) {
         }
 
         /**
+         * Gets data from blocks
+         */
+
+    }, {
+        key: 'split',
+        value: function split() {
+
+            var selection = _Selection2.default.get(),
+                range = new Range();
+
+            var cnt = this.currentBlock.pluginsContent,
+                last = $.getDeepestNode(cnt, true);
+
+            range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
+            range.setEnd(last, last.length);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            var extractedFragment = range.extractContents(),
+                wrapper = $.make('div');
+
+            wrapper.append(extractedFragment.cloneNode(true));
+
+            var data = {
+                text: wrapper.innerHTML
+            };
+
+            return data;
+        }
+
+        /**
          * Replace current working block
          *
          * @param {String} toolName — plugin name
@@ -2556,13 +2588,19 @@ module.exports = exports["default"];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, $) {
+/* WEBPACK VAR INJECTION */(function(Module, _) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _Selection = __webpack_require__(3);
+
+var _Selection2 = _interopRequireDefault(_Selection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -2580,7 +2618,9 @@ var Keyboard = function (_Module) {
 
         var _this = _possibleConstructorReturn(this, (Keyboard.__proto__ || Object.getPrototypeOf(Keyboard)).call(this, { config: config }));
 
-        document.body.addEventListener('keydown', _this.keyBoardListener.bind(_this));
+        document.body.addEventListener('keydown', function (event) {
+            return _this.keyBoardListener(event);
+        });
 
         return _this;
     }
@@ -2598,55 +2638,57 @@ var Keyboard = function (_Module) {
 
             switch (event.keyCode) {
 
-                case 8:
-                    console.log('backspace pressed');
+                case _.keyCodes.BACKSPACE:
 
+                    _.log('Backspace key pressed');
                     break;
 
-                case 13:
-                    console.log('enter pressed');
+                case _.keyCodes.ENTER:
 
+                    _.log('Enter key pressed');
                     event.preventDefault();
 
-                    this.Editor.BlockManager.insert('text', this.getDataFromRange());
+                    this.enterPressed();
+                    break;
+
+                case _.keyCodes.DOWN:
+
+                    _.log('Down key pressed');
+                    break;
+
+                case _.keyCodes.RIGHT:
+
+                    _.log('Right key pressed');
+                    this.Editor.BlockManager.navigateNext();
+                    break;
+
+                case _.keyCodes.UP:
+
+                    _.log('Up key pressed');
+                    break;
+
+                case _.keyCodes.LEFT:
+
+                    _.log('left key pressed');
+                    this.Editor.BlockManager.navigatePrevious();
                     break;
 
                 default:
+
                     break;
 
             }
         }
 
         /**
-         * Gets data from blocks
+         * Insert new block with data below current block
          */
 
     }, {
-        key: 'getDataFromRange',
-        value: function getDataFromRange() {
+        key: 'enterPressed',
+        value: function enterPressed() {
 
-            var selection = window.getSelection();
-            var range = new Range();
-
-            var cnt = this.Editor.BlockManager.currentBlock.pluginsContent,
-                last = $.getDeepestNode(cnt, true);
-
-            range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-            range.setEnd(last, last.length);
-
-            selection.removeAllRanges();
-            selection.addRange(range);
-
-            var fragm = range.extractContents();
-            var div = document.createElement('div');
-
-            div.appendChild(fragm.cloneNode(true));
-
-            var data = {
-                text: div.innerHTML
-            };
-
-            return data;
+            this.Editor.BlockManager.insert('text', this.Editor.BlockManager.split());
         }
     }]);
 
@@ -2656,7 +2698,7 @@ var Keyboard = function (_Module) {
 Keyboard.displayName = 'Keyboard';
 exports.default = Keyboard;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
 /* 12 */
