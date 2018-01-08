@@ -317,6 +317,7 @@ module.exports = class CodexEditor {
             .then(prepareDecorator(this.moduleInstances.Tools))
             .then(prepareDecorator(this.moduleInstances.UI))
             .then(prepareDecorator(this.moduleInstances.BlockManager))
+            .then(prepareDecorator(this.moduleInstances.Keyboard))
             .then(() => {
 
                 return this.moduleInstances.Renderer.render(this.config.data.items);

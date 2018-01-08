@@ -1070,7 +1070,7 @@ module.exports = function () {
                 return module.prepare();
             };
 
-            return Promise.resolve().then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.BlockManager)).then(function () {
+            return Promise.resolve().then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.BlockManager)).then(prepareDecorator(this.moduleInstances.Keyboard)).then(function () {
 
                 return _this3.moduleInstances.Renderer.render(_this3.config.data.items);
             });
@@ -1289,17 +1289,17 @@ if (!Element.prototype.closest) Element.prototype.closest = function (s) {
 
 var map = {
 	"./blockManager.js": 7,
-	"./caret.js": 8,
-	"./events.js": 9,
-	"./keyboard.js": 10,
-	"./listeners.js": 11,
-	"./renderer.js": 12,
-	"./sanitizer.js": 13,
-	"./saver.js": 15,
-	"./toolbar.js": 16,
-	"./toolbox.js": 17,
-	"./tools.js": 18,
-	"./ui.js": 19
+	"./caret.js": 9,
+	"./events.js": 10,
+	"./keyboard.js": 11,
+	"./listeners.js": 12,
+	"./renderer.js": 13,
+	"./sanitizer.js": 14,
+	"./saver.js": 16,
+	"./toolbar.js": 17,
+	"./toolbox.js": 18,
+	"./tools.js": 19,
+	"./ui.js": 20
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1330,7 +1330,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _block = __webpack_require__(22);
+var _block = __webpack_require__(8);
 
 var _block2 = _interopRequireDefault(_block);
 
@@ -1576,26 +1576,14 @@ var BlockManager = function (_Module) {
         }
 
         /**
-         * Gets data from blocks
+         * Insert extract content form current block to below current block
          */
 
     }, {
         key: 'split',
         value: function split() {
 
-            var selection = _Selection2.default.get(),
-                range = new Range();
-
-            var cnt = this.currentBlock.pluginsContent,
-                last = $.getDeepestNode(cnt, true);
-
-            range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-            range.setEnd(last, last.length);
-
-            selection.removeAllRanges();
-            selection.addRange(range);
-
-            var extractedFragment = range.extractContents(),
+            var extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition(),
                 wrapper = $.make('div');
 
             wrapper.append(extractedFragment.cloneNode(true));
@@ -1604,17 +1592,8 @@ var BlockManager = function (_Module) {
                 text: wrapper.innerHTML
             };
 
-            return data;
+            this.insert('text', data);
         }
-
-        // @todo
-        /* split() {
-             let extractedFragment = this.Editor.Caret.extractFromCaretPosition(),
-                data = {
-                    text: //div.innerHTMl
-                }
-              this.insert('text', data);
-        }*/
 
         /**
          * Replace current working block
@@ -2061,6 +2040,271 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+/* WEBPACK VAR INJECTION */(function($, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ *
+ * @class Block
+ * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
+ *
+ * @property {Tool} tool — current block tool (Paragraph, for example)
+ * @property {Object} CSS — block`s css classes
+ *
+ */
+
+/**
+ * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
+ *
+ * @property tool - Tool instance
+ * @property html - Returns HTML content of plugin
+ * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+ * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property pluginsContent - HTML content that returns by Tool's render function
+ */
+var Block = function () {
+
+    /**
+     * @constructor
+     * @param {String} toolName - Tool name that passed on initialization
+     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
+     */
+    function Block(toolName, toolInstance) {
+        _classCallCheck(this, Block);
+
+        this.name = toolName;
+        this.tool = toolInstance;
+        this._html = this.compose();
+    }
+
+    /**
+     * CSS classes for the Block
+     * @return {{wrapper: string, content: string}}
+     */
+
+
+    _createClass(Block, [{
+        key: 'compose',
+
+
+        /**
+         * Make default Block wrappers and put Tool`s content there
+         * @returns {HTMLDivElement}
+         */
+        value: function compose() {
+
+            this.wrapper = $.make('div', Block.CSS.wrapper);
+            this.contentNode = $.make('div', Block.CSS.content);
+            this.pluginsContent = this.tool.render();
+
+            this.contentNode.appendChild(this.pluginsContent);
+            this.wrapper.appendChild(this.contentNode);
+
+            return this.wrapper;
+        }
+
+        /**
+         * Calls Tool's method
+         *
+         * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
+         *
+         * @param {String} methodName
+         * @param {Object} params
+         */
+
+    }, {
+        key: 'call',
+        value: function call(methodName, params) {
+
+            /**
+             * call Tool's method with the instance context
+             */
+            if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+
+                this.tool[methodName].call(this.tool, params);
+            }
+        }
+
+        /**
+         * Get Block`s HTML
+         * @returns {HTMLElement}
+         */
+
+    }, {
+        key: 'save',
+
+
+        /**
+         * Extracts data from Block
+         * Groups Tool's save processing time
+         * @return {Object}
+         */
+        value: function save() {
+            var _this = this;
+
+            var extractedBlock = this.tool.save(this.pluginsContent);
+
+            /** Measuring execution time*/
+            var measuringStart = window.performance.now(),
+                measuringEnd = void 0;
+
+            return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
+
+                /** measure promise execution */
+                measuringEnd = window.performance.now();
+
+                return {
+                    tool: _this.name,
+                    data: finishedExtraction,
+                    time: measuringEnd - measuringStart
+                };
+            }).catch(function (error) {
+
+                _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
+            });
+        }
+
+        /**
+         * Uses Tool's validation method to check the correctness of output data
+         * Tool's validation method is optional
+         *
+         * @description Method also can return data if it passed the validation
+         *
+         * @param {Object} data
+         * @returns {Boolean|Object} valid
+         */
+
+    }, {
+        key: 'validateData',
+        value: function validateData(data) {
+
+            var isValid = true;
+
+            if (this.tool.validate instanceof Function) {
+
+                isValid = this.tool.validate(data);
+            }
+
+            if (!isValid) {
+
+                return false;
+            }
+
+            return data;
+        }
+
+        /**
+         * Check block for emptiness
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'html',
+        get: function get() {
+
+            return this._html;
+        }
+
+        /**
+         * Get Block's JSON data
+         * @return {Object}
+         */
+
+    }, {
+        key: 'data',
+        get: function get() {
+
+            return this.save();
+        }
+    }, {
+        key: 'isEmpty',
+        get: function get() {
+
+            /**
+             * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
+             * That Tools are not empty
+             */
+            if (this.tool.contentless) {
+
+                return false;
+            }
+
+            var emptyText = $.isEmpty(this.pluginsContent),
+                emptyMedia = !this.hasMedia;
+
+            return emptyText && emptyMedia;
+        }
+
+        /**
+         * Check if block has a media content such as images, iframes and other
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'hasMedia',
+        get: function get() {
+
+            /**
+             * This tags represents media-content
+             * @type {string[]}
+             */
+            var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
+
+            return !!this._html.querySelector(mediaTags.join(','));
+        }
+
+        /**
+         * Set selected state
+         * @param {Boolean} state - 'true' to select, 'false' to remove selection
+         */
+
+    }, {
+        key: 'selected',
+        set: function set(state) {
+
+            /**
+             * We don't need to mark Block as Selected when it is not empty
+             */
+            if (state === true && !this.isEmpty) {
+
+                this._html.classList.add(Block.CSS.selected);
+            } else {
+
+                this._html.classList.remove(Block.CSS.selected);
+            }
+        }
+    }], [{
+        key: 'CSS',
+        get: function get() {
+
+            return {
+                wrapper: 'ce-block',
+                content: 'ce-block__content',
+                selected: 'ce-block--selected'
+            };
+        }
+    }]);
+
+    return Block;
+}();
+
+Block.displayName = 'Block';
+exports.default = Block;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(Module, $, _) {
 
 Object.defineProperty(exports, "__esModule", {
@@ -2210,6 +2454,29 @@ var Caret = function (_Module) {
                 this.Editor.BlockManager.insert(this.config.initialBlock);
             }
         }
+
+        /**
+         * Extract fragment of content current block form caret position
+         */
+
+    }, {
+        key: 'extractFragmentFromCaretPosition',
+        value: function extractFragmentFromCaretPosition() {
+
+            var selection = _Selection2.default.get(),
+                range = new Range();
+
+            var cnt = this.Editor.BlockManager.currentBlock.pluginsContent,
+                lastNode = $.getDeepestNode(cnt, true);
+
+            range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
+            range.setEnd(lastNode, lastNode.length);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            return range.extractContents();
+        }
     }]);
 
     return Caret;
@@ -2221,7 +2488,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2327,7 +2594,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2359,25 +2626,36 @@ var Keyboard = function (_Module) {
 
         _classCallCheck(this, Keyboard);
 
-        var _this = _possibleConstructorReturn(this, (Keyboard.__proto__ || Object.getPrototypeOf(Keyboard)).call(this, { config: config }));
-
-        document.body.addEventListener('keydown', function (event) {
-            return _this.keyBoardListener(event);
-        });
-
-        return _this;
+        return _possibleConstructorReturn(this, (Keyboard.__proto__ || Object.getPrototypeOf(Keyboard)).call(this, { config: config }));
     }
 
     /**
-     * handler processes special keyboard keys
+     * Should be called after Editor.BlockManager preparation
      *
-     * @param {KeyDown} event
+     * @returns {Listener}
      */
 
 
     _createClass(Keyboard, [{
-        key: 'keyBoardListener',
-        value: function keyBoardListener(event) {
+        key: 'prepare',
+        value: function prepare() {
+            var _this2 = this;
+
+            this.Editor.Listeners.on(document.body, 'keydown', function (event) {
+
+                _this2.keyboardListener(event);
+            });
+        }
+
+        /**
+         * handler processes special keyboard keys
+         *
+         * @param {KeyDown} event
+         */
+
+    }, {
+        key: 'keyboardListener',
+        value: function keyboardListener(event) {
 
             switch (event.keyCode) {
 
@@ -2389,31 +2667,21 @@ var Keyboard = function (_Module) {
                 case _.keyCodes.ENTER:
 
                     _.log('Enter key pressed');
-                    event.preventDefault();
-
-                    this.enterPressed();
+                    this.enterPressed(event);
                     break;
 
                 case _.keyCodes.DOWN:
-
-                    _.log('Down key pressed');
-                    break;
-
                 case _.keyCodes.RIGHT:
 
-                    _.log('Right key pressed');
-                    this.Editor.BlockManager.navigateNext();
+                    _.log('Right/Down key pressed');
+                    this.arrowRightAndDownPressed();
                     break;
 
                 case _.keyCodes.UP:
-
-                    _.log('Up key pressed');
-                    break;
-
                 case _.keyCodes.LEFT:
 
-                    _.log('left key pressed');
-                    this.Editor.BlockManager.navigatePrevious();
+                    _.log('Left/Up key pressed');
+                    this.arrowLeftAndUpPressed();
                     break;
 
                 default:
@@ -2425,13 +2693,38 @@ var Keyboard = function (_Module) {
 
         /**
          * Insert new block with data below current block
+         *
+         * @param {KeyDown} event
          */
 
     }, {
         key: 'enterPressed',
-        value: function enterPressed() {
+        value: function enterPressed(event) {
 
-            this.Editor.BlockManager.insert('text', this.Editor.BlockManager.split());
+            event.preventDefault();
+            this.Editor.BlockManager.split();
+        }
+
+        /**
+         * Hand right and down keyboard keys
+         */
+
+    }, {
+        key: 'arrowRightAndDownPressed',
+        value: function arrowRightAndDownPressed() {
+
+            this.Editor.BlockManager.navigateNext();
+        }
+
+        /**
+         * Hand left and up keyboard keys
+         */
+
+    }, {
+        key: 'arrowLeftAndUpPressed',
+        value: function arrowLeftAndUpPressed() {
+
+            this.Editor.BlockManager.navigatePrevious();
         }
     }]);
 
@@ -2444,7 +2737,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2702,7 +2995,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2830,7 +3123,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2908,7 +3201,7 @@ var Sanitizer = function (_Module) {
         _this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
 
         /** HTML Janitor library */
-        _this.sanitizerInstance = __webpack_require__(14);
+        _this.sanitizerInstance = __webpack_require__(15);
 
         return _this;
     }
@@ -3011,7 +3304,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -3206,7 +3499,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (roo
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3497,7 +3790,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3826,7 +4119,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4091,7 +4384,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4390,7 +4683,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4589,7 +4882,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(20);
+      var styles = __webpack_require__(21);
 
       /**
        * Make tag
@@ -5007,10 +5300,10 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(21)(undefined);
+exports = module.exports = __webpack_require__(22)(undefined);
 // imports
 
 
@@ -5021,7 +5314,7 @@ exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 /*
@@ -5101,271 +5394,6 @@ function toComment(sourceMap) {
 	return '/*# ' + data + ' */';
 }
 
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function($, _) {
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- *
- * @class Block
- * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
- *
- * @property {Tool} tool — current block tool (Paragraph, for example)
- * @property {Object} CSS — block`s css classes
- *
- */
-
-/**
- * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
- *
- * @property tool - Tool instance
- * @property html - Returns HTML content of plugin
- * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
- * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
- * @property pluginsContent - HTML content that returns by Tool's render function
- */
-var Block = function () {
-
-    /**
-     * @constructor
-     * @param {String} toolName - Tool name that passed on initialization
-     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
-     */
-    function Block(toolName, toolInstance) {
-        _classCallCheck(this, Block);
-
-        this.name = toolName;
-        this.tool = toolInstance;
-        this._html = this.compose();
-    }
-
-    /**
-     * CSS classes for the Block
-     * @return {{wrapper: string, content: string}}
-     */
-
-
-    _createClass(Block, [{
-        key: 'compose',
-
-
-        /**
-         * Make default Block wrappers and put Tool`s content there
-         * @returns {HTMLDivElement}
-         */
-        value: function compose() {
-
-            this.wrapper = $.make('div', Block.CSS.wrapper);
-            this.contentNode = $.make('div', Block.CSS.content);
-            this.pluginsContent = this.tool.render();
-
-            this.contentNode.appendChild(this.pluginsContent);
-            this.wrapper.appendChild(this.contentNode);
-
-            return this.wrapper;
-        }
-
-        /**
-         * Calls Tool's method
-         *
-         * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
-         *
-         * @param {String} methodName
-         * @param {Object} params
-         */
-
-    }, {
-        key: 'call',
-        value: function call(methodName, params) {
-
-            /**
-             * call Tool's method with the instance context
-             */
-            if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
-
-                this.tool[methodName].call(this.tool, params);
-            }
-        }
-
-        /**
-         * Get Block`s HTML
-         * @returns {HTMLElement}
-         */
-
-    }, {
-        key: 'save',
-
-
-        /**
-         * Extracts data from Block
-         * Groups Tool's save processing time
-         * @return {Object}
-         */
-        value: function save() {
-            var _this = this;
-
-            var extractedBlock = this.tool.save(this.pluginsContent);
-
-            /** Measuring execution time*/
-            var measuringStart = window.performance.now(),
-                measuringEnd = void 0;
-
-            return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
-
-                /** measure promise execution */
-                measuringEnd = window.performance.now();
-
-                return {
-                    tool: _this.name,
-                    data: finishedExtraction,
-                    time: measuringEnd - measuringStart
-                };
-            }).catch(function (error) {
-
-                _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
-            });
-        }
-
-        /**
-         * Uses Tool's validation method to check the correctness of output data
-         * Tool's validation method is optional
-         *
-         * @description Method also can return data if it passed the validation
-         *
-         * @param {Object} data
-         * @returns {Boolean|Object} valid
-         */
-
-    }, {
-        key: 'validateData',
-        value: function validateData(data) {
-
-            var isValid = true;
-
-            if (this.tool.validate instanceof Function) {
-
-                isValid = this.tool.validate(data);
-            }
-
-            if (!isValid) {
-
-                return false;
-            }
-
-            return data;
-        }
-
-        /**
-         * Check block for emptiness
-         * @return {Boolean}
-         */
-
-    }, {
-        key: 'html',
-        get: function get() {
-
-            return this._html;
-        }
-
-        /**
-         * Get Block's JSON data
-         * @return {Object}
-         */
-
-    }, {
-        key: 'data',
-        get: function get() {
-
-            return this.save();
-        }
-    }, {
-        key: 'isEmpty',
-        get: function get() {
-
-            /**
-             * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
-             * That Tools are not empty
-             */
-            if (this.tool.contentless) {
-
-                return false;
-            }
-
-            var emptyText = $.isEmpty(this.pluginsContent),
-                emptyMedia = !this.hasMedia;
-
-            return emptyText && emptyMedia;
-        }
-
-        /**
-         * Check if block has a media content such as images, iframes and other
-         * @return {Boolean}
-         */
-
-    }, {
-        key: 'hasMedia',
-        get: function get() {
-
-            /**
-             * This tags represents media-content
-             * @type {string[]}
-             */
-            var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
-
-            return !!this._html.querySelector(mediaTags.join(','));
-        }
-
-        /**
-         * Set selected state
-         * @param {Boolean} state - 'true' to select, 'false' to remove selection
-         */
-
-    }, {
-        key: 'selected',
-        set: function set(state) {
-
-            /**
-             * We don't need to mark Block as Selected when it is not empty
-             */
-            if (state === true && !this.isEmpty) {
-
-                this._html.classList.add(Block.CSS.selected);
-            } else {
-
-                this._html.classList.remove(Block.CSS.selected);
-            }
-        }
-    }], [{
-        key: 'CSS',
-        get: function get() {
-
-            return {
-                wrapper: 'ce-block',
-                content: 'ce-block__content',
-                selected: 'ce-block--selected'
-            };
-        }
-    }]);
-
-    return Block;
-}();
-
-Block.displayName = 'Block';
-exports.default = Block;
-module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
 
 /***/ })
 /******/ ]);

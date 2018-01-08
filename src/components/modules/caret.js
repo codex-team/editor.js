@@ -116,4 +116,25 @@ export default class Caret extends Module {
 
     }
 
+    /**
+     * Extract fragment of content current block form caret position
+     */
+    extractFragmentFromCaretPosition() {
+
+        let selection = Selection.get(),
+            range = new Range();
+
+        let cnt = this.Editor.BlockManager.currentBlock.pluginsContent,
+            lastNode = $.getDeepestNode(cnt, true);
+
+        range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
+        range.setEnd(lastNode, lastNode.length);
+
+        selection.removeAllRanges();
+        selection.addRange(range);
+
+        return range.extractContents();
+
+    }
+
 }

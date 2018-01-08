@@ -212,23 +212,11 @@ export default class BlockManager extends Module {
     }
 
     /**
-     * Gets data from blocks
+     * Insert extract content form current block to below current block
      */
     split() {
 
-        let selection = Selection.get(),
-            range = new Range();
-
-        let cnt = this.currentBlock.pluginsContent,
-            last = $.getDeepestNode(cnt, true);
-
-        range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-        range.setEnd(last, last.length);
-
-        selection.removeAllRanges();
-        selection.addRange(range);
-
-        let extractedFragment = range.extractContents(),
+        let extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition(),
             wrapper = $.make('div');
 
         wrapper.append(extractedFragment.cloneNode(true));
@@ -237,21 +225,9 @@ export default class BlockManager extends Module {
             text: wrapper.innerHTML,
         };
 
-        return data;
+        this.insert('text', data);
 
     }
-
-    // @todo
-    /* split() {
-
-        let extractedFragment = this.Editor.Caret.extractFromCaretPosition(),
-            data = {
-                text: //div.innerHTMl
-            }
-
-
-        this.insert('text', data);
-    }*/
 
     /**
      * Replace current working block
