@@ -114,7 +114,7 @@ export default class BlockManager extends Module {
          * keydown on block
          * @todo move to the keydown module
          */
-        block.pluginsContent.addEventListener('keydown', (event) => this.keyDownOnBlock(event), false);
+        this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.keyDownOnBlock(event));
 
     }
 
@@ -127,7 +127,7 @@ export default class BlockManager extends Module {
         switch(event.keyCode) {
 
             case _.keyCodes.ENTER:
-                this.enterPressedOnPluginsContent(event);
+                // this.enterPressedOnPluginsContent(event);
                 break;
             case _.keyCodes.DOWN:
             case _.keyCodes.RIGHT:
