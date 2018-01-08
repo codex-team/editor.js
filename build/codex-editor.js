@@ -1070,9 +1070,7 @@ module.exports = function () {
                 return module.prepare();
             };
 
-            return Promise.resolve().then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.BlockManager))
-            // .then(prepareDecorator(this.moduleInstances.Keyboard))
-            .then(function () {
+            return Promise.resolve().then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.BlockManager)).then(function () {
 
                 return _this3.moduleInstances.Renderer.render(_this3.config.data.items);
             });
@@ -1550,7 +1548,9 @@ var BlockManager = function (_Module) {
         }
 
         /**
-         * Create new block below current block and insert extracted content form current block to new block
+         * Split current Block
+         * 1. Extract content from Caret position to the Block`s end
+         * 2. Insert a new Block below current one with extracted content
          */
 
     }, {
@@ -1563,13 +1563,13 @@ var BlockManager = function (_Module) {
             wrapper.append(extractedFragment);
 
             /**
-             * @todo make object in accordance with the plugin
+             * @todo make object in accordance with Tool
              */
             var data = {
                 text: wrapper.innerHTML
             };
 
-            this.insert('text', data);
+            this.insert(this.config.initialBlock, data);
         }
 
         /**
@@ -2433,7 +2433,7 @@ var Caret = function (_Module) {
         }
 
         /**
-         * Extract content fragment of current block form caret position
+         * Extract content fragment of current Block from Caret position to the end of the Block
          */
 
     }, {
@@ -2595,14 +2595,12 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * @class Keyboard
- * @classdesc Сlass to handle the keystrokes
- *
- * @module Keyboard
+ * @classdesc Сlass to handle the keydowns
  *
  * @author CodeX Team (team@ifmo.su)
  * @copyright CodeX Team 2017
  * @license The MIT License (MIT)
- * @version 2.0.0
+ * @version 1.0.0
  */
 
 /**
@@ -2623,7 +2621,7 @@ var Keyboard = function (_Module) {
     }
 
     /**
-     * Handler on Editor for keyboard keys at keydown event
+     * Handler on Block for keyboard keys at keydown event
      *
      * @param {KeyboardEvent} event
      */
@@ -2670,7 +2668,7 @@ var Keyboard = function (_Module) {
         /**
          * Handle pressing enter key
          *
-         * @param {KeyDown} event
+         * @param {KeyboardEvent} event
          */
 
     }, {
@@ -2678,11 +2676,11 @@ var Keyboard = function (_Module) {
         value: function enterPressed(event) {
 
             /**
-             * @todo check settings of "allowLinebreaks" plugin
+             * @todo check Tool's configuration for allowLinebreaks property
              */
             event.preventDefault();
             /**
-             * Insert new block with data below current block
+             * Split the Current Block
              */
             this.Editor.BlockManager.split();
         }

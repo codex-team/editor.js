@@ -117,7 +117,7 @@ export default class Caret extends Module {
     }
 
     /**
-     * Extract content fragment of current block from caret position to the end of the block
+     * Extract content fragment of current Block from Caret position to the end of the Block
      */
     extractFragmentFromCaretPosition() {
 

@@ -1,6 +1,6 @@
 /**
  * @class Keyboard
- * @classdesc Сlass to handle the keystrokes
+ * @classdesc Сlass to handle the keydowns
  *
  * @author CodeX Team (team@ifmo.su)
  * @copyright CodeX Team 2017
@@ -23,7 +23,7 @@ export default class Keyboard extends Module {
     }
 
     /**
-     * Handler on block for keyboard keys at keydown event
+     * Handler on Block for keyboard keys at keydown event
      *
      * @param {KeyboardEvent} event
      */
@@ -72,11 +72,11 @@ export default class Keyboard extends Module {
     enterPressed(event) {
 
         /**
-         * @todo check plugin`s configuration for allowLinebreaks property
+         * @todo check Tool's configuration for allowLinebreaks property
          */
         event.preventDefault();
         /**
-         * Split current block into two ones
+         * Split the Current Block
          */
         this.Editor.BlockManager.split();
 

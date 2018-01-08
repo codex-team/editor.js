@@ -186,9 +186,9 @@ export default class BlockManager extends Module {
     }
 
     /**
-     * Split current block 
-     * 1. Extract content from caret position to block`s end
-     * 2. Insert new block below current one with extracted content
+     * Split current Block
+     * 1. Extract content from Caret position to the Block`s end
+     * 2. Insert a new Block below current one with extracted content
      */
     split() {
 
@@ -198,13 +198,13 @@ export default class BlockManager extends Module {
         wrapper.append(extractedFragment);
 
         /**
-         * @todo make object in accordance with the plugin
+         * @todo make object in accordance with Tool
          */
         let data = {
             text: wrapper.innerHTML,
         };
 
-        this.insert('text', data);
+        this.insert(this.config.initialBlock, data);
 
     }
 
