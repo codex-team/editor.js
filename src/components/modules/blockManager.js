@@ -203,6 +203,18 @@ export default class BlockManager extends Module {
 
     }
 
+    @todo
+    /* split() {
+
+        let extractedFragment = this.Editor.Caret.extractFromCaretPosition(),
+            data = {
+                text: //div.innerHTMl
+            }
+
+
+        this.insert('text', data);
+    }*/
+
     /**
      * Replace current working block
      *
