@@ -186,7 +186,9 @@ export default class BlockManager extends Module {
     }
 
     /**
-     * Create new block below current block and insert extracted content form current block to new block
+     * Split current block 
+     * 1. Extract content from caret position to block`s end
+     * 2. Insert new block below current one with extracted content
      */
     split() {
 
