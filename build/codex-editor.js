@@ -2585,6 +2585,13 @@ var Keyboard = function (_Module) {
         return _this;
     }
 
+    /**
+     * handler processes special keyboard keys
+     *
+     * @param {KeyDown} event
+     */
+
+
     _createClass(Keyboard, [{
         key: 'keyBoardListener',
         value: function keyBoardListener(event) {
@@ -2594,17 +2601,6 @@ var Keyboard = function (_Module) {
                 case 8:
                     console.log('backspace pressed');
 
-                    var selection = window.getSelection();
-
-                    if (!selection.isCollapsed || selection.anchorOffset != 0) {
-
-                        break;
-                    }
-
-                    event.preventDefault();
-                    console.log('+');
-
-                    this.Editor.BlockManager.Blocks.insert(this.Editor.BlockManager.currentBlockIndex - 1, 'text', this.getDataFromRange());
                     break;
 
                 case 13:
@@ -2620,6 +2616,11 @@ var Keyboard = function (_Module) {
 
             }
         }
+
+        /**
+         * Gets data from blocks
+         */
+
     }, {
         key: 'getDataFromRange',
         value: function getDataFromRange() {

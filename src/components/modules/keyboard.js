@@ -8,6 +8,11 @@ export default class Keyboard extends Module {
 
     }
 
+    /**
+     * handler processes special keyboard keys
+     *
+     * @param {KeyDown} event
+     */
     keyBoardListener(event) {
 
         switch(event.keyCode) {
@@ -15,18 +20,6 @@ export default class Keyboard extends Module {
             case (8):
                 console.log('backspace pressed');
 
-                let selection = window.getSelection();
-
-                if (!selection.isCollapsed || selection.anchorOffset != 0) {
-
-                    break;
-
-                }
-
-                event.preventDefault();
-                console.log('+');
-
-                // this.Editor.BlockManager.Blocks.insert(this.Editor.BlockManager.currentBlockIndex - 1, 'text', this.getDataFromRange());
                 break;
 
             case (13):
@@ -44,6 +37,9 @@ export default class Keyboard extends Module {
 
     }
 
+    /**
+     * Gets data from blocks
+     */
     getDataFromRange() {
 
         let selection = window.getSelection();
