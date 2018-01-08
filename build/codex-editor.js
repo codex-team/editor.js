@@ -855,7 +855,7 @@ module.exports = exports["default"];
  * @property {String} placeholder        - First Block placeholder
  * @property {Object} sanitizer          - @todo fill desc
  * @property {Boolean} hideToolbar       - @todo fill desc
- * @property {Object} toolsConfig        - tools configuration {@link Tools#ToolsConfig}
+ * @property {Object} toolsConfig        - tools configuration {@link tools#ToolConfig}
  */
 
 /**
@@ -881,7 +881,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["blockManager.js","caret.js","events.js","keyboard.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
+var modules = ["blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
     return __webpack_require__(6)("./" + module);
 });
 
@@ -1289,9 +1289,10 @@ if (!Element.prototype.closest) Element.prototype.closest = function (s) {
 
 var map = {
 	"./blockManager.js": 7,
-	"./caret.js": 9,
-	"./events.js": 10,
-	"./keyboard.js": 11,
+	"./caret.js": 8,
+	"./events.js": 9,
+	"./keyboard.js": 10,
+	"./listeners.js": 11,
 	"./renderer.js": 12,
 	"./sanitizer.js": 13,
 	"./saver.js": 15,
@@ -1318,13 +1319,745 @@ webpackContext.id = 6;
 
 /***/ }),
 /* 7 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-throw new Error("Module build failed: SyntaxError: Unexpected token (206:4)\n\n\u001b[0m \u001b[90m 204 | \u001b[39m    }\n \u001b[90m 205 | \u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 206 | \u001b[39m    \u001b[37m\u001b[41m\u001b[1m@\u001b[22m\u001b[49m\u001b[39mtodo\n \u001b[90m     | \u001b[39m    \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 207 | \u001b[39m    \u001b[90m/* split() {\u001b[39m\n \u001b[90m 208 | \u001b[39m\n \u001b[90m 209 | \u001b[39m\u001b[90m        let extractedFragment = this.Editor.Caret.extractFromCaretPosition(),\u001b[39m\u001b[0m\n");
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module, _, $) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _block = __webpack_require__(22);
+
+var _block2 = _interopRequireDefault(_block);
+
+var _Selection = __webpack_require__(3);
+
+var _Selection2 = _interopRequireDefault(_Selection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @class BlockManager
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @classdesc Manage editor`s blocks storage and appearance
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @module BlockManager
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @version 2.0.0
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+/**
+ * @typedef {BlockManager} BlockManager
+ * @property {Number} currentBlockIndex - Index of current working block
+ * @property {Proxy} _blocks - Proxy for Blocks instance {@link Blocks}
+ */
+var BlockManager = function (_Module) {
+    _inherits(BlockManager, _Module);
+
+    /**
+     * @constructor
+     * @param {EditorConfig} config
+     */
+    function BlockManager(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, BlockManager);
+
+        /**
+         * Proxy for Blocks instance {@link Blocks}
+         *
+         * @type {Proxy}
+         * @private
+         */
+        var _this = _possibleConstructorReturn(this, (BlockManager.__proto__ || Object.getPrototypeOf(BlockManager)).call(this, { config: config }));
+
+        _this._blocks = null;
+
+        /**
+         * Index of current working block
+         *
+         * @type {number}
+         * @private
+         */
+        _this.currentBlockIndex = -1;
+
+        return _this;
+    }
+
+    /**
+     * Should be called after Editor.UI preparation
+     * Define this._blocks property
+     *
+     * @returns {Promise}
+     */
+
+
+    _createClass(BlockManager, [{
+        key: 'prepare',
+        value: function prepare() {
+            var _this2 = this;
+
+            return new Promise(function (resolve) {
+
+                var blocks = new Blocks(_this2.Editor.UI.nodes.redactor);
+
+                /**
+                 * We need to use Proxy to overload set/get [] operator.
+                 * So we can use array-like syntax to access blocks
+                 *
+                 * @example
+                 * this._blocks[0] = new Block(...);
+                 *
+                 * block = this._blocks[0];
+                 *
+                 * @todo proxy the enumerate method
+                 *
+                 * @type {Proxy}
+                 * @private
+                 */
+                _this2._blocks = new Proxy(blocks, {
+                    set: Blocks.set,
+                    get: Blocks.get
+                });
+
+                resolve();
+            });
+        }
+
+        /**
+         * Creates Block instance by tool name
+         *
+         * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
+         * @param {Object} data - constructor params
+         *
+         * @return {Block}
+         */
+
+    }, {
+        key: 'composeBlock',
+        value: function composeBlock(toolName, data) {
+
+            var toolInstance = this.Editor.Tools.construct(toolName, data),
+                block = new _block2.default(toolName, toolInstance);
+
+            /**
+             * Apply callback before inserting html
+             */
+            block.call('appendCallback', {});
+
+            return block;
+        }
+
+        /**
+         * Bind Events
+         * @param {Object} block
+         */
+
+    }, {
+        key: 'bindEvents',
+        value: function bindEvents(block) {
+            var _this3 = this;
+
+            /**
+             * keydown on block
+             * @todo move to the keydown module
+             */
+            this.Editor.Listeners.on(block.pluginsContent, 'keydown', function (event) {
+                return _this3.keyDownOnBlock(event);
+            });
+        }
+
+        /**
+         * @todo move to the keydown module
+         * @param {MouseEvent} event
+         */
+
+    }, {
+        key: 'keyDownOnBlock',
+        value: function keyDownOnBlock(event) {
+
+            switch (event.keyCode) {
+
+                case _.keyCodes.ENTER:
+                    // this.enterPressedOnPluginsContent(event);
+                    break;
+                case _.keyCodes.DOWN:
+                case _.keyCodes.RIGHT:
+                    this.navigateNext();
+                    break;
+                case _.keyCodes.UP:
+                case _.keyCodes.LEFT:
+                    this.navigatePrevious();
+                    break;
+
+            }
+        }
+
+        /**
+         * Set's caret to the next Block
+         * Before moving caret, we should check if caret position is at the end of Plugins node
+         * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+         */
+
+    }, {
+        key: 'navigateNext',
+        value: function navigateNext() {
+
+            var lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
+                textNodeLength = lastTextNode.length;
+
+            if (_Selection2.default.getAnchorNode() !== lastTextNode) {
+
+                return;
+            }
+
+            if (_Selection2.default.getAnchorOffset() === textNodeLength) {
+
+                var nextBlock = this.nextBlock;
+
+                if (!nextBlock) return;
+
+                this.Editor.Caret.setToBlock(nextBlock);
+            }
+        }
+
+        /**
+         * Set's caret to the previous Block
+         * Before moving caret, we should check if caret position is at the end of Plugins node
+         * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+         */
+
+    }, {
+        key: 'navigatePrevious',
+        value: function navigatePrevious() {
+
+            var firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
+                textNodeLength = firstTextNode.length;
+
+            if (_Selection2.default.getAnchorNode() !== firstTextNode) {
+
+                return;
+            }
+
+            if (_Selection2.default.getAnchorOffset() === 0) {
+
+                var previousBlock = this.previousBlock;
+
+                if (!previousBlock) return;
+
+                this.Editor.Caret.setToBlock(previousBlock, textNodeLength, true);
+            }
+        }
+
+        /**
+         * Insert new block into _blocks
+         *
+         * @param {String} toolName — plugin name
+         * @param {Object} data — plugin data
+         */
+
+    }, {
+        key: 'insert',
+        value: function insert(toolName) {
+            var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+            var block = this.composeBlock(toolName, data);
+
+            this._blocks[++this.currentBlockIndex] = block;
+            this.Editor.Caret.setToBlock(block);
+        }
+
+        /**
+         * Gets data from blocks
+         */
+
+    }, {
+        key: 'split',
+        value: function split() {
+
+            var selection = _Selection2.default.get(),
+                range = new Range();
+
+            var cnt = this.currentBlock.pluginsContent,
+                last = $.getDeepestNode(cnt, true);
+
+            range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
+            range.setEnd(last, last.length);
+
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            var extractedFragment = range.extractContents(),
+                wrapper = $.make('div');
+
+            wrapper.append(extractedFragment.cloneNode(true));
+
+            var data = {
+                text: wrapper.innerHTML
+            };
+
+            return data;
+        }
+
+        // @todo
+        /* split() {
+             let extractedFragment = this.Editor.Caret.extractFromCaretPosition(),
+                data = {
+                    text: //div.innerHTMl
+                }
+              this.insert('text', data);
+        }*/
+
+        /**
+         * Replace current working block
+         *
+         * @param {String} toolName — plugin name
+         * @param {Object} data — plugin data
+         */
+
+    }, {
+        key: 'replace',
+        value: function replace(toolName) {
+            var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+
+            var block = this.composeBlock(toolName, data);
+
+            this._blocks.insert(this.currentBlockIndex, block, true);
+        }
+
+        /**
+         * returns last Block
+         * @return {Block}
+         */
+
+    }, {
+        key: 'getBlockByIndex',
+
+
+        /**
+         * Returns Block by passed index
+         * @param {Number} index
+         * @return {Block}
+         */
+        value: function getBlockByIndex(index) {
+
+            return this._blocks[index];
+        }
+
+        /**
+         * Get Block instance by html element
+         * @param {HTMLElement} element
+         * @returns {Block}
+         */
+
+    }, {
+        key: 'getBlock',
+        value: function getBlock(element) {
+
+            var nodes = this._blocks.nodes,
+                firstLevelBlock = element.closest('.' + _block2.default.CSS.wrapper),
+                index = nodes.indexOf(firstLevelBlock);
+
+            if (index >= 0) {
+
+                return this._blocks[index];
+            }
+        }
+
+        /**
+         * Get current Block instance
+         *
+         * @return {Block}
+         */
+
+    }, {
+        key: 'setCurrentBlockByChildNode',
+
+
+        /**
+         * 1) Find first-level Block from passed child Node
+         * 2) Mark it as current
+         *
+         *  @param {Element|Text} childNode - look ahead from this node.
+         *  @throws Error  - when passed Node is not included at the Block
+         */
+        value: function setCurrentBlockByChildNode(childNode) {
+
+            /**
+             * If node is Text TextNode
+             */
+            if (!$.isElement(childNode)) {
+
+                childNode = childNode.parentNode;
+            }
+
+            var parentFirstLevelBlock = childNode.closest('.' + _block2.default.CSS.wrapper);
+
+            if (parentFirstLevelBlock) {
+
+                this.currentNode = parentFirstLevelBlock;
+            } else {
+
+                throw new Error('Can not find a Block from this child Node');
+            }
+        }
+    }, {
+        key: 'lastBlock',
+        get: function get() {
+
+            return this._blocks[this._blocks.length - 1];
+        }
+    }, {
+        key: 'currentBlock',
+        get: function get() {
+
+            return this._blocks[this.currentBlockIndex];
+        }
+
+        /**
+         * Returns next Block instance
+         * @return {Block|null}
+         */
+
+    }, {
+        key: 'nextBlock',
+        get: function get() {
+
+            var isLastBlock = this.currentBlockIndex === this._blocks.length - 1;
+
+            if (isLastBlock) {
+
+                return null;
+            }
+
+            return this._blocks[this.currentBlockIndex + 1];
+        }
+
+        /**
+         * Returns previous Block instance
+         * @return {Block|null}
+         */
+
+    }, {
+        key: 'previousBlock',
+        get: function get() {
+
+            var isFirstBlock = this.currentBlockIndex === 0;
+
+            if (isFirstBlock) {
+
+                return null;
+            }
+
+            return this._blocks[this.currentBlockIndex - 1];
+        }
+
+        /**
+         * Get working html element
+         *
+         * @return {HTMLElement}
+         */
+
+    }, {
+        key: 'currentNode',
+        get: function get() {
+
+            return this._blocks.nodes[this.currentBlockIndex];
+        }
+
+        /**
+         * Set currentBlockIndex to passed block
+         * @param {HTMLElement} element
+         */
+        ,
+        set: function set(element) {
+
+            var nodes = this._blocks.nodes,
+                firstLevelBlock = element.closest('.' + _block2.default.CSS.wrapper);
+
+            /**
+             * Update current Block's index
+             * @type {number}
+             */
+            this.currentBlockIndex = nodes.indexOf(firstLevelBlock);
+
+            /**
+             * Remove previous selected Block's state
+             */
+            this._blocks.array.forEach(function (block) {
+                return block.selected = false;
+            });
+
+            /**
+             * Mark current Block as selected
+             * @type {boolean}
+             */
+            this.currentBlock.selected = true;
+        }
+
+        /**
+         * Get array of Block instances
+         *
+         * @returns {Block[]} {@link Blocks#array}
+         */
+
+    }, {
+        key: 'blocks',
+        get: function get() {
+
+            return this._blocks.array;
+        }
+    }]);
+
+    return BlockManager;
+}(Module);
+
+/**
+ * @class Blocks
+ * @classdesc Class to work with Block instances array
+ *
+ * @private
+ *
+ * @property {HTMLElement} workingArea — editor`s working node
+ *
+ */
+
+
+BlockManager.displayName = 'BlockManager';
+exports.default = BlockManager;
+
+var Blocks = function () {
+
+    /**
+     * @constructor
+     *
+     * @param {HTMLElement} workingArea — editor`s working node
+     */
+    function Blocks(workingArea) {
+        _classCallCheck(this, Blocks);
+
+        this.blocks = [];
+        this.workingArea = workingArea;
+    }
+
+    /**
+     * Push back new Block
+     *
+     * @param {Block} block
+     */
+
+
+    _createClass(Blocks, [{
+        key: 'push',
+        value: function push(block) {
+
+            this.blocks.push(block);
+            this.workingArea.appendChild(block.html);
+        }
+
+        /**
+         * Insert new Block at passed index
+         *
+         * @param {Number} index — index to insert Block
+         * @param {Block} block — Block to insert
+         * @param {Boolean} replace — it true, replace block on given index
+         */
+
+    }, {
+        key: 'insert',
+        value: function insert(index, block) {
+            var replace = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+
+
+            if (!this.length) {
+
+                this.push(block);
+                return;
+            }
+
+            if (index > this.length) {
+
+                index = this.length;
+            }
+
+            if (replace) {
+
+                this.blocks[index].html.remove();
+            }
+
+            var deleteCount = replace ? 1 : 0;
+
+            this.blocks.splice(index, deleteCount, block);
+
+            if (index > 0) {
+
+                var previousBlock = this.blocks[index - 1];
+
+                previousBlock.html.insertAdjacentElement('afterend', block.html);
+            } else {
+
+                var nextBlock = this.blocks[index + 1];
+
+                if (nextBlock) {
+
+                    nextBlock.html.insertAdjacentElement('beforebegin', block.html);
+                } else {
+
+                    this.workingArea.appendChild(block.html);
+                }
+            }
+        }
+
+        /**
+         * Insert Block after passed target
+         *
+         * @todo decide if this method is necessary
+         *
+         * @param {Block} targetBlock — target after wich Block should be inserted
+         * @param {Block} newBlock — Block to insert
+         */
+
+    }, {
+        key: 'insertAfter',
+        value: function insertAfter(targetBlock, newBlock) {
+
+            var index = this.blocks.indexOf(targetBlock);
+
+            this.insert(index + 1, newBlock);
+        }
+
+        /**
+         * Get Block by index
+         *
+         * @param {Number} index — Block index
+         * @returns {Block}
+         */
+
+    }, {
+        key: 'get',
+        value: function get(index) {
+
+            return this.blocks[index];
+        }
+
+        /**
+         * Return index of passed Block
+         *
+         * @param {Block} block
+         * @returns {Number}
+         */
+
+    }, {
+        key: 'indexOf',
+        value: function indexOf(block) {
+
+            return this.blocks.indexOf(block);
+        }
+
+        /**
+         * Get length of Block instances array
+         *
+         * @returns {Number}
+         */
+
+    }, {
+        key: 'length',
+        get: function get() {
+
+            return this.blocks.length;
+        }
+
+        /**
+         * Get Block instances array
+         *
+         * @returns {Block[]}
+         */
+
+    }, {
+        key: 'array',
+        get: function get() {
+
+            return this.blocks;
+        }
+
+        /**
+         * Get blocks html elements array
+         *
+         * @returns {HTMLElement[]}
+         */
+
+    }, {
+        key: 'nodes',
+        get: function get() {
+
+            return _.array(this.workingArea.children);
+        }
+
+        /**
+         * Proxy trap to implement array-like setter
+         *
+         * @example
+         * blocks[0] = new Block(...)
+         *
+         * @param {Blocks} instance — Blocks instance
+         * @param {Number|String} index — block index
+         * @param {Block} block — Block to set
+         * @returns {Boolean}
+         */
+
+    }], [{
+        key: 'set',
+        value: function set(instance, index, block) {
+
+            if (isNaN(Number(index))) {
+
+                return false;
+            }
+
+            instance.insert(index, block);
+
+            return true;
+        }
+
+        /**
+         * Proxy trap to implement array-like getter
+         *
+         * @param {Blocks} instance — Blocks instance
+         * @param {Number|String} index — Block index
+         * @returns {Block|*}
+         */
+
+    }, {
+        key: 'get',
+        value: function get(instance, index) {
+
+            if (isNaN(Number(index))) {
+
+                return instance[index];
+            }
+
+            return instance.get(index);
+        }
+    }]);
+
+    return Blocks;
+}();
+
+Blocks.displayName = 'Blocks';
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2)))
 
 /***/ }),
-/* 8 */,
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1488,7 +2221,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1594,7 +2327,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1709,6 +2442,264 @@ Keyboard.displayName = 'Keyboard';
 exports.default = Keyboard;
 module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Codex Editor Listeners module
+ *
+ * @module Listeners
+ *
+ * Module-decorator for event listeners assignment
+ *
+ * @author Codex Team
+ * @version 2.0.0
+ */
+
+/**
+ * @typedef {Listeners} Listeners
+ * @property {Array} allListeners
+ */
+
+var Listeners = function (_Module) {
+    _inherits(Listeners, _Module);
+
+    /**
+     * @constructor
+     * @param {EditorConfig} config
+     */
+    function Listeners(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, Listeners);
+
+        var _this = _possibleConstructorReturn(this, (Listeners.__proto__ || Object.getPrototypeOf(Listeners)).call(this, { config: config }));
+
+        _this.allListeners = [];
+
+        return _this;
+    }
+
+    /**
+     * Assigns event listener on element
+     *
+     * @param {Element} element - DOM element that needs to be listened
+     * @param {String} eventType - event type
+     * @param {Function} handler - method that will be fired on event
+     * @param {Boolean} useCapture - use event bubbling
+     */
+
+
+    _createClass(Listeners, [{
+        key: "on",
+        value: function on(element, eventType, handler) {
+            var useCapture = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+
+            var assignedEventData = {
+                element: element,
+                eventType: eventType,
+                handler: handler,
+                useCapture: useCapture
+            };
+
+            var alreadyExist = this.findOne(element, eventType, handler);
+
+            if (alreadyExist) return;
+
+            this.allListeners.push(assignedEventData);
+            element.addEventListener(eventType, handler, useCapture);
+        }
+
+        /**
+         * Removes event listener from element
+         *
+         * @param {Element} element - DOM element that we removing listener
+         * @param {String} eventType - event type
+         * @param {Function} handler - remove handler, if element listens several handlers on the same event type
+         * @param {Boolean} useCapture - use event bubbling
+         */
+
+    }, {
+        key: "off",
+        value: function off(element, eventType, handler) {
+            var useCapture = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+
+
+            var existingListeners = this.findAll(element, eventType, handler);
+
+            for (var i = 0; i < existingListeners.length; i++) {
+
+                var index = this.allListeners.indexOf(existingListeners[i]);
+
+                if (index > 0) {
+
+                    this.allListeners.splice(index, 1);
+                }
+            }
+
+            element.removeEventListener(eventType, handler, useCapture);
+        }
+
+        /**
+         * Search method: looks for listener by passed element
+         * @param {Element} element - searching element
+         * @returns {Array} listeners that found on element
+         */
+
+    }, {
+        key: "findByElement",
+        value: function findByElement(element) {
+
+            var listenersOnElement = [];
+
+            for (var i = 0; i < this.allListeners.length; i++) {
+
+                var listener = this.allListeners[i];
+
+                if (listener.element === element) {
+
+                    listenersOnElement.push(listener);
+                }
+            }
+
+            return listenersOnElement;
+        }
+
+        /**
+         * Search method: looks for listener by passed event type
+         * @param {String} eventType
+         * @return {Array} listeners that found on element
+         */
+
+    }, {
+        key: "findByType",
+        value: function findByType(eventType) {
+
+            var listenersWithType = [];
+
+            for (var i = 0; i < this.allListeners.length; i++) {
+
+                var listener = this.allListeners[i];
+
+                if (listener.type === eventType) {
+
+                    listenersWithType.push(listener);
+                }
+            }
+
+            return listenersWithType;
+        }
+
+        /**
+         * Search method: looks for listener by passed handler
+         * @param {Function} handler
+         * @return {Array} listeners that found on element
+         */
+
+    }, {
+        key: "findByHandler",
+        value: function findByHandler(handler) {
+
+            var listenersWithHandler = [];
+
+            for (var i = 0; i < this.allListeners.length; i++) {
+
+                var listener = this.allListeners[i];
+
+                if (listener.handler === handler) {
+
+                    listenersWithHandler.push(listener);
+                }
+            }
+
+            return listenersWithHandler;
+        }
+
+        /**
+         * @param {Element} element
+         * @param {String} eventType
+         * @param {Function} handler
+         * @return {Element|null}
+         */
+
+    }, {
+        key: "findOne",
+        value: function findOne(element, eventType, handler) {
+
+            var foundListeners = this.findAll(element, eventType, handler);
+
+            return foundListeners.length > 0 ? foundListeners[0] : null;
+        }
+
+        /**
+         * @param {Element} element
+         * @param {String} eventType
+         * @param {Function} handler
+         * @return {Array}
+         */
+
+    }, {
+        key: "findAll",
+        value: function findAll(element, eventType, handler) {
+
+            var foundAllListeners = void 0,
+                foundByElements = [],
+                foundByEventType = [],
+                foundByHandler = [];
+
+            if (element) foundByElements = this.findByElement(element);
+
+            if (eventType) foundByEventType = this.findByType(eventType);
+
+            if (handler) foundByHandler = this.findByHandler(handler);
+
+            foundAllListeners = foundByElements.concat(foundByEventType, foundByHandler);
+
+            return foundAllListeners;
+        }
+
+        /**
+         * Removes all listeners
+         */
+
+    }, {
+        key: "removeAll",
+        value: function removeAll() {
+
+            this.allListeners.map(function (current) {
+
+                current.element.removeEventListener(current.eventType, current.handler);
+            });
+
+            this.allListeners = [];
+        }
+    }]);
+
+    return Listeners;
+}(Module);
+
+Listeners.displayName = "Listeners";
+exports.default = Listeners;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
 /* 12 */
@@ -4110,6 +5101,271 @@ function toComment(sourceMap) {
 	return '/*# ' + data + ' */';
 }
 
+
+/***/ }),
+/* 22 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ *
+ * @class Block
+ * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
+ *
+ * @property {Tool} tool — current block tool (Paragraph, for example)
+ * @property {Object} CSS — block`s css classes
+ *
+ */
+
+/**
+ * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
+ *
+ * @property tool - Tool instance
+ * @property html - Returns HTML content of plugin
+ * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+ * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property pluginsContent - HTML content that returns by Tool's render function
+ */
+var Block = function () {
+
+    /**
+     * @constructor
+     * @param {String} toolName - Tool name that passed on initialization
+     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
+     */
+    function Block(toolName, toolInstance) {
+        _classCallCheck(this, Block);
+
+        this.name = toolName;
+        this.tool = toolInstance;
+        this._html = this.compose();
+    }
+
+    /**
+     * CSS classes for the Block
+     * @return {{wrapper: string, content: string}}
+     */
+
+
+    _createClass(Block, [{
+        key: 'compose',
+
+
+        /**
+         * Make default Block wrappers and put Tool`s content there
+         * @returns {HTMLDivElement}
+         */
+        value: function compose() {
+
+            this.wrapper = $.make('div', Block.CSS.wrapper);
+            this.contentNode = $.make('div', Block.CSS.content);
+            this.pluginsContent = this.tool.render();
+
+            this.contentNode.appendChild(this.pluginsContent);
+            this.wrapper.appendChild(this.contentNode);
+
+            return this.wrapper;
+        }
+
+        /**
+         * Calls Tool's method
+         *
+         * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
+         *
+         * @param {String} methodName
+         * @param {Object} params
+         */
+
+    }, {
+        key: 'call',
+        value: function call(methodName, params) {
+
+            /**
+             * call Tool's method with the instance context
+             */
+            if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
+
+                this.tool[methodName].call(this.tool, params);
+            }
+        }
+
+        /**
+         * Get Block`s HTML
+         * @returns {HTMLElement}
+         */
+
+    }, {
+        key: 'save',
+
+
+        /**
+         * Extracts data from Block
+         * Groups Tool's save processing time
+         * @return {Object}
+         */
+        value: function save() {
+            var _this = this;
+
+            var extractedBlock = this.tool.save(this.pluginsContent);
+
+            /** Measuring execution time*/
+            var measuringStart = window.performance.now(),
+                measuringEnd = void 0;
+
+            return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
+
+                /** measure promise execution */
+                measuringEnd = window.performance.now();
+
+                return {
+                    tool: _this.name,
+                    data: finishedExtraction,
+                    time: measuringEnd - measuringStart
+                };
+            }).catch(function (error) {
+
+                _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
+            });
+        }
+
+        /**
+         * Uses Tool's validation method to check the correctness of output data
+         * Tool's validation method is optional
+         *
+         * @description Method also can return data if it passed the validation
+         *
+         * @param {Object} data
+         * @returns {Boolean|Object} valid
+         */
+
+    }, {
+        key: 'validateData',
+        value: function validateData(data) {
+
+            var isValid = true;
+
+            if (this.tool.validate instanceof Function) {
+
+                isValid = this.tool.validate(data);
+            }
+
+            if (!isValid) {
+
+                return false;
+            }
+
+            return data;
+        }
+
+        /**
+         * Check block for emptiness
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'html',
+        get: function get() {
+
+            return this._html;
+        }
+
+        /**
+         * Get Block's JSON data
+         * @return {Object}
+         */
+
+    }, {
+        key: 'data',
+        get: function get() {
+
+            return this.save();
+        }
+    }, {
+        key: 'isEmpty',
+        get: function get() {
+
+            /**
+             * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
+             * That Tools are not empty
+             */
+            if (this.tool.contentless) {
+
+                return false;
+            }
+
+            var emptyText = $.isEmpty(this.pluginsContent),
+                emptyMedia = !this.hasMedia;
+
+            return emptyText && emptyMedia;
+        }
+
+        /**
+         * Check if block has a media content such as images, iframes and other
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'hasMedia',
+        get: function get() {
+
+            /**
+             * This tags represents media-content
+             * @type {string[]}
+             */
+            var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
+
+            return !!this._html.querySelector(mediaTags.join(','));
+        }
+
+        /**
+         * Set selected state
+         * @param {Boolean} state - 'true' to select, 'false' to remove selection
+         */
+
+    }, {
+        key: 'selected',
+        set: function set(state) {
+
+            /**
+             * We don't need to mark Block as Selected when it is not empty
+             */
+            if (state === true && !this.isEmpty) {
+
+                this._html.classList.add(Block.CSS.selected);
+            } else {
+
+                this._html.classList.remove(Block.CSS.selected);
+            }
+        }
+    }], [{
+        key: 'CSS',
+        get: function get() {
+
+            return {
+                wrapper: 'ce-block',
+                content: 'ce-block__content',
+                selected: 'ce-block--selected'
+            };
+        }
+    }]);
+
+    return Block;
+}();
+
+Block.displayName = 'Block';
+exports.default = Block;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
 
 /***/ })
 /******/ ]);

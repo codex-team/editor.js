@@ -103,6 +103,44 @@ export default class BlockManager extends Module {
     }
 
     /**
+     * Bind Events
+     * @param {Object} block
+     */
+    bindEvents(block) {
+
+        /**
+         * keydown on block
+         * @todo move to the keydown module
+         */
+        this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.keyDownOnBlock(event));
+
+    }
+
+    /**
+     * @todo move to the keydown module
+     * @param {MouseEvent} event
+     */
+    keyDownOnBlock(event) {
+
+        switch(event.keyCode) {
+
+            case _.keyCodes.ENTER:
+                // this.enterPressedOnPluginsContent(event);
+                break;
+            case _.keyCodes.DOWN:
+            case _.keyCodes.RIGHT:
+                this.navigateNext();
+                break;
+            case _.keyCodes.UP:
+            case _.keyCodes.LEFT:
+                this.navigatePrevious();
+                break;
+
+        }
+
+    }
+
+    /**
      * Set's caret to the next Block
      * Before moving caret, we should check if caret position is at the end of Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
@@ -203,7 +241,7 @@ export default class BlockManager extends Module {
 
     }
 
-    @todo
+    // @todo
     /* split() {
 
         let extractedFragment = this.Editor.Caret.extractFromCaretPosition(),
