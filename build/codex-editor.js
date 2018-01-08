@@ -1321,7 +1321,7 @@ webpackContext.id = 6;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, _, $) {
+/* WEBPACK VAR INJECTION */(function(Module, $, _) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1446,59 +1446,12 @@ var BlockManager = function (_Module) {
             var toolInstance = this.Editor.Tools.construct(toolName, data),
                 block = new _block2.default(toolName, toolInstance);
 
-            this.bindEvents(block);
-
             /**
              * Apply callback before inserting html
              */
             block.call('appendCallback', {});
 
             return block;
-        }
-
-        /**
-         * Bind Events
-         * @param {Object} block
-         */
-
-    }, {
-        key: 'bindEvents',
-        value: function bindEvents(block) {
-            var _this3 = this;
-
-            /**
-             * keydown on block
-             * @todo move to the keydown module
-             */
-            block.pluginsContent.addEventListener('keydown', function (event) {
-                return _this3.keyDownOnBlock(event);
-            }, false);
-        }
-
-        /**
-         * @todo move to the keydown module
-         * @param {MouseEvent} event
-         */
-
-    }, {
-        key: 'keyDownOnBlock',
-        value: function keyDownOnBlock(event) {
-
-            switch (event.keyCode) {
-
-                // case _.keyCodes.ENTER:
-                // this.enterPressedOnPluginsContent(event);
-                // break;
-                case _.keyCodes.DOWN:
-                case _.keyCodes.RIGHT:
-                    this.navigateNext();
-                    break;
-                case _.keyCodes.UP:
-                case _.keyCodes.LEFT:
-                    this.navigatePrevious();
-                    break;
-
-            }
         }
 
         /**
@@ -2046,7 +1999,7 @@ var Blocks = function () {
 
 Blocks.displayName = 'Blocks';
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
 /* 8 */

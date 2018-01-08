@@ -93,52 +93,12 @@ export default class BlockManager extends Module {
         let toolInstance = this.Editor.Tools.construct(toolName, data),
             block = new Block(toolName, toolInstance);
 
-        this.bindEvents(block);
-
         /**
          * Apply callback before inserting html
          */
         block.call('appendCallback', {});
 
         return block;
-
-    }
-
-    /**
-     * Bind Events
-     * @param {Object} block
-     */
-    bindEvents(block) {
-
-        /**
-         * keydown on block
-         * @todo move to the keydown module
-         */
-        block.pluginsContent.addEventListener('keydown', (event) => this.keyDownOnBlock(event), false);
-
-    }
-
-    /**
-     * @todo move to the keydown module
-     * @param {MouseEvent} event
-     */
-    keyDownOnBlock(event) {
-
-        switch(event.keyCode) {
-
-            // case _.keyCodes.ENTER:
-            // this.enterPressedOnPluginsContent(event);
-            // break;
-            case _.keyCodes.DOWN:
-            case _.keyCodes.RIGHT:
-                this.navigateNext();
-                break;
-            case _.keyCodes.UP:
-            case _.keyCodes.LEFT:
-                this.navigatePrevious();
-                break;
-
-        }
 
     }
 
