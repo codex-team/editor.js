@@ -69,7 +69,7 @@ export default class Keyboard extends Module {
     /**
      * Handle pressing enter key
      *
-     * @param {KeyDown} event
+     * @param {KeyboardEvent} event
      */
     enterPressed(event) {
 
