@@ -1,0 +1,17 @@
+/**
+* Editor wrapper
+*/
+.codex-editor {
+    position: relative;
+    border: 1px solid #ccc;
+    padding: 10px;
+    box-sizing: border-box;
+
+    .hide {
+        display: none;
+    }
+
+    &__redactor {
+        padding-bottom: 300px;
+    }
+}

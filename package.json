@@ -1,25 +1,43 @@
 {
   "name": "codex.editor",
-  "version": "1.7.8",
+  "version": "2.0.0",
   "description": "Codex Editor. Native JS, based on API and Open Source",
   "main": "index.js",
   "scripts": {
-    "build": "webpack"
+    "build": "webpack --progress  --display-error-details --display-entrypoints"
   },
   "author": "Codex Team",
   "license": "ISC",
   "devDependencies": {
-    "babel-core": "^6.21.0",
-    "babel-loader": "^6.2.10",
-    "babel-polyfill": "^6.20.0",
-    "babel-preset-es2015": "^6.22.0",
-    "babel-runtime": "^6.20.0",
-    "css-loader": "^0.26.1",
-    "eslint": "^3.12.2",
-    "eslint-loader": "^1.6.1",
-    "extract-text-webpack-plugin": "^1.0.1",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-plugin-class-display-name": "^2.1.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-runtime": "^6.26.0",
+    "css-loader": "^0.28.7",
+    "eslint": "^4.13.1",
+    "eslint-loader": "^1.9.0",
+    "extract-text-webpack-plugin": "^3.0.2",
     "html-janitor": "^2.0.2",
     "path": "^0.12.7",
-    "webpack": "^1.14.0"
-  }
+    "postcss-apply": "^0.8.0",
+    "postcss-color-function": "^4.0.1",
+    "postcss-color-hex-alpha": "^3.0.0",
+    "postcss-cssnext": "^3.0.2",
+    "postcss-custom-media": "^6.0.0",
+    "postcss-custom-properties": "^6.2.0",
+    "postcss-custom-selectors": "^4.0.1",
+    "postcss-font-family-system-ui": "^2.1.1",
+    "postcss-font-variant": "^3.0.0",
+    "postcss-loader": "^2.0.9",
+    "postcss-media-minmax": "^3.0.0",
+    "postcss-nested": "^2.1.2",
+    "postcss-nested-ancestors": "^1.0.0",
+    "postcss-nesting": "^4.2.1",
+    "postcss-smart-import": "^0.7.6",
+    "webpack": "^3.10.0"
+  },
+  "dependencies": {}
 }

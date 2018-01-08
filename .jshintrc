@@ -12,7 +12,11 @@
 
   // Define globals exposed by CodeX Team
   "predef": [
-    "codex"
+    "codex",
+    "_",
+    "$",
+    "editorModules",
+    "Module"
   ],
 
   // Allow ES6.
