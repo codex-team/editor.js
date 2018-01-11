@@ -705,6 +705,7 @@ var Dom = function () {
 
 Dom.displayName = 'Dom';
 exports.default = Dom;
+;
 module.exports = exports['default'];
 
 /***/ }),

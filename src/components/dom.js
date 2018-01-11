@@ -267,4 +267,4 @@ export default class Dom {
 
     }
 
-}
+};
