@@ -121,22 +121,26 @@ export default class Caret extends Module {
      */
     extractFragmentFromCaretPosition() {
 
-        let selection = Selection.get(),
-            range = new Range();
+        let selection = Selection.get();
 
-        let pluginsContent = this.Editor.BlockManager.currentBlock.pluginsContent,
-            /**
-             * Second argument is true because we need to find last deepest text node
-             */
-            lastNode = $.getDeepestNode(pluginsContent, true);
+        if (selection.rangeCount) {
 
-        range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-        range.setEnd(lastNode, lastNode.length);
+            let selectRange = selection.getRangeAt(0),
+                blockElem = $.getBlockContainer(selectRange.endContainer);
 
-        selection.removeAllRanges();
-        selection.addRange(range);
+            selectRange.deleteContents();
 
-        return range.extractContents();
+            if (blockElem) {
+
+                let range = selectRange.cloneRange(true);
+
+                range.selectNodeContents(blockElem);
+                range.setStart(selectRange.endContainer, selectRange.endOffset);
+                return range.extractContents();
+
+            }
+
+        }
 
     }
 

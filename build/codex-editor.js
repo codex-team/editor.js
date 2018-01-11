@@ -698,6 +698,30 @@ var Dom = function () {
                 return _this.isNodeEmpty(leaf);
             });
         }
+
+        /**
+         * Search for deepest node which responds regex
+         *
+         * @param {Element} node
+         * @return {Node}
+         */
+
+    }, {
+        key: 'getBlockContainer',
+        value: function getBlockContainer(node) {
+
+            while (node) {
+
+                /**
+                 * @regex tests node name for compliance 'div', 'h[1-6]', 'p'
+                 */
+                if (node.nodeType == 1 && /^(P|H[1-6]|DIV)$/i.test(node.nodeName)) {
+
+                    return node;
+                }
+                node = node.parentNode;
+            }
+        }
     }]);
 
     return Dom;
@@ -2440,23 +2464,24 @@ var Caret = function (_Module) {
         key: 'extractFragmentFromCaretPosition',
         value: function extractFragmentFromCaretPosition() {
 
-            var selection = _Selection2.default.get(),
-                range = new Range();
+            var selection = _Selection2.default.get();
 
-            var pluginsContent = this.Editor.BlockManager.currentBlock.pluginsContent,
+            if (selection.rangeCount) {
 
-            /**
-             * Second argument is true because we need to find last deepest text node
-             */
-            lastNode = $.getDeepestNode(pluginsContent, true);
+                var selectRange = selection.getRangeAt(0),
+                    blockElem = $.getBlockContainer(selectRange.endContainer);
 
-            range.setStart(selection.anchorNode, selection.getRangeAt(0).startOffset);
-            range.setEnd(lastNode, lastNode.length);
+                selectRange.deleteContents();
 
-            selection.removeAllRanges();
-            selection.addRange(range);
+                if (blockElem) {
 
-            return range.extractContents();
+                    var range = selectRange.cloneRange(true);
+
+                    range.selectNodeContents(blockElem);
+                    range.setStart(selectRange.endContainer, selectRange.endOffset);
+                    return range.extractContents();
+                }
+            }
         }
     }]);
 
