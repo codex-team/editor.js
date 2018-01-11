@@ -116,4 +116,32 @@ export default class Caret extends Module {
 
     }
 
+    /**
+     * Extract content fragment of current Block from Caret position to the end of the Block
+     */
+    extractFragmentFromCaretPosition() {
+
+        let selection = Selection.get();
+
+        if (selection.rangeCount) {
+
+            let selectRange = selection.getRangeAt(0),
+                blockElem = this.Editor.BlockManager.currentBlock.pluginsContent;
+
+            selectRange.deleteContents();
+
+            if (blockElem) {
+
+                let range = selectRange.cloneRange(true);
+
+                range.selectNodeContents(blockElem);
+                range.setStart(selectRange.endContainer, selectRange.endOffset);
+                return range.extractContents();
+
+            }
+
+        }
+
+    }
+
 }

@@ -110,35 +110,7 @@ export default class BlockManager extends Module {
      */
     bindEvents(block) {
 
-        /**
-         * keydown on block
-         * @todo move to the keydown module
-         */
-        this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.keyDownOnBlock(event));
-
-    }
-
-    /**
-     * @todo move to the keydown module
-     * @param {MouseEvent} event
-     */
-    keyDownOnBlock(event) {
-
-        switch(event.keyCode) {
-
-            case _.keyCodes.ENTER:
-                // this.enterPressedOnPluginsContent(event);
-                break;
-            case _.keyCodes.DOWN:
-            case _.keyCodes.RIGHT:
-                this.navigateNext();
-                break;
-            case _.keyCodes.UP:
-            case _.keyCodes.LEFT:
-                this.navigatePrevious();
-                break;
-
-        }
+        this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.Keyboard.blockKeydownsListener(event));
 
     }
 
@@ -206,11 +178,33 @@ export default class BlockManager extends Module {
      */
     insert(toolName, data = {}) {
 
-
         let block = this.composeBlock(toolName, data);
 
         this._blocks[++this.currentBlockIndex] = block;
         this.Editor.Caret.setToBlock(block);
+
+    }
+
+    /**
+     * Split current Block
+     * 1. Extract content from Caret position to the Block`s end
+     * 2. Insert a new Block below current one with extracted content
+     */
+    split() {
+
+        let extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition(),
+            wrapper = $.make('div');
+
+        wrapper.append(extractedFragment);
+
+        /**
+         * @todo make object in accordance with Tool
+         */
+        let data = {
+            text: wrapper.innerHTML,
+        };
+
+        this.insert(this.config.initialBlock, data);
 
     }
 

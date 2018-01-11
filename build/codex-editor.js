@@ -881,7 +881,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["blockManager.js","caret.js","events.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
+var modules = ["blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
     return __webpack_require__(6)("./" + module);
 });
 
@@ -1291,14 +1291,15 @@ var map = {
 	"./blockManager.js": 7,
 	"./caret.js": 9,
 	"./events.js": 10,
-	"./listeners.js": 11,
-	"./renderer.js": 12,
-	"./sanitizer.js": 13,
-	"./saver.js": 15,
-	"./toolbar.js": 16,
-	"./toolbox.js": 17,
-	"./tools.js": 18,
-	"./ui.js": 19
+	"./keyboard.js": 11,
+	"./listeners.js": 12,
+	"./renderer.js": 13,
+	"./sanitizer.js": 14,
+	"./saver.js": 16,
+	"./toolbar.js": 17,
+	"./toolbox.js": 18,
+	"./tools.js": 19,
+	"./ui.js": 20
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -1321,7 +1322,7 @@ webpackContext.id = 6;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, _, $) {
+/* WEBPACK VAR INJECTION */(function(Module, $, _) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1466,39 +1467,9 @@ var BlockManager = function (_Module) {
         value: function bindEvents(block) {
             var _this3 = this;
 
-            /**
-             * keydown on block
-             * @todo move to the keydown module
-             */
             this.Editor.Listeners.on(block.pluginsContent, 'keydown', function (event) {
-                return _this3.keyDownOnBlock(event);
+                return _this3.Editor.Keyboard.blockKeydownsListener(event);
             });
-        }
-
-        /**
-         * @todo move to the keydown module
-         * @param {MouseEvent} event
-         */
-
-    }, {
-        key: 'keyDownOnBlock',
-        value: function keyDownOnBlock(event) {
-
-            switch (event.keyCode) {
-
-                case _.keyCodes.ENTER:
-                    // this.enterPressedOnPluginsContent(event);
-                    break;
-                case _.keyCodes.DOWN:
-                case _.keyCodes.RIGHT:
-                    this.navigateNext();
-                    break;
-                case _.keyCodes.UP:
-                case _.keyCodes.LEFT:
-                    this.navigatePrevious();
-                    break;
-
-            }
         }
 
         /**
@@ -1574,6 +1545,31 @@ var BlockManager = function (_Module) {
 
             this._blocks[++this.currentBlockIndex] = block;
             this.Editor.Caret.setToBlock(block);
+        }
+
+        /**
+         * Split current Block
+         * 1. Extract content from Caret position to the Block`s end
+         * 2. Insert a new Block below current one with extracted content
+         */
+
+    }, {
+        key: 'split',
+        value: function split() {
+
+            var extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition(),
+                wrapper = $.make('div');
+
+            wrapper.append(extractedFragment);
+
+            /**
+             * @todo make object in accordance with Tool
+             */
+            var data = {
+                text: wrapper.innerHTML
+            };
+
+            this.insert(this.config.initialBlock, data);
         }
 
         /**
@@ -2014,7 +2010,7 @@ var Blocks = function () {
 
 Blocks.displayName = 'Blocks';
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
 /* 8 */
@@ -2435,6 +2431,34 @@ var Caret = function (_Module) {
                 this.Editor.BlockManager.insert(this.config.initialBlock);
             }
         }
+
+        /**
+         * Extract content fragment of current Block from Caret position to the end of the Block
+         */
+
+    }, {
+        key: 'extractFragmentFromCaretPosition',
+        value: function extractFragmentFromCaretPosition() {
+
+            var selection = _Selection2.default.get();
+
+            if (selection.rangeCount) {
+
+                var selectRange = selection.getRangeAt(0),
+                    blockElem = this.Editor.BlockManager.currentBlock.pluginsContent;
+
+                selectRange.deleteContents();
+
+                if (blockElem) {
+
+                    var range = selectRange.cloneRange(true);
+
+                    range.selectNodeContents(blockElem);
+                    range.setStart(selectRange.endContainer, selectRange.endOffset);
+                    return range.extractContents();
+                }
+            }
+        }
     }]);
 
     return Caret;
@@ -2553,6 +2577,148 @@ module.exports = exports["default"];
 
 /***/ }),
 /* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * @class Keyboard
+ * @classdesc Сlass to handle the keydowns
+ *
+ * @author CodeX Team (team@ifmo.su)
+ * @copyright CodeX Team 2017
+ * @license The MIT License (MIT)
+ * @version 1.0.0
+ */
+
+/**
+ * @typedef {Keyboard} Keyboard
+ */
+var Keyboard = function (_Module) {
+    _inherits(Keyboard, _Module);
+
+    /**
+     * @constructor
+     */
+    function Keyboard(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, Keyboard);
+
+        return _possibleConstructorReturn(this, (Keyboard.__proto__ || Object.getPrototypeOf(Keyboard)).call(this, { config: config }));
+    }
+
+    /**
+     * Handler on Block for keyboard keys at keydown event
+     *
+     * @param {KeyboardEvent} event
+     */
+
+
+    _createClass(Keyboard, [{
+        key: 'blockKeydownsListener',
+        value: function blockKeydownsListener(event) {
+
+            switch (event.keyCode) {
+
+                case _.keyCodes.BACKSPACE:
+
+                    _.log('Backspace key pressed');
+                    break;
+
+                case _.keyCodes.ENTER:
+
+                    _.log('Enter key pressed');
+                    this.enterPressed(event);
+                    break;
+
+                case _.keyCodes.DOWN:
+                case _.keyCodes.RIGHT:
+
+                    _.log('Right/Down key pressed');
+                    this.arrowRightAndDownPressed();
+                    break;
+
+                case _.keyCodes.UP:
+                case _.keyCodes.LEFT:
+
+                    _.log('Left/Up key pressed');
+                    this.arrowLeftAndUpPressed();
+                    break;
+
+                default:
+
+                    break;
+
+            }
+        }
+
+        /**
+         * Handle pressing enter key
+         *
+         * @param {KeyboardEvent} event
+         */
+
+    }, {
+        key: 'enterPressed',
+        value: function enterPressed(event) {
+
+            /**
+             * @todo check Tool's configuration for allowLinebreaks property
+             */
+            event.preventDefault();
+            /**
+             * Split the Current Block
+             */
+            this.Editor.BlockManager.split();
+        }
+
+        /**
+         * Handle right and down keyboard keys
+         */
+
+    }, {
+        key: 'arrowRightAndDownPressed',
+        value: function arrowRightAndDownPressed() {
+
+            this.Editor.BlockManager.navigateNext();
+        }
+
+        /**
+         * Handle left and up keyboard keys
+         */
+
+    }, {
+        key: 'arrowLeftAndUpPressed',
+        value: function arrowLeftAndUpPressed() {
+
+            this.Editor.BlockManager.navigatePrevious();
+        }
+    }]);
+
+    return Keyboard;
+}(Module);
+
+Keyboard.displayName = 'Keyboard';
+exports.default = Keyboard;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2810,7 +2976,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2938,7 +3104,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3016,7 +3182,7 @@ var Sanitizer = function (_Module) {
         _this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
 
         /** HTML Janitor library */
-        _this.sanitizerInstance = __webpack_require__(14);
+        _this.sanitizerInstance = __webpack_require__(15);
 
         return _this;
     }
@@ -3119,7 +3285,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -3314,7 +3480,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (roo
 
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3605,7 +3771,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3934,7 +4100,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4199,7 +4365,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4498,7 +4664,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4697,7 +4863,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(20);
+      var styles = __webpack_require__(21);
 
       /**
        * Make tag
@@ -5115,10 +5281,10 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(21)(undefined);
+exports = module.exports = __webpack_require__(22)(undefined);
 // imports
 
 
@@ -5129,7 +5295,7 @@ exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n
 
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports) {
 
 /*
