@@ -267,28 +267,4 @@ export default class Dom {
 
     }
 
-    /**
-     * Search for deepest node which responds regex
-     *
-     * @param {Element} node
-     * @return {Node}
-     */
-    static getBlockContainer(node) {
-
-        while (node) {
-
-            /**
-             * @regex tests node name for compliance 'div', 'h[1-6]', 'p'
-             */
-            if (node.nodeType == 1 && /^(P|H[1-6]|DIV)$/i.test(node.nodeName)) {
-
-                return node;
-
-            }
-            node = node.parentNode;
-
-        }
-
-    }
-
-};
+}

@@ -126,7 +126,7 @@ export default class Caret extends Module {
         if (selection.rangeCount) {
 
             let selectRange = selection.getRangeAt(0),
-                blockElem = $.getBlockContainer(selectRange.endContainer);
+                blockElem = this.Editor.BlockManager.currentBlock.pluginsContent;
 
             selectRange.deleteContents();
 

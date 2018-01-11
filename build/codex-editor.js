@@ -698,30 +698,6 @@ var Dom = function () {
                 return _this.isNodeEmpty(leaf);
             });
         }
-
-        /**
-         * Search for deepest node which responds regex
-         *
-         * @param {Element} node
-         * @return {Node}
-         */
-
-    }, {
-        key: 'getBlockContainer',
-        value: function getBlockContainer(node) {
-
-            while (node) {
-
-                /**
-                 * @regex tests node name for compliance 'div', 'h[1-6]', 'p'
-                 */
-                if (node.nodeType == 1 && /^(P|H[1-6]|DIV)$/i.test(node.nodeName)) {
-
-                    return node;
-                }
-                node = node.parentNode;
-            }
-        }
     }]);
 
     return Dom;
@@ -729,7 +705,6 @@ var Dom = function () {
 
 Dom.displayName = 'Dom';
 exports.default = Dom;
-;
 module.exports = exports['default'];
 
 /***/ }),
@@ -2469,7 +2444,7 @@ var Caret = function (_Module) {
             if (selection.rangeCount) {
 
                 var selectRange = selection.getRangeAt(0),
-                    blockElem = $.getBlockContainer(selectRange.endContainer);
+                    blockElem = this.Editor.BlockManager.currentBlock.pluginsContent;
 
                 selectRange.deleteContents();
 
