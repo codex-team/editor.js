@@ -74,12 +74,18 @@ export default class Keyboard extends Module {
         let currentBlock = this.Editor.BlockManager.currentBlock,
             toolsConfig = this.config.toolsConfig[currentBlock.name];
 
+        /**
+         * Check if configuration for enableLineBreaks property true
+         */
         if (toolsConfig && toolsConfig.enableLineBreaks) {
 
             return;
 
         }
 
+        /**
+         * Check if shift key pressed synchronously with enter key
+         */
         if (event.shiftKey) {
 
             return;
