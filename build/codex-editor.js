@@ -2641,11 +2641,6 @@ var Keyboard = function (_Module) {
 
                 case _.keyCodes.ENTER:
 
-                    if (this.config.toolsConfig[this.config.initialBlock] && this.config.toolsConfig[this.config.initialBlock].enableLineBreaks) {
-
-                        break;
-                    }
-
                     if (event.shiftKey) {
 
                         break;
@@ -2686,9 +2681,11 @@ var Keyboard = function (_Module) {
         key: 'enterPressed',
         value: function enterPressed(event) {
 
-            /**
-             * @todo check Tool's configuration for allowLinebreaks property
-             */
+            if (this.config.toolsConfig[this.config.initialBlock] && this.config.toolsConfig[this.config.initialBlock].enableLineBreaks) {
+
+                return;
+            }
+
             event.preventDefault();
             /**
              * Split the Current Block
