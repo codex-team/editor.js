@@ -2680,7 +2680,8 @@ var Keyboard = function (_Module) {
                 toolsConfig = this.config.toolsConfig[currentBlock.name];
 
             /**
-             * Check if configuration for enableLineBreaks property true
+             * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
+             * Uses for Tools like <code> where line breaks should be handled by default behaviour.
              */
             if (toolsConfig && toolsConfig.enableLineBreaks) {
 
@@ -2688,7 +2689,7 @@ var Keyboard = function (_Module) {
             }
 
             /**
-             * Check if shift key pressed synchronously with enter key
+             * Allow to create linebreaks by Shift+Enter
              */
             if (event.shiftKey) {
 
