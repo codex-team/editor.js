@@ -2676,9 +2676,26 @@ var Keyboard = function (_Module) {
         key: 'enterPressed',
         value: function enterPressed(event) {
 
+            var currentBlock = this.Editor.BlockManager.currentBlock,
+                toolsConfig = this.config.toolsConfig[currentBlock.name];
+
             /**
-             * @todo check Tool's configuration for allowLinebreaks property
+             * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
+             * Uses for Tools like <code> where line breaks should be handled by default behaviour.
              */
+            if (toolsConfig && toolsConfig.enableLineBreaks) {
+
+                return;
+            }
+
+            /**
+             * Allow to create linebreaks by Shift+Enter
+             */
+            if (event.shiftKey) {
+
+                return;
+            }
+
             event.preventDefault();
             /**
              * Split the Current Block
