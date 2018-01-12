@@ -38,6 +38,18 @@ export default class Keyboard extends Module {
 
             case _.keyCodes.ENTER:
 
+                if (this.config.toolsConfig[this.config.initialBlock] &&  this.config.toolsConfig[this.config.initialBlock].enableLineBreaks) {
+
+                    break;
+
+                }
+
+                if (event.shiftKey) {
+
+                    break;
+
+                }
+
                 _.log('Enter key pressed');
                 this.enterPressed(event);
                 break;
