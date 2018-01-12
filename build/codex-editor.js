@@ -2642,12 +2642,6 @@ var Keyboard = function (_Module) {
                 case _.keyCodes.ENTER:
 
                     _.log('Enter key pressed');
-
-                    if (event.shiftKey) {
-
-                        break;
-                    }
-
                     this.enterPressed(event);
                     break;
 
@@ -2682,9 +2676,15 @@ var Keyboard = function (_Module) {
         key: 'enterPressed',
         value: function enterPressed(event) {
 
-            var currentBlock = this.Editor.BlockManager.currentBlock;
+            var currentBlock = this.Editor.BlockManager.currentBlock,
+                toolsConfig = this.config.toolsConfig[currentBlock.name];
 
-            if (this.config.toolsConfig[currentBlock.name] && this.config.toolsConfig[currentBlock.name].enableLineBreaks) {
+            if (toolsConfig && toolsConfig.enableLineBreaks) {
+
+                return;
+            }
+
+            if (event.shiftKey) {
 
                 return;
             }

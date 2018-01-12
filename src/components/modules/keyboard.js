@@ -39,13 +39,6 @@ export default class Keyboard extends Module {
             case _.keyCodes.ENTER:
 
                 _.log('Enter key pressed');
-
-                if (event.shiftKey) {
-
-                    break;
-
-                }
-
                 this.enterPressed(event);
                 break;
 
@@ -78,9 +71,16 @@ export default class Keyboard extends Module {
      */
     enterPressed(event) {
 
-        let currentBlock = this.Editor.BlockManager.currentBlock;
+        let currentBlock = this.Editor.BlockManager.currentBlock,
+            toolsConfig = this.config.toolsConfig[currentBlock.name];
 
-        if (this.config.toolsConfig[currentBlock.name] && this.config.toolsConfig[currentBlock.name].enableLineBreaks) {
+        if (toolsConfig && toolsConfig.enableLineBreaks) {
+
+            return;
+
+        }
+
+        if (event.shiftKey) {
 
             return;
 
