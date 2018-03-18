@@ -44,6 +44,8 @@ export default class BlockSettings extends Module {
 
     /**
      * Panel with block settings with 2 sections:
+     *  - Tool's Settings
+     *  - Default Settings [Move, Remove, etc]
      *
      * @return {Element}
      */
@@ -87,8 +89,6 @@ export default class BlockSettings extends Module {
         this.nodes.buttonRemove = $.make('div', BlockSettings.CSS.button, {
             textContent: 'Remove Block'
         });
-
-        console.log('this.nodes.buttonRemove', this.nodes.buttonRemove);
 
         $.append(this.nodes.defaultSettings, this.nodes.buttonRemove);
 

@@ -3851,6 +3851,8 @@ var BlockSettings = function (_Module) {
 
         /**
          * Panel with block settings with 2 sections:
+         *  - Tool's Settings
+         *  - Default Settings [Move, Remove, etc]
          *
          * @return {Element}
          */
@@ -3896,8 +3898,6 @@ var BlockSettings = function (_Module) {
             this.nodes.buttonRemove = $.make('div', BlockSettings.CSS.button, {
                 textContent: 'Remove Block'
             });
-
-            console.log('this.nodes.buttonRemove', this.nodes.buttonRemove);
 
             $.append(this.nodes.defaultSettings, this.nodes.buttonRemove);
 
@@ -4495,7 +4495,6 @@ var Toolbar = function (_Module) {
     /**
      * Bind events on the Toolbar Elements:
      * - Block Settings
-     * - Remove Block
      */
 
   }, {
@@ -4503,6 +4502,9 @@ var Toolbar = function (_Module) {
     value: function bindEvents() {
       var _this3 = this;
 
+      /**
+       * Settings toggler
+       */
       this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', function (event) {
 
         _this3.settingsTogglerClicked(event);

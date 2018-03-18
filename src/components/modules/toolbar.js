@@ -240,10 +240,12 @@ export default class Toolbar extends Module {
     /**
      * Bind events on the Toolbar Elements:
      * - Block Settings
-     * - Remove Block
      */
     bindEvents() {
 
+        /**
+         * Settings toggler
+         */
         this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', (event) => {
 
             this.settingsTogglerClicked(event);
