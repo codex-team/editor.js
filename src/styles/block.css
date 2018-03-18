@@ -2,6 +2,10 @@
   border: 1px dotted #ccc;
   margin: 2px 0;
 
+  &:first-of-type {
+    margin-top: 0;
+  }
+
   &--selected {
     background-color: var(--bg-light);
   }

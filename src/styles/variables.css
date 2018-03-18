@@ -6,6 +6,11 @@
     --bg-light: #eff2f5;
 
     /**
+     * All gray texts: placeholders, settings
+     */
+    --grayText: #707684;
+
+    /**
      * Block content width
      */
     --content-width: 650px;

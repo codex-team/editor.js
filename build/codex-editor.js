@@ -881,7 +881,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar.js","toolbox.js","tools.js","ui.js"].map(function (module) {
+var modules = ["blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
     return __webpack_require__(6)("./" + module);
 });
 
@@ -932,6 +932,7 @@ module.exports = function () {
          * @property {UI} UI
          * @property {Toolbar} Toolbar
          * @property {Toolbox} Toolbox
+         * @property {BlockSettings} BlockSettings
          * @property {Renderer} Renderer
          */
         this.moduleInstances = {};
@@ -1296,10 +1297,11 @@ var map = {
 	"./renderer.js": 13,
 	"./sanitizer.js": 14,
 	"./saver.js": 16,
-	"./toolbar.js": 17,
-	"./toolbox.js": 18,
-	"./tools.js": 19,
-	"./ui.js": 20
+	"./toolbar-blockSettings.js": 17,
+	"./toolbar-toolbox.js": 18,
+	"./toolbar.js": 19,
+	"./tools.js": 20,
+	"./ui.js": 21
 };
 function webpackContext(req) {
 	return __webpack_require__(webpackContextResolve(req));
@@ -3795,7 +3797,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */(function(Module, $) {
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3807,30 +3809,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
- *
- * «Toolbar» is the node that moves up/down over current block
- *
- *  ______________________________________ Toolbar ____________________________________________
- * |                                                                                           |
- * |  ..................... Content ....................   ......... Block Actions ..........  |
- * |  .                                                .   .                                .  |
- * |  .                                                .   . [Open Settings] [Remove Block] .  |
- * |  .  [Plus Button]  [Toolbox: {Tool1}, {Tool2}]    .   .                                .  |
- * |  .                                                .   .        [Settings Panel]        .  |
- * |  ..................................................   ..................................  |
- * |                                                                                           |
- * |___________________________________________________________________________________________|
- *
- *
- * Toolbox — its an Element contains tools buttons. Can be shown by Plus Button.
- *
- *  _______________ Toolbox _______________
- * |                                       |
- * | [Header] [Image] [List] [Quote] ...   |
- * |_______________________________________|
- *
- *
- * Settings Panel — is an Element with block settings:
+ * Block Settings
  *
  *   ____ Settings Panel ____
  *  | ...................... |
@@ -3839,280 +3818,164 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  *  | .  Default Settings  . |
  *  | ...................... |
  *  |________________________|
- *
- *
- * @class
- * @classdesc Toolbar module
- *
- * @typedef {Toolbar} Toolbar
- * @property {Object} nodes
- * @property {Element} nodes.wrapper        - Toolbar main element
- * @property {Element} nodes.content        - Zone with Plus button and toolbox.
- * @property {Element} nodes.actions        - Zone with Block Settings and Remove Button
- * @property {Element} nodes.plusButton     - Button that opens or closes Toolbox
- * @property {Element} nodes.toolbox        - Container for tools
- * @property {Element} nodes.settingsToggler - open/close Settings Panel button
- * @property {Element} nodes.removeBlockButton - Remove Block button
- * @property {Element} nodes.settings          - Settings Panel
- * @property {Element} nodes.pluginSettings    - Plugin Settings section of Settings Panel
- * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
  */
-var Toolbar = function (_Module) {
-  _inherits(Toolbar, _Module);
+var BlockSettings = function (_Module) {
+    _inherits(BlockSettings, _Module);
 
-  /**
-   * @constructor
-   */
-  function Toolbar(_ref) {
-    var config = _ref.config;
+    function BlockSettings(_ref) {
+        var config = _ref.config;
 
-    _classCallCheck(this, Toolbar);
+        _classCallCheck(this, BlockSettings);
 
-    var _this = _possibleConstructorReturn(this, (Toolbar.__proto__ || Object.getPrototypeOf(Toolbar)).call(this, { config: config }));
+        var _this = _possibleConstructorReturn(this, (BlockSettings.__proto__ || Object.getPrototypeOf(BlockSettings)).call(this, { config: config }));
 
-    _this.nodes = {
-      wrapper: null,
-      content: null,
-      actions: null,
+        _this.nodes = {
+            wrapper: null,
+            toolSettings: null,
+            defaultSettings: null,
+            buttonRemove: null
+        };
 
-      // Content Zone
-      plusButton: null,
-
-      // Actions Zone
-      settingsToggler: null,
-      removeBlockButton: null,
-      settings: null,
-
-      // Settings Zone: Plugin Settings and Default Settings
-      pluginSettings: null,
-      defaultSettings: null
-    };
-
-    return _this;
-  }
-
-  /**
-   * CSS styles
-   * @return {Object}
-   * @constructor
-   */
-
-
-  _createClass(Toolbar, [{
-    key: 'make',
-
-
-    /**
-     * Makes toolbar
-     */
-    value: function make() {
-      var _this2 = this;
-
-      this.nodes.wrapper = $.make('div', Toolbar.CSS.toolbar);
-
-      /**
-       * Make Content Zone and Actions Zone
-       */
-      ['content', 'actions'].forEach(function (el) {
-
-        _this2.nodes[el] = $.make('div', Toolbar.CSS[el]);
-        $.append(_this2.nodes.wrapper, _this2.nodes[el]);
-      });
-
-      /**
-       * Fill Content Zone:
-       *  - Plus Button
-       *  - Toolbox
-       */
-      this.nodes.plusButton = $.make('div', Toolbar.CSS.plusButton);
-      $.append(this.nodes.content, this.nodes.plusButton);
-      this.nodes.plusButton.addEventListener('click', function (event) {
-        return _this2.plusButtonClicked(event);
-      }, false);
-
-      /**
-       * Make a Toolbox
-       */
-      this.Editor.Toolbox.make();
-
-      /**
-       * Fill Actions Zone:
-       *  - Settings Toggler
-       *  - Remove Block Button
-       *  - Settings Panel
-       */
-      this.nodes.settingsToggler = $.make('span', Toolbar.CSS.settingsToggler);
-      this.nodes.removeBlockButton = this.makeRemoveBlockButton();
-
-      $.append(this.nodes.actions, [this.nodes.settingsToggler, this.nodes.removeBlockButton]);
-
-      /**
-       * Make and append Settings Panel
-       */
-      this.makeBlockSettingsPanel();
-
-      /**
-       * Append toolbar to the Editor
-       */
-      $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+        return _this;
     }
 
     /**
-     * Panel with block settings with 2 sections:
-     *
-     * @return {Element}
+     * Block Settings CSS
+     * @return {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
      */
 
-  }, {
-    key: 'makeBlockSettingsPanel',
-    value: function makeBlockSettingsPanel() {
 
-      this.nodes.settings = $.make('div', Toolbar.CSS.settings);
-
-      this.nodes.pluginSettings = $.make('div', Toolbar.CSS.pluginSettings);
-      this.nodes.defaultSettings = $.make('div', Toolbar.CSS.defaultSettings);
-
-      $.append(this.nodes.settings, [this.nodes.pluginSettings, this.nodes.defaultSettings]);
-      $.append(this.nodes.actions, this.nodes.settings);
-    }
-
-    /**
-     * Makes Remove Block button, and confirmation panel
-     * @return {Element} wrapper with button and panel
-     */
-
-  }, {
-    key: 'makeRemoveBlockButton',
-    value: function makeRemoveBlockButton() {
-
-      /**
-       * @todo  add confirmation panel and handlers
-       * @see  {@link settings#makeRemoveBlockButton}
-       */
-      return $.make('span', Toolbar.CSS.removeBlockButton);
-    }
-
-    /**
-     * Move Toolbar to the Current Block
-     */
-
-  }, {
-    key: 'move',
-    value: function move() {
-
-      /** Close Toolbox when we move toolbar */
-      this.Editor.Toolbox.close();
-
-      var currentNode = this.Editor.BlockManager.currentNode;
-
-      /**
-       * If no one Block selected as a Current
-       */
-      if (!currentNode) {
-
-        return;
-      }
-
-      /**
-       * @todo Compute dynamically on prepare
-       * @type {number}
-       */
-      var defaultToolbarHeight = 49;
-      var defaultOffset = 34;
-
-      var newYCoordinate = currentNode.offsetTop - defaultToolbarHeight / 2 + defaultOffset;
-
-      this.nodes.wrapper.style.transform = 'translate3D(0, ' + Math.floor(newYCoordinate) + 'px, 0)';
-
-      /** Close trash actions */
-      // editor.toolbar.settings.hideRemoveActions();
-    }
-
-    /**
-     * Open Toolbar with Plus Button
-     */
-
-  }, {
-    key: 'open',
-    value: function open() {
-
-      this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
-    }
-
-    /**
-     * Close the Toolbar
-     */
-
-  }, {
-    key: 'close',
-    value: function close() {
-
-      this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
-    }
-
-    /**
-     * Plus Button public methods
-     * @return {{hide: function(): void, show: function(): void}}
-     */
-
-  }, {
-    key: 'plusButtonClicked',
+    _createClass(BlockSettings, [{
+        key: 'make',
 
 
-    /**
-     * Handler for Plus Button
-     * @param {MouseEvent} event
-     */
-    value: function plusButtonClicked(event) {
+        /**
+         * Panel with block settings with 2 sections:
+         *
+         * @return {Element}
+         */
+        value: function make() {
 
-      this.Editor.Toolbox.toggle();
-    }
-  }, {
-    key: 'plusButton',
-    get: function get() {
-      var _this3 = this;
+            this.nodes.wrapper = $.make('div', BlockSettings.CSS.wrapper);
 
-      return {
-        hide: function hide() {
-          return _this3.nodes.plusButton.classList.add(Toolbar.CSS.plusButtonHidden);
-        },
-        show: function show() {
-          return _this3.nodes.plusButton.classList.remove(Toolbar.CSS.plusButtonHidden);
+            this.nodes.toolSettings = $.make('div', BlockSettings.CSS.toolSettings);
+            this.nodes.defaultSettings = $.make('div', BlockSettings.CSS.defaultSettings);
+
+            $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
+
+            /**
+             * Add default settings that presents for all Blocks
+             */
+            this.addDefaultSettings();
         }
-      };
-    }
-  }], [{
-    key: 'CSS',
-    get: function get() {
 
-      return {
-        toolbar: 'ce-toolbar',
-        content: 'ce-toolbar__content',
-        actions: 'ce-toolbar__actions',
+        /**
+         * Add Tool's settings
+         */
 
-        toolbarOpened: 'ce-toolbar--opened',
+    }, {
+        key: 'addToolSettings',
+        value: function addToolSettings() {
 
-        // Content Zone
-        plusButton: 'ce-toolbar__plus',
-        plusButtonHidden: 'ce-toolbar__plus--hidden',
+            console.log('Block Settings: add settings for ', this.Editor.BlockManager.currentBlock);
+        }
 
-        // Actions Zone
-        settingsToggler: 'ce-toolbar__settings-btn',
-        removeBlockButton: 'ce-toolbar__remove-btn',
+        /**
+         * Add default settings
+         */
 
-        // Settings Panel
-        settings: 'ce-settings',
-        defaultSettings: 'ce-settings_default',
-        pluginSettings: 'ce-settings_plugin'
-      };
-    }
-  }]);
+    }, {
+        key: 'addDefaultSettings',
+        value: function addDefaultSettings() {
+            var _this2 = this;
 
-  return Toolbar;
+            /**
+             * Remove Block Button
+             * --------------------------------------------
+             */
+            this.nodes.buttonRemove = $.make('div', BlockSettings.CSS.button, {
+                textContent: 'Remove Block'
+            });
+
+            console.log('this.nodes.buttonRemove', this.nodes.buttonRemove);
+
+            $.append(this.nodes.defaultSettings, this.nodes.buttonRemove);
+
+            this.Editor.Listeners.on(this.nodes.buttonRemove, 'click', function (event) {
+                return _this2.removeBlockButtonClicked(event);
+            });
+        }
+
+        /**
+         * Clicks on the Remove Block Button
+         */
+
+    }, {
+        key: 'removeBlockButtonClicked',
+        value: function removeBlockButtonClicked() {
+
+            console.log('❇️ Remove Block Button clicked');
+        }
+
+        /**
+         * Is Block Settings opened or not
+         * @returns {boolean}
+         */
+
+    }, {
+        key: 'open',
+
+
+        /**
+         * Open Block Settings pane
+         */
+        value: function open() {
+
+            this.nodes.wrapper.classList.add(BlockSettings.CSS.wrapperOpened);
+
+            /**
+             * Fill Tool's settings
+             */
+            this.addToolSettings();
+        }
+
+        /**
+         * Close Block Settings pane
+         */
+
+    }, {
+        key: 'close',
+        value: function close() {
+
+            this.nodes.wrapper.classList.remove(BlockSettings.CSS.wrapperOpened);
+        }
+    }, {
+        key: 'opened',
+        get: function get() {
+
+            return this.nodes.wrapper.classList.contains(BlockSettings.CSS.wrapperOpened);
+        }
+    }], [{
+        key: 'CSS',
+        get: function get() {
+
+            return {
+                // Settings Panel
+                wrapper: 'ce-settings',
+                wrapperOpened: 'ce-settings--opened',
+                toolSettings: 'ce-settings__plugin-zone',
+                defaultSettings: 'ce-settings__default-zone',
+
+                button: 'ce-settings__button'
+            };
+        }
+    }]);
+
+    return BlockSettings;
 }(Module);
 
-Toolbar.displayName = 'Toolbar';
-exports.default = Toolbar;
+BlockSettings.displayName = 'BlockSettings';
+exports.default = BlockSettings;
 module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
@@ -4383,6 +4246,331 @@ module.exports = exports['default'];
 
 /***/ }),
 /* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module, $) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ *
+ * «Toolbar» is the node that moves up/down over current block
+ *
+ *  ______________________________________ Toolbar ____________________________________________
+ * |                                                                                           |
+ * |  ..................... Content ....................   ......... Block Actions ..........  |
+ * |  .                                                .   .                                .  |
+ * |  .                                                .   . [Open Settings] [Remove Block] .  |
+ * |  .  [Plus Button]  [Toolbox: {Tool1}, {Tool2}]    .   .                                .  |
+ * |  .                                                .   .        [Settings Panel]        .  |
+ * |  ..................................................   ..................................  |
+ * |                                                                                           |
+ * |___________________________________________________________________________________________|
+ *
+ *
+ * Toolbox — its an Element contains tools buttons. Can be shown by Plus Button.
+ *
+ *  _______________ Toolbox _______________
+ * |                                       |
+ * | [Header] [Image] [List] [Quote] ...   |
+ * |_______________________________________|
+ *
+ *
+ * Settings Panel — is an Element with block settings:
+ *
+ *   ____ Settings Panel ____
+ *  | ...................... |
+ *  | .   Tool Settings    . |
+ *  | ...................... |
+ *  | .  Default Settings  . |
+ *  | ...................... |
+ *  |________________________|
+ *
+ *
+ * @class
+ * @classdesc Toolbar module
+ *
+ * @typedef {Toolbar} Toolbar
+ * @property {Object} nodes
+ * @property {Element} nodes.wrapper        - Toolbar main element
+ * @property {Element} nodes.content        - Zone with Plus button and toolbox.
+ * @property {Element} nodes.actions        - Zone with Block Settings and Remove Button
+ * @property {Element} nodes.blockActionsButtons   - Zone with Block Buttons: [Settings]
+ * @property {Element} nodes.plusButton     - Button that opens or closes Toolbox
+ * @property {Element} nodes.toolbox        - Container for tools
+ * @property {Element} nodes.settingsToggler - open/close Settings Panel button
+ * @property {Element} nodes.settings          - Settings Panel
+ * @property {Element} nodes.pluginSettings    - Plugin Settings section of Settings Panel
+ * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
+ */
+var Toolbar = function (_Module) {
+  _inherits(Toolbar, _Module);
+
+  /**
+   * @constructor
+   */
+  function Toolbar(_ref) {
+    var config = _ref.config;
+
+    _classCallCheck(this, Toolbar);
+
+    var _this = _possibleConstructorReturn(this, (Toolbar.__proto__ || Object.getPrototypeOf(Toolbar)).call(this, { config: config }));
+
+    _this.nodes = {
+      wrapper: null,
+      content: null,
+      actions: null,
+
+      // Content Zone
+      plusButton: null,
+
+      // Actions Zone
+      blockActionsButtons: null,
+      settingsToggler: null
+    };
+
+    return _this;
+  }
+
+  /**
+   * CSS styles
+   * @return {Object}
+   * @constructor
+   */
+
+
+  _createClass(Toolbar, [{
+    key: 'make',
+
+
+    /**
+     * Makes toolbar
+     */
+    value: function make() {
+      var _this2 = this;
+
+      this.nodes.wrapper = $.make('div', Toolbar.CSS.toolbar);
+
+      /**
+       * Make Content Zone and Actions Zone
+       */
+      ['content', 'actions'].forEach(function (el) {
+
+        _this2.nodes[el] = $.make('div', Toolbar.CSS[el]);
+        $.append(_this2.nodes.wrapper, _this2.nodes[el]);
+      });
+
+      /**
+       * Fill Content Zone:
+       *  - Plus Button
+       *  - Toolbox
+       */
+      this.nodes.plusButton = $.make('div', Toolbar.CSS.plusButton);
+      $.append(this.nodes.content, this.nodes.plusButton);
+      this.nodes.plusButton.addEventListener('click', function (event) {
+        return _this2.plusButtonClicked(event);
+      }, false);
+
+      /**
+       * Make a Toolbox
+       */
+      this.Editor.Toolbox.make();
+
+      /**
+       * Fill Actions Zone:
+       *  - Settings Toggler
+       *  - Remove Block Button
+       *  - Settings Panel
+       */
+      this.nodes.blockActionsButtons = $.make('div', Toolbar.CSS.blockActionsButtons);
+      this.nodes.settingsToggler = $.make('span', Toolbar.CSS.settingsToggler);
+
+      $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
+      $.append(this.nodes.actions, this.nodes.blockActionsButtons);
+
+      /**
+       * Make and append Settings Panel
+       */
+      this.Editor.BlockSettings.make();
+      $.append(this.nodes.actions, this.Editor.BlockSettings.nodes.wrapper);
+
+      /**
+       * Append toolbar to the Editor
+       */
+      $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+
+      /**
+       * Bind events on the Toolbar elements
+       */
+      this.bindEvents();
+    }
+
+    /**
+     * Move Toolbar to the Current Block
+     */
+
+  }, {
+    key: 'move',
+    value: function move() {
+
+      /** Close Toolbox when we move toolbar */
+      this.Editor.Toolbox.close();
+
+      var currentNode = this.Editor.BlockManager.currentNode;
+
+      /**
+       * If no one Block selected as a Current
+       */
+      if (!currentNode) {
+
+        return;
+      }
+
+      /**
+       * @todo Compute dynamically on prepare
+       * @type {number}
+       */
+      var defaultToolbarHeight = 49;
+      var defaultOffset = 34;
+
+      var newYCoordinate = currentNode.offsetTop - defaultToolbarHeight / 2 + defaultOffset;
+
+      this.nodes.wrapper.style.transform = 'translate3D(0, ' + Math.floor(newYCoordinate) + 'px, 0)';
+
+      /** Close trash actions */
+      // editor.toolbar.settings.hideRemoveActions();
+    }
+
+    /**
+     * Open Toolbar with Plus Button
+     */
+
+  }, {
+    key: 'open',
+    value: function open() {
+
+      this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
+    }
+
+    /**
+     * Close the Toolbar
+     */
+
+  }, {
+    key: 'close',
+    value: function close() {
+
+      this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
+    }
+
+    /**
+     * Plus Button public methods
+     * @return {{hide: function(): void, show: function(): void}}
+     */
+
+  }, {
+    key: 'plusButtonClicked',
+
+
+    /**
+     * Handler for Plus Button
+     * @param {MouseEvent} event
+     */
+    value: function plusButtonClicked() {
+
+      this.Editor.Toolbox.toggle();
+    }
+
+    /**
+     * Bind events on the Toolbar Elements:
+     * - Block Settings
+     * - Remove Block
+     */
+
+  }, {
+    key: 'bindEvents',
+    value: function bindEvents() {
+      var _this3 = this;
+
+      this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', function (event) {
+
+        _this3.settingsTogglerClicked(event);
+      });
+    }
+
+    /**
+     * Clicks on the Block Settings toggler
+     */
+
+  }, {
+    key: 'settingsTogglerClicked',
+    value: function settingsTogglerClicked() {
+
+      if (this.Editor.BlockSettings.opened) {
+
+        this.Editor.BlockSettings.close();
+      } else {
+
+        this.Editor.BlockSettings.open();
+      }
+    }
+  }, {
+    key: 'plusButton',
+    get: function get() {
+      var _this4 = this;
+
+      return {
+        hide: function hide() {
+          return _this4.nodes.plusButton.classList.add(Toolbar.CSS.plusButtonHidden);
+        },
+        show: function show() {
+          return _this4.nodes.plusButton.classList.remove(Toolbar.CSS.plusButtonHidden);
+        }
+      };
+    }
+  }], [{
+    key: 'CSS',
+    get: function get() {
+
+      return {
+        toolbar: 'ce-toolbar',
+        content: 'ce-toolbar__content',
+        actions: 'ce-toolbar__actions',
+
+        toolbarOpened: 'ce-toolbar--opened',
+
+        // Content Zone
+        plusButton: 'ce-toolbar__plus',
+        plusButtonHidden: 'ce-toolbar__plus--hidden',
+
+        // Actions Zone
+        blockActionsButtons: 'ce-toolbar__actions-buttons',
+        settingsToggler: 'ce-toolbar__settings-btn'
+      };
+    }
+  }]);
+
+  return Toolbar;
+}(Module);
+
+Toolbar.displayName = 'Toolbar';
+exports.default = Toolbar;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
+
+/***/ }),
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4681,7 +4869,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
 
 /***/ }),
-/* 20 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4880,7 +5068,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(21);
+      var styles = __webpack_require__(22);
 
       /**
        * Make tag
@@ -5298,21 +5486,21 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(22)(undefined);
+exports = module.exports = __webpack_require__(23)(undefined);
 // imports
 
 
 // module
-exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n    /**\n     * Block content width\n     */\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 10px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-34px - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    width: 34px;\n    height: 34px;\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n    content: '+';\n    font-size: 26px;\n    display: block;\n    margin-top: -2px;\n    margin-right: -2px;\n\n}\n.ce-toolbar__plus--hidden {\n      display: none;\n\n}\n.ce-toolbox {\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        width: 34px;\n        height: 34px;\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px\n    }\n.ce-toolbox__button::before {\n    content: attr(title);\n    font-size: 22px;\n    font-weight: 500;\n    letter-spacing: 1em;\n    -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n            font-feature-settings: \"smcp\", \"c2sc\";\n    font-variant-caps: all-small-caps;\n    padding-left: 11.5px;\n    margin-top: -1px;\n    display: inline-block;\n\n}\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0;\n}\n.ce-block--selected {\n    background-color: #eff2f5;\n  }\n.ce-block__content {\n    max-width: 650px;\n    margin: 0 auto;\n  }\n", ""]);
+exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n    /**\n     * All gray texts: placeholders, settings\n     */\n\n    /**\n     * Block content width\n     */\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 2px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-34px - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    width: 34px;\n    height: 34px;\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n    content: '+';\n    font-size: 26px;\n    display: block;\n    margin-top: -2px;\n    margin-right: -2px;\n\n}\n.ce-toolbar__plus--hidden {\n      display: none;\n\n}\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    border: 1px dotted #ccc;\n    padding: 2px;\n  }\n.ce-toolbar__actions-buttons {\n      border: 1px dotted #ccc;\n      padding: 2px;\n      text-align: right;\n      margin-bottom: 2px;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    border: 1px dotted #ccc\n  }\n.ce-toolbar__settings-btn::before {\n    content: 'STN';\n    font-size: 10px;\n    opacity: .4;\n\n}\n.ce-toolbox {\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        width: 34px;\n        height: 34px;\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px\n    }\n.ce-toolbox__button::before {\n    content: attr(title);\n    font-size: 22px;\n    font-weight: 500;\n    letter-spacing: 1em;\n    -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n            font-feature-settings: \"smcp\", \"c2sc\";\n    font-variant-caps: all-small-caps;\n    padding-left: 11.5px;\n    margin-top: -1px;\n    display: inline-block;\n\n}\n.ce-settings {\n  border: 1px dotted #ccc;\n  padding: 2px;\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone {\n    border: 1px dotted #ccc;\n    padding: 2px;\n    margin-bottom: 2px\n  }\n.ce-settings__plugin-zone::before {\n    content: 'PLUGIN SETTINGS';\n    opacity: .4;\n    font-size: 12px;\n\n}\n.ce-settings__default-zone {\n    border: 1px dotted #ccc;\n    padding: 2px\n  }\n.ce-settings__default-zone::before {\n    content: 'DEFAULT SETTINGS';\n    opacity: .4;\n    font-size: 12px;\n\n}\n.ce-settings__button {\n    padding: 10px 15px;\n    color: #707684\n  }\n.ce-settings__button:hover {\n    background: #eff2f5;\n\n}\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0\n}\n.ce-block:first-of-type {\n    margin-top: 0;\n\n}\n.ce-block--selected {\n    background-color: #eff2f5;\n\n}\n.ce-block__content {\n    max-width: 650px;\n    margin: 0 auto;\n\n}\n", ""]);
 
 // exports
 
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports) {
 
 /*

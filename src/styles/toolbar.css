@@ -20,6 +20,7 @@
     margin: 0 auto;
     position: relative;
   }
+
   &__plus {
     position: absolute;
     left: calc(-var(--toolbar-buttons-size) - 10px);
@@ -41,6 +42,38 @@
 
     &--hidden {
       display: none;
+    }
+  }
+
+  /**
+   * Block actions Zone
+   * -------------------------
+   */
+  &__actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+    border: 1px dotted #ccc;
+    padding: 2px;
+
+    &-buttons {
+      border: 1px dotted #ccc;
+      padding: 2px;
+      text-align: right;
+      margin-bottom: 2px;
+    }
+  }
+
+  &__settings-btn {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 1px dotted #ccc;
+
+    &::before {
+      content: 'STN';
+      font-size: 10px;
+      opacity: .4;
     }
   }
 }
