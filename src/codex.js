@@ -114,6 +114,7 @@ module.exports = class CodexEditor {
          * @property {UI} UI
          * @property {Toolbar} Toolbar
          * @property {Toolbox} Toolbox
+         * @property {BlockSettings} BlockSettings
          * @property {Renderer} Renderer
          */
         this.moduleInstances = {};

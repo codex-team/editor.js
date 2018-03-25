@@ -1,0 +1,40 @@
+.ce-settings {
+  border: 1px dotted #ccc;
+  padding: 2px;
+  display: none;
+
+  &--opened {
+    display: block;
+  }
+
+  &__plugin-zone {
+    border: 1px dotted #ccc;
+    padding: 2px;
+    margin-bottom: 2px;
+
+    &::before {
+      content: 'PLUGIN SETTINGS';
+      opacity: .4;
+      font-size: 12px;
+    }
+  }
+
+  &__default-zone {
+    border: 1px dotted #ccc;
+    padding: 2px;
+    &::before {
+      content: 'DEFAULT SETTINGS';
+      opacity: .4;
+      font-size: 12px;
+    }
+  }
+
+  &__button {
+    padding: 10px 15px;
+    color: var(--grayText);
+
+    &:hover {
+      background: var(--bg-light);
+    }
+  }
+}

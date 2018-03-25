@@ -41,10 +41,10 @@
  * @property {Element} nodes.wrapper        - Toolbar main element
  * @property {Element} nodes.content        - Zone with Plus button and toolbox.
  * @property {Element} nodes.actions        - Zone with Block Settings and Remove Button
+ * @property {Element} nodes.blockActionsButtons   - Zone with Block Buttons: [Settings]
  * @property {Element} nodes.plusButton     - Button that opens or closes Toolbox
  * @property {Element} nodes.toolbox        - Container for tools
  * @property {Element} nodes.settingsToggler - open/close Settings Panel button
- * @property {Element} nodes.removeBlockButton - Remove Block button
  * @property {Element} nodes.settings          - Settings Panel
  * @property {Element} nodes.pluginSettings    - Plugin Settings section of Settings Panel
  * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
@@ -67,13 +67,8 @@ export default class Toolbar extends Module {
             plusButton : null,
 
             // Actions Zone
+            blockActionsButtons: null,
             settingsToggler : null,
-            removeBlockButton: null,
-            settings: null,
-
-            // Settings Zone: Plugin Settings and Default Settings
-            pluginSettings: null,
-            defaultSettings: null,
         };
 
     }
@@ -97,13 +92,8 @@ export default class Toolbar extends Module {
             plusButtonHidden: 'ce-toolbar__plus--hidden',
 
             // Actions Zone
+            blockActionsButtons: 'ce-toolbar__actions-buttons',
             settingsToggler: 'ce-toolbar__settings-btn',
-            removeBlockButton: 'ce-toolbar__remove-btn',
-
-            // Settings Panel
-            settings: 'ce-settings',
-            defaultSettings: 'ce-settings_default',
-            pluginSettings: 'ce-settings_plugin',
         };
 
     }
@@ -147,51 +137,27 @@ export default class Toolbar extends Module {
          *  - Remove Block Button
          *  - Settings Panel
          */
+        this.nodes.blockActionsButtons = $.make('div', Toolbar.CSS.blockActionsButtons);
         this.nodes.settingsToggler  = $.make('span', Toolbar.CSS.settingsToggler);
-        this.nodes.removeBlockButton = this.makeRemoveBlockButton();
 
-        $.append(this.nodes.actions, [this.nodes.settingsToggler, this.nodes.removeBlockButton]);
+        $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
+        $.append(this.nodes.actions, this.nodes.blockActionsButtons);
 
         /**
          * Make and append Settings Panel
          */
-        this.makeBlockSettingsPanel();
+        this.Editor.BlockSettings.make();
+        $.append(this.nodes.actions, this.Editor.BlockSettings.nodes.wrapper);
 
         /**
          * Append toolbar to the Editor
          */
         $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
 
-    }
-
-    /**
-     * Panel with block settings with 2 sections:
-     *
-     * @return {Element}
-     */
-    makeBlockSettingsPanel() {
-
-        this.nodes.settings = $.make('div', Toolbar.CSS.settings);
-
-        this.nodes.pluginSettings = $.make('div', Toolbar.CSS.pluginSettings);
-        this.nodes.defaultSettings = $.make('div', Toolbar.CSS.defaultSettings);
-
-        $.append(this.nodes.settings, [this.nodes.pluginSettings, this.nodes.defaultSettings]);
-        $.append(this.nodes.actions, this.nodes.settings);
-
-    }
-
-    /**
-     * Makes Remove Block button, and confirmation panel
-     * @return {Element} wrapper with button and panel
-     */
-    makeRemoveBlockButton() {
-
         /**
-         * @todo  add confirmation panel and handlers
-         * @see  {@link settings#makeRemoveBlockButton}
+         * Bind events on the Toolbar elements
          */
-        return $.make('span', Toolbar.CSS.removeBlockButton);
+        this.bindEvents();
 
     }
 
@@ -265,9 +231,43 @@ export default class Toolbar extends Module {
      * Handler for Plus Button
      * @param {MouseEvent} event
      */
-    plusButtonClicked(event) {
+    plusButtonClicked() {
 
         this.Editor.Toolbox.toggle();
+
+    }
+
+    /**
+     * Bind events on the Toolbar Elements:
+     * - Block Settings
+     */
+    bindEvents() {
+
+        /**
+         * Settings toggler
+         */
+        this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', (event) => {
+
+            this.settingsTogglerClicked(event);
+
+        });
+
+    }
+
+    /**
+     * Clicks on the Block Settings toggler
+     */
+    settingsTogglerClicked() {
+
+        if (this.Editor.BlockSettings.opened) {
+
+            this.Editor.BlockSettings.close();
+
+        } else {
+
+            this.Editor.BlockSettings.open();
+
+        }
 
     }
 
