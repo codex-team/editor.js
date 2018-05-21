@@ -75,6 +75,8 @@ export default class UI extends Module {
      */
     prepare() {
 
+        this.Editor.Toolbar.make()
+
         return this.make()
             /**
              * Make toolbar
