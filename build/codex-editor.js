@@ -545,13 +545,9 @@ var Dom = function () {
 
             if (node && node.nodeType === Node.ELEMENT_NODE && node.firstChild) {
 
-                if (atLast) {
+                var nodeChild = atLast ? node.lastChild : node.firstChild;
 
-                    return this.getDeepestNode(node.lastChild, atLast);
-                } else {
-
-                    return this.getDeepestNode(node.firstChild, false);
-                }
+                return this.getDeepestNode(nodeChild, atLast);
             }
 
             return node;
@@ -1555,10 +1551,15 @@ var BlockManager = function (_Module) {
                 mergingBlock = this._blocks[this.currentBlockIndex];
             }
 
-            if (mergingBlock.html.textContent.trim() !== '') {
+            if (!$.isEmpty(mergingBlock.html)) {
 
-                var range = document.createRange(),
+                var selection = _Selection2.default.get(),
+                    selectRange = selection.getRangeAt(0),
                     extractedBlock = void 0;
+
+                selectRange.deleteContents();
+
+                var range = selectRange.cloneRange(true);
 
                 range.selectNodeContents(mergingBlock.pluginsContent);
                 extractedBlock = range.extractContents();
@@ -1583,6 +1584,8 @@ var BlockManager = function (_Module) {
 
             // decrease current block index so that to know current actual
             this.currentBlockIndex--;
+
+            this.currentNode = this._blocks[this.currentBlockIndex].html;
 
             // set caret to the block without offset at the end
             this.Editor.Caret.setToBlock(this.currentBlock, 0, true);
@@ -1923,11 +1926,12 @@ var Blocks = function () {
         key: 'remove',
         value: function remove(index) {
 
-            if (!isNaN(index)) {
+            if (!index) {
 
                 index = this.length - 1;
             }
 
+            // this.blocks[index].html;
             this.blocks[index].html.remove();
             this.blocks.splice(index, 1);
         }
@@ -2548,9 +2552,6 @@ var Caret = function (_Module) {
                 anchorNode = selection.anchorNode,
                 lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
 
-            // console.log('lastNode', lastNode);
-            // console.log('anchorNode', anchorNode);
-
             return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
         }
     }]);
@@ -2810,7 +2811,7 @@ var Keyboard = function (_Module) {
         key: 'backSpacePressed',
         value: function backSpacePressed(event) {
 
-            if (this.Editor.Caret.isAtStart) {
+            if (this.Editor.Caret.isAtStart && this.Editor.BlockManager.currentBlockIndex !== 0) {
 
                 this.Editor.BlockManager.mergeBlocks();
                 event.preventDefault();

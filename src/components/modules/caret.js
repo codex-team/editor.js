@@ -168,9 +168,6 @@ export default class Caret extends Module {
             anchorNode = selection.anchorNode,
             lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
 
-        // console.log('lastNode', lastNode);
-        // console.log('anchorNode', anchorNode);
-
         return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
 
     }

@@ -111,15 +111,9 @@ export default class Dom {
 
         if (node && node.nodeType === Node.ELEMENT_NODE && node.firstChild) {
 
-            if (atLast) {
+            let nodeChild = atLast ? node.lastChild : node.firstChild;
 
-                return this.getDeepestNode(node.lastChild, atLast);
-
-            } else {
-
-                return this.getDeepestNode(node.firstChild, false);
-
-            }
+            return this.getDeepestNode(nodeChild, atLast);
 
         }
 

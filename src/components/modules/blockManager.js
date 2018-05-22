@@ -204,10 +204,15 @@ export default class BlockManager extends Module {
 
         }
 
-        if (mergingBlock.html.textContent.trim() !== '') {
+        if (!$.isEmpty(mergingBlock.html)) {
 
-            let range = document.createRange(),
+            let selection = Selection.get(),
+                selectRange = selection.getRangeAt(0),
                 extractedBlock;
+
+            selectRange.deleteContents();
+
+            let range = selectRange.cloneRange(true);
 
             range.selectNodeContents(mergingBlock.pluginsContent);
             extractedBlock = range.extractContents();
@@ -231,6 +236,8 @@ export default class BlockManager extends Module {
 
         // decrease current block index so that to know current actual
         this.currentBlockIndex--;
+
+        this.currentNode = this._blocks[this.currentBlockIndex].html;
 
         // set caret to the block without offset at the end
         this.Editor.Caret.setToBlock(this.currentBlock, 0, true);
@@ -542,12 +549,13 @@ class Blocks {
      */
     remove(index) {
 
-        if (!isNaN(index)) {
+        if (!index) {
 
             index = this.length - 1;
 
         }
 
+        // this.blocks[index].html;
         this.blocks[index].html.remove();
         this.blocks.splice(index, 1);
 
