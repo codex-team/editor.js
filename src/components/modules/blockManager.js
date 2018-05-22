@@ -186,6 +186,22 @@ export default class BlockManager extends Module {
     }
 
     /**
+     * Remove block with passed index or remove last
+     * @param {Number|null} index
+     */
+    removeBlock(index) {
+
+        this._blocks.remove(index);
+
+        // decrease current block index so that to know current actual
+        this.currentBlockIndex--;
+
+        // set caret to the block without offset at the end
+        this.Editor.Caret.setToBlock(this.currentBlock, 0, true);
+        this.Editor.Toolbar.close();
+
+    }
+    /**
      * Split current Block
      * 1. Extract content from Caret position to the Block`s end
      * 2. Insert a new Block below current one with extracted content
@@ -481,6 +497,23 @@ class Blocks {
             }
 
         }
+
+    }
+
+    /**
+     * Remove block
+     * @param {Number|null} index
+     */
+    remove(index) {
+
+        if (!isNaN(index)) {
+
+            index = this.length - 1;
+
+        }
+
+        this.blocks[index].html.remove();
+        this.blocks.splice(index, 1);
 
     }
 

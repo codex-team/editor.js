@@ -75,7 +75,7 @@ export default class UI extends Module {
      */
     prepare() {
 
-        this.Editor.Toolbar.make()
+        // this.Editor.Toolbar.make();
 
         return this.make()
             /**
@@ -194,7 +194,7 @@ export default class UI extends Module {
         /**
          * @todo bind events with the Listeners module
          */
-        this.nodes.redactor.addEventListener('click', event => this.redactorClicked(event), false );
+        this.Editor.Listeners.on(this.nodes.redactor, 'click', event => this.redactorClicked(event), false );
 
     }
 
@@ -233,17 +233,14 @@ export default class UI extends Module {
 
             this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
 
-        /**
-         * If clicked outside first-level Blocks, set Caret to the last empty Block
-         */
-
         } catch (e) {
 
+            /**
+             * If clicked outside first-level Blocks, set Caret to the last empty Block
+             */
             this.Editor.Caret.setToTheLastBlock();
 
         }
-
-
 
 
         /**

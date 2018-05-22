@@ -34,6 +34,7 @@ export default class Keyboard extends Module {
             case _.keyCodes.BACKSPACE:
 
                 _.log('Backspace key pressed');
+                this.backSpacePressed(event);
                 break;
 
             case _.keyCodes.ENTER:
@@ -98,6 +99,16 @@ export default class Keyboard extends Module {
          * Split the Current Block
          */
         this.Editor.BlockManager.split();
+
+    }
+
+    /**
+     * Handle backspace keypress on block
+     * @param event
+     */
+    backSpacePressed(event) {
+
+        this.Editor.BlockManager.removeBlock();
 
     }
 

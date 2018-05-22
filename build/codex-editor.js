@@ -1550,6 +1550,24 @@ var BlockManager = function (_Module) {
         }
 
         /**
+         * Remove block with passed index or remove last
+         * @param {Number|null} index
+         */
+
+    }, {
+        key: 'removeBlock',
+        value: function removeBlock(index) {
+
+            this._blocks.remove(index);
+
+            // decrease current block index so that to know current actual
+            this.currentBlockIndex--;
+
+            // set caret to the block without offset at the end
+            this.Editor.Caret.setToBlock(this.currentBlock, 0, true);
+            this.Editor.Toolbar.close();
+        }
+        /**
          * Split current Block
          * 1. Extract content from Caret position to the Block`s end
          * 2. Insert a new Block below current one with extracted content
@@ -1873,6 +1891,24 @@ var Blocks = function () {
                     this.workingArea.appendChild(block.html);
                 }
             }
+        }
+
+        /**
+         * Remove block
+         * @param {Number|null} index
+         */
+
+    }, {
+        key: 'remove',
+        value: function remove(index) {
+
+            if (!isNaN(index)) {
+
+                index = this.length - 1;
+            }
+
+            this.blocks[index].html.remove();
+            this.blocks.splice(index, 1);
         }
 
         /**
@@ -2639,6 +2675,7 @@ var Keyboard = function (_Module) {
                 case _.keyCodes.BACKSPACE:
 
                     _.log('Backspace key pressed');
+                    this.backSpacePressed(event);
                     break;
 
                 case _.keyCodes.ENTER:
@@ -2703,6 +2740,18 @@ var Keyboard = function (_Module) {
              * Split the Current Block
              */
             this.Editor.BlockManager.split();
+        }
+
+        /**
+         * Handle backspace keypress on block
+         * @param event
+         */
+
+    }, {
+        key: 'backSpacePressed',
+        value: function backSpacePressed(event) {
+
+            this.Editor.BlockManager.removeBlock();
         }
 
         /**
@@ -4976,6 +5025,8 @@ var UI = function (_Module) {
     value: function prepare() {
       var _this2 = this;
 
+      // this.Editor.Toolbar.make();
+
       return this.make()
       /**
        * Make toolbar
@@ -5097,7 +5148,7 @@ var UI = function (_Module) {
       /**
        * @todo bind events with the Listeners module
        */
-      this.nodes.redactor.addEventListener('click', function (event) {
+      this.Editor.Listeners.on(this.nodes.redactor, 'click', function (event) {
         return _this4.redactorClicked(event);
       }, false);
     }
@@ -5139,12 +5190,11 @@ var UI = function (_Module) {
       try {
 
         this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+      } catch (e) {
 
         /**
          * If clicked outside first-level Blocks, set Caret to the last empty Block
          */
-      } catch (e) {
-
         this.Editor.Caret.setToTheLastBlock();
       }
 
