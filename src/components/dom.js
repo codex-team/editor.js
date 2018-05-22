@@ -103,42 +103,27 @@ export default class Dom {
      *
      * @description Method recursively goes throw the all Node until it finds the Leaf
      *
-     * @param {Element} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
+     * @param {Node} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
      * @param {Boolean} atLast - find last text node
      * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
      */
     static getDeepestNode(node, atLast = false) {
 
-        if (node.childNodes.length === 0) {
+        if (node && node.nodeType === Node.ELEMENT_NODE && node.firstChild) {
 
-            /**
-             * We need to return an empty text node
-             * But caret will not be placed in empty textNode, so we need textNode with zero-width char
-             */
-            if (this.isElement(node) && !this.isNativeInput(node)) {
+            if (atLast) {
 
-                let emptyTextNode = this.text('\u200B');
+                return this.getDeepestNode(node.lastChild, atLast);
 
-                node.appendChild(emptyTextNode);
+            } else {
+
+                return this.getDeepestNode(node.firstChild, false);
 
             }
 
-            return node;
-
         }
 
-        let childsLength = node.childNodes.length,
-            last = childsLength - 1;
-
-        if (atLast) {
-
-            return this.getDeepestNode(node.childNodes[last], atLast);
-
-        } else {
-
-            return this.getDeepestNode(node.childNodes[0], false);
-
-        }
+        return node;
 
     }
 

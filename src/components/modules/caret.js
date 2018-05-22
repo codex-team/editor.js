@@ -144,4 +144,32 @@ export default class Caret extends Module {
 
     }
 
+    /**
+     * Get's deepest first node and checks if offset is zero
+     * @return {boolean}
+     */
+    get isAtStart() {
+
+        let selection = Selection.get(),
+            anchorNode = selection.anchorNode,
+            firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
+
+        return anchorNode === firstNode && selection.anchorOffset === 0;
+
+    }
+
+    /**
+     * Get's deepest last node and checks if offset is last node text length
+     * @return {boolean}
+     */
+    get isAtEnd() {
+
+        let selection = Selection.get(),
+            anchorNode = selection.anchorNode,
+            lastNode = $.getDeepest;
+
+        return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
+
+    }
+
 }

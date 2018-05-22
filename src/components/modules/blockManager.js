@@ -186,6 +186,38 @@ export default class BlockManager extends Module {
     }
 
     /**
+     *
+     * @param targetBlock
+     * @param mergingBlock
+     */
+    mergeBlocks(targetBlock, mergingBlock) {
+
+        if (!targetBlock) {
+
+            targetBlock = this._blocks[this.currentBlockIndex - 1];
+
+        }
+
+        if (!mergingBlock) {
+
+            mergingBlock = this._blocks[this.currentBlockIndex];
+
+        }
+
+        let range = document.createRange();
+
+        range.selectNodeContents(mergingBlock.pluginsContent);
+
+        let extracted = range.extractContents();
+
+        targetBlock.pluginsContent.appendChild(extracted);
+        targetBlock.pluginsContent.normalize();
+
+        this.removeBlock(this.currentBlockIndex);
+
+    }
+
+    /**
      * Remove block with passed index or remove last
      * @param {Number|null} index
      */

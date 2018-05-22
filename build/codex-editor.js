@@ -532,7 +532,7 @@ var Dom = function () {
          *
          * @description Method recursively goes throw the all Node until it finds the Leaf
          *
-         * @param {Element} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
+         * @param {Node} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
          * @param {Boolean} atLast - find last text node
          * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
          */
@@ -543,32 +543,18 @@ var Dom = function () {
             var atLast = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
 
-            if (node.childNodes.length === 0) {
+            if (node && node.nodeType === Node.ELEMENT_NODE && node.firstChild) {
 
-                /**
-                 * We need to return an empty text node
-                 * But caret will not be placed in empty textNode, so we need textNode with zero-width char
-                 */
-                if (this.isElement(node) && !this.isNativeInput(node)) {
+                if (atLast) {
 
-                    var emptyTextNode = this.text('\u200B');
+                    return this.getDeepestNode(node.lastChild, atLast);
+                } else {
 
-                    node.appendChild(emptyTextNode);
+                    return this.getDeepestNode(node.firstChild, false);
                 }
-
-                return node;
             }
 
-            var childsLength = node.childNodes.length,
-                last = childsLength - 1;
-
-            if (atLast) {
-
-                return this.getDeepestNode(node.childNodes[last], atLast);
-            } else {
-
-                return this.getDeepestNode(node.childNodes[0], false);
-            }
+            return node;
         }
 
         /**
@@ -1550,6 +1536,38 @@ var BlockManager = function (_Module) {
         }
 
         /**
+         *
+         * @param targetBlock
+         * @param mergingBlock
+         */
+
+    }, {
+        key: 'mergeBlocks',
+        value: function mergeBlocks(targetBlock, mergingBlock) {
+
+            if (!targetBlock) {
+
+                targetBlock = this._blocks[this.currentBlockIndex - 1];
+            }
+
+            if (!mergingBlock) {
+
+                mergingBlock = this._blocks[this.currentBlockIndex];
+            }
+
+            var range = document.createRange();
+
+            range.selectNodeContents(mergingBlock.pluginsContent);
+
+            var extracted = range.extractContents();
+
+            targetBlock.pluginsContent.appendChild(extracted);
+            targetBlock.pluginsContent.normalize();
+
+            this.removeBlock(this.currentBlockIndex);
+        }
+
+        /**
          * Remove block with passed index or remove last
          * @param {Number|null} index
          */
@@ -2497,6 +2515,38 @@ var Caret = function (_Module) {
                 }
             }
         }
+
+        /**
+         * Get's deepest first node and checks if offset is zero
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isAtStart',
+        get: function get() {
+
+            var selection = _Selection2.default.get(),
+                anchorNode = selection.anchorNode,
+                firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
+
+            return anchorNode === firstNode && selection.anchorOffset === 0;
+        }
+
+        /**
+         * Get's deepest last node and checks if offset is last node text length
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isAtEnd',
+        get: function get() {
+
+            var selection = _Selection2.default.get(),
+                anchorNode = selection.anchorNode,
+                lastNode = $.getDeepest;
+
+            return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
+        }
     }]);
 
     return Caret;
@@ -2751,7 +2801,11 @@ var Keyboard = function (_Module) {
         key: 'backSpacePressed',
         value: function backSpacePressed(event) {
 
-            this.Editor.BlockManager.removeBlock();
+            if (this.Editor.Caret.isAtStart) {
+
+                this.Editor.BlockManager.mergeBlocks();
+                event.preventDefault();
+            }
         }
 
         /**
