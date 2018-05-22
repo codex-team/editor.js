@@ -186,9 +186,9 @@ export default class BlockManager extends Module {
     }
 
     /**
-     *
-     * @param targetBlock
-     * @param mergingBlock
+     * Merge two blocks
+     * @param {Block} targetBlock - block to merge
+     * @param {Block} mergingBlock - block that will be merged with target block
      */
     mergeBlocks(targetBlock, mergingBlock) {
 
@@ -204,14 +204,18 @@ export default class BlockManager extends Module {
 
         }
 
-        let range = document.createRange();
+        if (mergingBlock.html.textContent.trim() !== '') {
 
-        range.selectNodeContents(mergingBlock.pluginsContent);
+            let range = document.createRange(),
+                extractedBlock;
 
-        let extracted = range.extractContents();
+            range.selectNodeContents(mergingBlock.pluginsContent);
+            extractedBlock = range.extractContents();
 
-        targetBlock.pluginsContent.appendChild(extracted);
-        targetBlock.pluginsContent.normalize();
+            targetBlock.pluginsContent.appendChild(extractedBlock);
+            targetBlock.pluginsContent.normalize();
+
+        }
 
         this.removeBlock(this.currentBlockIndex);
 

@@ -1536,9 +1536,9 @@ var BlockManager = function (_Module) {
         }
 
         /**
-         *
-         * @param targetBlock
-         * @param mergingBlock
+         * Merge two blocks
+         * @param {Block} targetBlock - block to merge
+         * @param {Block} mergingBlock - block that will be merged with target block
          */
 
     }, {
@@ -1555,14 +1555,17 @@ var BlockManager = function (_Module) {
                 mergingBlock = this._blocks[this.currentBlockIndex];
             }
 
-            var range = document.createRange();
+            if (mergingBlock.html.textContent.trim() !== '') {
 
-            range.selectNodeContents(mergingBlock.pluginsContent);
+                var range = document.createRange(),
+                    extractedBlock = void 0;
 
-            var extracted = range.extractContents();
+                range.selectNodeContents(mergingBlock.pluginsContent);
+                extractedBlock = range.extractContents();
 
-            targetBlock.pluginsContent.appendChild(extracted);
-            targetBlock.pluginsContent.normalize();
+                targetBlock.pluginsContent.appendChild(extractedBlock);
+                targetBlock.pluginsContent.normalize();
+            }
 
             this.removeBlock(this.currentBlockIndex);
         }
@@ -2543,7 +2546,10 @@ var Caret = function (_Module) {
 
             var selection = _Selection2.default.get(),
                 anchorNode = selection.anchorNode,
-                lastNode = $.getDeepest;
+                lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
+
+            // console.log('lastNode', lastNode);
+            // console.log('anchorNode', anchorNode);
 
             return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
         }
@@ -2785,11 +2791,14 @@ var Keyboard = function (_Module) {
                 return;
             }
 
-            event.preventDefault();
-            /**
-             * Split the Current Block
-             */
-            this.Editor.BlockManager.split();
+            if (this.Editor.Caret.isAtEnd) {
+
+                /**
+                 * Split the Current Block into two blocks
+                 */
+                this.Editor.BlockManager.split();
+                event.preventDefault();
+            }
         }
 
         /**

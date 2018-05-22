@@ -94,11 +94,15 @@ export default class Keyboard extends Module {
 
         }
 
-        event.preventDefault();
-        /**
-         * Split the Current Block
-         */
-        this.Editor.BlockManager.split();
+        if (this.Editor.Caret.isAtEnd) {
+
+            /**
+             * Split the Current Block into two blocks
+             */
+            this.Editor.BlockManager.split();
+            event.preventDefault();
+
+        }
 
     }
 
