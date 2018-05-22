@@ -112,12 +112,18 @@ export default class Keyboard extends Module {
      */
     backSpacePressed(event) {
 
-        if (this.Editor.Caret.isAtStart && this.Editor.BlockManager.currentBlockIndex !== 0) {
+        let isFirstBlock    = this.Editor.BlockManager.currentBlockIndex === 0,
+            canMergeBlocks  = !$.hasMediaContent(event.target) && this.Editor.Caret.isAtStart && !isFirstBlock;
 
-            this.Editor.BlockManager.mergeBlocks();
-            event.preventDefault();
+        if (!canMergeBlocks) {
+
+            return;
 
         }
+
+        this.Editor.BlockManager.mergeBlocks();
+        event.preventDefault();
+
 
     }
 

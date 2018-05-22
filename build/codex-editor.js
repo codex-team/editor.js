@@ -583,6 +583,22 @@ var Dom = function () {
         }
 
         /**
+         * Check passed node if it has IMG, Twitter, iframe or something that could contain media
+         * @param target
+         */
+
+    }, {
+        key: 'hasMediaContent',
+        value: function hasMediaContent(target) {
+
+            var mayContainMedia = ['IMG', 'IFRAME', 'TWITTER', 'VIDEO', 'SOURCE', 'EMBED'];
+
+            var foundMediaContent = target.querySelectorAll(mayContainMedia.join());
+
+            return foundMediaContent.length !== 0;
+        }
+
+        /**
          * Checks node if it is empty
          *
          * @description Method checks simple Node without any childs for emptiness
@@ -1534,24 +1550,24 @@ var BlockManager = function (_Module) {
         /**
          * Merge two blocks
          * @param {Block} targetBlock - block to merge
-         * @param {Block} mergingBlock - block that will be merged with target block
+         * @param {Block} blockToMerge - block that will be merged with target block
          */
 
     }, {
         key: 'mergeBlocks',
-        value: function mergeBlocks(targetBlock, mergingBlock) {
+        value: function mergeBlocks(targetBlock, blockToMerge) {
 
             if (!targetBlock) {
 
                 targetBlock = this._blocks[this.currentBlockIndex - 1];
             }
 
-            if (!mergingBlock) {
+            if (!blockToMerge) {
 
-                mergingBlock = this._blocks[this.currentBlockIndex];
+                blockToMerge = this._blocks[this.currentBlockIndex];
             }
 
-            if (!$.isEmpty(mergingBlock.html)) {
+            if (!$.isEmpty(blockToMerge.html)) {
 
                 var selection = _Selection2.default.get(),
                     selectRange = selection.getRangeAt(0),
@@ -1561,7 +1577,7 @@ var BlockManager = function (_Module) {
 
                 var range = selectRange.cloneRange(true);
 
-                range.selectNodeContents(mergingBlock.pluginsContent);
+                range.selectNodeContents(blockToMerge.pluginsContent);
                 extractedBlock = range.extractContents();
 
                 targetBlock.pluginsContent.appendChild(extractedBlock);
@@ -2675,7 +2691,7 @@ module.exports = exports["default"];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, _) {
+/* WEBPACK VAR INJECTION */(function(Module, _, $) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -2811,11 +2827,16 @@ var Keyboard = function (_Module) {
         key: 'backSpacePressed',
         value: function backSpacePressed(event) {
 
-            if (this.Editor.Caret.isAtStart && this.Editor.BlockManager.currentBlockIndex !== 0) {
+            var isFirstBlock = this.Editor.BlockManager.currentBlockIndex === 0,
+                canMergeBlocks = !$.hasMediaContent(event.target) && this.Editor.Caret.isAtStart && !isFirstBlock;
 
-                this.Editor.BlockManager.mergeBlocks();
-                event.preventDefault();
+            if (!canMergeBlocks) {
+
+                return;
             }
+
+            this.Editor.BlockManager.mergeBlocks();
+            event.preventDefault();
         }
 
         /**
@@ -2847,7 +2868,7 @@ var Keyboard = function (_Module) {
 Keyboard.displayName = 'Keyboard';
 exports.default = Keyboard;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1), __webpack_require__(2)))
 
 /***/ }),
 /* 12 */
