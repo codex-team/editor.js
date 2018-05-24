@@ -105,13 +105,19 @@ export default class Dom {
      *
      * @param {Node} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
      * @param {Boolean} atLast - find last text node
-     * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
+     * @return {Node|null} - it can be text Node or Element Node, so that caret will able to work with it
      */
     static getDeepestNode(node, atLast = false) {
 
         if (node && node.nodeType === Node.ELEMENT_NODE && node.firstChild) {
 
             let nodeChild = atLast ? node.lastChild : node.firstChild;
+
+            if (nodeChild.tagName === 'BR') {
+
+                nodeChild = nodeChild.nextSibling || nodeChild.parentNode.nextSibling;
+
+            }
 
             return this.getDeepestNode(nodeChild, atLast);
 
