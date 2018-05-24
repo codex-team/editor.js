@@ -1466,10 +1466,18 @@ var BlockManager = function (_Module) {
         key: 'navigateNext',
         value: function navigateNext() {
 
-            var lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
-                textNodeLength = lastTextNode.length;
+            var lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
+                textNodeLength = void 0;
 
-            if (_Selection2.default.getAnchorNode() !== lastTextNode) {
+            if (lastNode.nodeType === Node.ELEMENT_NODE) {
+
+                textNodeLength = lastNode.textContent.length;
+            } else {
+
+                textNodeLength = lastNode.length;
+            }
+
+            if (_Selection2.default.getAnchorNode() !== lastNode) {
 
                 return;
             }
@@ -1560,6 +1568,10 @@ var BlockManager = function (_Module) {
             }
 
             this.removeBlock(this.currentBlockIndex);
+
+            // decrease current block index so that to know current actual
+            this.currentBlockIndex--;
+            this.currentNode = this._blocks[this.currentBlockIndex].html;
         }
 
         /**
@@ -1572,10 +1584,6 @@ var BlockManager = function (_Module) {
         value: function removeBlock(index) {
 
             this._blocks.remove(index);
-
-            // decrease current block index so that to know current actual
-            this.currentBlockIndex--;
-            this.currentNode = this._blocks[this.currentBlockIndex].html;
         }
         /**
          * Split current Block
@@ -1598,6 +1606,11 @@ var BlockManager = function (_Module) {
             var data = {
                 text: wrapper.innerHTML
             };
+
+            if (this.currentBlock.isEmpty) {
+
+                this.currentBlock.pluginsContent.innerHTML = '';
+            }
 
             this.insert(this.config.initialBlock, data);
         }

@@ -121,10 +121,20 @@ export default class BlockManager extends Module {
      */
     navigateNext() {
 
-        let lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
-            textNodeLength = lastTextNode.length;
+        let lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
+            textNodeLength;
 
-        if (Selection.getAnchorNode() !== lastTextNode) {
+        if (lastNode.nodeType === Node.ELEMENT_NODE) {
+
+            textNodeLength = lastNode.textContent.length;
+
+        } else {
+
+            textNodeLength = lastNode.length;
+
+        }
+
+        if (Selection.getAnchorNode() !== lastNode) {
 
             return;
 
@@ -215,6 +225,10 @@ export default class BlockManager extends Module {
 
         this.removeBlock(this.currentBlockIndex);
 
+        // decrease current block index so that to know current actual
+        this.currentBlockIndex--;
+        this.currentNode = this._blocks[this.currentBlockIndex].html;
+
     }
 
     /**
@@ -224,10 +238,6 @@ export default class BlockManager extends Module {
     removeBlock(index) {
 
         this._blocks.remove(index);
-
-        // decrease current block index so that to know current actual
-        this.currentBlockIndex--;
-        this.currentNode = this._blocks[this.currentBlockIndex].html;
 
     }
     /**
@@ -248,6 +258,12 @@ export default class BlockManager extends Module {
         let data = {
             text: wrapper.innerHTML,
         };
+
+        if (this.currentBlock.isEmpty) {
+
+            this.currentBlock.pluginsContent.innerHTML = '';
+
+        }
 
         this.insert(this.config.initialBlock, data);
 
