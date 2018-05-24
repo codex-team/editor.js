@@ -150,22 +150,6 @@ export default class Dom {
     }
 
     /**
-     * Check passed node if it has IMG, Twitter, iframe or something that could contain media
-     * @param target
-     */
-    static hasMediaContent(target) {
-
-        let mayContainMedia = [
-            'IMG', 'IFRAME', 'TWITTER', 'VIDEO', 'SOURCE', 'EMBED'
-        ];
-
-        let foundMediaContent = target.querySelectorAll(mayContainMedia.join());
-
-        return foundMediaContent.length !== 0;
-
-    }
-
-    /**
      * Checks node if it is empty
      *
      * @description Method checks simple Node without any childs for emptiness

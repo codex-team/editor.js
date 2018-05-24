@@ -187,7 +187,7 @@ export default class BlockManager extends Module {
 
     /**
      * Merge two blocks
-     * @param {Block} targetBlock - block to merge
+     * @param {Block} targetBlock - previous block will be append to this block
      * @param {Block} blockToMerge - block that will be merged with target block
      */
     mergeBlocks(targetBlock, blockToMerge ) {
@@ -204,18 +204,9 @@ export default class BlockManager extends Module {
 
         }
 
-        if (!$.isEmpty(blockToMerge .html)) {
+        if (!blockToMerge.isEmpty) {
 
-            let selection = Selection.get(),
-                selectRange = selection.getRangeAt(0),
-                extractedBlock;
-
-            selectRange.deleteContents();
-
-            let range = selectRange.cloneRange(true);
-
-            range.selectNodeContents(blockToMerge .pluginsContent);
-            extractedBlock = range.extractContents();
+            let extractedBlock = this.Editor.Caret.extractFragmentFromCaretPosition();
 
             targetBlock.pluginsContent.appendChild(extractedBlock);
             targetBlock.pluginsContent.normalize();
@@ -236,12 +227,7 @@ export default class BlockManager extends Module {
 
         // decrease current block index so that to know current actual
         this.currentBlockIndex--;
-
         this.currentNode = this._blocks[this.currentBlockIndex].html;
-
-        // set caret to the block without offset at the end
-        this.Editor.Caret.setToBlock(this.currentBlock, 0, true);
-        this.Editor.Toolbar.close();
 
     }
     /**

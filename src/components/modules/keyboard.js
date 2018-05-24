@@ -94,15 +94,12 @@ export default class Keyboard extends Module {
 
         }
 
-        if (this.Editor.Caret.isAtEnd) {
 
-            /**
-             * Split the Current Block into two blocks
-             */
-            this.Editor.BlockManager.split();
-            event.preventDefault();
-
-        }
+        /**
+         * Split the Current Block into two blocks
+         */
+        this.Editor.BlockManager.split();
+        event.preventDefault();
 
     }
 
@@ -113,7 +110,7 @@ export default class Keyboard extends Module {
     backSpacePressed(event) {
 
         let isFirstBlock    = this.Editor.BlockManager.currentBlockIndex === 0,
-            canMergeBlocks  = !$.hasMediaContent(event.target) && this.Editor.Caret.isAtStart && !isFirstBlock;
+            canMergeBlocks  = !this.Editor.BlockManager.currentBlock.hasMedia && this.Editor.Caret.isAtStart && !isFirstBlock;
 
         if (!canMergeBlocks) {
 
@@ -122,6 +119,11 @@ export default class Keyboard extends Module {
         }
 
         this.Editor.BlockManager.mergeBlocks();
+
+        // set caret to the block without offset at the end
+        this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, 0, true);
+        this.Editor.Toolbar.close();
+
         event.preventDefault();
 
 
