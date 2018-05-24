@@ -256,7 +256,7 @@ export default class BlockManager extends Module {
          * @todo make object in accordance with Tool
          */
         let data = {
-            text: wrapper.innerHTML,
+            text: wrapper.textContent.trim() === '' ? '' : wrapper.innerHTML,
         };
 
         if (this.currentBlock.isEmpty) {

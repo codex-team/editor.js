@@ -1604,7 +1604,7 @@ var BlockManager = function (_Module) {
              * @todo make object in accordance with Tool
              */
             var data = {
-                text: wrapper.innerHTML
+                text: wrapper.textContent.trim() === '' ? '' : wrapper.innerHTML
             };
 
             if (this.currentBlock.isEmpty) {
