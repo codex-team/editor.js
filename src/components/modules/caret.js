@@ -179,7 +179,7 @@ export default class Caret extends Module {
         /**
          * In case of
          * <div contenteditable>
-         *     <p><b></b></p>
+         *     <p><b></b></p>   <--- first (and deepest) node is <b></b>
          *     |adaddad
          * </div>
          */
