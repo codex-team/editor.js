@@ -98,7 +98,7 @@ module.exports = (function (caret) {
         }
 
         /** Looking for parent contentEditable block */
-        while (focusedNode.contentEditable != 'true') {
+        while (focusedNode && focusedNode.contentEditable != 'true') {
 
             focusedNodeHolder = focusedNode.parentNode;
             focusedNode       = focusedNodeHolder;

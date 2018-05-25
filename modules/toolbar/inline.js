@@ -91,6 +91,12 @@ module.exports = (function (inline) {
             newCoordinateX,
             newCoordinateY;
 
+        if (!coords) {
+
+            return;
+
+        }
+
         if (toolbar.offsetHeight === 0) {
 
             defaultOffset = 40;
