@@ -558,7 +558,6 @@ var Dom = function () {
             var child = atLast ? 'lastChild' : 'firstChild',
                 sibling = atLast ? 'previousSibling' : 'nextSibling';
 
-            console.log('node is ', node);
             if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
 
                 var nodeChild = node[child];
@@ -590,13 +589,6 @@ var Dom = function () {
                 }
 
                 return this.getDeepestNode(nodeChild, atLast);
-            }
-
-            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() === '') {
-
-                var zeroSpaceSymbol = document.createTextNode('\u200B');
-
-                node.parentNode.appendChild(zeroSpaceSymbol);
             }
 
             return node;
@@ -1515,23 +1507,35 @@ var BlockManager = function (_Module) {
         key: 'navigateNext',
         value: function navigateNext() {
 
-            var lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
-                textNodeLength = void 0;
+            var lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, true);
 
-            if (lastNode.nodeType === Node.ELEMENT_NODE) {
+            /**
+            * Founded contentEditable element doesn't have childs
+            * Or maybe New created block
+            */
+            var currentBlockIsEmpty = this.currentBlock.isEmpty;
 
-                textNodeLength = lastNode.textContent.length;
-            } else {
+            /**
+             * Case of
+             * <div contenteditable>
+             *   adaddad|
+             *   <p><b></b></p> <---- deepest (lastNode) node is <b>, but caret is in 'adaddad'
+             * </div>
+             */
+            if (!currentBlockIsEmpty && $.isEmpty(lastNode)) {
 
-                textNodeLength = lastNode.length;
+                lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, false);
             }
 
-            if (_Selection2.default.getAnchorNode() !== lastNode) {
+            var caretInTheLastNode = _Selection2.default.getAnchorNode() === lastNode,
+                caretAtTheEndOfLastNode = _Selection2.default.getAnchorOffset() === lastNode.textContent.length;
+
+            if (!currentBlockIsEmpty && !caretInTheLastNode) {
 
                 return;
             }
 
-            if (_Selection2.default.getAnchorOffset() === textNodeLength) {
+            if (caretAtTheEndOfLastNode) {
 
                 var nextBlock = this.nextBlock;
 
@@ -1543,7 +1547,7 @@ var BlockManager = function (_Module) {
 
         /**
          * Set's caret to the previous Block
-         * Before moving caret, we should check if caret position is at the end of Plugins node
+         * Before moving caret, we should check if caret position is start of the Plugins node
          * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
          */
 
@@ -1554,7 +1558,15 @@ var BlockManager = function (_Module) {
             var firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
                 textNodeLength = firstTextNode.length;
 
-            if (_Selection2.default.getAnchorNode() !== firstTextNode) {
+            var caretInTheFirstNode = _Selection2.default.getAnchorNode() === firstTextNode;
+
+            /**
+            * Founded contentEditable element doesn't have childs
+            * Or maybe New created block
+            */
+            var currentBlockIsEmpty = this.currentBlock.isEmpty;
+
+            if (!currentBlockIsEmpty && !caretInTheFirstNode) {
 
                 return;
             }
@@ -1563,7 +1575,10 @@ var BlockManager = function (_Module) {
 
                 var previousBlock = this.previousBlock;
 
-                if (!previousBlock) return;
+                if (!previousBlock) {
+
+                    return;
+                }
 
                 this.Editor.Caret.setToBlock(previousBlock, textNodeLength, true);
             }
@@ -2497,19 +2512,12 @@ var Caret = function (_Module) {
 
                 offset = nodeToSet.length;
             }
-
-            /** if found deepest node is native input */
-            if ($.isNativeInput(nodeToSet)) {
-
-                nodeToSet.focus();
-                return;
-            }
-
             /**
              * @todo try to fix via Promises or use querySelectorAll to not to use timeout
              */
             _.delay(function () {
-                return _this2.set(nodeToSet, offset);
+
+                _this2.set(nodeToSet, offset);
             }, 20)();
 
             this.Editor.BlockManager.currentNode = block.wrapper;

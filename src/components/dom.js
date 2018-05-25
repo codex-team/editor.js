@@ -124,7 +124,6 @@ export default class Dom {
         let child = atLast ? 'lastChild' : 'firstChild',
             sibling = atLast ? 'previousSibling' : 'nextSibling';
 
-        console.log('node is ', node);
         if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
 
             let nodeChild = node[child];
@@ -160,14 +159,6 @@ export default class Dom {
             }
 
             return this.getDeepestNode(nodeChild, atLast);
-
-        }
-
-        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() === '') {
-
-            let zeroSpaceSymbol = document.createTextNode('\u200b');
-
-            node.parentNode.appendChild(zeroSpaceSymbol);
 
         }
 

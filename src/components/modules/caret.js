@@ -54,19 +54,14 @@ export default class Caret extends Module {
             offset = nodeToSet.length;
 
         }
-
-        /** if found deepest node is native input */
-        if ($.isNativeInput(nodeToSet)) {
-
-            nodeToSet.focus();
-            return;
-
-        }
-
         /**
          * @todo try to fix via Promises or use querySelectorAll to not to use timeout
          */
-        _.delay( () => this.set(nodeToSet, offset), 20)();
+        _.delay( () => {
+
+            this.set(nodeToSet, offset);
+
+        }, 20)();
 
         this.Editor.BlockManager.currentNode = block.wrapper;
 

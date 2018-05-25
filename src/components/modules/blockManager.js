@@ -121,26 +121,37 @@ export default class BlockManager extends Module {
      */
     navigateNext() {
 
-        let lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
-            textNodeLength;
+        let lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, true);
 
-        if (lastNode.nodeType === Node.ELEMENT_NODE) {
+        /**
+        * Founded contentEditable element doesn't have childs
+        * Or maybe New created block
+        */
+        let currentBlockIsEmpty = this.currentBlock.isEmpty;
 
-            textNodeLength = lastNode.textContent.length;
+        /**
+         * Case of
+         * <div contenteditable>
+         *   adaddad|
+         *   <p><b></b></p> <---- deepest (lastNode) node is <b>, but caret is in 'adaddad'
+         * </div>
+         */
+        if (!currentBlockIsEmpty && $.isEmpty(lastNode)) {
 
-        } else {
-
-            textNodeLength = lastNode.length;
+            lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, false);
 
         }
 
-        if (Selection.getAnchorNode() !== lastNode) {
+        let caretInTheLastNode = Selection.getAnchorNode() === lastNode,
+            caretAtTheEndOfLastNode = Selection.getAnchorOffset() === lastNode.textContent.length;
+
+        if (!currentBlockIsEmpty && !caretInTheLastNode) {
 
             return;
 
         }
 
-        if (Selection.getAnchorOffset() === textNodeLength) {
+        if (caretAtTheEndOfLastNode) {
 
             let nextBlock = this.nextBlock;
 
@@ -154,7 +165,7 @@ export default class BlockManager extends Module {
 
     /**
      * Set's caret to the previous Block
-     * Before moving caret, we should check if caret position is at the end of Plugins node
+     * Before moving caret, we should check if caret position is start of the Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
      */
     navigatePrevious() {
@@ -162,7 +173,15 @@ export default class BlockManager extends Module {
         let firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
             textNodeLength = firstTextNode.length;
 
-        if (Selection.getAnchorNode() !== firstTextNode) {
+        let caretInTheFirstNode = Selection.getAnchorNode() === firstTextNode;
+
+        /**
+        * Founded contentEditable element doesn't have childs
+        * Or maybe New created block
+        */
+        let currentBlockIsEmpty = this.currentBlock.isEmpty;
+
+        if (!currentBlockIsEmpty && !caretInTheFirstNode) {
 
             return;
 
@@ -172,7 +191,11 @@ export default class BlockManager extends Module {
 
             let previousBlock = this.previousBlock;
 
-            if (!previousBlock) return;
+            if (!previousBlock) {
+
+                return;
+
+            }
 
             this.Editor.Caret.setToBlock( previousBlock, textNodeLength, true );
 
