@@ -125,7 +125,7 @@ export default class Keyboard extends Module {
             blockToMerge = this.Editor.BlockManager.currentBlock;
 
 
-        if (blockToMerge.name !== targetBlock.name) {
+        if (blockToMerge.name !== targetBlock.name || !this.Editor.BlockManager.currentBlock.mergeable) {
 
             this.Editor.BlockManager.navigatePrevious();
 

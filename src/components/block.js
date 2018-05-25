@@ -105,6 +105,17 @@ export default class Block {
     }
 
     /**
+     * is block mergeable
+     * We plugin have merge function then we call it mergable
+     * @return {boolean}
+     */
+    get mergeable() {
+
+        return !!(this.tool.merge && typeof this.tool.merge === 'function');
+
+    }
+
+    /**
      * Call plugins merge method
      * @param {Object} data
      */

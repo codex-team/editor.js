@@ -1557,7 +1557,7 @@ var BlockManager = function (_Module) {
         value: function mergeBlocks(targetBlock, blockToMerge) {
             var _this4 = this;
 
-            var blockToMergeIndex = this.getBlockIndex(blockToMerge);
+            var blockToMergeIndex = this._blocks.indexOf(blockToMerge);
 
             if (blockToMerge.isEmpty) {
 
@@ -2296,6 +2296,19 @@ var Block = function () {
 
             return this.save();
         }
+
+        /**
+         * is block mergeable
+         * We plugin have merge function then we call it mergable
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'mergeable',
+        get: function get() {
+
+            return !!(this.tool.merge && typeof this.tool.merge === 'function');
+        }
     }, {
         key: 'isEmpty',
         get: function get() {
@@ -2856,7 +2869,7 @@ var Keyboard = function (_Module) {
             var targetBlock = this.Editor.BlockManager.getBlockByIndex(this.Editor.BlockManager.currentBlockIndex - 1),
                 blockToMerge = this.Editor.BlockManager.currentBlock;
 
-            if (blockToMerge.name !== targetBlock.name) {
+            if (blockToMerge.name !== targetBlock.name || !this.Editor.BlockManager.currentBlock.mergeable) {
 
                 this.Editor.BlockManager.navigatePrevious();
             }

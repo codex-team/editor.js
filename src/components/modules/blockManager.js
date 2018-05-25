@@ -204,7 +204,7 @@ export default class BlockManager extends Module {
      */
     mergeBlocks(targetBlock, blockToMerge) {
 
-        let blockToMergeIndex = this.getBlockIndex(blockToMerge);
+        let blockToMergeIndex = this._blocks.indexOf(blockToMerge);
 
         if (blockToMerge.isEmpty) {
 
