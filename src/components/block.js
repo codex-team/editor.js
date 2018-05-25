@@ -111,7 +111,7 @@ export default class Block {
      */
     get mergeable() {
 
-        return !!(this.tool.merge && typeof this.tool.merge === 'function');
+        return typeof this.tool.merge === 'function';
 
     }
 
