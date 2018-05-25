@@ -1559,15 +1559,21 @@ var BlockManager = function (_Module) {
 
             var blockToMergeIndex = this._blocks.indexOf(blockToMerge);
 
-            if (blockToMerge.isEmpty) {
+            return new Promise(function (resolve) {
 
-                this.removeBlock(blockToMergeIndex);
-                return Promise.resolve();
-            }
+                if (blockToMerge.isEmpty) {
 
-            return blockToMerge.data.then(function (blockToMergeInfo) {
+                    resolve();
+                } else {
 
-                targetBlock.mergeWith(blockToMergeInfo.data);
+                    blockToMerge.data.then(function (blockToMergeInfo) {
+
+                        targetBlock.mergeWith(blockToMergeInfo.data);
+                        resolve();
+                    });
+                }
+            }).then(function () {
+
                 _this4.removeBlock(blockToMergeIndex);
             });
         }
@@ -1602,13 +1608,8 @@ var BlockManager = function (_Module) {
              * @todo make object in accordance with Tool
              */
             var data = {
-                text: wrapper.textContent.trim() === '' ? '' : wrapper.innerHTML
+                text: $.isEmpty(wrapper) ? '' : wrapper.innerHTML
             };
-
-            if (this.currentBlock.isEmpty) {
-
-                this.currentBlock.pluginsContent.innerHTML = '';
-            }
 
             this.insert(this.config.initialBlock, data);
         }
@@ -1637,35 +1638,14 @@ var BlockManager = function (_Module) {
          */
 
     }, {
-        key: 'getBlockIndex',
+        key: 'getBlockByIndex',
 
-
-        /**
-         * Returns block's index
-         * @param {Block} block
-         * @return {Number}
-         */
-        value: function getBlockIndex(block) {
-
-            for (var i = 0; i < this._blocks.length; i++) {
-
-                if (this._blocks[i] === block) {
-
-                    return i;
-                }
-            }
-
-            return -1;
-        }
 
         /**
          * Returns Block by passed index
          * @param {Number} index
          * @return {Block}
          */
-
-    }, {
-        key: 'getBlockByIndex',
         value: function getBlockByIndex(index) {
 
             return this._blocks[index];
@@ -2778,7 +2758,7 @@ var Keyboard = function (_Module) {
                 case _.keyCodes.BACKSPACE:
 
                     _.log('Backspace key pressed');
-                    this.backSpacePressed(event);
+                    this.backspacePressed(event);
                     break;
 
                 case _.keyCodes.ENTER:
@@ -2851,12 +2831,12 @@ var Keyboard = function (_Module) {
          */
 
     }, {
-        key: 'backSpacePressed',
-        value: function backSpacePressed(event) {
+        key: 'backspacePressed',
+        value: function backspacePressed(event) {
             var _this2 = this;
 
             var isFirstBlock = this.Editor.BlockManager.currentBlockIndex === 0,
-                canMergeBlocks = !this.Editor.BlockManager.currentBlock.hasMedia && this.Editor.Caret.isAtStart && !isFirstBlock;
+                canMergeBlocks = (this.Editor.BlockManager.currentBlock.isEmpty || this.Editor.Caret.isAtStart) && !isFirstBlock;
 
             if (!canMergeBlocks) {
 
@@ -2869,7 +2849,7 @@ var Keyboard = function (_Module) {
             var targetBlock = this.Editor.BlockManager.getBlockByIndex(this.Editor.BlockManager.currentBlockIndex - 1),
                 blockToMerge = this.Editor.BlockManager.currentBlock;
 
-            if (blockToMerge.name !== targetBlock.name || !this.Editor.BlockManager.currentBlock.mergeable) {
+            if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
 
                 this.Editor.BlockManager.navigatePrevious();
             }

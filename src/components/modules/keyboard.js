@@ -34,7 +34,7 @@ export default class Keyboard extends Module {
             case _.keyCodes.BACKSPACE:
 
                 _.log('Backspace key pressed');
-                this.backSpacePressed(event);
+                this.backspacePressed(event);
                 break;
 
             case _.keyCodes.ENTER:
@@ -107,10 +107,10 @@ export default class Keyboard extends Module {
      * Handle backspace keypress on block
      * @param event
      */
-    backSpacePressed(event) {
+    backspacePressed(event) {
 
         let isFirstBlock    = this.Editor.BlockManager.currentBlockIndex === 0,
-            canMergeBlocks  = !this.Editor.BlockManager.currentBlock.hasMedia && this.Editor.Caret.isAtStart && !isFirstBlock;
+            canMergeBlocks  = (this.Editor.BlockManager.currentBlock.isEmpty || this.Editor.Caret.isAtStart) && !isFirstBlock;
 
         if (!canMergeBlocks) {
 
@@ -125,7 +125,7 @@ export default class Keyboard extends Module {
             blockToMerge = this.Editor.BlockManager.currentBlock;
 
 
-        if (blockToMerge.name !== targetBlock.name || !this.Editor.BlockManager.currentBlock.mergeable) {
+        if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
 
             this.Editor.BlockManager.navigatePrevious();
 

@@ -122,7 +122,7 @@ export default class Block {
     mergeWith(data) {
 
         return Promise.resolve()
-            .then( () => {
+            .then(() => {
 
                 this.tool.merge(data);
 

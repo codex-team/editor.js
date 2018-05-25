@@ -206,20 +206,31 @@ export default class BlockManager extends Module {
 
         let blockToMergeIndex = this._blocks.indexOf(blockToMerge);
 
-        if (blockToMerge.isEmpty) {
+        return new Promise((resolve) => {
 
-            this.removeBlock(blockToMergeIndex);
-            return Promise.resolve();
+            if (blockToMerge.isEmpty) {
 
-        }
+                resolve();
 
-        return blockToMerge.data
-            .then((blockToMergeInfo) => {
+            } else {
 
-                targetBlock.mergeWith(blockToMergeInfo.data);
+                blockToMerge.data
+                    .then((blockToMergeInfo) => {
+
+                        targetBlock.mergeWith(blockToMergeInfo.data);
+                        resolve();
+
+                    });
+
+            }
+
+        })
+            .then( () => {
+
                 this.removeBlock(blockToMergeIndex);
 
             });
+
 
     }
 
@@ -248,14 +259,8 @@ export default class BlockManager extends Module {
          * @todo make object in accordance with Tool
          */
         let data = {
-            text: wrapper.textContent.trim() === '' ? '' : wrapper.innerHTML,
+            text: $.isEmpty(wrapper) ? '' : wrapper.innerHTML,
         };
-
-        if (this.currentBlock.isEmpty) {
-
-            this.currentBlock.pluginsContent.innerHTML = '';
-
-        }
 
         this.insert(this.config.initialBlock, data);
 
@@ -282,27 +287,6 @@ export default class BlockManager extends Module {
     get lastBlock() {
 
         return this._blocks[this._blocks.length - 1];
-
-    }
-
-    /**
-     * Returns block's index
-     * @param {Block} block
-     * @return {Number}
-     */
-    getBlockIndex(block) {
-
-        for(let i = 0; i < this._blocks.length; i++) {
-
-            if (this._blocks[i] === block) {
-
-                return i;
-
-            }
-
-        }
-
-        return -1;
 
     }
 
