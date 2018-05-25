@@ -720,6 +720,8 @@ module.exports = (function (content) {
      */
     var wrapPlainTextWithParagraphs = function (plainText) {
 
+        if (!plainText) return '';
+
         return '<p>' + plainText.split('\n\n').join('</p><p>') + '</p>';
 
     };

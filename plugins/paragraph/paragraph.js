@@ -67,8 +67,25 @@ var paragraph = (function(paragraph_plugin) {
      */
     paragraph_plugin.validate = function(output) {
 
-        if (output.text === '')
-            return;
+        let text = output.text;
+
+        text = text.replace('&nbsp;', ' ');
+        text = text.replace(/\s/g, ' ');
+        text = text.trim();
+
+        /**
+         * Check for empty <p>:
+         * <p> </p>
+         */
+        let div = document.createElement('div');
+        div.innerHTML = text;
+
+        text = div.textContent.trim();
+
+        if (!text) {
+            return false;
+        }
+
 
         return output;
     };
