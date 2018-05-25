@@ -3,9 +3,9 @@
  */
 export default class Dom {
 
-    static get singleTags() {
+    static isSingleTag(tagName) {
 
-        return ['BR', 'HR', 'IMG'];
+        return tagName && ['BR', 'HR', 'IMG'].includes(tagName);
 
     }
 
@@ -124,14 +124,15 @@ export default class Dom {
         let child = atLast ? 'lastChild' : 'firstChild',
             sibling = atLast ? 'previousSibling' : 'nextSibling';
 
+        console.log('node is ', node);
         if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
 
-            let nodeChild = atLast ? node[child] : node[child];
+            let nodeChild = node[child];
 
             /**
              * special case when child is single tag that can't contain any content
              */
-            if (Dom.singleTags.includes(nodeChild.tagName)) {
+            if (Dom.isSingleTag(nodeChild.tagName)) {
 
                 /**
                  * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
@@ -159,6 +160,14 @@ export default class Dom {
             }
 
             return this.getDeepestNode(nodeChild, atLast);
+
+        }
+
+        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() === '') {
+
+            let zeroSpaceSymbol = document.createTextNode('\u200b');
+
+            node.parentNode.appendChild(zeroSpaceSymbol);
 
         }
 

@@ -415,8 +415,11 @@ var Dom = function () {
     }
 
     _createClass(Dom, null, [{
-        key: 'make',
+        key: 'isSingleTag',
+        value: function isSingleTag(tagName) {
 
+            return tagName && ['BR', 'HR', 'IMG'].includes(tagName);
+        }
 
         /**
          * Helper for making Elements with classname and attributes
@@ -426,6 +429,9 @@ var Dom = function () {
          * @param  {Object} attributes        - any attributes
          * @return {Element}
          */
+
+    }, {
+        key: 'make',
         value: function make(tagName) {
             var classNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
             var attributes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
@@ -552,14 +558,15 @@ var Dom = function () {
             var child = atLast ? 'lastChild' : 'firstChild',
                 sibling = atLast ? 'previousSibling' : 'nextSibling';
 
+            console.log('node is ', node);
             if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
 
-                var nodeChild = atLast ? node[child] : node[child];
+                var nodeChild = node[child];
 
                 /**
                  * special case when child is single tag that can't contain any content
                  */
-                if (Dom.singleTags.includes(nodeChild.tagName)) {
+                if (Dom.isSingleTag(nodeChild.tagName)) {
 
                     /**
                      * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
@@ -583,6 +590,13 @@ var Dom = function () {
                 }
 
                 return this.getDeepestNode(nodeChild, atLast);
+            }
+
+            if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() === '') {
+
+                var zeroSpaceSymbol = document.createTextNode('\u200B');
+
+                node.parentNode.appendChild(zeroSpaceSymbol);
             }
 
             return node;
@@ -714,12 +728,6 @@ var Dom = function () {
             return leafs.every(function (leaf) {
                 return _this.isNodeEmpty(leaf);
             });
-        }
-    }, {
-        key: 'singleTags',
-        get: function get() {
-
-            return ['BR', 'HR', 'IMG'];
         }
     }]);
 
