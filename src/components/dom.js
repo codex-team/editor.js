@@ -3,6 +3,12 @@
  */
 export default class Dom {
 
+    static get singleTags() {
+
+        return ['BR', 'HR', 'IMG'];
+
+    }
+
     /**
      * Helper for making Elements with classname and attributes
      *
@@ -109,19 +115,40 @@ export default class Dom {
      */
     static getDeepestNode(node, atLast = false) {
 
-        if (node && node.nodeType === Node.ELEMENT_NODE && node.firstChild) {
+        /**
+         * Current function have two directions:
+         *  - starts from first child and every time gets first or nextSibling in special cases
+         *  - starts from last child and gets last or previousSibling
+         * @type {string}
+         */
+        let child = atLast ? 'lastChild' : 'firstChild',
+            sibling = atLast ? 'previousSibling' : 'nextSibling';
 
-            let nodeChild = atLast ? node.lastChild : node.firstChild;
+        if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
 
-            if (nodeChild.tagName === 'BR') {
+            let nodeChild = atLast ? node[child] : node[child];
 
-                if (nodeChild.nextSibling) {
+            /**
+             * special case when child is single tag that can't contain any content
+             */
+            if (Dom.singleTags.includes(nodeChild.tagName)) {
 
-                    nodeChild = nodeChild.nextSibling;
+                /**
+                 * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
+                 * from sibling
+                 *
+                 * 2) If single tag's next sibling is null, then go back to parent and check his sibling
+                 * In case of Node Element continue searching
+                 *
+                 * 3) If none of conditions above happened return parent Node Element
+                 */
+                if (nodeChild[sibling]) {
 
-                } else if (!nodeChild.nextSibling && nodeChild.parentNode.nextSibling) {
+                    nodeChild = nodeChild[sibling];
 
-                    nodeChild = nodeChild.parentNode.nextSibling;
+                } else if (nodeChild.parentNode[sibling]) {
+
+                    nodeChild = nodeChild.parentNode[sibling];
 
                 } else {
 
