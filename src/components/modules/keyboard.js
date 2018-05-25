@@ -118,14 +118,34 @@ export default class Keyboard extends Module {
 
         }
 
-        this.Editor.BlockManager.mergeBlocks();
-
-        // set caret to the block without offset at the end
-        this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, 0, true);
-        this.Editor.Toolbar.close();
-
+        // preventing browser default behaviour
         event.preventDefault();
 
+        let targetBlock = this.Editor.BlockManager.getBlockByIndex(this.Editor.BlockManager.currentBlockIndex - 1),
+            blockToMerge = this.Editor.BlockManager.currentBlock;
+
+
+        if (blockToMerge.name !== targetBlock.name) {
+
+            this.Editor.BlockManager.navigatePrevious();
+
+        }
+
+        this.Editor.BlockManager.mergeBlocks(targetBlock, blockToMerge)
+            .then( () => {
+
+                // decrease current block index so that to know current actual
+                this.Editor.BlockManager.currentBlockIndex--;
+
+                window.setTimeout( () => {
+
+                    // set caret to the block without offset at the end
+                    this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, 0, true);
+                    this.Editor.Toolbar.close();
+
+                }, 10);
+
+            });
 
     }
 

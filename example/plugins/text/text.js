@@ -84,6 +84,18 @@ class Text {
     }
 
     /**
+     * Merge current data with passed data
+     * @param {TextData} data
+     */
+    merge(data) {
+        let newData = {
+            text : this.data.text + data.text
+        };
+
+        this.data = newData;
+    }
+
+    /**
      * Check if saved text is empty
      *
      * @param {TextData} savedData — data received from plugins`s element

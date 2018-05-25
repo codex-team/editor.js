@@ -199,35 +199,27 @@ export default class BlockManager extends Module {
      * Merge two blocks
      * @param {Block} targetBlock - previous block will be append to this block
      * @param {Block} blockToMerge - block that will be merged with target block
+     *
+     * @return {Promise} - the sequence that can be continued
      */
-    mergeBlocks(targetBlock, blockToMerge ) {
+    mergeBlocks(targetBlock, blockToMerge) {
 
-        if (!targetBlock) {
+        let blockToMergeIndex = this.getBlockIndex(blockToMerge);
 
-            targetBlock = this._blocks[this.currentBlockIndex - 1];
+        if (blockToMerge.isEmpty) {
 
-        }
-
-        if (!blockToMerge ) {
-
-            blockToMerge = this._blocks[this.currentBlockIndex];
+            this.removeBlock(blockToMergeIndex);
+            return Promise.resolve();
 
         }
 
-        if (!blockToMerge.isEmpty) {
+        return blockToMerge.data
+            .then((blockToMergeInfo) => {
 
-            let extractedBlock = this.Editor.Caret.extractFragmentFromCaretPosition();
+                targetBlock.mergeWith(blockToMergeInfo.data);
+                this.removeBlock(blockToMergeIndex);
 
-            targetBlock.pluginsContent.appendChild(extractedBlock);
-            targetBlock.pluginsContent.normalize();
-
-        }
-
-        this.removeBlock(this.currentBlockIndex);
-
-        // decrease current block index so that to know current actual
-        this.currentBlockIndex--;
-        this.currentNode = this._blocks[this.currentBlockIndex].html;
+            });
 
     }
 
@@ -290,6 +282,27 @@ export default class BlockManager extends Module {
     get lastBlock() {
 
         return this._blocks[this._blocks.length - 1];
+
+    }
+
+    /**
+     * Returns block's index
+     * @param {Block} block
+     * @return {Number}
+     */
+    getBlockIndex(block) {
+
+        for(let i = 0; i < this._blocks.length; i++) {
+
+            if (this._blocks[i] === block) {
+
+                return i;
+
+            }
+
+        }
+
+        return -1;
 
     }
 

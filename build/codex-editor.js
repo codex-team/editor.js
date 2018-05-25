@@ -1548,35 +1548,28 @@ var BlockManager = function (_Module) {
          * Merge two blocks
          * @param {Block} targetBlock - previous block will be append to this block
          * @param {Block} blockToMerge - block that will be merged with target block
+         *
+         * @return {Promise} - the sequence that can be continued
          */
 
     }, {
         key: 'mergeBlocks',
         value: function mergeBlocks(targetBlock, blockToMerge) {
+            var _this4 = this;
 
-            if (!targetBlock) {
+            var blockToMergeIndex = this.getBlockIndex(blockToMerge);
 
-                targetBlock = this._blocks[this.currentBlockIndex - 1];
+            if (blockToMerge.isEmpty) {
+
+                this.removeBlock(blockToMergeIndex);
+                return Promise.resolve();
             }
 
-            if (!blockToMerge) {
+            return blockToMerge.data.then(function (blockToMergeInfo) {
 
-                blockToMerge = this._blocks[this.currentBlockIndex];
-            }
-
-            if (!blockToMerge.isEmpty) {
-
-                var extractedBlock = this.Editor.Caret.extractFragmentFromCaretPosition();
-
-                targetBlock.pluginsContent.appendChild(extractedBlock);
-                targetBlock.pluginsContent.normalize();
-            }
-
-            this.removeBlock(this.currentBlockIndex);
-
-            // decrease current block index so that to know current actual
-            this.currentBlockIndex--;
-            this.currentNode = this._blocks[this.currentBlockIndex].html;
+                targetBlock.mergeWith(blockToMergeInfo.data);
+                _this4.removeBlock(blockToMergeIndex);
+            });
         }
 
         /**
@@ -1644,14 +1637,35 @@ var BlockManager = function (_Module) {
          */
 
     }, {
-        key: 'getBlockByIndex',
+        key: 'getBlockIndex',
 
+
+        /**
+         * Returns block's index
+         * @param {Block} block
+         * @return {Number}
+         */
+        value: function getBlockIndex(block) {
+
+            for (var i = 0; i < this._blocks.length; i++) {
+
+                if (this._blocks[i] === block) {
+
+                    return i;
+                }
+            }
+
+            return -1;
+        }
 
         /**
          * Returns Block by passed index
          * @param {Number} index
          * @return {Block}
          */
+
+    }, {
+        key: 'getBlockByIndex',
         value: function getBlockByIndex(index) {
 
             return this._blocks[index];
@@ -2182,16 +2196,31 @@ var Block = function () {
          */
 
     }, {
-        key: 'save',
+        key: 'mergeWith',
 
 
+        /**
+         * Call plugins merge method
+         * @param {Object} data
+         */
+        value: function mergeWith(data) {
+            var _this = this;
+
+            return Promise.resolve().then(function () {
+
+                _this.tool.merge(data);
+            });
+        }
         /**
          * Extracts data from Block
          * Groups Tool's save processing time
          * @return {Object}
          */
+
+    }, {
+        key: 'save',
         value: function save() {
-            var _this = this;
+            var _this2 = this;
 
             var extractedBlock = this.tool.save(this.pluginsContent);
 
@@ -2205,7 +2234,7 @@ var Block = function () {
                 measuringEnd = window.performance.now();
 
                 return {
-                    tool: _this.name,
+                    tool: _this2.name,
                     data: finishedExtraction,
                     time: measuringEnd - measuringStart
                 };
@@ -2811,6 +2840,7 @@ var Keyboard = function (_Module) {
     }, {
         key: 'backSpacePressed',
         value: function backSpacePressed(event) {
+            var _this2 = this;
 
             var isFirstBlock = this.Editor.BlockManager.currentBlockIndex === 0,
                 canMergeBlocks = !this.Editor.BlockManager.currentBlock.hasMedia && this.Editor.Caret.isAtStart && !isFirstBlock;
@@ -2820,13 +2850,29 @@ var Keyboard = function (_Module) {
                 return;
             }
 
-            this.Editor.BlockManager.mergeBlocks();
-
-            // set caret to the block without offset at the end
-            this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, 0, true);
-            this.Editor.Toolbar.close();
-
+            // preventing browser default behaviour
             event.preventDefault();
+
+            var targetBlock = this.Editor.BlockManager.getBlockByIndex(this.Editor.BlockManager.currentBlockIndex - 1),
+                blockToMerge = this.Editor.BlockManager.currentBlock;
+
+            if (blockToMerge.name !== targetBlock.name) {
+
+                this.Editor.BlockManager.navigatePrevious();
+            }
+
+            this.Editor.BlockManager.mergeBlocks(targetBlock, blockToMerge).then(function () {
+
+                // decrease current block index so that to know current actual
+                _this2.Editor.BlockManager.currentBlockIndex--;
+
+                window.setTimeout(function () {
+
+                    // set caret to the block without offset at the end
+                    _this2.Editor.Caret.setToBlock(_this2.Editor.BlockManager.currentBlock, 0, true);
+                    _this2.Editor.Toolbar.close();
+                }, 10);
+            });
         }
 
         /**

@@ -105,6 +105,20 @@ export default class Block {
     }
 
     /**
+     * Call plugins merge method
+     * @param {Object} data
+     */
+    mergeWith(data) {
+
+        return Promise.resolve()
+            .then( () => {
+
+                this.tool.merge(data);
+
+            });
+
+    }
+    /**
      * Extracts data from Block
      * Groups Tool's save processing time
      * @return {Object}
