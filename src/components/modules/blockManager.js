@@ -206,25 +206,23 @@ export default class BlockManager extends Module {
 
         let blockToMergeIndex = this._blocks.indexOf(blockToMerge);
 
-        return new Promise((resolve) => {
+        return Promise.resolve()
+            .then( () => {
 
-            if (blockToMerge.isEmpty) {
+                if (blockToMerge.isEmpty) {
 
-                resolve();
+                    return;
 
-            } else {
+                }
 
-                blockToMerge.data
+                return blockToMerge.data
                     .then((blockToMergeInfo) => {
 
                         targetBlock.mergeWith(blockToMergeInfo.data);
-                        resolve();
 
                     });
 
-            }
-
-        })
+            })
             .then( () => {
 
                 this.removeBlock(blockToMergeIndex);

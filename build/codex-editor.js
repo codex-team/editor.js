@@ -1559,19 +1559,17 @@ var BlockManager = function (_Module) {
 
             var blockToMergeIndex = this._blocks.indexOf(blockToMerge);
 
-            return new Promise(function (resolve) {
+            return Promise.resolve().then(function () {
 
                 if (blockToMerge.isEmpty) {
 
-                    resolve();
-                } else {
-
-                    blockToMerge.data.then(function (blockToMergeInfo) {
-
-                        targetBlock.mergeWith(blockToMergeInfo.data);
-                        resolve();
-                    });
+                    return;
                 }
+
+                return blockToMerge.data.then(function (blockToMergeInfo) {
+
+                    targetBlock.mergeWith(blockToMergeInfo.data);
+                });
             }).then(function () {
 
                 _this4.removeBlock(blockToMergeIndex);
