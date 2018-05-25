@@ -709,6 +709,14 @@ var Dom = function () {
                     treeWalker.push(node);
                 }
 
+                /**
+                * If one of childs is not empty, checked Node is not empty too
+                */
+                if (node && !this.isNodeEmpty(node)) {
+
+                    return false;
+                }
+
                 node = treeWalker.shift();
 
                 if (!node) continue;
@@ -2600,6 +2608,33 @@ var Caret = function (_Module) {
         }
 
         /**
+        * Get all first-level (first child of [contenteditabel]) siblings from passed node
+        */
+
+    }, {
+        key: 'getHigherLevelSiblings',
+        value: function getHigherLevelSiblings(from, direction) {
+
+            var current = from;
+
+            while (current.parentNode.contentEditable !== 'true') {
+
+                current = current.parentNode;
+            }
+
+            var siblings = [],
+                sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
+
+            while (current[sibling]) {
+
+                current = current[sibling];
+                siblings.push(current);
+            }
+
+            return siblings;
+        }
+
+        /**
          * Get's deepest first node and checks if offset is zero
          * @return {boolean}
          */
@@ -2611,6 +2646,26 @@ var Caret = function (_Module) {
             var selection = _Selection2.default.get(),
                 anchorNode = selection.anchorNode,
                 firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
+
+            /**
+             * In case of
+             * <div contenteditable>
+             *     <p><b></b></p>
+             *     |adaddad
+             * </div>
+             */
+            if ($.isEmpty(firstNode)) {
+
+                var leftSiblings = this.getHigherLevelSiblings(anchorNode, 'left'),
+                    nothingAtLeft = leftSiblings.every(function (node) {
+                    return node.textContent.length === 0;
+                });
+
+                if (nothingAtLeft && selection.anchorOffset === 0) {
+
+                    return true;
+                }
+            }
 
             return firstNode === null || anchorNode === firstNode && selection.anchorOffset === 0;
         }
@@ -2904,6 +2959,8 @@ var Keyboard = function (_Module) {
                 this.Editor.BlockManager.navigatePrevious();
             }
 
+            var caretAtTheEnd = targetBlock.isEmpty ? false : true;
+
             this.Editor.BlockManager.mergeBlocks(targetBlock, blockToMerge).then(function () {
 
                 // decrease current block index so that to know current actual
@@ -2912,7 +2969,7 @@ var Keyboard = function (_Module) {
                 window.setTimeout(function () {
 
                     // set caret to the block without offset at the end
-                    _this2.Editor.Caret.setToBlock(_this2.Editor.BlockManager.currentBlock, 0, true);
+                    _this2.Editor.Caret.setToBlock(_this2.Editor.BlockManager.currentBlock, 0, caretAtTheEnd);
                     _this2.Editor.Toolbar.close();
                 }, 10);
             });

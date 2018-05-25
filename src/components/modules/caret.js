@@ -140,6 +140,33 @@ export default class Caret extends Module {
     }
 
     /**
+   * Get all first-level (first child of [contenteditabel]) siblings from passed node
+   */
+    getHigherLevelSiblings(from, direction ) {
+
+        let current = from;
+
+        while (current.parentNode.contentEditable !== 'true') {
+
+            current = current.parentNode;
+
+        }
+
+        let siblings = [],
+            sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
+
+        while (current[sibling]) {
+
+            current = current[sibling];
+            siblings.push(current);
+
+        }
+
+        return siblings;
+
+    }
+
+    /**
      * Get's deepest first node and checks if offset is zero
      * @return {boolean}
      */
@@ -148,6 +175,26 @@ export default class Caret extends Module {
         let selection = Selection.get(),
             anchorNode = selection.anchorNode,
             firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
+
+        /**
+         * In case of
+         * <div contenteditable>
+         *     <p><b></b></p>
+         *     |adaddad
+         * </div>
+         */
+        if ($.isEmpty(firstNode)) {
+
+            let leftSiblings = this.getHigherLevelSiblings(anchorNode, 'left'),
+                nothingAtLeft = leftSiblings.every( node => node.textContent.length === 0 );
+
+            if (nothingAtLeft && selection.anchorOffset === 0) {
+
+                return true;
+
+            }
+
+        }
 
         return firstNode === null || anchorNode === firstNode && selection.anchorOffset === 0;
 

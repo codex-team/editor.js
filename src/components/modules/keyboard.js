@@ -131,6 +131,8 @@ export default class Keyboard extends Module {
 
         }
 
+        let caretAtTheEnd = targetBlock.isEmpty ? false : true;
+
         this.Editor.BlockManager.mergeBlocks(targetBlock, blockToMerge)
             .then( () => {
 
@@ -140,7 +142,7 @@ export default class Keyboard extends Module {
                 window.setTimeout( () => {
 
                     // set caret to the block without offset at the end
-                    this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, 0, true);
+                    this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, 0, caretAtTheEnd);
                     this.Editor.Toolbar.close();
 
                 }, 10);

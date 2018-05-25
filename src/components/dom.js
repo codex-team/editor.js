@@ -278,6 +278,15 @@ export default class Dom {
 
             }
 
+            /**
+            * If one of childs is not empty, checked Node is not empty too
+            */
+            if (node && !this.isNodeEmpty(node)) {
+
+                return false;
+
+            }
+
             node = treeWalker.shift();
 
             if (!node) continue;
