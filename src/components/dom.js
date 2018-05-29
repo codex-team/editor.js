@@ -254,7 +254,13 @@ export default class Dom {
 
         if (!node) {
 
-            return false;
+            return true;
+
+        }
+
+        if (!node.childNodes.length) {
+
+            return this.isNodeEmpty(node);
 
         }
 
@@ -296,7 +302,7 @@ export default class Dom {
 
         }
 
-        return leafs.every( leaf => this.isNodeEmpty(leaf)) ;
+        return leafs.every( leaf => this.isNodeEmpty(leaf) );
 
     }
 

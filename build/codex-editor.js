@@ -688,7 +688,12 @@ var Dom = function () {
 
             if (!node) {
 
-                return false;
+                return true;
+            }
+
+            if (!node.childNodes.length) {
+
+                return this.isNodeEmpty(node);
             }
 
             treeWalker.push(node);
@@ -2575,8 +2580,22 @@ var Caret = function (_Module) {
         }
 
         /**
-        * Get all first-level (first child of [contenteditabel]) siblings from passed node
-        */
+         * Get all first-level (first child of [contenteditabel]) siblings from passed node
+         * Then you can check it for emptiness
+         *
+         * @example
+         * <div contenteditable>
+         *     <p></p>                            |
+         *     <p></p>                            | left first-level siblings
+         *     <p></p>                            |
+         *     <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
+         *     <p></p>                            |
+         *     <p></p>                            | right first-level siblings
+         *     <p></p>                            |
+         * </div>
+         *
+         * @return {Element[]}
+         */
 
     }, {
         key: 'getHigherLevelSiblings',
@@ -2585,6 +2604,9 @@ var Caret = function (_Module) {
             var current = from,
                 siblings = [];
 
+            /**
+             * Find passed node's firs-level parent (in example - blockquote)
+             */
             while (current.parentNode && current.parentNode.contentEditable !== 'true') {
 
                 current = current.parentNode;
@@ -2592,6 +2614,9 @@ var Caret = function (_Module) {
 
             var sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
 
+            /**
+             * Find all left/right siblings
+             */
             while (current[sibling]) {
 
                 current = current[sibling];
@@ -2919,7 +2944,7 @@ var Keyboard = function (_Module) {
 
         /**
          * Handle backspace keypress on block
-         * @param event
+         * @param {KeyboardEvent} event - keydown
          */
 
     }, {
@@ -2927,8 +2952,10 @@ var Keyboard = function (_Module) {
         value: function backspacePressed(event) {
             var _this2 = this;
 
-            var isFirstBlock = this.Editor.BlockManager.currentBlockIndex === 0,
-                canMergeBlocks = (this.Editor.BlockManager.currentBlock.isEmpty || this.Editor.Caret.isAtStart) && !isFirstBlock;
+            var BM = this.Editor.BlockManager;
+
+            var isFirstBlock = BM.currentBlockIndex === 0,
+                canMergeBlocks = this.Editor.Caret.isAtStart && !isFirstBlock;
 
             if (!canMergeBlocks) {
 
@@ -2938,25 +2965,32 @@ var Keyboard = function (_Module) {
             // preventing browser default behaviour
             event.preventDefault();
 
-            var targetBlock = this.Editor.BlockManager.getBlockByIndex(this.Editor.BlockManager.currentBlockIndex - 1),
-                blockToMerge = this.Editor.BlockManager.currentBlock;
+            var targetBlock = BM.getBlockByIndex(BM.currentBlockIndex - 1),
+                blockToMerge = BM.currentBlock;
 
+            /**
+             * Blocks that can be merged:
+             * 1) with the same Name
+             * 2) Tool has 'merge' method
+             *
+             * other case will handle as usual ARROW LEFT behaviour
+             */
             if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
 
-                this.Editor.BlockManager.navigatePrevious();
+                BM.navigatePrevious();
             }
 
-            var caretAtTheEnd = targetBlock.isEmpty ? false : true;
+            var setCaretToTheEnd = !targetBlock.isEmpty ? true : false;
 
-            this.Editor.BlockManager.mergeBlocks(targetBlock, blockToMerge).then(function () {
+            BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
 
                 // decrease current block index so that to know current actual
-                _this2.Editor.BlockManager.currentBlockIndex--;
+                BM.currentBlockIndex--;
 
                 window.setTimeout(function () {
 
                     // set caret to the block without offset at the end
-                    _this2.Editor.Caret.setToBlock(_this2.Editor.BlockManager.currentBlock, 0, caretAtTheEnd);
+                    _this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
                     _this2.Editor.Toolbar.close();
                 }, 10);
             });

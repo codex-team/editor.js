@@ -8,9 +8,17 @@ CodeX Editor is a block-oriented editor. It means that entry composed with the l
 
 ### Constructor
 
+### Render
+
 ### Save
 
-### Render
+### Validate
+
+### Merge (optional)
+
+Method that specifies how to merge two `Blocks` of the same type, for example on `Backspace` keypress. 
+Method does accept data object in same format as the `Render` and it should provide logic how to combine new 
+data with the currently stored value.
 
 ### Available settings
 

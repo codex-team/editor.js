@@ -105,12 +105,14 @@ export default class Keyboard extends Module {
 
     /**
      * Handle backspace keypress on block
-     * @param event
+     * @param {KeyboardEvent} event - keydown
      */
     backspacePressed(event) {
 
-        let isFirstBlock    = this.Editor.BlockManager.currentBlockIndex === 0,
-            canMergeBlocks  = (this.Editor.BlockManager.currentBlock.isEmpty || this.Editor.Caret.isAtStart) && !isFirstBlock;
+        const BM = this.Editor.BlockManager;
+
+        let isFirstBlock    = BM.currentBlockIndex === 0,
+            canMergeBlocks  = this.Editor.Caret.isAtStart && !isFirstBlock;
 
         if (!canMergeBlocks) {
 
@@ -121,28 +123,34 @@ export default class Keyboard extends Module {
         // preventing browser default behaviour
         event.preventDefault();
 
-        let targetBlock = this.Editor.BlockManager.getBlockByIndex(this.Editor.BlockManager.currentBlockIndex - 1),
-            blockToMerge = this.Editor.BlockManager.currentBlock;
+        let targetBlock = BM.getBlockByIndex(BM.currentBlockIndex - 1),
+            blockToMerge = BM.currentBlock;
 
-
+        /**
+         * Blocks that can be merged:
+         * 1) with the same Name
+         * 2) Tool has 'merge' method
+         *
+         * other case will handle as usual ARROW LEFT behaviour
+         */
         if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
 
-            this.Editor.BlockManager.navigatePrevious();
+            BM.navigatePrevious();
 
         }
 
-        let caretAtTheEnd = targetBlock.isEmpty ? false : true;
+        let setCaretToTheEnd = !targetBlock.isEmpty ? true : false;
 
-        this.Editor.BlockManager.mergeBlocks(targetBlock, blockToMerge)
+        BM.mergeBlocks(targetBlock, blockToMerge)
             .then( () => {
 
                 // decrease current block index so that to know current actual
-                this.Editor.BlockManager.currentBlockIndex--;
+                BM.currentBlockIndex--;
 
                 window.setTimeout( () => {
 
                     // set caret to the block without offset at the end
-                    this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, 0, caretAtTheEnd);
+                    this.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
                     this.Editor.Toolbar.close();
 
                 }, 10);
