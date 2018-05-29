@@ -693,8 +693,6 @@ var Dom = function () {
             var treeWalker = [],
                 leafs = [];
 
-            console.warn('check', node);
-
             if (!node) {
 
                 return true;
@@ -705,9 +703,13 @@ var Dom = function () {
                 return this.isNodeEmpty(node);
             }
 
-            treeWalker.push(node);
+            treeWalker.push(node.firstChild);
 
             while (treeWalker.length > 0) {
+
+                node = treeWalker.shift();
+
+                if (!node) continue;
 
                 if (this.isLeaf(node)) {
 
@@ -728,17 +730,13 @@ var Dom = function () {
                 */
                 if (node && !this.isNodeEmpty(node)) {
 
-                    console.log('NOT EMPTY!!!!!!!!!', node);
-
                     return false;
                 }
 
-                node = treeWalker.shift();
+                if (node.firstChild) {
 
-                if (!node) continue;
-
-                node = node.firstChild;
-                treeWalker.push(node);
+                    treeWalker.push(node.firstChild);
+                }
             }
 
             return leafs.every(function (leaf) {
@@ -2683,9 +2681,14 @@ var Caret = function (_Module) {
                     return $.isEmpty(node);
                 });
 
-                console.log('nothing at left?', nothingAtLeft);
+                /**
+                 * Workaround case when caret in the text link " |Hello!"
+                 * selection.anchorOffset is 1, but real caret visible position is 0
+                 * @type {number}
+                 */
+                var firstLetterPosition = anchorNode.textContent.search(/\S/);
 
-                if (nothingAtLeft && selection.anchorOffset === 0) {
+                if (nothingAtLeft && selection.anchorOffset === firstLetterPosition) {
 
                     return true;
                 }

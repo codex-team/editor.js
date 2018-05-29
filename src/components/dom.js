@@ -258,8 +258,6 @@ export default class Dom {
         let treeWalker = [],
             leafs = [];
 
-        console.warn('check', node);
-
         if (!node) {
 
             return true;
@@ -272,9 +270,13 @@ export default class Dom {
 
         }
 
-        treeWalker.push(node);
+        treeWalker.push(node.firstChild);
 
         while ( treeWalker.length > 0 ) {
+
+            node = treeWalker.shift();
+
+            if (!node) continue;
 
             if ( this.isLeaf(node) ) {
 
@@ -297,18 +299,15 @@ export default class Dom {
             */
             if (node && !this.isNodeEmpty(node)) {
 
-                console.log('NOT EMPTY!!!!!!!!!', node);
-
                 return false;
 
             }
 
-            node = treeWalker.shift();
+            if ( node.firstChild ) {
 
-            if (!node) continue;
+                treeWalker.push(node.firstChild);
 
-            node = node.firstChild;
-            treeWalker.push(node);
+            }
 
         }
 

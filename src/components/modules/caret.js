@@ -226,9 +226,14 @@ export default class Caret extends Module {
             let leftSiblings = this.getHigherLevelSiblings(anchorNode, 'left'),
                 nothingAtLeft = leftSiblings.every( node => $.isEmpty(node) );
 
-            console.log('nothing at left?', nothingAtLeft);
+            /**
+             * Workaround case when caret in the text link " |Hello!"
+             * selection.anchorOffset is 1, but real caret visible position is 0
+             * @type {number}
+             */
+            let firstLetterPosition = anchorNode.textContent.search(/\S/);
 
-            if (nothingAtLeft && selection.anchorOffset === 0) {
+            if (nothingAtLeft && selection.anchorOffset === firstLetterPosition) {
 
                 return true;
 
