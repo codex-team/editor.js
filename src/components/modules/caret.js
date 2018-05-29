@@ -140,20 +140,20 @@ export default class Caret extends Module {
     }
 
     /**
-   * Get all first-level (first child of [contenteditabel]) siblings from passed node
-   */
+    * Get all first-level (first child of [contenteditabel]) siblings from passed node
+    */
     getHigherLevelSiblings(from, direction ) {
 
-        let current = from;
+        let current = from,
+            siblings = [];
 
-        while (current.parentNode.contentEditable !== 'true') {
+        while (current.parentNode && current.parentNode.contentEditable !== 'true') {
 
             current = current.parentNode;
 
         }
 
-        let siblings = [],
-            sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
+        let sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
 
         while (current[sibling]) {
 
@@ -179,8 +179,8 @@ export default class Caret extends Module {
         /**
          * In case of
          * <div contenteditable>
-         *     <p><b></b></p>   <--- first (and deepest) node is <b></b>
-         *     |adaddad
+         *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
+         *     |adaddad         <-- anchor node
          * </div>
          */
         if ($.isEmpty(firstNode)) {
@@ -209,6 +209,26 @@ export default class Caret extends Module {
         let selection = Selection.get(),
             anchorNode = selection.anchorNode,
             lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
+
+        /**
+         * In case of
+         * <div contenteditable>
+         *     adaddad|         <-- anchor node
+         *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
+         * </div>
+         */
+        if ($.isEmpty(lastNode)) {
+
+            let leftSiblings = this.getHigherLevelSiblings(anchorNode, 'right'),
+                nothingAtRight = leftSiblings.every( node => node.textContent.length === 0 );
+
+            if (nothingAtRight && selection.anchorOffset === 0) {
+
+                return true;
+
+            }
+
+        }
 
         return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
 

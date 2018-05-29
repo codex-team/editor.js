@@ -121,45 +121,24 @@ export default class BlockManager extends Module {
      */
     navigateNext() {
 
-        let lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, true);
+        let caretAtEnd = this.Editor.Caret.isAtEnd;
 
-        /**
-        * Founded contentEditable element doesn't have childs
-        * Or maybe New created block
-        */
-        let currentBlockIsEmpty = this.currentBlock.isEmpty;
-
-        /**
-         * Case of
-         * <div contenteditable>
-         *   adaddad|
-         *   <p><b></b></p> <---- deepest (lastNode) node is <b>, but caret is in 'adaddad'
-         * </div>
-         */
-        if (!currentBlockIsEmpty && $.isEmpty(lastNode)) {
-
-            lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, false);
-
-        }
-
-        let caretInTheLastNode = Selection.getAnchorNode() === lastNode,
-            caretAtTheEndOfLastNode = Selection.getAnchorOffset() === lastNode.textContent.length;
-
-        if (!currentBlockIsEmpty && !caretInTheLastNode) {
+        if (!caretAtEnd) {
 
             return;
 
         }
 
-        if (caretAtTheEndOfLastNode) {
+        let nextBlock = this.nextBlock;
 
-            let nextBlock = this.nextBlock;
+        if (!nextBlock) {
 
-            if (!nextBlock) return;
-
-            this.Editor.Caret.setToBlock( nextBlock );
+            return;
 
         }
+
+        this.Editor.Caret.setToBlock( nextBlock );
+
 
     }
 
@@ -170,36 +149,23 @@ export default class BlockManager extends Module {
      */
     navigatePrevious() {
 
-        let firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
-            textNodeLength = firstTextNode.length;
+        let caretAtStart = this.Editor.Caret.isAtStart;
 
-        let caretInTheFirstNode = Selection.getAnchorNode() === firstTextNode;
-
-        /**
-        * Founded contentEditable element doesn't have childs
-        * Or maybe New created block
-        */
-        let currentBlockIsEmpty = this.currentBlock.isEmpty;
-
-        if (!currentBlockIsEmpty && !caretInTheFirstNode) {
+        if (!caretAtStart) {
 
             return;
 
         }
 
-        if (Selection.getAnchorOffset() === 0) {
+        let previousBlock = this.previousBlock;
 
-            let previousBlock = this.previousBlock;
+        if (!previousBlock) {
 
-            if (!previousBlock) {
-
-                return;
-
-            }
-
-            this.Editor.Caret.setToBlock( previousBlock, textNodeLength, true );
+            return;
 
         }
+
+        this.Editor.Caret.setToBlock( previousBlock, 0, true );
 
     }
 

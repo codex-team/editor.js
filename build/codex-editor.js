@@ -1515,42 +1515,21 @@ var BlockManager = function (_Module) {
         key: 'navigateNext',
         value: function navigateNext() {
 
-            var lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, true);
+            var caretAtEnd = this.Editor.Caret.isAtEnd;
 
-            /**
-            * Founded contentEditable element doesn't have childs
-            * Or maybe New created block
-            */
-            var currentBlockIsEmpty = this.currentBlock.isEmpty;
-
-            /**
-             * Case of
-             * <div contenteditable>
-             *   adaddad|
-             *   <p><b></b></p> <---- deepest (lastNode) node is <b>, but caret is in 'adaddad'
-             * </div>
-             */
-            if (!currentBlockIsEmpty && $.isEmpty(lastNode)) {
-
-                lastNode = $.getDeepestNode(this.currentBlock.pluginsContent, false);
-            }
-
-            var caretInTheLastNode = _Selection2.default.getAnchorNode() === lastNode,
-                caretAtTheEndOfLastNode = _Selection2.default.getAnchorOffset() === lastNode.textContent.length;
-
-            if (!currentBlockIsEmpty && !caretInTheLastNode) {
+            if (!caretAtEnd) {
 
                 return;
             }
 
-            if (caretAtTheEndOfLastNode) {
+            var nextBlock = this.nextBlock;
 
-                var nextBlock = this.nextBlock;
+            if (!nextBlock) {
 
-                if (!nextBlock) return;
-
-                this.Editor.Caret.setToBlock(nextBlock);
+                return;
             }
+
+            this.Editor.Caret.setToBlock(nextBlock);
         }
 
         /**
@@ -1563,33 +1542,21 @@ var BlockManager = function (_Module) {
         key: 'navigatePrevious',
         value: function navigatePrevious() {
 
-            var firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
-                textNodeLength = firstTextNode.length;
+            var caretAtStart = this.Editor.Caret.isAtStart;
 
-            var caretInTheFirstNode = _Selection2.default.getAnchorNode() === firstTextNode;
-
-            /**
-            * Founded contentEditable element doesn't have childs
-            * Or maybe New created block
-            */
-            var currentBlockIsEmpty = this.currentBlock.isEmpty;
-
-            if (!currentBlockIsEmpty && !caretInTheFirstNode) {
+            if (!caretAtStart) {
 
                 return;
             }
 
-            if (_Selection2.default.getAnchorOffset() === 0) {
+            var previousBlock = this.previousBlock;
 
-                var previousBlock = this.previousBlock;
+            if (!previousBlock) {
 
-                if (!previousBlock) {
-
-                    return;
-                }
-
-                this.Editor.Caret.setToBlock(previousBlock, textNodeLength, true);
+                return;
             }
+
+            this.Editor.Caret.setToBlock(previousBlock, 0, true);
         }
 
         /**
@@ -2615,15 +2582,15 @@ var Caret = function (_Module) {
         key: 'getHigherLevelSiblings',
         value: function getHigherLevelSiblings(from, direction) {
 
-            var current = from;
+            var current = from,
+                siblings = [];
 
-            while (current.parentNode.contentEditable !== 'true') {
+            while (current.parentNode && current.parentNode.contentEditable !== 'true') {
 
                 current = current.parentNode;
             }
 
-            var siblings = [],
-                sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
+            var sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
 
             while (current[sibling]) {
 
@@ -2650,8 +2617,8 @@ var Caret = function (_Module) {
             /**
              * In case of
              * <div contenteditable>
-             *     <p><b></b></p>   <--- first (and deepest) node is <b></b>
-             *     |adaddad
+             *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
+             *     |adaddad         <-- anchor node
              * </div>
              */
             if ($.isEmpty(firstNode)) {
@@ -2682,6 +2649,26 @@ var Caret = function (_Module) {
             var selection = _Selection2.default.get(),
                 anchorNode = selection.anchorNode,
                 lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
+
+            /**
+             * In case of
+             * <div contenteditable>
+             *     adaddad|         <-- anchor node
+             *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
+             * </div>
+             */
+            if ($.isEmpty(lastNode)) {
+
+                var leftSiblings = this.getHigherLevelSiblings(anchorNode, 'right'),
+                    nothingAtRight = leftSiblings.every(function (node) {
+                    return node.textContent.length === 0;
+                });
+
+                if (nothingAtRight && selection.anchorOffset === 0) {
+
+                    return true;
+                }
+            }
 
             return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
         }
