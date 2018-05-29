@@ -105,6 +105,31 @@ export default class Block {
     }
 
     /**
+     * is block mergeable
+     * We plugin have merge function then we call it mergable
+     * @return {boolean}
+     */
+    get mergeable() {
+
+        return typeof this.tool.merge === 'function';
+
+    }
+
+    /**
+     * Call plugins merge method
+     * @param {Object} data
+     */
+    mergeWith(data) {
+
+        return Promise.resolve()
+            .then(() => {
+
+                this.tool.merge(data);
+
+            });
+
+    }
+    /**
      * Extracts data from Block
      * Groups Tool's save processing time
      * @return {Object}

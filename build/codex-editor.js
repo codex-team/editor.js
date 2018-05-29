@@ -61,7 +61,7 @@ var CodexEditor =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -415,6 +415,19 @@ var Dom = function () {
     }
 
     _createClass(Dom, null, [{
+        key: 'isSingleTag',
+
+
+        /**
+         * Check if passed tag has no closed tag
+         * @param  {Element}  tag
+         * @return {Boolean}
+         */
+        value: function isSingleTag(tag) {
+
+            return tag.tagName && ['AREA', 'BASE', 'BR', 'COL', 'COMMAND', 'EMBED', 'HR', 'IMG', 'INPUT', 'KEYGEN', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'].includes(tag.tagName);
+        }
+    }, {
         key: 'make',
 
 
@@ -532,7 +545,7 @@ var Dom = function () {
          *
          * @description Method recursively goes throw the all Node until it finds the Leaf
          *
-         * @param {Element} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
+         * @param {Node} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
          * @param {Boolean} atLast - find last text node
          * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
          */
@@ -543,32 +556,49 @@ var Dom = function () {
             var atLast = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
 
-            if (node.childNodes.length === 0) {
+            /**
+             * Current function have two directions:
+             *  - starts from first child and every time gets first or nextSibling in special cases
+             *  - starts from last child and gets last or previousSibling
+             * @type {string}
+             */
+            var child = atLast ? 'lastChild' : 'firstChild',
+                sibling = atLast ? 'previousSibling' : 'nextSibling';
+
+            if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
+
+                var nodeChild = node[child];
 
                 /**
-                 * We need to return an empty text node
-                 * But caret will not be placed in empty textNode, so we need textNode with zero-width char
+                 * special case when child is single tag that can't contain any content
                  */
-                if (this.isElement(node) && !this.isNativeInput(node)) {
+                if (Dom.isSingleTag(nodeChild)) {
 
-                    var emptyTextNode = this.text('\u200B');
+                    /**
+                     * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
+                     * from sibling
+                     *
+                     * 2) If single tag's next sibling is null, then go back to parent and check his sibling
+                     * In case of Node Element continue searching
+                     *
+                     * 3) If none of conditions above happened return parent Node Element
+                     */
+                    if (nodeChild[sibling]) {
 
-                    node.appendChild(emptyTextNode);
+                        nodeChild = nodeChild[sibling];
+                    } else if (nodeChild.parentNode[sibling]) {
+
+                        nodeChild = nodeChild.parentNode[sibling];
+                    } else {
+
+                        return nodeChild.parentNode;
+                    }
                 }
 
-                return node;
+                return this.getDeepestNode(nodeChild, atLast);
             }
 
-            var childsLength = node.childNodes.length,
-                last = childsLength - 1;
-
-            if (atLast) {
-
-                return this.getDeepestNode(node.childNodes[last], atLast);
-            } else {
-
-                return this.getDeepestNode(node.childNodes[0], false);
-            }
+            return node;
         }
 
         /**
@@ -665,16 +695,28 @@ var Dom = function () {
 
             if (!node) {
 
-                return false;
+                return true;
             }
 
-            treeWalker.push(node);
+            if (!node.childNodes.length) {
+
+                return this.isNodeEmpty(node);
+            }
+
+            treeWalker.push(node.firstChild);
 
             while (treeWalker.length > 0) {
+
+                node = treeWalker.shift();
+
+                if (!node) continue;
 
                 if (this.isLeaf(node)) {
 
                     leafs.push(node);
+                } else {
+
+                    treeWalker.push(node.firstChild);
                 }
 
                 while (node && node.nextSibling) {
@@ -686,12 +728,13 @@ var Dom = function () {
                     treeWalker.push(node);
                 }
 
-                node = treeWalker.shift();
+                /**
+                * If one of childs is not empty, checked Node is not empty too
+                */
+                if (node && !this.isNodeEmpty(node)) {
 
-                if (!node) continue;
-
-                node = node.firstChild;
-                treeWalker.push(node);
+                    return false;
+                }
             }
 
             return leafs.every(function (leaf) {
@@ -710,94 +753,6 @@ module.exports = exports['default'];
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Working with selection
- */
-var Selection = function () {
-
-    /**
-     * @constructor
-     */
-    function Selection() {
-        _classCallCheck(this, Selection);
-
-        this.instance = null;
-        this.selection = null;
-    }
-
-    /**
-     * Returns window Selection
-     * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-     * @return {Selection}
-     */
-
-
-    _createClass(Selection, null, [{
-        key: "get",
-        value: function get() {
-
-            return window.getSelection();
-        }
-
-        /**
-         * Returns selected anchor
-         * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
-         * @return {Node}
-         */
-
-    }, {
-        key: "getAnchorNode",
-        value: function getAnchorNode() {
-
-            var selection = window.getSelection();
-
-            if (selection) {
-
-                return selection.anchorNode;
-            }
-        }
-
-        /**
-         * Returns selection offset according to the anchor node
-         * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
-         * @return {Number}
-         */
-
-    }, {
-        key: "getAnchorOffset",
-        value: function getAnchorOffset() {
-
-            var selection = window.getSelection();
-
-            if (selection) {
-
-                return selection.anchorOffset;
-            }
-        }
-    }]);
-
-    return Selection;
-}();
-
-Selection.displayName = "Selection";
-exports.default = Selection;
-module.exports = exports["default"];
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -873,7 +828,7 @@ module.exports = exports["default"];
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(5);
+__webpack_require__(4);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -882,7 +837,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 // eslint-disable-next-line
 var modules = ["blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-    return __webpack_require__(6)("./" + module);
+    return __webpack_require__(5)("./" + module);
 });
 
 /**
@@ -1258,7 +1213,7 @@ module.exports = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1285,12 +1240,12 @@ if (!Element.prototype.closest) Element.prototype.closest = function (s) {
 };
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./blockManager.js": 7,
-	"./caret.js": 9,
+	"./blockManager.js": 6,
+	"./caret.js": 8,
 	"./events.js": 10,
 	"./keyboard.js": 11,
 	"./listeners.js": 12,
@@ -1317,10 +1272,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 6;
+webpackContext.id = 5;
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1332,13 +1287,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _block = __webpack_require__(8);
+var _block = __webpack_require__(7);
 
 var _block2 = _interopRequireDefault(_block);
-
-var _Selection = __webpack_require__(3);
-
-var _Selection2 = _interopRequireDefault(_Selection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1484,27 +1435,26 @@ var BlockManager = function (_Module) {
         key: 'navigateNext',
         value: function navigateNext() {
 
-            var lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
-                textNodeLength = lastTextNode.length;
+            var caretAtEnd = this.Editor.Caret.isAtEnd;
 
-            if (_Selection2.default.getAnchorNode() !== lastTextNode) {
+            if (!caretAtEnd) {
 
                 return;
             }
 
-            if (_Selection2.default.getAnchorOffset() === textNodeLength) {
+            var nextBlock = this.nextBlock;
 
-                var nextBlock = this.nextBlock;
+            if (!nextBlock) {
 
-                if (!nextBlock) return;
-
-                this.Editor.Caret.setToBlock(nextBlock);
+                return;
             }
+
+            this.Editor.Caret.setToBlock(nextBlock);
         }
 
         /**
          * Set's caret to the previous Block
-         * Before moving caret, we should check if caret position is at the end of Plugins node
+         * Before moving caret, we should check if caret position is start of the Plugins node
          * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
          */
 
@@ -1512,22 +1462,21 @@ var BlockManager = function (_Module) {
         key: 'navigatePrevious',
         value: function navigatePrevious() {
 
-            var firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
-                textNodeLength = firstTextNode.length;
+            var caretAtStart = this.Editor.Caret.isAtStart;
 
-            if (_Selection2.default.getAnchorNode() !== firstTextNode) {
+            if (!caretAtStart) {
 
                 return;
             }
 
-            if (_Selection2.default.getAnchorOffset() === 0) {
+            var previousBlock = this.previousBlock;
 
-                var previousBlock = this.previousBlock;
+            if (!previousBlock) {
 
-                if (!previousBlock) return;
-
-                this.Editor.Caret.setToBlock(previousBlock, textNodeLength, true);
+                return;
             }
+
+            this.Editor.Caret.setToBlock(previousBlock, 0, true);
         }
 
         /**
@@ -1550,6 +1499,50 @@ var BlockManager = function (_Module) {
         }
 
         /**
+         * Merge two blocks
+         * @param {Block} targetBlock - previous block will be append to this block
+         * @param {Block} blockToMerge - block that will be merged with target block
+         *
+         * @return {Promise} - the sequence that can be continued
+         */
+
+    }, {
+        key: 'mergeBlocks',
+        value: function mergeBlocks(targetBlock, blockToMerge) {
+            var _this4 = this;
+
+            var blockToMergeIndex = this._blocks.indexOf(blockToMerge);
+
+            return Promise.resolve().then(function () {
+
+                if (blockToMerge.isEmpty) {
+
+                    return;
+                }
+
+                return blockToMerge.data.then(function (blockToMergeInfo) {
+
+                    targetBlock.mergeWith(blockToMergeInfo.data);
+                });
+            }).then(function () {
+
+                _this4.removeBlock(blockToMergeIndex);
+                _this4.currentBlockIndex = _this4._blocks.indexOf(targetBlock);
+            });
+        }
+
+        /**
+         * Remove block with passed index or remove last
+         * @param {Number|null} index
+         */
+
+    }, {
+        key: 'removeBlock',
+        value: function removeBlock(index) {
+
+            this._blocks.remove(index);
+        }
+        /**
          * Split current Block
          * 1. Extract content from Caret position to the Block`s end
          * 2. Insert a new Block below current one with extracted content
@@ -1568,7 +1561,7 @@ var BlockManager = function (_Module) {
              * @todo make object in accordance with Tool
              */
             var data = {
-                text: wrapper.innerHTML
+                text: $.isEmpty(wrapper) ? '' : wrapper.innerHTML
             };
 
             this.insert(this.config.initialBlock, data);
@@ -1876,6 +1869,24 @@ var Blocks = function () {
         }
 
         /**
+         * Remove block
+         * @param {Number|null} index
+         */
+
+    }, {
+        key: 'remove',
+        value: function remove(index) {
+
+            if (!index) {
+
+                index = this.length - 1;
+            }
+
+            this.blocks[index].html.remove();
+            this.blocks.splice(index, 1);
+        }
+
+        /**
          * Insert Block after passed target
          *
          * @todo decide if this method is necessary
@@ -2015,7 +2026,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2117,16 +2128,31 @@ var Block = function () {
          */
 
     }, {
-        key: 'save',
+        key: 'mergeWith',
 
 
+        /**
+         * Call plugins merge method
+         * @param {Object} data
+         */
+        value: function mergeWith(data) {
+            var _this = this;
+
+            return Promise.resolve().then(function () {
+
+                _this.tool.merge(data);
+            });
+        }
         /**
          * Extracts data from Block
          * Groups Tool's save processing time
          * @return {Object}
          */
+
+    }, {
+        key: 'save',
         value: function save() {
-            var _this = this;
+            var _this2 = this;
 
             var extractedBlock = this.tool.save(this.pluginsContent);
 
@@ -2140,7 +2166,7 @@ var Block = function () {
                 measuringEnd = window.performance.now();
 
                 return {
-                    tool: _this.name,
+                    tool: _this2.name,
                     data: finishedExtraction,
                     time: measuringEnd - measuringStart
                 };
@@ -2201,6 +2227,19 @@ var Block = function () {
         get: function get() {
 
             return this.save();
+        }
+
+        /**
+         * is block mergeable
+         * We plugin have merge function then we call it mergable
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'mergeable',
+        get: function get() {
+
+            return typeof this.tool.merge === 'function';
         }
     }, {
         key: 'isEmpty',
@@ -2280,7 +2319,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2292,7 +2331,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Selection = __webpack_require__(3);
+var _Selection = __webpack_require__(9);
 
 var _Selection2 = _interopRequireDefault(_Selection);
 
@@ -2380,7 +2419,8 @@ var Caret = function (_Module) {
              * @todo try to fix via Promises or use querySelectorAll to not to use timeout
              */
             _.delay(function () {
-                return _this2.set(nodeToSet, offset);
+
+                _this2.set(nodeToSet, offset);
             }, 20)();
 
             this.Editor.BlockManager.currentNode = block.wrapper;
@@ -2461,6 +2501,154 @@ var Caret = function (_Module) {
                 }
             }
         }
+
+        /**
+         * Get all first-level (first child of [contenteditabel]) siblings from passed node
+         * Then you can check it for emptiness
+         *
+         * @example
+         * <div contenteditable>
+         *     <p></p>                            |
+         *     <p></p>                            | left first-level siblings
+         *     <p></p>                            |
+         *     <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
+         *     <p></p>                            |
+         *     <p></p>                            | right first-level siblings
+         *     <p></p>                            |
+         * </div>
+         *
+         * @return {Element[]}
+         */
+
+    }, {
+        key: 'getHigherLevelSiblings',
+        value: function getHigherLevelSiblings(from, direction) {
+
+            var current = from,
+                siblings = [];
+
+            /**
+             * Find passed node's firs-level parent (in example - blockquote)
+             */
+            while (current.parentNode && current.parentNode.contentEditable !== 'true') {
+
+                current = current.parentNode;
+            }
+
+            var sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
+
+            /**
+             * Find all left/right siblings
+             */
+            while (current[sibling]) {
+
+                current = current[sibling];
+                siblings.push(current);
+            }
+
+            return siblings;
+        }
+
+        /**
+         * Get's deepest first node and checks if offset is zero
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isAtStart',
+        get: function get() {
+
+            /**
+             * Don't handle ranges
+             */
+            if (!_Selection2.default.isCollapsed) {
+
+                return false;
+            }
+
+            var selection = _Selection2.default.get(),
+                anchorNode = selection.anchorNode,
+                firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
+
+            /**
+             * Workaround case when caret in the text like " |Hello!"
+             * selection.anchorOffset is 1, but real caret visible position is 0
+             * @type {number}
+             */
+            var firstLetterPosition = anchorNode.textContent.search(/\S/);
+
+            if (firstLetterPosition === -1) {
+                // empty text
+
+                firstLetterPosition = 0;
+            }
+
+            /**
+             * In case of
+             * <div contenteditable>
+             *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
+             *     |adaddad         <-- anchor node
+             * </div>
+             */
+            if ($.isEmpty(firstNode)) {
+
+                var leftSiblings = this.getHigherLevelSiblings(anchorNode, 'left'),
+                    nothingAtLeft = leftSiblings.every(function (node) {
+                    return $.isEmpty(node);
+                });
+
+                if (nothingAtLeft && selection.anchorOffset === firstLetterPosition) {
+
+                    return true;
+                }
+            }
+
+            return firstNode === null || anchorNode === firstNode && selection.anchorOffset === firstLetterPosition;
+        }
+
+        /**
+         * Get's deepest last node and checks if offset is last node text length
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isAtEnd',
+        get: function get() {
+
+            /**
+             * Don't handle ranges
+             */
+            if (!_Selection2.default.isCollapsed) {
+
+                return false;
+            }
+
+            var selection = _Selection2.default.get(),
+                anchorNode = selection.anchorNode,
+                lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
+
+            /**
+             * In case of
+             * <div contenteditable>
+             *     adaddad|         <-- anchor node
+             *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
+             * </div>
+             */
+            if ($.isEmpty(lastNode)) {
+
+                var leftSiblings = this.getHigherLevelSiblings(anchorNode, 'right'),
+                    nothingAtRight = leftSiblings.every(function (node) {
+                    return $.isEmpty(node);
+                });
+
+                if (nothingAtRight && selection.anchorOffset === anchorNode.textContent.length) {
+
+                    return true;
+                }
+            }
+
+            return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
+        }
     }]);
 
     return Caret;
@@ -2470,6 +2658,102 @@ Caret.displayName = 'Caret';
 exports.default = Caret;
 module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Working with selection
+ */
+var Selection = function () {
+
+  /**
+   * @constructor
+   */
+  function Selection() {
+    _classCallCheck(this, Selection);
+
+    this.instance = null;
+    this.selection = null;
+  }
+
+  /**
+   * Returns window Selection
+   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+   * @return {Selection}
+   */
+
+
+  _createClass(Selection, null, [{
+    key: "get",
+    value: function get() {
+
+      return window.getSelection();
+    }
+
+    /**
+     * Returns selected anchor
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
+     * @return {Node|null}
+     */
+
+  }, {
+    key: "getAnchorNode",
+    value: function getAnchorNode() {
+
+      var selection = window.getSelection();
+
+      return selection ? selection.anchorNode : null;
+    }
+
+    /**
+     * Returns selection offset according to the anchor node
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
+     * @return {Number|null}
+     */
+
+  }, {
+    key: "getAnchorOffset",
+    value: function getAnchorOffset() {
+
+      var selection = window.getSelection();
+
+      return selection ? selection.anchorOffset : null;
+    }
+
+    /**
+     * Is current selection range collapsed
+     * @return {boolean|null}
+     */
+
+  }, {
+    key: "isCollapsed",
+    get: function get() {
+
+      var selection = window.getSelection();
+
+      return selection ? selection.isCollapsed : null;
+    }
+  }]);
+
+  return Selection;
+}();
+
+Selection.displayName = "Selection";
+exports.default = Selection;
+module.exports = exports["default"];
 
 /***/ }),
 /* 10 */
@@ -2639,6 +2923,7 @@ var Keyboard = function (_Module) {
                 case _.keyCodes.BACKSPACE:
 
                     _.log('Backspace key pressed');
+                    this.backspacePressed(event);
                     break;
 
                 case _.keyCodes.ENTER:
@@ -2698,11 +2983,62 @@ var Keyboard = function (_Module) {
                 return;
             }
 
-            event.preventDefault();
             /**
-             * Split the Current Block
+             * Split the Current Block into two blocks
              */
             this.Editor.BlockManager.split();
+            event.preventDefault();
+        }
+
+        /**
+         * Handle backspace keypress on block
+         * @param {KeyboardEvent} event - keydown
+         */
+
+    }, {
+        key: 'backspacePressed',
+        value: function backspacePressed(event) {
+            var _this2 = this;
+
+            var BM = this.Editor.BlockManager;
+
+            var isFirstBlock = BM.currentBlockIndex === 0,
+                canMergeBlocks = this.Editor.Caret.isAtStart && !isFirstBlock;
+
+            if (!canMergeBlocks) {
+
+                return;
+            }
+
+            // preventing browser default behaviour
+            event.preventDefault();
+
+            var targetBlock = BM.getBlockByIndex(BM.currentBlockIndex - 1),
+                blockToMerge = BM.currentBlock;
+
+            /**
+             * Blocks that can be merged:
+             * 1) with the same Name
+             * 2) Tool has 'merge' method
+             *
+             * other case will handle as usual ARROW LEFT behaviour
+             */
+            if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
+
+                BM.navigatePrevious();
+            }
+
+            var setCaretToTheEnd = !targetBlock.isEmpty ? true : false;
+
+            BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
+
+                window.setTimeout(function () {
+
+                    // set caret to the block without offset at the end
+                    _this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
+                    _this2.Editor.Toolbar.close();
+                }, 10);
+            });
         }
 
         /**
@@ -4976,6 +5312,8 @@ var UI = function (_Module) {
     value: function prepare() {
       var _this2 = this;
 
+      // this.Editor.Toolbar.make();
+
       return this.make()
       /**
        * Make toolbar
@@ -5097,7 +5435,7 @@ var UI = function (_Module) {
       /**
        * @todo bind events with the Listeners module
        */
-      this.nodes.redactor.addEventListener('click', function (event) {
+      this.Editor.Listeners.on(this.nodes.redactor, 'click', function (event) {
         return _this4.redactorClicked(event);
       }, false);
     }
@@ -5139,12 +5477,11 @@ var UI = function (_Module) {
       try {
 
         this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+      } catch (e) {
 
         /**
          * If clicked outside first-level Blocks, set Caret to the last empty Block
          */
-      } catch (e) {
-
         this.Editor.Caret.setToTheLastBlock();
       }
 

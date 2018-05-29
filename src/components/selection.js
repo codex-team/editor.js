@@ -27,34 +27,38 @@ export default class Selection {
     /**
      * Returns selected anchor
      * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
-     * @return {Node}
+     * @return {Node|null}
      */
     static getAnchorNode() {
 
         let selection = window.getSelection();
 
-        if (selection) {
-
-            return selection.anchorNode;
-
-        }
+        return selection ? selection.anchorNode : null;
 
     }
 
     /**
      * Returns selection offset according to the anchor node
      * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
-     * @return {Number}
+     * @return {Number|null}
      */
     static getAnchorOffset() {
 
         let selection = window.getSelection();
 
-        if (selection) {
+        return selection ? selection.anchorOffset : null;
 
-            return selection.anchorOffset;
+    }
 
-        }
+    /**
+     * Is current selection range collapsed
+     * @return {boolean|null}
+     */
+    static get isCollapsed() {
+
+        let selection = window.getSelection();
+
+        return selection ? selection.isCollapsed : null;
 
     }
 

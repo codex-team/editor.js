@@ -4,6 +4,18 @@
 export default class Dom {
 
     /**
+     * Check if passed tag has no closed tag
+     * @param  {Element}  tag
+     * @return {Boolean}
+     */
+    static isSingleTag(tag) {
+
+        return tag.tagName && ['AREA', 'BASE', 'BR', 'COL', 'COMMAND', 'EMBED', 'HR', 'IMG', 'INPUT', 'KEYGEN', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'].includes(tag.tagName);
+
+    };
+
+
+    /**
      * Helper for making Elements with classname and attributes
      *
      * @param  {string} tagName           - new Element tag name
@@ -103,42 +115,60 @@ export default class Dom {
      *
      * @description Method recursively goes throw the all Node until it finds the Leaf
      *
-     * @param {Element} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
+     * @param {Node} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
      * @param {Boolean} atLast - find last text node
      * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
      */
     static getDeepestNode(node, atLast = false) {
 
-        if (node.childNodes.length === 0) {
+        /**
+         * Current function have two directions:
+         *  - starts from first child and every time gets first or nextSibling in special cases
+         *  - starts from last child and gets last or previousSibling
+         * @type {string}
+         */
+        let child = atLast ? 'lastChild' : 'firstChild',
+            sibling = atLast ? 'previousSibling' : 'nextSibling';
+
+        if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
+
+            let nodeChild = node[child];
 
             /**
-             * We need to return an empty text node
-             * But caret will not be placed in empty textNode, so we need textNode with zero-width char
+             * special case when child is single tag that can't contain any content
              */
-            if (this.isElement(node) && !this.isNativeInput(node)) {
+            if (Dom.isSingleTag(nodeChild)) {
 
-                let emptyTextNode = this.text('\u200B');
+                /**
+                 * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
+                 * from sibling
+                 *
+                 * 2) If single tag's next sibling is null, then go back to parent and check his sibling
+                 * In case of Node Element continue searching
+                 *
+                 * 3) If none of conditions above happened return parent Node Element
+                 */
+                if (nodeChild[sibling]) {
 
-                node.appendChild(emptyTextNode);
+                    nodeChild = nodeChild[sibling];
+
+                } else if (nodeChild.parentNode[sibling]) {
+
+                    nodeChild = nodeChild.parentNode[sibling];
+
+                } else {
+
+                    return nodeChild.parentNode;
+
+                }
 
             }
 
-            return node;
+            return this.getDeepestNode(nodeChild, atLast);
 
         }
 
-        let childsLength = node.childNodes.length,
-            last = childsLength - 1;
-
-        if (atLast) {
-
-            return this.getDeepestNode(node.childNodes[last], atLast);
-
-        } else {
-
-            return this.getDeepestNode(node.childNodes[0], false);
-
-        }
+        return node;
 
     }
 
@@ -230,17 +260,31 @@ export default class Dom {
 
         if (!node) {
 
-            return false;
+            return true;
 
         }
 
-        treeWalker.push(node);
+        if (!node.childNodes.length) {
+
+            return this.isNodeEmpty(node);
+
+        }
+
+        treeWalker.push(node.firstChild);
 
         while ( treeWalker.length > 0 ) {
+
+            node = treeWalker.shift();
+
+            if (!node) continue;
 
             if ( this.isLeaf(node) ) {
 
                 leafs.push(node);
+
+            } else {
+
+                treeWalker.push(node.firstChild);
 
             }
 
@@ -254,16 +298,18 @@ export default class Dom {
 
             }
 
-            node = treeWalker.shift();
+            /**
+            * If one of childs is not empty, checked Node is not empty too
+            */
+            if (node && !this.isNodeEmpty(node)) {
 
-            if (!node) continue;
+                return false;
 
-            node = node.firstChild;
-            treeWalker.push(node);
+            }
 
         }
 
-        return leafs.every( leaf => this.isNodeEmpty(leaf)) ;
+        return leafs.every( leaf => this.isNodeEmpty(leaf) );
 
     }
 

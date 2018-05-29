@@ -34,6 +34,7 @@ export default class Keyboard extends Module {
             case _.keyCodes.BACKSPACE:
 
                 _.log('Backspace key pressed');
+                this.backspacePressed(event);
                 break;
 
             case _.keyCodes.ENTER:
@@ -93,11 +94,65 @@ export default class Keyboard extends Module {
 
         }
 
-        event.preventDefault();
+
         /**
-         * Split the Current Block
+         * Split the Current Block into two blocks
          */
         this.Editor.BlockManager.split();
+        event.preventDefault();
+
+    }
+
+    /**
+     * Handle backspace keypress on block
+     * @param {KeyboardEvent} event - keydown
+     */
+    backspacePressed(event) {
+
+        const BM = this.Editor.BlockManager;
+
+        let isFirstBlock    = BM.currentBlockIndex === 0,
+            canMergeBlocks  = this.Editor.Caret.isAtStart && !isFirstBlock;
+
+        if (!canMergeBlocks) {
+
+            return;
+
+        }
+
+        // preventing browser default behaviour
+        event.preventDefault();
+
+        let targetBlock = BM.getBlockByIndex(BM.currentBlockIndex - 1),
+            blockToMerge = BM.currentBlock;
+
+        /**
+         * Blocks that can be merged:
+         * 1) with the same Name
+         * 2) Tool has 'merge' method
+         *
+         * other case will handle as usual ARROW LEFT behaviour
+         */
+        if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
+
+            BM.navigatePrevious();
+
+        }
+
+        let setCaretToTheEnd = !targetBlock.isEmpty ? true : false;
+
+        BM.mergeBlocks(targetBlock, blockToMerge)
+            .then( () => {
+
+                window.setTimeout( () => {
+
+                    // set caret to the block without offset at the end
+                    this.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
+                    this.Editor.Toolbar.close();
+
+                }, 10);
+
+            });
 
     }
 

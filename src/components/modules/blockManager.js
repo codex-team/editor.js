@@ -8,7 +8,6 @@
  */
 
 import Block from '../block';
-import Selection from '../Selection';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -121,52 +120,51 @@ export default class BlockManager extends Module {
      */
     navigateNext() {
 
-        let lastTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, true),
-            textNodeLength = lastTextNode.length;
+        let caretAtEnd = this.Editor.Caret.isAtEnd;
 
-        if (Selection.getAnchorNode() !== lastTextNode) {
+        if (!caretAtEnd) {
 
             return;
 
         }
 
-        if (Selection.getAnchorOffset() === textNodeLength) {
+        let nextBlock = this.nextBlock;
 
-            let nextBlock = this.nextBlock;
+        if (!nextBlock) {
 
-            if (!nextBlock) return;
-
-            this.Editor.Caret.setToBlock( nextBlock );
+            return;
 
         }
+
+        this.Editor.Caret.setToBlock( nextBlock );
+
 
     }
 
     /**
      * Set's caret to the previous Block
-     * Before moving caret, we should check if caret position is at the end of Plugins node
+     * Before moving caret, we should check if caret position is start of the Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
      */
     navigatePrevious() {
 
-        let firstTextNode = $.getDeepestNode(this.currentBlock.pluginsContent, false),
-            textNodeLength = firstTextNode.length;
+        let caretAtStart = this.Editor.Caret.isAtStart;
 
-        if (Selection.getAnchorNode() !== firstTextNode) {
+        if (!caretAtStart) {
 
             return;
 
         }
 
-        if (Selection.getAnchorOffset() === 0) {
+        let previousBlock = this.previousBlock;
 
-            let previousBlock = this.previousBlock;
+        if (!previousBlock) {
 
-            if (!previousBlock) return;
-
-            this.Editor.Caret.setToBlock( previousBlock, textNodeLength, true );
+            return;
 
         }
+
+        this.Editor.Caret.setToBlock( previousBlock, 0, true );
 
     }
 
@@ -186,6 +184,53 @@ export default class BlockManager extends Module {
     }
 
     /**
+     * Merge two blocks
+     * @param {Block} targetBlock - previous block will be append to this block
+     * @param {Block} blockToMerge - block that will be merged with target block
+     *
+     * @return {Promise} - the sequence that can be continued
+     */
+    mergeBlocks(targetBlock, blockToMerge) {
+
+        let blockToMergeIndex = this._blocks.indexOf(blockToMerge);
+
+        return Promise.resolve()
+            .then( () => {
+
+                if (blockToMerge.isEmpty) {
+
+                    return;
+
+                }
+
+                return blockToMerge.data
+                    .then((blockToMergeInfo) => {
+
+                        targetBlock.mergeWith(blockToMergeInfo.data);
+
+                    });
+
+            })
+            .then( () => {
+
+                this.removeBlock(blockToMergeIndex);
+                this.currentBlockIndex = this._blocks.indexOf(targetBlock);
+
+            });
+
+
+    }
+
+    /**
+     * Remove block with passed index or remove last
+     * @param {Number|null} index
+     */
+    removeBlock(index) {
+
+        this._blocks.remove(index);
+
+    }
+    /**
      * Split current Block
      * 1. Extract content from Caret position to the Block`s end
      * 2. Insert a new Block below current one with extracted content
@@ -201,7 +246,7 @@ export default class BlockManager extends Module {
          * @todo make object in accordance with Tool
          */
         let data = {
-            text: wrapper.innerHTML,
+            text: $.isEmpty(wrapper) ? '' : wrapper.innerHTML,
         };
 
         this.insert(this.config.initialBlock, data);
@@ -481,6 +526,23 @@ class Blocks {
             }
 
         }
+
+    }
+
+    /**
+     * Remove block
+     * @param {Number|null} index
+     */
+    remove(index) {
+
+        if (!index) {
+
+            index = this.length - 1;
+
+        }
+
+        this.blocks[index].html.remove();
+        this.blocks.splice(index, 1);
 
     }
 

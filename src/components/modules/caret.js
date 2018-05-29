@@ -66,7 +66,11 @@ export default class Caret extends Module {
         /**
          * @todo try to fix via Promises or use querySelectorAll to not to use timeout
          */
-        _.delay( () => this.set(nodeToSet, offset), 20)();
+        _.delay( () => {
+
+            this.set(nodeToSet, offset);
+
+        }, 20)();
 
         this.Editor.BlockManager.currentNode = block.wrapper;
 
@@ -141,6 +145,154 @@ export default class Caret extends Module {
             }
 
         }
+
+    }
+
+    /**
+     * Get all first-level (first child of [contenteditabel]) siblings from passed node
+     * Then you can check it for emptiness
+     *
+     * @example
+     * <div contenteditable>
+     *     <p></p>                            |
+     *     <p></p>                            | left first-level siblings
+     *     <p></p>                            |
+     *     <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
+     *     <p></p>                            |
+     *     <p></p>                            | right first-level siblings
+     *     <p></p>                            |
+     * </div>
+     *
+     * @return {Element[]}
+     */
+    getHigherLevelSiblings(from, direction ) {
+
+        let current = from,
+            siblings = [];
+
+        /**
+         * Find passed node's firs-level parent (in example - blockquote)
+         */
+        while (current.parentNode && current.parentNode.contentEditable !== 'true') {
+
+            current = current.parentNode;
+
+        }
+
+        let sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
+
+        /**
+         * Find all left/right siblings
+         */
+        while (current[sibling]) {
+
+            current = current[sibling];
+            siblings.push(current);
+
+        }
+
+        return siblings;
+
+    }
+
+    /**
+     * Get's deepest first node and checks if offset is zero
+     * @return {boolean}
+     */
+    get isAtStart() {
+
+        /**
+         * Don't handle ranges
+         */
+        if (!Selection.isCollapsed) {
+
+            return false;
+
+        }
+
+        let selection = Selection.get(),
+            anchorNode = selection.anchorNode,
+            firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
+
+        /**
+         * Workaround case when caret in the text like " |Hello!"
+         * selection.anchorOffset is 1, but real caret visible position is 0
+         * @type {number}
+         */
+        let firstLetterPosition = anchorNode.textContent.search(/\S/);
+
+        if (firstLetterPosition === -1) { // empty text
+
+            firstLetterPosition = 0;
+
+        }
+
+        /**
+         * In case of
+         * <div contenteditable>
+         *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
+         *     |adaddad         <-- anchor node
+         * </div>
+         */
+        if ($.isEmpty(firstNode)) {
+
+            let leftSiblings = this.getHigherLevelSiblings(anchorNode, 'left'),
+                nothingAtLeft = leftSiblings.every( node => $.isEmpty(node) );
+
+
+
+            if (nothingAtLeft && selection.anchorOffset === firstLetterPosition) {
+
+                return true;
+
+            }
+
+        }
+
+        return firstNode === null || anchorNode === firstNode && selection.anchorOffset === firstLetterPosition;
+
+    }
+
+    /**
+     * Get's deepest last node and checks if offset is last node text length
+     * @return {boolean}
+     */
+    get isAtEnd() {
+
+        /**
+         * Don't handle ranges
+         */
+        if (!Selection.isCollapsed) {
+
+            return false;
+
+        }
+
+        let selection = Selection.get(),
+            anchorNode = selection.anchorNode,
+            lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
+
+        /**
+         * In case of
+         * <div contenteditable>
+         *     adaddad|         <-- anchor node
+         *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
+         * </div>
+         */
+        if ($.isEmpty(lastNode)) {
+
+            let leftSiblings = this.getHigherLevelSiblings(anchorNode, 'right'),
+                nothingAtRight = leftSiblings.every( node => $.isEmpty(node) );
+
+            if (nothingAtRight && selection.anchorOffset === anchorNode.textContent.length) {
+
+                return true;
+
+            }
+
+        }
+
+        return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
 
     }
 
