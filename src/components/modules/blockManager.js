@@ -8,7 +8,6 @@
  */
 
 import Block from '../block';
-import Selection from '../Selection';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -541,7 +540,6 @@ class Blocks {
 
         }
 
-        // this.blocks[index].html;
         this.blocks[index].html.remove();
         this.blocks.splice(index, 1);
 

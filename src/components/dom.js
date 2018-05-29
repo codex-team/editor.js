@@ -258,6 +258,8 @@ export default class Dom {
         let treeWalker = [],
             leafs = [];
 
+        console.warn('check', node);
+
         if (!node) {
 
             return true;
@@ -294,6 +296,8 @@ export default class Dom {
             * If one of childs is not empty, checked Node is not empty too
             */
             if (node && !this.isNodeEmpty(node)) {
+
+                console.log('NOT EMPTY!!!!!!!!!', node);
 
                 return false;
 

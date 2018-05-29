@@ -693,6 +693,8 @@ var Dom = function () {
             var treeWalker = [],
                 leafs = [];
 
+            console.warn('check', node);
+
             if (!node) {
 
                 return true;
@@ -725,6 +727,8 @@ var Dom = function () {
                 * If one of childs is not empty, checked Node is not empty too
                 */
                 if (node && !this.isNodeEmpty(node)) {
+
+                    console.log('NOT EMPTY!!!!!!!!!', node);
 
                     return false;
                 }
@@ -1387,10 +1391,6 @@ var _block = __webpack_require__(8);
 
 var _block2 = _interopRequireDefault(_block);
 
-var _Selection = __webpack_require__(3);
-
-var _Selection2 = _interopRequireDefault(_Selection);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1981,7 +1981,6 @@ var Blocks = function () {
                 index = this.length - 1;
             }
 
-            // this.blocks[index].html;
             this.blocks[index].html.remove();
             this.blocks.splice(index, 1);
         }
@@ -2681,8 +2680,10 @@ var Caret = function (_Module) {
 
                 var leftSiblings = this.getHigherLevelSiblings(anchorNode, 'left'),
                     nothingAtLeft = leftSiblings.every(function (node) {
-                    return node.textContent.length === 0;
+                    return $.isEmpty(node);
                 });
+
+                console.log('nothing at left?', nothingAtLeft);
 
                 if (nothingAtLeft && selection.anchorOffset === 0) {
 
@@ -2725,7 +2726,7 @@ var Caret = function (_Module) {
 
                 var leftSiblings = this.getHigherLevelSiblings(anchorNode, 'right'),
                     nothingAtRight = leftSiblings.every(function (node) {
-                    return node.textContent.length === 0;
+                    return $.isEmpty(node);
                 });
 
                 if (nothingAtRight && selection.anchorOffset === anchorNode.textContent.length) {

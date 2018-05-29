@@ -224,7 +224,9 @@ export default class Caret extends Module {
         if ($.isEmpty(firstNode)) {
 
             let leftSiblings = this.getHigherLevelSiblings(anchorNode, 'left'),
-                nothingAtLeft = leftSiblings.every( node => node.textContent.length === 0 );
+                nothingAtLeft = leftSiblings.every( node => $.isEmpty(node) );
+
+            console.log('nothing at left?', nothingAtLeft);
 
             if (nothingAtLeft && selection.anchorOffset === 0) {
 
@@ -267,7 +269,7 @@ export default class Caret extends Module {
         if ($.isEmpty(lastNode)) {
 
             let leftSiblings = this.getHigherLevelSiblings(anchorNode, 'right'),
-                nothingAtRight = leftSiblings.every( node => node.textContent.length === 0 );
+                nothingAtRight = leftSiblings.every( node => $.isEmpty(node) );
 
             if (nothingAtRight && selection.anchorOffset === anchorNode.textContent.length) {
 
