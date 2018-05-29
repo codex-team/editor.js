@@ -215,7 +215,7 @@ export default class Caret extends Module {
             firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
 
         /**
-         * Workaround case when caret in the text link " |Hello!"
+         * Workaround case when caret in the text like " |Hello!"
          * selection.anchorOffset is 1, but real caret visible position is 0
          * @type {number}
          */
