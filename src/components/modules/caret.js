@@ -233,6 +233,12 @@ export default class Caret extends Module {
              */
             let firstLetterPosition = anchorNode.textContent.search(/\S/);
 
+            if (firstLetterPosition === -1) { // empty text
+
+                firstLetterPosition = 0;
+
+            }
+
             if (nothingAtLeft && selection.anchorOffset === firstLetterPosition) {
 
                 return true;
