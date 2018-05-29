@@ -416,10 +416,20 @@ var Dom = function () {
 
     _createClass(Dom, null, [{
         key: 'isSingleTag',
-        value: function isSingleTag(tagName) {
 
-            return tagName && ['BR', 'HR', 'IMG'].includes(tagName);
+
+        /**
+         * Check if passed tag has no closed tag
+         * @param  {Element}  tag
+         * @return {Boolean}
+         */
+        value: function isSingleTag(tag) {
+
+            return tag.tagName && ['AREA', 'BASE', 'BR', 'COL', 'COMMAND', 'EMBED', 'HR', 'IMG', 'INPUT', 'KEYGEN', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'].includes(tag.tagName);
         }
+    }, {
+        key: 'make',
+
 
         /**
          * Helper for making Elements with classname and attributes
@@ -429,9 +439,6 @@ var Dom = function () {
          * @param  {Object} attributes        - any attributes
          * @return {Element}
          */
-
-    }, {
-        key: 'make',
         value: function make(tagName) {
             var classNames = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
             var attributes = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
@@ -565,7 +572,7 @@ var Dom = function () {
                 /**
                  * special case when child is single tag that can't contain any content
                  */
-                if (Dom.isSingleTag(nodeChild.tagName)) {
+                if (Dom.isSingleTag(nodeChild)) {
 
                     /**
                      * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
@@ -752,7 +759,7 @@ module.exports = exports['default'];
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -764,68 +771,76 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 var Selection = function () {
 
-    /**
-     * @constructor
-     */
-    function Selection() {
-        _classCallCheck(this, Selection);
+  /**
+   * @constructor
+   */
+  function Selection() {
+    _classCallCheck(this, Selection);
 
-        this.instance = null;
-        this.selection = null;
+    this.instance = null;
+    this.selection = null;
+  }
+
+  /**
+   * Returns window Selection
+   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+   * @return {Selection}
+   */
+
+
+  _createClass(Selection, null, [{
+    key: "get",
+    value: function get() {
+
+      return window.getSelection();
     }
 
     /**
-     * Returns window Selection
-     * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-     * @return {Selection}
+     * Returns selected anchor
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
+     * @return {Node|null}
      */
 
+  }, {
+    key: "getAnchorNode",
+    value: function getAnchorNode() {
 
-    _createClass(Selection, null, [{
-        key: "get",
-        value: function get() {
+      var selection = window.getSelection();
 
-            return window.getSelection();
-        }
+      return selection ? selection.anchorNode : null;
+    }
 
-        /**
-         * Returns selected anchor
-         * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
-         * @return {Node}
-         */
+    /**
+     * Returns selection offset according to the anchor node
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
+     * @return {Number|null}
+     */
 
-    }, {
-        key: "getAnchorNode",
-        value: function getAnchorNode() {
+  }, {
+    key: "getAnchorOffset",
+    value: function getAnchorOffset() {
 
-            var selection = window.getSelection();
+      var selection = window.getSelection();
 
-            if (selection) {
+      return selection ? selection.anchorOffset : null;
+    }
 
-                return selection.anchorNode;
-            }
-        }
+    /**
+     * Is current selection range collapsed
+     * @return {boolean|null}
+     */
 
-        /**
-         * Returns selection offset according to the anchor node
-         * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
-         * @return {Number}
-         */
+  }, {
+    key: "isCollapsed",
+    get: function get() {
 
-    }, {
-        key: "getAnchorOffset",
-        value: function getAnchorOffset() {
+      var selection = window.getSelection();
 
-            var selection = window.getSelection();
+      return selection ? selection.isCollapsed : null;
+    }
+  }]);
 
-            if (selection) {
-
-                return selection.anchorOffset;
-            }
-        }
-    }]);
-
-    return Selection;
+  return Selection;
 }();
 
 Selection.displayName = "Selection";
@@ -2643,6 +2658,14 @@ var Caret = function (_Module) {
         key: 'isAtStart',
         get: function get() {
 
+            /**
+             * Don't handle ranges
+             */
+            if (!_Selection2.default.isCollapsed) {
+
+                return false;
+            }
+
             var selection = _Selection2.default.get(),
                 anchorNode = selection.anchorNode,
                 firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
@@ -2678,6 +2701,14 @@ var Caret = function (_Module) {
     }, {
         key: 'isAtEnd',
         get: function get() {
+
+            /**
+             * Don't handle ranges
+             */
+            if (!_Selection2.default.isCollapsed) {
+
+                return false;
+            }
 
             var selection = _Selection2.default.get(),
                 anchorNode = selection.anchorNode,

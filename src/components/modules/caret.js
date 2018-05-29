@@ -201,6 +201,15 @@ export default class Caret extends Module {
      */
     get isAtStart() {
 
+        /**
+         * Don't handle ranges
+         */
+        if (!Selection.isCollapsed) {
+
+            return false;
+
+        }
+
         let selection = Selection.get(),
             anchorNode = selection.anchorNode,
             firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
@@ -234,6 +243,15 @@ export default class Caret extends Module {
      * @return {boolean}
      */
     get isAtEnd() {
+
+        /**
+         * Don't handle ranges
+         */
+        if (!Selection.isCollapsed) {
+
+            return false;
+
+        }
 
         let selection = Selection.get(),
             anchorNode = selection.anchorNode,

@@ -3,11 +3,17 @@
  */
 export default class Dom {
 
-    static isSingleTag(tagName) {
+    /**
+     * Check if passed tag has no closed tag
+     * @param  {Element}  tag
+     * @return {Boolean}
+     */
+    static isSingleTag(tag) {
 
-        return tagName && ['BR', 'HR', 'IMG'].includes(tagName);
+        return tag.tagName && ['AREA', 'BASE', 'BR', 'COL', 'COMMAND', 'EMBED', 'HR', 'IMG', 'INPUT', 'KEYGEN', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'].includes(tag.tagName);
 
-    }
+    };
+
 
     /**
      * Helper for making Elements with classname and attributes
@@ -131,7 +137,7 @@ export default class Dom {
             /**
              * special case when child is single tag that can't contain any content
              */
-            if (Dom.isSingleTag(nodeChild.tagName)) {
+            if (Dom.isSingleTag(nodeChild)) {
 
                 /**
                  * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
