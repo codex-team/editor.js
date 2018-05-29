@@ -140,13 +140,30 @@ export default class Caret extends Module {
     }
 
     /**
-    * Get all first-level (first child of [contenteditabel]) siblings from passed node
-    */
+     * Get all first-level (first child of [contenteditabel]) siblings from passed node
+     * Then you can check it for emptiness
+     *
+     * @example
+     * <div contenteditable>
+     *     <p></p>                            |
+     *     <p></p>                            | left first-level siblings
+     *     <p></p>                            |
+     *     <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
+     *     <p></p>                            |
+     *     <p></p>                            | right first-level siblings
+     *     <p></p>                            |
+     * </div>
+     *
+     * @return {Element[]}
+     */
     getHigherLevelSiblings(from, direction ) {
 
         let current = from,
             siblings = [];
 
+        /**
+         * Find passed node's firs-level parent (in example - blockquote)
+         */
         while (current.parentNode && current.parentNode.contentEditable !== 'true') {
 
             current = current.parentNode;
@@ -155,6 +172,9 @@ export default class Caret extends Module {
 
         let sibling = direction === 'left' ? 'previousSibling' : 'nextSibling';
 
+        /**
+         * Find all left/right siblings
+         */
         while (current[sibling]) {
 
             current = current[sibling];
