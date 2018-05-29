@@ -282,6 +282,10 @@ export default class Dom {
 
                 leafs.push(node);
 
+            } else {
+
+                treeWalker.push(node.firstChild);
+
             }
 
             while ( node && node.nextSibling ) {
@@ -300,12 +304,6 @@ export default class Dom {
             if (node && !this.isNodeEmpty(node)) {
 
                 return false;
-
-            }
-
-            if ( node.firstChild ) {
-
-                treeWalker.push(node.firstChild);
 
             }
 

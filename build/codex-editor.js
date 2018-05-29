@@ -61,7 +61,7 @@ var CodexEditor =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 4);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -714,6 +714,9 @@ var Dom = function () {
                 if (this.isLeaf(node)) {
 
                     leafs.push(node);
+                } else {
+
+                    treeWalker.push(node.firstChild);
                 }
 
                 while (node && node.nextSibling) {
@@ -731,11 +734,6 @@ var Dom = function () {
                 if (node && !this.isNodeEmpty(node)) {
 
                     return false;
-                }
-
-                if (node.firstChild) {
-
-                    treeWalker.push(node.firstChild);
                 }
             }
 
@@ -755,102 +753,6 @@ module.exports = exports['default'];
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Working with selection
- */
-var Selection = function () {
-
-  /**
-   * @constructor
-   */
-  function Selection() {
-    _classCallCheck(this, Selection);
-
-    this.instance = null;
-    this.selection = null;
-  }
-
-  /**
-   * Returns window Selection
-   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-   * @return {Selection}
-   */
-
-
-  _createClass(Selection, null, [{
-    key: "get",
-    value: function get() {
-
-      return window.getSelection();
-    }
-
-    /**
-     * Returns selected anchor
-     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
-     * @return {Node|null}
-     */
-
-  }, {
-    key: "getAnchorNode",
-    value: function getAnchorNode() {
-
-      var selection = window.getSelection();
-
-      return selection ? selection.anchorNode : null;
-    }
-
-    /**
-     * Returns selection offset according to the anchor node
-     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
-     * @return {Number|null}
-     */
-
-  }, {
-    key: "getAnchorOffset",
-    value: function getAnchorOffset() {
-
-      var selection = window.getSelection();
-
-      return selection ? selection.anchorOffset : null;
-    }
-
-    /**
-     * Is current selection range collapsed
-     * @return {boolean|null}
-     */
-
-  }, {
-    key: "isCollapsed",
-    get: function get() {
-
-      var selection = window.getSelection();
-
-      return selection ? selection.isCollapsed : null;
-    }
-  }]);
-
-  return Selection;
-}();
-
-Selection.displayName = "Selection";
-exports.default = Selection;
-module.exports = exports["default"];
-
-/***/ }),
-/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -926,7 +828,7 @@ module.exports = exports["default"];
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-__webpack_require__(5);
+__webpack_require__(4);
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -935,7 +837,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 // eslint-disable-next-line
 var modules = ["blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-    return __webpack_require__(6)("./" + module);
+    return __webpack_require__(5)("./" + module);
 });
 
 /**
@@ -1311,7 +1213,7 @@ module.exports = function () {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 5 */
+/* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1338,12 +1240,12 @@ if (!Element.prototype.closest) Element.prototype.closest = function (s) {
 };
 
 /***/ }),
-/* 6 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./blockManager.js": 7,
-	"./caret.js": 9,
+	"./blockManager.js": 6,
+	"./caret.js": 8,
 	"./events.js": 10,
 	"./keyboard.js": 11,
 	"./listeners.js": 12,
@@ -1370,10 +1272,10 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 6;
+webpackContext.id = 5;
 
 /***/ }),
-/* 7 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1385,7 +1287,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _block = __webpack_require__(8);
+var _block = __webpack_require__(7);
 
 var _block2 = _interopRequireDefault(_block);
 
@@ -2123,7 +2025,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 8 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2416,7 +2318,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 9 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2428,7 +2330,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Selection = __webpack_require__(3);
+var _Selection = __webpack_require__(9);
 
 var _Selection2 = _interopRequireDefault(_Selection);
 
@@ -2755,6 +2657,102 @@ Caret.displayName = 'Caret';
 exports.default = Caret;
 module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Working with selection
+ */
+var Selection = function () {
+
+  /**
+   * @constructor
+   */
+  function Selection() {
+    _classCallCheck(this, Selection);
+
+    this.instance = null;
+    this.selection = null;
+  }
+
+  /**
+   * Returns window Selection
+   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+   * @return {Selection}
+   */
+
+
+  _createClass(Selection, null, [{
+    key: "get",
+    value: function get() {
+
+      return window.getSelection();
+    }
+
+    /**
+     * Returns selected anchor
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
+     * @return {Node|null}
+     */
+
+  }, {
+    key: "getAnchorNode",
+    value: function getAnchorNode() {
+
+      var selection = window.getSelection();
+
+      return selection ? selection.anchorNode : null;
+    }
+
+    /**
+     * Returns selection offset according to the anchor node
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
+     * @return {Number|null}
+     */
+
+  }, {
+    key: "getAnchorOffset",
+    value: function getAnchorOffset() {
+
+      var selection = window.getSelection();
+
+      return selection ? selection.anchorOffset : null;
+    }
+
+    /**
+     * Is current selection range collapsed
+     * @return {boolean|null}
+     */
+
+  }, {
+    key: "isCollapsed",
+    get: function get() {
+
+      var selection = window.getSelection();
+
+      return selection ? selection.isCollapsed : null;
+    }
+  }]);
+
+  return Selection;
+}();
+
+Selection.displayName = "Selection";
+exports.default = Selection;
+module.exports = exports["default"];
 
 /***/ }),
 /* 10 */
