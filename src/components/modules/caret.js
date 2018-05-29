@@ -215,6 +215,19 @@ export default class Caret extends Module {
             firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
 
         /**
+         * Workaround case when caret in the text link " |Hello!"
+         * selection.anchorOffset is 1, but real caret visible position is 0
+         * @type {number}
+         */
+        let firstLetterPosition = anchorNode.textContent.search(/\S/);
+
+        if (firstLetterPosition === -1) { // empty text
+
+            firstLetterPosition = 0;
+
+        }
+
+        /**
          * In case of
          * <div contenteditable>
          *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
@@ -226,18 +239,7 @@ export default class Caret extends Module {
             let leftSiblings = this.getHigherLevelSiblings(anchorNode, 'left'),
                 nothingAtLeft = leftSiblings.every( node => $.isEmpty(node) );
 
-            /**
-             * Workaround case when caret in the text link " |Hello!"
-             * selection.anchorOffset is 1, but real caret visible position is 0
-             * @type {number}
-             */
-            let firstLetterPosition = anchorNode.textContent.search(/\S/);
 
-            if (firstLetterPosition === -1) { // empty text
-
-                firstLetterPosition = 0;
-
-            }
 
             if (nothingAtLeft && selection.anchorOffset === firstLetterPosition) {
 
@@ -247,7 +249,7 @@ export default class Caret extends Module {
 
         }
 
-        return firstNode === null || anchorNode === firstNode && selection.anchorOffset === 0;
+        return firstNode === null || anchorNode === firstNode && selection.anchorOffset === firstLetterPosition;
 
     }
 
