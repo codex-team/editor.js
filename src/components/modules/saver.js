@@ -73,7 +73,7 @@ export default class Saver extends Module {
 
         console.groupCollapsed('[CodexEditor saving]:');
 
-        allExtractedData.forEach((extraction, index) => {
+        allExtractedData.forEach((extraction) => {
 
             /** Group process info */
             console.log(`«${extraction.tool}» saving info`, extraction);

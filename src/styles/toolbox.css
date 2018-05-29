@@ -1,4 +1,5 @@
 .ce-toolbox {
+    position: absolute;
     visibility: hidden;
     transition: opacity 100ms ease;
     will-change: opacity;

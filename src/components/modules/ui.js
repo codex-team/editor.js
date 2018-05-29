@@ -75,13 +75,15 @@ export default class UI extends Module {
      */
     prepare() {
 
-        // this.Editor.Toolbar.make();
-
         return this.make()
             /**
              * Make toolbar
              */
             .then(() => this.Editor.Toolbar.make())
+            /**
+             * Make the Inline toolbar
+             */
+            .then(() => this.Editor.InlineToolbar.make())
             /**
              * Load and append CSS
              */
