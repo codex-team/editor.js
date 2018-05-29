@@ -2689,7 +2689,7 @@ var Caret = function (_Module) {
                     return node.textContent.length === 0;
                 });
 
-                if (nothingAtRight && selection.anchorOffset === 0) {
+                if (nothingAtRight && selection.anchorOffset === anchorNode.textContent.length) {
 
                     return true;
                 }
