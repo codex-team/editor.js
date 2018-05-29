@@ -144,9 +144,6 @@ export default class Keyboard extends Module {
         BM.mergeBlocks(targetBlock, blockToMerge)
             .then( () => {
 
-                // decrease current block index so that to know current actual
-                BM.currentBlockIndex--;
-
                 window.setTimeout( () => {
 
                     // set caret to the block without offset at the end

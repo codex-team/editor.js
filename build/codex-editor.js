@@ -1527,6 +1527,7 @@ var BlockManager = function (_Module) {
             }).then(function () {
 
                 _this4.removeBlock(blockToMergeIndex);
+                _this4.currentBlockIndex = _this4._blocks.indexOf(targetBlock);
             });
         }
 
@@ -2570,7 +2571,7 @@ var Caret = function (_Module) {
                 firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
 
             /**
-             * Workaround case when caret in the text link " |Hello!"
+             * Workaround case when caret in the text like " |Hello!"
              * selection.anchorOffset is 1, but real caret visible position is 0
              * @type {number}
              */
@@ -3030,9 +3031,6 @@ var Keyboard = function (_Module) {
             var setCaretToTheEnd = !targetBlock.isEmpty ? true : false;
 
             BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
-
-                // decrease current block index so that to know current actual
-                BM.currentBlockIndex--;
 
                 window.setTimeout(function () {
 

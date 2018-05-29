@@ -214,6 +214,7 @@ export default class BlockManager extends Module {
             .then( () => {
 
                 this.removeBlock(blockToMergeIndex);
+                this.currentBlockIndex = this._blocks.indexOf(targetBlock);
 
             });
 
