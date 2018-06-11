@@ -86,248 +86,197 @@ let modules = editorModules.map( module => require('./components/modules/' + mod
  * @type {CodexEditor}
  */
 export default class CodexEditor {
+  /** Editor version */
+  static get version() {
+    return VERSION;
+  }
 
-    /** Editor version */
-    static get version() {
+  /**
+   * @param {EditorConfig} config - user configuration
+   *
+   */
+  constructor(config) {
+    /**
+     * Configuration object
+     * @type {EditorConfig}
+     */
+    this.config = {};
 
-        return VERSION;
+    /**
+     * @typedef {Object} EditorComponents
+     * @property {BlockManager} BlockManager
+     * @property {Tools} Tools
+     * @property {Events} Events
+     * @property {UI} UI
+     * @property {Toolbar} Toolbar
+     * @property {Toolbox} Toolbox
+     * @property {BlockSettings} BlockSettings
+     * @property {Renderer} Renderer
+     * @property {InlineToolbar} InlineToolbar
+     */
+    this.moduleInstances = {};
 
+    Promise.resolve()
+      .then(() => {
+        this.configuration = config;
+      })
+      .then(() => this.init())
+      .then(() => this.start())
+      .then(() => {
+        console.log('CodeX Editor is ready!');
+      })
+      .catch(error => {
+        console.log('CodeX Editor does not ready because of %o', error);
+      });
+  }
+
+  /**
+   * Setting for configuration
+   * @param {EditorConfig} config
+   */
+  set configuration(config) {
+    /**
+     * Initlai block type
+     * Uses in case when there is no items passed
+     * @type {{type: (*), data: {text: null}}}
+     */
+    let initialBlock = {
+      type : config.initialBlock,
+      data : {}
+    };
+
+    this.config.holderId = config.holderId;
+    this.config.placeholder = config.placeholder || 'write your story...';
+    this.config.sanitizer = config.sanitizer || {
+      p: true,
+      b: true,
+      a: true
+    };
+
+    this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
+    this.config.tools = config.tools || {};
+    this.config.toolsConfig = config.toolsConfig || {};
+    this.config.data = config.data || {};
+
+    /**
+     * Initialize items to pass data to the Renderer
+     */
+    if (_.isEmpty(this.config.data)) {
+      this.config.data = {};
+      this.config.data.items = [ initialBlock ];
+    } else {
+      if (!this.config.data.items || this.config.data.items.length === 0) {
+        this.config.data.items = [ initialBlock ];
+      }
     }
 
     /**
-     * @param {EditorConfig} config - user configuration
-     *
+     * If initial Block's Tool was not passed, use the first Tool in config.tools
      */
-    constructor(config) {
-
-        /**
-         * Configuration object
-         * @type {EditorConfig}
-         */
-        this.config = {};
-
-        /**
-         * @typedef {Object} EditorComponents
-         * @property {BlockManager} BlockManager
-         * @property {Tools} Tools
-         * @property {Events} Events
-         * @property {UI} UI
-         * @property {Toolbar} Toolbar
-         * @property {Toolbox} Toolbox
-         * @property {BlockSettings} BlockSettings
-         * @property {Renderer} Renderer
-         * @property {InlineToolbar} InlineToolbar
-         */
-        this.moduleInstances = {};
-
-        Promise.resolve()
-            .then(() => {
-
-                this.configuration = config;
-
-            })
-            .then(() => this.init())
-            .then(() => this.start())
-            .then(() => {
-
-                console.log('CodeX Editor is ready!');
-
-            })
-            .catch(error => {
-
-                console.log('CodeX Editor does not ready because of %o', error);
-
-            });
-
+    if (!config.initialBlock) {
+      for (this.config.initialBlock in this.config.tools) break;
+    } else {
+      this.config.initialBlock = config.initialBlock;
     }
+  }
 
-    /**
-     * Setting for configuration
-     * @param {EditorConfig} config
-     */
-    set configuration(config) {
+  /**
+   * Returns private property
+   * @returns {EditorConfig}
+   */
+  get configuration() {
+    return this.config;
+  }
 
-        /**
-         * Initlai block type
-         * Uses in case when there is no items passed
-         * @type {{type: (*), data: {text: null}}}
-         */
-        let initialBlock = {
-            type : config.initialBlock,
-            data : {}
-        };
-
-        this.config.holderId = config.holderId;
-        this.config.placeholder = config.placeholder || 'write your story...';
-        this.config.sanitizer = config.sanitizer || {
-            p: true,
-            b: true,
-            a: true
-        };
-
-        this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
-        this.config.tools = config.tools || {};
-        this.config.toolsConfig = config.toolsConfig || {};
-        this.config.data = config.data || {};
-
-        /**
-         * Initialize items to pass data to the Renderer
-         */
-        if (_.isEmpty(this.config.data)) {
-
-            this.config.data = {};
-            this.config.data.items = [ initialBlock ];
-
-        } else {
-
-            if (!this.config.data.items || this.config.data.items.length === 0) {
-
-                this.config.data.items = [ initialBlock ];
-
-            }
-
-        }
-
-        /**
-         * If initial Block's Tool was not passed, use the first Tool in config.tools
-         */
-        if (!config.initialBlock) {
-
-            for (this.config.initialBlock in this.config.tools) break;
-
-        } else {
-
-            this.config.initialBlock = config.initialBlock;
-
-        }
-
-    }
-
-    /**
-     * Returns private property
-     * @returns {EditorConfig}
-     */
-    get configuration() {
-
-        return this.config;
-
-    }
-
-    /**
-     * Initializes modules:
-     *  - make and save instances
-     *  - configure
-     */
-    init() {
-
-        /**
-         * Make modules instances and save it to the @property this.moduleInstances
-         */
-        this.constructModules();
-
-        /**
-         * Modules configuration
-         */
-        this.configureModules();
-
-    }
-
+  /**
+   * Initializes modules:
+   *  - make and save instances
+   *  - configure
+   */
+  init() {
     /**
      * Make modules instances and save it to the @property this.moduleInstances
      */
-    constructModules() {
+    this.constructModules();
 
-        modules.forEach( Module => {
+    /**
+     * Modules configuration
+     */
+    this.configureModules();
+  }
 
-            try {
-
-                /**
-                 * We use class name provided by displayName property
-                 *
-                 * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
-                 * To prevent this, we use 'babel-plugin-class-display-name' plugin
-                 * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
-                 */
-                this.moduleInstances[Module.displayName] = new Module({
-                    config : this.configuration
-                });
-
-            } catch ( e ) {
-
-                console.log('Module %o skipped because %o', Module, e);
-
-            }
-
+  /**
+   * Make modules instances and save it to the @property this.moduleInstances
+   */
+  constructModules() {
+    modules.forEach( Module => {
+      try {
+        /**
+         * We use class name provided by displayName property
+         *
+         * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
+         * To prevent this, we use 'babel-plugin-class-display-name' plugin
+         * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
+         */
+        this.moduleInstances[Module.displayName] = new Module({
+          config : this.configuration
         });
+      } catch ( e ) {
+        console.log('Module %o skipped because %o', Module, e);
+      }
+    });
+  }
 
+  /**
+   * Modules instances configuration:
+   *  - pass other modules to the 'state' property
+   *  - ...
+   */
+  configureModules() {
+    for(let name in this.moduleInstances) {
+      /**
+       * Module does not need self-instance
+       */
+      this.moduleInstances[name].state = this.getModulesDiff( name );
+    }
+  }
+
+  /**
+   * Return modules without passed name
+   */
+  getModulesDiff( name ) {
+    let diff = {};
+
+    for(let moduleName in this.moduleInstances) {
+      /**
+       * Skip module with passed name
+       */
+      if (moduleName === name) {
+        continue;
+      }
+      diff[moduleName] = this.moduleInstances[moduleName];
     }
 
-    /**
-     * Modules instances configuration:
-     *  - pass other modules to the 'state' property
-     *  - ...
-     */
-    configureModules() {
+    return diff;
+  }
 
-        for(let name in this.moduleInstances) {
+  /**
+   * Start Editor!
+   *
+   * Get list of modules that needs to be prepared and return a sequence (Promise)
+   * @return {Promise}
+   */
+  start() {
+    let prepareDecorator = module => module.prepare();
 
-            /**
-             * Module does not need self-instance
-             */
-            this.moduleInstances[name].state = this.getModulesDiff( name );
-
-        }
-
-    }
-
-    /**
-     * Return modules without passed name
-     */
-    getModulesDiff( name ) {
-
-        let diff = {};
-
-        for(let moduleName in this.moduleInstances) {
-
-            /**
-             * Skip module with passed name
-             */
-            if (moduleName === name) {
-
-                continue;
-
-            }
-            diff[moduleName] = this.moduleInstances[moduleName];
-
-        }
-
-        return diff;
-
-    }
-
-    /**
-     * Start Editor!
-     *
-     * Get list of modules that needs to be prepared and return a sequence (Promise)
-     * @return {Promise}
-     */
-    start() {
-
-        let prepareDecorator = module => module.prepare();
-
-        return Promise.resolve()
-            .then(prepareDecorator(this.moduleInstances.Tools))
-            .then(prepareDecorator(this.moduleInstances.UI))
-            .then(prepareDecorator(this.moduleInstances.BlockManager))
-            .then(() => {
-
-                return this.moduleInstances.Renderer.render(this.config.data.items);
-
-
-            });
-
-    }
-
+    return Promise.resolve()
+      .then(prepareDecorator(this.moduleInstances.Tools))
+      .then(prepareDecorator(this.moduleInstances.UI))
+      .then(prepareDecorator(this.moduleInstances.BlockManager))
+      .then(() => {
+        return this.moduleInstances.Renderer.render(this.config.data.items);
+      });
+  }
 };
 
 // module.exports = (function (editor) {

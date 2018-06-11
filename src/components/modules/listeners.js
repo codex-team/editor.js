@@ -15,203 +15,164 @@
  */
 
 export default class Listeners extends Module {
+  /**
+   * @constructor
+   * @param {EditorConfig} config
+   */
+  constructor({config}) {
+    super({config});
+    this.allListeners = [];
+  }
 
-    /**
-     * @constructor
-     * @param {EditorConfig} config
-     */
-    constructor({config}) {
+  /**
+   * Assigns event listener on element
+   *
+   * @param {Element} element - DOM element that needs to be listened
+   * @param {String} eventType - event type
+   * @param {Function} handler - method that will be fired on event
+   * @param {Boolean} useCapture - use event bubbling
+   */
+  on(element, eventType, handler, useCapture = false) {
+    let assignedEventData = {
+      element,
+      eventType,
+      handler,
+      useCapture
+    };
 
-        super({config});
-        this.allListeners = [];
+    let alreadyExist = this.findOne(element, eventType, handler);
 
+    if (alreadyExist) return;
+
+    this.allListeners.push(assignedEventData);
+    element.addEventListener(eventType, handler, useCapture);
+  }
+
+  /**
+   * Removes event listener from element
+   *
+   * @param {Element} element - DOM element that we removing listener
+   * @param {String} eventType - event type
+   * @param {Function} handler - remove handler, if element listens several handlers on the same event type
+   * @param {Boolean} useCapture - use event bubbling
+   */
+  off(element, eventType, handler, useCapture = false) {
+    let existingListeners = this.findAll(element, eventType, handler);
+
+    for (let i = 0; i < existingListeners.length; i++) {
+      let index = this.allListeners.indexOf(existingListeners[i]);
+
+      if (index > 0) {
+        this.allListeners.splice(index, 1);
+      }
     }
 
-    /**
-     * Assigns event listener on element
-     *
-     * @param {Element} element - DOM element that needs to be listened
-     * @param {String} eventType - event type
-     * @param {Function} handler - method that will be fired on event
-     * @param {Boolean} useCapture - use event bubbling
-     */
-    on(element, eventType, handler, useCapture = false) {
+    element.removeEventListener(eventType, handler, useCapture);
+  }
 
-        let assignedEventData = {
-            element,
-            eventType,
-            handler,
-            useCapture
-        };
+  /**
+   * Search method: looks for listener by passed element
+   * @param {Element} element - searching element
+   * @returns {Array} listeners that found on element
+   */
+  findByElement(element) {
+    let listenersOnElement = [];
 
-        let alreadyExist = this.findOne(element, eventType, handler);
+    for (let i = 0; i < this.allListeners.length; i++) {
+      let listener = this.allListeners[i];
 
-        if (alreadyExist) return;
-
-        this.allListeners.push(assignedEventData);
-        element.addEventListener(eventType, handler, useCapture);
-
+      if (listener.element === element) {
+        listenersOnElement.push(listener);
+      }
     }
 
-    /**
-     * Removes event listener from element
-     *
-     * @param {Element} element - DOM element that we removing listener
-     * @param {String} eventType - event type
-     * @param {Function} handler - remove handler, if element listens several handlers on the same event type
-     * @param {Boolean} useCapture - use event bubbling
-     */
-    off(element, eventType, handler, useCapture = false) {
+    return listenersOnElement;
+  }
 
-        let existingListeners = this.findAll(element, eventType, handler);
+  /**
+   * Search method: looks for listener by passed event type
+   * @param {String} eventType
+   * @return {Array} listeners that found on element
+   */
+  findByType(eventType) {
+    let listenersWithType = [];
 
-        for (let i = 0; i < existingListeners.length; i++) {
+    for (let i = 0; i < this.allListeners.length; i++) {
+      let listener = this.allListeners[i];
 
-            let index = this.allListeners.indexOf(existingListeners[i]);
-
-            if (index > 0) {
-
-                this.allListeners.splice(index, 1);
-
-            }
-
-        }
-
-        element.removeEventListener(eventType, handler, useCapture);
-
-
+      if (listener.type === eventType) {
+        listenersWithType.push(listener);
+      }
     }
 
-    /**
-     * Search method: looks for listener by passed element
-     * @param {Element} element - searching element
-     * @returns {Array} listeners that found on element
-     */
-    findByElement(element) {
+    return listenersWithType;
+  }
 
-        let listenersOnElement = [];
+  /**
+   * Search method: looks for listener by passed handler
+   * @param {Function} handler
+   * @return {Array} listeners that found on element
+   */
+  findByHandler(handler) {
+    let listenersWithHandler = [];
 
-        for (let i = 0; i < this.allListeners.length; i++) {
+    for (let i = 0; i < this.allListeners.length; i++) {
+      let listener = this.allListeners[i];
 
-            let listener = this.allListeners[i];
-
-            if (listener.element === element) {
-
-                listenersOnElement.push(listener);
-
-            }
-
-        }
-
-        return listenersOnElement;
-
+      if (listener.handler === handler) {
+        listenersWithHandler.push(listener);
+      }
     }
 
-    /**
-     * Search method: looks for listener by passed event type
-     * @param {String} eventType
-     * @return {Array} listeners that found on element
-     */
-    findByType(eventType) {
+    return listenersWithHandler;
+  }
 
-        let listenersWithType = [];
+  /**
+   * @param {Element} element
+   * @param {String} eventType
+   * @param {Function} handler
+   * @return {Element|null}
+   */
+  findOne(element, eventType, handler) {
+    let foundListeners = this.findAll(element, eventType, handler);
 
-        for (let i = 0; i < this.allListeners.length; i++) {
+    return foundListeners.length > 0 ? foundListeners[0] : null;
+  }
 
-            let listener = this.allListeners[i];
+  /**
+   * @param {Element} element
+   * @param {String} eventType
+   * @param {Function} handler
+   * @return {Array}
+   */
+  findAll(element, eventType, handler) {
+    let foundAllListeners,
+      foundByElements = [],
+      foundByEventType = [],
+      foundByHandler = [];
 
-            if (listener.type === eventType) {
+    if (element)
+      foundByElements = this.findByElement(element);
 
-                listenersWithType.push(listener);
+    if (eventType)
+      foundByEventType = this.findByType(eventType);
 
-            }
+    if (handler)
+      foundByHandler = this.findByHandler(handler);
 
-        }
+    foundAllListeners = foundByElements.concat(foundByEventType, foundByHandler);
 
-        return listenersWithType;
+    return foundAllListeners;
+  }
 
-    }
+  /**
+   * Removes all listeners
+   */
+  removeAll() {
+    this.allListeners.map( (current) => {
+      current.element.removeEventListener(current.eventType, current.handler);
+    });
 
-    /**
-     * Search method: looks for listener by passed handler
-     * @param {Function} handler
-     * @return {Array} listeners that found on element
-     */
-    findByHandler(handler) {
-
-        let listenersWithHandler = [];
-
-        for (let i = 0; i < this.allListeners.length; i++) {
-
-            let listener = this.allListeners[i];
-
-            if (listener.handler === handler) {
-
-                listenersWithHandler.push(listener);
-
-            }
-
-        }
-
-        return listenersWithHandler;
-
-    }
-
-    /**
-     * @param {Element} element
-     * @param {String} eventType
-     * @param {Function} handler
-     * @return {Element|null}
-     */
-    findOne(element, eventType, handler) {
-
-        let foundListeners = this.findAll(element, eventType, handler);
-
-        return foundListeners.length > 0 ? foundListeners[0] : null;
-
-    }
-
-    /**
-     * @param {Element} element
-     * @param {String} eventType
-     * @param {Function} handler
-     * @return {Array}
-     */
-    findAll(element, eventType, handler) {
-
-        let foundAllListeners,
-            foundByElements = [],
-            foundByEventType = [],
-            foundByHandler = [];
-
-        if (element)
-            foundByElements = this.findByElement(element);
-
-        if (eventType)
-            foundByEventType = this.findByType(eventType);
-
-        if (handler)
-            foundByHandler = this.findByHandler(handler);
-
-        foundAllListeners = foundByElements.concat(foundByEventType, foundByHandler);
-
-        return foundAllListeners;
-
-    }
-
-    /**
-     * Removes all listeners
-     */
-    removeAll() {
-
-        this.allListeners.map( (current) => {
-
-            current.element.removeEventListener(current.eventType, current.handler);
-
-        });
-
-        this.allListeners = [];
-
-    }
-
+    this.allListeners = [];
+  }
 }

@@ -6,28 +6,28 @@
 // let className = {
 
 /**
-     * @const {string} BLOCK_CLASSNAME - redactor blocks name
-     */
+ * @const {string} BLOCK_CLASSNAME - redactor blocks name
+ */
 // BLOCK_CLASSNAME : 'ce-block',
 
 /**
-     * @const {String} wrapper for plugins content
-     */
+ * @const {String} wrapper for plugins content
+ */
 // BLOCK_CONTENT : 'ce-block__content',
 
 /**
-     * @const {String} BLOCK_STRETCHED - makes block stretched
-     */
+ * @const {String} BLOCK_STRETCHED - makes block stretched
+ */
 // BLOCK_STRETCHED : 'ce-block--stretched',
 
 /**
-     * @const {String} BLOCK_HIGHLIGHTED - adds background
-     */
+ * @const {String} BLOCK_HIGHLIGHTED - adds background
+ */
 // BLOCK_HIGHLIGHTED : 'ce-block--focused',
 
 /**
-     * @const {String} - for all default settings
-     */
+ * @const {String} - for all default settings
+ */
 // SETTINGS_ITEM : 'ce-settings__item'
 // };
 
@@ -52,307 +52,279 @@
  * @property {Element} nodes.redactor - <ce-redactor>
  */
 export default class UI extends Module {
+  /**
+   * @constructor
+   *
+   * @param  {EditorConfig} config
+   */
+  constructor({config}) {
+    super({config});
 
-    /**
-     * @constructor
-     *
-     * @param  {EditorConfig} config
-     */
-    constructor({config}) {
+    this.nodes = {
+      holder: null,
+      wrapper: null,
+      redactor: null
+    };
+  }
 
-        super({config});
+  /**
+   * Making main interface
+   */
+  prepare() {
+    return this.make()
+      /**
+       * Make toolbar
+       */
+      .then(() => this.Editor.Toolbar.make())
+      /**
+       * Make the Inline toolbar
+       */
+      .then(() => this.Editor.InlineToolbar.make())
+      /**
+       * Load and append CSS
+       */
+      .then(() => this.loadStyles())
+      /**
+       * Bind events for the UI elements
+       */
+      .then(() => this.bindEvents())
 
-        this.nodes = {
-            holder: null,
-            wrapper: null,
-            redactor: null
-        };
+    /** Make container for inline toolbar */
+    // .then(makeInlineToolbar_)
 
-    }
+    /** Add inline toolbar tools */
+    // .then(addInlineToolbarTools_)
 
-    /**
-     * Making main interface
-     */
-    prepare() {
+    /** Draw wrapper for notifications */
+    // .then(makeNotificationHolder_)
 
-        return this.make()
-            /**
-             * Make toolbar
-             */
-            .then(() => this.Editor.Toolbar.make())
-            /**
-             * Make the Inline toolbar
-             */
-            .then(() => this.Editor.InlineToolbar.make())
-            /**
-             * Load and append CSS
-             */
-            .then(() => this.loadStyles())
-            /**
-             * Bind events for the UI elements
-             */
-            .then(() => this.bindEvents())
+    /** Add eventlisteners to redactor elements */
+    // .then(bindEvents_)
 
-        /** Make container for inline toolbar */
-        // .then(makeInlineToolbar_)
+      .catch(e => {
+        console.error(e);
 
-        /** Add inline toolbar tools */
-        // .then(addInlineToolbarTools_)
+        // editor.core.log("Can't draw editor interface");
+      });
+  }
 
-        /** Draw wrapper for notifications */
-        // .then(makeNotificationHolder_)
-
-        /** Add eventlisteners to redactor elements */
-        // .then(bindEvents_)
-
-            .catch(e => {
-
-                console.error(e);
-
-            // editor.core.log("Can't draw editor interface");
-
-            });
-
-    }
-
-    /**
+  /**
      * CodeX Editor UI CSS class names
      * @return {{editorWrapper: string, editorZone: string, block: string}}
      */
-    get CSS() {
+  get CSS() {
+    return {
+      editorWrapper : 'codex-editor',
+      editorZone    : 'codex-editor__redactor',
+    };
+  }
 
-        return {
-            editorWrapper : 'codex-editor',
-            editorZone    : 'codex-editor__redactor',
-        };
-
-    }
-
-    /**
+  /**
      * Makes CodeX Editor interface
      * @return {Promise<any>}
      */
-    make() {
+  make() {
+    return new Promise( (resolve, reject) => {
+      /**
+       * Element where we need to append CodeX Editor
+       * @type {Element}
+       */
+      this.nodes.holder = document.getElementById(this.config.holderId);
 
-        return new Promise( (resolve, reject) => {
+      if (!this.nodes.holder) {
+        reject(Error("Holder wasn't found by ID: #" + this.config.holderId));
+        return;
+      }
 
-            /**
-             * Element where we need to append CodeX Editor
-             * @type {Element}
-             */
-            this.nodes.holder = document.getElementById(this.config.holderId);
+      /**
+       * Create and save main UI elements
+       */
+      this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
+      this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
-            if (!this.nodes.holder) {
+      this.nodes.wrapper.appendChild(this.nodes.redactor);
+      this.nodes.holder.appendChild(this.nodes.wrapper);
 
-                reject(Error("Holder wasn't found by ID: #" + this.config.holderId));
-                return;
+      resolve();
+    });
+  }
 
-            }
-
-            /**
-             * Create and save main UI elements
-             */
-            this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
-            this.nodes.redactor = $.make('div', this.CSS.editorZone);
-
-            this.nodes.wrapper.appendChild(this.nodes.redactor);
-            this.nodes.holder.appendChild(this.nodes.wrapper);
-
-            resolve();
-
-        });
-
-    }
+  /**
+   * Appends CSS
+   */
+  loadStyles() {
+    /**
+     * Load CSS
+     */
+    let styles = require('../../styles/main.css');
 
     /**
-     * Appends CSS
+     * Make tag
      */
-    loadStyles() {
-
-        /**
-         * Load CSS
-         */
-        let styles = require('../../styles/main.css');
-
-        /**
-         * Make tag
-         */
-        let tag = $.make('style', null, {
-            textContent: styles.toString()
-        });
-
-        /**
-         * Append styles
-         */
-        $.append(document.head, tag);
-
-    }
+    let tag = $.make('style', null, {
+      textContent: styles.toString()
+    });
 
     /**
-     * Bind events on the CodeX Editor interface
+     * Append styles
      */
-    bindEvents() {
+    $.append(document.head, tag);
+  }
 
-        /**
-         * @todo bind events with the Listeners module
-         */
-        this.Editor.Listeners.on(this.nodes.redactor, 'click', event => this.redactorClicked(event), false );
+  /**
+   * Bind events on the CodeX Editor interface
+   */
+  bindEvents() {
+    /**
+     * @todo bind events with the Listeners module
+     */
+    this.Editor.Listeners.on(this.nodes.redactor, 'click', event => this.redactorClicked(event), false );
+  }
 
-    }
+  /**
+   * All clicks on the redactor zone
+   *
+   * @param {MouseEvent} event
+   *
+   * @description
+   * 1. Save clicked Block as a current {@link BlockManager#currentNode}
+   *      it uses for the following:
+   *      - add CSS modifier for the selected Block
+   *      - on Enter press, we make a new Block under that
+   *
+   * 2. Move and show the Toolbar
+   *
+   * 3. Set a Caret
+   *
+   * 4. By clicks on the Editor's bottom zone:
+   *      - if last Block is empty, set a Caret to this
+   *      - otherwise, add a new empty Block and set a Caret to that
+   *
+   * 5. Hide the Inline Toolbar
+   *
+   * @see selectClickedBlock
+   *
+   */
+  redactorClicked(event) {
+    let clickedNode = event.target;
 
     /**
-     * All clicks on the redactor zone
-     *
-     * @param {MouseEvent} event
-     *
-     * @description
-     * 1. Save clicked Block as a current {@link BlockManager#currentNode}
-     *      it uses for the following:
-     *      - add CSS modifier for the selected Block
-     *      - on Enter press, we make a new Block under that
-     *
-     * 2. Move and show the Toolbar
-     *
-     * 3. Set a Caret
-     *
-     * 4. By clicks on the Editor's bottom zone:
-     *      - if last Block is empty, set a Caret to this
-     *      - otherwise, add a new empty Block and set a Caret to that
-     *
-     * 5. Hide the Inline Toolbar
-     *
-     * @see selectClickedBlock
-     *
+     * Select clicked Block as Current
      */
-    redactorClicked(event) {
-
-        let clickedNode = event.target;
-
-        /**
-         * Select clicked Block as Current
-         */
-        try {
-
-            this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
-
-        } catch (e) {
-
-            /**
-             * If clicked outside first-level Blocks, set Caret to the last empty Block
-             */
-            this.Editor.Caret.setToTheLastBlock();
-
-        }
+    try {
+      this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+    } catch (e) {
+      /**
+       * If clicked outside first-level Blocks, set Caret to the last empty Block
+       */
+      this.Editor.Caret.setToTheLastBlock();
+    }
 
 
-        /**
-         * @todo hide the Inline Toolbar
-         */
-        // var selectedText = editor.toolbar.inline.getSelectionText(),
-        //     firstLevelBlock;
+    /**
+     * @todo hide the Inline Toolbar
+     */
+    // var selectedText = editor.toolbar.inline.getSelectionText(),
+    //     firstLevelBlock;
 
-        /** If selection range took off, then we hide inline toolbar */
-        // if (selectedText.length === 0) {
+    /** If selection range took off, then we hide inline toolbar */
+    // if (selectedText.length === 0) {
 
-        // editor.toolbar.inline.close();
+    // editor.toolbar.inline.close();
 
-        // }
+    // }
 
-        /**
+    /**
          *
 
         /** Update current input index in memory when caret focused into existed input */
-        // if (event.target.contentEditable == 'true') {
-        //
-        //     editor.caret.saveCurrentInputIndex();
-        //
-        // }
+    // if (event.target.contentEditable == 'true') {
+    //
+    //     editor.caret.saveCurrentInputIndex();
+    //
+    // }
 
-        // if (editor.content.currentNode === null) {
-        //
-        //     /**
-        //      * If inputs in redactor does not exits, then we put input index 0 not -1
-        //      */
-        //     var indexOfLastInput = editor.state.inputs.length > 0 ? editor.state.inputs.length - 1 : 0;
-        //
-        //     /** If we have any inputs */
-        //     if (editor.state.inputs.length) {
-        //
-        //         /** getting firstlevel parent of input */
-        //         firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
-        //
-        //     }
-        //
-        //     /** If input is empty, then we set caret to the last input */
-        //     if (editor.state.inputs.length && editor.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == editor.settings.initialBlockPlugin) {
-        //
-        //         editor.caret.setToBlock(indexOfLastInput);
-        //
-        //     } else {
-        //
-        //         /** Create new input when caret clicked in redactors area */
-        //         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
-        //
-        //         editor.content.insertBlock({
-        //             type  : NEW_BLOCK_TYPE,
-        //             block : editor.tools[NEW_BLOCK_TYPE].render()
-        //         });
-        //
-        //         /** If there is no inputs except inserted */
-        //         if (editor.state.inputs.length === 1) {
-        //
-        //             editor.caret.setToBlock(indexOfLastInput);
-        //
-        //         } else {
-        //
-        //             /** Set caret to this appended input */
-        //             editor.caret.setToNextBlock(indexOfLastInput);
-        //
-        //         }
-        //
-        //     }
-        //
-        // } else {
-        //
-        //     /** Close all panels */
-        //     editor.toolbar.settings.close();
-        //     editor.toolbar.toolbox.close();
-        //
-        // }
-        //
-        /**
-         * Move toolbar and open
-         */
-        this.Editor.Toolbar.move();
-        this.Editor.Toolbar.open();
-        //
-        // var inputIsEmpty = !editor.content.currentNode.textContent.trim(),
-        //     currentNodeType = editor.content.currentNode.dataset.tool,
-        //     isInitialType = currentNodeType == editor.settings.initialBlockPlugin;
-        //
-        //
+    // if (editor.content.currentNode === null) {
+    //
+    //     /**
+    //      * If inputs in redactor does not exits, then we put input index 0 not -1
+    //      */
+    //     var indexOfLastInput = editor.state.inputs.length > 0 ? editor.state.inputs.length - 1 : 0;
+    //
+    //     /** If we have any inputs */
+    //     if (editor.state.inputs.length) {
+    //
+    //         /** getting firstlevel parent of input */
+    //         firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
+    //
+    //     }
+    //
+    //     /** If input is empty, then we set caret to the last input */
+    //     if (editor.state.inputs.length && editor.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == editor.settings.initialBlockPlugin) {
+    //
+    //         editor.caret.setToBlock(indexOfLastInput);
+    //
+    //     } else {
+    //
+    //         /** Create new input when caret clicked in redactors area */
+    //         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
+    //
+    //         editor.content.insertBlock({
+    //             type  : NEW_BLOCK_TYPE,
+    //             block : editor.tools[NEW_BLOCK_TYPE].render()
+    //         });
+    //
+    //         /** If there is no inputs except inserted */
+    //         if (editor.state.inputs.length === 1) {
+    //
+    //             editor.caret.setToBlock(indexOfLastInput);
+    //
+    //         } else {
+    //
+    //             /** Set caret to this appended input */
+    //             editor.caret.setToNextBlock(indexOfLastInput);
+    //
+    //         }
+    //
+    //     }
+    //
+    // } else {
+    //
+    //     /** Close all panels */
+    //     editor.toolbar.settings.close();
+    //     editor.toolbar.toolbox.close();
+    //
+    // }
+    //
+    /**
+     * Move toolbar and open
+     */
+    this.Editor.Toolbar.move();
+    this.Editor.Toolbar.open();
+    //
+    // var inputIsEmpty = !editor.content.currentNode.textContent.trim(),
+    //     currentNodeType = editor.content.currentNode.dataset.tool,
+    //     isInitialType = currentNodeType == editor.settings.initialBlockPlugin;
+    //
+    //
 
-        /**
-         * Hide the Plus Button
-         * */
-        this.Editor.Toolbar.plusButton.hide();
+    /**
+     * Hide the Plus Button
+     * */
+    this.Editor.Toolbar.plusButton.hide();
 
-        /**
-         * Show the Plus Button if:
-         * - Block is an initial-block (Text)
-         * - Block is empty
-         */
-        let isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool),
-            isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
+    /**
+     * Show the Plus Button if:
+     * - Block is an initial-block (Text)
+     * - Block is empty
+     */
+    let isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool),
+      isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
 
-        if (isInitialBlock && isEmptyBlock) {
-
-            this.Editor.Toolbar.plusButton.show();
-
-        }
-
+    if (isInitialBlock && isEmptyBlock) {
+      this.Editor.Toolbar.plusButton.show();
     }
-
+  }
 }
 
 // /**

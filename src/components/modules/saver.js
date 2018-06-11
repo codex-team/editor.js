@@ -22,77 +22,63 @@
  */
 
 export default class Saver extends Module {
+  /**
+   * @constructor
+   * @param config
+   */
+  constructor({config}) {
+    super({config});
 
-    /**
-     * @constructor
-     * @param config
-     */
-    constructor({config}) {
+    this.output = null;
+    this.blocksData = [];
+  }
 
-        super({config});
+  /**
+   * Composes new chain of Promises to fire them alternatelly
+   * @return {SavedData}
+   */
+  save() {
+    let blocks = this.Editor.BlockManager.blocks,
+      chainData = [];
 
-        this.output = null;
-        this.blocksData = [];
+    blocks.forEach((block) => {
+      chainData.push(block.data);
+    });
 
-    }
+    return Promise.all(chainData)
+      .then((allExtractedData) => this.makeOutput(allExtractedData))
+      .then((outputData) => {
+        return outputData;
+      });
+  }
 
-    /**
-     * Composes new chain of Promises to fire them alternatelly
-     * @return {SavedData}
-     */
-    save() {
+  /**
+   * Creates output object with saved data, time and version of editor
+   * @param {Object} allExtractedData
+   * @return {SavedData}
+   */
+  makeOutput(allExtractedData) {
+    let items = [],
+      totalTime = 0;
 
-        let blocks = this.Editor.BlockManager.blocks,
-            chainData = [];
+    console.groupCollapsed('[CodexEditor saving]:');
 
-        blocks.forEach((block) => {
+    allExtractedData.forEach((extraction) => {
+      /** Group process info */
+      console.log(`«${extraction.tool}» saving info`, extraction);
+      totalTime += extraction.time;
+      items.push(extraction.data);
+    });
 
-            chainData.push(block.data);
+    console.log('Total', totalTime);
+    console.groupEnd();
 
-        });
-
-        return Promise.all(chainData)
-            .then((allExtractedData) => this.makeOutput(allExtractedData))
-            .then((outputData) => {
-
-                return outputData;
-
-            });
-
-    }
-
-    /**
-     * Creates output object with saved data, time and version of editor
-     * @param {Object} allExtractedData
-     * @return {SavedData}
-     */
-    makeOutput(allExtractedData) {
-
-        let items = [],
-            totalTime = 0;
-
-        console.groupCollapsed('[CodexEditor saving]:');
-
-        allExtractedData.forEach((extraction) => {
-
-            /** Group process info */
-            console.log(`«${extraction.tool}» saving info`, extraction);
-            totalTime += extraction.time;
-            items.push(extraction.data);
-
-        });
-
-        console.log('Total', totalTime);
-        console.groupEnd();
-
-        return {
-            time    : +new Date(),
-            items   : items,
-            version : VERSION,
-        };
-
-    }
-
+    return {
+      time    : +new Date(),
+      items   : items,
+      version : VERSION,
+    };
+  }
 }
 
 // module.exports = (function (saver) {

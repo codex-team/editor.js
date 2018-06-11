@@ -9,215 +9,179 @@
  *
  */
 export default class Toolbox extends Module {
+  /**
+   * @constructor
+   */
+  constructor({config}) {
+    super({config});
+
+    this.nodes = {
+      toolbox: null,
+      buttons: []
+    };
 
     /**
-     * @constructor
+     * Opening state
+     * @type {boolean}
      */
-    constructor({config}) {
+    this.opened = false;
+  }
 
-        super({config});
+  /**
+   * CSS styles
+   * @return {{toolbox: string, toolboxButton: string, toolboxOpened: string}}
+   */
+  static get CSS() {
+    return  {
+      toolbox: 'ce-toolbox',
+      toolboxButton: 'ce-toolbox__button',
+      toolboxOpened: 'ce-toolbox--opened',
+    };
+  }
 
-        this.nodes = {
-            toolbox: null,
-            buttons: []
-        };
+  /**
+   * Makes the Toolbox
+   */
+  make() {
+    this.nodes.toolbox = $.make('div', Toolbox.CSS.toolbox);
+    $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
 
-        /**
-         * Opening state
-         * @type {boolean}
-         */
-        this.opened = false;
+    this.addTools();
+  }
 
+  /**
+   * Iterates available tools and appends them to the Toolbox
+   */
+  addTools() {
+    let tools = this.Editor.Tools.toolsAvailable;
+
+    for (let toolName in tools) {
+      this.addTool(toolName, tools[toolName]);
+    }
+  }
+
+  /**
+   * Append Tool to the Toolbox
+   *
+   * @param {string} toolName  - tool name
+   * @param {Tool}  tool      - tool class
+   */
+  addTool(toolName, tool) {
+    if (tool.displayInToolbox && !tool.iconClassName) {
+      _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
+      return;
     }
 
     /**
-     * CSS styles
-     * @return {{toolbox: string, toolboxButton: string, toolboxOpened: string}}
+     * @todo Add checkup for the render method
      */
-    static get CSS() {
+    // if (typeof tool.render !== 'function') {
+    //
+    //     _.log('render method missed. Tool %o skipped', 'warn', tool);
+    //     return;
+    //
+    // }
 
-        return  {
-            toolbox: 'ce-toolbox',
-            toolboxButton: 'ce-toolbox__button',
-            toolboxOpened: 'ce-toolbox--opened',
-        };
+    /**
+     * Skip tools that pass 'displayInToolbox=false'
+     */
+    if (!tool.displayInToolbox) {
+      return;
+    }
 
+    let button = $.make('li', [Toolbox.CSS.toolboxButton, tool.iconClassName], {
+      title: toolName
+    });
+
+    /**
+     * Save tool's name in the button data-name
+     */
+    button.dataset.name = toolName;
+
+    $.append(this.nodes.toolbox, button);
+
+    this.nodes.toolbox.appendChild(button);
+    this.nodes.buttons.push(button);
+
+    /**
+     * @todo add event with module Listeners
+     */
+    // this.Editor.Listeners.add();
+    button.addEventListener('click', event => {
+      this.buttonClicked(event);
+    }, false);
+  }
+
+  /**
+   * Toolbox button click listener
+   * 1) if block is empty -> replace
+   * 2) if block is not empty -> add new block below
+   *
+   * @param {MouseEvent} event
+   */
+  buttonClicked(event) {
+    let toolButton = event.target,
+      toolName = toolButton.dataset.name,
+      tool = this.Editor.Tools.toolClasses[toolName];
+
+    /**
+     * @type {Block}
+     */
+    let currentBlock = this.Editor.BlockManager.currentBlock;
+
+    /**
+     * We do replace if:
+     * - block is empty
+     * - block is not irreplaceable
+     * @type {Array}
+     */
+    if (!tool.irreplaceable && currentBlock.isEmpty) {
+      this.Editor.BlockManager.replace(toolName);
+    } else {
+      this.Editor.BlockManager.insert(toolName);
     }
 
     /**
-     * Makes the Toolbox
+     * @todo set caret to the new block
      */
-    make() {
 
-        this.nodes.toolbox = $.make('div', Toolbox.CSS.toolbox);
-        $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
+    // window.setTimeout(function () {
 
-        this.addTools();
+    /** Set caret to current block */
+    // editor.caret.setToBlock(currentInputIndex);
 
-    }
+    // }, 10);
 
     /**
-     * Iterates available tools and appends them to the Toolbox
+     * Move toolbar when node is changed
      */
-    addTools() {
+    this.Editor.Toolbar.move();
+  }
 
-        let tools = this.Editor.Tools.toolsAvailable;
+  /**
+   * Open Toolbox with Tools
+   */
+  open() {
+    this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpened);
+    this.opened = true;
+  }
 
-        for (let toolName in tools) {
+  /**
+   * Close Toolbox
+   */
+  close() {
+    this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpened);
+    this.opened = false;
+  }
 
-            this.addTool(toolName, tools[toolName]);
-
-        }
-
+  /**
+   * Close Toolbox
+   */
+  toggle() {
+    if (!this.opened) {
+      this.open();
+    } else {
+      this.close();
     }
-
-    /**
-     * Append Tool to the Toolbox
-     *
-     * @param {string} toolName  - tool name
-     * @param {Tool}  tool      - tool class
-     */
-    addTool(toolName, tool) {
-
-        if (tool.displayInToolbox && !tool.iconClassName) {
-
-            _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
-            return;
-
-        }
-
-        /**
-         * @todo Add checkup for the render method
-         */
-        // if (typeof tool.render !== 'function') {
-        //
-        //     _.log('render method missed. Tool %o skipped', 'warn', tool);
-        //     return;
-        //
-        // }
-
-        /**
-         * Skip tools that pass 'displayInToolbox=false'
-         */
-        if (!tool.displayInToolbox) {
-
-            return;
-
-        }
-
-        let button = $.make('li', [Toolbox.CSS.toolboxButton, tool.iconClassName], {
-            title: toolName
-        });
-
-        /**
-         * Save tool's name in the button data-name
-         */
-        button.dataset.name = toolName;
-
-        $.append(this.nodes.toolbox, button);
-
-        this.nodes.toolbox.appendChild(button);
-        this.nodes.buttons.push(button);
-
-        /**
-         * @todo add event with module Listeners
-         */
-        // this.Editor.Listeners.add();
-        button.addEventListener('click', event => {
-
-            this.buttonClicked(event);
-
-        }, false);
-
-    }
-
-    /**
-     * Toolbox button click listener
-     * 1) if block is empty -> replace
-     * 2) if block is not empty -> add new block below
-     *
-     * @param {MouseEvent} event
-     */
-    buttonClicked(event) {
-
-        let toolButton = event.target,
-            toolName = toolButton.dataset.name,
-            tool = this.Editor.Tools.toolClasses[toolName];
-
-        /**
-         * @type {Block}
-         */
-        let currentBlock = this.Editor.BlockManager.currentBlock;
-
-        /**
-         * We do replace if:
-         * - block is empty
-         * - block is not irreplaceable
-         * @type {Array}
-         */
-        if (!tool.irreplaceable && currentBlock.isEmpty) {
-
-            this.Editor.BlockManager.replace(toolName);
-
-        } else {
-
-            this.Editor.BlockManager.insert(toolName);
-
-        }
-
-        /**
-         * @todo set caret to the new block
-         */
-
-        // window.setTimeout(function () {
-
-        /** Set caret to current block */
-        // editor.caret.setToBlock(currentInputIndex);
-
-        // }, 10);
-
-        /**
-         * Move toolbar when node is changed
-         */
-        this.Editor.Toolbar.move();
-
-    }
-
-    /**
-     * Open Toolbox with Tools
-     */
-    open() {
-
-        this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpened);
-        this.opened = true;
-
-    }
-
-    /**
-     * Close Toolbox
-     */
-    close() {
-
-        this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpened);
-        this.opened = false;
-
-    }
-
-    /**
-     * Close Toolbox
-     */
-    toggle() {
-
-        if (!this.opened) {
-
-            this.open();
-
-        } else {
-
-            this.close();
-
-        }
-
-    }
-
+  }
 }

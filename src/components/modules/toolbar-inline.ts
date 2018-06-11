@@ -6,7 +6,6 @@
  * |   B  i [link] [mark]   |
  * | _______________________|
  */
-
 declare var Module: any;
 declare var $: any;
 
@@ -14,7 +13,7 @@ declare var $: any;
  * DOM Elements
  */
 interface InlineToolbarNodes {
-    wrapper?: Element; // main wrapper
+  wrapper?: Element; // main wrapper
 }
 
 /**
@@ -41,30 +40,29 @@ export default class InlineToolbar extends Module {
   };
 
   /**
-     * @constructor
-     */
-    constructor({config}) {
+   * @constructor
+   */
+  constructor({config}) {
 
-        super({config});
+      super({config});
 
-    }
+  }
 
-    /**
-     * Making DOM
-     */
-    make() {
+  /**
+   * Making DOM
+   */
+  make() {
 
-        this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
+      this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
 
-        /**
-         * Append Inline Toolbar to the Editor
-         */
-        $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+      /**
+       * Append Inline Toolbar to the Editor
+       */
+      $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
 
-    }
+  }
 
-    move() {
+  move() {
 
-    }
-
+  }
 }
