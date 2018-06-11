@@ -1,8 +1,7 @@
 .ce-inline-toolbar {
-    position: absolute;
-    z-index: 2;
     @apply --overlay-pane;
 
     width: 100px;
     height: 40px;
+    transform: translateX(-50%);
 }

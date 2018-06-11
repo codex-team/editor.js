@@ -9,11 +9,11 @@
  * @version 2.0.0
  */
 
+import Selection from '../selection';
+
 /**
  * @typedef {Caret} Caret
  */
-import Selection from '../Selection';
-
 export default class Caret extends Module {
   /**
    * @constructor

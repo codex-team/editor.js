@@ -826,102 +826,6 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/Selection.js":
-/*!*************************************!*\
-  !*** ./src/components/Selection.js ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Working with selection
- */
-var Selection = function () {
-  /**
-   * @constructor
-   */
-  function Selection() {
-    _classCallCheck(this, Selection);
-
-    this.instance = null;
-    this.selection = null;
-  }
-
-  /**
-   * Returns window Selection
-   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-   * @return {Selection}
-   */
-
-
-  _createClass(Selection, null, [{
-    key: "get",
-    value: function get() {
-      return window.getSelection();
-    }
-
-    /**
-     * Returns selected anchor
-     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
-     * @return {Node|null}
-     */
-
-  }, {
-    key: "getAnchorNode",
-    value: function getAnchorNode() {
-      var selection = window.getSelection();
-
-      return selection ? selection.anchorNode : null;
-    }
-
-    /**
-     * Returns selection offset according to the anchor node
-     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
-     * @return {Number|null}
-     */
-
-  }, {
-    key: "getAnchorOffset",
-    value: function getAnchorOffset() {
-      var selection = window.getSelection();
-
-      return selection ? selection.anchorOffset : null;
-    }
-
-    /**
-     * Is current selection range collapsed
-     * @return {boolean|null}
-     */
-
-  }, {
-    key: "isCollapsed",
-    get: function get() {
-      var selection = window.getSelection();
-
-      return selection ? selection.isCollapsed : null;
-    }
-  }]);
-
-  return Selection;
-}();
-
-Selection.displayName = "Selection";
-exports.default = Selection;
-module.exports = exports["default"];
-
-/***/ }),
-
 /***/ "./src/components/__module.ts":
 /*!************************************!*\
   !*** ./src/components/__module.ts ***!
@@ -2383,9 +2287,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Selection = __webpack_require__(/*! ../Selection */ "./src/components/Selection.js");
+var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
 
-var _Selection2 = _interopRequireDefault(_Selection);
+var _selection2 = _interopRequireDefault(_selection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2407,8 +2311,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @typedef {Caret} Caret
  */
-
-
 var Caret = function (_Module) {
   _inherits(Caret, _Module);
 
@@ -2485,7 +2387,7 @@ var Caret = function (_Module) {
       var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
       var range = document.createRange(),
-          selection = _Selection2.default.get();
+          selection = _selection2.default.get();
 
       range.setStart(element, offset);
       range.setEnd(element, offset);
@@ -2524,7 +2426,7 @@ var Caret = function (_Module) {
   }, {
     key: 'extractFragmentFromCaretPosition',
     value: function extractFragmentFromCaretPosition() {
-      var selection = _Selection2.default.get();
+      var selection = _selection2.default.get();
 
       if (selection.rangeCount) {
         var selectRange = selection.getRangeAt(0),
@@ -2597,11 +2499,11 @@ var Caret = function (_Module) {
       /**
        * Don't handle ranges
        */
-      if (!_Selection2.default.isCollapsed) {
+      if (!_selection2.default.isCollapsed) {
         return false;
       }
 
-      var selection = _Selection2.default.get(),
+      var selection = _selection2.default.get(),
           anchorNode = selection.anchorNode,
           firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
 
@@ -2649,11 +2551,11 @@ var Caret = function (_Module) {
       /**
        * Don't handle ranges
        */
-      if (!_Selection2.default.isCollapsed) {
+      if (!_selection2.default.isCollapsed) {
         return false;
       }
 
-      var selection = _Selection2.default.get(),
+      var selection = _selection2.default.get(),
           anchorNode = selection.anchorNode,
           lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
 
@@ -3202,20 +3104,24 @@ var Listeners = function (_Module) {
   }, {
     key: "findAll",
     value: function findAll(element, eventType, handler) {
-      var foundAllListeners = void 0,
-          foundByElements = [],
-          foundByEventType = [],
-          foundByHandler = [];
+      var found = void 0,
+          foundByElements = element ? this.findByElement(element) : [];
+      // foundByEventType = eventType ? this.findByType(eventType) : [],
+      // foundByHandler = handler ? this.findByHandler(handler) : [];
 
-      if (element) foundByElements = this.findByElement(element);
+      if (element && eventType && handler) {
+        found = foundByElements.filter(function (event) {
+          return event.eventType === eventType && event.handler === handler;
+        });
+      } else if (element && eventType) {
+        found = foundByElements.filter(function (event) {
+          return event.eventType === eventType;
+        });
+      } else {
+        found = foundByElements;
+      }
 
-      if (eventType) foundByEventType = this.findByType(eventType);
-
-      if (handler) foundByHandler = this.findByHandler(handler);
-
-      foundAllListeners = foundByElements.concat(foundByEventType, foundByHandler);
-
-      return foundAllListeners;
+      return found;
     }
 
     /**
@@ -4040,10 +3946,16 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */(function(Module, $) {
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
+
+var _selection2 = _interopRequireDefault(_selection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -4052,54 +3964,101 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var InlineToolbar = function (_Module) {
-    _inherits(InlineToolbar, _Module);
+  _inherits(InlineToolbar, _Module);
+
+  /**
+   * @constructor
+   */
+  function InlineToolbar(_ref) {
+    var config = _ref.config;
+
+    _classCallCheck(this, InlineToolbar);
 
     /**
-     * @constructor
+     * Inline Toolbar elements
      */
-    function InlineToolbar(_ref) {
-        var config = _ref.config;
+    var _this = _possibleConstructorReturn(this, (InlineToolbar.__proto__ || Object.getPrototypeOf(InlineToolbar)).call(this, { config: config }));
 
-        _classCallCheck(this, InlineToolbar);
+    _this.nodes = {
+      wrapper: null
+    };
+    /**
+     * CSS styles
+     */
+    _this.CSS = {
+      inlineToolbar: 'ce-inline-toolbar'
+    };
+    /**
+     * Margin above/below the Toolbar
+     */
+    _this.toolbarVerticalMargin = 10;
+    return _this;
+  }
+  /**
+   * Making DOM
+   */
 
-        /**
-         * Inline Toolbar elements
-         */
-        var _this = _possibleConstructorReturn(this, (InlineToolbar.__proto__ || Object.getPrototypeOf(InlineToolbar)).call(this, { config: config }));
 
-        _this.nodes = {
-            wrapper: null
-        };
-        /**
-         * CSS styles
-         */
-        _this.CSS = {
-            inlineToolbar: 'ce-inline-toolbar'
-        };
-        return _this;
+  _createClass(InlineToolbar, [{
+    key: 'make',
+    value: function make() {
+      this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
+      /**
+       * Append Inline Toolbar to the Editor
+       */
+      $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
     }
     /**
-     * Making DOM
+     * Move Toolbar to the selected text
      */
 
+  }, {
+    key: 'move',
+    value: function move() {
+      if (!this.allowedToShow()) {
+        // close
+        return;
+      }
+      var selectionCoords = _selection2.default.getCoords;
+      var wrapperOffset = this.getWrapperOffset();
+      var toolbarHeight = this.nodes.wrapper.offsetHeight || 40;
+      var newCoords = {
+        x: selectionCoords.x - wrapperOffset.left,
+        y: selectionCoords.y + window.scrollY - wrapperOffset.top + toolbarHeight + this.toolbarVerticalMargin
+      };
+      this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
+      this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
+    }
+    /**
+     * Need to show Inline Toolbar or not
+     */
 
-    _createClass(InlineToolbar, [{
-        key: 'make',
-        value: function make() {
-            this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
-            /**
-             * Append Inline Toolbar to the Editor
-             */
-            $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
-        }
-    }, {
-        key: 'move',
-        value: function move() {
-            // moving
-        }
-    }]);
+  }, {
+    key: 'allowedToShow',
+    value: function allowedToShow() {
+      /**
+       * @todo check for empty selection, tagsConflictsWithSelection, currentBlock 'inlineToolbar' settings
+       */
+      return true;
+    }
+    /**
+     * Returns editor wrapper offset
+     * @return {{bottom: number, top: number, left: number, right: number, height: number: width: number}}
+     */
 
-    return InlineToolbar;
+  }, {
+    key: 'getWrapperOffset',
+    value: function getWrapperOffset() {
+      var rect = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
+      /**
+       * @todo
+       * add cache
+       */
+      return rect;
+    }
+  }]);
+
+  return InlineToolbar;
 }(Module);
 
 InlineToolbar.displayName = 'InlineToolbar';
@@ -5615,6 +5574,178 @@ if (!Element.prototype.closest) Element.prototype.closest = function (s) {
 
 /***/ }),
 
+/***/ "./src/components/selection.js":
+/*!*************************************!*\
+  !*** ./src/components/selection.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(_) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Working with selection
+ * @typedef {Selection} Selection
+ */
+var Selection = function () {
+  /**
+   * @constructor
+   */
+  function Selection() {
+    _classCallCheck(this, Selection);
+
+    this.instance = null;
+    this.selection = null;
+  }
+
+  /**
+   * Returns window Selection
+   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+   * @return {Selection}
+   */
+
+
+  _createClass(Selection, null, [{
+    key: 'get',
+    value: function get() {
+      return window.getSelection();
+    }
+
+    /**
+     * Returns selected anchor
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
+     * @return {Node|null}
+     */
+
+  }, {
+    key: 'getAnchorNode',
+    value: function getAnchorNode() {
+      var selection = window.getSelection();
+
+      return selection ? selection.anchorNode : null;
+    }
+
+    /**
+     * Returns selection offset according to the anchor node
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
+     * @return {Number|null}
+     */
+
+  }, {
+    key: 'getAnchorOffset',
+    value: function getAnchorOffset() {
+      var selection = window.getSelection();
+
+      return selection ? selection.anchorOffset : null;
+    }
+
+    /**
+     * Is current selection range collapsed
+     * @return {boolean|null}
+     */
+
+  }, {
+    key: 'isCollapsed',
+    get: function get() {
+      var selection = window.getSelection();
+
+      return selection ? selection.isCollapsed : null;
+    }
+
+    /**
+     * Calculates position of selected text
+     * @return {{x: number, y: number}}
+     */
+
+  }, {
+    key: 'getCoords',
+    get: function get() {
+      var sel = document.selection,
+          range = void 0,
+          rect = void 0;
+      var coords = {
+        x: 0,
+        y: 0
+      };
+
+      if (sel && sel.type !== 'Control') {
+        range = sel.createRange();
+        range.collapse(true);
+        coords.x = range.boundingLeft;
+        coords.y = range.boundingTop;
+
+        return coords;
+      }
+
+      if (!window.getSelection) {
+        _.log('Method window.getSelection is not supported', 'warn');
+        return coords;
+      }
+
+      sel = window.getSelection();
+
+      if (!sel.rangeCount) {
+        _.log('Method Selection.rangeCount() is not supported', 'warn');
+        return coords;
+      }
+
+      range = sel.getRangeAt(0).cloneRange();
+
+      if (range.getClientRects) {
+        range.collapse(true);
+
+        var rects = range.getClientRects();
+
+        if (rects.length > 0) {
+          rect = rects[0];
+          coords.x = rect.left;
+          coords.y = rect.top;
+        }
+      }
+      // Fall back to inserting a temporary element
+      if (coords.x === 0 && coords.y === 0) {
+        var span = document.createElement('span');
+
+        if (span.getClientRects) {
+          // Ensure span has dimensions and position by
+          // adding a zero-width space character
+          span.appendChild(document.createTextNode('\u200B'));
+          range.insertNode(span);
+          rect = span.getClientRects()[0];
+          coords.x = rect.left;
+          coords.y = rect.top;
+          var spanParent = span.parentNode;
+
+          spanParent.removeChild(span);
+
+          // Glue any broken text nodes back together
+          spanParent.normalize();
+        }
+      }
+
+      return coords;
+    }
+  }]);
+
+  return Selection;
+}();
+
+Selection.displayName = 'Selection';
+exports.default = Selection;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! utils */ "./src/components/utils.js")))
+
+/***/ }),
+
 /***/ "./src/components/utils.js":
 /*!*********************************!*\
   !*** ./src/components/utils.js ***!
@@ -5856,7 +5987,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n    --bg-light: #eff2f5;\n\n    /**\n     * All gray texts: placeholders, settings\n     */\n    --grayText: #707684;\n\n    /**\n     * Block content width\n     */\n    --content-width: 650px;\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n    --toolbar-buttons-size: 34px\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 2px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    width: 34px;\n    width: var(--toolbar-buttons-size);\n    height: 34px;\n    height: var(--toolbar-buttons-size);\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n      content: '+';\n      font-size: 26px;\n      display: block;\n      margin-top: -2px;\n      margin-right: -2px;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    border: 1px dotted #ccc;\n    padding: 2px;\n  }\n.ce-toolbar__actions-buttons {\n      border: 1px dotted #ccc;\n      padding: 2px;\n      text-align: right;\n      margin-bottom: 2px;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    border: 1px dotted #ccc\n  }\n.ce-toolbar__settings-btn::before {\n      content: 'STN';\n      font-size: 10px;\n      opacity: .4;\n    }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        background: var(--bg-light);\n        width: 34px;\n        width: var(--toolbar-buttons-size);\n        height: 34px;\n        height: var(--toolbar-buttons-size);\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px;\n        line-height: var(--toolbar-buttons-size)\n    }\n.ce-toolbox__button::before {\n            content: attr(title);\n            font-size: 22px;\n            font-weight: 500;\n            letter-spacing: 1em;\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                    font-feature-settings: \"smcp\", \"c2sc\";\n            font-variant-caps: all-small-caps;\n            padding-left: 11.5px;\n            margin-top: -1px;\n            display: inline-block;\n        }\n.ce-inline-toolbar {\n    position: absolute;\n    z-index: 2;\n  background: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  position: relative;\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background: #fff;\n        }\n.ce-inline-toolbar {\n\n    width: 100px;\n    height: 40px;\n}\n.ce-settings {\n  border: 1px dotted #ccc;\n  padding: 2px;\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone {\n    border: 1px dotted #ccc;\n    padding: 2px;\n    margin-bottom: 2px\n  }\n.ce-settings__plugin-zone::before {\n      content: 'PLUGIN SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__default-zone {\n    border: 1px dotted #ccc;\n    padding: 2px\n  }\n.ce-settings__default-zone::before {\n      content: 'DEFAULT SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__button {\n    padding: 10px 15px;\n    color: #707684;\n    color: var(--grayText)\n  }\n.ce-settings__button:hover {\n      background: #eff2f5;\n      background: var(--bg-light);\n    }\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0\n}\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n", ""]);
+exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n    --bg-light: #eff2f5;\n\n    /**\n     * All gray texts: placeholders, settings\n     */\n    --grayText: #707684;\n\n    /**\n     * Block content width\n     */\n    --content-width: 650px;\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n    --toolbar-buttons-size: 34px\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 2px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    width: 34px;\n    width: var(--toolbar-buttons-size);\n    height: 34px;\n    height: var(--toolbar-buttons-size);\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n      content: '+';\n      font-size: 26px;\n      display: block;\n      margin-top: -2px;\n      margin-right: -2px;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    border: 1px dotted #ccc;\n    padding: 2px;\n  }\n.ce-toolbar__actions-buttons {\n      border: 1px dotted #ccc;\n      padding: 2px;\n      text-align: right;\n      margin-bottom: 2px;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    border: 1px dotted #ccc\n  }\n.ce-toolbar__settings-btn::before {\n      content: 'STN';\n      font-size: 10px;\n      opacity: .4;\n    }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        background: var(--bg-light);\n        width: 34px;\n        width: var(--toolbar-buttons-size);\n        height: 34px;\n        height: var(--toolbar-buttons-size);\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px;\n        line-height: var(--toolbar-buttons-size)\n    }\n.ce-toolbox__button::before {\n            content: attr(title);\n            font-size: 22px;\n            font-weight: 500;\n            letter-spacing: 1em;\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                    font-feature-settings: \"smcp\", \"c2sc\";\n            font-variant-caps: all-small-caps;\n            padding-left: 11.5px;\n            margin-top: -1px;\n            display: inline-block;\n        }\n.ce-inline-toolbar {\n  position: absolute;\n  background: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2;\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background: #fff;\n        }\n.ce-inline-toolbar {\n\n    width: 100px;\n    height: 40px;\n    transform: translateX(-50%);\n}\n.ce-settings {\n  border: 1px dotted #ccc;\n  padding: 2px;\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone {\n    border: 1px dotted #ccc;\n    padding: 2px;\n    margin-bottom: 2px\n  }\n.ce-settings__plugin-zone::before {\n      content: 'PLUGIN SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__default-zone {\n    border: 1px dotted #ccc;\n    padding: 2px\n  }\n.ce-settings__default-zone::before {\n      content: 'DEFAULT SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__button {\n    padding: 10px 15px;\n    color: #707684;\n    color: var(--grayText)\n  }\n.ce-settings__button:hover {\n      background: #eff2f5;\n      background: var(--bg-light);\n    }\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0\n}\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n", ""]);
 
 // exports
 
