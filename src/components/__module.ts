@@ -10,11 +10,23 @@
 export default class Module {
 
     /**
+     * Editor modules list
+     * @type {EditorComponents}
+     */
+    Editor: any = null;
+
+    /**
+     * Editor configuration object
+     * @type {EditorConfig}
+     */
+    config: any = {};
+
+    /**
      * @constructor
      *
      * @param  {EditorConfig} config
      */
-    constructor({ config } = {}) {
+    constructor({config}) {
 
         if (new.target === Module) {
 
@@ -22,16 +34,7 @@ export default class Module {
 
         }
 
-        /**
-         * @type {EditorConfig}
-         */
         this.config = config;
-
-        /**
-         * @type {EditorComponents}
-         */
-        this.Editor = null;
-
     }
 
     /**

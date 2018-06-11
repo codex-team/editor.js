@@ -33,11 +33,43 @@ var fs = require('fs');
  * Folders and files starting with '_' will be skipped
  * @type {Array}
  */
-var editorModules = fs.readdirSync('./src/components/modules').filter( name => /.js$/.test(name) && name.substring(0,1) !== '_' );
+var editorModules = fs.readdirSync('./src/components/modules').filter( name => /.(j|t)s$/.test(name) && name.substring(0,1) !== '_' );
 
 editorModules.forEach( name => {
     console.log('Require modules/' + name);
 });
+
+/**
+ * Options for the Babel
+ */
+var babelLoader = {
+    loader: 'babel-loader',
+    options: {
+        cacheDirectory: true,
+        presets: [
+            "env"
+        ],
+        plugins: [
+            /**
+             * Dont need to use «.default» after «export default Class Ui {}»
+             * @see  {@link https://github.com/59naga/babel-plugin-add-module-exports}
+             */
+            'add-module-exports',
+            /**
+             * Babel transforms some awesome ES6 features to ES5 with extra code, such as Class, JSX.
+             * This plugin makes all generated extra codes to one module which significantly reduces the bundle code size.
+             *
+             * {@link https://github.com/brianZeng/babel-plugin-transform-helper}
+             * @since 11 dec 2017 - removed due to plugin does not supports class inheritance
+             */
+            // ['babel-plugin-transform-helper', {
+            //     helperFilename:'build/__tmp_babel_helpers.js'
+            // }],
+            'class-display-name',
+        ]
+    }
+};
+
 
 
 module.exports = {
@@ -52,7 +84,6 @@ module.exports = {
     },
 
     watch: true,
-
     watchOptions: {
         aggregateTimeout: 50
     },
@@ -108,7 +139,7 @@ module.exports = {
         new webpack.ProvidePlugin({
           '_': 'utils',
           '$': 'dom',
-          'Module': './../__module',
+          'Module': './../__module.ts',
         }),
 
 
@@ -127,38 +158,24 @@ module.exports = {
 
     module : {
         rules : [
+          {
+            test: /\.ts$/,
+            use: [
+              babelLoader,
+              {
+                loader: 'ts-loader'
+              }
+            ]
+          },
             {
                 test : /\.js$/,
-                exclude: /node_modules/,
-                use : {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: [ __dirname + '/node_modules/babel-preset-es2015' ],
-                        plugins: [
-                            /**
-                             * Dont need to use «.default» after «export default Class Ui {}»
-                             * @see  {@link https://github.com/59naga/babel-plugin-add-module-exports}
-                             */
-                            'add-module-exports',
-                            /**
-                             * Babel transforms some awesome ES6 features to ES5 with extra code, such as Class, JSX.
-                             * This plugin makes all generated extra codes to one module which significantly reduces the bundle code size.
-                             *
-                             * {@link https://github.com/brianZeng/babel-plugin-transform-helper}
-                             * @since 11 dec 2017 - removed due to plugin does not supports class inheritance
-                             */
-                            // ['babel-plugin-transform-helper', {
-                            //     helperFilename:'build/__tmp_babel_helpers.js'
-                            // }],
-                            'class-display-name',
-                        ]
-                    }
-                }
-            },
-            {
-                test : /\.js$/,
-                use: 'eslint-loader?fix=true',
-                exclude: /(node_modules|build)/ // dont need to look in '/build' to prevent analyse __tmp_babel_helper.js
+                use: [
+                  babelLoader,
+                  {
+                    loader: 'eslint-loader?fix=true&esModules=true',
+                  }
+                ],
+                exclude: /(node_modules|build)/, // dont need to look in '/build' to prevent analyse __tmp_babel_helper.js
             },
             {
                 test: /\.css$/,
@@ -175,5 +192,9 @@ module.exports = {
                 ]
             }
         ]
-    }
+    },
+
+    optimization: {
+        minimize: false
+    },
 };

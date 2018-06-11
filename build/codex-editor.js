@@ -37,12 +37,32 @@ var CodexEditor =
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -60,12 +80,880 @@ var CodexEditor =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 3);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/codex.js");
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
+/******/ ({
+
+/***/ "./node_modules/css-loader/lib/css-base.js":
+/*!*************************************************!*\
+  !*** ./node_modules/css-loader/lib/css-base.js ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+/*
+	MIT License http://www.opensource.org/licenses/mit-license.php
+	Author Tobias Koppers @sokra
+*/
+// css base code, injected by the css-loader
+module.exports = function(useSourceMap) {
+	var list = [];
+
+	// return the list of modules as css string
+	list.toString = function toString() {
+		return this.map(function (item) {
+			var content = cssWithMappingToString(item, useSourceMap);
+			if(item[2]) {
+				return "@media " + item[2] + "{" + content + "}";
+			} else {
+				return content;
+			}
+		}).join("");
+	};
+
+	// import a list of modules into the list
+	list.i = function(modules, mediaQuery) {
+		if(typeof modules === "string")
+			modules = [[null, modules, ""]];
+		var alreadyImportedModules = {};
+		for(var i = 0; i < this.length; i++) {
+			var id = this[i][0];
+			if(typeof id === "number")
+				alreadyImportedModules[id] = true;
+		}
+		for(i = 0; i < modules.length; i++) {
+			var item = modules[i];
+			// skip already imported module
+			// this implementation is not 100% perfect for weird media query combinations
+			//  when a module is imported multiple times with different media queries.
+			//  I hope this will never occur (Hey this way we have smaller bundles)
+			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+				if(mediaQuery && !item[2]) {
+					item[2] = mediaQuery;
+				} else if(mediaQuery) {
+					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+				}
+				list.push(item);
+			}
+		}
+	};
+	return list;
+};
+
+function cssWithMappingToString(item, useSourceMap) {
+	var content = item[1] || '';
+	var cssMapping = item[3];
+	if (!cssMapping) {
+		return content;
+	}
+
+	if (useSourceMap && typeof btoa === 'function') {
+		var sourceMapping = toComment(cssMapping);
+		var sourceURLs = cssMapping.sources.map(function (source) {
+			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
+		});
+
+		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
+	}
+
+	return [content].join('\n');
+}
+
+// Adapted from convert-source-map (MIT)
+function toComment(sourceMap) {
+	// eslint-disable-next-line no-undef
+	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
+	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
+
+	return '/*# ' + data + ' */';
+}
+
+
+/***/ }),
+
+/***/ "./node_modules/html-janitor/src/html-janitor.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/html-janitor/src/html-janitor.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
+				__WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else {}
+}(this, function () {
+
+  /**
+   * @param {Object} config.tags Dictionary of allowed tags.
+   * @param {boolean} config.keepNestedBlockElements Default false.
+   */
+  function HTMLJanitor(config) {
+
+    var tagDefinitions = config['tags'];
+    var tags = Object.keys(tagDefinitions);
+
+    var validConfigValues = tags
+      .map(function(k) { return typeof tagDefinitions[k]; })
+      .every(function(type) { return type === 'object' || type === 'boolean' || type === 'function'; });
+
+    if(!validConfigValues) {
+      throw new Error("The configuration was invalid");
+    }
+
+    this.config = config;
+  }
+
+  // TODO: not exhaustive?
+  var blockElementNames = ['P', 'LI', 'TD', 'TH', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'PRE'];
+  function isBlockElement(node) {
+    return blockElementNames.indexOf(node.nodeName) !== -1;
+  }
+
+  var inlineElementNames = ['A', 'B', 'STRONG', 'I', 'EM', 'SUB', 'SUP', 'U', 'STRIKE'];
+  function isInlineElement(node) {
+    return inlineElementNames.indexOf(node.nodeName) !== -1;
+  }
+
+  HTMLJanitor.prototype.clean = function (html) {
+    var sandbox = document.createElement('div');
+    sandbox.innerHTML = html;
+
+    this._sanitize(sandbox);
+
+    return sandbox.innerHTML;
+  };
+
+  HTMLJanitor.prototype._sanitize = function (parentNode) {
+    var treeWalker = createTreeWalker(parentNode);
+    var node = treeWalker.firstChild();
+    if (!node) { return; }
+
+    do {
+      // Ignore nodes that have already been sanitized
+      if (node._sanitized) {
+        continue;
+      }
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        // If this text node is just whitespace and the previous or next element
+        // sibling is a block element, remove it
+        // N.B.: This heuristic could change. Very specific to a bug with
+        // `contenteditable` in Firefox: http://jsbin.com/EyuKase/1/edit?js,output
+        // FIXME: make this an option?
+        if (node.data.trim() === ''
+            && ((node.previousElementSibling && isBlockElement(node.previousElementSibling))
+                 || (node.nextElementSibling && isBlockElement(node.nextElementSibling)))) {
+          parentNode.removeChild(node);
+          this._sanitize(parentNode);
+          break;
+        } else {
+          continue;
+        }
+      }
+
+      // Remove all comments
+      if (node.nodeType === Node.COMMENT_NODE) {
+        parentNode.removeChild(node);
+        this._sanitize(parentNode);
+        break;
+      }
+
+      var isInline = isInlineElement(node);
+      var containsBlockElement;
+      if (isInline) {
+        containsBlockElement = Array.prototype.some.call(node.childNodes, isBlockElement);
+      }
+
+      // Block elements should not be nested (e.g. <li><p>...); if
+      // they are, we want to unwrap the inner block element.
+      var isNotTopContainer = !! parentNode.parentNode;
+      var isNestedBlockElement =
+            isBlockElement(parentNode) &&
+            isBlockElement(node) &&
+            isNotTopContainer;
+
+      var nodeName = node.nodeName.toLowerCase();
+
+      var allowedAttrs = getAllowedAttrs(this.config, nodeName, node);
+
+      var isInvalid = isInline && containsBlockElement;
+
+      // Drop tag entirely according to the whitelist *and* if the markup
+      // is invalid.
+      if (isInvalid || shouldRejectNode(node, allowedAttrs)
+          || (!this.config.keepNestedBlockElements && isNestedBlockElement)) {
+        // Do not keep the inner text of SCRIPT/STYLE elements.
+        if (! (node.nodeName === 'SCRIPT' || node.nodeName === 'STYLE')) {
+          while (node.childNodes.length > 0) {
+            parentNode.insertBefore(node.childNodes[0], node);
+          }
+        }
+        parentNode.removeChild(node);
+
+        this._sanitize(parentNode);
+        break;
+      }
+
+      // Sanitize attributes
+      for (var a = 0; a < node.attributes.length; a += 1) {
+        var attr = node.attributes[a];
+
+        if (shouldRejectAttr(attr, allowedAttrs, node)) {
+          node.removeAttribute(attr.name);
+          // Shift the array to continue looping.
+          a = a - 1;
+        }
+      }
+
+      // Sanitize children
+      this._sanitize(node);
+
+      // Mark node as sanitized so it's ignored in future runs
+      node._sanitized = true;
+    } while ((node = treeWalker.nextSibling()));
+  };
+
+  function createTreeWalker(node) {
+    return document.createTreeWalker(node,
+                                     NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT,
+                                     null, false);
+  }
+
+  function getAllowedAttrs(config, nodeName, node){
+    if (typeof config.tags[nodeName] === 'function') {
+      return config.tags[nodeName](node);
+    } else {
+      return config.tags[nodeName];
+    }
+  }
+
+  function shouldRejectNode(node, allowedAttrs){
+    if (typeof allowedAttrs === 'undefined') {
+      return true;
+    } else if (typeof allowedAttrs === 'boolean') {
+      return !allowedAttrs;
+    }
+
+    return false;
+  }
+
+  function shouldRejectAttr(attr, allowedAttrs, node){
+    var attrName = attr.name.toLowerCase();
+
+    if (allowedAttrs === true){
+      return false;
+    } else if (typeof allowedAttrs[attrName] === 'function'){
+      return !allowedAttrs[attrName](attr.value, node);
+    } else if (typeof allowedAttrs[attrName] === 'undefined'){
+      return true;
+    } else if (allowedAttrs[attrName] === false) {
+      return true;
+    } else if (typeof allowedAttrs[attrName] === 'string') {
+      return (allowedAttrs[attrName] !== attr.value);
+    }
+
+    return false;
+  }
+
+  return HTMLJanitor;
+
+}));
+
+
+/***/ }),
+
+/***/ "./src/codex.js":
+/*!**********************!*\
+  !*** ./src/codex.js ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(_) {/**
+ * Codex Editor
+ *
+ * Short Description (눈_눈;)
+ * @version 2.0.0
+ *
+ * How to start?
+ * Example:
+ *           new CodexEditor({
+ *                holderId : 'codex-editor',
+ *                initialBlock : 'text',
+ *                placeholder : 'Write your story....',
+ *                tools: {
+ *                    quote: Quote,
+ *                    anotherTool : AnotherTool
+ *                },
+ *                toolsConfig: {
+ *                     quote: {
+ *                        iconClassname : 'quote-icon',
+ *                        displayInToolbox : true,
+ *                        enableLineBreaks : true
+ *                     },
+ *                     anotherTool: {
+ *                        iconClassname : 'tool-icon'
+ *                     }
+ *                 }
+ *            });
+ *
+ * - tools is an object: {
+ *       pluginName: PluginClass,
+ *       .....
+ *   }
+ * - toolsConfig is an additional configuration that uses Codex Editor API
+ *      iconClassname - CSS classname of toolbox icon
+ *      displayInToolbox - if you want to see your Tool in toolbox hided in "plus" button, than set "True". By default : "False"
+ *      enableLineBreaks - by default enter creates new block that set as initialblock, but if you set this property "True", enter will break the lines in current block
+ *
+ * @author CodeX-Team <https://ifmo.su>
+ *
+ */
+
+/**
+ * @typedef {CodexEditor} CodexEditor - editor class
+ */
+
+/**
+ * @typedef {Object} EditorConfig
+ * @property {String} holderId           - Element to append Editor
+ * @property {Array} data                - Blocks list in JSON-format
+ * @property {Object} tools              - Map for used Tools in format { name : Class, ... }
+ * @property {String} initialBlock       - This Tool will be added by default
+ * @property {String} placeholder        - First Block placeholder
+ * @property {Object} sanitizer          - @todo fill desc
+ * @property {Boolean} hideToolbar       - @todo fill desc
+ * @property {Object} toolsConfig        - tools configuration {@link tools#ToolConfig}
+ */
+
+/**
+ * Dynamically imported utils
+ *
+ * @typedef {Dom}   $      - {@link components/dom.js}
+ * @typedef {Util}  _      - {@link components/utils.js}
+ */
+
+
+
+/**
+ * Apply polyfills
+ */
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+__webpack_require__(/*! components/polyfills */ "./src/components/polyfills.js");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Require Editor modules places in components/modules dir
+ */
+// eslint-disable-next-line
+var modules = ["blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+    return __webpack_require__("./src/components/modules sync [^_](blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+});
+
+/**
+ * @class
+ *
+ * @classdesc CodeX Editor base class
+ *
+ * @property this.config - all settings
+ * @property this.moduleInstances - constructed editor components
+ *
+ * @type {CodexEditor}
+ */
+
+var CodexEditor = function () {
+    _createClass(CodexEditor, null, [{
+        key: 'version',
+
+
+        /** Editor version */
+        get: function get() {
+
+            return "2.0.0";
+        }
+
+        /**
+         * @param {EditorConfig} config - user configuration
+         *
+         */
+
+    }]);
+
+    function CodexEditor(config) {
+        var _this = this;
+
+        _classCallCheck(this, CodexEditor);
+
+        /**
+         * Configuration object
+         * @type {EditorConfig}
+         */
+        this.config = {};
+
+        /**
+         * @typedef {Object} EditorComponents
+         * @property {BlockManager} BlockManager
+         * @property {Tools} Tools
+         * @property {Events} Events
+         * @property {UI} UI
+         * @property {Toolbar} Toolbar
+         * @property {Toolbox} Toolbox
+         * @property {BlockSettings} BlockSettings
+         * @property {Renderer} Renderer
+         * @property {InlineToolbar} InlineToolbar
+         */
+        this.moduleInstances = {};
+
+        Promise.resolve().then(function () {
+
+            _this.configuration = config;
+        }).then(function () {
+            return _this.init();
+        }).then(function () {
+            return _this.start();
+        }).then(function () {
+
+            console.log('CodeX Editor is ready!');
+        }).catch(function (error) {
+
+            console.log('CodeX Editor does not ready because of %o', error);
+        });
+    }
+
+    /**
+     * Setting for configuration
+     * @param {EditorConfig} config
+     */
+
+
+    _createClass(CodexEditor, [{
+        key: 'init',
+
+
+        /**
+         * Initializes modules:
+         *  - make and save instances
+         *  - configure
+         */
+        value: function init() {
+
+            /**
+             * Make modules instances and save it to the @property this.moduleInstances
+             */
+            this.constructModules();
+
+            /**
+             * Modules configuration
+             */
+            this.configureModules();
+        }
+
+        /**
+         * Make modules instances and save it to the @property this.moduleInstances
+         */
+
+    }, {
+        key: 'constructModules',
+        value: function constructModules() {
+            var _this2 = this;
+
+            modules.forEach(function (Module) {
+
+                try {
+
+                    /**
+                     * We use class name provided by displayName property
+                     *
+                     * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
+                     * To prevent this, we use 'babel-plugin-class-display-name' plugin
+                     * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
+                     */
+                    _this2.moduleInstances[Module.displayName] = new Module({
+                        config: _this2.configuration
+                    });
+                } catch (e) {
+
+                    console.log('Module %o skipped because %o', Module, e);
+                }
+            });
+        }
+
+        /**
+         * Modules instances configuration:
+         *  - pass other modules to the 'state' property
+         *  - ...
+         */
+
+    }, {
+        key: 'configureModules',
+        value: function configureModules() {
+
+            for (var name in this.moduleInstances) {
+
+                /**
+                 * Module does not need self-instance
+                 */
+                this.moduleInstances[name].state = this.getModulesDiff(name);
+            }
+        }
+
+        /**
+         * Return modules without passed name
+         */
+
+    }, {
+        key: 'getModulesDiff',
+        value: function getModulesDiff(name) {
+
+            var diff = {};
+
+            for (var moduleName in this.moduleInstances) {
+
+                /**
+                 * Skip module with passed name
+                 */
+                if (moduleName === name) {
+
+                    continue;
+                }
+                diff[moduleName] = this.moduleInstances[moduleName];
+            }
+
+            return diff;
+        }
+
+        /**
+         * Start Editor!
+         *
+         * Get list of modules that needs to be prepared and return a sequence (Promise)
+         * @return {Promise}
+         */
+
+    }, {
+        key: 'start',
+        value: function start() {
+            var _this3 = this;
+
+            var prepareDecorator = function prepareDecorator(module) {
+                return module.prepare();
+            };
+
+            return Promise.resolve().then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.BlockManager)).then(function () {
+
+                return _this3.moduleInstances.Renderer.render(_this3.config.data.items);
+            });
+        }
+    }, {
+        key: 'configuration',
+        set: function set(config) {
+
+            /**
+             * Initlai block type
+             * Uses in case when there is no items passed
+             * @type {{type: (*), data: {text: null}}}
+             */
+            var initialBlock = {
+                type: config.initialBlock,
+                data: {}
+            };
+
+            this.config.holderId = config.holderId;
+            this.config.placeholder = config.placeholder || 'write your story...';
+            this.config.sanitizer = config.sanitizer || {
+                p: true,
+                b: true,
+                a: true
+            };
+
+            this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
+            this.config.tools = config.tools || {};
+            this.config.toolsConfig = config.toolsConfig || {};
+            this.config.data = config.data || {};
+
+            /**
+             * Initialize items to pass data to the Renderer
+             */
+            if (_.isEmpty(this.config.data)) {
+
+                this.config.data = {};
+                this.config.data.items = [initialBlock];
+            } else {
+
+                if (!this.config.data.items || this.config.data.items.length === 0) {
+
+                    this.config.data.items = [initialBlock];
+                }
+            }
+
+            /**
+             * If initial Block's Tool was not passed, use the first Tool in config.tools
+             */
+            if (!config.initialBlock) {
+
+                for (this.config.initialBlock in this.config.tools) {
+                    break;
+                }
+            } else {
+
+                this.config.initialBlock = config.initialBlock;
+            }
+        }
+
+        /**
+         * Returns private property
+         * @returns {EditorConfig}
+         */
+        ,
+        get: function get() {
+
+            return this.config;
+        }
+    }]);
+
+    return CodexEditor;
+}();
+
+CodexEditor.displayName = 'CodexEditor';
+exports.default = CodexEditor;
+;
+
+// module.exports = (function (editor) {
+//
+//     'use strict';
+//
+//     editor.version = VERSION;
+//     editor.scriptPrefix = 'cdx-script-';
+//
+//     var init = function () {
+//
+//         editor.core          = require('./modules/core');
+//         editor.tools         = require('./modules/tools');
+//         editor.ui            = require('./modules/ui');
+//         editor.transport     = require('./modules/transport');
+//         editor.renderer      = require('./modules/renderer');
+//         editor.saver         = require('./modules/saver');
+//         editor.content       = require('./modules/content');
+//         editor.toolbar       = require('./modules/toolbar/toolbar');
+//         editor.callback      = require('./modules/callbacks');
+//         editor.draw          = require('./modules/draw');
+//         editor.caret         = require('./modules/caret');
+//         editor.notifications = require('./modules/notifications');
+//         editor.parser        = require('./modules/parser');
+//         editor.sanitizer     = require('./modules/sanitizer');
+//         editor.listeners     = require('./modules/listeners');
+//         editor.destroyer     = require('./modules/destroyer');
+//         editor.paste         = require('./modules/paste');
+//
+//     };
+//
+//     /**
+//      * @public
+//      * holds initial settings
+//      */
+//     editor.settings = {
+//         tools     : ['text', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
+//         holderId  : 'codex-editor',
+//
+//         // Type of block showing on empty editor
+//         initialBlockPlugin: 'text'
+//     };
+//
+//     /**
+//      * public
+//      *
+//      * Static nodes
+//      */
+//     editor.nodes = {
+//         holder            : null,
+//         wrapper           : null,
+//         toolbar           : null,
+//         inlineToolbar     : {
+//             wrapper : null,
+//             buttons : null,
+//             actions : null
+//         },
+//         toolbox           : null,
+//         notifications     : null,
+//         plusButton        : null,
+//         showSettingsButton: null,
+//         showTrashButton   : null,
+//         blockSettings     : null,
+//         pluginSettings    : null,
+//         defaultSettings   : null,
+//         toolbarButtons    : {}, // { type : DomEl, ... }
+//         redactor          : null
+//     };
+//
+//     /**
+//      * @public
+//      *
+//      * Output state
+//      */
+//     editor.state = {
+//         jsonOutput  : [],
+//         blocks      : [],
+//         inputs      : []
+//     };
+//
+//     /**
+//     * @public
+//     * Editor plugins
+//     */
+//     editor.tools = {};
+//
+//     editor.start = function (userSettings) {
+//
+//         init();
+//
+//         editor.core.prepare(userSettings)
+//
+//         // If all ok, make UI, bind events and parse initial-content
+//             .then(editor.ui.prepare)
+//             .then(editor.tools.prepare)
+//             .then(editor.sanitizer.prepare)
+//             .then(editor.paste.prepare)
+//             .then(editor.transport.prepare)
+//             .then(editor.renderer.makeBlocksFromData)
+//             .then(editor.ui.saveInputs)
+//             .catch(function (error) {
+//
+//                 editor.core.log('Initialization failed with error: %o', 'warn', error);
+//
+//             });
+//
+//     };
+//
+//     return editor;
+//
+// })({});
+
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! utils */ "./src/components/utils.js")))
+
+/***/ }),
+
+/***/ "./src/components/Selection.js":
+/*!*************************************!*\
+  !*** ./src/components/Selection.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Working with selection
+ */
+var Selection = function () {
+
+  /**
+   * @constructor
+   */
+  function Selection() {
+    _classCallCheck(this, Selection);
+
+    this.instance = null;
+    this.selection = null;
+  }
+
+  /**
+   * Returns window Selection
+   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+   * @return {Selection}
+   */
+
+
+  _createClass(Selection, null, [{
+    key: "get",
+    value: function get() {
+
+      return window.getSelection();
+    }
+
+    /**
+     * Returns selected anchor
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
+     * @return {Node|null}
+     */
+
+  }, {
+    key: "getAnchorNode",
+    value: function getAnchorNode() {
+
+      var selection = window.getSelection();
+
+      return selection ? selection.anchorNode : null;
+    }
+
+    /**
+     * Returns selection offset according to the anchor node
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
+     * @return {Number|null}
+     */
+
+  }, {
+    key: "getAnchorOffset",
+    value: function getAnchorOffset() {
+
+      var selection = window.getSelection();
+
+      return selection ? selection.anchorOffset : null;
+    }
+
+    /**
+     * Is current selection range collapsed
+     * @return {boolean|null}
+     */
+
+  }, {
+    key: "isCollapsed",
+    get: function get() {
+
+      var selection = window.getSelection();
+
+      return selection ? selection.isCollapsed : null;
+    }
+  }]);
+
+  return Selection;
+}();
+
+Selection.displayName = "Selection";
+exports.default = Selection;
+module.exports = exports["default"];
+
+/***/ }),
+
+/***/ "./src/components/__module.ts":
+/*!************************************!*\
+  !*** ./src/components/__module.ts ***!
+  \************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -89,34 +977,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * @property {Object} Editor - List of Editor modules
  */
 var Module = function () {
-
   /**
    * @constructor
    *
    * @param  {EditorConfig} config
    */
-  function Module() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        config = _ref.config;
+  function Module(_ref) {
+    var config = _ref.config;
 
     _classCallCheck(this, Module);
 
-    if (new.target === Module) {
-
-      throw new TypeError('Constructors for abstract class Module are not allowed.');
-    }
-
     /**
-     * @type {EditorConfig}
-     */
-    this.config = config;
-
-    /**
+     * Editor modules list
      * @type {EditorComponents}
      */
     this.Editor = null;
+    /**
+     * Editor configuration object
+     * @type {EditorConfig}
+     */
+    this.config = {};
+    if (new.target === Module) {
+      throw new TypeError('Constructors for abstract class Module are not allowed.');
+    }
+    this.config = config;
   }
-
   /**
    * Editor modules setter
    *
@@ -129,7 +1014,6 @@ var Module = function () {
   _createClass(Module, [{
     key: 'state',
     set: function set(Editor) {
-
       this.Editor = Editor;
     }
   }]);
@@ -142,11 +1026,16 @@ exports.default = Module;
 module.exports = exports['default'];
 
 /***/ }),
-/* 1 */
+
+/***/ "./src/components/block.js":
+/*!*********************************!*\
+  !*** ./src/components/block.js ***!
+  \*********************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function($, _) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -157,238 +1046,290 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
- * Codex Editor Util
+ *
+ * @class Block
+ * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
+ *
+ * @property {Tool} tool — current block tool (Paragraph, for example)
+ * @property {Object} CSS — block`s css classes
+ *
  */
-var Util = function () {
-    function Util() {
-        _classCallCheck(this, Util);
+
+/**
+ * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
+ *
+ * @property tool - Tool instance
+ * @property html - Returns HTML content of plugin
+ * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
+ * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property pluginsContent - HTML content that returns by Tool's render function
+ */
+var Block = function () {
+
+    /**
+     * @constructor
+     * @param {String} toolName - Tool name that passed on initialization
+     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
+     */
+    function Block(toolName, toolInstance) {
+        _classCallCheck(this, Block);
+
+        this.name = toolName;
+        this.tool = toolInstance;
+        this._html = this.compose();
     }
 
-    _createClass(Util, null, [{
-        key: 'log',
+    /**
+     * CSS classes for the Block
+     * @return {{wrapper: string, content: string}}
+     */
+
+
+    _createClass(Block, [{
+        key: 'compose',
 
 
         /**
-         * Custom logger
-         *
-         * @param {string} msg  - message
-         * @param {string} type - logging type 'log'|'warn'|'error'|'info'
-         * @param {*} args      - argument to log with a message
+         * Make default Block wrappers and put Tool`s content there
+         * @returns {HTMLDivElement}
          */
-        value: function log(msg, type, args) {
+        value: function compose() {
 
-            type = type || 'log';
+            this.wrapper = $.make('div', Block.CSS.wrapper);
+            this.contentNode = $.make('div', Block.CSS.content);
+            this.pluginsContent = this.tool.render();
 
-            if (!args) {
+            this.contentNode.appendChild(this.pluginsContent);
+            this.wrapper.appendChild(this.contentNode);
 
-                args = msg || 'undefined';
-                msg = '[codex-editor]:      %o';
-            } else {
-
-                msg = '[codex-editor]:      ' + msg;
-            }
-
-            try {
-
-                if ('console' in window && window.console[type]) {
-
-                    if (args) window.console[type](msg, args);else window.console[type](msg);
-                }
-            } catch (e) {
-                // do nothing
-            }
+            return this.wrapper;
         }
 
         /**
-         * Returns basic keycodes as constants
-         * @return {{}}
+         * Calls Tool's method
+         *
+         * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
+         *
+         * @param {String} methodName
+         * @param {Object} params
          */
 
     }, {
-        key: 'sequence',
-
-
-        /**
-         * @typedef {Object} ChainData
-         * @property {Object} data - data that will be passed to the success or fallback
-         * @property {Function} function - function's that must be called asynchronically
-         */
-
-        /**
-         * Fires a promise sequence asyncronically
-         *
-         * @param {Object[]} chains - list or ChainData's
-         * @param {Function} success - success callback
-         * @param {Function} fallback - callback that fires in case of errors
-         *
-         * @return {Promise}
-         */
-        value: function sequence(chains) {
-            var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
-            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
-
-
-            return new Promise(function (resolve) {
-
-                /**
-                 * pluck each element from queue
-                 * First, send resolved Promise as previous value
-                 * Each plugins "prepare" method returns a Promise, that's why
-                 * reduce current element will not be able to continue while can't get
-                 * a resolved Promise
-                 */
-                chains.reduce(function (previousValue, currentValue, iteration) {
-
-                    return previousValue.then(function () {
-                        return waitNextBlock(currentValue, success, fallback);
-                    }).then(function () {
-
-                        // finished
-                        if (iteration === chains.length - 1) {
-
-                            resolve();
-                        }
-                    });
-                }, Promise.resolve());
-            });
+        key: 'call',
+        value: function call(methodName, params) {
 
             /**
-             * Decorator
-             *
-             * @param {ChainData} chainData
-             *
-             * @param {Function} successCallback
-             * @param {Function} fallbackCallback
-             *
-             * @return {Promise}
+             * call Tool's method with the instance context
              */
-            function waitNextBlock(chainData, successCallback, fallbackCallback) {
+            if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
 
-                return new Promise(function (resolve) {
-
-                    chainData.function().then(function () {
-
-                        successCallback(chainData.data || {});
-                    }).then(resolve).catch(function () {
-
-                        fallbackCallback(chainData.data || {});
-
-                        // anyway, go ahead even it falls
-                        resolve();
-                    });
-                });
+                this.tool[methodName].call(this.tool, params);
             }
         }
 
         /**
-         * Make array from array-like collection
-         *
-         * @param {*} collection
-         *
-         * @return {Array}
+         * Get Block`s HTML
+         * @returns {HTMLElement}
          */
 
     }, {
-        key: 'array',
-        value: function array(collection) {
+        key: 'mergeWith',
 
-            return Array.prototype.slice.call(collection);
-        }
 
         /**
-         * Checks if object is empty
-         *
-         * @param {Object} object
-         * @return {boolean}
+         * Call plugins merge method
+         * @param {Object} data
+         */
+        value: function mergeWith(data) {
+            var _this = this;
+
+            return Promise.resolve().then(function () {
+
+                _this.tool.merge(data);
+            });
+        }
+        /**
+         * Extracts data from Block
+         * Groups Tool's save processing time
+         * @return {Object}
          */
 
     }, {
-        key: 'isEmpty',
-        value: function isEmpty(object) {
+        key: 'save',
+        value: function save() {
+            var _this2 = this;
 
-            return Object.keys(object).length === 0 && object.constructor === Object;
+            var extractedBlock = this.tool.save(this.pluginsContent);
+
+            /** Measuring execution time*/
+            var measuringStart = window.performance.now(),
+                measuringEnd = void 0;
+
+            return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
+
+                /** measure promise execution */
+                measuringEnd = window.performance.now();
+
+                return {
+                    tool: _this2.name,
+                    data: finishedExtraction,
+                    time: measuringEnd - measuringStart
+                };
+            }).catch(function (error) {
+
+                _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
+            });
         }
 
         /**
-         * Check if passed object is a Promise
-         * @param  {*}  object - object to check
+         * Uses Tool's validation method to check the correctness of output data
+         * Tool's validation method is optional
+         *
+         * @description Method also can return data if it passed the validation
+         *
+         * @param {Object} data
+         * @returns {Boolean|Object} valid
+         */
+
+    }, {
+        key: 'validateData',
+        value: function validateData(data) {
+
+            var isValid = true;
+
+            if (this.tool.validate instanceof Function) {
+
+                isValid = this.tool.validate(data);
+            }
+
+            if (!isValid) {
+
+                return false;
+            }
+
+            return data;
+        }
+
+        /**
+         * Check block for emptiness
          * @return {Boolean}
          */
 
     }, {
-        key: 'isPromise',
-        value: function isPromise(object) {
+        key: 'html',
+        get: function get() {
 
-            return Promise.resolve(object) === object;
+            return this._html;
         }
 
         /**
-         * Check if passed element is contenteditable
-         * @param element
+         * Get Block's JSON data
+         * @return {Object}
+         */
+
+    }, {
+        key: 'data',
+        get: function get() {
+
+            return this.save();
+        }
+
+        /**
+         * is block mergeable
+         * We plugin have merge function then we call it mergable
          * @return {boolean}
          */
 
     }, {
-        key: 'isContentEditable',
-        value: function isContentEditable(element) {
+        key: 'mergeable',
+        get: function get() {
 
-            return element.contentEditable === 'true';
+            return typeof this.tool.merge === 'function';
+        }
+    }, {
+        key: 'isEmpty',
+        get: function get() {
+
+            /**
+             * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
+             * That Tools are not empty
+             */
+            if (this.tool.contentless) {
+
+                return false;
+            }
+
+            var emptyText = $.isEmpty(this.pluginsContent),
+                emptyMedia = !this.hasMedia;
+
+            return emptyText && emptyMedia;
         }
 
         /**
-         * Delays method execution
-         *
-         * @param method
-         * @param timeout
+         * Check if block has a media content such as images, iframes and other
+         * @return {Boolean}
          */
 
     }, {
-        key: 'delay',
-        value: function delay(method, timeout) {
+        key: 'hasMedia',
+        get: function get() {
 
-            return function () {
+            /**
+             * This tags represents media-content
+             * @type {string[]}
+             */
+            var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
 
-                var context = this,
-                    args = arguments;
-
-                window.setTimeout(function () {
-                    return method.apply(context, args);
-                }, timeout);
-            };
+            return !!this._html.querySelector(mediaTags.join(','));
         }
+
+        /**
+         * Set selected state
+         * @param {Boolean} state - 'true' to select, 'false' to remove selection
+         */
+
     }, {
-        key: 'keyCodes',
+        key: 'selected',
+        set: function set(state) {
+
+            /**
+             * We don't need to mark Block as Selected when it is not empty
+             */
+            if (state === true && !this.isEmpty) {
+
+                this._html.classList.add(Block.CSS.selected);
+            } else {
+
+                this._html.classList.remove(Block.CSS.selected);
+            }
+        }
+    }], [{
+        key: 'CSS',
         get: function get() {
 
             return {
-                BACKSPACE: 8,
-                TAB: 9,
-                ENTER: 13,
-                SHIFT: 16,
-                CTRL: 17,
-                ALT: 18,
-                ESC: 27,
-                SPACE: 32,
-                LEFT: 37,
-                UP: 38,
-                DOWN: 40,
-                RIGHT: 39,
-                DELETE: 46,
-                META: 91
+                wrapper: 'ce-block',
+                content: 'ce-block__content',
+                selected: 'ce-block--selected'
             };
         }
     }]);
 
-    return Util;
+    return Block;
 }();
 
-Util.displayName = 'Util';
-exports.default = Util;
-;
+Block.displayName = 'Block';
+exports.default = Block;
 module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! dom */ "./src/components/dom.js"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
-/* 2 */
+
+/***/ "./src/components/dom.js":
+/*!*******************************!*\
+  !*** ./src/components/dom.js ***!
+  \*******************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -752,531 +1693,59 @@ exports.default = Dom;
 module.exports = exports['default'];
 
 /***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function(_) {/**
- * Codex Editor
- *
- * Short Description (눈_눈;)
- * @version 2.0.0
- *
- * How to start?
- * Example:
- *           new CodexEditor({
- *                holderId : 'codex-editor',
- *                initialBlock : 'text',
- *                placeholder : 'Write your story....',
- *                tools: {
- *                    quote: Quote,
- *                    anotherTool : AnotherTool
- *                },
- *                toolsConfig: {
- *                     quote: {
- *                        iconClassname : 'quote-icon',
- *                        displayInToolbox : true,
- *                        enableLineBreaks : true
- *                     },
- *                     anotherTool: {
- *                        iconClassname : 'tool-icon'
- *                     }
- *                 }
- *            });
- *
- * - tools is an object: {
- *       pluginName: PluginClass,
- *       .....
- *   }
- * - toolsConfig is an additional configuration that uses Codex Editor API
- *      iconClassname - CSS classname of toolbox icon
- *      displayInToolbox - if you want to see your Tool in toolbox hided in "plus" button, than set "True". By default : "False"
- *      enableLineBreaks - by default enter creates new block that set as initialblock, but if you set this property "True", enter will break the lines in current block
- *
- * @author CodeX-Team <https://ifmo.su>
- *
- */
-
-/**
- * @typedef {CodexEditor} CodexEditor - editor class
- */
-
-/**
- * @typedef {Object} EditorConfig
- * @property {String} holderId           - Element to append Editor
- * @property {Array} data                - Blocks list in JSON-format
- * @property {Object} tools              - Map for used Tools in format { name : Class, ... }
- * @property {String} initialBlock       - This Tool will be added by default
- * @property {String} placeholder        - First Block placeholder
- * @property {Object} sanitizer          - @todo fill desc
- * @property {Boolean} hideToolbar       - @todo fill desc
- * @property {Object} toolsConfig        - tools configuration {@link tools#ToolConfig}
- */
-
-/**
- * Dynamically imported utils
- *
- * @typedef {Dom}   $      - {@link components/dom.js}
- * @typedef {Util}  _      - {@link components/utils.js}
- */
-
-
-
-/**
- * Apply polyfills
- */
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-__webpack_require__(4);
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Require Editor modules places in components/modules dir
- */
-// eslint-disable-next-line
-var modules = ["blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.js","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-    return __webpack_require__(5)("./" + module);
-});
-
-/**
- * @class
- *
- * @classdesc CodeX Editor base class
- *
- * @property this.config - all settings
- * @property this.moduleInstances - constructed editor components
- *
- * @type {CodexEditor}
- */
-module.exports = function () {
-    _createClass(CodexEditor, null, [{
-        key: 'version',
-
-
-        /** Editor version */
-        get: function get() {
-
-            return "2.0.0";
-        }
-
-        /**
-         * @param {EditorConfig} config - user configuration
-         *
-         */
-
-    }]);
-
-    function CodexEditor(config) {
-        var _this = this;
-
-        _classCallCheck(this, CodexEditor);
-
-        /**
-         * Configuration object
-         * @type {EditorConfig}
-         */
-        this.config = {};
-
-        /**
-         * @typedef {Object} EditorComponents
-         * @property {BlockManager} BlockManager
-         * @property {Tools} Tools
-         * @property {Events} Events
-         * @property {UI} UI
-         * @property {Toolbar} Toolbar
-         * @property {Toolbox} Toolbox
-         * @property {BlockSettings} BlockSettings
-         * @property {Renderer} Renderer
-         */
-        this.moduleInstances = {};
-
-        Promise.resolve().then(function () {
-
-            _this.configuration = config;
-        }).then(function () {
-            return _this.init();
-        }).then(function () {
-            return _this.start();
-        }).then(function () {
-
-            console.log('CodeX Editor is ready!');
-        }).catch(function (error) {
-
-            console.log('CodeX Editor does not ready because of %o', error);
-        });
-    }
-
-    /**
-     * Setting for configuration
-     * @param {EditorConfig} config
-     */
-
-
-    _createClass(CodexEditor, [{
-        key: 'init',
-
-
-        /**
-         * Initializes modules:
-         *  - make and save instances
-         *  - configure
-         */
-        value: function init() {
-
-            /**
-             * Make modules instances and save it to the @property this.moduleInstances
-             */
-            this.constructModules();
-
-            /**
-             * Modules configuration
-             */
-            this.configureModules();
-        }
-
-        /**
-         * Make modules instances and save it to the @property this.moduleInstances
-         */
-
-    }, {
-        key: 'constructModules',
-        value: function constructModules() {
-            var _this2 = this;
-
-            modules.forEach(function (Module) {
-
-                try {
-
-                    /**
-                     * We use class name provided by displayName property
-                     *
-                     * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
-                     * To prevent this, we use 'babel-plugin-class-display-name' plugin
-                     * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
-                     */
-                    _this2.moduleInstances[Module.displayName] = new Module({
-                        config: _this2.configuration
-                    });
-                } catch (e) {
-
-                    console.log('Module %o skipped because %o', Module, e);
-                }
-            });
-        }
-
-        /**
-         * Modules instances configuration:
-         *  - pass other modules to the 'state' property
-         *  - ...
-         */
-
-    }, {
-        key: 'configureModules',
-        value: function configureModules() {
-
-            for (var name in this.moduleInstances) {
-
-                /**
-                 * Module does not need self-instance
-                 */
-                this.moduleInstances[name].state = this.getModulesDiff(name);
-            }
-        }
-
-        /**
-         * Return modules without passed name
-         */
-
-    }, {
-        key: 'getModulesDiff',
-        value: function getModulesDiff(name) {
-
-            var diff = {};
-
-            for (var moduleName in this.moduleInstances) {
-
-                /**
-                 * Skip module with passed name
-                 */
-                if (moduleName === name) {
-
-                    continue;
-                }
-                diff[moduleName] = this.moduleInstances[moduleName];
-            }
-
-            return diff;
-        }
-
-        /**
-         * Start Editor!
-         *
-         * Get list of modules that needs to be prepared and return a sequence (Promise)
-         * @return {Promise}
-         */
-
-    }, {
-        key: 'start',
-        value: function start() {
-            var _this3 = this;
-
-            var prepareDecorator = function prepareDecorator(module) {
-                return module.prepare();
-            };
-
-            return Promise.resolve().then(prepareDecorator(this.moduleInstances.Tools)).then(prepareDecorator(this.moduleInstances.UI)).then(prepareDecorator(this.moduleInstances.BlockManager)).then(function () {
-
-                return _this3.moduleInstances.Renderer.render(_this3.config.data.items);
-            });
-        }
-    }, {
-        key: 'configuration',
-        set: function set(config) {
-
-            /**
-             * Initlai block type
-             * Uses in case when there is no items passed
-             * @type {{type: (*), data: {text: null}}}
-             */
-            var initialBlock = {
-                type: config.initialBlock,
-                data: {}
-            };
-
-            this.config.holderId = config.holderId;
-            this.config.placeholder = config.placeholder || 'write your story...';
-            this.config.sanitizer = config.sanitizer || {
-                p: true,
-                b: true,
-                a: true
-            };
-
-            this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
-            this.config.tools = config.tools || {};
-            this.config.toolsConfig = config.toolsConfig || {};
-            this.config.data = config.data || {};
-
-            /**
-             * Initialize items to pass data to the Renderer
-             */
-            if (_.isEmpty(this.config.data)) {
-
-                this.config.data = {};
-                this.config.data.items = [initialBlock];
-            } else {
-
-                if (!this.config.data.items || this.config.data.items.length === 0) {
-
-                    this.config.data.items = [initialBlock];
-                }
-            }
-
-            /**
-             * If initial Block's Tool was not passed, use the first Tool in config.tools
-             */
-            if (!config.initialBlock) {
-
-                for (this.config.initialBlock in this.config.tools) {
-                    break;
-                }
-            } else {
-
-                this.config.initialBlock = config.initialBlock;
-            }
-        }
-
-        /**
-         * Returns private property
-         * @returns {EditorConfig}
-         */
-        ,
-        get: function get() {
-
-            return this.config;
-        }
-    }]);
-
-    return CodexEditor;
-}();
-
-// module.exports = (function (editor) {
-//
-//     'use strict';
-//
-//     editor.version = VERSION;
-//     editor.scriptPrefix = 'cdx-script-';
-//
-//     var init = function () {
-//
-//         editor.core          = require('./modules/core');
-//         editor.tools         = require('./modules/tools');
-//         editor.ui            = require('./modules/ui');
-//         editor.transport     = require('./modules/transport');
-//         editor.renderer      = require('./modules/renderer');
-//         editor.saver         = require('./modules/saver');
-//         editor.content       = require('./modules/content');
-//         editor.toolbar       = require('./modules/toolbar/toolbar');
-//         editor.callback      = require('./modules/callbacks');
-//         editor.draw          = require('./modules/draw');
-//         editor.caret         = require('./modules/caret');
-//         editor.notifications = require('./modules/notifications');
-//         editor.parser        = require('./modules/parser');
-//         editor.sanitizer     = require('./modules/sanitizer');
-//         editor.listeners     = require('./modules/listeners');
-//         editor.destroyer     = require('./modules/destroyer');
-//         editor.paste         = require('./modules/paste');
-//
-//     };
-//
-//     /**
-//      * @public
-//      * holds initial settings
-//      */
-//     editor.settings = {
-//         tools     : ['text', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
-//         holderId  : 'codex-editor',
-//
-//         // Type of block showing on empty editor
-//         initialBlockPlugin: 'text'
-//     };
-//
-//     /**
-//      * public
-//      *
-//      * Static nodes
-//      */
-//     editor.nodes = {
-//         holder            : null,
-//         wrapper           : null,
-//         toolbar           : null,
-//         inlineToolbar     : {
-//             wrapper : null,
-//             buttons : null,
-//             actions : null
-//         },
-//         toolbox           : null,
-//         notifications     : null,
-//         plusButton        : null,
-//         showSettingsButton: null,
-//         showTrashButton   : null,
-//         blockSettings     : null,
-//         pluginSettings    : null,
-//         defaultSettings   : null,
-//         toolbarButtons    : {}, // { type : DomEl, ... }
-//         redactor          : null
-//     };
-//
-//     /**
-//      * @public
-//      *
-//      * Output state
-//      */
-//     editor.state = {
-//         jsonOutput  : [],
-//         blocks      : [],
-//         inputs      : []
-//     };
-//
-//     /**
-//     * @public
-//     * Editor plugins
-//     */
-//     editor.tools = {};
-//
-//     editor.start = function (userSettings) {
-//
-//         init();
-//
-//         editor.core.prepare(userSettings)
-//
-//         // If all ok, make UI, bind events and parse initial-content
-//             .then(editor.ui.prepare)
-//             .then(editor.tools.prepare)
-//             .then(editor.sanitizer.prepare)
-//             .then(editor.paste.prepare)
-//             .then(editor.transport.prepare)
-//             .then(editor.renderer.makeBlocksFromData)
-//             .then(editor.ui.saveInputs)
-//             .catch(function (error) {
-//
-//                 editor.core.log('Initialization failed with error: %o', 'warn', error);
-//
-//             });
-//
-//     };
-//
-//     return editor;
-//
-// })({});
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-/**
- * Element.closest()
- *
- * https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
- */
-if (!Element.prototype.matches) Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
-
-if (!Element.prototype.closest) Element.prototype.closest = function (s) {
-
-    var el = this;
-
-    if (!document.documentElement.contains(el)) return null;
-    do {
-
-        if (el.matches(s)) return el;
-        el = el.parentElement || el.parentNode;
-    } while (el !== null);
-    return null;
-};
-
-/***/ }),
-/* 5 */
+/***/ "./src/components/modules sync [^_](blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!***********************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \***********************************************************************************************************************************************************************************************************************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
-	"./blockManager.js": 6,
-	"./caret.js": 8,
-	"./events.js": 10,
-	"./keyboard.js": 11,
-	"./listeners.js": 12,
-	"./renderer.js": 13,
-	"./sanitizer.js": 14,
-	"./saver.js": 16,
-	"./toolbar-blockSettings.js": 17,
-	"./toolbar-inline.js": 18,
-	"./toolbar-toolbox.js": 19,
-	"./toolbar.js": 20,
-	"./tools.js": 21,
-	"./ui.js": 22
+	"./blockManager.js": "./src/components/modules/blockManager.js",
+	"./caret.js": "./src/components/modules/caret.js",
+	"./events.js": "./src/components/modules/events.js",
+	"./keyboard.js": "./src/components/modules/keyboard.js",
+	"./listeners.js": "./src/components/modules/listeners.js",
+	"./renderer.js": "./src/components/modules/renderer.js",
+	"./sanitizer.js": "./src/components/modules/sanitizer.js",
+	"./saver.js": "./src/components/modules/saver.js",
+	"./toolbar-blockSettings.js": "./src/components/modules/toolbar-blockSettings.js",
+	"./toolbar-inline.ts": "./src/components/modules/toolbar-inline.ts",
+	"./toolbar-toolbox.js": "./src/components/modules/toolbar-toolbox.js",
+	"./toolbar.js": "./src/components/modules/toolbar.js",
+	"./tools.js": "./src/components/modules/tools.js",
+	"./ui.js": "./src/components/modules/ui.js"
 };
+
+
 function webpackContext(req) {
-	return __webpack_require__(webpackContextResolve(req));
-};
+	var id = webpackContextResolve(req);
+	return __webpack_require__(id);
+}
 function webpackContextResolve(req) {
 	var id = map[req];
-	if(!(id + 1)) // check for number or string
-		throw new Error("Cannot find module '" + req + "'.");
+	if(!(id + 1)) { // check for number or string
+		var e = new Error("Cannot find module '" + req + "'");
+		e.code = 'MODULE_NOT_FOUND';
+		throw e;
+	}
 	return id;
-};
+}
 webpackContext.keys = function webpackContextKeys() {
 	return Object.keys(map);
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = 5;
+webpackContext.id = "./src/components/modules sync [^_](blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
 
 /***/ }),
-/* 6 */
+
+/***/ "./src/components/modules/blockManager.js":
+/*!************************************************!*\
+  !*** ./src/components/modules/blockManager.js ***!
+  \************************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1288,7 +1757,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _block = __webpack_require__(7);
+var _block = __webpack_require__(/*! ../block */ "./src/components/block.js");
 
 var _block2 = _interopRequireDefault(_block);
 
@@ -1423,6 +1892,10 @@ var BlockManager = function (_Module) {
 
             this.Editor.Listeners.on(block.pluginsContent, 'keydown', function (event) {
                 return _this3.Editor.Keyboard.blockKeydownsListener(event);
+            });
+            this.Editor.Listeners.on(block.pluginsContent, 'mouseup', function (event) {
+
+                _this3.Editor.InlineToolbar.move(event);
             });
         }
 
@@ -1773,6 +2246,10 @@ var BlockManager = function (_Module) {
     return BlockManager;
 }(Module);
 
+BlockManager.displayName = 'BlockManager';
+exports.default = BlockManager;
+;
+
 /**
  * @class Blocks
  * @classdesc Class to work with Block instances array
@@ -1782,10 +2259,6 @@ var BlockManager = function (_Module) {
  * @property {HTMLElement} workingArea — editor`s working node
  *
  */
-
-
-BlockManager.displayName = 'BlockManager';
-exports.default = BlockManager;
 
 var Blocks = function () {
 
@@ -2024,303 +2497,15 @@ var Blocks = function () {
 
 Blocks.displayName = 'Blocks';
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-/* WEBPACK VAR INJECTION */(function($, _) {
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- *
- * @class Block
- * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
- *
- * @property {Tool} tool — current block tool (Paragraph, for example)
- * @property {Object} CSS — block`s css classes
- *
- */
-
-/**
- * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
- *
- * @property tool - Tool instance
- * @property html - Returns HTML content of plugin
- * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
- * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
- * @property pluginsContent - HTML content that returns by Tool's render function
- */
-var Block = function () {
-
-    /**
-     * @constructor
-     * @param {String} toolName - Tool name that passed on initialization
-     * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
-     */
-    function Block(toolName, toolInstance) {
-        _classCallCheck(this, Block);
-
-        this.name = toolName;
-        this.tool = toolInstance;
-        this._html = this.compose();
-    }
-
-    /**
-     * CSS classes for the Block
-     * @return {{wrapper: string, content: string}}
-     */
-
-
-    _createClass(Block, [{
-        key: 'compose',
-
-
-        /**
-         * Make default Block wrappers and put Tool`s content there
-         * @returns {HTMLDivElement}
-         */
-        value: function compose() {
-
-            this.wrapper = $.make('div', Block.CSS.wrapper);
-            this.contentNode = $.make('div', Block.CSS.content);
-            this.pluginsContent = this.tool.render();
-
-            this.contentNode.appendChild(this.pluginsContent);
-            this.wrapper.appendChild(this.contentNode);
-
-            return this.wrapper;
-        }
-
-        /**
-         * Calls Tool's method
-         *
-         * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
-         *
-         * @param {String} methodName
-         * @param {Object} params
-         */
-
-    }, {
-        key: 'call',
-        value: function call(methodName, params) {
-
-            /**
-             * call Tool's method with the instance context
-             */
-            if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
-
-                this.tool[methodName].call(this.tool, params);
-            }
-        }
-
-        /**
-         * Get Block`s HTML
-         * @returns {HTMLElement}
-         */
-
-    }, {
-        key: 'mergeWith',
-
-
-        /**
-         * Call plugins merge method
-         * @param {Object} data
-         */
-        value: function mergeWith(data) {
-            var _this = this;
-
-            return Promise.resolve().then(function () {
-
-                _this.tool.merge(data);
-            });
-        }
-        /**
-         * Extracts data from Block
-         * Groups Tool's save processing time
-         * @return {Object}
-         */
-
-    }, {
-        key: 'save',
-        value: function save() {
-            var _this2 = this;
-
-            var extractedBlock = this.tool.save(this.pluginsContent);
-
-            /** Measuring execution time*/
-            var measuringStart = window.performance.now(),
-                measuringEnd = void 0;
-
-            return Promise.resolve(extractedBlock).then(function (finishedExtraction) {
-
-                /** measure promise execution */
-                measuringEnd = window.performance.now();
-
-                return {
-                    tool: _this2.name,
-                    data: finishedExtraction,
-                    time: measuringEnd - measuringStart
-                };
-            }).catch(function (error) {
-
-                _.log('Saving proccess for ' + this.tool.name + ' tool failed due to the ' + error, 'log', 'red');
-            });
-        }
-
-        /**
-         * Uses Tool's validation method to check the correctness of output data
-         * Tool's validation method is optional
-         *
-         * @description Method also can return data if it passed the validation
-         *
-         * @param {Object} data
-         * @returns {Boolean|Object} valid
-         */
-
-    }, {
-        key: 'validateData',
-        value: function validateData(data) {
-
-            var isValid = true;
-
-            if (this.tool.validate instanceof Function) {
-
-                isValid = this.tool.validate(data);
-            }
-
-            if (!isValid) {
-
-                return false;
-            }
-
-            return data;
-        }
-
-        /**
-         * Check block for emptiness
-         * @return {Boolean}
-         */
-
-    }, {
-        key: 'html',
-        get: function get() {
-
-            return this._html;
-        }
-
-        /**
-         * Get Block's JSON data
-         * @return {Object}
-         */
-
-    }, {
-        key: 'data',
-        get: function get() {
-
-            return this.save();
-        }
-
-        /**
-         * is block mergeable
-         * We plugin have merge function then we call it mergable
-         * @return {boolean}
-         */
-
-    }, {
-        key: 'mergeable',
-        get: function get() {
-
-            return typeof this.tool.merge === 'function';
-        }
-    }, {
-        key: 'isEmpty',
-        get: function get() {
-
-            /**
-             * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
-             * That Tools are not empty
-             */
-            if (this.tool.contentless) {
-
-                return false;
-            }
-
-            var emptyText = $.isEmpty(this.pluginsContent),
-                emptyMedia = !this.hasMedia;
-
-            return emptyText && emptyMedia;
-        }
-
-        /**
-         * Check if block has a media content such as images, iframes and other
-         * @return {Boolean}
-         */
-
-    }, {
-        key: 'hasMedia',
-        get: function get() {
-
-            /**
-             * This tags represents media-content
-             * @type {string[]}
-             */
-            var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
-
-            return !!this._html.querySelector(mediaTags.join(','));
-        }
-
-        /**
-         * Set selected state
-         * @param {Boolean} state - 'true' to select, 'false' to remove selection
-         */
-
-    }, {
-        key: 'selected',
-        set: function set(state) {
-
-            /**
-             * We don't need to mark Block as Selected when it is not empty
-             */
-            if (state === true && !this.isEmpty) {
-
-                this._html.classList.add(Block.CSS.selected);
-            } else {
-
-                this._html.classList.remove(Block.CSS.selected);
-            }
-        }
-    }], [{
-        key: 'CSS',
-        get: function get() {
-
-            return {
-                wrapper: 'ce-block',
-                content: 'ce-block__content',
-                selected: 'ce-block--selected'
-            };
-        }
-    }]);
-
-    return Block;
-}();
-
-Block.displayName = 'Block';
-exports.default = Block;
-module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
-
-/***/ }),
-/* 8 */
+/***/ "./src/components/modules/caret.js":
+/*!*****************************************!*\
+  !*** ./src/components/modules/caret.js ***!
+  \*****************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2332,7 +2517,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Selection = __webpack_require__(9);
+var _Selection = __webpack_require__(/*! ../Selection */ "./src/components/Selection.js");
 
 var _Selection2 = _interopRequireDefault(_Selection);
 
@@ -2658,106 +2843,15 @@ var Caret = function (_Module) {
 Caret.displayName = 'Caret';
 exports.default = Caret;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Working with selection
- */
-var Selection = function () {
-
-  /**
-   * @constructor
-   */
-  function Selection() {
-    _classCallCheck(this, Selection);
-
-    this.instance = null;
-    this.selection = null;
-  }
-
-  /**
-   * Returns window Selection
-   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-   * @return {Selection}
-   */
-
-
-  _createClass(Selection, null, [{
-    key: "get",
-    value: function get() {
-
-      return window.getSelection();
-    }
-
-    /**
-     * Returns selected anchor
-     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
-     * @return {Node|null}
-     */
-
-  }, {
-    key: "getAnchorNode",
-    value: function getAnchorNode() {
-
-      var selection = window.getSelection();
-
-      return selection ? selection.anchorNode : null;
-    }
-
-    /**
-     * Returns selection offset according to the anchor node
-     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
-     * @return {Number|null}
-     */
-
-  }, {
-    key: "getAnchorOffset",
-    value: function getAnchorOffset() {
-
-      var selection = window.getSelection();
-
-      return selection ? selection.anchorOffset : null;
-    }
-
-    /**
-     * Is current selection range collapsed
-     * @return {boolean|null}
-     */
-
-  }, {
-    key: "isCollapsed",
-    get: function get() {
-
-      var selection = window.getSelection();
-
-      return selection ? selection.isCollapsed : null;
-    }
-  }]);
-
-  return Selection;
-}();
-
-Selection.displayName = "Selection";
-exports.default = Selection;
-module.exports = exports["default"];
-
-/***/ }),
-/* 10 */
+/***/ "./src/components/modules/events.js":
+/*!******************************************!*\
+  !*** ./src/components/modules/events.js ***!
+  \******************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -2860,10 +2954,15 @@ var Events = function (_Module) {
 Events.displayName = "Events";
 exports.default = Events;
 module.exports = exports["default"];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
 
 /***/ }),
-/* 11 */
+
+/***/ "./src/components/modules/keyboard.js":
+/*!********************************************!*\
+  !*** ./src/components/modules/keyboard.js ***!
+  \********************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3071,10 +3170,15 @@ var Keyboard = function (_Module) {
 Keyboard.displayName = 'Keyboard';
 exports.default = Keyboard;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
-/* 12 */
+
+/***/ "./src/components/modules/listeners.js":
+/*!*********************************************!*\
+  !*** ./src/components/modules/listeners.js ***!
+  \*********************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3329,10 +3433,15 @@ var Listeners = function (_Module) {
 Listeners.displayName = "Listeners";
 exports.default = Listeners;
 module.exports = exports["default"];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
 
 /***/ }),
-/* 13 */
+
+/***/ "./src/components/modules/renderer.js":
+/*!********************************************!*\
+  !*** ./src/components/modules/renderer.js ***!
+  \********************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3457,10 +3566,15 @@ var Renderer = function (_Module) {
 Renderer.displayName = "Renderer";
 exports.default = Renderer;
 module.exports = exports["default"];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
-/* 14 */
+
+/***/ "./src/components/modules/sanitizer.js":
+/*!*********************************************!*\
+  !*** ./src/components/modules/sanitizer.js ***!
+  \*********************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -3538,7 +3652,7 @@ var Sanitizer = function (_Module) {
         _this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
 
         /** HTML Janitor library */
-        _this.sanitizerInstance = __webpack_require__(15);
+        _this.sanitizerInstance = __webpack_require__(/*! html-janitor */ "./node_modules/html-janitor/src/html-janitor.js");
 
         return _this;
     }
@@ -3638,205 +3752,15 @@ var Sanitizer = function (_Module) {
 Sanitizer.displayName = 'Sanitizer';
 exports.default = Sanitizer;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
-/* 15 */
-/***/ (function(module, exports, __webpack_require__) {
 
-var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
-  if (true) {
-    !(__WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
-				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
-				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
-				__WEBPACK_AMD_DEFINE_FACTORY__),
-				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-  } else if (typeof exports === 'object') {
-    module.exports = factory();
-  } else {
-    root.HTMLJanitor = factory();
-  }
-}(this, function () {
-
-  /**
-   * @param {Object} config.tags Dictionary of allowed tags.
-   * @param {boolean} config.keepNestedBlockElements Default false.
-   */
-  function HTMLJanitor(config) {
-
-    var tagDefinitions = config['tags'];
-    var tags = Object.keys(tagDefinitions);
-
-    var validConfigValues = tags
-      .map(function(k) { return typeof tagDefinitions[k]; })
-      .every(function(type) { return type === 'object' || type === 'boolean' || type === 'function'; });
-
-    if(!validConfigValues) {
-      throw new Error("The configuration was invalid");
-    }
-
-    this.config = config;
-  }
-
-  // TODO: not exhaustive?
-  var blockElementNames = ['P', 'LI', 'TD', 'TH', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'PRE'];
-  function isBlockElement(node) {
-    return blockElementNames.indexOf(node.nodeName) !== -1;
-  }
-
-  var inlineElementNames = ['A', 'B', 'STRONG', 'I', 'EM', 'SUB', 'SUP', 'U', 'STRIKE'];
-  function isInlineElement(node) {
-    return inlineElementNames.indexOf(node.nodeName) !== -1;
-  }
-
-  HTMLJanitor.prototype.clean = function (html) {
-    var sandbox = document.createElement('div');
-    sandbox.innerHTML = html;
-
-    this._sanitize(sandbox);
-
-    return sandbox.innerHTML;
-  };
-
-  HTMLJanitor.prototype._sanitize = function (parentNode) {
-    var treeWalker = createTreeWalker(parentNode);
-    var node = treeWalker.firstChild();
-    if (!node) { return; }
-
-    do {
-      // Ignore nodes that have already been sanitized
-      if (node._sanitized) {
-        continue;
-      }
-
-      if (node.nodeType === Node.TEXT_NODE) {
-        // If this text node is just whitespace and the previous or next element
-        // sibling is a block element, remove it
-        // N.B.: This heuristic could change. Very specific to a bug with
-        // `contenteditable` in Firefox: http://jsbin.com/EyuKase/1/edit?js,output
-        // FIXME: make this an option?
-        if (node.data.trim() === ''
-            && ((node.previousElementSibling && isBlockElement(node.previousElementSibling))
-                 || (node.nextElementSibling && isBlockElement(node.nextElementSibling)))) {
-          parentNode.removeChild(node);
-          this._sanitize(parentNode);
-          break;
-        } else {
-          continue;
-        }
-      }
-
-      // Remove all comments
-      if (node.nodeType === Node.COMMENT_NODE) {
-        parentNode.removeChild(node);
-        this._sanitize(parentNode);
-        break;
-      }
-
-      var isInline = isInlineElement(node);
-      var containsBlockElement;
-      if (isInline) {
-        containsBlockElement = Array.prototype.some.call(node.childNodes, isBlockElement);
-      }
-
-      // Block elements should not be nested (e.g. <li><p>...); if
-      // they are, we want to unwrap the inner block element.
-      var isNotTopContainer = !! parentNode.parentNode;
-      var isNestedBlockElement =
-            isBlockElement(parentNode) &&
-            isBlockElement(node) &&
-            isNotTopContainer;
-
-      var nodeName = node.nodeName.toLowerCase();
-
-      var allowedAttrs = getAllowedAttrs(this.config, nodeName, node);
-
-      var isInvalid = isInline && containsBlockElement;
-
-      // Drop tag entirely according to the whitelist *and* if the markup
-      // is invalid.
-      if (isInvalid || shouldRejectNode(node, allowedAttrs)
-          || (!this.config.keepNestedBlockElements && isNestedBlockElement)) {
-        // Do not keep the inner text of SCRIPT/STYLE elements.
-        if (! (node.nodeName === 'SCRIPT' || node.nodeName === 'STYLE')) {
-          while (node.childNodes.length > 0) {
-            parentNode.insertBefore(node.childNodes[0], node);
-          }
-        }
-        parentNode.removeChild(node);
-
-        this._sanitize(parentNode);
-        break;
-      }
-
-      // Sanitize attributes
-      for (var a = 0; a < node.attributes.length; a += 1) {
-        var attr = node.attributes[a];
-
-        if (shouldRejectAttr(attr, allowedAttrs, node)) {
-          node.removeAttribute(attr.name);
-          // Shift the array to continue looping.
-          a = a - 1;
-        }
-      }
-
-      // Sanitize children
-      this._sanitize(node);
-
-      // Mark node as sanitized so it's ignored in future runs
-      node._sanitized = true;
-    } while ((node = treeWalker.nextSibling()));
-  };
-
-  function createTreeWalker(node) {
-    return document.createTreeWalker(node,
-                                     NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_COMMENT,
-                                     null, false);
-  }
-
-  function getAllowedAttrs(config, nodeName, node){
-    if (typeof config.tags[nodeName] === 'function') {
-      return config.tags[nodeName](node);
-    } else {
-      return config.tags[nodeName];
-    }
-  }
-
-  function shouldRejectNode(node, allowedAttrs){
-    if (typeof allowedAttrs === 'undefined') {
-      return true;
-    } else if (typeof allowedAttrs === 'boolean') {
-      return !allowedAttrs;
-    }
-
-    return false;
-  }
-
-  function shouldRejectAttr(attr, allowedAttrs, node){
-    var attrName = attr.name.toLowerCase();
-
-    if (allowedAttrs === true){
-      return false;
-    } else if (typeof allowedAttrs[attrName] === 'function'){
-      return !allowedAttrs[attrName](attr.value, node);
-    } else if (typeof allowedAttrs[attrName] === 'undefined'){
-      return true;
-    } else if (allowedAttrs[attrName] === false) {
-      return true;
-    } else if (typeof allowedAttrs[attrName] === 'string') {
-      return (allowedAttrs[attrName] !== attr.value);
-    }
-
-    return false;
-  }
-
-  return HTMLJanitor;
-
-}));
-
-
-/***/ }),
-/* 16 */
+/***/ "./src/components/modules/saver.js":
+/*!*****************************************!*\
+  !*** ./src/components/modules/saver.js ***!
+  \*****************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4124,10 +4048,15 @@ var Saver = function (_Module) {
 Saver.displayName = 'Saver';
 exports.default = Saver;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
 
 /***/ }),
-/* 17 */
+
+/***/ "./src/components/modules/toolbar-blockSettings.js":
+/*!*********************************************************!*\
+  !*** ./src/components/modules/toolbar-blockSettings.js ***!
+  \*********************************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4314,10 +4243,15 @@ var BlockSettings = function (_Module) {
 BlockSettings.displayName = 'BlockSettings';
 exports.default = BlockSettings;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
 
 /***/ }),
-/* 18 */
+
+/***/ "./src/components/modules/toolbar-inline.ts":
+/*!**************************************************!*\
+  !*** ./src/components/modules/toolbar-inline.ts ***!
+  \**************************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4343,56 +4277,50 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * |   B  i [link] [mark]   |
  * | _______________________|
  */
-
 var InlineToolbar = function (_Module) {
   _inherits(InlineToolbar, _Module);
 
   /**
-   * @constructor
-   */
+     * @constructor
+     */
   function InlineToolbar(_ref) {
     var config = _ref.config;
 
     _classCallCheck(this, InlineToolbar);
 
+    /**
+     * Inline Toolbar elements
+     */
     var _this = _possibleConstructorReturn(this, (InlineToolbar.__proto__ || Object.getPrototypeOf(InlineToolbar)).call(this, { config: config }));
 
-    _this.nodes = {};
-
+    _this.nodes = {
+      wrapper: null
+    };
+    /**
+     * CSS styles
+     */
+    _this.CSS = {
+      inlineToolbar: 'ce-inline-toolbar'
+    };
     return _this;
   }
-
   /**
-   * CSS styles
-   * @return {Object}
-   * @constructor
+   * Making DOM
    */
 
 
   _createClass(InlineToolbar, [{
     key: 'make',
-
-
-    /**
-     * Making DOM
-     */
     value: function make() {
-
-      this.nodes.wrapper = $.make('div', InlineToolbar.CSS.inlineToolbar);
-
+      this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
       /**
        * Append Inline Toolbar to the Editor
        */
       $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
     }
-  }], [{
-    key: 'CSS',
-    get: function get() {
-
-      return {
-        inlineToolbar: 'ce-inline-toolbar'
-      };
-    }
+  }, {
+    key: 'move',
+    value: function move() {}
   }]);
 
   return InlineToolbar;
@@ -4401,10 +4329,15 @@ var InlineToolbar = function (_Module) {
 InlineToolbar.displayName = 'InlineToolbar';
 exports.default = InlineToolbar;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
 
 /***/ }),
-/* 19 */
+
+/***/ "./src/components/modules/toolbar-toolbox.js":
+/*!***************************************************!*\
+  !*** ./src/components/modules/toolbar-toolbox.js ***!
+  \***************************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4666,10 +4599,15 @@ var Toolbox = function (_Module) {
 Toolbox.displayName = 'Toolbox';
 exports.default = Toolbox;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
-/* 20 */
+
+/***/ "./src/components/modules/toolbar.js":
+/*!*******************************************!*\
+  !*** ./src/components/modules/toolbar.js ***!
+  \*******************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4993,10 +4931,15 @@ var Toolbar = function (_Module) {
 Toolbar.displayName = 'Toolbar';
 exports.default = Toolbar;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
 
 /***/ }),
-/* 21 */
+
+/***/ "./src/components/modules/tools.js":
+/*!*****************************************!*\
+  !*** ./src/components/modules/tools.js ***!
+  \*****************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5292,10 +5235,15 @@ var Tools = function (_Module) {
 Tools.displayName = 'Tools';
 exports.default = Tools;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(1)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
-/* 22 */
+
+/***/ "./src/components/modules/ui.js":
+/*!**************************************!*\
+  !*** ./src/components/modules/ui.js ***!
+  \**************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5500,7 +5448,7 @@ var UI = function (_Module) {
       /**
        * Load CSS
        */
-      var styles = __webpack_require__(23);
+      var styles = __webpack_require__(/*! ../../styles/main.css */ "./src/styles/main.css");
 
       /**
        * Make tag
@@ -5914,104 +5862,311 @@ var UI = function (_Module) {
 UI.displayName = 'UI';
 exports.default = UI;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(0), __webpack_require__(2)))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
 
 /***/ }),
-/* 23 */
+
+/***/ "./src/components/polyfills.js":
+/*!*************************************!*\
+  !*** ./src/components/polyfills.js ***!
+  \*************************************/
+/*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-exports = module.exports = __webpack_require__(24)(undefined);
+"use strict";
+
+
+/**
+ * Element.closest()
+ *
+ * https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+ */
+if (!Element.prototype.matches) Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+
+if (!Element.prototype.closest) Element.prototype.closest = function (s) {
+
+    var el = this;
+
+    if (!document.documentElement.contains(el)) return null;
+    do {
+
+        if (el.matches(s)) return el;
+        el = el.parentElement || el.parentNode;
+    } while (el !== null);
+    return null;
+};
+
+/***/ }),
+
+/***/ "./src/components/utils.js":
+/*!*********************************!*\
+  !*** ./src/components/utils.js ***!
+  \*********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Codex Editor Util
+ */
+var Util = function () {
+    function Util() {
+        _classCallCheck(this, Util);
+    }
+
+    _createClass(Util, null, [{
+        key: 'log',
+
+
+        /**
+         * Custom logger
+         *
+         * @param {string} msg  - message
+         * @param {string} type - logging type 'log'|'warn'|'error'|'info'
+         * @param {*} args      - argument to log with a message
+         */
+        value: function log(msg, type, args) {
+
+            type = type || 'log';
+
+            if (!args) {
+
+                args = msg || 'undefined';
+                msg = '[codex-editor]:      %o';
+            } else {
+
+                msg = '[codex-editor]:      ' + msg;
+            }
+
+            try {
+
+                if ('console' in window && window.console[type]) {
+
+                    if (args) window.console[type](msg, args);else window.console[type](msg);
+                }
+            } catch (e) {
+                // do nothing
+            }
+        }
+
+        /**
+         * Returns basic keycodes as constants
+         * @return {{}}
+         */
+
+    }, {
+        key: 'sequence',
+
+
+        /**
+         * @typedef {Object} ChainData
+         * @property {Object} data - data that will be passed to the success or fallback
+         * @property {Function} function - function's that must be called asynchronically
+         */
+
+        /**
+         * Fires a promise sequence asyncronically
+         *
+         * @param {Object[]} chains - list or ChainData's
+         * @param {Function} success - success callback
+         * @param {Function} fallback - callback that fires in case of errors
+         *
+         * @return {Promise}
+         */
+        value: function sequence(chains) {
+            var success = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : function () {};
+            var fallback = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : function () {};
+
+
+            return new Promise(function (resolve) {
+
+                /**
+                 * pluck each element from queue
+                 * First, send resolved Promise as previous value
+                 * Each plugins "prepare" method returns a Promise, that's why
+                 * reduce current element will not be able to continue while can't get
+                 * a resolved Promise
+                 */
+                chains.reduce(function (previousValue, currentValue, iteration) {
+
+                    return previousValue.then(function () {
+                        return waitNextBlock(currentValue, success, fallback);
+                    }).then(function () {
+
+                        // finished
+                        if (iteration === chains.length - 1) {
+
+                            resolve();
+                        }
+                    });
+                }, Promise.resolve());
+            });
+
+            /**
+             * Decorator
+             *
+             * @param {ChainData} chainData
+             *
+             * @param {Function} successCallback
+             * @param {Function} fallbackCallback
+             *
+             * @return {Promise}
+             */
+            function waitNextBlock(chainData, successCallback, fallbackCallback) {
+
+                return new Promise(function (resolve) {
+
+                    chainData.function().then(function () {
+
+                        successCallback(chainData.data || {});
+                    }).then(resolve).catch(function () {
+
+                        fallbackCallback(chainData.data || {});
+
+                        // anyway, go ahead even it falls
+                        resolve();
+                    });
+                });
+            }
+        }
+
+        /**
+         * Make array from array-like collection
+         *
+         * @param {*} collection
+         *
+         * @return {Array}
+         */
+
+    }, {
+        key: 'array',
+        value: function array(collection) {
+
+            return Array.prototype.slice.call(collection);
+        }
+
+        /**
+         * Checks if object is empty
+         *
+         * @param {Object} object
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isEmpty',
+        value: function isEmpty(object) {
+
+            return Object.keys(object).length === 0 && object.constructor === Object;
+        }
+
+        /**
+         * Check if passed object is a Promise
+         * @param  {*}  object - object to check
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'isPromise',
+        value: function isPromise(object) {
+
+            return Promise.resolve(object) === object;
+        }
+
+        /**
+         * Check if passed element is contenteditable
+         * @param element
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isContentEditable',
+        value: function isContentEditable(element) {
+
+            return element.contentEditable === 'true';
+        }
+
+        /**
+         * Delays method execution
+         *
+         * @param method
+         * @param timeout
+         */
+
+    }, {
+        key: 'delay',
+        value: function delay(method, timeout) {
+
+            return function () {
+
+                var context = this,
+                    args = arguments;
+
+                window.setTimeout(function () {
+                    return method.apply(context, args);
+                }, timeout);
+            };
+        }
+    }, {
+        key: 'keyCodes',
+        get: function get() {
+
+            return {
+                BACKSPACE: 8,
+                TAB: 9,
+                ENTER: 13,
+                SHIFT: 16,
+                CTRL: 17,
+                ALT: 18,
+                ESC: 27,
+                SPACE: 32,
+                LEFT: 37,
+                UP: 38,
+                DOWN: 40,
+                RIGHT: 39,
+                DELETE: 46,
+                META: 91
+            };
+        }
+    }]);
+
+    return Util;
+}();
+
+Util.displayName = 'Util';
+exports.default = Util;
+;
+module.exports = exports['default'];
+
+/***/ }),
+
+/***/ "./src/styles/main.css":
+/*!*****************************!*\
+  !*** ./src/styles/main.css ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/lib/css-base.js */ "./node_modules/css-loader/lib/css-base.js")(false);
 // imports
 
 
 // module
-exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n\n    /**\n     * All gray texts: placeholders, settings\n     */\n\n    /**\n     * Block content width\n     */\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 2px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-34px - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    width: 34px;\n    height: 34px;\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n    content: '+';\n    font-size: 26px;\n    display: block;\n    margin-top: -2px;\n    margin-right: -2px;\n\n}\n.ce-toolbar__plus--hidden {\n      display: none;\n\n}\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    border: 1px dotted #ccc;\n    padding: 2px;\n  }\n.ce-toolbar__actions-buttons {\n      border: 1px dotted #ccc;\n      padding: 2px;\n      text-align: right;\n      margin-bottom: 2px;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    border: 1px dotted #ccc\n  }\n.ce-toolbar__settings-btn::before {\n    content: 'STN';\n    font-size: 10px;\n    opacity: .4;\n\n}\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        width: 34px;\n        height: 34px;\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px\n    }\n.ce-toolbox__button::before {\n    content: attr(title);\n    font-size: 22px;\n    font-weight: 500;\n    letter-spacing: 1em;\n    -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n            font-feature-settings: \"smcp\", \"c2sc\";\n    font-variant-caps: all-small-caps;\n    padding-left: 11.5px;\n    margin-top: -1px;\n    display: inline-block;\n\n}\n.ce-inline-toolbar {\n\n}\n.ce-settings {\n  border: 1px dotted #ccc;\n  padding: 2px;\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone {\n    border: 1px dotted #ccc;\n    padding: 2px;\n    margin-bottom: 2px\n  }\n.ce-settings__plugin-zone::before {\n    content: 'PLUGIN SETTINGS';\n    opacity: .4;\n    font-size: 12px;\n\n}\n.ce-settings__default-zone {\n    border: 1px dotted #ccc;\n    padding: 2px\n  }\n.ce-settings__default-zone::before {\n    content: 'DEFAULT SETTINGS';\n    opacity: .4;\n    font-size: 12px;\n\n}\n.ce-settings__button {\n    padding: 10px 15px;\n    color: #707684\n  }\n.ce-settings__button:hover {\n    background: #eff2f5;\n\n}\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0\n}\n.ce-block:first-of-type {\n    margin-top: 0;\n\n}\n.ce-block--selected {\n    background-color: #eff2f5;\n\n}\n.ce-block__content {\n    max-width: 650px;\n    margin: 0 auto;\n\n}\n", ""]);
+exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n    --bg-light: #eff2f5;\n\n    /**\n     * All gray texts: placeholders, settings\n     */\n    --grayText: #707684;\n\n    /**\n     * Block content width\n     */\n    --content-width: 650px;\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n    --toolbar-buttons-size: 34px\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 2px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    width: 34px;\n    width: var(--toolbar-buttons-size);\n    height: 34px;\n    height: var(--toolbar-buttons-size);\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n      content: '+';\n      font-size: 26px;\n      display: block;\n      margin-top: -2px;\n      margin-right: -2px;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    border: 1px dotted #ccc;\n    padding: 2px;\n  }\n.ce-toolbar__actions-buttons {\n      border: 1px dotted #ccc;\n      padding: 2px;\n      text-align: right;\n      margin-bottom: 2px;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    border: 1px dotted #ccc\n  }\n.ce-toolbar__settings-btn::before {\n      content: 'STN';\n      font-size: 10px;\n      opacity: .4;\n    }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        background: var(--bg-light);\n        width: 34px;\n        width: var(--toolbar-buttons-size);\n        height: 34px;\n        height: var(--toolbar-buttons-size);\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px;\n        line-height: var(--toolbar-buttons-size)\n    }\n.ce-toolbox__button::before {\n            content: attr(title);\n            font-size: 22px;\n            font-weight: 500;\n            letter-spacing: 1em;\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                    font-feature-settings: \"smcp\", \"c2sc\";\n            font-variant-caps: all-small-caps;\n            padding-left: 11.5px;\n            margin-top: -1px;\n            display: inline-block;\n        }\n.ce-inline-toolbar {\n    position: absolute;\n    z-index: 2;\n  background: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  position: relative;\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background: #fff;\n        }\n.ce-inline-toolbar {\n\n    width: 100px;\n    height: 40px;\n}\n.ce-settings {\n  border: 1px dotted #ccc;\n  padding: 2px;\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone {\n    border: 1px dotted #ccc;\n    padding: 2px;\n    margin-bottom: 2px\n  }\n.ce-settings__plugin-zone::before {\n      content: 'PLUGIN SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__default-zone {\n    border: 1px dotted #ccc;\n    padding: 2px\n  }\n.ce-settings__default-zone::before {\n      content: 'DEFAULT SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__button {\n    padding: 10px 15px;\n    color: #707684;\n    color: var(--grayText)\n  }\n.ce-settings__button:hover {\n      background: #eff2f5;\n      background: var(--bg-light);\n    }\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0\n}\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n", ""]);
 
 // exports
 
 
-/***/ }),
-/* 24 */
-/***/ (function(module, exports) {
-
-/*
-	MIT License http://www.opensource.org/licenses/mit-license.php
-	Author Tobias Koppers @sokra
-*/
-// css base code, injected by the css-loader
-module.exports = function(useSourceMap) {
-	var list = [];
-
-	// return the list of modules as css string
-	list.toString = function toString() {
-		return this.map(function (item) {
-			var content = cssWithMappingToString(item, useSourceMap);
-			if(item[2]) {
-				return "@media " + item[2] + "{" + content + "}";
-			} else {
-				return content;
-			}
-		}).join("");
-	};
-
-	// import a list of modules into the list
-	list.i = function(modules, mediaQuery) {
-		if(typeof modules === "string")
-			modules = [[null, modules, ""]];
-		var alreadyImportedModules = {};
-		for(var i = 0; i < this.length; i++) {
-			var id = this[i][0];
-			if(typeof id === "number")
-				alreadyImportedModules[id] = true;
-		}
-		for(i = 0; i < modules.length; i++) {
-			var item = modules[i];
-			// skip already imported module
-			// this implementation is not 100% perfect for weird media query combinations
-			//  when a module is imported multiple times with different media queries.
-			//  I hope this will never occur (Hey this way we have smaller bundles)
-			if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-				if(mediaQuery && !item[2]) {
-					item[2] = mediaQuery;
-				} else if(mediaQuery) {
-					item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-				}
-				list.push(item);
-			}
-		}
-	};
-	return list;
-};
-
-function cssWithMappingToString(item, useSourceMap) {
-	var content = item[1] || '';
-	var cssMapping = item[3];
-	if (!cssMapping) {
-		return content;
-	}
-
-	if (useSourceMap && typeof btoa === 'function') {
-		var sourceMapping = toComment(cssMapping);
-		var sourceURLs = cssMapping.sources.map(function (source) {
-			return '/*# sourceURL=' + cssMapping.sourceRoot + source + ' */'
-		});
-
-		return [content].concat(sourceURLs).concat([sourceMapping]).join('\n');
-	}
-
-	return [content].join('\n');
-}
-
-// Adapted from convert-source-map (MIT)
-function toComment(sourceMap) {
-	// eslint-disable-next-line no-undef
-	var base64 = btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap))));
-	var data = 'sourceMappingURL=data:application/json;charset=utf-8;base64,' + base64;
-
-	return '/*# ' + data + ' */';
-}
-
-
 /***/ })
-/******/ ]);
+
+/******/ });
 //# sourceMappingURL=codex-editor.js.map

@@ -110,6 +110,11 @@ export default class BlockManager extends Module {
     bindEvents(block) {
 
         this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.Keyboard.blockKeydownsListener(event));
+        this.Editor.Listeners.on(block.pluginsContent, 'mouseup', (event) => {
+
+            this.Editor.InlineToolbar.move(event);
+
+        });
 
     }
 
@@ -436,7 +441,7 @@ export default class BlockManager extends Module {
 
     }
 
-}
+};
 
 /**
  * @class Blocks

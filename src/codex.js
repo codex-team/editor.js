@@ -85,7 +85,7 @@ let modules = editorModules.map( module => require('./components/modules/' + mod
  *
  * @type {CodexEditor}
  */
-module.exports = class CodexEditor {
+export default class CodexEditor {
 
     /** Editor version */
     static get version() {
@@ -116,6 +116,7 @@ module.exports = class CodexEditor {
          * @property {Toolbox} Toolbox
          * @property {BlockSettings} BlockSettings
          * @property {Renderer} Renderer
+         * @property {InlineToolbar} InlineToolbar
          */
         this.moduleInstances = {};
 
