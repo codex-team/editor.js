@@ -953,7 +953,7 @@ var Module = function () {
   /**
    * @constructor
    *
-   * @param  {EditorConfig} config
+   * @param {EditorConfig} config
    */
   function Module(_ref) {
     var config = _ref.config;
@@ -4040,7 +4040,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */(function(Module, $) {
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4052,52 +4052,54 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var InlineToolbar = function (_Module) {
-  _inherits(InlineToolbar, _Module);
-
-  /**
-   * @constructor
-   */
-  function InlineToolbar(_ref) {
-    var config = _ref.config;
-
-    _classCallCheck(this, InlineToolbar);
+    _inherits(InlineToolbar, _Module);
 
     /**
-     * Inline Toolbar elements
+     * @constructor
      */
-    var _this = _possibleConstructorReturn(this, (InlineToolbar.__proto__ || Object.getPrototypeOf(InlineToolbar)).call(this, { config: config }));
+    function InlineToolbar(_ref) {
+        var config = _ref.config;
 
-    _this.nodes = {
-      wrapper: null
-    };
-    /**
-     * CSS styles
-     */
-    _this.CSS = {
-      inlineToolbar: 'ce-inline-toolbar'
-    };
-    return _this;
-  }
-  /**
-   * Making DOM
-   */
+        _classCallCheck(this, InlineToolbar);
 
+        /**
+         * Inline Toolbar elements
+         */
+        var _this = _possibleConstructorReturn(this, (InlineToolbar.__proto__ || Object.getPrototypeOf(InlineToolbar)).call(this, { config: config }));
 
-  _createClass(InlineToolbar, [{
-    key: 'make',
-    value: function make() {
-      this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
-      /**
-       * Append Inline Toolbar to the Editor
-       */
-      $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+        _this.nodes = {
+            wrapper: null
+        };
+        /**
+         * CSS styles
+         */
+        _this.CSS = {
+            inlineToolbar: 'ce-inline-toolbar'
+        };
+        return _this;
     }
-  }, {
-    key: 'move',
-    value: function move() {}
-  }]);
+    /**
+     * Making DOM
+     */
 
-  return InlineToolbar;
+
+    _createClass(InlineToolbar, [{
+        key: 'make',
+        value: function make() {
+            this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
+            /**
+             * Append Inline Toolbar to the Editor
+             */
+            $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+        }
+    }, {
+        key: 'move',
+        value: function move() {
+            // moving
+        }
+    }]);
+
+    return InlineToolbar;
 }(Module);
 
 InlineToolbar.displayName = 'InlineToolbar';

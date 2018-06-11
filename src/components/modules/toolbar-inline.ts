@@ -28,14 +28,14 @@ export default class InlineToolbar extends Module {
   /**
    * Inline Toolbar elements
    */
-  nodes: InlineToolbarNodes = {
-      wrapper: null
+  private nodes: InlineToolbarNodes = {
+      wrapper: null,
   };
 
   /**
    * CSS styles
    */
-  CSS: InlineToolbarCSS = {
+  private CSS: InlineToolbarCSS = {
       inlineToolbar: 'ce-inline-toolbar',
   };
 
@@ -51,7 +51,7 @@ export default class InlineToolbar extends Module {
   /**
    * Making DOM
    */
-  make() {
+  public make() {
 
       this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
 
@@ -62,7 +62,7 @@ export default class InlineToolbar extends Module {
 
   }
 
-  move() {
-
+  public move() {
+    // moving
   }
 }
