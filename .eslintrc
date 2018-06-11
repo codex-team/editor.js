@@ -42,7 +42,7 @@
         "no-nested-ternary": 1,
         "no-trailing-spaces": 2,
         "no-mixed-spaces-and-tabs": 2,
-        "padded-blocks": [2, "always"],
+        "padded-blocks": [2, "never"],
         "space-before-blocks": 1,
         "space-before-function-paren": [1, {
             "anonymous": "always",
@@ -53,7 +53,7 @@
             "markers": ["=", "!"]
         }],
         "semi": [2, "always"],
-        "indent": [2, 4, {
+        "indent": [2, 2, {
             "SwitchCase": 1
         }],
         "camelcase": [2, {

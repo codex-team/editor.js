@@ -10,132 +10,111 @@
  *  |________________________|
  */
 export default class BlockSettings extends Module {
+  constructor({config}) {
+    super({config});
 
-    constructor({config}) {
+    this.nodes = {
+      wrapper: null,
+      toolSettings: null,
+      defaultSettings: null,
+      buttonRemove: null
+    };
+  }
 
-        super({config});
+  /**
+   * Block Settings CSS
+   * @return {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
+   */
+  static get CSS() {
+    return {
+      // Settings Panel
+      wrapper: 'ce-settings',
+      wrapperOpened: 'ce-settings--opened',
+      toolSettings: 'ce-settings__plugin-zone',
+      defaultSettings: 'ce-settings__default-zone',
 
-        this.nodes = {
-            wrapper: null,
-            toolSettings: null,
-            defaultSettings: null,
-            buttonRemove: null
-        };
+      button: 'ce-settings__button'
+    };
+  }
 
-    }
+  /**
+   * Panel with block settings with 2 sections:
+   *  - Tool's Settings
+   *  - Default Settings [Move, Remove, etc]
+   *
+   * @return {Element}
+   */
+  make() {
+    this.nodes.wrapper = $.make('div', BlockSettings.CSS.wrapper);
 
-    /**
-     * Block Settings CSS
-     * @return {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
-     */
-    static get CSS() {
+    this.nodes.toolSettings = $.make('div', BlockSettings.CSS.toolSettings);
+    this.nodes.defaultSettings = $.make('div', BlockSettings.CSS.defaultSettings);
 
-        return {
-            // Settings Panel
-            wrapper: 'ce-settings',
-            wrapperOpened: 'ce-settings--opened',
-            toolSettings: 'ce-settings__plugin-zone',
-            defaultSettings: 'ce-settings__default-zone',
-
-            button: 'ce-settings__button'
-        };
-
-    }
-
-    /**
-     * Panel with block settings with 2 sections:
-     *  - Tool's Settings
-     *  - Default Settings [Move, Remove, etc]
-     *
-     * @return {Element}
-     */
-    make() {
-
-        this.nodes.wrapper = $.make('div', BlockSettings.CSS.wrapper);
-
-        this.nodes.toolSettings = $.make('div', BlockSettings.CSS.toolSettings);
-        this.nodes.defaultSettings = $.make('div', BlockSettings.CSS.defaultSettings);
-
-        $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
-
-        /**
-         * Add default settings that presents for all Blocks
-         */
-        this.addDefaultSettings();
-
-    }
+    $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
 
     /**
-     * Add Tool's settings
+     * Add default settings that presents for all Blocks
      */
-    addToolSettings() {
+    this.addDefaultSettings();
+  }
 
-        console.log('Block Settings: add settings for ',
-            this.Editor.BlockManager.currentBlock
-        );
+  /**
+   * Add Tool's settings
+   */
+  addToolSettings() {
+    console.log('Block Settings: add settings for ',
+      this.Editor.BlockManager.currentBlock
+    );
+  }
 
+  /**
+   * Add default settings
+   */
+  addDefaultSettings() {
+    /**
+     * Remove Block Button
+     * --------------------------------------------
+     */
+    this.nodes.buttonRemove = $.make('div', BlockSettings.CSS.button, {
+      textContent: 'Remove Block'
+    });
 
-    }
+    $.append(this.nodes.defaultSettings, this.nodes.buttonRemove);
+
+    this.Editor.Listeners.on(this.nodes.buttonRemove, 'click', (event) => this.removeBlockButtonClicked(event));
+  }
+
+  /**
+   * Clicks on the Remove Block Button
+   */
+  removeBlockButtonClicked() {
+    console.log('❇️ Remove Block Button clicked');
+  }
+
+  /**
+   * Is Block Settings opened or not
+   * @returns {boolean}
+   */
+  get opened() {
+    return this.nodes.wrapper.classList.contains(BlockSettings.CSS.wrapperOpened);
+  }
+
+  /**
+   * Open Block Settings pane
+   */
+  open() {
+    this.nodes.wrapper.classList.add(BlockSettings.CSS.wrapperOpened);
 
     /**
-     * Add default settings
+     * Fill Tool's settings
      */
-    addDefaultSettings() {
+    this.addToolSettings();
+  }
 
-        /**
-         * Remove Block Button
-         * --------------------------------------------
-         */
-        this.nodes.buttonRemove = $.make('div', BlockSettings.CSS.button, {
-            textContent: 'Remove Block'
-        });
-
-        $.append(this.nodes.defaultSettings, this.nodes.buttonRemove);
-
-        this.Editor.Listeners.on(this.nodes.buttonRemove, 'click', (event) => this.removeBlockButtonClicked(event));
-
-    }
-
-    /**
-     * Clicks on the Remove Block Button
-     */
-    removeBlockButtonClicked() {
-
-        console.log('❇️ Remove Block Button clicked');
-
-    }
-
-    /**
-     * Is Block Settings opened or not
-     * @returns {boolean}
-     */
-    get opened() {
-
-        return this.nodes.wrapper.classList.contains(BlockSettings.CSS.wrapperOpened);
-
-    }
-
-    /**
-     * Open Block Settings pane
-     */
-    open() {
-
-        this.nodes.wrapper.classList.add(BlockSettings.CSS.wrapperOpened);
-
-        /**
-         * Fill Tool's settings
-         */
-        this.addToolSettings();
-
-    }
-
-    /**
-     * Close Block Settings pane
-     */
-    close() {
-
-        this.nodes.wrapper.classList.remove(BlockSettings.CSS.wrapperOpened);
-
-    }
-
+  /**
+   * Close Block Settings pane
+   */
+  close() {
+    this.nodes.wrapper.classList.remove(BlockSettings.CSS.wrapperOpened);
+  }
 }
