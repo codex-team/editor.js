@@ -14,7 +14,6 @@
     "url": "git+https://github.com/codex-team/codex.editor.git"
   },
   "devDependencies": {
-    "ancestors": "0.0.3",
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-plugin-add-module-exports": "^0.2.1",
