@@ -1,8 +1,7 @@
 /**
  * Inline toolbar with actions that modifies selected text fragment
  *
- *  ________________________
- * |                        |
+ * |¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|
  * |   B  i [link] [mark]   |
  * | _______________________|
  */
