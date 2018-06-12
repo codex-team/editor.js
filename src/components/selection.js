@@ -54,61 +54,55 @@ export default class Selection {
 
   /**
    * Calculates position of selected text
-   * @return {{x: number, y: number}}
+   * @return {{x, y, width, height, top?, left?, bottom?, right?}}
    */
-  static get getCoords() {
-    let sel = document.selection, range, rect;
-    let coords = {
+  static get getRect() {
+    let sel = document.selection, range;
+    let rect = {
       x: 0,
-      y: 0
+      y: 0,
+      width: 0,
+      height: 0
     };
 
     if (sel && sel.type !== 'Control') {
       range = sel.createRange();
-      range.collapse(true);
-      coords.x = range.boundingLeft;
-      coords.y = range.boundingTop;
+      rect.x = range.boundingLeft;
+      rect.y = range.boundingTop;
+      rect.width = range.boundingWidth;
+      rect.height = range.boundingHeight;
 
-      return coords;
+      return rect;
     }
 
     if (!window.getSelection) {
       _.log('Method window.getSelection is not supported', 'warn');
-      return coords;
+      return rect;
     }
 
     sel = window.getSelection();
 
     if (!sel.rangeCount) {
       _.log('Method Selection.rangeCount() is not supported', 'warn');
-      return coords;
+      return rect;
     }
 
     range = sel.getRangeAt(0).cloneRange();
 
-    if (range.getClientRects) {
-      range.collapse(true);
-
-      let rects = range.getClientRects();
-
-      if (rects.length > 0) {
-        rect = rects[0];
-        coords.x = rect.left;
-        coords.y = rect.top;
-      }
+    if (range.getBoundingClientRect) {
+      rect = range.getBoundingClientRect();
     }
     // Fall back to inserting a temporary element
-    if (coords.x === 0 && coords.y === 0) {
+    if (rect.x === 0 && rect.y === 0) {
       let span = document.createElement('span');
 
-      if (span.getClientRects) {
+      if (span.getBoundingClientRect) {
         // Ensure span has dimensions and position by
         // adding a zero-width space character
         span.appendChild( document.createTextNode('\u200b') );
         range.insertNode(span);
-        rect = span.getClientRects()[0];
-        coords.x = rect.left;
-        coords.y = rect.top;
+        rect = span.getBoundingClientRect();
+
         let spanParent = span.parentNode;
 
         spanParent.removeChild(span);
@@ -118,6 +112,6 @@ export default class Selection {
       }
     }
 
-    return coords;
+    return rect;
   }
 }

@@ -3991,7 +3991,7 @@ var InlineToolbar = function (_Module) {
     /**
      * Margin above/below the Toolbar
      */
-    _this.toolbarVerticalMargin = 10;
+    _this.toolbarVerticalMargin = 20;
     return _this;
   }
   /**
@@ -4019,13 +4019,20 @@ var InlineToolbar = function (_Module) {
         // close
         return;
       }
-      var selectionCoords = _selection2.default.getCoords;
-      var wrapperOffset = this.getWrapperOffset();
-      var toolbarHeight = this.nodes.wrapper.offsetHeight || 40;
+      var selectionRect = _selection2.default.getRect;
+      var wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
       var newCoords = {
-        x: selectionCoords.x - wrapperOffset.left,
-        y: selectionCoords.y + window.scrollY - wrapperOffset.top + toolbarHeight + this.toolbarVerticalMargin
+        x: selectionRect.x - wrapperOffset.left,
+        y: selectionRect.y + selectionRect.height
+        // + window.scrollY
+        - wrapperOffset.top + this.toolbarVerticalMargin
       };
+      /**
+       * If we know selections width, place InlineToolbar to center
+       */
+      if (selectionRect.width) {
+        newCoords.x += Math.floor(selectionRect.width / 2);
+      }
       this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
       this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
     }
@@ -4040,21 +4047,6 @@ var InlineToolbar = function (_Module) {
        * @todo check for empty selection, tagsConflictsWithSelection, currentBlock 'inlineToolbar' settings
        */
       return true;
-    }
-    /**
-     * Returns editor wrapper offset
-     * @return {{bottom: number, top: number, left: number, right: number, height: number: width: number}}
-     */
-
-  }, {
-    key: 'getWrapperOffset',
-    value: function getWrapperOffset() {
-      var rect = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
-      /**
-       * @todo
-       * add cache
-       */
-      return rect;
     }
   }]);
 
@@ -5663,66 +5655,59 @@ var Selection = function () {
 
     /**
      * Calculates position of selected text
-     * @return {{x: number, y: number}}
+     * @return {{x, y, width, height, top?, left?, bottom?, right?}}
      */
 
   }, {
-    key: 'getCoords',
+    key: 'getRect',
     get: function get() {
       var sel = document.selection,
-          range = void 0,
-          rect = void 0;
-      var coords = {
+          range = void 0;
+      var rect = {
         x: 0,
-        y: 0
+        y: 0,
+        width: 0,
+        height: 0
       };
 
       if (sel && sel.type !== 'Control') {
         range = sel.createRange();
-        range.collapse(true);
-        coords.x = range.boundingLeft;
-        coords.y = range.boundingTop;
+        rect.x = range.boundingLeft;
+        rect.y = range.boundingTop;
+        rect.width = range.boundingWidth;
+        rect.height = range.boundingHeight;
 
-        return coords;
+        return rect;
       }
 
       if (!window.getSelection) {
         _.log('Method window.getSelection is not supported', 'warn');
-        return coords;
+        return rect;
       }
 
       sel = window.getSelection();
 
       if (!sel.rangeCount) {
         _.log('Method Selection.rangeCount() is not supported', 'warn');
-        return coords;
+        return rect;
       }
 
       range = sel.getRangeAt(0).cloneRange();
 
-      if (range.getClientRects) {
-        range.collapse(true);
-
-        var rects = range.getClientRects();
-
-        if (rects.length > 0) {
-          rect = rects[0];
-          coords.x = rect.left;
-          coords.y = rect.top;
-        }
+      if (range.getBoundingClientRect) {
+        rect = range.getBoundingClientRect();
       }
       // Fall back to inserting a temporary element
-      if (coords.x === 0 && coords.y === 0) {
+      if (rect.x === 0 && rect.y === 0) {
         var span = document.createElement('span');
 
-        if (span.getClientRects) {
+        if (span.getBoundingClientRect) {
           // Ensure span has dimensions and position by
           // adding a zero-width space character
           span.appendChild(document.createTextNode('\u200B'));
           range.insertNode(span);
-          rect = span.getClientRects()[0];
-          coords.x = rect.left;
-          coords.y = rect.top;
+          rect = span.getBoundingClientRect();
+
           var spanParent = span.parentNode;
 
           spanParent.removeChild(span);
@@ -5732,7 +5717,7 @@ var Selection = function () {
         }
       }
 
-      return coords;
+      return rect;
     }
   }]);
 

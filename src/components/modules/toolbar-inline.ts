@@ -25,14 +25,6 @@ interface ICSS {
   inlineToolbar: string;
 }
 
-/**
- * Coordinates
- */
-interface ICoords {
-  x: number;
-  y: number;
-}
-
 export default class InlineToolbar extends Module {
 
   /**
@@ -52,7 +44,7 @@ export default class InlineToolbar extends Module {
   /**
    * Margin above/below the Toolbar
    */
-  private readonly toolbarVerticalMargin: number = 10;
+  private readonly toolbarVerticalMargin: number = 20;
 
   /**
    * @constructor
@@ -87,18 +79,24 @@ export default class InlineToolbar extends Module {
       return;
     }
 
-    const selectionCoords: ICoords = Selection.getCoords;
-    const wrapperOffset = this.getWrapperOffset();
-    const toolbarHeight = this.nodes.wrapper.offsetHeight || 40;
+    const selectionRect = Selection.getRect;
+    const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
 
-    const newCoords: ICoords = {
-      x: selectionCoords.x - wrapperOffset.left,
-      y: selectionCoords.y
-      + window.scrollY
-      - wrapperOffset.top
-      + toolbarHeight
-      + this.toolbarVerticalMargin,
+    const newCoords = {
+      x: selectionRect.x - wrapperOffset.left,
+      y: selectionRect.y
+          + selectionRect.height
+          // + window.scrollY
+          - wrapperOffset.top
+          + this.toolbarVerticalMargin,
     };
+
+    /**
+     * If we know selections width, place InlineToolbar to center
+     */
+    if (selectionRect.width) {
+      newCoords.x += Math.floor(selectionRect.width / 2);
+    }
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
     this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
@@ -114,19 +112,5 @@ export default class InlineToolbar extends Module {
      * @todo check for empty selection, tagsConflictsWithSelection, currentBlock 'inlineToolbar' settings
      */
     return true;
-  }
-
-  /**
-   * Returns editor wrapper offset
-   * @return {{bottom: number, top: number, left: number, right: number, height: number: width: number}}
-   */
-  private getWrapperOffset() {
-    const rect = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
-
-    /**
-     * @todo
-     * add cache
-     */
-    return rect;
   }
 }
