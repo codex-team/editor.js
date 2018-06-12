@@ -57,7 +57,7 @@ There are few options available by CodeX Editor.
 | Name | Type | Default Value | Description |
 | -- | -- | -- | -- |
 | `enableLineBreaks` | _Boolean_ | `false` | With this option, CodeX Editor won't handle Enter keydowns. Can be helpful for Tools like `<code>` where line breaks should be handled by default behaviour. |
-| `inlineToolbar` | _Boolean|Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
+| `inlineToolbar` | _Boolean/Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
 
 
 

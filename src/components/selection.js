@@ -53,7 +53,7 @@ export default class Selection {
   }
 
   /**
-   * Calculates and size of selected text
+   * Calculates position and size of selected text
    * @return {{x, y, width, height, top?, left?, bottom?, right?}}
    */
   static get rect() {
