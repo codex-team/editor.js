@@ -71,7 +71,7 @@ export default class Keyboard extends Module {
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
-    if (toolsConfig && toolsConfig.enableLineBreaks) {
+    if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
       return;
     }
 

@@ -70,16 +70,26 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   * Move Toolbar to the selected text
+   * Shows Inline Toolbar by keyup/mouseup
+   * @param {KeyboardEvent|MouseEvent} event
    */
-  public move() {
-
-    if (!this.allowedToShow()) {
-      // close
+  public handleShowingEvent(event): void {
+    if (!this.allowedToShow(event)) {
+      /**
+       * @todo close
+       */
       return;
     }
 
-    const selectionRect = Selection.getRect;
+    this.move();
+  }
+
+  /**
+   * Move Toolbar to the selected text
+   */
+  public move(): void {
+
+    const selectionRect = Selection.rect;
     const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
 
     const newCoords = {
@@ -100,17 +110,44 @@ export default class InlineToolbar extends Module {
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
     this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
-
   }
 
   /**
    * Need to show Inline Toolbar or not
+   * @param {KeyboardEvent|MouseEvent} event
    */
-  private allowedToShow(): boolean {
-
+  private allowedToShow(event): boolean {
     /**
-     * @todo check for empty selection, tagsConflictsWithSelection, currentBlock 'inlineToolbar' settings
+     * Tags conflicts with window.selection function.
+     * Ex. IMG tag returns null (Firefox) or Redactors wrapper (Chrome)
      */
-    return true;
+    const tagsConflictsWithSelection = ['IMG', 'INPUT'];
+    if (event && tagsConflictsWithSelection.includes(event.target.tagName)) {
+      return false;
+    }
+
+    const currentSelection = Selection.get(),
+      selectedText = Selection.text;
+
+    // old browsers
+    if (!currentSelection || !currentSelection.anchorNode) {
+      return false;
+    }
+
+    // empty selection
+    if (currentSelection.isCollapsed || selectedText.length < 1) {
+      return false;
+    }
+
+    // is enabled by current Block's Tool
+    const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode);
+
+    if (!currentBlock) {
+      return false;
+    }
+
+    const toolConfig = this.config.toolsConfig[currentBlock.name];
+
+    return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
   }
 }

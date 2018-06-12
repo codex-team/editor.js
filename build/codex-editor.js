@@ -1717,7 +1717,7 @@ var BlockManager = function (_Module) {
         return _this3.Editor.Keyboard.blockKeydownsListener(event);
       });
       this.Editor.Listeners.on(block.pluginsContent, 'mouseup', function (event) {
-        _this3.Editor.InlineToolbar.move(event);
+        _this3.Editor.InlineToolbar.handleShowingEvent(event);
       });
     }
 
@@ -1887,13 +1887,17 @@ var BlockManager = function (_Module) {
 
     /**
      * Get Block instance by html element
-     * @param {HTMLElement} element
+     * @param {Node} element
      * @returns {Block}
      */
 
   }, {
     key: 'getBlock',
     value: function getBlock(element) {
+      if (!$.isElement(element)) {
+        element = element.parentNode;
+      }
+
       var nodes = this._blocks.nodes,
           firstLevelBlock = element.closest('.' + _block2.default.CSS.wrapper),
           index = nodes.indexOf(firstLevelBlock);
@@ -2804,7 +2808,7 @@ var Keyboard = function (_Module) {
        * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
        * Uses for Tools like <code> where line breaks should be handled by default behaviour.
        */
-      if (toolsConfig && toolsConfig.enableLineBreaks) {
+      if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
         return;
       }
 
@@ -3946,7 +3950,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */(function(Module, $) {
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3964,93 +3968,127 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var InlineToolbar = function (_Module) {
-  _inherits(InlineToolbar, _Module);
-
-  /**
-   * @constructor
-   */
-  function InlineToolbar(_ref) {
-    var config = _ref.config;
-
-    _classCallCheck(this, InlineToolbar);
+    _inherits(InlineToolbar, _Module);
 
     /**
-     * Inline Toolbar elements
+     * @constructor
      */
-    var _this = _possibleConstructorReturn(this, (InlineToolbar.__proto__ || Object.getPrototypeOf(InlineToolbar)).call(this, { config: config }));
+    function InlineToolbar(_ref) {
+        var config = _ref.config;
 
-    _this.nodes = {
-      wrapper: null
-    };
-    /**
-     * CSS styles
-     */
-    _this.CSS = {
-      inlineToolbar: 'ce-inline-toolbar'
-    };
-    /**
-     * Margin above/below the Toolbar
-     */
-    _this.toolbarVerticalMargin = 20;
-    return _this;
-  }
-  /**
-   * Making DOM
-   */
+        _classCallCheck(this, InlineToolbar);
 
+        /**
+         * Inline Toolbar elements
+         */
+        var _this = _possibleConstructorReturn(this, (InlineToolbar.__proto__ || Object.getPrototypeOf(InlineToolbar)).call(this, { config: config }));
 
-  _createClass(InlineToolbar, [{
-    key: 'make',
-    value: function make() {
-      this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
-      /**
-       * Append Inline Toolbar to the Editor
-       */
-      $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+        _this.nodes = {
+            wrapper: null
+        };
+        /**
+         * CSS styles
+         */
+        _this.CSS = {
+            inlineToolbar: 'ce-inline-toolbar'
+        };
+        /**
+         * Margin above/below the Toolbar
+         */
+        _this.toolbarVerticalMargin = 20;
+        return _this;
     }
     /**
-     * Move Toolbar to the selected text
+     * Making DOM
      */
 
-  }, {
-    key: 'move',
-    value: function move() {
-      if (!this.allowedToShow()) {
-        // close
-        return;
-      }
-      var selectionRect = _selection2.default.getRect;
-      var wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
-      var newCoords = {
-        x: selectionRect.x - wrapperOffset.left,
-        y: selectionRect.y + selectionRect.height
-        // + window.scrollY
-        - wrapperOffset.top + this.toolbarVerticalMargin
-      };
-      /**
-       * If we know selections width, place InlineToolbar to center
-       */
-      if (selectionRect.width) {
-        newCoords.x += Math.floor(selectionRect.width / 2);
-      }
-      this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
-      this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
-    }
-    /**
-     * Need to show Inline Toolbar or not
-     */
 
-  }, {
-    key: 'allowedToShow',
-    value: function allowedToShow() {
-      /**
-       * @todo check for empty selection, tagsConflictsWithSelection, currentBlock 'inlineToolbar' settings
-       */
-      return true;
-    }
-  }]);
+    _createClass(InlineToolbar, [{
+        key: 'make',
+        value: function make() {
+            this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
+            /**
+             * Append Inline Toolbar to the Editor
+             */
+            $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+        }
+        /**
+         * Shows Inline Toolbar by keyup/mouseup
+         * @param {KeyboardEvent|MouseEvent} event
+         */
 
-  return InlineToolbar;
+    }, {
+        key: 'handleShowingEvent',
+        value: function handleShowingEvent(event) {
+            if (!this.allowedToShow(event)) {
+                /**
+                 * @todo close
+                 */
+                return;
+            }
+            this.move();
+        }
+        /**
+         * Move Toolbar to the selected text
+         */
+
+    }, {
+        key: 'move',
+        value: function move() {
+            var selectionRect = _selection2.default.rect;
+            var wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
+            var newCoords = {
+                x: selectionRect.x - wrapperOffset.left,
+                y: selectionRect.y + selectionRect.height
+                // + window.scrollY
+                - wrapperOffset.top + this.toolbarVerticalMargin
+            };
+            /**
+             * If we know selections width, place InlineToolbar to center
+             */
+            if (selectionRect.width) {
+                newCoords.x += Math.floor(selectionRect.width / 2);
+            }
+            this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
+            this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
+        }
+        /**
+         * Need to show Inline Toolbar or not
+         * @param {KeyboardEvent|MouseEvent} event
+         */
+
+    }, {
+        key: 'allowedToShow',
+        value: function allowedToShow(event) {
+            /**
+             * Tags conflicts with window.selection function.
+             * Ex. IMG tag returns null (Firefox) or Redactors wrapper (Chrome)
+             */
+            var tagsConflictsWithSelection = ['IMG', 'INPUT'];
+            if (event && tagsConflictsWithSelection.includes(event.target.tagName)) {
+                return false;
+            }
+            var currentSelection = _selection2.default.get(),
+                selectedText = _selection2.default.text;
+            // old browsers
+            if (!currentSelection || !currentSelection.anchorNode) {
+                return false;
+            }
+            // empty selection
+            if (currentSelection.isCollapsed || selectedText.length < 1) {
+                return false;
+            }
+            // is enabled by current Block's Tool
+            var currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode);
+            if (!currentBlock) {
+                return false;
+            }
+            var toolConfig = this.config.toolsConfig[currentBlock.name];
+            return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
+        }
+    }]);
+
+    return InlineToolbar;
 }(Module);
 
 InlineToolbar.displayName = 'InlineToolbar';
@@ -4164,7 +4202,9 @@ var Toolbox = function (_Module) {
     value: function addTool(toolName, tool) {
       var _this2 = this;
 
-      if (tool.displayInToolbox && !tool.iconClassName) {
+      var api = this.Editor.Tools.apiSettings;
+
+      if (tool[api.IS_DISPLAYED_IN_TOOLBOX] && !tool[api.TOOLBAR_ICON_CLASS]) {
         _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
         return;
       }
@@ -4182,11 +4222,11 @@ var Toolbox = function (_Module) {
       /**
        * Skip tools that pass 'displayInToolbox=false'
        */
-      if (!tool.displayInToolbox) {
+      if (!tool[api.IS_DISPLAYED_IN_TOOLBOX]) {
         return;
       }
 
-      var button = $.make('li', [Toolbox.CSS.toolboxButton, tool.iconClassName], {
+      var button = $.make('li', [Toolbox.CSS.toolboxButton, tool[api.TOOLBAR_ICON_CLASS]], {
         title: toolName
       });
 
@@ -4235,7 +4275,7 @@ var Toolbox = function (_Module) {
        * - block is not irreplaceable
        * @type {Array}
        */
-      if (!tool.irreplaceable && currentBlock.isEmpty) {
+      if (!tool[this.Editor.Tools.apiSettings.IS_IRREPLACEBLE_TOOL] && currentBlock.isEmpty) {
         this.Editor.BlockManager.replace(toolName);
       } else {
         this.Editor.BlockManager.insert(toolName);
@@ -4650,6 +4690,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -4669,6 +4711,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @property {String} iconClassname - this a icon in toolbar
  * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
  * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
+ * @property {Boolean|String[]} inlineToolbar - Pass `true` to enable the Inline Toolbar with all Tools, all pass an array with specified Tools list |
  * @property render @todo add description
  * @property save @todo add description
  * @property settings @todo add description
@@ -4724,21 +4767,33 @@ var Tools = function (_Module) {
     }
 
     /**
+     * Constant for available Tools Settings
+     * @return {object}
+     */
+
+  }, {
+    key: 'apiSettings',
+    get: function get() {
+      return {
+        TOOLBAR_ICON_CLASS: 'iconClassName',
+        IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
+        IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
+        IS_IRREPLACEBLE_TOOL: 'irreplaceable',
+        IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar'
+      };
+    }
+
+    /**
      * Static getter for default Tool config fields
-     *
-     * @usage Tools.defaultConfig.displayInToolbox
      * @return {ToolConfig}
      */
 
-  }], [{
+  }, {
     key: 'defaultConfig',
     get: function get() {
-      return {
-        iconClassName: '',
-        displayInToolbox: false,
-        enableLineBreaks: false,
-        irreplaceable: false
-      };
+      var _ref;
+
+      return _ref = {}, _defineProperty(_ref, this.apiSettings.TOOLBAR_ICON_CLASS, false), _defineProperty(_ref, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _ref;
     }
 
     /**
@@ -4749,8 +4804,8 @@ var Tools = function (_Module) {
 
   }]);
 
-  function Tools(_ref) {
-    var config = _ref.config;
+  function Tools(_ref2) {
+    var config = _ref2.config;
 
     _classCallCheck(this, Tools);
 
@@ -4887,11 +4942,7 @@ var Tools = function (_Module) {
       var plugin = this.toolClasses[tool],
           config = this.config.toolsConfig[tool];
 
-      if (!config) {
-        config = this.defaultConfig;
-      }
-
-      var instance = new plugin(data, config);
+      var instance = new plugin(data, config || {});
 
       return instance;
     }
@@ -5619,8 +5670,8 @@ var Selection = function () {
      */
 
   }, {
-    key: 'getAnchorNode',
-    value: function getAnchorNode() {
+    key: 'anchorNode',
+    get: function get() {
       var selection = window.getSelection();
 
       return selection ? selection.anchorNode : null;
@@ -5633,8 +5684,8 @@ var Selection = function () {
      */
 
   }, {
-    key: 'getAnchorOffset',
-    value: function getAnchorOffset() {
+    key: 'anchorOffset',
+    get: function get() {
       var selection = window.getSelection();
 
       return selection ? selection.anchorOffset : null;
@@ -5654,12 +5705,12 @@ var Selection = function () {
     }
 
     /**
-     * Calculates position of selected text
+     * Calculates and size of selected text
      * @return {{x, y, width, height, top?, left?, bottom?, right?}}
      */
 
   }, {
-    key: 'getRect',
+    key: 'rect',
     get: function get() {
       var sel = document.selection,
           range = void 0;
@@ -5718,6 +5769,17 @@ var Selection = function () {
       }
 
       return rect;
+    }
+
+    /**
+     * Returns selected text as String
+     * @returns {string}
+     */
+
+  }, {
+    key: 'text',
+    get: function get() {
+      return window.getSelection ? window.getSelection().toString() : '';
     }
   }]);
 

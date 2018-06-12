@@ -67,7 +67,9 @@ export default class Toolbox extends Module {
    * @param {Tool}  tool      - tool class
    */
   addTool(toolName, tool) {
-    if (tool.displayInToolbox && !tool.iconClassName) {
+    const api = this.Editor.Tools.apiSettings;
+
+    if (tool[api.IS_DISPLAYED_IN_TOOLBOX] && !tool[api.TOOLBAR_ICON_CLASS]) {
       _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
       return;
     }
@@ -85,11 +87,11 @@ export default class Toolbox extends Module {
     /**
      * Skip tools that pass 'displayInToolbox=false'
      */
-    if (!tool.displayInToolbox) {
+    if (!tool[api.IS_DISPLAYED_IN_TOOLBOX]) {
       return;
     }
 
-    let button = $.make('li', [Toolbox.CSS.toolboxButton, tool.iconClassName], {
+    let button = $.make('li', [Toolbox.CSS.toolboxButton, tool[api.TOOLBAR_ICON_CLASS]], {
       title: toolName
     });
 
@@ -135,7 +137,7 @@ export default class Toolbox extends Module {
      * - block is not irreplaceable
      * @type {Array}
      */
-    if (!tool.irreplaceable && currentBlock.isEmpty) {
+    if (!tool[this.Editor.Tools.apiSettings.IS_IRREPLACEBLE_TOOL] && currentBlock.isEmpty) {
       this.Editor.BlockManager.replace(toolName);
     } else {
       this.Editor.BlockManager.insert(toolName);

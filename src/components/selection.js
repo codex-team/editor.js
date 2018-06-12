@@ -25,7 +25,7 @@ export default class Selection {
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
    * @return {Node|null}
    */
-  static getAnchorNode() {
+  static get anchorNode() {
     let selection = window.getSelection();
 
     return selection ? selection.anchorNode : null;
@@ -36,7 +36,7 @@ export default class Selection {
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
    * @return {Number|null}
    */
-  static getAnchorOffset() {
+  static get anchorOffset() {
     let selection = window.getSelection();
 
     return selection ? selection.anchorOffset : null;
@@ -53,10 +53,10 @@ export default class Selection {
   }
 
   /**
-   * Calculates position of selected text
+   * Calculates and size of selected text
    * @return {{x, y, width, height, top?, left?, bottom?, right?}}
    */
-  static get getRect() {
+  static get rect() {
     let sel = document.selection, range;
     let rect = {
       x: 0,
@@ -114,4 +114,12 @@ export default class Selection {
 
     return rect;
   }
+
+  /**
+   * Returns selected text as String
+   * @returns {string}
+   */
+  static get text() {
+    return window.getSelection ? window.getSelection().toString() : '';
+  };
 }

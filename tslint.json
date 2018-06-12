@@ -2,6 +2,7 @@
   "extends": "tslint:recommended",
   "rules": {
     "quotemark": [true, "single"],
-    "no-console": false
+    "no-console": false,
+    "one-variable-per-declaration": false
   }
 }
