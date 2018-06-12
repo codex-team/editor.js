@@ -5267,17 +5267,9 @@ var UI = function (_Module) {
       }
 
       /**
-       * @todo hide the Inline Toolbar
+       * Close Inline Toolbar when nothing selected
        */
-      // var selectedText = editor.toolbar.inline.getSelectionText(),
-      //     firstLevelBlock;
-
-      /** If selection range took off, then we hide inline toolbar */
-      // if (selectedText.length === 0) {
-
-      // editor.toolbar.inline.close();
-
-      // }
+      this.Editor.InlineToolbar.handleShowingEvent(event);
 
       /**
            *
