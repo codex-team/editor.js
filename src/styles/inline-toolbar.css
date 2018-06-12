@@ -1,7 +1,12 @@
 .ce-inline-toolbar {
-    @apply --overlay-pane;
+  @apply --overlay-pane;
 
-    width: 100px;
-    height: 40px;
-    transform: translateX(-50%);
+  width: 100px;
+  height: 40px;
+  transform: translateX(-50%);
+  display: none;
+
+  &--showed {
+    display: block;
+  }
 }

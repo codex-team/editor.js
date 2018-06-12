@@ -23,6 +23,7 @@ interface INodes {
  */
 interface ICSS {
   inlineToolbar: string;
+  inlineToolbarShowed: string;
 }
 
 export default class InlineToolbar extends Module {
@@ -31,14 +32,15 @@ export default class InlineToolbar extends Module {
    * Inline Toolbar elements
    */
   private nodes: INodes = {
-      wrapper: null,
+    wrapper: null,
   };
 
   /**
    * CSS styles
    */
   private CSS: ICSS = {
-      inlineToolbar: 'ce-inline-toolbar',
+    inlineToolbar: 'ce-inline-toolbar',
+    inlineToolbarShowed: 'ce-inline-toolbar--showed',
   };
 
   /**
@@ -75,13 +77,12 @@ export default class InlineToolbar extends Module {
    */
   public handleShowingEvent(event): void {
     if (!this.allowedToShow(event)) {
-      /**
-       * @todo close
-       */
+      this.close();
       return;
     }
 
     this.move();
+    this.open();
   }
 
   /**
@@ -110,6 +111,20 @@ export default class InlineToolbar extends Module {
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
     this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
+  }
+
+  /**
+   * Shows Inline Toolbar
+   */
+  private open() {
+    this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
+  }
+
+  /**
+   * Hides Inline Toolbar
+   */
+  private close() {
+    this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
   }
 
   /**
