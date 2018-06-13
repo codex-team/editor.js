@@ -146,23 +146,20 @@ export default class Listeners extends Module {
    * @return {Array}
    */
   findAll(element, eventType, handler) {
-    let foundAllListeners,
-      foundByElements = [],
-      foundByEventType = [],
-      foundByHandler = [];
+    let found,
+      foundByElements = element ? this.findByElement(element) : [];
+      // foundByEventType = eventType ? this.findByType(eventType) : [],
+      // foundByHandler = handler ? this.findByHandler(handler) : [];
 
-    if (element)
-      foundByElements = this.findByElement(element);
+    if (element && eventType && handler) {
+      found = foundByElements.filter( event => event.eventType === eventType && event.handler === handler );
+    } else if (element && eventType) {
+      found = foundByElements.filter( event => event.eventType === eventType);
+    } else {
+      found = foundByElements;
+    }
 
-    if (eventType)
-      foundByEventType = this.findByType(eventType);
-
-    if (handler)
-      foundByHandler = this.findByHandler(handler);
-
-    foundAllListeners = foundByElements.concat(foundByEventType, foundByHandler);
-
-    return foundAllListeners;
+    return found;
   }
 
   /**

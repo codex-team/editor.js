@@ -826,102 +826,6 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/Selection.js":
-/*!*************************************!*\
-  !*** ./src/components/Selection.js ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- * Working with selection
- */
-var Selection = function () {
-  /**
-   * @constructor
-   */
-  function Selection() {
-    _classCallCheck(this, Selection);
-
-    this.instance = null;
-    this.selection = null;
-  }
-
-  /**
-   * Returns window Selection
-   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-   * @return {Selection}
-   */
-
-
-  _createClass(Selection, null, [{
-    key: "get",
-    value: function get() {
-      return window.getSelection();
-    }
-
-    /**
-     * Returns selected anchor
-     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
-     * @return {Node|null}
-     */
-
-  }, {
-    key: "getAnchorNode",
-    value: function getAnchorNode() {
-      var selection = window.getSelection();
-
-      return selection ? selection.anchorNode : null;
-    }
-
-    /**
-     * Returns selection offset according to the anchor node
-     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
-     * @return {Number|null}
-     */
-
-  }, {
-    key: "getAnchorOffset",
-    value: function getAnchorOffset() {
-      var selection = window.getSelection();
-
-      return selection ? selection.anchorOffset : null;
-    }
-
-    /**
-     * Is current selection range collapsed
-     * @return {boolean|null}
-     */
-
-  }, {
-    key: "isCollapsed",
-    get: function get() {
-      var selection = window.getSelection();
-
-      return selection ? selection.isCollapsed : null;
-    }
-  }]);
-
-  return Selection;
-}();
-
-Selection.displayName = "Selection";
-exports.default = Selection;
-module.exports = exports["default"];
-
-/***/ }),
-
 /***/ "./src/components/__module.ts":
 /*!************************************!*\
   !*** ./src/components/__module.ts ***!
@@ -1813,7 +1717,7 @@ var BlockManager = function (_Module) {
         return _this3.Editor.Keyboard.blockKeydownsListener(event);
       });
       this.Editor.Listeners.on(block.pluginsContent, 'mouseup', function (event) {
-        _this3.Editor.InlineToolbar.move(event);
+        _this3.Editor.InlineToolbar.handleShowingEvent(event);
       });
     }
 
@@ -1983,13 +1887,17 @@ var BlockManager = function (_Module) {
 
     /**
      * Get Block instance by html element
-     * @param {HTMLElement} element
+     * @param {Node} element
      * @returns {Block}
      */
 
   }, {
     key: 'getBlock',
     value: function getBlock(element) {
+      if (!$.isElement(element)) {
+        element = element.parentNode;
+      }
+
       var nodes = this._blocks.nodes,
           firstLevelBlock = element.closest('.' + _block2.default.CSS.wrapper),
           index = nodes.indexOf(firstLevelBlock);
@@ -2383,9 +2291,9 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Selection = __webpack_require__(/*! ../Selection */ "./src/components/Selection.js");
+var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
 
-var _Selection2 = _interopRequireDefault(_Selection);
+var _selection2 = _interopRequireDefault(_selection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -2407,8 +2315,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 /**
  * @typedef {Caret} Caret
  */
-
-
 var Caret = function (_Module) {
   _inherits(Caret, _Module);
 
@@ -2485,7 +2391,7 @@ var Caret = function (_Module) {
       var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
 
       var range = document.createRange(),
-          selection = _Selection2.default.get();
+          selection = _selection2.default.get();
 
       range.setStart(element, offset);
       range.setEnd(element, offset);
@@ -2524,7 +2430,7 @@ var Caret = function (_Module) {
   }, {
     key: 'extractFragmentFromCaretPosition',
     value: function extractFragmentFromCaretPosition() {
-      var selection = _Selection2.default.get();
+      var selection = _selection2.default.get();
 
       if (selection.rangeCount) {
         var selectRange = selection.getRangeAt(0),
@@ -2597,11 +2503,11 @@ var Caret = function (_Module) {
       /**
        * Don't handle ranges
        */
-      if (!_Selection2.default.isCollapsed) {
+      if (!_selection2.default.isCollapsed) {
         return false;
       }
 
-      var selection = _Selection2.default.get(),
+      var selection = _selection2.default.get(),
           anchorNode = selection.anchorNode,
           firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
 
@@ -2649,11 +2555,11 @@ var Caret = function (_Module) {
       /**
        * Don't handle ranges
        */
-      if (!_Selection2.default.isCollapsed) {
+      if (!_selection2.default.isCollapsed) {
         return false;
       }
 
-      var selection = _Selection2.default.get(),
+      var selection = _selection2.default.get(),
           anchorNode = selection.anchorNode,
           lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
 
@@ -2902,7 +2808,7 @@ var Keyboard = function (_Module) {
        * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
        * Uses for Tools like <code> where line breaks should be handled by default behaviour.
        */
-      if (toolsConfig && toolsConfig.enableLineBreaks) {
+      if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
         return;
       }
 
@@ -3202,20 +3108,24 @@ var Listeners = function (_Module) {
   }, {
     key: "findAll",
     value: function findAll(element, eventType, handler) {
-      var foundAllListeners = void 0,
-          foundByElements = [],
-          foundByEventType = [],
-          foundByHandler = [];
+      var found = void 0,
+          foundByElements = element ? this.findByElement(element) : [];
+      // foundByEventType = eventType ? this.findByType(eventType) : [],
+      // foundByHandler = handler ? this.findByHandler(handler) : [];
 
-      if (element) foundByElements = this.findByElement(element);
+      if (element && eventType && handler) {
+        found = foundByElements.filter(function (event) {
+          return event.eventType === eventType && event.handler === handler;
+        });
+      } else if (element && eventType) {
+        found = foundByElements.filter(function (event) {
+          return event.eventType === eventType;
+        });
+      } else {
+        found = foundByElements;
+      }
 
-      if (eventType) foundByEventType = this.findByType(eventType);
-
-      if (handler) foundByHandler = this.findByHandler(handler);
-
-      foundAllListeners = foundByElements.concat(foundByEventType, foundByHandler);
-
-      return foundAllListeners;
+      return found;
     }
 
     /**
@@ -4045,6 +3955,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
+
+var _selection2 = _interopRequireDefault(_selection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -4074,8 +3990,13 @@ var InlineToolbar = function (_Module) {
          * CSS styles
          */
         _this.CSS = {
-            inlineToolbar: 'ce-inline-toolbar'
+            inlineToolbar: 'ce-inline-toolbar',
+            inlineToolbarShowed: 'ce-inline-toolbar--showed'
         };
+        /**
+         * Margin above/below the Toolbar
+         */
+        _this.toolbarVerticalMargin = 20;
         return _this;
     }
     /**
@@ -4092,10 +4013,96 @@ var InlineToolbar = function (_Module) {
              */
             $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
         }
+        /**
+         * Shows Inline Toolbar by keyup/mouseup
+         * @param {KeyboardEvent|MouseEvent} event
+         */
+
+    }, {
+        key: 'handleShowingEvent',
+        value: function handleShowingEvent(event) {
+            if (!this.allowedToShow(event)) {
+                this.close();
+                return;
+            }
+            this.move();
+            this.open();
+        }
+        /**
+         * Move Toolbar to the selected text
+         */
+
     }, {
         key: 'move',
         value: function move() {
-            // moving
+            var selectionRect = _selection2.default.rect;
+            var wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
+            var newCoords = {
+                x: selectionRect.x - wrapperOffset.left,
+                y: selectionRect.y + selectionRect.height
+                // + window.scrollY
+                - wrapperOffset.top + this.toolbarVerticalMargin
+            };
+            /**
+             * If we know selections width, place InlineToolbar to center
+             */
+            if (selectionRect.width) {
+                newCoords.x += Math.floor(selectionRect.width / 2);
+            }
+            this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
+            this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
+        }
+        /**
+         * Shows Inline Toolbar
+         */
+
+    }, {
+        key: 'open',
+        value: function open() {
+            this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
+        }
+        /**
+         * Hides Inline Toolbar
+         */
+
+    }, {
+        key: 'close',
+        value: function close() {
+            this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
+        }
+        /**
+         * Need to show Inline Toolbar or not
+         * @param {KeyboardEvent|MouseEvent} event
+         */
+
+    }, {
+        key: 'allowedToShow',
+        value: function allowedToShow(event) {
+            /**
+             * Tags conflicts with window.selection function.
+             * Ex. IMG tag returns null (Firefox) or Redactors wrapper (Chrome)
+             */
+            var tagsConflictsWithSelection = ['IMG', 'INPUT'];
+            if (event && tagsConflictsWithSelection.includes(event.target.tagName)) {
+                return false;
+            }
+            var currentSelection = _selection2.default.get(),
+                selectedText = _selection2.default.text;
+            // old browsers
+            if (!currentSelection || !currentSelection.anchorNode) {
+                return false;
+            }
+            // empty selection
+            if (currentSelection.isCollapsed || selectedText.length < 1) {
+                return false;
+            }
+            // is enabled by current Block's Tool
+            var currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode);
+            if (!currentBlock) {
+                return false;
+            }
+            var toolConfig = this.config.toolsConfig[currentBlock.name];
+            return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
         }
     }]);
 
@@ -4213,7 +4220,9 @@ var Toolbox = function (_Module) {
     value: function addTool(toolName, tool) {
       var _this2 = this;
 
-      if (tool.displayInToolbox && !tool.iconClassName) {
+      var api = this.Editor.Tools.apiSettings;
+
+      if (tool[api.IS_DISPLAYED_IN_TOOLBOX] && !tool[api.TOOLBAR_ICON_CLASS]) {
         _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
         return;
       }
@@ -4231,11 +4240,11 @@ var Toolbox = function (_Module) {
       /**
        * Skip tools that pass 'displayInToolbox=false'
        */
-      if (!tool.displayInToolbox) {
+      if (!tool[api.IS_DISPLAYED_IN_TOOLBOX]) {
         return;
       }
 
-      var button = $.make('li', [Toolbox.CSS.toolboxButton, tool.iconClassName], {
+      var button = $.make('li', [Toolbox.CSS.toolboxButton, tool[api.TOOLBAR_ICON_CLASS]], {
         title: toolName
       });
 
@@ -4284,7 +4293,7 @@ var Toolbox = function (_Module) {
        * - block is not irreplaceable
        * @type {Array}
        */
-      if (!tool.irreplaceable && currentBlock.isEmpty) {
+      if (!tool[this.Editor.Tools.apiSettings.IS_IRREPLACEBLE_TOOL] && currentBlock.isEmpty) {
         this.Editor.BlockManager.replace(toolName);
       } else {
         this.Editor.BlockManager.insert(toolName);
@@ -4699,6 +4708,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -4718,6 +4729,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @property {String} iconClassname - this a icon in toolbar
  * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
  * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
+ * @property {Boolean|String[]} inlineToolbar - Pass `true` to enable the Inline Toolbar with all Tools, all pass an array with specified Tools list |
  * @property render @todo add description
  * @property save @todo add description
  * @property settings @todo add description
@@ -4773,21 +4785,33 @@ var Tools = function (_Module) {
     }
 
     /**
+     * Constant for available Tools Settings
+     * @return {object}
+     */
+
+  }, {
+    key: 'apiSettings',
+    get: function get() {
+      return {
+        TOOLBAR_ICON_CLASS: 'iconClassName',
+        IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
+        IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
+        IS_IRREPLACEBLE_TOOL: 'irreplaceable',
+        IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar'
+      };
+    }
+
+    /**
      * Static getter for default Tool config fields
-     *
-     * @usage Tools.defaultConfig.displayInToolbox
      * @return {ToolConfig}
      */
 
-  }], [{
+  }, {
     key: 'defaultConfig',
     get: function get() {
-      return {
-        iconClassName: '',
-        displayInToolbox: false,
-        enableLineBreaks: false,
-        irreplaceable: false
-      };
+      var _ref;
+
+      return _ref = {}, _defineProperty(_ref, this.apiSettings.TOOLBAR_ICON_CLASS, false), _defineProperty(_ref, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _ref;
     }
 
     /**
@@ -4798,8 +4822,8 @@ var Tools = function (_Module) {
 
   }]);
 
-  function Tools(_ref) {
-    var config = _ref.config;
+  function Tools(_ref2) {
+    var config = _ref2.config;
 
     _classCallCheck(this, Tools);
 
@@ -4936,11 +4960,7 @@ var Tools = function (_Module) {
       var plugin = this.toolClasses[tool],
           config = this.config.toolsConfig[tool];
 
-      if (!config) {
-        config = this.defaultConfig;
-      }
-
-      var instance = new plugin(data, config);
+      var instance = new plugin(data, config || {});
 
       return instance;
     }
@@ -5247,17 +5267,9 @@ var UI = function (_Module) {
       }
 
       /**
-       * @todo hide the Inline Toolbar
+       * Close Inline Toolbar when nothing selected
        */
-      // var selectedText = editor.toolbar.inline.getSelectionText(),
-      //     firstLevelBlock;
-
-      /** If selection range took off, then we hide inline toolbar */
-      // if (selectedText.length === 0) {
-
-      // editor.toolbar.inline.close();
-
-      // }
+      this.Editor.InlineToolbar.handleShowingEvent(event);
 
       /**
            *
@@ -5615,6 +5627,182 @@ if (!Element.prototype.closest) Element.prototype.closest = function (s) {
 
 /***/ }),
 
+/***/ "./src/components/selection.js":
+/*!*************************************!*\
+  !*** ./src/components/selection.js ***!
+  \*************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(_) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Working with selection
+ * @typedef {Selection} Selection
+ */
+var Selection = function () {
+  /**
+   * @constructor
+   */
+  function Selection() {
+    _classCallCheck(this, Selection);
+
+    this.instance = null;
+    this.selection = null;
+  }
+
+  /**
+   * Returns window Selection
+   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+   * @return {Selection}
+   */
+
+
+  _createClass(Selection, null, [{
+    key: 'get',
+    value: function get() {
+      return window.getSelection();
+    }
+
+    /**
+     * Returns selected anchor
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
+     * @return {Node|null}
+     */
+
+  }, {
+    key: 'anchorNode',
+    get: function get() {
+      var selection = window.getSelection();
+
+      return selection ? selection.anchorNode : null;
+    }
+
+    /**
+     * Returns selection offset according to the anchor node
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
+     * @return {Number|null}
+     */
+
+  }, {
+    key: 'anchorOffset',
+    get: function get() {
+      var selection = window.getSelection();
+
+      return selection ? selection.anchorOffset : null;
+    }
+
+    /**
+     * Is current selection range collapsed
+     * @return {boolean|null}
+     */
+
+  }, {
+    key: 'isCollapsed',
+    get: function get() {
+      var selection = window.getSelection();
+
+      return selection ? selection.isCollapsed : null;
+    }
+
+    /**
+     * Calculates position and size of selected text
+     * @return {{x, y, width, height, top?, left?, bottom?, right?}}
+     */
+
+  }, {
+    key: 'rect',
+    get: function get() {
+      var sel = document.selection,
+          range = void 0;
+      var rect = {
+        x: 0,
+        y: 0,
+        width: 0,
+        height: 0
+      };
+
+      if (sel && sel.type !== 'Control') {
+        range = sel.createRange();
+        rect.x = range.boundingLeft;
+        rect.y = range.boundingTop;
+        rect.width = range.boundingWidth;
+        rect.height = range.boundingHeight;
+
+        return rect;
+      }
+
+      if (!window.getSelection) {
+        _.log('Method window.getSelection is not supported', 'warn');
+        return rect;
+      }
+
+      sel = window.getSelection();
+
+      if (!sel.rangeCount) {
+        _.log('Method Selection.rangeCount() is not supported', 'warn');
+        return rect;
+      }
+
+      range = sel.getRangeAt(0).cloneRange();
+
+      if (range.getBoundingClientRect) {
+        rect = range.getBoundingClientRect();
+      }
+      // Fall back to inserting a temporary element
+      if (rect.x === 0 && rect.y === 0) {
+        var span = document.createElement('span');
+
+        if (span.getBoundingClientRect) {
+          // Ensure span has dimensions and position by
+          // adding a zero-width space character
+          span.appendChild(document.createTextNode('\u200B'));
+          range.insertNode(span);
+          rect = span.getBoundingClientRect();
+
+          var spanParent = span.parentNode;
+
+          spanParent.removeChild(span);
+
+          // Glue any broken text nodes back together
+          spanParent.normalize();
+        }
+      }
+
+      return rect;
+    }
+
+    /**
+     * Returns selected text as String
+     * @returns {string}
+     */
+
+  }, {
+    key: 'text',
+    get: function get() {
+      return window.getSelection ? window.getSelection().toString() : '';
+    }
+  }]);
+
+  return Selection;
+}();
+
+Selection.displayName = 'Selection';
+exports.default = Selection;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! utils */ "./src/components/utils.js")))
+
+/***/ }),
+
 /***/ "./src/components/utils.js":
 /*!*********************************!*\
   !*** ./src/components/utils.js ***!
@@ -5856,7 +6044,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n    --bg-light: #eff2f5;\n\n    /**\n     * All gray texts: placeholders, settings\n     */\n    --grayText: #707684;\n\n    /**\n     * Block content width\n     */\n    --content-width: 650px;\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n    --toolbar-buttons-size: 34px\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 2px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    width: 34px;\n    width: var(--toolbar-buttons-size);\n    height: 34px;\n    height: var(--toolbar-buttons-size);\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n      content: '+';\n      font-size: 26px;\n      display: block;\n      margin-top: -2px;\n      margin-right: -2px;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    border: 1px dotted #ccc;\n    padding: 2px;\n  }\n.ce-toolbar__actions-buttons {\n      border: 1px dotted #ccc;\n      padding: 2px;\n      text-align: right;\n      margin-bottom: 2px;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    border: 1px dotted #ccc\n  }\n.ce-toolbar__settings-btn::before {\n      content: 'STN';\n      font-size: 10px;\n      opacity: .4;\n    }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        background: var(--bg-light);\n        width: 34px;\n        width: var(--toolbar-buttons-size);\n        height: 34px;\n        height: var(--toolbar-buttons-size);\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px;\n        line-height: var(--toolbar-buttons-size)\n    }\n.ce-toolbox__button::before {\n            content: attr(title);\n            font-size: 22px;\n            font-weight: 500;\n            letter-spacing: 1em;\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                    font-feature-settings: \"smcp\", \"c2sc\";\n            font-variant-caps: all-small-caps;\n            padding-left: 11.5px;\n            margin-top: -1px;\n            display: inline-block;\n        }\n.ce-inline-toolbar {\n    position: absolute;\n    z-index: 2;\n  background: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  position: relative;\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background: #fff;\n        }\n.ce-inline-toolbar {\n\n    width: 100px;\n    height: 40px;\n}\n.ce-settings {\n  border: 1px dotted #ccc;\n  padding: 2px;\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone {\n    border: 1px dotted #ccc;\n    padding: 2px;\n    margin-bottom: 2px\n  }\n.ce-settings__plugin-zone::before {\n      content: 'PLUGIN SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__default-zone {\n    border: 1px dotted #ccc;\n    padding: 2px\n  }\n.ce-settings__default-zone::before {\n      content: 'DEFAULT SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__button {\n    padding: 10px 15px;\n    color: #707684;\n    color: var(--grayText)\n  }\n.ce-settings__button:hover {\n      background: #eff2f5;\n      background: var(--bg-light);\n    }\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0\n}\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n", ""]);
+exports.push([module.i, ":root {\n\n    /**\n     * Toolbar buttons\n     */\n    --bg-light: #eff2f5;\n\n    /**\n     * All gray texts: placeholders, settings\n     */\n    --grayText: #707684;\n\n    /**\n     * Block content width\n     */\n    --content-width: 650px;\n\n    /**\n     * Toolbar Plus Button and Toolbox buttons height and width\n     */\n    --toolbar-buttons-size: 34px\n\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 2px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    width: 34px;\n    width: var(--toolbar-buttons-size);\n    height: 34px;\n    height: var(--toolbar-buttons-size);\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n      content: '+';\n      font-size: 26px;\n      display: block;\n      margin-top: -2px;\n      margin-right: -2px;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    border: 1px dotted #ccc;\n    padding: 2px;\n  }\n.ce-toolbar__actions-buttons {\n      border: 1px dotted #ccc;\n      padding: 2px;\n      text-align: right;\n      margin-bottom: 2px;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    border: 1px dotted #ccc\n  }\n.ce-toolbar__settings-btn::before {\n      content: 'STN';\n      font-size: 10px;\n      opacity: .4;\n    }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        background: var(--bg-light);\n        width: 34px;\n        width: var(--toolbar-buttons-size);\n        height: 34px;\n        height: var(--toolbar-buttons-size);\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px;\n        line-height: var(--toolbar-buttons-size)\n    }\n.ce-toolbox__button::before {\n            content: attr(title);\n            font-size: 22px;\n            font-weight: 500;\n            letter-spacing: 1em;\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                    font-feature-settings: \"smcp\", \"c2sc\";\n            font-variant-caps: all-small-caps;\n            padding-left: 11.5px;\n            margin-top: -1px;\n            display: inline-block;\n        }\n.ce-inline-toolbar {\n  position: absolute;\n  background: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background: #fff;\n        }\n.ce-inline-toolbar {\n\n  width: 100px;\n  height: 40px;\n  transform: translateX(-50%);\n  display: none;\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-settings {\n  border: 1px dotted #ccc;\n  padding: 2px;\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone {\n    border: 1px dotted #ccc;\n    padding: 2px;\n    margin-bottom: 2px\n  }\n.ce-settings__plugin-zone::before {\n      content: 'PLUGIN SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__default-zone {\n    border: 1px dotted #ccc;\n    padding: 2px\n  }\n.ce-settings__default-zone::before {\n      content: 'DEFAULT SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__button {\n    padding: 10px 15px;\n    color: #707684;\n    color: var(--grayText)\n  }\n.ce-settings__button:hover {\n      background: #eff2f5;\n      background: var(--bg-light);\n    }\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0\n}\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n", ""]);
 
 // exports
 

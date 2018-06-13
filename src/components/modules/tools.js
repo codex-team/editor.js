@@ -11,6 +11,7 @@
  * @property {String} iconClassname - this a icon in toolbar
  * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
  * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
+ * @property {Boolean|String[]} inlineToolbar - Pass `true` to enable the Inline Toolbar with all Tools, all pass an array with specified Tools list |
  * @property render @todo add description
  * @property save @todo add description
  * @property settings @todo add description
@@ -58,17 +59,30 @@ export default class Tools extends Module {
   }
 
   /**
+   * Constant for available Tools Settings
+   * @return {object}
+   */
+  get apiSettings() {
+    return {
+      TOOLBAR_ICON_CLASS: 'iconClassName',
+      IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
+      IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
+      IS_IRREPLACEBLE_TOOL: 'irreplaceable',
+      IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
+    };
+  }
+
+  /**
    * Static getter for default Tool config fields
-   *
-   * @usage Tools.defaultConfig.displayInToolbox
    * @return {ToolConfig}
    */
-  static get defaultConfig() {
+  get defaultConfig() {
     return {
-      iconClassName : '',
-      displayInToolbox : false,
-      enableLineBreaks : false,
-      irreplaceable : false
+      [this.apiSettings.TOOLBAR_ICON_CLASS] : false,
+      [this.apiSettings.IS_DISPLAYED_IN_TOOLBOX] : false,
+      [this.apiSettings.IS_ENABLED_LINE_BREAKS] : false,
+      [this.apiSettings.IS_IRREPLACEBLE_TOOL] : false,
+      [this.apiSettings.IS_ENABLED_INLINE_TOOLBAR]: false,
     };
   }
 
@@ -192,11 +206,7 @@ export default class Tools extends Module {
     let plugin = this.toolClasses[tool],
       config = this.config.toolsConfig[tool];
 
-    if (!config) {
-      config = this.defaultConfig;
-    }
-
-    let instance = new plugin(data, config);
+    let instance = new plugin(data, config || {});
 
     return instance;
   }

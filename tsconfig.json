@@ -2,5 +2,6 @@
   "compilerOptions" : {
     "target": "es6",
     "declaration": false,
+    "lib": ["es2016", "dom"]
   }
 }
