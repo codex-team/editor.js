@@ -168,6 +168,11 @@ export default class Block {
     return data;
   }
 
+  /**
+   * Make an array with default settings
+   * Each block has default tune instance that have states
+   * @return {*[]}
+   */
   makeTunes() {
     return [
       new MoveUpTune(this.settings),
@@ -175,6 +180,10 @@ export default class Block {
     ];
   }
 
+  /**
+   * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
+   * @return {DocumentFragment}
+   */
   renderTunes() {
     let tunesElement = document.createDocumentFragment();
 
@@ -182,7 +191,6 @@ export default class Block {
       $.append(tunesElement, tune.render());
     });
 
-    console.log(tunesElement);
     return tunesElement;
   }
 

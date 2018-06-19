@@ -57,35 +57,14 @@ export default class BlockSettings extends Module {
    * Add Tool's settings
    */
   addToolSettings() {
-    // console.log('Block Settings: add settings for ',
-    //   this.Editor.BlockManager.currentBlock
-    // );
+
   }
 
   /**
    * Add default settings
    */
   addDefaultSettings() {
-    this.Editor.BlockManager.currentBlock.renderTunes();
-
-    /**
-     * Remove Block Button
-     * --------------------------------------------
-     */
-    this.nodes.buttonRemove = $.make('div', BlockSettings.CSS.button, {
-      textContent: 'Remove Block'
-    });
-
-    $.append(this.nodes.defaultSettings, this.nodes.buttonRemove);
-
-    this.Editor.Listeners.on(this.nodes.buttonRemove, 'click', (event) => this.removeBlockButtonClicked(event));
-  }
-
-  /**
-   * Clicks on the Remove Block Button
-   */
-  removeBlockButtonClicked() {
-    console.log('❇️ Remove Block Button clicked');
+    $.append(this.nodes.defaultSettings, this.Editor.BlockManager.currentBlock.renderTunes());
   }
 
   /**

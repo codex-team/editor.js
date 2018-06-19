@@ -931,13 +931,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @class MoveUpTune
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @classdesc Editor's default tune that moves up selected block
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
-/**
- *
- */
 var MoveUpTune = function (_BlockTune) {
   _inherits(MoveUpTune, _BlockTune);
 
@@ -947,6 +945,7 @@ var MoveUpTune = function (_BlockTune) {
     return _possibleConstructorReturn(this, (MoveUpTune.__proto__ || Object.getPrototypeOf(MoveUpTune)).call(this, state));
   }
   /**
+     * Create "MoveUp" button and add click event listener
      * @returns [Element}
      */
 
@@ -958,7 +957,18 @@ var MoveUpTune = function (_BlockTune) {
         textContent: 'Her'
       });
 
+      moveUpButton.addEventListener('click', this.handle, false);
       return moveUpButton;
+    }
+    /**
+       * Move current block up
+       * @param {Event} event
+       */
+
+  }, {
+    key: 'handle',
+    value: function handle(event) {
+      console.log('hey');
     }
   }]);
 
@@ -983,7 +993,7 @@ module.exports = exports['default'];
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+   value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -992,24 +1002,38 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * BlockTune abstract class
+ *
+ * All tunes must expand this class
  */
 var BlockTune = function () {
-  function BlockTune(state) {
-    _classCallCheck(this, BlockTune);
+   /**
+      * Tune's state
+      * @param {Object} state
+      */
+   function BlockTune(state) {
+      _classCallCheck(this, BlockTune);
 
-    this.state = state;
-  }
-  /**
-     * @return {Element}
-     */
+      this.state = state;
+   }
+   /**
+      * @return {Element}
+      */
 
 
-  _createClass(BlockTune, [{
-    key: "render",
-    value: function render() {}
-  }]);
+   _createClass(BlockTune, [{
+      key: "render",
+      value: function render() {}
+      /**
+         * Handle click event
+         * @param {Event} event
+         */
 
-  return BlockTune;
+   }, {
+      key: "handle",
+      value: function handle(event) {}
+   }]);
+
+   return BlockTune;
 }();
 
 BlockTune.displayName = "BlockTune";
@@ -1203,11 +1227,24 @@ var Block = function () {
 
       return data;
     }
+
+    /**
+     * Make an array with default settings
+     * Each block has default tune instance that have states
+     * @return {*[]}
+     */
+
   }, {
     key: 'makeTunes',
     value: function makeTunes() {
       return [new _blockTuneMoveUp2.default(this.settings)];
     }
+
+    /**
+     * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
+     * @return {DocumentFragment}
+     */
+
   }, {
     key: 'renderTunes',
     value: function renderTunes() {
@@ -1217,7 +1254,6 @@ var Block = function () {
         $.append(tunesElement, tune.render());
       });
 
-      console.log(tunesElement);
       return tunesElement;
     }
 
@@ -3984,10 +4020,6 @@ var BlockSettings = function (_Module) {
   }, {
     key: 'addToolSettings',
     value: function addToolSettings() {}
-    // console.log('Block Settings: add settings for ',
-    //   this.Editor.BlockManager.currentBlock
-    // );
-
 
     /**
      * Add default settings
@@ -3996,33 +4028,7 @@ var BlockSettings = function (_Module) {
   }, {
     key: 'addDefaultSettings',
     value: function addDefaultSettings() {
-      var _this2 = this;
-
-      this.Editor.BlockManager.currentBlock.renderTunes();
-
-      /**
-       * Remove Block Button
-       * --------------------------------------------
-       */
-      this.nodes.buttonRemove = $.make('div', BlockSettings.CSS.button, {
-        textContent: 'Remove Block'
-      });
-
-      $.append(this.nodes.defaultSettings, this.nodes.buttonRemove);
-
-      this.Editor.Listeners.on(this.nodes.buttonRemove, 'click', function (event) {
-        return _this2.removeBlockButtonClicked(event);
-      });
-    }
-
-    /**
-     * Clicks on the Remove Block Button
-     */
-
-  }, {
-    key: 'removeBlockButtonClicked',
-    value: function removeBlockButtonClicked() {
-      console.log('❇️ Remove Block Button clicked');
+      $.append(this.nodes.defaultSettings, this.Editor.BlockManager.currentBlock.renderTunes());
     }
 
     /**
