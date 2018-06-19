@@ -87,8 +87,8 @@ export default class BlockManager extends Module {
     this.bindEvents(block);
 
     /**
-         * Apply callback before inserting html
-         */
+     * Apply callback before inserting html
+     */
     block.call('appendCallback', {});
 
     return block;
@@ -156,7 +156,12 @@ export default class BlockManager extends Module {
   insert(toolName, data = {}) {
     let block = this.composeBlock(toolName, data);
 
-    this._blocks[++this.currentBlockIndex] = block;
+
+    if (this.currentBlock && this.currentBlock.isEmpty && !block.isEmpty) {
+      this._blocks.insert(this.currentBlockIndex, block, true);
+    } else {
+      this._blocks[++this.currentBlockIndex] = block;
+    }
     this.Editor.Caret.setToBlock(block);
   }
 
@@ -314,8 +319,17 @@ export default class BlockManager extends Module {
    * @param {HTMLElement} element
    */
   set currentNode(element) {
+    if (!$.isElement(element)) {
+      element = element.parentNode;
+    }
+
     let nodes = this._blocks.nodes,
       firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`);
+
+    if (!firstLevelBlock) {
+      throw Error('Passed element is not a Block.');
+    }
+
 
     /**
      * Update current Block's index
@@ -342,30 +356,6 @@ export default class BlockManager extends Module {
    */
   get blocks() {
     return this._blocks.array;
-  }
-
-  /**
-   * 1) Find first-level Block from passed child Node
-   * 2) Mark it as current
-   *
-   *  @param {Element|Text} childNode - look ahead from this node.
-   *  @throws Error  - when passed Node is not included at the Block
-   */
-  setCurrentBlockByChildNode(childNode) {
-    /**
-     * If node is Text TextNode
-     */
-    if (!$.isElement(childNode)) {
-      childNode = childNode.parentNode;
-    }
-
-    let parentFirstLevelBlock = childNode.closest(`.${Block.CSS.wrapper}`);
-
-    if (parentFirstLevelBlock) {
-      this.currentNode = parentFirstLevelBlock;
-    } else {
-      throw new Error('Can not find a Block from this child Node');
-    }
   }
 };
 

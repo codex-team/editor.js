@@ -148,6 +148,16 @@ export default class Dom {
   }
 
   /**
+   * Check if object is DocumentFragmemt node
+   *
+   * @param {Object} node
+   * @returns {boolean}
+   */
+  static isFragment(node) {
+    return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
+  }
+
+  /**
    * Checks target if it is native input
    * @param {Element|String} target - HTML element or string
    * @return {Boolean}
@@ -246,5 +256,13 @@ export default class Dom {
     }
 
     return leafs.every( leaf => this.isNodeEmpty(leaf) );
+  }
+
+  static isHTMLString(string) {
+    const wrapper = Dom.make('div');
+
+    wrapper.innerHTML = string;
+
+    return wrapper.childElementCount > 0;
   }
 };

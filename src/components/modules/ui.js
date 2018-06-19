@@ -70,48 +70,34 @@ export default class UI extends Module {
   /**
    * Making main interface
    */
-  prepare() {
-    return this.make()
-      /**
-       * Make toolbar
-       */
-      .then(() => this.Editor.Toolbar.make())
-      /**
-       * Make the Inline toolbar
-       */
-      .then(() => this.Editor.InlineToolbar.make())
-      /**
-       * Load and append CSS
-       */
-      .then(() => this.loadStyles())
-      /**
-       * Bind events for the UI elements
-       */
-      .then(() => this.bindEvents())
+  async prepare() {
+    await this.make();
 
-    /** Make container for inline toolbar */
-    // .then(makeInlineToolbar_)
+    /**
+     * Make toolbar
+     */
+    await this.Editor.Toolbar.make();
 
-    /** Add inline toolbar tools */
-    // .then(addInlineToolbarTools_)
+    /**
+     * Make the Inline toolbar
+     */
+    await this.Editor.InlineToolbar.make();
 
-    /** Draw wrapper for notifications */
-    // .then(makeNotificationHolder_)
+    /**
+     * Load and append CSS
+     */
+    await this.loadStyles();
 
-    /** Add eventlisteners to redactor elements */
-    // .then(bindEvents_)
-
-      .catch(e => {
-        console.error(e);
-
-        // editor.core.log("Can't draw editor interface");
-      });
+    /**
+     * Bind events for the UI elements
+     */
+    await this.bindEvents();
   }
 
   /**
-     * CodeX Editor UI CSS class names
-     * @return {{editorWrapper: string, editorZone: string, block: string}}
-     */
+   * CodeX Editor UI CSS class names
+   * @return {{editorWrapper: string, editorZone: string, block: string}}
+   */
   get CSS() {
     return {
       editorWrapper : 'codex-editor',
@@ -123,30 +109,25 @@ export default class UI extends Module {
      * Makes CodeX Editor interface
      * @return {Promise<any>}
      */
-  make() {
-    return new Promise( (resolve, reject) => {
-      /**
-       * Element where we need to append CodeX Editor
-       * @type {Element}
-       */
-      this.nodes.holder = document.getElementById(this.config.holderId);
+  async make() {
+    /**
+     * Element where we need to append CodeX Editor
+     * @type {Element}
+     */
+    this.nodes.holder = document.getElementById(this.config.holderId);
 
-      if (!this.nodes.holder) {
-        reject(Error("Holder wasn't found by ID: #" + this.config.holderId));
-        return;
-      }
+    if (!this.nodes.holder) {
+      throw Error("Holder wasn't found by ID: #" + this.config.holderId);
+    }
 
-      /**
-       * Create and save main UI elements
-       */
-      this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
-      this.nodes.redactor = $.make('div', this.CSS.editorZone);
+    /**
+     * Create and save main UI elements
+     */
+    this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
+    this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
-      this.nodes.wrapper.appendChild(this.nodes.redactor);
-      this.nodes.holder.appendChild(this.nodes.wrapper);
-
-      resolve();
-    });
+    this.nodes.wrapper.appendChild(this.nodes.redactor);
+    this.nodes.holder.appendChild(this.nodes.wrapper);
   }
 
   /**
@@ -212,7 +193,7 @@ export default class UI extends Module {
      * Select clicked Block as Current
      */
     try {
-      this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+      this.Editor.BlockManager.currentNode = clickedNode;
     } catch (e) {
       /**
        * If clicked outside first-level Blocks, set Caret to the last empty Block

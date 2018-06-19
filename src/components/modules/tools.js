@@ -69,6 +69,7 @@ export default class Tools extends Module {
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_IRREPLACEBLE_TOOL: 'irreplaceable',
       IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
+      IS_PASTE_DISALLOWED: 'disallowPaste'
     };
   }
 

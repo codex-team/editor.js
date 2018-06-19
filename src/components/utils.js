@@ -13,8 +13,12 @@ export default class Util {
     type = type || 'log';
 
     if (!args) {
-      args  = msg || 'undefined';
-      msg  = '[codex-editor]:      %o';
+      if (['time', 'timeEnd'].includes(type)) {
+        msg = `[codex-editor]: ${msg}`;
+      } else {
+        args = msg || 'undefined';
+        msg = '[codex-editor]:      %o';
+      }
     } else {
       msg  = '[codex-editor]:      ' + msg;
     }

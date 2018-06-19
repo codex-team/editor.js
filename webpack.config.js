@@ -47,7 +47,7 @@ var babelLoader = {
   options: {
     cacheDirectory: true,
     presets: [
-      "env"
+      "env", "stage-0"
     ],
     plugins: [
       /**
@@ -75,7 +75,7 @@ var babelLoader = {
 module.exports = {
 
   entry: {
-    'codex-editor': './src/codex'
+    'codex-editor': ['babel-polyfill', './src/codex']
   },
   output: {
     path: path.resolve(__dirname, 'build'),
