@@ -17,16 +17,25 @@
  * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
  * @property pluginsContent - HTML content that returns by Tool's render function
  */
+import MoveUpTune from './block-tunes/block-tune-move-up';
+
 export default class Block {
   /**
    * @constructor
    * @param {String} toolName - Tool name that passed on initialization
    * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
+   * @param {Object} settings - default settings
    */
-  constructor(toolName, toolInstance) {
+  constructor(toolName, toolInstance, settings) {
     this.name = toolName;
     this.tool = toolInstance;
+    this.settings = settings;
     this._html = this.compose();
+
+    /**
+     * @type {BlockTune[]}
+     */
+    this.tunes = this.makeTunes();
   }
 
   /**
@@ -157,6 +166,24 @@ export default class Block {
     }
 
     return data;
+  }
+
+  makeTunes() {
+    return [
+      new MoveUpTune(this.settings),
+      // ...
+    ];
+  }
+
+  renderTunes() {
+    let tunesElement = document.createDocumentFragment();
+
+    this.tunes.forEach( tune => {
+      $.append(tunesElement, tune.render());
+    });
+
+    console.log(tunesElement);
+    return tunesElement;
   }
 
   /**

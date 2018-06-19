@@ -68,9 +68,10 @@ export default class Renderer extends Module {
    */
   insertBlock(item) {
     let tool = item.type,
-      data = item.data;
+      data = item.data,
+      settings = item.settings;
 
-    this.Editor.BlockManager.insert(tool, data);
+    this.Editor.BlockManager.insert(tool, data, settings);
 
     return Promise.resolve();
   }

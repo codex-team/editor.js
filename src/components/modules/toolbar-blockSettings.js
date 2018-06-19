@@ -51,26 +51,23 @@ export default class BlockSettings extends Module {
     this.nodes.defaultSettings = $.make('div', BlockSettings.CSS.defaultSettings);
 
     $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
-
-    /**
-     * Add default settings that presents for all Blocks
-     */
-    this.addDefaultSettings();
   }
 
   /**
    * Add Tool's settings
    */
   addToolSettings() {
-    console.log('Block Settings: add settings for ',
-      this.Editor.BlockManager.currentBlock
-    );
+    // console.log('Block Settings: add settings for ',
+    //   this.Editor.BlockManager.currentBlock
+    // );
   }
 
   /**
    * Add default settings
    */
   addDefaultSettings() {
+    this.Editor.BlockManager.currentBlock.renderTunes();
+
     /**
      * Remove Block Button
      * --------------------------------------------
@@ -109,6 +106,11 @@ export default class BlockSettings extends Module {
      * Fill Tool's settings
      */
     this.addToolSettings();
+
+    /**
+     * Add default settings that presents for all Blocks
+     */
+    this.addDefaultSettings();
   }
 
   /**

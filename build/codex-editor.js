@@ -904,6 +904,120 @@ module.exports = exports['default'];
 
 /***/ }),
 
+/***/ "./src/components/block-tunes/block-tune-move-up.js":
+/*!**********************************************************!*\
+  !*** ./src/components/block-tunes/block-tune-move-up.js ***!
+  \**********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _blockTune = __webpack_require__(/*! ./block-tune */ "./src/components/block-tunes/block-tune.js");
+
+var _blockTune2 = _interopRequireDefault(_blockTune);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+/**
+ *
+ */
+var MoveUpTune = function (_BlockTune) {
+  _inherits(MoveUpTune, _BlockTune);
+
+  function MoveUpTune(state) {
+    _classCallCheck(this, MoveUpTune);
+
+    return _possibleConstructorReturn(this, (MoveUpTune.__proto__ || Object.getPrototypeOf(MoveUpTune)).call(this, state));
+  }
+  /**
+     * @returns [Element}
+     */
+
+
+  _createClass(MoveUpTune, [{
+    key: 'render',
+    value: function render() {
+      var moveUpButton = $.make('div', [], {
+        textContent: 'Her'
+      });
+
+      return moveUpButton;
+    }
+  }]);
+
+  return MoveUpTune;
+}(_blockTune2.default);
+
+MoveUpTune.displayName = 'MoveUpTune';
+exports.default = MoveUpTune;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! dom */ "./src/components/dom.js")))
+
+/***/ }),
+
+/***/ "./src/components/block-tunes/block-tune.js":
+/*!**************************************************!*\
+  !*** ./src/components/block-tunes/block-tune.js ***!
+  \**************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * BlockTune abstract class
+ */
+var BlockTune = function () {
+  function BlockTune(state) {
+    _classCallCheck(this, BlockTune);
+
+    this.state = state;
+  }
+  /**
+     * @return {Element}
+     */
+
+
+  _createClass(BlockTune, [{
+    key: "render",
+    value: function render() {}
+  }]);
+
+  return BlockTune;
+}();
+
+BlockTune.displayName = "BlockTune";
+exports.default = BlockTune;
+module.exports = exports["default"];
+
+/***/ }),
+
 /***/ "./src/components/block.js":
 /*!*********************************!*\
   !*** ./src/components/block.js ***!
@@ -918,19 +1032,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/**
- *
- * @class Block
- * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
- *
- * @property {Tool} tool — current block tool (Paragraph, for example)
- * @property {Object} CSS — block`s css classes
- *
- */
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @class Block
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @property {Tool} tool — current block tool (Paragraph, for example)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @property {Object} CSS — block`s css classes
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -941,18 +1051,35 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
  * @property pluginsContent - HTML content that returns by Tool's render function
  */
+
+
+var _blockTuneMoveUp = __webpack_require__(/*! ./block-tunes/block-tune-move-up */ "./src/components/block-tunes/block-tune-move-up.js");
+
+var _blockTuneMoveUp2 = _interopRequireDefault(_blockTuneMoveUp);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
 var Block = function () {
   /**
    * @constructor
    * @param {String} toolName - Tool name that passed on initialization
    * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
+   * @param {Object} settings - default settings
    */
-  function Block(toolName, toolInstance) {
+  function Block(toolName, toolInstance, settings) {
     _classCallCheck(this, Block);
 
     this.name = toolName;
     this.tool = toolInstance;
+    this.settings = settings;
     this._html = this.compose();
+
+    /**
+     * @type {BlockTune[]}
+     */
+    this.tunes = this.makeTunes();
   }
 
   /**
@@ -1075,6 +1202,23 @@ var Block = function () {
       }
 
       return data;
+    }
+  }, {
+    key: 'makeTunes',
+    value: function makeTunes() {
+      return [new _blockTuneMoveUp2.default(this.settings)];
+    }
+  }, {
+    key: 'renderTunes',
+    value: function renderTunes() {
+      var tunesElement = document.createDocumentFragment();
+
+      this.tunes.forEach(function (tune) {
+        $.append(tunesElement, tune.render());
+      });
+
+      console.log(tunesElement);
+      return tunesElement;
     }
 
     /**
@@ -1683,21 +1827,21 @@ var BlockManager = function (_Module) {
      *
      * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
      * @param {Object} data - constructor params
+     * @param {Object} settings - block settings
      *
      * @return {Block}
      */
 
   }, {
     key: 'composeBlock',
-    value: function composeBlock(toolName, data) {
+    value: function composeBlock(toolName, data, settings) {
       var toolInstance = this.Editor.Tools.construct(toolName, data),
-          block = new _block2.default(toolName, toolInstance);
+          block = new _block2.default(toolName, toolInstance, settings);
 
       this.bindEvents(block);
-
       /**
-           * Apply callback before inserting html
-           */
+       * Apply callback before inserting html
+       */
       block.call('appendCallback', {});
 
       return block;
@@ -1774,14 +1918,16 @@ var BlockManager = function (_Module) {
      *
      * @param {String} toolName — plugin name
      * @param {Object} data — plugin data
+     * @param {Object} settings - default settings
      */
 
   }, {
     key: 'insert',
     value: function insert(toolName) {
       var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-      var block = this.composeBlock(toolName, data);
+      var block = this.composeBlock(toolName, data, settings);
 
       this._blocks[++this.currentBlockIndex] = block;
       this.Editor.Caret.setToBlock(block);
@@ -3266,9 +3412,10 @@ var Renderer = function (_Module) {
     key: "insertBlock",
     value: function insertBlock(item) {
       var tool = item.type,
-          data = item.data;
+          data = item.data,
+          settings = item.settings;
 
-      this.Editor.BlockManager.insert(tool, data);
+      this.Editor.BlockManager.insert(tool, data, settings);
 
       return Promise.resolve();
     }
@@ -3828,11 +3975,6 @@ var BlockSettings = function (_Module) {
       this.nodes.defaultSettings = $.make('div', BlockSettings.CSS.defaultSettings);
 
       $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
-
-      /**
-       * Add default settings that presents for all Blocks
-       */
-      this.addDefaultSettings();
     }
 
     /**
@@ -3841,9 +3983,11 @@ var BlockSettings = function (_Module) {
 
   }, {
     key: 'addToolSettings',
-    value: function addToolSettings() {
-      console.log('Block Settings: add settings for ', this.Editor.BlockManager.currentBlock);
-    }
+    value: function addToolSettings() {}
+    // console.log('Block Settings: add settings for ',
+    //   this.Editor.BlockManager.currentBlock
+    // );
+
 
     /**
      * Add default settings
@@ -3853,6 +3997,8 @@ var BlockSettings = function (_Module) {
     key: 'addDefaultSettings',
     value: function addDefaultSettings() {
       var _this2 = this;
+
+      this.Editor.BlockManager.currentBlock.renderTunes();
 
       /**
        * Remove Block Button
@@ -3898,6 +4044,11 @@ var BlockSettings = function (_Module) {
        * Fill Tool's settings
        */
       this.addToolSettings();
+
+      /**
+       * Add default settings that presents for all Blocks
+       */
+      this.addDefaultSettings();
     }
 
     /**
@@ -4402,7 +4553,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * |                                                                                           |
  * |  ..................... Content ....................   ......... Block Actions ..........  |
  * |  .                                                .   .                                .  |
- * |  .                                                .   . [Open Settings] [Remove Block] .  |
+ * |  .                                                .   .        [Open Settings]         |
  * |  .  [Plus Button]  [Toolbox: {Tool1}, {Tool2}]    .   .                                .  |
  * |  .                                                .   .        [Settings Panel]        .  |
  * |  ..................................................   ..................................  |
