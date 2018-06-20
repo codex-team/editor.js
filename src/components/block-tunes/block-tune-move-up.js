@@ -6,15 +6,17 @@ import BlockTune from './block-tune';
 export default class MoveUpTune extends BlockTune {
   constructor(state) {
     super(state);
+    this.CSS = {
+      wrapper: '',
+      icon: ''
+    };
   }
   /**
      * Create "MoveUp" button and add click event listener
      * @returns [Element}
      */
   render() {
-    let moveUpButton = $.make('div', [], {
-      textContent: 'Her'
-    });
+    let moveUpButton = $.make('div', [], {});
 
     moveUpButton.addEventListener('click', this.handle, false);
     return moveUpButton;
