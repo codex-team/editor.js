@@ -1543,7 +1543,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  * Inline Toolbar Tool
  *
- * Makes selected text more bolder
+ * Makes selected text bolder
  */
 var BoldInlineTool = function () {
   function BoldInlineTool() {
@@ -4127,7 +4127,7 @@ var InlineToolbar = function (_Module) {
          *
          *
          *  Moving / appearance
-         *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          *
          */
         /**
@@ -4227,7 +4227,7 @@ var InlineToolbar = function (_Module) {
          *
          *
          *  Working with Tools
-         *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
          *
          */
         /**

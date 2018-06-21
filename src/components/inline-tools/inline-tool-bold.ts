@@ -5,7 +5,7 @@ import InlineTool from './inline-tool';
  *
  * Inline Toolbar Tool
  *
- * Makes selected text more bolder
+ * Makes selected text bolder
  */
 export default class BoldInlineTool implements InlineTool {
 
@@ -39,9 +39,7 @@ export default class BoldInlineTool implements InlineTool {
    */
   public render(): HTMLElement {
     this.nodes.button = document.createElement('button');
-
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-
     return this.nodes.button;
   }
 
