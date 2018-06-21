@@ -1,12 +1,37 @@
 .ce-inline-toolbar {
   @apply --overlay-pane;
-
-  width: 100px;
-  height: 40px;
+  padding: 6px;
   transform: translateX(-50%);
   display: none;
 
   &--showed {
     display: block;
+  }
+}
+
+.ce-inline-tool {
+  display: inline-block;
+  width: 34px;
+  height: 34px;
+  border-radius: 3px;
+  cursor: pointer;
+  border: 0;
+  outline: none;
+  background: transparent;
+  vertical-align: bottom;
+
+  &:hover {
+    background: var(--bg-light);
+  }
+
+  &--active {
+    color: var(--color-active-icon);
+  }
+
+  &--bold {
+    &::before {
+      font-weight: bold;
+      content: 'B'
+    }
   }
 }

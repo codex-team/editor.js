@@ -96,6 +96,7 @@ module.exports = {
   resolve : {
     // fallback: path.join(__dirname, 'node_modules'),
     modules : [ path.join(__dirname, "src"),  "node_modules"],
+    extensions: ['.js', '.ts'],
     alias: {
       'utils': path.resolve(__dirname + '/src/components/', './utils'),
       'dom': path.resolve(__dirname + '/src/components/', './dom'),
