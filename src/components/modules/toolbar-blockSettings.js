@@ -16,8 +16,7 @@ export default class BlockSettings extends Module {
     this.nodes = {
       wrapper: null,
       toolSettings: null,
-      defaultSettings: null,
-      buttonRemove: null
+      defaultSettings: null
     };
   }
 
@@ -57,7 +56,9 @@ export default class BlockSettings extends Module {
    * Add Tool's settings
    */
   addToolSettings() {
-
+    if (typeof this.Editor.BlockManager.currentBlock.tool.makeSettings === 'function') {
+      $.append(this.nodes.toolSettings, this.Editor.BlockManager.currentBlock.tool.makeSettings());
+    }
   }
 
   /**

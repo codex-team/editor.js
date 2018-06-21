@@ -13,13 +13,13 @@ export default class Module {
    * Editor modules list
    * @type {EditorComponents}
    */
-  private Editor: any = null;
+  protected Editor: any = null;
 
   /**
    * Editor configuration object
    * @type {EditorConfig}
    */
-  private config: any = {};
+  protected config: any = {};
 
   /**
    * @constructor
