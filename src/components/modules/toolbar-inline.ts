@@ -8,6 +8,8 @@
 declare var Module: any;
 declare var $: any;
 declare var _: any;
+import InlineTool from '../inline-tools/inline-tool';
+import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import Selection from '../selection';
 
 /**
@@ -48,12 +50,22 @@ export default class InlineToolbar extends Module {
   private readonly toolbarVerticalMargin: number = 20;
 
   /**
+   * Available Tools classes
+   */
+  private tools: InlineTool[] = [];
+
+  /**
    * @constructor
    */
   constructor({config}) {
+    super({config});
 
-      super({config});
-
+    /**
+     * @todo Merge internal tools with external
+     */
+    this.tools = [
+      new BoldInlineTool(),
+    ];
   }
 
   /**
@@ -61,14 +73,27 @@ export default class InlineToolbar extends Module {
    */
   public make() {
 
-      this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
+    this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
 
-      /**
-       * Append Inline Toolbar to the Editor
-       */
-      $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+    /**
+     * Append Inline Toolbar to the Editor
+     */
+    $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+
+    /**
+     * Append Inline Toolbar Tools
+     */
+    this.addTools();
 
   }
+
+  /**
+   *
+   *
+   *  Moving / appearance
+   *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   *
+   */
 
   /**
    * Shows Inline Toolbar by keyup/mouseup
@@ -82,6 +107,9 @@ export default class InlineToolbar extends Module {
 
     this.move();
     this.open();
+
+    /** Check Tools state for selected fragment */
+    this.chechToolsState();
   }
 
   /**
@@ -163,5 +191,59 @@ export default class InlineToolbar extends Module {
     const toolConfig = this.config.toolsConfig[currentBlock.name];
 
     return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
+  }
+
+  /**
+   *
+   *
+   *  Working with Tools
+   *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   *
+   */
+
+  /**
+   * Fill Inline Toolbar with Tools
+   */
+  private addTools(): void {
+    this.tools.forEach( (tool) => {
+      this.addTool(tool);
+    });
+  }
+
+  /**
+   * Add tool button and activate clicks
+   * @param {InlineTool} tool - Tool's instance
+   */
+  private addTool(tool: InlineTool): void {
+    const button = tool.render();
+
+    this.nodes.wrapper.appendChild(button);
+    this.Editor.Listeners.on(button, 'click', () => {
+      this.toolClicked(tool);
+    });
+  }
+
+  /**
+   * Inline Tool button clicks
+   * @param {InlineTool} tool - Tool's instance
+   */
+  private toolClicked(tool: InlineTool): void {
+    const range = Selection.range;
+
+    if (!range) {
+      return;
+    }
+
+    tool.surround(range);
+    this.chechToolsState();
+  }
+
+  /**
+   * Check Tools` state by selectio
+   */
+  private chechToolsState(): void {
+    this.tools.forEach( (tool) => {
+      tool.checkState(Selection.get);
+    });
   }
 }

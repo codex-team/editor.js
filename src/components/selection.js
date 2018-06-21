@@ -26,7 +26,7 @@ export default class Selection {
    * @return {Node|null}
    */
   static get anchorNode() {
-    let selection = window.getSelection();
+    const selection = window.getSelection();
 
     return selection ? selection.anchorNode : null;
   }
@@ -37,7 +37,7 @@ export default class Selection {
    * @return {Number|null}
    */
   static get anchorOffset() {
-    let selection = window.getSelection();
+    const selection = window.getSelection();
 
     return selection ? selection.anchorOffset : null;
   }
@@ -47,9 +47,19 @@ export default class Selection {
    * @return {boolean|null}
    */
   static get isCollapsed() {
-    let selection = window.getSelection();
+    const selection = window.getSelection();
 
     return selection ? selection.isCollapsed : null;
+  }
+
+  /**
+   * Return first range
+   * @return {Range|null}
+   */
+  static get range() {
+    const selection = window.getSelection();
+
+    return selection ? selection.getRangeAt(0) : null;
   }
 
   /**
