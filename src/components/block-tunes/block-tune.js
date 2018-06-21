@@ -4,20 +4,20 @@
  * All tunes must expand this class
  */
 export default class BlockTune {
-  /**
+    /**
      * Tune's state
      * @param {Object} state
      */
-  constructor(state) {
-    this.state = state;
-  }
-  /**
+    constructor(state) {
+        this.state = state;
+    }
+    /**
      * @return {Element}
      */
-  render() { }
-  /**
+    render() { }
+    /**
      * Handle click event
      * @param {Event} event
      */
-  handle(event) { }
+    handle(event) { }
 }
