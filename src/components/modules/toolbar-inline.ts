@@ -239,7 +239,7 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   * Check Tools` state by selectio
+   * Check Tools` state by selection
    */
   private checkToolsState(): void {
     this.tools.forEach( (tool) => {

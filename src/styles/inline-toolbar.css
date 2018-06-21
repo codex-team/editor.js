@@ -29,7 +29,7 @@
   }
 
   &--bold {
-    &:before {
+    &::before {
       font-weight: bold;
       content: 'B'
     }

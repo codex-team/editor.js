@@ -47,7 +47,7 @@ export default class BoldInlineTool implements InlineTool {
    * Wrap range with <b> tag
    * @param {Range} range
    */
-  public surround(range: Range) {
+  public surround(range: Range): void {
     document.execCommand(this.commandName);
   }
 
