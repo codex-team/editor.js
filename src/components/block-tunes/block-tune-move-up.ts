@@ -2,46 +2,48 @@
  * @class MoveUpTune
  * @classdesc Editor's default tune that moves up selected block
  */
-import BlockTune from './block-tune';
+import IBlockTune from './block-tune';
 
 declare var $: any;
 declare var _: any;
 
-/**
- * CSS classes interface
- */
-interface ICSS {
-  wrapper: string;
-  icon: string;
-}
+export default class MoveUpTune implements IBlockTune {
 
-export default class MoveUpTune extends BlockTune {
-  constructor(state) {
-    super(state);
-  }
+  private settings: object;
 
-  private CSS: ICSS = {
-    wrapper: '',
-    icon: ''
+  /**
+   * Styles
+   * @type {{wrapper: string}}
+   */
+  private CSS = {
+    wrapper: 'as',
   };
+
+  /**
+   * MoveUpTune constructor
+   * @param {Object} settings
+   */
+  public constructor(settings) {
+    this.settings = settings;
+  }
 
   /**
    * Create "MoveUp" button and add click event listener
    * @returns [Element}
    */
-  render() {
+  public render() {
 
-    let moveUpButton = $.make('div', [], {});
+    const moveUpButton = $.make('div', ['ce-settings-move-up'], {});
 
-    moveUpButton.addEventListener('click', this.handle, false);
+    moveUpButton.addEventListener('click', this.handleClick, false);
     return moveUpButton;
   }
 
   /**
    * Move current block up
-   * @param {Event} event
+   * @param {MouseEvent} event
    */
-  handle(event) {
-    console.log("hey");
+  public handleClick(event: MouseEvent): void {
+    console.log(`mas`);
   }
 }

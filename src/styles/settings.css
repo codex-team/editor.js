@@ -37,3 +37,14 @@
     }
   }
 }
+
+.ce-settings-move-up {
+  &:hover {
+    cursor: pointer;
+  }
+
+  &::before {
+    display: inline-block;
+    content: 'up';
+  }
+}

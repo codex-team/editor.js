@@ -1,28 +1,18 @@
 /**
- * BlockTune abstract class
+ * BlockTune interface
  *
- * All tunes must expand this class
+ * All tunes must implement this interface
  */
-export default class BlockTune {
-
-  state: any;
+export default interface IBlockTune {
 
   /**
-   * Tune's state
-   * @param {Object} state
+   * Returns tune button that will be appended in default settings area
    */
-  constructor(state) {
-    this.state = state;
-  }
+  render(): HTMLElement;
 
   /**
-   * @return {Element}
+   * handle Click event
+   * @param {MouseEvent} event
    */
-  render() {}
-
-  /**
-   * Handle click event
-   * @param {Event} event
-   */
-  handle(event) {}
+  handleClick(event: MouseEvent): void;
 }
