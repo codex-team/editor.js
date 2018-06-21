@@ -4145,7 +4145,7 @@ var InlineToolbar = function (_Module) {
             this.move();
             this.open();
             /** Check Tools state for selected fragment */
-            this.chechToolsState();
+            this.checkToolsState();
         }
         /**
          * Move Toolbar to the selected text
@@ -4272,15 +4272,15 @@ var InlineToolbar = function (_Module) {
                 return;
             }
             tool.surround(range);
-            this.chechToolsState();
+            this.checkToolsState();
         }
         /**
          * Check Tools` state by selectio
          */
 
     }, {
-        key: 'chechToolsState',
-        value: function chechToolsState() {
+        key: 'checkToolsState',
+        value: function checkToolsState() {
             this.tools.forEach(function (tool) {
                 tool.checkState(_selection2.default.get);
             });

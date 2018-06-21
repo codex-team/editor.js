@@ -109,7 +109,7 @@ export default class InlineToolbar extends Module {
     this.open();
 
     /** Check Tools state for selected fragment */
-    this.chechToolsState();
+    this.checkToolsState();
   }
 
   /**
@@ -235,13 +235,13 @@ export default class InlineToolbar extends Module {
     }
 
     tool.surround(range);
-    this.chechToolsState();
+    this.checkToolsState();
   }
 
   /**
    * Check Tools` state by selectio
    */
-  private chechToolsState(): void {
+  private checkToolsState(): void {
     this.tools.forEach( (tool) => {
       tool.checkState(Selection.get);
     });

@@ -1,7 +1,7 @@
 # Tools for the Inline Toolbar
 
-Similar with [Tools](tools.md) represented Blocks, you can create Tools for the Inline Toolbar. It will works with 
-selected fragment of text. The simplest example is `bold` or `italic` tools.
+Similar with [Tools](tools.md) represented Blocks, you can create Tools for the Inline Toolbar. It will work with 
+selected fragment of text. The simplest example is `bold` or `italic` Tools.
 
 ## Base structure
 
@@ -9,7 +9,7 @@ Inline Tool should implement next methods
 
 - `render()` — create a button
 - `surround()` — works with selected range
-- `checkState()` — get tools activated state by selected range
+- `checkState()` — get Tool's activated state by selected range
 
 ### render()
 
