@@ -265,4 +265,35 @@ export default class Dom {
 
     return wrapper.childElementCount > 0;
   }
+
+  static get blockElements() {
+    return [
+      'address',
+      'artical',
+      'aside',
+      'blockquote',
+      'div',
+      'dl',
+      'figure',
+      'footer',
+      'form',
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'header',
+      'nav',
+      'ol',
+      'p',
+      'pre',
+      'ruby',
+      'section',
+      'table',
+      'ul',
+      'li',
+      'dt'
+    ];
+  }
 };

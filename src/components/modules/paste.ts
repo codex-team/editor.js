@@ -2,35 +2,36 @@ declare const Module: any;
 declare const $: any;
 declare const _: any;
 
-interface IPasteConfig {
-    tags?: string[];
-    tagHandler?: (element: HTMLElement) => any;
-    allowedAttributes: string[];
-    patterns?: RegExp[];
-    patternHandler?: (pattern: string) => any;
-}
-
-interface ITagSubstitute {
-    tool: string;
-    attributes: {[name: string]: any};
-    handler: (element: HTMLElement) => any;
-}
-
-interface IPatternSubstitute {
-    pattern: RegExp;
-    handler: (text: string, pattern: RegExp) => any;
-    tool: string;
-}
-
 interface IBlockData {
     tool: string;
     data: any;
 }
 
-interface IInitialBlockData extends IBlockData {
-    data: {
-        text: string,
-    };
+interface IPasteConfig {
+    handler: (content: HTMLElement) => IBlockData;
+    tags?: string[];
+    allowedAttributes?: string[];
+    patterns?: RegExp[];
+    parser?: (text: string, pattern: RegExp) => IBlockData;
+}
+
+interface ITagSubstitute {
+    tool: string;
+    attributes: {[name: string]: any};
+    handler: (element: HTMLElement) => IBlockData;
+}
+
+interface IPatternSubstitute {
+    pattern: RegExp;
+    handler: (text: string, pattern: RegExp) => IBlockData;
+    tool: string;
+}
+
+interface IPasteData {
+    tool: string;
+    content: HTMLElement;
+    isBlock: boolean;
+    handler: (content: HTMLElement|string, patten?: RegExp) => IBlockData;
 }
 
 export default class Paste extends Module {
@@ -98,7 +99,7 @@ export default class Paste extends Module {
      */
     private processConfig(tool: string, config: IPasteConfig): void {
 
-        if (typeof config.tagHandler !== 'function') {
+        if (typeof config.handler !== 'function') {
             _.log(
                 `Paste handler for "${tool}" Tool should be a function.`,
                 'warn',
@@ -117,15 +118,15 @@ export default class Paste extends Module {
 
                 this.toolsTags[tag] = {
                     attributes: config.allowedAttributes || {},
-                    handler: config.tagHandler,
+                    handler: config.handler,
                     tool,
                 };
             });
         }
 
-        if (typeof config.patternHandler !== 'function') {
+        if (typeof config.parser !== 'function') {
             _.log(
-                `Pattern handler for "${tool}" Tool should be a function.`,
+                `Pattern parser for "${tool}" Tool should be a function.`,
                 'warn',
             );
         } else {
@@ -140,7 +141,7 @@ export default class Paste extends Module {
                 }
 
                 this.toolsPatterns.push({
-                    handler: config.patternHandler,
+                    handler: config.parser,
                     pattern,
                     tool,
                 });
@@ -172,7 +173,7 @@ export default class Paste extends Module {
      * @param {ClipboardEvent} event
      */
     private processPastedData = (event: ClipboardEvent): void => {
-        const {Editor: {Tools, Sanitizer, BlockManager}, config: {toolsConfig}} = this;
+        const {Editor: {Tools, Sanitizer}, config: {toolsConfig}} = this;
 
         /** If target is native input or is not Block, use browser behaviour */
         if (this.isNativeBehaviour(event.target)) {
@@ -197,25 +198,29 @@ export default class Paste extends Module {
             allowedTags[tag.toLowerCase()] = config.attributes;
         });
 
+        const blockTags: {[tag: string]: any} = {};
+        $.blockElements.forEach((el) => blockTags[el] = {});
+
+        /** P is not block element but we need it to split text by paragraphs */
+        blockTags.p = {};
+
         /** Add all tags can be substituted to sanitizer configuration */
-        const customConfig = {tags: Object.assign({}, Sanitizer.defaultConfig.tags, allowedTags)};
+        const customConfig = {tags: Object.assign({}, Sanitizer.defaultConfig.tags, blockTags, allowedTags)};
         const cleanData = Sanitizer.clean(htmlData, customConfig);
 
         let dataToInsert = [];
         if (!cleanData.trim() || cleanData.trim() === plainData.trim() || !$.isHTMLString(cleanData)) {
             dataToInsert = this.processPlain(plainData);
-
-            if (dataToInsert.length === 1) {
-                this.processSingleBlock(dataToInsert.pop());
-                return;
-            }
         } else {
             dataToInsert = this.processHTML(cleanData);
         }
 
-        dataToInsert.forEach((data) => {
-            BlockManager.insert(data.tool, data.data);
-        });
+        if (dataToInsert.length === 1 && !dataToInsert[0].isBlock) {
+            this.processSingleBlock(dataToInsert.pop());
+            return;
+        }
+
+        Promise.all(dataToInsert.map(async (data) => await this.insertBlock(data)));
     }
 
     /**
@@ -224,35 +229,38 @@ export default class Paste extends Module {
      * 2. Insert new block if it is not the same type as current one
      * 3. Just insert text if there is no substitutions
      *
-     * @param {IBlockData} block
+     * @param {IPasteData} dataToInsert
      */
-    private processSingleBlock(block: IBlockData): void {
+    private async processSingleBlock(dataToInsert: IPasteData): Promise<void> {
         const initialTool = this.config.initialBlock;
         const {BlockManager, BlockManager: {currentBlock}} = this.Editor;
-        const {tool, data} = block;
-        let blockToInsert = block;
+        const {content, tool} = dataToInsert;
 
-        if (tool === initialTool && data.text.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
-            blockToInsert = this.processPattern(block);
+        if (tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
+            const blockData = await this.processPattern(content.textContent);
+
+            if (blockData) {
+                BlockManager.insert(blockData.tool, blockData.data);
+                return;
+            }
         }
 
-        if (blockToInsert.tool !== currentBlock.name) {
-            BlockManager.insert(blockToInsert.tool, blockToInsert.data);
+        if (tool !== currentBlock.name) {
+            this.insertBlock(dataToInsert);
             return;
         }
 
-        document.execCommand('insertHTML', false, blockToInsert.data.text);
+        document.execCommand('insertHTML', false, content.innerHTML);
     }
 
     /**
      * Get patterns` matches
      *
-     * @param {IInitialBlockData} block
-     * @returns {IBlockData}
+     * @param {string} text
+     * @returns Promise<IBlockData>
      */
-    private processPattern(block: IInitialBlockData): IBlockData {
-        const {tool, data: {text}} = block;
-        const match = this.toolsPatterns.find((config) => {
+    private async processPattern(text: string): Promise<IBlockData> {
+        const pattern =  this.toolsPatterns.find((config) => {
             const execResult = config.pattern.exec(text);
 
             if (!execResult) {
@@ -262,21 +270,30 @@ export default class Paste extends Module {
             return text === execResult.shift();
         });
 
-        if (!match) {
-            return block;
-        }
+        return pattern && pattern.handler(text, pattern.pattern);
+    }
 
-        return match.handler(text, match.pattern);
+    /**
+     *
+     * @param {IPasteData} data
+     * @returns {Promise<void>}
+     */
+    private async insertBlock(data: IPasteData): Promise<void> {
+        const blockData = await data.handler(data.content);
+        const {BlockManager} = this.Editor;
+
+        BlockManager.insert(data.tool, blockData);
     }
 
     /**
      * Split HTML string to blocks and return it as array of Block data
      *
      * @param {string} innerHTML
-     * @returns {IBlockData[]}
+     * @returns IPasteData[]
      */
-    private processHTML(innerHTML: string): IBlockData[] {
+    private processHTML(innerHTML: string): IPasteData[] {
         const initialTool = this.config.initialBlock;
+        const {toolsConfig} = this.config;
         const wrapper = $.make('DIV');
 
         wrapper.innerHTML = innerHTML;
@@ -284,28 +301,29 @@ export default class Paste extends Module {
         const nodes = this.getNodes(wrapper);
 
         return nodes.map((node) => {
-            let data, tool = initialTool;
+            let content, tool = initialTool, isBlock = false;
 
             switch (node.nodeType) {
                 /** If node is a document fragment, use temp wrapper to get innerHTML */
                 case Node.DOCUMENT_FRAGMENT_NODE:
-                    const tempNode = $.make('div');
-                    tempNode.appendChild(node);
-
-                    data = {text: tempNode.innerHTML};
+                    content = $.make('div');
+                    content.appendChild(node);
                     break;
 
-                /** If node is an element, then there must be a substitution */
+                /** If node is an element, then there might be a substitution */
                 case Node.ELEMENT_NODE:
-                    const element = node as HTMLElement;
-                    const {handler, tool: handlerTool} = this.toolsTags[element.tagName];
+                    content = node as HTMLElement;
+                    isBlock = true;
 
-                    data = handler(element);
-                    tool = handlerTool;
+                    if (this.toolsTags[content.tagName]) {
+                        tool = this.toolsTags[content.tagName].tool;
+                    }
                     break;
             }
 
-            return {tool, data};
+            const handler = toolsConfig[tool].onPaste.handler;
+
+            return {content, isBlock, handler, tool};
         });
     }
 
@@ -313,31 +331,36 @@ export default class Paste extends Module {
      * Split plain text by new line symbols and return it as array of Block data
      *
      * @param {string} plain
-     * @returns {IBlockData[]}
+     * @returns {IPasteData[]}
      */
-    private processPlain(plain: string): IBlockData[] {
+    private processPlain(plain: string): IPasteData[] {
+        const {initialBlock, toolsConfig} = this.config;
+
         if (!plain) {
             return [];
         }
-        const initialTool = this.config.initialBlock;
+        const tool = initialBlock;
+        const handler = toolsConfig[tool].onPaste.handler;
 
-        return plain.split('\n\n').map((text) => ({
-            data: {
-                text,
-            },
-            tool: initialTool,
-        }));
+        return plain.split('\n\n').map((text) => {
+            const content = $.make('div');
+
+            content.innerHTML = plain;
+
+            return {content, tool, isBlock: false, handler};
+        });
     }
 
     /**
      * Recursively divide HTML string to two types of nodes:
-     * 1. Element with tag name that have a plugin`s substitution
+     * 1. Block element
      * 2. Document Fragments contained text and markup tags like a, b, i etc.
      *
      * @param {Node} wrapper
      * @returns {Node[]}
      */
     private getNodes(wrapper: Node): Node[] {
+        const markupTags = ['B', 'I', 'A'];
         const children = Array.from(wrapper.childNodes);
         const tags = Object.keys(this.toolsTags);
         const reducer = (nodes: Node[], node: Node): Node[] => {
@@ -345,49 +368,39 @@ export default class Paste extends Module {
                 return nodes;
             }
 
-            const lastNode = nodes.pop();
-            const fragment = new DocumentFragment();
+            const lastNode = nodes[nodes.length - 1];
+            let destNode: Node = new DocumentFragment();
 
+            if (lastNode && $.isFragment(lastNode)) {
+                destNode = nodes.pop();
+            }
             switch (node.nodeType) {
                 case Node.ELEMENT_NODE:
                     const element = node as HTMLElement;
 
-                    if (!tags.includes(element.tagName)) {
-                        if (!lastNode) {
-                            fragment.appendChild(element);
-                            return [fragment];
-                        }
-
-                        if ($.isFragment(lastNode)) {
-                            lastNode.appendChild(node);
-                            return [...nodes, lastNode];
-                        }
-
-                        fragment.appendChild(node);
-                        return [...nodes, lastNode, fragment];
+                    if (markupTags.includes(element.tagName)) {
+                        destNode.appendChild(element);
+                        return [...nodes, destNode];
                     }
 
                     if (
-                        tags.includes(element.tagName) &&
-                        Array.from(element.children).every(({tagName}) => !tags.includes(tagName))
+                        (
+                            tags.includes(element.tagName) &&
+                            Array.from(element.children).every(({tagName}) => !tags.includes(tagName))
+                        ) || (
+                            $.blockElements.includes(element.tagName.toLowerCase()) &&
+                            Array.from(element.children).every(
+                                ({tagName}) => !$.blockElements.includes(tagName.toLowerCase()),
+                            )
+                        )
                     ) {
-                        return lastNode ? [...nodes, lastNode, element] : [...nodes, element];
+                        return [...nodes, element];
                     }
                     break;
 
                 case Node.TEXT_NODE:
-                    if (!lastNode) {
-                        fragment.appendChild(node);
-                        return [fragment];
-                    }
-
-                    if (!$.isFragment(lastNode)) {
-                        fragment.appendChild((node));
-                        return [...nodes, lastNode, fragment];
-                    }
-
-                    lastNode.appendChild(node);
-                    return [...nodes, lastNode];
+                    destNode.appendChild(node);
+                    return [...nodes, destNode];
             }
 
             return [...nodes, ...Array.from(node.childNodes).reduce(reducer, [])];

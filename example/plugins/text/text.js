@@ -128,4 +128,10 @@ class Text {
 
     this._element.innerHTML = this._data.text || '';
   }
+
+  static async onPaste(content) {
+    return {
+      text: content.innerHTML
+    };
+  }
 }

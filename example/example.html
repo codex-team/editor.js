@@ -23,8 +23,8 @@
 <!--<script src="plugins/header/header.js"></script>-->
 <!--<link rel="stylesheet" href="plugins/header/header.css">-->
 
-<!--<script src="plugins/code/code.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/code/code.css">-->
+<script src="plugins/code/code.js"></script>
+<link rel="stylesheet" href="plugins/code/code.css">
 
 <!--<script src="plugins/link/link.js"></script>-->
 <!--<link rel="stylesheet" href="plugins/link/link.css">-->
@@ -67,10 +67,11 @@
         toolsConfig: {
             text: {
               inlineToolbar : true,
+              onPaste: {
+                handler: Text.onPaste,
+                tags: [],
+              }
             },
-            quote: {
-                enableLineBreaks : true
-            }
         },
         data: {
             items: [

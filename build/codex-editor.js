@@ -12213,6 +12213,11 @@ var Dom = function () {
 
       return wrapper.childElementCount > 0;
     }
+  }, {
+    key: 'blockElements',
+    get: function get() {
+      return ['address', 'artical', 'aside', 'blockquote', 'div', 'dl', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'nav', 'ol', 'p', 'pre', 'ruby', 'section', 'table', 'ul', 'li', 'dt'];
+    }
   }]);
 
   return Dom;
@@ -12271,8 +12276,6 @@ var map = {
 	"./toolbar": "./src/components/modules/toolbar.js",
 	"./toolbar-blockSettings": "./src/components/modules/toolbar-blockSettings.js",
 	"./toolbar-blockSettings.js": "./src/components/modules/toolbar-blockSettings.js",
-	"./toolbar-inline": "./src/components/modules/toolbar-inline.js",
-	"./toolbar-inline.js": "./src/components/modules/toolbar-inline.js",
 	"./toolbar-inline.ts": "./src/components/modules/toolbar-inline.ts",
 	"./toolbar-toolbox": "./src/components/modules/toolbar-toolbox.js",
 	"./toolbar-toolbox.js": "./src/components/modules/toolbar-toolbox.js",
@@ -16722,7 +16725,6 @@ var Paste = function (_Module) {
             var _this$Editor = _this.Editor,
                 Tools = _this$Editor.Tools,
                 Sanitizer = _this$Editor.Sanitizer,
-                BlockManager = _this$Editor.BlockManager,
                 toolsConfig = _this.config.toolsConfig;
             /** If target is native input or is not Block, use browser behaviour */
 
@@ -16746,22 +16748,45 @@ var Paste = function (_Module) {
 
                 allowedTags[tag.toLowerCase()] = config.attributes;
             });
+            var blockTags = {};
+            $.blockElements.forEach(function (el) {
+                return blockTags[el] = {};
+            });
+            /** P is not block element but we need it to split text by paragraphs */
+            blockTags.p = {};
             /** Add all tags can be substituted to sanitizer configuration */
-            var customConfig = { tags: Object.assign({}, Sanitizer.defaultConfig.tags, allowedTags) };
+            var customConfig = { tags: Object.assign({}, Sanitizer.defaultConfig.tags, blockTags, allowedTags) };
             var cleanData = Sanitizer.clean(htmlData, customConfig);
             var dataToInsert = [];
             if (!cleanData.trim() || cleanData.trim() === plainData.trim() || !$.isHTMLString(cleanData)) {
                 dataToInsert = _this.processPlain(plainData);
-                if (dataToInsert.length === 1) {
-                    _this.processSingleBlock(dataToInsert.pop());
-                    return;
-                }
             } else {
                 dataToInsert = _this.processHTML(cleanData);
             }
-            dataToInsert.forEach(function (data) {
-                BlockManager.insert(data.tool, data.data);
-            });
+            if (dataToInsert.length === 1 && !dataToInsert[0].isBlock) {
+                _this.processSingleBlock(dataToInsert.pop());
+                return;
+            }
+            Promise.all(dataToInsert.map(function (data) {
+                return __awaiter(_this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+                    return regeneratorRuntime.wrap(function _callee$(_context) {
+                        while (1) {
+                            switch (_context.prev = _context.next) {
+                                case 0:
+                                    _context.next = 2;
+                                    return this.insertBlock(data);
+
+                                case 2:
+                                    return _context.abrupt('return', _context.sent);
+
+                                case 3:
+                                case 'end':
+                                    return _context.stop();
+                            }
+                        }
+                    }, _callee, this);
+                }));
+            }));
         };
         return _this;
     }
@@ -16769,20 +16794,20 @@ var Paste = function (_Module) {
     _createClass(Paste, [{
         key: 'prepare',
         value: function prepare() {
-            return __awaiter(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
-                return regeneratorRuntime.wrap(function _callee$(_context) {
+            return __awaiter(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+                return regeneratorRuntime.wrap(function _callee2$(_context2) {
                     while (1) {
-                        switch (_context.prev = _context.next) {
+                        switch (_context2.prev = _context2.next) {
                             case 0:
                                 this.setCallback();
                                 this.processConfigs();
 
                             case 2:
                             case 'end':
-                                return _context.stop();
+                                return _context2.stop();
                         }
                     }
-                }, _callee, this);
+                }, _callee2, this);
             }));
         }
         /**
@@ -16831,7 +16856,7 @@ var Paste = function (_Module) {
         value: function processConfig(tool, config) {
             var _this3 = this;
 
-            if (typeof config.tagHandler !== 'function') {
+            if (typeof config.handler !== 'function') {
                 _.log('Paste handler for "' + tool + '" Tool should be a function.', 'warn');
             } else {
                 config.tags.forEach(function (tag) {
@@ -16841,13 +16866,13 @@ var Paste = function (_Module) {
                     }
                     _this3.toolsTags[tag] = {
                         attributes: config.allowedAttributes || {},
-                        handler: config.tagHandler,
+                        handler: config.handler,
                         tool: tool
                     };
                 });
             }
-            if (typeof config.patternHandler !== 'function') {
-                _.log('Pattern handler for "' + tool + '" Tool should be a function.', 'warn');
+            if (typeof config.parser !== 'function') {
+                _.log('Pattern parser for "' + tool + '" Tool should be a function.', 'warn');
             } else {
                 config.patterns.forEach(function (pattern) {
                     /** Still need to validate pattern as it provided by user */
@@ -16855,7 +16880,7 @@ var Paste = function (_Module) {
                         _.log('Pattern ' + pattern + ' for "' + tool + '" Tool is skipped because it should be a Regexp instance.', 'warn');
                     }
                     _this3.toolsPatterns.push({
-                        handler: config.patternHandler,
+                        handler: config.parser,
                         pattern: pattern,
                         tool: tool
                     });
@@ -16887,59 +16912,132 @@ var Paste = function (_Module) {
          * 2. Insert new block if it is not the same type as current one
          * 3. Just insert text if there is no substitutions
          *
-         * @param {IBlockData} block
+         * @param {IPasteData} dataToInsert
          */
 
     }, {
         key: 'processSingleBlock',
-        value: function processSingleBlock(block) {
-            var initialTool = this.config.initialBlock;
-            var _Editor2 = this.Editor,
-                BlockManager = _Editor2.BlockManager,
-                currentBlock = _Editor2.BlockManager.currentBlock;
-            var tool = block.tool,
-                data = block.data;
+        value: function processSingleBlock(dataToInsert) {
+            return __awaiter(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+                var initialTool, _Editor2, BlockManager, currentBlock, content, tool, blockData;
 
-            var blockToInsert = block;
-            if (tool === initialTool && data.text.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
-                blockToInsert = this.processPattern(block);
-            }
-            if (blockToInsert.tool !== currentBlock.name) {
-                BlockManager.insert(blockToInsert.tool, blockToInsert.data);
-                return;
-            }
-            document.execCommand('insertHTML', false, blockToInsert.data.text);
+                return regeneratorRuntime.wrap(function _callee3$(_context3) {
+                    while (1) {
+                        switch (_context3.prev = _context3.next) {
+                            case 0:
+                                initialTool = this.config.initialBlock;
+                                _Editor2 = this.Editor, BlockManager = _Editor2.BlockManager, currentBlock = _Editor2.BlockManager.currentBlock;
+                                content = dataToInsert.content, tool = dataToInsert.tool;
+
+                                if (!(tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
+                                    _context3.next = 10;
+                                    break;
+                                }
+
+                                _context3.next = 6;
+                                return this.processPattern(content.textContent);
+
+                            case 6:
+                                blockData = _context3.sent;
+
+                                if (!blockData) {
+                                    _context3.next = 10;
+                                    break;
+                                }
+
+                                BlockManager.insert(blockData.tool, blockData.data);
+                                return _context3.abrupt('return');
+
+                            case 10:
+                                if (!(tool !== currentBlock.name)) {
+                                    _context3.next = 13;
+                                    break;
+                                }
+
+                                this.insertBlock(dataToInsert);
+                                return _context3.abrupt('return');
+
+                            case 13:
+                                document.execCommand('insertHTML', false, content.innerHTML);
+
+                            case 14:
+                            case 'end':
+                                return _context3.stop();
+                        }
+                    }
+                }, _callee3, this);
+            }));
         }
         /**
          * Get patterns` matches
          *
-         * @param {IInitialBlockData} block
-         * @returns {IBlockData}
+         * @param {string} text
+         * @returns Promise<IBlockData>
          */
 
     }, {
         key: 'processPattern',
-        value: function processPattern(block) {
-            var tool = block.tool,
-                text = block.data.text;
+        value: function processPattern(text) {
+            return __awaiter(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
+                var pattern;
+                return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                    while (1) {
+                        switch (_context4.prev = _context4.next) {
+                            case 0:
+                                pattern = this.toolsPatterns.find(function (config) {
+                                    var execResult = config.pattern.exec(text);
+                                    if (!execResult) {
+                                        return false;
+                                    }
+                                    return text === execResult.shift();
+                                });
+                                return _context4.abrupt('return', pattern && pattern.handler(text, pattern.pattern));
 
-            var match = this.toolsPatterns.find(function (config) {
-                var execResult = config.pattern.exec(text);
-                if (!execResult) {
-                    return false;
-                }
-                return text === execResult.shift();
-            });
-            if (!match) {
-                return block;
-            }
-            return match.handler(text, match.pattern);
+                            case 2:
+                            case 'end':
+                                return _context4.stop();
+                        }
+                    }
+                }, _callee4, this);
+            }));
+        }
+        /**
+         *
+         * @param {IPasteData} data
+         * @returns {Promise<void>}
+         */
+
+    }, {
+        key: 'insertBlock',
+        value: function insertBlock(data) {
+            return __awaiter(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+                var blockData, BlockManager;
+                return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                    while (1) {
+                        switch (_context5.prev = _context5.next) {
+                            case 0:
+                                _context5.next = 2;
+                                return data.handler(data.content);
+
+                            case 2:
+                                blockData = _context5.sent;
+                                BlockManager = this.Editor.BlockManager;
+
+                                BlockManager.insert(data.tool, blockData);
+
+                            case 5:
+                            case 'end':
+                                return _context5.stop();
+                        }
+                    }
+                }, _callee5, this);
+            }));
         }
         /**
          * Split HTML string to blocks and return it as array of Block data
          *
          * @param {string} innerHTML
-         * @returns {IBlockData[]}
+         * @returns IPasteData[]
          */
 
     }, {
@@ -16948,59 +17046,62 @@ var Paste = function (_Module) {
             var _this4 = this;
 
             var initialTool = this.config.initialBlock;
+            var toolsConfig = this.config.toolsConfig;
+
             var wrapper = $.make('DIV');
             wrapper.innerHTML = innerHTML;
             var nodes = this.getNodes(wrapper);
             return nodes.map(function (node) {
-                var data = void 0,
-                    tool = initialTool;
+                var content = void 0,
+                    tool = initialTool,
+                    isBlock = false;
                 switch (node.nodeType) {
                     /** If node is a document fragment, use temp wrapper to get innerHTML */
                     case Node.DOCUMENT_FRAGMENT_NODE:
-                        var tempNode = $.make('div');
-                        tempNode.appendChild(node);
-                        data = { text: tempNode.innerHTML };
+                        content = $.make('div');
+                        content.appendChild(node);
                         break;
-                    /** If node is an element, then there must be a substitution */
+                    /** If node is an element, then there might be a substitution */
                     case Node.ELEMENT_NODE:
-                        var element = node;
-                        var _toolsTags$element$ta = _this4.toolsTags[element.tagName],
-                            handler = _toolsTags$element$ta.handler,
-                            handlerTool = _toolsTags$element$ta.tool;
-
-                        data = handler(element);
-                        tool = handlerTool;
+                        content = node;
+                        isBlock = true;
+                        if (_this4.toolsTags[content.tagName]) {
+                            tool = _this4.toolsTags[content.tagName].tool;
+                        }
                         break;
                 }
-                return { tool: tool, data: data };
+                var handler = toolsConfig[tool].onPaste.handler;
+                return { content: content, isBlock: isBlock, handler: handler, tool: tool };
             });
         }
         /**
          * Split plain text by new line symbols and return it as array of Block data
          *
          * @param {string} plain
-         * @returns {IBlockData[]}
+         * @returns {IPasteData[]}
          */
 
     }, {
         key: 'processPlain',
         value: function processPlain(plain) {
+            var _config = this.config,
+                initialBlock = _config.initialBlock,
+                toolsConfig = _config.toolsConfig;
+
             if (!plain) {
                 return [];
             }
-            var initialTool = this.config.initialBlock;
+            var tool = initialBlock;
+            var handler = toolsConfig[tool].onPaste.handler;
             return plain.split('\n\n').map(function (text) {
-                return {
-                    data: {
-                        text: text
-                    },
-                    tool: initialTool
-                };
+                var content = $.make('div');
+                content.innerHTML = plain;
+                return { content: content, tool: tool, isBlock: false, handler: handler };
             });
         }
         /**
          * Recursively divide HTML string to two types of nodes:
-         * 1. Element with tag name that have a plugin`s substitution
+         * 1. Block element
          * 2. Document Fragments contained text and markup tags like a, b, i etc.
          *
          * @param {Node} wrapper
@@ -17010,47 +17111,38 @@ var Paste = function (_Module) {
     }, {
         key: 'getNodes',
         value: function getNodes(wrapper) {
+            var markupTags = ['B', 'I', 'A'];
             var children = Array.from(wrapper.childNodes);
             var tags = Object.keys(this.toolsTags);
             var reducer = function reducer(nodes, node) {
                 if ($.isEmpty(node)) {
                     return nodes;
                 }
-                var lastNode = nodes.pop();
-                var fragment = new DocumentFragment();
+                var lastNode = nodes[nodes.length - 1];
+                var destNode = new DocumentFragment();
+                if (lastNode && $.isFragment(lastNode)) {
+                    destNode = nodes.pop();
+                }
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
                         var element = node;
-                        if (!tags.includes(element.tagName)) {
-                            if (!lastNode) {
-                                fragment.appendChild(element);
-                                return [fragment];
-                            }
-                            if ($.isFragment(lastNode)) {
-                                lastNode.appendChild(node);
-                                return [].concat(_toConsumableArray(nodes), [lastNode]);
-                            }
-                            fragment.appendChild(node);
-                            return [].concat(_toConsumableArray(nodes), [lastNode, fragment]);
+                        if (markupTags.includes(element.tagName)) {
+                            destNode.appendChild(element);
+                            return [].concat(_toConsumableArray(nodes), [destNode]);
                         }
                         if (tags.includes(element.tagName) && Array.from(element.children).every(function (_ref6) {
                             var tagName = _ref6.tagName;
                             return !tags.includes(tagName);
+                        }) || $.blockElements.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref7) {
+                            var tagName = _ref7.tagName;
+                            return !$.blockElements.includes(tagName.toLowerCase());
                         })) {
-                            return lastNode ? [].concat(_toConsumableArray(nodes), [lastNode, element]) : [].concat(_toConsumableArray(nodes), [element]);
+                            return [].concat(_toConsumableArray(nodes), [element]);
                         }
                         break;
                     case Node.TEXT_NODE:
-                        if (!lastNode) {
-                            fragment.appendChild(node);
-                            return [fragment];
-                        }
-                        if (!$.isFragment(lastNode)) {
-                            fragment.appendChild(node);
-                            return [].concat(_toConsumableArray(nodes), [lastNode, fragment]);
-                        }
-                        lastNode.appendChild(node);
-                        return [].concat(_toConsumableArray(nodes), [lastNode]);
+                        destNode.appendChild(node);
+                        return [].concat(_toConsumableArray(nodes), [destNode]);
                 }
                 return [].concat(_toConsumableArray(nodes), _toConsumableArray(Array.from(node.childNodes).reduce(reducer, [])));
             };
@@ -17860,188 +17952,6 @@ var BlockSettings = function (_Module) {
 
 BlockSettings.displayName = 'BlockSettings';
 exports.default = BlockSettings;
-module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
-
-/***/ }),
-
-/***/ "./src/components/modules/toolbar-inline.js":
-/*!**************************************************!*\
-  !*** ./src/components/modules/toolbar-inline.js ***!
-  \**************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(Module, $) {
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
-
-var _selection2 = _interopRequireDefault(_selection);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var InlineToolbar = function (_Module) {
-  _inherits(InlineToolbar, _Module);
-
-  /**
-     * @constructor
-     */
-  function InlineToolbar(_ref) {
-    var config = _ref.config;
-
-    _classCallCheck(this, InlineToolbar);
-
-    /**
-         * Inline Toolbar elements
-         */
-    var _this = _possibleConstructorReturn(this, (InlineToolbar.__proto__ || Object.getPrototypeOf(InlineToolbar)).call(this, { config: config }));
-
-    _this.nodes = {
-      wrapper: null
-    };
-    /**
-         * CSS styles
-         */
-    _this.CSS = {
-      inlineToolbar: 'ce-inline-toolbar',
-      inlineToolbarShowed: 'ce-inline-toolbar--showed'
-    };
-    /**
-         * Margin above/below the Toolbar
-         */
-    _this.toolbarVerticalMargin = 20;
-    return _this;
-  }
-  /**
-     * Making DOM
-     */
-
-
-  _createClass(InlineToolbar, [{
-    key: 'make',
-    value: function make() {
-      this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
-      /**
-           * Append Inline Toolbar to the Editor
-           */
-      $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
-    }
-    /**
-       * Shows Inline Toolbar by keyup/mouseup
-       * @param {KeyboardEvent|MouseEvent} event
-       */
-
-  }, {
-    key: 'handleShowingEvent',
-    value: function handleShowingEvent(event) {
-      if (!this.allowedToShow(event)) {
-        this.close();
-        return;
-      }
-      this.move();
-      this.open();
-    }
-    /**
-       * Move Toolbar to the selected text
-       */
-
-  }, {
-    key: 'move',
-    value: function move() {
-      var selectionRect = _selection2.default.rect;
-      var wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
-      var newCoords = {
-        x: selectionRect.x - wrapperOffset.left,
-        y: selectionRect.y + selectionRect.height
-        // + window.scrollY
-        - wrapperOffset.top + this.toolbarVerticalMargin
-      };
-      /**
-           * If we know selections width, place InlineToolbar to center
-           */
-
-      if (selectionRect.width) {
-        newCoords.x += Math.floor(selectionRect.width / 2);
-      }
-      this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
-      this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
-    }
-    /**
-       * Shows Inline Toolbar
-       */
-
-  }, {
-    key: 'open',
-    value: function open() {
-      this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
-    }
-    /**
-       * Hides Inline Toolbar
-       */
-
-  }, {
-    key: 'close',
-    value: function close() {
-      this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
-    }
-    /**
-       * Need to show Inline Toolbar or not
-       * @param {KeyboardEvent|MouseEvent} event
-       */
-
-  }, {
-    key: 'allowedToShow',
-    value: function allowedToShow(event) {
-      /**
-           * Tags conflicts with window.selection function.
-           * Ex. IMG tag returns null (Firefox) or Redactors wrapper (Chrome)
-           */
-      var tagsConflictsWithSelection = ['IMG', 'INPUT'];
-
-      if (event && tagsConflictsWithSelection.includes(event.target.tagName)) {
-        return false;
-      }
-      var currentSelection = _selection2.default.get(),
-          selectedText = _selection2.default.text;
-      // old browsers
-
-      if (!currentSelection || !currentSelection.anchorNode) {
-        return false;
-      }
-      // empty selection
-      if (currentSelection.isCollapsed || selectedText.length < 1) {
-        return false;
-      }
-      // is enabled by current Block's Tool
-      var currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode);
-
-      if (!currentBlock) {
-        return false;
-      }
-      var toolConfig = this.config.toolsConfig[currentBlock.name];
-
-      return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
-    }
-  }]);
-
-  return InlineToolbar;
-}(Module);
-
-InlineToolbar.displayName = 'InlineToolbar';
-exports.default = InlineToolbar;
 module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
 
