@@ -16,6 +16,17 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
     super({config});
   }
 
+  /**
+   * Available methods
+   * @return {IBlocksAPI}
+   */
+  get methods(): IBlocksAPI {
+    return {
+      moveDown: () => this.moveDown(),
+      moveUp: () => this.moveUp()
+    }
+  }
+
   public moveDown(): void {
     console.log('moving down', this.Editor.BlockManager);
   }

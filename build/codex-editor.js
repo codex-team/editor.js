@@ -938,11 +938,9 @@ var MoveUpTune = function () {
      * MoveUpTune constructor
      *
      * @param {Object} api
-     * @param {Object} settings
      */
     function MoveUpTune(_ref) {
-        var api = _ref.api,
-            settings = _ref.settings;
+        var api = _ref.api;
 
         _classCallCheck(this, MoveUpTune);
 
@@ -954,7 +952,6 @@ var MoveUpTune = function () {
             wrapper: 'ass'
         };
         this.api = api;
-        this.settings = settings;
     }
     /**
      * Create "MoveUp" button and add click event listener
@@ -1858,7 +1855,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
- *
+ * @class BlocksAPI
+ * provides with methods working with Block
  */
 var BlocksAPI = function (_Module) {
     _inherits(BlocksAPI, _Module);
@@ -1874,6 +1872,11 @@ var BlocksAPI = function (_Module) {
 
         return _possibleConstructorReturn(this, (BlocksAPI.__proto__ || Object.getPrototypeOf(BlocksAPI)).call(this, { config: config }));
     }
+    /**
+     * Available methods
+     * @return {IBlocksAPI}
+     */
+
 
     _createClass(BlocksAPI, [{
         key: 'moveDown',
@@ -1888,6 +1891,20 @@ var BlocksAPI = function (_Module) {
         key: 'moveUp',
         value: function moveUp() {
             console.log('moving up', this.Editor.BlockManager);
+        }
+    }, {
+        key: 'methods',
+        get: function get() {
+            var _this2 = this;
+
+            return {
+                moveDown: function moveDown() {
+                    return _this2.moveDown();
+                },
+                moveUp: function moveUp() {
+                    return _this2.moveUp();
+                }
+            };
         }
     }]);
 
@@ -1940,11 +1957,27 @@ var SanitizerAPI = function (_Module) {
 
         return _possibleConstructorReturn(this, (SanitizerAPI.__proto__ || Object.getPrototypeOf(SanitizerAPI)).call(this, { config: config }));
     }
+    /**
+     * Available methods
+     * @return {ISanitizerAPI}
+     */
+
 
     _createClass(SanitizerAPI, [{
         key: "clean",
         value: function clean(taintString, config) {
             return this.Editor.Sanitizer.clean(taintString, config);
+        }
+    }, {
+        key: "methods",
+        get: function get() {
+            var _this2 = this;
+
+            return {
+                clean: function clean(taintString, config) {
+                    return _this2.clean(taintString, config);
+                }
+            };
         }
     }]);
 
@@ -2002,9 +2035,9 @@ var API = function (_Module) {
         key: "methods",
         get: function get() {
             return {
-                blocks: this.Editor.BlocksAPI,
+                blocks: this.Editor.BlocksAPI.methods,
                 caret: {},
-                sanitizer: this.Editor.SanitizerAPI,
+                sanitizer: this.Editor.SanitizerAPI.methods,
                 toolbar: {}
             };
         }

@@ -1,6 +1,6 @@
 declare var Module: any;
 
-import { ISanitizerAPI } from '../interfaces/api';
+import {ISanitizerAPI} from '../interfaces/api';
 
 /**
  * @class API
@@ -13,6 +13,16 @@ export default class SanitizerAPI extends Module implements ISanitizerAPI {
    */
   constructor({config}) {
     super({config});
+  }
+
+  /**
+   * Available methods
+   * @return {ISanitizerAPI}
+   */
+  get methods(): ISanitizerAPI {
+    return {
+      clean: (taintString, config) => this.clean(taintString, config),
+    }
   }
 
   public clean(taintString, config) {
