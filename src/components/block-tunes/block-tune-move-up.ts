@@ -1,6 +1,8 @@
 /**
  * @class MoveUpTune
  * @classdesc Editor's default tune that moves up selected block
+ *
+ * @copyright <CodeX Team> 2018
  */
 import IBlockTune from './block-tune';
 
@@ -9,8 +11,15 @@ declare var _: any;
 
 export default class MoveUpTune implements IBlockTune {
 
+  /**
+   * Settings will be described later
+   */
   private settings: object;
 
+  /**
+   * Property that contains CodeX Editor API methods
+   * @see {api.md}
+   */
   private readonly api: any;
 
   /**

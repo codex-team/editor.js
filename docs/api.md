@@ -1,19 +1,42 @@
 # CodeX Editor API
 
-Each Block instance provided API by default. Plugin and Tune Developers 
+Blocks have access to the public methods provided by CodeX Editor API Module. Plugin and Tune Developers 
 can use Editor API as they want.
-
-Example:
-
-1) Developing Tunes: 
-
-Create Class that implements block-tune.ts
-
-Your Tune's constructor gets two arguments: 
- - {Object} api - object contains public methods from modules 
- - {Object} settings - settings contains block default state. 
- This object could have information about cover, anchor and so on.
-
----
  
-### Api object description
+## Api object description
+
+Common API interface.
+
+```js
+export interface IAPI {
+   blocks: IBlocksAPI;
+   caret: ICaretAPI;
+   sanitizer: ISanitizerAPI;
+   toolbar: IToolbarAPI;
+ }
+ ```
+
+#### IBlocksAPI
+
+```moveDown()``` - method moves down the working block.
+
+```moveUp()``` - method moves up the working block.
+
+#### ISanitizerAPI
+
+```clean(taintString, config)``` - method uses HTMLJanitor to clean taint string.
+CodeX Editor provides basic config without attributes, but you can inherit by passing your own config.
+
+Usage:
+
+```js
+let taintString = '<div><p style="font-size: 5em;"><b></b>BlockWithText<a onclick="void(0)"></div>'
+let customConfig = {
+  b: true,
+  p: {
+    style: true,
+  },
+}
+this.api.sanitizer.clean(taintString, customConfig);
+```
+
