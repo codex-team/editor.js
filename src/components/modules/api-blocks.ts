@@ -3,7 +3,8 @@ declare var Module: any;
 import { IBlocksAPI } from '../interfaces/api';
 
 /**
- *
+ * @class BlocksAPI
+ * provides with methods working with Block
  */
 export default class BlocksAPI extends Module implements IBlocksAPI {
 

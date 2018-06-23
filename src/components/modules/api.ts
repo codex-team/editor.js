@@ -3,7 +3,6 @@
  * @copyright <CodeX Team> 2018
  *
  * Each block has an Editor API instance to use provided public methods
- *
  * if you cant to read more about how API works, please see docs
  */
 declare var Module: any;

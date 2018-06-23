@@ -6,6 +6,11 @@
 export default interface IBlockTune {
 
   /**
+   * Settings will be described later
+   */
+  settings?: object;
+
+  /**
    * Returns tune button that will be appended in default settings area
    */
   render(): HTMLElement;

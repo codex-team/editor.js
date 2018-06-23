@@ -12,11 +12,6 @@ declare var _: any;
 export default class MoveUpTune implements IBlockTune {
 
   /**
-   * Settings will be described later
-   */
-  private settings: object;
-
-  /**
    * Property that contains CodeX Editor API methods
    * @see {api.md}
    */
@@ -34,11 +29,9 @@ export default class MoveUpTune implements IBlockTune {
    * MoveUpTune constructor
    *
    * @param {Object} api
-   * @param {Object} settings
    */
-  public constructor({api, settings}) {
+  public constructor({api}) {
     this.api = api;
-    this.settings = settings;
   }
 
   /**

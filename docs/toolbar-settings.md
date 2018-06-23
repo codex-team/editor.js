@@ -52,7 +52,7 @@ export default class YourCustomTune implements IBlockTune {
   }
   
   save() {
-    // Return the important that needs to be saved
+    // Return the important data that needs to be saved
     return object
   }
   
@@ -62,6 +62,3 @@ export default class YourCustomTune implements IBlockTune {
   }
 }
 ```
-
---- 
-  
