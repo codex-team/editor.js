@@ -10,36 +10,12 @@ declare var Module: any;
 declare var $: any;
 declare var _: any;
 
+import { IAPI } from '../interfaces/api';
+
 /**
  * @class API
  */
 export default class API extends Module {
-
-  protected Editor: any;
-
-  /**
-   * Editor Modules
-   * API has access to all Module public methods
-   */
-  private EditorModules: any;
-
-  /**
-   * @param {@link CodexEditor#moduleInstances} Editor - module can set editor public methods
-   */
-  set state(Editor) {
-    this.EditorModules = Editor;
-    this.Editor = {
-      block: {
-        moveDown: () => { this.moveDownBlock(); } ,
-        moveUp: () => { this.moveUpBlock(); },
-      },
-      caret: {},
-      sanitizer: {
-        clean: Editor.Sanitizer.clean,
-      },
-      toolbar: {},
-    };
-  }
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
@@ -49,15 +25,12 @@ export default class API extends Module {
     super({config});
   }
 
-  public moveDownBlock(): void {
-    console.log('moving down');
+  public get methods(): IAPI {
+    return {
+      blocks: this.Editor.BlocksAPI,
+      caret: {},
+      sanitizer: this.Editor.SanitizerAPI,
+      toolbar: {},
+    };
   }
-
-  /**
-   * Moves block up
-   */
-  public moveUpBlock(): void {
-    console.log('moving up');
-  }
-
 }

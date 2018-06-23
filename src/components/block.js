@@ -181,7 +181,7 @@ export default class Block {
     // Pluck tunes list and return tune instances with passed Editor API and settings
     return tunesList.map( (tune) => {
       return new tune({
-        api: this.api.Editor,
+        api: this.api,
         settings: this.settings,
       });
     });

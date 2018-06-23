@@ -47,6 +47,6 @@ export default class MoveUpTune implements IBlockTune {
    * @param {MouseEvent} event
    */
   public handleClick(event: MouseEvent): void {
-    this.api.block.moveUp();
+    this.api.blocks.moveUp();
   }
 }
