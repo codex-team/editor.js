@@ -25,11 +25,13 @@ export default class Block {
    * @param {String} toolName - Tool name that passed on initialization
    * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
    * @param {Object} settings - default settings
+   * @param {Object} apiMethods - Editor API
    */
-  constructor(toolName, toolInstance, settings) {
+  constructor(toolName, toolInstance, settings, apiMethods) {
     this.name = toolName;
     this.tool = toolInstance;
     this.settings = settings;
+    this.api = apiMethods;
     this._html = this.compose();
 
     /**

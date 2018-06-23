@@ -462,8 +462,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-  return __webpack_require__("./src/components/modules sync [^_](blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+var modules = ["api.ts","blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+  return __webpack_require__("./src/components/modules sync [^_](api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
 });
 
 /**
@@ -925,9 +925,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var MoveUpTune = function () {
     /**
      * MoveUpTune constructor
+     *
+     * @param {Object} api
      * @param {Object} settings
      */
-    function MoveUpTune(settings) {
+    function MoveUpTune(api, settings) {
         _classCallCheck(this, MoveUpTune);
 
         /**
@@ -937,6 +939,7 @@ var MoveUpTune = function () {
         this.CSS = {
             wrapper: 'as'
         };
+        this.api = api;
         this.settings = settings;
     }
     /**
@@ -1023,13 +1026,15 @@ var Block = function () {
    * @param {String} toolName - Tool name that passed on initialization
    * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
    * @param {Object} settings - default settings
+   * @param {Object} apiMethods - Editor API
    */
-  function Block(toolName, toolInstance, settings) {
+  function Block(toolName, toolInstance, settings, apiMethods) {
     _classCallCheck(this, Block);
 
     this.name = toolName;
     this.tool = toolInstance;
     this.settings = settings;
+    this.api = apiMethods;
     this._html = this.compose();
 
     /**
@@ -1726,14 +1731,15 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/modules sync [^_](blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
-/*!***********************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./src/components/modules sync nonrecursive [^_](blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
-  \***********************************************************************************************************************************************************************************************************************************************/
+/***/ "./src/components/modules sync [^_](api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!******************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \******************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
+	"./api.ts": "./src/components/modules/api.ts",
 	"./blockManager.js": "./src/components/modules/blockManager.js",
 	"./caret.js": "./src/components/modules/caret.js",
 	"./events.js": "./src/components/modules/events.js",
@@ -1769,7 +1775,89 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./src/components/modules sync [^_](blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+webpackContext.id = "./src/components/modules sync [^_](api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+
+/***/ }),
+
+/***/ "./src/components/modules/api.ts":
+/*!***************************************!*\
+  !*** ./src/components/modules/api.ts ***!
+  \***************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * @class API
+ */
+var API = function (_Module) {
+    _inherits(API, _Module);
+
+    _createClass(API, [{
+        key: 'state',
+
+        /**
+         *
+         * @param {Object} Editor - module can set editor public methods
+         */
+        set: function set(Editor) {
+            this.Editor = {
+                moveDownBlock: this.moveDownBlock,
+                moveUpBlock: this.moveUpBlock
+            };
+        }
+        /**
+         * Doing something
+         * @param {EditorsConfig} config
+         */
+
+    }]);
+
+    function API(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, API);
+
+        return _possibleConstructorReturn(this, (API.__proto__ || Object.getPrototypeOf(API)).call(this, { config: config }));
+    }
+    /**
+     * Moves block up
+     */
+
+
+    _createClass(API, [{
+        key: 'moveUpBlock',
+        value: function moveUpBlock() {
+            console.log('moving up');
+        }
+    }, {
+        key: 'moveDownBlock',
+        value: function moveDownBlock() {
+            console.log('moving down');
+        }
+    }]);
+
+    return API;
+}(Module);
+
+API.displayName = 'API';
+exports.default = API;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
 
 /***/ }),
 
@@ -1898,7 +1986,7 @@ var BlockManager = function (_Module) {
     key: 'composeBlock',
     value: function composeBlock(toolName, data, settings) {
       var toolInstance = this.Editor.Tools.construct(toolName, data),
-          block = new _block2.default(toolName, toolInstance, settings);
+          block = new _block2.default(toolName, toolInstance, settings, this.Editor.API);
 
       this.bindEvents(block);
       /**

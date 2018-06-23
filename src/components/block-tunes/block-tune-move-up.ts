@@ -11,6 +11,8 @@ export default class MoveUpTune implements IBlockTune {
 
   private settings: object;
 
+  private api: any;
+
   /**
    * Styles
    * @type {{wrapper: string}}
@@ -21,9 +23,12 @@ export default class MoveUpTune implements IBlockTune {
 
   /**
    * MoveUpTune constructor
+   *
+   * @param {Object} api
    * @param {Object} settings
    */
-  public constructor(settings) {
+  public constructor(api, settings) {
+    this.api = api;
     this.settings = settings;
   }
 
