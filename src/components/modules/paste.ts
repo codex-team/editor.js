@@ -15,6 +15,12 @@ interface IPasteConfig {
     parser?: (text: string, pattern: RegExp) => IBlockData;
 }
 
+interface IToolsConfig {
+    [tool: string]: {
+        onPaste: IPasteConfig,
+    };
+}
+
 interface ITagSubstitute {
     tool: string;
     attributes: {[name: string]: any};
@@ -36,7 +42,7 @@ interface IPasteData {
 
 export default class Paste extends Module {
 
-    /** If string`s length is greater than this number we don't process it */
+    /** If string`s length is greater than this number we don't check paste patterns */
     public static readonly PATTERN_PROCESSING_MAX_LENGTH = 450;
 
     /**
@@ -79,15 +85,15 @@ export default class Paste extends Module {
      */
     private processConfigs(): void {
 
-        const {toolsConfig} = this.config;
+        const {toolsConfig} = this.config as {toolsConfig: IToolsConfig};
 
         Object
             .entries(toolsConfig)
             .forEach(([name, config]: [string, {onPaste?: IPasteConfig}]) => {
-            if (config && config.onPaste) {
-                this.processConfig(name, config.onPaste);
-            }
-        });
+                if (config && config.onPaste) {
+                    this.processConfig(name, config.onPaste);
+                }
+            });
 
     }
 
@@ -99,12 +105,18 @@ export default class Paste extends Module {
      */
     private processConfig(tool: string, config: IPasteConfig): void {
 
+        if (!config.handler) {
+            _.log(
+                `"${tool}" Tool MUST provide paste handler.`,
+                'warn',
+            );
+        }
+
         if (typeof config.handler !== 'function') {
             _.log(
                 `Paste handler for "${tool}" Tool should be a function.`,
                 'warn',
             );
-
         } else {
             config.tags.forEach((tag) => {
                 if (this.toolsTags.hasOwnProperty(tag)) {
@@ -122,6 +134,10 @@ export default class Paste extends Module {
                     tool,
                 };
             });
+        }
+
+        if (!config.parser) {
+            return;
         }
 
         if (typeof config.parser !== 'function') {
@@ -152,11 +168,11 @@ export default class Paste extends Module {
     /**
      * Check if browser behavior suits better
      *
-     * @param {EventTarget} element
+     * @param {EventTarget} element - element where content has been pasted
      * @returns {boolean}
      */
     private isNativeBehaviour(element: EventTarget): boolean {
-        const {Editor: {BlockManager}, config: {toolsConfig}} = this;
+        const {Editor: {BlockManager}} = this;
 
         if ( $.isNativeInput(element) ) {
             return true;
@@ -173,7 +189,10 @@ export default class Paste extends Module {
      * @param {ClipboardEvent} event
      */
     private processPastedData = (event: ClipboardEvent): void => {
-        const {Editor: {Tools, Sanitizer}, config: {toolsConfig}} = this;
+        const {
+            Editor: {Tools, Sanitizer, BlockManager},
+            config: {toolsConfig},
+        } = this;
 
         /** If target is native input or is not Block, use browser behaviour */
         if (this.isNativeBehaviour(event.target)) {
@@ -182,7 +201,7 @@ export default class Paste extends Module {
 
         event.preventDefault();
 
-        const block = this.Editor.BlockManager.getBlock(event.target);
+        const block = BlockManager.getBlock(event.target);
         const toolConfig = toolsConfig[block.name];
 
         /** If paste is dissalowed in block do nothing */
@@ -209,6 +228,8 @@ export default class Paste extends Module {
         const cleanData = Sanitizer.clean(htmlData, customConfig);
 
         let dataToInsert = [];
+
+        /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
         if (!cleanData.trim() || cleanData.trim() === plainData.trim() || !$.isHTMLString(cleanData)) {
             dataToInsert = this.processPlain(plainData);
         } else {
@@ -224,7 +245,7 @@ export default class Paste extends Module {
     }
 
     /**
-     * Process single block:
+     * Process paste to single Block:
      * 1. Find patterns` matches
      * 2. Insert new block if it is not the same type as current one
      * 3. Just insert text if there is no substitutions
@@ -293,7 +314,7 @@ export default class Paste extends Module {
      */
     private processHTML(innerHTML: string): IPasteData[] {
         const initialTool = this.config.initialBlock;
-        const {toolsConfig} = this.config;
+        const {toolsConfig} = this.config as {toolsConfig: IToolsConfig};
         const wrapper = $.make('DIV');
 
         wrapper.innerHTML = innerHTML;
@@ -334,7 +355,7 @@ export default class Paste extends Module {
      * @returns {IPasteData[]}
      */
     private processPlain(plain: string): IPasteData[] {
-        const {initialBlock, toolsConfig} = this.config;
+        const {initialBlock, toolsConfig} = this.config as {initialBlock: string, toolsConfig: IToolsConfig};
 
         if (!plain) {
             return [];
@@ -360,7 +381,6 @@ export default class Paste extends Module {
      * @returns {Node[]}
      */
     private getNodes(wrapper: Node): Node[] {
-        const markupTags = ['B', 'I', 'A'];
         const children = Array.from(wrapper.childNodes);
         const tags = Object.keys(this.toolsTags);
         const reducer = (nodes: Node[], node: Node): Node[] => {
@@ -378,7 +398,11 @@ export default class Paste extends Module {
                 case Node.ELEMENT_NODE:
                     const element = node as HTMLElement;
 
-                    if (markupTags.includes(element.tagName)) {
+                    /** Append inline elements to previous fragment */
+                    if (
+                        !$.blockElements.includes(element.tagName.toLowerCase()) &&
+                        !tags.includes(element.tagName.toLowerCase())
+                    ) {
                         destNode.appendChild(element);
                         return [...nodes, destNode];
                     }

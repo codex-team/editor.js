@@ -275,17 +275,15 @@ export default class CodexEditor {
       (promise, module) => promise.then(async () => {
         _.log(`Preparing ${module} module`, 'time');
 
-        await this.moduleInstances[module].prepare();
-
+        try {
+          await this.moduleInstances[module].prepare();
+        } catch (e) {
+          _.log(`Module ${module} was skipped because of %o`, 'warn', e);
+        }
         _.log(`Preparing ${module} module`, 'timeEnd');
       }),
       Promise.resolve()
     );
-
-    // console.log(await prepareDecorator(this.moduleInstances.Tools));
-    // console.log(await prepareDecorator(this.moduleInstances.UI));
-    // console.log(await prepareDecorator(this.moduleInstances.BlockManager));
-    // console.log(await prepareDecorator(this.moduleInstances.Paste));
 
     return this.moduleInstances.Renderer.render(this.config.data.items);
   }

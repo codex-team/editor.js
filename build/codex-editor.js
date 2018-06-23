@@ -11294,19 +11294,29 @@ var CodexEditor = function () {
                           case 0:
                             _.log('Preparing ' + module + ' module', 'time');
 
-                            _context.next = 3;
+                            _context.prev = 1;
+                            _context.next = 4;
                             return _this3.moduleInstances[module].prepare();
 
-                          case 3:
+                          case 4:
+                            _context.next = 9;
+                            break;
 
+                          case 6:
+                            _context.prev = 6;
+                            _context.t0 = _context['catch'](1);
+
+                            _.log('Module ' + module + ' was skipped because of %o', 'warn', _context.t0);
+
+                          case 9:
                             _.log('Preparing ' + module + ' module', 'timeEnd');
 
-                          case 4:
+                          case 10:
                           case 'end':
                             return _context.stop();
                         }
                       }
-                    }, _callee, _this3);
+                    }, _callee, _this3, [[1, 6]]);
                   })));
                 }, Promise.resolve());
 
@@ -15291,6 +15301,7 @@ var BlockManager = function (_Module) {
 
       var block = this.composeBlock(toolName, data);
 
+      /** If current Block is empty and new Block is not empty, replace current Block with new one */
       if (this.currentBlock && this.currentBlock.isEmpty && !block.isEmpty) {
         this._blocks.insert(this.currentBlockIndex, block, true);
       } else {
@@ -15863,8 +15874,8 @@ var Caret = function (_Module) {
       }
 
       /**
-       * @todo try to fix via Promises or use querySelectorAll to not to use timeout
-       */
+           * @todo try to fix via Promises or use querySelectorAll to not to use timeout
+           */
       _.delay(function () {
         _this2.set(nodeToSet, offset);
       }, 20)();
@@ -16725,6 +16736,7 @@ var Paste = function (_Module) {
             var _this$Editor = _this.Editor,
                 Tools = _this$Editor.Tools,
                 Sanitizer = _this$Editor.Sanitizer,
+                BlockManager = _this$Editor.BlockManager,
                 toolsConfig = _this.config.toolsConfig;
             /** If target is native input or is not Block, use browser behaviour */
 
@@ -16732,7 +16744,7 @@ var Paste = function (_Module) {
                 return;
             }
             event.preventDefault();
-            var block = _this.Editor.BlockManager.getBlock(event.target);
+            var block = BlockManager.getBlock(event.target);
             var toolConfig = toolsConfig[block.name];
             /** If paste is dissalowed in block do nothing */
             if (!toolConfig || toolConfig[Tools.apiSettings.IS_PASTE_DISALLOWED]) {
@@ -16758,6 +16770,7 @@ var Paste = function (_Module) {
             var customConfig = { tags: Object.assign({}, Sanitizer.defaultConfig.tags, blockTags, allowedTags) };
             var cleanData = Sanitizer.clean(htmlData, customConfig);
             var dataToInsert = [];
+            /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
             if (!cleanData.trim() || cleanData.trim() === plainData.trim() || !$.isHTMLString(cleanData)) {
                 dataToInsert = _this.processPlain(plainData);
             } else {
@@ -16856,6 +16869,9 @@ var Paste = function (_Module) {
         value: function processConfig(tool, config) {
             var _this3 = this;
 
+            if (!config.handler) {
+                _.log('"' + tool + '" Tool MUST provide paste handler.', 'warn');
+            }
             if (typeof config.handler !== 'function') {
                 _.log('Paste handler for "' + tool + '" Tool should be a function.', 'warn');
             } else {
@@ -16870,6 +16886,9 @@ var Paste = function (_Module) {
                         tool: tool
                     };
                 });
+            }
+            if (!config.parser) {
+                return;
             }
             if (typeof config.parser !== 'function') {
                 _.log('Pattern parser for "' + tool + '" Tool should be a function.', 'warn');
@@ -16890,15 +16909,14 @@ var Paste = function (_Module) {
         /**
          * Check if browser behavior suits better
          *
-         * @param {EventTarget} element
+         * @param {EventTarget} element - element where content has been pasted
          * @returns {boolean}
          */
 
     }, {
         key: 'isNativeBehaviour',
         value: function isNativeBehaviour(element) {
-            var BlockManager = this.Editor.BlockManager,
-                toolsConfig = this.config.toolsConfig;
+            var BlockManager = this.Editor.BlockManager;
 
             if ($.isNativeInput(element)) {
                 return true;
@@ -16907,7 +16925,7 @@ var Paste = function (_Module) {
             return !block;
         }
         /**
-         * Process single block:
+         * Process paste to single Block:
          * 1. Find patterns` matches
          * 2. Insert new block if it is not the same type as current one
          * 3. Just insert text if there is no substitutions
@@ -17111,7 +17129,6 @@ var Paste = function (_Module) {
     }, {
         key: 'getNodes',
         value: function getNodes(wrapper) {
-            var markupTags = ['B', 'I', 'A'];
             var children = Array.from(wrapper.childNodes);
             var tags = Object.keys(this.toolsTags);
             var reducer = function reducer(nodes, node) {
@@ -17126,7 +17143,8 @@ var Paste = function (_Module) {
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
                         var element = node;
-                        if (markupTags.includes(element.tagName)) {
+                        /** Append inline elements to previous fragment */
+                        if (!$.blockElements.includes(element.tagName.toLowerCase()) && !tags.includes(element.tagName.toLowerCase())) {
                             destNode.appendChild(element);
                             return [].concat(_toConsumableArray(nodes), [destNode]);
                         }
@@ -17152,7 +17170,7 @@ var Paste = function (_Module) {
 
     return Paste;
 }(Module);
-/** If string`s length is greater than this number we don't process it */
+/** If string`s length is greater than this number we don't check paste patterns */
 
 
 Paste.displayName = 'Paste';
