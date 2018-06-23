@@ -18,9 +18,9 @@ export interface IAPI {
 
 #### IBlocksAPI
 
-```moveDown()``` - method moves down the working block.
+```moveDown()``` - method moves down the current block.
 
-```moveUp()``` - method moves up the working block.
+```moveUp()``` - method moves up the current block.
 
 #### ISanitizerAPI
 

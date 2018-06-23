@@ -1,4 +1,4 @@
-# CodeX Editor Toolbar Settings Module
+# CodeX Editor Toolbar Block Settings Module
 
 Toolbar Module has space for Block settings. Settings divided into:
  - space for plugin's settings, that is described by «Plugin»'s Developer
@@ -33,7 +33,7 @@ Your Tune's constructor gets argument as object and it includes:
  - {Object} settings - settings contains block default state. 
 This object could have information about cover, anchor and so on.
 
-Example: 
+Example on TypeScript: 
 
 ```js
 
@@ -46,6 +46,33 @@ export default class YourCustomTune implements IBlockTune {
     this.settings = settings;
   }
   
+  render() {
+    let someHTML = '...'; 
+    return someHTML;
+  }
+  
+  save() {
+    // Return the important data that needs to be saved
+    return object
+  }
+  
+  someMethod() {
+    // moves current block down
+    this.api.blocks.moveDown();
+  }
+}
+```
+
+Example on ES6
+
+```js
+export default class YourCustomTune {
+  
+  constructor({api, settings}) {
+    this.api = api;
+    this.settings = settings;
+  }
+    
   render() {
     let someHTML = '...'; 
     return someHTML;
