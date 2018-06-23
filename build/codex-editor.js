@@ -87,6 +87,17 @@ var CodexEditor =
 /************************************************************************/
 /******/ ({
 
+/***/ "./build/sprite.svg":
+/*!**************************!*\
+  !*** ./build/sprite.svg ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\">\n<symbol id=\"icon-bold\" viewBox=\"0 0 13 15\">\n  <path d=\"M5.996 13.9H1.752c-.613 0-1.05-.137-1.312-.412-.262-.275-.393-.712-.393-1.312V1.737C.047 1.125.18.684.449.416.718.147 1.152.013 1.752.013h4.5a10.5 10.5 0 0 1 1.723.123c.487.082.922.24 1.308.474a3.43 3.43 0 0 1 1.449 1.738c.132.363.199.747.199 1.151 0 1.39-.695 2.406-2.084 3.05 1.825.581 2.737 1.712 2.737 3.391 0 .777-.199 1.477-.596 2.099a3.581 3.581 0 0 1-1.61 1.378c-.424.177-.91.301-1.46.374-.549.073-1.19.109-1.922.109zm-.209-6.167H2.86v4.055h3.022c1.9 0 2.851-.686 2.851-2.056 0-.7-.246-1.21-.739-1.525-.492-.316-1.228-.474-2.207-.474zM2.86 2.125v3.59h2.577c.7 0 1.242-.066 1.624-.198a1.55 1.55 0 0 0 .876-.758c.158-.265.237-.562.237-.89 0-.702-.25-1.167-.748-1.398-.499-.23-1.26-.346-2.283-.346H2.86z\"/>\n\n</symbol>\n<symbol id=\"icon-plus\" viewBox=\"0 0 14 14\">\n  <path d=\"M8.05 5.8h4.625a1.125 1.125 0 0 1 0 2.25H8.05v4.625a1.125 1.125 0 0 1-2.25 0V8.05H1.125a1.125 1.125 0 0 1 0-2.25H5.8V1.125a1.125 1.125 0 0 1 2.25 0V5.8z\" id=\"a\"/>\n\n</symbol></svg>"
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/lib/css-base.js":
 /*!*************************************************!*\
   !*** ./node_modules/css-loader/lib/css-base.js ***!
@@ -1269,6 +1280,30 @@ var Dom = function () {
     }
 
     /**
+     * Creates SVG icon linked to the sprite
+     * @param {string} name - name (id) of icon from sprite
+     * @param {number} width
+     * @param {number} height
+     * @return {SVGElement}
+     */
+
+  }, {
+    key: 'svg',
+    value: function svg(name) {
+      var width = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 14;
+      var height = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 14;
+
+      var icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+      icon.classList.add('icon', 'icon--' + name);
+      icon.setAttribute('width', width + 'px');
+      icon.setAttribute('height', height + 'px');
+      icon.innerHTML = '<use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#' + name + '"></use>';
+
+      return icon;
+    }
+
+    /**
      * Append one or several elements to the parent
      *
      * @param  {Element} parent    - where to append
@@ -1528,7 +1563,7 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function($) {
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -1579,6 +1614,7 @@ var BoldInlineTool = function () {
     value: function render() {
       this.nodes.button = document.createElement('button');
       this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
+      this.nodes.button.appendChild($.svg('icon-bold', 13, 15));
       return this.nodes.button;
     }
     /**
@@ -1611,6 +1647,7 @@ var BoldInlineTool = function () {
 BoldInlineTool.displayName = 'BoldInlineTool';
 exports.default = BoldInlineTool;
 module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! dom */ "./src/components/dom.js")))
 
 /***/ }),
 
@@ -5185,17 +5222,27 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _sprite = __webpack_require__(/*! ../../../build/sprite.svg */ "./build/sprite.svg");
+
+var _sprite2 = _interopRequireDefault(_sprite);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Module UI
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @type {UI}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
 /**
- * Module UI
- *
- * @type {UI}
+ * Prebuilded sprite of SVG icons
  */
+
+
 // let className = {
 
 /**
@@ -5278,6 +5325,12 @@ var UI = function (_Module) {
       var _this2 = this;
 
       return this.make()
+      /**
+       * Append SVG sprite
+       */
+      .then(function () {
+        return _this2.appendSVGSprite();
+      })
       /**
        * Make toolbar
        */
@@ -5541,6 +5594,20 @@ var UI = function (_Module) {
       if (isInitialBlock && isEmptyBlock) {
         this.Editor.Toolbar.plusButton.show();
       }
+    }
+
+    /**
+     * Append prebuilded sprite with SVG icons
+     */
+
+  }, {
+    key: 'appendSVGSprite',
+    value: function appendSVGSprite() {
+      var spriteHolder = $.make('div');
+
+      spriteHolder.innerHTML = _sprite2.default;
+
+      $.append(this.nodes.wrapper, spriteHolder);
     }
   }, {
     key: 'CSS',
@@ -6238,7 +6305,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ":root {\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /** Blue icons */\n  --color-active-icon: #388AE5;\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbar-buttons-size: 34px\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n    position: relative;\n    border: 1px solid #ccc;\n    padding: 2px;\n    box-sizing: border-box;\n}\n.codex-editor .hide {\n        display: none;\n    }\n.codex-editor__redactor {\n        padding-bottom: 300px;\n    }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    width: 34px;\n    width: var(--toolbar-buttons-size);\n    height: 34px;\n    height: var(--toolbar-buttons-size);\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n      content: '+';\n      font-size: 26px;\n      display: block;\n      margin-top: -2px;\n      margin-right: -2px;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    border: 1px dotted #ccc;\n    padding: 2px;\n  }\n.ce-toolbar__actions-buttons {\n      border: 1px dotted #ccc;\n      padding: 2px;\n      text-align: right;\n      margin-bottom: 2px;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    border: 1px dotted #ccc\n  }\n.ce-toolbar__settings-btn::before {\n      content: 'STN';\n      font-size: 10px;\n      opacity: .4;\n    }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        background: var(--bg-light);\n        width: 34px;\n        width: var(--toolbar-buttons-size);\n        height: 34px;\n        height: var(--toolbar-buttons-size);\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px;\n        line-height: var(--toolbar-buttons-size)\n    }\n.ce-toolbox__button::before {\n            content: attr(title);\n            font-size: 22px;\n            font-weight: 500;\n            letter-spacing: 1em;\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                    font-feature-settings: \"smcp\", \"c2sc\";\n            font-variant-caps: all-small-caps;\n            padding-left: 11.5px;\n            margin-top: -1px;\n            display: inline-block;\n        }\n.ce-inline-toolbar {\n  position: absolute;\n  background: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background: #fff;\n  z-index: -1;\n      }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-tool {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background: transparent;\n  vertical-align: bottom\n}\n.ce-inline-tool:hover {\n    background: #eff2f5;\n    background: var(--bg-light);\n  }\n.ce-inline-tool--active {\n    color: #388AE5;\n    color: var(--color-active-icon);\n  }\n.ce-inline-tool--bold::before {\n      font-weight: bold;\n      content: 'B'\n    }\n.ce-settings {\n  border: 1px dotted #ccc;\n  padding: 2px;\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone {\n    border: 1px dotted #ccc;\n    padding: 2px;\n    margin-bottom: 2px\n  }\n.ce-settings__plugin-zone::before {\n      content: 'PLUGIN SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__default-zone {\n    border: 1px dotted #ccc;\n    padding: 2px\n  }\n.ce-settings__default-zone::before {\n      content: 'DEFAULT SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__button {\n    padding: 10px 15px;\n    color: #707684;\n    color: var(--grayText)\n  }\n.ce-settings__button:hover {\n      background: #eff2f5;\n      background: var(--bg-light);\n    }\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0\n}\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n", ""]);
+exports.push([module.i, ":root {\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /** Blue icons */\n  --color-active-icon: #388AE5;\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbar-buttons-size: 34px\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n  position: relative;\n  border: 1px solid #ccc;\n  padding: 2px;\n  box-sizing: border-box;\n}\n.codex-editor .hide {\n    display: none;\n  }\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    margin-top: -2px;\n    max-height: 100%;\n  }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    width: 34px;\n    width: var(--toolbar-buttons-size);\n    height: 34px;\n    height: var(--toolbar-buttons-size);\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n      content: '+';\n      font-size: 26px;\n      display: block;\n      margin-top: -2px;\n      margin-right: -2px;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    border: 1px dotted #ccc;\n    padding: 2px;\n  }\n.ce-toolbar__actions-buttons {\n      border: 1px dotted #ccc;\n      padding: 2px;\n      text-align: right;\n      margin-bottom: 2px;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    border: 1px dotted #ccc\n  }\n.ce-toolbar__settings-btn::before {\n      content: 'STN';\n      font-size: 10px;\n      opacity: .4;\n    }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        background: var(--bg-light);\n        width: 34px;\n        width: var(--toolbar-buttons-size);\n        height: 34px;\n        height: var(--toolbar-buttons-size);\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px;\n        line-height: var(--toolbar-buttons-size)\n    }\n.ce-toolbox__button::before {\n            content: attr(title);\n            font-size: 22px;\n            font-weight: 500;\n            letter-spacing: 1em;\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                    font-feature-settings: \"smcp\", \"c2sc\";\n            font-variant-caps: all-small-caps;\n            padding-left: 11.5px;\n            margin-top: -1px;\n            display: inline-block;\n        }\n.ce-inline-toolbar {\n  position: absolute;\n  background: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background: #fff;\n  z-index: -1;\n      }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-tool {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.ce-inline-tool:hover {\n    background: #eff2f5;\n    background: var(--bg-light);\n  }\n.ce-inline-tool--active {\n    color: #388AE5;\n    color: var(--color-active-icon);\n  }\n.ce-inline-tool--bold {\n  }\n.ce-settings {\n  border: 1px dotted #ccc;\n  padding: 2px;\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone {\n    border: 1px dotted #ccc;\n    padding: 2px;\n    margin-bottom: 2px\n  }\n.ce-settings__plugin-zone::before {\n      content: 'PLUGIN SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__default-zone {\n    border: 1px dotted #ccc;\n    padding: 2px\n  }\n.ce-settings__default-zone::before {\n      content: 'DEFAULT SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__button {\n    padding: 10px 15px;\n    color: #707684;\n    color: var(--grayText)\n  }\n.ce-settings__button:hover {\n      background: #eff2f5;\n      background: var(--bg-light);\n    }\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0\n}\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n", ""]);
 
 // exports
 
