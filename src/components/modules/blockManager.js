@@ -77,18 +77,18 @@ export default class BlockManager extends Module {
    *
    * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
    * @param {Object} data - constructor params
+   * @param {Object} settings - block settings
    *
    * @return {Block}
    */
-  composeBlock(toolName, data) {
+  composeBlock(toolName, data, settings) {
     let toolInstance = this.Editor.Tools.construct(toolName, data),
-      block = new Block(toolName, toolInstance);
+      block = new Block(toolName, toolInstance, settings, this.Editor.API.methods);
 
     this.bindEvents(block);
-
     /**
-         * Apply callback before inserting html
-         */
+     * Apply callback before inserting html
+     */
     block.call('appendCallback', {});
 
     return block;
@@ -152,9 +152,10 @@ export default class BlockManager extends Module {
    *
    * @param {String} toolName — plugin name
    * @param {Object} data — plugin data
+   * @param {Object} settings - default settings
    */
-  insert(toolName, data = {}) {
-    let block = this.composeBlock(toolName, data);
+  insert(toolName, data = {}, settings = {}) {
+    let block = this.composeBlock(toolName, data, settings);
 
     this._blocks[++this.currentBlockIndex] = block;
     this.Editor.Caret.setToBlock(block);

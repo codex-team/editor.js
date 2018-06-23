@@ -2,7 +2,6 @@
   border: 1px dotted #ccc;
   padding: 2px;
   display: none;
-
   &--opened {
     display: block;
   }
@@ -23,7 +22,7 @@
     border: 1px dotted #ccc;
     padding: 2px;
     &::before {
-      content: 'DEFAULT SETTINGS';
+      /*content: 'DEFAULT SETTINGS';*/
       opacity: .4;
       font-size: 12px;
     }
@@ -36,5 +35,16 @@
     &:hover {
       background: var(--bg-light);
     }
+  }
+}
+
+.ce-settings-move-up {
+  &:hover {
+    cursor: pointer;
+  }
+
+  &::before {
+    display: inline-block;
+    content: 'up';
   }
 }

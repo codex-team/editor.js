@@ -1,5 +1,4 @@
 /**
- *
  * @class Block
  * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
  *
@@ -7,6 +6,9 @@
  * @property {Object} CSS — block`s css classes
  *
  */
+
+/** Import default tunes */
+import MoveUpTune from './block-tunes/block-tune-move-up';
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -22,11 +24,20 @@ export default class Block {
    * @constructor
    * @param {String} toolName - Tool name that passed on initialization
    * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
+   * @param {Object} settings - default settings
+   * @param {Object} apiMethods - Editor API
    */
-  constructor(toolName, toolInstance) {
+  constructor(toolName, toolInstance, settings, apiMethods) {
     this.name = toolName;
     this.tool = toolInstance;
+    this.settings = settings;
+    this.api = apiMethods;
     this._html = this.compose();
+
+    /**
+     * @type {IBlockTune[]}
+     */
+    this.tunes = this.makeTunes();
   }
 
   /**
@@ -157,6 +168,37 @@ export default class Block {
     }
 
     return data;
+  }
+
+  /**
+   * Make an array with default settings
+   * Each block has default tune instance that have states
+   * @return {IBlockTune[]}
+   */
+  makeTunes() {
+    let tunesList = [ MoveUpTune ];
+
+    // Pluck tunes list and return tune instances with passed Editor API and settings
+    return tunesList.map( (tune) => {
+      return new tune({
+        api: this.api,
+        settings: this.settings,
+      });
+    });
+  }
+
+  /**
+   * Enumerates initialized tunes and returns fragment that can be appended to the toolbars area
+   * @return {DocumentFragment}
+   */
+  renderTunes() {
+    let tunesElement = document.createDocumentFragment();
+
+    this.tunes.forEach( tune => {
+      $.append(tunesElement, tune.render());
+    });
+
+    return tunesElement;
   }
 
   /**
