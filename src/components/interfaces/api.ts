@@ -26,6 +26,11 @@ export interface IBlocksAPI {
    * After moving the block, we need to scroll window
    */
   moveUp: () => void;
+
+  /**
+   * Removes block
+   */
+  delete: (blockIndex?: number) => void;
 }
 
 /**

@@ -77,3 +77,6 @@
     }
   }
 }
+
+@import "tunes/move-up.css";
+@import "tunes/delete.css";
