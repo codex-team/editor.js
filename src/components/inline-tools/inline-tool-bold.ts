@@ -1,5 +1,7 @@
 import InlineTool from '../interfaces/inline-tool';
 
+declare var $: any;
+
 /**
  * Bold Tool
  *
@@ -40,6 +42,7 @@ export default class BoldInlineTool implements InlineTool {
   public render(): HTMLElement {
     this.nodes.button = document.createElement('button');
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
+    this.nodes.button.appendChild($.svg('icon-bold', 13, 15));
     return this.nodes.button;
   }
 

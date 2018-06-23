@@ -143,7 +143,6 @@ module.exports = {
       'Module': './../__module.ts',
     }),
 
-
     /** Минифицируем CSS и JS */
     // new webpack.optimize.UglifyJsPlugin({
     /** Disable warning messages. Cant disable uglify for 3rd party libs such as html-janitor */
@@ -193,6 +192,14 @@ module.exports = {
             }
           },
           'postcss-loader'
+        ]
+      },
+      {
+        test: /\.(svg)$/,
+        use: [
+          {
+            loader: 'raw-loader',
+          }
         ]
       }
     ]
