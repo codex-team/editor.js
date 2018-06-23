@@ -272,8 +272,12 @@ export default class Dom {
       'artical',
       'aside',
       'blockquote',
+      'canvas',
       'div',
       'dl',
+      'dt',
+      'fieldset',
+      'figcaption',
       'figure',
       'footer',
       'form',
@@ -284,16 +288,22 @@ export default class Dom {
       'h5',
       'h6',
       'header',
+      'hgroup',
+      'hr',
+      'li',
+      'main',
       'nav',
+      'noscript',
       'ol',
+      'output',
       'p',
       'pre',
       'ruby',
       'section',
       'table',
+      'tfoot',
       'ul',
-      'li',
-      'dt'
+      'video'
     ];
   }
 };

@@ -12226,7 +12226,7 @@ var Dom = function () {
   }, {
     key: 'blockElements',
     get: function get() {
-      return ['address', 'artical', 'aside', 'blockquote', 'div', 'dl', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'nav', 'ol', 'p', 'pre', 'ruby', 'section', 'table', 'ul', 'li', 'dt'];
+      return ['address', 'artical', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'li', 'main', 'nav', 'noscript', 'ol', 'output', 'p', 'pre', 'ruby', 'section', 'table', 'tfoot', 'ul', 'video'];
     }
   }]);
 
@@ -16764,8 +16764,6 @@ var Paste = function (_Module) {
             $.blockElements.forEach(function (el) {
                 return blockTags[el] = {};
             });
-            /** P is not block element but we need it to split text by paragraphs */
-            blockTags.p = {};
             /** Add all tags can be substituted to sanitizer configuration */
             var customConfig = { tags: Object.assign({}, Sanitizer.defaultConfig.tags, blockTags, allowedTags) };
             var cleanData = Sanitizer.clean(htmlData, customConfig);

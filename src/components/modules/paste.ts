@@ -220,9 +220,6 @@ export default class Paste extends Module {
         const blockTags: {[tag: string]: any} = {};
         $.blockElements.forEach((el) => blockTags[el] = {});
 
-        /** P is not block element but we need it to split text by paragraphs */
-        blockTags.p = {};
-
         /** Add all tags can be substituted to sanitizer configuration */
         const customConfig = {tags: Object.assign({}, Sanitizer.defaultConfig.tags, blockTags, allowedTags)};
         const cleanData = Sanitizer.clean(htmlData, customConfig);
