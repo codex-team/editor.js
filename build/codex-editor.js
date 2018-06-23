@@ -1831,10 +1831,17 @@ var API = function (_Module) {
          * @param {@link CodexEditor#moduleInstances} Editor - module can set editor public methods
          */
         set: function set(Editor) {
+            var _this2 = this;
+
+            this.EditorModules = Editor;
             this.Editor = {
                 block: {
-                    moveDown: this.moveDownBlock,
-                    moveUp: this.moveUpBlock
+                    moveDown: function moveDown() {
+                        _this2.moveDownBlock();
+                    },
+                    moveUp: function moveUp() {
+                        _this2.moveUpBlock();
+                    }
                 },
                 caret: {},
                 sanitizer: {
