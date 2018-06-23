@@ -8,8 +8,8 @@
 declare var Module: any;
 declare var $: any;
 declare var _: any;
-import InlineTool from '../inline-tools/inline-tool';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
+import InlineTool from '../interfaces/inline-tool';
 import Selection from '../selection';
 
 /**
