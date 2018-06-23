@@ -4793,7 +4793,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * |                                                                                           |
  * |  ..................... Content ....................   ......... Block Actions ..........  |
  * |  .                                                .   .                                .  |
- * |  .                                                .   .        [Open Settings]         |
+ * |  .                                                .   .        [Open Settings]         .  |
  * |  .  [Plus Button]  [Toolbox: {Tool1}, {Tool2}]    .   .                                .  |
  * |  .                                                .   .        [Settings Panel]        .  |
  * |  ..................................................   ..................................  |

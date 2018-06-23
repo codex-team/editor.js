@@ -37,9 +37,7 @@ export default class MoveUpTune implements IBlockTune {
    * @returns [Element}
    */
   public render() {
-
     const moveUpButton = $.make('div', ['ce-settings-move-up'], {});
-
     moveUpButton.addEventListener('click', (event) => this.handleClick(event), false);
     return moveUpButton;
   }
