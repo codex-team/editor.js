@@ -19,6 +19,7 @@
   outline: none;
   background: transparent;
   vertical-align: bottom;
+  color: var(--grayText);
 
   &:hover {
     background: var(--bg-light);
@@ -29,9 +30,5 @@
   }
 
   &--bold {
-    &::before {
-      font-weight: bold;
-      content: 'B'
-    }
   }
 }

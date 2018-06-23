@@ -3,6 +3,12 @@
  *
  * @type {UI}
  */
+
+/**
+ * Prebuilded sprite of SVG icons
+ */
+import sprite from '../../../build/sprite.svg';
+
 // let className = {
 
 /**
@@ -72,6 +78,10 @@ export default class UI extends Module {
    */
   prepare() {
     return this.make()
+      /**
+       * Append SVG sprite
+       */
+      .then(() => this.appendSVGSprite())
       /**
        * Make toolbar
        */
@@ -316,6 +326,17 @@ export default class UI extends Module {
     if (isInitialBlock && isEmptyBlock) {
       this.Editor.Toolbar.plusButton.show();
     }
+  }
+
+  /**
+   * Append prebuilded sprite with SVG icons
+   */
+  appendSVGSprite() {
+    let spriteHolder = $.make('div');
+
+    spriteHolder.innerHTML = sprite;
+
+    $.append(this.nodes.wrapper, spriteHolder);
   }
 }
 
