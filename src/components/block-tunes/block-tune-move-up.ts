@@ -11,14 +11,14 @@ export default class MoveUpTune implements IBlockTune {
 
   private settings: object;
 
-  private api: any;
+  private readonly api: any;
 
   /**
    * Styles
    * @type {{wrapper: string}}
    */
   private CSS = {
-    wrapper: 'as',
+    wrapper: 'ass',
   };
 
   /**
@@ -27,7 +27,7 @@ export default class MoveUpTune implements IBlockTune {
    * @param {Object} api
    * @param {Object} settings
    */
-  public constructor(api, settings) {
+  public constructor({api, settings}) {
     this.api = api;
     this.settings = settings;
   }
@@ -40,7 +40,7 @@ export default class MoveUpTune implements IBlockTune {
 
     const moveUpButton = $.make('div', ['ce-settings-move-up'], {});
 
-    moveUpButton.addEventListener('click', this.handleClick, false);
+    moveUpButton.addEventListener('click', (event) => this.handleClick(event), false);
     return moveUpButton;
   }
 
@@ -49,6 +49,6 @@ export default class MoveUpTune implements IBlockTune {
    * @param {MouseEvent} event
    */
   public handleClick(event: MouseEvent): void {
-    console.log(`mas`);
+    this.api.block.moveUp();
   }
 }

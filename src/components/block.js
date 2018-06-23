@@ -176,9 +176,15 @@ export default class Block {
    * @return {IBlockTune[]}
    */
   makeTunes() {
-    return [
-      new MoveUpTune(this.settings),
-    ];
+    let tunesList = [ MoveUpTune ];
+
+    // Pluck tunes list and return tune instances with passed Editor API and settings
+    return tunesList.map( (tune) => {
+      return new tune({
+        api: this.api.Editor,
+        settings: this.settings,
+      });
+    });
   }
 
   /**

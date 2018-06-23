@@ -929,7 +929,10 @@ var MoveUpTune = function () {
      * @param {Object} api
      * @param {Object} settings
      */
-    function MoveUpTune(api, settings) {
+    function MoveUpTune(_ref) {
+        var api = _ref.api,
+            settings = _ref.settings;
+
         _classCallCheck(this, MoveUpTune);
 
         /**
@@ -937,7 +940,7 @@ var MoveUpTune = function () {
          * @type {{wrapper: string}}
          */
         this.CSS = {
-            wrapper: 'as'
+            wrapper: 'ass'
         };
         this.api = api;
         this.settings = settings;
@@ -951,8 +954,12 @@ var MoveUpTune = function () {
     _createClass(MoveUpTune, [{
         key: 'render',
         value: function render() {
+            var _this = this;
+
             var moveUpButton = $.make('div', ['ce-settings-move-up'], {});
-            moveUpButton.addEventListener('click', this.handleClick, false);
+            moveUpButton.addEventListener('click', function (event) {
+                return _this.handleClick(event);
+            }, false);
             return moveUpButton;
         }
         /**
@@ -963,7 +970,7 @@ var MoveUpTune = function () {
     }, {
         key: 'handleClick',
         value: function handleClick(event) {
-            console.log('mas');
+            this.api.block.moveUp();
         }
     }]);
 
@@ -1174,7 +1181,17 @@ var Block = function () {
   }, {
     key: 'makeTunes',
     value: function makeTunes() {
-      return [new _blockTuneMoveUp2.default(this.settings)];
+      var _this3 = this;
+
+      var tunesList = [_blockTuneMoveUp2.default];
+
+      // Pluck tunes list and return tune instances with passed Editor API and settings
+      return tunesList.map(function (tune) {
+        return new tune({
+          api: _this3.api.Editor,
+          settings: _this3.settings
+        });
+      });
     }
 
     /**
@@ -1811,17 +1828,23 @@ var API = function (_Module) {
         key: 'state',
 
         /**
-         *
-         * @param {Object} Editor - module can set editor public methods
+         * @param {@link CodexEditor#moduleInstances} Editor - module can set editor public methods
          */
         set: function set(Editor) {
             this.Editor = {
-                moveDownBlock: this.moveDownBlock,
-                moveUpBlock: this.moveUpBlock
+                block: {
+                    moveDown: this.moveDownBlock,
+                    moveUp: this.moveUpBlock
+                },
+                caret: {},
+                sanitizer: {
+                    clean: Editor.Sanitizer.clean
+                },
+                toolbar: {}
             };
         }
         /**
-         * Doing something
+         * Save Editor config. API provides passed configuration to the Blocks
          * @param {EditorsConfig} config
          */
 
@@ -1834,20 +1857,20 @@ var API = function (_Module) {
 
         return _possibleConstructorReturn(this, (API.__proto__ || Object.getPrototypeOf(API)).call(this, { config: config }));
     }
-    /**
-     * Moves block up
-     */
-
 
     _createClass(API, [{
-        key: 'moveUpBlock',
-        value: function moveUpBlock() {
-            console.log('moving up');
-        }
-    }, {
         key: 'moveDownBlock',
         value: function moveDownBlock() {
             console.log('moving down');
+        }
+        /**
+         * Moves block up
+         */
+
+    }, {
+        key: 'moveUpBlock',
+        value: function moveUpBlock() {
+            console.log('moving up');
         }
     }]);
 
