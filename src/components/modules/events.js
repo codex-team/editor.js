@@ -12,14 +12,16 @@
  */
 export default class Events extends Module {
   /**
-     * @constructor
-     */
+   * @constructor
+   */
   constructor({config}) {
     super({config});
     this.subscribers = {};
   }
 
   /**
+   * Subscribe any event on callback
+   *
    * @param {String} eventName - event name
    * @param {Function} callback - subscriber
    */
@@ -33,15 +35,36 @@ export default class Events extends Module {
   }
 
   /**
+   * Emit callbacks with passed data
+   *
    * @param {String} eventName - event name
    * @param {Object} data - subscribers get this data when they were fired
    */
   emit(eventName, data) {
+    if (!this.subscribers[eventName]) {
+      return;
+    }
+
     this.subscribers[eventName].reduce(function (previousData, currentHandler) {
       let newData = currentHandler(previousData);
 
       return newData ? newData : previousData;
     }, data);
+  }
+
+  /**
+   * Unsubsribe callback
+   *
+   * @param eventName
+   * @param callback
+   */
+  off(eventName, callback) {
+    for(let i = 0; i < this.subscribers[eventName].length; i++) {
+      if (this.subscribers[eventName][i] === callback) {
+        delete this.subscribers[eventName][i];
+        break;
+      }
+    }
   }
 
   /**

@@ -473,8 +473,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["api-blocks.ts","api-sanitizer.ts","api-toolbar.ts","api.ts","blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+var modules = ["api-blocks.ts","api-events.ts","api-sanitizer.ts","api-toolbar.ts","api.ts","blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
 });
 
 /**
@@ -952,6 +952,10 @@ var DeleteTune = function () {
             wrapper: 'ass'
         };
         this.api = api;
+        this.method = function () {
+            console.log('hey');
+        };
+        this.api.events.on('block-settings-closed', this.method);
     }
     /**
      * Create "MoveUp" button and add click event listener
@@ -980,7 +984,7 @@ var DeleteTune = function () {
         value: function handleClick(event) {
             if (!this.needConfirmation) {
                 this.needConfirmation = true;
-                console.log("hey");
+                this.api.events.off('block-settings-closed', this.method);
             } else {
                 this.api.blocks.delete();
             }
@@ -1868,15 +1872,16 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/modules sync [^_](api-blocks.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
-/*!****************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
-  \****************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
 	"./api-blocks.ts": "./src/components/modules/api-blocks.ts",
+	"./api-events.ts": "./src/components/modules/api-events.ts",
 	"./api-sanitizer.ts": "./src/components/modules/api-sanitizer.ts",
 	"./api-toolbar.ts": "./src/components/modules/api-toolbar.ts",
 	"./api.ts": "./src/components/modules/api.ts",
@@ -1915,7 +1920,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
 
 /***/ }),
 
@@ -2022,6 +2027,116 @@ var BlocksAPI = function (_Module) {
 BlocksAPI.displayName = 'BlocksAPI';
 exports.default = BlocksAPI;
 module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
+
+/***/ }),
+
+/***/ "./src/components/modules/api-events.ts":
+/*!**********************************************!*\
+  !*** ./src/components/modules/api-events.ts ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * @class ToolbarsApi
+ * provides with methods working with Toolbar
+ */
+var EventsAPI = function (_Module) {
+    _inherits(EventsAPI, _Module);
+
+    /**
+     * Save Editor config. API provides passed configuration to the Blocks
+     * @param {EditorsConfig} config
+     */
+    function EventsAPI(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, EventsAPI);
+
+        return _possibleConstructorReturn(this, (EventsAPI.__proto__ || Object.getPrototypeOf(EventsAPI)).call(this, { config: config }));
+    }
+    /**
+     * Available methods
+     * @return {IBlocksAPI}
+     */
+
+
+    _createClass(EventsAPI, [{
+        key: "on",
+
+        /**
+         * Subscribe on Events
+         * @param {String} eventName
+         * @param {Function} callback
+         */
+        value: function on(eventName, callback) {
+            this.Editor.Events.on(eventName, callback);
+        }
+        /**
+         * Emit event with data
+         *
+         * @param {String} eventName
+         * @param {Object} data
+         */
+
+    }, {
+        key: "emit",
+        value: function emit(eventName, data) {
+            this.Editor.Events.emit(eventName, data);
+        }
+        /**
+         * Unsubscribe from Event
+         *
+         * @param {String} eventName
+         * @param {Function} callback
+         */
+
+    }, {
+        key: "off",
+        value: function off(eventName, callback) {
+            this.Editor.Events.off(eventName, callback);
+        }
+    }, {
+        key: "methods",
+        get: function get() {
+            var _this2 = this;
+
+            return {
+                emit: function emit(eventName, data) {
+                    return _this2.emit(eventName, data);
+                },
+                off: function off(eventName, callback) {
+                    return _this2.off(eventName, callback);
+                },
+                on: function on(eventName, callback) {
+                    return _this2.on(eventName, callback);
+                }
+            };
+        }
+    }]);
+
+    return EventsAPI;
+}(Module);
+
+EventsAPI.displayName = "EventsAPI";
+exports.default = EventsAPI;
+module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
 
 /***/ }),
@@ -2235,6 +2350,7 @@ var API = function (_Module) {
             return {
                 blocks: this.Editor.BlocksAPI.methods,
                 caret: {},
+                events: this.Editor.EventsAPI.methods,
                 sanitizer: this.Editor.SanitizerAPI.methods,
                 toolbar: this.Editor.ToolbarsAPI.methods
             };
@@ -3331,8 +3447,8 @@ var Events = function (_Module) {
   _inherits(Events, _Module);
 
   /**
-     * @constructor
-     */
+   * @constructor
+   */
   function Events(_ref) {
     var config = _ref.config;
 
@@ -3345,6 +3461,8 @@ var Events = function (_Module) {
   }
 
   /**
+   * Subscribe any event on callback
+   *
    * @param {String} eventName - event name
    * @param {Function} callback - subscriber
    */
@@ -3362,6 +3480,8 @@ var Events = function (_Module) {
     }
 
     /**
+     * Emit callbacks with passed data
+     *
      * @param {String} eventName - event name
      * @param {Object} data - subscribers get this data when they were fired
      */
@@ -3369,11 +3489,33 @@ var Events = function (_Module) {
   }, {
     key: "emit",
     value: function emit(eventName, data) {
+      if (!this.subscribers[eventName]) {
+        return;
+      }
+
       this.subscribers[eventName].reduce(function (previousData, currentHandler) {
         var newData = currentHandler(previousData);
 
         return newData ? newData : previousData;
       }, data);
+    }
+
+    /**
+     * Unsubsribe callback
+     *
+     * @param eventName
+     * @param callback
+     */
+
+  }, {
+    key: "off",
+    value: function off(eventName, callback) {
+      for (var i = 0; i < this.subscribers[eventName].length; i++) {
+        if (this.subscribers[eventName][i] === callback) {
+          delete this.subscribers[eventName][i];
+          break;
+        }
+      }
     }
 
     /**
@@ -5322,6 +5464,8 @@ var Toolbar = function (_Module) {
       /** Close Toolbox when we move toolbar */
       this.Editor.Toolbox.close();
       this.Editor.BlockSettings.close();
+
+      this.Editor.Events.emit('block-settings-closed');
 
       var currentNode = this.Editor.BlockManager.currentNode;
 

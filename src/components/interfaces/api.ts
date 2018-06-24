@@ -8,6 +8,7 @@ export interface IAPI {
   caret: ICaretAPI;
   sanitizer: ISanitizerAPI;
   toolbar: IToolbarAPI;
+  events: IEventsAPI;
 }
 
 /**
@@ -67,4 +68,25 @@ export interface IToolbarAPI {
    * Closes toolbar. If toolbox or toolbar-blockSettings are opened then they will be closed too
    */
   close: () => void;
+}
+
+/**
+ * Events Module API methods
+ */
+export interface IEventsAPI {
+
+  /**
+   * Subsribe on events
+   */
+  on: (eventName: string, callback: () => void) => void;
+
+  /**
+   * Trigger subsribed callbacks
+   */
+  emit: (eventName: string, data: object) => void;
+
+  /**
+   * Unsubsribe callback
+   */
+  off: (eventName: string, callback: () => void) => void;
 }

@@ -30,6 +30,8 @@ export default class DeleteTune implements IBlockTune {
    */
   private needConfirmation: boolean;
 
+  private method: () => void;
+
   /**
    * MoveUpTune constructor
    *
@@ -37,6 +39,12 @@ export default class DeleteTune implements IBlockTune {
    */
   public constructor({api}) {
     this.api = api;
+
+    this.method = () => {
+      console.log('hey');
+    };
+
+    this.api.events.on('block-settings-closed', this.method);
   }
 
   /**
@@ -56,7 +64,7 @@ export default class DeleteTune implements IBlockTune {
   public handleClick(event: MouseEvent): void {
     if (!this.needConfirmation) {
       this.needConfirmation = true;
-      console.log("hey");
+      this.api.events.off('block-settings-closed', this.method);
     } else {
       this.api.blocks.delete();
     }
