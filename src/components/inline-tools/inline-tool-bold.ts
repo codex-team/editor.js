@@ -32,7 +32,7 @@ export default class BoldInlineTool implements InlineTool {
     button: null,
   };
 
-  constructor() {
+  constructor(api) {
     console.log('Bold Inline Tool is ready');
   }
 

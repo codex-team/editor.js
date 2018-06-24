@@ -1825,7 +1825,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Makes selected text bolder
  */
 var BoldInlineTool = function () {
-  function BoldInlineTool() {
+  function BoldInlineTool(api) {
     _classCallCheck(this, BoldInlineTool);
 
     /**
@@ -1928,7 +1928,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 var LinkInlineTool = function () {
     /**
-     * @param {object} api - Inline Toolbar API
+     * @param {object} api - CodeX Editor API
+     * @param {object} api.toolbar - Inline Toolbar API
      */
     function LinkInlineTool(api) {
         _classCallCheck(this, LinkInlineTool);
@@ -1964,7 +1965,7 @@ var LinkInlineTool = function () {
          * Input opening state
          */
         this.inputOpened = false;
-        this.inlineToolbar = api;
+        this.inlineToolbar = api.toolbar;
         this.selection = new _selection2.default();
     }
     /**
@@ -5197,31 +5198,20 @@ var InlineToolbar = function (_Module) {
          * Margin above/below the Toolbar
          */
         _this.toolbarVerticalMargin = 20;
-        /**
-         * Available Tools classes
-         */
-        _this.tools = [];
-        var api = {
-            close: function close() {
-                return _this.close();
-            },
-            open: function open() {
-                return _this.open();
-            }
-        };
-        /**
-         * @todo Merge internal tools with external
-         */
-        _this.tools = [new _inlineToolBold2.default(), new _inlineToolLink2.default(api)];
         return _this;
     }
     /**
-     * Making DOM
+     * Inline Toolbar Tools
+     * @todo Merge internal tools with external
      */
 
 
     _createClass(InlineToolbar, [{
         key: 'make',
+
+        /**
+         * Making DOM
+         */
         value: function make() {
             this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
             this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
@@ -5398,6 +5388,14 @@ var InlineToolbar = function (_Module) {
             this.tools.forEach(function (tool) {
                 tool.checkState(_selection2.default.get);
             });
+        }
+    }, {
+        key: 'tools',
+        get: function get() {
+            if (!this.toolsInstances) {
+                this.toolsInstances = [new _inlineToolBold2.default(this.Editor.API.methods), new _inlineToolLink2.default(this.Editor.API.methods)];
+            }
+            return this.toolsInstances;
         }
     }]);
 

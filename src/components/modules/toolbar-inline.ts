@@ -44,28 +44,29 @@ export default class InlineToolbar extends Module {
   private readonly toolbarVerticalMargin: number = 20;
 
   /**
-   * Available Tools classes
+   * Tools instances
    */
-  private tools: InlineTool[] = [];
+  private toolsInstances: InlineTool[];
 
   /**
    * @constructor
    */
   constructor({config}) {
     super({config});
+  }
 
-    const api = {
-      close: () => this.close(),
-      open: () => this.open(),
-    };
-
-    /**
-     * @todo Merge internal tools with external
-     */
-    this.tools = [
-      new BoldInlineTool(),
-      new LinkInlineTool(api),
-    ];
+  /**
+   * Inline Toolbar Tools
+   * @todo Merge internal tools with external
+   */
+  get tools(): InlineTool[] {
+    if (!this.toolsInstances) {
+      this.toolsInstances = [
+        new BoldInlineTool(this.Editor.API.methods),
+        new LinkInlineTool(this.Editor.API.methods),
+      ];
+    }
+    return this.toolsInstances;
   }
 
   /**
