@@ -1,3 +1,6 @@
+@import "tunes/move-up.css";
+@import "tunes/delete.css";
+
 .ce-toolbar {
   position: absolute;
   left: 0;

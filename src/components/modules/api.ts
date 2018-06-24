@@ -28,8 +28,9 @@ export default class API extends Module {
     return {
       blocks: this.Editor.BlocksAPI.methods,
       caret: {},
+      events: this.Editor.EventsAPI.methods,
       sanitizer: this.Editor.SanitizerAPI.methods,
-      toolbar: {},
+      toolbar: this.Editor.ToolbarsAPI.methods,
     };
   }
 }

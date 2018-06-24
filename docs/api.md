@@ -18,6 +18,8 @@ export interface IAPI {
 
 #### IBlocksAPI
 
+Methods that working with Blocks
+
 ```moveDown()``` - method moves down the current block.
 
 ```moveUp()``` - method moves up the current block.
@@ -39,4 +41,23 @@ let customConfig = {
 }
 this.api.sanitizer.clean(taintString, customConfig);
 ```
+
+### IToolbarAPI
+
+Methods that working with Toolbar
+
+```open()``` - Opens toolbar
+
+```close()``` - Closes toolbar, toolbox and blockSettings if they are opened
+
+### IEventsAPI
+
+Methods that allows to subscribe on CodeX Editor events
+
+```on(eventName: string, callback: Function)``` - subscribe callback on event
+
+```off(eventName: string, callback: Function)``` - unsubscribe callback from event
+
+```emit(eventName: string, data: object)``` - fires all subscribed callbacks with passed data
+
 

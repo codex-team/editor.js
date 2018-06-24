@@ -4,6 +4,7 @@ import {ISanitizerAPI} from '../interfaces/api';
 
 /**
  * @class API
+ * Provides CodeX Editor Sanitizer that allows developers to clean their HTML
  */
 export default class SanitizerAPI extends Module implements ISanitizerAPI {
 

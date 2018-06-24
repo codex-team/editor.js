@@ -10,6 +10,9 @@
  *  |________________________|
  */
 export default class BlockSettings extends Module {
+  /**
+   * @constructor
+   */
   constructor({config}) {
     super({config});
 
@@ -17,6 +20,17 @@ export default class BlockSettings extends Module {
       wrapper: null,
       toolSettings: null,
       defaultSettings: null
+    };
+  }
+
+  /**
+   * Module Events
+   * @return {{opened: string, closed: string}}
+   */
+  get events() {
+    return {
+      opened: 'block-settings-opened',
+      closed: 'block-settings-closed',
     };
   }
 
@@ -91,6 +105,9 @@ export default class BlockSettings extends Module {
      * Add default settings that presents for all Blocks
      */
     this.addDefaultSettings();
+
+    /** Tell to subscribers that block settings is opened */
+    this.Editor.Events.emit(this.events.opened);
   }
 
   /**
@@ -98,5 +115,12 @@ export default class BlockSettings extends Module {
    */
   close() {
     this.nodes.wrapper.classList.remove(BlockSettings.CSS.wrapperOpened);
+
+    /** Clear settings */
+    this.nodes.toolSettings.innerHTML = '';
+    this.nodes.defaultSettings.innerHTML = '';
+
+    /** Tell to subscribers that block settings is closed */
+    this.Editor.Events.emit(this.events.closed);
   }
 }
