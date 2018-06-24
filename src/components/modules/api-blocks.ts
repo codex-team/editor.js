@@ -23,8 +23,8 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
   get methods(): IBlocksAPI {
     return {
       moveDown: () => this.moveDown(),
-      moveUp: () => this.moveUp()
-    }
+      moveUp: () => this.moveUp(),
+    };
   }
 
   public moveDown(): void {

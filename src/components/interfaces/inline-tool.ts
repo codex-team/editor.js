@@ -8,6 +8,12 @@ export default interface InlineTool {
   render(): HTMLElement;
 
   /**
+   * Make additional element with actions
+   * For example, input for the 'link' tool or textarea for the 'comment' tool
+   */
+  renderActions?(): HTMLElement;
+
+  /**
    * Method that accepts selected range and wrap it somehow
    * @param {Range} range - selection's range
    */

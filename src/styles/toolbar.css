@@ -23,7 +23,7 @@
 
   &__plus {
     position: absolute;
-    left: calc(-var(--toolbar-buttons-size) - 10px);
+    left: calc(var(--toolbar-buttons-size) - 10px);
     display: inline-block;
     background-color: var(--bg-light);
     width: var(--toolbar-buttons-size);

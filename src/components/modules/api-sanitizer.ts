@@ -22,7 +22,7 @@ export default class SanitizerAPI extends Module implements ISanitizerAPI {
   get methods(): ISanitizerAPI {
     return {
       clean: (taintString, config) => this.clean(taintString, config),
-    }
+    };
   }
 
   public clean(taintString, config) {

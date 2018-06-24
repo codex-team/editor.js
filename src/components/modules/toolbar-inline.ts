@@ -9,39 +9,33 @@ declare var Module: any;
 declare var $: any;
 declare var _: any;
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
+import LinkInlineTool from '../inline-tools/inline-tool-link';
 import InlineTool from '../interfaces/inline-tool';
 import Selection from '../selection';
-
-/**
- * DOM Elements
- */
-interface INodes {
-  wrapper?: HTMLElement; // main wrapper
-}
-
-/**
- * CSS
- */
-interface ICSS {
-  inlineToolbar: string;
-  inlineToolbarShowed: string;
-}
 
 export default class InlineToolbar extends Module {
 
   /**
    * Inline Toolbar elements
    */
-  private nodes: INodes = {
+  private nodes = {
     wrapper: null,
+    buttons: null,
+    /**
+     * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
+     * For example, input for the 'link' tool or textarea for the 'comment' tool
+     */
+    actions: null,
   };
 
   /**
    * CSS styles
    */
-  private CSS: ICSS = {
+  private CSS = {
     inlineToolbar: 'ce-inline-toolbar',
     inlineToolbarShowed: 'ce-inline-toolbar--showed',
+    buttonsWrapper: 'ce-inline-toolbar__buttons',
+    actionsWrapper: 'ce-inline-toolbar__actions',
   };
 
   /**
@@ -60,11 +54,17 @@ export default class InlineToolbar extends Module {
   constructor({config}) {
     super({config});
 
+    const api = {
+      close: () => this.close(),
+      open: () => this.open(),
+    };
+
     /**
      * @todo Merge internal tools with external
      */
     this.tools = [
       new BoldInlineTool(),
+      new LinkInlineTool(api),
     ];
   }
 
@@ -74,10 +74,13 @@ export default class InlineToolbar extends Module {
   public make() {
 
     this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
+    this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
+    this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
 
     /**
      * Append Inline Toolbar to the Editor
      */
+    $.append(this.nodes.wrapper, [this.nodes.buttons, this.nodes.actions]);
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
 
     /**
@@ -217,7 +220,13 @@ export default class InlineToolbar extends Module {
   private addTool(tool: InlineTool): void {
     const button = tool.render();
 
-    this.nodes.wrapper.appendChild(button);
+    this.nodes.buttons.appendChild(button);
+
+    if (typeof tool.renderActions === 'function') {
+      const actions = tool.renderActions();
+      this.nodes.actions.appendChild(actions);
+    }
+
     this.Editor.Listeners.on(button, 'click', () => {
       this.toolClicked(tool);
     });
@@ -230,12 +239,9 @@ export default class InlineToolbar extends Module {
   private toolClicked(tool: InlineTool): void {
     const range = Selection.range;
 
-    if (!range) {
-      return;
-    }
-
     tool.surround(range);
     this.checkToolsState();
+
   }
 
   /**

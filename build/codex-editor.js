@@ -94,7 +94,7 @@ var CodexEditor =
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\">\n<symbol id=\"icon-bold\" viewBox=\"0 0 13 15\">\n  <path d=\"M5.996 13.9H1.752c-.613 0-1.05-.137-1.312-.412-.262-.275-.393-.712-.393-1.312V1.737C.047 1.125.18.684.449.416.718.147 1.152.013 1.752.013h4.5a10.5 10.5 0 0 1 1.723.123c.487.082.922.24 1.308.474a3.43 3.43 0 0 1 1.449 1.738c.132.363.199.747.199 1.151 0 1.39-.695 2.406-2.084 3.05 1.825.581 2.737 1.712 2.737 3.391 0 .777-.199 1.477-.596 2.099a3.581 3.581 0 0 1-1.61 1.378c-.424.177-.91.301-1.46.374-.549.073-1.19.109-1.922.109zm-.209-6.167H2.86v4.055h3.022c1.9 0 2.851-.686 2.851-2.056 0-.7-.246-1.21-.739-1.525-.492-.316-1.228-.474-2.207-.474zM2.86 2.125v3.59h2.577c.7 0 1.242-.066 1.624-.198a1.55 1.55 0 0 0 .876-.758c.158-.265.237-.562.237-.89 0-.702-.25-1.167-.748-1.398-.499-.23-1.26-.346-2.283-.346H2.86z\"/>\n\n</symbol>\n<symbol id=\"icon-plus\" viewBox=\"0 0 14 14\">\n  <path d=\"M8.05 5.8h4.625a1.125 1.125 0 0 1 0 2.25H8.05v4.625a1.125 1.125 0 0 1-2.25 0V8.05H1.125a1.125 1.125 0 0 1 0-2.25H5.8V1.125a1.125 1.125 0 0 1 2.25 0V5.8z\" id=\"a\"/>\n\n</symbol></svg>"
+module.exports = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg xmlns=\"http://www.w3.org/2000/svg\">\n<symbol id=\"bold\" viewBox=\"0 0 13 15\">\n  <path d=\"M5.996 13.9H1.752c-.613 0-1.05-.137-1.312-.412-.262-.275-.393-.712-.393-1.312V1.737C.047 1.125.18.684.449.416.718.147 1.152.013 1.752.013h4.5a10.5 10.5 0 0 1 1.723.123c.487.082.922.24 1.308.474a3.43 3.43 0 0 1 1.449 1.738c.132.363.199.747.199 1.151 0 1.39-.695 2.406-2.084 3.05 1.825.581 2.737 1.712 2.737 3.391 0 .777-.199 1.477-.596 2.099a3.581 3.581 0 0 1-1.61 1.378c-.424.177-.91.301-1.46.374-.549.073-1.19.109-1.922.109zm-.209-6.167H2.86v4.055h3.022c1.9 0 2.851-.686 2.851-2.056 0-.7-.246-1.21-.739-1.525-.492-.316-1.228-.474-2.207-.474zM2.86 2.125v3.59h2.577c.7 0 1.242-.066 1.624-.198a1.55 1.55 0 0 0 .876-.758c.158-.265.237-.562.237-.89 0-.702-.25-1.167-.748-1.398-.499-.23-1.26-.346-2.283-.346H2.86z\"/>\n\n</symbol>\n<symbol id=\"link\" viewBox=\"0 0 15 14\">\n    <path transform=\"rotate(-45 11.83 6.678)\" d=\"M11.332 4.013a51.07 51.07 0 0 1-2.28.001A1.402 1.402 0 0 0 7.7 2.25H3.65a1.4 1.4 0 1 0 0 2.8h.848c.206.86.693 1.61 1.463 2.25H3.65a3.65 3.65 0 1 1 0-7.3H7.7a3.65 3.65 0 0 1 3.632 4.013zM10.9 0h2a3.65 3.65 0 0 1 0 7.3H8.85a3.65 3.65 0 0 1-3.632-4.011A62.68 62.68 0 0 1 7.5 3.273 1.401 1.401 0 0 0 8.85 5.05h4.05a1.4 1.4 0 0 0 0-2.8h-.48C12.274 1.664 11.694.785 10.9 0z\"/>\n\n</symbol>\n<symbol id=\"plus\" viewBox=\"0 0 14 14\">\n  <path d=\"M8.05 5.8h4.625a1.125 1.125 0 0 1 0 2.25H8.05v4.625a1.125 1.125 0 0 1-2.25 0V8.05H1.125a1.125 1.125 0 0 1 0-2.25H5.8V1.125a1.125 1.125 0 0 1 2.25 0V5.8z\"/>\n\n</symbol>\n<symbol id=\"unlink\" viewBox=\"0 0 16 18\">\n    <path transform=\"rotate(-45 8.358 11.636)\" d=\"M9.14 9.433c.008-.12-.087-.686-.112-.81a1.4 1.4 0 0 0-1.64-1.106l-3.977.772a1.4 1.4 0 0 0 .535 2.749l.935-.162s.019 1.093.592 2.223l-1.098.148A3.65 3.65 0 1 1 2.982 6.08l3.976-.773c1.979-.385 3.838.919 4.28 2.886.51 2.276-1.084 2.816-1.073 2.935.011.12-.394-1.59-1.026-1.696zm3.563-.875l2.105 3.439a3.65 3.65 0 0 1-6.19 3.868L6.47 12.431c-1.068-1.71-.964-2.295-.49-3.07.067-.107 1.16-1.466 1.48-.936-.12.036.9 1.33.789 1.398-.656.41-.28.76.13 1.415l2.145 3.435a1.4 1.4 0 0 0 2.375-1.484l-1.132-1.941c.42-.435 1.237-1.054.935-2.69zm1.88-2.256h3.4a1.125 1.125 0 0 1 0 2.25h-3.4a1.125 1.125 0 0 1 0-2.25zM11.849.038c.62 0 1.125.503 1.125 1.125v3.4a1.125 1.125 0 0 1-2.25 0v-3.4c0-.622.503-1.125 1.125-1.125z\"/>\n\n</symbol></svg>"
 
 /***/ }),
 
@@ -1745,7 +1745,7 @@ var BoldInlineTool = function () {
     value: function render() {
       this.nodes.button = document.createElement('button');
       this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-      this.nodes.button.appendChild($.svg('icon-bold', 13, 15));
+      this.nodes.button.appendChild($.svg('bold', 13, 15));
       return this.nodes.button;
     }
     /**
@@ -1779,6 +1779,324 @@ BoldInlineTool.displayName = 'BoldInlineTool';
 exports.default = BoldInlineTool;
 module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! dom */ "./src/components/dom.js")))
+
+/***/ }),
+
+/***/ "./src/components/inline-tools/inline-tool-link.ts":
+/*!*********************************************************!*\
+  !*** ./src/components/inline-tools/inline-tool-link.ts ***!
+  \*********************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
+
+var _selection2 = _interopRequireDefault(_selection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Link Tool
+ *
+ * Inline Toolbar Tool
+ *
+ * Wrap selected text with <a> tag
+ */
+var LinkInlineTool = function () {
+    /**
+     * @param {object} api - Inline Toolbar API
+     */
+    function LinkInlineTool(api) {
+        _classCallCheck(this, LinkInlineTool);
+
+        /**
+         * Native Document's commands for link/unlink
+         */
+        this.commandLink = 'createLink';
+        this.commandUnlink = 'unlink';
+        /**
+         * Enter key code
+         */
+        this.ENTER_KEY = 13;
+        /**
+         * Styles
+         */
+        this.CSS = {
+            button: 'ce-inline-tool',
+            buttonActive: 'ce-inline-tool--active',
+            buttonModifier: 'ce-inline-tool--link',
+            buttonUnlink: 'ce-inline-tool--unlink',
+            input: 'ce-inline-tool-input',
+            inputShowed: 'ce-inline-tool-input--showed'
+        };
+        /**
+         * Elements
+         */
+        this.nodes = {
+            button: null,
+            input: null
+        };
+        /**
+         * Input opening state
+         */
+        this.inputOpened = false;
+        this.inlineToolbar = api;
+        this.selection = new _selection2.default();
+    }
+    /**
+     * Create button for Inline Toolbar
+     */
+
+
+    _createClass(LinkInlineTool, [{
+        key: 'render',
+        value: function render() {
+            this.nodes.button = document.createElement('button');
+            this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
+            this.nodes.button.appendChild($.svg('link', 15, 14));
+            this.nodes.button.appendChild($.svg('unlink', 16, 18));
+            return this.nodes.button;
+        }
+        /**
+         * Input for the link
+         */
+
+    }, {
+        key: 'renderActions',
+        value: function renderActions() {
+            var _this = this;
+
+            this.nodes.input = document.createElement('input');
+            this.nodes.input.placeholder = 'Add a link';
+            this.nodes.input.classList.add(this.CSS.input);
+            this.nodes.input.addEventListener('keydown', function (event) {
+                if (event.keyCode === _this.ENTER_KEY) {
+                    _this.enterPressed(event);
+                }
+            });
+            return this.nodes.input;
+        }
+        /**
+         * Wrap range with <b> tag
+         * @param {Range} range
+         */
+
+    }, {
+        key: 'surround',
+        value: function surround(range) {
+            /**
+             * Save selection before change focus to the input
+             */
+            this.selection.save();
+            var parentAnchor = this.selection.findParentTag('A');
+            if (parentAnchor) {
+                this.selection.expandToTag(parentAnchor);
+                this.unlink();
+                this.closeActions();
+                this.checkState();
+                this.inlineToolbar.close();
+                return;
+            }
+            this.toggleActions();
+        }
+        /**
+         * Check selection and set activated state to button if there are <b> tag
+         * @param {Selection} selection
+         */
+
+    }, {
+        key: 'checkState',
+        value: function checkState(selection) {
+            var anchorTag = this.selection.findParentTag('A');
+            if (anchorTag) {
+                this.nodes.button.classList.add(this.CSS.buttonUnlink);
+                this.nodes.button.classList.add(this.CSS.buttonActive);
+                this.openActions();
+                /**
+                 * Fill input value with link href
+                 */
+                var hrefAttr = anchorTag.getAttribute('href');
+                this.nodes.input.value = hrefAttr !== 'null' ? hrefAttr : '';
+            } else {
+                this.nodes.button.classList.remove(this.CSS.buttonUnlink);
+                this.nodes.button.classList.remove(this.CSS.buttonActive);
+            }
+            return !!anchorTag;
+        }
+    }, {
+        key: 'toggleActions',
+        value: function toggleActions() {
+            if (!this.inputOpened) {
+                this.openActions(true);
+            } else {
+                this.closeActions();
+            }
+        }
+        /**
+         * @param {boolean} needFocus - on link creation we need to focus input. On editing - nope.
+         */
+
+    }, {
+        key: 'openActions',
+        value: function openActions() {
+            var needFocus = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+            this.nodes.input.classList.add(this.CSS.inputShowed);
+            if (needFocus) {
+                this.nodes.input.focus();
+            }
+        }
+        /**
+         * Close input
+         */
+
+    }, {
+        key: 'closeActions',
+        value: function closeActions() {
+            this.nodes.input.classList.remove(this.CSS.inputShowed);
+            this.nodes.input.value = '';
+        }
+        /**
+         * Enter pressed on input
+         * @param {KeyboardEvent} event
+         */
+
+    }, {
+        key: 'enterPressed',
+        value: function enterPressed(event) {
+            var value = this.nodes.input.value || '';
+            if (!value.trim()) {
+                this.selection.restore();
+                this.unlink();
+                event.preventDefault();
+                this.closeActions();
+            }
+            if (!this.validateURL(value)) {
+                /**
+                 * @todo show notification 'Incorrect Link'
+                 */
+                _.log('Incorrect Link pasted', 'warn', value);
+                return;
+            }
+            value = this.prepareLink(value);
+            /**
+             * Add 'http' protocol if need
+             */
+            value = this.addProtocol(value);
+            this.selection.restore();
+            this.insertLink(value);
+            /**
+             * Preventing events that will be able to happen
+             */
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+            this.closeActions();
+            this.inlineToolbar.close();
+            this.checkState();
+        }
+        /**
+         * Detects if passed string is URL
+         * @param  {string}  str
+         * @return {Boolean}
+         */
+
+    }, {
+        key: 'validateURL',
+        value: function validateURL(str) {
+            /**
+             * Don't allow spaces
+             */
+            return !/\s/.test(str);
+        }
+        /**
+         * Process link before injection
+         * - sanitize
+         * - add protocol for links like 'google.com'
+         * @param {string} link - raw user input
+         */
+
+    }, {
+        key: 'prepareLink',
+        value: function prepareLink(link) {
+            link = link.trim();
+            link = this.addProtocol(link);
+            return link;
+        }
+        /**
+         * Add 'http' protocol to the links like 'vc.ru', 'google.com'
+         * @param {String} link
+         */
+
+    }, {
+        key: 'addProtocol',
+        value: function addProtocol(link) {
+            /**
+             * If protocol already exists, do nothing
+             */
+            if (/^(https?|mailto|ftp):\/\//.test(link)) {
+                return link;
+            }
+            /**
+             * We need to add missed HTTP protocol to the link, but skip 2 cases:
+             *     1) Internal links like "/general"
+             *     2) Anchors looks like "#results"
+             *     3) Protocol-relative URLs like "//google.com"
+             */
+            var isInternal = /^\/[^\/\s]/.test(link),
+                isAnchor = link.substring(0, 1) === '#',
+                isProtocolRelative = /^\/\/[^\/\s]/.test(link);
+            if (!isInternal && !isAnchor && !isProtocolRelative) {
+                link = 'http://' + link;
+            }
+            return link;
+        }
+        /**
+         * Inserts <a> tag with "href"
+         * @param {string} link - "href" value
+         */
+
+    }, {
+        key: 'insertLink',
+        value: function insertLink(link) {
+            /**
+             * Edit all link, not selected part
+             */
+            var anchorTag = this.selection.findParentTag('A');
+            if (anchorTag) {
+                this.selection.expandToTag(anchorTag);
+            }
+            document.execCommand(this.commandLink, false, link);
+        }
+        /**
+         * Removes <a> tag
+         */
+
+    }, {
+        key: 'unlink',
+        value: function unlink() {
+            document.execCommand(this.commandUnlink);
+        }
+    }]);
+
+    return LinkInlineTool;
+}();
+
+LinkInlineTool.displayName = 'LinkInlineTool';
+exports.default = LinkInlineTool;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! dom */ "./src/components/dom.js"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
 
@@ -4425,6 +4743,10 @@ var _inlineToolBold = __webpack_require__(/*! ../inline-tools/inline-tool-bold *
 
 var _inlineToolBold2 = _interopRequireDefault(_inlineToolBold);
 
+var _inlineToolLink = __webpack_require__(/*! ../inline-tools/inline-tool-link */ "./src/components/inline-tools/inline-tool-link.ts");
+
+var _inlineToolLink2 = _interopRequireDefault(_inlineToolLink);
+
 var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
 
 var _selection2 = _interopRequireDefault(_selection);
@@ -4454,14 +4776,22 @@ var InlineToolbar = function (_Module) {
         var _this = _possibleConstructorReturn(this, (InlineToolbar.__proto__ || Object.getPrototypeOf(InlineToolbar)).call(this, { config: config }));
 
         _this.nodes = {
-            wrapper: null
+            wrapper: null,
+            buttons: null,
+            /**
+             * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
+             * For example, input for the 'link' tool or textarea for the 'comment' tool
+             */
+            actions: null
         };
         /**
          * CSS styles
          */
         _this.CSS = {
             inlineToolbar: 'ce-inline-toolbar',
-            inlineToolbarShowed: 'ce-inline-toolbar--showed'
+            inlineToolbarShowed: 'ce-inline-toolbar--showed',
+            buttonsWrapper: 'ce-inline-toolbar__buttons',
+            actionsWrapper: 'ce-inline-toolbar__actions'
         };
         /**
          * Margin above/below the Toolbar
@@ -4471,10 +4801,18 @@ var InlineToolbar = function (_Module) {
          * Available Tools classes
          */
         _this.tools = [];
+        var api = {
+            close: function close() {
+                return _this.close();
+            },
+            open: function open() {
+                return _this.open();
+            }
+        };
         /**
          * @todo Merge internal tools with external
          */
-        _this.tools = [new _inlineToolBold2.default()];
+        _this.tools = [new _inlineToolBold2.default(), new _inlineToolLink2.default(api)];
         return _this;
     }
     /**
@@ -4486,9 +4824,12 @@ var InlineToolbar = function (_Module) {
         key: 'make',
         value: function make() {
             this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
+            this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
+            this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
             /**
              * Append Inline Toolbar to the Editor
              */
+            $.append(this.nodes.wrapper, [this.nodes.buttons, this.nodes.actions]);
             $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
             /**
              * Append Inline Toolbar Tools
@@ -4626,7 +4967,11 @@ var InlineToolbar = function (_Module) {
             var _this3 = this;
 
             var button = tool.render();
-            this.nodes.wrapper.appendChild(button);
+            this.nodes.buttons.appendChild(button);
+            if (typeof tool.renderActions === 'function') {
+                var actions = tool.renderActions();
+                this.nodes.actions.appendChild(actions);
+            }
             this.Editor.Listeners.on(button, 'click', function () {
                 _this3.toolClicked(tool);
             });
@@ -4640,9 +4985,6 @@ var InlineToolbar = function (_Module) {
         key: 'toolClicked',
         value: function toolClicked(tool) {
             var range = _selection2.default.range;
-            if (!range) {
-                return;
-            }
             tool.surround(range);
             this.checkToolsState();
         }
@@ -6241,6 +6583,12 @@ var Selection = function () {
 
     this.instance = null;
     this.selection = null;
+
+    /**
+     * This property can stores Selection's range for restoring later
+     * @type {Range|null}
+     */
+    this.savedSelectionRange = null;
   }
 
   /**
@@ -6250,7 +6598,83 @@ var Selection = function () {
    */
 
 
-  _createClass(Selection, null, [{
+  _createClass(Selection, [{
+    key: 'save',
+
+
+    /**
+     * Save Selection's range
+     */
+    value: function save() {
+      this.savedSelectionRange = Selection.range;
+    }
+
+    /**
+     * Restore saved Selection's range
+     */
+
+  }, {
+    key: 'restore',
+    value: function restore() {
+      if (!this.savedSelectionRange) {
+        return;
+      }
+
+      var sel = window.getSelection();
+
+      sel.removeAllRanges();
+      sel.addRange(this.savedSelectionRange);
+    }
+
+    /**
+     * Looks ahead to find passed tag from current selection
+     * @param  {String} tagName    - tag to found
+     * @param  {String} className  - tag's class name
+     * @return {Node|null}
+     */
+
+  }, {
+    key: 'findParentTag',
+    value: function findParentTag(tagName, className) {
+      var selection = window.getSelection(),
+          parentTag = selection.anchorNode.parentNode,
+          searchDepth = 10; // count of tags that can be included in <a>. For better performance.
+
+      while (searchDepth > 0 && parentTag.parentNode) {
+        if (parentTag.tagName === tagName) {
+          /**
+           * Optional additional check for class-name matching
+           */
+          if (className && !parentTag.classList.contains(className)) {
+            return null;
+          }
+
+          return parentTag;
+        }
+
+        parentTag = parentTag.parentNode;
+        searchDepth--;
+      }
+      return null;
+    }
+
+    /**
+     * Expands selection range to the passed parent node
+     * @param {Element} node
+     */
+
+  }, {
+    key: 'expandToTag',
+    value: function expandToTag(node) {
+      var selection = window.getSelection();
+
+      selection.removeAllRanges();
+      var range = document.createRange();
+
+      range.selectNodeContents(node);
+      selection.addRange(range);
+    }
+  }], [{
     key: 'get',
     value: function get() {
       return window.getSelection();
@@ -6307,7 +6731,7 @@ var Selection = function () {
     get: function get() {
       var selection = window.getSelection();
 
-      return selection ? selection.getRangeAt(0) : null;
+      return selection && selection.rangeCount ? selection.getRangeAt(0) : null;
     }
 
     /**
@@ -6640,7 +7064,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ":root {\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /** Blue icons */\n  --color-active-icon: #388AE5;\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbar-buttons-size: 34px\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n  position: relative;\n  border: 1px solid #ccc;\n  padding: 2px;\n  box-sizing: border-box;\n}\n.codex-editor .hide {\n    display: none;\n  }\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    margin-top: -2px;\n    max-height: 100%;\n  }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    left: calc(-var(--toolbar-buttons-size) - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    width: 34px;\n    width: var(--toolbar-buttons-size);\n    height: 34px;\n    height: var(--toolbar-buttons-size);\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n      content: '+';\n      font-size: 26px;\n      display: block;\n      margin-top: -2px;\n      margin-right: -2px;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    border: 1px dotted #ccc;\n    padding: 2px;\n  }\n.ce-toolbar__actions-buttons {\n      border: 1px dotted #ccc;\n      padding: 2px;\n      text-align: right;\n      margin-bottom: 2px;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    border: 1px dotted #ccc\n  }\n.ce-toolbar__settings-btn::before {\n      content: 'STN';\n      font-size: 10px;\n      opacity: .4;\n    }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        background: var(--bg-light);\n        width: 34px;\n        width: var(--toolbar-buttons-size);\n        height: 34px;\n        height: var(--toolbar-buttons-size);\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px;\n        line-height: var(--toolbar-buttons-size)\n    }\n.ce-toolbox__button::before {\n            content: attr(title);\n            font-size: 22px;\n            font-weight: 500;\n            letter-spacing: 1em;\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                    font-feature-settings: \"smcp\", \"c2sc\";\n            font-variant-caps: all-small-caps;\n            padding-left: 11.5px;\n            margin-top: -1px;\n            display: inline-block;\n        }\n.ce-inline-toolbar {\n  position: absolute;\n  background: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background: #fff;\n  z-index: -1;\n      }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-tool {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.ce-inline-tool:hover {\n    background: #eff2f5;\n    background: var(--bg-light);\n  }\n.ce-inline-tool--active {\n    color: #388AE5;\n    color: var(--color-active-icon);\n  }\n.ce-inline-tool--bold {\n  }\n.ce-settings {\n  border: 1px dotted #ccc;\n  padding: 2px;\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone {\n    border: 1px dotted #ccc;\n    padding: 2px;\n    margin-bottom: 2px\n  }\n.ce-settings__plugin-zone::before {\n      content: 'PLUGIN SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__default-zone {\n    border: 1px dotted #ccc;\n    padding: 2px\n  }\n.ce-settings__default-zone::before {\n      /*content: 'DEFAULT SETTINGS';*/\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__button {\n    padding: 10px 15px;\n    color: #707684;\n    color: var(--grayText)\n  }\n.ce-settings__button:hover {\n      background: #eff2f5;\n      background: var(--bg-light);\n    }\n.ce-settings-move-up:hover {\n    cursor: pointer;\n  }\n.ce-settings-move-up::before {\n    display: inline-block;\n    content: 'up';\n  }\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0\n}\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n", ""]);
+exports.push([module.i, ":root {\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /** Blue icons */\n  --color-active-icon: #388AE5;\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbar-buttons-size: 34px\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n  position: relative;\n  border: 1px solid #ccc;\n  padding: 2px;\n  box-sizing: border-box;\n\n\n}\n.codex-editor .hide {\n    display: none;\n  }\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    max-height: 100%;\n  }\n::-moz-selection{\n  background-color: rgba(61,166,239,0.63);\n}\n::selection{\n  background-color: rgba(61,166,239,0.63);\n}\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(34px - 10px);\n    left: calc(var(--toolbar-buttons-size) - 10px);\n    display: inline-block;\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    width: 34px;\n    width: var(--toolbar-buttons-size);\n    height: 34px;\n    height: var(--toolbar-buttons-size);\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%\n  }\n.ce-toolbar__plus::after {\n      content: '+';\n      font-size: 26px;\n      display: block;\n      margin-top: -2px;\n      margin-right: -2px;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    border: 1px dotted #ccc;\n    padding: 2px;\n  }\n.ce-toolbar__actions-buttons {\n      border: 1px dotted #ccc;\n      padding: 2px;\n      text-align: right;\n      margin-bottom: 2px;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    border: 1px dotted #ccc\n  }\n.ce-toolbar__settings-btn::before {\n      content: 'STN';\n      font-size: 10px;\n      opacity: .4;\n    }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        background: var(--bg-light);\n        width: 34px;\n        width: var(--toolbar-buttons-size);\n        height: 34px;\n        height: var(--toolbar-buttons-size);\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px;\n        line-height: var(--toolbar-buttons-size)\n    }\n.ce-toolbox__button::before {\n            content: attr(title);\n            font-size: 22px;\n            font-weight: 500;\n            letter-spacing: 1em;\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                    font-feature-settings: \"smcp\", \"c2sc\";\n            font-variant-caps: all-small-caps;\n            padding-left: 11.5px;\n            margin-top: -1px;\n            display: inline-block;\n        }\n.ce-inline-toolbar {\n  position: absolute;\n  background: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background: #fff;\n  z-index: -1;\n      }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-tool {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.ce-inline-tool:hover {\n    background: #eff2f5;\n    background: var(--bg-light);\n  }\n.ce-inline-tool--active {\n    color: #388AE5;\n    color: var(--color-active-icon);\n  }\n.ce-inline-tool--link .icon {\n      margin-top: -2px;\n    }\n.ce-inline-tool--link .icon--unlink {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--link {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--unlink {\n      display: inline-block;\n    }\n.ce-inline-tool-input {\n    background: #eff2f5;\n    background: var(--bg-light);\n    outline: none;\n    border: 0;\n    border-radius: 3px;\n    font-size: 13px;\n    padding: 8px;\n    width: 100%;\n    box-sizing: border-box;\n    display: none\n  }\n.ce-inline-tool-input::-webkit-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input:-ms-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input::placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input--showed {\n      display: block;\n    }\n.ce-settings {\n  border: 1px dotted #ccc;\n  padding: 2px;\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone {\n    border: 1px dotted #ccc;\n    padding: 2px;\n    margin-bottom: 2px\n  }\n.ce-settings__plugin-zone::before {\n      content: 'PLUGIN SETTINGS';\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__default-zone {\n    border: 1px dotted #ccc;\n    padding: 2px\n  }\n.ce-settings__default-zone::before {\n      /*content: 'DEFAULT SETTINGS';*/\n      opacity: .4;\n      font-size: 12px;\n    }\n.ce-settings__button {\n    padding: 10px 15px;\n    color: #707684;\n    color: var(--grayText)\n  }\n.ce-settings__button:hover {\n      background: #eff2f5;\n      background: var(--bg-light);\n    }\n.ce-settings-move-up:hover {\n    cursor: pointer;\n  }\n.ce-settings-move-up::before {\n    display: inline-block;\n    content: 'up';\n  }\n.ce-block {\n  border: 1px dotted #ccc;\n  margin: 2px 0\n}\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n", ""]);
 
 // exports
 
