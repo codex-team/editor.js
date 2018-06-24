@@ -18,6 +18,8 @@ export interface IAPI {
 
 #### IBlocksAPI
 
+Methods that working with Blocks
+
 ```moveDown()``` - method moves down the current block.
 
 ```moveUp()``` - method moves up the current block.
@@ -39,4 +41,12 @@ let customConfig = {
 }
 this.api.sanitizer.clean(taintString, customConfig);
 ```
+
+### ToolbarAPI
+
+Methods that working with Toolbar
+
+```open()``` - Opens toolbar
+
+```close()``` - Closes toolbar, toolbox and blockSettings if they are opened
 

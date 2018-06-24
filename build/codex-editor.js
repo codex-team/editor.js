@@ -473,8 +473,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["api-blocks.ts","api-sanitizer.ts","api.ts","blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-sanitizer.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+var modules = ["api-blocks.ts","api-sanitizer.ts","api-toolbar.ts","api.ts","blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
 });
 
 /**
@@ -978,7 +978,12 @@ var DeleteTune = function () {
     }, {
         key: 'handleClick',
         value: function handleClick(event) {
-            this.api.blocks.delete();
+            if (!this.needConfirmation) {
+                this.needConfirmation = true;
+                console.log("hey");
+            } else {
+                this.api.blocks.delete();
+            }
         }
     }]);
 
@@ -1863,16 +1868,17 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/modules sync [^_](api-blocks.ts|api-sanitizer.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
-/*!*************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-sanitizer.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
-  \*************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./src/components/modules sync [^_](api-blocks.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
 	"./api-blocks.ts": "./src/components/modules/api-blocks.ts",
 	"./api-sanitizer.ts": "./src/components/modules/api-sanitizer.ts",
+	"./api-toolbar.ts": "./src/components/modules/api-toolbar.ts",
 	"./api.ts": "./src/components/modules/api.ts",
 	"./blockManager.js": "./src/components/modules/blockManager.js",
 	"./caret.js": "./src/components/modules/caret.js",
@@ -1909,7 +1915,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-sanitizer.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
 
 /***/ }),
 
@@ -2093,6 +2099,96 @@ module.exports = exports["default"];
 
 /***/ }),
 
+/***/ "./src/components/modules/api-toolbar.ts":
+/*!***********************************************!*\
+  !*** ./src/components/modules/api-toolbar.ts ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * @class ToolbarsApi
+ * provides with methods working with Toolbar
+ */
+var ToolbarsAPI = function (_Module) {
+    _inherits(ToolbarsAPI, _Module);
+
+    /**
+     * Save Editor config. API provides passed configuration to the Blocks
+     * @param {EditorsConfig} config
+     */
+    function ToolbarsAPI(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, ToolbarsAPI);
+
+        return _possibleConstructorReturn(this, (ToolbarsAPI.__proto__ || Object.getPrototypeOf(ToolbarsAPI)).call(this, { config: config }));
+    }
+    /**
+     * Available methods
+     * @return {IBlocksAPI}
+     */
+
+
+    _createClass(ToolbarsAPI, [{
+        key: "open",
+
+        /**
+         * Open toolbar
+         */
+        value: function open() {
+            this.Editor.Toolbar.open();
+        }
+        /**
+         * Close toolbar and all included elements
+         */
+
+    }, {
+        key: "close",
+        value: function close() {
+            this.Editor.Toolbar.close();
+        }
+    }, {
+        key: "methods",
+        get: function get() {
+            var _this2 = this;
+
+            return {
+                close: function close() {
+                    return _this2.close();
+                },
+                open: function open() {
+                    return _this2.open();
+                }
+            };
+        }
+    }]);
+
+    return ToolbarsAPI;
+}(Module);
+
+ToolbarsAPI.displayName = "ToolbarsAPI";
+exports.default = ToolbarsAPI;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
+
+/***/ }),
+
 /***/ "./src/components/modules/api.ts":
 /*!***************************************!*\
   !*** ./src/components/modules/api.ts ***!
@@ -2140,7 +2236,7 @@ var API = function (_Module) {
                 blocks: this.Editor.BlocksAPI.methods,
                 caret: {},
                 sanitizer: this.Editor.SanitizerAPI.methods,
-                toolbar: {}
+                toolbar: this.Editor.ToolbarsAPI.methods
             };
         }
     }]);
@@ -4488,6 +4584,10 @@ var BlockSettings = function (_Module) {
     key: 'close',
     value: function close() {
       this.nodes.wrapper.classList.remove(BlockSettings.CSS.wrapperOpened);
+
+      /** Clear settings */
+      this.nodes.toolSettings.innerHTML = '';
+      this.nodes.defaultSettings.innerHTML = '';
     }
   }, {
     key: 'opened',
@@ -5221,6 +5321,7 @@ var Toolbar = function (_Module) {
     value: function move() {
       /** Close Toolbox when we move toolbar */
       this.Editor.Toolbox.close();
+      this.Editor.BlockSettings.close();
 
       var currentNode = this.Editor.BlockManager.currentNode;
 

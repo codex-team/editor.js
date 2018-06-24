@@ -98,5 +98,9 @@ export default class BlockSettings extends Module {
    */
   close() {
     this.nodes.wrapper.classList.remove(BlockSettings.CSS.wrapperOpened);
+
+    /** Clear settings */
+    this.nodes.toolSettings.innerHTML = '';
+    this.nodes.defaultSettings.innerHTML = '';
   }
 }

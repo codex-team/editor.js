@@ -29,7 +29,7 @@ export default class API extends Module {
       blocks: this.Editor.BlocksAPI.methods,
       caret: {},
       sanitizer: this.Editor.SanitizerAPI.methods,
-      toolbar: {},
+      toolbar: this.Editor.ToolbarsAPI.methods,
     };
   }
 }

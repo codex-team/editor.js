@@ -158,6 +158,7 @@ export default class Toolbar extends Module {
   move() {
     /** Close Toolbox when we move toolbar */
     this.Editor.Toolbox.close();
+    this.Editor.BlockSettings.close();
 
     let currentNode = this.Editor.BlockManager.currentNode;
 

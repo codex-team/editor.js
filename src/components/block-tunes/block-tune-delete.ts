@@ -13,7 +13,7 @@ export default class DeleteTune implements IBlockTune {
 
   /**
    * Property that contains CodeX Editor API methods
-   * @see {api.md}
+   * @see {docs/api.md}
    */
   private readonly api: any;
 
@@ -24,6 +24,11 @@ export default class DeleteTune implements IBlockTune {
   private CSS = {
     wrapper: 'ass',
   };
+
+  /**
+   * Delete confirmation
+   */
+  private needConfirmation: boolean;
 
   /**
    * MoveUpTune constructor
@@ -49,6 +54,12 @@ export default class DeleteTune implements IBlockTune {
    * @param {MouseEvent} event
    */
   public handleClick(event: MouseEvent): void {
-    this.api.blocks.delete();
+    if (!this.needConfirmation) {
+      this.needConfirmation = true;
+      console.log("hey");
+    } else {
+      this.api.blocks.delete();
+    }
+
   }
 }
