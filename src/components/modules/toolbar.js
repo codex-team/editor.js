@@ -160,8 +160,6 @@ export default class Toolbar extends Module {
     this.Editor.Toolbox.close();
     this.Editor.BlockSettings.close();
 
-    this.Editor.Events.emit('block-settings-closed');
-
     let currentNode = this.Editor.BlockManager.currentNode;
 
     /**

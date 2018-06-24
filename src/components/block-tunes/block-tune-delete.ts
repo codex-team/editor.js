@@ -30,7 +30,17 @@ export default class DeleteTune implements IBlockTune {
    */
   private needConfirmation: boolean;
 
-  private method: () => void;
+  /**
+   * set false confirmation state
+   */
+  private resetConfirmation: () => void;
+
+  /**
+   * change tune state
+   */
+  private setConfirmation(state): void {
+    this.needConfirmation = state;
+  }
 
   /**
    * MoveUpTune constructor
@@ -40,15 +50,13 @@ export default class DeleteTune implements IBlockTune {
   public constructor({api}) {
     this.api = api;
 
-    this.method = () => {
-      console.log('hey');
+    this.resetConfirmation = () => {
+      this.setConfirmation(false);
     };
-
-    this.api.events.on('block-settings-closed', this.method);
   }
 
   /**
-   * Create "MoveUp" button and add click event listener
+   * Create "Delete" button and add click event listener
    * @returns [Element}
    */
   public render() {
@@ -62,12 +70,29 @@ export default class DeleteTune implements IBlockTune {
    * @param {MouseEvent} event
    */
   public handleClick(event: MouseEvent): void {
+
+    /**
+     * if block is not waiting the confirmation, subscribe on block-settings-closing event to reset
+     * otherwise delete block
+     */
     if (!this.needConfirmation) {
-      this.needConfirmation = true;
-      this.api.events.off('block-settings-closed', this.method);
+      this.setConfirmation(true);
+
+      /**
+       * Subscribe on event.
+       * When toolbar block settings is closed but block deletion is not confirmed,
+       * then reset confirmation state
+       */
+      this.api.events.on('block-settings-closed', this.resetConfirmation);
+
     } else {
+
+      /**
+       * Unsubscribe from block-settings closing event
+       */
+      this.api.events.off('block-settings-closed', this.resetConfirmation);
+
       this.api.blocks.delete();
     }
-
   }
 }

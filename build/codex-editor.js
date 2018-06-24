@@ -940,6 +940,8 @@ var DeleteTune = function () {
      * @param {Object} api
      */
     function DeleteTune(_ref) {
+        var _this = this;
+
         var api = _ref.api;
 
         _classCallCheck(this, DeleteTune);
@@ -952,25 +954,33 @@ var DeleteTune = function () {
             wrapper: 'ass'
         };
         this.api = api;
-        this.method = function () {
-            console.log('hey');
+        this.resetConfirmation = function () {
+            _this.setConfirmation(false);
         };
-        this.api.events.on('block-settings-closed', this.method);
     }
     /**
-     * Create "MoveUp" button and add click event listener
-     * @returns [Element}
+     * change tune state
      */
 
 
     _createClass(DeleteTune, [{
+        key: 'setConfirmation',
+        value: function setConfirmation(state) {
+            this.needConfirmation = state;
+        }
+        /**
+         * Create "Delete" button and add click event listener
+         * @returns [Element}
+         */
+
+    }, {
         key: 'render',
         value: function render() {
-            var _this = this;
+            var _this2 = this;
 
             var deleteButton = $.make('div', ['ce-settings-delete'], {});
             deleteButton.addEventListener('click', function (event) {
-                return _this.handleClick(event);
+                return _this2.handleClick(event);
             }, false);
             return deleteButton;
         }
@@ -982,10 +992,23 @@ var DeleteTune = function () {
     }, {
         key: 'handleClick',
         value: function handleClick(event) {
+            /**
+             * if block is not waiting the confirmation, subscribe on block-settings-closing event to reset
+             * otherwise delete block
+             */
             if (!this.needConfirmation) {
-                this.needConfirmation = true;
-                this.api.events.off('block-settings-closed', this.method);
+                this.setConfirmation(true);
+                /**
+                 * Subscribe on event.
+                 * When toolbar block settings is closed but block deletion is not confirmed,
+                 * then reset confirmation state
+                 */
+                this.api.events.on('block-settings-closed', this.resetConfirmation);
             } else {
+                /**
+                 * Unsubscribe from block-settings closing event
+                 */
+                this.api.events.off('block-settings-closed', this.resetConfirmation);
                 this.api.blocks.delete();
             }
         }
@@ -2165,6 +2188,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * @class API
+ * Provides CodeX Editor Sanitizer that allows developers to clean their HTML
  */
 var SanitizerAPI = function (_Module) {
     _inherits(SanitizerAPI, _Module);
@@ -3437,6 +3461,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * Has two important methods:
  *    - {Function} on - appends subscriber to the event. If event doesn't exist - creates new one
  *    - {Function} emit - fires all subscribers with data
+ *    - {Function off - unsubsribes callback
  *
  * @version 1.0.0
  *
@@ -3494,14 +3519,14 @@ var Events = function (_Module) {
       }
 
       this.subscribers[eventName].reduce(function (previousData, currentHandler) {
-        var newData = currentHandler(previousData);
+        var newData = currentHandler.call(currentHandler, previousData);
 
         return newData ? newData : previousData;
       }, data);
     }
 
     /**
-     * Unsubsribe callback
+     * Unsubsribe callback from event
      *
      * @param eventName
      * @param callback
@@ -4629,6 +4654,10 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var BlockSettings = function (_Module) {
   _inherits(BlockSettings, _Module);
 
+  /**
+   * @constructor
+   * @param config
+   */
   function BlockSettings(_ref) {
     var config = _ref.config;
 
@@ -4645,8 +4674,8 @@ var BlockSettings = function (_Module) {
   }
 
   /**
-   * Block Settings CSS
-   * @return {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
+   * Module Events
+   * @return {{opened: string, closed: string}}
    */
 
 
@@ -4716,6 +4745,9 @@ var BlockSettings = function (_Module) {
        * Add default settings that presents for all Blocks
        */
       this.addDefaultSettings();
+
+      /** Tell to subscribers that block settings is opened */
+      this.Editor.Events.emit(this.events.opened);
     }
 
     /**
@@ -4730,7 +4762,24 @@ var BlockSettings = function (_Module) {
       /** Clear settings */
       this.nodes.toolSettings.innerHTML = '';
       this.nodes.defaultSettings.innerHTML = '';
+
+      /** Tell to subscribers that block settings is closed */
+      this.Editor.Events.emit(this.events.closed);
     }
+  }, {
+    key: 'events',
+    get: function get() {
+      return {
+        opened: 'block-settings-opened',
+        closed: 'block-settings-closed'
+      };
+    }
+
+    /**
+     * Block Settings CSS
+     * @return {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
+     */
+
   }, {
     key: 'opened',
     get: function get() {
@@ -5464,8 +5513,6 @@ var Toolbar = function (_Module) {
       /** Close Toolbox when we move toolbar */
       this.Editor.Toolbox.close();
       this.Editor.BlockSettings.close();
-
-      this.Editor.Events.emit('block-settings-closed');
 
       var currentNode = this.Editor.BlockManager.currentNode;
 

@@ -4,6 +4,7 @@
  * Has two important methods:
  *    - {Function} on - appends subscriber to the event. If event doesn't exist - creates new one
  *    - {Function} emit - fires all subscribers with data
+ *    - {Function off - unsubsribes callback
  *
  * @version 1.0.0
  *
@@ -46,14 +47,14 @@ export default class Events extends Module {
     }
 
     this.subscribers[eventName].reduce(function (previousData, currentHandler) {
-      let newData = currentHandler(previousData);
+      let newData = currentHandler.call(currentHandler, previousData);
 
       return newData ? newData : previousData;
     }, data);
   }
 
   /**
-   * Unsubsribe callback
+   * Unsubsribe callback from event
    *
    * @param eventName
    * @param callback
