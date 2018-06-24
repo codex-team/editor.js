@@ -47,7 +47,7 @@ export default class Events extends Module {
     }
 
     this.subscribers[eventName].reduce(function (previousData, currentHandler) {
-      let newData = currentHandler.call(currentHandler, previousData);
+      let newData = currentHandler(previousData);
 
       return newData ? newData : previousData;
     }, data);

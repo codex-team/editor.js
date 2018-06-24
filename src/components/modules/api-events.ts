@@ -3,7 +3,7 @@ declare var Module: any;
 import { IEventsAPI } from '../interfaces/api';
 
 /**
- * @class ToolbarsApi
+ * @class EventsAPI
  * provides with methods working with Toolbar
  */
 export default class EventsAPI extends Module implements IEventsAPI {
@@ -18,7 +18,7 @@ export default class EventsAPI extends Module implements IEventsAPI {
 
   /**
    * Available methods
-   * @return {IBlocksAPI}
+   * @return {IEventsAPI}
    */
   get methods(): IEventsAPI {
     return {
@@ -39,7 +39,6 @@ export default class EventsAPI extends Module implements IEventsAPI {
 
   /**
    * Emit event with data
-   *
    * @param {String} eventName
    * @param {Object} data
    */
@@ -49,7 +48,6 @@ export default class EventsAPI extends Module implements IEventsAPI {
 
   /**
    * Unsubscribe from Event
-   *
    * @param {String} eventName
    * @param {Function} callback
    */

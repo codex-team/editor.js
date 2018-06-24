@@ -1,6 +1,6 @@
 # CodeX Editor Events Module
 
-Module allows Developers subscribe on events or trigger callbacks
+Module allows Developers to subscribe on events or trigger own events
 
 ## Methods
 

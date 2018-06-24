@@ -3,7 +3,7 @@ declare var Module: any;
 import { IToolbarAPI } from '../interfaces/api';
 
 /**
- * @class ToolbarsApi
+ * @class ToolbarsAPI
  * provides with methods working with Toolbar
  */
 export default class ToolbarsAPI extends Module implements IToolbarAPI {
@@ -18,7 +18,7 @@ export default class ToolbarsAPI extends Module implements IToolbarAPI {
 
   /**
    * Available methods
-   * @return {IBlocksAPI}
+   * @return {IToolbarAPI}
    */
   get methods(): IToolbarAPI {
     return {

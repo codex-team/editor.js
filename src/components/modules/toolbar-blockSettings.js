@@ -12,7 +12,6 @@
 export default class BlockSettings extends Module {
   /**
    * @constructor
-   * @param config
    */
   constructor({config}) {
     super({config});

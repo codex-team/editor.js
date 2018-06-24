@@ -935,7 +935,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var DeleteTune = function () {
     /**
-     * MoveUpTune constructor
+     * DeleteTune constructor
      *
      * @param {Object} api
      */
@@ -985,7 +985,7 @@ var DeleteTune = function () {
             return deleteButton;
         }
         /**
-         * Move current block up
+         * Delete block conditions passed
          * @param {MouseEvent} event
          */
 
@@ -2019,11 +2019,9 @@ var BlocksAPI = function (_Module) {
     }, {
         key: 'delete',
         value: function _delete(blockIndex) {
-            if (!blockIndex) {
-                this.Editor.BlockManager.removeBlock();
-                this.Editor.Toolbar.close();
-                this.Editor.BlockManager.navigatePrevious(true);
-            }
+            this.Editor.BlockManager.removeBlock(blockIndex);
+            this.Editor.Toolbar.close();
+            this.Editor.BlockManager.navigatePrevious(true);
         }
     }, {
         key: 'methods',
@@ -2077,7 +2075,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
- * @class ToolbarsApi
+ * @class EventsAPI
  * provides with methods working with Toolbar
  */
 var EventsAPI = function (_Module) {
@@ -2096,7 +2094,7 @@ var EventsAPI = function (_Module) {
     }
     /**
      * Available methods
-     * @return {IBlocksAPI}
+     * @return {IEventsAPI}
      */
 
 
@@ -2113,7 +2111,6 @@ var EventsAPI = function (_Module) {
         }
         /**
          * Emit event with data
-         *
          * @param {String} eventName
          * @param {Object} data
          */
@@ -2125,7 +2122,6 @@ var EventsAPI = function (_Module) {
         }
         /**
          * Unsubscribe from Event
-         *
          * @param {String} eventName
          * @param {Function} callback
          */
@@ -2261,7 +2257,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 /**
- * @class ToolbarsApi
+ * @class ToolbarsAPI
  * provides with methods working with Toolbar
  */
 var ToolbarsAPI = function (_Module) {
@@ -2280,7 +2276,7 @@ var ToolbarsAPI = function (_Module) {
     }
     /**
      * Available methods
-     * @return {IBlocksAPI}
+     * @return {IToolbarAPI}
      */
 
 
@@ -3519,7 +3515,7 @@ var Events = function (_Module) {
       }
 
       this.subscribers[eventName].reduce(function (previousData, currentHandler) {
-        var newData = currentHandler.call(currentHandler, previousData);
+        var newData = currentHandler(previousData);
 
         return newData ? newData : previousData;
       }, data);
@@ -4656,7 +4652,6 @@ var BlockSettings = function (_Module) {
 
   /**
    * @constructor
-   * @param config
    */
   function BlockSettings(_ref) {
     var config = _ref.config;

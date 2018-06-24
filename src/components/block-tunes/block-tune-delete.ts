@@ -1,5 +1,5 @@
 /**
- * @class MoveUpTune
+ * @class DeleteTune
  * @classdesc Editor's default tune that moves up selected block
  *
  * @copyright <CodeX Team> 2018
@@ -31,19 +31,7 @@ export default class DeleteTune implements IBlockTune {
   private needConfirmation: boolean;
 
   /**
-   * set false confirmation state
-   */
-  private resetConfirmation: () => void;
-
-  /**
-   * change tune state
-   */
-  private setConfirmation(state): void {
-    this.needConfirmation = state;
-  }
-
-  /**
-   * MoveUpTune constructor
+   * DeleteTune constructor
    *
    * @param {Object} api
    */
@@ -56,6 +44,18 @@ export default class DeleteTune implements IBlockTune {
   }
 
   /**
+   * change tune state
+   */
+  private setConfirmation(state): void {
+    this.needConfirmation = state;
+  }
+
+  /**
+   * set false confirmation state
+   */
+  private resetConfirmation: () => void;
+
+  /**
    * Create "Delete" button and add click event listener
    * @returns [Element}
    */
@@ -66,7 +66,7 @@ export default class DeleteTune implements IBlockTune {
   }
 
   /**
-   * Move current block up
+   * Delete block conditions passed
    * @param {MouseEvent} event
    */
   public handleClick(event: MouseEvent): void {
