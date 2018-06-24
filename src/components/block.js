@@ -9,6 +9,7 @@
 
 /** Import default tunes */
 import MoveUpTune from './block-tunes/block-tune-move-up';
+import DeleteTune from './block-tunes/block-tune-delete';
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -176,7 +177,7 @@ export default class Block {
    * @return {IBlockTune[]}
    */
   makeTunes() {
-    let tunesList = [ MoveUpTune ];
+    let tunesList = [MoveUpTune, DeleteTune];
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
     return tunesList.map( (tune) => {
