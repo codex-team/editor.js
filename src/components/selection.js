@@ -161,6 +161,13 @@ export default class Selection {
   }
 
   /**
+   * Clears saved selection
+   */
+  clearSaved() {
+    this.savedSelectionRange = null;
+  }
+
+  /**
    * Looks ahead to find passed tag from current selection
    * @param  {String} tagName    - tag to found
    * @param  {String} className  - tag's class name
@@ -168,8 +175,14 @@ export default class Selection {
    */
   findParentTag(tagName, className) {
     let selection = window.getSelection(),
-      parentTag = selection.anchorNode.parentNode,
+      parentTag,
       searchDepth = 10; // count of tags that can be included in <a>. For better performance.
+
+    if (!selection || !selection.anchorNode) {
+      return null;
+    }
+
+    parentTag = selection.anchorNode.parentNode;
 
     while (searchDepth > 0 && parentTag.parentNode) {
       if (parentTag.tagName === tagName) {

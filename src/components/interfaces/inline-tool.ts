@@ -27,6 +27,11 @@ export default interface InlineTool {
   checkState(selection: Selection): boolean;
 
   /**
+   * Function called with Inline Toolbar closing
+   */
+  clear?(): void;
+
+  /**
    * Allow Tool to determine shortcut that will fire 'surround' method
    */
   shortcut?(): Shortcut;

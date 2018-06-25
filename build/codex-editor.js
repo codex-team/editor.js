@@ -2010,17 +2010,25 @@ var LinkInlineTool = function () {
         key: 'surround',
         value: function surround(range) {
             /**
-             * Save selection before change focus to the input
+             * Range will be null when user makes second click on the 'link icon' to close opened input
              */
-            this.selection.save();
-            var parentAnchor = this.selection.findParentTag('A');
-            if (parentAnchor) {
-                this.selection.expandToTag(parentAnchor);
-                this.unlink();
-                this.closeActions();
-                this.checkState();
-                this.inlineToolbar.close();
-                return;
+            if (range) {
+                /**
+                 * Save selection before change focus to the input
+                 */
+                this.selection.save();
+                var parentAnchor = this.selection.findParentTag('A');
+                /**
+                 * Unlink icon pressed
+                 */
+                if (parentAnchor) {
+                    this.selection.expandToTag(parentAnchor);
+                    this.unlink();
+                    this.closeActions();
+                    this.checkState();
+                    this.inlineToolbar.close();
+                    return;
+                }
             }
             this.toggleActions();
         }
@@ -2042,11 +2050,21 @@ var LinkInlineTool = function () {
                  */
                 var hrefAttr = anchorTag.getAttribute('href');
                 this.nodes.input.value = hrefAttr !== 'null' ? hrefAttr : '';
+                this.selection.save();
             } else {
                 this.nodes.button.classList.remove(this.CSS.buttonUnlink);
                 this.nodes.button.classList.remove(this.CSS.buttonActive);
             }
             return !!anchorTag;
+        }
+        /**
+         * Function called with Inline Toolbar closing
+         */
+
+    }, {
+        key: 'clear',
+        value: function clear() {
+            this.closeActions();
         }
     }, {
         key: 'toggleActions',
@@ -2054,7 +2072,7 @@ var LinkInlineTool = function () {
             if (!this.inputOpened) {
                 this.openActions(true);
             } else {
-                this.closeActions();
+                this.closeActions(false);
             }
         }
         /**
@@ -2070,16 +2088,25 @@ var LinkInlineTool = function () {
             if (needFocus) {
                 this.nodes.input.focus();
             }
+            this.inputOpened = true;
         }
         /**
          * Close input
+         * @param {boolean} clearSavedSelection — we don't need to clear saved selection
+         *                                        on toggle-clicks on the icon of opened Toolbar
          */
 
     }, {
         key: 'closeActions',
         value: function closeActions() {
+            var clearSavedSelection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
             this.nodes.input.classList.remove(this.CSS.inputShowed);
             this.nodes.input.value = '';
+            if (clearSavedSelection) {
+                this.selection.clearSaved();
+            }
+            this.inputOpened = false;
         }
         /**
          * Enter pressed on input
@@ -5278,6 +5305,11 @@ var InlineToolbar = function (_Module) {
         key: 'open',
         value: function open() {
             this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
+            this.tools.forEach(function (tool) {
+                if (typeof tool.clear === 'function') {
+                    tool.clear();
+                }
+            });
         }
         /**
          * Hides Inline Toolbar
@@ -5287,6 +5319,11 @@ var InlineToolbar = function (_Module) {
         key: 'close',
         value: function close() {
             this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
+            this.tools.forEach(function (tool) {
+                if (typeof tool.clear === 'function') {
+                    tool.clear();
+                }
+            });
         }
         /**
          * Need to show Inline Toolbar or not
@@ -5382,7 +5419,7 @@ var InlineToolbar = function (_Module) {
         key: 'checkToolsState',
         value: function checkToolsState() {
             this.tools.forEach(function (tool) {
-                tool.checkState(_selection2.default.get);
+                tool.checkState(_selection2.default.get());
             });
         }
     }, {
@@ -7022,6 +7059,16 @@ var Selection = function () {
     }
 
     /**
+     * Clears saved selection
+     */
+
+  }, {
+    key: 'clearSaved',
+    value: function clearSaved() {
+      this.savedSelectionRange = null;
+    }
+
+    /**
      * Looks ahead to find passed tag from current selection
      * @param  {String} tagName    - tag to found
      * @param  {String} className  - tag's class name
@@ -7032,8 +7079,14 @@ var Selection = function () {
     key: 'findParentTag',
     value: function findParentTag(tagName, className) {
       var selection = window.getSelection(),
-          parentTag = selection.anchorNode.parentNode,
+          parentTag = void 0,
           searchDepth = 10; // count of tags that can be included in <a>. For better performance.
+
+      if (!selection || !selection.anchorNode) {
+        return null;
+      }
+
+      parentTag = selection.anchorNode.parentNode;
 
       while (searchDepth > 0 && parentTag.parentNode) {
         if (parentTag.tagName === tagName) {

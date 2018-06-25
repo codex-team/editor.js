@@ -149,6 +149,12 @@ export default class InlineToolbar extends Module {
    */
   private open() {
     this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
+
+    this.tools.forEach( (tool) => {
+      if (typeof tool.clear === 'function') {
+        tool.clear();
+      }
+    });
   }
 
   /**
@@ -156,6 +162,12 @@ export default class InlineToolbar extends Module {
    */
   private close() {
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
+
+    this.tools.forEach( (tool) => {
+      if (typeof tool.clear === 'function') {
+        tool.clear();
+      }
+    });
   }
 
   /**
@@ -250,7 +262,7 @@ export default class InlineToolbar extends Module {
    */
   private checkToolsState(): void {
     this.tools.forEach( (tool) => {
-      tool.checkState(Selection.get);
+      tool.checkState(Selection.get());
     });
   }
 }

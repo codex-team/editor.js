@@ -99,21 +99,27 @@ export default class LinkInlineTool implements InlineTool {
    * @param {Range} range
    */
   public surround(range: Range): void {
-
     /**
-     * Save selection before change focus to the input
+     * Range will be null when user makes second click on the 'link icon' to close opened input
      */
-    this.selection.save();
+    if (range) {
+      /**
+       * Save selection before change focus to the input
+       */
+      this.selection.save();
+      const parentAnchor = this.selection.findParentTag('A');
 
-    const parentAnchor = this.selection.findParentTag('A');
-
-    if (parentAnchor) {
-      this.selection.expandToTag(parentAnchor);
-      this.unlink();
-      this.closeActions();
-      this.checkState();
-      this.inlineToolbar.close();
-      return;
+      /**
+       * Unlink icon pressed
+       */
+      if (parentAnchor) {
+        this.selection.expandToTag(parentAnchor);
+        this.unlink();
+        this.closeActions();
+        this.checkState();
+        this.inlineToolbar.close();
+        return;
+      }
     }
 
     this.toggleActions();
@@ -136,6 +142,8 @@ export default class LinkInlineTool implements InlineTool {
        */
       const hrefAttr = anchorTag.getAttribute('href');
       this.nodes.input.value = hrefAttr !== 'null' ? hrefAttr : '';
+
+      this.selection.save();
     } else {
       this.nodes.button.classList.remove(this.CSS.buttonUnlink);
       this.nodes.button.classList.remove(this.CSS.buttonActive);
@@ -144,37 +152,51 @@ export default class LinkInlineTool implements InlineTool {
     return !!anchorTag;
   }
 
-  private toggleActions() {
+  /**
+   * Function called with Inline Toolbar closing
+   */
+  public clear(): void {
+    this.closeActions();
+  }
+
+  private toggleActions(): void {
     if (!this.inputOpened) {
       this.openActions(true);
     } else {
-      this.closeActions();
+      this.closeActions(false);
     }
   }
 
   /**
    * @param {boolean} needFocus - on link creation we need to focus input. On editing - nope.
    */
-  private openActions(needFocus: boolean = false) {
+  private openActions(needFocus: boolean = false): void {
     this.nodes.input.classList.add(this.CSS.inputShowed);
     if (needFocus) {
       this.nodes.input.focus();
     }
+    this.inputOpened = true;
   }
 
   /**
    * Close input
+   * @param {boolean} clearSavedSelection — we don't need to clear saved selection
+   *                                        on toggle-clicks on the icon of opened Toolbar
    */
-  private closeActions() {
+  private closeActions(clearSavedSelection: boolean = true): void {
     this.nodes.input.classList.remove(this.CSS.inputShowed);
     this.nodes.input.value = '';
+    if (clearSavedSelection) {
+      this.selection.clearSaved();
+    }
+    this.inputOpened = false;
   }
 
   /**
    * Enter pressed on input
    * @param {KeyboardEvent} event
    */
-  private enterPressed(event: KeyboardEvent) {
+  private enterPressed(event: KeyboardEvent): void {
     let value = this.nodes.input.value || '';
 
     if (!value.trim()) {

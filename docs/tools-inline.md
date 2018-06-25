@@ -11,6 +11,11 @@ Inline Tool should implement next methods
 - `surround()` — works with selected range
 - `checkState()` — get Tool's activated state by selected range
 
+And some optional methods:
+- `renderActions()` — create additional element below the buttons
+- `clear()` — clear Tool's stuff on opening/closing of Inline Toolbar
+- `shortcut()` — shortcut that handles Tool
+
 ### render()
 
 Method that returns button to append at the Inline Toolbar
@@ -55,3 +60,32 @@ selection | Selection | current Selection |
 type | description | 
 -- | -- |
 `Boolean` | `true` if Tool is active, otherwise `false` |
+
+### renderActions()
+
+Optional method that returns additional Element with actions. 
+For example, input for the 'link' tool or textarea for the 'comment' tool. 
+It will be places below the buttons list at Inline Toolbar.
+
+#### Parameters
+
+Method does not accept any parameters
+
+#### Return value
+
+type | description | 
+-- | -- |
+`HTMLElement` | element that will be added to the Inline Toolbar |
+
+### clear()
+
+Optional method that will be called on opening/closing of Inline Toolbar. 
+Can contain logic for clearing Tool's stuff, such as inputs, states and other.
+
+#### Parameters
+
+Method does not accept any parameters
+
+#### Return value
+
+Method should not return a value. 
