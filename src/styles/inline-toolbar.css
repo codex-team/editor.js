@@ -29,6 +29,43 @@
     color: var(--color-active-icon);
   }
 
-  &--bold {
+  &--link {
+    .icon {
+      margin-top: -2px;
+    }
+
+    .icon--unlink {
+      display: none;
+    }
+  }
+
+  &--unlink {
+    .icon--link {
+      display: none;
+    }
+    .icon--unlink {
+      display: inline-block;
+    }
+  }
+
+  &-input {
+    background: var(--bg-light);
+    outline: none;
+    border: 0;
+    border-radius: 3px;
+    margin: 6px 0 0;
+    font-size: 13px;
+    padding: 8px;
+    width: 100%;
+    box-sizing: border-box;
+    display: none;
+
+    &::placeholder {
+      color: var(--grayText);
+    }
+
+    &--showed {
+      display: block;
+    }
   }
 }

@@ -9,6 +9,12 @@ export default class Selection {
   constructor() {
     this.instance = null;
     this.selection = null;
+
+    /**
+     * This property can store Selection's range for restoring later
+     * @type {Range|null}
+     */
+    this.savedSelectionRange = null;
   }
 
   /**
@@ -59,7 +65,7 @@ export default class Selection {
   static get range() {
     const selection = window.getSelection();
 
-    return selection ? selection.getRangeAt(0) : null;
+    return selection && selection.rangeCount ? selection.getRangeAt(0) : null;
   }
 
   /**
@@ -132,4 +138,81 @@ export default class Selection {
   static get text() {
     return window.getSelection ? window.getSelection().toString() : '';
   };
+
+  /**
+   * Save Selection's range
+   */
+  save() {
+    this.savedSelectionRange = Selection.range;
+  }
+
+  /**
+   * Restore saved Selection's range
+   */
+  restore() {
+    if (!this.savedSelectionRange) {
+      return;
+    }
+
+    const sel = window.getSelection();
+
+    sel.removeAllRanges();
+    sel.addRange(this.savedSelectionRange);
+  }
+
+  /**
+   * Clears saved selection
+   */
+  clearSaved() {
+    this.savedSelectionRange = null;
+  }
+
+  /**
+   * Looks ahead to find passed tag from current selection
+   * @param  {String} tagName    - tag to found
+   * @param  {String} className  - tag's class name
+   * @return {Node|null}
+   */
+  findParentTag(tagName, className) {
+    let selection = window.getSelection(),
+      parentTag,
+      searchDepth = 10; // count of tags that can be included in <a>. For better performance.
+
+    if (!selection || !selection.anchorNode) {
+      return null;
+    }
+
+    parentTag = selection.anchorNode.parentNode;
+
+    while (searchDepth > 0 && parentTag.parentNode) {
+      if (parentTag.tagName === tagName) {
+        /**
+         * Optional additional check for class-name matching
+         */
+        if (className && !parentTag.classList.contains(className)) {
+          return null;
+        }
+
+        return parentTag;
+      }
+
+      parentTag = parentTag.parentNode;
+      searchDepth--;
+    }
+    return null;
+  }
+
+  /**
+   * Expands selection range to the passed parent node
+   * @param {Element} node
+   */
+  expandToTag(node) {
+    let selection = window.getSelection();
+
+    selection.removeAllRanges();
+    let range = document.createRange();
+
+    range.selectNodeContents(node);
+    selection.addRange(range);
+  }
 }

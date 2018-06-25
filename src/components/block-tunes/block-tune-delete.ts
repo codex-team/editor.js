@@ -31,29 +31,22 @@ export default class DeleteTune implements IBlockTune {
   private needConfirmation: boolean;
 
   /**
+   * set false confirmation state
+   */
+  private resetConfirmation: () => void;
+
+  /**
    * DeleteTune constructor
    *
    * @param {Object} api
    */
-  public constructor({api}) {
+  constructor({api}) {
     this.api = api;
 
     this.resetConfirmation = () => {
       this.setConfirmation(false);
     };
   }
-
-  /**
-   * change tune state
-   */
-  private setConfirmation(state): void {
-    this.needConfirmation = state;
-  }
-
-  /**
-   * set false confirmation state
-   */
-  private resetConfirmation: () => void;
 
   /**
    * Create "Delete" button and add click event listener
@@ -95,4 +88,12 @@ export default class DeleteTune implements IBlockTune {
       this.api.blocks.delete();
     }
   }
+
+  /**
+   * change tune state
+   */
+  private setConfirmation(state): void {
+    this.needConfirmation = state;
+  }
+
 }

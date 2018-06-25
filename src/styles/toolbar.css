@@ -1,3 +1,6 @@
+@import "tunes/move-up.css";
+@import "tunes/delete.css";
+
 .ce-toolbar {
   position: absolute;
   left: 0;
@@ -23,7 +26,7 @@
 
   &__plus {
     position: absolute;
-    left: calc(-var(--toolbar-buttons-size) - 10px);
+    left: calc(var(--toolbar-buttons-size) - 10px);
     display: inline-block;
     background-color: var(--bg-light);
     width: var(--toolbar-buttons-size);
@@ -77,6 +80,3 @@
     }
   }
 }
-
-@import "tunes/move-up.css";
-@import "tunes/delete.css";

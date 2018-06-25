@@ -8,6 +8,12 @@ export default interface InlineTool {
   render(): HTMLElement;
 
   /**
+   * Make additional element with actions
+   * For example, input for the 'link' tool or textarea for the 'comment' tool
+   */
+  renderActions?(): HTMLElement;
+
+  /**
    * Method that accepts selected range and wrap it somehow
    * @param {Range} range - selection's range
    */
@@ -19,6 +25,11 @@ export default interface InlineTool {
    * @param {Selection} selection - current Selection
    */
   checkState(selection: Selection): boolean;
+
+  /**
+   * Function called with Inline Toolbar closing
+   */
+  clear?(): void;
 
   /**
    * Allow Tool to determine shortcut that will fire 'surround' method
