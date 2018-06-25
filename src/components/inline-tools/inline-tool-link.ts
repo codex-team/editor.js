@@ -263,7 +263,7 @@ export default class LinkInlineTool implements InlineTool {
     /**
      * If protocol already exists, do nothing
      */
-    if (/^(https?|mailto|ftp):\/\//.test(link)) {
+    if (/^(\w+):\/\//.test(link)) {
       return link;
     }
 

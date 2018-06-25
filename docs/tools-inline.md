@@ -11,7 +11,8 @@ Inline Tool should implement next methods
 - `surround()` — works with selected range
 - `checkState()` — get Tool's activated state by selected range
 
-And some optional methods:
+Also, you can provide optional methods
+
 - `renderActions()` — create additional element below the buttons
 - `clear()` — clear Tool's stuff on opening/closing of Inline Toolbar
 - `shortcut()` — shortcut that handles Tool
