@@ -11,7 +11,7 @@ export default class Selection {
     this.selection = null;
 
     /**
-     * This property can stores Selection's range for restoring later
+     * This property can store Selection's range for restoring later
      * @type {Range|null}
      */
     this.savedSelectionRange = null;

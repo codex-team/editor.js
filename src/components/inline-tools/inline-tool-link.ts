@@ -95,7 +95,7 @@ export default class LinkInlineTool implements InlineTool {
   }
 
   /**
-   * Wrap range with <b> tag
+   * Handle clicks on the Inline Toolbar icon
    * @param {Range} range
    */
   public surround(range: Range): void {
@@ -120,7 +120,7 @@ export default class LinkInlineTool implements InlineTool {
   }
 
   /**
-   * Check selection and set activated state to button if there are <b> tag
+   * Check selection and set activated state to button if there are <a> tag
    * @param {Selection} selection
    */
   public checkState(selection?: Selection): boolean {
@@ -193,11 +193,6 @@ export default class LinkInlineTool implements InlineTool {
     }
 
     value = this.prepareLink(value);
-
-    /**
-     * Add 'http' protocol if need
-     */
-    value = this.addProtocol(value);
 
     this.selection.restore();
     this.insertLink(value);

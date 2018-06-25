@@ -2002,7 +2002,7 @@ var LinkInlineTool = function () {
             return this.nodes.input;
         }
         /**
-         * Wrap range with <b> tag
+         * Handle clicks on the Inline Toolbar icon
          * @param {Range} range
          */
 
@@ -2025,7 +2025,7 @@ var LinkInlineTool = function () {
             this.toggleActions();
         }
         /**
-         * Check selection and set activated state to button if there are <b> tag
+         * Check selection and set activated state to button if there are <a> tag
          * @param {Selection} selection
          */
 
@@ -2104,10 +2104,6 @@ var LinkInlineTool = function () {
                 return;
             }
             value = this.prepareLink(value);
-            /**
-             * Add 'http' protocol if need
-             */
-            value = this.addProtocol(value);
             this.selection.restore();
             this.insertLink(value);
             /**
@@ -6984,7 +6980,7 @@ var Selection = function () {
     this.selection = null;
 
     /**
-     * This property can stores Selection's range for restoring later
+     * This property can store Selection's range for restoring later
      * @type {Range|null}
      */
     this.savedSelectionRange = null;
