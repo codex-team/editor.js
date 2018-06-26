@@ -1,12 +1,12 @@
 .ce-settings {
   @apply --overlay-pane;
   right: 5px;
-  top: 40px;
+  top: 35px;
   min-width: 124px;
 
   &::before{
     left: auto;
-    right: 17px;
+    right: 12px;
   }
 
   display: none;

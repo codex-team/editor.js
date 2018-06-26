@@ -49,8 +49,7 @@
     position: absolute;
     right: 0;
     top: 0;
-    padding-top: 5px;
-    padding-right: 21px;
+    padding-right: 16px;
 
     &-buttons {
       text-align: right;
