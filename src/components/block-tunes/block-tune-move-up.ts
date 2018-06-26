@@ -23,6 +23,7 @@ export default class MoveUpTune implements IBlockTune {
    */
   private CSS = {
     wrapper: 'ass',
+    button: 'ce-settings__button',
   };
 
   /**
@@ -39,7 +40,8 @@ export default class MoveUpTune implements IBlockTune {
    * @returns [Element}
    */
   public render() {
-    const moveUpButton = $.make('div', ['ce-settings-move-up'], {});
+    const moveUpButton = $.make('div', this.CSS.button, {});
+    moveUpButton.appendChild($.svg('arrow-up', 14, 14));
     moveUpButton.addEventListener('click', (event) => this.handleClick(event), false);
     return moveUpButton;
   }

@@ -26,7 +26,7 @@
 
   &__plus {
     position: absolute;
-    left: calc(var(--toolbar-buttons-size) - 10px);
+    left: calc(calc(var(--toolbar-buttons-size) + 10px) * -1);
     display: inline-block;
     background-color: var(--bg-light);
     width: var(--toolbar-buttons-size);
@@ -34,14 +34,7 @@
     line-height: 34px;
     text-align: center;
     border-radius: 50%;
-
-    &::after {
-      content: '+';
-      font-size: 26px;
-      display: block;
-      margin-top: -2px;
-      margin-right: -2px;
-    }
+    cursor: pointer;
 
     &--hidden {
       display: none;
@@ -56,14 +49,11 @@
     position: absolute;
     right: 0;
     top: 0;
-    border: 1px dotted #ccc;
-    padding: 2px;
+    padding-top: 5px;
+    padding-right: 21px;
 
     &-buttons {
-      border: 1px dotted #ccc;
-      padding: 2px;
       text-align: right;
-      margin-bottom: 2px;
     }
   }
 
@@ -71,12 +61,7 @@
     display: inline-block;
     width: 24px;
     height: 24px;
-    border: 1px dotted #ccc;
-
-    &::before {
-      content: 'STN';
-      font-size: 10px;
-      opacity: .4;
-    }
+    color: var(--grayText);
+    cursor: pointer;
   }
 }
