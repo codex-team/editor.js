@@ -13,4 +13,4 @@ plugins:
     postcss-font-variant: {}
     postcss-font-family-system-ui: {}
     autoprefixer:
-        browsers: ['last 10 versions', '> 1%']
+        browsers: ['last 2 versions', '> 1%']
