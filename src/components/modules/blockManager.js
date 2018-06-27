@@ -109,21 +109,42 @@ export default class BlockManager extends Module {
    * Set's caret to the next Block
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+   *
+   * @param {Boolean} force - force navigation
    */
-  navigateNext() {
-    let caretAtEnd = this.Editor.Caret.isAtEnd;
-
-    if (!caretAtEnd) {
-      return;
-    }
-
+  navigateNext(force = false) {
     let nextBlock = this.nextBlock;
 
     if (!nextBlock) {
       return;
     }
 
-    this.Editor.Caret.setToBlock( nextBlock );
+    if (force) {
+      this.Editor.Caret.setToBlock( nextBlock, 0, true );
+      return;
+    }
+
+    let caretAtEnd = this.Editor.Caret.isAtEnd;
+
+    if (!caretAtEnd) {
+      return;
+    }
+
+    this.Editor.Caret.setToBlock(nextBlock);
+  }
+
+  /**
+   * @param {Boolean} atTheEnd - Set the caret at the end or at the start
+   * @return {boolean}
+   */
+  setToCurrentBlock(atTheEnd = false) {
+    let currentBlock = this.currentBlock;
+
+    if (!currentBlock) {
+      return false;
+    }
+
+    this.Editor.Caret.setToBlock(currentBlock, 0, atTheEnd);
   }
 
   /**
@@ -455,7 +476,7 @@ class Blocks {
    * @param {Number|null} index
    */
   remove(index) {
-    if (!index) {
+    if (isNaN(index)) {
       index = this.length - 1;
     }
 
