@@ -48,7 +48,7 @@
       }
   };
 
-  --toolbar-icon: {
+  --toolbar-button: {
     display: inline-block;
     width: 34px;
     height: 34px;

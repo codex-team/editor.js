@@ -28,7 +28,7 @@
   }
 
   &__button {
-    @apply --toolbar-icon;
+    @apply --toolbar-button;
 
     &--delete {
       transition: background-color 300ms ease;

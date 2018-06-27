@@ -13,7 +13,7 @@
 }
 
 .ce-inline-tool {
-  @apply --toolbar-icon;
+  @apply --toolbar-button;
   line-height: normal;
 
   &--link {
