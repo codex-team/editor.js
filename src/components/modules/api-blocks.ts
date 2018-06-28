@@ -39,7 +39,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    * Moves block up
    */
   public moveUp(): void {
-    console.log('moving up', this.Editor.BlockManager);
+    this.Editor.BlockManager.moveCurrentBlockUp();
   }
 
   /**

@@ -2364,7 +2364,7 @@ var BlocksAPI = function (_Module) {
     }, {
         key: 'moveUp',
         value: function moveUp() {
-            console.log('moving up', this.Editor.BlockManager);
+            this.Editor.BlockManager.moveCurrentBlockUp();
         }
         /**
          * Deletes Block
@@ -2815,14 +2815,29 @@ var BlockManager = function (_Module) {
   }
 
   /**
-   * Should be called after Editor.UI preparation
-   * Define this._blocks property
-   *
-   * @returns {Promise}
+   * Swaps blocks with indexes first and second
+   * @param {Number} first - first block index
+   * @param {Number} second - second block index
    */
 
 
   _createClass(BlockManager, [{
+    key: 'swapBlocksPosition',
+    value: function swapBlocksPosition(first, second) {
+      var secondBlock = this.blocks[second];
+
+      this.blocks[second] = this.blocks[first];
+      this.blocks[first] = secondBlock;
+    }
+
+    /**
+     * Should be called after Editor.UI preparation
+     * Define this._blocks property
+     *
+     * @returns {Promise}
+     */
+
+  }, {
     key: 'prepare',
     value: function prepare() {
       var _this2 = this;
@@ -3138,6 +3153,28 @@ var BlockManager = function (_Module) {
       } else {
         throw new Error('Can not find a Block from this child Node');
       }
+    }
+
+    /**
+     * Move current block Up
+     * - change first level block position in DOM
+     * - swap in blocks array to actualize Editor Blocks state
+     */
+
+  }, {
+    key: 'moveCurrentBlockUp',
+    value: function moveCurrentBlockUp() {
+      var currentBlockElement = this.currentBlock.html;
+
+      if (!this.previousBlock) {
+        return;
+      }
+
+      var previousBlockElement = this.previousBlock.html;
+
+      previousBlockElement.parentNode.insertBefore(currentBlockElement, previousBlockElement);
+
+      this.swapBlocksPosition(this.currentBlockIndex, this.currentBlockIndex - 1);
     }
   }, {
     key: 'lastBlock',

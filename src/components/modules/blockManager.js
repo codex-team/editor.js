@@ -40,6 +40,18 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Swaps blocks with indexes first and second
+   * @param {Number} first - first block index
+   * @param {Number} second - second block index
+   */
+  swapBlocksPosition(first, second) {
+    let secondBlock = this.blocks[second];
+
+    this.blocks[second] = this.blocks[first];
+    this.blocks[first] = secondBlock;
+  }
+
+  /**
    * Should be called after Editor.UI preparation
    * Define this._blocks property
    *
@@ -387,6 +399,25 @@ export default class BlockManager extends Module {
     } else {
       throw new Error('Can not find a Block from this child Node');
     }
+  }
+
+  /**
+   * Move current block Up
+   * - change first level block position in DOM
+   * - swap in blocks array to actualize Editor Blocks state
+   */
+  moveCurrentBlockUp() {
+    let currentBlockElement = this.currentBlock.html;
+
+    if (!this.previousBlock) {
+      return;
+    }
+
+    let previousBlockElement = this.previousBlock.html;
+
+    previousBlockElement.parentNode.insertBefore(currentBlockElement, previousBlockElement);
+
+    this.swapBlocksPosition(this.currentBlockIndex, this.currentBlockIndex - 1);
   }
 };
 
