@@ -3104,8 +3104,7 @@ var BlockManager = function (_Module) {
 
     /**
      * Move current block Up
-     * - change first level block position in DOM tree
-     * - swap in blocks array to actualize Editor Blocks state
+     * Pass Proxy current block index to move it up and change Block's array state
      */
 
   }, {
@@ -3365,8 +3364,12 @@ var Blocks = function () {
     }
 
     /**
+     * Move Block with passed index up
      *
-     * @param index
+     * - change first level block position in DOM tree
+     * - swap in blocks array to actualize Editor Blocks state
+     *
+     * @param {Number} index
      */
 
   }, {
