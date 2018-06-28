@@ -2376,11 +2376,7 @@ var BlocksAPI = function (_Module) {
         value: function _delete(blockIndex) {
             this.Editor.BlockManager.removeBlock(blockIndex);
             this.Editor.Toolbar.close();
-            if (this.Editor.BlockManager.currentBlockIndex === 0) {
-                this.Editor.BlockManager.navigateToCurrent();
-            } else {
-                this.Editor.BlockManager.navigatePrevious(true);
-            }
+            this.Editor.BlockManager.navigatePrevious(true);
         }
     }, {
         key: 'methods',
@@ -2904,14 +2900,16 @@ var BlockManager = function (_Module) {
      * Set's caret to the next Block
      * Before moving caret, we should check if caret position is at the end of Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
-     *
-     * @param {Boolean} force - force navigation
      */
 
   }, {
     key: 'navigateNext',
     value: function navigateNext() {
-      var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var caretAtEnd = this.Editor.Caret.isAtEnd;
+
+      if (!caretAtEnd) {
+        return;
+      }
 
       var nextBlock = this.nextBlock;
 
@@ -2919,37 +2917,7 @@ var BlockManager = function (_Module) {
         return;
       }
 
-      if (force) {
-        this.Editor.Caret.setToBlock(nextBlock, 0, true);
-        return;
-      }
-
-      var caretAtEnd = this.Editor.Caret.isAtEnd;
-
-      if (!caretAtEnd) {
-        return;
-      }
-
       this.Editor.Caret.setToBlock(nextBlock);
-    }
-
-    /**
-     * @param {Boolean} atTheEnd - Set the caret at the end or at the start
-     * @return {boolean}
-     */
-
-  }, {
-    key: 'navigateToCurrent',
-    value: function navigateToCurrent() {
-      var atTheEnd = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-      var currentBlock = this.currentBlock;
-
-      if (!currentBlock) {
-        return false;
-      }
-
-      this.Editor.Caret.setToBlock(currentBlock, 0, atTheEnd);
     }
 
     /**
@@ -3367,7 +3335,7 @@ var Blocks = function () {
   }, {
     key: 'remove',
     value: function remove(index) {
-      if (isNaN(index)) {
+      if (!index) {
         index = this.length - 1;
       }
 
