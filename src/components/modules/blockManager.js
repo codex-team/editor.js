@@ -109,21 +109,29 @@ export default class BlockManager extends Module {
    * Set's caret to the next Block
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+   *
+   * @param {Boolean} force - force navigation
    */
-  navigateNext() {
-    let caretAtEnd = this.Editor.Caret.isAtEnd;
-
-    if (!caretAtEnd) {
-      return;
-    }
-
+  navigateNext(force = false) {
     let nextBlock = this.nextBlock;
 
     if (!nextBlock) {
       return;
     }
 
-    this.Editor.Caret.setToBlock( nextBlock );
+    if (force) {
+      this.Editor.Caret.setToBlock(nextBlock, 0, true);
+      return;
+    }
+
+    let caretAtEnd = this.Editor.Caret.isAtEnd;
+
+    if (!caretAtEnd) {
+      return;
+    }
+
+
+    this.Editor.Caret.setToBlock(nextBlock);
   }
 
   /**
@@ -157,13 +165,13 @@ export default class BlockManager extends Module {
   /**
    * Insert new block into _blocks
    *
-   * @param {String} toolName — plugin name
+   * @param {String} toolName — plugin name, by default method inserts initial block type
    * @param {Object} data — plugin data
    * @param {Object} settings - default settings
    *
    * @return {Block}
    */
-  insert(toolName, data = {}, settings = {}) {
+  insert(toolName = this.config.initialBlock, data = {}, settings = {}) {
     let block = this.composeBlock(toolName, data, settings);
 
     this._blocks[++this.currentBlockIndex] = block;
@@ -465,7 +473,7 @@ class Blocks {
    * @param {Number|null} index
    */
   remove(index) {
-    if (!index) {
+    if (isNaN(index)) {
       index = this.length - 1;
     }
 
