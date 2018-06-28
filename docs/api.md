@@ -24,6 +24,8 @@ Methods that working with Blocks
 
 ```moveUp()``` - method moves up the current block.
 
+```delete(blockIndex?: Number)``` - deletes block with passed index 
+
 #### ISanitizerAPI
 
 ```clean(taintString, config)``` - method uses HTMLJanitor to clean taint string.

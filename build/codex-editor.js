@@ -2376,7 +2376,21 @@ var BlocksAPI = function (_Module) {
         value: function _delete(blockIndex) {
             this.Editor.BlockManager.removeBlock(blockIndex);
             this.Editor.Toolbar.close();
-            this.Editor.BlockManager.navigatePrevious(true);
+            /**
+             * in case of last block deletion
+             * Insert new initial empty block
+             */
+            if (this.Editor.BlockManager.blocks.length === 0) {
+                this.Editor.BlockManager.insert();
+            }
+            /**
+             * In case of deletion first block we need to set caret to the current Block
+             */
+            if (this.Editor.BlockManager.currentBlockIndex === 0) {
+                this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+            } else {
+                this.Editor.BlockManager.navigatePrevious(true);
+            }
         }
     }, {
         key: 'methods',
@@ -2900,20 +2914,29 @@ var BlockManager = function (_Module) {
      * Set's caret to the next Block
      * Before moving caret, we should check if caret position is at the end of Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+     *
+     * @param {Boolean} force - force navigation even if caret is not at the end.
      */
 
   }, {
     key: 'navigateNext',
     value: function navigateNext() {
-      var caretAtEnd = this.Editor.Caret.isAtEnd;
-
-      if (!caretAtEnd) {
-        return;
-      }
+      var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
       var nextBlock = this.nextBlock;
 
       if (!nextBlock) {
+        return;
+      }
+
+      if (force) {
+        this.Editor.Caret.setToBlock(nextBlock, 0, true);
+        return;
+      }
+
+      var caretAtEnd = this.Editor.Caret.isAtEnd;
+
+      if (!caretAtEnd) {
         return;
       }
 
@@ -2956,7 +2979,7 @@ var BlockManager = function (_Module) {
     /**
      * Insert new block into _blocks
      *
-     * @param {String} toolName — plugin name
+     * @param {String} toolName — plugin name, by default method inserts initial block type
      * @param {Object} data — plugin data
      * @param {Object} settings - default settings
      *
@@ -2965,7 +2988,8 @@ var BlockManager = function (_Module) {
 
   }, {
     key: 'insert',
-    value: function insert(toolName) {
+    value: function insert() {
+      var toolName = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.config.initialBlock;
       var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
@@ -3335,7 +3359,7 @@ var Blocks = function () {
   }, {
     key: 'remove',
     value: function remove(index) {
-      if (!index) {
+      if (isNaN(index)) {
         index = this.length - 1;
       }
 
@@ -3569,8 +3593,8 @@ var Caret = function (_Module) {
       }
 
       /**
-           * @todo try to fix via Promises or use querySelectorAll to not to use timeout
-           */
+       * @todo try to fix via Promises or use querySelectorAll to not to use timeout
+       */
       _.delay(function () {
         _this2.set(nodeToSet, offset);
       }, 20)();

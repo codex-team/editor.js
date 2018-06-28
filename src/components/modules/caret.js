@@ -54,8 +54,8 @@ export default class Caret extends Module {
     }
 
     /**
-         * @todo try to fix via Promises or use querySelectorAll to not to use timeout
-         */
+     * @todo try to fix via Promises or use querySelectorAll to not to use timeout
+     */
     _.delay( () => {
       this.set(nodeToSet, offset);
     }, 20)();
