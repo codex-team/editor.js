@@ -415,9 +415,30 @@ export default class BlockManager extends Module {
 
     let previousBlockElement = this.previousBlock.html;
 
+    /**
+     * Here is two cases:
+     *  - when previous block has negative offset and part of it is visible on window, then we scroll
+     *  by window's height and add offset which is mathematically difference between two blocks
+     *
+     *  - when previous block is visible and has offset from the window,
+     *      than we scroll window to the difference between this offsets.
+     * @type {ClientRect}
+     */
+    let currentBlockElementClientCoords  = currentBlockElement.getBoundingClientRect(),
+      previoutBlockElementClientCoords = previousBlockElement.getBoundingClientRect(),
+      formulaSign = previoutBlockElementClientCoords.top > 0 ? 1 : -1,
+      blocksTopOffset = formulaSign * (Math.abs(currentBlockElementClientCoords.top) + Math.abs(previoutBlockElementClientCoords.top)),
+      scrollUpOffset = blocksTopOffset;
+
+    if (formulaSign === 1) {
+      scrollUpOffset = window.innerHeight - blocksTopOffset;
+    }
+
+    window.scrollBy(0, -1 * scrollUpOffset);
     previousBlockElement.parentNode.insertBefore(currentBlockElement, previousBlockElement);
 
     this.swapBlocksPosition(this.currentBlockIndex, this.currentBlockIndex - 1);
+    this.Editor.Toolbar.move();
   }
 };
 
