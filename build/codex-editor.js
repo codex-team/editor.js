@@ -2384,8 +2384,7 @@ var BlocksAPI = function (_Module) {
                 this.Editor.BlockManager.insert();
             }
             /**
-             * In case of deletion first block we need to set caret to the next block by index
-             * but next jumped up after removing, so set caret to the current block means to set it to next
+             * In case of deletion first block we need to set caret to the current Block
              */
             if (this.Editor.BlockManager.currentBlockIndex === 0) {
                 this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
@@ -2916,7 +2915,7 @@ var BlockManager = function (_Module) {
      * Before moving caret, we should check if caret position is at the end of Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
      *
-     * @param {Boolean} force - force navigation
+     * @param {Boolean} force - force navigation even if caret is not at the end.
      */
 
   }, {
@@ -3594,8 +3593,8 @@ var Caret = function (_Module) {
       }
 
       /**
-           * @todo try to fix via Promises or use querySelectorAll to not to use timeout
-           */
+       * @todo try to fix via Promises or use querySelectorAll to not to use timeout
+       */
       _.delay(function () {
         _this2.set(nodeToSet, offset);
       }, 20)();
