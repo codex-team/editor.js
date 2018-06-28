@@ -120,13 +120,13 @@ export default class BlockManager extends Module {
   /**
    * Insert new block into _blocks
    *
-   * @param {String} toolName — plugin name
+   * @param {String} toolName — plugin name, by default method inserts initial block type
    * @param {Object} data — plugin data
    * @param {Object} settings - default settings
    *
    * @return {Block}
    */
-  insert(toolName, data = {}, settings = {}) {
+  insert(toolName = this.config.initialBlock, data = {}, settings = {}) {
     let block = this.composeBlock(toolName, data, settings);
 
     this._blocks[++this.currentBlockIndex] = block;
@@ -476,7 +476,7 @@ class Blocks {
    * @param {Number|null} index
    */
   remove(index) {
-    if (!index) {
+    if (isNaN(index)) {
       index = this.length - 1;
     }
 
