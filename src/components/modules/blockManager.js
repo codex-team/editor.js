@@ -403,7 +403,7 @@ export default class BlockManager extends Module {
 
   /**
    * Move current block Up
-   * - change first level block position in DOM
+   * - change first level block position in DOM tree
    * - swap in blocks array to actualize Editor Blocks state
    */
   moveCurrentBlockUp() {
@@ -422,12 +422,11 @@ export default class BlockManager extends Module {
      *
      *  - when previous block is visible and has offset from the window,
      *      than we scroll window to the difference between this offsets.
-     * @type {ClientRect}
      */
     let currentBlockElementClientCoords  = currentBlockElement.getBoundingClientRect(),
       previoutBlockElementClientCoords = previousBlockElement.getBoundingClientRect(),
       formulaSign = previoutBlockElementClientCoords.top > 0 ? 1 : -1,
-      blocksTopOffset = formulaSign * (Math.abs(currentBlockElementClientCoords.top) + Math.abs(previoutBlockElementClientCoords.top)),
+      blocksTopOffset = formulaSign * (Math.abs(currentBlockElementClientCoords.top || 0) + Math.abs(previoutBlockElementClientCoords.top || 0)),
       scrollUpOffset = blocksTopOffset;
 
     if (formulaSign === 1) {
@@ -435,9 +434,14 @@ export default class BlockManager extends Module {
     }
 
     window.scrollBy(0, -1 * scrollUpOffset);
+
+    /** First we change positions on DOM tree */
     previousBlockElement.parentNode.insertBefore(currentBlockElement, previousBlockElement);
 
+    /** Actualize Blocks state */
     this.swapBlocksPosition(this.currentBlockIndex, this.currentBlockIndex - 1);
+
+    /** Move toolbar */
     this.Editor.Toolbar.move();
   }
 };
