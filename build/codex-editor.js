@@ -2933,6 +2933,7 @@ var BlockManager = function (_Module) {
       }
 
       this.Editor.Caret.setToBlock(nextBlock);
+      this.Editor.Toolbar.close();
     }
 
     /**
@@ -2966,6 +2967,7 @@ var BlockManager = function (_Module) {
       }
 
       this.Editor.Caret.setToBlock(previousBlock, 0, true);
+      this.Editor.Toolbar.close();
     }
 
     /**
@@ -3197,9 +3199,13 @@ var BlockManager = function (_Module) {
 
       /** Actualize Blocks state */
       this.swapBlocksPosition(this.currentBlockIndex, this.currentBlockIndex - 1);
+      this.currentBlockIndex--;
 
-      /** Move toolbar */
-      this.Editor.Toolbar.move();
+      /**
+       * Move toolbar
+       * DO not close the settings
+       */
+      this.Editor.Toolbar.move(false);
     }
   }, {
     key: 'lastBlock',
@@ -5974,14 +5980,19 @@ var Toolbar = function (_Module) {
 
     /**
      * Move Toolbar to the Current Block
+     * @param {Boolean} forceClose - force close Toolbar Settings and Toolbar
      */
 
   }, {
     key: 'move',
     value: function move() {
-      /** Close Toolbox when we move toolbar */
-      this.Editor.Toolbox.close();
-      this.Editor.BlockSettings.close();
+      var forceClose = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      if (forceClose) {
+        /** Close Toolbox when we move toolbar */
+        this.Editor.Toolbox.close();
+        this.Editor.BlockSettings.close();
+      }
 
       var currentNode = this.Editor.BlockManager.currentNode;
 
@@ -6002,9 +6013,6 @@ var Toolbar = function (_Module) {
       var newYCoordinate = currentNode.offsetTop - defaultToolbarHeight / 2 + defaultOffset;
 
       this.nodes.wrapper.style.transform = 'translate3D(0, ' + Math.floor(newYCoordinate) + 'px, 0)';
-
-      /** Close trash actions */
-      // editor.toolbar.settings.hideRemoveActions();
     }
 
     /**

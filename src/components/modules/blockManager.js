@@ -136,6 +136,7 @@ export default class BlockManager extends Module {
     }
 
     this.Editor.Caret.setToBlock( nextBlock );
+    this.Editor.Toolbar.close();
   }
 
   /**
@@ -164,6 +165,7 @@ export default class BlockManager extends Module {
     }
 
     this.Editor.Caret.setToBlock( previousBlock, 0, true );
+    this.Editor.Toolbar.close();
   }
 
   /**
@@ -440,9 +442,13 @@ export default class BlockManager extends Module {
 
     /** Actualize Blocks state */
     this.swapBlocksPosition(this.currentBlockIndex, this.currentBlockIndex - 1);
+    this.currentBlockIndex--;
 
-    /** Move toolbar */
-    this.Editor.Toolbar.move();
+    /**
+     * Move toolbar
+     * DO not close the settings
+     */
+    this.Editor.Toolbar.move(false);
   }
 };
 
