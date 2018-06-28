@@ -110,7 +110,7 @@ export default class BlockManager extends Module {
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {Boolean} force - force navigation
+   * @param {Boolean} force - force navigation even if caret is not at the end.
    */
   navigateNext(force = false) {
     let nextBlock = this.nextBlock;

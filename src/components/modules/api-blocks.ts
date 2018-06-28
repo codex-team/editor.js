@@ -59,7 +59,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
     }
 
     /**
-     * In case of deletion first block we need to set caret to the next block by index
+     * In case of deletion first block we need to set caret to the current Block
      */
     if (this.Editor.BlockManager.currentBlockIndex === 0) {
       this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
