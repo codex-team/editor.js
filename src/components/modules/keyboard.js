@@ -110,7 +110,7 @@ export default class Keyboard extends Module {
   backspacePressed(event) {
     const BM = this.Editor.BlockManager;
 
-    let isFirstBlock    = BM.currentBlockIndex === 0,
+    let isFirstBlock  = BM.currentBlockIndex === 0,
       canMergeBlocks  = this.Editor.Caret.isAtStart && !isFirstBlock;
 
     if (!canMergeBlocks) {
@@ -131,17 +131,21 @@ export default class Keyboard extends Module {
      * other case will handle as usual ARROW LEFT behaviour
      */
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
-      this.Editor.Caret.navigatePrevious();
+      if (this.Editor.Caret.navigatePrevious()) {
+        this.Editor.Toolbar.close();
+      }
     }
 
-    let setCaretToTheEnd = !targetBlock.isEmpty ? true : false;
+    let setCaretToTheEnd = !targetBlock.isEmpty;
 
     BM.mergeBlocks(targetBlock, blockToMerge)
       .then( () => {
+        // @todo figure out without timeout
         window.setTimeout( () => {
           // set caret to the block without offset at the end
-          this.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
-          this.Editor.Toolbar.close();
+          if (this.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd)) {
+            this.Editor.Toolbar.close();
+          }
         }, 10);
       });
   }
@@ -150,13 +154,21 @@ export default class Keyboard extends Module {
    * Handle right and down keyboard keys
    */
   arrowRightAndDownPressed() {
-    this.Editor.Caret.navigateNext();
+    if (!this.Editor.Caret.navigateNext()) {
+      return;
+    }
+
+    this.Editor.Toolbar.close();
   }
 
   /**
    * Handle left and up keyboard keys
    */
   arrowLeftAndUpPressed() {
-    this.Editor.Caret.navigatePrevious();
+    if (!this.Editor.Caret.navigatePrevious()) {
+      return;
+    }
+
+    this.Editor.Toolbar.close();
   }
 }

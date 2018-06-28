@@ -48,7 +48,6 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    */
   public delete(blockIndex?: number): void {
     this.Editor.BlockManager.removeBlock(blockIndex);
-    this.Editor.Toolbar.close();
 
     /**
      * in case of last block deletion
@@ -62,9 +61,13 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
      * In case of deletion first block we need to set caret to the current Block
      */
     if (this.Editor.BlockManager.currentBlockIndex === 0) {
-      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+      if (this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock)) {
+        this.Editor.Toolbar.close();
+      }
     } else {
-      this.Editor.BlockManager.navigatePrevious(true);
+      if (this.Editor.Caret.navigatePrevious(true)) {
+        this.Editor.Toolbar.close();
+      }
     }
   }
 

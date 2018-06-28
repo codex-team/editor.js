@@ -2375,7 +2375,6 @@ var BlocksAPI = function (_Module) {
         key: 'delete',
         value: function _delete(blockIndex) {
             this.Editor.BlockManager.removeBlock(blockIndex);
-            this.Editor.Toolbar.close();
             /**
              * in case of last block deletion
              * Insert new initial empty block
@@ -2387,9 +2386,13 @@ var BlocksAPI = function (_Module) {
              * In case of deletion first block we need to set caret to the current Block
              */
             if (this.Editor.BlockManager.currentBlockIndex === 0) {
-                this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+                if (this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock)) {
+                    this.Editor.Toolbar.close();
+                }
             } else {
-                this.Editor.BlockManager.navigatePrevious(true);
+                if (this.Editor.Caret.navigatePrevious(true)) {
+                    this.Editor.Toolbar.close();
+                }
             }
         }
     }, {
@@ -3602,6 +3605,7 @@ var Caret = function (_Module) {
       }, 20)();
 
       this.Editor.BlockManager.currentNode = block.wrapper;
+      return true;
     }
 
     /**
@@ -3721,25 +3725,34 @@ var Caret = function (_Module) {
      * Set's caret to the next Block
      * Before moving caret, we should check if caret position is at the end of Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+     *
+     * @param {Boolean} force - force navigation even if caret is not at the end
+     *
+     * @return {Boolean}
      */
 
   }, {
     key: 'navigateNext',
     value: function navigateNext() {
-      var caretAtEnd = this.Editor.Caret.isAtEnd;
+      var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
-      if (!caretAtEnd) {
-        return;
-      }
-
-      var nextBlock = this.nextBlock;
+      var nextBlock = this.Editor.BlockManager.nextBlock;
 
       if (!nextBlock) {
-        return;
+        return false;
       }
 
-      this.Editor.Caret.setToBlock(nextBlock);
-      this.Editor.Toolbar.close();
+      if (force) {
+        this.setToBlock(nextBlock);
+      }
+
+      var caretAtEnd = this.isAtEnd;
+
+      if (!caretAtEnd) {
+        return false;
+      }
+
+      return this.setToBlock(nextBlock);
     }
 
     /**
@@ -3747,7 +3760,9 @@ var Caret = function (_Module) {
      * Before moving caret, we should check if caret position is start of the Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
      *
-     * @param {Boolean} force - force navigation
+     * @param {Boolean} force - force navigation even if caret is not at the start
+     *
+     * @return {Boolean}
      */
 
   }, {
@@ -3762,18 +3777,17 @@ var Caret = function (_Module) {
       }
 
       if (force) {
-        this.Editor.Caret.setToBlock(previousBlock, 0, true);
+        this.setToBlock(previousBlock, 0, true);
         return true;
       }
 
-      var caretAtStart = this.Editor.Caret.isAtStart;
+      var caretAtStart = this.isAtStart;
 
       if (!caretAtStart) {
-        return;
+        return false;
       }
 
-      this.Editor.Caret.setToBlock(previousBlock, 0, true);
-      this.Editor.Toolbar.close();
+      return this.setToBlock(previousBlock, 0, true);
     }
 
     /**
@@ -4183,16 +4197,20 @@ var Keyboard = function (_Module) {
        * other case will handle as usual ARROW LEFT behaviour
        */
       if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
-        this.Editor.Caret.navigatePrevious();
+        if (this.Editor.Caret.navigatePrevious()) {
+          this.Editor.Toolbar.close();
+        }
       }
 
-      var setCaretToTheEnd = !targetBlock.isEmpty ? true : false;
+      var setCaretToTheEnd = !targetBlock.isEmpty;
 
       BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
+        // @todo figure out without timeout
         window.setTimeout(function () {
           // set caret to the block without offset at the end
-          _this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
-          _this2.Editor.Toolbar.close();
+          if (_this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd)) {
+            _this2.Editor.Toolbar.close();
+          }
         }, 10);
       });
     }
@@ -4204,7 +4222,11 @@ var Keyboard = function (_Module) {
   }, {
     key: 'arrowRightAndDownPressed',
     value: function arrowRightAndDownPressed() {
-      this.Editor.Caret.navigateNext();
+      if (!this.Editor.Caret.navigateNext()) {
+        return;
+      }
+
+      this.Editor.Toolbar.close();
     }
 
     /**
@@ -4214,7 +4236,11 @@ var Keyboard = function (_Module) {
   }, {
     key: 'arrowLeftAndUpPressed',
     value: function arrowLeftAndUpPressed() {
-      this.Editor.Caret.navigatePrevious();
+      if (!this.Editor.Caret.navigatePrevious()) {
+        return;
+      }
+
+      this.Editor.Toolbar.close();
     }
   }]);
 

@@ -63,6 +63,7 @@ export default class Caret extends Module {
     }, 20)();
 
     this.Editor.BlockManager.currentNode = block.wrapper;
+    return true;
   }
 
   /**
@@ -168,22 +169,29 @@ export default class Caret extends Module {
    * Set's caret to the next Block
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+   *
+   * @param {Boolean} force - force navigation even if caret is not at the end
+   *
+   * @return {Boolean}
    */
-  navigateNext() {
-    let caretAtEnd = this.Editor.Caret.isAtEnd;
-
-    if (!caretAtEnd) {
-      return;
-    }
-
-    let nextBlock = this.nextBlock;
+  navigateNext(force = false) {
+    let nextBlock = this.Editor.BlockManager.nextBlock;
 
     if (!nextBlock) {
-      return;
+      return false;
     }
 
-    this.Editor.Caret.setToBlock( nextBlock );
-    this.Editor.Toolbar.close();
+    if (force) {
+      this.setToBlock(nextBlock);
+    }
+
+    let caretAtEnd = this.isAtEnd;
+
+    if (!caretAtEnd) {
+      return false;
+    }
+
+    return this.setToBlock( nextBlock );
   }
 
   /**
@@ -191,7 +199,9 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is start of the Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {Boolean} force - force navigation
+   * @param {Boolean} force - force navigation even if caret is not at the start
+   *
+   * @return {Boolean}
    */
   navigatePrevious(force = false) {
     let previousBlock = this.Editor.BlockManager.previousBlock;
@@ -201,18 +211,17 @@ export default class Caret extends Module {
     }
 
     if (force) {
-      this.Editor.Caret.setToBlock( previousBlock, 0, true );
+      this.setToBlock( previousBlock, 0, true );
       return true;
     }
 
-    let caretAtStart = this.Editor.Caret.isAtStart;
+    let caretAtStart = this.isAtStart;
 
     if (!caretAtStart) {
-      return;
+      return false;
     }
 
-    this.Editor.Caret.setToBlock( previousBlock, 0, true );
-    this.Editor.Toolbar.close();
+    return this.setToBlock( previousBlock, 0, true );
   }
 
   /**
