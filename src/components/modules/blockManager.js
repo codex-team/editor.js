@@ -40,18 +40,6 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Swaps blocks with indexes first and second
-   * @param {Number} first - first block index
-   * @param {Number} second - second block index
-   */
-  swapBlocksPosition(first, second) {
-    let secondBlock = this.blocks[second];
-
-    this.blocks[second] = this.blocks[first];
-    this.blocks[first] = secondBlock;
-  }
-
-  /**
    * Should be called after Editor.UI preparation
    * Define this._blocks property
    *
@@ -172,6 +160,7 @@ export default class BlockManager extends Module {
     }
     this._blocks.remove(index);
   }
+
   /**
    * Split current Block
    * 1. Extract content from Caret position to the Block`s end
@@ -310,7 +299,7 @@ export default class BlockManager extends Module {
     /**
      * Remove previous selected Block's state
      */
-    this._blocks.array.forEach( block => block.selected = false);
+    this.blocks.forEach( block => block.selected = false);
 
     /**
      * Mark current Block as selected
@@ -358,39 +347,15 @@ export default class BlockManager extends Module {
    * - swap in blocks array to actualize Editor Blocks state
    */
   moveCurrentBlockUp() {
-    let currentBlockElement = this.currentBlock.html;
-
-    if (!this.previousBlock) {
+    /** Can't move up, sorry */
+    if (this.currentBlockIndex <= 0) {
       return;
     }
 
-    let previousBlockElement = this.previousBlock.html;
+    /** Move up current Block */
+    this._blocks.moveUp(this.currentBlockIndex);
 
-    /**
-     * Here is two cases:
-     *  - when previous block has negative offset and part of it is visible on window, then we scroll
-     *  by window's height and add offset which is mathematically difference between two blocks
-     *
-     *  - when previous block is visible and has offset from the window,
-     *      than we scroll window to the difference between this offsets.
-     */
-    let currentBlockElementClientCoords  = currentBlockElement.getBoundingClientRect(),
-      previoutBlockElementClientCoords = previousBlockElement.getBoundingClientRect(),
-      formulaSign = previoutBlockElementClientCoords.top > 0 ? 1 : -1,
-      blocksTopOffset = formulaSign * (Math.abs(currentBlockElementClientCoords.top || 0) + Math.abs(previoutBlockElementClientCoords.top || 0)),
-      scrollUpOffset = blocksTopOffset;
-
-    if (formulaSign === 1) {
-      scrollUpOffset = window.innerHeight - blocksTopOffset;
-    }
-
-    window.scrollBy(0, -1 * scrollUpOffset);
-
-    /** First we change positions on DOM tree */
-    previousBlockElement.parentNode.insertBefore(currentBlockElement, previousBlockElement);
-
-    /** Actualize Blocks state */
-    this.swapBlocksPosition(this.currentBlockIndex, this.currentBlockIndex - 1);
+    /** Now actual block moved up so that current block index decreased */
     this.currentBlockIndex--;
 
     /**
@@ -429,6 +394,18 @@ class Blocks {
   push(block) {
     this.blocks.push(block);
     this.workingArea.appendChild(block.html);
+  }
+
+  /**
+   * Swaps blocks with indexes first and second
+   * @param {Number} first - first block index
+   * @param {Number} second - second block index
+   */
+  swapBlocksPosition(first, second) {
+    let secondBlock = this.blocks[second];
+
+    this.blocks[second] = this.blocks[first];
+    this.blocks[first] = secondBlock;
   }
 
   /**
@@ -497,6 +474,46 @@ class Blocks {
 
     this.insert(index + 1, newBlock);
   }
+
+  /**
+   *
+   * @param index
+   */
+  moveUp(index) {
+    if (index === 0) {
+      return;
+    }
+
+    let currentBlockElement = this.blocks[index].html,
+      previousBlockElement = this.blocks[index - 1].html;
+
+    /**
+     * Here is two cases:
+     *  - when previous block has negative offset and part of it is visible on window, then we scroll
+     *  by window's height and add offset which is mathematically difference between two blocks
+     *
+     *  - when previous block is visible and has offset from the window,
+     *      than we scroll window to the difference between this offsets.
+     */
+    let currentBlockElementClientCoords  = currentBlockElement.getBoundingClientRect(),
+      previoutBlockElementClientCoords = previousBlockElement.getBoundingClientRect(),
+      formulaSign = previoutBlockElementClientCoords.top > 0 ? 1 : -1,
+      blocksTopOffset = formulaSign * (Math.abs(currentBlockElementClientCoords.top || 0) + Math.abs(previoutBlockElementClientCoords.top || 0)),
+      scrollUpOffset = blocksTopOffset;
+
+    if (formulaSign === 1) {
+      scrollUpOffset = window.innerHeight - blocksTopOffset;
+    }
+
+    window.scrollBy(0, -1 * scrollUpOffset);
+
+
+    /** First we change positions on DOM tree */
+    previousBlockElement.parentNode.insertBefore(currentBlockElement, previousBlockElement);
+
+    /** Actualize Blocks state */
+    this.swapBlocksPosition(index, index - 1);
+  };
 
   /**
    * Get Block by index
