@@ -114,6 +114,7 @@ export default class Toolbar extends Module {
      *  - Toolbox
      */
     this.nodes.plusButton = $.make('div', Toolbar.CSS.plusButton);
+    $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
     $.append(this.nodes.content, this.nodes.plusButton);
     this.nodes.plusButton.addEventListener('click', event => this.plusButtonClicked(event), false);
 
@@ -131,7 +132,9 @@ export default class Toolbar extends Module {
      */
     this.nodes.blockActionsButtons = $.make('div', Toolbar.CSS.blockActionsButtons);
     this.nodes.settingsToggler  = $.make('span', Toolbar.CSS.settingsToggler);
+    const settingsIcon = $.svg('dots', 18, 4);
 
+    $.append(this.nodes.settingsToggler, settingsIcon);
     $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
     $.append(this.nodes.actions, this.nodes.blockActionsButtons);
 

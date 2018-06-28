@@ -3,8 +3,6 @@
 */
 .codex-editor {
   position: relative;
-  border: 1px solid #ccc;
-  padding: 2px;
   box-sizing: border-box;
 
   .hide {
@@ -26,3 +24,4 @@
 ::selection{
   background-color: rgba(61,166,239,0.63);
 }
+

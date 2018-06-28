@@ -8,7 +8,7 @@ plugins:
     postcss-nested-ancestors: {}
     postcss-nesting: {}
     postcss-nested: {}
-    postcss-color-function: {}
+    postcss-color-mod-function: {}
     postcss-color-hex-alpha: {}
     postcss-font-variant: {}
     postcss-font-family-system-ui: {}

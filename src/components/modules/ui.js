@@ -9,36 +9,6 @@
  */
 import sprite from '../../../build/sprite.svg';
 
-// let className = {
-
-/**
- * @const {string} BLOCK_CLASSNAME - redactor blocks name
- */
-// BLOCK_CLASSNAME : 'ce-block',
-
-/**
- * @const {String} wrapper for plugins content
- */
-// BLOCK_CONTENT : 'ce-block__content',
-
-/**
- * @const {String} BLOCK_STRETCHED - makes block stretched
- */
-// BLOCK_STRETCHED : 'ce-block--stretched',
-
-/**
- * @const {String} BLOCK_HIGHLIGHTED - adds background
- */
-// BLOCK_HIGHLIGHTED : 'ce-block--focused',
-
-/**
- * @const {String} - for all default settings
- */
-// SETTINGS_ITEM : 'ce-settings__item'
-// };
-
-// import Block from '../block';
-
 /**
  * @class
  *

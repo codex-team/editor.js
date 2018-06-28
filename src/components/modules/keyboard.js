@@ -87,6 +87,19 @@ export default class Keyboard extends Module {
      * Split the Current Block into two blocks
      */
     this.Editor.BlockManager.split();
+
+    /**
+     * Renew local current node after split
+     */
+    let newCurrent = this.Editor.BlockManager.currentBlock;
+
+    this.Editor.Toolbar.move();
+    this.Editor.Toolbar.open();
+
+    if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
+      this.Editor.Toolbar.plusButton.show();
+    }
+
     event.preventDefault();
   }
 

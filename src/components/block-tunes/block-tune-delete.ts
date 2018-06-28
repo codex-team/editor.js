@@ -23,6 +23,9 @@ export default class DeleteTune implements IBlockTune {
    */
   private CSS = {
     wrapper: 'ass',
+    button: 'ce-settings__button',
+    buttonDelete: 'ce-settings__button--delete',
+    buttonConfirm: 'ce-settings__button--confirm',
   };
 
   /**
@@ -34,6 +37,13 @@ export default class DeleteTune implements IBlockTune {
    * set false confirmation state
    */
   private resetConfirmation: () => void;
+
+  /**
+   * Tune nodes
+   */
+  private nodes = {
+    button: null,
+  };
 
   /**
    * DeleteTune constructor
@@ -53,9 +63,10 @@ export default class DeleteTune implements IBlockTune {
    * @returns [Element}
    */
   public render() {
-    const deleteButton = $.make('div', ['ce-settings-delete'], {});
-    deleteButton.addEventListener('click', (event) => this.handleClick(event), false);
-    return deleteButton;
+    this.nodes.button = $.make('div', [this.CSS.button, this.CSS.buttonDelete], {});
+    this.nodes.button.appendChild($.svg('cross', 12, 12));
+    this.nodes.button.addEventListener('click', (event) => this.handleClick(event), false);
+    return this.nodes.button;
   }
 
   /**
@@ -94,6 +105,7 @@ export default class DeleteTune implements IBlockTune {
    */
   private setConfirmation(state): void {
     this.needConfirmation = state;
+    this.nodes.button.classList.add(this.CSS.buttonConfirm);
   }
 
 }

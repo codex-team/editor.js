@@ -160,12 +160,16 @@ export default class BlockManager extends Module {
    * @param {String} toolName — plugin name
    * @param {Object} data — plugin data
    * @param {Object} settings - default settings
+   *
+   * @return {Block}
    */
   insert(toolName, data = {}, settings = {}) {
     let block = this.composeBlock(toolName, data, settings);
 
     this._blocks[++this.currentBlockIndex] = block;
     this.Editor.Caret.setToBlock(block);
+
+    return block;
   }
 
   /**
@@ -223,7 +227,13 @@ export default class BlockManager extends Module {
       text: $.isEmpty(wrapper) ? '' : wrapper.innerHTML,
     };
 
-    this.insert(this.config.initialBlock, data);
+    /**
+     * Renew current Block
+     * @type {Block}
+     */
+    const blockInserted = this.insert(this.config.initialBlock, data);
+
+    this.currentNode = blockInserted.pluginsContent;
   }
 
   /**
