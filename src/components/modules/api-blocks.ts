@@ -47,9 +47,15 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    * @param blockIndex
    */
   public delete(blockIndex?: number): void {
+
     this.Editor.BlockManager.removeBlock(blockIndex);
     this.Editor.Toolbar.close();
-    this.Editor.BlockManager.navigatePrevious(true);
+
+    if (this.Editor.BlockManager.currentBlockIndex === 0) {
+      this.Editor.BlockManager.navigateToCurrent();
+    } else {
+      this.Editor.BlockManager.navigatePrevious(true);
+    }
   }
 
 }
