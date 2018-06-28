@@ -118,57 +118,6 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Set's caret to the next Block
-   * Before moving caret, we should check if caret position is at the end of Plugins node
-   * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
-   */
-  navigateNext() {
-    let caretAtEnd = this.Editor.Caret.isAtEnd;
-
-    if (!caretAtEnd) {
-      return;
-    }
-
-    let nextBlock = this.nextBlock;
-
-    if (!nextBlock) {
-      return;
-    }
-
-    this.Editor.Caret.setToBlock( nextBlock );
-    this.Editor.Toolbar.close();
-  }
-
-  /**
-   * Set's caret to the previous Block
-   * Before moving caret, we should check if caret position is start of the Plugins node
-   * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
-   *
-   * @param {Boolean} force - force navigation
-   */
-  navigatePrevious(force = false) {
-    let previousBlock = this.previousBlock;
-
-    if (!previousBlock) {
-      return;
-    }
-
-    if (force) {
-      this.Editor.Caret.setToBlock( previousBlock, 0, true );
-      return;
-    }
-
-    let caretAtStart = this.Editor.Caret.isAtStart;
-
-    if (!caretAtStart) {
-      return;
-    }
-
-    this.Editor.Caret.setToBlock( previousBlock, 0, true );
-    this.Editor.Toolbar.close();
-  }
-
-  /**
    * Insert new block into _blocks
    *
    * @param {String} toolName — plugin name

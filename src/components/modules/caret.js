@@ -31,6 +31,8 @@ export default class Caret extends Module {
    * @param {Block} block - Block class
    * @param {Number} offset - caret offset regarding to the text node
    * @param {Boolean} atEnd - put caret at the end of the text node or not
+   *
+   * @returns {Boolean} - caret was set or not
    */
   setToBlock(block, offset = 0, atEnd = false) {
     let element = block.pluginsContent;
@@ -38,7 +40,7 @@ export default class Caret extends Module {
     /** If Element is INPUT */
     if ($.isNativeInput(element)) {
       element.focus();
-      return;
+      return true;
     }
 
     let nodeToSet = $.getDeepestNode(element, atEnd);
@@ -50,7 +52,7 @@ export default class Caret extends Module {
     /** if found deepest node is native input */
     if ($.isNativeInput(nodeToSet)) {
       nodeToSet.focus();
-      return;
+      return true;
     }
 
     /**
@@ -160,6 +162,57 @@ export default class Caret extends Module {
     }
 
     return siblings;
+  }
+
+  /**
+   * Set's caret to the next Block
+   * Before moving caret, we should check if caret position is at the end of Plugins node
+   * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+   */
+  navigateNext() {
+    let caretAtEnd = this.Editor.Caret.isAtEnd;
+
+    if (!caretAtEnd) {
+      return;
+    }
+
+    let nextBlock = this.nextBlock;
+
+    if (!nextBlock) {
+      return;
+    }
+
+    this.Editor.Caret.setToBlock( nextBlock );
+    this.Editor.Toolbar.close();
+  }
+
+  /**
+   * Set's caret to the previous Block
+   * Before moving caret, we should check if caret position is start of the Plugins node
+   * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+   *
+   * @param {Boolean} force - force navigation
+   */
+  navigatePrevious(force = false) {
+    let previousBlock = this.Editor.BlockManager.previousBlock;
+
+    if (!previousBlock) {
+      return false;
+    }
+
+    if (force) {
+      this.Editor.Caret.setToBlock( previousBlock, 0, true );
+      return true;
+    }
+
+    let caretAtStart = this.Editor.Caret.isAtStart;
+
+    if (!caretAtStart) {
+      return;
+    }
+
+    this.Editor.Caret.setToBlock( previousBlock, 0, true );
+    this.Editor.Toolbar.close();
   }
 
   /**

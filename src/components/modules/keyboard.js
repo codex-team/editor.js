@@ -131,7 +131,7 @@ export default class Keyboard extends Module {
      * other case will handle as usual ARROW LEFT behaviour
      */
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
-      BM.navigatePrevious();
+      this.Editor.Caret.navigatePrevious();
     }
 
     let setCaretToTheEnd = !targetBlock.isEmpty ? true : false;
@@ -150,13 +150,13 @@ export default class Keyboard extends Module {
    * Handle right and down keyboard keys
    */
   arrowRightAndDownPressed() {
-    this.Editor.BlockManager.navigateNext();
+    this.Editor.Caret.navigateNext();
   }
 
   /**
    * Handle left and up keyboard keys
    */
   arrowLeftAndUpPressed() {
-    this.Editor.BlockManager.navigatePrevious();
+    this.Editor.Caret.navigatePrevious();
   }
 }
