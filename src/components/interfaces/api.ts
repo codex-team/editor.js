@@ -32,6 +32,18 @@ export interface IBlocksAPI {
    * Removes block
    */
   delete: (blockIndex?: number) => void;
+
+  /**
+   * Returns current block
+   * @return {object}
+   */
+  getCurrentBlock: () => object;
+
+  /**
+   * Returns current block index
+   * @return {number}
+   */
+  getCurrentBlockIndex: () => number;
 }
 
 /**

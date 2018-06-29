@@ -26,6 +26,10 @@ Methods that working with Blocks
 
 ```delete(blockIndex?: Number)``` - deletes block with passed index 
 
+```getCurrentBlock()``` - current block
+
+```getCurrentBlockIndex()``` - current block index
+
 #### ISanitizerAPI
 
 ```clean(taintString, config)``` - method uses HTMLJanitor to clean taint string.
