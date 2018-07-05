@@ -9,6 +9,7 @@ declare var Module: any;
 declare var $: any;
 declare var _: any;
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
+import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
 import InlineTool from '../interfaces/inline-tool';
 import Selection from '../selection';
@@ -63,6 +64,7 @@ export default class InlineToolbar extends Module {
     if (!this.toolsInstances) {
       this.toolsInstances = [
         new BoldInlineTool(this.Editor.API.methods),
+        new ItalicInlineTool(this.Editor.API.methods),
         new LinkInlineTool(this.Editor.API.methods),
         ...this.Editor.Tools.inline.map( (Tool) => new Tool(this.Editor.API.methods) ),
       ];
