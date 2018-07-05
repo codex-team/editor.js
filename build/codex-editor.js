@@ -1967,7 +1967,7 @@ var ItalicInlineTool = function () {
     value: function render() {
       this.nodes.button = document.createElement('button');
       this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-      this.nodes.button.appendChild($.svg('italic', 13, 15));
+      this.nodes.button.appendChild($.svg('italic', 6, 15));
       return this.nodes.button;
     }
     /**
