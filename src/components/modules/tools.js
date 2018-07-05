@@ -59,6 +59,31 @@ export default class Tools extends Module {
   }
 
   /**
+   * Return Tools for the Inline Toolbar
+   * @return {Array} - array of Inline Tool's classes
+   */
+  get inline() {
+    return Object.values(this.available).filter( tool => {
+      if (!tool.isInline) {
+        return false;
+      }
+
+      /**
+       * Some Tools validation
+       */
+      const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
+      const notImplementedMethods = inlineToolRequiredMethods.filter( method => !new tool()[method] );
+
+      if (notImplementedMethods.length) {
+        _.log(`Incorrect Inline Tool: ${tool.name}. Some of required methods is not implemented %o`, 'warn', notImplementedMethods);
+        return false;
+      }
+
+      return true;
+    });
+  }
+
+  /**
    * Constant for available Tools Settings
    * @return {object}
    */
