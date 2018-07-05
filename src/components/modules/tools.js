@@ -64,7 +64,7 @@ export default class Tools extends Module {
    */
   get inline() {
     return Object.values(this.available).filter( tool => {
-      if (!tool.isInline) {
+      if (!tool[this.apiSettings.IS_INLINE]) {
         return false;
       }
 
@@ -89,6 +89,7 @@ export default class Tools extends Module {
    */
   get apiSettings() {
     return {
+      IS_INLINE: 'isInline',
       TOOLBAR_ICON_CLASS: 'iconClassName',
       IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',

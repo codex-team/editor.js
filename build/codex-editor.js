@@ -6192,8 +6192,10 @@ var Tools = function (_Module) {
   }, {
     key: 'inline',
     get: function get() {
+      var _this2 = this;
+
       return Object.values(this.available).filter(function (tool) {
-        if (!tool.isInline) {
+        if (!tool[_this2.apiSettings.IS_INLINE]) {
           return false;
         }
 
@@ -6223,6 +6225,7 @@ var Tools = function (_Module) {
     key: 'apiSettings',
     get: function get() {
       return {
+        IS_INLINE: 'isInline',
         TOOLBAR_ICON_CLASS: 'iconClassName',
         IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
         IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
@@ -6291,7 +6294,7 @@ var Tools = function (_Module) {
   _createClass(Tools, [{
     key: 'prepare',
     value: function prepare() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (!this.config.hasOwnProperty('tools')) {
         return Promise.reject("Can't start without tools");
@@ -6317,9 +6320,9 @@ var Tools = function (_Module) {
        * to see how it works {@link Util#sequence}
        */
       return _.sequence(sequenceData, function (data) {
-        _this2.success(data);
+        _this3.success(data);
       }, function (data) {
-        _this2.fallback(data);
+        _this3.fallback(data);
       });
     }
 
