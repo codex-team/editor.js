@@ -5215,7 +5215,7 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, $) {
+/* WEBPACK VAR INJECTION */(function(Module, $, _) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -5236,6 +5236,8 @@ var _selection = __webpack_require__(/*! ../selection */ "./src/components/selec
 var _selection2 = _interopRequireDefault(_selection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -5450,6 +5452,10 @@ var InlineToolbar = function (_Module) {
             var _this3 = this;
 
             var button = tool.render();
+            if (!button) {
+                _.log('Render method must return an instance of Node', 'warn', tool);
+                return;
+            }
             this.nodes.buttons.appendChild(button);
             if (typeof tool.renderActions === 'function') {
                 var actions = tool.renderActions();
@@ -5485,8 +5491,12 @@ var InlineToolbar = function (_Module) {
     }, {
         key: 'tools',
         get: function get() {
+            var _this4 = this;
+
             if (!this.toolsInstances) {
-                this.toolsInstances = [new _inlineToolBold2.default(this.Editor.API.methods), new _inlineToolLink2.default(this.Editor.API.methods)];
+                this.toolsInstances = [new _inlineToolBold2.default(this.Editor.API.methods), new _inlineToolLink2.default(this.Editor.API.methods)].concat(_toConsumableArray(this.Editor.Tools.inline.map(function (Tool) {
+                    return new Tool(_this4.Editor.API.methods);
+                })));
             }
             return this.toolsInstances;
         }
@@ -5498,7 +5508,7 @@ var InlineToolbar = function (_Module) {
 InlineToolbar.displayName = 'InlineToolbar';
 exports.default = InlineToolbar;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
 
@@ -6175,6 +6185,38 @@ var Tools = function (_Module) {
     }
 
     /**
+     * Return Tools for the Inline Toolbar
+     * @return {Array} - array of Inline Tool's classes
+     */
+
+  }, {
+    key: 'inline',
+    get: function get() {
+      var _this2 = this;
+
+      return Object.values(this.available).filter(function (tool) {
+        if (!tool[_this2.apiSettings.IS_INLINE]) {
+          return false;
+        }
+
+        /**
+         * Some Tools validation
+         */
+        var inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
+        var notImplementedMethods = inlineToolRequiredMethods.filter(function (method) {
+          return !new tool()[method];
+        });
+
+        if (notImplementedMethods.length) {
+          _.log('Incorrect Inline Tool: ' + tool.name + '. Some of required methods is not implemented %o', 'warn', notImplementedMethods);
+          return false;
+        }
+
+        return true;
+      });
+    }
+
+    /**
      * Constant for available Tools Settings
      * @return {object}
      */
@@ -6183,6 +6225,7 @@ var Tools = function (_Module) {
     key: 'apiSettings',
     get: function get() {
       return {
+        IS_INLINE: 'isInline',
         TOOLBAR_ICON_CLASS: 'iconClassName',
         IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
         IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
@@ -6251,7 +6294,7 @@ var Tools = function (_Module) {
   _createClass(Tools, [{
     key: 'prepare',
     value: function prepare() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (!this.config.hasOwnProperty('tools')) {
         return Promise.reject("Can't start without tools");
@@ -6277,9 +6320,9 @@ var Tools = function (_Module) {
        * to see how it works {@link Util#sequence}
        */
       return _.sequence(sequenceData, function (data) {
-        _this2.success(data);
+        _this3.success(data);
       }, function (data) {
-        _this2.fallback(data);
+        _this3.fallback(data);
       });
     }
 

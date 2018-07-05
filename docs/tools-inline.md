@@ -5,7 +5,9 @@ selected fragment of text. The simplest example is `bold` or `italic` Tools.
 
 ## Base structure
 
-Inline Tool should implement next methods
+First of all, Tool's class should have a `isInline` property (static getter) set as `true`. 
+
+After that Inline Tool should implement next methods.
 
 - `render()` — create a button
 - `surround()` — works with selected range
@@ -16,6 +18,10 @@ Also, you can provide optional methods
 - `renderActions()` — create additional element below the buttons
 - `clear()` — clear Tool's stuff on opening/closing of Inline Toolbar
 - `shortcut()` — shortcut that handles Tool
+
+At the constructor of Tool's class exemplar you will accept an object with the [API](api.md) as a parameter.
+
+---
 
 ### render()
 
@@ -31,6 +37,7 @@ type | description |
 -- | -- |
 `HTMLElement` | element that will be added to the Inline Toolbar |
 
+---
 
 ### surround(range: Range)
 
@@ -45,6 +52,8 @@ range | Range | first range of current Selection |
 #### Return value
 
 There is no return value
+
+---
 
 ### checkState(selection: Selection)
 
@@ -62,6 +71,8 @@ type | description |
 -- | -- |
 `Boolean` | `true` if Tool is active, otherwise `false` |
 
+---
+
 ### renderActions()
 
 Optional method that returns additional Element with actions. 
@@ -77,6 +88,8 @@ Method does not accept any parameters
 type | description | 
 -- | -- |
 `HTMLElement` | element that will be added to the Inline Toolbar |
+
+---
 
 ### clear()
 

@@ -64,6 +64,7 @@ export default class InlineToolbar extends Module {
       this.toolsInstances = [
         new BoldInlineTool(this.Editor.API.methods),
         new LinkInlineTool(this.Editor.API.methods),
+        ...this.Editor.Tools.inline.map( (Tool) => new Tool(this.Editor.API.methods) ),
       ];
     }
     return this.toolsInstances;
@@ -232,6 +233,11 @@ export default class InlineToolbar extends Module {
    */
   private addTool(tool: InlineTool): void {
     const button = tool.render();
+
+    if (!button) {
+      _.log('Render method must return an instance of Node', 'warn', tool);
+      return;
+    }
 
     this.nodes.buttons.appendChild(button);
 
