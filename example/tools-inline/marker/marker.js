@@ -1,0 +1,76 @@
+/**
+ * @todo cross-tag wrapping []:
+ *       sam[ple <b>te]xt</b> -> sam[ple ]<b>[te]xt</b>
+ *
+ * @todo optimizer:
+ *       sa[mple t][ex]t -> sa[mple tex]t
+ *       sa[mpl[e t]ex]t -> sa[mple tex]t
+ *
+ * @todo remove wrapper if selection () inside it:
+ *       s(ampl[e t]ex)t -> s[ample tex]t
+ *       s[ampl(e t)ex]t -> s[ampl]e t[ex]t
+ *       s([ample tex])t -> sample text
+ */
+
+class Marker {
+  constructor(api) {
+    this.api = api;
+    console.log(this.api);
+
+    this.button = null;
+    this.CSS = 'marked';
+  }
+
+  static get isInline() {
+    return true;
+  }
+
+  render() {
+    this.button = document.createElement('button');
+    this.button.innerText = 'HL';
+    this.button.classList.add('ce-inline-tool');
+
+    return this.button;
+  }
+
+  surround(range) {
+    if (!range) {
+      return;
+    }
+
+    let state = this.checkState();
+
+    if (state) {
+      // let selectedText = range.extractContents();
+
+      console.log('range', range);
+      console.log('state', state);
+      // console.log('selectedText', selectedText);
+
+      // range.insertNode(document.createTextNode('New Node Inserted Here'));
+    } else {
+      // let selectedText = range.extractContents();
+      // let span = document.createElement('SPAN');
+      //
+      // span.classList.add(this.CSS);
+      // span.appendChild(selectedText);
+      // range.insertNode(span);
+
+      // let selectedText = range.extractContents();
+
+      let span = document.createElement('SPAN');
+
+      span.classList.add(this.CSS);
+      range.surroundContents(span);
+      range.selectNode(span);
+    }
+  }
+
+  checkState(selection) {
+    const markerTag = this.api.selection.findParentTag('SPAN', this.CSS);
+
+    this.button.classList.toggle('ce-inline-tool--active', !!markerTag);
+
+    return markerTag;
+  }
+}
