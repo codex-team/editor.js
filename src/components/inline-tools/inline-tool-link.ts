@@ -241,8 +241,8 @@ export default class LinkInlineTool implements InlineTool {
      * Don't allow spaces
      */
     return !/\s/.test(str);
-
   }
+
   /**
    * Process link before injection
    * - sanitize
