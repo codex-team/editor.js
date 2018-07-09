@@ -169,37 +169,75 @@ export default class Selection {
 
   /**
    * Looks ahead to find passed tag from current selection
-   * @param  {String} tagName    - tag to found
-   * @param  {String} className  - tag's class name
+   *
+   * Read more about selection's Nodes on https://stackoverflow.com/a/33586253
+   *
+   * @param  {String} tagName       - tag to found
+   * @param  {String} [className]   - tag's class name
+   * @param  {Number} [searchDepth] - count of tags that can be included. For better performance.
    * @return {Node|null}
    */
-  findParentTag(tagName, className) {
+  findParentTag(tagName, className, searchDepth = 10) {
     let selection = window.getSelection(),
-      parentTag,
-      searchDepth = 10; // count of tags that can be included in <a>. For better performance.
+      parentTag = null;
 
-    if (!selection || !selection.anchorNode) {
+    /**
+     * If selection is missing or no anchorNode or focusNode were found then return null
+     */
+    if (!selection || !selection.anchorNode || !selection.focusNode) {
       return null;
     }
 
-    parentTag = selection.anchorNode.parentNode;
+    /**
+     * Define Nodes for start and end of selection
+     */
+    let parents = [
+      /** the Node in which the selection begins */
+      selection.anchorNode.parentNode,
 
-    while (searchDepth > 0 && parentTag.parentNode) {
-      if (parentTag.tagName === tagName) {
+      /** the Node in which the selection ends */
+      selection.focusNode.parentNode
+    ];
+
+    /**
+     * For each selection parent Nodes we try to find target tag [with target class name]
+     * It would be saved in parentTag variable
+     */
+    parents.forEach(parent => {
+      /** Reset tags limit */
+      let searchDepthIterable = searchDepth;
+
+      while (searchDepthIterable > 0 && parent.parentNode) {
         /**
-         * Optional additional check for class-name matching
+         * Check tag's name
          */
-        if (className && !parentTag.classList.contains(className)) {
-          return null;
+        if (parent.tagName === tagName) {
+          /**
+           * Optional additional check for class-name matching
+           */
+          if (className && !parent.classList.contains(className)) {
+            break;
+          }
+
+          /**
+           * If we have found required tag with class then save the result and go out from cycle
+           */
+          parentTag = parent;
+          break;
         }
 
-        return parentTag;
+        /**
+         * Target tag was not found. Go up to the parent and check it
+         */
+        parent = parent.parentNode;
+        searchDepthIterable--;
       }
+    });
 
-      parentTag = parentTag.parentNode;
-      searchDepth--;
-    }
-    return null;
+    /**
+     * Return found tag or null
+     */
+    return parentTag;
   }
 
   /**
