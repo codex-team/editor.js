@@ -2423,7 +2423,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * @class BlocksAPI
- * Provides with methods working with Block
+ * provides with methods working with Block
  */
 var BlocksAPI = function (_Module) {
     _inherits(BlocksAPI, _Module);
@@ -2542,7 +2542,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * @class EventsAPI
- * Provides with methods working with Toolbar
+ * provides with methods working with Toolbar
  */
 var EventsAPI = function (_Module) {
     _inherits(EventsAPI, _Module);
@@ -2804,7 +2804,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * @class ToolbarsAPI
- * Provides with methods working with Toolbar
+ * provides with methods working with Toolbar
  */
 var ToolbarsAPI = function (_Module) {
     _inherits(ToolbarsAPI, _Module);

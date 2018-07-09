@@ -1,15 +1,19 @@
 /**
- * @todo cross-tag wrapping []:
+ * @todo remove wrapper if selection () inside it:
+ *       s([ample tex])t -> sample text
+ *       s[ampl(e t)ex]t -> s[ampl]e t[ex]t       @todo create splitter
+ *       s(ampl[e t]ex)t -> s[ampl[e t]ex]t       do not remove wrapper
+ *       s([ampl]e t[ex])t -> s[[ampl]e t[ex]]t   do not remove wrapper
+ *
+ * @todo process cross-tag wrapping []:
  *       sam[ple <b>te]xt</b> -> sam[ple ]<b>[te]xt</b>
  *
- * @todo optimizer:
+ * @todo create optimizer:
  *       sa[mple t][ex]t -> sa[mple tex]t
  *       sa[mpl[e t]ex]t -> sa[mple tex]t
+ *       @see https://developer.mozilla.org/en-US/docs/Web/API/Range/commonAncestorContainer
  *
- * @todo remove wrapper if selection () inside it:
- *       s(ampl[e t]ex)t -> s[ample tex]t
- *       s[ampl(e t)ex]t -> s[ampl]e t[ex]t
- *       s([ample tex])t -> sample text
+ * @todo save selection after clicking on tool
  */
 
 class Marker {
@@ -41,23 +45,21 @@ class Marker {
     let state = this.checkState();
 
     if (state) {
-      // let selectedText = range.extractContents();
-
       console.log('range', range);
       console.log('state', state);
-      // console.log('selectedText', selectedText);
 
-      // range.insertNode(document.createTextNode('New Node Inserted Here'));
+      /** @todo remove highlighting */
+
+      // /**
+      //  *
+      //  */
+      // if (range.startContainer === range.endContainer) {
+      //   /**
+      //    * @todo remove whole wrapper not class
+      //    */
+      //   state.classList.remove(this.CSS);
+      // }
     } else {
-      // let selectedText = range.extractContents();
-      // let span = document.createElement('SPAN');
-      //
-      // span.classList.add(this.CSS);
-      // span.appendChild(selectedText);
-      // range.insertNode(span);
-
-      // let selectedText = range.extractContents();
-
       let span = document.createElement('SPAN');
 
       span.classList.add(this.CSS);
