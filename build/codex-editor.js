@@ -473,8 +473,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["api-blocks.ts","api-events.ts","api-sanitizer.ts","api-toolbar.ts","api.ts","blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+var modules = ["api-blocks.ts","api-events.ts","api-sanitizer.ts","api-selection.ts","api-toolbar.ts","api.ts","blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
 });
 
 /**
@@ -2346,10 +2346,10 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
-/*!******************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
-  \******************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2357,6 +2357,7 @@ var map = {
 	"./api-blocks.ts": "./src/components/modules/api-blocks.ts",
 	"./api-events.ts": "./src/components/modules/api-events.ts",
 	"./api-sanitizer.ts": "./src/components/modules/api-sanitizer.ts",
+	"./api-selection.ts": "./src/components/modules/api-selection.ts",
 	"./api-toolbar.ts": "./src/components/modules/api-toolbar.ts",
 	"./api.ts": "./src/components/modules/api.ts",
 	"./blockManager.js": "./src/components/modules/blockManager.js",
@@ -2394,7 +2395,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
 
 /***/ }),
 
@@ -2422,7 +2423,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * @class BlocksAPI
- * provides with methods working with Block
+ * Provides with methods working with Block
  */
 var BlocksAPI = function (_Module) {
     _inherits(BlocksAPI, _Module);
@@ -2541,7 +2542,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * @class EventsAPI
- * provides with methods working with Toolbar
+ * Provides with methods working with Toolbar
  */
 var EventsAPI = function (_Module) {
     _inherits(EventsAPI, _Module);
@@ -2699,6 +2700,86 @@ module.exports = exports["default"];
 
 /***/ }),
 
+/***/ "./src/components/modules/api-selection.ts":
+/*!*************************************************!*\
+  !*** ./src/components/modules/api-selection.ts ***!
+  \*************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
+
+var _selection2 = _interopRequireDefault(_selection);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * @class API
+ * Provides with methods working with Selection
+ */
+var SelectionAPI = function (_Module) {
+    _inherits(SelectionAPI, _Module);
+
+    /**
+     * Save Editor config. API provides passed configuration to the Blocks
+     * @param {EditorsConfig} config
+     */
+    function SelectionAPI(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, SelectionAPI);
+
+        return _possibleConstructorReturn(this, (SelectionAPI.__proto__ || Object.getPrototypeOf(SelectionAPI)).call(this, { config: config }));
+    }
+    /**
+     * Available methods
+     * @return {ISelectionAPI}
+     */
+
+
+    _createClass(SelectionAPI, [{
+        key: 'findParentTag',
+        value: function findParentTag(tagName, className) {
+            return new _selection2.default().findParentTag(tagName, className);
+        }
+    }, {
+        key: 'methods',
+        get: function get() {
+            var _this2 = this;
+
+            return {
+                findParentTag: function findParentTag(tagName, className) {
+                    return _this2.findParentTag(tagName, className);
+                }
+            };
+        }
+    }]);
+
+    return SelectionAPI;
+}(Module);
+
+SelectionAPI.displayName = 'SelectionAPI';
+exports.default = SelectionAPI;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
+
+/***/ }),
+
 /***/ "./src/components/modules/api-toolbar.ts":
 /*!***********************************************!*\
   !*** ./src/components/modules/api-toolbar.ts ***!
@@ -2723,7 +2804,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 /**
  * @class ToolbarsAPI
- * provides with methods working with Toolbar
+ * Provides with methods working with Toolbar
  */
 var ToolbarsAPI = function (_Module) {
     _inherits(ToolbarsAPI, _Module);
@@ -2837,6 +2918,7 @@ var API = function (_Module) {
                 caret: {},
                 events: this.Editor.EventsAPI.methods,
                 sanitizer: this.Editor.SanitizerAPI.methods,
+                selection: this.Editor.SelectionAPI.methods,
                 toolbar: this.Editor.ToolbarsAPI.methods
             };
         }
@@ -7246,40 +7328,79 @@ var Selection = function () {
 
     /**
      * Looks ahead to find passed tag from current selection
-     * @param  {String} tagName    - tag to found
-     * @param  {String} className  - tag's class name
+     *
+     * Read more about selection's Nodes on https://stackoverflow.com/a/33586253
+     *
+     * @param  {String} tagName       - tag to found
+     * @param  {String} [className]   - tag's class name
+     * @param  {Number} [searchDepth] - count of tags that can be included. For better performance.
      * @return {Node|null}
      */
 
   }, {
     key: 'findParentTag',
     value: function findParentTag(tagName, className) {
-      var selection = window.getSelection(),
-          parentTag = void 0,
-          searchDepth = 10; // count of tags that can be included in <a>. For better performance.
+      var searchDepth = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 10;
 
-      if (!selection || !selection.anchorNode) {
+      var selection = window.getSelection(),
+          parentTag = null;
+
+      /**
+       * If selection is missing or no anchorNode or focusNode were found then return null
+       */
+      if (!selection || !selection.anchorNode || !selection.focusNode) {
         return null;
       }
 
-      parentTag = selection.anchorNode.parentNode;
+      /**
+       * Define Nodes for start and end of selection
+       */
+      var parents = [
+      /** the Node in which the selection begins */
+      selection.anchorNode.parentNode,
 
-      while (searchDepth > 0 && parentTag.parentNode) {
-        if (parentTag.tagName === tagName) {
+      /** the Node in which the selection ends */
+      selection.focusNode.parentNode];
+
+      /**
+       * For each selection parent Nodes we try to find target tag [with target class name]
+       * It would be saved in parentTag variable
+       */
+      parents.forEach(function (parent) {
+        /** Reset tags limit */
+        var searchDepthIterable = searchDepth;
+
+        while (searchDepthIterable > 0 && parent.parentNode) {
           /**
-           * Optional additional check for class-name matching
+           * Check tag's name
            */
-          if (className && !parentTag.classList.contains(className)) {
-            return null;
+          if (parent.tagName === tagName) {
+            /**
+             * Optional additional check for class-name matching
+             */
+            if (className && !parent.classList.contains(className)) {
+              break;
+            }
+
+            /**
+             * If we have found required tag with class then save the result and go out from cycle
+             */
+            parentTag = parent;
+            break;
           }
 
-          return parentTag;
+          /**
+           * Target tag was not found. Go up to the parent and check it
+           */
+          parent = parent.parentNode;
+          searchDepthIterable--;
         }
+      });
 
-        parentTag = parentTag.parentNode;
-        searchDepth--;
-      }
-      return null;
+      /**
+       * Return found tag or null
+       */
+      return parentTag;
     }
 
     /**
