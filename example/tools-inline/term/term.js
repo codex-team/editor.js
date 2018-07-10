@@ -15,38 +15,55 @@
  *       @see https://developer.mozilla.org/en-US/docs/Web/API/Range/commonAncestorContainer
  */
 
-class Marker {
+// @todo add description
+class Term {
   constructor(api) {
     this.api = api;
 
     this.button = null;
     this.TAG = 'SPAN';
     this.CSS = 'marked';
+
+    // @todo move this classes to api
+    this.ICON_CLASSES = {
+      default: 'ce-inline-tool',
+      active: 'ce-inline-tool--active'
+    };
   }
 
+  // @todo add description
   static get isInline() {
     return true;
   }
 
+  /**
+   * Create button element for Toolbar
+   *
+   * @return {HTMLElement}
+   */
   render() {
     this.button = document.createElement('button');
-    this.button.innerText = 'HL';
-    this.button.classList.add('ce-inline-tool');
+
+    this.button.innerText = '<>'; // @todo change to SVG icon
+
+    this.button.classList.add(this.ICON_CLASSES.default);
 
     return this.button;
   }
 
+  // @todo add description
   surround(range) {
     if (!range) {
       return;
     }
 
-    let state = this.checkState();
+    let state = this.api.selection.findParentTag(this.TAG, this.CSS);
 
     /**
      * If start or end of selection is in the highlighted block
      */
     if (state) {
+      // @todo create "unwrap" function
       /**
        * Expand selection
        */
@@ -59,6 +76,7 @@ class Marker {
 
       // @todo save selection on the text
     } else {
+      // @todo create "wrap" function
       /**
        * Create a wrapper for highlighting
        */
@@ -78,11 +96,15 @@ class Marker {
     }
   }
 
+  /**
+   * Check and change Term's state for current selection
+   *
+   * @param {Selection} selection
+   */
   checkState(selection) {
-    const markerTag = this.api.selection.findParentTag(this.TAG, this.CSS);
+    const termTag = this.api.selection.findParentTag(this.TAG, this.CSS);
+                                      // @todo pass selection to this function
 
-    this.button.classList.toggle('ce-inline-tool--active', !!markerTag);
-
-    return markerTag;
+    this.button.classList.toggle(this.ICON_CLASSES.active, !!termTag);
   }
 }
