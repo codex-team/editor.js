@@ -2758,6 +2758,11 @@ var SelectionAPI = function (_Module) {
             return new _selection2.default().findParentTag(tagName, className);
         }
     }, {
+        key: 'expandToTag',
+        value: function expandToTag(node) {
+            new _selection2.default().expandToTag(node);
+        }
+    }, {
         key: 'methods',
         get: function get() {
             var _this2 = this;
@@ -2765,6 +2770,9 @@ var SelectionAPI = function (_Module) {
             return {
                 findParentTag: function findParentTag(tagName, className) {
                     return _this2.findParentTag(tagName, className);
+                },
+                expandToTag: function expandToTag(node) {
+                    return _this2.expandToTag(node);
                 }
             };
         }
@@ -7405,7 +7413,8 @@ var Selection = function () {
 
     /**
      * Expands selection range to the passed parent node
-     * @param {Element} node
+     *
+     * @param {HTMLElement} node
      */
 
   }, {

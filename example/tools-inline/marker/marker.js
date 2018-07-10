@@ -1,9 +1,10 @@
 /**
  * @todo remove wrapper if selection () inside it:
- *       s([ample tex])t -> sample text
- *       s[ampl(e t)ex]t -> s[ampl]e t[ex]t       @todo create splitter
- *       s(ampl[e t]ex)t -> s[ampl[e t]ex]t       do not remove wrapper
- *       s([ampl]e t[ex])t -> s[[ampl]e t[ex]]t   do not remove wrapper
+ *   [x] s[(ample tex)]t -> sample text
+ *   [x] s[ampl(e t)ex]t -> sample text
+ *   (?) s[ampl(e t)ex]t -> s[ampl]e t[ex]t       @todo create splitter
+ *   [x] s(ampl[e t]ex)t -> s[ampl[e t]ex]t       add remove wrapper
+ *   [ ] s[(ampl]e t[ex)]t -> s[[ampl]e t[ex]]t   add wrapper
  *
  * @todo process cross-tag wrapping []:
  *       sam[ple <b>te]xt</b> -> sam[ple ]<b>[te]xt</b>
@@ -12,16 +13,14 @@
  *       sa[mple t][ex]t -> sa[mple tex]t
  *       sa[mpl[e t]ex]t -> sa[mple tex]t
  *       @see https://developer.mozilla.org/en-US/docs/Web/API/Range/commonAncestorContainer
- *
- * @todo save selection after clicking on tool
  */
 
 class Marker {
   constructor(api) {
     this.api = api;
-    console.log(this.api);
 
     this.button = null;
+    this.TAG = 'SPAN';
     this.CSS = 'marked';
   }
 
@@ -44,32 +43,43 @@ class Marker {
 
     let state = this.checkState();
 
+    /**
+     * If start or end of selection is in the highlighted block
+     */
     if (state) {
-      console.log('range', range);
-      console.log('state', state);
+      /**
+       * Expand selection
+       */
+      this.api.selection.expandToTag(state);
 
-      /** @todo remove highlighting */
+      /**
+       * Remove wrapper
+       */
+      state.outerHTML = state.innerHTML;
 
-      // /**
-      //  *
-      //  */
-      // if (range.startContainer === range.endContainer) {
-      //   /**
-      //    * @todo remove whole wrapper not class
-      //    */
-      //   state.classList.remove(this.CSS);
-      // }
+      // @todo save selection on the text
     } else {
-      let span = document.createElement('SPAN');
+      /**
+       * Create a wrapper for highlighting
+       */
+      let span = document.createElement(this.TAG);
 
       span.classList.add(this.CSS);
+
+      /**
+       * Wrap text with wrapper tag
+       */
       range.surroundContents(span);
-      range.selectNode(span);
+
+      /**
+       * Expand (add) selection to highlighted block
+       */
+      this.api.selection.expandToTag(span);
     }
   }
 
   checkState(selection) {
-    const markerTag = this.api.selection.findParentTag('SPAN', this.CSS);
+    const markerTag = this.api.selection.findParentTag(this.TAG, this.CSS);
 
     this.button.classList.toggle('ce-inline-tool--active', !!markerTag);
 

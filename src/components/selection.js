@@ -242,7 +242,8 @@ export default class Selection {
 
   /**
    * Expands selection range to the passed parent node
-   * @param {Element} node
+   *
+   * @param {HTMLElement} node
    */
   expandToTag(node) {
     let selection = window.getSelection();

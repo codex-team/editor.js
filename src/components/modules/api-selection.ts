@@ -23,12 +23,17 @@ export default class SelectionAPI extends Module implements ISelectionAPI {
    */
   get methods(): ISelectionAPI {
     return {
-      findParentTag: (tagName, className) => this.findParentTag(tagName, className),
+      findParentTag: (tagName: string, className: string) => this.findParentTag(tagName, className),
+      expandToTag: (node: HTMLElement) => this.expandToTag(node),
     };
   }
 
-  public findParentTag(tagName, className) {
+  public findParentTag(tagName: string, className: string): Node {
     return new Selection().findParentTag(tagName, className);
+  }
+
+  public expandToTag(node: HTMLElement): void {
+    new Selection().expandToTag(node);
   }
 
 }

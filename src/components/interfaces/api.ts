@@ -83,10 +83,17 @@ export interface ISelectionAPI {
   /**
    * Looks ahead to find passed tag from current selection
    *
-   * @param tagName
-   * @param className
+   * @param {String} tagName
+   * @param {String} className
    */
   findParentTag: (tagName: string, className: string) => Node;
+
+  /**
+   * Expands selection range to the passed parent node
+   *
+   * @param {HTMLElement} node
+   */
+  expandToTag: (node: HTMLElement) => void;
 }
 
 /**
