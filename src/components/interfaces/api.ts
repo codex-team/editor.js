@@ -86,7 +86,7 @@ export interface ISelectionAPI {
    * @param {String} tagName
    * @param {String} className
    */
-  findParentTag: (tagName: string, className: string) => Node;
+  findParentTag: (tagName: string, className: string) => HTMLElement|null;
 
   /**
    * Expands selection range to the passed parent node

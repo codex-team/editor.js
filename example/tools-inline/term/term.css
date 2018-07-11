@@ -1,12 +1,24 @@
-/*.marked {*/
-  /*background: yellowgreen;*/
-/*}*/
+/**
+ * Styles for the Term tool
+ *
+ * CodeX Editor Inline Toolbar plugin
+ */
+.ce-term-tool__icon {
+  background-image: url('term.svg');
+  background-repeat: no-repeat;
+  background-position: center center;
+}
+
+.ce-term-tool__icon--active {
+  background-image: url('term-blue.svg');
+}
+
 
 .marked {
-  /*font-family: 'monospace', 'monaco', 'consolas', 'courier';*/
   background-color: #f4f4f4;
   border: 1px solid #eaeaea;
   color: #3c3434;
   padding: 1px 3px;
   border-radius: 2px;
+  margin: 0 4px;
 }

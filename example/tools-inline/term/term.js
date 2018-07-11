@@ -1,37 +1,47 @@
 /**
- * @todo remove wrapper if selection () inside it:
- *   [x] s[(ample tex)]t -> sample text
- *   [x] s[ampl(e t)ex]t -> sample text
- *   (?) s[ampl(e t)ex]t -> s[ampl]e t[ex]t       @todo create splitter
- *   [x] s(ampl[e t]ex)t -> s[ampl[e t]ex]t       add remove wrapper
- *   [ ] s[(ampl]e t[ex)]t -> s[[ampl]e t[ex]]t   add wrapper
+ * Term plugin for the CodeX Editor
  *
- * @todo process cross-tag wrapping []:
- *       sam[ple <b>te]xt</b> -> sam[ple ]<b>[te]xt</b>
- *
- * @todo create optimizer:
- *       sa[mple t][ex]t -> sa[mple tex]t
- *       sa[mpl[e t]ex]t -> sa[mple tex]t
- *       @see https://developer.mozilla.org/en-US/docs/Web/API/Range/commonAncestorContainer
+ * Allows to wrap inline fragment and style it somehow.
  */
-
-// @todo add description
 class Term {
+  /**
+   * @param {object} api - CodeX Editor API
+   */
   constructor(api) {
     this.api = api;
 
+    /**
+     * Toolbar Button
+     * @type {HTMLElement|null}
+     */
     this.button = null;
-    this.TAG = 'SPAN';
+
+    /**
+     * Tag represented the term
+     * @type {string}
+     */
+    this.tag = 'SPAN';
+
+    /**
+     * Class name for term-tag
+     * @type {string}
+     */
     this.CSS = 'marked';
 
-    // @todo move this classes to api
-    this.ICON_CLASSES = {
-      default: 'ce-inline-tool',
-      active: 'ce-inline-tool--active'
+    /**
+     * CSS classes
+     */
+    this.iconClasses = {
+      base: 'ce-inline-tool',
+      term: 'ce-term-tool__icon',
+      active: 'ce-term-tool__icon--active'
     };
   }
 
-  // @todo add description
+  /**
+   * Specifies Tool as Inline Toolbar Tool
+   * @return {boolean}
+   */
   static get isInline() {
     return true;
   }
@@ -43,76 +53,96 @@ class Term {
    */
   render() {
     this.button = document.createElement('button');
-
-    this.button.innerText = '<>'; // @todo change to SVG icon
-
-    this.button.classList.add(this.ICON_CLASSES.default);
+    this.button.classList.add(this.iconClasses.base, this.iconClasses.term);
 
     return this.button;
   }
 
   /**
-   * Process selected fragment
-   *
-   * @param {Range} range
+   * Wrap/Unwrap selected fragment
+   * @param {Range} range - selected fragment
    */
   surround(range) {
     if (!range) {
       return;
     }
 
-    console.log(range);
-
-
-    let state = this.api.selection.findParentTag(this.TAG, this.CSS);
-    console.log(state);
+    let termWrapper = this.api.selection.findParentTag(this.tag, this.CSS);
 
     /**
      * If start or end of selection is in the highlighted block
      */
-    if (state) {
-      // @todo create "unwrap" function
-      /**
-       * Expand selection
-       */
-      this.api.selection.expandToTag(state);
-
-      /**
-       * Remove wrapper
-       */
-      state.outerHTML = state.innerHTML;
-
-      // @todo save selection on the text
+    if (termWrapper) {
+      this.unwrap(termWrapper);
     } else {
-      // @todo create "wrap" function
-      /**
-       * Create a wrapper for highlighting
-       */
-      let span = document.createElement(this.TAG);
-
-      span.classList.add(this.CSS);
-
-      /**
-       * Wrap text with wrapper tag
-       */
-      range.surroundContents(span);
-
-      /**
-       * Expand (add) selection to highlighted block
-       */
-      this.api.selection.expandToTag(span);
+      this.wrap(range);
     }
   }
 
   /**
-   * Check and change Term's state for current selection
-   *
-   * @param {Selection} selection
+   * Wrap selection with term-tag
+   * @param {Range} range - selected fragment
    */
-  checkState(selection) {
-    const termTag = this.api.selection.findParentTag(this.TAG, this.CSS);
-                                      // @todo pass selection to this function
+  wrap(range) {
+    /**
+     * Create a wrapper for highlighting
+     */
+    let span = document.createElement(this.tag);
 
-    this.button.classList.toggle(this.ICON_CLASSES.active, !!termTag);
+    span.classList.add(this.CSS);
+
+    /**
+     * SurroundContent throws an error if the Range splits a non-Text node with only one of its boundary points
+     * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Range/surroundContents}
+     * // range.surroundContents(span);
+     */
+    span.appendChild(range.extractContents());
+    range.insertNode(span);
+
+    /**
+     * Expand (add) selection to highlighted block
+     */
+    this.api.selection.expandToTag(span);
+  }
+
+  /**
+   * Unwrap term-tag
+   * @param {HTMLElement} termWrapper - term wrapper tag
+   */
+  unwrap(termWrapper) {
+    /**
+     * Expand selection to all term-tag
+     */
+    this.api.selection.expandToTag(termWrapper);
+
+    let sel = window.getSelection();
+    let range = sel.getRangeAt(0);
+
+    let unwrappedContent = range.extractContents();
+
+    /**
+     * Remove empty term-tag
+     */
+    termWrapper.parentNode.removeChild(termWrapper);
+
+    /**
+     * Insert extracted content
+     */
+    range.insertNode(unwrappedContent);
+
+    /**
+     * Restore selection
+     */
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  /**
+   * Check and change Term's state for current selection
+   */
+  checkState() {
+    const termTag = this.api.selection.findParentTag(this.tag, this.CSS);
+
+    this.button.classList.toggle(this.iconClasses.active, !!termTag);
   }
 }

@@ -175,7 +175,7 @@ export default class Selection {
    * @param  {String} tagName       - tag to found
    * @param  {String} [className]   - tag's class name
    * @param  {Number} [searchDepth] - count of tags that can be included. For better performance.
-   * @return {Node|null}
+   * @return {HTMLElement|null}
    */
   findParentTag(tagName, className, searchDepth = 10) {
     let selection = window.getSelection(),
@@ -191,7 +191,7 @@ export default class Selection {
     /**
      * Define Nodes for start and end of selection
      */
-    let parents = [
+    let boundNodes = [
       /** the Node in which the selection begins */
       selection.anchorNode.parentNode,
 
@@ -203,7 +203,7 @@ export default class Selection {
      * For each selection parent Nodes we try to find target tag [with target class name]
      * It would be saved in parentTag variable
      */
-    parents.forEach(parent => {
+    boundNodes.forEach(parent => {
       /** Reset tags limit */
       let searchDepthIterable = searchDepth;
 

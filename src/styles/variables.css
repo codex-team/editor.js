@@ -67,7 +67,7 @@
     }
 
     &:hover {
-      background: var(--bg-light);
+      background-color: var(--bg-light);
     }
 
     &--active {

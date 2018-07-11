@@ -203,8 +203,12 @@ export default class UI extends Module {
 
     /**
      * Close Inline Toolbar when nothing selected
+     * use small delay to renew selection
      */
-    this.Editor.InlineToolbar.handleShowingEvent(event);
+    setTimeout(() => {
+      this.Editor.InlineToolbar.handleShowingEvent(event);
+    }, 50);
+
 
     /**
          *
