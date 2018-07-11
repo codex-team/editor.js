@@ -114,7 +114,7 @@ class Term {
 
   /**
    * Unwrap term-tag
-   * 
+   *
    * @param {HTMLElement} termWrapper - term wrapper tag
    */
   unwrap(termWrapper) {
