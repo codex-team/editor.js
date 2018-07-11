@@ -123,6 +123,9 @@ export default class CodexEditor {
       .then(() => this.init())
       .then(() => this.start())
       .then(() => {
+        this.api = this.moduleInstances.API.methods;
+      })
+      .then(() => {
         console.log('CodeX Editor is ready!');
       })
       .catch(error => {

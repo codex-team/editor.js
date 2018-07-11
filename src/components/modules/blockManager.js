@@ -399,6 +399,14 @@ export default class BlockManager extends Module {
       throw new Error('Can not find a Block from this child Node');
     }
   }
+
+  /**
+   * Clears Editor
+   */
+  clear() {
+    this._blocks.removeAll();
+    this.currentBlockIndex = -1;
+  }
 };
 
 /**
@@ -482,6 +490,14 @@ class Blocks {
 
     this.blocks[index].html.remove();
     this.blocks.splice(index, 1);
+  }
+
+  /**
+   * Remove all blocks
+   */
+  removeAll() {
+    this.workingArea.innerHTML = '';
+    this.blocks = null;
   }
 
   /**

@@ -545,6 +545,8 @@ var CodexEditor = function () {
     }).then(function () {
       return _this.start();
     }).then(function () {
+      _this.api = _this.moduleInstances.API.methods;
+    }).then(function () {
       console.log('CodeX Editor is ready!');
     }).catch(function (error) {
       console.log('CodeX Editor does not ready because of %o', error);
@@ -2455,22 +2457,13 @@ var BlocksAPI = function (_Module) {
 
 
     _createClass(BlocksAPI, [{
-        key: 'moveDown',
+        key: 'clear',
 
         /**
-         * Moves block down
+         * Clear Editor's area
          */
-        value: function moveDown() {
-            console.log('moving down', this.Editor.BlockManager);
-        }
-        /**
-         * Moves block up
-         */
-
-    }, {
-        key: 'moveUp',
-        value: function moveUp() {
-            console.log('moving up', this.Editor.BlockManager);
+        value: function clear() {
+            this.Editor.BlockManager.clear();
         }
         /**
          * Deletes Block
@@ -2498,12 +2491,33 @@ var BlocksAPI = function (_Module) {
                 this.Editor.BlockManager.navigatePrevious(true);
             }
         }
+        /**
+         * Moves block down
+         */
+
+    }, {
+        key: 'moveDown',
+        value: function moveDown() {
+            console.log('moving down', this.Editor.BlockManager);
+        }
+        /**
+         * Moves block up
+         */
+
+    }, {
+        key: 'moveUp',
+        value: function moveUp() {
+            console.log('moving up', this.Editor.BlockManager);
+        }
     }, {
         key: 'methods',
         get: function get() {
             var _this2 = this;
 
             return {
+                clear: function clear() {
+                    return _this2.clear();
+                },
                 delete: function _delete() {
                     return _this2.delete();
                 },
@@ -3373,6 +3387,17 @@ var BlockManager = function (_Module) {
         throw new Error('Can not find a Block from this child Node');
       }
     }
+
+    /**
+     * Clears Editor
+     */
+
+  }, {
+    key: 'clear',
+    value: function clear() {
+      this._blocks.removeAll();
+      this.currentBlockIndex = -1;
+    }
   }, {
     key: 'lastBlock',
     get: function get() {
@@ -3575,6 +3600,17 @@ var Blocks = function () {
 
       this.blocks[index].html.remove();
       this.blocks.splice(index, 1);
+    }
+
+    /**
+     * Remove all blocks
+     */
+
+  }, {
+    key: 'removeAll',
+    value: function removeAll() {
+      this.workingArea.innerHTML = '';
+      this.blocks = null;
     }
 
     /**

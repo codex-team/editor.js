@@ -22,6 +22,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    */
   get methods(): IBlocksAPI {
     return {
+      clear: () => this.clear(),
       delete: () => this.delete(),
       moveDown: () => this.moveDown(),
       moveUp: () => this.moveUp(),
@@ -29,17 +30,10 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
   }
 
   /**
-   * Moves block down
+   * Clear Editor's area
    */
-  public moveDown(): void {
-    console.log('moving down', this.Editor.BlockManager);
-  }
-
-  /**
-   * Moves block up
-   */
-  public moveUp(): void {
-    console.log('moving up', this.Editor.BlockManager);
+  public clear(): void {
+    this.Editor.BlockManager.clear();
   }
 
   /**
@@ -66,6 +60,20 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
     } else {
       this.Editor.BlockManager.navigatePrevious(true);
     }
+  }
+
+  /**
+   * Moves block down
+   */
+  public moveDown(): void {
+    console.log('moving down', this.Editor.BlockManager);
+  }
+
+  /**
+   * Moves block up
+   */
+  public moveUp(): void {
+    console.log('moving up', this.Editor.BlockManager);
   }
 
 }

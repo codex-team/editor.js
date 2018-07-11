@@ -18,21 +18,24 @@ export interface IAPI {
 export interface IBlocksAPI {
 
   /**
-   * Move down the highlighted block
-   * Using BlockManager methods
+   * Clears Blocks list
    */
-  moveDown: () => void;
-
-  /**
-   * Move up the highlighted block
-   * After moving the block, we need to scroll window
-   */
-  moveUp: () => void;
+  clear: () => void;
 
   /**
    * Removes block
    */
   delete: (blockIndex?: number) => void;
+
+  /**
+   * Move down the highlighted block
+   */
+  moveDown: () => void;
+
+  /**
+   * Move up the highlighted block
+   */
+  moveUp: () => void;
 }
 
 /**
