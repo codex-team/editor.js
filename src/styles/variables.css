@@ -29,7 +29,7 @@
 
   --overlay-pane: {
       position: absolute;
-      background: #FFFFFF;
+      background-color: #FFFFFF;
       box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);
       border-radius: 4px;
       z-index: 2;
@@ -43,7 +43,7 @@
           left: 50%;
           margin-left: -7px;
           transform: rotate(-45deg);
-          background: #fff;
+          background-color: #fff;
           z-index: -1;
       }
   };
@@ -58,7 +58,7 @@
     cursor: pointer;
     border: 0;
     outline: none;
-    background: transparent;
+    background-color: transparent;
     vertical-align: bottom;
     color: var(--grayText);
 

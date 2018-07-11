@@ -36,7 +36,7 @@
   }
 
   &-input {
-    background: var(--bg-light);
+    background-color: var(--bg-light);
     outline: none;
     border: 0;
     border-radius: 3px;
