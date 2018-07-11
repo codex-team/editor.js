@@ -166,8 +166,13 @@ export default class UI extends Module {
   documentClicked(event) {
     /**
      * Close Inline Toolbar when nothing selected
+     * Do not fire check on clicks at the Inline Toolbar buttons
      */
-    this.Editor.InlineToolbar.handleShowingEvent(event);
+    const clickedOnInlineToolbarButton = event.target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
+
+    if (!clickedOnInlineToolbarButton) {
+      this.Editor.InlineToolbar.handleShowingEvent(event);
+    }
   }
 
   /**

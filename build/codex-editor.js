@@ -5462,10 +5462,19 @@ var InlineToolbar = function (_Module) {
         _classCallCheck(this, InlineToolbar);
 
         /**
-         * Inline Toolbar elements
+         * CSS styles
          */
         var _this = _possibleConstructorReturn(this, (InlineToolbar.__proto__ || Object.getPrototypeOf(InlineToolbar)).call(this, { config: config }));
 
+        _this.CSS = {
+            inlineToolbar: 'ce-inline-toolbar',
+            inlineToolbarShowed: 'ce-inline-toolbar--showed',
+            buttonsWrapper: 'ce-inline-toolbar__buttons',
+            actionsWrapper: 'ce-inline-toolbar__actions'
+        };
+        /**
+         * Inline Toolbar elements
+         */
         _this.nodes = {
             wrapper: null,
             buttons: null,
@@ -5474,15 +5483,6 @@ var InlineToolbar = function (_Module) {
              * For example, input for the 'link' tool or textarea for the 'comment' tool
              */
             actions: null
-        };
-        /**
-         * CSS styles
-         */
-        _this.CSS = {
-            inlineToolbar: 'ce-inline-toolbar',
-            inlineToolbarShowed: 'ce-inline-toolbar--showed',
-            buttonsWrapper: 'ce-inline-toolbar__buttons',
-            actionsWrapper: 'ce-inline-toolbar__actions'
         };
         /**
          * Margin above/below the Toolbar
@@ -6858,8 +6858,13 @@ var UI = function (_Module) {
     value: function documentClicked(event) {
       /**
        * Close Inline Toolbar when nothing selected
+       * Do not fire check on clicks at the Inline Toolbar buttons
        */
-      this.Editor.InlineToolbar.handleShowingEvent(event);
+      var clickedOnInlineToolbarButton = event.target.closest('.' + this.Editor.InlineToolbar.CSS.inlineToolbar);
+
+      if (!clickedOnInlineToolbarButton) {
+        this.Editor.InlineToolbar.handleShowingEvent(event);
+      }
     }
 
     /**
