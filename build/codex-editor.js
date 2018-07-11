@@ -1,5 +1,14 @@
-var CodexEditor =
-/******/ (function(modules) { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["CodexEditor"] = factory();
+	else
+		root["CodexEditor"] = factory();
+})(window, function() {
+return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
 /******/
@@ -4405,7 +4414,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @typedef {Listeners} Listeners
  * @property {Array} allListeners
  */
-
 var Listeners = function (_Module) {
   _inherits(Listeners, _Module);
 
@@ -4970,7 +4978,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @property {Element} html - Editor HTML content
  * @property {String} json - Editor JSON output
  */
-
 var Saver = function (_Module) {
   _inherits(Saver, _Module);
 
@@ -7852,4 +7859,5 @@ exports.push([module.i, ":root {\n  /**\n   * Toolbar buttons\n   */\n  --bg-lig
 /***/ })
 
 /******/ });
+});
 //# sourceMappingURL=codex-editor.js.map
