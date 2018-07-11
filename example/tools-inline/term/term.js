@@ -51,13 +51,21 @@ class Term {
     return this.button;
   }
 
-  // @todo add description
+  /**
+   * Process selected fragment
+   *
+   * @param {Range} range
+   */
   surround(range) {
     if (!range) {
       return;
     }
 
+    console.log(range);
+
+
     let state = this.api.selection.findParentTag(this.TAG, this.CSS);
+    console.log(state);
 
     /**
      * If start or end of selection is in the highlighted block

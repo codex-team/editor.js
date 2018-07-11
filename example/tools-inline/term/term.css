@@ -3,9 +3,10 @@
 /*}*/
 
 .marked {
-  font-family: 'monospace', 'monaco', 'consolas', 'courier';
-  background-color: rgba(255, 97, 106, 0.2);
-  border: 1px solid rgba(255, 98, 86, 0.49);
-  padding: 0px 3px;
-  border-radius: 3px;
+  /*font-family: 'monospace', 'monaco', 'consolas', 'courier';*/
+  background-color: #f4f4f4;
+  border: 1px solid #eaeaea;
+  color: #3c3434;
+  padding: 1px 3px;
+  border-radius: 2px;
 }
