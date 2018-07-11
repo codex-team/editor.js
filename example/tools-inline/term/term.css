@@ -1,0 +1,22 @@
+/**
+ * Styles for the Term tool
+ *
+ * CodeX Editor Inline Toolbar plugin
+ */
+.ce-term-tool__icon {
+  background: url('term.svg') no-repeat center center;
+}
+
+.ce-term-tool__icon--active {
+  background-image: url('term-blue.svg');
+}
+
+
+.marked {
+  background-color: #f4f4f4;
+  border: 1px solid #eaeaea;
+  color: #3c3434;
+  padding: 1px 3px;
+  border-radius: 2px;
+  margin: 0 2px;
+}

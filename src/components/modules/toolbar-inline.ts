@@ -17,6 +17,16 @@ import Selection from '../selection';
 export default class InlineToolbar extends Module {
 
   /**
+   * CSS styles
+   */
+  public CSS = {
+    inlineToolbar: 'ce-inline-toolbar',
+    inlineToolbarShowed: 'ce-inline-toolbar--showed',
+    buttonsWrapper: 'ce-inline-toolbar__buttons',
+    actionsWrapper: 'ce-inline-toolbar__actions',
+  };
+
+  /**
    * Inline Toolbar elements
    */
   private nodes = {
@@ -27,16 +37,6 @@ export default class InlineToolbar extends Module {
      * For example, input for the 'link' tool or textarea for the 'comment' tool
      */
     actions: null,
-  };
-
-  /**
-   * CSS styles
-   */
-  private CSS = {
-    inlineToolbar: 'ce-inline-toolbar',
-    inlineToolbarShowed: 'ce-inline-toolbar--showed',
-    buttonsWrapper: 'ce-inline-toolbar__buttons',
-    actionsWrapper: 'ce-inline-toolbar__actions',
   };
 
   /**
