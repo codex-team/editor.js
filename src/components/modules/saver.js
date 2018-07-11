@@ -20,7 +20,6 @@
  * @property {Element} html - Editor HTML content
  * @property {String} json - Editor JSON output
  */
-
 export default class Saver extends Module {
   /**
    * @constructor

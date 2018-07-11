@@ -13,7 +13,6 @@
  * @typedef {Listeners} Listeners
  * @property {Array} allListeners
  */
-
 export default class Listeners extends Module {
   /**
    * @constructor
