@@ -3106,6 +3106,9 @@ var BlockManager = function (_Module) {
       this.Editor.Listeners.on(block.pluginsContent, 'mouseup', function (event) {
         _this3.Editor.InlineToolbar.handleShowingEvent(event);
       });
+      this.Editor.Listeners.on(block.pluginsContent, 'keyup', function (event) {
+        _this3.Editor.InlineToolbar.handleShowingEvent(event);
+      });
     }
 
     /**
@@ -6837,12 +6840,26 @@ var UI = function (_Module) {
     value: function bindEvents() {
       var _this4 = this;
 
-      /**
-       * @todo bind events with the Listeners module
-       */
       this.Editor.Listeners.on(this.nodes.redactor, 'click', function (event) {
         return _this4.redactorClicked(event);
       }, false);
+      this.Editor.Listeners.on(document, 'click', function (event) {
+        return _this4.documentClicked(event);
+      }, false);
+    }
+
+    /**
+     * All clicks on document
+     * @param {MouseEvent} event - Click
+     */
+
+  }, {
+    key: 'documentClicked',
+    value: function documentClicked(event) {
+      /**
+       * Close Inline Toolbar when nothing selected
+       */
+      this.Editor.InlineToolbar.handleShowingEvent(event);
     }
 
     /**
@@ -6873,8 +6890,6 @@ var UI = function (_Module) {
   }, {
     key: 'redactorClicked',
     value: function redactorClicked(event) {
-      var _this5 = this;
-
       var clickedNode = event.target;
 
       /**
@@ -6888,14 +6903,6 @@ var UI = function (_Module) {
          */
         this.Editor.Caret.setToTheLastBlock();
       }
-
-      /**
-       * Close Inline Toolbar when nothing selected
-       * use small delay to renew selection
-       */
-      setTimeout(function () {
-        _this5.Editor.InlineToolbar.handleShowingEvent(event);
-      }, 50);
 
       /**
            *
@@ -7354,8 +7361,6 @@ var Selection = function () {
     /**
      * Looks ahead to find passed tag from current selection
      *
-     * Read more about selection's Nodes on https://stackoverflow.com/a/33586253
-     *
      * @param  {String} tagName       - tag to found
      * @param  {String} [className]   - tag's class name
      * @param  {Number} [searchDepth] - count of tags that can be included. For better performance.
@@ -7382,10 +7387,9 @@ var Selection = function () {
        */
       var boundNodes = [
       /** the Node in which the selection begins */
-      selection.anchorNode.parentNode,
-
+      selection.anchorNode,
       /** the Node in which the selection ends */
-      selection.focusNode.parentNode];
+      selection.focusNode];
 
       /**
        * For each selection parent Nodes we try to find target tag [with target class name]
@@ -7403,8 +7407,8 @@ var Selection = function () {
             /**
              * Optional additional check for class-name matching
              */
-            if (className && !parent.classList.contains(className)) {
-              break;
+            if (className && parent.classList && !parent.classList.contains(className)) {
+              continue;
             }
 
             /**

@@ -191,10 +191,9 @@ export default class Selection {
      */
     let boundNodes = [
       /** the Node in which the selection begins */
-      selection.anchorNode.parentNode,
-
+      selection.anchorNode,
       /** the Node in which the selection ends */
-      selection.focusNode.parentNode
+      selection.focusNode
     ];
 
     /**
@@ -213,8 +212,8 @@ export default class Selection {
           /**
            * Optional additional check for class-name matching
            */
-          if (className && !parent.classList.contains(className)) {
-            break;
+          if (className && parent.classList && !parent.classList.contains(className)) {
+            continue;
           }
 
           /**
