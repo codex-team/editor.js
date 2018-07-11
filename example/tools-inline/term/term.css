@@ -4,9 +4,7 @@
  * CodeX Editor Inline Toolbar plugin
  */
 .ce-term-tool__icon {
-  background-image: url('term.svg');
-  background-repeat: no-repeat;
-  background-position: center center;
+  background: url('term.svg') no-repeat center center;
 }
 
 .ce-term-tool__icon--active {

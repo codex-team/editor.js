@@ -170,8 +170,6 @@ export default class Selection {
   /**
    * Looks ahead to find passed tag from current selection
    *
-   * Read more about selection's Nodes on https://stackoverflow.com/a/33586253
-   *
    * @param  {String} tagName       - tag to found
    * @param  {String} [className]   - tag's class name
    * @param  {Number} [searchDepth] - count of tags that can be included. For better performance.

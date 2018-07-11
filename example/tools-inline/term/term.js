@@ -12,18 +12,21 @@ class Term {
 
     /**
      * Toolbar Button
+     *
      * @type {HTMLElement|null}
      */
     this.button = null;
 
     /**
      * Tag represented the term
+     *
      * @type {string}
      */
     this.tag = 'SPAN';
 
     /**
      * Class name for term-tag
+     *
      * @type {string}
      */
     this.CSS = 'marked';
@@ -40,6 +43,7 @@ class Term {
 
   /**
    * Specifies Tool as Inline Toolbar Tool
+   *
    * @return {boolean}
    */
   static get isInline() {
@@ -60,6 +64,7 @@ class Term {
 
   /**
    * Wrap/Unwrap selected fragment
+   *
    * @param {Range} range - selected fragment
    */
   surround(range) {
@@ -81,6 +86,7 @@ class Term {
 
   /**
    * Wrap selection with term-tag
+   *
    * @param {Range} range - selected fragment
    */
   wrap(range) {
@@ -94,6 +100,7 @@ class Term {
     /**
      * SurroundContent throws an error if the Range splits a non-Text node with only one of its boundary points
      * @see {@link https://developer.mozilla.org/en-US/docs/Web/API/Range/surroundContents}
+     *
      * // range.surroundContents(span);
      */
     span.appendChild(range.extractContents());
@@ -107,6 +114,7 @@ class Term {
 
   /**
    * Unwrap term-tag
+   * 
    * @param {HTMLElement} termWrapper - term wrapper tag
    */
   unwrap(termWrapper) {
