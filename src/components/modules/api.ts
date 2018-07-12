@@ -30,8 +30,9 @@ export default class API extends Module {
       caret: {},
       events: this.Editor.EventsAPI.methods,
       sanitizer: this.Editor.SanitizerAPI.methods,
+      saver: this.Editor.SaverAPI.methods,
       selection: this.Editor.SelectionAPI.methods,
-      toolbar: this.Editor.ToolbarsAPI.methods,
+      toolbar: this.Editor.ToolbarAPI.methods,
     };
   }
 }

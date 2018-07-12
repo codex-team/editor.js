@@ -1,4 +1,4 @@
-import IInputData from "./input-data";
+import IInputOutputData from "./input-output-data";
 
 /**
  * CodeX Editor Public API
@@ -10,6 +10,7 @@ export interface IAPI {
   caret: ICaretAPI;
   events: IEventsAPI;
   sanitizer: ISanitizerAPI;
+  saver: ISaverAPI;
   selection: ISelectionAPI;
   toolbar: IToolbarAPI;
 }
@@ -42,7 +43,7 @@ export interface IBlocksAPI {
   /**
    * Fills editor with Blocks data
    */
-  render: (data: IInputData) => void;
+  render: (data: IInputOutputData) => void;
 }
 
 /**
@@ -83,6 +84,13 @@ export interface ISanitizerAPI {
    * @param config
    */
   clean: (taintString, config) => string;
+}
+
+/**
+ * Saver's methods
+ */
+export interface ISaverAPI {
+  save: () => IInputOutputData;
 }
 
 /**

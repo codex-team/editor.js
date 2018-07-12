@@ -54,7 +54,7 @@ export default class Saver extends Module {
   /**
    * Creates output object with saved data, time and version of editor
    * @param {Object} allExtractedData
-   * @return {SavedData}
+   * @return {SavedData} todo return IInputOutput
    */
   makeOutput(allExtractedData) {
     let items = [],
