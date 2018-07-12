@@ -66,4 +66,10 @@ Methods that allows to subscribe on CodeX Editor events
 
 ```emit(eventName: string, data: object)``` - fires all subscribed callbacks with passed data
 
+### IListenerAPI
 
+Methods that allows to work with DOM listener
+
+```on(element: HTMLElement, eventType: string, handler: Function, useCapture?: boolean)``` - add event listener to HTML element
+
+```off(element: HTMLElement, eventType: string, handler: Function)``` - remove event handler from HTML element 
