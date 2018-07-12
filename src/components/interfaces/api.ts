@@ -6,9 +6,10 @@
 export interface IAPI {
   blocks: IBlocksAPI;
   caret: ICaretAPI;
-  sanitizer: ISanitizerAPI;
-  toolbar: IToolbarAPI;
   events: IEventsAPI;
+  sanitizer: ISanitizerAPI;
+  selection: ISelectionAPI;
+  toolbar: IToolbarAPI;
   listener: IListenerAPI;
 }
 
@@ -53,37 +54,6 @@ export interface IBlocksAPI {
 export interface ICaretAPI {}
 
 /**
- * Sanitizer's methods
- */
-export interface ISanitizerAPI {
-
-  /**
-   * Clean taint string from disallowed tags and attributes
-   *
-   * @param taintString
-   * @param config
-   */
-  clean: (taintString, config) => string;
-}
-
-/**
- * Toolbar's methods
- * Basic toolbar methods
- */
-export interface IToolbarAPI {
-
-  /**
-   * Opens only toolbar
-   */
-  open: () => void;
-
-  /**
-   * Closes toolbar. If toolbox or toolbar-blockSettings are opened then they will be closed too
-   */
-  close: () => void;
-}
-
-/**
  * Events Module API methods
  */
 export interface IEventsAPI {
@@ -102,6 +72,58 @@ export interface IEventsAPI {
    * Unsubsribe callback
    */
   off: (eventName: string, callback: () => void) => void;
+}
+
+/**
+ * Sanitizer's methods
+ */
+export interface ISanitizerAPI {
+
+  /**
+   * Clean taint string from disallowed tags and attributes
+   *
+   * @param taintString
+   * @param config
+   */
+  clean: (taintString, config) => string;
+}
+
+/**
+ * Selection's methods
+ */
+export interface ISelectionAPI {
+
+  /**
+   * Looks ahead to find passed tag from current selection
+   *
+   * @param {String} tagName
+   * @param {String} className
+   */
+  findParentTag: (tagName: string, className: string) => HTMLElement|null;
+
+  /**
+   * Expands selection range to the passed parent node
+   *
+   * @param {HTMLElement} node
+   */
+  expandToTag: (node: HTMLElement) => void;
+}
+
+/**
+ * Toolbar's methods
+ * Basic toolbar methods
+ */
+export interface IToolbarAPI {
+
+  /**
+   * Opens only toolbar
+   */
+  open: () => void;
+
+  /**
+   * Closes toolbar. If toolbox or toolbar-blockSettings are opened then they will be closed too
+   */
+  close: () => void;
 }
 
 /**

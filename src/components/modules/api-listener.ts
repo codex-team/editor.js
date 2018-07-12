@@ -2,6 +2,10 @@ declare var Module: any;
 
 import {IListenerAPI} from '../interfaces/api';
 
+/**
+ * @class API
+ * Provides with methods working with DOM Listener
+ */
 export default class ListenerAPI extends Module implements IListenerAPI {
 
   /**

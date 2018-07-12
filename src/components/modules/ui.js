@@ -155,10 +155,24 @@ export default class UI extends Module {
    * Bind events on the CodeX Editor interface
    */
   bindEvents() {
-    /**
-     * @todo bind events with the Listeners module
-     */
     this.Editor.Listeners.on(this.nodes.redactor, 'click', event => this.redactorClicked(event), false );
+    this.Editor.Listeners.on(document, 'click', event => this.documentClicked(event), false );
+  }
+
+  /**
+   * All clicks on document
+   * @param {MouseEvent} event - Click
+   */
+  documentClicked(event) {
+    /**
+     * Close Inline Toolbar when nothing selected
+     * Do not fire check on clicks at the Inline Toolbar buttons
+     */
+    const clickedOnInlineToolbarButton = event.target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
+
+    if (!clickedOnInlineToolbarButton) {
+      this.Editor.InlineToolbar.handleShowingEvent(event);
+    }
   }
 
   /**
@@ -199,12 +213,6 @@ export default class UI extends Module {
        */
       this.Editor.Caret.setToTheLastBlock();
     }
-
-
-    /**
-     * Close Inline Toolbar when nothing selected
-     */
-    this.Editor.InlineToolbar.handleShowingEvent(event);
 
     /**
          *

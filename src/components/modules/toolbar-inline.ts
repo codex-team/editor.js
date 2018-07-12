@@ -9,11 +9,22 @@ declare var Module: any;
 declare var $: any;
 declare var _: any;
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
+import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
 import InlineTool from '../interfaces/inline-tool';
 import Selection from '../selection';
 
 export default class InlineToolbar extends Module {
+
+  /**
+   * CSS styles
+   */
+  public CSS = {
+    inlineToolbar: 'ce-inline-toolbar',
+    inlineToolbarShowed: 'ce-inline-toolbar--showed',
+    buttonsWrapper: 'ce-inline-toolbar__buttons',
+    actionsWrapper: 'ce-inline-toolbar__actions',
+  };
 
   /**
    * Inline Toolbar elements
@@ -26,16 +37,6 @@ export default class InlineToolbar extends Module {
      * For example, input for the 'link' tool or textarea for the 'comment' tool
      */
     actions: null,
-  };
-
-  /**
-   * CSS styles
-   */
-  private CSS = {
-    inlineToolbar: 'ce-inline-toolbar',
-    inlineToolbarShowed: 'ce-inline-toolbar--showed',
-    buttonsWrapper: 'ce-inline-toolbar__buttons',
-    actionsWrapper: 'ce-inline-toolbar__actions',
   };
 
   /**
@@ -63,7 +64,9 @@ export default class InlineToolbar extends Module {
     if (!this.toolsInstances) {
       this.toolsInstances = [
         new BoldInlineTool(this.Editor.API.methods),
+        new ItalicInlineTool(this.Editor.API.methods),
         new LinkInlineTool(this.Editor.API.methods),
+        ...this.Editor.Tools.inline.map( (Tool) => new Tool(this.Editor.API.methods) ),
       ];
     }
     return this.toolsInstances;
@@ -232,6 +235,11 @@ export default class InlineToolbar extends Module {
    */
   private addTool(tool: InlineTool): void {
     const button = tool.render();
+
+    if (!button) {
+      _.log('Render method must return an instance of Node', 'warn', tool);
+      return;
+    }
 
     this.nodes.buttons.appendChild(button);
 

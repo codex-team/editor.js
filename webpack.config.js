@@ -80,7 +80,8 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: '[name].js',
-    library: [ 'CodexEditor' ]
+    library: [ 'CodexEditor' ],
+    libraryTarget: 'umd'
   },
 
   watch: true,
