@@ -545,7 +545,16 @@ var CodexEditor = function () {
     }).then(function () {
       return _this.start();
     }).then(function () {
-      _this.api = _this.moduleInstances.API.methods;
+      var methods = _this.moduleInstances.API.methods;
+
+      /**
+       * Make API methods available from inside easier
+       */
+      for (var method in methods) {
+        _this[method] = methods[method];
+      }
+
+      delete _this.moduleInstances; // todo Is it necessary?
     }).then(function () {
       console.log('CodeX Editor is ready!');
     }).catch(function (error) {
@@ -3395,8 +3404,9 @@ var BlockManager = function (_Module) {
   }, {
     key: 'clear',
     value: function clear() {
-      this._blocks.removeAll();
-      this.currentBlockIndex = -1;
+      console.log(this._blocks);
+      // this._blocks.removeAll();
+      // this.currentBlockIndex = -1;
     }
   }, {
     key: 'lastBlock',
