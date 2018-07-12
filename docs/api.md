@@ -26,9 +26,9 @@ Methods that working with Blocks
 
 ```delete(blockIndex?: Number)``` - deletes block with passed index 
 
-```getBlockByIndex(index: Number)``` - returns block with passed index
-
 ```getCurrentBlockIndex()``` - current block index
+
+```getBlockByIndex(index: Number)``` - returns block with passed index
 
 #### ISanitizerAPI
 
@@ -68,7 +68,8 @@ Methods that allows to subscribe on CodeX Editor events
 
 ### IListenerAPI
 
-Methods that allows to work with DOM listener
+Methods that allows to work with DOM listener. Useful when you forgot to remove listener.
+Module collects all listeners and destroys automatically 
 
 ```on(element: HTMLElement, eventType: string, handler: Function, useCapture?: boolean)``` - add event listener to HTML element
 

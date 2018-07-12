@@ -47,6 +47,9 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
 
   /**
    * Returns Current Block
+   * @param {Number} index
+   *
+   * @return {Object}
    */
   public getBlockByIndex(index: number): object {
     return this.Editor.BlockManager.getBlockByIndex(index);

@@ -2507,6 +2507,9 @@ var BlocksAPI = function (_Module) {
         }
         /**
          * Returns Current Block
+         * @param {Number} index
+         *
+         * @return {Object}
          */
 
     }, {
