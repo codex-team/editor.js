@@ -46,7 +46,7 @@ export default class MoveUpTune implements IBlockTune {
     if (this.api.blocks.getCurrentBlockIndex() === 0) {
       moveUpButton.classList.add(this.CSS.btnDisabled);
     } else {
-      moveUpButton.addEventListener('click', (event) => this.handleClick(event), false);
+      this.api.listener.on(moveUpButton, 'click', (event) => this.handleClick(event), false);
     }
 
     return moveUpButton;

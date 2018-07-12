@@ -9,6 +9,7 @@ export interface IAPI {
   sanitizer: ISanitizerAPI;
   toolbar: IToolbarAPI;
   events: IEventsAPI;
+  listener: IListenerAPI;
 }
 
 /**
@@ -101,4 +102,28 @@ export interface IEventsAPI {
    * Unsubsribe callback
    */
   off: (eventName: string, callback: () => void) => void;
+}
+
+/**
+ * DOM Listener API
+ */
+export interface IListenerAPI {
+
+  /**
+   * Adds event listener
+   * @param {HTMLElement} element
+   * @param {string} eventType
+   * @param {() => void} handler
+   * @param useCapture
+   * @return {boolean}
+   */
+  on: (element: HTMLElement, eventType: string, handler: () => void, useCapture: boolean) => void;
+
+  /**
+   * Remove event listener
+   * @param {HTMLElement} element
+   * @param {string} eventType
+   * @param {() => void} handler
+   */
+  off: (element: HTMLElement, eventType: string, handler: () => void) => void;
 }

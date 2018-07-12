@@ -1,3 +1,5 @@
+import ListenerAPI from "./api-listener";
+
 /**
  * @module API
  * @copyright <CodeX Team> 2018
@@ -31,6 +33,7 @@ export default class API extends Module {
       events: this.Editor.EventsAPI.methods,
       sanitizer: this.Editor.SanitizerAPI.methods,
       toolbar: this.Editor.ToolbarsAPI.methods,
+      listener: this.Editor.ListenerAPI.methods,
     };
   }
 }
