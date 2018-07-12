@@ -406,6 +406,7 @@ export default class BlockManager extends Module {
   clear() {
     this._blocks.removeAll();
     this.currentBlockIndex = -1;
+    this.insert(this.config.initialBlock);
   }
 };
 

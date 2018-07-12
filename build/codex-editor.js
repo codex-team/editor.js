@@ -3406,6 +3406,7 @@ var BlockManager = function (_Module) {
     value: function clear() {
       this._blocks.removeAll();
       this.currentBlockIndex = -1;
+      this.insert(this.config.initialBlock);
     }
   }, {
     key: 'lastBlock',
