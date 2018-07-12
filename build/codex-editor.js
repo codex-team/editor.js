@@ -4105,17 +4105,11 @@ var Caret = function (_Module) {
         return false;
       }
 
-      if (force) {
-        this.setToBlock(nextBlock);
+      if (force || this.isAtEnd) {
+        return this.setToBlock(nextBlock);
       }
 
-      var caretAtEnd = this.isAtEnd;
-
-      if (!caretAtEnd) {
-        return false;
-      }
-
-      return this.setToBlock(nextBlock);
+      return false;
     }
 
     /**
@@ -4139,18 +4133,11 @@ var Caret = function (_Module) {
         return false;
       }
 
-      if (force) {
-        this.setToBlock(previousBlock, 0, true);
-        return true;
+      if (force || this.isAtStart) {
+        return this.setToBlock(previousBlock, 0, true);
       }
 
-      var caretAtStart = this.isAtStart;
-
-      if (!caretAtStart) {
-        return false;
-      }
-
-      return this.setToBlock(previousBlock, 0, true);
+      return false;
     }
 
     /**

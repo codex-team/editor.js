@@ -181,17 +181,11 @@ export default class Caret extends Module {
       return false;
     }
 
-    if (force) {
-      this.setToBlock(nextBlock);
+    if (force || this.isAtEnd) {
+      return this.setToBlock(nextBlock);
     }
 
-    let caretAtEnd = this.isAtEnd;
-
-    if (!caretAtEnd) {
-      return false;
-    }
-
-    return this.setToBlock( nextBlock );
+    return false;
   }
 
   /**
@@ -210,18 +204,11 @@ export default class Caret extends Module {
       return false;
     }
 
-    if (force) {
-      this.setToBlock( previousBlock, 0, true );
-      return true;
+    if (force || this.isAtStart) {
+      return this.setToBlock( previousBlock, 0, true );
     }
 
-    let caretAtStart = this.isAtStart;
-
-    if (!caretAtStart) {
-      return false;
-    }
-
-    return this.setToBlock( previousBlock, 0, true );
+    return false;
   }
 
   /**
