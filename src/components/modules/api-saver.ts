@@ -29,7 +29,7 @@ export default class SaverAPI extends Module implements ISaverAPI {
   }
 
   /**
-   * Clear Editor's area
+   * Return current blocks
    */
   public save(): IInputOutputData {
     return this.Editor.Saver.save();

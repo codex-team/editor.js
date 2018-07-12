@@ -2797,7 +2797,7 @@ var SaverAPI = function (_Module) {
         key: "save",
 
         /**
-         * Clear Editor's area
+         * Return current blocks
          */
         value: function save() {
             return this.Editor.Saver.save();
