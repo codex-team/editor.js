@@ -1,6 +1,7 @@
 declare var Module: any;
 
 import { IBlocksAPI } from '../interfaces/api';
+import IInputData from '../interfaces/input-data';
 
 /**
  * @class BlocksAPI
@@ -26,6 +27,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
       delete: () => this.delete(),
       moveDown: () => this.moveDown(),
       moveUp: () => this.moveUp(),
+      render: (data: IInputData) => this.render(data),
     };
   }
 
@@ -33,7 +35,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    * Clear Editor's area
    */
   public clear(): void {
-    this.Editor.BlockManager.clear();
+    this.Editor.BlockManager.clear(true);
   }
 
   /**
@@ -74,6 +76,15 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    */
   public moveUp(): void {
     console.log('moving up', this.Editor.BlockManager);
+  }
+
+  /**
+   * Fills Editor with Blocks data
+   * @param {IInputData} data — Saved Editor data
+   */
+  public render(data: IInputData): void {
+    this.Editor.BlockManager.clear();
+    this.Editor.Renderer.render(data.items);
   }
 
 }

@@ -402,11 +402,17 @@ export default class BlockManager extends Module {
 
   /**
    * Clears Editor
+   * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
+   *                                        we don't need to add empty initial block
+   *                                        2) in api.blocks.clear we should add empty block
    */
-  clear() {
+  clear(needAddInitialBlock = false) {
     this._blocks.removeAll();
     this.currentBlockIndex = -1;
-    this.insert(this.config.initialBlock);
+
+    if (needAddInitialBlock) {
+      this.insert(this.config.initialBlock);
+    }
   }
 };
 

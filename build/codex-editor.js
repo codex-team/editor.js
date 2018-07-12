@@ -2472,7 +2472,7 @@ var BlocksAPI = function (_Module) {
          * Clear Editor's area
          */
         value: function clear() {
-            this.Editor.BlockManager.clear();
+            this.Editor.BlockManager.clear(true);
         }
         /**
          * Deletes Block
@@ -2518,6 +2518,17 @@ var BlocksAPI = function (_Module) {
         value: function moveUp() {
             console.log('moving up', this.Editor.BlockManager);
         }
+        /**
+         * Fills Editor with Blocks data
+         * @param {IInputData} data — Saved Editor data
+         */
+
+    }, {
+        key: 'render',
+        value: function render(data) {
+            this.Editor.BlockManager.clear();
+            this.Editor.Renderer.render(data.items);
+        }
     }, {
         key: 'methods',
         get: function get() {
@@ -2535,6 +2546,9 @@ var BlocksAPI = function (_Module) {
                 },
                 moveUp: function moveUp() {
                     return _this2.moveUp();
+                },
+                render: function render(data) {
+                    return _this2.render(data);
                 }
             };
         }
@@ -3399,14 +3413,22 @@ var BlockManager = function (_Module) {
 
     /**
      * Clears Editor
+     * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
+     *                                        we don't need to add empty initial block
+     *                                        2) in api.blocks.clear we should add empty block
      */
 
   }, {
     key: 'clear',
     value: function clear() {
+      var needAddInitialBlock = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
       this._blocks.removeAll();
       this.currentBlockIndex = -1;
-      this.insert(this.config.initialBlock);
+
+      if (needAddInitialBlock) {
+        this.insert(this.config.initialBlock);
+      }
     }
   }, {
     key: 'lastBlock',

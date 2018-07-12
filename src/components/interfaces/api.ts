@@ -1,3 +1,5 @@
+import IInputData from "./input-data";
+
 /**
  * CodeX Editor Public API
  *
@@ -36,6 +38,11 @@ export interface IBlocksAPI {
    * Move up the highlighted block
    */
   moveUp: () => void;
+
+  /**
+   * Fills editor with Blocks data
+   */
+  render: (data: IInputData) => void;
 }
 
 /**
