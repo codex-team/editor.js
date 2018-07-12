@@ -404,9 +404,8 @@ export default class BlockManager extends Module {
    * Clears Editor
    */
   clear() {
-    console.log(this._blocks);
-    // this._blocks.removeAll();
-    // this.currentBlockIndex = -1;
+    this._blocks.removeAll();
+    this.currentBlockIndex = -1;
   }
 };
 
@@ -498,7 +497,7 @@ class Blocks {
    */
   removeAll() {
     this.workingArea.innerHTML = '';
-    this.blocks = null;
+    this.blocks.length = 0;
   }
 
   /**

@@ -3404,9 +3404,8 @@ var BlockManager = function (_Module) {
   }, {
     key: 'clear',
     value: function clear() {
-      console.log(this._blocks);
-      // this._blocks.removeAll();
-      // this.currentBlockIndex = -1;
+      this._blocks.removeAll();
+      this.currentBlockIndex = -1;
     }
   }, {
     key: 'lastBlock',
@@ -3620,7 +3619,7 @@ var Blocks = function () {
     key: 'removeAll',
     value: function removeAll() {
       this.workingArea.innerHTML = '';
-      this.blocks = null;
+      this.blocks.length = 0;
     }
 
     /**
