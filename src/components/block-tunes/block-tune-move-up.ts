@@ -57,6 +57,41 @@ export default class MoveUpTune implements IBlockTune {
    * @param {MouseEvent} event
    */
   public handleClick(event: MouseEvent): void {
+
+    const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+
+    if (currentBlockIndex === 0) {
+      return;
+    }
+
+    const currentBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex).html,
+      previousBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex - 1).html;
+
+    /**
+     * Here is two cases:
+     *  - when previous block has negative offset and part of it is visible on window, then we scroll
+     *  by window's height and add offset which is mathematically difference between two blocks
+     *
+     *  - when previous block is visible and has offset from the window,
+     *      than we scroll window to the difference between this offsets.
+     */
+    const currentBlockElementClientCoords  = currentBlockElement.getBoundingClientRect(),
+      previoutBlockElementClientCoords = previousBlockElement.getBoundingClientRect(),
+      formulaSign = previoutBlockElementClientCoords.top > 0 ? 1 : -1,
+      blocksTopOffset = formulaSign * (Math.abs(currentBlockElementClientCoords.top || 0) + Math.abs(previoutBlockElementClientCoords.top || 0));
+
+    let scrollUpOffset = blocksTopOffset;
+
+    if (formulaSign === 1) {
+      scrollUpOffset = window.innerHeight - blocksTopOffset;
+    }
+
+    window.scrollBy(0, -1 * scrollUpOffset);
+
+    /** First we change positions on DOM tree */
+    previousBlockElement.parentNode.insertBefore(currentBlockElement, previousBlockElement);
+
+    /** Change blocks state */
     this.api.blocks.moveUp();
   }
 }

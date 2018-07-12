@@ -25,7 +25,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
       delete: () => this.delete(),
       moveDown: () => this.moveDown(),
       moveUp: () => this.moveUp(),
-      getCurrentBlock: () => this.getCurrentBlock(),
+      getBlockByIndex: (index: number) => this.getBlockByIndex(index),
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
     };
   }
@@ -48,8 +48,8 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
   /**
    * Returns Current Block
    */
-  public getCurrentBlock(): object {
-    return this.Editor.BlockManager.currentBlock;
+  public getBlockByIndex(index: number): object {
+    return this.Editor.BlockManager.getBlockByIndex(index);
   }
 
   /**

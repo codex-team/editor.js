@@ -26,7 +26,7 @@ Methods that working with Blocks
 
 ```delete(blockIndex?: Number)``` - deletes block with passed index 
 
-```getCurrentBlock()``` - current block
+```getBlockByIndex(index: Number)``` - returns block with passed index
 
 ```getCurrentBlockIndex()``` - current block index
 
