@@ -48,19 +48,18 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
   }
 
   /**
-   * Call Block Manager method that swap blocks in state
-   * @param {number} fromIndex
-   * @param {number} toIndex
+   * Call Block Manager method that swap Blocks
+   * @param {number} fromIndex - position of first Block
+   * @param {number} toIndex - position of second Block
    */
   public swap(fromIndex: number, toIndex: number): void {
-
-    /** First we change positions on DOM tree */
-    const toIndexBlockElement = this.Editor.BlockManager.getBlockByIndex(toIndex).html,
-      fromIndexBlockElement = this.Editor.BlockManager.getBlockByIndex(fromIndex).html;
-
-    toIndexBlockElement.parentNode.insertBefore(fromIndexBlockElement, toIndexBlockElement);
-
     this.Editor.BlockManager.swap(fromIndex, toIndex);
+
+    /**
+     * Move toolbar
+     * DO not close the settings
+     */
+    this.Editor.Toolbar.move(false);
   }
 
   /**

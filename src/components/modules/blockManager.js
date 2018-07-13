@@ -355,12 +355,6 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved up so that current block index decreased */
     this.currentBlockIndex = toIndex;
-
-    /**
-     * Move toolbar
-     * DO not close the settings
-     */
-    this.Editor.Toolbar.move(false);
   }
 };
 
@@ -402,6 +396,14 @@ class Blocks {
   swap(first, second) {
     let secondBlock = this.blocks[second];
 
+    /**
+     * Change in DOM
+     */
+    $.swap(this.blocks[first].html, secondBlock.html);
+
+    /**
+     * Change in array
+     */
     this.blocks[second] = this.blocks[first];
     this.blocks[first] = secondBlock;
   }

@@ -19,9 +19,9 @@ export interface IAPI {
 export interface IBlocksAPI {
 
   /**
-   * swap Blocks Position
-   * @param fromIndex
-   * @param toIndex
+   * Swap two Blocks by positions
+   * @param {number} fromIndex - position of first Block
+   * @param {number} toIndex - position of second Block
    */
   swap: (fromIndex: number, toIndex: number) => void;
 

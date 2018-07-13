@@ -75,20 +75,20 @@ export default class MoveUpTune implements IBlockTune {
      *  - when previous block is visible and has offset from the window,
      *      than we scroll window to the difference between this offsets.
      */
-    const currentBlockElementClientCoords  = currentBlockElement.getBoundingClientRect(),
-      previoutBlockElementClientCoords = previousBlockElement.getBoundingClientRect();
+    const currentBlockCoords = currentBlockElement.getBoundingClientRect(),
+      previousBlockCoords = previousBlockElement.getBoundingClientRect();
 
     let scrollUpOffset;
 
-    if (previoutBlockElementClientCoords.top > 0) {
-      scrollUpOffset = Math.abs(currentBlockElementClientCoords.top) - Math.abs(previoutBlockElementClientCoords.top);
+    if (previousBlockCoords.top > 0) {
+      scrollUpOffset = Math.abs(currentBlockCoords.top) - Math.abs(previousBlockCoords.top);
     } else {
-      scrollUpOffset = window.innerHeight - Math.abs(currentBlockElementClientCoords.top) + Math.abs(previoutBlockElementClientCoords.top);
+      scrollUpOffset = window.innerHeight - Math.abs(currentBlockCoords.top) + Math.abs(previousBlockCoords.top);
     }
 
     window.scrollBy(0, -1 * scrollUpOffset);
 
-    /** Change blocks state */
+    /** Change blocks positions */
     this.api.blocks.swap(currentBlockIndex, currentBlockIndex - 1);
   }
 }

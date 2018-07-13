@@ -1128,16 +1128,16 @@ var MoveUpTune = function () {
              *  - when previous block is visible and has offset from the window,
              *      than we scroll window to the difference between this offsets.
              */
-            var currentBlockElementClientCoords = currentBlockElement.getBoundingClientRect(),
-                previoutBlockElementClientCoords = previousBlockElement.getBoundingClientRect();
+            var currentBlockCoords = currentBlockElement.getBoundingClientRect(),
+                previousBlockCoords = previousBlockElement.getBoundingClientRect();
             var scrollUpOffset = void 0;
-            if (previoutBlockElementClientCoords.top > 0) {
-                scrollUpOffset = Math.abs(currentBlockElementClientCoords.top) - Math.abs(previoutBlockElementClientCoords.top);
+            if (previousBlockCoords.top > 0) {
+                scrollUpOffset = Math.abs(currentBlockCoords.top) - Math.abs(previousBlockCoords.top);
             } else {
-                scrollUpOffset = window.innerHeight - Math.abs(currentBlockElementClientCoords.top) + Math.abs(previoutBlockElementClientCoords.top);
+                scrollUpOffset = window.innerHeight - Math.abs(currentBlockCoords.top) + Math.abs(previousBlockCoords.top);
             }
             window.scrollBy(0, -1 * scrollUpOffset);
-            /** Change blocks state */
+            /** Change blocks positions */
             this.api.blocks.swap(currentBlockIndex, currentBlockIndex - 1);
         }
     }]);
@@ -1615,6 +1615,30 @@ var Dom = function () {
       } else {
         parent.appendChild(elements);
       }
+    }
+
+    /**
+     * Swap two elements in parent
+     * @param {HTMLElement} el1 - from
+     * @param {HTMLElement} el2 - to
+     */
+
+  }, {
+    key: 'swap',
+    value: function swap(el1, el2) {
+      // create marker element and insert it where el1 is
+      var temp = document.createElement('div');
+
+      el1.parentNode.insertBefore(temp, el1);
+
+      // move el1 to right before el2
+      el2.parentNode.insertBefore(el1, el2);
+
+      // move el2 to right before where el1 used to be
+      temp.parentNode.insertBefore(el2, temp);
+
+      // remove temporary marker node
+      temp.parentNode.removeChild(temp);
     }
 
     /**
@@ -2507,19 +2531,20 @@ var BlocksAPI = function (_Module) {
             return this.Editor.BlockManager.getBlockByIndex(index);
         }
         /**
-         * Call Block Manager method that swap blocks in state
-         * @param {number} fromIndex
-         * @param {number} toIndex
+         * Call Block Manager method that swap Blocks
+         * @param {number} fromIndex - position of first Block
+         * @param {number} toIndex - position of second Block
          */
 
     }, {
         key: "swap",
         value: function swap(fromIndex, toIndex) {
-            /** First we change positions on DOM tree */
-            var toIndexBlockElement = this.Editor.BlockManager.getBlockByIndex(toIndex).html,
-                fromIndexBlockElement = this.Editor.BlockManager.getBlockByIndex(fromIndex).html;
-            toIndexBlockElement.parentNode.insertBefore(fromIndexBlockElement, toIndexBlockElement);
             this.Editor.BlockManager.swap(fromIndex, toIndex);
+            /**
+             * Move toolbar
+             * DO not close the settings
+             */
+            this.Editor.Toolbar.move(false);
         }
         /**
          * Deletes Block
@@ -3478,12 +3503,6 @@ var BlockManager = function (_Module) {
 
       /** Now actual block moved up so that current block index decreased */
       this.currentBlockIndex = toIndex;
-
-      /**
-       * Move toolbar
-       * DO not close the settings
-       */
-      this.Editor.Toolbar.move(false);
     }
   }, {
     key: 'lastBlock',
@@ -3639,6 +3658,14 @@ var Blocks = function () {
     value: function swap(first, second) {
       var secondBlock = this.blocks[second];
 
+      /**
+       * Change in DOM
+       */
+      $.swap(this.blocks[first].html, secondBlock.html);
+
+      /**
+       * Change in array
+       */
       this.blocks[second] = this.blocks[first];
       this.blocks[first] = secondBlock;
     }
