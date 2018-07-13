@@ -476,23 +476,6 @@ class Blocks {
   }
 
   /**
-   * Move Block with passed index up
-   *
-   * - change first level block position in DOM tree
-   * - swap in blocks array to actualize Editor Blocks state
-   *
-   * @param {Number} index
-   */
-  moveUp(index) {
-    if (index === 0) {
-      return;
-    }
-
-    /** Actualize Blocks state */
-    this.swap(index, index - 1);
-  };
-
-  /**
    * Get Block by index
    *
    * @param {Number} index — Block index

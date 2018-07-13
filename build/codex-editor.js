@@ -3749,34 +3749,14 @@ var Blocks = function () {
     }
 
     /**
-     * Move Block with passed index up
-     *
-     * - change first level block position in DOM tree
-     * - swap in blocks array to actualize Editor Blocks state
-     *
-     * @param {Number} index
-     */
-
-  }, {
-    key: 'moveUp',
-    value: function moveUp(index) {
-      if (index === 0) {
-        return;
-      }
-
-      /** Actualize Blocks state */
-      this.swap(index, index - 1);
-    }
-  }, {
-    key: 'get',
-
-
-    /**
      * Get Block by index
      *
      * @param {Number} index — Block index
      * @returns {Block}
      */
+
+  }, {
+    key: 'get',
     value: function get(index) {
       return this.blocks[index];
     }
