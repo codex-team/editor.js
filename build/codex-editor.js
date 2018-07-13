@@ -5040,7 +5040,10 @@ var Saver = function (_Module) {
         /** Group process info */
         console.log('\xAB' + extraction.tool + '\xBB saving info', extraction);
         totalTime += extraction.time;
-        items.push(extraction.data);
+        items.push({
+          tool: extraction.tool,
+          data: extraction.data
+        });
       });
 
       console.log('Total', totalTime);
