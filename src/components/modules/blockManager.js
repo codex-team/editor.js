@@ -399,6 +399,21 @@ export default class BlockManager extends Module {
       throw new Error('Can not find a Block from this child Node');
     }
   }
+
+  /**
+   * Clears Editor
+   * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
+   *                                        we don't need to add empty initial block
+   *                                        2) in api.blocks.clear we should add empty block
+   */
+  clear(needAddInitialBlock = false) {
+    this._blocks.removeAll();
+    this.currentBlockIndex = -1;
+
+    if (needAddInitialBlock) {
+      this.insert(this.config.initialBlock);
+    }
+  }
 };
 
 /**
@@ -482,6 +497,14 @@ class Blocks {
 
     this.blocks[index].html.remove();
     this.blocks.splice(index, 1);
+  }
+
+  /**
+   * Remove all blocks
+   */
+  removeAll() {
+    this.workingArea.innerHTML = '';
+    this.blocks.length = 0;
   }
 
   /**

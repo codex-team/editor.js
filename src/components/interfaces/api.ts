@@ -1,3 +1,5 @@
+import IInputOutputData from "./input-output-data";
+
 /**
  * CodeX Editor Public API
  *
@@ -8,6 +10,7 @@ export interface IAPI {
   caret: ICaretAPI;
   events: IEventsAPI;
   sanitizer: ISanitizerAPI;
+  saver: ISaverAPI;
   selection: ISelectionAPI;
   toolbar: IToolbarAPI;
 }
@@ -18,21 +21,29 @@ export interface IAPI {
 export interface IBlocksAPI {
 
   /**
-   * Move down the highlighted block
-   * Using BlockManager methods
+   * Clears Blocks list
    */
-  moveDown: () => void;
-
-  /**
-   * Move up the highlighted block
-   * After moving the block, we need to scroll window
-   */
-  moveUp: () => void;
+  clear: () => void;
 
   /**
    * Removes block
    */
   delete: (blockIndex?: number) => void;
+
+  /**
+   * Move down the highlighted block
+   */
+  moveDown: () => void;
+
+  /**
+   * Move up the highlighted block
+   */
+  moveUp: () => void;
+
+  /**
+   * Fills editor with Blocks data
+   */
+  render: (data: IInputOutputData) => void;
 }
 
 /**
@@ -73,6 +84,18 @@ export interface ISanitizerAPI {
    * @param config
    */
   clean: (taintString, config) => string;
+}
+
+/**
+ * Saver's methods
+ */
+export interface ISaverAPI {
+  /**
+   * Return current blocks
+   *
+   * @return {IInputOutputData}
+   */
+  save: () => IInputOutputData;
 }
 
 /**

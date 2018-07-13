@@ -482,8 +482,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["api-blocks.ts","api-events.ts","api-sanitizer.ts","api-selection.ts","api-toolbar.ts","api.ts","blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+var modules = ["api-blocks.ts","api-events.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-toolbar.ts","api.ts","blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
 });
 
 /**
@@ -544,6 +544,17 @@ var CodexEditor = function () {
       return _this.init();
     }).then(function () {
       return _this.start();
+    }).then(function () {
+      var methods = _this.moduleInstances.API.methods;
+
+      /**
+       * Make API methods available from inside easier
+       */
+      for (var method in methods) {
+        _this[method] = methods[method];
+      }
+
+      delete _this.moduleInstances; // todo Is it necessary?
     }).then(function () {
       console.log('CodeX Editor is ready!');
     }).catch(function (error) {
@@ -2355,10 +2366,10 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
-/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2366,6 +2377,7 @@ var map = {
 	"./api-blocks.ts": "./src/components/modules/api-blocks.ts",
 	"./api-events.ts": "./src/components/modules/api-events.ts",
 	"./api-sanitizer.ts": "./src/components/modules/api-sanitizer.ts",
+	"./api-saver.ts": "./src/components/modules/api-saver.ts",
 	"./api-selection.ts": "./src/components/modules/api-selection.ts",
 	"./api-toolbar.ts": "./src/components/modules/api-toolbar.ts",
 	"./api.ts": "./src/components/modules/api.ts",
@@ -2404,7 +2416,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
 
 /***/ }),
 
@@ -2455,22 +2467,13 @@ var BlocksAPI = function (_Module) {
 
 
     _createClass(BlocksAPI, [{
-        key: 'moveDown',
+        key: 'clear',
 
         /**
-         * Moves block down
+         * Clear Editor's area
          */
-        value: function moveDown() {
-            console.log('moving down', this.Editor.BlockManager);
-        }
-        /**
-         * Moves block up
-         */
-
-    }, {
-        key: 'moveUp',
-        value: function moveUp() {
-            console.log('moving up', this.Editor.BlockManager);
+        value: function clear() {
+            this.Editor.BlockManager.clear(true);
         }
         /**
          * Deletes Block
@@ -2498,12 +2501,44 @@ var BlocksAPI = function (_Module) {
                 this.Editor.BlockManager.navigatePrevious(true);
             }
         }
+        /**
+         * Moves block down
+         */
+
+    }, {
+        key: 'moveDown',
+        value: function moveDown() {
+            console.log('moving down', this.Editor.BlockManager);
+        }
+        /**
+         * Moves block up
+         */
+
+    }, {
+        key: 'moveUp',
+        value: function moveUp() {
+            console.log('moving up', this.Editor.BlockManager);
+        }
+        /**
+         * Fills Editor with Blocks data
+         * @param {IInputOutputData} data — Saved Editor data
+         */
+
+    }, {
+        key: 'render',
+        value: function render(data) {
+            this.Editor.BlockManager.clear();
+            this.Editor.Renderer.render(data.items);
+        }
     }, {
         key: 'methods',
         get: function get() {
             var _this2 = this;
 
             return {
+                clear: function clear() {
+                    return _this2.clear();
+                },
                 delete: function _delete() {
                     return _this2.delete();
                 },
@@ -2512,6 +2547,9 @@ var BlocksAPI = function (_Module) {
                 },
                 moveUp: function moveUp() {
                     return _this2.moveUp();
+                },
+                render: function render(data) {
+                    return _this2.render(data);
                 }
             };
         }
@@ -2709,6 +2747,84 @@ module.exports = exports["default"];
 
 /***/ }),
 
+/***/ "./src/components/modules/api-saver.ts":
+/*!*********************************************!*\
+  !*** ./src/components/modules/api-saver.ts ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * @class SaverAPI
+ * provides with methods to save data
+ */
+var SaverAPI = function (_Module) {
+    _inherits(SaverAPI, _Module);
+
+    /**
+     * Save Editor config. API provides passed configuration to the Blocks
+     * @param {EditorsConfig} config
+     */
+    function SaverAPI(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, SaverAPI);
+
+        return _possibleConstructorReturn(this, (SaverAPI.__proto__ || Object.getPrototypeOf(SaverAPI)).call(this, { config: config }));
+    }
+    /**
+     * Available methods
+     * @return {ISaverAPI}
+     */
+
+
+    _createClass(SaverAPI, [{
+        key: "save",
+
+        /**
+         * Return Editor's data
+         */
+        value: function save() {
+            return this.Editor.Saver.save();
+        }
+    }, {
+        key: "methods",
+        get: function get() {
+            var _this2 = this;
+
+            return {
+                save: function save() {
+                    return _this2.save();
+                }
+            };
+        }
+    }]);
+
+    return SaverAPI;
+}(Module);
+
+SaverAPI.displayName = "SaverAPI";
+exports.default = SaverAPI;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
+
+/***/ }),
+
 /***/ "./src/components/modules/api-selection.ts":
 /*!*************************************************!*\
   !*** ./src/components/modules/api-selection.ts ***!
@@ -2835,19 +2951,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @class ToolbarsAPI
  * provides with methods working with Toolbar
  */
-var ToolbarsAPI = function (_Module) {
-    _inherits(ToolbarsAPI, _Module);
+var ToolbarAPI = function (_Module) {
+    _inherits(ToolbarAPI, _Module);
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
      * @param {EditorsConfig} config
      */
-    function ToolbarsAPI(_ref) {
+    function ToolbarAPI(_ref) {
         var config = _ref.config;
 
-        _classCallCheck(this, ToolbarsAPI);
+        _classCallCheck(this, ToolbarAPI);
 
-        return _possibleConstructorReturn(this, (ToolbarsAPI.__proto__ || Object.getPrototypeOf(ToolbarsAPI)).call(this, { config: config }));
+        return _possibleConstructorReturn(this, (ToolbarAPI.__proto__ || Object.getPrototypeOf(ToolbarAPI)).call(this, { config: config }));
     }
     /**
      * Available methods
@@ -2855,7 +2971,7 @@ var ToolbarsAPI = function (_Module) {
      */
 
 
-    _createClass(ToolbarsAPI, [{
+    _createClass(ToolbarAPI, [{
         key: "open",
 
         /**
@@ -2889,11 +3005,11 @@ var ToolbarsAPI = function (_Module) {
         }
     }]);
 
-    return ToolbarsAPI;
+    return ToolbarAPI;
 }(Module);
 
-ToolbarsAPI.displayName = "ToolbarsAPI";
-exports.default = ToolbarsAPI;
+ToolbarAPI.displayName = "ToolbarAPI";
+exports.default = ToolbarAPI;
 module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
 
@@ -2947,8 +3063,9 @@ var API = function (_Module) {
                 caret: {},
                 events: this.Editor.EventsAPI.methods,
                 sanitizer: this.Editor.SanitizerAPI.methods,
+                saver: this.Editor.SaverAPI.methods,
                 selection: this.Editor.SelectionAPI.methods,
-                toolbar: this.Editor.ToolbarsAPI.methods
+                toolbar: this.Editor.ToolbarAPI.methods
             };
         }
     }]);
@@ -3373,6 +3490,26 @@ var BlockManager = function (_Module) {
         throw new Error('Can not find a Block from this child Node');
       }
     }
+
+    /**
+     * Clears Editor
+     * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
+     *                                        we don't need to add empty initial block
+     *                                        2) in api.blocks.clear we should add empty block
+     */
+
+  }, {
+    key: 'clear',
+    value: function clear() {
+      var needAddInitialBlock = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      this._blocks.removeAll();
+      this.currentBlockIndex = -1;
+
+      if (needAddInitialBlock) {
+        this.insert(this.config.initialBlock);
+      }
+    }
   }, {
     key: 'lastBlock',
     get: function get() {
@@ -3575,6 +3712,17 @@ var Blocks = function () {
 
       this.blocks[index].html.remove();
       this.blocks.splice(index, 1);
+    }
+
+    /**
+     * Remove all blocks
+     */
+
+  }, {
+    key: 'removeAll',
+    value: function removeAll() {
+      this.workingArea.innerHTML = '';
+      this.blocks.length = 0;
     }
 
     /**
@@ -5040,7 +5188,10 @@ var Saver = function (_Module) {
         /** Group process info */
         console.log('\xAB' + extraction.tool + '\xBB saving info', extraction);
         totalTime += extraction.time;
-        items.push(extraction.data);
+        items.push({
+          tool: extraction.tool,
+          data: extraction.data
+        });
       });
 
       console.log('Total', totalTime);

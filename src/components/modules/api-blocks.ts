@@ -1,6 +1,7 @@
 declare var Module: any;
 
 import { IBlocksAPI } from '../interfaces/api';
+import IInputOutputData from '../interfaces/input-output-data';
 
 /**
  * @class BlocksAPI
@@ -22,24 +23,19 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    */
   get methods(): IBlocksAPI {
     return {
+      clear: () => this.clear(),
       delete: () => this.delete(),
       moveDown: () => this.moveDown(),
       moveUp: () => this.moveUp(),
+      render: (data: IInputOutputData) => this.render(data),
     };
   }
 
   /**
-   * Moves block down
+   * Clear Editor's area
    */
-  public moveDown(): void {
-    console.log('moving down', this.Editor.BlockManager);
-  }
-
-  /**
-   * Moves block up
-   */
-  public moveUp(): void {
-    console.log('moving up', this.Editor.BlockManager);
+  public clear(): void {
+    this.Editor.BlockManager.clear(true);
   }
 
   /**
@@ -66,6 +62,29 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
     } else {
       this.Editor.BlockManager.navigatePrevious(true);
     }
+  }
+
+  /**
+   * Moves block down
+   */
+  public moveDown(): void {
+    console.log('moving down', this.Editor.BlockManager);
+  }
+
+  /**
+   * Moves block up
+   */
+  public moveUp(): void {
+    console.log('moving up', this.Editor.BlockManager);
+  }
+
+  /**
+   * Fills Editor with Blocks data
+   * @param {IInputOutputData} data — Saved Editor data
+   */
+  public render(data: IInputOutputData): void {
+    this.Editor.BlockManager.clear();
+    this.Editor.Renderer.render(data.items);
   }
 
 }
