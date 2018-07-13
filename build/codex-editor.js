@@ -1129,18 +1129,16 @@ var MoveUpTune = function () {
              *      than we scroll window to the difference between this offsets.
              */
             var currentBlockElementClientCoords = currentBlockElement.getBoundingClientRect(),
-                previoutBlockElementClientCoords = previousBlockElement.getBoundingClientRect(),
-                formulaSign = previoutBlockElementClientCoords.top > 0 ? 1 : -1,
-                blocksTopOffset = formulaSign * (Math.abs(currentBlockElementClientCoords.top || 0) + Math.abs(previoutBlockElementClientCoords.top || 0));
-            var scrollUpOffset = blocksTopOffset;
-            if (formulaSign === 1) {
-                scrollUpOffset = window.innerHeight - blocksTopOffset;
+                previoutBlockElementClientCoords = previousBlockElement.getBoundingClientRect();
+            var scrollUpOffset = void 0;
+            if (previoutBlockElementClientCoords.top > 0) {
+                scrollUpOffset = Math.abs(currentBlockElementClientCoords.top) - Math.abs(previoutBlockElementClientCoords.top);
+            } else {
+                scrollUpOffset = window.innerHeight - Math.abs(currentBlockElementClientCoords.top) + Math.abs(previoutBlockElementClientCoords.top);
             }
             window.scrollBy(0, -1 * scrollUpOffset);
-            /** First we change positions on DOM tree */
-            previousBlockElement.parentNode.insertBefore(currentBlockElement, previousBlockElement);
             /** Change blocks state */
-            this.api.blocks.swapBlocksPosition(currentBlockIndex, currentBlockIndex - 1);
+            this.api.blocks.swap(currentBlockIndex, currentBlockIndex - 1);
         }
     }]);
 
@@ -2515,9 +2513,13 @@ var BlocksAPI = function (_Module) {
          */
 
     }, {
-        key: "swapBlocksPosition",
-        value: function swapBlocksPosition(fromIndex, toIndex) {
-            this.Editor.BlockManager.swapBlocksPosition(fromIndex, toIndex);
+        key: "swap",
+        value: function swap(fromIndex, toIndex) {
+            /** First we change positions on DOM tree */
+            var toIndexBlockElement = this.Editor.BlockManager.getBlockByIndex(toIndex).html,
+                fromIndexBlockElement = this.Editor.BlockManager.getBlockByIndex(fromIndex).html;
+            toIndexBlockElement.parentNode.insertBefore(fromIndexBlockElement, toIndexBlockElement);
+            this.Editor.BlockManager.swap(fromIndex, toIndex);
         }
         /**
          * Deletes Block
@@ -2557,8 +2559,8 @@ var BlocksAPI = function (_Module) {
                 delete: function _delete() {
                     return _this2.delete();
                 },
-                swapBlocksPosition: function swapBlocksPosition(fromIndex, toIndex) {
-                    return _this2.swapBlocksPosition(fromIndex, toIndex);
+                swap: function swap(fromIndex, toIndex) {
+                    return _this2.swap(fromIndex, toIndex);
                 },
                 getBlockByIndex: function getBlockByIndex(index) {
                     return _this2.getBlockByIndex(index);
@@ -3469,8 +3471,8 @@ var BlockManager = function (_Module) {
      */
 
   }, {
-    key: 'swapBlocksPosition',
-    value: function swapBlocksPosition(fromIndex, toIndex) {
+    key: 'swap',
+    value: function swap(fromIndex, toIndex) {
       /** Move up current Block */
       this._blocks.swap(fromIndex, toIndex);
 

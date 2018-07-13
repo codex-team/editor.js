@@ -349,7 +349,7 @@ export default class BlockManager extends Module {
    * @param {Number} fromIndex
    * @param {Number} toIndex
    */
-  swapBlocksPosition(fromIndex, toIndex) {
+  swap(fromIndex, toIndex) {
     /** Move up current Block */
     this._blocks.swap(fromIndex, toIndex);
 

@@ -23,7 +23,7 @@ export interface IBlocksAPI {
    * @param fromIndex
    * @param toIndex
    */
-  swapBlocksPosition: (fromIndex: number, toIndex: number) => void;
+  swap: (fromIndex: number, toIndex: number) => void;
 
   /**
    * Removes block

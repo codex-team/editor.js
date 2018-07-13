@@ -23,12 +23,11 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
   get methods(): IBlocksAPI {
     return {
       delete: () => this.delete(),
-      swapBlocksPosition: (fromIndex: number, toIndex: number) => this.swapBlocksPosition(fromIndex, toIndex),
+      swap: (fromIndex: number, toIndex: number) => this.swap(fromIndex, toIndex),
       getBlockByIndex: (index: number) => this.getBlockByIndex(index),
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
     };
   }
-
 
   /**
    * Returns current block index
@@ -53,8 +52,15 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    * @param {number} fromIndex
    * @param {number} toIndex
    */
-  public swapBlocksPosition(fromIndex: number, toIndex: number): void {
-    this.Editor.BlockManager.swapBlocksPosition(fromIndex, toIndex);
+  public swap(fromIndex: number, toIndex: number): void {
+
+    /** First we change positions on DOM tree */
+    const toIndexBlockElement = this.Editor.BlockManager.getBlockByIndex(toIndex).html,
+      fromIndexBlockElement = this.Editor.BlockManager.getBlockByIndex(fromIndex).html;
+
+    toIndexBlockElement.parentNode.insertBefore(fromIndexBlockElement, toIndexBlockElement);
+
+    this.Editor.BlockManager.swap(fromIndex, toIndex);
   }
 
   /**

@@ -20,7 +20,7 @@ export interface IAPI {
 
 Methods that working with Blocks
 
-```swapBlocksPosition(fromIndex, toIndex)``` - swaps two blocks only in Block's state. To change in DOM use your own implementation
+```swap(fromIndex, toIndex)``` - swaps two blocks only in Block's state. To change in DOM use your own implementation
 
 ```delete(blockIndex?: Number)``` - deletes block with passed index 
 
