@@ -54,7 +54,7 @@ export default class Saver extends Module {
   /**
    * Creates output object with saved data, time and version of editor
    * @param {Object} allExtractedData
-   * @return {SavedData} todo return IInputOutput
+   * @return {SavedData}
    */
   makeOutput(allExtractedData) {
     let items = [],
@@ -66,7 +66,10 @@ export default class Saver extends Module {
       /** Group process info */
       console.log(`«${extraction.tool}» saving info`, extraction);
       totalTime += extraction.time;
-      items.push(extraction.data);
+      items.push({
+        tool: extraction.tool,
+        data: extraction.data
+      });
     });
 
     console.log('Total', totalTime);

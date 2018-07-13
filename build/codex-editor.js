@@ -2797,7 +2797,7 @@ var SaverAPI = function (_Module) {
         key: "save",
 
         /**
-         * Return current blocks
+         * Return Editor's data
          */
         value: function save() {
             return this.Editor.Saver.save();
@@ -5173,7 +5173,7 @@ var Saver = function (_Module) {
     /**
      * Creates output object with saved data, time and version of editor
      * @param {Object} allExtractedData
-     * @return {SavedData} todo return IInputOutput
+     * @return {SavedData}
      */
 
   }, {
@@ -5188,7 +5188,10 @@ var Saver = function (_Module) {
         /** Group process info */
         console.log('\xAB' + extraction.tool + '\xBB saving info', extraction);
         totalTime += extraction.time;
-        items.push(extraction.data);
+        items.push({
+          tool: extraction.tool,
+          data: extraction.data
+        });
       });
 
       console.log('Total', totalTime);
