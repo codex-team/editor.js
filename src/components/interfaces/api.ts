@@ -19,16 +19,11 @@ export interface IAPI {
 export interface IBlocksAPI {
 
   /**
-   * Move down the highlighted block
-   * Using BlockManager methods
+   * swap Blocks Position
+   * @param fromIndex
+   * @param toIndex
    */
-  moveDown: () => void;
-
-  /**
-   * Move up the highlighted block
-   * After moving the block, we need to scroll window
-   */
-  moveUp: () => void;
+  swapBlocksPosition: (fromIndex: number, toIndex: number) => void;
 
   /**
    * Removes block

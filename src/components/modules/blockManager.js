@@ -345,20 +345,16 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Move current block Up
-   * Pass Proxy current block index to move it up and change Block's array state
+   * Swap Blocks Position
+   * @param {Number} fromIndex
+   * @param {Number} toIndex
    */
-  moveCurrentBlockUp() {
-    /** Can't move up, sorry */
-    if (this.currentBlockIndex <= 0) {
-      return;
-    }
-
+  swapBlocksPosition(fromIndex, toIndex) {
     /** Move up current Block */
-    this._blocks.moveUp(this.currentBlockIndex);
+    this._blocks.swap(fromIndex, toIndex);
 
     /** Now actual block moved up so that current block index decreased */
-    this.currentBlockIndex--;
+    this.currentBlockIndex = toIndex;
 
     /**
      * Move toolbar
@@ -403,7 +399,7 @@ class Blocks {
    * @param {Number} first - first block index
    * @param {Number} second - second block index
    */
-  swapBlocksPosition(first, second) {
+  swap(first, second) {
     let secondBlock = this.blocks[second];
 
     this.blocks[second] = this.blocks[first];
@@ -491,7 +487,7 @@ class Blocks {
     }
 
     /** Actualize Blocks state */
-    this.swapBlocksPosition(index, index - 1);
+    this.swap(index, index - 1);
   };
 
   /**

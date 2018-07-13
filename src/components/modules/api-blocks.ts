@@ -23,19 +23,12 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
   get methods(): IBlocksAPI {
     return {
       delete: () => this.delete(),
-      moveDown: () => this.moveDown(),
-      moveUp: () => this.moveUp(),
+      swapBlocksPosition: (fromIndex: number, toIndex: number) => this.swapBlocksPosition(fromIndex, toIndex),
       getBlockByIndex: (index: number) => this.getBlockByIndex(index),
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
     };
   }
 
-  /**
-   * Moves block down
-   */
-  public moveDown(): void {
-    console.log('moving down', this.Editor.BlockManager);
-  }
 
   /**
    * Returns current block index
@@ -56,10 +49,12 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
   }
 
   /**
-   * Moves block up
+   * Call Block Manager method that swap blocks in state
+   * @param {number} fromIndex
+   * @param {number} toIndex
    */
-  public moveUp(): void {
-    this.Editor.BlockManager.moveCurrentBlockUp();
+  public swapBlocksPosition(fromIndex: number, toIndex: number): void {
+    this.Editor.BlockManager.swapBlocksPosition(fromIndex, toIndex);
   }
 
   /**

@@ -20,9 +20,7 @@ export interface IAPI {
 
 Methods that working with Blocks
 
-```moveDown()``` - method moves down the current block.
-
-```moveUp()``` - method moves up the current block.
+```swapBlocksPosition(fromIndex, toIndex)``` - swaps two blocks only in Block's state. To change in DOM use your own implementation
 
 ```delete(blockIndex?: Number)``` - deletes block with passed index 
 

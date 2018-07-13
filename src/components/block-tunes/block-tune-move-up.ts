@@ -92,6 +92,6 @@ export default class MoveUpTune implements IBlockTune {
     previousBlockElement.parentNode.insertBefore(currentBlockElement, previousBlockElement);
 
     /** Change blocks state */
-    this.api.blocks.moveUp();
+    this.api.blocks.swapBlocksPosition(currentBlockIndex, currentBlockIndex - 1);
   }
 }

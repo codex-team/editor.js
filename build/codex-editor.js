@@ -1140,7 +1140,7 @@ var MoveUpTune = function () {
             /** First we change positions on DOM tree */
             previousBlockElement.parentNode.insertBefore(currentBlockElement, previousBlockElement);
             /** Change blocks state */
-            this.api.blocks.moveUp();
+            this.api.blocks.swapBlocksPosition(currentBlockIndex, currentBlockIndex - 1);
         }
     }]);
 
@@ -2487,21 +2487,12 @@ var BlocksAPI = function (_Module) {
 
 
     _createClass(BlocksAPI, [{
-        key: 'moveDown',
+        key: "getCurrentBlockIndex",
 
-        /**
-         * Moves block down
-         */
-        value: function moveDown() {
-            console.log('moving down', this.Editor.BlockManager);
-        }
         /**
          * Returns current block index
          * @return {number}
          */
-
-    }, {
-        key: 'getCurrentBlockIndex',
         value: function getCurrentBlockIndex() {
             return this.Editor.BlockManager.currentBlockIndex;
         }
@@ -2513,18 +2504,20 @@ var BlocksAPI = function (_Module) {
          */
 
     }, {
-        key: 'getBlockByIndex',
+        key: "getBlockByIndex",
         value: function getBlockByIndex(index) {
             return this.Editor.BlockManager.getBlockByIndex(index);
         }
         /**
-         * Moves block up
+         * Call Block Manager method that swap blocks in state
+         * @param {number} fromIndex
+         * @param {number} toIndex
          */
 
     }, {
-        key: 'moveUp',
-        value: function moveUp() {
-            this.Editor.BlockManager.moveCurrentBlockUp();
+        key: "swapBlocksPosition",
+        value: function swapBlocksPosition(fromIndex, toIndex) {
+            this.Editor.BlockManager.swapBlocksPosition(fromIndex, toIndex);
         }
         /**
          * Deletes Block
@@ -2532,7 +2525,7 @@ var BlocksAPI = function (_Module) {
          */
 
     }, {
-        key: 'delete',
+        key: "delete",
         value: function _delete(blockIndex) {
             this.Editor.BlockManager.removeBlock(blockIndex);
             /**
@@ -2556,7 +2549,7 @@ var BlocksAPI = function (_Module) {
             }
         }
     }, {
-        key: 'methods',
+        key: "methods",
         get: function get() {
             var _this2 = this;
 
@@ -2564,11 +2557,8 @@ var BlocksAPI = function (_Module) {
                 delete: function _delete() {
                     return _this2.delete();
                 },
-                moveDown: function moveDown() {
-                    return _this2.moveDown();
-                },
-                moveUp: function moveUp() {
-                    return _this2.moveUp();
+                swapBlocksPosition: function swapBlocksPosition(fromIndex, toIndex) {
+                    return _this2.swapBlocksPosition(fromIndex, toIndex);
                 },
                 getBlockByIndex: function getBlockByIndex(index) {
                     return _this2.getBlockByIndex(index);
@@ -2583,9 +2573,9 @@ var BlocksAPI = function (_Module) {
     return BlocksAPI;
 }(Module);
 
-BlocksAPI.displayName = 'BlocksAPI';
+BlocksAPI.displayName = "BlocksAPI";
 exports.default = BlocksAPI;
-module.exports = exports['default'];
+module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
 
 /***/ }),
@@ -3473,23 +3463,19 @@ var BlockManager = function (_Module) {
     }
 
     /**
-     * Move current block Up
-     * Pass Proxy current block index to move it up and change Block's array state
+     * Swap Blocks Position
+     * @param {Number} fromIndex
+     * @param {Number} toIndex
      */
 
   }, {
-    key: 'moveCurrentBlockUp',
-    value: function moveCurrentBlockUp() {
-      /** Can't move up, sorry */
-      if (this.currentBlockIndex <= 0) {
-        return;
-      }
-
+    key: 'swapBlocksPosition',
+    value: function swapBlocksPosition(fromIndex, toIndex) {
       /** Move up current Block */
-      this._blocks.moveUp(this.currentBlockIndex);
+      this._blocks.swap(fromIndex, toIndex);
 
       /** Now actual block moved up so that current block index decreased */
-      this.currentBlockIndex--;
+      this.currentBlockIndex = toIndex;
 
       /**
        * Move toolbar
@@ -3647,8 +3633,8 @@ var Blocks = function () {
      */
 
   }, {
-    key: 'swapBlocksPosition',
-    value: function swapBlocksPosition(first, second) {
+    key: 'swap',
+    value: function swap(first, second) {
       var secondBlock = this.blocks[second];
 
       this.blocks[second] = this.blocks[first];
@@ -3750,7 +3736,7 @@ var Blocks = function () {
       }
 
       /** Actualize Blocks state */
-      this.swapBlocksPosition(index, index - 1);
+      this.swap(index, index - 1);
     }
   }, {
     key: 'get',
