@@ -4,7 +4,7 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import IBlockTune from './block-tune';
+import IBlockTune from '../interfaces/block-tune';
 
 declare var $: any;
 declare var _: any;

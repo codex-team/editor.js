@@ -989,7 +989,7 @@ var DeleteTune = function () {
 
             this.nodes.button = $.make('div', [this.CSS.button, this.CSS.buttonDelete], {});
             this.nodes.button.appendChild($.svg('cross', 12, 12));
-            this.nodes.button.addEventListener('click', function (event) {
+            this.api.listener.on(this.nodes.button, 'click', function (event) {
                 return _this2.handleClick(event);
             }, false);
             return this.nodes.button;
