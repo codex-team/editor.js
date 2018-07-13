@@ -92,7 +92,7 @@ export interface ISanitizerAPI {
 export interface ISaverAPI {
   /**
    * Return current blocks
-   * ]
+   *
    * @return {IInputOutputData}
    */
   save: () => IInputOutputData;
