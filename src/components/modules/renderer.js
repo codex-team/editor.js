@@ -1,5 +1,3 @@
-import Utils from '../utils';
-
 /**
  * Codex Editor Renderer Module
  *
@@ -78,7 +76,7 @@ export default class Renderer extends Module {
     } else {
       /** @todo show warning notification message */
 
-      Utils.log(`Tool «${tool}» is missing`, 'warn');
+      _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial CodeX Editor config.`, 'warn');
     }
 
     return Promise.resolve();
