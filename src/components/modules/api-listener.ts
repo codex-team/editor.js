@@ -47,6 +47,6 @@ export default class ListenerAPI extends Module implements IListenerAPI {
    * @param handler
    */
   public off(element, eventType, handler): void {
-    this.Editor.Listeners.on(element, eventType, handler);
+    this.Editor.Listeners.off(element, eventType, handler);
   }
 }

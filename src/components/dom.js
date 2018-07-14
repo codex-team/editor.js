@@ -84,18 +84,19 @@ export default class Dom {
    */
   static swap(el1, el2) {
     // create marker element and insert it where el1 is
-    const temp = document.createElement('div');
+    const temp = document.createElement('div'),
+      parent = el1.parentNode;
 
-    el1.parentNode.insertBefore(temp, el1);
+    parent.insertBefore(temp, el1);
 
     // move el1 to right before el2
-    el2.parentNode.insertBefore(el1, el2);
+    parent.insertBefore(el1, el2);
 
     // move el2 to right before where el1 used to be
-    temp.parentNode.insertBefore(el2, temp);
+    parent.insertBefore(el2, temp);
 
     // remove temporary marker node
-    temp.parentNode.removeChild(temp);
+    parent.removeChild(temp);
   }
 
   /**

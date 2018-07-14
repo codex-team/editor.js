@@ -178,9 +178,7 @@ export default class Caret extends Module {
       return false;
     }
 
-    let isEnd = this.isAtEnd;
-
-    if (force || isEnd) {
+    if (force || this.isAtEnd) {
       this.setToBlock(nextBlock);
       return true;
     }
