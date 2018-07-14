@@ -2578,9 +2578,7 @@ var BlocksAPI = function (_Module) {
              * In case of deletion first block we need to set caret to the current Block
              */
             if (this.Editor.BlockManager.currentBlockIndex === 0) {
-                if (this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock)) {
-                    this.Editor.Toolbar.close();
-                }
+                this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
             } else {
                 if (this.Editor.Caret.navigatePrevious(true)) {
                     this.Editor.Toolbar.close();
@@ -3418,9 +3416,8 @@ var BlockEvents = function (_Module) {
                 // @todo figure out without timeout
                 window.setTimeout(function () {
                     // set caret to the block without offset at the end
-                    if (_this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd)) {
-                        _this2.Editor.Toolbar.close();
-                    }
+                    _this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
+                    _this2.Editor.Toolbar.close();
                 }, 10);
             });
         }
@@ -4272,8 +4269,6 @@ var Caret = function (_Module) {
    * @param {Block} block - Block class
    * @param {Number} offset - caret offset regarding to the text node
    * @param {Boolean} atEnd - put caret at the end of the text node or not
-   *
-   * @returns {Boolean} - caret was set or not
    */
 
 
@@ -4290,7 +4285,7 @@ var Caret = function (_Module) {
       /** If Element is INPUT */
       if ($.isNativeInput(element)) {
         element.focus();
-        return true;
+        return;
       }
 
       var nodeToSet = $.getDeepestNode(element, atEnd);
@@ -4302,7 +4297,7 @@ var Caret = function (_Module) {
       /** if found deepest node is native input */
       if ($.isNativeInput(nodeToSet)) {
         nodeToSet.focus();
-        return true;
+        return;
       }
 
       /**
@@ -4313,7 +4308,6 @@ var Caret = function (_Module) {
       }, 20)();
 
       this.Editor.BlockManager.currentNode = block.wrapper;
-      return true;
     }
 
     /**
@@ -4451,7 +4445,8 @@ var Caret = function (_Module) {
       }
 
       if (force || this.isAtEnd) {
-        return this.setToBlock(nextBlock);
+        this.setToBlock(nextBlock);
+        return true;
       }
 
       return false;
@@ -4479,7 +4474,8 @@ var Caret = function (_Module) {
       }
 
       if (force || this.isAtStart) {
-        return this.setToBlock(previousBlock, 0, true);
+        this.setToBlock(previousBlock, 0, true);
+        return true;
       }
 
       return false;

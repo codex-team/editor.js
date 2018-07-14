@@ -31,8 +31,6 @@ export default class Caret extends Module {
    * @param {Block} block - Block class
    * @param {Number} offset - caret offset regarding to the text node
    * @param {Boolean} atEnd - put caret at the end of the text node or not
-   *
-   * @returns {Boolean} - caret was set or not
    */
   setToBlock(block, offset = 0, atEnd = false) {
     let element = block.pluginsContent;
@@ -40,7 +38,7 @@ export default class Caret extends Module {
     /** If Element is INPUT */
     if ($.isNativeInput(element)) {
       element.focus();
-      return true;
+      return;
     }
 
     let nodeToSet = $.getDeepestNode(element, atEnd);
@@ -52,7 +50,7 @@ export default class Caret extends Module {
     /** if found deepest node is native input */
     if ($.isNativeInput(nodeToSet)) {
       nodeToSet.focus();
-      return true;
+      return;
     }
 
     /**
@@ -63,7 +61,6 @@ export default class Caret extends Module {
     }, 20)();
 
     this.Editor.BlockManager.currentNode = block.wrapper;
-    return true;
   }
 
   /**
@@ -182,7 +179,8 @@ export default class Caret extends Module {
     }
 
     if (force || this.isAtEnd) {
-      return this.setToBlock(nextBlock);
+      this.setToBlock(nextBlock);
+      return true;
     }
 
     return false;
@@ -205,7 +203,8 @@ export default class Caret extends Module {
     }
 
     if (force || this.isAtStart) {
-      return this.setToBlock( previousBlock, 0, true );
+      this.setToBlock( previousBlock, 0, true );
+      return true;
     }
 
     return false;

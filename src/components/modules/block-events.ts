@@ -141,9 +141,8 @@ export default class BlockEvents extends Module {
         // @todo figure out without timeout
         window.setTimeout( () => {
           // set caret to the block without offset at the end
-          if (this.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd)) {
-            this.Editor.Toolbar.close();
-          }
+          this.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
+          this.Editor.Toolbar.close();
         }, 10);
       });
   }
