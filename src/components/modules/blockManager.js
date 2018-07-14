@@ -99,70 +99,9 @@ export default class BlockManager extends Module {
    * @param {Object} block
    */
   bindEvents(block) {
-    this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.Keyboard.blockKeydownsListener(event));
-    this.Editor.Listeners.on(block.pluginsContent, 'mouseup', (event) => {
-      this.Editor.InlineToolbar.handleShowingEvent(event);
-    });
-    this.Editor.Listeners.on(block.pluginsContent, 'keyup', (event) => {
-      this.Editor.InlineToolbar.handleShowingEvent(event);
-    });
-  }
-
-  /**
-   * Set's caret to the next Block
-   * Before moving caret, we should check if caret position is at the end of Plugins node
-   * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
-   *
-   * @param {Boolean} force - force navigation even if caret is not at the end.
-   */
-  navigateNext(force = false) {
-    let nextBlock = this.nextBlock;
-
-    if (!nextBlock) {
-      return;
-    }
-
-    if (force) {
-      this.Editor.Caret.setToBlock(nextBlock, 0, true);
-      return;
-    }
-
-    let caretAtEnd = this.Editor.Caret.isAtEnd;
-
-    if (!caretAtEnd) {
-      return;
-    }
-
-
-    this.Editor.Caret.setToBlock(nextBlock);
-  }
-
-  /**
-   * Set's caret to the previous Block
-   * Before moving caret, we should check if caret position is start of the Plugins node
-   * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
-   *
-   * @param {Boolean} force - force navigation
-   */
-  navigatePrevious(force = false) {
-    let previousBlock = this.previousBlock;
-
-    if (!previousBlock) {
-      return;
-    }
-
-    if (force) {
-      this.Editor.Caret.setToBlock( previousBlock, 0, true );
-      return;
-    }
-
-    let caretAtStart = this.Editor.Caret.isAtStart;
-
-    if (!caretAtStart) {
-      return;
-    }
-
-    this.Editor.Caret.setToBlock( previousBlock, 0, true );
+    this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.BlockEvents.keydown(event));
+    this.Editor.Listeners.on(block.pluginsContent, 'mouseup', (event) => this.Editor.BlockEvents.mouseUp(event));
+    this.Editor.Listeners.on(block.pluginsContent, 'keyup', (event) => this.Editor.BlockEvents.keyup(event));
   }
 
   /**
@@ -226,6 +165,7 @@ export default class BlockManager extends Module {
     }
     this._blocks.remove(index);
   }
+
   /**
    * Split current Block
    * 1. Extract content from Caret position to the Block`s end
@@ -373,7 +313,7 @@ export default class BlockManager extends Module {
     /**
      * Remove previous selected Block's state
      */
-    this._blocks.array.forEach( block => block.selected = false);
+    this.blocks.forEach( block => block.selected = false);
 
     /**
      * Mark current Block as selected
@@ -415,6 +355,18 @@ export default class BlockManager extends Module {
     }
   }
 
+  /**
+   * Swap Blocks Position
+   * @param {Number} fromIndex
+   * @param {Number} toIndex
+   */
+  swap(fromIndex, toIndex) {
+    /** Move up current Block */
+    this._blocks.swap(fromIndex, toIndex);
+
+    /** Now actual block moved up so that current block index decreased */
+    this.currentBlockIndex = toIndex;
+  }
   /**
    * Clears Editor
    * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
@@ -459,6 +411,26 @@ class Blocks {
   push(block) {
     this.blocks.push(block);
     this.workingArea.appendChild(block.html);
+  }
+
+  /**
+   * Swaps blocks with indexes first and second
+   * @param {Number} first - first block index
+   * @param {Number} second - second block index
+   */
+  swap(first, second) {
+    let secondBlock = this.blocks[second];
+
+    /**
+     * Change in DOM
+     */
+    $.swap(this.blocks[first].html, secondBlock.html);
+
+    /**
+     * Change in array
+     */
+    this.blocks[second] = this.blocks[first];
+    this.blocks[first] = secondBlock;
   }
 
   /**

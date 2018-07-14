@@ -60,8 +60,8 @@
     cursor: pointer;
   }
 
-  &::before {
-    display: inline-block;
-    content: 'up';
+  &--disabled {
+    cursor: not-allowed !important;
+    opacity: .3;
   }
 }

@@ -18,7 +18,7 @@ export default class API extends Module {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorsConfig} config
+   * @param {EditorConfig} config
    */
   constructor({config}) {
     super({config});
@@ -32,6 +32,7 @@ export default class API extends Module {
       sanitizer: this.Editor.SanitizerAPI.methods,
       saver: this.Editor.SaverAPI.methods,
       selection: this.Editor.SelectionAPI.methods,
+      listener: this.Editor.ListenerAPI.methods,
       toolbar: this.Editor.ToolbarAPI.methods,
     };
   }

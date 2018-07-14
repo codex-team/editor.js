@@ -20,11 +20,13 @@ export interface IAPI {
 
 Methods that working with Blocks
 
-```moveDown()``` - method moves down the current block.
-
-```moveUp()``` - method moves up the current block.
+```swap(fromIndex, toIndex)``` - swaps two Blocks by their positions
 
 ```delete(blockIndex?: Number)``` - deletes block with passed index 
+
+```getCurrentBlockIndex()``` - current block index
+
+```getBlockByIndex(index: Number)``` - returns block with passed index
 
 #### ISanitizerAPI
 
@@ -62,4 +64,11 @@ Methods that allows to subscribe on CodeX Editor events
 
 ```emit(eventName: string, data: object)``` - fires all subscribed callbacks with passed data
 
+### IListenerAPI
 
+Methods that allows to work with DOM listener. Useful when you forgot to remove listener.
+Module collects all listeners and destroys automatically 
+
+```on(element: HTMLElement, eventType: string, handler: Function, useCapture?: boolean)``` - add event listener to HTML element
+
+```off(element: HTMLElement, eventType: string, handler: Function)``` - remove event handler from HTML element 
