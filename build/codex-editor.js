@@ -482,8 +482,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["api-blocks.ts","api-events.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-toolbar.ts","api.ts","blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+var modules = ["api-blocks.ts","api-events.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-toolbar.ts","api.ts","block-events.ts","blockManager.js","caret.js","events.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
 });
 
 /**
@@ -2366,10 +2366,10 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
-/*!************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
-  \************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2381,6 +2381,7 @@ var map = {
 	"./api-selection.ts": "./src/components/modules/api-selection.ts",
 	"./api-toolbar.ts": "./src/components/modules/api-toolbar.ts",
 	"./api.ts": "./src/components/modules/api.ts",
+	"./block-events.ts": "./src/components/modules/block-events.ts",
 	"./blockManager.js": "./src/components/modules/blockManager.js",
 	"./caret.js": "./src/components/modules/caret.js",
 	"./events.js": "./src/components/modules/events.js",
@@ -2415,7 +2416,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
 
 /***/ }),
 
@@ -3079,6 +3080,196 @@ module.exports = exports["default"];
 
 /***/ }),
 
+/***/ "./src/components/modules/block-events.ts":
+/*!************************************************!*\
+  !*** ./src/components/modules/block-events.ts ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var BlockEvents = function (_Module) {
+    _inherits(BlockEvents, _Module);
+
+    /**
+     * @constructor
+     */
+    function BlockEvents(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, BlockEvents);
+
+        return _possibleConstructorReturn(this, (BlockEvents.__proto__ || Object.getPrototypeOf(BlockEvents)).call(this, { config: config }));
+    }
+    /**
+     * All keydowns on Block
+     * @param {KeyboardEvent} event - keydown
+     */
+
+
+    _createClass(BlockEvents, [{
+        key: "keydown",
+        value: function keydown(event) {
+            switch (event.keyCode) {
+                case _.keyCodes.BACKSPACE:
+                    this.backspace(event);
+                    break;
+                case _.keyCodes.ENTER:
+                    this.enter(event);
+                    break;
+                case _.keyCodes.DOWN:
+                case _.keyCodes.RIGHT:
+                    this.arrowRightAndDownPressed();
+                    break;
+                case _.keyCodes.UP:
+                case _.keyCodes.LEFT:
+                    this.arrowLeftAndUpPressed();
+                    break;
+                default:
+                    break;
+            }
+        }
+        /**
+         * Key up on Block:
+         * - shows Inline Toolbar if something selected
+         */
+
+    }, {
+        key: "keyup",
+        value: function keyup(event) {
+            this.Editor.InlineToolbar.handleShowingEvent(event);
+        }
+        /**
+         * Mouse up on Block:
+         * - shows Inline Toolbar if something selected
+         */
+
+    }, {
+        key: "mouseUp",
+        value: function mouseUp(event) {
+            this.Editor.InlineToolbar.handleShowingEvent(event);
+        }
+        /**
+         * ENTER pressed on block
+         * @param {KeyboardEvent} event - keydown
+         */
+
+    }, {
+        key: "enter",
+        value: function enter(event) {
+            var currentBlock = this.Editor.BlockManager.currentBlock,
+                toolsConfig = this.config.toolsConfig[currentBlock.name];
+            /**
+             * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
+             * Uses for Tools like <code> where line breaks should be handled by default behaviour.
+             */
+            if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+                return;
+            }
+            /**
+             * Allow to create linebreaks by Shift+Enter
+             */
+            if (event.shiftKey) {
+                return;
+            }
+            /**
+             * Split the Current Block into two blocks
+             */
+            this.Editor.BlockManager.split();
+            /**
+             * Renew local current node after split
+             */
+            var newCurrent = this.Editor.BlockManager.currentBlock;
+            this.Editor.Toolbar.move();
+            this.Editor.Toolbar.open();
+            if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
+                this.Editor.Toolbar.plusButton.show();
+            }
+            event.preventDefault();
+        }
+        /**
+         * Handle backspace keydown on Block
+         * @param {KeyboardEvent} event - keydown
+         */
+
+    }, {
+        key: "backspace",
+        value: function backspace(event) {
+            var _this2 = this;
+
+            var BM = this.Editor.BlockManager;
+            var isFirstBlock = BM.currentBlockIndex === 0,
+                canMergeBlocks = this.Editor.Caret.isAtStart && !isFirstBlock;
+            if (!canMergeBlocks) {
+                return;
+            }
+            // preventing browser default behaviour
+            event.preventDefault();
+            var targetBlock = BM.getBlockByIndex(BM.currentBlockIndex - 1),
+                blockToMerge = BM.currentBlock;
+            /**
+             * Blocks that can be merged:
+             * 1) with the same Name
+             * 2) Tool has 'merge' method
+             *
+             * other case will handle as usual ARROW LEFT behaviour
+             */
+            if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
+                BM.navigatePrevious();
+            }
+            var setCaretToTheEnd = !targetBlock.isEmpty;
+            BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
+                window.setTimeout(function () {
+                    // set caret to the block without offset at the end
+                    _this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
+                    _this2.Editor.Toolbar.close();
+                }, 10);
+            });
+        }
+        /**
+         * Handle right and down keyboard keys
+         */
+
+    }, {
+        key: "arrowRightAndDownPressed",
+        value: function arrowRightAndDownPressed() {
+            this.Editor.BlockManager.navigateNext();
+        }
+        /**
+         * Handle left and up keyboard keys
+         */
+
+    }, {
+        key: "arrowLeftAndUpPressed",
+        value: function arrowLeftAndUpPressed() {
+            this.Editor.BlockManager.navigatePrevious();
+        }
+    }]);
+
+    return BlockEvents;
+}(Module);
+
+BlockEvents.displayName = "BlockEvents";
+exports.default = BlockEvents;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
+
+/***/ }),
+
 /***/ "./src/components/modules/blockManager.js":
 /*!************************************************!*\
   !*** ./src/components/modules/blockManager.js ***!
@@ -3229,10 +3420,10 @@ var BlockManager = function (_Module) {
         return _this3.Editor.BlockEvents.keydown(event);
       });
       this.Editor.Listeners.on(block.pluginsContent, 'mouseup', function (event) {
-        _this3.Editor.InlineToolbar.handleShowingEvent(event);
+        return _this3.Editor.BlockEvents.mouseUp(event);
       });
       this.Editor.Listeners.on(block.pluginsContent, 'keyup', function (event) {
-        _this3.Editor.InlineToolbar.handleShowingEvent(event);
+        return _this3.Editor.BlockEvents.keyup(event);
       });
     }
 

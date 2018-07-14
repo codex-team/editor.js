@@ -43,6 +43,22 @@ export default class BlockEvents extends Module {
   }
 
   /**
+   * Key up on Block:
+   * - shows Inline Toolbar if something selected
+   */
+  public keyup(event): void {
+    this.Editor.InlineToolbar.handleShowingEvent(event);
+  }
+
+  /**
+   * Mouse up on Block:
+   * - shows Inline Toolbar if something selected
+   */
+  public mouseUp(event): void {
+    this.Editor.InlineToolbar.handleShowingEvent(event);
+  }
+
+  /**
    * ENTER pressed on block
    * @param {KeyboardEvent} event - keydown
    */
