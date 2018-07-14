@@ -77,18 +77,18 @@ export default class BlockManager extends Module {
    *
    * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
    * @param {Object} data - constructor params
+   * @param {Object} settings - block settings
    *
    * @return {Block}
    */
-  composeBlock(toolName, data) {
+  composeBlock(toolName, data, settings) {
     let toolInstance = this.Editor.Tools.construct(toolName, data),
-      block = new Block(toolName, toolInstance);
+      block = new Block(toolName, toolInstance, settings, this.Editor.API.methods);
 
     this.bindEvents(block);
-
     /**
-         * Apply callback before inserting html
-         */
+     * Apply callback before inserting html
+     */
     block.call('appendCallback', {});
 
     return block;
@@ -99,65 +99,27 @@ export default class BlockManager extends Module {
    * @param {Object} block
    */
   bindEvents(block) {
-    this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.Keyboard.blockKeydownsListener(event));
-    this.Editor.Listeners.on(block.pluginsContent, 'mouseup', (event) => {
-      this.Editor.InlineToolbar.handleShowingEvent(event);
-    });
-  }
-
-  /**
-   * Set's caret to the next Block
-   * Before moving caret, we should check if caret position is at the end of Plugins node
-   * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
-   */
-  navigateNext() {
-    let caretAtEnd = this.Editor.Caret.isAtEnd;
-
-    if (!caretAtEnd) {
-      return;
-    }
-
-    let nextBlock = this.nextBlock;
-
-    if (!nextBlock) {
-      return;
-    }
-
-    this.Editor.Caret.setToBlock( nextBlock );
-  }
-
-  /**
-   * Set's caret to the previous Block
-   * Before moving caret, we should check if caret position is start of the Plugins node
-   * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
-   */
-  navigatePrevious() {
-    let caretAtStart = this.Editor.Caret.isAtStart;
-
-    if (!caretAtStart) {
-      return;
-    }
-
-    let previousBlock = this.previousBlock;
-
-    if (!previousBlock) {
-      return;
-    }
-
-    this.Editor.Caret.setToBlock( previousBlock, 0, true );
+    this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.BlockEvents.keydown(event));
+    this.Editor.Listeners.on(block.pluginsContent, 'mouseup', (event) => this.Editor.BlockEvents.mouseUp(event));
+    this.Editor.Listeners.on(block.pluginsContent, 'keyup', (event) => this.Editor.BlockEvents.keyup(event));
   }
 
   /**
    * Insert new block into _blocks
    *
-   * @param {String} toolName — plugin name
+   * @param {String} toolName — plugin name, by default method inserts initial block type
    * @param {Object} data — plugin data
+   * @param {Object} settings - default settings
+   *
+   * @return {Block}
    */
-  insert(toolName, data = {}) {
-    let block = this.composeBlock(toolName, data);
+  insert(toolName = this.config.initialBlock, data = {}, settings = {}) {
+    let block = this.composeBlock(toolName, data, settings);
 
     this._blocks[++this.currentBlockIndex] = block;
     this.Editor.Caret.setToBlock(block);
+
+    return block;
   }
 
   /**
@@ -192,8 +154,12 @@ export default class BlockManager extends Module {
    * @param {Number|null} index
    */
   removeBlock(index) {
+    if (!index) {
+      index = this.currentBlockIndex;
+    }
     this._blocks.remove(index);
   }
+
   /**
    * Split current Block
    * 1. Extract content from Caret position to the Block`s end
@@ -212,7 +178,13 @@ export default class BlockManager extends Module {
       text: $.isEmpty(wrapper) ? '' : wrapper.innerHTML,
     };
 
-    this.insert(this.config.initialBlock, data);
+    /**
+     * Renew current Block
+     * @type {Block}
+     */
+    const blockInserted = this.insert(this.config.initialBlock, data);
+
+    this.currentNode = blockInserted.pluginsContent;
   }
 
   /**
@@ -326,7 +298,7 @@ export default class BlockManager extends Module {
     /**
      * Remove previous selected Block's state
      */
-    this._blocks.array.forEach( block => block.selected = false);
+    this.blocks.forEach( block => block.selected = false);
 
     /**
      * Mark current Block as selected
@@ -367,6 +339,33 @@ export default class BlockManager extends Module {
       throw new Error('Can not find a Block from this child Node');
     }
   }
+
+  /**
+   * Swap Blocks Position
+   * @param {Number} fromIndex
+   * @param {Number} toIndex
+   */
+  swap(fromIndex, toIndex) {
+    /** Move up current Block */
+    this._blocks.swap(fromIndex, toIndex);
+
+    /** Now actual block moved up so that current block index decreased */
+    this.currentBlockIndex = toIndex;
+  }
+  /**
+   * Clears Editor
+   * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
+   *                                        we don't need to add empty initial block
+   *                                        2) in api.blocks.clear we should add empty block
+   */
+  clear(needAddInitialBlock = false) {
+    this._blocks.removeAll();
+    this.currentBlockIndex = -1;
+
+    if (needAddInitialBlock) {
+      this.insert(this.config.initialBlock);
+    }
+  }
 };
 
 /**
@@ -397,6 +396,26 @@ class Blocks {
   push(block) {
     this.blocks.push(block);
     this.workingArea.appendChild(block.html);
+  }
+
+  /**
+   * Swaps blocks with indexes first and second
+   * @param {Number} first - first block index
+   * @param {Number} second - second block index
+   */
+  swap(first, second) {
+    let secondBlock = this.blocks[second];
+
+    /**
+     * Change in DOM
+     */
+    $.swap(this.blocks[first].html, secondBlock.html);
+
+    /**
+     * Change in array
+     */
+    this.blocks[second] = this.blocks[first];
+    this.blocks[first] = secondBlock;
   }
 
   /**
@@ -444,12 +463,20 @@ class Blocks {
    * @param {Number|null} index
    */
   remove(index) {
-    if (!index) {
+    if (isNaN(index)) {
       index = this.length - 1;
     }
 
     this.blocks[index].html.remove();
     this.blocks.splice(index, 1);
+  }
+
+  /**
+   * Remove all blocks
+   */
+  removeAll() {
+    this.workingArea.innerHTML = '';
+    this.blocks.length = 0;
   }
 
   /**

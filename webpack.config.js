@@ -80,7 +80,8 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: '[name].js',
-    library: [ 'CodexEditor' ]
+    library: [ 'CodexEditor' ],
+    libraryTarget: 'umd'
   },
 
   watch: true,
@@ -96,6 +97,7 @@ module.exports = {
   resolve : {
     // fallback: path.join(__dirname, 'node_modules'),
     modules : [ path.join(__dirname, "src"),  "node_modules"],
+    extensions: ['.js', '.ts'],
     alias: {
       'utils': path.resolve(__dirname + '/src/components/', './utils'),
       'dom': path.resolve(__dirname + '/src/components/', './dom'),
@@ -141,7 +143,6 @@ module.exports = {
       '$': 'dom',
       'Module': './../__module.ts',
     }),
-
 
     /** Минифицируем CSS и JS */
     // new webpack.optimize.UglifyJsPlugin({
@@ -192,6 +193,14 @@ module.exports = {
             }
           },
           'postcss-loader'
+        ]
+      },
+      {
+        test: /\.(svg)$/,
+        use: [
+          {
+            loader: 'raw-loader',
+          }
         ]
       }
     ]

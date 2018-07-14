@@ -6,8 +6,6 @@ between blocks.
 Caret class implements basic Module class that holds User configuration
 and default CodeX Editor instances
 
-You can read more about Module class [here]()
-
 ## Properties
 
 ## Methods

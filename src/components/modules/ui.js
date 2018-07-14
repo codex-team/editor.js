@@ -3,35 +3,11 @@
  *
  * @type {UI}
  */
-// let className = {
 
 /**
- * @const {string} BLOCK_CLASSNAME - redactor blocks name
+ * Prebuilded sprite of SVG icons
  */
-// BLOCK_CLASSNAME : 'ce-block',
-
-/**
- * @const {String} wrapper for plugins content
- */
-// BLOCK_CONTENT : 'ce-block__content',
-
-/**
- * @const {String} BLOCK_STRETCHED - makes block stretched
- */
-// BLOCK_STRETCHED : 'ce-block--stretched',
-
-/**
- * @const {String} BLOCK_HIGHLIGHTED - adds background
- */
-// BLOCK_HIGHLIGHTED : 'ce-block--focused',
-
-/**
- * @const {String} - for all default settings
- */
-// SETTINGS_ITEM : 'ce-settings__item'
-// };
-
-// import Block from '../block';
+import sprite from '../../../build/sprite.svg';
 
 /**
  * @class
@@ -72,6 +48,10 @@ export default class UI extends Module {
    */
   prepare() {
     return this.make()
+      /**
+       * Append SVG sprite
+       */
+      .then(() => this.appendSVGSprite())
       /**
        * Make toolbar
        */
@@ -175,10 +155,24 @@ export default class UI extends Module {
    * Bind events on the CodeX Editor interface
    */
   bindEvents() {
-    /**
-     * @todo bind events with the Listeners module
-     */
     this.Editor.Listeners.on(this.nodes.redactor, 'click', event => this.redactorClicked(event), false );
+    this.Editor.Listeners.on(document, 'click', event => this.documentClicked(event), false );
+  }
+
+  /**
+   * All clicks on document
+   * @param {MouseEvent} event - Click
+   */
+  documentClicked(event) {
+    /**
+     * Close Inline Toolbar when nothing selected
+     * Do not fire check on clicks at the Inline Toolbar buttons
+     */
+    const clickedOnInlineToolbarButton = event.target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
+
+    if (!clickedOnInlineToolbarButton) {
+      this.Editor.InlineToolbar.handleShowingEvent(event);
+    }
   }
 
   /**
@@ -219,12 +213,6 @@ export default class UI extends Module {
        */
       this.Editor.Caret.setToTheLastBlock();
     }
-
-
-    /**
-     * Close Inline Toolbar when nothing selected
-     */
-    this.Editor.InlineToolbar.handleShowingEvent(event);
 
     /**
          *
@@ -316,6 +304,17 @@ export default class UI extends Module {
     if (isInitialBlock && isEmptyBlock) {
       this.Editor.Toolbar.plusButton.show();
     }
+  }
+
+  /**
+   * Append prebuilded sprite with SVG icons
+   */
+  appendSVGSprite() {
+    let spriteHolder = $.make('div');
+
+    spriteHolder.innerHTML = sprite;
+
+    $.append(this.nodes.wrapper, spriteHolder);
   }
 }
 

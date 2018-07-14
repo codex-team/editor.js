@@ -10,14 +10,27 @@
  *  |________________________|
  */
 export default class BlockSettings extends Module {
+  /**
+   * @constructor
+   */
   constructor({config}) {
     super({config});
 
     this.nodes = {
       wrapper: null,
       toolSettings: null,
-      defaultSettings: null,
-      buttonRemove: null
+      defaultSettings: null
+    };
+  }
+
+  /**
+   * Module Events
+   * @return {{opened: string, closed: string}}
+   */
+  get events() {
+    return {
+      opened: 'block-settings-opened',
+      closed: 'block-settings-closed',
     };
   }
 
@@ -51,44 +64,22 @@ export default class BlockSettings extends Module {
     this.nodes.defaultSettings = $.make('div', BlockSettings.CSS.defaultSettings);
 
     $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
-
-    /**
-     * Add default settings that presents for all Blocks
-     */
-    this.addDefaultSettings();
   }
 
   /**
    * Add Tool's settings
    */
   addToolSettings() {
-    console.log('Block Settings: add settings for ',
-      this.Editor.BlockManager.currentBlock
-    );
+    if (typeof this.Editor.BlockManager.currentBlock.tool.makeSettings === 'function') {
+      $.append(this.nodes.toolSettings, this.Editor.BlockManager.currentBlock.tool.makeSettings());
+    }
   }
 
   /**
    * Add default settings
    */
   addDefaultSettings() {
-    /**
-     * Remove Block Button
-     * --------------------------------------------
-     */
-    this.nodes.buttonRemove = $.make('div', BlockSettings.CSS.button, {
-      textContent: 'Remove Block'
-    });
-
-    $.append(this.nodes.defaultSettings, this.nodes.buttonRemove);
-
-    this.Editor.Listeners.on(this.nodes.buttonRemove, 'click', (event) => this.removeBlockButtonClicked(event));
-  }
-
-  /**
-   * Clicks on the Remove Block Button
-   */
-  removeBlockButtonClicked() {
-    console.log('❇️ Remove Block Button clicked');
+    $.append(this.nodes.defaultSettings, this.Editor.BlockManager.currentBlock.renderTunes());
   }
 
   /**
@@ -109,6 +100,14 @@ export default class BlockSettings extends Module {
      * Fill Tool's settings
      */
     this.addToolSettings();
+
+    /**
+     * Add default settings that presents for all Blocks
+     */
+    this.addDefaultSettings();
+
+    /** Tell to subscribers that block settings is opened */
+    this.Editor.Events.emit(this.events.opened);
   }
 
   /**
@@ -116,5 +115,12 @@ export default class BlockSettings extends Module {
    */
   close() {
     this.nodes.wrapper.classList.remove(BlockSettings.CSS.wrapperOpened);
+
+    /** Clear settings */
+    this.nodes.toolSettings.innerHTML = '';
+    this.nodes.defaultSettings.innerHTML = '';
+
+    /** Tell to subscribers that block settings is closed */
+    this.Editor.Events.emit(this.events.closed);
   }
 }
