@@ -6,7 +6,7 @@ import { IToolbarAPI } from '../interfaces/api';
  * @class ToolbarsAPI
  * provides with methods working with Toolbar
  */
-export default class ToolbarsAPI extends Module implements IToolbarAPI {
+export default class ToolbarAPI extends Module implements IToolbarAPI {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks

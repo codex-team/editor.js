@@ -482,8 +482,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["api-blocks.ts","api-events.ts","api-listener.ts","api-sanitizer.ts","api-selection.ts","api-toolbar.ts","api.ts","blockManager.js","caret.js","events.js","keyboard.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+var modules = ["api-blocks.ts","api-events.ts","api-listener.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-toolbar.ts","api.ts","block-events.ts","blockManager.js","caret.js","events.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
 });
 
 /**
@@ -544,6 +544,17 @@ var CodexEditor = function () {
       return _this.init();
     }).then(function () {
       return _this.start();
+    }).then(function () {
+      var methods = _this.moduleInstances.API.methods;
+
+      /**
+       * Make API methods available from inside easier
+       */
+      for (var method in methods) {
+        _this[method] = methods[method];
+      }
+
+      delete _this.moduleInstances; // todo Is it necessary?
     }).then(function () {
       console.log('CodeX Editor is ready!');
     }).catch(function (error) {
@@ -2408,10 +2419,10 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
-/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
-  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2420,13 +2431,14 @@ var map = {
 	"./api-events.ts": "./src/components/modules/api-events.ts",
 	"./api-listener.ts": "./src/components/modules/api-listener.ts",
 	"./api-sanitizer.ts": "./src/components/modules/api-sanitizer.ts",
+	"./api-saver.ts": "./src/components/modules/api-saver.ts",
 	"./api-selection.ts": "./src/components/modules/api-selection.ts",
 	"./api-toolbar.ts": "./src/components/modules/api-toolbar.ts",
 	"./api.ts": "./src/components/modules/api.ts",
+	"./block-events.ts": "./src/components/modules/block-events.ts",
 	"./blockManager.js": "./src/components/modules/blockManager.js",
 	"./caret.js": "./src/components/modules/caret.js",
 	"./events.js": "./src/components/modules/events.js",
-	"./keyboard.js": "./src/components/modules/keyboard.js",
 	"./listeners.js": "./src/components/modules/listeners.js",
 	"./renderer.js": "./src/components/modules/renderer.js",
 	"./sanitizer.js": "./src/components/modules/sanitizer.js",
@@ -2458,7 +2470,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-selection.ts|api-toolbar.ts|api.ts|blockManager.js|caret.js|events.js|keyboard.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
 
 /***/ }),
 
@@ -2575,12 +2587,38 @@ var BlocksAPI = function (_Module) {
                 }
             }
         }
+        /**
+         * Clear Editor's area
+         */
+
+    }, {
+        key: "clear",
+        value: function clear() {
+            this.Editor.BlockManager.clear(true);
+        }
+        /**
+         * Fills Editor with Blocks data
+         * @param {IInputOutputData} data — Saved Editor data
+         */
+
+    }, {
+        key: "render",
+        value: function render(data) {
+            this.Editor.BlockManager.clear();
+            this.Editor.Renderer.render(data.items);
+        }
     }, {
         key: "methods",
         get: function get() {
             var _this2 = this;
 
             return {
+                clear: function clear() {
+                    return _this2.clear();
+                },
+                render: function render(data) {
+                    return _this2.render(data);
+                },
                 delete: function _delete() {
                     return _this2.delete();
                 },
@@ -2888,6 +2926,84 @@ module.exports = exports["default"];
 
 /***/ }),
 
+/***/ "./src/components/modules/api-saver.ts":
+/*!*********************************************!*\
+  !*** ./src/components/modules/api-saver.ts ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * @class SaverAPI
+ * provides with methods to save data
+ */
+var SaverAPI = function (_Module) {
+    _inherits(SaverAPI, _Module);
+
+    /**
+     * Save Editor config. API provides passed configuration to the Blocks
+     * @param {EditorsConfig} config
+     */
+    function SaverAPI(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, SaverAPI);
+
+        return _possibleConstructorReturn(this, (SaverAPI.__proto__ || Object.getPrototypeOf(SaverAPI)).call(this, { config: config }));
+    }
+    /**
+     * Available methods
+     * @return {ISaverAPI}
+     */
+
+
+    _createClass(SaverAPI, [{
+        key: "save",
+
+        /**
+         * Return Editor's data
+         */
+        value: function save() {
+            return this.Editor.Saver.save();
+        }
+    }, {
+        key: "methods",
+        get: function get() {
+            var _this2 = this;
+
+            return {
+                save: function save() {
+                    return _this2.save();
+                }
+            };
+        }
+    }]);
+
+    return SaverAPI;
+}(Module);
+
+SaverAPI.displayName = "SaverAPI";
+exports.default = SaverAPI;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
+
+/***/ }),
+
 /***/ "./src/components/modules/api-selection.ts":
 /*!*************************************************!*\
   !*** ./src/components/modules/api-selection.ts ***!
@@ -3014,19 +3130,19 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @class ToolbarsAPI
  * provides with methods working with Toolbar
  */
-var ToolbarsAPI = function (_Module) {
-    _inherits(ToolbarsAPI, _Module);
+var ToolbarAPI = function (_Module) {
+    _inherits(ToolbarAPI, _Module);
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
      * @param {EditorsConfig} config
      */
-    function ToolbarsAPI(_ref) {
+    function ToolbarAPI(_ref) {
         var config = _ref.config;
 
-        _classCallCheck(this, ToolbarsAPI);
+        _classCallCheck(this, ToolbarAPI);
 
-        return _possibleConstructorReturn(this, (ToolbarsAPI.__proto__ || Object.getPrototypeOf(ToolbarsAPI)).call(this, { config: config }));
+        return _possibleConstructorReturn(this, (ToolbarAPI.__proto__ || Object.getPrototypeOf(ToolbarAPI)).call(this, { config: config }));
     }
     /**
      * Available methods
@@ -3034,7 +3150,7 @@ var ToolbarsAPI = function (_Module) {
      */
 
 
-    _createClass(ToolbarsAPI, [{
+    _createClass(ToolbarAPI, [{
         key: "open",
 
         /**
@@ -3068,11 +3184,11 @@ var ToolbarsAPI = function (_Module) {
         }
     }]);
 
-    return ToolbarsAPI;
+    return ToolbarAPI;
 }(Module);
 
-ToolbarsAPI.displayName = "ToolbarsAPI";
-exports.default = ToolbarsAPI;
+ToolbarAPI.displayName = "ToolbarAPI";
+exports.default = ToolbarAPI;
 module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
 
@@ -3108,7 +3224,7 @@ var API = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
+     * @param {EditorConfig} config
      */
     function API(_ref) {
         var config = _ref.config;
@@ -3126,9 +3242,10 @@ var API = function (_Module) {
                 caret: {},
                 events: this.Editor.EventsAPI.methods,
                 sanitizer: this.Editor.SanitizerAPI.methods,
+                saver: this.Editor.SaverAPI.methods,
                 selection: this.Editor.SelectionAPI.methods,
-                toolbar: this.Editor.ToolbarsAPI.methods,
-                listener: this.Editor.ListenerAPI.methods
+                listener: this.Editor.ListenerAPI.methods,
+                toolbar: this.Editor.ToolbarAPI.methods
             };
         }
     }]);
@@ -3140,6 +3257,206 @@ API.displayName = "API";
 exports.default = API;
 module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
+
+/***/ }),
+
+/***/ "./src/components/modules/block-events.ts":
+/*!************************************************!*\
+  !*** ./src/components/modules/block-events.ts ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module, _) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var BlockEvents = function (_Module) {
+    _inherits(BlockEvents, _Module);
+
+    /**
+     * @constructor
+     */
+    function BlockEvents(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, BlockEvents);
+
+        return _possibleConstructorReturn(this, (BlockEvents.__proto__ || Object.getPrototypeOf(BlockEvents)).call(this, { config: config }));
+    }
+    /**
+     * All keydowns on Block
+     * @param {KeyboardEvent} event - keydown
+     */
+
+
+    _createClass(BlockEvents, [{
+        key: "keydown",
+        value: function keydown(event) {
+            switch (event.keyCode) {
+                case _.keyCodes.BACKSPACE:
+                    this.backspace(event);
+                    break;
+                case _.keyCodes.ENTER:
+                    this.enter(event);
+                    break;
+                case _.keyCodes.DOWN:
+                case _.keyCodes.RIGHT:
+                    this.arrowRightAndDownPressed();
+                    break;
+                case _.keyCodes.UP:
+                case _.keyCodes.LEFT:
+                    this.arrowLeftAndUpPressed();
+                    break;
+                default:
+                    break;
+            }
+        }
+        /**
+         * Key up on Block:
+         * - shows Inline Toolbar if something selected
+         */
+
+    }, {
+        key: "keyup",
+        value: function keyup(event) {
+            this.Editor.InlineToolbar.handleShowingEvent(event);
+        }
+        /**
+         * Mouse up on Block:
+         * - shows Inline Toolbar if something selected
+         */
+
+    }, {
+        key: "mouseUp",
+        value: function mouseUp(event) {
+            this.Editor.InlineToolbar.handleShowingEvent(event);
+        }
+        /**
+         * ENTER pressed on block
+         * @param {KeyboardEvent} event - keydown
+         */
+
+    }, {
+        key: "enter",
+        value: function enter(event) {
+            var currentBlock = this.Editor.BlockManager.currentBlock,
+                toolsConfig = this.config.toolsConfig[currentBlock.name];
+            /**
+             * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
+             * Uses for Tools like <code> where line breaks should be handled by default behaviour.
+             */
+            if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+                return;
+            }
+            /**
+             * Allow to create linebreaks by Shift+Enter
+             */
+            if (event.shiftKey) {
+                return;
+            }
+            /**
+             * Split the Current Block into two blocks
+             */
+            this.Editor.BlockManager.split();
+            /**
+             * Renew local current node after split
+             */
+            var newCurrent = this.Editor.BlockManager.currentBlock;
+            this.Editor.Toolbar.move();
+            this.Editor.Toolbar.open();
+            if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
+                this.Editor.Toolbar.plusButton.show();
+            }
+            event.preventDefault();
+        }
+        /**
+         * Handle backspace keydown on Block
+         * @param {KeyboardEvent} event - keydown
+         */
+
+    }, {
+        key: "backspace",
+        value: function backspace(event) {
+            var _this2 = this;
+
+            var BM = this.Editor.BlockManager;
+            var isFirstBlock = BM.currentBlockIndex === 0,
+                canMergeBlocks = this.Editor.Caret.isAtStart && !isFirstBlock;
+            if (!canMergeBlocks) {
+                return;
+            }
+            // preventing browser default behaviour
+            event.preventDefault();
+            var targetBlock = BM.getBlockByIndex(BM.currentBlockIndex - 1),
+                blockToMerge = BM.currentBlock;
+            /**
+             * Blocks that can be merged:
+             * 1) with the same Name
+             * 2) Tool has 'merge' method
+             *
+             * other case will handle as usual ARROW LEFT behaviour
+             */
+            if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
+                if (this.Editor.Caret.navigatePrevious()) {
+                    this.Editor.Toolbar.close();
+                }
+            }
+            var setCaretToTheEnd = !targetBlock.isEmpty;
+            BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
+                // @todo figure out without timeout
+                window.setTimeout(function () {
+                    // set caret to the block without offset at the end
+                    if (_this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd)) {
+                        _this2.Editor.Toolbar.close();
+                    }
+                }, 10);
+            });
+        }
+        /**
+         * Handle right and down keyboard keys
+         */
+
+    }, {
+        key: "arrowRightAndDownPressed",
+        value: function arrowRightAndDownPressed() {
+            if (!this.Editor.Caret.navigateNext()) {
+                return;
+            }
+            this.Editor.Toolbar.close();
+        }
+        /**
+         * Handle left and up keyboard keys
+         */
+
+    }, {
+        key: "arrowLeftAndUpPressed",
+        value: function arrowLeftAndUpPressed() {
+            if (!this.Editor.Caret.navigatePrevious()) {
+                return;
+            }
+            this.Editor.Toolbar.close();
+        }
+    }]);
+
+    return BlockEvents;
+}(Module);
+
+BlockEvents.displayName = "BlockEvents";
+exports.default = BlockEvents;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
 
@@ -3290,13 +3607,13 @@ var BlockManager = function (_Module) {
       var _this3 = this;
 
       this.Editor.Listeners.on(block.pluginsContent, 'keydown', function (event) {
-        return _this3.Editor.Keyboard.blockKeydownsListener(event);
+        return _this3.Editor.BlockEvents.keydown(event);
       });
       this.Editor.Listeners.on(block.pluginsContent, 'mouseup', function (event) {
-        _this3.Editor.InlineToolbar.handleShowingEvent(event);
+        return _this3.Editor.BlockEvents.mouseUp(event);
       });
       this.Editor.Listeners.on(block.pluginsContent, 'keyup', function (event) {
-        _this3.Editor.InlineToolbar.handleShowingEvent(event);
+        return _this3.Editor.BlockEvents.keyup(event);
       });
     }
 
@@ -3503,6 +3820,25 @@ var BlockManager = function (_Module) {
 
       /** Now actual block moved up so that current block index decreased */
       this.currentBlockIndex = toIndex;
+    }
+    /**
+     * Clears Editor
+     * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
+     *                                        we don't need to add empty initial block
+     *                                        2) in api.blocks.clear we should add empty block
+     */
+
+  }, {
+    key: 'clear',
+    value: function clear() {
+      var needAddInitialBlock = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      this._blocks.removeAll();
+      this.currentBlockIndex = -1;
+
+      if (needAddInitialBlock) {
+        this.insert(this.config.initialBlock);
+      }
     }
   }, {
     key: 'lastBlock',
@@ -3729,6 +4065,17 @@ var Blocks = function () {
 
       this.blocks[index].html.remove();
       this.blocks.splice(index, 1);
+    }
+
+    /**
+     * Remove all blocks
+     */
+
+  }, {
+    key: 'removeAll',
+    value: function removeAll() {
+      this.workingArea.innerHTML = '';
+      this.blocks.length = 0;
     }
 
     /**
@@ -4373,235 +4720,6 @@ module.exports = exports["default"];
 
 /***/ }),
 
-/***/ "./src/components/modules/keyboard.js":
-/*!********************************************!*\
-  !*** ./src/components/modules/keyboard.js ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(Module, _) {
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-/**
- * @class Keyboard
- * @classdesc Сlass to handle the keydowns
- *
- * @author CodeX Team (team@ifmo.su)
- * @copyright CodeX Team 2017
- * @license The MIT License (MIT)
- * @version 1.0.0
- */
-
-/**
- * @typedef {Keyboard} Keyboard
- */
-var Keyboard = function (_Module) {
-  _inherits(Keyboard, _Module);
-
-  /**
-   * @constructor
-   */
-  function Keyboard(_ref) {
-    var config = _ref.config;
-
-    _classCallCheck(this, Keyboard);
-
-    return _possibleConstructorReturn(this, (Keyboard.__proto__ || Object.getPrototypeOf(Keyboard)).call(this, { config: config }));
-  }
-
-  /**
-   * Handler on Block for keyboard keys at keydown event
-   *
-   * @param {KeyboardEvent} event
-   */
-
-
-  _createClass(Keyboard, [{
-    key: 'blockKeydownsListener',
-    value: function blockKeydownsListener(event) {
-      switch (event.keyCode) {
-        case _.keyCodes.BACKSPACE:
-
-          _.log('Backspace key pressed');
-          this.backspacePressed(event);
-          break;
-
-        case _.keyCodes.ENTER:
-
-          _.log('Enter key pressed');
-          this.enterPressed(event);
-          break;
-
-        case _.keyCodes.DOWN:
-        case _.keyCodes.RIGHT:
-
-          _.log('Right/Down key pressed');
-          this.arrowRightAndDownPressed();
-          break;
-
-        case _.keyCodes.UP:
-        case _.keyCodes.LEFT:
-
-          _.log('Left/Up key pressed');
-          this.arrowLeftAndUpPressed();
-          break;
-
-        default:
-
-          break;
-      }
-    }
-
-    /**
-     * Handle pressing enter key
-     *
-     * @param {KeyboardEvent} event
-     */
-
-  }, {
-    key: 'enterPressed',
-    value: function enterPressed(event) {
-      var currentBlock = this.Editor.BlockManager.currentBlock,
-          toolsConfig = this.config.toolsConfig[currentBlock.name];
-
-      /**
-       * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
-       * Uses for Tools like <code> where line breaks should be handled by default behaviour.
-       */
-      if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
-        return;
-      }
-
-      /**
-       * Allow to create linebreaks by Shift+Enter
-       */
-      if (event.shiftKey) {
-        return;
-      }
-
-      /**
-       * Split the Current Block into two blocks
-       */
-      this.Editor.BlockManager.split();
-
-      /**
-       * Renew local current node after split
-       */
-      var newCurrent = this.Editor.BlockManager.currentBlock;
-
-      this.Editor.Toolbar.move();
-      this.Editor.Toolbar.open();
-
-      if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
-        this.Editor.Toolbar.plusButton.show();
-      }
-
-      event.preventDefault();
-    }
-
-    /**
-     * Handle backspace keypress on block
-     * @param {KeyboardEvent} event - keydown
-     */
-
-  }, {
-    key: 'backspacePressed',
-    value: function backspacePressed(event) {
-      var _this2 = this;
-
-      var BM = this.Editor.BlockManager;
-
-      var isFirstBlock = BM.currentBlockIndex === 0,
-          canMergeBlocks = this.Editor.Caret.isAtStart && !isFirstBlock;
-
-      if (!canMergeBlocks) {
-        return;
-      }
-
-      // preventing browser default behaviour
-      event.preventDefault();
-
-      var targetBlock = BM.getBlockByIndex(BM.currentBlockIndex - 1),
-          blockToMerge = BM.currentBlock;
-
-      /**
-       * Blocks that can be merged:
-       * 1) with the same Name
-       * 2) Tool has 'merge' method
-       *
-       * other case will handle as usual ARROW LEFT behaviour
-       */
-      if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
-        if (this.Editor.Caret.navigatePrevious()) {
-          this.Editor.Toolbar.close();
-        }
-      }
-
-      var setCaretToTheEnd = !targetBlock.isEmpty;
-
-      BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
-        // @todo figure out without timeout
-        window.setTimeout(function () {
-          // set caret to the block without offset at the end
-          if (_this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd)) {
-            _this2.Editor.Toolbar.close();
-          }
-        }, 10);
-      });
-    }
-
-    /**
-     * Handle right and down keyboard keys
-     */
-
-  }, {
-    key: 'arrowRightAndDownPressed',
-    value: function arrowRightAndDownPressed() {
-      if (!this.Editor.Caret.navigateNext()) {
-        return;
-      }
-
-      this.Editor.Toolbar.close();
-    }
-
-    /**
-     * Handle left and up keyboard keys
-     */
-
-  }, {
-    key: 'arrowLeftAndUpPressed',
-    value: function arrowLeftAndUpPressed() {
-      if (!this.Editor.Caret.navigatePrevious()) {
-        return;
-      }
-
-      this.Editor.Toolbar.close();
-    }
-  }]);
-
-  return Keyboard;
-}(Module);
-
-Keyboard.displayName = 'Keyboard';
-exports.default = Keyboard;
-module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
-
-/***/ }),
-
 /***/ "./src/components/modules/listeners.js":
 /*!*********************************************!*\
   !*** ./src/components/modules/listeners.js ***!
@@ -4928,7 +5046,7 @@ var Renderer = function (_Module) {
 
 
   _createClass(Renderer, [{
-    key: "render",
+    key: 'render',
     value: function render(items) {
       var _this2 = this;
 
@@ -4960,13 +5078,23 @@ var Renderer = function (_Module) {
      */
 
   }, {
-    key: "insertBlock",
+    key: 'insertBlock',
     value: function insertBlock(item) {
       var tool = item.type,
           data = item.data,
           settings = item.settings;
 
-      this.Editor.BlockManager.insert(tool, data, settings);
+      if (tool in this.Editor.Tools.available) {
+        this.Editor.BlockManager.insert(tool, data, settings);
+      } else {
+        /**
+         * @todo show warning notification message
+         *
+         * `${tool} blocks was skipped.`
+         */
+
+        _.log('Tool \xAB' + tool + '\xBB is not found. Check \'tools\' property at your initial CodeX Editor config.', 'warn');
+      }
 
       return Promise.resolve();
     }
@@ -4975,9 +5103,9 @@ var Renderer = function (_Module) {
   return Renderer;
 }(Module);
 
-Renderer.displayName = "Renderer";
+Renderer.displayName = 'Renderer';
 exports.default = Renderer;
-module.exports = exports["default"];
+module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
@@ -5265,7 +5393,10 @@ var Saver = function (_Module) {
         /** Group process info */
         console.log('\xAB' + extraction.tool + '\xBB saving info', extraction);
         totalTime += extraction.time;
-        items.push(extraction.data);
+        items.push({
+          type: extraction.tool,
+          data: extraction.data
+        });
       });
 
       console.log('Total', totalTime);

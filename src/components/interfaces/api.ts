@@ -1,3 +1,5 @@
+import IInputOutputData from "./input-output-data";
+
 /**
  * CodeX Editor Public API
  *
@@ -8,6 +10,7 @@ export interface IAPI {
   caret: ICaretAPI;
   events: IEventsAPI;
   sanitizer: ISanitizerAPI;
+  saver: ISaverAPI;
   selection: ISelectionAPI;
   toolbar: IToolbarAPI;
   listener: IListenerAPI;
@@ -19,16 +22,26 @@ export interface IAPI {
 export interface IBlocksAPI {
 
   /**
-   * Swap two Blocks by positions
-   * @param {number} fromIndex - position of first Block
-   * @param {number} toIndex - position of second Block
+   * Clears Blocks list
    */
-  swap: (fromIndex: number, toIndex: number) => void;
+  clear: () => void;
+
+  /**
+   * Fills editor with Blocks data
+   */
+  render: (data: IInputOutputData) => void;
 
   /**
    * Removes block
    */
   delete: (blockIndex?: number) => void;
+
+  /**
+   * Swap two Blocks by positions
+   * @param {number} fromIndex - position of first Block
+   * @param {number} toIndex - position of second Block
+   */
+  swap: (fromIndex: number, toIndex: number) => void;
 
   /**
    * Returns block by passed index
@@ -83,6 +96,18 @@ export interface ISanitizerAPI {
    * @param config
    */
   clean: (taintString, config) => string;
+}
+
+/**
+ * Saver's methods
+ */
+export interface ISaverAPI {
+  /**
+   * Return current blocks
+   *
+   * @return {IInputOutputData}
+   */
+  save: () => IInputOutputData;
 }
 
 /**

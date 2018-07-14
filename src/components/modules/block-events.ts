@@ -1,17 +1,11 @@
 /**
- * @class Keyboard
- * @classdesc Сlass to handle the keydowns
- *
- * @author CodeX Team (team@ifmo.su)
- * @copyright CodeX Team 2017
- * @license The MIT License (MIT)
- * @version 1.0.0
+ * Contains keyboard and mouse events binded on each Block by Block Manager
  */
+declare var Module: any;
+declare var $: any;
+declare var _: any;
 
-/**
- * @typedef {Keyboard} Keyboard
- */
-export default class Keyboard extends Module {
+export default class BlockEvents extends Module {
   /**
    * @constructor
    */
@@ -20,51 +14,56 @@ export default class Keyboard extends Module {
   }
 
   /**
-   * Handler on Block for keyboard keys at keydown event
-   *
-   * @param {KeyboardEvent} event
+   * All keydowns on Block
+   * @param {KeyboardEvent} event - keydown
    */
-  blockKeydownsListener(event) {
-    switch(event.keyCode) {
+  public keydown(event: KeyboardEvent): void {
+    switch (event.keyCode) {
       case _.keyCodes.BACKSPACE:
-
-        _.log('Backspace key pressed');
-        this.backspacePressed(event);
+        this.backspace(event);
         break;
 
       case _.keyCodes.ENTER:
-
-        _.log('Enter key pressed');
-        this.enterPressed(event);
+        this.enter(event);
         break;
 
       case _.keyCodes.DOWN:
       case _.keyCodes.RIGHT:
-
-        _.log('Right/Down key pressed');
         this.arrowRightAndDownPressed();
         break;
 
       case _.keyCodes.UP:
       case _.keyCodes.LEFT:
-
-        _.log('Left/Up key pressed');
         this.arrowLeftAndUpPressed();
         break;
 
       default:
-
         break;
     }
   }
 
   /**
-   * Handle pressing enter key
-   *
-   * @param {KeyboardEvent} event
+   * Key up on Block:
+   * - shows Inline Toolbar if something selected
    */
-  enterPressed(event) {
-    let currentBlock = this.Editor.BlockManager.currentBlock,
+  public keyup(event): void {
+    this.Editor.InlineToolbar.handleShowingEvent(event);
+  }
+
+  /**
+   * Mouse up on Block:
+   * - shows Inline Toolbar if something selected
+   */
+  public mouseUp(event): void {
+    this.Editor.InlineToolbar.handleShowingEvent(event);
+  }
+
+  /**
+   * ENTER pressed on block
+   * @param {KeyboardEvent} event - keydown
+   */
+  private enter(event: KeyboardEvent): void {
+    const currentBlock = this.Editor.BlockManager.currentBlock,
       toolsConfig = this.config.toolsConfig[currentBlock.name];
 
     /**
@@ -82,7 +81,6 @@ export default class Keyboard extends Module {
       return;
     }
 
-
     /**
      * Split the Current Block into two blocks
      */
@@ -91,7 +89,7 @@ export default class Keyboard extends Module {
     /**
      * Renew local current node after split
      */
-    let newCurrent = this.Editor.BlockManager.currentBlock;
+    const newCurrent = this.Editor.BlockManager.currentBlock;
 
     this.Editor.Toolbar.move();
     this.Editor.Toolbar.open();
@@ -104,14 +102,14 @@ export default class Keyboard extends Module {
   }
 
   /**
-   * Handle backspace keypress on block
+   * Handle backspace keydown on Block
    * @param {KeyboardEvent} event - keydown
    */
-  backspacePressed(event) {
+  private backspace(event: KeyboardEvent): void {
     const BM = this.Editor.BlockManager;
 
-    let isFirstBlock  = BM.currentBlockIndex === 0,
-      canMergeBlocks  = this.Editor.Caret.isAtStart && !isFirstBlock;
+    const isFirstBlock = BM.currentBlockIndex === 0,
+      canMergeBlocks = this.Editor.Caret.isAtStart && !isFirstBlock;
 
     if (!canMergeBlocks) {
       return;
@@ -120,7 +118,7 @@ export default class Keyboard extends Module {
     // preventing browser default behaviour
     event.preventDefault();
 
-    let targetBlock = BM.getBlockByIndex(BM.currentBlockIndex - 1),
+    const targetBlock = BM.getBlockByIndex(BM.currentBlockIndex - 1),
       blockToMerge = BM.currentBlock;
 
     /**
@@ -136,7 +134,7 @@ export default class Keyboard extends Module {
       }
     }
 
-    let setCaretToTheEnd = !targetBlock.isEmpty;
+    const setCaretToTheEnd = !targetBlock.isEmpty;
 
     BM.mergeBlocks(targetBlock, blockToMerge)
       .then( () => {
@@ -153,7 +151,7 @@ export default class Keyboard extends Module {
   /**
    * Handle right and down keyboard keys
    */
-  arrowRightAndDownPressed() {
+  private arrowRightAndDownPressed(): void {
     if (!this.Editor.Caret.navigateNext()) {
       return;
     }
@@ -164,7 +162,7 @@ export default class Keyboard extends Module {
   /**
    * Handle left and up keyboard keys
    */
-  arrowLeftAndUpPressed() {
+  private arrowLeftAndUpPressed(): void {
     if (!this.Editor.Caret.navigatePrevious()) {
       return;
     }

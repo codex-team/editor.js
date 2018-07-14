@@ -99,13 +99,9 @@ export default class BlockManager extends Module {
    * @param {Object} block
    */
   bindEvents(block) {
-    this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.Keyboard.blockKeydownsListener(event));
-    this.Editor.Listeners.on(block.pluginsContent, 'mouseup', (event) => {
-      this.Editor.InlineToolbar.handleShowingEvent(event);
-    });
-    this.Editor.Listeners.on(block.pluginsContent, 'keyup', (event) => {
-      this.Editor.InlineToolbar.handleShowingEvent(event);
-    });
+    this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.BlockEvents.keydown(event));
+    this.Editor.Listeners.on(block.pluginsContent, 'mouseup', (event) => this.Editor.BlockEvents.mouseUp(event));
+    this.Editor.Listeners.on(block.pluginsContent, 'keyup', (event) => this.Editor.BlockEvents.keyup(event));
   }
 
   /**
@@ -356,6 +352,20 @@ export default class BlockManager extends Module {
     /** Now actual block moved up so that current block index decreased */
     this.currentBlockIndex = toIndex;
   }
+  /**
+   * Clears Editor
+   * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
+   *                                        we don't need to add empty initial block
+   *                                        2) in api.blocks.clear we should add empty block
+   */
+  clear(needAddInitialBlock = false) {
+    this._blocks.removeAll();
+    this.currentBlockIndex = -1;
+
+    if (needAddInitialBlock) {
+      this.insert(this.config.initialBlock);
+    }
+  }
 };
 
 /**
@@ -459,6 +469,14 @@ class Blocks {
 
     this.blocks[index].html.remove();
     this.blocks.splice(index, 1);
+  }
+
+  /**
+   * Remove all blocks
+   */
+  removeAll() {
+    this.workingArea.innerHTML = '';
+    this.blocks.length = 0;
   }
 
   /**
