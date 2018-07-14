@@ -76,6 +76,8 @@ export default class Renderer extends Module {
     if (tool in this.Editor.Tools.available) {
       this.Editor.BlockManager.insert(tool, data, settings);
     } else {
+      /** @todo show warning notification message */
+
       Utils.log(`Tool «${tool}» is missing`, 'warn');
     }
 

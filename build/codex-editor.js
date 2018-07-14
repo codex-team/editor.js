@@ -4898,6 +4898,8 @@ var Renderer = function (_Module) {
       if (tool in this.Editor.Tools.available) {
         this.Editor.BlockManager.insert(tool, data, settings);
       } else {
+        /** @todo show warning notification message */
+
         _utils2.default.log('Tool \xAB' + tool + '\xBB is missing', 'warn');
       }
 
