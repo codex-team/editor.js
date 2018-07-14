@@ -129,13 +129,16 @@ export default class BlockEvents extends Module {
      * other case will handle as usual ARROW LEFT behaviour
      */
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
-      BM.navigatePrevious();
+      if (this.Editor.Caret.navigatePrevious()) {
+        this.Editor.Toolbar.close();
+      }
     }
 
     const setCaretToTheEnd = !targetBlock.isEmpty;
 
     BM.mergeBlocks(targetBlock, blockToMerge)
       .then( () => {
+        // @todo figure out without timeout
         window.setTimeout( () => {
           // set caret to the block without offset at the end
           this.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
@@ -148,13 +151,17 @@ export default class BlockEvents extends Module {
    * Handle right and down keyboard keys
    */
   private arrowRightAndDownPressed(): void {
-    this.Editor.BlockManager.navigateNext();
+    this.Editor.Caret.navigateNext();
+
+    this.Editor.Toolbar.close();
   }
 
   /**
    * Handle left and up keyboard keys
    */
   private arrowLeftAndUpPressed(): void {
-    this.Editor.BlockManager.navigatePrevious();
+    this.Editor.Caret.navigatePrevious();
+
+    this.Editor.Toolbar.close();
   }
 }

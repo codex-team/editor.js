@@ -24,18 +24,45 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
   get methods(): IBlocksAPI {
     return {
       clear: () => this.clear(),
-      delete: () => this.delete(),
-      moveDown: () => this.moveDown(),
-      moveUp: () => this.moveUp(),
       render: (data: IInputOutputData) => this.render(data),
+      delete: () => this.delete(),
+      swap: (fromIndex: number, toIndex: number) => this.swap(fromIndex, toIndex),
+      getBlockByIndex: (index: number) => this.getBlockByIndex(index),
+      getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
     };
   }
 
   /**
-   * Clear Editor's area
+   * Returns current block index
+   * @return {number}
    */
-  public clear(): void {
-    this.Editor.BlockManager.clear(true);
+  public getCurrentBlockIndex(): number {
+    return this.Editor.BlockManager.currentBlockIndex;
+  }
+
+  /**
+   * Returns Current Block
+   * @param {Number} index
+   *
+   * @return {Object}
+   */
+  public getBlockByIndex(index: number): object {
+    return this.Editor.BlockManager.getBlockByIndex(index);
+  }
+
+  /**
+   * Call Block Manager method that swap Blocks
+   * @param {number} fromIndex - position of first Block
+   * @param {number} toIndex - position of second Block
+   */
+  public swap(fromIndex: number, toIndex: number): void {
+    this.Editor.BlockManager.swap(fromIndex, toIndex);
+
+    /**
+     * Move toolbar
+     * DO not close the settings
+     */
+    this.Editor.Toolbar.move(false);
   }
 
   /**
@@ -44,7 +71,6 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    */
   public delete(blockIndex?: number): void {
     this.Editor.BlockManager.removeBlock(blockIndex);
-    this.Editor.Toolbar.close();
 
     /**
      * in case of last block deletion
@@ -60,22 +86,17 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
     if (this.Editor.BlockManager.currentBlockIndex === 0) {
       this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
     } else {
-      this.Editor.BlockManager.navigatePrevious(true);
+      if (this.Editor.Caret.navigatePrevious(true)) {
+        this.Editor.Toolbar.close();
+      }
     }
   }
 
   /**
-   * Moves block down
+   * Clear Editor's area
    */
-  public moveDown(): void {
-    console.log('moving down', this.Editor.BlockManager);
-  }
-
-  /**
-   * Moves block up
-   */
-  public moveUp(): void {
-    console.log('moving up', this.Editor.BlockManager);
+  public clear(): void {
+    this.Editor.BlockManager.clear(true);
   }
 
   /**

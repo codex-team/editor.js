@@ -13,6 +13,7 @@ export interface IAPI {
   saver: ISaverAPI;
   selection: ISelectionAPI;
   toolbar: IToolbarAPI;
+  listener: IListenerAPI;
 }
 
 /**
@@ -26,24 +27,35 @@ export interface IBlocksAPI {
   clear: () => void;
 
   /**
+   * Fills editor with Blocks data
+   */
+  render: (data: IInputOutputData) => void;
+
+  /**
    * Removes block
    */
   delete: (blockIndex?: number) => void;
 
   /**
-   * Move down the highlighted block
+   * Swap two Blocks by positions
+   * @param {number} fromIndex - position of first Block
+   * @param {number} toIndex - position of second Block
    */
-  moveDown: () => void;
+  swap: (fromIndex: number, toIndex: number) => void;
 
   /**
-   * Move up the highlighted block
+   * Returns block by passed index
+   *
+   * @param {Number} index - needed block with index
+   * @return {object}
    */
-  moveUp: () => void;
+  getBlockByIndex: (index: number) => object;
 
   /**
-   * Fills editor with Blocks data
+   * Returns current block index
+   * @return {number}
    */
-  render: (data: IInputOutputData) => void;
+  getCurrentBlockIndex: () => number;
 }
 
 /**
@@ -134,4 +146,28 @@ export interface IToolbarAPI {
    * Closes toolbar. If toolbox or toolbar-blockSettings are opened then they will be closed too
    */
   close: () => void;
+}
+
+/**
+ * DOM Listener API
+ */
+export interface IListenerAPI {
+
+  /**
+   * Adds event listener
+   * @param {HTMLElement} element
+   * @param {string} eventType
+   * @param {() => void} handler
+   * @param useCapture
+   * @return {boolean}
+   */
+  on: (element: HTMLElement, eventType: string, handler: () => void, useCapture: boolean) => void;
+
+  /**
+   * Remove event listener
+   * @param {HTMLElement} element
+   * @param {string} eventType
+   * @param {() => void} handler
+   */
+  off: (element: HTMLElement, eventType: string, handler: () => void) => void;
 }

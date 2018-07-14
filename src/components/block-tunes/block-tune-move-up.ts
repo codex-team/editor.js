@@ -4,7 +4,7 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import IBlockTune from './block-tune';
+import IBlockTune from '../interfaces/block-tune';
 
 declare var $: any;
 declare var _: any;
@@ -22,8 +22,9 @@ export default class MoveUpTune implements IBlockTune {
    * @type {{wrapper: string}}
    */
   private CSS = {
-    wrapper: 'ass',
     button: 'ce-settings__button',
+    wrapper: 'ce-settings-move-up',
+    btnDisabled: 'ce-settings-move-up--disabled',
   };
 
   /**
@@ -40,9 +41,14 @@ export default class MoveUpTune implements IBlockTune {
    * @returns [Element}
    */
   public render() {
-    const moveUpButton = $.make('div', this.CSS.button, {});
+    const moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveUpButton.appendChild($.svg('arrow-up', 14, 14));
-    moveUpButton.addEventListener('click', (event) => this.handleClick(event), false);
+    if (this.api.blocks.getCurrentBlockIndex() === 0) {
+      moveUpButton.classList.add(this.CSS.btnDisabled);
+    } else {
+      this.api.listener.on(moveUpButton, 'click', (event) => this.handleClick(event), false);
+    }
+
     return moveUpButton;
   }
 
@@ -51,6 +57,38 @@ export default class MoveUpTune implements IBlockTune {
    * @param {MouseEvent} event
    */
   public handleClick(event: MouseEvent): void {
-    this.api.blocks.moveUp();
+
+    const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+
+    if (currentBlockIndex === 0) {
+      return;
+    }
+
+    const currentBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex).html,
+      previousBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex - 1).html;
+
+    /**
+     * Here is two cases:
+     *  - when previous block has negative offset and part of it is visible on window, then we scroll
+     *  by window's height and add offset which is mathematically difference between two blocks
+     *
+     *  - when previous block is visible and has offset from the window,
+     *      than we scroll window to the difference between this offsets.
+     */
+    const currentBlockCoords = currentBlockElement.getBoundingClientRect(),
+      previousBlockCoords = previousBlockElement.getBoundingClientRect();
+
+    let scrollUpOffset;
+
+    if (previousBlockCoords.top > 0) {
+      scrollUpOffset = Math.abs(currentBlockCoords.top) - Math.abs(previousBlockCoords.top);
+    } else {
+      scrollUpOffset = window.innerHeight - Math.abs(currentBlockCoords.top) + Math.abs(previousBlockCoords.top);
+    }
+
+    window.scrollBy(0, -1 * scrollUpOffset);
+
+    /** Change blocks positions */
+    this.api.blocks.swap(currentBlockIndex, currentBlockIndex - 1);
   }
 }

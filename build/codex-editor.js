@@ -482,8 +482,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["api-blocks.ts","api-events.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-toolbar.ts","api.ts","block-events.ts","blockManager.js","caret.js","events.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+var modules = ["api-blocks.ts","api-events.ts","api-listener.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-toolbar.ts","api.ts","block-events.ts","blockManager.js","caret.js","events.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
 });
 
 /**
@@ -1000,7 +1000,7 @@ var DeleteTune = function () {
 
             this.nodes.button = $.make('div', [this.CSS.button, this.CSS.buttonDelete], {});
             this.nodes.button.appendChild($.svg('cross', 12, 12));
-            this.nodes.button.addEventListener('click', function (event) {
+            this.api.listener.on(this.nodes.button, 'click', function (event) {
                 return _this2.handleClick(event);
             }, false);
             return this.nodes.button;
@@ -1089,8 +1089,9 @@ var MoveUpTune = function () {
          * @type {{wrapper: string}}
          */
         this.CSS = {
-            wrapper: 'ass',
-            button: 'ce-settings__button'
+            button: 'ce-settings__button',
+            wrapper: 'ce-settings-move-up',
+            btnDisabled: 'ce-settings-move-up--disabled'
         };
         this.api = api;
     }
@@ -1105,11 +1106,15 @@ var MoveUpTune = function () {
         value: function render() {
             var _this = this;
 
-            var moveUpButton = $.make('div', this.CSS.button, {});
+            var moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
             moveUpButton.appendChild($.svg('arrow-up', 14, 14));
-            moveUpButton.addEventListener('click', function (event) {
-                return _this.handleClick(event);
-            }, false);
+            if (this.api.blocks.getCurrentBlockIndex() === 0) {
+                moveUpButton.classList.add(this.CSS.btnDisabled);
+            } else {
+                this.api.listener.on(moveUpButton, 'click', function (event) {
+                    return _this.handleClick(event);
+                }, false);
+            }
             return moveUpButton;
         }
         /**
@@ -1120,7 +1125,31 @@ var MoveUpTune = function () {
     }, {
         key: 'handleClick',
         value: function handleClick(event) {
-            this.api.blocks.moveUp();
+            var currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+            if (currentBlockIndex === 0) {
+                return;
+            }
+            var currentBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex).html,
+                previousBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex - 1).html;
+            /**
+             * Here is two cases:
+             *  - when previous block has negative offset and part of it is visible on window, then we scroll
+             *  by window's height and add offset which is mathematically difference between two blocks
+             *
+             *  - when previous block is visible and has offset from the window,
+             *      than we scroll window to the difference between this offsets.
+             */
+            var currentBlockCoords = currentBlockElement.getBoundingClientRect(),
+                previousBlockCoords = previousBlockElement.getBoundingClientRect();
+            var scrollUpOffset = void 0;
+            if (previousBlockCoords.top > 0) {
+                scrollUpOffset = Math.abs(currentBlockCoords.top) - Math.abs(previousBlockCoords.top);
+            } else {
+                scrollUpOffset = window.innerHeight - Math.abs(currentBlockCoords.top) + Math.abs(previousBlockCoords.top);
+            }
+            window.scrollBy(0, -1 * scrollUpOffset);
+            /** Change blocks positions */
+            this.api.blocks.swap(currentBlockIndex, currentBlockIndex - 1);
         }
     }]);
 
@@ -1597,6 +1626,31 @@ var Dom = function () {
       } else {
         parent.appendChild(elements);
       }
+    }
+
+    /**
+     * Swap two elements in parent
+     * @param {HTMLElement} el1 - from
+     * @param {HTMLElement} el2 - to
+     */
+
+  }, {
+    key: 'swap',
+    value: function swap(el1, el2) {
+      // create marker element and insert it where el1 is
+      var temp = document.createElement('div'),
+          parent = el1.parentNode;
+
+      parent.insertBefore(temp, el1);
+
+      // move el1 to right before el2
+      parent.insertBefore(el1, el2);
+
+      // move el2 to right before where el1 used to be
+      parent.insertBefore(el2, temp);
+
+      // remove temporary marker node
+      parent.removeChild(temp);
     }
 
     /**
@@ -2366,16 +2420,17 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
-/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
-  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
 	"./api-blocks.ts": "./src/components/modules/api-blocks.ts",
 	"./api-events.ts": "./src/components/modules/api-events.ts",
+	"./api-listener.ts": "./src/components/modules/api-listener.ts",
 	"./api-sanitizer.ts": "./src/components/modules/api-sanitizer.ts",
 	"./api-saver.ts": "./src/components/modules/api-saver.ts",
 	"./api-selection.ts": "./src/components/modules/api-selection.ts",
@@ -2416,7 +2471,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
 
 /***/ }),
 
@@ -2467,13 +2522,42 @@ var BlocksAPI = function (_Module) {
 
 
     _createClass(BlocksAPI, [{
-        key: 'clear',
+        key: "getCurrentBlockIndex",
 
         /**
-         * Clear Editor's area
+         * Returns current block index
+         * @return {number}
          */
-        value: function clear() {
-            this.Editor.BlockManager.clear(true);
+        value: function getCurrentBlockIndex() {
+            return this.Editor.BlockManager.currentBlockIndex;
+        }
+        /**
+         * Returns Current Block
+         * @param {Number} index
+         *
+         * @return {Object}
+         */
+
+    }, {
+        key: "getBlockByIndex",
+        value: function getBlockByIndex(index) {
+            return this.Editor.BlockManager.getBlockByIndex(index);
+        }
+        /**
+         * Call Block Manager method that swap Blocks
+         * @param {number} fromIndex - position of first Block
+         * @param {number} toIndex - position of second Block
+         */
+
+    }, {
+        key: "swap",
+        value: function swap(fromIndex, toIndex) {
+            this.Editor.BlockManager.swap(fromIndex, toIndex);
+            /**
+             * Move toolbar
+             * DO not close the settings
+             */
+            this.Editor.Toolbar.move(false);
         }
         /**
          * Deletes Block
@@ -2481,10 +2565,9 @@ var BlocksAPI = function (_Module) {
          */
 
     }, {
-        key: 'delete',
+        key: "delete",
         value: function _delete(blockIndex) {
             this.Editor.BlockManager.removeBlock(blockIndex);
-            this.Editor.Toolbar.close();
             /**
              * in case of last block deletion
              * Insert new initial empty block
@@ -2498,26 +2581,19 @@ var BlocksAPI = function (_Module) {
             if (this.Editor.BlockManager.currentBlockIndex === 0) {
                 this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
             } else {
-                this.Editor.BlockManager.navigatePrevious(true);
+                if (this.Editor.Caret.navigatePrevious(true)) {
+                    this.Editor.Toolbar.close();
+                }
             }
         }
         /**
-         * Moves block down
+         * Clear Editor's area
          */
 
     }, {
-        key: 'moveDown',
-        value: function moveDown() {
-            console.log('moving down', this.Editor.BlockManager);
-        }
-        /**
-         * Moves block up
-         */
-
-    }, {
-        key: 'moveUp',
-        value: function moveUp() {
-            console.log('moving up', this.Editor.BlockManager);
+        key: "clear",
+        value: function clear() {
+            this.Editor.BlockManager.clear(true);
         }
         /**
          * Fills Editor with Blocks data
@@ -2525,13 +2601,13 @@ var BlocksAPI = function (_Module) {
          */
 
     }, {
-        key: 'render',
+        key: "render",
         value: function render(data) {
             this.Editor.BlockManager.clear();
             this.Editor.Renderer.render(data.items);
         }
     }, {
-        key: 'methods',
+        key: "methods",
         get: function get() {
             var _this2 = this;
 
@@ -2539,17 +2615,20 @@ var BlocksAPI = function (_Module) {
                 clear: function clear() {
                     return _this2.clear();
                 },
+                render: function render(data) {
+                    return _this2.render(data);
+                },
                 delete: function _delete() {
                     return _this2.delete();
                 },
-                moveDown: function moveDown() {
-                    return _this2.moveDown();
+                swap: function swap(fromIndex, toIndex) {
+                    return _this2.swap(fromIndex, toIndex);
                 },
-                moveUp: function moveUp() {
-                    return _this2.moveUp();
+                getBlockByIndex: function getBlockByIndex(index) {
+                    return _this2.getBlockByIndex(index);
                 },
-                render: function render(data) {
-                    return _this2.render(data);
+                getCurrentBlockIndex: function getCurrentBlockIndex() {
+                    return _this2.getCurrentBlockIndex();
                 }
             };
         }
@@ -2558,9 +2637,9 @@ var BlocksAPI = function (_Module) {
     return BlocksAPI;
 }(Module);
 
-BlocksAPI.displayName = 'BlocksAPI';
+BlocksAPI.displayName = "BlocksAPI";
 exports.default = BlocksAPI;
-module.exports = exports['default'];
+module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
 
 /***/ }),
@@ -2668,6 +2747,105 @@ var EventsAPI = function (_Module) {
 
 EventsAPI.displayName = "EventsAPI";
 exports.default = EventsAPI;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
+
+/***/ }),
+
+/***/ "./src/components/modules/api-listener.ts":
+/*!************************************************!*\
+  !*** ./src/components/modules/api-listener.ts ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * @class API
+ * Provides with methods working with DOM Listener
+ */
+var ListenerAPI = function (_Module) {
+    _inherits(ListenerAPI, _Module);
+
+    /**
+     * Save Editor config. API provides passed configuration to the Blocks
+     * @param {EditorsConfig} config
+     */
+    function ListenerAPI(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, ListenerAPI);
+
+        return _possibleConstructorReturn(this, (ListenerAPI.__proto__ || Object.getPrototypeOf(ListenerAPI)).call(this, { config: config }));
+    }
+    /**
+     * Available methods
+     * @return {IToolbarAPI}
+     */
+
+
+    _createClass(ListenerAPI, [{
+        key: "on",
+
+        /**
+         * adds DOM event listener
+         *
+         * @param {HTMLElement} element
+         * @param {string} eventType
+         * @param {() => void} handler
+         * @param {boolean} useCapture
+         */
+        value: function on(element, eventType, handler, useCapture) {
+            this.Editor.Listeners.on(element, eventType, handler, useCapture);
+        }
+        /**
+         * Removes DOM listener from element
+         *
+         * @param element
+         * @param eventType
+         * @param handler
+         */
+
+    }, {
+        key: "off",
+        value: function off(element, eventType, handler) {
+            this.Editor.Listeners.off(element, eventType, handler);
+        }
+    }, {
+        key: "methods",
+        get: function get() {
+            var _this2 = this;
+
+            return {
+                on: function on(element, eventType, handler, useCapture) {
+                    return _this2.on(element, eventType, handler, useCapture);
+                },
+                off: function off(element, eventType, handler) {
+                    return _this2.off(element, eventType, handler);
+                }
+            };
+        }
+    }]);
+
+    return ListenerAPI;
+}(Module);
+
+ListenerAPI.displayName = "ListenerAPI";
+exports.default = ListenerAPI;
 module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
 
@@ -3065,6 +3243,7 @@ var API = function (_Module) {
                 sanitizer: this.Editor.SanitizerAPI.methods,
                 saver: this.Editor.SaverAPI.methods,
                 selection: this.Editor.SelectionAPI.methods,
+                listener: this.Editor.ListenerAPI.methods,
                 toolbar: this.Editor.ToolbarAPI.methods
             };
         }
@@ -3229,10 +3408,13 @@ var BlockEvents = function (_Module) {
              * other case will handle as usual ARROW LEFT behaviour
              */
             if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
-                BM.navigatePrevious();
+                if (this.Editor.Caret.navigatePrevious()) {
+                    this.Editor.Toolbar.close();
+                }
             }
             var setCaretToTheEnd = !targetBlock.isEmpty;
             BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
+                // @todo figure out without timeout
                 window.setTimeout(function () {
                     // set caret to the block without offset at the end
                     _this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
@@ -3247,7 +3429,8 @@ var BlockEvents = function (_Module) {
     }, {
         key: "arrowRightAndDownPressed",
         value: function arrowRightAndDownPressed() {
-            this.Editor.BlockManager.navigateNext();
+            this.Editor.Caret.navigateNext();
+            this.Editor.Toolbar.close();
         }
         /**
          * Handle left and up keyboard keys
@@ -3256,7 +3439,8 @@ var BlockEvents = function (_Module) {
     }, {
         key: "arrowLeftAndUpPressed",
         value: function arrowLeftAndUpPressed() {
-            this.Editor.BlockManager.navigatePrevious();
+            this.Editor.Caret.navigatePrevious();
+            this.Editor.Toolbar.close();
         }
     }]);
 
@@ -3428,72 +3612,6 @@ var BlockManager = function (_Module) {
     }
 
     /**
-     * Set's caret to the next Block
-     * Before moving caret, we should check if caret position is at the end of Plugins node
-     * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
-     *
-     * @param {Boolean} force - force navigation even if caret is not at the end.
-     */
-
-  }, {
-    key: 'navigateNext',
-    value: function navigateNext() {
-      var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-      var nextBlock = this.nextBlock;
-
-      if (!nextBlock) {
-        return;
-      }
-
-      if (force) {
-        this.Editor.Caret.setToBlock(nextBlock, 0, true);
-        return;
-      }
-
-      var caretAtEnd = this.Editor.Caret.isAtEnd;
-
-      if (!caretAtEnd) {
-        return;
-      }
-
-      this.Editor.Caret.setToBlock(nextBlock);
-    }
-
-    /**
-     * Set's caret to the previous Block
-     * Before moving caret, we should check if caret position is start of the Plugins node
-     * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
-     *
-     * @param {Boolean} force - force navigation
-     */
-
-  }, {
-    key: 'navigatePrevious',
-    value: function navigatePrevious() {
-      var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-      var previousBlock = this.previousBlock;
-
-      if (!previousBlock) {
-        return;
-      }
-
-      if (force) {
-        this.Editor.Caret.setToBlock(previousBlock, 0, true);
-        return;
-      }
-
-      var caretAtStart = this.Editor.Caret.isAtStart;
-
-      if (!caretAtStart) {
-        return;
-      }
-
-      this.Editor.Caret.setToBlock(previousBlock, 0, true);
-    }
-
-    /**
      * Insert new block into _blocks
      *
      * @param {String} toolName — plugin name, by default method inserts initial block type
@@ -3560,6 +3678,7 @@ var BlockManager = function (_Module) {
       }
       this._blocks.remove(index);
     }
+
     /**
      * Split current Block
      * 1. Extract content from Caret position to the Block`s end
@@ -3682,6 +3801,21 @@ var BlockManager = function (_Module) {
     }
 
     /**
+     * Swap Blocks Position
+     * @param {Number} fromIndex
+     * @param {Number} toIndex
+     */
+
+  }, {
+    key: 'swap',
+    value: function swap(fromIndex, toIndex) {
+      /** Move up current Block */
+      this._blocks.swap(fromIndex, toIndex);
+
+      /** Now actual block moved up so that current block index decreased */
+      this.currentBlockIndex = toIndex;
+    }
+    /**
      * Clears Editor
      * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
      *                                        we don't need to add empty initial block
@@ -3775,7 +3909,7 @@ var BlockManager = function (_Module) {
       /**
        * Remove previous selected Block's state
        */
-      this._blocks.array.forEach(function (block) {
+      this.blocks.forEach(function (block) {
         return block.selected = false;
       });
 
@@ -3841,6 +3975,29 @@ var Blocks = function () {
     value: function push(block) {
       this.blocks.push(block);
       this.workingArea.appendChild(block.html);
+    }
+
+    /**
+     * Swaps blocks with indexes first and second
+     * @param {Number} first - first block index
+     * @param {Number} second - second block index
+     */
+
+  }, {
+    key: 'swap',
+    value: function swap(first, second) {
+      var secondBlock = this.blocks[second];
+
+      /**
+       * Change in DOM
+       */
+      $.swap(this.blocks[first].html, secondBlock.html);
+
+      /**
+       * Change in array
+       */
+      this.blocks[second] = this.blocks[first];
+      this.blocks[first] = secondBlock;
     }
 
     /**
@@ -4264,6 +4421,64 @@ var Caret = function (_Module) {
     }
 
     /**
+     * Set's caret to the next Block
+     * Before moving caret, we should check if caret position is at the end of Plugins node
+     * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+     *
+     * @param {Boolean} force - force navigation even if caret is not at the end
+     *
+     * @return {Boolean}
+     */
+
+  }, {
+    key: 'navigateNext',
+    value: function navigateNext() {
+      var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      var nextBlock = this.Editor.BlockManager.nextBlock;
+
+      if (!nextBlock) {
+        return false;
+      }
+
+      if (force || this.isAtEnd) {
+        this.setToBlock(nextBlock);
+        return true;
+      }
+
+      return false;
+    }
+
+    /**
+     * Set's caret to the previous Block
+     * Before moving caret, we should check if caret position is start of the Plugins node
+     * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+     *
+     * @param {Boolean} force - force navigation even if caret is not at the start
+     *
+     * @return {Boolean}
+     */
+
+  }, {
+    key: 'navigatePrevious',
+    value: function navigatePrevious() {
+      var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      var previousBlock = this.Editor.BlockManager.previousBlock;
+
+      if (!previousBlock) {
+        return false;
+      }
+
+      if (force || this.isAtStart) {
+        this.setToBlock(previousBlock, 0, true);
+        return true;
+      }
+
+      return false;
+    }
+
+    /**
      * Get's deepest first node and checks if offset is zero
      * @return {boolean}
      */
@@ -4312,7 +4527,11 @@ var Caret = function (_Module) {
         }
       }
 
-      return firstNode === null || anchorNode === firstNode && selection.anchorOffset === firstLetterPosition;
+      /**
+       * We use <= comparison for case:
+       * "| Hello"  <--- selection.anchorOffset is 0, but firstLetterPosition is 1
+       */
+      return firstNode === null || anchorNode === firstNode && selection.anchorOffset <= firstLetterPosition;
     }
 
     /**
@@ -4352,7 +4571,19 @@ var Caret = function (_Module) {
         }
       }
 
-      return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
+      /**
+       * Workaround case:
+       * hello |     <--- anchorOffset will be 5, but textContent.length will be 6.
+       * Why not regular .trim():
+       *  in case of ' hello |' trim() will also remove space at the beginning, so length will be lower than anchorOffset
+       */
+      var rightTrimmedText = lastNode.textContent.replace(/\s+$/, '');
+
+      /**
+       * We use >= comparison for case:
+       * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
+       */
+      return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
     }
   }]);
 
@@ -6292,14 +6523,19 @@ var Toolbar = function (_Module) {
 
     /**
      * Move Toolbar to the Current Block
+     * @param {Boolean} forceClose - force close Toolbar Settings and Toolbar
      */
 
   }, {
     key: 'move',
     value: function move() {
-      /** Close Toolbox when we move toolbar */
-      this.Editor.Toolbox.close();
-      this.Editor.BlockSettings.close();
+      var forceClose = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+      if (forceClose) {
+        /** Close Toolbox when we move toolbar */
+        this.Editor.Toolbox.close();
+        this.Editor.BlockSettings.close();
+      }
 
       var currentNode = this.Editor.BlockManager.currentNode;
 
@@ -6320,9 +6556,6 @@ var Toolbar = function (_Module) {
       var newYCoordinate = currentNode.offsetTop - defaultToolbarHeight / 2 + defaultOffset;
 
       this.nodes.wrapper.style.transform = 'translate3D(0, ' + Math.floor(newYCoordinate) + 'px, 0)';
-
-      /** Close trash actions */
-      // editor.toolbar.settings.hideRemoveActions();
     }
 
     /**
@@ -7985,7 +8218,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ":root {\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /** Blue icons */\n  --color-active-icon: #388AE5;\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbar-buttons-size: 34px;\n\n  /**\n   * Confirm deletion bg\n   */\n  --color-confirm: #E24A4A;\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n  position: relative;\n  box-sizing: border-box;\n\n\n}\n.codex-editor .hide {\n    display: none;\n  }\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    max-height: 100%;\n  }\n::-moz-selection{\n  background-color: rgba(61,166,239,0.63);\n}\n::selection{\n  background-color: rgba(61,166,239,0.63);\n}\n.ce-tune-moveup{}\n.ce-settings-delete:hover {\n    cursor: pointer;\n  }\n.ce-settings-delete::before {\n    content: 'delete'\n  }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(calc(34px + 10px) * -1);\n    left: calc(calc(var(--toolbar-buttons-size) + 10px) * -1);\n    display: inline-block;\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    width: 34px;\n    width: var(--toolbar-buttons-size);\n    height: 34px;\n    height: var(--toolbar-buttons-size);\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%;\n    cursor: pointer;\n  }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    padding-right: 16px;\n  }\n.ce-toolbar__actions-buttons {\n      text-align: right;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    color: #707684;\n    color: var(--grayText);\n    cursor: pointer;\n  }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        background: var(--bg-light);\n        width: 34px;\n        width: var(--toolbar-buttons-size);\n        height: 34px;\n        height: var(--toolbar-buttons-size);\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px;\n        line-height: var(--toolbar-buttons-size)\n    }\n.ce-toolbox__button::before {\n            content: attr(title);\n            font-size: 22px;\n            font-weight: 500;\n            letter-spacing: 1em;\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                    font-feature-settings: \"smcp\", \"c2sc\";\n            font-variant-caps: all-small-caps;\n            padding-left: 11.5px;\n            margin-top: -1px;\n            display: inline-block;\n        }\n.ce-inline-toolbar {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n      }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-tool {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.ce-inline-tool:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-inline-tool:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-inline-tool {\n  line-height: normal;\n}\n.ce-inline-tool--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-inline-tool--link .icon {\n      margin-top: -2px;\n    }\n.ce-inline-tool--link .icon--unlink {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--link {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--unlink {\n      display: inline-block;\n    }\n.ce-inline-tool-input {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    outline: none;\n    border: 0;\n    border-radius: 3px;\n    margin: 6px 0 0;\n    font-size: 13px;\n    padding: 8px;\n    width: 100%;\n    box-sizing: border-box;\n    display: none\n  }\n.ce-inline-tool-input::-webkit-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input:-ms-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input::placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input--showed {\n      display: block;\n    }\n.ce-settings {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-settings::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n      }\n.ce-settings {\n  right: 5px;\n  top: 35px;\n  min-width: 124px\n}\n.ce-settings::before{\n    left: auto;\n    right: 12px;\n  }\n.ce-settings {\n\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone:not(:empty){\n      padding: 6px;\n    }\n.ce-settings__default-zone:not(:empty){\n      padding: 6px;\n    }\n.ce-settings__button {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n  }\n.ce-settings__button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-settings__button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-settings__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-settings__button--delete {\n      transition: background-color 300ms ease;\n      will-change: background-color;\n    }\n.ce-settings__button--delete .icon {\n        transition: transform 200ms ease-out;\n        will-change: transform;\n      }\n.ce-settings__button--confirm {\n      background-color: #E24A4A;\n      background-color: var(--color-confirm);\n      color: #fff\n    }\n.ce-settings__button--confirm:hover {\n        background-color: rgb(213, 74, 74) !important;\n        background-color: rgb(213, 74, 74) !important;\n      }\n.ce-settings__button--confirm .icon {\n        transform: rotate(90deg);\n      }\n.ce-settings-move-up:hover {\n    cursor: pointer;\n  }\n.ce-settings-move-up::before {\n    display: inline-block;\n    content: 'up';\n  }\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\n    border-radius: 3px;\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n", ""]);
+exports.push([module.i, ":root {\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /** Blue icons */\n  --color-active-icon: #388AE5;\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbar-buttons-size: 34px;\n\n  /**\n   * Confirm deletion bg\n   */\n  --color-confirm: #E24A4A;\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n  position: relative;\n  box-sizing: border-box;\n\n\n}\n.codex-editor .hide {\n    display: none;\n  }\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    max-height: 100%;\n  }\n::-moz-selection{\n  background-color: rgba(61,166,239,0.63);\n}\n::selection{\n  background-color: rgba(61,166,239,0.63);\n}\n.ce-tune-moveup{}\n.ce-settings-delete:hover {\n    cursor: pointer;\n  }\n.ce-settings-delete::before {\n    content: 'delete'\n  }\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n    position: absolute;\n    left: calc(calc(34px + 10px) * -1);\n    left: calc(calc(var(--toolbar-buttons-size) + 10px) * -1);\n    display: inline-block;\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    width: 34px;\n    width: var(--toolbar-buttons-size);\n    height: 34px;\n    height: var(--toolbar-buttons-size);\n    line-height: 34px;\n    text-align: center;\n    border-radius: 50%;\n    cursor: pointer;\n  }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    padding-right: 16px;\n  }\n.ce-toolbar__actions-buttons {\n      text-align: right;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    color: #707684;\n    color: var(--grayText);\n    cursor: pointer;\n  }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n        display: inline-block;\n        list-style: none;\n        margin: 0;\n        background: #eff2f5;\n        background: var(--bg-light);\n        width: 34px;\n        width: var(--toolbar-buttons-size);\n        height: 34px;\n        height: var(--toolbar-buttons-size);\n        border-radius: 30px;\n        overflow: hidden;\n        text-align: center;\n        line-height: 34px;\n        line-height: var(--toolbar-buttons-size)\n    }\n.ce-toolbox__button::before {\n            content: attr(title);\n            font-size: 22px;\n            font-weight: 500;\n            letter-spacing: 1em;\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\n                    font-feature-settings: \"smcp\", \"c2sc\";\n            font-variant-caps: all-small-caps;\n            padding-left: 11.5px;\n            margin-top: -1px;\n            display: inline-block;\n        }\n.ce-inline-toolbar {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n      }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-tool {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.ce-inline-tool:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-inline-tool:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-inline-tool {\n  line-height: normal;\n}\n.ce-inline-tool--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-inline-tool--link .icon {\n      margin-top: -2px;\n    }\n.ce-inline-tool--link .icon--unlink {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--link {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--unlink {\n      display: inline-block;\n    }\n.ce-inline-tool-input {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    outline: none;\n    border: 0;\n    border-radius: 3px;\n    margin: 6px 0 0;\n    font-size: 13px;\n    padding: 8px;\n    width: 100%;\n    box-sizing: border-box;\n    display: none\n  }\n.ce-inline-tool-input::-webkit-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input:-ms-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input::placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input--showed {\n      display: block;\n    }\n.ce-settings {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-settings::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n      }\n.ce-settings {\n  right: 5px;\n  top: 35px;\n  min-width: 124px\n}\n.ce-settings::before{\n    left: auto;\n    right: 12px;\n  }\n.ce-settings {\n\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone:not(:empty){\n      padding: 6px;\n    }\n.ce-settings__default-zone:not(:empty){\n      padding: 6px;\n    }\n.ce-settings__button {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n  }\n.ce-settings__button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-settings__button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-settings__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-settings__button--delete {\n      transition: background-color 300ms ease;\n      will-change: background-color;\n    }\n.ce-settings__button--delete .icon {\n        transition: transform 200ms ease-out;\n        will-change: transform;\n      }\n.ce-settings__button--confirm {\n      background-color: #E24A4A;\n      background-color: var(--color-confirm);\n      color: #fff\n    }\n.ce-settings__button--confirm:hover {\n        background-color: rgb(213, 74, 74) !important;\n        background-color: rgb(213, 74, 74) !important;\n      }\n.ce-settings__button--confirm .icon {\n        transform: rotate(90deg);\n      }\n.ce-settings-move-up:hover {\n    cursor: pointer;\n  }\n.ce-settings-move-up--disabled {\n    cursor: not-allowed !important;\n    opacity: .3;\n  }\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\n    border-radius: 3px;\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n", ""]);
 
 // exports
 

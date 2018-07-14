@@ -157,11 +157,14 @@ export default class Toolbar extends Module {
 
   /**
    * Move Toolbar to the Current Block
+   * @param {Boolean} forceClose - force close Toolbar Settings and Toolbar
    */
-  move() {
-    /** Close Toolbox when we move toolbar */
-    this.Editor.Toolbox.close();
-    this.Editor.BlockSettings.close();
+  move(forceClose = true) {
+    if (forceClose) {
+      /** Close Toolbox when we move toolbar */
+      this.Editor.Toolbox.close();
+      this.Editor.BlockSettings.close();
+    }
 
     let currentNode = this.Editor.BlockManager.currentNode;
 
@@ -182,9 +185,6 @@ export default class Toolbar extends Module {
     var newYCoordinate = currentNode.offsetTop - (defaultToolbarHeight / 2) + defaultOffset;
 
     this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
-
-    /** Close trash actions */
-    // editor.toolbar.settings.hideRemoveActions();
   }
 
   /**

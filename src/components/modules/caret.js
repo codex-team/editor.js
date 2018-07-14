@@ -163,6 +163,54 @@ export default class Caret extends Module {
   }
 
   /**
+   * Set's caret to the next Block
+   * Before moving caret, we should check if caret position is at the end of Plugins node
+   * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+   *
+   * @param {Boolean} force - force navigation even if caret is not at the end
+   *
+   * @return {Boolean}
+   */
+  navigateNext(force = false) {
+    let nextBlock = this.Editor.BlockManager.nextBlock;
+
+    if (!nextBlock) {
+      return false;
+    }
+
+    if (force || this.isAtEnd) {
+      this.setToBlock(nextBlock);
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Set's caret to the previous Block
+   * Before moving caret, we should check if caret position is start of the Plugins node
+   * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+   *
+   * @param {Boolean} force - force navigation even if caret is not at the start
+   *
+   * @return {Boolean}
+   */
+  navigatePrevious(force = false) {
+    let previousBlock = this.Editor.BlockManager.previousBlock;
+
+    if (!previousBlock) {
+      return false;
+    }
+
+    if (force || this.isAtStart) {
+      this.setToBlock( previousBlock, 0, true );
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Get's deepest first node and checks if offset is zero
    * @return {boolean}
    */
@@ -207,7 +255,11 @@ export default class Caret extends Module {
       }
     }
 
-    return firstNode === null || anchorNode === firstNode && selection.anchorOffset === firstLetterPosition;
+    /**
+     * We use <= comparison for case:
+     * "| Hello"  <--- selection.anchorOffset is 0, but firstLetterPosition is 1
+     */
+    return firstNode === null || anchorNode === firstNode && selection.anchorOffset <= firstLetterPosition;
   }
 
   /**
@@ -242,6 +294,18 @@ export default class Caret extends Module {
       }
     }
 
-    return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
+    /**
+     * Workaround case:
+     * hello |     <--- anchorOffset will be 5, but textContent.length will be 6.
+     * Why not regular .trim():
+     *  in case of ' hello |' trim() will also remove space at the beginning, so length will be lower than anchorOffset
+     */
+    let rightTrimmedText = lastNode.textContent.replace(/\s+$/, '');
+
+    /**
+     * We use >= comparison for case:
+     * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
+     */
+    return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
   }
 }
