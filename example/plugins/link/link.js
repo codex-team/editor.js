@@ -6,345 +6,296 @@
  * Link tool plugin
  */
 
-var link = (function(link_plugin) {
+var link = (function (link_plugin) {
+  var settings = {
+    defaultText    : 'Вставьте ссылку ...',
+    ENTER_KEY      : 13,
+    currentBlock   : null,
+    currentInput   : null,
+    elementClasses : {
+      link: 'tool-link-link',
+      image: 'tool-link-image',
+      title: 'tool-link-title',
+      description: 'tool-link-description',
+      loader: 'tool-link-loader',
+      error: 'tool-link-error'
+    }
+  };
 
-    var settings = {
-        defaultText    : 'Вставьте ссылку ...',
-        ENTER_KEY      : 13,
-        currentBlock   : null,
-        currentInput   : null,
-        elementClasses : {
-            link: "tool-link-link",
-            image: "tool-link-image",
-            title: "tool-link-title",
-            description: "tool-link-description",
-            loader: "tool-link-loader",
-            error: "tool-link-error"
-        }
-    };
+  var ui = {
 
-    var ui = {
+    make : function (json) {
+      var wrapper = ui.wrapper(),
+        siteImage = ui.image(json.image, settings.elementClasses.image),
+        siteTitle = ui.title(json.title),
+        siteDescription = ui.description(json.description),
+        siteLink = ui.link(json.url, json.url);
 
-        make : function (json) {
+      wrapper.appendChild(siteImage);
+      wrapper.appendChild(siteTitle);
+      wrapper.appendChild(siteLink);
+      wrapper.appendChild(siteDescription);
 
-            var wrapper = ui.wrapper(),
-                siteImage = ui.image(json.image, settings.elementClasses.image),
-                siteTitle = ui.title(json.title),
-                siteDescription = ui.description(json.description),
-                siteLink = ui.link(json.url, json.url);
+      siteTitle.contentEditable = true;
+      siteDescription.contentEditable = true;
 
-            wrapper.appendChild(siteImage);
-            wrapper.appendChild(siteTitle);
-            wrapper.appendChild(siteLink);
-            wrapper.appendChild(siteDescription);
+      return wrapper;
+    },
 
-            siteTitle.contentEditable = true;
-            siteDescription.contentEditable = true;
+    mainBlock : function () {
+      var wrapper = document.createElement('div');
 
-            return wrapper;
+      wrapper.classList.add('ceditor-tool-link');
 
-        },
+      return wrapper;
+    },
 
-        mainBlock : function () {
+    input : function () {
+      var inputTag = document.createElement('input');
 
-            var wrapper = document.createElement('div');
+      inputTag.classList.add('ceditor-tool-link-input');
 
-            wrapper.classList.add("ceditor-tool-link");
+      inputTag.placeholder = settings.defaultText;
 
-            return wrapper;
+      inputTag.contentEditable = false;
 
-        },
+      return inputTag;
+    },
 
-        input : function () {
+    wrapper : function () {
+      var wrapper = document.createElement('div');
 
-            var inputTag = document.createElement('input');
+      wrapper.classList.add('tool-link-panel', 'clearfix');
 
-            inputTag.classList.add("ceditor-tool-link-input");
+      return wrapper;
+    },
 
-            inputTag.placeholder = settings.defaultText;
+    image : function (imageSrc, imageClass) {
+      var imageTag = document.createElement('img');
 
-            inputTag.contentEditable = false;
+      imageTag.classList.add(imageClass);
 
-            return inputTag;
+      imageTag.setAttribute('src', imageSrc);
 
-        },
+      return imageTag;
+    },
 
-        wrapper : function () {
+    link : function (linkUrl, linkText) {
+      var linkTag = document.createElement('a');
 
-            var wrapper = document.createElement('div');
+      linkTag.classList.add(settings.elementClasses.link);
 
-            wrapper.classList.add('tool-link-panel', 'clearfix');
+      linkTag.href = linkUrl;
 
-            return wrapper;
+      linkTag.target = '_blank';
 
-        },
+      linkTag.innerText = linkText;
 
-        image : function (imageSrc, imageClass) {
+      return linkTag;
+    },
 
-            var imageTag = document.createElement('img');
+    title : function (titleText) {
+      var titleTag = document.createElement('div');
 
-            imageTag.classList.add(imageClass);
+      titleTag.classList.add('tool-link-content', settings.elementClasses.title);
 
-            imageTag.setAttribute('src', imageSrc);
+      titleTag.innerHTML = titleText;
 
-            return imageTag;
+      return titleTag;
+    },
 
-        },
+    description : function (descriptionText) {
+      var descriptionTag = document.createElement('div');
 
-        link : function (linkUrl, linkText) {
+      descriptionTag.classList.add('tool-link-content', settings.elementClasses.description);
 
-            var linkTag = document.createElement('a');
+      descriptionTag.innerHTML = descriptionText;
 
-            linkTag.classList.add(settings.elementClasses.link);
+      return descriptionTag;
+    }
 
-            linkTag.href = linkUrl;
+  };
 
-            linkTag.target = "_blank";
+  var methods = {
 
-            linkTag.innerText = linkText;
+    blockPasteCallback : function (event) {
+      var clipboardData = event.clipboardData || window.clipboardData,
+        pastedData    = clipboardData.getData('Text'),
+        block         = event.target.parentNode;
 
-            return linkTag;
+      methods.renderLink(pastedData, block);
 
-        },
+      event.stopPropagation();
+    },
 
-        title : function (titleText) {
+    blockKeyDownCallback : function (event) {
+      var inputTag = event.target,
+        block    = inputTag.parentNode,
+        url;
 
-            var titleTag = document.createElement('div');
+      if ( block.classList.contains(settings.elementClasses.error) ) {
+        block.classList.remove(settings.elementClasses.error);
+      }
 
-            titleTag.classList.add("tool-link-content", settings.elementClasses.title);
+      if (event.keyCode == settings.ENTER_KEY) {
+        url = inputTag.value;
 
-            titleTag.innerHTML = titleText;
+        methods.renderLink(url, block);
 
-            return titleTag;
-        },
+        event.preventDefault();
+      }
+    },
 
-        description : function (descriptionText) {
+    renderLink : function (url, block) {
+      Promise.resolve()
 
-            var descriptionTag = document.createElement('div');
+        .then(function () {
+          return methods.urlify(url);
+        })
 
-            descriptionTag.classList.add("tool-link-content", settings.elementClasses.description);
+        .then(function (url) {
+          /* Show loader gif **/
+          block.classList.add(settings.elementClasses.loader);
 
-            descriptionTag.innerHTML = descriptionText;
+          return fetch( link_plugin.config.fetchUrl + '?url=' + encodeURI(url) );
+        })
 
-            return descriptionTag;
-        }
+        .then(function (response) {
+          if (response.status == '200') {
+            return response.json();
+          } else {
+            return Error('Invalid response status: %o', response);
+          }
+        })
 
-    };
+        .then(function (json) {
+          methods.composeLinkPreview(json, block);
+        })
 
-    var methods = {
+        .catch(function (error) {
+          /* Hide loader gif **/
+          block.classList.remove(settings.elementClasses.loader);
 
-        blockPasteCallback : function (event) {
+          block.classList.add(settings.elementClasses.error);
 
-            var clipboardData = event.clipboardData || window.clipboardData,
-                pastedData    = clipboardData.getData('Text'),
-                block         = event.target.parentNode;
+          codex.editor.core.log('Error while doing things with link paste: %o', 'error', error);
+        });
+    },
 
-            methods.renderLink(pastedData, block);
+    urlify : function (text) {
+      var urlRegex = /(https?:\/\/\S+)/g;
 
-            event.stopPropagation();
+      var links = text.match(urlRegex);
 
-        },
+      if (links) {
+        return links[0];
+      }
 
-        blockKeyDownCallback : function (event) {
+      return Promise.reject(Error('Url is not matched'));
+    },
 
-            var inputTag = event.target,
-                block    = inputTag.parentNode,
-                url;
+    composeLinkPreview : function (json, currentBlock) {
+      if (json == {}) {
+        return;
+      }
 
-            if ( block.classList.contains(settings.elementClasses.error) ) {
-                block.classList.remove(settings.elementClasses.error);
-            }
+      var previewBlock = ui.make(json);
 
-            if (event.keyCode == settings.ENTER_KEY) {
+      settings.currentInput.remove();
 
-                url = inputTag.value;
+      currentBlock.appendChild(previewBlock);
 
-                methods.renderLink(url, block);
+      currentBlock.classList.remove(settings.elementClasses.loader);
+    }
+  };
 
-                event.preventDefault();
-            }
-        },
+  link_plugin.prepare = function (config) {
+    link_plugin.config = config;
 
-        renderLink : function (url, block) {
+    return Promise.resolve();
+  };
 
-            Promise.resolve()
-
-                .then(function () {
-                    return methods.urlify(url);
-                })
-
-                .then(function (url) {
-
-                    /* Show loader gif **/
-                    block.classList.add(settings.elementClasses.loader);
-
-                    return fetch( link_plugin.config.fetchUrl + '?url=' + encodeURI(url) );
-                })
-
-                .then(function (response) {
-
-                    if (response.status == "200"){
-
-                        return response.json();
-
-                    } else {
-
-                        return Error("Invalid response status: %o", response);
-
-                    }
-
-                })
-
-                .then(function (json) {
-                    methods.composeLinkPreview(json, block);
-                })
-
-                .catch(function(error) {
-
-                    /* Hide loader gif **/
-                    block.classList.remove(settings.elementClasses.loader);
-
-                    block.classList.add(settings.elementClasses.error);
-
-                    codex.editor.core.log('Error while doing things with link paste: %o', 'error', error);
-                });
-
-        },
-
-        urlify : function (text) {
-
-            var urlRegex = /(https?:\/\/\S+)/g;
-
-            var links = text.match(urlRegex);
-
-            if (links) {
-                return links[0];
-            }
-
-            return Promise.reject(Error("Url is not matched"));
-
-        },
-
-        composeLinkPreview : function (json, currentBlock) {
-
-            if (json == {}) {
-                return;
-            }
-
-            var previewBlock = ui.make(json);
-
-            settings.currentInput.remove();
-
-            currentBlock.appendChild(previewBlock);
-
-            currentBlock.classList.remove(settings.elementClasses.loader);
-
-        }
-    };
-
-    link_plugin.prepare = function (config) {
-
-        link_plugin.config = config;
-
-        return Promise.resolve();
-
-    };
-
-    /**
+  /**
      * Make initial header block
      * @param {object} JSON with block data
      * @return {Element} element to append
      */
-    link_plugin.makeNewBlock = function (data) {
+  link_plugin.makeNewBlock = function (data) {
+    var wrapper = ui.mainBlock(),
+      tag     = ui.input();
 
-        var wrapper = ui.mainBlock(),
-            tag     = ui.input();
+    settings.currentInput = tag;
 
-        settings.currentInput = tag;
+    wrapper.appendChild(tag);
 
-        wrapper.appendChild(tag);
-
-        wrapper.classList.add('ce-link');
-        /**
+    wrapper.classList.add('ce-link');
+    /**
          * Bind callbacks
          **/
-        tag.addEventListener('paste', methods.blockPasteCallback, false);
-        tag.addEventListener('keydown', methods.blockKeyDownCallback, false);
+    tag.addEventListener('paste', methods.blockPasteCallback, false);
+    tag.addEventListener('keydown', methods.blockKeyDownCallback, false);
 
-        return wrapper;
+    return wrapper;
+  };
 
-    };
-
-    /**
+  /**
      * Method to render HTML block from JSON
      */
-    link_plugin.render = function (json) {
+  link_plugin.render = function (json) {
+    if ( json ) {
+      var block = ui.mainBlock(),
+        tag   = ui.make(json);
 
-        if ( json ) {
+      block.classList.add('ce-link');
+      block.appendChild(tag);
 
-            var block = ui.mainBlock(),
-                tag   = ui.make(json);
+      return block;
+    } else {
+      var wrapper = ui.mainBlock(),
+        tag     = ui.input();
 
-            block.classList.add('ce-link');
-            block.appendChild(tag);
+      settings.currentInput = tag;
 
-            return block;
+      wrapper.appendChild(tag);
 
-        } else {
-
-            var wrapper = ui.mainBlock(),
-                tag     = ui.input();
-
-            settings.currentInput = tag;
-
-            wrapper.appendChild(tag);
-
-            wrapper.classList.add('ce-link');
-            /**
+      wrapper.classList.add('ce-link');
+      /**
              * Bind callbacks
              **/
-            tag.addEventListener('paste', methods.blockPasteCallback, false);
-            tag.addEventListener('keydown', methods.blockKeyDownCallback, false);
+      tag.addEventListener('paste', methods.blockPasteCallback, false);
+      tag.addEventListener('keydown', methods.blockKeyDownCallback, false);
 
-                return wrapper;
-        }
+      return wrapper;
+    }
+  };
 
+  link_plugin.validate = function (data) {
+    if (data.url.trim() == '' || data.title.trim() == '' || data.description.trim() == '')
+      return;
 
-    };
+    return true;
+  };
 
-    link_plugin.validate = function (data) {
-
-        if (data.url.trim() == '' || data.title.trim() == '' || data.description.trim() == '')
-            return;
-
-        return true;
-    };
-
-    /**
+  /**
      * Method to extract JSON data from HTML block
      */
-    link_plugin.save = function (blockContent){
+  link_plugin.save = function (blockContent) {
+    var linkElement = settings.elementClasses.link;
 
-        var linkElement = settings.elementClasses.link;
-
-        var data = {
-            url    : blockContent.querySelector("." + linkElement).href,
-            shortLink   : blockContent.querySelector("." + linkElement).textContent || '',
-            image       : blockContent.querySelector("." + settings.elementClasses.image).src || '',
-            title       : blockContent.querySelector("." + settings.elementClasses.title).textContent || '',
-            description : blockContent.querySelector("." + settings.elementClasses.description).textContent || ''
-        };
-
-        return data;
-
+    var data = {
+      url    : blockContent.querySelector('.' + linkElement).href,
+      shortLink   : blockContent.querySelector('.' + linkElement).textContent || '',
+      image       : blockContent.querySelector('.' + settings.elementClasses.image).src || '',
+      title       : blockContent.querySelector('.' + settings.elementClasses.title).textContent || '',
+      description : blockContent.querySelector('.' + settings.elementClasses.description).textContent || ''
     };
 
-    link_plugin.destroy = function () {
+    return data;
+  };
 
-        link = null;
+  link_plugin.destroy = function () {
+    link = null;
+  };
 
-    };
-
-    return link_plugin;
-
+  return link_plugin;
 })({});

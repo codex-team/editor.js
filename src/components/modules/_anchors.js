@@ -6,87 +6,65 @@
  */
 
 module.exports = function (anchors) {
+  let editor = codex.editor;
 
-    let editor = codex.editor;
+  anchors.input       = null;
+  anchors.currentNode = null;
 
-    anchors.input       = null;
-    anchors.currentNode = null;
+  anchors.settingsOpened = function (currentBlock) {
+    anchors.currentNode = currentBlock;
+    anchors.input.value = anchors.currentNode.dataset.anchor || '';
+  };
 
-    anchors.settingsOpened = function (currentBlock) {
+  anchors.anchorChanged = function (e) {
+    var newAnchor = e.target.value = anchors.rusToTranslit(e.target.value);
 
-        anchors.currentNode = currentBlock;
-        anchors.input.value = anchors.currentNode.dataset.anchor || '';
+    anchors.currentNode.dataset.anchor = newAnchor;
 
-    };
+    if (newAnchor.trim() !== '') {
+      anchors.currentNode.classList.add(editor.ui.className.BLOCK_WITH_ANCHOR);
+    } else {
+      anchors.currentNode.classList.remove(editor.ui.className.BLOCK_WITH_ANCHOR);
+    }
+  };
 
-    anchors.anchorChanged = function (e) {
+  anchors.keyDownOnAnchorInput = function (e) {
+    if (e.keyCode == editor.core.keys.ENTER) {
+      e.preventDefault();
+      e.stopPropagation();
 
-        var newAnchor = e.target.value = anchors.rusToTranslit(e.target.value);
+      e.target.blur();
+      editor.toolbar.settings.close();
+    }
+  };
 
-        anchors.currentNode.dataset.anchor = newAnchor;
+  anchors.keyUpOnAnchorInput = function (e) {
+    if (e.keyCode >= editor.core.keys.LEFT && e.keyCode <= editor.core.keys.DOWN) {
+      e.stopPropagation();
+    }
+  };
 
-        if (newAnchor.trim() !== '') {
+  anchors.rusToTranslit = function (string) {
+    var ru = [
+        'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й',
+        'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф',
+        'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ь', 'Ы', 'Ь', 'Э', 'Ю', 'Я'
+      ],
+      en = [
+        'A', 'B', 'V', 'G', 'D', 'E', 'E', 'Zh', 'Z', 'I', 'Y',
+        'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F',
+        'H', 'C', 'Ch', 'Sh', 'Sch', '', 'Y', '', 'E', 'Yu', 'Ya'
+      ];
 
-            anchors.currentNode.classList.add(editor.ui.className.BLOCK_WITH_ANCHOR);
+    for (var i = 0; i < ru.length; i++) {
+      string = string.split(ru[i]).join(en[i]);
+      string = string.split(ru[i].toLowerCase()).join(en[i].toLowerCase());
+    }
 
-        } else {
+    string = string.replace(/[^0-9a-zA-Z_]+/g, '-');
 
-            anchors.currentNode.classList.remove(editor.ui.className.BLOCK_WITH_ANCHOR);
+    return string;
+  };
 
-        }
-
-    };
-
-    anchors.keyDownOnAnchorInput = function (e) {
-
-        if (e.keyCode == editor.core.keys.ENTER) {
-
-            e.preventDefault();
-            e.stopPropagation();
-
-            e.target.blur();
-            editor.toolbar.settings.close();
-
-        }
-
-    };
-
-    anchors.keyUpOnAnchorInput = function (e) {
-
-        if (e.keyCode >= editor.core.keys.LEFT && e.keyCode <= editor.core.keys.DOWN) {
-
-            e.stopPropagation();
-
-        }
-
-    };
-
-    anchors.rusToTranslit = function (string) {
-
-        var ru = [
-                'А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й',
-                'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т', 'У', 'Ф',
-                'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ь', 'Ы', 'Ь', 'Э', 'Ю', 'Я'
-            ],
-            en = [
-                'A', 'B', 'V', 'G', 'D', 'E', 'E', 'Zh', 'Z', 'I', 'Y',
-                'K', 'L', 'M', 'N', 'O', 'P', 'R', 'S', 'T', 'U', 'F',
-                'H', 'C', 'Ch', 'Sh', 'Sch', '', 'Y', '', 'E', 'Yu', 'Ya'
-            ];
-
-        for (var i = 0; i < ru.length; i++) {
-
-            string = string.split(ru[i]).join(en[i]);
-            string = string.split(ru[i].toLowerCase()).join(en[i].toLowerCase());
-
-        }
-
-        string = string.replace(/[^0-9a-zA-Z_]+/g, '-');
-
-        return string;
-
-    };
-
-    return anchors;
-
+  return anchors;
 }({});

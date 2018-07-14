@@ -6,55 +6,44 @@
  */
 
 module.exports = (function (notifications) {
+  let editor = codex.editor;
 
-    let editor = codex.editor;
+  var queue = [];
 
-    var queue = [];
+  var addToQueue = function (settings) {
+    queue.push(settings);
 
-    var addToQueue = function (settings) {
+    var index = 0;
 
-        queue.push(settings);
+    while ( index < queue.length && queue.length > 5) {
+      if (queue[index].type == 'confirm' || queue[index].type == 'prompt') {
+        index++;
+        continue;
+      }
 
-        var index = 0;
+      queue[index].close();
+      queue.splice(index, 1);
+    }
+  };
 
-        while ( index < queue.length && queue.length > 5) {
+  notifications.createHolder = function () {
+    var holder = editor.draw.node('DIV', 'cdx-notifications-block');
 
-            if (queue[index].type == 'confirm' || queue[index].type == 'prompt') {
+    editor.nodes.notifications = document.body.appendChild(holder);
 
-                index++;
-                continue;
-
-            }
-
-            queue[index].close();
-            queue.splice(index, 1);
-
-        }
-
-    };
-
-    notifications.createHolder = function () {
-
-        var holder = editor.draw.node('DIV', 'cdx-notifications-block');
-
-        editor.nodes.notifications = document.body.appendChild(holder);
-
-        return holder;
-
-    };
+    return holder;
+  };
 
 
-    /**
+  /**
      * Error notificator. Shows block with message
      * @protected
      */
-    notifications.errorThrown = function (errorMsg, event) {
+  notifications.errorThrown = function (errorMsg, event) {
+    editor.notifications.notification({message: 'This action is not available currently', type: event.type});
+  };
 
-        editor.notifications.notification({message: 'This action is not available currently', type: event.type});
-
-    };
-
-    /**
+  /**
      *
      * Appends notification
      *
@@ -70,162 +59,129 @@ module.exports = (function (notifications) {
      *
      * @param settings
      */
-    notifications.notification = function (constructorSettings) {
+  notifications.notification = function (constructorSettings) {
+    /** Private vars and methods */
+    var notification = null,
+      cancel       = null,
+      type         = null,
+      confirm      = null,
+      inputField   = null;
 
-        /** Private vars and methods */
-        var notification = null,
-            cancel       = null,
-            type         = null,
-            confirm      = null,
-            inputField   = null;
+    var confirmHandler = function () {
+      close();
 
-        var confirmHandler = function () {
+      if (typeof confirm !== 'function' ) {
+        return;
+      }
 
-            close();
+      if (type == 'prompt') {
+        confirm(inputField.value);
+        return;
+      }
 
-            if (typeof confirm !== 'function' ) {
+      confirm();
+    };
 
-                return;
+    var cancelHandler = function () {
+      close();
 
-            }
+      if (typeof cancel !== 'function' ) {
+        return;
+      }
 
-            if (type == 'prompt') {
-
-                confirm(inputField.value);
-                return;
-
-            }
-
-            confirm();
-
-        };
-
-        var cancelHandler = function () {
-
-            close();
-
-            if (typeof cancel !== 'function' ) {
-
-                return;
-
-            }
-
-            cancel();
-
-        };
+      cancel();
+    };
 
 
-        /** Public methods */
-        function create(settings) {
+    /** Public methods */
+    function create(settings) {
+      if (!(settings && settings.message)) {
+        editor.core.log('Can\'t create notification. Message is missed');
+        return;
+      }
 
-            if (!(settings && settings.message)) {
+      settings.type = settings.type || 'alert';
+      settings.time = settings.time*1000 || 10000;
 
-                editor.core.log('Can\'t create notification. Message is missed');
-                return;
+      var wrapper = editor.draw.node('DIV', 'cdx-notification'),
+        message = editor.draw.node('DIV', 'cdx-notification__message'),
+        input = editor.draw.node('INPUT', 'cdx-notification__input'),
+        okBtn = editor.draw.node('SPAN', 'cdx-notification__ok-btn'),
+        cancelBtn = editor.draw.node('SPAN', 'cdx-notification__cancel-btn');
 
-            }
+      message.textContent = settings.message;
+      okBtn.textContent = settings.okMsg || 'ОК';
+      cancelBtn.textContent = settings.cancelMsg || 'Отмена';
 
-            settings.type = settings.type || 'alert';
-            settings.time = settings.time*1000 || 10000;
+      editor.listeners.add(okBtn, 'click', confirmHandler);
+      editor.listeners.add(cancelBtn, 'click', cancelHandler);
 
-            var wrapper = editor.draw.node('DIV', 'cdx-notification'),
-                message = editor.draw.node('DIV', 'cdx-notification__message'),
-                input = editor.draw.node('INPUT', 'cdx-notification__input'),
-                okBtn = editor.draw.node('SPAN', 'cdx-notification__ok-btn'),
-                cancelBtn = editor.draw.node('SPAN', 'cdx-notification__cancel-btn');
+      wrapper.appendChild(message);
 
-            message.textContent = settings.message;
-            okBtn.textContent = settings.okMsg || 'ОК';
-            cancelBtn.textContent = settings.cancelMsg || 'Отмена';
+      if (settings.type == 'prompt') {
+        wrapper.appendChild(input);
+      }
 
-            editor.listeners.add(okBtn, 'click', confirmHandler);
-            editor.listeners.add(cancelBtn, 'click', cancelHandler);
+      wrapper.appendChild(okBtn);
 
-            wrapper.appendChild(message);
+      if (settings.type == 'prompt' || settings.type == 'confirm') {
+        wrapper.appendChild(cancelBtn);
+      }
 
-            if (settings.type == 'prompt') {
+      wrapper.classList.add('cdx-notification-' + settings.type);
+      wrapper.dataset.type = settings.type;
 
-                wrapper.appendChild(input);
+      notification = wrapper;
+      type         = settings.type;
+      confirm      = settings.confirm;
+      cancel       = settings.cancel;
+      inputField   = input;
 
-            }
+      if (settings.type != 'prompt' && settings.type != 'confirm') {
+        window.setTimeout(close, settings.time);
+      }
+    };
 
-            wrapper.appendChild(okBtn);
-
-            if (settings.type == 'prompt' || settings.type == 'confirm') {
-
-                wrapper.appendChild(cancelBtn);
-
-            }
-
-            wrapper.classList.add('cdx-notification-' + settings.type);
-            wrapper.dataset.type = settings.type;
-
-            notification = wrapper;
-            type         = settings.type;
-            confirm      = settings.confirm;
-            cancel       = settings.cancel;
-            inputField   = input;
-
-            if (settings.type != 'prompt' && settings.type != 'confirm') {
-
-                window.setTimeout(close, settings.time);
-
-            }
-
-        };
-
-        /**
+    /**
         * Show notification block
         */
-        function send() {
+    function send() {
+      editor.nodes.notifications.appendChild(notification);
+      inputField.focus();
 
-            editor.nodes.notifications.appendChild(notification);
-            inputField.focus();
+      editor.nodes.notifications.classList.add('cdx-notification__notification-appending');
 
-            editor.nodes.notifications.classList.add('cdx-notification__notification-appending');
+      window.setTimeout(function () {
+        editor.nodes.notifications.classList.remove('cdx-notification__notification-appending');
+      }, 100);
 
-            window.setTimeout(function () {
+      addToQueue({type: type, close: close});
+    };
 
-                editor.nodes.notifications.classList.remove('cdx-notification__notification-appending');
-
-            }, 100);
-
-            addToQueue({type: type, close: close});
-
-        };
-
-        /**
+    /**
         *  Remove notification block
         */
-        function close() {
-
-            notification.remove();
-
-        };
-
-
-        if (constructorSettings) {
-
-            create(constructorSettings);
-            send();
-
-        }
-
-        return {
-            create: create,
-            send: send,
-            close: close
-        };
-
+    function close() {
+      notification.remove();
     };
 
-    notifications.clear = function () {
 
-        editor.nodes.notifications.innerHTML = '';
-        queue = [];
+    if (constructorSettings) {
+      create(constructorSettings);
+      send();
+    }
 
+    return {
+      create: create,
+      send: send,
+      close: close
     };
+  };
 
-    return notifications;
+  notifications.clear = function () {
+    editor.nodes.notifications.innerHTML = '';
+    queue = [];
+  };
 
+  return notifications;
 })({});

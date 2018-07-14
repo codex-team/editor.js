@@ -12,102 +12,87 @@
 import $ from '../dom';
 
 module.exports = class Content {
-
-    /**
+  /**
      * Module key name
      * @returns {string}
      */
-    static get name() {
+  static get name() {
+    return 'Content';
+  }
 
-        return 'Content';
-
-    }
-
-    /**
+  /**
      * @constructor
      *
      * @param {EditorConfig} config
      */
-    constructor(config) {
+  constructor(config) {
+    this.config = config;
+    this.Editor = null;
 
-        this.config = config;
-        this.Editor = null;
+    this.CSS = {
+      block: 'ce-block',
+      content: 'ce-block__content',
+      stretched: 'ce-block--stretched',
+      highlighted: 'ce-block--highlighted',
+    };
 
-        this.CSS = {
-            block: 'ce-block',
-            content: 'ce-block__content',
-            stretched: 'ce-block--stretched',
-            highlighted: 'ce-block--highlighted',
-        };
+    this._currentNode = null;
+    this._currentIndex = 0;
+  }
 
-        this._currentNode = null;
-        this._currentIndex = 0;
-
-    }
-
-    /**
+  /**
      * Editor modules setter
      * @param {object} Editor
      */
-    set state(Editor) {
+  set state(Editor) {
+    this.Editor = Editor;
+  }
 
-        this.Editor = Editor;
-
-    }
-
-    /**
+  /**
      * Get current working node
      *
      * @returns {null|HTMLElement}
      */
-    get currentNode() {
+  get currentNode() {
+    return this._currentNode;
+  }
 
-        return this._currentNode;
-
-    }
-
-    /**
+  /**
      * Set working node. Working node should be first level block, so we find it before set one to _currentNode property
      *
      * @param {HTMLElement} node
      */
-    set currentNode(node) {
+  set currentNode(node) {
+    let firstLevelBlock = this.getFirstLevelBlock(node);
 
-        let firstLevelBlock = this.getFirstLevelBlock(node);
-
-        this._currentNode = firstLevelBlock;
-
-    }
+    this._currentNode = firstLevelBlock;
+  }
 
 
-    /**
+  /**
      * @private
      * @param pluginHTML
      * @param {Boolean} isStretched - make stretched block or not
      *
      * @description adds necessary information to wrap new created block by first-level holder
      */
-    composeBlock_(pluginHTML, isStretched = false) {
+  composeBlock_(pluginHTML, isStretched = false) {
+    let block     = $.make('DIV', this.CSS.block),
+      blockContent = $.make('DIV', this.CSS.content);
 
-        let block     = $.make('DIV', this.CSS.block),
-            blockContent = $.make('DIV', this.CSS.content);
+    blockContent.appendChild(pluginHTML);
+    block.appendChild(blockContent);
 
-        blockContent.appendChild(pluginHTML);
-        block.appendChild(blockContent);
+    if (isStretched) {
+      blockContent.classList.add(this.CSS.stretched);
+    }
 
-        if (isStretched) {
+    block.dataset.toolId = this._currentIndex++;
 
-            blockContent.classList.add(this.CSS.stretched);
+    return block;
+  };
 
-        }
-
-        block.dataset.toolId = this._currentIndex++;
-
-        return block;
-
-    };
-
-    /**
+  /**
      * Finds first-level block
      * @description looks for first-level block.
      * gets parent while node is not first-level
@@ -116,33 +101,23 @@ module.exports = class Content {
      * @protected
      *
      */
-    getFirstLevelBlock(node) {
+  getFirstLevelBlock(node) {
+    if (!$.isElement(node)) {
+      node = node.parentNode;
+    }
 
-        if (!$.isElement(node)) {
+    if (node === this.Editor.ui.nodes.redactor || node === document.body) {
+      return null;
+    } else {
+      while(node.classList && !node.classList.contains(this.CSS.block)) {
+        node = node.parentNode;
+      }
 
-            node = node.parentNode;
+      return node;
+    }
+  };
 
-        }
-
-        if (node === this.Editor.ui.nodes.redactor || node === document.body) {
-
-            return null;
-
-        } else {
-
-            while(node.classList && !node.classList.contains(this.CSS.block)) {
-
-                node = node.parentNode;
-
-            }
-
-            return node;
-
-        }
-
-    };
-
-    /**
+  /**
      * Insert new block to working area
      *
      * @param {HTMLElement} tool
@@ -150,32 +125,25 @@ module.exports = class Content {
      * @returns {Number} tool index
      *
      */
-    insertBlock(tool) {
+  insertBlock(tool) {
+    let newBlock = this.composeBlock_(tool);
 
-        let newBlock = this.composeBlock_(tool);
-
-        if (this.currentNode) {
-
-            this.currentNode.insertAdjacentElement('afterend', newBlock);
-
-        } else {
-
-            /**
+    if (this.currentNode) {
+      this.currentNode.insertAdjacentElement('afterend', newBlock);
+    } else {
+      /**
              * If redactor is empty, append as first child
              */
-            this.Editor.ui.nodes.redactor.appendChild(newBlock);
-
-        }
-
-        /**
-         * Set new node as current
-         */
-        this.currentNode = newBlock;
-
-        return newBlock.dataset.toolId;
-
+      this.Editor.ui.nodes.redactor.appendChild(newBlock);
     }
 
+    /**
+         * Set new node as current
+         */
+    this.currentNode = newBlock;
+
+    return newBlock.dataset.toolId;
+  }
 };
 
 // module.exports = (function (content) {

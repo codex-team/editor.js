@@ -48,7 +48,7 @@ class Text {
    * Method fires before rendered data appended to the editors area
    */
   appendCallback() {
-    console.log("text appended");
+    console.log('text appended');
   }
 
   draw() {
