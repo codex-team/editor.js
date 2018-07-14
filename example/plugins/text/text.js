@@ -1,21 +1,22 @@
 /**
- * @class Text
- * @classdesc Paragraph plugin for CodexEditor
+ * Base Text block for the CodeX Editor.
+ * Represents simple paragraph
  *
  * @author CodeX Team (team@ifmo.su)
  * @copyright CodeX Team 2017
  * @license The MIT License (MIT)
- * @version 2.0.0
- *
- *
- * @typedef {Object} TextData
- * @property {String} text — HTML content to insert to text element
- *
+ * @version 2.0.1
  */
+ /**
+  * @typedef {Object} TextData
+  * @description Tool's input and output data format
+  * @property {String} text — Paragraph's content. Can include HTML tags: <a><b><i>
+  */
 class Text {
   /**
-   * Pass true to display this tool in the Editor's Toolbox
+   * Should this tools be displayed at the Editor's Toolbox
    * @returns {boolean}
+   * @public
    */
   static get displayInToolbox() {
     return true;
@@ -24,34 +25,33 @@ class Text {
   /**
    * Class for the Toolbox icon
    * @returns {string}
+   * @public
    */
   static get iconClassName() {
     return 'cdx-text-icon';
   }
 
   /**
-   * Render plugin`s html and set initial content
-   * @param {TextData} data — initial plugin content
+   * Render plugin`s main Element and fill it with saved data
+   * @param {TextData} savedData — previously saved data
    */
-  constructor(data = {}, config) {
+  constructor(savedData = {}) {
     this._CSS = {
       wrapper: 'ce-text'
     };
 
     this._data = {};
-    this._element = this.draw();
+    this._element = this.drawView();
 
-    this.data = data;
+    this.data = savedData;
   }
 
   /**
-   * Method fires before rendered data appended to the editors area
+   * Create Tool's view
+   * @return {HTMLElement}
+   * @private
    */
-  appendCallback() {
-    console.log("text appended");
-  }
-
-  draw() {
+  drawView() {
     let div = document.createElement('DIV');
 
     div.classList.add(this._CSS.wrapper);
@@ -61,16 +61,19 @@ class Text {
   }
 
   /**
-   * Create div element and add needed css classes
-   * @returns {HTMLDivElement} Created DIV element
+   * Return Tool's view
+   * @returns {HTMLDivElement}
+   * @public
    */
   render() {
     return this._element;
   }
 
   /**
-   * Merge current data with passed data
+   * Method that specified how to merge two Text blocks.
+   * Called by CodeX Editor by backspace at the beginning of the Block
    * @param {TextData} data
+   * @public
    */
   merge(data) {
     let newData = {
@@ -81,10 +84,12 @@ class Text {
   }
 
   /**
-   * Check if saved text is empty
+   * Validate Text block data:
+   * - check for emptiness
    *
-   * @param {TextData} savedData — data received from plugins`s element
-   * @returns {boolean} false if saved text is empty, true otherwise
+   * @param {TextData} savedData — data received after saving
+   * @returns {boolean} false if saved data is not correct, otherwise true
+   * @public
    */
   validate(savedData) {
     if (savedData.text.trim() === '') {
@@ -95,23 +100,30 @@ class Text {
   }
 
   /**
-   * Get plugin`s element HTMLDivElement
-   * @param {HTMLDivElement} block - returned self content
-   * @returns {HTMLDivElement} Plugin`s element
+   * Extract Tool's data from the view
+   * @param {HTMLDivElement} toolsContent - Text tools rendered view
+   * @returns {TextData} - saved data
+   * @public
    */
-  save(block) {
-    return this.data;
+  save(toolsContent) {
+    let toolData = {
+      text: toolsContent.innerHTML
+    };
+
+    return toolData;
   }
 
   /**
-   * Get current plugin`s data
-   *
-   * @todo sanitize data while saving
-   *
+   * Get current Tools`s data
    * @returns {TextData} Current data
+   * @private
    */
   get data() {
     let text = this._element.innerHTML;
+
+    /**
+     * @todo sanitize data
+     */
 
     this._data.text = text;
 
@@ -119,12 +131,15 @@ class Text {
   }
 
   /**
-   * Set new data for plugin
+   * Store data in plugin:
+   * - at the this._data property
+   * - at the HTML
    *
    * @param {TextData} data — data to set
+   * @private
    */
   set data(data) {
-    Object.assign(this._data, data);
+    this._data = data || {};
 
     this._element.innerHTML = this._data.text || '';
   }
