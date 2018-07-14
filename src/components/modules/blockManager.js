@@ -99,13 +99,9 @@ export default class BlockManager extends Module {
    * @param {Object} block
    */
   bindEvents(block) {
-    this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.Keyboard.blockKeydownsListener(event));
-    this.Editor.Listeners.on(block.pluginsContent, 'mouseup', (event) => {
-      this.Editor.InlineToolbar.handleShowingEvent(event);
-    });
-    this.Editor.Listeners.on(block.pluginsContent, 'keyup', (event) => {
-      this.Editor.InlineToolbar.handleShowingEvent(event);
-    });
+    this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.BlockEvents.keydown(event));
+    this.Editor.Listeners.on(block.pluginsContent, 'mouseup', (event) => this.Editor.BlockEvents.mouseUp(event));
+    this.Editor.Listeners.on(block.pluginsContent, 'keyup', (event) => this.Editor.BlockEvents.keyup(event));
   }
 
   /**
