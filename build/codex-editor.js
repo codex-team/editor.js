@@ -4851,7 +4851,7 @@ var Renderer = function (_Module) {
 
 
   _createClass(Renderer, [{
-    key: "render",
+    key: 'render',
     value: function render(items) {
       var _this2 = this;
 
@@ -4883,13 +4883,23 @@ var Renderer = function (_Module) {
      */
 
   }, {
-    key: "insertBlock",
+    key: 'insertBlock',
     value: function insertBlock(item) {
       var tool = item.type,
           data = item.data,
           settings = item.settings;
 
-      this.Editor.BlockManager.insert(tool, data, settings);
+      if (tool in this.Editor.Tools.available) {
+        this.Editor.BlockManager.insert(tool, data, settings);
+      } else {
+        /**
+         * @todo show warning notification message
+         *
+         * `${tool} blocks was skipped.`
+         */
+
+        _.log('Tool \xAB' + tool + '\xBB is not found. Check \'tools\' property at your initial CodeX Editor config.', 'warn');
+      }
 
       return Promise.resolve();
     }
@@ -4898,9 +4908,9 @@ var Renderer = function (_Module) {
   return Renderer;
 }(Module);
 
-Renderer.displayName = "Renderer";
+Renderer.displayName = 'Renderer';
 exports.default = Renderer;
-module.exports = exports["default"];
+module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
