@@ -1,169 +1,228 @@
 /**
-* Example of making plugin
-* H e a d e r
-*/
+ * @typedef {Object} HeaderData
+ * @description Tool's input and output data format
+ * @property {String} text — Header's content
+ * @property {number} level - Header's level from 1 to 3
+ */
 
-var header = (function(header_plugin) {
+/**
+ * Header block for the CodeX Editor.
+ *
+ * @author CodeX Team (team@ifmo.su)
+ * @copyright CodeX Team 2018
+ * @license The MIT License (MIT)
+ * @version 2.0.0
+ */
+class Header {
+  /**
+   * Should this tools be displayed at the Editor's Toolbox
+   * @returns {boolean}
+   * @public
+   */
+  static get displayInToolbox() {
+    return true;
+  }
+
+  /**
+   * Class for the Toolbox icon
+   * @returns {string}
+   * @public
+   */
+  static get iconClassName() {
+    return 'cdx-header-icon'; // todo add icon
+  }
+
+  /**
+   * Render plugin`s main Element and fill it with saved data
+   * @param {HeaderData} savedData — previously saved data
+   */
+  constructor(savedData = {}) {
+    this._CSS = {
+      wrapper: 'ce-header'
+    };
+
+    this._data = savedData || {};
+    this._element = this.drawView();
+
+    console.log('this._element', this._element)
+
+    // this.data = savedData;
+
+  }
+
+  /**
+   * Create Tool's view
+   * @return {HTMLElement}
+   * @private
+   */
+  drawView() {
+    let div = this.getTag();
+
+    return div;
+  }
+
+  /**
+   * Return Tool's view
+   * @returns {HTMLDivElement}
+   * @public
+   */
+  render() {
+    return this._element;
+  }
+
+  get levels(){
+    return [2,3,4];
+  }
+
+  /**
+   *
+   * @return {HTMLElement}
+   */
+  makeSettings() {
+    let holder = document.createElement('h2'),
+      selectTypeButton;
+
+    /** Now add type selectors */
+    this.levels.forEach( level => {
+
+      selectTypeButton = document.createElement('SPAN');
+
+
+      selectTypeButton.innerText = level;
+      selectTypeButton.classList.add('ce-settings__button');
+      holder.appendChild(selectTypeButton);
+
+      selectTypeButton.addEventListener('click', () => {
+        this.settingsButtonClicked(level);
+      });
+
+    });
+
+    return holder;
+  }
+
+  settingsButtonClicked(level){
+    this.data = {
+      level: level
+    };
+  }
+
+  /**
+   * Method that specified how to merge two Text blocks.
+   * Called by CodeX Editor by backspace at the beginning of the Block
+   * @param {TextData} data
+   * @public
+   */
+  merge(data) {
+    let newData = {
+      text : this.data.text + data.text
+    };
+
+    this.data = newData;
+  }
+
+  /**
+   * Validate Text block data:
+   * - check for emptiness
+   *
+   * @param {TextData} savedData — data received after saving
+   * @returns {boolean} false if saved data is not correct, otherwise true
+   * @public
+   */
+  validate(savedData) {
+    if (savedData.text.trim() === '') {
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Extract Tool's data from the view
+   * @param {HTMLDivElement} toolsContent - Text tools rendered view
+   * @returns {TextData} - saved data
+   * @public
+   */
+  save(toolsContent) {
+    let toolData = {
+      text: toolsContent.innerHTML,
+      level: toolsContent.tagName
+    };
+
+    return toolData;
+  }
+
+  /**
+   * Get current Tools`s data
+   * @returns {TextData} Current data
+   * @private
+   */
+  get data() {
+    let text = this._element.innerHTML,
+      tag = this._element.tagName;
 
     /**
-     * @private
+     * @todo sanitize data
      */
-    var methods_ = {
 
-        /**
-         * Binds click event to passed button
-         */
-        addSelectTypeClickListener : function (el, type) {
+    this._data.text = text;
+    this._data.level = tag;
 
-            el.addEventListener('click', function () {
+    return this._data;
+  }
 
-                methods_.selectTypeClicked(type);
-
-            }, false);
-        },
-
-        /**
-         * Replaces old header with new type
-         * @params {string} type - new header tagName: H1—H6
-         */
-        selectTypeClicked : function (type) {
-
-            var old_header, new_header;
-
-            /** Now current header stored as a currentNode */
-            old_header = codex.editor.content.currentNode.querySelector('[contentEditable]');
-
-            /** Making new header */
-            new_header = codex.editor.draw.node(type, ['ce-header'], { innerHTML : old_header.innerHTML });
-            new_header.contentEditable = true;
-            new_header.setAttribute('data-placeholder', 'Заголовок');
-            new_header.dataset.headerData = type;
-
-            codex.editor.content.switchBlock(old_header, new_header, 'header');
-
-            /** Close settings after replacing */
-            codex.editor.toolbar.settings.close();
-        }
-
-    };
-
-    /**
-     * @private
-     *
-     * Make initial header block
-     * @param {object} JSON with block data
-     * @return {Element} element to append
-     */
-    var make_ = function (data) {
-
-        var availableTypes = ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'],
-            tag,
-            headerType = 'h2';
+  /**
+   * Store data in plugin:
+   * - at the this._data property
+   * - at the HTML
+   *
+   * @param {HeaderData} data — data to set
+   * @private
+   */
+  set data(data) {
+    this._data = data || {};
 
 
-        if ( data && data['heading-styles'] && availableTypes.includes(data['heading-styles']) ) {
+    if (data.level !== undefined) {
 
-            headerType = data['heading-styles'];
+      if (this._element.parentNode){
+        let newHeader = this.getTag();
+        newHeader.innerHTML = this._element.innerHTML;
+        this._element.parentNode.replaceChild(newHeader, this._element);
+        this._element = newHeader;
+      }
 
-        }
-
-        tag = document.createElement(headerType);
-
-        /**
-         * Save header type in data-attr.
-         * We need it in save method to extract type from HTML to JSON
-         */
-        tag.dataset.headerData = headerType;
-
-
-        if (data && data.text) {
-            tag.textContent = data.text;
-        }
-
-        if (!tag.dataset.headerData) {
-            tag.dataset.headerData = 'h2';
-        }
-
-        tag.classList.add('ce-header');
-        tag.setAttribute('data-placeholder', 'Заголовок');
-        tag.contentEditable = true;
-
-        return tag;
-
-    };
-
-    header_plugin.prepareDataForSave = function(data) {
-
-    };
-
-    /**
-     * Method to render HTML block from JSON
-     */
-    header_plugin.render = function (data) {
-
-        return make_(data);
-
-    };
-
-    /**
-     * Method to extract JSON data from HTML block
-     */
-    header_plugin.save = function (blockContent) {
-
-        var data = {
-            "heading-styles": blockContent.dataset.headerData,
-            "format": "html",
-            "text": blockContent.textContent || ''
-        };
-
-        return data;
-    };
-
-    /**
-     * Settings panel content
-     *  - - - - - - - - - - - - -
-     * | настройки   H1  H2  H3  |
-     *  - - - - - - - - - - - - -
-     * @return {Element} element contains all settings
-     */
-    header_plugin.makeSettings = function () {
-
-        var holder  = codex.editor.draw.node('DIV', ['cdx-plugin-settings--horisontal'], {} ),
-            types   = {
-                h2: 'H2',
-                h3: 'H3',
-                h4: 'H4'
-            },
-            selectTypeButton;
-
-        /** Now add type selectors */
-        for (var type in types){
-
-            selectTypeButton = codex.editor.draw.node('SPAN', ['cdx-plugin-settings__item'], { textContent : types[type] });
-            methods_.addSelectTypeClickListener(selectTypeButton, type);
-            holder.appendChild(selectTypeButton);
-
-        }
-
-        return holder;
-    };
-
-    header_plugin.validate = function(data) {
-
-        if (data.text.trim() === '' || data['heading-styles'].trim() === ''){
-            return false;
-        }
-
-        return true;
-    };
-
-    header_plugin.destroy = function () {
-
-        header = null;
 
     }
 
-    return header_plugin;
+    if (data.text !== undefined) {
+      this._element.innerHTML = this._data.text || '';
+    }
+  }
 
-})({});
+  /**
+   * Get tag for target level
+   * @return {HTMLHeadingElement}
+   */
+  getTag() {
+    let tag;
 
+    switch (this._data.level) {
+      case 3:
+        tag = document.createElement('h3');
+        break;
+      case 4:
+        tag = document.createElement('h4');
+        break;
+      default:
+        tag = document.createElement('h2');
+    }
+
+    tag.innerHTML = this._data.text;
+
+    tag.classList.add(this._CSS.wrapper);
+    tag.contentEditable = true;
+
+    return tag;
+  }
+}

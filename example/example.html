@@ -25,38 +25,8 @@
 <script src="plugins/text/text.js?v=100"></script>
 <link rel="stylesheet" href="plugins/text/text.css">
 
-<!--<script src="plugins/header/header.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/header/header.css">-->
-
-<!--<script src="plugins/code/code.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/code/code.css">-->
-
-<!--<script src="plugins/link/link.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/link/link.css">-->
-
-<!--<script src="plugins/quote/quote.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/quote/quote.css">-->
-
-<!--<script src="plugins/list/list.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/list/list.css">-->
-
-<!--<script src="plugins/image/image.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/image/image.css">-->
-
-<!--<script src="plugins/instagram/instagram.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/instagram/instagram.css">-->
-
-<!--<script src="plugins/twitter/twitter.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/twitter/twitter.css">-->
-
-<!--<script src="plugins/embed/embed.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/embed/embed.css">-->
-
-<!--<script src="plugins/raw/raw.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/raw/raw.css">-->
-
-<!--<script src="plugins/attaches/attaches.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/attaches/attaches.css">-->
+<script src="plugins/header/header.js?v=100"></script>
+<link rel="stylesheet" href="plugins/header/header.css">
 
 <script src="../build/codex-editor.js?v=108"></script>
 
@@ -68,15 +38,13 @@
         initialBlock : 'text',
         tools: {
             text: Text,
-            term: Term
+            header: Header,
+            term: Term,
         },
         toolsConfig: {
             text: {
               inlineToolbar : true,
             },
-            quote: {
-                enableLineBreaks : true
-            }
         },
         data: {
             items: [
@@ -93,6 +61,13 @@
                     }
                 },
                 {
+                  type: "header",
+                  data: {
+                    text: "ES6 тебя сожрет",
+                    level: 4
+                  }
+                },
+                {
                   type : 'text',
                   data : {
                     text : 'Одним из недостатков ES6 классов является невозможность сделать методы и свойства приватными. В TS есть привычные модификаторы: <span class="marked">public</span>, <span class="marked">private</span> и <span class="marked">protected</span>, которые можно использовать как для методов, так и для свойств. По умолчанию, как и в других языках, все свойства имеют модификатор <span class="marked">public</span>.'
@@ -106,192 +81,5 @@
 
     window.editor = editor;
 
-//    var editor2 = new CodexEditor({
-//        holderId : 'cdx',
-//        initialBlock: 'header'
-//    });
-//    codex.editor.start({
-//        holderId : "codex-editor",
-//        initialBlockPlugin : 'text',
-//        // placeholder: 'Прошлой ночью мне приснилось...',
-//        hideToolbar: false,
-//        tools : {
-//            text: {
-//                type: 'text',
-//                iconClassname: 'ce-icon-text',
-//                render: text.render,
-//                validate: text.validate,
-//                save: text.save,
-//                destroy: text.destroy,
-//                allowedToPaste: true,
-//                showInlineToolbar: true,
-//                allowRenderOnPaste: true
-//            },
-//            header: {
-//                type: 'header',
-//                iconClassname: 'ce-icon-header',
-//                appendCallback: header.appendCallback,
-//                makeSettings: header.makeSettings,
-//                render: header.render,
-//                validate: header.validate,
-//                save: header.save,
-//                destroy: header.destroy,
-//                displayInToolbox: true
-//            },
-//            code: {
-//                type: 'code',
-//                iconClassname: 'ce-icon-code',
-//                make: code.make,
-//                appendCallback: null,
-//                settings: null,
-//                render: code.render,
-//                validate: code.validate,
-//                save: code.save,
-//                destroy: code.destroy,
-//                displayInToolbox: true,
-//                enableLineBreaks: true
-//            },
-//            link: {
-//                type: 'link',
-//                iconClassname: 'ce-icon-link',
-//                prepare: link.prepare,
-//                make: link.makeNewBlock,
-//                appendCallback: link.appendCallback,
-//                render: link.render,
-//                validate: link.validate,
-//                save: link.save,
-//                destroy: link.destroy,
-//                displayInToolbox: true,
-//                enableLineBreaks: true
-//            },
-//            list: {
-//                type: 'list',
-//                iconClassname: 'ce-icon-list-bullet',
-//                make: list.make,
-//                appendCallback: null,
-//                makeSettings: list.makeSettings,
-//                render: list.render,
-//                validate: list.validate,
-//                save: list.save,
-//                destroy: list.destroy,
-//                displayInToolbox: true,
-//                showInlineToolbar: true,
-//                enableLineBreaks: true,
-//                allowedToPaste: true,
-//            },
-//            quote: {
-//                type: 'quote',
-//                iconClassname: 'ce-icon-quote',
-//                makeSettings: quote.makeSettings,
-//                prepare: quote.prepare,
-//                render: quote.render,
-//                validate: quote.validate,
-//                save: quote.save,
-//                destroy: quote.destroy,
-//                displayInToolbox: true,
-//                enableLineBreaks: true,
-//                showInlineToolbar: true,
-//                allowedToPaste: true,
-//                config : {
-//                    defaultStyle : 'withPhoto'
-//                }
-//            },
-//            image_extended: {
-//                type: 'image_extended',
-//                iconClassname: 'ce-icon-picture',
-//                appendCallback: image.appendCallback,
-//                prepare: image.prepare,
-//                makeSettings: image.makeSettings,
-//                render: image.render,
-//                save: image.save,
-//                destroy: image.destroy,
-//                isStretched: true,
-//                showInlineToolbar: true,
-//                displayInToolbox: true,
-//                renderOnPastePatterns: image.pastePatterns,
-//                config: {
-//                    uploadImage : '/writing/uploadImage',
-//                    uploadFromUrl : '/club/fetch'
-//                }
-//            },
-//            instagram: {
-//                type: 'instagram',
-//                iconClassname: 'ce-icon-instagram',
-//                prepare: instagram.prepare,
-//                render: instagram.render,
-//                validate: instagram.validate,
-//                save: instagram.save,
-//                destroy: instagram.destroy,
-//                renderOnPastePatterns: instagram.pastePatterns,
-//            },
-//            tweet: {
-//                type: 'tweet',
-//                iconClassname: 'ce-icon-twitter',
-//                prepare: twitter.prepare,
-//                render: twitter.render,
-//                validate: twitter.validate,
-//                save: twitter.save,
-//                destroy: twitter.destroy,
-//                showInlineToolbar : true,
-//                renderOnPastePatterns: twitter.pastePatterns,
-//                config : {
-//                    fetchUrl : ''
-//                }
-//            },
-//            video_extended: {
-//                type: 'video_extended',
-//                make: embed.make,
-//                render: embed.render,
-//                save: embed.save,
-//                destroy: embed.destroy,
-//                validate: embed.validate,
-//                renderOnPastePatterns: embed.pastePatterns,
-//            },
-//            raw: {
-//                type: 'raw',
-//                displayInToolbox: true,
-//                iconClassname: 'raw-plugin-icon',
-//                render: rawPlugin.render,
-//                save: rawPlugin.save,
-//                validate: rawPlugin.validate,
-//                destroy: rawPlugin.destroy,
-//                enableLineBreaks: true,
-//                allowPasteHTML: true
-//            },
-//            attaches: {
-//                type: 'attaches',
-//                displayInToolbox: true,
-//                iconClassname: 'cdx-attaches__icon',
-//                prepare: cdxAttaches.prepare,
-//                render: cdxAttaches.render,
-//                save: cdxAttaches.save,
-//                validate: cdxAttaches.validate,
-//                destroy: cdxAttaches.destroy,
-//                appendCallback: cdxAttaches.appendCallback,
-//                config: {
-//                    fetchUrl: '/test',
-//                    maxSize: 50000,
-//                }
-//            },
-//        },
-//        data : {
-//            id: +new Date(),
-//            items: [
-//                {
-//                    type : 'header',
-//                    data : {
-//                        text : 'Привет от CodeX'
-//                    }
-//                },
-//                {
-//                    type : 'text',
-//                    data : {
-//                        text : 'Пишите нам на team@ifmo.su'
-//                    }
-//                },
-//            ],
-//            count: 3
-//        }
-//    });
 </script>
 </html>

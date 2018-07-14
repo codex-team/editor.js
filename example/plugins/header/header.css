@@ -5,6 +5,9 @@
     padding: .7em 0;
     margin: 0;
     line-height: 1.4em;
+  outline: none;
+
+    /*font-size: 3em;*/
 }
 .ce-header p,
 .ce-header div{

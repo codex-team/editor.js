@@ -7,6 +7,7 @@
  * @license The MIT License (MIT)
  * @version 2.0.1
  */
+
  /**
   * @typedef {Object} TextData
   * @description Tool's input and output data format
