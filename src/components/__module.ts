@@ -13,13 +13,13 @@ export default class Module {
    * Editor modules list
    * @type {EditorComponents}
    */
-  private Editor: any = null;
+  protected Editor: any = null;
 
   /**
    * Editor configuration object
    * @type {EditorConfig}
    */
-  private config: any = {};
+  protected config: any = {};
 
   /**
    * @constructor
@@ -31,7 +31,6 @@ export default class Module {
     if (new.target === Module) {
       throw new TypeError('Constructors for abstract class Module are not allowed.');
     }
-
     this.config = config;
   }
 

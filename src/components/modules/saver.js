@@ -20,7 +20,6 @@
  * @property {Element} html - Editor HTML content
  * @property {String} json - Editor JSON output
  */
-
 export default class Saver extends Module {
   /**
    * @constructor
@@ -67,7 +66,10 @@ export default class Saver extends Module {
       /** Group process info */
       console.log(`«${extraction.tool}» saving info`, extraction);
       totalTime += extraction.time;
-      items.push(extraction.data);
+      items.push({
+        type: extraction.tool,
+        data: extraction.data
+      });
     });
 
     console.log('Total', totalTime);

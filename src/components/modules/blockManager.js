@@ -77,15 +77,15 @@ export default class BlockManager extends Module {
    *
    * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
    * @param {Object} data - constructor params
+   * @param {Object} settings - block settings
    *
    * @return {Block}
    */
-  composeBlock(toolName, data) {
+  composeBlock(toolName, data, settings) {
     let toolInstance = this.Editor.Tools.construct(toolName, data),
-      block = new Block(toolName, toolInstance);
+      block = new Block(toolName, toolInstance, settings, this.Editor.API.methods);
 
     this.bindEvents(block);
-
     /**
      * Apply callback before inserting html
      */
@@ -103,44 +103,62 @@ export default class BlockManager extends Module {
     this.Editor.Listeners.on(block.pluginsContent, 'mouseup', (event) => {
       this.Editor.InlineToolbar.handleShowingEvent(event);
     });
+    this.Editor.Listeners.on(block.pluginsContent, 'keyup', (event) => {
+      this.Editor.InlineToolbar.handleShowingEvent(event);
+    });
   }
 
   /**
    * Set's caret to the next Block
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+   *
+   * @param {Boolean} force - force navigation even if caret is not at the end.
    */
-  navigateNext() {
-    let caretAtEnd = this.Editor.Caret.isAtEnd;
-
-    if (!caretAtEnd) {
-      return;
-    }
-
+  navigateNext(force = false) {
     let nextBlock = this.nextBlock;
 
     if (!nextBlock) {
       return;
     }
 
-    this.Editor.Caret.setToBlock( nextBlock );
+    if (force) {
+      this.Editor.Caret.setToBlock(nextBlock, 0, true);
+      return;
+    }
+
+    let caretAtEnd = this.Editor.Caret.isAtEnd;
+
+    if (!caretAtEnd) {
+      return;
+    }
+
+
+    this.Editor.Caret.setToBlock(nextBlock);
   }
 
   /**
    * Set's caret to the previous Block
    * Before moving caret, we should check if caret position is start of the Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
+   *
+   * @param {Boolean} force - force navigation
    */
-  navigatePrevious() {
-    let caretAtStart = this.Editor.Caret.isAtStart;
-
-    if (!caretAtStart) {
-      return;
-    }
-
+  navigatePrevious(force = false) {
     let previousBlock = this.previousBlock;
 
     if (!previousBlock) {
+      return;
+    }
+
+    if (force) {
+      this.Editor.Caret.setToBlock( previousBlock, 0, true );
+      return;
+    }
+
+    let caretAtStart = this.Editor.Caret.isAtStart;
+
+    if (!caretAtStart) {
       return;
     }
 
@@ -150,11 +168,14 @@ export default class BlockManager extends Module {
   /**
    * Insert new block into _blocks
    *
-   * @param {String} toolName — plugin name
+   * @param {String} toolName — plugin name, by default method inserts initial block type
    * @param {Object} data — plugin data
+   * @param {Object} settings - default settings
+   *
+   * @return {Block}
    */
-  insert(toolName, data = {}) {
-    let block = this.composeBlock(toolName, data);
+  insert(toolName = this.config.initialBlock, data = {}, settings = {}) {
+    let block = this.composeBlock(toolName, data, settings);
 
 
     /** If current Block is empty and new Block is not empty, replace current Block with new one */
@@ -164,6 +185,8 @@ export default class BlockManager extends Module {
       this._blocks[++this.currentBlockIndex] = block;
     }
     this.Editor.Caret.setToBlock(block);
+
+    return block;
   }
 
   /**
@@ -198,6 +221,9 @@ export default class BlockManager extends Module {
    * @param {Number|null} index
    */
   removeBlock(index) {
+    if (!index) {
+      index = this.currentBlockIndex;
+    }
     this._blocks.remove(index);
   }
   /**
@@ -218,7 +244,13 @@ export default class BlockManager extends Module {
       text: $.isEmpty(wrapper) ? '' : wrapper.innerHTML,
     };
 
-    this.insert(this.config.initialBlock, data);
+    /**
+     * Renew current Block
+     * @type {Block}
+     */
+    const blockInserted = this.insert(this.config.initialBlock, data);
+
+    this.currentNode = blockInserted.pluginsContent;
   }
 
   /**
@@ -358,6 +390,45 @@ export default class BlockManager extends Module {
   get blocks() {
     return this._blocks.array;
   }
+
+  /**
+   * 1) Find first-level Block from passed child Node
+   * 2) Mark it as current
+   *
+   *  @param {Element|Text} childNode - look ahead from this node.
+   *  @throws Error  - when passed Node is not included at the Block
+   */
+  setCurrentBlockByChildNode(childNode) {
+    /**
+     * If node is Text TextNode
+     */
+    if (!$.isElement(childNode)) {
+      childNode = childNode.parentNode;
+    }
+
+    let parentFirstLevelBlock = childNode.closest(`.${Block.CSS.wrapper}`);
+
+    if (parentFirstLevelBlock) {
+      this.currentNode = parentFirstLevelBlock;
+    } else {
+      throw new Error('Can not find a Block from this child Node');
+    }
+  }
+
+  /**
+   * Clears Editor
+   * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
+   *                                        we don't need to add empty initial block
+   *                                        2) in api.blocks.clear we should add empty block
+   */
+  clear(needAddInitialBlock = false) {
+    this._blocks.removeAll();
+    this.currentBlockIndex = -1;
+
+    if (needAddInitialBlock) {
+      this.insert(this.config.initialBlock);
+    }
+  }
 };
 
 /**
@@ -435,12 +506,20 @@ class Blocks {
    * @param {Number|null} index
    */
   remove(index) {
-    if (!index) {
+    if (isNaN(index)) {
       index = this.length - 1;
     }
 
     this.blocks[index].html.remove();
     this.blocks.splice(index, 1);
+  }
+
+  /**
+   * Remove all blocks
+   */
+  removeAll() {
+    this.workingArea.innerHTML = '';
+    this.blocks.length = 0;
   }
 
   /**

@@ -1,6 +1,14 @@
 .ce-settings {
-  border: 1px dotted #ccc;
-  padding: 2px;
+  @apply --overlay-pane;
+  right: 5px;
+  top: 35px;
+  min-width: 124px;
+
+  &::before{
+    left: auto;
+    right: 12px;
+  }
+
   display: none;
 
   &--opened {
@@ -8,33 +16,52 @@
   }
 
   &__plugin-zone {
-    border: 1px dotted #ccc;
-    padding: 2px;
-    margin-bottom: 2px;
-
-    &::before {
-      content: 'PLUGIN SETTINGS';
-      opacity: .4;
-      font-size: 12px;
+    &:not(:empty){
+      padding: 6px;
     }
   }
 
   &__default-zone {
-    border: 1px dotted #ccc;
-    padding: 2px;
-    &::before {
-      content: 'DEFAULT SETTINGS';
-      opacity: .4;
-      font-size: 12px;
+    &:not(:empty){
+      padding: 6px;
     }
   }
 
   &__button {
-    padding: 10px 15px;
-    color: var(--grayText);
+    @apply --toolbar-button;
 
-    &:hover {
-      background: var(--bg-light);
+    &--delete {
+      transition: background-color 300ms ease;
+      will-change: background-color;
+
+      .icon {
+        transition: transform 200ms ease-out;
+        will-change: transform;
+      }
     }
+
+    &--confirm {
+      background-color: var(--color-confirm);
+      color: #fff;
+
+      &:hover {
+        background-color: color-mod(var(--color-confirm) blackness(+5%)) !important;
+      }
+
+      .icon {
+        transform: rotate(90deg);
+      }
+    }
+  }
+}
+
+.ce-settings-move-up {
+  &:hover {
+    cursor: pointer;
+  }
+
+  &::before {
+    display: inline-block;
+    content: 'up';
   }
 }

@@ -2,16 +2,26 @@
 * Editor wrapper
 */
 .codex-editor {
-    position: relative;
-    border: 1px solid #ccc;
-    padding: 2px;
-    box-sizing: border-box;
+  position: relative;
+  box-sizing: border-box;
 
-    .hide {
-        display: none;
-    }
+  .hide {
+    display: none;
+  }
 
-    &__redactor {
-        padding-bottom: 300px;
-    }
+  &__redactor {
+    padding-bottom: 300px;
+  }
+
+  svg {
+    fill: currentColor;
+    vertical-align: middle;
+    max-height: 100%;
+  }
+
+
 }
+::selection{
+  background-color: rgba(61,166,239,0.63);
+}
+
