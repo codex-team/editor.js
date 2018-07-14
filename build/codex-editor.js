@@ -4889,7 +4889,9 @@ var Renderer = function (_Module) {
           data = item.data,
           settings = item.settings;
 
-      this.Editor.BlockManager.insert(tool, data, settings);
+      if (tool in this.Editor.Tools.available) {
+        this.Editor.BlockManager.insert(tool, data, settings);
+      }
 
       return Promise.resolve();
     }
