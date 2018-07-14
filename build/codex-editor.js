@@ -4789,6 +4789,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _utils = __webpack_require__(/*! ../utils */ "./src/components/utils.js");
+
+var _utils2 = _interopRequireDefault(_utils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -4851,7 +4857,7 @@ var Renderer = function (_Module) {
 
 
   _createClass(Renderer, [{
-    key: "render",
+    key: 'render',
     value: function render(items) {
       var _this2 = this;
 
@@ -4883,7 +4889,7 @@ var Renderer = function (_Module) {
      */
 
   }, {
-    key: "insertBlock",
+    key: 'insertBlock',
     value: function insertBlock(item) {
       var tool = item.type,
           data = item.data,
@@ -4891,6 +4897,8 @@ var Renderer = function (_Module) {
 
       if (tool in this.Editor.Tools.available) {
         this.Editor.BlockManager.insert(tool, data, settings);
+      } else {
+        _utils2.default.log('Tool \xAB' + tool + '\xBB is missing', 'warn');
       }
 
       return Promise.resolve();
@@ -4900,9 +4908,9 @@ var Renderer = function (_Module) {
   return Renderer;
 }(Module);
 
-Renderer.displayName = "Renderer";
+Renderer.displayName = 'Renderer';
 exports.default = Renderer;
-module.exports = exports["default"];
+module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),

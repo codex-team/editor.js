@@ -1,3 +1,5 @@
+import Utils from '../utils';
+
 /**
  * Codex Editor Renderer Module
  *
@@ -73,6 +75,8 @@ export default class Renderer extends Module {
 
     if (tool in this.Editor.Tools.available) {
       this.Editor.BlockManager.insert(tool, data, settings);
+    } else {
+      Utils.log(`Tool «${tool}» is missing`, 'warn');
     }
 
     return Promise.resolve();
