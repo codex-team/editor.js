@@ -178,7 +178,9 @@ export default class Caret extends Module {
       return false;
     }
 
-    if (force || this.isAtEnd) {
+    let isEnd = this.isAtEnd;
+
+    if (force || isEnd) {
       this.setToBlock(nextBlock);
       return true;
     }
@@ -255,7 +257,11 @@ export default class Caret extends Module {
       }
     }
 
-    return firstNode === null || anchorNode === firstNode && selection.anchorOffset === firstLetterPosition;
+    /**
+     * We use <= comparison for case:
+     * "| Hello"  <--- selection.anchorOffset is 0, but firstLetterPosition is 1
+     */
+    return firstNode === null || anchorNode === firstNode && selection.anchorOffset <= firstLetterPosition;
   }
 
   /**
@@ -290,6 +296,18 @@ export default class Caret extends Module {
       }
     }
 
-    return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
+    /**
+     * Workaround case:
+     * hello |     <--- anchorOffset will be 5, but textContent.length will be 6.
+     * Why not regular .trim():
+     *  in case of ' hello |' trim() will also remove space at the beginning, so length will be lower than anchorOffset
+     */
+    let rightTrimmedText = lastNode.textContent.replace(/\s+$/, '');
+
+    /**
+     * We use >= comparison for case:
+     * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
+     */
+    return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
   }
 }

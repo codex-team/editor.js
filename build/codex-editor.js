@@ -3428,9 +3428,7 @@ var BlockEvents = function (_Module) {
     }, {
         key: "arrowRightAndDownPressed",
         value: function arrowRightAndDownPressed() {
-            if (!this.Editor.Caret.navigateNext()) {
-                return;
-            }
+            this.Editor.Caret.navigateNext();
             this.Editor.Toolbar.close();
         }
         /**
@@ -3440,9 +3438,7 @@ var BlockEvents = function (_Module) {
     }, {
         key: "arrowLeftAndUpPressed",
         value: function arrowLeftAndUpPressed() {
-            if (!this.Editor.Caret.navigatePrevious()) {
-                return;
-            }
+            this.Editor.Caret.navigatePrevious();
             this.Editor.Toolbar.close();
         }
     }]);
@@ -4444,7 +4440,9 @@ var Caret = function (_Module) {
         return false;
       }
 
-      if (force || this.isAtEnd) {
+      var isEnd = this.isAtEnd;
+
+      if (force || isEnd) {
         this.setToBlock(nextBlock);
         return true;
       }
@@ -4530,7 +4528,11 @@ var Caret = function (_Module) {
         }
       }
 
-      return firstNode === null || anchorNode === firstNode && selection.anchorOffset === firstLetterPosition;
+      /**
+       * We use <= comparison for case:
+       * "| Hello"  <--- selection.anchorOffset is 0, but firstLetterPosition is 1
+       */
+      return firstNode === null || anchorNode === firstNode && selection.anchorOffset <= firstLetterPosition;
     }
 
     /**
@@ -4570,7 +4572,19 @@ var Caret = function (_Module) {
         }
       }
 
-      return anchorNode === lastNode && selection.anchorOffset === lastNode.textContent.length;
+      /**
+       * Workaround case:
+       * hello |     <--- anchorOffset will be 5, but textContent.length will be 6.
+       * Why not regular .trim():
+       *  in case of ' hello |' trim() will also remove space at the beginning, so length will be lower than anchorOffset
+       */
+      var rightTrimmedText = lastNode.textContent.replace(/\s+$/, '');
+
+      /**
+       * We use >= comparison for case:
+       * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
+       */
+      return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
     }
   }]);
 
