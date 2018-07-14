@@ -67,7 +67,7 @@ export default class Saver extends Module {
       console.log(`«${extraction.tool}» saving info`, extraction);
       totalTime += extraction.time;
       items.push({
-        tool: extraction.tool,
+        type: extraction.tool,
         data: extraction.data
       });
     });

@@ -5189,7 +5189,7 @@ var Saver = function (_Module) {
         console.log('\xAB' + extraction.tool + '\xBB saving info', extraction);
         totalTime += extraction.time;
         items.push({
-          tool: extraction.tool,
+          type: extraction.tool,
           data: extraction.data
         });
       });
