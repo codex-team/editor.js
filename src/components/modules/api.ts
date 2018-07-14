@@ -18,7 +18,7 @@ export default class API extends Module {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorsConfig} config
+   * @param {EditorConfig} config
    */
   constructor({config}) {
     super({config});
