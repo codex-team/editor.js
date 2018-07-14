@@ -4892,7 +4892,11 @@ var Renderer = function (_Module) {
       if (tool in this.Editor.Tools.available) {
         this.Editor.BlockManager.insert(tool, data, settings);
       } else {
-        /** @todo show warning notification message */
+        /**
+         * @todo show warning notification message
+         *
+         * `${tool} blocks was skipped.`
+         */
 
         _.log('Tool \xAB' + tool + '\xBB is not found. Check \'tools\' property at your initial CodeX Editor config.', 'warn');
       }
