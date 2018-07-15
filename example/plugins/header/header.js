@@ -44,9 +44,7 @@ class Header {
     this._data = savedData || {};
     this._element = this.drawView();
 
-    console.log('this._element', this._element)
-
-    // this.data = savedData;
+    console.log('this._element', this._element);
 
   }
 
@@ -70,8 +68,12 @@ class Header {
     return this._element;
   }
 
-  get levels(){
-    return [2,3,4];
+  /**
+   *
+   * @return {number[]}
+   */
+  get levels() {
+    return [2, 3, 4];
   }
 
   /**
@@ -79,14 +81,12 @@ class Header {
    * @return {HTMLElement}
    */
   makeSettings() {
-    let holder = document.createElement('h2'),
+    let holder = document.createElement('DIV'),
       selectTypeButton;
 
     /** Now add type selectors */
     this.levels.forEach( level => {
-
       selectTypeButton = document.createElement('SPAN');
-
 
       selectTypeButton.innerText = level;
       selectTypeButton.classList.add('ce-settings__button');
@@ -95,13 +95,16 @@ class Header {
       selectTypeButton.addEventListener('click', () => {
         this.settingsButtonClicked(level);
       });
-
     });
 
     return holder;
   }
 
-  settingsButtonClicked(level){
+  /**
+   *
+   * @param level
+   */
+  settingsButtonClicked(level) {
     this.data = {
       level: level
     };
@@ -185,8 +188,9 @@ class Header {
 
     if (data.level !== undefined) {
 
-      if (this._element.parentNode){
+      if (this._element.parentNode) {
         let newHeader = this.getTag();
+
         newHeader.innerHTML = this._element.innerHTML;
         this._element.parentNode.replaceChild(newHeader, this._element);
         this._element = newHeader;
@@ -218,10 +222,12 @@ class Header {
         tag = document.createElement('h2');
     }
 
-    tag.innerHTML = this._data.text;
+    tag.innerHTML = this._data.text || '';
 
     tag.classList.add(this._CSS.wrapper);
     tag.contentEditable = true;
+
+    // todo focus tag
 
     return tag;
   }
