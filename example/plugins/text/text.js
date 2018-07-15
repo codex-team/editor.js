@@ -8,11 +8,7 @@
  * @version 2.0.1
  */
 
-<<<<<<< HEAD
  /**
-=======
-/**
->>>>>>> rewriting-version2.0
   * @typedef {Object} TextData
   * @description Tool's input and output data format
   * @property {String} text — Paragraph's content. Can include HTML tags: <a><b><i>
@@ -147,5 +143,14 @@ class Text {
     this._data = data || {};
 
     this._element.innerHTML = this._data.text || '';
+  }
+
+  /**
+   * Focus element on append
+   */
+  appendCallback() {
+    window.setTimeout(() => {
+      this._element.focus();
+    }, 0);
   }
 }

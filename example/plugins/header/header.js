@@ -223,8 +223,15 @@ class Header {
     tag.classList.add(this._CSS.wrapper);
     tag.contentEditable = true;
 
-    // todo focus tag
-
     return tag;
+  }
+
+  /**
+   * Focus element on append
+   */
+  appendCallback() {
+    window.setTimeout(() => {
+      this._element.focus();
+    }, 0);
   }
 }
