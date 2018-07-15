@@ -45,7 +45,6 @@ class Header {
     this._element = this.drawView();
 
     console.log('this._element', this._element);
-
   }
 
   /**
@@ -187,7 +186,6 @@ class Header {
 
 
     if (data.level !== undefined) {
-
       if (this._element.parentNode) {
         let newHeader = this.getTag();
 
@@ -195,8 +193,6 @@ class Header {
         this._element.parentNode.replaceChild(newHeader, this._element);
         this._element = newHeader;
       }
-
-
     }
 
     if (data.text !== undefined) {
