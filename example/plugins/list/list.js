@@ -2,240 +2,208 @@
  * Code Plugin\
  * Creates code tag and adds content to this tag
  */
-var list = (function(list_plugin) {
-
-    /**
+var list = (function (list_plugin) {
+  /**
     * CSS class names
     */
-    var elementClasses_ = {
-        pluginWrapper: 'cdx-plugin-list',
-        li:            'cdx-plugin-list__li',
-        settings:      'cdx-plugin-list__settings',
-        settingsItem:  'cdx-plugin-settings__item'
-    };
+  var elementClasses_ = {
+    pluginWrapper: 'cdx-plugin-list',
+    li:            'cdx-plugin-list__li',
+    settings:      'cdx-plugin-list__settings',
+    settingsItem:  'cdx-plugin-settings__item'
+  };
 
-    var LIST_ITEM_TAG = 'LI';
+  var LIST_ITEM_TAG = 'LI';
 
-    var ui = {
+  var ui = {
 
-        make: function (blockType) {
+    make: function (blockType) {
+      var wrapper = this.block(blockType || 'UL', elementClasses_.pluginWrapper);
 
-            var wrapper = this.block(blockType || 'UL', elementClasses_.pluginWrapper);
+      wrapper.dataset.type = blockType;
+      wrapper.contentEditable = true;
 
-            wrapper.dataset.type = blockType;
-            wrapper.contentEditable = true;
+      wrapper.addEventListener('keydown', methods_.keyDown);
 
-            wrapper.addEventListener('keydown', methods_.keyDown);
+      return wrapper;
+    },
 
-            return wrapper;
+    block: function (blockType, blockClass) {
+      var block = document.createElement(blockType);
 
+      if (blockClass) block.classList.add(blockClass);
+
+      return block;
+    },
+
+    button: function (buttonType) {
+      var types = {
+          unordered: '<i class="ce-icon-list-bullet"></i>Обычный',
+          ordered: '<i class="ce-icon-list-numbered"></i>Нумерованный'
         },
+        button = document.createElement('DIV');
 
-        block: function (blockType, blockClass) {
+      button.innerHTML = types[buttonType];
 
-            var block = document.createElement(blockType);
+      button.classList.add(elementClasses_.settingsItem);
 
-            if (blockClass) block.classList.add(blockClass);
+      return button;
+    }
+  };
 
-            return block;
+  var methods_ = {
 
-        },
-
-        button: function (buttonType) {
-
-            var types = {
-                    unordered: '<i class="ce-icon-list-bullet"></i>Обычный',
-                    ordered: '<i class="ce-icon-list-numbered"></i>Нумерованный'
-                },
-                button = document.createElement('DIV');
-
-            button.innerHTML = types[buttonType];
-
-            button.classList.add(elementClasses_.settingsItem);
-
-            return button;
-        }
-    };
-
-    var methods_ = {
-
-        /**
+    /**
          * Changes block type => OL or UL
          * @param event
          * @param blockType
          */
-        changeBlockStyle : function (event, blockType) {
+    changeBlockStyle : function (event, blockType) {
+      var currentBlock = codex.editor.content.currentNode,
+        newEditable = ui.make(blockType),
+        oldEditable = currentBlock.querySelector('[contenteditable]');
 
-            var currentBlock = codex.editor.content.currentNode,
-                newEditable = ui.make(blockType),
-                oldEditable = currentBlock.querySelector("[contenteditable]");
+      newEditable.dataset.type = blockType;
+      newEditable.innerHTML = oldEditable.innerHTML;
+      newEditable.classList.add(elementClasses_.pluginWrapper);
 
-            newEditable.dataset.type = blockType;
-            newEditable.innerHTML = oldEditable.innerHTML;
-            newEditable.classList.add(elementClasses_.pluginWrapper);
+      codex.editor.content.switchBlock(currentBlock, newEditable, 'list');
+    },
+    keyDown: function (e) {
+      var controlKeyPressed = e.ctrlKey || e.metaKey,
+        keyCodeForA = 65;
 
-            codex.editor.content.switchBlock(currentBlock, newEditable, 'list');
-        },
-        keyDown: function (e) {
-
-            var controlKeyPressed = e.ctrlKey || e.metaKey,
-                keyCodeForA = 65;
-
-            /**
+      /**
             * If CTRL+A (CMD+A) was pressed, we should select only one list item,
             * not all <OL> or <UI>
             */
-            if (controlKeyPressed && e.keyCode == keyCodeForA) {
-
-                e.preventDefault();
-
-                /**
-                * Select <LI> content
-                */
-                methods_.selectListItem();
-
-            }
-
-        },
+      if (controlKeyPressed && e.keyCode == keyCodeForA) {
+        e.preventDefault();
 
         /**
+                * Select <LI> content
+                */
+        methods_.selectListItem();
+      }
+    },
+
+    /**
         * Select all content of <LI> with caret
         */
-        selectListItem : function () {
+    selectListItem : function () {
+      var selection = window.getSelection(),
+        currentSelectedNode = selection.anchorNode.parentNode,
+        range = new Range();
 
-            var selection = window.getSelection(),
-                currentSelectedNode = selection.anchorNode.parentNode,
-                range = new Range();
-
-            /**
+      /**
             * Search for <LI> element
             */
-            while ( currentSelectedNode && currentSelectedNode.tagName != LIST_ITEM_TAG ) {
+      while ( currentSelectedNode && currentSelectedNode.tagName != LIST_ITEM_TAG ) {
+        currentSelectedNode = currentSelectedNode.parentNode;
+      }
 
-                currentSelectedNode = currentSelectedNode.parentNode;
+      range.selectNodeContents(currentSelectedNode);
 
-            }
-
-            range.selectNodeContents(currentSelectedNode);
-
-            selection.removeAllRanges();
-            selection.addRange(range);
-
-        }
-    };
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  };
 
     /**
      * Method to render HTML block from JSON
      */
-    list_plugin.render = function (data) {
+  list_plugin.render = function (data) {
+    var type = data && (data.type == 'ordered' || data.type == 'OL') ? 'OL' : 'UL',
+      tag  = ui.make(type),
+      newLi;
 
-        var type = data && (data.type == 'ordered' || data.type == 'OL') ? 'OL' : 'UL',
-            tag  = ui.make(type),
-            newLi;
+    if (data && data.items) {
+      data.items.forEach(function (element, index, array) {
+        newLi = ui.block('li', elementClasses_.li);
 
-        if (data && data.items) {
+        newLi.innerHTML = element || '';
 
-            data.items.forEach(function (element, index, array) {
+        tag.appendChild(newLi);
+      });
+    } else {
+      newLi = ui.block('li', elementClasses_.li);
 
-                newLi = ui.block('li', elementClasses_.li);
+      tag.appendChild(newLi);
+    }
 
-                newLi.innerHTML = element || '';
+    return tag;
+  };
 
-                tag.appendChild(newLi);
+  list_plugin.validate = function (data) {
+    var isEmpty = data.items.every(function (item) {
+      return item.trim() === '';
+    });
 
-            });
+    if (isEmpty) {
+      return;
+    }
 
-        } else {
+    if (data.type != 'UL' && data.type != 'OL') {
+      console.warn('CodeX Editor List-tool: wrong list type passed %o', data.type);
+      return;
+    }
 
-            newLi = ui.block('li', elementClasses_.li);
+    return true;
+  };
 
-            tag.appendChild(newLi);
-
-        }
-
-        return tag;
-
-    };
-
-    list_plugin.validate = function(data) {
-
-        var isEmpty = data.items.every(function(item){
-            return item.trim() === '';
-        });
-
-        if (isEmpty){
-            return;
-        }
-
-        if (data.type != 'UL' && data.type != 'OL'){
-            console.warn('CodeX Editor List-tool: wrong list type passed %o', data.type);
-            return;
-        }
-
-        return true;
-    };
-
-    /**
+  /**
      * Method to extract JSON data from HTML block
      */
-    list_plugin.save = function (blockContent){
+  list_plugin.save = function (blockContent) {
+    var data = {
+        type  : null,
+        items : []
+      },
+      litsItemContent = '',
+      isEmptyItem = false;
 
-        var data = {
-            type  : null,
-            items : []
-        },
-        litsItemContent = '',
-        isEmptyItem = false;
+    for (var index = 0; index < blockContent.childNodes.length; index++) {
+      litsItemContent = blockContent.childNodes[index].innerHTML;
+      isEmptyItem = !blockContent.childNodes[index].textContent.trim();
 
-        for (var index = 0; index < blockContent.childNodes.length; index++){
+      if (!isEmptyItem) {
+        data.items.push(litsItemContent);
+      }
+    }
 
-            litsItemContent = blockContent.childNodes[index].innerHTML;
-            isEmptyItem = !blockContent.childNodes[index].textContent.trim();
+    data.type = blockContent.dataset.type;
 
-            if (!isEmptyItem) {
-                data.items.push(litsItemContent);
-            }
-        }
+    return data;
+  };
 
-        data.type = blockContent.dataset.type;
+  list_plugin.makeSettings = function () {
+    var holder  = document.createElement('DIV');
 
-        return data;
+    /** Add holder classname */
+    holder.className = elementClasses_.settings;
 
-    };
+    var orderedButton = ui.button('ordered'),
+      unorderedButton = ui.button('unordered');
 
-    list_plugin.makeSettings = function () {
+    orderedButton.addEventListener('click', function (event) {
+      methods_.changeBlockStyle(event, 'OL');
+      codex.editor.toolbar.settings.close();
+    });
 
-        var holder  = document.createElement('DIV');
+    unorderedButton.addEventListener('click', function (event) {
+      methods_.changeBlockStyle(event, 'UL');
+      codex.editor.toolbar.settings.close();
+    });
 
-        /** Add holder classname */
-        holder.className = elementClasses_.settings;
+    holder.appendChild(orderedButton);
+    holder.appendChild(unorderedButton);
 
-        var orderedButton = ui.button("ordered"),
-            unorderedButton = ui.button("unordered");
+    return holder;
+  };
 
-        orderedButton.addEventListener('click', function (event) {
-            methods_.changeBlockStyle(event, 'OL');
-            codex.editor.toolbar.settings.close();
-        });
+  list_plugin.destroy = function () {
+    list = null;
+  };
 
-        unorderedButton.addEventListener('click', function (event) {
-            methods_.changeBlockStyle(event, 'UL');
-            codex.editor.toolbar.settings.close();
-        });
-
-        holder.appendChild(orderedButton);
-        holder.appendChild(unorderedButton);
-
-        return holder;
-
-    };
-
-    list_plugin.destroy = function () {
-
-        list = null;
-
-    };
-
-    return list_plugin;
-
+  return list_plugin;
 })({});

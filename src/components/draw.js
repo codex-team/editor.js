@@ -6,72 +6,61 @@
  */
 
 export default (function (draw) {
+  draw.ceBlock = function () {
+    var block = document.createElement('DIV');
 
-    draw.ceBlock = function () {
+    block.className += 'ce_block';
 
-        var block = document.createElement('DIV');
+    return block;
+  };
 
-        block.className += 'ce_block';
-
-        return block;
-
-    };
-
-    /**
+  /**
      * Inline toolbar
      */
-    draw.inlineToolbar = function () {
+  draw.inlineToolbar = function () {
+    var bar = document.createElement('DIV');
 
-        var bar = document.createElement('DIV');
+    bar.className += 'ce-toolbar-inline';
 
-        bar.className += 'ce-toolbar-inline';
+    return bar;
+  };
 
-        return bar;
-
-    };
-
-    /**
+  /**
      * Wrapper for inline toobar buttons
      */
-    draw.inlineToolbarButtons = function () {
+  draw.inlineToolbarButtons = function () {
+    var wrapper = document.createElement('DIV');
 
-        var wrapper = document.createElement('DIV');
+    wrapper.className += 'ce-toolbar-inline__buttons';
 
-        wrapper.className += 'ce-toolbar-inline__buttons';
+    return wrapper;
+  };
 
-        return wrapper;
-
-    };
-
-    /**
+  /**
      * For some actions
      */
-    draw.inlineToolbarActions = function () {
+  draw.inlineToolbarActions = function () {
+    var wrapper = document.createElement('DIV');
 
-        var wrapper = document.createElement('DIV');
+    wrapper.className += 'ce-toolbar-inline__actions';
 
-        wrapper.className += 'ce-toolbar-inline__actions';
+    return wrapper;
+  };
 
-        return wrapper;
+  draw.inputForLink = function () {
+    var input = document.createElement('INPUT');
 
-    };
+    input.type        = 'input';
+    input.className  += 'inputForLink';
+    input.placeholder = 'Вставьте ссылку ...';
+    input.setAttribute('form', 'defaultForm');
 
-    draw.inputForLink = function () {
+    input.setAttribute('autofocus', 'autofocus');
 
-        var input = document.createElement('INPUT');
+    return input;
+  };
 
-        input.type        = 'input';
-        input.className  += 'inputForLink';
-        input.placeholder = 'Вставьте ссылку ...';
-        input.setAttribute('form', 'defaultForm');
-
-        input.setAttribute('autofocus', 'autofocus');
-
-        return input;
-
-    };
-
-    /**
+  /**
      * @protected
      *
      * Draws tool buttons for toolbox
@@ -80,27 +69,25 @@ export default (function (draw) {
      * @param {String} classname
      * @returns {Element}
      */
-    draw.toolbarButton = function (type, classname) {
+  draw.toolbarButton = function (type, classname) {
+    var button     = document.createElement('li'),
+      toolIcon  = document.createElement('i'),
+      toolTitle = document.createElement('span');
 
-        var button     = document.createElement('li'),
-            toolIcon  = document.createElement('i'),
-            toolTitle = document.createElement('span');
+    button.dataset.type = type;
+    button.setAttribute('title', type);
 
-        button.dataset.type = type;
-        button.setAttribute('title', type);
-
-        toolIcon.classList.add(classname);
-        toolTitle.classList.add('ce_toolbar_tools--title');
+    toolIcon.classList.add(classname);
+    toolTitle.classList.add('ce_toolbar_tools--title');
 
 
-        button.appendChild(toolIcon);
-        button.appendChild(toolTitle);
+    button.appendChild(toolIcon);
+    button.appendChild(toolTitle);
 
-        return button;
+    return button;
+  };
 
-    };
-
-    /**
+  /**
      * @protected
      *
      * Draws tools for inline toolbar
@@ -108,73 +95,60 @@ export default (function (draw) {
      * @param {String} type
      * @param {String} classname
      */
-    draw.toolbarButtonInline = function (type, classname) {
+  draw.toolbarButtonInline = function (type, classname) {
+    var button     = document.createElement('BUTTON'),
+      toolIcon  = document.createElement('I');
 
-        var button     = document.createElement('BUTTON'),
-            toolIcon  = document.createElement('I');
+    button.type = 'button';
+    button.dataset.type = type;
+    toolIcon.classList.add(classname);
 
-        button.type = 'button';
-        button.dataset.type = type;
-        toolIcon.classList.add(classname);
+    button.appendChild(toolIcon);
 
-        button.appendChild(toolIcon);
+    return button;
+  };
 
-        return button;
-
-    };
-
-    /**
+  /**
      * Redactor block
      */
-    draw.block = function (tagName, content) {
+  draw.block = function (tagName, content) {
+    var node = document.createElement(tagName);
 
-        var node = document.createElement(tagName);
+    node.innerHTML = content || '';
 
-        node.innerHTML = content || '';
+    return node;
+  };
 
-        return node;
-
-    };
-
-    /**
+  /**
      * Creates Node with passed tagName and className
      * @param {string}  tagName
      * @param {string} className
      * @param {object} properties - allow to assign properties
      */
-    draw.node = function ( tagName, className, properties ) {
+  draw.node = function ( tagName, className, properties ) {
+    var el = document.createElement( tagName );
 
-        var el = document.createElement( tagName );
+    if ( className ) el.className = className;
 
-        if ( className ) el.className = className;
+    if ( properties ) {
+      for (var name in properties) {
+        el[name] = properties[name];
+      }
+    }
 
-        if ( properties ) {
+    return el;
+  };
 
-            for (var name in properties) {
-
-                el[name] = properties[name];
-
-            }
-
-        }
-
-        return el;
-
-    };
-
-    /**
+  /**
     * Unavailable plugin block
     */
-    draw.unavailableBlock = function () {
+  draw.unavailableBlock = function () {
+    var wrapper = document.createElement('DIV');
 
-        var wrapper = document.createElement('DIV');
+    wrapper.classList.add('cdx-unavailable-block');
 
-        wrapper.classList.add('cdx-unavailable-block');
+    return wrapper;
+  };
 
-        return wrapper;
-
-    };
-
-    return draw;
-
+  return draw;
 })({});

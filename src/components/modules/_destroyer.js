@@ -6,49 +6,34 @@
  */
 
 module.exports = function (destroyer) {
+  let editor = codex.editor;
 
-    let editor = codex.editor;
+  destroyer.removeNodes = function () {
+    editor.nodes.wrapper.remove();
+    editor.nodes.notifications.remove();
+  };
 
-    destroyer.removeNodes = function () {
+  destroyer.destroyPlugins = function () {
+    for (var tool in editor.tools) {
+      if (typeof editor.tools[tool].destroy === 'function') {
+        editor.tools[tool].destroy();
+      }
+    }
+  };
 
-        editor.nodes.wrapper.remove();
-        editor.nodes.notifications.remove();
+  destroyer.destroyScripts = function () {
+    var scripts = document.getElementsByTagName('SCRIPT');
 
-    };
-
-    destroyer.destroyPlugins = function () {
-
-        for (var tool in editor.tools) {
-
-            if (typeof editor.tools[tool].destroy === 'function') {
-
-                editor.tools[tool].destroy();
-
-            }
-
-        }
-
-    };
-
-    destroyer.destroyScripts = function () {
-
-        var scripts = document.getElementsByTagName('SCRIPT');
-
-        for (var i = 0; i < scripts.length; i++) {
-
-            if (scripts[i].id.indexOf(editor.scriptPrefix) + 1) {
-
-                scripts[i].remove();
-                i--;
-
-            }
-
-        }
-
-    };
+    for (var i = 0; i < scripts.length; i++) {
+      if (scripts[i].id.indexOf(editor.scriptPrefix) + 1) {
+        scripts[i].remove();
+        i--;
+      }
+    }
+  };
 
 
-    /**
+  /**
      * Delete editor data from webpage.
      * You should send settings argument with boolean flags:
      * @param settings.ui- remove redactor event listeners and DOM nodes
@@ -58,41 +43,28 @@ module.exports = function (destroyer) {
      * }
      *
      */
-    destroyer.destroy = function (settings) {
+  destroyer.destroy = function (settings) {
+    if (!settings || typeof settings !== 'object') {
+      return;
+    }
 
-        if (!settings || typeof settings !== 'object') {
+    if (settings.ui) {
+      destroyer.removeNodes();
+      editor.listeners.removeAll();
+    }
 
-            return;
+    if (settings.scripts) {
+      destroyer.destroyScripts();
+    }
 
-        }
+    if (settings.plugins) {
+      destroyer.destroyPlugins();
+    }
 
-        if (settings.ui) {
+    if (settings.ui && settings.scripts && settings.core) {
+      delete codex.editor;
+    }
+  };
 
-            destroyer.removeNodes();
-            editor.listeners.removeAll();
-
-        }
-
-        if (settings.scripts) {
-
-            destroyer.destroyScripts();
-
-        }
-
-        if (settings.plugins) {
-
-            destroyer.destroyPlugins();
-
-        }
-
-        if (settings.ui && settings.scripts && settings.core) {
-
-            delete codex.editor;
-
-        }
-
-    };
-
-    return destroyer;
-
+  return destroyer;
 }({});

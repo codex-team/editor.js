@@ -3,49 +3,37 @@
 * Implements RAW-data block
 */
 var rawPlugin = function (plugin) {
+  var editor = codex.editor;
 
-    var editor = codex.editor;
+  plugin.render = function (data) {
+    var input   = editor.draw.node('TEXTAREA', 'raw-plugin__input', {});
 
-    plugin.render = function (data) {
+    input.placeholder = 'Вставьте HTML код';
 
-        var input   = editor.draw.node('TEXTAREA', 'raw-plugin__input', {});
+    if (data && data.raw) {
+      input.value = data.raw;
+    }
 
-        input.placeholder = 'Вставьте HTML код';
+    return input;
+  };
 
-        if (data && data.raw) {
-            input.value = data.raw;
-        }
-
-        return input;
-
+  plugin.save = function (block) {
+    return {
+      raw: block.value
     };
+  };
 
-    plugin.save = function (block) {
+  plugin.validate = function (data) {
+    if (data.raw.trim() === '') {
+      return;
+    }
 
-        return {
-            raw: block.value
-        };
+    return true;
+  };
 
-    };
+  plugin.destroy = function () {
+    rawPlugin = null;
+  };
 
-    plugin.validate = function (data) {
-
-        if (data.raw.trim() === '') {
-
-            return;
-
-        }
-
-        return true;
-
-    };
-
-    plugin.destroy = function () {
-
-        rawPlugin = null;
-
-    };
-
-    return plugin;
-
+  return plugin;
 }({});
