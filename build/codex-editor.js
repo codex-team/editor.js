@@ -22307,7 +22307,7 @@ var UI = function (_Module) {
 
       /**
            *
-           /** Update current input index in memory when caret focused into existed input */
+            /** Update current input index in memory when caret focused into existed input */
       // if (event.target.contentEditable == 'true') {
       //
       //     editor.caret.saveCurrentInputIndex();

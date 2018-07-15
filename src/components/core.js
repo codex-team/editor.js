@@ -5,79 +5,69 @@
  * @version 2.0.0
  */
 export default class Core {
-
-    /**
+  /**
      * Module key name
      * @returns {string}
      */
-    static get name() {
+  static get name() {
+    return 'core';
+  };
 
-        return 'core';
+  /** Editor script prefixes */
+  static get scriptPrefix() {
+    return 'cdx-script-';
+  }
 
-    };
-
-    /** Editor script prefixes */
-    static get scriptPrefix() {
-
-        return 'cdx-script-';
-
-    }
-
-    /**
+  /**
      *
      * @param Editor
      * @param Editor.modules {@link Tools#list}
      * @param Editor.config {@link CodexEditor#configuration}
      */
-    constructor(config) {
+  constructor(config) {
+    // this.Editor.modules.toolbar;
 
-        // this.Editor.modules.toolbar;
+    this.Editor = null;
 
-        this.Editor = null;
-
-        // console.log(this.Editor);
+    // console.log(this.Editor);
 
 
-        // this.toolbar = modules.toolbar;
+    // this.toolbar = modules.toolbar;
 
-        // this.sanitizer = null;
-        // this.state = {};
+    // this.sanitizer = null;
+    // this.state = {};
+  }
 
-    }
-
-    /**
+  /**
      * @param Editor
      * @param Editor.modules {@link CodexEditor#moduleInstances}
      * @param Editor.config {@link CodexEditor#configuration}
      * @param Editor
      */
-    set state(Editor) {
+  set state(Editor) {
+    this.Editor = Editor;
+  }
 
-        this.Editor = Editor;
-
-    }
-
-    /**
+  /**
      * @public
      *
      * Editor preparing method
      * @return Promise
      */
-    prepare() {
+  prepare() {
+    // let self = this;
 
-        // let self = this;
+    console.log('Core prepare fired');
 
-        console.log('Core prepare fired');
-
-        /**
+    /**
          * Обращение к другому модулю
          */
-        console.log(this.Editor.ui.wrapper);
+    console.log(this.Editor.ui.wrapper);
 
 
-        return;
+    return;
 
-        /**
+    /**
 
         return new Promise(function (resolve, reject) {
 
@@ -96,149 +86,107 @@ export default class Core {
         });
 
          */
+  }
 
-    }
 
-
-    /**
+  /**
      * Native Ajax
      * @param {String}   settings.url         - request URL
      * @param {function} settings.beforeSend  - returned value will be passed as context to the Success, Error and Progress callbacks
      * @param {function} settings.success
      * @param {function} settings.progress
      */
-    ajax(settings) {
+  ajax(settings) {
+    if (!settings || !settings.url) {
+      return;
+    }
 
-        if (!settings || !settings.url) {
-
-            return;
-
-        }
-
-        var XMLHTTP = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
-            encodedString,
-            isFormData,
-            prop;
+    var XMLHTTP = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP'),
+      encodedString,
+      isFormData,
+      prop;
 
 
-        settings.async           = true;
-        settings.type            = settings.type || 'GET';
-        settings.data            = settings.data || '';
-        settings['content-type'] = settings['content-type'] || 'application/json; charset=utf-8';
+    settings.async           = true;
+    settings.type            = settings.type || 'GET';
+    settings.data            = settings.data || '';
+    settings['content-type'] = settings['content-type'] || 'application/json; charset=utf-8';
 
-        if (settings.type == 'GET' && settings.data) {
+    if (settings.type == 'GET' && settings.data) {
+      settings.url = /\?/.test(settings.url) ? settings.url + '&' + settings.data : settings.url + '?' + settings.data;
+    } else {
+      encodedString = '';
+      for(prop in settings.data) {
+        encodedString += (prop + '=' + encodeURIComponent(settings.data[prop]) + '&');
+      }
+    }
 
-            settings.url = /\?/.test(settings.url) ? settings.url + '&' + settings.data : settings.url + '?' + settings.data;
+    if (settings.withCredentials) {
+      XMLHTTP.withCredentials = true;
+    }
 
-        } else {
-
-            encodedString = '';
-            for(prop in settings.data) {
-
-                encodedString += (prop + '=' + encodeURIComponent(settings.data[prop]) + '&');
-
-            }
-
-        }
-
-        if (settings.withCredentials) {
-
-            XMLHTTP.withCredentials = true;
-
-        }
-
-        /**
+    /**
          * Value returned in beforeSend funtion will be passed as context to the other response callbacks
          * If beforeSend returns false, AJAX will be blocked
          */
-        let responseContext,
-            beforeSendResult;
+    let responseContext,
+      beforeSendResult;
 
-        if (typeof settings.beforeSend === 'function') {
+    if (typeof settings.beforeSend === 'function') {
+      beforeSendResult = settings.beforeSend.call();
 
-            beforeSendResult = settings.beforeSend.call();
-
-            if (beforeSendResult === false) {
-
-                return;
-
-            }
-
-        }
-
-        XMLHTTP.open( settings.type, settings.url, settings.async );
-
-        /**
-         * If we send FormData, we need no content-type header
-         */
-        isFormData = isFormData_(settings.data);
-
-        if (!isFormData) {
-
-            if (settings.type !== 'POST') {
-
-                XMLHTTP.setRequestHeader('Content-type', settings['content-type']);
-
-            } else {
-
-                XMLHTTP.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-
-            }
-
-        }
-
-        XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-
-        responseContext = beforeSendResult || XMLHTTP;
-
-        if (typeof settings.progress === 'function') {
-
-            XMLHTTP.upload.onprogress = settings.progress.bind(responseContext);
-
-        }
-
-        XMLHTTP.onreadystatechange = function () {
-
-            if (XMLHTTP.readyState === 4) {
-
-                if (XMLHTTP.status === 200) {
-
-                    if (typeof settings.success === 'function') {
-
-                        settings.success.call(responseContext, XMLHTTP.responseText);
-
-                    }
-
-                } else {
-
-                    if (typeof settings.error === 'function') {
-
-                        settings.error.call(responseContext, XMLHTTP.responseText, XMLHTTP.status);
-
-                    }
-
-                }
-
-            }
-
-        };
-
-        if (isFormData) {
-
-            // Sending FormData
-            XMLHTTP.send(settings.data);
-
-        } else {
-
-            // POST requests
-            XMLHTTP.send(encodedString);
-
-        }
-
-        return XMLHTTP;
-
+      if (beforeSendResult === false) {
+        return;
+      }
     }
 
+    XMLHTTP.open( settings.type, settings.url, settings.async );
+
+    /**
+         * If we send FormData, we need no content-type header
+         */
+    isFormData = isFormData_(settings.data);
+
+    if (!isFormData) {
+      if (settings.type !== 'POST') {
+        XMLHTTP.setRequestHeader('Content-type', settings['content-type']);
+      } else {
+        XMLHTTP.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+      }
+    }
+
+    XMLHTTP.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+    responseContext = beforeSendResult || XMLHTTP;
+
+    if (typeof settings.progress === 'function') {
+      XMLHTTP.upload.onprogress = settings.progress.bind(responseContext);
+    }
+
+    XMLHTTP.onreadystatechange = function () {
+      if (XMLHTTP.readyState === 4) {
+        if (XMLHTTP.status === 200) {
+          if (typeof settings.success === 'function') {
+            settings.success.call(responseContext, XMLHTTP.responseText);
+          }
+        } else {
+          if (typeof settings.error === 'function') {
+            settings.error.call(responseContext, XMLHTTP.responseText, XMLHTTP.status);
+          }
+        }
+      }
+    };
+
+    if (isFormData) {
+      // Sending FormData
+      XMLHTTP.send(settings.data);
+    } else {
+      // POST requests
+      XMLHTTP.send(encodedString);
+    }
+
+    return XMLHTTP;
+  }
 };
 // module.exports = (function (core) {
 //
