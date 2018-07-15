@@ -4,7 +4,7 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import IBlockTune from './block-tune';
+import IBlockTune from '../interfaces/block-tune';
 
 declare var $: any;
 declare var _: any;
@@ -65,7 +65,7 @@ export default class DeleteTune implements IBlockTune {
   public render() {
     this.nodes.button = $.make('div', [this.CSS.button, this.CSS.buttonDelete], {});
     this.nodes.button.appendChild($.svg('cross', 12, 12));
-    this.nodes.button.addEventListener('click', (event) => this.handleClick(event), false);
+    this.api.listener.on(this.nodes.button, 'click', (event) => this.handleClick(event), false);
     return this.nodes.button;
   }
 
