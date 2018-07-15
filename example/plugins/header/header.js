@@ -49,7 +49,7 @@ class Header {
 
   /**
    * Create Tool's view
-   * @return {HTMLElement}
+   * @return {HTMLHeadingElement}
    * @private
    */
   drawView() {
@@ -60,7 +60,7 @@ class Header {
 
   /**
    * Return Tool's view
-   * @returns {HTMLDivElement}
+   * @returns {HTMLHeadingElement}
    * @public
    */
   render() {
@@ -68,7 +68,7 @@ class Header {
   }
 
   /**
-   *
+   * Available header levels
    * @return {number[]}
    */
   get levels() {
@@ -76,18 +76,20 @@ class Header {
   }
 
   /**
+   * Create Block's settings block
    *
-   * @return {HTMLElement}
+   * @return {HTMLDivElement}
    */
   makeSettings() {
     let holder = document.createElement('DIV'),
       selectTypeButton;
 
-    /** Now add type selectors */
+    /** Add type selectors */
     this.levels.forEach( level => {
       selectTypeButton = document.createElement('SPAN');
 
-      selectTypeButton.innerText = level;
+      selectTypeButton.innerText = level; /** @todo add svg image for button */
+
       selectTypeButton.classList.add('ce-settings__button');
       holder.appendChild(selectTypeButton);
 
@@ -100,13 +102,22 @@ class Header {
   }
 
   /**
-   *
+   * Callback for Block's settings buttons
    * @param level
    */
   settingsButtonClicked(level) {
     this.data = {
       level: level
     };
+  }
+
+  /**
+   * Focus element on append
+   */
+  appendCallback() {
+    window.setTimeout(() => {
+      this._element.focus();
+    }, 0);
   }
 
   /**
@@ -141,7 +152,7 @@ class Header {
 
   /**
    * Extract Tool's data from the view
-   * @param {HTMLDivElement} toolsContent - Text tools rendered view
+   * @param {HTMLHeadingElement} toolsContent - Text tools rendered view
    * @returns {TextData} - saved data
    * @public
    */
@@ -184,17 +195,38 @@ class Header {
   set data(data) {
     this._data = data || {};
 
+    /**
+     * If level is set and block in DOM
+     * then replace it to a new block
+     */
+    if (data.level !== undefined && this._element.parentNode) {
+      /**
+       * Create a new tag
+       * @type {HTMLHeadingElement}
+       */
+      let newHeader = this.getTag();
 
-    if (data.level !== undefined) {
-      if (this._element.parentNode) {
-        let newHeader = this.getTag();
+      /**
+       * Save Block's content
+       */
+      newHeader.innerHTML = this._element.innerHTML;
 
-        newHeader.innerHTML = this._element.innerHTML;
-        this._element.parentNode.replaceChild(newHeader, this._element);
-        this._element = newHeader;
-      }
+      /**
+       * Replace blocks
+       */
+      this._element.parentNode.replaceChild(newHeader, this._element);
+
+      /**
+       * Save new block to private variable
+       * @type {HTMLHeadingElement}
+       * @private
+       */
+      this._element = newHeader;
     }
 
+    /**
+     * If passed data.text is not empty then update block's content
+     */
     if (data.text !== undefined) {
       this._element.innerHTML = this._data.text || '';
     }
@@ -202,11 +234,16 @@ class Header {
 
   /**
    * Get tag for target level
+   * By default returns second-leveled header
    * @return {HTMLHeadingElement}
    */
   getTag() {
     let tag;
 
+    /**
+     * Create element for current Block's level
+     * @todo get available levels from this.levels
+     */
     switch (this._data.level) {
       case 3:
         tag = document.createElement('h3');
@@ -218,20 +255,21 @@ class Header {
         tag = document.createElement('h2');
     }
 
+    /**
+     * Add text to block
+     */
     tag.innerHTML = this._data.text || '';
 
+    /**
+     * Add styles class
+     */
     tag.classList.add(this._CSS.wrapper);
-    tag.contentEditable = true;
+
+    /**
+     * Make tag editable
+     */
+    tag.contentEditable = 'true';
 
     return tag;
-  }
-
-  /**
-   * Focus element on append
-   */
-  appendCallback() {
-    window.setTimeout(() => {
-      this._element.focus();
-    }, 0);
   }
 }
