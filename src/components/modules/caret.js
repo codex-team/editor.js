@@ -25,9 +25,9 @@ export default class Caret extends Module {
   /**
    * Elements styles that can be useful for Caret Module
    */
-  static get extraElements() {
+  static get CSS() {
     return {
-      shadowSpan: 'shadow-span'
+      shadowCaret: 'cdx-shadow-caret'
     };
   };
 
@@ -323,10 +323,10 @@ export default class Caret extends Module {
    * @param {Node} element
    */
   createShadow(element) {
-    let shadowSpan = document.createElement('span');
+    let shadowCaret = document.createElement('span');
 
-    shadowSpan.classList.add(Caret.extraElements.shadowSpan);
-    element.insertAdjacentElement('beforeEnd', shadowSpan);
+    shadowCaret.classList.add(Caret.CSS.shadowCaret);
+    element.insertAdjacentElement('beforeEnd', shadowCaret);
   }
 
   /**
@@ -334,33 +334,29 @@ export default class Caret extends Module {
    * @param {Node} element
    */
   restoreCaret(element) {
-    let shadowSpan = element.querySelector(`.${Caret.extraElements.shadowSpan}`);
+    let shadowCaret = element.querySelector(`.${Caret.CSS.shadowCaret}`);
 
-    if (!shadowSpan) {
+    if (!shadowCaret) {
       return;
     }
 
     /**
-     * First we create new range with "shadow-caret" and set caret
-     */
-    let rangeToSet = document.createRange(),
-      selection = Selection.get();
-
-    rangeToSet.setStart(shadowSpan, 0);
-    rangeToSet.setEnd(shadowSpan, 0);
-
-    selection.removeAllRanges();
-    selection.addRange(rangeToSet);
-
-    /**
      * After we set the caret to the required place
-     * we need to clear shadowed span
+     * we need to clear shadow caret
      *
-     * For that we make new range and select shadowed span with outer HTML and then use extract to remove from DOM
+     * - make new range
+     * - select shadowed span
+     * - use extractContent to remove it from DOM
      */
-    let newRange = document.createRange();
+    let sel = new Selection();
 
-    newRange.selectNode(shadowSpan);
-    newRange.extractContents();
+    sel.expandToTag(shadowCaret);
+
+    setTimeout(() => {
+      let newRange = document.createRange();
+
+      newRange.selectNode(shadowCaret);
+      newRange.extractContents();
+    }, 50);
   }
 }

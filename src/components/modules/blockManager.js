@@ -8,7 +8,6 @@
  */
 
 import Block from '../block';
-import Selection from '../selection';
 
 /**
  * @typedef {BlockManager} BlockManager

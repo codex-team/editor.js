@@ -150,7 +150,7 @@ export default class BlockEvents extends Module {
         /** Restore caret position after merge */
         this.Editor.Caret.restoreCaret(targetBlock.pluginsContent);
         targetBlock.pluginsContent.normalize();
-          this.Editor.Toolbar.close();
+        this.Editor.Toolbar.close();
       });
   }
 

@@ -3608,10 +3608,6 @@ var _block = __webpack_require__(/*! ../block */ "./src/components/block.js");
 
 var _block2 = _interopRequireDefault(_block);
 
-var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
-
-var _selection2 = _interopRequireDefault(_selection);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4635,10 +4631,10 @@ var Caret = function (_Module) {
      * @param {Node} element
      */
     value: function createShadow(element) {
-      var shadowSpan = document.createElement('span');
+      var shadowCaret = document.createElement('span');
 
-      shadowSpan.classList.add(Caret.extraElements.shadowSpan);
-      element.insertAdjacentElement('beforeEnd', shadowSpan);
+      shadowCaret.classList.add(Caret.CSS.shadowCaret);
+      element.insertAdjacentElement('beforeEnd', shadowCaret);
     }
 
     /**
@@ -4649,34 +4645,30 @@ var Caret = function (_Module) {
   }, {
     key: 'restoreCaret',
     value: function restoreCaret(element) {
-      var shadowSpan = element.querySelector('.' + Caret.extraElements.shadowSpan);
+      var shadowCaret = element.querySelector('.' + Caret.CSS.shadowCaret);
 
-      if (!shadowSpan) {
+      if (!shadowCaret) {
         return;
       }
 
       /**
-       * First we create new range with "shadow-caret" and set caret
-       */
-      var rangeToSet = document.createRange(),
-          selection = _selection2.default.get();
-
-      rangeToSet.setStart(shadowSpan, 0);
-      rangeToSet.setEnd(shadowSpan, 0);
-
-      selection.removeAllRanges();
-      selection.addRange(rangeToSet);
-
-      /**
        * After we set the caret to the required place
-       * we need to clear shadowed span
+       * we need to clear shadow caret
        *
-       * For that we make new range and select shadowed span with outer HTML and then use extract to remove from DOM
+       * - make new range
+       * - select shadowed span
+       * - use extractContent to remove it from DOM
        */
-      var newRange = document.createRange();
+      var sel = new _selection2.default();
 
-      newRange.selectNode(shadowSpan);
-      newRange.extractContents();
+      sel.expandToTag(shadowCaret);
+
+      setTimeout(function () {
+        var newRange = document.createRange();
+
+        newRange.selectNode(shadowCaret);
+        newRange.extractContents();
+      }, 50);
     }
   }, {
     key: 'isAtStart',
@@ -4781,10 +4773,10 @@ var Caret = function (_Module) {
       return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
     }
   }], [{
-    key: 'extraElements',
+    key: 'CSS',
     get: function get() {
       return {
-        shadowSpan: 'shadow-span'
+        shadowCaret: 'cdx-shadow-caret'
       };
     }
   }]);
