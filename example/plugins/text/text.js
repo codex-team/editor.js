@@ -20,7 +20,7 @@ class Text {
    * @public
    */
   static get displayInToolbox() {
-    return true;
+    return false;
   }
 
   /**
