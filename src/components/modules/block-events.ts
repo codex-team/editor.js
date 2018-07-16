@@ -144,16 +144,13 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const setCaretToTheEnd = !targetBlock.isEmpty;
-
+    this.Editor.Caret.createShadow(targetBlock.pluginsContent);
     BM.mergeBlocks(targetBlock, blockToMerge)
       .then( () => {
-        // @todo figure out without timeout
-        window.setTimeout( () => {
-          // set caret to the block without offset at the end
-          this.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
-          this.Editor.Toolbar.close();
-        }, 10);
+        /** Restore caret position after merge */
+        this.Editor.Caret.restoreCaret(targetBlock.pluginsContent);
+        targetBlock.pluginsContent.normalize();
+        this.Editor.Toolbar.close();
       });
   }
 
