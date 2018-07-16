@@ -1,3 +1,5 @@
+import IEditorConfig from './interfaces/editor-config';
+
 /**
  * @abstract
  * @class      Module
@@ -17,16 +19,13 @@ export default class Module {
 
   /**
    * Editor configuration object
-   * @type {EditorConfig}
    */
-  protected config: any = {};
+  protected config: IEditorConfig = {};
 
   /**
    * @constructor
-   *
-   * @param {EditorConfig} config
    */
-  constructor({config}) {
+  constructor({config}: IEditorConfig) {
 
     if (new.target === Module) {
       throw new TypeError('Constructors for abstract class Module are not allowed.');
