@@ -25,6 +25,7 @@ export default class MoveUpTune implements IBlockTune {
     button: 'ce-settings__button',
     btnDisabled: 'ce-settings__button--disabled',
     wrapper: 'ce-tune-move-up',
+    animation: 'wobble',
   };
 
   /**
@@ -43,24 +44,27 @@ export default class MoveUpTune implements IBlockTune {
   public render() {
     const moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveUpButton.appendChild($.svg('arrow-up', 14, 14));
-    if (this.api.blocks.getCurrentBlockIndex() === 0) {
-      moveUpButton.classList.add(this.CSS.btnDisabled);
-    } else {
-      this.api.listener.on(moveUpButton, 'click', (event) => this.handleClick(event), false);
-    }
-
+    this.api.listener.on(moveUpButton, 'click', (event) => this.handleClick(event, moveUpButton), false);
     return moveUpButton;
   }
 
   /**
    * Move current block up
    * @param {MouseEvent} event
+   * @param {HTMLElement} button
    */
-  public handleClick(event: MouseEvent): void {
+  public handleClick(event: MouseEvent, button: HTMLElement): void {
 
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
 
     if (currentBlockIndex === 0) {
+      button.classList.add(this.CSS.animation);
+      button.classList.add(this.CSS.btnDisabled);
+
+      window.setTimeout( () => {
+        button.classList.remove(this.CSS.animation);
+        button.classList.remove(this.CSS.btnDisabled);
+      }, 500);
       return;
     }
 

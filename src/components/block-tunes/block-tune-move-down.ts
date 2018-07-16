@@ -24,6 +24,7 @@ export default class MoveDownTune implements IBlockTune {
     button: 'ce-settings__button',
     btnDisabled: 'ce-settings__button--disabled',
     wrapper: 'ce-tune-move-down',
+    animation: 'wobble',
   };
 
   /**
@@ -41,26 +42,28 @@ export default class MoveDownTune implements IBlockTune {
   public render() {
     const moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveDownButton.appendChild($.svg('arrow-down', 14, 14));
-
-    if (this.api.blocks.getCurrentBlockIndex() === this.api.blocks.getBlocksCount() - 1) {
-      moveDownButton.classList.add(this.CSS.btnDisabled);
-    } else {
-      this.api.listener.on(moveDownButton, 'click', (event) => this.handleClick(event), false);
-    }
-
+    this.api.listener.on(moveDownButton, 'click', (event) => this.handleClick(event, moveDownButton), false);
     return moveDownButton;
   }
 
   /**
    * Handle clicks on 'move down' button
    * @param {MouseEvent} event
+   * @param {HTMLElement} button
    */
-  public handleClick(event: MouseEvent) {
+  public handleClick(event: MouseEvent, button: HTMLElement) {
 
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
 
     // If Block is last do nothing
     if (currentBlockIndex === this.api.blocks.getBlocksCount() - 1) {
+      button.classList.add(this.CSS.animation);
+      button.classList.add(this.CSS.btnDisabled);
+
+      window.setTimeout( () => {
+        button.classList.remove(this.CSS.animation);
+        button.classList.remove(this.CSS.btnDisabled);
+      }, 500);
       return;
     }
 

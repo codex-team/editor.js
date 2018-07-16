@@ -1,3 +1,8 @@
+.wobble {
+  animation-name: wobble;
+  animation-duration: 400ms;
+}
+
 /**
  * @author Nick Pettit - https://github.com/nickpettit/glide
  */
