@@ -23,6 +23,15 @@ export default class Caret extends Module {
   }
 
   /**
+   * Elements styles that can be useful for Caret Module
+   */
+  static get extraElements() {
+    return {
+      shadowSpan: 'shadow-span'
+    };
+  };
+
+  /**
    * Method gets Block instance and puts caret to the text node with offset
    * There two ways that method applies caret position:
    *   - first found text node: sets at the beginning, but you can pass an offset
@@ -307,5 +316,51 @@ export default class Caret extends Module {
      * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
      */
     return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
+  }
+
+  /**
+   * Inserts shadow element after passed element where caret can be placed
+   * @param {Node} element
+   */
+  createShadow(element) {
+    let shadowSpan = document.createElement('span');
+
+    shadowSpan.classList.add(Caret.extraElements.shadowSpan);
+    element.insertAdjacentElement('beforeEnd', shadowSpan);
+  }
+
+  /**
+   * Restores caret position
+   * @param {Node} element
+   */
+  restoreCaret(element) {
+    let shadowSpan = element.querySelector(`.${Caret.extraElements.shadowSpan}`);
+
+    if (!shadowSpan) {
+      return;
+    }
+
+    /**
+     * First we create new range with "shadow-caret" and set caret
+     */
+    let rangeToSet = document.createRange(),
+      selection = Selection.get();
+
+    rangeToSet.setStart(shadowSpan, 0);
+    rangeToSet.setEnd(shadowSpan, 0);
+
+    selection.removeAllRanges();
+    selection.addRange(rangeToSet);
+
+    /**
+     * After we set the caret to the required place
+     * we need to clear shadowed span
+     *
+     * For that we make new range and select shadowed span with outer HTML and then use extract to remove from DOM
+     */
+    let newRange = document.createRange();
+
+    newRange.selectNode(shadowSpan);
+    newRange.extractContents();
   }
 }

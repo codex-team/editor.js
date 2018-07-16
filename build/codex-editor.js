@@ -3548,7 +3548,11 @@ var BlockEvents = function (_Module) {
                 }
                 return;
             }
+            this.Editor.Caret.createShadow(targetBlock.pluginsContent);
             BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
+                /** Restore caret position after merge */
+                _this2.Editor.Caret.restoreCaret(targetBlock.pluginsContent);
+                targetBlock.pluginsContent.normalize();
                 _this2.Editor.Toolbar.close();
             });
         }
@@ -3791,16 +3795,11 @@ var BlockManager = function (_Module) {
         }
 
         return blockToMerge.data.then(function (blockToMergeInfo) {
-          _selection2.default.shadowCaret(targetBlock.pluginsContent);
           targetBlock.mergeWith(blockToMergeInfo.data);
         });
       }).then(function () {
         _this4.removeBlock(blockToMergeIndex);
         _this4.currentBlockIndex = _this4._blocks.indexOf(targetBlock);
-
-        /** Restore caret position after merge */
-        _selection2.default.restoreCaret(targetBlock.pluginsContent);
-        targetBlock.pluginsContent.normalize();
       });
     }
 
@@ -4397,19 +4396,24 @@ var Caret = function (_Module) {
   }
 
   /**
-   * Method gets Block instance and puts caret to the text node with offset
-   * There two ways that method applies caret position:
-   *   - first found text node: sets at the beginning, but you can pass an offset
-   *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
-   *
-   * @param {Block} block - Block class
-   * @param {Number} offset - caret offset regarding to the text node
-   * @param {Boolean} atEnd - put caret at the end of the text node or not
+   * Elements styles that can be useful for Caret Module
    */
 
 
   _createClass(Caret, [{
     key: 'setToBlock',
+
+
+    /**
+     * Method gets Block instance and puts caret to the text node with offset
+     * There two ways that method applies caret position:
+     *   - first found text node: sets at the beginning, but you can pass an offset
+     *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
+     *
+     * @param {Block} block - Block class
+     * @param {Number} offset - caret offset regarding to the text node
+     * @param {Boolean} atEnd - put caret at the end of the text node or not
+     */
     value: function setToBlock(block) {
       var _this2 = this;
 
@@ -4623,6 +4627,58 @@ var Caret = function (_Module) {
      */
 
   }, {
+    key: 'createShadow',
+
+
+    /**
+     * Inserts shadow element after passed element where caret can be placed
+     * @param {Node} element
+     */
+    value: function createShadow(element) {
+      var shadowSpan = document.createElement('span');
+
+      shadowSpan.classList.add(Caret.extraElements.shadowSpan);
+      element.insertAdjacentElement('beforeEnd', shadowSpan);
+    }
+
+    /**
+     * Restores caret position
+     * @param {Node} element
+     */
+
+  }, {
+    key: 'restoreCaret',
+    value: function restoreCaret(element) {
+      var shadowSpan = element.querySelector('.' + Caret.extraElements.shadowSpan);
+
+      if (!shadowSpan) {
+        return;
+      }
+
+      /**
+       * First we create new range with "shadow-caret" and set caret
+       */
+      var rangeToSet = document.createRange(),
+          selection = _selection2.default.get();
+
+      rangeToSet.setStart(shadowSpan, 0);
+      rangeToSet.setEnd(shadowSpan, 0);
+
+      selection.removeAllRanges();
+      selection.addRange(rangeToSet);
+
+      /**
+       * After we set the caret to the required place
+       * we need to clear shadowed span
+       *
+       * For that we make new range and select shadowed span with outer HTML and then use extract to remove from DOM
+       */
+      var newRange = document.createRange();
+
+      newRange.selectNode(shadowSpan);
+      newRange.extractContents();
+    }
+  }, {
     key: 'isAtStart',
     get: function get() {
       /**
@@ -4723,6 +4779,13 @@ var Caret = function (_Module) {
        * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
        */
       return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
+    }
+  }], [{
+    key: 'extraElements',
+    get: function get() {
+      return {
+        shadowSpan: 'shadow-span'
+      };
     }
   }]);
 
@@ -7980,64 +8043,6 @@ var Selection = function () {
      */
 
   }, {
-    key: 'shadowCaret',
-
-
-    /**
-     * Inserts shadow element where caret can be placed
-     * @param element
-     */
-    value: function shadowCaret(element) {
-      var shadowSpan = document.createElement('span');
-
-      shadowSpan.classList.add('shadow-caret');
-      element.insertAdjacentElement('beforeEnd', shadowSpan);
-    }
-
-    /**
-     * Restores caret position
-     * @param element
-     */
-
-  }, {
-    key: 'restoreCaret',
-    value: function restoreCaret(element) {
-      var shadowSpan = element.querySelector('.shadow-caret');
-
-      if (!shadowSpan) {
-        return;
-      }
-
-      /**
-       * First we create new range with "shadow-caret" and set caret
-       */
-      var rangeToSet = document.createRange(),
-          selection = Selection.get();
-
-      rangeToSet.setStart(shadowSpan, 0);
-      rangeToSet.setEnd(shadowSpan, 0);
-
-      selection.removeAllRanges();
-      selection.addRange(rangeToSet);
-
-      /**
-       * After we set the caret to the required place
-       * we need to clear shadowed span
-       *
-       * For that we make new range and select shadowed span with outer HTML and then use extract to remove from DOM
-       */
-      var newRange = document.createRange();
-
-      newRange.selectNode(shadowSpan);
-      newRange.extractContents();
-    }
-
-    /**
-     * Returns selected text as String
-     * @returns {string}
-     */
-
-  }, {
     key: 'anchorNode',
     get: function get() {
       var selection = window.getSelection();
@@ -8151,6 +8156,12 @@ var Selection = function () {
 
       return rect;
     }
+
+    /**
+     * Returns selected text as String
+     * @returns {string}
+     */
+
   }, {
     key: 'text',
     get: function get() {

@@ -152,8 +152,8 @@ class Header {
    */
   merge(data) {
     let newData = {
-      text: this._data.text + data.text,
-      level: this._data.level
+      text: this.data.text + data.text,
+      level: this.data.level
     };
 
     this.data = newData;

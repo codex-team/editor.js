@@ -141,17 +141,12 @@ export default class BlockManager extends Module {
 
         return blockToMerge.data
           .then((blockToMergeInfo) => {
-            Selection.shadowCaret(targetBlock.pluginsContent);
             targetBlock.mergeWith(blockToMergeInfo.data);
           });
       })
       .then( () => {
         this.removeBlock(blockToMergeIndex);
         this.currentBlockIndex = this._blocks.indexOf(targetBlock);
-
-        /** Restore caret position after merge */
-        Selection.restoreCaret(targetBlock.pluginsContent);
-        targetBlock.pluginsContent.normalize();
       });
   }
 

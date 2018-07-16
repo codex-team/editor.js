@@ -144,8 +144,12 @@ export default class BlockEvents extends Module {
       return;
     }
 
+    this.Editor.Caret.createShadow(targetBlock.pluginsContent);
     BM.mergeBlocks(targetBlock, blockToMerge)
       .then( () => {
+        /** Restore caret position after merge */
+        this.Editor.Caret.restoreCaret(targetBlock.pluginsContent);
+        targetBlock.pluginsContent.normalize();
           this.Editor.Toolbar.close();
       });
   }
