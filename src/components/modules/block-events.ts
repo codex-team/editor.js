@@ -144,16 +144,9 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const setCaretToTheEnd = !targetBlock.isEmpty;
-
     BM.mergeBlocks(targetBlock, blockToMerge)
       .then( () => {
-        // @todo figure out without timeout
-        window.setTimeout( () => {
-          // set caret to the block without offset at the end
-          this.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
           this.Editor.Toolbar.close();
-        }, 10);
       });
   }
 

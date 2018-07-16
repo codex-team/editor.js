@@ -132,6 +132,52 @@ export default class Selection {
   }
 
   /**
+   * Inserts shadow element where caret can be placed
+   * @param element
+   */
+  static shadowCaret(element) {
+    let shadowSpan = document.createElement('span');
+
+    shadowSpan.classList.add('shadow-caret');
+    element.insertAdjacentElement('beforeEnd', shadowSpan);
+  }
+
+  /**
+   * Restores caret position
+   * @param element
+   */
+  static restoreCaret(element) {
+    let shadowSpan = element.querySelector('.shadow-caret');
+
+    if (!shadowSpan) {
+      return;
+    }
+
+    /**
+     * First we create new range with "shadow-caret" and set caret
+     */
+    let rangeToSet = document.createRange(),
+      selection = Selection.get();
+
+    rangeToSet.setStart(shadowSpan, 0);
+    rangeToSet.setEnd(shadowSpan, 0);
+
+    selection.removeAllRanges();
+    selection.addRange(rangeToSet);
+
+    /**
+     * After we set the caret to the required place
+     * we need to clear shadowed span
+     *
+     * For that we make new range and select shadowed span with outer HTML and then use extract to remove from DOM
+     */
+    let newRange = document.createRange();
+
+    newRange.selectNode(shadowSpan);
+    newRange.extractContents();
+  }
+
+  /**
    * Returns selected text as String
    * @returns {string}
    */

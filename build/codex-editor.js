@@ -3548,14 +3548,8 @@ var BlockEvents = function (_Module) {
                 }
                 return;
             }
-            var setCaretToTheEnd = !targetBlock.isEmpty;
             BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
-                // @todo figure out without timeout
-                window.setTimeout(function () {
-                    // set caret to the block without offset at the end
-                    _this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
-                    _this2.Editor.Toolbar.close();
-                }, 10);
+                _this2.Editor.Toolbar.close();
             });
         }
         /**
@@ -3609,6 +3603,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _block = __webpack_require__(/*! ../block */ "./src/components/block.js");
 
 var _block2 = _interopRequireDefault(_block);
+
+var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
+
+var _selection2 = _interopRequireDefault(_selection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3793,11 +3791,16 @@ var BlockManager = function (_Module) {
         }
 
         return blockToMerge.data.then(function (blockToMergeInfo) {
+          _selection2.default.shadowCaret(targetBlock.pluginsContent);
           targetBlock.mergeWith(blockToMergeInfo.data);
         });
       }).then(function () {
         _this4.removeBlock(blockToMergeIndex);
         _this4.currentBlockIndex = _this4._blocks.indexOf(targetBlock);
+
+        /** Restore caret position after merge */
+        _selection2.default.restoreCaret(targetBlock.pluginsContent);
+        targetBlock.pluginsContent.normalize();
       });
     }
 
@@ -7977,6 +7980,64 @@ var Selection = function () {
      */
 
   }, {
+    key: 'shadowCaret',
+
+
+    /**
+     * Inserts shadow element where caret can be placed
+     * @param element
+     */
+    value: function shadowCaret(element) {
+      var shadowSpan = document.createElement('span');
+
+      shadowSpan.classList.add('shadow-caret');
+      element.insertAdjacentElement('beforeEnd', shadowSpan);
+    }
+
+    /**
+     * Restores caret position
+     * @param element
+     */
+
+  }, {
+    key: 'restoreCaret',
+    value: function restoreCaret(element) {
+      var shadowSpan = element.querySelector('.shadow-caret');
+
+      if (!shadowSpan) {
+        return;
+      }
+
+      /**
+       * First we create new range with "shadow-caret" and set caret
+       */
+      var rangeToSet = document.createRange(),
+          selection = Selection.get();
+
+      rangeToSet.setStart(shadowSpan, 0);
+      rangeToSet.setEnd(shadowSpan, 0);
+
+      selection.removeAllRanges();
+      selection.addRange(rangeToSet);
+
+      /**
+       * After we set the caret to the required place
+       * we need to clear shadowed span
+       *
+       * For that we make new range and select shadowed span with outer HTML and then use extract to remove from DOM
+       */
+      var newRange = document.createRange();
+
+      newRange.selectNode(shadowSpan);
+      newRange.extractContents();
+    }
+
+    /**
+     * Returns selected text as String
+     * @returns {string}
+     */
+
+  }, {
     key: 'anchorNode',
     get: function get() {
       var selection = window.getSelection();
@@ -8090,12 +8151,6 @@ var Selection = function () {
 
       return rect;
     }
-
-    /**
-     * Returns selected text as String
-     * @returns {string}
-     */
-
   }, {
     key: 'text',
     get: function get() {
