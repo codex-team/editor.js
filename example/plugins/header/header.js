@@ -92,7 +92,7 @@ class Header {
       /**
        * Highlight current level button
        */
-      if (this.currentLevel === level.number) {
+      if (this.currentLevel.number === level.number) {
         selectTypeButton.classList.add(this._CSS.settingsSelected);
       }
 
@@ -151,11 +151,9 @@ class Header {
    * @public
    */
   merge(data) {
-    let newData = {
+    this.data = {
       text : this.data.text + data.text
     };
-
-    this.data = newData;
   }
 
   /**
@@ -183,7 +181,7 @@ class Header {
 
     return {
       text: toolsContent.innerHTML,
-      level: this.currentLevel
+      level: this.currentLevel.number
     };
   }
 
@@ -193,11 +191,8 @@ class Header {
    * @private
    */
   get data() {
-    let text = this._element.innerHTML,
-      tag = this._element.tagName;
-
-    this._data.text = text;
-    this._data.level = tag;
+    this._data.text = this._element.innerHTML;
+    this._data.level = this.currentLevel.number;
 
     return this._data;
   }
@@ -253,30 +248,13 @@ class Header {
   /**
    * Get tag for target level
    * By default returns second-leveled header
-   * @return {HTMLHeadingElement}
+   * @return {HTMLElement}
    */
   getTag() {
     /**
-     * Create default element
-     */
-    let tagName = this.levels[0].tag;
-
-    /**
-     * Find tag for current level
-     */
-    for (let index in this.levels) {
-      const level = this.levels[index];
-
-      if (level.number === this._data.level) {
-        tagName = level.tag;
-        break;
-      }
-    }
-
-    /**
      * Create element for current Block's level
      */
-    let tag = document.createElement(tagName);
+    let tag = document.createElement(this.currentLevel.tag);
 
     /**
      * Add text to block
@@ -298,17 +276,22 @@ class Header {
 
   /**
    * Get current level
-   * @return {number}
+   * @return {level}
    */
   get currentLevel() {
-    let level = this.levels.find( level => level.number === this._data.level);
-
-    return level.number;
+    return this.levels.find( level => level.number === this._data.level);
   }
 
   /**
+   * @typedef {object} level
+   * @property {number} number - level number
+   * @property {string} tag - tag correspondes with level number
+   * @property {string} svg - icon
+   */
+
+  /**
    * Available header levels
-   * @return {Object[]}
+   * @return {level[]}
    */
   get levels() {
     return [
