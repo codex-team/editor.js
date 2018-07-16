@@ -1132,7 +1132,7 @@ var MoveDownTune = function () {
                 }, 500);
                 return;
             }
-            var nextBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex + 1).html,
+            var nextBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex + 1).holder,
                 nextBlockCoords = nextBlockElement.getBoundingClientRect();
             var scrollOffset = Math.abs(window.innerHeight - nextBlockElement.offsetHeight);
             /**
@@ -1235,8 +1235,8 @@ var MoveUpTune = function () {
                 }, 500);
                 return;
             }
-            var currentBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex).html,
-                previousBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex - 1).html;
+            var currentBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex).holder,
+                previousBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex - 1).holder;
             /**
              * Here is two cases:
              *  - when previous block has negative offset and part of it is visible on window, then we scroll
@@ -1316,8 +1316,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  * @property tool - Tool instance
  * @property html - Returns HTML content of plugin
- * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
- * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
  * @property pluginsContent - HTML content that returns by Tool's render function
  */
 var Block = function () {
@@ -1335,7 +1334,7 @@ var Block = function () {
     this.tool = toolInstance;
     this.settings = settings;
     this.api = apiMethods;
-    this._html = this.compose();
+    this.holder = this.compose();
 
     /**
      * @type {IBlockTune[]}
@@ -1358,14 +1357,13 @@ var Block = function () {
      * @returns {HTMLDivElement}
      */
     value: function compose() {
-      this.wrapper = $.make('div', Block.CSS.wrapper);
-      this.contentNode = $.make('div', Block.CSS.content);
-      this.pluginsContent = this.tool.render();
+      var wrapper = $.make('div', Block.CSS.wrapper),
+          contentNode = $.make('div', Block.CSS.content),
+          pluginsContent = this.tool.render();
 
-      this.contentNode.appendChild(this.pluginsContent);
-      this.wrapper.appendChild(this.contentNode);
-
-      return this.wrapper;
+      contentNode.appendChild(pluginsContent);
+      wrapper.appendChild(contentNode);
+      return wrapper;
     }
 
     /**
@@ -1389,8 +1387,8 @@ var Block = function () {
     }
 
     /**
-     * Get Block`s HTML
-     * @returns {HTMLElement}
+     * Returns Plugins content
+     * @return {Node}
      */
 
   }, {
@@ -1510,9 +1508,14 @@ var Block = function () {
      */
 
   }, {
-    key: 'html',
+    key: 'pluginsContent',
     get: function get() {
-      return this._html;
+      var pluginsContent = this.holder.querySelector('.' + Block.CSS.content);
+
+      if (pluginsContent) {
+        return pluginsContent.childNodes[0];
+      }
+      return null;
     }
 
     /**
@@ -1568,7 +1571,7 @@ var Block = function () {
        */
       var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
 
-      return !!this._html.querySelector(mediaTags.join(','));
+      return !!this.holder.querySelector(mediaTags.join(','));
     }
 
     /**
@@ -1583,9 +1586,9 @@ var Block = function () {
        * We don't need to mark Block as Selected when it is not empty
        */
       if (state === true && !this.isEmpty) {
-        this._html.classList.add(Block.CSS.selected);
+        this.holder.classList.add(Block.CSS.selected);
       } else {
-        this._html.classList.remove(Block.CSS.selected);
+        this.holder.classList.remove(Block.CSS.selected);
       }
     }
   }], [{
@@ -1873,7 +1876,7 @@ var Dom = function () {
 
     /**
      * Checks target if it is native input
-     * @param {Element|String} target - HTML element or string
+     * @param {Element|String|Node} target - HTML element or string
      * @return {Boolean}
      */
 
@@ -3516,6 +3519,14 @@ var BlockEvents = function (_Module) {
             var BM = this.Editor.BlockManager;
             var isFirstBlock = BM.currentBlockIndex === 0,
                 canMergeBlocks = this.Editor.Caret.isAtStart && !isFirstBlock;
+            /** If current Block is empty just remove this Block */
+            if (this.Editor.BlockManager.currentBlock.isEmpty) {
+                this.Editor.BlockManager.removeBlock();
+                if (this.Editor.Caret.navigatePrevious(true)) {
+                    this.Editor.Toolbar.close();
+                }
+                return;
+            }
             if (!canMergeBlocks) {
                 return;
             }
@@ -3534,6 +3545,7 @@ var BlockEvents = function (_Module) {
                 if (this.Editor.Caret.navigatePrevious()) {
                     this.Editor.Toolbar.close();
                 }
+                return;
             }
             var setCaretToTheEnd = !targetBlock.isEmpty;
             BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
@@ -3723,13 +3735,13 @@ var BlockManager = function (_Module) {
     value: function bindEvents(block) {
       var _this3 = this;
 
-      this.Editor.Listeners.on(block.html, 'keydown', function (event) {
+      this.Editor.Listeners.on(block.holder, 'keydown', function (event) {
         return _this3.Editor.BlockEvents.keydown(event);
       });
-      this.Editor.Listeners.on(block.html, 'mouseup', function (event) {
+      this.Editor.Listeners.on(block.holder, 'mouseup', function (event) {
         return _this3.Editor.BlockEvents.mouseUp(event);
       });
-      this.Editor.Listeners.on(block.html, 'keyup', function (event) {
+      this.Editor.Listeners.on(block.holder, 'keyup', function (event) {
         return _this3.Editor.BlockEvents.keyup(event);
       });
     }
@@ -4016,7 +4028,7 @@ var BlockManager = function (_Module) {
 
     /**
      * Set currentBlockIndex to passed block
-     * @param {HTMLElement} element
+     * @param {Node} element
      */
     ,
     set: function set(element) {
@@ -4097,7 +4109,7 @@ var Blocks = function () {
     key: 'push',
     value: function push(block) {
       this.blocks.push(block);
-      this.workingArea.appendChild(block.html);
+      this.workingArea.appendChild(block.holder);
     }
 
     /**
@@ -4114,7 +4126,7 @@ var Blocks = function () {
       /**
        * Change in DOM
        */
-      $.swap(this.blocks[first].html, secondBlock.html);
+      $.swap(this.blocks[first].holder, secondBlock.holder);
 
       /**
        * Change in array
@@ -4146,7 +4158,7 @@ var Blocks = function () {
       }
 
       if (replace) {
-        this.blocks[index].html.remove();
+        this.blocks[index].holder.remove();
       }
 
       var deleteCount = replace ? 1 : 0;
@@ -4156,14 +4168,14 @@ var Blocks = function () {
       if (index > 0) {
         var previousBlock = this.blocks[index - 1];
 
-        previousBlock.html.insertAdjacentElement('afterend', block.html);
+        previousBlock.holder.insertAdjacentElement('afterend', block.holder);
       } else {
         var nextBlock = this.blocks[index + 1];
 
         if (nextBlock) {
-          nextBlock.html.insertAdjacentElement('beforebegin', block.html);
+          nextBlock.holder.insertAdjacentElement('beforebegin', block.holder);
         } else {
-          this.workingArea.appendChild(block.html);
+          this.workingArea.appendChild(block.holder);
         }
       }
     }
@@ -4180,7 +4192,7 @@ var Blocks = function () {
         index = this.length - 1;
       }
 
-      this.blocks[index].html.remove();
+      this.blocks[index].holder.remove();
       this.blocks.splice(index, 1);
     }
 
@@ -4400,7 +4412,7 @@ var Caret = function (_Module) {
       var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
       var atEnd = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-      var element = block.html;
+      var element = block.pluginsContent;
 
       /** If Element is INPUT */
       if ($.isNativeInput(element)) {
@@ -4427,7 +4439,7 @@ var Caret = function (_Module) {
         _this2.set(nodeToSet, offset);
       }, 20)();
 
-      this.Editor.BlockManager.currentNode = block.wrapper;
+      this.Editor.BlockManager.currentNode = block.holder;
     }
 
     /**
@@ -4618,7 +4630,7 @@ var Caret = function (_Module) {
 
       var selection = _selection2.default.get(),
           anchorNode = selection.anchorNode,
-          firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.html);
+          firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
 
       /**
        * Workaround case when caret in the text like " |Hello!"
@@ -4674,7 +4686,7 @@ var Caret = function (_Module) {
 
       var selection = _selection2.default.get(),
           anchorNode = selection.anchorNode,
-          lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.html, true);
+          lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
 
       /**
        * In case of

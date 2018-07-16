@@ -33,7 +33,7 @@ export default class Caret extends Module {
    * @param {Boolean} atEnd - put caret at the end of the text node or not
    */
   setToBlock(block, offset = 0, atEnd = false) {
-    let element = block.html;
+    let element = block.pluginsContent;
 
     /** If Element is INPUT */
     if ($.isNativeInput(element)) {
@@ -60,7 +60,7 @@ export default class Caret extends Module {
       this.set(nodeToSet, offset);
     }, 20)();
 
-    this.Editor.BlockManager.currentNode = block.wrapper;
+    this.Editor.BlockManager.currentNode = block.holder;
   }
 
   /**
@@ -224,7 +224,7 @@ export default class Caret extends Module {
 
     let selection = Selection.get(),
       anchorNode = selection.anchorNode,
-      firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.html);
+      firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
 
     /**
      * Workaround case when caret in the text like " |Hello!"
@@ -276,7 +276,7 @@ export default class Caret extends Module {
 
     let selection = Selection.get(),
       anchorNode = selection.anchorNode,
-      lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.html, true);
+      lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
 
     /**
      * In case of

@@ -99,9 +99,9 @@ export default class BlockManager extends Module {
    * @param {Object} block
    */
   bindEvents(block) {
-    this.Editor.Listeners.on(block.html, 'keydown', (event) => this.Editor.BlockEvents.keydown(event));
-    this.Editor.Listeners.on(block.html, 'mouseup', (event) => this.Editor.BlockEvents.mouseUp(event));
-    this.Editor.Listeners.on(block.html, 'keyup', (event) => this.Editor.BlockEvents.keyup(event));
+    this.Editor.Listeners.on(block.holder, 'keydown', (event) => this.Editor.BlockEvents.keydown(event));
+    this.Editor.Listeners.on(block.holder, 'mouseup', (event) => this.Editor.BlockEvents.mouseUp(event));
+    this.Editor.Listeners.on(block.holder, 'keyup', (event) => this.Editor.BlockEvents.keyup(event));
   }
 
   /**
@@ -283,7 +283,7 @@ export default class BlockManager extends Module {
 
   /**
    * Set currentBlockIndex to passed block
-   * @param {HTMLElement} element
+   * @param {Node} element
    */
   set currentNode(element) {
     let nodes = this._blocks.nodes,
@@ -395,7 +395,7 @@ class Blocks {
    */
   push(block) {
     this.blocks.push(block);
-    this.workingArea.appendChild(block.html);
+    this.workingArea.appendChild(block.holder);
   }
 
   /**
@@ -409,7 +409,7 @@ class Blocks {
     /**
      * Change in DOM
      */
-    $.swap(this.blocks[first].html, secondBlock.html);
+    $.swap(this.blocks[first].holder, secondBlock.holder);
 
     /**
      * Change in array
@@ -436,7 +436,7 @@ class Blocks {
     }
 
     if (replace) {
-      this.blocks[index].html.remove();
+      this.blocks[index].holder.remove();
     }
 
     let deleteCount = replace ? 1 : 0;
@@ -446,14 +446,14 @@ class Blocks {
     if (index > 0) {
       let previousBlock = this.blocks[index - 1];
 
-      previousBlock.html.insertAdjacentElement('afterend', block.html);
+      previousBlock.holder.insertAdjacentElement('afterend', block.holder);
     } else {
       let nextBlock = this.blocks[index + 1];
 
       if (nextBlock) {
-        nextBlock.html.insertAdjacentElement('beforebegin', block.html);
+        nextBlock.holder.insertAdjacentElement('beforebegin', block.holder);
       } else {
-        this.workingArea.appendChild(block.html);
+        this.workingArea.appendChild(block.holder);
       }
     }
   }
@@ -467,7 +467,7 @@ class Blocks {
       index = this.length - 1;
     }
 
-    this.blocks[index].html.remove();
+    this.blocks[index].holder.remove();
     this.blocks.splice(index, 1);
   }
 

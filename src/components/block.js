@@ -17,8 +17,7 @@ import MoveDownTune from './block-tunes/block-tune-move-down';
  *
  * @property tool - Tool instance
  * @property html - Returns HTML content of plugin
- * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
- * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
  * @property pluginsContent - HTML content that returns by Tool's render function
  */
 export default class Block {
@@ -34,7 +33,7 @@ export default class Block {
     this.tool = toolInstance;
     this.settings = settings;
     this.api = apiMethods;
-    this._html = this.compose();
+    this.holder = this.compose();
 
     /**
      * @type {IBlockTune[]}
@@ -59,14 +58,13 @@ export default class Block {
    * @returns {HTMLDivElement}
    */
   compose() {
-    this.wrapper = $.make('div', Block.CSS.wrapper);
-    this.contentNode    = $.make('div', Block.CSS.content);
-    this.pluginsContent  = this.tool.render();
+    let wrapper = $.make('div', Block.CSS.wrapper),
+      contentNode = $.make('div', Block.CSS.content),
+      pluginsContent  = this.tool.render();
 
-    this.contentNode.appendChild(this.pluginsContent);
-    this.wrapper.appendChild(this.contentNode);
-
-    return this.wrapper;
+    contentNode.appendChild(pluginsContent);
+    wrapper.appendChild(contentNode);
+    return wrapper;
   }
 
   /**
@@ -87,11 +85,16 @@ export default class Block {
   }
 
   /**
-   * Get Block`s HTML
-   * @returns {HTMLElement}
+   * Returns Plugins content
+   * @return {Node}
    */
-  get html() {
-    return this._html;
+  get pluginsContent() {
+    let pluginsContent = this.holder.querySelector(`.${Block.CSS.content}`);
+
+    if (pluginsContent) {
+      return pluginsContent.childNodes[0];
+    }
+    return null;
   }
 
   /**
@@ -242,7 +245,7 @@ export default class Block {
       'twitterwidget'
     ];
 
-    return !!this._html.querySelector(mediaTags.join(','));
+    return !!this.holder.querySelector(mediaTags.join(','));
   }
 
   /**
@@ -254,9 +257,9 @@ export default class Block {
      * We don't need to mark Block as Selected when it is not empty
      */
     if (state === true && !this.isEmpty) {
-      this._html.classList.add(Block.CSS.selected);
+      this.holder.classList.add(Block.CSS.selected);
     } else {
-      this._html.classList.remove(Block.CSS.selected);
+      this.holder.classList.remove(Block.CSS.selected);
     }
   }
 }
