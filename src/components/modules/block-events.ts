@@ -111,6 +111,15 @@ export default class BlockEvents extends Module {
     const isFirstBlock = BM.currentBlockIndex === 0,
       canMergeBlocks = this.Editor.Caret.isAtStart && !isFirstBlock;
 
+    /** If current Block is empty just remove this Block */
+    if (this.Editor.BlockManager.currentBlock.isEmpty) {
+      this.Editor.BlockManager.removeBlock();
+      if (this.Editor.Caret.navigatePrevious(true)) {
+        this.Editor.Toolbar.close();
+      }
+      return;
+    }
+
     if (!canMergeBlocks) {
       return;
     }
@@ -132,6 +141,7 @@ export default class BlockEvents extends Module {
       if (this.Editor.Caret.navigatePrevious()) {
         this.Editor.Toolbar.close();
       }
+      return;
     }
 
     const setCaretToTheEnd = !targetBlock.isEmpty;
