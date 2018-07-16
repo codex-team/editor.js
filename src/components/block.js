@@ -91,7 +91,7 @@ export default class Block {
   get pluginsContent() {
     let pluginsContent = this.holder.querySelector(`.${Block.CSS.content}`);
 
-    if (!pluginsContent.childNodes[0]) {
+    if (pluginsContent && pluginsContent.childNodes[0]) {
       return pluginsContent.childNodes[0];
     }
 
