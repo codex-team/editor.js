@@ -1512,7 +1512,7 @@ var Block = function () {
     get: function get() {
       var pluginsContent = this.holder.querySelector('.' + Block.CSS.content);
 
-      if (pluginsContent && pluginsContent.childNodes[0]) {
+      if (pluginsContent && pluginsContent.childNodes.length) {
         return pluginsContent.childNodes[0];
       }
 
