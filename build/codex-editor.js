@@ -1090,7 +1090,6 @@ var MoveDownTune = function () {
          */
         this.CSS = {
             button: 'ce-settings__button',
-            btnDisabled: 'ce-settings__button--disabled',
             wrapper: 'ce-tune-move-down',
             animation: 'wobble'
         };
@@ -1128,10 +1127,8 @@ var MoveDownTune = function () {
             // If Block is last do nothing
             if (currentBlockIndex === this.api.blocks.getBlocksCount() - 1) {
                 button.classList.add(this.CSS.animation);
-                button.classList.add(this.CSS.btnDisabled);
                 window.setTimeout(function () {
                     button.classList.remove(_this2.CSS.animation);
-                    button.classList.remove(_this2.CSS.btnDisabled);
                 }, 500);
                 return;
             }
@@ -1196,7 +1193,6 @@ var MoveUpTune = function () {
          */
         this.CSS = {
             button: 'ce-settings__button',
-            btnDisabled: 'ce-settings__button--disabled',
             wrapper: 'ce-tune-move-up',
             animation: 'wobble'
         };
@@ -1234,10 +1230,8 @@ var MoveUpTune = function () {
             var currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
             if (currentBlockIndex === 0) {
                 button.classList.add(this.CSS.animation);
-                button.classList.add(this.CSS.btnDisabled);
                 window.setTimeout(function () {
                     button.classList.remove(_this2.CSS.animation);
-                    button.classList.remove(_this2.CSS.btnDisabled);
                 }, 500);
                 return;
             }

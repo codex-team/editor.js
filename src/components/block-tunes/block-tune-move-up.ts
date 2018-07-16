@@ -23,7 +23,6 @@ export default class MoveUpTune implements IBlockTune {
    */
   private CSS = {
     button: 'ce-settings__button',
-    btnDisabled: 'ce-settings__button--disabled',
     wrapper: 'ce-tune-move-up',
     animation: 'wobble',
   };
@@ -59,11 +58,9 @@ export default class MoveUpTune implements IBlockTune {
 
     if (currentBlockIndex === 0) {
       button.classList.add(this.CSS.animation);
-      button.classList.add(this.CSS.btnDisabled);
 
       window.setTimeout( () => {
         button.classList.remove(this.CSS.animation);
-        button.classList.remove(this.CSS.btnDisabled);
       }, 500);
       return;
     }

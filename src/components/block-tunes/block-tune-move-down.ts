@@ -22,7 +22,6 @@ export default class MoveDownTune implements IBlockTune {
    */
   private CSS = {
     button: 'ce-settings__button',
-    btnDisabled: 'ce-settings__button--disabled',
     wrapper: 'ce-tune-move-down',
     animation: 'wobble',
   };
@@ -58,11 +57,9 @@ export default class MoveDownTune implements IBlockTune {
     // If Block is last do nothing
     if (currentBlockIndex === this.api.blocks.getBlocksCount() - 1) {
       button.classList.add(this.CSS.animation);
-      button.classList.add(this.CSS.btnDisabled);
 
       window.setTimeout( () => {
         button.classList.remove(this.CSS.animation);
-        button.classList.remove(this.CSS.btnDisabled);
       }, 500);
       return;
     }
