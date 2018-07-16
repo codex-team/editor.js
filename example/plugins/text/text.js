@@ -107,11 +107,13 @@ class Text {
    * @public
    */
   save(toolsContent) {
-    let toolData = {
+    /**
+     * @todo sanitize data
+     */
+
+    return {
       text: toolsContent.innerHTML
     };
-
-    return toolData;
   }
 
   /**
@@ -121,10 +123,6 @@ class Text {
    */
   get data() {
     let text = this._element.innerHTML;
-
-    /**
-     * @todo sanitize data
-     */
 
     this._data.text = text;
 

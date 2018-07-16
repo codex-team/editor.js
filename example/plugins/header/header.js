@@ -177,6 +177,10 @@ class Header {
    * @public
    */
   save(toolsContent) {
+    /**
+     * @todo sanitize data
+     */
+
     return {
       text: toolsContent.innerHTML,
       level: this.currentLevel
@@ -191,10 +195,6 @@ class Header {
   get data() {
     let text = this._element.innerHTML,
       tag = this._element.tagName;
-
-    /**
-     * @todo sanitize data
-     */
 
     this._data.text = text;
     this._data.level = tag;
@@ -257,26 +257,26 @@ class Header {
    */
   getTag() {
     /**
-     * Create element for current Block's level
-     */
-    let tag;
-
-    /**
      * Create default element
      */
-    tag = document.createElement(this.levels[0].tag);
+    let tagName = this.levels[0].tag;
 
     /**
-     * Try to reassign to passed level element
+     * Find tag for current level
      */
     for (let index in this.levels) {
       const level = this.levels[index];
 
       if (level.number === this._data.level) {
-        tag = document.createElement(level.tag);
+        tagName = level.tag;
         break;
       }
     }
+
+    /**
+     * Create element for current Block's level
+     */
+    let tag = document.createElement(tagName);
 
     /**
      * Add text to block
@@ -301,7 +301,7 @@ class Header {
    * @return {number}
    */
   get currentLevel() {
-    let level = this.levels.find( level => level.tag === this._element.tagName);
+    let level = this.levels.find( level => level.number === this._data.level);
 
     return level.number;
   }
