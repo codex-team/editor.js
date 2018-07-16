@@ -30,6 +30,10 @@
   &__button {
     @apply --toolbar-button;
 
+    &--selected {
+      color: var(--color-active-icon);
+    }
+
     &--delete {
       transition: background-color 300ms ease;
       will-change: background-color;

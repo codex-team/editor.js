@@ -144,13 +144,4 @@ class Text {
 
     this._element.innerHTML = this._data.text || '';
   }
-
-  /**
-   * Focus element on append
-   */
-  appendCallback() {
-    window.setTimeout(() => {
-      this._element.focus();
-    }, 0);
-  }
 }
