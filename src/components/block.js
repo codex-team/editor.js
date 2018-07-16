@@ -91,10 +91,13 @@ export default class Block {
   get pluginsContent() {
     let pluginsContent = this.holder.querySelector(`.${Block.CSS.content}`);
 
-    if (pluginsContent) {
-      return pluginsContent.childNodes[0];
+    pluginsContent = pluginsContent.childNodes[0];
+
+    if (!pluginsContent) {
+      return null;
     }
-    return null;
+
+    return pluginsContent;
   }
 
   /**
