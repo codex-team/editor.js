@@ -3600,13 +3600,13 @@ var BlockManager = function (_Module) {
     value: function bindEvents(block) {
       var _this3 = this;
 
-      this.Editor.Listeners.on(block.pluginsContent, 'keydown', function (event) {
+      this.Editor.Listeners.on(block.html, 'keydown', function (event) {
         return _this3.Editor.BlockEvents.keydown(event);
       });
-      this.Editor.Listeners.on(block.pluginsContent, 'mouseup', function (event) {
+      this.Editor.Listeners.on(block.html, 'mouseup', function (event) {
         return _this3.Editor.BlockEvents.mouseUp(event);
       });
-      this.Editor.Listeners.on(block.pluginsContent, 'keyup', function (event) {
+      this.Editor.Listeners.on(block.html, 'keyup', function (event) {
         return _this3.Editor.BlockEvents.keyup(event);
       });
     }
@@ -4277,7 +4277,7 @@ var Caret = function (_Module) {
       var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
       var atEnd = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
 
-      var element = block.pluginsContent;
+      var element = block.html;
 
       /** If Element is INPUT */
       if ($.isNativeInput(element)) {
@@ -4495,7 +4495,7 @@ var Caret = function (_Module) {
 
       var selection = _selection2.default.get(),
           anchorNode = selection.anchorNode,
-          firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
+          firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.html);
 
       /**
        * Workaround case when caret in the text like " |Hello!"
@@ -4551,7 +4551,7 @@ var Caret = function (_Module) {
 
       var selection = _selection2.default.get(),
           anchorNode = selection.anchorNode,
-          lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
+          lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.html, true);
 
       /**
        * In case of
