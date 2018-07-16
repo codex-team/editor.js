@@ -20,7 +20,7 @@ class Text {
    * @public
    */
   static get displayInToolbox() {
-    return true;
+    return false;
   }
 
   /**
@@ -107,11 +107,13 @@ class Text {
    * @public
    */
   save(toolsContent) {
-    let toolData = {
+    /**
+     * @todo sanitize data
+     */
+
+    return {
       text: toolsContent.innerHTML
     };
-
-    return toolData;
   }
 
   /**
@@ -121,10 +123,6 @@ class Text {
    */
   get data() {
     let text = this._element.innerHTML;
-
-    /**
-     * @todo sanitize data
-     */
 
     this._data.text = text;
 
@@ -143,14 +141,5 @@ class Text {
     this._data = data || {};
 
     this._element.innerHTML = this._data.text || '';
-  }
-
-  /**
-   * Focus element on append
-   */
-  appendCallback() {
-    window.setTimeout(() => {
-      this._element.focus();
-    }, 0);
   }
 }
