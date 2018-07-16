@@ -34,7 +34,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
   }
 
   /**
-   * Returns Block's count
+   * Returns Blocks count
    * @return {number}
    */
   public getBlocksCount(): number {

@@ -1125,7 +1125,7 @@ var MoveDownTune = function () {
         key: 'handleClick',
         value: function handleClick(event) {
             var currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
-            // If Block is last do noting
+            // If Block is last do nothing
             if (currentBlockIndex === this.api.blocks.getBlocksCount() - 1) {
                 return;
             }
@@ -2629,7 +2629,7 @@ var BlocksAPI = function (_Module) {
         key: "getBlocksCount",
 
         /**
-         * Returns Block's count
+         * Returns Blocks count
          * @return {number}
          */
         value: function getBlocksCount() {

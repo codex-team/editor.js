@@ -59,7 +59,7 @@ export default class MoveDownTune implements IBlockTune {
 
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
 
-    // If Block is last do noting
+    // If Block is last do nothing
     if (currentBlockIndex === this.api.blocks.getBlocksCount() - 1) {
       return;
     }
