@@ -30,6 +30,11 @@
   &__button {
     @apply --toolbar-button;
 
+    &--disabled {
+      cursor: not-allowed !important;
+      opacity: .3;
+    }
+
     &--delete {
       transition: background-color 300ms ease;
       will-change: background-color;
@@ -52,16 +57,5 @@
         transform: rotate(90deg);
       }
     }
-  }
-}
-
-.ce-settings-move-up {
-  &:hover {
-    cursor: pointer;
-  }
-
-  &--disabled {
-    cursor: not-allowed !important;
-    opacity: .3;
   }
 }

@@ -23,8 +23,8 @@ export default class MoveUpTune implements IBlockTune {
    */
   private CSS = {
     button: 'ce-settings__button',
-    wrapper: 'ce-settings-move-up',
-    btnDisabled: 'ce-settings-move-up--disabled',
+    btnDisabled: 'ce-settings__button--disabled',
+    wrapper: 'ce-tune-move-up',
   };
 
   /**
