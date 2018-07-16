@@ -31,8 +31,12 @@
     @apply --toolbar-button;
 
     &--disabled {
-      cursor: not-allowed !important;
-      opacity: .3;
+        cursor: not-allowed !important;
+        opacity: .3;
+    }
+
+    &--selected {
+      color: var(--color-active-icon);
     }
 
     &--delete {

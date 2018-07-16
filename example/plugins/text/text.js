@@ -8,7 +8,7 @@
  * @version 2.0.1
  */
 
-/**
+ /**
   * @typedef {Object} TextData
   * @description Tool's input and output data format
   * @property {String} text — Paragraph's content. Can include HTML tags: <a><b><i>
@@ -20,7 +20,7 @@ class Text {
    * @public
    */
   static get displayInToolbox() {
-    return true;
+    return false;
   }
 
   /**
@@ -107,11 +107,13 @@ class Text {
    * @public
    */
   save(toolsContent) {
-    let toolData = {
+    /**
+     * @todo sanitize data
+     */
+
+    return {
       text: toolsContent.innerHTML
     };
-
-    return toolData;
   }
 
   /**
@@ -121,10 +123,6 @@ class Text {
    */
   get data() {
     let text = this._element.innerHTML;
-
-    /**
-     * @todo sanitize data
-     */
 
     this._data.text = text;
 
