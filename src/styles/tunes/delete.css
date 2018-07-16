@@ -1,9 +1,0 @@
-.ce-settings-delete {
-  &:hover {
-    cursor: pointer;
-  }
-
-  &::before {
-    content: 'delete'
-  }
-}

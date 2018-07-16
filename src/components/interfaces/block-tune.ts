@@ -18,6 +18,7 @@ export default interface IBlockTune {
   /**
    * handle Click event
    * @param {MouseEvent} event
+   * @param {HTMLElement} button
    */
-  handleClick(event: MouseEvent): void;
+  handleClick(event: MouseEvent, button: HTMLElement): void;
 }

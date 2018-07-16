@@ -29,7 +29,16 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
       swap: (fromIndex: number, toIndex: number) => this.swap(fromIndex, toIndex),
       getBlockByIndex: (index: number) => this.getBlockByIndex(index),
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
+      getBlocksCount: () => this.getBlocksCount(),
     };
+  }
+
+  /**
+   * Returns Blocks count
+   * @return {number}
+   */
+  public getBlocksCount(): number {
+    return this.Editor.BlockManager.blocks.length;
   }
 
   /**

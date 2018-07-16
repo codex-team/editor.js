@@ -30,6 +30,11 @@
   &__button {
     @apply --toolbar-button;
 
+    &--disabled {
+        cursor: not-allowed !important;
+        opacity: .3;
+    }
+
     &--selected {
       color: var(--color-active-icon);
     }
@@ -56,16 +61,5 @@
         transform: rotate(90deg);
       }
     }
-  }
-}
-
-.ce-settings-move-up {
-  &:hover {
-    cursor: pointer;
-  }
-
-  &--disabled {
-    cursor: not-allowed !important;
-    opacity: .3;
   }
 }
