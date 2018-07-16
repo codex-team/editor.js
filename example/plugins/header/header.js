@@ -151,9 +151,12 @@ class Header {
    * @public
    */
   merge(data) {
-    this.data = {
-      text : this.data.text + data.text
+    let newData = {
+      text: this._data.text + data.text,
+      level: this._data.level
     };
+
+    this.data = newData;
   }
 
   /**
@@ -279,7 +282,13 @@ class Header {
    * @return {level}
    */
   get currentLevel() {
-    return this.levels.find( level => level.number === this._data.level);
+    let level = this.levels.find( level => level.number === this._data.level);
+
+    if (!level) {
+      level = this.levels[0];
+    }
+
+    return level;
   }
 
   /**
