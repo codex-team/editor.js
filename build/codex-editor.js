@@ -1075,7 +1075,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var MoveDownTune = function () {
     /**
-     * MoveUpTune constructor
+     * MoveDownTune constructor
      *
      * @param {Object} api
      */
@@ -1107,7 +1107,7 @@ var MoveDownTune = function () {
 
             var moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
             moveDownButton.appendChild($.svg('arrow-down', 14, 14));
-            if (this.api.blocks.getCurrentBlockIndex() === 0) {
+            if (this.api.blocks.getCurrentBlockIndex() === this.api.blocks.getBlocksCount() - 1) {
                 moveDownButton.classList.add(this.CSS.btnDisabled);
             } else {
                 this.api.listener.on(moveDownButton, 'click', function (event) {
@@ -1125,21 +1125,19 @@ var MoveDownTune = function () {
         key: 'handleClick',
         value: function handleClick(event) {
             var currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+            // If Block is last do noting
+            if (currentBlockIndex === this.api.blocks.getBlocksCount() - 1) {
+                return;
+            }
             var nextBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex + 1).html,
                 nextBlockCoords = nextBlockElement.getBoundingClientRect();
-            var scrollOffset = void 0;
+            var scrollOffset = Math.abs(window.innerHeight - nextBlockElement.offsetHeight);
             /**
              * Next block ends on screen.
              * Increment scroll by next block's height to save element onscreen-position
              */
             if (nextBlockCoords.top < window.innerHeight) {
                 scrollOffset = window.scrollY + nextBlockElement.offsetHeight;
-                /**
-                 * Next block ends belows the screen.
-                 * Increment scroll by next block's hidden height
-                 */
-            } else {
-                scrollOffset = Math.abs(window.innerHeight - nextBlockElement.offsetHeight);
             }
             window.scrollTo(0, scrollOffset);
             /** Change blocks positions */
@@ -2628,12 +2626,22 @@ var BlocksAPI = function (_Module) {
 
 
     _createClass(BlocksAPI, [{
-        key: "getCurrentBlockIndex",
+        key: "getBlocksCount",
 
+        /**
+         * Returns Block's count
+         * @return {number}
+         */
+        value: function getBlocksCount() {
+            return this.Editor.BlockManager.blocks.length;
+        }
         /**
          * Returns current block index
          * @return {number}
          */
+
+    }, {
+        key: "getCurrentBlockIndex",
         value: function getCurrentBlockIndex() {
             return this.Editor.BlockManager.currentBlockIndex;
         }
@@ -2735,6 +2743,9 @@ var BlocksAPI = function (_Module) {
                 },
                 getCurrentBlockIndex: function getCurrentBlockIndex() {
                     return _this2.getCurrentBlockIndex();
+                },
+                getBlocksCount: function getBlocksCount() {
+                    return _this2.getBlocksCount();
                 }
             };
         }

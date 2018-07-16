@@ -22,11 +22,13 @@ Methods that working with Blocks
 
 ```swap(fromIndex, toIndex)``` - swaps two Blocks by their positions
 
-```delete(blockIndex?: Number)``` - deletes block with passed index 
+```delete(blockIndex?: Number)``` - deletes Block with passed index 
 
-```getCurrentBlockIndex()``` - current block index
+```getCurrentBlockIndex()``` - current Block index
 
-```getBlockByIndex(index: Number)``` - returns block with passed index
+```getBlockByIndex(index: Number)``` - returns Block with passed index
+
+```getBlocksCount()``` - returns Blocks count
 
 #### ISanitizerAPI
 

@@ -27,7 +27,7 @@ export default class MoveDownTune implements IBlockTune {
   };
 
   /**
-   * MoveUpTune constructor
+   * MoveDownTune constructor
    *
    * @param {Object} api
    */
@@ -41,7 +41,8 @@ export default class MoveDownTune implements IBlockTune {
   public render() {
     const moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveDownButton.appendChild($.svg('arrow-down', 14, 14));
-    if (this.api.blocks.getCurrentBlockIndex() === 0) {
+
+    if (this.api.blocks.getCurrentBlockIndex() === this.api.blocks.getBlocksCount() - 1) {
       moveDownButton.classList.add(this.CSS.btnDisabled);
     } else {
       this.api.listener.on(moveDownButton, 'click', (event) => this.handleClick(event), false);
@@ -58,10 +59,15 @@ export default class MoveDownTune implements IBlockTune {
 
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
 
+    // If Block is last do noting
+    if (currentBlockIndex === this.api.blocks.getBlocksCount() - 1) {
+      return;
+    }
+
     const nextBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex + 1).html,
         nextBlockCoords = nextBlockElement.getBoundingClientRect();
 
-    let scrollOffset;
+    let scrollOffset = Math.abs(window.innerHeight - nextBlockElement.offsetHeight);
 
     /**
      * Next block ends on screen.
@@ -70,15 +76,6 @@ export default class MoveDownTune implements IBlockTune {
     if (nextBlockCoords.top < window.innerHeight) {
 
       scrollOffset = window.scrollY + nextBlockElement.offsetHeight;
-
-      /**
-       * Next block ends belows the screen.
-       * Increment scroll by next block's hidden height
-       */
-
-    } else {
-
-      scrollOffset = Math.abs(window.innerHeight - nextBlockElement.offsetHeight);
 
     }
 
