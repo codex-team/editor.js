@@ -3439,13 +3439,14 @@ var BlockEvents = function (_Module) {
                     break;
                 case _.keyCodes.DOWN:
                 case _.keyCodes.RIGHT:
-                    this.arrowRightAndDownPressed();
+                    this.arrowRightAndDown();
                     break;
                 case _.keyCodes.UP:
                 case _.keyCodes.LEFT:
-                    this.arrowLeftAndUpPressed();
+                    this.arrowLeftAndUp();
                     break;
                 default:
+                    this.defaultHandler();
                     break;
             }
         }
@@ -3561,8 +3562,8 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "arrowRightAndDownPressed",
-        value: function arrowRightAndDownPressed() {
+        key: "arrowRightAndDown",
+        value: function arrowRightAndDown() {
             this.Editor.Caret.navigateNext();
             this.Editor.Toolbar.close();
         }
@@ -3571,9 +3572,19 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "arrowLeftAndUpPressed",
-        value: function arrowLeftAndUpPressed() {
+        key: "arrowLeftAndUp",
+        value: function arrowLeftAndUp() {
             this.Editor.Caret.navigatePrevious();
+            this.Editor.Toolbar.close();
+        }
+        /**
+         * Default keydown handler
+         */
+
+    }, {
+        key: "defaultHandler",
+        value: function defaultHandler() {
+            this.Editor.BlockManager.currentBlock.selected = false;
             this.Editor.Toolbar.close();
         }
     }]);

@@ -82,6 +82,7 @@
         "Proxy": true,
         "Symbol": true,
         "$": true,
-        "_": true
+        "_": true,
+        "setTimeout": true
     }
 }
