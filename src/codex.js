@@ -132,7 +132,8 @@ export default class CodexEditor {
           this[method] = methods[method];
         }
 
-        delete this.moduleInstances; // todo Is it necessary?
+        // todo Is it necessary?
+        delete this.moduleInstances;
       })
       .then(() => {
         console.log('CodeX Editor is ready!');

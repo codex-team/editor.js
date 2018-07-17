@@ -1,3 +1,4 @@
+import IEditor from './interfaces/editor';
 import IEditorConfig from './interfaces/editor-config';
 import IModuleConfig from './interfaces/module-config';
 
@@ -14,17 +15,19 @@ export default class Module {
 
   /**
    * Editor modules list
-   * @type {EditorComponents}
+   * @type {IEditor}
    */
-  protected Editor: any;
+  protected Editor: IEditor;
 
   /**
    * Editor configuration object
+   * @type {IEditorConfig}
    */
   protected config: IEditorConfig;
 
   /**
    * @constructor
+   * @param {IModuleConfig}
    */
   constructor({config}: IModuleConfig) {
     if (new.target === Module) {
@@ -36,10 +39,7 @@ export default class Module {
 
   /**
    * Editor modules setter
-   *
-   * @param Editor
-   * @param Editor.modules {@link CodexEditor#moduleInstances}
-   * @param Editor.config {@link CodexEditor#configuration}
+   * @param {IEditor} Editor
    */
   set state(Editor) {
     this.Editor = Editor;

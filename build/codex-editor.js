@@ -554,7 +554,8 @@ var CodexEditor = function () {
         _this[method] = methods[method];
       }
 
-      delete _this.moduleInstances; // todo Is it necessary?
+      // todo Is it necessary?
+      delete _this.moduleInstances;
     }).then(function () {
       console.log('CodeX Editor is ready!');
     }).catch(function (error) {
@@ -887,6 +888,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var Module = function () {
     /**
      * @constructor
+     * @param {IModuleConfig}
      */
     function Module(_ref) {
         var config = _ref.config;
@@ -900,10 +902,7 @@ var Module = function () {
     }
     /**
      * Editor modules setter
-     *
-     * @param Editor
-     * @param Editor.modules {@link CodexEditor#moduleInstances}
-     * @param Editor.config {@link CodexEditor#configuration}
+     * @param {IEditor} Editor
      */
 
 
@@ -3348,10 +3347,10 @@ var API = function (_Module) {
                 blocks: this.Editor.BlocksAPI.methods,
                 caret: {},
                 events: this.Editor.EventsAPI.methods,
+                listener: this.Editor.ListenerAPI.methods,
                 sanitizer: this.Editor.SanitizerAPI.methods,
                 saver: this.Editor.SaverAPI.methods,
                 selection: this.Editor.SelectionAPI.methods,
-                listener: this.Editor.ListenerAPI.methods,
                 toolbar: this.Editor.ToolbarAPI.methods
             };
         }

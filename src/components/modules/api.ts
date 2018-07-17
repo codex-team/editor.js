@@ -29,10 +29,10 @@ export default class API extends Module {
       blocks: this.Editor.BlocksAPI.methods,
       caret: {},
       events: this.Editor.EventsAPI.methods,
+      listener: this.Editor.ListenerAPI.methods,
       sanitizer: this.Editor.SanitizerAPI.methods,
       saver: this.Editor.SaverAPI.methods,
       selection: this.Editor.SelectionAPI.methods,
-      listener: this.Editor.ListenerAPI.methods,
       toolbar: this.Editor.ToolbarAPI.methods,
     };
   }
