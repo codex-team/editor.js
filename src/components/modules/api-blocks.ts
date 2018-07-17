@@ -1,6 +1,7 @@
 declare var Module: any;
 
 import { IBlocksAPI } from '../interfaces/api';
+import IEditorConfig from '../interfaces/editor-config';
 import IInputOutputData from '../interfaces/input-output-data';
 
 /**
@@ -11,7 +12,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorsConfig} config
+   * @param {IEditorConfig} config
    */
   constructor({config}) {
     super({config});

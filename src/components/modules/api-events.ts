@@ -1,6 +1,7 @@
 declare var Module: any;
 
-import { IEventsAPI } from '../interfaces/api';
+import {IEventsAPI} from '../interfaces/api';
+import IModuleConfig from '../interfaces/module-config';
 
 /**
  * @class EventsAPI
@@ -10,9 +11,8 @@ export default class EventsAPI extends Module implements IEventsAPI {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorsConfig} config
    */
-  constructor({config}) {
+  constructor({config}: IModuleConfig) {
     super({config});
   }
 

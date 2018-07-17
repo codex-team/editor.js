@@ -1,6 +1,7 @@
 declare var Module: any;
 
 import {ISanitizerAPI} from '../interfaces/api';
+import IModuleConfig from '../interfaces/module-config';
 
 /**
  * @class API
@@ -10,9 +11,8 @@ export default class SanitizerAPI extends Module implements ISanitizerAPI {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorsConfig} config
    */
-  constructor({config}) {
+  constructor({config}: IModuleConfig) {
     super({config});
   }
 

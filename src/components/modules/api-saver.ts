@@ -1,8 +1,8 @@
-import IInputOutputData from '../interfaces/input-output-data';
-
 declare var Module: any;
 
 import {ISaverAPI} from '../interfaces/api';
+import IInputOutputData from '../interfaces/input-output-data';
+import IModuleConfig from '../interfaces/module-config';
 
 /**
  * @class SaverAPI
@@ -12,9 +12,8 @@ export default class SaverAPI extends Module implements ISaverAPI {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorsConfig} config
    */
-  constructor({config}) {
+  constructor({config}: IModuleConfig) {
     super({config});
   }
 
