@@ -6,47 +6,48 @@ import SanitizerAPI from '../modules/api-sanitizer';
 import SaverAPI from '../modules/api-saver';
 import SelectionAPI from '../modules/api-selection';
 import ToolbarAPI from '../modules/api-toolbar';
+import API from '../modules/api';
 
 export default interface IEditor {
-  API: Module; // todo create interface
+  API: API;
 
   BlockEvents: BlockEvents;
 
-  BlockSettings: Module; // todo create interface
+  BlockSettings: Module; // @todo create interface
 
-  BlocksAPI: Module; // todo create interface
+  BlocksAPI: Module; // @todo create interface
 
-  Caret: Module; // todo create interface
+  Caret: Module; // @todo create interface
 
-  Events: Module; // todo create interface
+  Events: Module; // @todo create interface
 
-  EventsAPI: Module; // todo create interface
+  EventsAPI: Module; // @todo create interface
 
   InlineToolbar: InlineToolbar;
 
   ListenerAPI: ListenerAPI;
 
-  Listeners: Module; // todo create interface
+  Listeners: Module; // @todo create interface
 
-  Renderer: Module; // todo create interface
+  Renderer: Module; // @todo create interface
 
-  Sanitizer: Module; // todo create interface
+  Sanitizer: Module; // @todo create interface
 
   SanitizerAPI: SanitizerAPI;
 
-  Saver: Module; // todo create interface
+  Saver: Module; // @todo create interface
 
   SaverAPI: SaverAPI;
 
   SelectionAPI: SelectionAPI;
 
-  Toolbar: Module; // todo create interface
+  Toolbar: Module; // @todo create interface
 
   ToolbarAPI: ToolbarAPI;
 
-  Toolbox: Module; // todo create interface
+  Toolbox: Module; // @todo create interface
 
-  Tools: Module; // todo create interface
+  Tools: Module; // @todo create interface
 
-  UI: Module; // todo create interface
+  UI: Module; // @todo create interface
 }

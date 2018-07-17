@@ -1,7 +1,10 @@
+import IEditorConfig from "./editor-config";
+
 /**
  * Describe Block Tool object
+ * @see {@link docs/tools.md}
  */
-export default interface IBlockTool {
+export interface IBlockTool {
 
   /**
    * Should this tools be displayed at the Editor's Toolbox
@@ -29,7 +32,7 @@ export default interface IBlockTool {
 
   /**
    * Process Tool's element in DOM and return raw data
-   * @param {HTMLElement} block - element created by render() function
+   * @param {HTMLElement} block - element created by {@link IBlockTool#render} function
    * @return {IBlockToolData}
    */
   save(block: HTMLElement): IBlockToolData;
@@ -49,6 +52,12 @@ export default interface IBlockTool {
   validate(blockData: IBlockToolData): boolean;
 }
 
-interface IBlockToolData {}
+/**
+ * Object returned by Tool's {@link IBlockTool#save} method
+ */
+export interface IBlockToolData {}
 
-interface IBlockToolConfig {}
+/**
+ * Object passed to the Tool's constructor by {@link IEditorConfig#toolsConfig}
+ */
+export interface IBlockToolConfig {}

@@ -1,5 +1,5 @@
-import IBlockTool from './block-tool';
-import IBlockToolConfig from './block-tool';
+import {IBlockTool} from './block-tool';
+import {IBlockToolConfig} from './block-tool';
 import ISanitizerConfig from './sanitizer-config';
 
 /**
