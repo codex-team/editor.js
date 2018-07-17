@@ -2608,7 +2608,6 @@ var BlocksAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {IEditorConfig} config
      */
     function BlocksAPI(_ref) {
         var config = _ref.config;

@@ -1,10 +1,12 @@
 import IBlockTool from './block-tool';
+import IBlockToolConfig from './block-tool';
 import ISanitizerConfig from './sanitizer-config';
 
 /**
  * Editor Instance config
  */
 export default interface IEditorConfig {
+
   /**
    * Element to append Editor
    */
@@ -12,23 +14,23 @@ export default interface IEditorConfig {
 
   /**
    * Blocks list in JSON-format
-   * todo define input block's type
    */
-  data: object[];
+  data: IBlockToolConfig[];
 
   /**
    * Map of used Tools
    */
-  tools: {string: IBlockTool};
+  tools: {[toolName: string]: IBlockTool};
 
   /**
-   * tools configuration {@link tools#ToolConfig}
-   * todo create interface
+   * Tools configuration
+   * @see {@link tools#ToolConfig}
    */
-  toolsConfig: object;
+  toolsConfig: {[toolName: string]: IBlockToolConfig};
 
   /**
    * This Tool will be added by default
+   * Name should be equal a one Tool's key of Editor's Tools
    */
   initialBlock: string;
 
@@ -39,6 +41,7 @@ export default interface IEditorConfig {
 
   /**
    * Define tags not to be stripped off while pasting
+   * @see {@link sanitizer}
    */
   sanitizer: ISanitizerConfig;
 

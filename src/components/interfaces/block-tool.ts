@@ -1,6 +1,11 @@
+/**
+ * Describe Block Tool object
+ */
 export default interface IBlockTool {
+
   /**
    * Should this tools be displayed at the Editor's Toolbox
+   * @return {boolean}
    */
   displayInToolbox(): boolean;
 
@@ -12,31 +17,38 @@ export default interface IBlockTool {
 
   /**
    * Create Block's settings block
+   * @return {HTMLElement}
    */
   makeSettings(): HTMLElement;
 
   /**
-   * Return Tool's view
+   * Return Tool's main block-wrapper
    * @return {HTMLElement}
    */
   render(): HTMLElement;
 
   /**
-   * todo define type for block's output data
-   * @return {object}
+   * Process Tool's element in DOM and return raw data
+   * @param {HTMLElement} block - element created by render() function
+   * @return {IBlockToolData}
    */
-  save(block: HTMLElement): object;
+  save(block: HTMLElement): IBlockToolData;
 
   /**
    * Method that specified how to merge two Text blocks.
    * Called by CodeX Editor by backspace at the beginning of the Block
-   *
-   * todo define type for block's input data
+   * @param {IBlockToolData} blockData
    */
-  merge(blockData): void;
+  merge(blockData: IBlockToolData): void;
 
   /**
    * Validate Block's data
+   * @param {IBlockToolData} blockData
+   * @return {boolean}
    */
-  validate(blockData): boolean;
+  validate(blockData: IBlockToolData): boolean;
 }
+
+interface IBlockToolData {}
+
+interface IBlockToolConfig {}

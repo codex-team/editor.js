@@ -1,34 +1,35 @@
 export default interface ISanitizerConfig {
   /**
-   * Tag name and params
+   * Tag name and params not to be stripped off
+   * @see {@link https://github.com/guardian/html-janitor}
    *
-   * Save P tags
-   * @example p: true
+   * @example Save P tags
+   * p: true
    *
-   * Save A tags and do not strip HREF attribute
-   * @example a: {
-   *            href: true
-   *          }
+   * @example Save A tags and do not strip HREF attribute
+   * a: {
+   *   href: true
+   * }
    *
-   * Save A tags with TARGET="_blank" attribute
-   * @example a: function (aTag) {
-   *            return aTag.target === '_black';
-   *          }
+   * @example Save A tags with TARGET="_blank" attribute
+   * a: function (aTag) {
+   *   return aTag.target === '_black';
+   * }
    *
-   * Save U tags that are not empty
-   * @example u: function(el){
-   *            return el.textContent !== '';
-   *          }
+   * @example Save U tags that are not empty
+   * u: function(el){
+   *   return el.textContent !== '';
+   * }
    *
-   * For blockquote with class 'indent' save CLASS and STYLE attributes
-   * Otherwise strip all attributes
-   * @example blockquote: function(el) {
-   *            if (el.classList.contains('indent')) {
-   *              return { 'class': true, 'style': true };
-   *            } else {
-   *              return {};
-   *            }
-   *          }
+   * @example For blockquote with class 'indent' save CLASS and STYLE attributes
+   *          Otherwise strip all attributes
+   * blockquote: function(el) {
+   *   if (el.classList.contains('indent')) {
+   *     return { 'class': true, 'style': true };
+   *   } else {
+   *     return {};
+   *   }
+   * }
    */
   [key: string]: boolean|object|(() => any);
 }

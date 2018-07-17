@@ -174,5 +174,4 @@ export default class BlockEvents extends Module {
 
     this.Editor.Toolbar.close();
   }
-
 }

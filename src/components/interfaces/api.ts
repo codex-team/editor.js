@@ -1,4 +1,4 @@
-import IInputOutputData from "./input-output-data";
+import IInputOutputData from './input-output-data';
 
 /**
  * CodeX Editor Public API
