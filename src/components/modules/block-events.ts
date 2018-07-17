@@ -29,15 +29,16 @@ export default class BlockEvents extends Module {
 
       case _.keyCodes.DOWN:
       case _.keyCodes.RIGHT:
-        this.arrowRightAndDownPressed();
+        this.arrowRightAndDown();
         break;
 
       case _.keyCodes.UP:
       case _.keyCodes.LEFT:
-        this.arrowLeftAndUpPressed();
+        this.arrowLeftAndUp();
         break;
 
       default:
+        this.defaultHandler();
         break;
     }
   }
@@ -144,23 +145,20 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const setCaretToTheEnd = !targetBlock.isEmpty;
-
+    this.Editor.Caret.createShadow(targetBlock.pluginsContent);
     BM.mergeBlocks(targetBlock, blockToMerge)
       .then( () => {
-        // @todo figure out without timeout
-        window.setTimeout( () => {
-          // set caret to the block without offset at the end
-          this.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
-          this.Editor.Toolbar.close();
-        }, 10);
+        /** Restore caret position after merge */
+        this.Editor.Caret.restoreCaret(targetBlock.pluginsContent);
+        targetBlock.pluginsContent.normalize();
+        this.Editor.Toolbar.close();
       });
   }
 
   /**
    * Handle right and down keyboard keys
    */
-  private arrowRightAndDownPressed(): void {
+  private arrowRightAndDown(): void {
     this.Editor.Caret.navigateNext();
 
     this.Editor.Toolbar.close();
@@ -169,8 +167,17 @@ export default class BlockEvents extends Module {
   /**
    * Handle left and up keyboard keys
    */
-  private arrowLeftAndUpPressed(): void {
+  private arrowLeftAndUp(): void {
     this.Editor.Caret.navigatePrevious();
+
+    this.Editor.Toolbar.close();
+  }
+
+  /**
+   * Default keydown handler
+   */
+  private defaultHandler(): void {
+    this.Editor.BlockManager.currentBlock.selected = false;
 
     this.Editor.Toolbar.close();
   }

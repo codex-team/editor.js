@@ -23,6 +23,15 @@ export default class Caret extends Module {
   }
 
   /**
+   * Elements styles that can be useful for Caret Module
+   */
+  static get CSS() {
+    return {
+      shadowCaret: 'cdx-shadow-caret'
+    };
+  };
+
+  /**
    * Method gets Block instance and puts caret to the text node with offset
    * There two ways that method applies caret position:
    *   - first found text node: sets at the beginning, but you can pass an offset
@@ -307,5 +316,47 @@ export default class Caret extends Module {
      * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
      */
     return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
+  }
+
+  /**
+   * Inserts shadow element after passed element where caret can be placed
+   * @param {Node} element
+   */
+  createShadow(element) {
+    let shadowCaret = document.createElement('span');
+
+    shadowCaret.classList.add(Caret.CSS.shadowCaret);
+    element.insertAdjacentElement('beforeEnd', shadowCaret);
+  }
+
+  /**
+   * Restores caret position
+   * @param {Node} element
+   */
+  restoreCaret(element) {
+    let shadowCaret = element.querySelector(`.${Caret.CSS.shadowCaret}`);
+
+    if (!shadowCaret) {
+      return;
+    }
+
+    /**
+     * After we set the caret to the required place
+     * we need to clear shadow caret
+     *
+     * - make new range
+     * - select shadowed span
+     * - use extractContent to remove it from DOM
+     */
+    let sel = new Selection();
+
+    sel.expandToTag(shadowCaret);
+
+    setTimeout(() => {
+      let newRange = document.createRange();
+
+      newRange.selectNode(shadowCaret);
+      newRange.extractContents();
+    }, 50);
   }
 }

@@ -3419,13 +3419,14 @@ var BlockEvents = function (_Module) {
                     break;
                 case _.keyCodes.DOWN:
                 case _.keyCodes.RIGHT:
-                    this.arrowRightAndDownPressed();
+                    this.arrowRightAndDown();
                     break;
                 case _.keyCodes.UP:
                 case _.keyCodes.LEFT:
-                    this.arrowLeftAndUpPressed();
+                    this.arrowLeftAndUp();
                     break;
                 default:
+                    this.defaultHandler();
                     break;
             }
         }
@@ -3528,14 +3529,12 @@ var BlockEvents = function (_Module) {
                 }
                 return;
             }
-            var setCaretToTheEnd = !targetBlock.isEmpty;
+            this.Editor.Caret.createShadow(targetBlock.pluginsContent);
             BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
-                // @todo figure out without timeout
-                window.setTimeout(function () {
-                    // set caret to the block without offset at the end
-                    _this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
-                    _this2.Editor.Toolbar.close();
-                }, 10);
+                /** Restore caret position after merge */
+                _this2.Editor.Caret.restoreCaret(targetBlock.pluginsContent);
+                targetBlock.pluginsContent.normalize();
+                _this2.Editor.Toolbar.close();
             });
         }
         /**
@@ -3543,8 +3542,8 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "arrowRightAndDownPressed",
-        value: function arrowRightAndDownPressed() {
+        key: "arrowRightAndDown",
+        value: function arrowRightAndDown() {
             this.Editor.Caret.navigateNext();
             this.Editor.Toolbar.close();
         }
@@ -3553,9 +3552,19 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "arrowLeftAndUpPressed",
-        value: function arrowLeftAndUpPressed() {
+        key: "arrowLeftAndUp",
+        value: function arrowLeftAndUp() {
             this.Editor.Caret.navigatePrevious();
+            this.Editor.Toolbar.close();
+        }
+        /**
+         * Default keydown handler
+         */
+
+    }, {
+        key: "defaultHandler",
+        value: function defaultHandler() {
+            this.Editor.BlockManager.currentBlock.selected = false;
             this.Editor.Toolbar.close();
         }
     }]);
@@ -4374,19 +4383,24 @@ var Caret = function (_Module) {
   }
 
   /**
-   * Method gets Block instance and puts caret to the text node with offset
-   * There two ways that method applies caret position:
-   *   - first found text node: sets at the beginning, but you can pass an offset
-   *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
-   *
-   * @param {Block} block - Block class
-   * @param {Number} offset - caret offset regarding to the text node
-   * @param {Boolean} atEnd - put caret at the end of the text node or not
+   * Elements styles that can be useful for Caret Module
    */
 
 
   _createClass(Caret, [{
     key: 'setToBlock',
+
+
+    /**
+     * Method gets Block instance and puts caret to the text node with offset
+     * There two ways that method applies caret position:
+     *   - first found text node: sets at the beginning, but you can pass an offset
+     *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
+     *
+     * @param {Block} block - Block class
+     * @param {Number} offset - caret offset regarding to the text node
+     * @param {Boolean} atEnd - put caret at the end of the text node or not
+     */
     value: function setToBlock(block) {
       var _this2 = this;
 
@@ -4600,6 +4614,54 @@ var Caret = function (_Module) {
      */
 
   }, {
+    key: 'createShadow',
+
+
+    /**
+     * Inserts shadow element after passed element where caret can be placed
+     * @param {Node} element
+     */
+    value: function createShadow(element) {
+      var shadowCaret = document.createElement('span');
+
+      shadowCaret.classList.add(Caret.CSS.shadowCaret);
+      element.insertAdjacentElement('beforeEnd', shadowCaret);
+    }
+
+    /**
+     * Restores caret position
+     * @param {Node} element
+     */
+
+  }, {
+    key: 'restoreCaret',
+    value: function restoreCaret(element) {
+      var shadowCaret = element.querySelector('.' + Caret.CSS.shadowCaret);
+
+      if (!shadowCaret) {
+        return;
+      }
+
+      /**
+       * After we set the caret to the required place
+       * we need to clear shadow caret
+       *
+       * - make new range
+       * - select shadowed span
+       * - use extractContent to remove it from DOM
+       */
+      var sel = new _selection2.default();
+
+      sel.expandToTag(shadowCaret);
+
+      setTimeout(function () {
+        var newRange = document.createRange();
+
+        newRange.selectNode(shadowCaret);
+        newRange.extractContents();
+      }, 50);
+    }
+  }, {
     key: 'isAtStart',
     get: function get() {
       /**
@@ -4700,6 +4762,13 @@ var Caret = function (_Module) {
        * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
        */
       return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
+    }
+  }], [{
+    key: 'CSS',
+    get: function get() {
+      return {
+        shadowCaret: 'cdx-shadow-caret'
+      };
     }
   }]);
 
