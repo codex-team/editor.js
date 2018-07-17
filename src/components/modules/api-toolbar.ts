@@ -1,6 +1,7 @@
 declare var Module: any;
 
-import { IToolbarAPI } from '../interfaces/api';
+import {IToolbarAPI} from '../interfaces/api';
+import IModuleConfig from '../interfaces/module-config';
 
 /**
  * @class ToolbarsAPI
@@ -10,9 +11,8 @@ export default class ToolbarAPI extends Module implements IToolbarAPI {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorsConfig} config
    */
-  constructor({config}) {
+  constructor({config}: IModuleConfig) {
     super({config});
   }
 

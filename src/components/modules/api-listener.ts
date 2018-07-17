@@ -1,6 +1,7 @@
 declare var Module: any;
 
 import {IListenerAPI} from '../interfaces/api';
+import IModuleConfig from '../interfaces/module-config';
 
 /**
  * @class API
@@ -10,9 +11,8 @@ export default class ListenerAPI extends Module implements IListenerAPI {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorsConfig} config
    */
-  constructor({config}) {
+  constructor({config}: IModuleConfig) {
     super({config});
   }
 

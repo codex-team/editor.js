@@ -554,7 +554,8 @@ var CodexEditor = function () {
         _this[method] = methods[method];
       }
 
-      delete _this.moduleInstances; // todo Is it necessary?
+      // todo Is it necessary?
+      delete _this.moduleInstances;
     }).then(function () {
       console.log('CodeX Editor is ready!');
     }).catch(function (error) {
@@ -868,7 +869,7 @@ module.exports = exports['default'];
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -882,51 +883,37 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  * @typedef {Module} Module
  * @property {Object} config - Editor user settings
- * @property {Object} Editor - List of Editor modules
+ * @property {IEditorConfig} Editor - List of Editor modules
  */
 var Module = function () {
-  /**
-   * @constructor
-   *
-   * @param {EditorConfig} config
-   */
-  function Module(_ref) {
-    var config = _ref.config;
-
-    _classCallCheck(this, Module);
-
     /**
-     * Editor modules list
-     * @type {EditorComponents}
+     * @constructor
+     * @param {IModuleConfig}
      */
-    this.Editor = null;
+    function Module(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, Module);
+
+        if (new.target === Module) {
+            throw new TypeError('Constructors for abstract class Module are not allowed.');
+        }
+        this.config = config;
+    }
     /**
-     * Editor configuration object
-     * @type {EditorConfig}
+     * Editor modules setter
+     * @param {IEditor} Editor
      */
-    this.config = {};
-    if (new.target === Module) {
-      throw new TypeError('Constructors for abstract class Module are not allowed.');
-    }
-    this.config = config;
-  }
-  /**
-   * Editor modules setter
-   *
-   * @param Editor
-   * @param Editor.modules {@link CodexEditor#moduleInstances}
-   * @param Editor.config {@link CodexEditor#configuration}
-   */
 
 
-  _createClass(Module, [{
-    key: 'state',
-    set: function set(Editor) {
-      this.Editor = Editor;
-    }
-  }]);
+    _createClass(Module, [{
+        key: 'state',
+        set: function set(Editor) {
+            this.Editor = Editor;
+        }
+    }]);
 
-  return Module;
+    return Module;
 }();
 
 Module.displayName = 'Module';
@@ -2620,7 +2607,6 @@ var BlocksAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function BlocksAPI(_ref) {
         var config = _ref.config;
@@ -2802,7 +2788,6 @@ var EventsAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function EventsAPI(_ref) {
         var config = _ref.config;
@@ -2910,7 +2895,6 @@ var ListenerAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function ListenerAPI(_ref) {
         var config = _ref.config;
@@ -3009,7 +2993,6 @@ var SanitizerAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function SanitizerAPI(_ref) {
         var config = _ref.config;
@@ -3083,7 +3066,6 @@ var SaverAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function SaverAPI(_ref) {
         var config = _ref.config;
@@ -3167,7 +3149,6 @@ var SelectionAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function SelectionAPI(_ref) {
         var config = _ref.config;
@@ -3261,7 +3242,6 @@ var ToolbarAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function ToolbarAPI(_ref) {
         var config = _ref.config;
@@ -3367,10 +3347,10 @@ var API = function (_Module) {
                 blocks: this.Editor.BlocksAPI.methods,
                 caret: {},
                 events: this.Editor.EventsAPI.methods,
+                listener: this.Editor.ListenerAPI.methods,
                 sanitizer: this.Editor.SanitizerAPI.methods,
                 saver: this.Editor.SaverAPI.methods,
                 selection: this.Editor.SelectionAPI.methods,
-                listener: this.Editor.ListenerAPI.methods,
                 toolbar: this.Editor.ToolbarAPI.methods
             };
         }

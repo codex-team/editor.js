@@ -1,6 +1,7 @@
 declare var Module: any;
 
 import {ISelectionAPI} from '../interfaces/api';
+import IModuleConfig from '../interfaces/module-config';
 import Selection from '../selection';
 
 /**
@@ -11,9 +12,8 @@ export default class SelectionAPI extends Module implements ISelectionAPI {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorsConfig} config
    */
-  constructor({config}) {
+  constructor({config}: IModuleConfig) {
     super({config});
   }
 

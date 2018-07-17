@@ -3,6 +3,7 @@
  * that passed with initial configuration object as 'data' key
  */
 export default interface IInputOutputData {
+
   /**
    * Saved Blocks
    */
