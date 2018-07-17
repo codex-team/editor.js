@@ -1,6 +1,7 @@
 import {IBlockTool} from './block-tool';
 import {IBlockToolConfig} from './block-tool';
 import ISanitizerConfig from './sanitizer-config';
+import IInputOutputData from './input-output-data';
 
 /**
  * Editor Instance config
@@ -15,7 +16,7 @@ export default interface IEditorConfig {
   /**
    * Blocks list in JSON-format
    */
-  data: IBlockToolConfig[];
+  data: IInputOutputData;
 
   /**
    * Map of used Tools
