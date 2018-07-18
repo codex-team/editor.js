@@ -31,7 +31,7 @@
  * Add placeholder to content editable elements with data attribute
  * data-placeholder="Hello world!"
  */
-[contentEditable=true]:empty:not(:focus):before{
+[contentEditable=true][data-placeholder]:empty:not(:focus):before{
   content: attr(data-placeholder);
   color: var(--grayText);
 }

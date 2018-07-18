@@ -6,8 +6,8 @@
  */
 
 /**
- * @typedef {Object} HeaderSettings
- * @description Tool's settings from Editor
+ * @typedef {Object} HeaderConfig
+ * @description Tool's config from Editor
  * @property {string} placeholder — Block's placeholder
  */
 
@@ -41,9 +41,9 @@ class Header {
   /**
    * Render plugin`s main Element and fill it with saved data
    * @param {HeaderData} blockData - previously saved data
-   * @param {HeaderSettings} blockSettings - Tool's setting from Editor
+   * @param {HeaderConfig} blockConfig - Tool's config from Editor
    */
-  constructor(blockData = {}, blockSettings = {}) {
+  constructor(blockData = {}, blockConfig = {}) {
     /**
      * Styles
      * @type {Object}
@@ -56,10 +56,10 @@ class Header {
 
     /**
      * Tool's settings passed from Editor
-     * @type {HeaderSettings}
+     * @type {HeaderConfig}
      * @private
      */
-    this._settings = blockSettings;
+    this._settings = blockConfig;
 
     /**
      * Block's data
