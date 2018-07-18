@@ -3795,10 +3795,14 @@ var BlockManager = function (_Module) {
   }, {
     key: 'insertAtEnd',
     value: function insertAtEnd() {
-      /** define new value for current block index */
+      /**
+       * Define new value for current block index
+       */
       this.currentBlockIndex = this.blocks.length - 1;
 
-      /** insert initial typed block */
+      /**
+       * Insert initial typed block
+       */
       this.insert();
     }
 
