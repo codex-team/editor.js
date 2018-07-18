@@ -49,8 +49,14 @@ export default class BlockEvents extends Module {
    * Fires on keydown before event processing
    */
   public beforeKeydownProcessing(): void {
+    /**
+     * Clear all highlightings
+     */
     this.Editor.BlockManager.clearHighlightings();
 
+    /**
+     * Hide Toolbar
+     */
     this.Editor.Toolbar.close();
   }
 

@@ -3438,7 +3438,13 @@ var BlockEvents = function (_Module) {
     }, {
         key: "beforeKeydownProcessing",
         value: function beforeKeydownProcessing() {
+            /**
+             * Clear all highlightings
+             */
             this.Editor.BlockManager.clearHighlightings();
+            /**
+             * Hide Toolbar
+             */
             this.Editor.Toolbar.close();
         }
         /**
