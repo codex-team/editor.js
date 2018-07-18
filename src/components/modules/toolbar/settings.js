@@ -112,7 +112,7 @@ module.exports = (function (settings) {
 
     firstLevelBlocksCount = editor.nodes.redactor.childNodes.length;
 
-    /**
+        /**
          * If all blocks are removed
          */
     if (firstLevelBlocksCount === 0) {

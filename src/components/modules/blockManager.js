@@ -294,17 +294,29 @@ export default class BlockManager extends Module {
      * @type {number}
      */
     this.currentBlockIndex = nodes.indexOf(firstLevelBlock);
+  }
 
-    /**
-     * Remove previous selected Block's state
-     */
-    this.blocks.forEach( block => block.selected = false);
+  /**
+   * Remove selection from all Blocks then highlight only Current Block
+   */
+  highlightCurrentNode() {
+    this.clearHighlightings();
 
     /**
      * Mark current Block as selected
      * @type {boolean}
      */
     this.currentBlock.selected = true;
+  }
+
+  /**
+   * Remove selection from all Blocks
+   */
+  clearHighlightings() {
+    /**
+     * Remove previous selected Block's state
+     */
+    this.blocks.forEach( block => block.selected = false);
   }
 
   /**
