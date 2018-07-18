@@ -6,6 +6,12 @@
  */
 
 /**
+ * @typedef {Object} HeaderSettings
+ * @description Tool's settings from Editor
+ * @property {string} placeholder — Block's placeholder
+ */
+
+/**
  * Header block for the CodeX Editor.
  *
  * @author CodeX Team (team@ifmo.su)
@@ -34,9 +40,10 @@ class Header {
 
   /**
    * Render plugin`s main Element and fill it with saved data
-   * @param {HeaderData} savedData — previously saved data
+   * @param {HeaderData} blockData - previously saved data
+   * @param {HeaderSettings} blockSettings - Tool's setting from Editor
    */
-  constructor(savedData = {}) {
+  constructor(blockData = {}, blockSettings = {}) {
     /**
      * Styles
      * @type {Object}
@@ -48,10 +55,18 @@ class Header {
     };
 
     /**
-     * Block's data
-     * @type {Object}
+     * Tool's settings passed from Editor
+     * @type {HeaderSettings}
+     * @private
      */
-    this._data = savedData || {};
+    this._settings = blockSettings;
+
+    /**
+     * Block's data
+     * @type {HeaderData}
+     * @private
+     */
+    this._data = blockData || {};
 
     /**
      * List of settings buttons
@@ -62,6 +77,7 @@ class Header {
     /**
      * Main Block wrapper
      * @type {HTMLElement}
+     * @private
      */
     this._element = this.getTag();
   }
@@ -147,7 +163,7 @@ class Header {
   /**
    * Method that specified how to merge two Text blocks.
    * Called by CodeX Editor by backspace at the beginning of the Block
-   * @param {TextData} data
+   * @param {HeaderData} data
    * @public
    */
   merge(data) {
@@ -163,18 +179,18 @@ class Header {
    * Validate Text block data:
    * - check for emptiness
    *
-   * @param {TextData} savedData — data received after saving
+   * @param {HeaderData} blockData — data received after saving
    * @returns {boolean} false if saved data is not correct, otherwise true
    * @public
    */
-  validate(savedData) {
-    return savedData.text.trim() !== '';
+  validate(blockData) {
+    return blockData.text.trim() !== '';
   }
 
   /**
    * Extract Tool's data from the view
    * @param {HTMLHeadingElement} toolsContent - Text tools rendered view
-   * @returns {TextData} - saved data
+   * @returns {HeaderData} - saved data
    * @public
    */
   save(toolsContent) {
@@ -190,7 +206,7 @@ class Header {
 
   /**
    * Get current Tools`s data
-   * @returns {TextData} Current data
+   * @returns {HeaderData} Current data
    * @private
    */
   get data() {
@@ -273,6 +289,11 @@ class Header {
      * Make tag editable
      */
     tag.contentEditable = 'true';
+
+    /**
+     * Add Placeholder
+     */
+    tag.dataset.placeholder = this._settings.placeholder || '';
 
     return tag;
   }
