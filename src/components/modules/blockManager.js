@@ -123,7 +123,7 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Always inserts at the end independently current block index pointer
+   * Always inserts at the end
    */
   insertAtEnd() {
     /** define new value for current block index */

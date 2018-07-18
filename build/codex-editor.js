@@ -3789,7 +3789,7 @@ var BlockManager = function (_Module) {
     }
 
     /**
-     * Always inserts at the end independently current block index pointer
+     * Always inserts at the end
      */
 
   }, {
