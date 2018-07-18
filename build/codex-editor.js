@@ -3410,6 +3410,13 @@ var BlockEvents = function (_Module) {
     _createClass(BlockEvents, [{
         key: "keydown",
         value: function keydown(event) {
+            /**
+             * Run common method for all keydown events
+             */
+            this.beforeKeydownProcessing();
+            /**
+             * Fire keydown processor by event.keyCode
+             */
             switch (event.keyCode) {
                 case _.keyCodes.BACKSPACE:
                     this.backspace(event);
@@ -3429,6 +3436,22 @@ var BlockEvents = function (_Module) {
                     this.defaultHandler();
                     break;
             }
+        }
+        /**
+         * Fires on keydown before event processing
+         */
+
+    }, {
+        key: "beforeKeydownProcessing",
+        value: function beforeKeydownProcessing() {
+            /**
+             * Clear all highlightings
+             */
+            this.Editor.BlockManager.clearHighlightings();
+            /**
+             * Hide Toolbar
+             */
+            this.Editor.Toolbar.close();
         }
         /**
          * Key up on Block:
@@ -3482,8 +3505,17 @@ var BlockEvents = function (_Module) {
              */
             var newCurrent = this.Editor.BlockManager.currentBlock;
             this.Editor.Toolbar.move();
-            this.Editor.Toolbar.open();
+            /**
+             * If new Block is empty
+             */
             if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
+                /**
+                 * Show Toolbar
+                 */
+                this.Editor.Toolbar.open();
+                /**
+                 * Show Plus Button
+                 */
                 this.Editor.Toolbar.plusButton.show();
             }
             event.preventDefault();
@@ -3545,7 +3577,6 @@ var BlockEvents = function (_Module) {
         key: "arrowRightAndDown",
         value: function arrowRightAndDown() {
             this.Editor.Caret.navigateNext();
-            this.Editor.Toolbar.close();
         }
         /**
          * Handle left and up keyboard keys
@@ -3555,7 +3586,6 @@ var BlockEvents = function (_Module) {
         key: "arrowLeftAndUp",
         value: function arrowLeftAndUp() {
             this.Editor.Caret.navigatePrevious();
-            this.Editor.Toolbar.close();
         }
         /**
          * Default keydown handler
@@ -3563,10 +3593,7 @@ var BlockEvents = function (_Module) {
 
     }, {
         key: "defaultHandler",
-        value: function defaultHandler() {
-            this.Editor.BlockManager.currentBlock.selected = false;
-            this.Editor.Toolbar.close();
-        }
+        value: function defaultHandler() {}
     }]);
 
     return BlockEvents;
@@ -3898,6 +3925,44 @@ var BlockManager = function (_Module) {
      */
 
   }, {
+    key: 'highlightCurrentNode',
+
+
+    /**
+     * Remove selection from all Blocks then highlight only Current Block
+     */
+    value: function highlightCurrentNode() {
+      /**
+       * Remove previous selected Block's state
+       */
+      this.clearHighlightings();
+
+      /**
+       * Mark current Block as selected
+       * @type {boolean}
+       */
+      this.currentBlock.selected = true;
+    }
+
+    /**
+     * Remove selection from all Blocks
+     */
+
+  }, {
+    key: 'clearHighlightings',
+    value: function clearHighlightings() {
+      this.blocks.forEach(function (block) {
+        return block.selected = false;
+      });
+    }
+
+    /**
+     * Get array of Block instances
+     *
+     * @returns {Block[]} {@link Blocks#array}
+     */
+
+  }, {
     key: 'setCurrentBlockByChildNode',
 
 
@@ -4030,27 +4095,7 @@ var BlockManager = function (_Module) {
        * @type {number}
        */
       this.currentBlockIndex = nodes.indexOf(firstLevelBlock);
-
-      /**
-       * Remove previous selected Block's state
-       */
-      this.blocks.forEach(function (block) {
-        return block.selected = false;
-      });
-
-      /**
-       * Mark current Block as selected
-       * @type {boolean}
-       */
-      this.currentBlock.selected = true;
     }
-
-    /**
-     * Get array of Block instances
-     *
-     * @returns {Block[]} {@link Blocks#array}
-     */
-
   }, {
     key: 'blocks',
     get: function get() {
@@ -7460,7 +7505,15 @@ var UI = function (_Module) {
        * Select clicked Block as Current
        */
       try {
+        /**
+         * Renew Current Block
+         */
         this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+
+        /**
+         * Highlight Current Node
+         */
+        this.Editor.BlockManager.highlightCurrentNode();
       } catch (e) {
         /**
          * If clicked outside first-level Blocks, set Caret to the last empty Block

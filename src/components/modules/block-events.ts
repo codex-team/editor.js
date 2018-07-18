@@ -18,6 +18,14 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   public keydown(event: KeyboardEvent): void {
+    /**
+     * Run common method for all keydown events
+     */
+    this.beforeKeydownProcessing();
+
+    /**
+     * Fire keydown processor by event.keyCode
+     */
     switch (event.keyCode) {
       case _.keyCodes.BACKSPACE:
         this.backspace(event);
@@ -41,6 +49,21 @@ export default class BlockEvents extends Module {
         this.defaultHandler();
         break;
     }
+  }
+
+  /**
+   * Fires on keydown before event processing
+   */
+  public beforeKeydownProcessing(): void {
+    /**
+     * Clear all highlightings
+     */
+    this.Editor.BlockManager.clearHighlightings();
+
+    /**
+     * Hide Toolbar
+     */
+    this.Editor.Toolbar.close();
   }
 
   /**
@@ -93,9 +116,19 @@ export default class BlockEvents extends Module {
     const newCurrent = this.Editor.BlockManager.currentBlock;
 
     this.Editor.Toolbar.move();
-    this.Editor.Toolbar.open();
 
+    /**
+     * If new Block is empty
+     */
     if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
+      /**
+       * Show Toolbar
+       */
+      this.Editor.Toolbar.open();
+
+      /**
+       * Show Plus Button
+       */
       this.Editor.Toolbar.plusButton.show();
     }
 
@@ -142,6 +175,7 @@ export default class BlockEvents extends Module {
       if (this.Editor.Caret.navigatePrevious()) {
         this.Editor.Toolbar.close();
       }
+
       return;
     }
 
@@ -160,8 +194,6 @@ export default class BlockEvents extends Module {
    */
   private arrowRightAndDown(): void {
     this.Editor.Caret.navigateNext();
-
-    this.Editor.Toolbar.close();
   }
 
   /**
@@ -169,16 +201,10 @@ export default class BlockEvents extends Module {
    */
   private arrowLeftAndUp(): void {
     this.Editor.Caret.navigatePrevious();
-
-    this.Editor.Toolbar.close();
   }
 
   /**
    * Default keydown handler
    */
-  private defaultHandler(): void {
-    this.Editor.BlockManager.currentBlock.selected = false;
-
-    this.Editor.Toolbar.close();
-  }
+  private defaultHandler(): void {}
 }

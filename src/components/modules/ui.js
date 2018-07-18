@@ -206,7 +206,15 @@ export default class UI extends Module {
      * Select clicked Block as Current
      */
     try {
+      /**
+       * Renew Current Block
+       */
       this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+
+      /**
+       * Highlight Current Node
+       */
+      this.Editor.BlockManager.highlightCurrentNode();
     } catch (e) {
       /**
        * If clicked outside first-level Blocks, set Caret to the last empty Block
