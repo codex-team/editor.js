@@ -7500,17 +7500,45 @@ var UI = function (_Module) {
   }, {
     key: 'enterPressed',
     value: function enterPressed(event) {
-      var selection = _selection2.default.get();
+      var selection = _selection2.default.get(),
+          selectedNode = void 0,
+          editorZone = false;
+
+      /**
+       * Something selected on document
+       */
+      selectedNode = selection.anchorNode || selection.focusNode;
+
+      if (selectedNode && selectedNode.nodeType === Node.TEXT_NODE) {
+        selectedNode = selectedNode.parentNode;
+      }
+
+      if (selectedNode) {
+        editorZone = selectedNode.closest('.' + this.CSS.editorZone);
+      }
+
+      /**
+       * Selection is out of Editor
+       */
+      if (!editorZone && selectedNode) {
+        return;
+      }
+
+      var hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
 
       /**
        * If there is no selection (caret is not placed) and BlockManager points some to Block
        */
-      if (!selection.anchorNode && !selection.focusNode && this.Editor.BlockManager.currentBlockIndex >= 0) {
-        /** Insert initial typed Block */
+      if (hasPointerToBlock && !selectedNode) {
+        /**
+         * Insert initial typed Block
+         */
         this.Editor.BlockManager.insert();
         this.Editor.BlockManager.highlightCurrentNode();
 
-        /** Move toolbar and show plus button because new Block is empty */
+        /**
+         * Move toolbar and show plus button because new Block is empty
+         */
         this.Editor.Toolbar.move();
         this.Editor.Toolbar.plusButton.show();
       }
