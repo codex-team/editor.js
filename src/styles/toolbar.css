@@ -22,16 +22,11 @@
   }
 
   &__plus {
+    @apply --toolbox-button;
+
     position: absolute;
-    left: calc(calc(var(--toolbar-buttons-size) + 10px) * -1);
-    display: inline-block;
-    background-color: var(--bg-light);
-    width: var(--toolbar-buttons-size);
-    height: var(--toolbar-buttons-size);
-    line-height: 34px;
-    text-align: center;
-    border-radius: 50%;
-    cursor: pointer;
+    top: -1px;
+    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);
 
     &--hidden {
       display: none;
