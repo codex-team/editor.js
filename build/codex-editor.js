@@ -3410,7 +3410,13 @@ var BlockEvents = function (_Module) {
     _createClass(BlockEvents, [{
         key: "keydown",
         value: function keydown(event) {
+            /**
+             * Run common method for all keydown events
+             */
             this.beforeKeydownProcessing();
+            /**
+             * Fire keydown processor by event.keyCode
+             */
             switch (event.keyCode) {
                 case _.keyCodes.BACKSPACE:
                     this.backspace(event);
@@ -3500,7 +3506,7 @@ var BlockEvents = function (_Module) {
             var newCurrent = this.Editor.BlockManager.currentBlock;
             this.Editor.Toolbar.move();
             /**
-             * If new Block was created
+             * If new Block is empty
              */
             if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
                 /**
@@ -3926,6 +3932,9 @@ var BlockManager = function (_Module) {
      * Remove selection from all Blocks then highlight only Current Block
      */
     value: function highlightCurrentNode() {
+      /**
+       * Remove previous selected Block's state
+       */
       this.clearHighlightings();
 
       /**
@@ -3942,9 +3951,6 @@ var BlockManager = function (_Module) {
   }, {
     key: 'clearHighlightings',
     value: function clearHighlightings() {
-      /**
-       * Remove previous selected Block's state
-       */
       this.blocks.forEach(function (block) {
         return block.selected = false;
       });

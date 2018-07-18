@@ -18,8 +18,14 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   public keydown(event: KeyboardEvent): void {
+    /**
+     * Run common method for all keydown events
+     */
     this.beforeKeydownProcessing();
 
+    /**
+     * Fire keydown processor by event.keyCode
+     */
     switch (event.keyCode) {
       case _.keyCodes.BACKSPACE:
         this.backspace(event);
@@ -112,7 +118,7 @@ export default class BlockEvents extends Module {
     this.Editor.Toolbar.move();
 
     /**
-     * If new Block was created
+     * If new Block is empty
      */
     if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
       /**

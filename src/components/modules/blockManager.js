@@ -300,6 +300,9 @@ export default class BlockManager extends Module {
    * Remove selection from all Blocks then highlight only Current Block
    */
   highlightCurrentNode() {
+    /**
+     * Remove previous selected Block's state
+     */
     this.clearHighlightings();
 
     /**
@@ -313,9 +316,6 @@ export default class BlockManager extends Module {
    * Remove selection from all Blocks
    */
   clearHighlightings() {
-    /**
-     * Remove previous selected Block's state
-     */
     this.blocks.forEach( block => block.selected = false);
   }
 
