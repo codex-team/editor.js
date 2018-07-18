@@ -3789,6 +3789,20 @@ var BlockManager = function (_Module) {
     }
 
     /**
+     * Always inserts at the end independently current block index pointer
+     */
+
+  }, {
+    key: 'insertAtEnd',
+    value: function insertAtEnd() {
+      /** define new value for current block index */
+      this.currentBlockIndex = this.blocks.length - 1;
+
+      /** insert initial typed block */
+      this.insert();
+    }
+
+    /**
      * Merge two blocks
      * @param {Block} targetBlock - previous block will be append to this block
      * @param {Block} blockToMerge - block that will be merged with target block
@@ -4522,7 +4536,7 @@ var Caret = function (_Module) {
       if (lastBlock.isEmpty) {
         this.setToBlock(lastBlock);
       } else {
-        this.Editor.BlockManager.insert(this.config.initialBlock);
+        this.Editor.BlockManager.insertAtEnd();
       }
     }
 
