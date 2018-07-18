@@ -207,7 +207,7 @@ export default class UI extends Module {
      */
     try {
       /**
-       * Detect Current Block for clicked block
+       * Renew Current Block
        */
       this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
 

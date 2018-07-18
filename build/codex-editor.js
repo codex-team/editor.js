@@ -7506,7 +7506,7 @@ var UI = function (_Module) {
        */
       try {
         /**
-         * Detect Current Block for clicked block
+         * Renew Current Block
          */
         this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
 
