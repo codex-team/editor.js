@@ -1,5 +1,10 @@
 :root {
   /**
+   * Selection color
+   */
+  --selectionColor: rgba(61,166,239,0.63);
+
+  /**
    * Toolbar buttons
    */
   --bg-light: #eff2f5;

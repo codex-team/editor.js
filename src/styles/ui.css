@@ -19,8 +19,12 @@
     max-height: 100%;
   }
 }
+
+/**
+ * Set color for native selection
+ */
 ::selection{
-  background-color: rgba(61,166,239,0.63);
+  background-color: var(--selectionColor);
 }
 
 /**
