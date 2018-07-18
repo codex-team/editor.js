@@ -18,9 +18,14 @@
   --content-width: 650px;
 
   /**
-   * Toolbar Plus Button and Toolbox buttons height and width
+   * Toolbar buttons height and width
    */
   --toolbar-buttons-size: 34px;
+
+  /**
+   * Toolbar Plus Button and Toolbox buttons height and width
+   */
+  --toolbox-buttons-size: 20px;
 
   /**
    * Confirm deletion bg
@@ -28,26 +33,49 @@
   --color-confirm: #E24A4A;
 
   --overlay-pane: {
-      position: absolute;
-      background-color: #FFFFFF;
-      box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);
-      border-radius: 4px;
-      z-index: 2;
+    position: absolute;
+    background-color: #FFFFFF;
+    box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);
+    border-radius: 4px;
+    z-index: 2;
 
-      &::before {
-          content: '';
-          width: 15px;
-          height: 15px;
-          position: absolute;
-          top: -7px;
-          left: 50%;
-          margin-left: -7px;
-          transform: rotate(-45deg);
-          background-color: #fff;
-          z-index: -1;
-      }
+    &::before {
+      content: '';
+      width: 15px;
+      height: 15px;
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      margin-left: -7px;
+      transform: rotate(-45deg);
+      background-color: #fff;
+      z-index: -1;
+    }
   };
 
+  /**
+   * Styles for Toolbox Buttons and Plus Button
+   */
+  --toolbox-button: {
+    color: var(--grayText);
+    cursor: pointer;
+    display: inline-block;
+    width: var(--toolbox-buttons-size);
+    height: var(--toolbox-buttons-size);
+    line-height: var(--toolbox-buttons-size);
+
+    &:not(:last-of-type){
+      margin-right: 3px;
+    }
+
+    &:hover {
+      color: var(--color-active-icon);
+    }
+  };
+
+  /**
+   * Styles for Settings Button in Toolbar
+   */
   --toolbar-button: {
     display: inline-block;
     width: 34px;
