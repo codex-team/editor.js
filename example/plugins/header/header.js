@@ -96,7 +96,7 @@ class Header {
    *
    * @return {HTMLElement}
    */
-  makeSettings() {
+  renderSettings() {
     let holder = document.createElement('DIV');
 
     /** Add type selectors */

@@ -22,7 +22,7 @@ export interface IBlockTool {
    * Create Block's settings block
    * @return {HTMLElement}
    */
-  makeSettings(): HTMLElement;
+  renderSettings(): HTMLElement;
 
   /**
    * Return Tool's main block-wrapper

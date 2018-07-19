@@ -170,12 +170,17 @@ export default class UI extends Module {
       case _.keyCodes.ENTER:
         this.enterPressed(event);
         break;
+
       default:
         this.defaultBehaviour(event);
         break;
     }
   }
 
+  /**
+   * Ignore all other document's keydown events
+   * @param {KeyboardEvent} event
+   */
   defaultBehaviour(event) {
     const keyDownOnEditor = event.target.closest(`.${this.CSS.editorWrapper}`);
 
@@ -184,7 +189,14 @@ export default class UI extends Module {
      * clear pointer and close toolbar
      */
     if (!keyDownOnEditor) {
+      /**
+       * Remove all highlights and remove caret
+       */
       this.Editor.BlockManager.dropPointer();
+
+      /**
+       * Close Toolbar
+       */
       this.Editor.Toolbar.close();
     }
   }
