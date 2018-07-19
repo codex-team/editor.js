@@ -17,7 +17,7 @@
 
   &__plugin-zone {
     &:not(:empty){
-      padding: 6px;
+      padding: 6px 6px 0;
     }
   }
 
