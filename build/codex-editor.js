@@ -5936,8 +5936,8 @@ var BlockSettings = function (_Module) {
   }, {
     key: 'addToolSettings',
     value: function addToolSettings() {
-      if (typeof this.Editor.BlockManager.currentBlock.tool.makeSettings === 'function') {
-        $.append(this.nodes.toolSettings, this.Editor.BlockManager.currentBlock.tool.makeSettings());
+      if (typeof this.Editor.BlockManager.currentBlock.tool.renderSettings === 'function') {
+        $.append(this.nodes.toolSettings, this.Editor.BlockManager.currentBlock.tool.renderSettings());
       }
     }
 
@@ -7501,11 +7501,18 @@ var UI = function (_Module) {
         case _.keyCodes.ENTER:
           this.enterPressed(event);
           break;
+
         default:
           this.defaultBehaviour(event);
           break;
       }
     }
+
+    /**
+     * Ignore all other document's keydown events
+     * @param {KeyboardEvent} event
+     */
+
   }, {
     key: 'defaultBehaviour',
     value: function defaultBehaviour(event) {
@@ -7516,7 +7523,14 @@ var UI = function (_Module) {
        * clear pointer and close toolbar
        */
       if (!keyDownOnEditor) {
+        /**
+         * Remove all highlights and remove caret
+         */
         this.Editor.BlockManager.dropPointer();
+
+        /**
+         * Close Toolbar
+         */
         this.Editor.Toolbar.close();
       }
     }
