@@ -4023,6 +4023,19 @@ var BlockManager = function (_Module) {
       /** Now actual block moved up so that current block index decreased */
       this.currentBlockIndex = toIndex;
     }
+
+    /**
+     * Sets current Block Index -1 which means unknown
+     * and clear highlightings
+     */
+
+  }, {
+    key: 'dropPointer',
+    value: function dropPointer() {
+      this.currentBlockIndex = -1;
+      this.clearHighlightings();
+    }
+
     /**
      * Clears Editor
      * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
@@ -4036,7 +4049,7 @@ var BlockManager = function (_Module) {
       var needAddInitialBlock = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
       this._blocks.removeAll();
-      this.currentBlockIndex = -1;
+      this.dropPointer();
 
       if (needAddInitialBlock) {
         this.insert(this.config.initialBlock);
@@ -7256,7 +7269,7 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, $) {
+/* WEBPACK VAR INJECTION */(function(Module, $, _) {
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -7267,6 +7280,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _sprite = __webpack_require__(/*! ../../../build/sprite.svg */ "./build/sprite.svg");
 
 var _sprite2 = _interopRequireDefault(_sprite);
+
+var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
+
+var _selection2 = _interopRequireDefault(_selection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7465,9 +7482,79 @@ var UI = function (_Module) {
       this.Editor.Listeners.on(this.nodes.redactor, 'click', function (event) {
         return _this4.redactorClicked(event);
       }, false);
+      this.Editor.Listeners.on(document, 'keydown', function (event) {
+        return _this4.documentKeydown(event);
+      }, true);
       this.Editor.Listeners.on(document, 'click', function (event) {
         return _this4.documentClicked(event);
       }, false);
+    }
+
+    /**
+     * All keydowns on document
+     * @param event
+     */
+
+  }, {
+    key: 'documentKeydown',
+    value: function documentKeydown(event) {
+      switch (event.keyCode) {
+        case _.keyCodes.ENTER:
+          this.enterPressed(event);
+          break;
+        default:
+          this.defaultBehaviour(event);
+          break;
+      }
+    }
+  }, {
+    key: 'defaultBehaviour',
+    value: function defaultBehaviour(event) {
+      var keyDownOnEditor = event.target.closest('.' + this.CSS.editorWrapper);
+
+      /**
+       * Ignore keydowns on document
+       * clear pointer and close toolbar
+       */
+      if (!keyDownOnEditor) {
+        this.Editor.BlockManager.dropPointer();
+        this.Editor.Toolbar.close();
+      }
+    }
+
+    /**
+     * Enter pressed on document
+     * @param event
+     */
+
+  }, {
+    key: 'enterPressed',
+    value: function enterPressed(event) {
+      var hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
+
+      /**
+       * If Selection is out of Editor and document has some selection
+       */
+      if (!_selection2.default.isAtEditor && _selection2.default.anchorNode) {
+        return;
+      }
+
+      /**
+       * If there is no selection (caret is not placed) and BlockManager points some to Block
+       */
+      if (hasPointerToBlock && !_selection2.default.anchorNode) {
+        /**
+         * Insert initial typed Block
+         */
+        this.Editor.BlockManager.insert();
+        this.Editor.BlockManager.highlightCurrentNode();
+
+        /**
+         * Move toolbar and show plus button because new Block is empty
+         */
+        this.Editor.Toolbar.move();
+        this.Editor.Toolbar.plusButton.show();
+      }
     }
 
     /**
@@ -7483,6 +7570,13 @@ var UI = function (_Module) {
        * Do not fire check on clicks at the Inline Toolbar buttons
        */
       var clickedOnInlineToolbarButton = event.target.closest('.' + this.Editor.InlineToolbar.CSS.inlineToolbar);
+      var clickedInsideofEditor = event.target.closest('.' + this.CSS.editorWrapper);
+
+      /** Clear highlightings and pointer on BlockManager */
+      if (!clickedInsideofEditor) {
+        this.Editor.BlockManager.dropPointer();
+        this.Editor.Toolbar.close();
+      }
 
       if (!clickedOnInlineToolbarButton) {
         this.Editor.InlineToolbar.handleShowingEvent(event);
@@ -7540,77 +7634,10 @@ var UI = function (_Module) {
       }
 
       /**
-           *
-           /** Update current input index in memory when caret focused into existed input */
-      // if (event.target.contentEditable == 'true') {
-      //
-      //     editor.caret.saveCurrentInputIndex();
-      //
-      // }
-
-      // if (editor.content.currentNode === null) {
-      //
-      //     /**
-      //      * If inputs in redactor does not exits, then we put input index 0 not -1
-      //      */
-      //     var indexOfLastInput = editor.state.inputs.length > 0 ? editor.state.inputs.length - 1 : 0;
-      //
-      //     /** If we have any inputs */
-      //     if (editor.state.inputs.length) {
-      //
-      //         /** getting firstlevel parent of input */
-      //         firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
-      //
-      //     }
-      //
-      //     /** If input is empty, then we set caret to the last input */
-      //     if (editor.state.inputs.length && editor.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == editor.settings.initialBlockPlugin) {
-      //
-      //         editor.caret.setToBlock(indexOfLastInput);
-      //
-      //     } else {
-      //
-      //         /** Create new input when caret clicked in redactors area */
-      //         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
-      //
-      //         editor.content.insertBlock({
-      //             type  : NEW_BLOCK_TYPE,
-      //             block : editor.tools[NEW_BLOCK_TYPE].render()
-      //         });
-      //
-      //         /** If there is no inputs except inserted */
-      //         if (editor.state.inputs.length === 1) {
-      //
-      //             editor.caret.setToBlock(indexOfLastInput);
-      //
-      //         } else {
-      //
-      //             /** Set caret to this appended input */
-      //             editor.caret.setToNextBlock(indexOfLastInput);
-      //
-      //         }
-      //
-      //     }
-      //
-      // } else {
-      //
-      //     /** Close all panels */
-      //     editor.toolbar.settings.close();
-      //     editor.toolbar.toolbox.close();
-      //
-      // }
-      //
-      /**
        * Move toolbar and open
        */
       this.Editor.Toolbar.move();
       this.Editor.Toolbar.open();
-      //
-      // var inputIsEmpty = !editor.content.currentNode.textContent.trim(),
-      //     currentNodeType = editor.content.currentNode.dataset.tool,
-      //     isInitialType = currentNodeType == editor.settings.initialBlockPlugin;
-      //
-      //
 
       /**
        * Hide the Plus Button
@@ -7875,7 +7902,7 @@ var UI = function (_Module) {
 UI.displayName = 'UI';
 exports.default = UI;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
 
@@ -7949,9 +7976,9 @@ var Selection = function () {
   }
 
   /**
-   * Returns window Selection
-   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-   * @return {Selection}
+   * Editor styles
+   * @return {{editorWrapper: string, editorZone: string}}
+   * @constructor
    */
 
 
@@ -8086,6 +8113,13 @@ var Selection = function () {
     }
   }], [{
     key: 'get',
+
+
+    /**
+     * Returns window Selection
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+     * @return {Selection}
+     */
     value: function get() {
       return window.getSelection();
     }
@@ -8096,6 +8130,14 @@ var Selection = function () {
      * @return {Node|null}
      */
 
+  }, {
+    key: 'CSS',
+    get: function get() {
+      return {
+        editorWrapper: 'codex-editor',
+        editorZone: 'codex-editor__redactor'
+      };
+    }
   }, {
     key: 'anchorNode',
     get: function get() {
@@ -8129,6 +8171,37 @@ var Selection = function () {
       var selection = window.getSelection();
 
       return selection ? selection.isCollapsed : null;
+    }
+
+    /**
+     * Check current selection if it is at Editor's zone
+     * @return {boolean}
+     */
+
+  }, {
+    key: 'isAtEditor',
+    get: function get() {
+      var selection = Selection.get(),
+          selectedNode = void 0,
+          editorZone = false;
+
+      /**
+       * Something selected on document
+       */
+      selectedNode = selection.anchorNode || selection.focusNode;
+
+      if (selectedNode && selectedNode.nodeType === Node.TEXT_NODE) {
+        selectedNode = selectedNode.parentNode;
+      }
+
+      if (selectedNode) {
+        editorZone = selectedNode.closest('.' + Selection.CSS.editorZone);
+      }
+
+      /**
+       * Selection is not out of Editor because Editor's wrapper was found
+       */
+      return editorZone && editorZone.nodeType === Node.ELEMENT_NODE;
     }
 
     /**
