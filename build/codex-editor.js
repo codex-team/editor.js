@@ -7500,36 +7500,19 @@ var UI = function (_Module) {
   }, {
     key: 'enterPressed',
     value: function enterPressed(event) {
-      var selection = _selection2.default.get(),
-          selectedNode = void 0,
-          editorZone = false;
+      var hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
 
       /**
-       * Something selected on document
+       * If Selection is out of Editor and document has some selection
        */
-      selectedNode = selection.anchorNode || selection.focusNode;
-
-      if (selectedNode && selectedNode.nodeType === Node.TEXT_NODE) {
-        selectedNode = selectedNode.parentNode;
-      }
-
-      if (selectedNode) {
-        editorZone = selectedNode.closest('.' + this.CSS.editorZone);
-      }
-
-      /**
-       * Selection is out of Editor
-       */
-      if (!editorZone && selectedNode) {
+      if (!_selection2.default.isAtEditor && _selection2.default.anchorNode) {
         return;
       }
-
-      var hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
 
       /**
        * If there is no selection (caret is not placed) and BlockManager points some to Block
        */
-      if (hasPointerToBlock && !selectedNode) {
+      if (hasPointerToBlock && !_selection2.default.anchorNode) {
         /**
          * Insert initial typed Block
          */
@@ -7956,9 +7939,9 @@ var Selection = function () {
   }
 
   /**
-   * Returns window Selection
-   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-   * @return {Selection}
+   * Editor styles
+   * @return {{editorWrapper: string, editorZone: string}}
+   * @constructor
    */
 
 
@@ -8093,6 +8076,13 @@ var Selection = function () {
     }
   }], [{
     key: 'get',
+
+
+    /**
+     * Returns window Selection
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+     * @return {Selection}
+     */
     value: function get() {
       return window.getSelection();
     }
@@ -8103,6 +8093,14 @@ var Selection = function () {
      * @return {Node|null}
      */
 
+  }, {
+    key: 'CSS',
+    get: function get() {
+      return {
+        editorWrapper: 'codex-editor',
+        editorZone: 'codex-editor__redactor'
+      };
+    }
   }, {
     key: 'anchorNode',
     get: function get() {
@@ -8136,6 +8134,37 @@ var Selection = function () {
       var selection = window.getSelection();
 
       return selection ? selection.isCollapsed : null;
+    }
+
+    /**
+     * Check current selection if it is at Editor's zone
+     * @return {boolean}
+     */
+
+  }, {
+    key: 'isAtEditor',
+    get: function get() {
+      var selection = Selection.get(),
+          selectedNode = void 0,
+          editorZone = false;
+
+      /**
+       * Something selected on document
+       */
+      selectedNode = selection.anchorNode || selection.focusNode;
+
+      if (selectedNode && selectedNode.nodeType === Node.TEXT_NODE) {
+        selectedNode = selectedNode.parentNode;
+      }
+
+      if (selectedNode) {
+        editorZone = selectedNode.closest('.' + Selection.CSS.editorZone);
+      }
+
+      /**
+       * Selection is not out of Editor because Editor's wrapper was found
+       */
+      return editorZone.nodeType === Node.ELEMENT_NODE;
     }
 
     /**

@@ -18,6 +18,18 @@ export default class Selection {
   }
 
   /**
+   * Editor styles
+   * @return {{editorWrapper: string, editorZone: string}}
+   * @constructor
+   */
+  static get CSS() {
+    return {
+      editorWrapper : 'codex-editor',
+      editorZone    : 'codex-editor__redactor',
+    };
+  }
+
+  /**
    * Returns window Selection
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
    * @return {Selection}
@@ -56,6 +68,34 @@ export default class Selection {
     const selection = window.getSelection();
 
     return selection ? selection.isCollapsed : null;
+  }
+
+  /**
+   * Check current selection if it is at Editor's zone
+   * @return {boolean}
+   */
+  static get isAtEditor() {
+    let selection = Selection.get(),
+      selectedNode,
+      editorZone = false;
+
+    /**
+     * Something selected on document
+     */
+    selectedNode = selection.anchorNode || selection.focusNode;
+
+    if (selectedNode && selectedNode.nodeType === Node.TEXT_NODE) {
+      selectedNode = selectedNode.parentNode;
+    }
+
+    if (selectedNode) {
+      editorZone = selectedNode.closest(`.${Selection.CSS.editorZone}`);
+    }
+
+    /**
+     * Selection is not out of Editor because Editor's wrapper was found
+     */
+    return editorZone.nodeType === Node.ELEMENT_NODE;
   }
 
   /**

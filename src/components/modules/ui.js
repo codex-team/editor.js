@@ -178,36 +178,19 @@ export default class UI extends Module {
    * @param event
    */
   enterPressed(event) {
-    let selection = Selection.get(),
-      selectedNode,
-      editorZone = false;
+    let hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
 
     /**
-     * Something selected on document
+     * If Selection is out of Editor and document has some selection
      */
-    selectedNode = selection.anchorNode || selection.focusNode;
-
-    if (selectedNode && selectedNode.nodeType === Node.TEXT_NODE) {
-      selectedNode = selectedNode.parentNode;
-    }
-
-    if (selectedNode) {
-      editorZone = selectedNode.closest(`.${this.CSS.editorZone}`);
-    }
-
-    /**
-     * Selection is out of Editor
-     */
-    if (!editorZone && selectedNode) {
+    if (!Selection.isAtEditor && Selection.anchorNode) {
       return;
     }
-
-    let hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
 
     /**
      * If there is no selection (caret is not placed) and BlockManager points some to Block
      */
-    if (hasPointerToBlock && !selectedNode) {
+    if (hasPointerToBlock && !Selection.anchorNode) {
       /**
        * Insert initial typed Block
        */
