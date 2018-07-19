@@ -6301,7 +6301,17 @@ var InlineToolbar = function (_Module) {
             this.Editor.Listeners.on(button, 'click', function () {
                 _this3.toolClicked(tool);
             });
+            /** Enable shortcuts if inline-tool implemented Shortcuts */
+            this.enableShortcuts(tool);
         }
+        /**
+         *
+         * @param {InlineTool} tool
+         */
+
+    }, {
+        key: 'enableShortcuts',
+        value: function enableShortcuts(tool) {}
         /**
          * Inline Tool button clicks
          * @param {InlineTool} tool - Tool's instance

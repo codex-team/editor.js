@@ -251,6 +251,17 @@ export default class InlineToolbar extends Module {
     this.Editor.Listeners.on(button, 'click', () => {
       this.toolClicked(tool);
     });
+
+    /** Enable shortcuts if inline-tool implemented Shortcuts */
+    this.enableShortcuts(tool);
+  }
+
+  /**
+   *
+   * @param {InlineTool} tool
+   */
+  private enableShortcuts(tool: InlineTool): void {
+
   }
 
   /**
