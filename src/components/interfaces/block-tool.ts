@@ -19,6 +19,12 @@ export interface IBlockTool {
   iconClassName(): string;
 
   /**
+   * Render icon for Toolbox
+   * @return {HTMLElement}
+   */
+  renderToolboxIcon(): HTMLElement;
+
+  /**
    * Create Block's settings block
    * @return {HTMLElement}
    */

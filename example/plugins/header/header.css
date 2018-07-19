@@ -18,7 +18,7 @@
  * Styles for Plugin icon in Toolbar
  */
 .cdx-header-icon {
-  background-image: url('icon.svg');
-  background-position: center center;
-  background-repeat: no-repeat;
+  //background-image: url('icon.svg');
+  //background-position: center center;
+  //background-repeat: no-repeat;
 }
