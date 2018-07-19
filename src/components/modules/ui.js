@@ -157,7 +157,7 @@ export default class UI extends Module {
    */
   bindEvents() {
     this.Editor.Listeners.on(this.nodes.redactor, 'click', event => this.redactorClicked(event), false );
-    this.Editor.Listeners.on(document, 'keydown', event => this.documentKeydown(event), false );
+    this.Editor.Listeners.on(document, 'keydown', event => this.documentKeydown(event), true );
     this.Editor.Listeners.on(document, 'click', event => this.documentClicked(event), false );
   }
 
@@ -169,6 +169,18 @@ export default class UI extends Module {
     switch (event.keyCode) {
       case _.keyCodes.ENTER:
         this.enterPressed(event);
+        break;
+      default:
+        const keyDownOnEditor = event.target.closest(`.${this.CSS.editorWrapper}`);
+
+        /**
+         * Ignore keydowns on document
+         * clear pointer and close toolbar
+         */
+        if (!keyDownOnEditor) {
+          this.Editor.BlockManager.dropPointer();
+          this.Editor.Toolbar.close();
+        }
         break;
     }
   }

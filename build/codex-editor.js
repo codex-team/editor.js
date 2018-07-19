@@ -7484,7 +7484,7 @@ var UI = function (_Module) {
       }, false);
       this.Editor.Listeners.on(document, 'keydown', function (event) {
         return _this4.documentKeydown(event);
-      }, false);
+      }, true);
       this.Editor.Listeners.on(document, 'click', function (event) {
         return _this4.documentClicked(event);
       }, false);
@@ -7501,6 +7501,18 @@ var UI = function (_Module) {
       switch (event.keyCode) {
         case _.keyCodes.ENTER:
           this.enterPressed(event);
+          break;
+        default:
+          var keyDownOnEditor = event.target.closest('.' + this.CSS.editorWrapper);
+
+          /**
+           * Ignore keydowns on document
+           * clear pointer and close toolbar
+           */
+          if (!keyDownOnEditor) {
+            this.Editor.BlockManager.dropPointer();
+            this.Editor.Toolbar.close();
+          }
           break;
       }
     }
