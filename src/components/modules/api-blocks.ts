@@ -95,10 +95,10 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
     if (this.Editor.BlockManager.currentBlockIndex === 0) {
       this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
     } else {
-      if (this.Editor.Caret.navigatePrevious(true)) {
-        this.Editor.Toolbar.close();
-      }
+      this.Editor.Caret.navigatePrevious(true);
     }
+
+    this.Editor.Toolbar.close();
   }
 
   /**
