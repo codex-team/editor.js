@@ -4049,7 +4049,7 @@ var BlockManager = function (_Module) {
       var needAddInitialBlock = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
       this._blocks.removeAll();
-      this.currentBlockIndex = -1;
+      this.dropPointer();
 
       if (needAddInitialBlock) {
         this.insert(this.config.initialBlock);
@@ -7503,17 +7503,22 @@ var UI = function (_Module) {
           this.enterPressed(event);
           break;
         default:
-          var keyDownOnEditor = event.target.closest('.' + this.CSS.editorWrapper);
-
-          /**
-           * Ignore keydowns on document
-           * clear pointer and close toolbar
-           */
-          if (!keyDownOnEditor) {
-            this.Editor.BlockManager.dropPointer();
-            this.Editor.Toolbar.close();
-          }
+          this.defaultBehaviour(event);
           break;
+      }
+    }
+  }, {
+    key: 'defaultBehaviour',
+    value: function defaultBehaviour(event) {
+      var keyDownOnEditor = event.target.closest('.' + this.CSS.editorWrapper);
+
+      /**
+       * Ignore keydowns on document
+       * clear pointer and close toolbar
+       */
+      if (!keyDownOnEditor) {
+        this.Editor.BlockManager.dropPointer();
+        this.Editor.Toolbar.close();
       }
     }
 

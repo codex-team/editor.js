@@ -397,7 +397,7 @@ export default class BlockManager extends Module {
    */
   clear(needAddInitialBlock = false) {
     this._blocks.removeAll();
-    this.currentBlockIndex = -1;
+    this.dropPointer();
 
     if (needAddInitialBlock) {
       this.insert(this.config.initialBlock);

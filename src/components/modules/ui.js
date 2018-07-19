@@ -171,17 +171,21 @@ export default class UI extends Module {
         this.enterPressed(event);
         break;
       default:
-        const keyDownOnEditor = event.target.closest(`.${this.CSS.editorWrapper}`);
-
-        /**
-         * Ignore keydowns on document
-         * clear pointer and close toolbar
-         */
-        if (!keyDownOnEditor) {
-          this.Editor.BlockManager.dropPointer();
-          this.Editor.Toolbar.close();
-        }
+        this.defaultBehaviour(event);
         break;
+    }
+  }
+
+  defaultBehaviour(event) {
+    const keyDownOnEditor = event.target.closest(`.${this.CSS.editorWrapper}`);
+
+    /**
+     * Ignore keydowns on document
+     * clear pointer and close toolbar
+     */
+    if (!keyDownOnEditor) {
+      this.Editor.BlockManager.dropPointer();
+      this.Editor.Toolbar.close();
     }
   }
 
