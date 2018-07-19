@@ -19,10 +19,10 @@ export interface IBlockTool {
   iconClassName(): string;
 
   /**
-   * Render icon for Toolbox
-   * @return {HTMLElement}
+   * Tool's SVG icon for Toolbox
+   * @return {string}
    */
-  renderToolboxIcon(): HTMLElement;
+  svgIcon(): string;
 
   /**
    * Create Block's settings block

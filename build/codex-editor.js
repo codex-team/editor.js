@@ -6445,7 +6445,7 @@ var Toolbox = function (_Module) {
      * Append Tool to the Toolbox
      *
      * @param {string} toolName  - tool name
-     * @param {Tool}  tool      - tool class
+     * @param {IBlockTool} tool - tool class
      */
 
   }, {
@@ -6480,6 +6480,8 @@ var Toolbox = function (_Module) {
       var button = $.make('li', [Toolbox.CSS.toolboxButton, tool[api.TOOLBAR_ICON_CLASS]], {
         title: toolName
       });
+
+      button.innerHTML = tool.svgIcon;
 
       /**
        * Save tool's name in the button data-name

@@ -64,7 +64,7 @@ export default class Toolbox extends Module {
    * Append Tool to the Toolbox
    *
    * @param {string} toolName  - tool name
-   * @param {Tool}  tool      - tool class
+   * @param {IBlockTool} tool - tool class
    */
   addTool(toolName, tool) {
     const api = this.Editor.Tools.apiSettings;
@@ -94,6 +94,8 @@ export default class Toolbox extends Module {
     let button = $.make('li', [Toolbox.CSS.toolboxButton, tool[api.TOOLBAR_ICON_CLASS]], {
       title: toolName
     });
+
+    button.innerHTML = tool.svgIcon;
 
     /**
      * Save tool's name in the button data-name
