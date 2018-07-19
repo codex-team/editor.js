@@ -95,7 +95,7 @@ export default class Selection {
     /**
      * Selection is not out of Editor because Editor's wrapper was found
      */
-    return editorZone.nodeType === Node.ELEMENT_NODE;
+    return editorZone && editorZone.nodeType === Node.ELEMENT_NODE;
   }
 
   /**
