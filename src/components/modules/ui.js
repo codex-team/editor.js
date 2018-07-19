@@ -215,6 +215,13 @@ export default class UI extends Module {
      * Do not fire check on clicks at the Inline Toolbar buttons
      */
     const clickedOnInlineToolbarButton = event.target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
+    const clickedInsideofEditor = event.target.closest(`.${this.CSS.editorWrapper}`);
+
+    /** Clear highlightings and pointer on BlockManager */
+    if (!clickedInsideofEditor) {
+      this.Editor.BlockManager.dropPointer();
+      this.Editor.Toolbar.close();
+    }
 
     if (!clickedOnInlineToolbarButton) {
       this.Editor.InlineToolbar.handleShowingEvent(event);

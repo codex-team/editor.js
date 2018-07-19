@@ -379,6 +379,16 @@ export default class BlockManager extends Module {
     /** Now actual block moved up so that current block index decreased */
     this.currentBlockIndex = toIndex;
   }
+
+  /**
+   * Sets current Block Index -1 which means unknown
+   * and clear highlightings
+   */
+  dropPointer() {
+    this.currentBlockIndex = -1;
+    this.clearHighlightings();
+  }
+
   /**
    * Clears Editor
    * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)

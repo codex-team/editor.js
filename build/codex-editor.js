@@ -4023,6 +4023,19 @@ var BlockManager = function (_Module) {
       /** Now actual block moved up so that current block index decreased */
       this.currentBlockIndex = toIndex;
     }
+
+    /**
+     * Sets current Block Index -1 which means unknown
+     * and clear highlightings
+     */
+
+  }, {
+    key: 'dropPointer',
+    value: function dropPointer() {
+      this.currentBlockIndex = -1;
+      this.clearHighlightings();
+    }
+
     /**
      * Clears Editor
      * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
@@ -7540,6 +7553,13 @@ var UI = function (_Module) {
        * Do not fire check on clicks at the Inline Toolbar buttons
        */
       var clickedOnInlineToolbarButton = event.target.closest('.' + this.Editor.InlineToolbar.CSS.inlineToolbar);
+      var clickedInsideofEditor = event.target.closest('.' + this.CSS.editorWrapper);
+
+      /** Clear highlightings and pointer on BlockManager */
+      if (!clickedInsideofEditor) {
+        this.Editor.BlockManager.dropPointer();
+        this.Editor.Toolbar.close();
+      }
 
       if (!clickedOnInlineToolbarButton) {
         this.Editor.InlineToolbar.handleShowingEvent(event);
