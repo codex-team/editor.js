@@ -1,36 +1,57 @@
+/**
+ * @class Paste
+ * @classdesc Contains methods to handle paste on editor
+ *
+ * @module Paste
+ *
+ * @version 2.0.0
+ */
+
+import {IBlockToolData} from '../interfaces/block-tool';
+
 declare const Module: any;
 declare const $: any;
 declare const _: any;
 
-interface IBlockData {
-  tool: string;
-  data: any;
-}
-
-interface IPasteConfig {
-  handler: (content: HTMLElement) => IBlockData;
-  tags?: string[];
-  patterns?: RegExp[];
-  patternHandler?: (text: string, pattern: RegExp) => IBlockData;
-}
-
+/**
+ * Tag substitute object.
+ *
+ * @param {string} tool - name of related Tool
+ * @param {Function} handler - callback to handle pasted element
+ */
 interface ITagSubstitute {
   tool: string;
-  handler: (element: HTMLElement) => IBlockData;
+  handler: (element: HTMLElement) => IBlockToolData;
 }
 
+/**
+ * Pattern substitute object.
+ *
+ * @param {string} key - pattern`s key
+ * @param {RegExp} pattern - pasted pattern
+ * @param {Function} handler - callback to handle pasted pattern
+ * @param {string} tool - name of related Tool
+ */
 interface IPatternSubstitute {
   key: string;
   pattern: RegExp;
-  handler: (text: string, key: string) => IBlockData;
+  handler: (text: string, key: string) => IBlockToolData;
   tool: string;
 }
 
+/**
+ * Processed paste data object.
+ *
+ * @param {string} tool - name of related Tool
+ * @param {HTMLElement} content - processed pasted content
+ * @param {boolean} isBlock - true if content should be inserted as new Block
+ * @param {Function} handler - callback that returns pasted data in IBlockToolData format
+ */
 interface IPasteData {
   tool: string;
   content: HTMLElement;
   isBlock: boolean;
-  handler: (content: HTMLElement|string, patten?: RegExp) => IBlockData;
+  handler: (content: HTMLElement|string, patten?: RegExp) => IBlockToolData;
 }
 
 export default class Paste extends Module {
@@ -215,19 +236,12 @@ export default class Paste extends Module {
       dataToInsert = this.processHTML(htmlData);
     }
 
-    /** If we paste into middle of the current block:
-     *  1. Split
-     *  2. Navigate to the first part
-     */
-    if (!BlockManager.currentBlock.isEmpty && !Caret.isAtEnd) {
-      BlockManager.split();
-      BlockManager.currentBlockIndex--;
-    }
-
     if (dataToInsert.length === 1 && !dataToInsert[0].isBlock) {
       this.processSingleBlock(dataToInsert.pop());
       return;
     }
+
+    this.splitBlock();
 
     await Promise.all(dataToInsert.map(async (data) => await this.insertBlock(data)));
 
@@ -251,6 +265,8 @@ export default class Paste extends Module {
       const blockData = await this.processPattern(content.textContent);
 
       if (blockData) {
+        this.splitBlock();
+
         BlockManager.insert(blockData.tool, blockData.data);
         return;
       }
@@ -294,6 +310,22 @@ export default class Paste extends Module {
     const {BlockManager} = this.Editor;
 
     BlockManager.insert(data.tool, blockData);
+  }
+
+  /**
+   * Split current block if paste isn't in the end of the block
+   */
+  private splitBlock() {
+    const {BlockManager, Caret} = this.Editor;
+
+    /** If we paste into middle of the current block:
+     *  1. Split
+     *  2. Navigate to the first part
+     */
+    if (!BlockManager.currentBlock.isEmpty && !Caret.isAtEnd) {
+      BlockManager.split();
+      BlockManager.currentBlockIndex--;
+    }
   }
 
   /**
@@ -391,6 +423,11 @@ export default class Paste extends Module {
       }
 
       switch (node.nodeType) {
+        /**
+         * If node is HTML element:
+         * 1. Check if it is inline element
+         * 2. Check if it contains another block or substitutable elements
+         */
         case Node.ELEMENT_NODE:
           const element = node as HTMLElement;
           /** Append inline elements to previous fragment */
@@ -417,6 +454,9 @@ export default class Paste extends Module {
           }
           break;
 
+        /**
+         * If node is text node, wrap it with DocumentFragment
+         */
         case Node.TEXT_NODE:
           destNode.appendChild(node);
           return [...nodes, destNode];

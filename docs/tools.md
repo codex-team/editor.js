@@ -1,6 +1,6 @@
 # CodeX Editor Tools
 
-CodeX Editor is a block-oriented editor. It means that entry composed with the list of `Blocks` of different types: `Texts`, `Headers`, `Images`, `Quotes` etc. 
+CodeX Editor is a block-oriented editor. It means that entry composed with the list of `Blocks` of different types: `Texts`, `Headers`, `Images`, `Quotes` etc.
 
 `Tool` — is a class that provide custom `Block` type. All Tools represented by `Plugins`.
 
@@ -16,8 +16,8 @@ CodeX Editor is a block-oriented editor. It means that entry composed with the l
 
 ### Merge (optional)
 
-Method that specifies how to merge two `Blocks` of the same type, for example on `Backspace` keypress. 
-Method does accept data object in same format as the `Render` and it should provide logic how to combine new 
+Method that specifies how to merge two `Blocks` of the same type, for example on `Backspace` keypress.
+Method does accept data object in same format as the `Render` and it should provide logic how to combine new
 data with the currently stored value.
 
 ### Internal Tool Settings
@@ -34,17 +34,17 @@ Options that Tool can specify. All settings should be passed as static propertie
 
 ### User configuration
 
-All Tools can be configured by users. For this reason, we provide `toolConfig` option at the Editor Initial Settings. 
-Unlike Internal Tool Settings, this options can be specified outside the Tool class, 
+All Tools can be configured by users. For this reason, we provide `toolConfig` option at the Editor Initial Settings.
+Unlike Internal Tool Settings, this options can be specified outside the Tool class,
 so users can set up different configurations for the same Tool.
 
-```js 
+```javascript
 var editor = new CodexEditor({
   holderId : 'codex-editor',
   initialBlock : 'text',
   tools: {
     text: Text // 'Text' Tool class for Blocks with type 'text'
-  }, 
+  },
   toolsConfig: {
     text: {  // user configuration for Blocks with type 'text'
       inlineToolbar : true,
@@ -59,26 +59,81 @@ There are few options available by CodeX Editor.
 | -- | -- | -- | -- |
 | `enableLineBreaks` | _Boolean_ | `false` | With this option, CodeX Editor won't handle Enter keydowns. Can be helpful for Tools like `<code>` where line breaks should be handled by default behaviour. |
 | `inlineToolbar` | _Boolean/Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
-| `onPase` | _Object_ | {} | Paste event handlers and configuration, see below.
+| `dissallowPaste` | _Boolean_ | false | Pass `true` if you want to prevent any paste into your Tool
 
 
 ### Paste handling
-CodeX Editor handle paste on Blocks and provide API for plugins to process pasted data. When user paste content into Editor, pasted content is split into blocks.
+CodeX Editor handles paste on Blocks and provides API for Tools to process the pasted data.
 
+
+When user pastes content into Editor, pasted content is splitted into blocks.
 1. If plain text has been pasted, it is split by new line characters
 2. If HTML string has been pasted, it is split by block tags
 
-You should provide `onPaste` field in Tool configuration with following parameters:
+
+Also Editor API allows you to define RegExp patterns to substitute them by your data.
+
+
+To provide paste handling for your Tool you need to define static getter `onPaste` in Tool class.
+`onPaste` getter should return object with fields described below.
+
+##### HTML tags handling
+To handle pasted HTML elements object returned from `onPaste` getter should contain following fields: 
+
 | Name | Type | Description |
 | -- | -- | -- | -- |
-| `handler` | `Function` | _Required_. Paste handler gets one argument `content`. `content` is HTML element extracted from pasted data. |
-| `tags` | `String[]` | _Optional_. If you provide tags parameter they will be extracted from pasted data and passed to your `handler` function. |
-| `allowedAttributes` | `String[]` | _Optional_. By default pasted content is sanitized and all attributes are removed. If you provide needed attributes here they won't be removed and you can handle them in `handle` function |
-| `patterns` | `RegExp[]` | _Optional_. If user paste one-line text into `initialBlock` Tool it will be checked for provided patterns. |
-| `parser` | `Function` | _Optional_. If one of your patterns has been found in pasted text it will be passed to your `parser` function. Matched pattern will be passed as second argument. |
+| `handler(content: HTMLElement)` | `Function` | _Optional_. Pasted HTML elements handler. Gets one argument `content`. `content` is HTML element extracted from pasted data. Handler should return the same object as Tool's `save` method |
+| `tags` | `String[]` | _Optional_. Should contain all tag names you want to be extracted from pasted data and be passed to your `handler` method |
 
-For correct work you MUST provide paste `handler` for `initialBlock` Tool at least.
 
-Using `tags` and `patterns` fields you can make your Tool to handle pasted images and videos or insert embeded elements useing pasted links.
+For correct work you MUST provide `onPaste.handler` at least for `initialBlock` Tool.
 
-### Sanitize 
+> Example
+
+Header tool can handle `H1`-`H6` tags using paste handling API
+```javascript
+static get onPaste() {
+  return {
+    tags: ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'],
+    handler: (element) => ({
+      type: element.tagName,
+      text: element.innerHTML
+    })
+  }
+}
+```
+
+> One tag can be handled by one Tool only.
+
+
+##### Patterns handling
+Your Tool can analyze text by RegExp patterns to substitute pasted string with data you want. Object returned from `onPaste` getter should contain following fields to use patterns:
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| `patterns` | `Object` | _Optional_. `patterns` object contains RegExp patterns with their names as object's keys |
+| `patternHandler(text: string, key: string)` | `Function` | _Optional_. Gets pasted string and pattern name. Should return the same object as Tool `save` method |
+
+
+Pattern will be processed only if paste was on `initialBlock` Tool and pasted string length is less than 450 characters.
+
+> Example
+
+You can handle youtube links and insert embeded video instead:
+```javascript
+static get onPaste() {
+  return {
+    patterns: {
+      youtube: /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?[\w\?‌​=]*)?/
+    },
+    patternHandler: (text, key) => {
+      const urlData = Youtube.onPaste.patterns[key].exec(text);
+      
+      return {
+        iframe: Youtube.makeEmbededFromURL(urlData)
+      };
+    }
+  }
+}
+```
+
+### Sanitize

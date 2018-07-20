@@ -18821,6 +18821,14 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+/**
+ * @class Paste
+ * @classdesc Contains methods to handle paste on editor
+ *
+ * @module Paste
+ *
+ * @version 2.0.0
+ */
 var Paste = function (_Module) {
     _inherits(Paste, _Module);
 
@@ -18949,24 +18957,17 @@ var Paste = function (_Module) {
                                 } else {
                                     dataToInsert = _this.processHTML(htmlData);
                                 }
-                                /** If we paste into middle of the current block:
-                                 *  1. Split
-                                 *  2. Navigate to the first part
-                                 */
-                                if (!BlockManager.currentBlock.isEmpty && !Caret.isAtEnd) {
-                                    BlockManager.split();
-                                    BlockManager.currentBlockIndex--;
-                                }
 
                                 if (!(dataToInsert.length === 1 && !dataToInsert[0].isBlock)) {
-                                    _context2.next = 19;
+                                    _context2.next = 18;
                                     break;
                                 }
 
                                 _this.processSingleBlock(dataToInsert.pop());
                                 return _context2.abrupt('return');
 
-                            case 19:
+                            case 18:
+                                _this.splitBlock();
                                 _context2.next = 21;
                                 return Promise.all(dataToInsert.map(function () {
                                     var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data) {
@@ -19100,7 +19101,7 @@ var Paste = function (_Module) {
                                 content = dataToInsert.content, tool = dataToInsert.tool;
 
                                 if (!(tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
-                                    _context4.next = 10;
+                                    _context4.next = 11;
                                     break;
                                 }
 
@@ -19111,17 +19112,18 @@ var Paste = function (_Module) {
                                 blockData = _context4.sent;
 
                                 if (!blockData) {
-                                    _context4.next = 10;
+                                    _context4.next = 11;
                                     break;
                                 }
 
+                                this.splitBlock();
                                 BlockManager.insert(blockData.tool, blockData.data);
                                 return _context4.abrupt('return');
 
-                            case 10:
+                            case 11:
                                 document.execCommand('insertHTML', false, content.innerHTML);
 
-                            case 11:
+                            case 12:
                             case 'end':
                                 return _context4.stop();
                         }
@@ -19231,6 +19233,26 @@ var Paste = function (_Module) {
             return insertBlock;
         }()
         /**
+         * Split current block if paste isn't in the end of the block
+         */
+
+    }, {
+        key: 'splitBlock',
+        value: function splitBlock() {
+            var _Editor2 = this.Editor,
+                BlockManager = _Editor2.BlockManager,
+                Caret = _Editor2.Caret;
+            /** If we paste into middle of the current block:
+             *  1. Split
+             *  2. Navigate to the first part
+             */
+
+            if (!BlockManager.currentBlock.isEmpty && !Caret.isAtEnd) {
+                BlockManager.split();
+                BlockManager.currentBlockIndex--;
+            }
+        }
+        /**
          * Split HTML string to blocks and return it as array of Block data
          *
          * @param {string} innerHTML
@@ -19242,9 +19264,9 @@ var Paste = function (_Module) {
         value: function processHTML(innerHTML) {
             var _this3 = this;
 
-            var _Editor2 = this.Editor,
-                Tools = _Editor2.Tools,
-                Sanitizer = _Editor2.Sanitizer;
+            var _Editor3 = this.Editor,
+                Tools = _Editor3.Tools,
+                Sanitizer = _Editor3.Sanitizer;
 
             var initialTool = this.config.initialBlock;
             var wrapper = $.make('DIV');
@@ -19325,6 +19347,11 @@ var Paste = function (_Module) {
                     destNode = nodes.pop();
                 }
                 switch (node.nodeType) {
+                    /**
+                     * If node is HTML element:
+                     * 1. Check if it is inline element
+                     * 2. Check if it contains another block or substitutable elements
+                     */
                     case Node.ELEMENT_NODE:
                         var element = node;
                         /** Append inline elements to previous fragment */
@@ -19342,6 +19369,9 @@ var Paste = function (_Module) {
                             return [].concat(_toConsumableArray(nodes), [element]);
                         }
                         break;
+                    /**
+                     * If node is text node, wrap it with DocumentFragment
+                     */
                     case Node.TEXT_NODE:
                         destNode.appendChild(node);
                         return [].concat(_toConsumableArray(nodes), [destNode]);
