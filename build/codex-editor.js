@@ -22087,6 +22087,11 @@ var Tools = function (_Module) {
         return true;
       });
     }
+
+    /**
+     * Return editor block tools
+     */
+
   }, {
     key: 'blockTools',
     get: function get() {

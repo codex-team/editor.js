@@ -83,6 +83,9 @@ export default class Tools extends Module {
     });
   }
 
+  /**
+   * Return editor block tools
+   */
   get blockTools() {
     const tools = Object.values(this.available).filter( tool => {
       if (tool[this.apiSettings.IS_INLINE]) {
