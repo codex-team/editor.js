@@ -19108,31 +19108,27 @@ var Paste = function (_Module) {
                                     }
                                     return text === execResult.shift();
                                 });
-
-                                console.log(pattern);
                                 _context4.t0 = pattern;
 
                                 if (!_context4.t0) {
-                                    _context4.next = 7;
+                                    _context4.next = 6;
                                     break;
                                 }
 
-                                _context4.next = 6;
+                                _context4.next = 5;
                                 return pattern.handler(text, pattern.key);
 
-                            case 6:
+                            case 5:
                                 _context4.t0 = _context4.sent;
 
-                            case 7:
+                            case 6:
                                 data = _context4.t0;
-
-                                console.log(data);
                                 return _context4.abrupt('return', data && {
                                     data: data,
                                     tool: pattern.tool
                                 });
 
-                            case 10:
+                            case 8:
                             case 'end':
                                 return _context4.stop();
                         }
@@ -19267,18 +19263,15 @@ var Paste = function (_Module) {
         value: function getNodes(wrapper) {
             var children = Array.from(wrapper.childNodes);
             var tags = Object.keys(this.toolsTags);
-            console.log(children);
             var reducer = function reducer(nodes, node) {
                 if ($.isEmpty(node)) {
                     return nodes;
                 }
-                console.log(nodes);
                 var lastNode = nodes[nodes.length - 1];
                 var destNode = new DocumentFragment();
                 if (lastNode && $.isFragment(lastNode)) {
                     destNode = nodes.pop();
                 }
-                console.log(destNode);
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
                         var element = node;

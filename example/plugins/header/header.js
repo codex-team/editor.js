@@ -342,4 +342,32 @@ class Header {
       }
     ];
   }
+
+
+  static async onPasteHandler(content) {
+    let level = 4
+
+    switch (content.tagName) {
+      case 'H1':
+      case 'H2':
+        level = 2;
+        break;
+
+      case 'H3':
+        level = 3;
+        break;
+    }
+
+    return {
+      level,
+      text: content.innerHTML
+    };
+  }
+
+  static get onPaste() {
+    return {
+      handler: Header.onPasteHandler,
+      tags: ['H1', 'H2', 'H3', 'H4', 'H5', 'H6']
+    };
+  }
 }

@@ -270,11 +270,7 @@ export default class Paste extends Module {
       return text === execResult.shift();
     });
 
-    console.log(pattern);
-
     const data = pattern && await pattern.handler(text, pattern.key);
-
-    console.log(data);
 
     return data && {
       data,
@@ -374,14 +370,10 @@ export default class Paste extends Module {
     const children = Array.from(wrapper.childNodes);
     const tags = Object.keys(this.toolsTags);
 
-    console.log(children);
-
     const reducer = (nodes: Node[], node: Node): Node[] => {
       if ($.isEmpty(node)) {
         return nodes;
       }
-
-      console.log(nodes);
 
       const lastNode = nodes[nodes.length - 1];
       let destNode: Node = new DocumentFragment();
@@ -390,7 +382,6 @@ export default class Paste extends Module {
         destNode = nodes.pop();
       }
 
-      console.log(destNode);
       switch (node.nodeType) {
         case Node.ELEMENT_NODE:
           const element = node as HTMLElement;
