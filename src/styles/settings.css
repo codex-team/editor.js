@@ -17,7 +17,7 @@
 
   &__plugin-zone {
     &:not(:empty){
-      padding: 6px;
+      padding: 6px 6px 0;
     }
   }
 
@@ -29,6 +29,15 @@
 
   &__button {
     @apply --toolbar-button;
+
+    &--disabled {
+        cursor: not-allowed !important;
+        opacity: .3;
+    }
+
+    &--selected {
+      color: var(--color-active-icon);
+    }
 
     &--delete {
       transition: background-color 300ms ease;
@@ -52,16 +61,5 @@
         transform: rotate(90deg);
       }
     }
-  }
-}
-
-.ce-settings-move-up {
-  &:hover {
-    cursor: pointer;
-  }
-
-  &--disabled {
-    cursor: not-allowed !important;
-    opacity: .3;
   }
 }

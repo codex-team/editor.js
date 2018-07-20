@@ -8,6 +8,7 @@
  * Prebuilded sprite of SVG icons
  */
 import sprite from '../../../build/sprite.svg';
+import Selection from '../selection';
 
 /**
  * @class
@@ -138,7 +139,80 @@ export default class UI extends Module {
    */
   bindEvents() {
     this.Editor.Listeners.on(this.nodes.redactor, 'click', event => this.redactorClicked(event), false );
+    this.Editor.Listeners.on(document, 'keydown', event => this.documentKeydown(event), true );
     this.Editor.Listeners.on(document, 'click', event => this.documentClicked(event), false );
+  }
+
+  /**
+   * All keydowns on document
+   * @param event
+   */
+  documentKeydown(event) {
+    switch (event.keyCode) {
+      case _.keyCodes.ENTER:
+        this.enterPressed(event);
+        break;
+
+      default:
+        this.defaultBehaviour(event);
+        break;
+    }
+  }
+
+  /**
+   * Ignore all other document's keydown events
+   * @param {KeyboardEvent} event
+   */
+  defaultBehaviour(event) {
+    const keyDownOnEditor = event.target.closest(`.${this.CSS.editorWrapper}`);
+
+    /**
+     * Ignore keydowns on document
+     * clear pointer and close toolbar
+     */
+    if (!keyDownOnEditor) {
+      /**
+       * Remove all highlights and remove caret
+       */
+      this.Editor.BlockManager.dropPointer();
+
+      /**
+       * Close Toolbar
+       */
+      this.Editor.Toolbar.close();
+    }
+  }
+
+  /**
+   * Enter pressed on document
+   * @param event
+   */
+  enterPressed(event) {
+    let hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
+
+    /**
+     * If Selection is out of Editor and document has some selection
+     */
+    if (!Selection.isAtEditor && Selection.anchorNode) {
+      return;
+    }
+
+    /**
+     * If there is no selection (caret is not placed) and BlockManager points some to Block
+     */
+    if (hasPointerToBlock && !Selection.anchorNode) {
+      /**
+       * Insert initial typed Block
+       */
+      this.Editor.BlockManager.insert();
+      this.Editor.BlockManager.highlightCurrentNode();
+
+      /**
+       * Move toolbar and show plus button because new Block is empty
+       */
+      this.Editor.Toolbar.move();
+      this.Editor.Toolbar.plusButton.show();
+    }
   }
 
   /**
@@ -151,6 +225,13 @@ export default class UI extends Module {
      * Do not fire check on clicks at the Inline Toolbar buttons
      */
     const clickedOnInlineToolbarButton = event.target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
+    const clickedInsideofEditor = event.target.closest(`.${this.CSS.editorWrapper}`);
+
+    /** Clear highlightings and pointer on BlockManager */
+    if (!clickedInsideofEditor) {
+      this.Editor.BlockManager.dropPointer();
+      this.Editor.Toolbar.close();
+    }
 
     if (!clickedOnInlineToolbarButton) {
       this.Editor.InlineToolbar.handleShowingEvent(event);
@@ -188,7 +269,15 @@ export default class UI extends Module {
      * Select clicked Block as Current
      */
     try {
-      this.Editor.BlockManager.currentNode = clickedNode;
+      /**
+       * Renew Current Block
+       */
+      this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+
+      /**
+       * Highlight Current Node
+       */
+      this.Editor.BlockManager.highlightCurrentNode();
     } catch (e) {
       /**
        * If clicked outside first-level Blocks, set Caret to the last empty Block
@@ -197,78 +286,10 @@ export default class UI extends Module {
     }
 
     /**
-         *
-
-        /** Update current input index in memory when caret focused into existed input */
-    // if (event.target.contentEditable == 'true') {
-    //
-    //     editor.caret.saveCurrentInputIndex();
-    //
-    // }
-
-    // if (editor.content.currentNode === null) {
-    //
-    //     /**
-    //      * If inputs in redactor does not exits, then we put input index 0 not -1
-    //      */
-    //     var indexOfLastInput = editor.state.inputs.length > 0 ? editor.state.inputs.length - 1 : 0;
-    //
-    //     /** If we have any inputs */
-    //     if (editor.state.inputs.length) {
-    //
-    //         /** getting firstlevel parent of input */
-    //         firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
-    //
-    //     }
-    //
-    //     /** If input is empty, then we set caret to the last input */
-    //     if (editor.state.inputs.length && editor.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == editor.settings.initialBlockPlugin) {
-    //
-    //         editor.caret.setToBlock(indexOfLastInput);
-    //
-    //     } else {
-    //
-    //         /** Create new input when caret clicked in redactors area */
-    //         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
-    //
-    //         editor.content.insertBlock({
-    //             type  : NEW_BLOCK_TYPE,
-    //             block : editor.tools[NEW_BLOCK_TYPE].render()
-    //         });
-    //
-    //         /** If there is no inputs except inserted */
-    //         if (editor.state.inputs.length === 1) {
-    //
-    //             editor.caret.setToBlock(indexOfLastInput);
-    //
-    //         } else {
-    //
-    //             /** Set caret to this appended input */
-    //             editor.caret.setToNextBlock(indexOfLastInput);
-    //
-    //         }
-    //
-    //     }
-    //
-    // } else {
-    //
-    //     /** Close all panels */
-    //     editor.toolbar.settings.close();
-    //     editor.toolbar.toolbox.close();
-    //
-    // }
-    //
-    /**
      * Move toolbar and open
      */
     this.Editor.Toolbar.move();
     this.Editor.Toolbar.open();
-    //
-    // var inputIsEmpty = !editor.content.currentNode.textContent.trim(),
-    //     currentNodeType = editor.content.currentNode.dataset.tool,
-    //     isInitialType = currentNodeType == editor.settings.initialBlockPlugin;
-    //
-    //
 
     /**
      * Hide the Plus Button

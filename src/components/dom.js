@@ -199,7 +199,7 @@ export default class Dom {
 
   /**
    * Checks target if it is native input
-   * @param {Element|String} target - HTML element or string
+   * @param {Element|String|Node} target - HTML element or string
    * @return {Boolean}
    */
   static isNativeInput(target) {

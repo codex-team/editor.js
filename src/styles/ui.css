@@ -18,10 +18,20 @@
     vertical-align: middle;
     max-height: 100%;
   }
-
-
 }
+
+/**
+ * Set color for native selection
+ */
 ::selection{
-  background-color: rgba(61,166,239,0.63);
+  background-color: var(--selectionColor);
 }
 
+/**
+ * Add placeholder to content editable elements with data attribute
+ * data-placeholder="Hello world!"
+ */
+[contentEditable=true][data-placeholder]:empty:not(:focus):before{
+  content: attr(data-placeholder);
+  color: var(--grayText);
+}

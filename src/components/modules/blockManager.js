@@ -99,9 +99,9 @@ export default class BlockManager extends Module {
    * @param {Object} block
    */
   bindEvents(block) {
-    this.Editor.Listeners.on(block.pluginsContent, 'keydown', (event) => this.Editor.BlockEvents.keydown(event));
-    this.Editor.Listeners.on(block.pluginsContent, 'mouseup', (event) => this.Editor.BlockEvents.mouseUp(event));
-    this.Editor.Listeners.on(block.pluginsContent, 'keyup', (event) => this.Editor.BlockEvents.keyup(event));
+    this.Editor.Listeners.on(block.holder, 'keydown', (event) => this.Editor.BlockEvents.keydown(event));
+    this.Editor.Listeners.on(block.holder, 'mouseup', (event) => this.Editor.BlockEvents.mouseUp(event));
+    this.Editor.Listeners.on(block.holder, 'keyup', (event) => this.Editor.BlockEvents.keyup(event));
   }
 
   /**
@@ -126,6 +126,21 @@ export default class BlockManager extends Module {
     this.Editor.Caret.setToBlock(block);
 
     return block;
+  }
+
+  /**
+   * Always inserts at the end
+   */
+  insertAtEnd() {
+    /**
+     * Define new value for current block index
+     */
+    this.currentBlockIndex = this.blocks.length - 1;
+
+    /**
+     * Insert initial typed block
+     */
+    this.insert();
   }
 
   /**
@@ -289,7 +304,7 @@ export default class BlockManager extends Module {
 
   /**
    * Set currentBlockIndex to passed block
-   * @param {HTMLElement} element
+   * @param {Node} element
    */
   set currentNode(element) {
     if (!$.isElement(element)) {
@@ -309,17 +324,29 @@ export default class BlockManager extends Module {
      * @type {number}
      */
     this.currentBlockIndex = nodes.indexOf(firstLevelBlock);
+  }
 
+  /**
+   * Remove selection from all Blocks then highlight only Current Block
+   */
+  highlightCurrentNode() {
     /**
      * Remove previous selected Block's state
      */
-    this.blocks.forEach( block => block.selected = false);
+    this.clearHighlightings();
 
     /**
      * Mark current Block as selected
      * @type {boolean}
      */
     this.currentBlock.selected = true;
+  }
+
+  /**
+   * Remove selection from all Blocks
+   */
+  clearHighlightings() {
+    this.blocks.forEach( block => block.selected = false);
   }
 
   /**
@@ -367,6 +394,16 @@ export default class BlockManager extends Module {
     /** Now actual block moved up so that current block index decreased */
     this.currentBlockIndex = toIndex;
   }
+
+  /**
+   * Sets current Block Index -1 which means unknown
+   * and clear highlightings
+   */
+  dropPointer() {
+    this.currentBlockIndex = -1;
+    this.clearHighlightings();
+  }
+
   /**
    * Clears Editor
    * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
@@ -375,7 +412,7 @@ export default class BlockManager extends Module {
    */
   clear(needAddInitialBlock = false) {
     this._blocks.removeAll();
-    this.currentBlockIndex = -1;
+    this.dropPointer();
 
     if (needAddInitialBlock) {
       this.insert(this.config.initialBlock);
@@ -410,7 +447,7 @@ class Blocks {
    */
   push(block) {
     this.blocks.push(block);
-    this.workingArea.appendChild(block.html);
+    this.workingArea.appendChild(block.holder);
   }
 
   /**
@@ -424,7 +461,7 @@ class Blocks {
     /**
      * Change in DOM
      */
-    $.swap(this.blocks[first].html, secondBlock.html);
+    $.swap(this.blocks[first].holder, secondBlock.holder);
 
     /**
      * Change in array
@@ -451,7 +488,7 @@ class Blocks {
     }
 
     if (replace) {
-      this.blocks[index].html.remove();
+      this.blocks[index].holder.remove();
     }
 
     let deleteCount = replace ? 1 : 0;
@@ -461,14 +498,14 @@ class Blocks {
     if (index > 0) {
       let previousBlock = this.blocks[index - 1];
 
-      previousBlock.html.insertAdjacentElement('afterend', block.html);
+      previousBlock.holder.insertAdjacentElement('afterend', block.holder);
     } else {
       let nextBlock = this.blocks[index + 1];
 
       if (nextBlock) {
-        nextBlock.html.insertAdjacentElement('beforebegin', block.html);
+        nextBlock.holder.insertAdjacentElement('beforebegin', block.holder);
       } else {
-        this.workingArea.appendChild(block.html);
+        this.workingArea.appendChild(block.holder);
       }
     }
   }
@@ -482,7 +519,7 @@ class Blocks {
       index = this.length - 1;
     }
 
-    this.blocks[index].html.remove();
+    this.blocks[index].holder.remove();
     this.blocks.splice(index, 1);
   }
 

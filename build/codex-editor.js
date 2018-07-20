@@ -11196,7 +11196,8 @@ var CodexEditor = function () {
         _this[method] = methods[method];
       }
 
-      delete _this.moduleInstances; // todo Is it necessary?
+      // todo Is it necessary?
+      delete _this.moduleInstances;
     }).then(function () {
       console.log('CodeX Editor is ready!');
     }).catch(function (error) {
@@ -11561,7 +11562,7 @@ module.exports = exports['default'];
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11575,51 +11576,37 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  * @typedef {Module} Module
  * @property {Object} config - Editor user settings
- * @property {Object} Editor - List of Editor modules
+ * @property {IEditorConfig} Editor - List of Editor modules
  */
 var Module = function () {
-  /**
-   * @constructor
-   *
-   * @param {EditorConfig} config
-   */
-  function Module(_ref) {
-    var config = _ref.config;
-
-    _classCallCheck(this, Module);
-
     /**
-     * Editor modules list
-     * @type {EditorComponents}
+     * @constructor
+     * @param {IModuleConfig}
      */
-    this.Editor = null;
+    function Module(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, Module);
+
+        if (new.target === Module) {
+            throw new TypeError('Constructors for abstract class Module are not allowed.');
+        }
+        this.config = config;
+    }
     /**
-     * Editor configuration object
-     * @type {EditorConfig}
+     * Editor modules setter
+     * @param {IEditor} Editor
      */
-    this.config = {};
-    if (new.target === Module) {
-      throw new TypeError('Constructors for abstract class Module are not allowed.');
-    }
-    this.config = config;
-  }
-  /**
-   * Editor modules setter
-   *
-   * @param Editor
-   * @param Editor.modules {@link CodexEditor#moduleInstances}
-   * @param Editor.config {@link CodexEditor#configuration}
-   */
 
 
-  _createClass(Module, [{
-    key: 'state',
-    set: function set(Editor) {
-      this.Editor = Editor;
-    }
-  }]);
+    _createClass(Module, [{
+        key: 'state',
+        set: function set(Editor) {
+            this.Editor = Editor;
+        }
+    }]);
 
-  return Module;
+    return Module;
 }();
 
 Module.displayName = 'Module';
@@ -11748,6 +11735,109 @@ module.exports = exports['default'];
 
 /***/ }),
 
+/***/ "./src/components/block-tunes/block-tune-move-down.ts":
+/*!************************************************************!*\
+  !*** ./src/components/block-tunes/block-tune-move-down.ts ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function($) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var MoveDownTune = function () {
+    /**
+     * MoveDownTune constructor
+     *
+     * @param {Object} api
+     */
+    function MoveDownTune(_ref) {
+        var api = _ref.api;
+
+        _classCallCheck(this, MoveDownTune);
+
+        /**
+         * Styles
+         * @type {{wrapper: string}}
+         */
+        this.CSS = {
+            button: 'ce-settings__button',
+            wrapper: 'ce-tune-move-down',
+            animation: 'wobble'
+        };
+        this.api = api;
+    }
+    /**
+     * Return 'move down' button
+     */
+
+
+    _createClass(MoveDownTune, [{
+        key: 'render',
+        value: function render() {
+            var _this = this;
+
+            var moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
+            moveDownButton.appendChild($.svg('arrow-down', 14, 14));
+            this.api.listener.on(moveDownButton, 'click', function (event) {
+                return _this.handleClick(event, moveDownButton);
+            }, false);
+            return moveDownButton;
+        }
+        /**
+         * Handle clicks on 'move down' button
+         * @param {MouseEvent} event
+         * @param {HTMLElement} button
+         */
+
+    }, {
+        key: 'handleClick',
+        value: function handleClick(event, button) {
+            var _this2 = this;
+
+            var currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+            // If Block is last do nothing
+            if (currentBlockIndex === this.api.blocks.getBlocksCount() - 1) {
+                button.classList.add(this.CSS.animation);
+                window.setTimeout(function () {
+                    button.classList.remove(_this2.CSS.animation);
+                }, 500);
+                return;
+            }
+            var nextBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex + 1).holder,
+                nextBlockCoords = nextBlockElement.getBoundingClientRect();
+            var scrollOffset = Math.abs(window.innerHeight - nextBlockElement.offsetHeight);
+            /**
+             * Next block ends on screen.
+             * Increment scroll by next block's height to save element onscreen-position
+             */
+            if (nextBlockCoords.top < window.innerHeight) {
+                scrollOffset = window.scrollY + nextBlockElement.offsetHeight;
+            }
+            window.scrollTo(0, scrollOffset);
+            /** Change blocks positions */
+            this.api.blocks.swap(currentBlockIndex, currentBlockIndex + 1);
+        }
+    }]);
+
+    return MoveDownTune;
+}();
+
+MoveDownTune.displayName = 'MoveDownTune';
+exports.default = MoveDownTune;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! dom */ "./src/components/dom.js")))
+
+/***/ }),
+
 /***/ "./src/components/block-tunes/block-tune-move-up.ts":
 /*!**********************************************************!*\
   !*** ./src/components/block-tunes/block-tune-move-up.ts ***!
@@ -11783,8 +11873,8 @@ var MoveUpTune = function () {
          */
         this.CSS = {
             button: 'ce-settings__button',
-            wrapper: 'ce-settings-move-up',
-            btnDisabled: 'ce-settings-move-up--disabled'
+            wrapper: 'ce-tune-move-up',
+            animation: 'wobble'
         };
         this.api = api;
     }
@@ -11801,29 +11891,32 @@ var MoveUpTune = function () {
 
             var moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
             moveUpButton.appendChild($.svg('arrow-up', 14, 14));
-            if (this.api.blocks.getCurrentBlockIndex() === 0) {
-                moveUpButton.classList.add(this.CSS.btnDisabled);
-            } else {
-                this.api.listener.on(moveUpButton, 'click', function (event) {
-                    return _this.handleClick(event);
-                }, false);
-            }
+            this.api.listener.on(moveUpButton, 'click', function (event) {
+                return _this.handleClick(event, moveUpButton);
+            }, false);
             return moveUpButton;
         }
         /**
          * Move current block up
          * @param {MouseEvent} event
+         * @param {HTMLElement} button
          */
 
     }, {
         key: 'handleClick',
-        value: function handleClick(event) {
+        value: function handleClick(event, button) {
+            var _this2 = this;
+
             var currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
             if (currentBlockIndex === 0) {
+                button.classList.add(this.CSS.animation);
+                window.setTimeout(function () {
+                    button.classList.remove(_this2.CSS.animation);
+                }, 500);
                 return;
             }
-            var currentBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex).html,
-                previousBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex - 1).html;
+            var currentBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex).holder,
+                previousBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex - 1).holder;
             /**
              * Here is two cases:
              *  - when previous block has negative offset and part of it is visible on window, then we scroll
@@ -11890,6 +11983,10 @@ var _blockTuneDelete = __webpack_require__(/*! ./block-tunes/block-tune-delete *
 
 var _blockTuneDelete2 = _interopRequireDefault(_blockTuneDelete);
 
+var _blockTuneMoveDown = __webpack_require__(/*! ./block-tunes/block-tune-move-down */ "./src/components/block-tunes/block-tune-move-down.ts");
+
+var _blockTuneMoveDown2 = _interopRequireDefault(_blockTuneMoveDown);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -11899,8 +11996,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  *
  * @property tool - Tool instance
  * @property html - Returns HTML content of plugin
- * @property wrapper - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
- * @property contentNode - Div element that wraps Tool's content. Has `ce-block__content` CSS class
+ * @property holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
  * @property pluginsContent - HTML content that returns by Tool's render function
  */
 var Block = function () {
@@ -11918,7 +12014,7 @@ var Block = function () {
     this.tool = toolInstance;
     this.settings = settings;
     this.api = apiMethods;
-    this._html = this.compose();
+    this.holder = this.compose();
 
     /**
      * @type {IBlockTune[]}
@@ -11941,14 +12037,13 @@ var Block = function () {
      * @returns {HTMLDivElement}
      */
     value: function compose() {
-      this.wrapper = $.make('div', Block.CSS.wrapper);
-      this.contentNode = $.make('div', Block.CSS.content);
-      this.pluginsContent = this.tool.render();
+      var wrapper = $.make('div', Block.CSS.wrapper),
+          contentNode = $.make('div', Block.CSS.content),
+          pluginsContent = this.tool.render();
 
-      this.contentNode.appendChild(this.pluginsContent);
-      this.wrapper.appendChild(this.contentNode);
-
-      return this.wrapper;
+      contentNode.appendChild(pluginsContent);
+      wrapper.appendChild(contentNode);
+      return wrapper;
     }
 
     /**
@@ -11972,8 +12067,8 @@ var Block = function () {
     }
 
     /**
-     * Get Block`s HTML
-     * @returns {HTMLElement}
+     * Returns Plugins content
+     * @return {Node}
      */
 
   }, {
@@ -12059,7 +12154,7 @@ var Block = function () {
     value: function makeTunes() {
       var _this3 = this;
 
-      var tunesList = [_blockTuneMoveUp2.default, _blockTuneDelete2.default];
+      var tunesList = [_blockTuneMoveUp2.default, _blockTuneDelete2.default, _blockTuneMoveDown2.default];
 
       // Pluck tunes list and return tune instances with passed Editor API and settings
       return tunesList.map(function (tune) {
@@ -12093,9 +12188,15 @@ var Block = function () {
      */
 
   }, {
-    key: 'html',
+    key: 'pluginsContent',
     get: function get() {
-      return this._html;
+      var pluginsContent = this.holder.querySelector('.' + Block.CSS.content);
+
+      if (pluginsContent && pluginsContent.childNodes.length) {
+        return pluginsContent.childNodes[0];
+      }
+
+      return null;
     }
 
     /**
@@ -12151,7 +12252,7 @@ var Block = function () {
        */
       var mediaTags = ['img', 'iframe', 'video', 'audio', 'source', 'input', 'textarea', 'twitterwidget'];
 
-      return !!this._html.querySelector(mediaTags.join(','));
+      return !!this.holder.querySelector(mediaTags.join(','));
     }
 
     /**
@@ -12166,9 +12267,9 @@ var Block = function () {
        * We don't need to mark Block as Selected when it is not empty
        */
       if (state === true && !this.isEmpty) {
-        this._html.classList.add(Block.CSS.selected);
+        this.holder.classList.add(Block.CSS.selected);
       } else {
-        this._html.classList.remove(Block.CSS.selected);
+        this.holder.classList.remove(Block.CSS.selected);
       }
     }
   }], [{
@@ -12469,7 +12570,7 @@ var Dom = function () {
 
     /**
      * Checks target if it is native input
-     * @param {Element|String} target - HTML element or string
+     * @param {Element|String|Node} target - HTML element or string
      * @return {Boolean}
      */
 
@@ -16034,7 +16135,6 @@ var BlocksAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function BlocksAPI(_ref) {
         var config = _ref.config;
@@ -16050,12 +16150,22 @@ var BlocksAPI = function (_Module) {
 
 
     _createClass(BlocksAPI, [{
-        key: "getCurrentBlockIndex",
+        key: "getBlocksCount",
 
+        /**
+         * Returns Blocks count
+         * @return {number}
+         */
+        value: function getBlocksCount() {
+            return this.Editor.BlockManager.blocks.length;
+        }
         /**
          * Returns current block index
          * @return {number}
          */
+
+    }, {
+        key: "getCurrentBlockIndex",
         value: function getCurrentBlockIndex() {
             return this.Editor.BlockManager.currentBlockIndex;
         }
@@ -16109,10 +16219,9 @@ var BlocksAPI = function (_Module) {
             if (this.Editor.BlockManager.currentBlockIndex === 0) {
                 this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
             } else {
-                if (this.Editor.Caret.navigatePrevious(true)) {
-                    this.Editor.Toolbar.close();
-                }
+                this.Editor.Caret.navigatePrevious(true);
             }
+            this.Editor.Toolbar.close();
         }
         /**
          * Clear Editor's area
@@ -16157,6 +16266,9 @@ var BlocksAPI = function (_Module) {
                 },
                 getCurrentBlockIndex: function getCurrentBlockIndex() {
                     return _this2.getCurrentBlockIndex();
+                },
+                getBlocksCount: function getBlocksCount() {
+                    return _this2.getBlocksCount();
                 }
             };
         }
@@ -16203,7 +16315,6 @@ var EventsAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function EventsAPI(_ref) {
         var config = _ref.config;
@@ -16311,7 +16422,6 @@ var ListenerAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function ListenerAPI(_ref) {
         var config = _ref.config;
@@ -16410,7 +16520,6 @@ var SanitizerAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function SanitizerAPI(_ref) {
         var config = _ref.config;
@@ -16484,7 +16593,6 @@ var SaverAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function SaverAPI(_ref) {
         var config = _ref.config;
@@ -16568,7 +16676,6 @@ var SelectionAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function SelectionAPI(_ref) {
         var config = _ref.config;
@@ -16662,7 +16769,6 @@ var ToolbarAPI = function (_Module) {
 
     /**
      * Save Editor config. API provides passed configuration to the Blocks
-     * @param {EditorsConfig} config
      */
     function ToolbarAPI(_ref) {
         var config = _ref.config;
@@ -16768,10 +16874,10 @@ var API = function (_Module) {
                 blocks: this.Editor.BlocksAPI.methods,
                 caret: {},
                 events: this.Editor.EventsAPI.methods,
+                listener: this.Editor.ListenerAPI.methods,
                 sanitizer: this.Editor.SanitizerAPI.methods,
                 saver: this.Editor.SaverAPI.methods,
                 selection: this.Editor.SelectionAPI.methods,
-                listener: this.Editor.ListenerAPI.methods,
                 toolbar: this.Editor.ToolbarAPI.methods
             };
         }
@@ -16831,6 +16937,13 @@ var BlockEvents = function (_Module) {
     _createClass(BlockEvents, [{
         key: "keydown",
         value: function keydown(event) {
+            /**
+             * Run common method for all keydown events
+             */
+            this.beforeKeydownProcessing();
+            /**
+             * Fire keydown processor by event.keyCode
+             */
             switch (event.keyCode) {
                 case _.keyCodes.BACKSPACE:
                     this.backspace(event);
@@ -16840,15 +16953,32 @@ var BlockEvents = function (_Module) {
                     break;
                 case _.keyCodes.DOWN:
                 case _.keyCodes.RIGHT:
-                    this.arrowRightAndDownPressed();
+                    this.arrowRightAndDown();
                     break;
                 case _.keyCodes.UP:
                 case _.keyCodes.LEFT:
-                    this.arrowLeftAndUpPressed();
+                    this.arrowLeftAndUp();
                     break;
                 default:
+                    this.defaultHandler();
                     break;
             }
+        }
+        /**
+         * Fires on keydown before event processing
+         */
+
+    }, {
+        key: "beforeKeydownProcessing",
+        value: function beforeKeydownProcessing() {
+            /**
+             * Clear all highlightings
+             */
+            this.Editor.BlockManager.clearHighlightings();
+            /**
+             * Hide Toolbar
+             */
+            this.Editor.Toolbar.close();
         }
         /**
          * Key up on Block:
@@ -16902,8 +17032,17 @@ var BlockEvents = function (_Module) {
              */
             var newCurrent = this.Editor.BlockManager.currentBlock;
             this.Editor.Toolbar.move();
-            this.Editor.Toolbar.open();
+            /**
+             * If new Block is empty
+             */
             if (this.Editor.Tools.isInitial(newCurrent.tool) && newCurrent.isEmpty) {
+                /**
+                 * Show Toolbar
+                 */
+                this.Editor.Toolbar.open();
+                /**
+                 * Show Plus Button
+                 */
                 this.Editor.Toolbar.plusButton.show();
             }
             event.preventDefault();
@@ -16921,6 +17060,14 @@ var BlockEvents = function (_Module) {
             var BM = this.Editor.BlockManager;
             var isFirstBlock = BM.currentBlockIndex === 0,
                 canMergeBlocks = this.Editor.Caret.isAtStart && !isFirstBlock;
+            /** If current Block is empty just remove this Block */
+            if (this.Editor.BlockManager.currentBlock.isEmpty) {
+                this.Editor.BlockManager.removeBlock();
+                if (this.Editor.Caret.navigatePrevious(true)) {
+                    this.Editor.Toolbar.close();
+                }
+                return;
+            }
             if (!canMergeBlocks) {
                 return;
             }
@@ -16939,15 +17086,14 @@ var BlockEvents = function (_Module) {
                 if (this.Editor.Caret.navigatePrevious()) {
                     this.Editor.Toolbar.close();
                 }
+                return;
             }
-            var setCaretToTheEnd = !targetBlock.isEmpty;
+            this.Editor.Caret.createShadow(targetBlock.pluginsContent);
             BM.mergeBlocks(targetBlock, blockToMerge).then(function () {
-                // @todo figure out without timeout
-                window.setTimeout(function () {
-                    // set caret to the block without offset at the end
-                    _this2.Editor.Caret.setToBlock(BM.currentBlock, 0, setCaretToTheEnd);
-                    _this2.Editor.Toolbar.close();
-                }, 10);
+                /** Restore caret position after merge */
+                _this2.Editor.Caret.restoreCaret(targetBlock.pluginsContent);
+                targetBlock.pluginsContent.normalize();
+                _this2.Editor.Toolbar.close();
             });
         }
         /**
@@ -16955,21 +17101,26 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "arrowRightAndDownPressed",
-        value: function arrowRightAndDownPressed() {
+        key: "arrowRightAndDown",
+        value: function arrowRightAndDown() {
             this.Editor.Caret.navigateNext();
-            this.Editor.Toolbar.close();
         }
         /**
          * Handle left and up keyboard keys
          */
 
     }, {
-        key: "arrowLeftAndUpPressed",
-        value: function arrowLeftAndUpPressed() {
+        key: "arrowLeftAndUp",
+        value: function arrowLeftAndUp() {
             this.Editor.Caret.navigatePrevious();
-            this.Editor.Toolbar.close();
         }
+        /**
+         * Default keydown handler
+         */
+
+    }, {
+        key: "defaultHandler",
+        value: function defaultHandler() {}
     }]);
 
     return BlockEvents;
@@ -17128,13 +17279,13 @@ var BlockManager = function (_Module) {
     value: function bindEvents(block) {
       var _this3 = this;
 
-      this.Editor.Listeners.on(block.pluginsContent, 'keydown', function (event) {
+      this.Editor.Listeners.on(block.holder, 'keydown', function (event) {
         return _this3.Editor.BlockEvents.keydown(event);
       });
-      this.Editor.Listeners.on(block.pluginsContent, 'mouseup', function (event) {
+      this.Editor.Listeners.on(block.holder, 'mouseup', function (event) {
         return _this3.Editor.BlockEvents.mouseUp(event);
       });
-      this.Editor.Listeners.on(block.pluginsContent, 'keyup', function (event) {
+      this.Editor.Listeners.on(block.holder, 'keyup', function (event) {
         return _this3.Editor.BlockEvents.keyup(event);
       });
     }
@@ -17167,6 +17318,24 @@ var BlockManager = function (_Module) {
       this.Editor.Caret.setToBlock(block);
 
       return block;
+    }
+
+    /**
+     * Always inserts at the end
+     */
+
+  }, {
+    key: 'insertAtEnd',
+    value: function insertAtEnd() {
+      /**
+       * Define new value for current block index
+       */
+      this.currentBlockIndex = this.blocks.length - 1;
+
+      /**
+       * Insert initial typed block
+       */
+      this.insert();
     }
 
     /**
@@ -17306,6 +17475,44 @@ var BlockManager = function (_Module) {
      */
 
   }, {
+    key: 'highlightCurrentNode',
+
+
+    /**
+     * Remove selection from all Blocks then highlight only Current Block
+     */
+    value: function highlightCurrentNode() {
+      /**
+       * Remove previous selected Block's state
+       */
+      this.clearHighlightings();
+
+      /**
+       * Mark current Block as selected
+       * @type {boolean}
+       */
+      this.currentBlock.selected = true;
+    }
+
+    /**
+     * Remove selection from all Blocks
+     */
+
+  }, {
+    key: 'clearHighlightings',
+    value: function clearHighlightings() {
+      this.blocks.forEach(function (block) {
+        return block.selected = false;
+      });
+    }
+
+    /**
+     * Get array of Block instances
+     *
+     * @returns {Block[]} {@link Blocks#array}
+     */
+
+  }, {
     key: 'setCurrentBlockByChildNode',
 
 
@@ -17348,6 +17555,19 @@ var BlockManager = function (_Module) {
       /** Now actual block moved up so that current block index decreased */
       this.currentBlockIndex = toIndex;
     }
+
+    /**
+     * Sets current Block Index -1 which means unknown
+     * and clear highlightings
+     */
+
+  }, {
+    key: 'dropPointer',
+    value: function dropPointer() {
+      this.currentBlockIndex = -1;
+      this.clearHighlightings();
+    }
+
     /**
      * Clears Editor
      * @param {boolean} needAddInitialBlock - 1) in internal calls (for example, in api.blocks.render)
@@ -17361,7 +17581,7 @@ var BlockManager = function (_Module) {
       var needAddInitialBlock = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
 
       this._blocks.removeAll();
-      this.currentBlockIndex = -1;
+      this.dropPointer();
 
       if (needAddInitialBlock) {
         this.insert(this.config.initialBlock);
@@ -17426,7 +17646,7 @@ var BlockManager = function (_Module) {
 
     /**
      * Set currentBlockIndex to passed block
-     * @param {HTMLElement} element
+     * @param {Node} element
      */
     ,
     set: function set(element) {
@@ -17446,27 +17666,7 @@ var BlockManager = function (_Module) {
        * @type {number}
        */
       this.currentBlockIndex = nodes.indexOf(firstLevelBlock);
-
-      /**
-       * Remove previous selected Block's state
-       */
-      this.blocks.forEach(function (block) {
-        return block.selected = false;
-      });
-
-      /**
-       * Mark current Block as selected
-       * @type {boolean}
-       */
-      this.currentBlock.selected = true;
     }
-
-    /**
-     * Get array of Block instances
-     *
-     * @returns {Block[]} {@link Blocks#array}
-     */
-
   }, {
     key: 'blocks',
     get: function get() {
@@ -17515,7 +17715,7 @@ var Blocks = function () {
     key: 'push',
     value: function push(block) {
       this.blocks.push(block);
-      this.workingArea.appendChild(block.html);
+      this.workingArea.appendChild(block.holder);
     }
 
     /**
@@ -17532,7 +17732,7 @@ var Blocks = function () {
       /**
        * Change in DOM
        */
-      $.swap(this.blocks[first].html, secondBlock.html);
+      $.swap(this.blocks[first].holder, secondBlock.holder);
 
       /**
        * Change in array
@@ -17564,7 +17764,7 @@ var Blocks = function () {
       }
 
       if (replace) {
-        this.blocks[index].html.remove();
+        this.blocks[index].holder.remove();
       }
 
       var deleteCount = replace ? 1 : 0;
@@ -17574,14 +17774,14 @@ var Blocks = function () {
       if (index > 0) {
         var previousBlock = this.blocks[index - 1];
 
-        previousBlock.html.insertAdjacentElement('afterend', block.html);
+        previousBlock.holder.insertAdjacentElement('afterend', block.holder);
       } else {
         var nextBlock = this.blocks[index + 1];
 
         if (nextBlock) {
-          nextBlock.html.insertAdjacentElement('beforebegin', block.html);
+          nextBlock.holder.insertAdjacentElement('beforebegin', block.holder);
         } else {
-          this.workingArea.appendChild(block.html);
+          this.workingArea.appendChild(block.holder);
         }
       }
     }
@@ -17598,7 +17798,7 @@ var Blocks = function () {
         index = this.length - 1;
       }
 
-      this.blocks[index].html.remove();
+      this.blocks[index].holder.remove();
       this.blocks.splice(index, 1);
     }
 
@@ -17799,19 +17999,24 @@ var Caret = function (_Module) {
   }
 
   /**
-   * Method gets Block instance and puts caret to the text node with offset
-   * There two ways that method applies caret position:
-   *   - first found text node: sets at the beginning, but you can pass an offset
-   *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
-   *
-   * @param {Block} block - Block class
-   * @param {Number} offset - caret offset regarding to the text node
-   * @param {Boolean} atEnd - put caret at the end of the text node or not
+   * Elements styles that can be useful for Caret Module
    */
 
 
   _createClass(Caret, [{
     key: 'setToBlock',
+
+
+    /**
+     * Method gets Block instance and puts caret to the text node with offset
+     * There two ways that method applies caret position:
+     *   - first found text node: sets at the beginning, but you can pass an offset
+     *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
+     *
+     * @param {Block} block - Block class
+     * @param {Number} offset - caret offset regarding to the text node
+     * @param {Boolean} atEnd - put caret at the end of the text node or not
+     */
     value: function setToBlock(block) {
       var _this2 = this;
 
@@ -17845,7 +18050,7 @@ var Caret = function (_Module) {
         _this2.set(nodeToSet, offset);
       }, 20)();
 
-      this.Editor.BlockManager.currentNode = block.wrapper;
+      this.Editor.BlockManager.currentNode = block.holder;
     }
 
     /**
@@ -17888,7 +18093,7 @@ var Caret = function (_Module) {
       if (lastBlock.isEmpty) {
         this.setToBlock(lastBlock);
       } else {
-        this.Editor.BlockManager.insert(this.config.initialBlock);
+        this.Editor.BlockManager.insertAtEnd();
       }
     }
 
@@ -18025,6 +18230,54 @@ var Caret = function (_Module) {
      */
 
   }, {
+    key: 'createShadow',
+
+
+    /**
+     * Inserts shadow element after passed element where caret can be placed
+     * @param {Node} element
+     */
+    value: function createShadow(element) {
+      var shadowCaret = document.createElement('span');
+
+      shadowCaret.classList.add(Caret.CSS.shadowCaret);
+      element.insertAdjacentElement('beforeEnd', shadowCaret);
+    }
+
+    /**
+     * Restores caret position
+     * @param {Node} element
+     */
+
+  }, {
+    key: 'restoreCaret',
+    value: function restoreCaret(element) {
+      var shadowCaret = element.querySelector('.' + Caret.CSS.shadowCaret);
+
+      if (!shadowCaret) {
+        return;
+      }
+
+      /**
+       * After we set the caret to the required place
+       * we need to clear shadow caret
+       *
+       * - make new range
+       * - select shadowed span
+       * - use extractContent to remove it from DOM
+       */
+      var sel = new _selection2.default();
+
+      sel.expandToTag(shadowCaret);
+
+      setTimeout(function () {
+        var newRange = document.createRange();
+
+        newRange.selectNode(shadowCaret);
+        newRange.extractContents();
+      }, 50);
+    }
+  }, {
     key: 'isAtStart',
     get: function get() {
       /**
@@ -18125,6 +18378,13 @@ var Caret = function (_Module) {
        * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
        */
       return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
+    }
+  }], [{
+    key: 'CSS',
+    get: function get() {
+      return {
+        shadowCaret: 'cdx-shadow-caret'
+      };
     }
   }]);
 
@@ -19769,8 +20029,8 @@ var BlockSettings = function (_Module) {
   }, {
     key: 'addToolSettings',
     value: function addToolSettings() {
-      if (typeof this.Editor.BlockManager.currentBlock.tool.makeSettings === 'function') {
-        $.append(this.nodes.toolSettings, this.Editor.BlockManager.currentBlock.tool.makeSettings());
+      if (typeof this.Editor.BlockManager.currentBlock.tool.renderSettings === 'function') {
+        $.append(this.nodes.toolSettings, this.Editor.BlockManager.currentBlock.tool.renderSettings());
       }
     }
 
@@ -21300,14 +21560,14 @@ module.exports = function (settings) {
          * Append settings content
          * It's stored in tool.settings
          */
-    if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings) {
+    if (!editor.tools[toolType] || !editor.tools[toolType].renderSettings) {
       return;
     }
 
     /**
          * Draw settings block
          */
-    var settingsBlock = editor.tools[toolType].makeSettings();
+    var settingsBlock = editor.tools[toolType].renderSettings();
 
     editor.nodes.pluginSettings.appendChild(settingsBlock);
 
@@ -21470,7 +21730,7 @@ module.exports = function (toolbar) {
 
     var toolType = editor.content.currentNode.dataset.tool;
 
-    if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings) {
+    if (!editor.tools[toolType] || !editor.tools[toolType].renderSettings) {
       editor.nodes.showSettingsButton.classList.add('hide');
     } else {
       editor.nodes.showSettingsButton.classList.remove('hide');
@@ -22064,7 +22324,7 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, $) {
+/* WEBPACK VAR INJECTION */(function(Module, $, _) {
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -22075,6 +22335,10 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _sprite = __webpack_require__(/*! ../../../build/sprite.svg */ "./build/sprite.svg");
 
 var _sprite2 = _interopRequireDefault(_sprite);
+
+var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
+
+var _selection2 = _interopRequireDefault(_selection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22282,9 +22546,93 @@ var UI = function (_Module) {
       this.Editor.Listeners.on(this.nodes.redactor, 'click', function (event) {
         return _this2.redactorClicked(event);
       }, false);
+      this.Editor.Listeners.on(document, 'keydown', function (event) {
+        return _this2.documentKeydown(event);
+      }, true);
       this.Editor.Listeners.on(document, 'click', function (event) {
         return _this2.documentClicked(event);
       }, false);
+    }
+
+    /**
+     * All keydowns on document
+     * @param event
+     */
+
+  }, {
+    key: 'documentKeydown',
+    value: function documentKeydown(event) {
+      switch (event.keyCode) {
+        case _.keyCodes.ENTER:
+          this.enterPressed(event);
+          break;
+
+        default:
+          this.defaultBehaviour(event);
+          break;
+      }
+    }
+
+    /**
+     * Ignore all other document's keydown events
+     * @param {KeyboardEvent} event
+     */
+
+  }, {
+    key: 'defaultBehaviour',
+    value: function defaultBehaviour(event) {
+      var keyDownOnEditor = event.target.closest('.' + this.CSS.editorWrapper);
+
+      /**
+       * Ignore keydowns on document
+       * clear pointer and close toolbar
+       */
+      if (!keyDownOnEditor) {
+        /**
+         * Remove all highlights and remove caret
+         */
+        this.Editor.BlockManager.dropPointer();
+
+        /**
+         * Close Toolbar
+         */
+        this.Editor.Toolbar.close();
+      }
+    }
+
+    /**
+     * Enter pressed on document
+     * @param event
+     */
+
+  }, {
+    key: 'enterPressed',
+    value: function enterPressed(event) {
+      var hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
+
+      /**
+       * If Selection is out of Editor and document has some selection
+       */
+      if (!_selection2.default.isAtEditor && _selection2.default.anchorNode) {
+        return;
+      }
+
+      /**
+       * If there is no selection (caret is not placed) and BlockManager points some to Block
+       */
+      if (hasPointerToBlock && !_selection2.default.anchorNode) {
+        /**
+         * Insert initial typed Block
+         */
+        this.Editor.BlockManager.insert();
+        this.Editor.BlockManager.highlightCurrentNode();
+
+        /**
+         * Move toolbar and show plus button because new Block is empty
+         */
+        this.Editor.Toolbar.move();
+        this.Editor.Toolbar.plusButton.show();
+      }
     }
 
     /**
@@ -22300,6 +22648,13 @@ var UI = function (_Module) {
        * Do not fire check on clicks at the Inline Toolbar buttons
        */
       var clickedOnInlineToolbarButton = event.target.closest('.' + this.Editor.InlineToolbar.CSS.inlineToolbar);
+      var clickedInsideofEditor = event.target.closest('.' + this.CSS.editorWrapper);
+
+      /** Clear highlightings and pointer on BlockManager */
+      if (!clickedInsideofEditor) {
+        this.Editor.BlockManager.dropPointer();
+        this.Editor.Toolbar.close();
+      }
 
       if (!clickedOnInlineToolbarButton) {
         this.Editor.InlineToolbar.handleShowingEvent(event);
@@ -22340,7 +22695,15 @@ var UI = function (_Module) {
        * Select clicked Block as Current
        */
       try {
-        this.Editor.BlockManager.currentNode = clickedNode;
+        /**
+         * Renew Current Block
+         */
+        this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+
+        /**
+         * Highlight Current Node
+         */
+        this.Editor.BlockManager.highlightCurrentNode();
       } catch (e) {
         /**
          * If clicked outside first-level Blocks, set Caret to the last empty Block
@@ -22349,77 +22712,10 @@ var UI = function (_Module) {
       }
 
       /**
-           *
-            /** Update current input index in memory when caret focused into existed input */
-      // if (event.target.contentEditable == 'true') {
-      //
-      //     editor.caret.saveCurrentInputIndex();
-      //
-      // }
-
-      // if (editor.content.currentNode === null) {
-      //
-      //     /**
-      //      * If inputs in redactor does not exits, then we put input index 0 not -1
-      //      */
-      //     var indexOfLastInput = editor.state.inputs.length > 0 ? editor.state.inputs.length - 1 : 0;
-      //
-      //     /** If we have any inputs */
-      //     if (editor.state.inputs.length) {
-      //
-      //         /** getting firstlevel parent of input */
-      //         firstLevelBlock = editor.content.getFirstLevelBlock(editor.state.inputs[indexOfLastInput]);
-      //
-      //     }
-      //
-      //     /** If input is empty, then we set caret to the last input */
-      //     if (editor.state.inputs.length && editor.state.inputs[indexOfLastInput].textContent === '' && firstLevelBlock.dataset.tool == editor.settings.initialBlockPlugin) {
-      //
-      //         editor.caret.setToBlock(indexOfLastInput);
-      //
-      //     } else {
-      //
-      //         /** Create new input when caret clicked in redactors area */
-      //         var NEW_BLOCK_TYPE = editor.settings.initialBlockPlugin;
-      //
-      //         editor.content.insertBlock({
-      //             type  : NEW_BLOCK_TYPE,
-      //             block : editor.tools[NEW_BLOCK_TYPE].render()
-      //         });
-      //
-      //         /** If there is no inputs except inserted */
-      //         if (editor.state.inputs.length === 1) {
-      //
-      //             editor.caret.setToBlock(indexOfLastInput);
-      //
-      //         } else {
-      //
-      //             /** Set caret to this appended input */
-      //             editor.caret.setToNextBlock(indexOfLastInput);
-      //
-      //         }
-      //
-      //     }
-      //
-      // } else {
-      //
-      //     /** Close all panels */
-      //     editor.toolbar.settings.close();
-      //     editor.toolbar.toolbox.close();
-      //
-      // }
-      //
-      /**
        * Move toolbar and open
        */
       this.Editor.Toolbar.move();
       this.Editor.Toolbar.open();
-      //
-      // var inputIsEmpty = !editor.content.currentNode.textContent.trim(),
-      //     currentNodeType = editor.content.currentNode.dataset.tool,
-      //     isInitialType = currentNodeType == editor.settings.initialBlockPlugin;
-      //
-      //
 
       /**
        * Hide the Plus Button
@@ -22684,7 +22980,7 @@ var UI = function (_Module) {
 UI.displayName = 'UI';
 exports.default = UI;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
 
@@ -22758,9 +23054,9 @@ var Selection = function () {
   }
 
   /**
-   * Returns window Selection
-   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-   * @return {Selection}
+   * Editor styles
+   * @return {{editorWrapper: string, editorZone: string}}
+   * @constructor
    */
 
 
@@ -22895,6 +23191,13 @@ var Selection = function () {
     }
   }], [{
     key: 'get',
+
+
+    /**
+     * Returns window Selection
+     * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+     * @return {Selection}
+     */
     value: function get() {
       return window.getSelection();
     }
@@ -22905,6 +23208,14 @@ var Selection = function () {
      * @return {Node|null}
      */
 
+  }, {
+    key: 'CSS',
+    get: function get() {
+      return {
+        editorWrapper: 'codex-editor',
+        editorZone: 'codex-editor__redactor'
+      };
+    }
   }, {
     key: 'anchorNode',
     get: function get() {
@@ -22938,6 +23249,37 @@ var Selection = function () {
       var selection = window.getSelection();
 
       return selection ? selection.isCollapsed : null;
+    }
+
+    /**
+     * Check current selection if it is at Editor's zone
+     * @return {boolean}
+     */
+
+  }, {
+    key: 'isAtEditor',
+    get: function get() {
+      var selection = Selection.get(),
+          selectedNode = void 0,
+          editorZone = false;
+
+      /**
+       * Something selected on document
+       */
+      selectedNode = selection.anchorNode || selection.focusNode;
+
+      if (selectedNode && selectedNode.nodeType === Node.TEXT_NODE) {
+        selectedNode = selectedNode.parentNode;
+      }
+
+      if (selectedNode) {
+        editorZone = selectedNode.closest('.' + Selection.CSS.editorZone);
+      }
+
+      /**
+       * Selection is not out of Editor because Editor's wrapper was found
+       */
+      return editorZone && editorZone.nodeType === Node.ELEMENT_NODE;
     }
 
     /**
@@ -23287,7 +23629,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ":root {\r\n  /**\r\n   * Toolbar buttons\r\n   */\r\n  --bg-light: #eff2f5;\r\n\r\n  /**\r\n   * All gray texts: placeholders, settings\r\n   */\r\n  --grayText: #707684;\r\n\r\n  /** Blue icons */\r\n  --color-active-icon: #388AE5;\r\n\r\n  /**\r\n   * Block content width\r\n   */\r\n  --content-width: 650px;\r\n\r\n  /**\r\n   * Toolbar Plus Button and Toolbox buttons height and width\r\n   */\r\n  --toolbar-buttons-size: 34px;\r\n\r\n  /**\r\n   * Confirm deletion bg\r\n   */\r\n  --color-confirm: #E24A4A;\r\n}\r\n/**\r\n* Editor wrapper\r\n*/\r\n.codex-editor {\r\n  position: relative;\r\n  box-sizing: border-box;\r\n\r\n\r\n}\r\n.codex-editor .hide {\r\n    display: none;\r\n  }\r\n.codex-editor__redactor {\r\n    padding-bottom: 300px;\r\n  }\r\n.codex-editor svg {\r\n    fill: currentColor;\r\n    vertical-align: middle;\r\n    max-height: 100%;\r\n  }\r\n::-moz-selection{\r\n  background-color: rgba(61,166,239,0.63);\r\n}\r\n::selection{\r\n  background-color: rgba(61,166,239,0.63);\r\n}\r\n.ce-tune-moveup{}\r\n.ce-settings-delete:hover {\r\n    cursor: pointer;\r\n  }\r\n.ce-settings-delete::before {\r\n    content: 'delete'\r\n  }\r\n.ce-toolbar {\r\n  position: absolute;\r\n  left: 0;\r\n  right: 0;\r\n  top: 0;\r\n  /*opacity: 0;*/\r\n  /*visibility: hidden;*/\r\n  transition: opacity 100ms ease;\r\n  will-change: opacity, transform;\r\n  display: none;\r\n}\r\n.ce-toolbar--opened {\r\n    display: block;\r\n    /*opacity: 1;*/\r\n    /*visibility: visible;*/\r\n  }\r\n.ce-toolbar__content {\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n    position: relative;\r\n  }\r\n.ce-toolbar__plus {\r\n    position: absolute;\r\n    left: calc(calc(34px + 10px) * -1);\r\n    left: calc(calc(var(--toolbar-buttons-size) + 10px) * -1);\r\n    display: inline-block;\r\n    background-color: #eff2f5;\r\n    background-color: var(--bg-light);\r\n    width: 34px;\r\n    width: var(--toolbar-buttons-size);\r\n    height: 34px;\r\n    height: var(--toolbar-buttons-size);\r\n    line-height: 34px;\r\n    text-align: center;\r\n    border-radius: 50%;\r\n    cursor: pointer;\r\n  }\r\n.ce-toolbar__plus--hidden {\r\n      display: none;\r\n    }\r\n/**\r\n   * Block actions Zone\r\n   * -------------------------\r\n   */\r\n.ce-toolbar__actions {\r\n    position: absolute;\r\n    right: 0;\r\n    top: 0;\r\n    padding-right: 16px;\r\n  }\r\n.ce-toolbar__actions-buttons {\r\n      text-align: right;\r\n    }\r\n.ce-toolbar__settings-btn {\r\n    display: inline-block;\r\n    width: 24px;\r\n    height: 24px;\r\n    color: #707684;\r\n    color: var(--grayText);\r\n    cursor: pointer;\r\n  }\r\n.ce-toolbox {\r\n    position: absolute;\r\n    visibility: hidden;\r\n    transition: opacity 100ms ease;\r\n    will-change: opacity;\r\n}\r\n.ce-toolbox--opened {\r\n        opacity: 1;\r\n        visibility: visible;\r\n    }\r\n.ce-toolbox__button {\r\n        display: inline-block;\r\n        list-style: none;\r\n        margin: 0;\r\n        background: #eff2f5;\r\n        background: var(--bg-light);\r\n        width: 34px;\r\n        width: var(--toolbar-buttons-size);\r\n        height: 34px;\r\n        height: var(--toolbar-buttons-size);\r\n        border-radius: 30px;\r\n        overflow: hidden;\r\n        text-align: center;\r\n        line-height: 34px;\r\n        line-height: var(--toolbar-buttons-size)\r\n    }\r\n.ce-toolbox__button::before {\r\n            content: attr(title);\r\n            font-size: 22px;\r\n            font-weight: 500;\r\n            letter-spacing: 1em;\r\n            -webkit-font-feature-settings: \"smcp\", \"c2sc\";\r\n                    font-feature-settings: \"smcp\", \"c2sc\";\r\n            font-variant-caps: all-small-caps;\r\n            padding-left: 11.5px;\r\n            margin-top: -1px;\r\n            display: inline-block;\r\n        }\r\n.ce-inline-toolbar {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-inline-toolbar::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n      }\r\n.ce-inline-toolbar {\r\n  padding: 6px;\r\n  transform: translateX(-50%);\r\n  display: none;\r\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\r\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\r\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\r\n}\r\n.ce-inline-toolbar--showed {\r\n    display: block;\r\n  }\r\n.ce-inline-tool {\r\n  display: inline-block;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n}\r\n.ce-inline-tool:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-inline-tool:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-inline-tool {\r\n  line-height: normal;\r\n}\r\n.ce-inline-tool--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-inline-tool--link .icon {\r\n      margin-top: -2px;\r\n    }\r\n.ce-inline-tool--link .icon--unlink {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--link {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--unlink {\r\n      display: inline-block;\r\n    }\r\n.ce-inline-tool-input {\r\n    background-color: #eff2f5;\r\n    background-color: var(--bg-light);\r\n    outline: none;\r\n    border: 0;\r\n    border-radius: 3px;\r\n    margin: 6px 0 0;\r\n    font-size: 13px;\r\n    padding: 8px;\r\n    width: 100%;\r\n    box-sizing: border-box;\r\n    display: none\r\n  }\r\n.ce-inline-tool-input::-webkit-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input:-ms-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input::placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input--showed {\r\n      display: block;\r\n    }\r\n.ce-settings {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-settings::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n      }\r\n.ce-settings {\r\n  right: 5px;\r\n  top: 35px;\r\n  min-width: 124px\r\n}\r\n.ce-settings::before{\r\n    left: auto;\r\n    right: 12px;\r\n  }\r\n.ce-settings {\r\n\r\n  display: none;\r\n}\r\n.ce-settings--opened {\r\n    display: block;\r\n  }\r\n.ce-settings__plugin-zone:not(:empty){\r\n      padding: 6px;\r\n    }\r\n.ce-settings__default-zone:not(:empty){\r\n      padding: 6px;\r\n    }\r\n.ce-settings__button {\r\n  display: inline-block;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n  }\r\n.ce-settings__button:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-settings__button:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-settings__button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-settings__button--delete {\r\n      transition: background-color 300ms ease;\r\n      will-change: background-color;\r\n    }\r\n.ce-settings__button--delete .icon {\r\n        transition: transform 200ms ease-out;\r\n        will-change: transform;\r\n      }\r\n.ce-settings__button--confirm {\r\n      background-color: #E24A4A;\r\n      background-color: var(--color-confirm);\r\n      color: #fff\r\n    }\r\n.ce-settings__button--confirm:hover {\r\n        background-color: rgb(213, 74, 74) !important;\r\n        background-color: rgb(213, 74, 74) !important;\r\n      }\r\n.ce-settings__button--confirm .icon {\r\n        transform: rotate(90deg);\r\n      }\r\n.ce-settings-move-up:hover {\r\n    cursor: pointer;\r\n  }\r\n.ce-settings-move-up--disabled {\r\n    cursor: not-allowed !important;\r\n    opacity: .3;\r\n  }\r\n.ce-block:first-of-type {\r\n    margin-top: 0;\r\n  }\r\n.ce-block--selected {\r\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\r\n    border-radius: 3px;\r\n  }\r\n.ce-block__content {\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n  }\r\n", ""]);
+exports.push([module.i, ":root {\r\n  /**\r\n   * Selection color\r\n   */\r\n  --selectionColor: rgba(61,166,239,0.63);\r\n\r\n  /**\r\n   * Toolbar buttons\r\n   */\r\n  --bg-light: #eff2f5;\r\n\r\n  /**\r\n   * All gray texts: placeholders, settings\r\n   */\r\n  --grayText: #707684;\r\n\r\n  /** Blue icons */\r\n  --color-active-icon: #388AE5;\r\n\r\n  /**\r\n   * Block content width\r\n   */\r\n  --content-width: 650px;\r\n\r\n  /**\r\n   * Toolbar buttons height and width\r\n   */\r\n  --toolbar-buttons-size: 34px;\r\n\r\n  /**\r\n   * Toolbar Plus Button and Toolbox buttons height and width\r\n   */\r\n  --toolbox-buttons-size: 20px;\r\n\r\n  /**\r\n   * Confirm deletion bg\r\n   */\r\n  --color-confirm: #E24A4A;\r\n}\r\n/**\r\n* Editor wrapper\r\n*/\r\n.codex-editor {\r\n  position: relative;\r\n  box-sizing: border-box;\r\n}\r\n.codex-editor .hide {\r\n    display: none;\r\n  }\r\n.codex-editor__redactor {\r\n    padding-bottom: 300px;\r\n  }\r\n.codex-editor svg {\r\n    fill: currentColor;\r\n    vertical-align: middle;\r\n    max-height: 100%;\r\n  }\r\n/**\r\n * Set color for native selection\r\n */\r\n::-moz-selection{\r\n  background-color: rgba(61,166,239,0.63);\r\n  background-color: var(--selectionColor);\r\n}\r\n::selection{\r\n  background-color: rgba(61,166,239,0.63);\r\n  background-color: var(--selectionColor);\r\n}\r\n/**\r\n * Add placeholder to content editable elements with data attribute\r\n * data-placeholder=\"Hello world!\"\r\n */\r\n[contentEditable=true][data-placeholder]:empty:not(:focus):before{\r\n  content: attr(data-placeholder);\r\n  color: #707684;\r\n  color: var(--grayText);\r\n}\r\n.ce-toolbar {\r\n  position: absolute;\r\n  left: 0;\r\n  right: 0;\r\n  top: 0;\r\n  /*opacity: 0;*/\r\n  /*visibility: hidden;*/\r\n  transition: opacity 100ms ease;\r\n  will-change: opacity, transform;\r\n  display: none;\r\n}\r\n.ce-toolbar--opened {\r\n    display: block;\r\n    /*opacity: 1;*/\r\n    /*visibility: visible;*/\r\n  }\r\n.ce-toolbar__content {\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n    position: relative;\r\n  }\r\n.ce-toolbar__plus {\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  cursor: pointer;\r\n  display: inline-block;\r\n  width: 20px;\r\n  width: var(--toolbox-buttons-size);\r\n  height: 20px;\r\n  height: var(--toolbox-buttons-size);\r\n  line-height: 20px;\r\n  line-height: var(--toolbox-buttons-size)\r\n  }\r\n.ce-toolbar__plus:not(:last-of-type){\r\n  margin-right: 3px;\r\n    }\r\n.ce-toolbar__plus:hover {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-toolbar__plus {\r\n\r\n    position: absolute;\r\n    top: -1px;\r\n    left: calc(calc(20px + 10px) * -1);\r\n    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);\r\n  }\r\n.ce-toolbar__plus--hidden {\r\n      display: none;\r\n    }\r\n/**\r\n   * Block actions Zone\r\n   * -------------------------\r\n   */\r\n.ce-toolbar__actions {\r\n    position: absolute;\r\n    right: 0;\r\n    top: 0;\r\n    padding-right: 16px;\r\n  }\r\n.ce-toolbar__actions-buttons {\r\n      text-align: right;\r\n    }\r\n.ce-toolbar__settings-btn {\r\n    display: inline-block;\r\n    width: 24px;\r\n    height: 24px;\r\n    color: #707684;\r\n    color: var(--grayText);\r\n    cursor: pointer;\r\n  }\r\n.ce-toolbox {\r\n    position: absolute;\r\n    visibility: hidden;\r\n    transition: opacity 100ms ease;\r\n    will-change: opacity;\r\n}\r\n.ce-toolbox--opened {\r\n        opacity: 1;\r\n        visibility: visible;\r\n    }\r\n.ce-toolbox__button {\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  cursor: pointer;\r\n  display: inline-block;\r\n  width: 20px;\r\n  width: var(--toolbox-buttons-size);\r\n  height: 20px;\r\n  height: var(--toolbox-buttons-size);\r\n  line-height: 20px;\r\n  line-height: var(--toolbox-buttons-size);\r\n    }\r\n.ce-toolbox__button:not(:last-of-type){\r\n  margin-right: 3px;\r\n    }\r\n.ce-toolbox__button:hover {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-inline-toolbar {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-inline-toolbar::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n    }\r\n.ce-inline-toolbar {\r\n  padding: 6px;\r\n  transform: translateX(-50%);\r\n  display: none;\r\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\r\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\r\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\r\n}\r\n.ce-inline-toolbar--showed {\r\n    display: block;\r\n  }\r\n.ce-inline-tool {\r\n  display: inline-block;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n}\r\n.ce-inline-tool:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-inline-tool:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-inline-tool {\r\n  line-height: normal;\r\n}\r\n.ce-inline-tool--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-inline-tool--link .icon {\r\n      margin-top: -2px;\r\n    }\r\n.ce-inline-tool--link .icon--unlink {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--link {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--unlink {\r\n      display: inline-block;\r\n    }\r\n.ce-inline-tool-input {\r\n    background-color: #eff2f5;\r\n    background-color: var(--bg-light);\r\n    outline: none;\r\n    border: 0;\r\n    border-radius: 3px;\r\n    margin: 6px 0 0;\r\n    font-size: 13px;\r\n    padding: 8px;\r\n    width: 100%;\r\n    box-sizing: border-box;\r\n    display: none\r\n  }\r\n.ce-inline-tool-input::-webkit-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input:-ms-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input::placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input--showed {\r\n      display: block;\r\n    }\r\n.ce-settings {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-settings::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n    }\r\n.ce-settings {\r\n  right: 5px;\r\n  top: 35px;\r\n  min-width: 124px\r\n}\r\n.ce-settings::before{\r\n    left: auto;\r\n    right: 12px;\r\n  }\r\n.ce-settings {\r\n\r\n  display: none;\r\n}\r\n.ce-settings--opened {\r\n    display: block;\r\n  }\r\n.ce-settings__plugin-zone:not(:empty){\r\n      padding: 6px 6px 0;\r\n    }\r\n.ce-settings__default-zone:not(:empty){\r\n      padding: 6px;\r\n    }\r\n.ce-settings__button {\r\n  display: inline-block;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n  }\r\n.ce-settings__button:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-settings__button:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-settings__button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-settings__button--disabled {\r\n        cursor: not-allowed !important;\r\n        opacity: .3;\r\n    }\r\n.ce-settings__button--selected {\r\n      color: #388AE5;\r\n      color: var(--color-active-icon);\r\n    }\r\n.ce-settings__button--delete {\r\n      transition: background-color 300ms ease;\r\n      will-change: background-color;\r\n    }\r\n.ce-settings__button--delete .icon {\r\n        transition: transform 200ms ease-out;\r\n        will-change: transform;\r\n      }\r\n.ce-settings__button--confirm {\r\n      background-color: #E24A4A;\r\n      background-color: var(--color-confirm);\r\n      color: #fff\r\n    }\r\n.ce-settings__button--confirm:hover {\r\n        background-color: rgb(213, 74, 74) !important;\r\n        background-color: rgb(213, 74, 74) !important;\r\n      }\r\n.ce-settings__button--confirm .icon {\r\n        transform: rotate(90deg);\r\n      }\r\n.ce-block:first-of-type {\r\n    margin-top: 0;\r\n  }\r\n.ce-block--selected {\r\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\r\n    border-radius: 3px;\r\n  }\r\n.ce-block__content {\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n  }\r\n.wobble {\r\n  animation-name: wobble;\r\n  animation-duration: 400ms;\r\n}\r\n/**\r\n * @author Nick Pettit - https://github.com/nickpettit/glide\r\n */\r\n@keyframes wobble {\r\n  from {\r\n    transform: translate3d(0, 0, 0);\r\n  }\r\n\r\n  15% {\r\n    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\r\n  }\r\n\r\n  30% {\r\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\r\n  }\r\n\r\n  45% {\r\n    transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\r\n  }\r\n\r\n  60% {\r\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\r\n  }\r\n\r\n  75% {\r\n    transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\r\n  }\r\n\r\n  to {\r\n    transform: translate3d(0, 0, 0);\r\n  }\r\n}\r\n", ""]);
 
 // exports
 

@@ -10,26 +10,6 @@
     }
 
     &__button {
-        display: inline-block;
-        list-style: none;
-        margin: 0;
-        background: var(--bg-light);
-        width: var(--toolbar-buttons-size);
-        height: var(--toolbar-buttons-size);
-        border-radius: 30px;
-        overflow: hidden;
-        text-align: center;
-        line-height: var(--toolbar-buttons-size);
-
-        &::before {
-            content: attr(title);
-            font-size: 22px;
-            font-weight: 500;
-            letter-spacing: 1em;
-            font-variant-caps: all-small-caps;
-            padding-left: 11.5px;
-            margin-top: -1px;
-            display: inline-block;
-        }
+        @apply --toolbox-button;
     }
 }

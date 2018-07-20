@@ -2,6 +2,7 @@ declare var Module: any;
 
 import { IBlocksAPI } from '../interfaces/api';
 import IInputOutputData from '../interfaces/input-output-data';
+import IModuleConfig from '../interfaces/module-config';
 
 /**
  * @class BlocksAPI
@@ -11,9 +12,8 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorsConfig} config
    */
-  constructor({config}) {
+  constructor({config}: IModuleConfig) {
     super({config});
   }
 
@@ -29,7 +29,16 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
       swap: (fromIndex: number, toIndex: number) => this.swap(fromIndex, toIndex),
       getBlockByIndex: (index: number) => this.getBlockByIndex(index),
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
+      getBlocksCount: () => this.getBlocksCount(),
     };
+  }
+
+  /**
+   * Returns Blocks count
+   * @return {number}
+   */
+  public getBlocksCount(): number {
+    return this.Editor.BlockManager.blocks.length;
   }
 
   /**
@@ -86,10 +95,10 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
     if (this.Editor.BlockManager.currentBlockIndex === 0) {
       this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
     } else {
-      if (this.Editor.Caret.navigatePrevious(true)) {
-        this.Editor.Toolbar.close();
-      }
+      this.Editor.Caret.navigatePrevious(true);
     }
+
+    this.Editor.Toolbar.close();
   }
 
   /**

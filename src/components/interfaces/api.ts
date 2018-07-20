@@ -56,6 +56,12 @@ export interface IBlocksAPI {
    * @return {number}
    */
   getCurrentBlockIndex: () => number;
+
+  /**
+   * Returns Block's count
+   * @return {number}
+   */
+  getBlocksCount: () => number;
 }
 
 /**
