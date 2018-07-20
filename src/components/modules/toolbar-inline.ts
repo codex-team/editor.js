@@ -262,7 +262,10 @@ export default class InlineToolbar extends Module {
    */
   private enableShortcuts(tool: InlineTool): void {
 
-    if (!tool.shortcut || tool.shortcut === '') {
+    /**
+     * Ignore tool that doesn't have shortcut name
+     */
+    if (!tool.shortcut || tool.shortcut.trim() === '') {
       return;
     }
 

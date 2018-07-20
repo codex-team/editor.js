@@ -6424,7 +6424,10 @@ var InlineToolbar = function (_Module) {
         value: function enableShortcuts(tool) {
             var _this4 = this;
 
-            if (!tool.shortcut || tool.shortcut === '') {
+            /**
+             * Ignore tool that doesn't have shortcut name
+             */
+            if (!tool.shortcut || tool.shortcut.trim() === '') {
                 return;
             }
             this.Editor.Shortcuts.add({
