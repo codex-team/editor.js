@@ -3916,6 +3916,7 @@ var BlockManager = function (_Module) {
       var block = this.composeBlock(toolName, data);
 
       this._blocks.insert(this.currentBlockIndex, block, true);
+      this.Editor.Caret.setToBlock(block);
     }
 
     /**
@@ -6580,7 +6581,7 @@ var Toolbox = function (_Module) {
      * Append Tool to the Toolbox
      *
      * @param {string} toolName  - tool name
-     * @param {Tool}  tool      - tool class
+     * @param {IBlockTool}  tool      - tool class
      */
 
   }, {
@@ -6635,7 +6636,7 @@ var Toolbox = function (_Module) {
 
     /**
      * Enable shortcut Block Tool implemented shortcut
-     * @param {Tool} tool - Tool class
+     * @param {IBlockTool} tool - Tool class
      * @param {String} toolName - Tool name
      */
 
@@ -6656,7 +6657,7 @@ var Toolbox = function (_Module) {
      * inserts new block
      * Can be called when button clicked on Toolbox or by Shortcut
      *
-     * @param {Tool} tool - Tool Class
+     * @param {IBlockTool} tool - Tool Class
      * @param {String} toolName - Tool name
      */
 
