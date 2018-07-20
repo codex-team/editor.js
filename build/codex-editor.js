@@ -12681,6 +12681,14 @@ var Dom = function () {
         return _this.isNodeEmpty(leaf);
       });
     }
+
+    /**
+     * Check if string contains html elements
+     *
+     * @param string
+     * @returns {boolean}
+     */
+
   }, {
     key: 'isHTMLString',
     value: function isHTMLString(string) {
@@ -12690,6 +12698,13 @@ var Dom = function () {
 
       return wrapper.childElementCount > 0;
     }
+
+    /**
+     * Return array of names of block html elements
+     *
+     * @returns {string[]}
+     */
+
   }, {
     key: 'blockElements',
     get: function get() {
@@ -18896,7 +18911,7 @@ var Paste = function (_Module) {
             var block = BlockManager.getBlock(event.target);
             var toolConfig = toolsConfig[block.name];
             /** If paste is dissalowed in block do nothing */
-            if (!toolConfig || toolConfig[Tools.apiSettings.IS_PASTE_DISALLOWED]) {
+            if (toolConfig && toolConfig[Tools.apiSettings.IS_PASTE_DISALLOWED]) {
                 return;
             }
             var htmlData = event.clipboardData.getData('text/html'),
@@ -19060,18 +19075,9 @@ var Paste = function (_Module) {
                                 return _context3.abrupt('return');
 
                             case 10:
-                                if (!(tool !== currentBlock.name)) {
-                                    _context3.next = 13;
-                                    break;
-                                }
-
-                                this.insertBlock(dataToInsert);
-                                return _context3.abrupt('return');
-
-                            case 13:
                                 document.execCommand('insertHTML', false, content.innerHTML);
 
-                            case 14:
+                            case 11:
                             case 'end':
                                 return _context3.stop();
                         }

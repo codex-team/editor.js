@@ -184,7 +184,7 @@ export default class Paste extends Module {
     const toolConfig = toolsConfig[block.name];
 
     /** If paste is dissalowed in block do nothing */
-    if (!toolConfig || toolConfig[Tools.apiSettings.IS_PASTE_DISALLOWED]) {
+    if (toolConfig && toolConfig[Tools.apiSettings.IS_PASTE_DISALLOWED]) {
       return;
     }
 
@@ -243,11 +243,6 @@ export default class Paste extends Module {
         BlockManager.insert(blockData.tool, blockData.data);
         return;
       }
-    }
-
-    if (tool !== currentBlock.name) {
-      this.insertBlock(dataToInsert);
-      return;
     }
 
     document.execCommand('insertHTML', false, content.innerHTML);

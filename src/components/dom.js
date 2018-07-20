@@ -298,6 +298,12 @@ export default class Dom {
     return leafs.every( leaf => this.isNodeEmpty(leaf) );
   }
 
+  /**
+   * Check if string contains html elements
+   *
+   * @param string
+   * @returns {boolean}
+   */
   static isHTMLString(string) {
     const wrapper = Dom.make('div');
 
@@ -306,6 +312,11 @@ export default class Dom {
     return wrapper.childElementCount > 0;
   }
 
+  /**
+   * Return array of names of block html elements
+   *
+   * @returns {string[]}
+   */
   static get blockElements() {
     return [
       'address',
