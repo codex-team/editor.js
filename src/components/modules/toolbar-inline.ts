@@ -252,7 +252,7 @@ export default class InlineToolbar extends Module {
       this.toolClicked(tool);
     });
 
-    /** Enable shortcuts if inline-tool implemented Shortcuts */
+    /** Enable shortcuts */
     this.enableShortcuts(tool);
   }
 
@@ -262,6 +262,16 @@ export default class InlineToolbar extends Module {
    */
   private enableShortcuts(tool: InlineTool): void {
 
+    if (!tool.shortcut || tool.shortcut === '') {
+      return;
+    }
+
+    this.Editor.Shortcuts.add({
+      name: tool.shortcut,
+      handler: () => {
+        this.toolClicked(tool);
+      },
+    });
   }
 
   /**

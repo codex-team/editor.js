@@ -107,6 +107,24 @@ module.exports = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg xmlns=\"http:
 
 /***/ }),
 
+/***/ "./node_modules/@codexteam/shortcuts/lib/shortcuts.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@codexteam/shortcuts/lib/shortcuts.js ***!
+  \************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*!
+ * Library for handling keyboard shortcuts
+ * @copyright undefined
+ * @license MIT
+ * @author CodeX (https://ifmo.su)
+ * @version 1.0.0
+ */
+!function(e,t){if(true)module.exports=t();else { var r, n; }}("undefined"!=typeof self?self:this,function(){return function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,t),o.l=!0,o.exports}var n={};return t.m=e,t.c=n,t.d=function(e,n,r){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i={0:48,1:49,2:50,3:51,4:52,5:53,6:54,7:55,8:56,9:57,A:65,B:66,C:67,D:68,E:69,F:70,G:71,H:72,I:73,J:74,K:75,L:76,M:77,N:78,O:79,P:80,Q:81,R:82,S:83,T:84,U:85,V:86,W:87,X:88,Y:89,Z:90,BACKSPACE:8,ENTER:13,ESCAPE:27,LEFT:37,UP:38,RIGHT:39,DOWN:40,INSERT:45,DELETE:46},u={CMD:["CMD","CONTROL","COMMAND","WINDOWS","CTRL"],SHIFT:["SHIFT"],ALT:["ALT","OPTION"]},c=function(){function e(t){var n=this;r(this,e),this.commands={},this.keys={},this.parseShortcutName(t.name),this.element=t.on,this.callback=t.callback,this.executeShortcut=function(e){n.execute(e)},this.element.addEventListener("keydown",this.executeShortcut,!1)}return o(e,[{key:"parseShortcutName",value:function(e){e=e.split("+");for(var t=0;t<e.length;t++)if(e[t]=e[t].toUpperCase(),e[t].length>1)for(var n in u)u[n].includes(e[t])&&(this.commands[n]=!0);else this.keys[e[t]]=!0}},{key:"execute",value:function(e){var t=e.ctrlKey||e.metaKey,n=e.shiftKey,r=e.altKey,o={CMD:t,SHIFT:n,ALT:r},u=void 0,c=!0;for(u in this.commands)c=c&&o[u];var a=void 0,s=!0;for(a in this.keys)s=s&&e.keyCode===i[a];c&&s&&this.callback(e)}},{key:"remove",value:function(){this.element.removeEventListener("keydown",this.executeShortcut)}}]),e}();t.default=c}])});
+
+/***/ }),
+
 /***/ "./node_modules/css-loader/lib/css-base.js":
 /*!*************************************************!*\
   !*** ./node_modules/css-loader/lib/css-base.js ***!
@@ -482,8 +500,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["api-blocks.ts","api-events.ts","api-listener.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-toolbar.ts","api.ts","block-events.ts","blockManager.js","caret.js","events.js","listeners.js","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+var modules = ["api-blocks.ts","api-events.ts","api-listener.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-toolbar.ts","api.ts","block-events.ts","blockManager.js","caret.js","events.js","listeners.js","renderer.js","sanitizer.js","saver.js","shortcuts.ts","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
 });
 
 /**
@@ -2219,6 +2237,10 @@ var LinkInlineTool = function () {
         _classCallCheck(this, LinkInlineTool);
 
         /**
+         * Shortcut name
+         */
+        this.shortcut = 'CMD+K';
+        /**
          * Native Document's commands for link/unlink
          */
         this.commandLink = 'createLink';
@@ -2521,10 +2543,10 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
-/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
-  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -2545,6 +2567,7 @@ var map = {
 	"./renderer.js": "./src/components/modules/renderer.js",
 	"./sanitizer.js": "./src/components/modules/sanitizer.js",
 	"./saver.js": "./src/components/modules/saver.js",
+	"./shortcuts.ts": "./src/components/modules/shortcuts.ts",
 	"./toolbar-blockSettings.js": "./src/components/modules/toolbar-blockSettings.js",
 	"./toolbar-inline.ts": "./src/components/modules/toolbar-inline.ts",
 	"./toolbar-toolbox.js": "./src/components/modules/toolbar-toolbox.js",
@@ -2572,7 +2595,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
 
 /***/ }),
 
@@ -5849,6 +5872,93 @@ module.exports = exports['default'];
 
 /***/ }),
 
+/***/ "./src/components/modules/shortcuts.ts":
+/*!*********************************************!*\
+  !*** ./src/components/modules/shortcuts.ts ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _shortcuts = __webpack_require__(/*! @codexteam/shortcuts */ "./node_modules/@codexteam/shortcuts/lib/shortcuts.js");
+
+var _shortcuts2 = _interopRequireDefault(_shortcuts);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Internal Shortcuts Module
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                *
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Register all methods to save state
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+var Shortcuts = function (_Module) {
+    _inherits(Shortcuts, _Module);
+
+    /**
+     * @constructor
+     */
+    function Shortcuts(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, Shortcuts);
+
+        var _this = _possibleConstructorReturn(this, (Shortcuts.__proto__ || Object.getPrototypeOf(Shortcuts)).call(this, { config: config }));
+
+        _this.registeredShortcuts = [];
+        return _this;
+    }
+    /**
+     * Register shortcut
+     * @param {IShortcut} shortcut
+     */
+
+
+    _createClass(Shortcuts, [{
+        key: 'add',
+        value: function add(shortcut) {
+            var newShortcut = new _shortcuts2.default({
+                name: shortcut.name,
+                on: document.body,
+                callback: shortcut.handler
+            });
+            this.registeredShortcuts.push(newShortcut);
+        }
+        /**
+         * Remove shortcut
+         * @param {IShortcut} shortcut
+         */
+
+    }, {
+        key: 'remove',
+        value: function remove(shortcut) {
+            // Remove
+        }
+    }]);
+
+    return Shortcuts;
+}(Module);
+
+Shortcuts.displayName = 'Shortcuts';
+exports.default = Shortcuts;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
+
+/***/ }),
+
 /***/ "./src/components/modules/toolbar-blockSettings.js":
 /*!*********************************************************!*\
   !*** ./src/components/modules/toolbar-blockSettings.js ***!
@@ -6301,7 +6411,7 @@ var InlineToolbar = function (_Module) {
             this.Editor.Listeners.on(button, 'click', function () {
                 _this3.toolClicked(tool);
             });
-            /** Enable shortcuts if inline-tool implemented Shortcuts */
+            /** Enable shortcuts */
             this.enableShortcuts(tool);
         }
         /**
@@ -6311,7 +6421,19 @@ var InlineToolbar = function (_Module) {
 
     }, {
         key: 'enableShortcuts',
-        value: function enableShortcuts(tool) {}
+        value: function enableShortcuts(tool) {
+            var _this4 = this;
+
+            if (!tool.shortcut || tool.shortcut === '') {
+                return;
+            }
+            this.Editor.Shortcuts.add({
+                name: tool.shortcut,
+                handler: function handler() {
+                    _this4.toolClicked(tool);
+                }
+            });
+        }
         /**
          * Inline Tool button clicks
          * @param {InlineTool} tool - Tool's instance
@@ -6338,11 +6460,11 @@ var InlineToolbar = function (_Module) {
     }, {
         key: 'tools',
         get: function get() {
-            var _this4 = this;
+            var _this5 = this;
 
             if (!this.toolsInstances) {
                 this.toolsInstances = [new _inlineToolBold2.default(this.Editor.API.methods), new _inlineToolItalic2.default(this.Editor.API.methods), new _inlineToolLink2.default(this.Editor.API.methods)].concat(_toConsumableArray(this.Editor.Tools.inline.map(function (Tool) {
-                    return new Tool(_this4.Editor.API.methods);
+                    return new Tool(_this5.Editor.API.methods);
                 })));
             }
             return this.toolsInstances;
