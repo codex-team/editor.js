@@ -25,7 +25,6 @@
     @apply --toolbox-button;
 
     position: absolute;
-    top: -1px;
     left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);
 
     &--hidden {
