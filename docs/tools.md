@@ -59,7 +59,7 @@ There are few options available by CodeX Editor.
 | -- | -- | -- | -- |
 | `enableLineBreaks` | _Boolean_ | `false` | With this option, CodeX Editor won't handle Enter keydowns. Can be helpful for Tools like `<code>` where line breaks should be handled by default behaviour. |
 | `inlineToolbar` | _Boolean/Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
-| `dissallowPaste` | _Boolean_ | false | Pass `true` if you want to prevent any paste into your Tool
+| `disallowPaste` | _Boolean_ | `false` | Pass `true` if you want to prevent any paste into your Tool
 
 
 ### Paste handling
@@ -80,8 +80,9 @@ To provide paste handling for your Tool you need to define static getter `onPast
 ##### HTML tags handling
 To handle pasted HTML elements object returned from `onPaste` getter should contain following fields: 
 
+
 | Name | Type | Description |
-| -- | -- | -- | -- |
+| -- | -- | -- |
 | `handler(content: HTMLElement)` | `Function` | _Optional_. Pasted HTML elements handler. Gets one argument `content`. `content` is HTML element extracted from pasted data. Handler should return the same object as Tool's `save` method |
 | `tags` | `String[]` | _Optional_. Should contain all tag names you want to be extracted from pasted data and be passed to your `handler` method |
 
@@ -108,8 +109,10 @@ static get onPaste() {
 
 ##### Patterns handling
 Your Tool can analyze text by RegExp patterns to substitute pasted string with data you want. Object returned from `onPaste` getter should contain following fields to use patterns:
+
+
 | Name | Type | Description |
-| ---- | ---- | ----------- |
+| -- | -- | -- |
 | `patterns` | `Object` | _Optional_. `patterns` object contains RegExp patterns with their names as object's keys |
 | `patternHandler(text: string, key: string)` | `Function` | _Optional_. Gets pasted string and pattern name. Should return the same object as Tool `save` method |
 
