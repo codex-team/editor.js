@@ -61,25 +61,23 @@ There are few options available by CodeX Editor.
 | `inlineToolbar` | _Boolean/Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
 | `disallowPaste` | _Boolean_ | `false` | Pass `true` if you want to prevent any paste into your Tool
 
-
 ### Paste handling
+
 CodeX Editor handles paste on Blocks and provides API for Tools to process the pasted data.
 
-
 When user pastes content into Editor, pasted content is splitted into blocks.
+
 1. If plain text has been pasted, it is split by new line characters
 2. If HTML string has been pasted, it is split by block tags
 
-
 Also Editor API allows you to define RegExp patterns to substitute them by your data.
-
 
 To provide paste handling for your Tool you need to define static getter `onPaste` in Tool class.
 `onPaste` getter should return object with fields described below.
 
 ##### HTML tags handling
-To handle pasted HTML elements object returned from `onPaste` getter should contain following fields: 
 
+To handle pasted HTML elements object returned from `onPaste` getter should contain following fields: 
 
 | Name | Type | Description |
 | -- | -- | -- |
@@ -92,6 +90,7 @@ For correct work you MUST provide `onPaste.handler` at least for `initialBlock` 
 > Example
 
 Header tool can handle `H1`-`H6` tags using paste handling API
+
 ```javascript
 static get onPaste() {
   return {
@@ -106,10 +105,9 @@ static get onPaste() {
 
 > One tag can be handled by one Tool only.
 
-
 ##### Patterns handling
-Your Tool can analyze text by RegExp patterns to substitute pasted string with data you want. Object returned from `onPaste` getter should contain following fields to use patterns:
 
+Your Tool can analyze text by RegExp patterns to substitute pasted string with data you want. Object returned from `onPaste` getter should contain following fields to use patterns:
 
 | Name | Type | Description |
 | -- | -- | -- |
@@ -122,6 +120,7 @@ Pattern will be processed only if paste was on `initialBlock` Tool and pasted st
 > Example
 
 You can handle youtube links and insert embeded video instead:
+
 ```javascript
 static get onPaste() {
   return {
