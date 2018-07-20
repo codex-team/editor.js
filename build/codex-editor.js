@@ -12592,7 +12592,7 @@ var Dom = function () {
   }, {
     key: 'blockElements',
     get: function get() {
-      return ['address', 'artical', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'li', 'main', 'nav', 'noscript', 'ol', 'output', 'p', 'pre', 'ruby', 'section', 'table', 'tfoot', 'ul', 'video'];
+      return ['address', 'article', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'li', 'main', 'nav', 'noscript', 'ol', 'output', 'p', 'pre', 'ruby', 'section', 'table', 'tfoot', 'ul', 'video'];
     }
   }]);
 
@@ -18526,7 +18526,7 @@ module.exports = exports["default"];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module, $, _) {
+/* WEBPACK VAR INJECTION */(function(Module, _, $) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -18538,36 +18538,13 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
+function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var __awaiter = undefined && undefined.__awaiter || function (thisArg, _arguments, P, generator) {
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) {
-            try {
-                step(generator.next(value));
-            } catch (e) {
-                reject(e);
-            }
-        }
-        function rejected(value) {
-            try {
-                step(generator["throw"](value));
-            } catch (e) {
-                reject(e);
-            }
-        }
-        function step(result) {
-            result.done ? resolve(result.value) : new P(function (resolve) {
-                resolve(result.value);
-            }).then(fulfilled, rejected);
-        }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 
 var Paste = function (_Module) {
     _inherits(Paste, _Module);
@@ -18576,6 +18553,8 @@ var Paste = function (_Module) {
      * @constructor
      */
     function Paste(_ref) {
+        var _this2 = this;
+
         var config = _ref.config;
 
         _classCallCheck(this, Paste);
@@ -18588,6 +18567,55 @@ var Paste = function (_Module) {
         _this.toolsTags = {};
         /** Patterns` substitutions parameters */
         _this.toolsPatterns = [];
+        /**
+         * Process paste config for each tools
+         *
+         * @param {string} tool
+         */
+        _this.processTool = function (tool) {
+            var toolPasteConfig = tool.onPaste || {};
+            if (!toolPasteConfig.handler) {
+                _.log('"' + tool.name + '" Tool MUST provide paste handler.', 'warn');
+            }
+            if (typeof toolPasteConfig.handler !== 'function') {
+                _.log('Paste handler for "' + tool.name + '" Tool should be a function.', 'warn');
+            } else {
+                var tags = toolPasteConfig.tags || [];
+                tags.forEach(function (tag) {
+                    if (_this.toolsTags.hasOwnProperty(tag)) {
+                        _.log('Paste handler for "' + tool.name + '" Tool on "' + tag + '" tag is skipped ' + ('because it is already used by "' + _this.toolsTags[tag].tool + '" Tool.'), 'warn');
+                        return;
+                    }
+                    _this.toolsTags[tag] = {
+                        handler: toolPasteConfig.handler,
+                        tool: tool.name.toLowerCase()
+                    };
+                });
+            }
+            if (!toolPasteConfig.patternHandler || _.isEmpty(toolPasteConfig.patterns)) {
+                return;
+            }
+            if (typeof toolPasteConfig.patternHandler !== 'function') {
+                _.log('Pattern parser for "' + tool.name + '" Tool should be a function.', 'warn');
+            } else {
+                Object.entries(toolPasteConfig.patterns).forEach(function (_ref2) {
+                    var _ref3 = _slicedToArray(_ref2, 2),
+                        key = _ref3[0],
+                        pattern = _ref3[1];
+
+                    /** Still need to validate pattern as it provided by user */
+                    if (!(pattern instanceof RegExp)) {
+                        _.log('Pattern ' + pattern + ' for "' + tool + '" Tool is skipped because it should be a Regexp instance.', 'warn');
+                    }
+                    _this.toolsPatterns.push({
+                        key: key,
+                        pattern: pattern,
+                        handler: toolPasteConfig.patternHandler,
+                        tool: tool.name.toLowerCase()
+                    });
+                });
+            }
+        };
         /**
          * Get pasted data, process it and insert into editor
          *
@@ -18613,40 +18641,36 @@ var Paste = function (_Module) {
             }
             var htmlData = event.clipboardData.getData('text/html'),
                 plainData = event.clipboardData.getData('text/plain');
-            var allowedTags = {};
-            Object.entries(_this.toolsTags).forEach(function (_ref2) {
-                var _ref3 = _slicedToArray(_ref2, 2),
-                    tag = _ref3[0],
-                    config = _ref3[1];
-
-                allowedTags[tag.toLowerCase()] = config.attributes;
-            });
-            var blockTags = {};
-            $.blockElements.forEach(function (el) {
-                return blockTags[el] = {};
-            });
             /** Add all tags can be substituted to sanitizer configuration */
-            var customConfig = { tags: Object.assign({}, Sanitizer.defaultConfig.tags, blockTags, allowedTags) };
+            var blockTags = $.blockElements.reduce(function (result, tag) {
+                result[tag.toLowerCase()] = {};
+                return result;
+            }, {});
+            var toolsTags = Object.keys(_this.toolsTags).reduce(function (result, tag) {
+                result[tag.toLowerCase()] = {};
+                return result;
+            }, {});
+            var customConfig = { tags: Object.assign({}, blockTags, toolsTags, Sanitizer.defaultConfig.tags) };
             var cleanData = Sanitizer.clean(htmlData, customConfig);
             var dataToInsert = [];
             /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
-            if (!cleanData.trim() || cleanData.trim() === plainData.trim() || !$.isHTMLString(cleanData)) {
+            if (!cleanData.trim() || cleanData.trim() === plainData || !$.isHTMLString(cleanData)) {
                 dataToInsert = _this.processPlain(plainData);
             } else {
-                dataToInsert = _this.processHTML(cleanData);
+                dataToInsert = _this.processHTML(htmlData);
             }
             if (dataToInsert.length === 1 && !dataToInsert[0].isBlock) {
                 _this.processSingleBlock(dataToInsert.pop());
                 return;
             }
-            Promise.all(dataToInsert.map(function (data) {
-                return __awaiter(_this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee() {
+            Promise.all(dataToInsert.map(function () {
+                var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data) {
                     return regeneratorRuntime.wrap(function _callee$(_context) {
                         while (1) {
                             switch (_context.prev = _context.next) {
                                 case 0:
                                     _context.next = 2;
-                                    return this.insertBlock(data);
+                                    return _this.insertBlock(data);
 
                                 case 2:
                                     return _context.abrupt('return', _context.sent);
@@ -18656,23 +18680,27 @@ var Paste = function (_Module) {
                                     return _context.stop();
                             }
                         }
-                    }, _callee, this);
+                    }, _callee, _this2);
                 }));
-            }));
+
+                return function (_x) {
+                    return _ref4.apply(this, arguments);
+                };
+            }()));
         };
         return _this;
     }
 
     _createClass(Paste, [{
         key: 'prepare',
-        value: function prepare() {
-            return __awaiter(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
+        value: function () {
+            var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
                 return regeneratorRuntime.wrap(function _callee2$(_context2) {
                     while (1) {
                         switch (_context2.prev = _context2.next) {
                             case 0:
                                 this.setCallback();
-                                this.processConfigs();
+                                this.processTools();
 
                             case 2:
                             case 'end':
@@ -18681,7 +18709,13 @@ var Paste = function (_Module) {
                     }
                 }, _callee2, this);
             }));
-        }
+
+            function prepare() {
+                return _ref5.apply(this, arguments);
+            }
+
+            return prepare;
+        }()
         /**
          * Set onPaste callback handler
          */
@@ -18700,70 +18734,10 @@ var Paste = function (_Module) {
          */
 
     }, {
-        key: 'processConfigs',
-        value: function processConfigs() {
-            var _this2 = this;
-
-            var toolsConfig = this.config.toolsConfig;
-
-            Object.entries(toolsConfig).forEach(function (_ref4) {
-                var _ref5 = _slicedToArray(_ref4, 2),
-                    name = _ref5[0],
-                    config = _ref5[1];
-
-                if (config && config.onPaste) {
-                    _this2.processConfig(name, config.onPaste);
-                }
-            });
-        }
-        /**
-         * Process paste config for each tools
-         *
-         * @param {string} tool
-         * @param {IPasteConfig} config
-         */
-
-    }, {
-        key: 'processConfig',
-        value: function processConfig(tool, config) {
-            var _this3 = this;
-
-            if (!config.handler) {
-                _.log('"' + tool + '" Tool MUST provide paste handler.', 'warn');
-            }
-            if (typeof config.handler !== 'function') {
-                _.log('Paste handler for "' + tool + '" Tool should be a function.', 'warn');
-            } else {
-                config.tags.forEach(function (tag) {
-                    if (_this3.toolsTags.hasOwnProperty(tag)) {
-                        _.log('Paste handler for "' + tool + '" Tool on "' + tag + '" tag is skipped ' + ('because it is already used by "' + _this3.toolsTags.tool + '" Tool.'), 'warn');
-                        return;
-                    }
-                    _this3.toolsTags[tag] = {
-                        attributes: config.allowedAttributes || {},
-                        handler: config.handler,
-                        tool: tool
-                    };
-                });
-            }
-            if (!config.parser) {
-                return;
-            }
-            if (typeof config.parser !== 'function') {
-                _.log('Pattern parser for "' + tool + '" Tool should be a function.', 'warn');
-            } else {
-                config.patterns.forEach(function (pattern) {
-                    /** Still need to validate pattern as it provided by user */
-                    if (!(pattern instanceof RegExp)) {
-                        _.log('Pattern ' + pattern + ' for "' + tool + '" Tool is skipped because it should be a Regexp instance.', 'warn');
-                    }
-                    _this3.toolsPatterns.push({
-                        handler: config.parser,
-                        pattern: pattern,
-                        tool: tool
-                    });
-                });
-            }
+        key: 'processTools',
+        value: function processTools() {
+            var tools = this.Editor.Tools.blockTools;
+            Object.values(tools).forEach(this.processTool);
         }
         /**
          * Check if browser behavior suits better
@@ -18794,8 +18768,8 @@ var Paste = function (_Module) {
 
     }, {
         key: 'processSingleBlock',
-        value: function processSingleBlock(dataToInsert) {
-            return __awaiter(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+        value: function () {
+            var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(dataToInsert) {
                 var initialTool, _Editor2, BlockManager, currentBlock, content, tool, blockData;
 
                 return regeneratorRuntime.wrap(function _callee3$(_context3) {
@@ -18844,7 +18818,13 @@ var Paste = function (_Module) {
                     }
                 }, _callee3, this);
             }));
-        }
+
+            function processSingleBlock(_x2) {
+                return _ref6.apply(this, arguments);
+            }
+
+            return processSingleBlock;
+        }()
         /**
          * Get patterns` matches
          *
@@ -18854,30 +18834,58 @@ var Paste = function (_Module) {
 
     }, {
         key: 'processPattern',
-        value: function processPattern(text) {
-            return __awaiter(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee4() {
-                var pattern;
+        value: function () {
+            var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(text) {
+                var pattern, data;
                 return regeneratorRuntime.wrap(function _callee4$(_context4) {
                     while (1) {
                         switch (_context4.prev = _context4.next) {
                             case 0:
-                                pattern = this.toolsPatterns.find(function (config) {
-                                    var execResult = config.pattern.exec(text);
+                                pattern = this.toolsPatterns.find(function (substitute) {
+                                    var execResult = substitute.pattern.exec(text);
                                     if (!execResult) {
                                         return false;
                                     }
                                     return text === execResult.shift();
                                 });
-                                return _context4.abrupt('return', pattern && pattern.handler(text, pattern.pattern));
 
-                            case 2:
+                                console.log(pattern);
+                                _context4.t0 = pattern;
+
+                                if (!_context4.t0) {
+                                    _context4.next = 7;
+                                    break;
+                                }
+
+                                _context4.next = 6;
+                                return pattern.handler(text, pattern.key);
+
+                            case 6:
+                                _context4.t0 = _context4.sent;
+
+                            case 7:
+                                data = _context4.t0;
+
+                                console.log(data);
+                                return _context4.abrupt('return', data && {
+                                    data: data,
+                                    tool: pattern.tool
+                                });
+
+                            case 10:
                             case 'end':
                                 return _context4.stop();
                         }
                     }
                 }, _callee4, this);
             }));
-        }
+
+            function processPattern(_x3) {
+                return _ref7.apply(this, arguments);
+            }
+
+            return processPattern;
+        }()
         /**
          *
          * @param {IPasteData} data
@@ -18886,8 +18894,8 @@ var Paste = function (_Module) {
 
     }, {
         key: 'insertBlock',
-        value: function insertBlock(data) {
-            return __awaiter(this, void 0, void 0, /*#__PURE__*/regeneratorRuntime.mark(function _callee5() {
+        value: function () {
+            var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(data) {
                 var blockData, BlockManager;
                 return regeneratorRuntime.wrap(function _callee5$(_context5) {
                     while (1) {
@@ -18909,7 +18917,13 @@ var Paste = function (_Module) {
                     }
                 }, _callee5, this);
             }));
-        }
+
+            function insertBlock(_x4) {
+                return _ref8.apply(this, arguments);
+            }
+
+            return insertBlock;
+        }()
         /**
          * Split HTML string to blocks and return it as array of Block data
          *
@@ -18920,11 +18934,13 @@ var Paste = function (_Module) {
     }, {
         key: 'processHTML',
         value: function processHTML(innerHTML) {
-            var _this4 = this;
+            var _this3 = this;
+
+            var _Editor3 = this.Editor,
+                Tools = _Editor3.Tools,
+                Sanitizer = _Editor3.Sanitizer;
 
             var initialTool = this.config.initialBlock;
-            var toolsConfig = this.config.toolsConfig;
-
             var wrapper = $.make('DIV');
             wrapper.innerHTML = innerHTML;
             var nodes = this.getNodes(wrapper);
@@ -18937,17 +18953,19 @@ var Paste = function (_Module) {
                     case Node.DOCUMENT_FRAGMENT_NODE:
                         content = $.make('div');
                         content.appendChild(node);
+                        content.innerHTML = Sanitizer.clean(content.innerHTML);
                         break;
                     /** If node is an element, then there might be a substitution */
                     case Node.ELEMENT_NODE:
                         content = node;
                         isBlock = true;
-                        if (_this4.toolsTags[content.tagName]) {
-                            tool = _this4.toolsTags[content.tagName].tool;
+                        content.innerHTML = Sanitizer.clean(content.innerHTML);
+                        if (_this3.toolsTags[content.tagName]) {
+                            tool = _this3.toolsTags[content.tagName].tool;
                         }
                         break;
                 }
-                var handler = toolsConfig[tool].onPaste.handler;
+                var handler = Tools.blockTools[tool].onPaste.handler;
                 return { content: content, isBlock: isBlock, handler: handler, tool: tool };
             });
         }
@@ -18961,15 +18979,14 @@ var Paste = function (_Module) {
     }, {
         key: 'processPlain',
         value: function processPlain(plain) {
-            var _config = this.config,
-                initialBlock = _config.initialBlock,
-                toolsConfig = _config.toolsConfig;
+            var initialBlock = this.config.initialBlock;
+            var Tools = this.Editor.Tools;
 
             if (!plain) {
                 return [];
             }
             var tool = initialBlock;
-            var handler = toolsConfig[tool].onPaste.handler;
+            var handler = Tools.blockTools[tool].onPaste.handler;
             return plain.split('\n\n').map(function (text) {
                 var content = $.make('div');
                 content.innerHTML = plain;
@@ -18990,15 +19007,18 @@ var Paste = function (_Module) {
         value: function getNodes(wrapper) {
             var children = Array.from(wrapper.childNodes);
             var tags = Object.keys(this.toolsTags);
+            console.log(children);
             var reducer = function reducer(nodes, node) {
                 if ($.isEmpty(node)) {
                     return nodes;
                 }
+                console.log(nodes);
                 var lastNode = nodes[nodes.length - 1];
                 var destNode = new DocumentFragment();
                 if (lastNode && $.isFragment(lastNode)) {
                     destNode = nodes.pop();
                 }
+                console.log(destNode);
                 switch (node.nodeType) {
                     case Node.ELEMENT_NODE:
                         var element = node;
@@ -19007,11 +19027,11 @@ var Paste = function (_Module) {
                             destNode.appendChild(element);
                             return [].concat(_toConsumableArray(nodes), [destNode]);
                         }
-                        if (tags.includes(element.tagName) && Array.from(element.children).every(function (_ref6) {
-                            var tagName = _ref6.tagName;
-                            return !tags.includes(tagName);
-                        }) || $.blockElements.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref7) {
-                            var tagName = _ref7.tagName;
+                        if (tags.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref9) {
+                            var tagName = _ref9.tagName;
+                            return !tags.includes(tagName.toLowerCase());
+                        }) || $.blockElements.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref10) {
+                            var tagName = _ref10.tagName;
                             return !$.blockElements.includes(tagName.toLowerCase());
                         })) {
                             return [].concat(_toConsumableArray(nodes), [element]);
@@ -19019,6 +19039,8 @@ var Paste = function (_Module) {
                         break;
                     case Node.TEXT_NODE:
                         destNode.appendChild(node);
+                        return [].concat(_toConsumableArray(nodes), [destNode]);
+                    default:
                         return [].concat(_toConsumableArray(nodes), [destNode]);
                 }
                 return [].concat(_toConsumableArray(nodes), _toConsumableArray(Array.from(node.childNodes).reduce(reducer, [])));
@@ -19036,7 +19058,7 @@ Paste.displayName = 'Paste';
 exports.default = Paste;
 Paste.PATTERN_PROCESSING_MAX_LENGTH = 450;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.js"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
 
 /***/ }),
 
@@ -21806,6 +21828,27 @@ var Tools = function (_Module) {
         return true;
       });
     }
+  }, {
+    key: 'blockTools',
+    get: function get() {
+      var _this3 = this;
+
+      var tools = Object.values(this.available).filter(function (tool) {
+        if (tool[_this3.apiSettings.IS_INLINE]) {
+          return false;
+        }
+
+        return true;
+      });
+
+      var result = {};
+
+      tools.forEach(function (tool) {
+        return result[tool.name.toLowerCase()] = tool;
+      });
+
+      return result;
+    }
 
     /**
      * Constant for available Tools Settings
@@ -21886,7 +21929,7 @@ var Tools = function (_Module) {
   _createClass(Tools, [{
     key: 'prepare',
     value: function prepare() {
-      var _this3 = this;
+      var _this4 = this;
 
       if (!this.config.hasOwnProperty('tools')) {
         return Promise.reject("Can't start without tools");
@@ -21912,9 +21955,9 @@ var Tools = function (_Module) {
        * to see how it works {@link Util#sequence}
        */
       return _.sequence(sequenceData, function (data) {
-        _this3.success(data);
+        _this4.success(data);
       }, function (data) {
-        _this3.fallback(data);
+        _this4.fallback(data);
       });
     }
 

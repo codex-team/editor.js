@@ -1,4 +1,4 @@
-import IInputOutputData from "./input-output-data";
+import IInputOutputData from './input-output-data';
 
 /**
  * CodeX Editor Public API
@@ -95,7 +95,7 @@ export interface ISanitizerAPI {
    * @param taintString
    * @param config
    */
-  clean: (taintString, config) => string;
+  clean: (taintString, config?) => string;
 }
 
 /**

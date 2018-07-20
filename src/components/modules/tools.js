@@ -83,6 +83,22 @@ export default class Tools extends Module {
     });
   }
 
+  get blockTools() {
+    const tools = Object.values(this.available).filter( tool => {
+      if (tool[this.apiSettings.IS_INLINE]) {
+        return false;
+      }
+
+      return true;
+    });
+
+    const result = {};
+
+    tools.forEach(tool => result[tool.name.toLowerCase()] = tool);
+
+    return result;
+  }
+
   /**
    * Constant for available Tools Settings
    * @return {object}

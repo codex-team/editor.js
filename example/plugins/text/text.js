@@ -145,9 +145,16 @@ class Text {
     this._element.innerHTML = this._data.text || '';
   }
 
-  static async onPaste(content) {
+  static async onPasteHandler(content) {
     return {
       text: content.innerHTML
+    };
+  }
+
+  static get onPaste() {
+    return {
+      handler: Text.onPasteHandler,
+      tags: ['P', 'DIV']
     };
   }
 }

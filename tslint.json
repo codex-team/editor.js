@@ -1,6 +1,7 @@
 {
   "extends": "tslint:recommended",
   "rules": {
+    "indent": [true, "spaces", 2],
     "quotemark": [true, "single"],
     "no-console": false,
     "one-variable-per-declaration": false,

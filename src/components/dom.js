@@ -309,7 +309,7 @@ export default class Dom {
   static get blockElements() {
     return [
       'address',
-      'artical',
+      'article',
       'aside',
       'blockquote',
       'canvas',
