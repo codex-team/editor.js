@@ -347,6 +347,7 @@ class Header {
   /**
    * Handle H1-H6 tags on paste to substitute it with header Tool
    *
+   * @private
    * @param {HTMLElement} content - pasted element
    * @returns {{level: number, text: *}}
    */
