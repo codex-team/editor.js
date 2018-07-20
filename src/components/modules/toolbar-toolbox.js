@@ -78,10 +78,8 @@ export default class Toolbox extends Module {
      * @todo Add checkup for the render method
      */
     // if (typeof tool.render !== 'function') {
-    //
-    //     _.log('render method missed. Tool %o skipped', 'warn', tool);
-    //     return;
-    //
+    //   _.log('render method missed. Tool %o skipped', 'warn', tool);
+    //   return;
     // }
 
     /**
@@ -105,27 +103,37 @@ export default class Toolbox extends Module {
     this.nodes.toolbox.appendChild(button);
     this.nodes.buttons.push(button);
 
-    /**
-     * @todo add event with module Listeners
-     */
-    // this.Editor.Listeners.add();
-    button.addEventListener('click', event => {
+    /** Add listener to click */
+    this.Editor.Listeners.on(button, 'click', (event) => {
       this.buttonClicked(event);
-    }, false);
+    });
+
+    /** Enable shortcut */
+    this.enableShortcut(tool, toolName);
   }
 
   /**
-   * Toolbox button click listener
-   * 1) if block is empty -> replace
-   * 2) if block is not empty -> add new block below
-   *
-   * @param {MouseEvent} event
+   * Enable shortcut Block Tool implemented shortcut
+   * @param {Tool} tool - Tool class
+   * @param {String} toolName - Tool name
    */
-  buttonClicked(event) {
-    let toolButton = event.target,
-      toolName = toolButton.dataset.name,
-      tool = this.Editor.Tools.toolClasses[toolName];
+  enableShortcut(tool, toolName) {
+    this.Editor.Shortcuts.add({
+      name: tool.shortcut,
+      handler: () => {
+        this.insertNewBlock(tool, toolName);
+      }
+    });
+  }
 
+  /**
+   * inserts new block
+   * Can be called when button clicked on Toolbox or by Shortcut
+   *
+   * @param {Tool} tool - Tool Class
+   * @param {String} toolName - Tool name
+   */
+  insertNewBlock(tool, toolName) {
     /**
      * @type {Block}
      */
@@ -144,20 +152,24 @@ export default class Toolbox extends Module {
     }
 
     /**
-     * @todo set caret to the new block
-     */
-
-    // window.setTimeout(function () {
-
-    /** Set caret to current block */
-    // editor.caret.setToBlock(currentInputIndex);
-
-    // }, 10);
-
-    /**
      * Move toolbar when node is changed
      */
     this.Editor.Toolbar.move();
+  }
+
+  /**
+   * Toolbox button click listener
+   * 1) if block is empty -> replace
+   * 2) if block is not empty -> add new block below
+   *
+   * @param {MouseEvent} event
+   */
+  buttonClicked(event) {
+    let toolButton = event.target,
+      toolName = toolButton.dataset.name,
+      tool = this.Editor.Tools.toolClasses[toolName];
+
+    this.insertNewBlock(tool, toolName);
   }
 
   /**

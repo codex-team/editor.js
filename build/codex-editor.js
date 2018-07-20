@@ -6599,10 +6599,8 @@ var Toolbox = function (_Module) {
        * @todo Add checkup for the render method
        */
       // if (typeof tool.render !== 'function') {
-      //
-      //     _.log('render method missed. Tool %o skipped', 'warn', tool);
-      //     return;
-      //
+      //   _.log('render method missed. Tool %o skipped', 'warn', tool);
+      //   return;
       // }
 
       /**
@@ -6626,30 +6624,45 @@ var Toolbox = function (_Module) {
       this.nodes.toolbox.appendChild(button);
       this.nodes.buttons.push(button);
 
-      /**
-       * @todo add event with module Listeners
-       */
-      // this.Editor.Listeners.add();
-      button.addEventListener('click', function (event) {
+      /** Add listener to click */
+      this.Editor.Listeners.on(button, 'click', function (event) {
         _this2.buttonClicked(event);
-      }, false);
+      });
+
+      /** Enable shortcut */
+      this.enableShortcut(tool, toolName);
     }
 
     /**
-     * Toolbox button click listener
-     * 1) if block is empty -> replace
-     * 2) if block is not empty -> add new block below
-     *
-     * @param {MouseEvent} event
+     * Enable shortcut Block Tool implemented shortcut
+     * @param {Tool} tool - Tool class
+     * @param {String} toolName - Tool name
      */
 
   }, {
-    key: 'buttonClicked',
-    value: function buttonClicked(event) {
-      var toolButton = event.target,
-          toolName = toolButton.dataset.name,
-          tool = this.Editor.Tools.toolClasses[toolName];
+    key: 'enableShortcut',
+    value: function enableShortcut(tool, toolName) {
+      var _this3 = this;
 
+      this.Editor.Shortcuts.add({
+        name: tool.shortcut,
+        handler: function handler() {
+          _this3.insertNewBlock(tool, toolName);
+        }
+      });
+    }
+
+    /**
+     * inserts new block
+     * Can be called when button clicked on Toolbox or by Shortcut
+     *
+     * @param {Tool} tool - Tool Class
+     * @param {String} toolName - Tool name
+     */
+
+  }, {
+    key: 'insertNewBlock',
+    value: function insertNewBlock(tool, toolName) {
       /**
        * @type {Block}
        */
@@ -6668,20 +6681,27 @@ var Toolbox = function (_Module) {
       }
 
       /**
-       * @todo set caret to the new block
-       */
-
-      // window.setTimeout(function () {
-
-      /** Set caret to current block */
-      // editor.caret.setToBlock(currentInputIndex);
-
-      // }, 10);
-
-      /**
        * Move toolbar when node is changed
        */
       this.Editor.Toolbar.move();
+    }
+
+    /**
+     * Toolbox button click listener
+     * 1) if block is empty -> replace
+     * 2) if block is not empty -> add new block below
+     *
+     * @param {MouseEvent} event
+     */
+
+  }, {
+    key: 'buttonClicked',
+    value: function buttonClicked(event) {
+      var toolButton = event.target,
+          toolName = toolButton.dataset.name,
+          tool = this.Editor.Tools.toolClasses[toolName];
+
+      this.insertNewBlock(tool, toolName);
     }
 
     /**
