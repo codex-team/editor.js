@@ -167,9 +167,9 @@ export default class Paste extends Module {
    *
    * @param {ClipboardEvent} event
    */
-  private processPastedData = (event: ClipboardEvent): void => {
+  private processPastedData = async (event: ClipboardEvent): Promise<void> => {
     const {
-      Editor: {Tools, Sanitizer, BlockManager},
+      Editor: {Tools, Sanitizer, BlockManager, Caret},
       config: {toolsConfig},
     } = this;
 
@@ -215,12 +215,23 @@ export default class Paste extends Module {
       dataToInsert = this.processHTML(htmlData);
     }
 
+    /** If we paste into middle of the current block:
+     *  1. Split
+     *  2. Navigate to the first part
+     */
+    if (!BlockManager.currentBlock.isEmpty && !Caret.isAtEnd) {
+      BlockManager.split();
+      BlockManager.currentBlockIndex--;
+    }
+
     if (dataToInsert.length === 1 && !dataToInsert[0].isBlock) {
       this.processSingleBlock(dataToInsert.pop());
       return;
     }
 
-    Promise.all(dataToInsert.map(async (data) => await this.insertBlock(data)));
+    await Promise.all(dataToInsert.map(async (data) => await this.insertBlock(data)));
+
+    Caret.setToBlock(BlockManager.currentBlock, 0, true);
   }
 
   /**
@@ -233,7 +244,7 @@ export default class Paste extends Module {
    */
   private async processSingleBlock(dataToInsert: IPasteData): Promise<void> {
     const initialTool = this.config.initialBlock;
-    const {BlockManager, BlockManager: {currentBlock}} = this.Editor;
+    const {BlockManager} = this.Editor;
     const {content, tool} = dataToInsert;
 
     if (tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
@@ -300,33 +311,35 @@ export default class Paste extends Module {
 
     const nodes = this.getNodes(wrapper);
 
-    return nodes.map((node) => {
-      let content, tool = initialTool, isBlock = false;
+    return nodes
+      .map((node) => {
+        let content, tool = initialTool, isBlock = false;
 
-      switch (node.nodeType) {
-        /** If node is a document fragment, use temp wrapper to get innerHTML */
-        case Node.DOCUMENT_FRAGMENT_NODE:
-          content = $.make('div');
-          content.appendChild(node);
-          content.innerHTML = Sanitizer.clean(content.innerHTML);
-          break;
+        switch (node.nodeType) {
+          /** If node is a document fragment, use temp wrapper to get innerHTML */
+          case Node.DOCUMENT_FRAGMENT_NODE:
+            content = $.make('div');
+            content.appendChild(node);
+            content.innerHTML = Sanitizer.clean(content.innerHTML);
+            break;
 
-        /** If node is an element, then there might be a substitution */
-        case Node.ELEMENT_NODE:
-          content = node as HTMLElement;
-          isBlock = true;
-          content.innerHTML = Sanitizer.clean(content.innerHTML);
+          /** If node is an element, then there might be a substitution */
+          case Node.ELEMENT_NODE:
+            content = node as HTMLElement;
+            isBlock = true;
+            content.innerHTML = Sanitizer.clean(content.innerHTML);
 
-          if (this.toolsTags[content.tagName]) {
-            tool = this.toolsTags[content.tagName].tool;
-          }
-          break;
-      }
+            if (this.toolsTags[content.tagName]) {
+              tool = this.toolsTags[content.tagName].tool;
+            }
+            break;
+        }
 
-      const handler = Tools.blockTools[tool].onPaste.handler;
+        const handler = Tools.blockTools[tool].onPaste.handler;
 
-      return {content, isBlock, handler, tool};
-    });
+        return {content, isBlock, handler, tool};
+    })
+    .filter((data) => !$.isNodeEmpty(data.content));
   }
 
   /**

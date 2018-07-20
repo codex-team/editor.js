@@ -18896,97 +18896,142 @@ var Paste = function (_Module) {
          *
          * @param {ClipboardEvent} event
          */
-        _this.processPastedData = function (event) {
-            var _this$Editor = _this.Editor,
-                Tools = _this$Editor.Tools,
-                Sanitizer = _this$Editor.Sanitizer,
-                BlockManager = _this$Editor.BlockManager,
-                toolsConfig = _this.config.toolsConfig;
-            /** If target is native input or is not Block, use browser behaviour */
+        _this.processPastedData = function () {
+            var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(event) {
+                var _this$Editor, Tools, Sanitizer, BlockManager, Caret, toolsConfig, block, toolConfig, htmlData, plainData, blockTags, toolsTags, customConfig, cleanData, dataToInsert;
 
-            if (_this.isNativeBehaviour(event.target)) {
-                return;
-            }
-            event.preventDefault();
-            var block = BlockManager.getBlock(event.target);
-            var toolConfig = toolsConfig[block.name];
-            /** If paste is dissalowed in block do nothing */
-            if (toolConfig && toolConfig[Tools.apiSettings.IS_PASTE_DISALLOWED]) {
-                return;
-            }
-            var htmlData = event.clipboardData.getData('text/html'),
-                plainData = event.clipboardData.getData('text/plain');
-            /** Add all tags can be substituted to sanitizer configuration */
-            var blockTags = $.blockElements.reduce(function (result, tag) {
-                result[tag.toLowerCase()] = {};
-                return result;
-            }, {});
-            var toolsTags = Object.keys(_this.toolsTags).reduce(function (result, tag) {
-                result[tag.toLowerCase()] = {};
-                return result;
-            }, {});
-            var customConfig = { tags: Object.assign({}, blockTags, toolsTags, Sanitizer.defaultConfig.tags) };
-            var cleanData = Sanitizer.clean(htmlData, customConfig);
-            var dataToInsert = [];
-            /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
-            if (!cleanData.trim() || cleanData.trim() === plainData || !$.isHTMLString(cleanData)) {
-                dataToInsert = _this.processPlain(plainData);
-            } else {
-                dataToInsert = _this.processHTML(htmlData);
-            }
-            if (dataToInsert.length === 1 && !dataToInsert[0].isBlock) {
-                _this.processSingleBlock(dataToInsert.pop());
-                return;
-            }
-            Promise.all(dataToInsert.map(function () {
-                var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data) {
-                    return regeneratorRuntime.wrap(function _callee$(_context) {
-                        while (1) {
-                            switch (_context.prev = _context.next) {
-                                case 0:
-                                    _context.next = 2;
-                                    return _this.insertBlock(data);
+                return regeneratorRuntime.wrap(function _callee2$(_context2) {
+                    while (1) {
+                        switch (_context2.prev = _context2.next) {
+                            case 0:
+                                _this$Editor = _this.Editor, Tools = _this$Editor.Tools, Sanitizer = _this$Editor.Sanitizer, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret, toolsConfig = _this.config.toolsConfig;
+                                /** If target is native input or is not Block, use browser behaviour */
 
-                                case 2:
-                                    return _context.abrupt('return', _context.sent);
+                                if (!_this.isNativeBehaviour(event.target)) {
+                                    _context2.next = 3;
+                                    break;
+                                }
 
-                                case 3:
-                                case 'end':
-                                    return _context.stop();
-                            }
+                                return _context2.abrupt('return');
+
+                            case 3:
+                                event.preventDefault();
+                                block = BlockManager.getBlock(event.target);
+                                toolConfig = toolsConfig[block.name];
+                                /** If paste is dissalowed in block do nothing */
+
+                                if (!(toolConfig && toolConfig[Tools.apiSettings.IS_PASTE_DISALLOWED])) {
+                                    _context2.next = 8;
+                                    break;
+                                }
+
+                                return _context2.abrupt('return');
+
+                            case 8:
+                                htmlData = event.clipboardData.getData('text/html'), plainData = event.clipboardData.getData('text/plain');
+                                /** Add all tags can be substituted to sanitizer configuration */
+
+                                blockTags = $.blockElements.reduce(function (result, tag) {
+                                    result[tag.toLowerCase()] = {};
+                                    return result;
+                                }, {});
+                                toolsTags = Object.keys(_this.toolsTags).reduce(function (result, tag) {
+                                    result[tag.toLowerCase()] = {};
+                                    return result;
+                                }, {});
+                                customConfig = { tags: Object.assign({}, blockTags, toolsTags, Sanitizer.defaultConfig.tags) };
+                                cleanData = Sanitizer.clean(htmlData, customConfig);
+                                dataToInsert = [];
+                                /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
+
+                                if (!cleanData.trim() || cleanData.trim() === plainData || !$.isHTMLString(cleanData)) {
+                                    dataToInsert = _this.processPlain(plainData);
+                                } else {
+                                    dataToInsert = _this.processHTML(htmlData);
+                                }
+                                /** If we paste into middle of the current block:
+                                 *  1. Split
+                                 *  2. Navigate to the first part
+                                 */
+                                if (!BlockManager.currentBlock.isEmpty && !Caret.isAtEnd) {
+                                    BlockManager.split();
+                                    BlockManager.currentBlockIndex--;
+                                }
+
+                                if (!(dataToInsert.length === 1 && !dataToInsert[0].isBlock)) {
+                                    _context2.next = 19;
+                                    break;
+                                }
+
+                                _this.processSingleBlock(dataToInsert.pop());
+                                return _context2.abrupt('return');
+
+                            case 19:
+                                _context2.next = 21;
+                                return Promise.all(dataToInsert.map(function () {
+                                    var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data) {
+                                        return regeneratorRuntime.wrap(function _callee$(_context) {
+                                            while (1) {
+                                                switch (_context.prev = _context.next) {
+                                                    case 0:
+                                                        _context.next = 2;
+                                                        return _this.insertBlock(data);
+
+                                                    case 2:
+                                                        return _context.abrupt('return', _context.sent);
+
+                                                    case 3:
+                                                    case 'end':
+                                                        return _context.stop();
+                                                }
+                                            }
+                                        }, _callee, _this2);
+                                    }));
+
+                                    return function (_x2) {
+                                        return _ref5.apply(this, arguments);
+                                    };
+                                }()));
+
+                            case 21:
+                                Caret.setToBlock(BlockManager.currentBlock, 0, true);
+
+                            case 22:
+                            case 'end':
+                                return _context2.stop();
                         }
-                    }, _callee, _this2);
-                }));
+                    }
+                }, _callee2, _this2);
+            }));
 
-                return function (_x) {
-                    return _ref4.apply(this, arguments);
-                };
-            }()));
-        };
+            return function (_x) {
+                return _ref4.apply(this, arguments);
+            };
+        }();
         return _this;
     }
 
     _createClass(Paste, [{
         key: 'prepare',
         value: function () {
-            var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2() {
-                return regeneratorRuntime.wrap(function _callee2$(_context2) {
+            var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+                return regeneratorRuntime.wrap(function _callee3$(_context3) {
                     while (1) {
-                        switch (_context2.prev = _context2.next) {
+                        switch (_context3.prev = _context3.next) {
                             case 0:
                                 this.setCallback();
                                 this.processTools();
 
                             case 2:
                             case 'end':
-                                return _context2.stop();
+                                return _context3.stop();
                         }
                     }
-                }, _callee2, this);
+                }, _callee3, this);
             }));
 
             function prepare() {
-                return _ref5.apply(this, arguments);
+                return _ref6.apply(this, arguments);
             }
 
             return prepare;
@@ -19044,49 +19089,48 @@ var Paste = function (_Module) {
     }, {
         key: 'processSingleBlock',
         value: function () {
-            var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3(dataToInsert) {
-                var initialTool, _Editor2, BlockManager, currentBlock, content, tool, blockData;
-
-                return regeneratorRuntime.wrap(function _callee3$(_context3) {
+            var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(dataToInsert) {
+                var initialTool, BlockManager, content, tool, blockData;
+                return regeneratorRuntime.wrap(function _callee4$(_context4) {
                     while (1) {
-                        switch (_context3.prev = _context3.next) {
+                        switch (_context4.prev = _context4.next) {
                             case 0:
                                 initialTool = this.config.initialBlock;
-                                _Editor2 = this.Editor, BlockManager = _Editor2.BlockManager, currentBlock = _Editor2.BlockManager.currentBlock;
+                                BlockManager = this.Editor.BlockManager;
                                 content = dataToInsert.content, tool = dataToInsert.tool;
 
                                 if (!(tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
-                                    _context3.next = 10;
+                                    _context4.next = 10;
                                     break;
                                 }
 
-                                _context3.next = 6;
+                                _context4.next = 6;
                                 return this.processPattern(content.textContent);
 
                             case 6:
-                                blockData = _context3.sent;
+                                blockData = _context4.sent;
 
                                 if (!blockData) {
-                                    _context3.next = 10;
+                                    _context4.next = 10;
                                     break;
                                 }
 
                                 BlockManager.insert(blockData.tool, blockData.data);
-                                return _context3.abrupt('return');
+                                return _context4.abrupt('return');
 
                             case 10:
                                 document.execCommand('insertHTML', false, content.innerHTML);
 
                             case 11:
                             case 'end':
-                                return _context3.stop();
+                                return _context4.stop();
                         }
                     }
-                }, _callee3, this);
+                }, _callee4, this);
             }));
 
-            function processSingleBlock(_x2) {
-                return _ref6.apply(this, arguments);
+            function processSingleBlock(_x3) {
+                return _ref7.apply(this, arguments);
             }
 
             return processSingleBlock;
@@ -19101,11 +19145,11 @@ var Paste = function (_Module) {
     }, {
         key: 'processPattern',
         value: function () {
-            var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(text) {
+            var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(text) {
                 var pattern, data;
-                return regeneratorRuntime.wrap(function _callee4$(_context4) {
+                return regeneratorRuntime.wrap(function _callee5$(_context5) {
                     while (1) {
-                        switch (_context4.prev = _context4.next) {
+                        switch (_context5.prev = _context5.next) {
                             case 0:
                                 pattern = this.toolsPatterns.find(function (substitute) {
                                     var execResult = substitute.pattern.exec(text);
@@ -19114,36 +19158,36 @@ var Paste = function (_Module) {
                                     }
                                     return text === execResult.shift();
                                 });
-                                _context4.t0 = pattern;
+                                _context5.t0 = pattern;
 
-                                if (!_context4.t0) {
-                                    _context4.next = 6;
+                                if (!_context5.t0) {
+                                    _context5.next = 6;
                                     break;
                                 }
 
-                                _context4.next = 5;
+                                _context5.next = 5;
                                 return pattern.handler(text, pattern.key);
 
                             case 5:
-                                _context4.t0 = _context4.sent;
+                                _context5.t0 = _context5.sent;
 
                             case 6:
-                                data = _context4.t0;
-                                return _context4.abrupt('return', data && {
+                                data = _context5.t0;
+                                return _context5.abrupt('return', data && {
                                     data: data,
                                     tool: pattern.tool
                                 });
 
                             case 8:
                             case 'end':
-                                return _context4.stop();
+                                return _context5.stop();
                         }
                     }
-                }, _callee4, this);
+                }, _callee5, this);
             }));
 
-            function processPattern(_x3) {
-                return _ref7.apply(this, arguments);
+            function processPattern(_x4) {
+                return _ref8.apply(this, arguments);
             }
 
             return processPattern;
@@ -19157,31 +19201,31 @@ var Paste = function (_Module) {
     }, {
         key: 'insertBlock',
         value: function () {
-            var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(data) {
+            var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(data) {
                 var blockData, BlockManager;
-                return regeneratorRuntime.wrap(function _callee5$(_context5) {
+                return regeneratorRuntime.wrap(function _callee6$(_context6) {
                     while (1) {
-                        switch (_context5.prev = _context5.next) {
+                        switch (_context6.prev = _context6.next) {
                             case 0:
-                                _context5.next = 2;
+                                _context6.next = 2;
                                 return data.handler(data.content);
 
                             case 2:
-                                blockData = _context5.sent;
+                                blockData = _context6.sent;
                                 BlockManager = this.Editor.BlockManager;
 
                                 BlockManager.insert(data.tool, blockData);
 
                             case 5:
                             case 'end':
-                                return _context5.stop();
+                                return _context6.stop();
                         }
                     }
-                }, _callee5, this);
+                }, _callee6, this);
             }));
 
-            function insertBlock(_x4) {
-                return _ref8.apply(this, arguments);
+            function insertBlock(_x5) {
+                return _ref9.apply(this, arguments);
             }
 
             return insertBlock;
@@ -19198,9 +19242,9 @@ var Paste = function (_Module) {
         value: function processHTML(innerHTML) {
             var _this3 = this;
 
-            var _Editor3 = this.Editor,
-                Tools = _Editor3.Tools,
-                Sanitizer = _Editor3.Sanitizer;
+            var _Editor2 = this.Editor,
+                Tools = _Editor2.Tools,
+                Sanitizer = _Editor2.Sanitizer;
 
             var initialTool = this.config.initialBlock;
             var wrapper = $.make('DIV');
@@ -19229,6 +19273,8 @@ var Paste = function (_Module) {
                 }
                 var handler = Tools.blockTools[tool].onPaste.handler;
                 return { content: content, isBlock: isBlock, handler: handler, tool: tool };
+            }).filter(function (data) {
+                return !$.isNodeEmpty(data.content);
             });
         }
         /**
@@ -19286,11 +19332,11 @@ var Paste = function (_Module) {
                             destNode.appendChild(element);
                             return [].concat(_toConsumableArray(nodes), [destNode]);
                         }
-                        if (tags.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref9) {
-                            var tagName = _ref9.tagName;
-                            return !tags.includes(tagName.toLowerCase());
-                        }) || $.blockElements.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref10) {
+                        if (tags.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref10) {
                             var tagName = _ref10.tagName;
+                            return !tags.includes(tagName.toLowerCase());
+                        }) || $.blockElements.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref11) {
+                            var tagName = _ref11.tagName;
                             return !$.blockElements.includes(tagName.toLowerCase());
                         })) {
                             return [].concat(_toConsumableArray(nodes), [element]);
