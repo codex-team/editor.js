@@ -138,4 +138,6 @@ static get onPaste() {
 }
 ```
 
+> Both `onPaste.handler` and `onPaste.patternHandler` can be `async` or return a `Promise`.
+
 ### Sanitize

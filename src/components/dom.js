@@ -352,6 +352,7 @@ export default class Dom {
       'ruby',
       'section',
       'table',
+      'tr',
       'tfoot',
       'ul',
       'video'

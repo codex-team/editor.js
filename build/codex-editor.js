@@ -12708,7 +12708,7 @@ var Dom = function () {
   }, {
     key: 'blockElements',
     get: function get() {
-      return ['address', 'article', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'li', 'main', 'nav', 'noscript', 'ol', 'output', 'p', 'pre', 'ruby', 'section', 'table', 'tfoot', 'ul', 'video'];
+      return ['address', 'article', 'aside', 'blockquote', 'canvas', 'div', 'dl', 'dt', 'fieldset', 'figcaption', 'figure', 'footer', 'form', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'header', 'hgroup', 'hr', 'li', 'main', 'nav', 'noscript', 'ol', 'output', 'p', 'pre', 'ruby', 'section', 'table', 'tr', 'tfoot', 'ul', 'video'];
     }
   }]);
 
@@ -18941,7 +18941,7 @@ var Paste = function (_Module) {
 
                             case 8:
                                 htmlData = event.clipboardData.getData('text/html'), plainData = event.clipboardData.getData('text/plain');
-                                /** Add all tags can be substituted to sanitizer configuration */
+                                /** Add all block tags and tags can be substituted to sanitizer configuration */
 
                                 blockTags = $.blockElements.reduce(function (result, tag) {
                                     result[tag.toLowerCase()] = {};
@@ -19125,6 +19125,7 @@ var Paste = function (_Module) {
                                 return _context4.abrupt('return');
 
                             case 11:
+                                /** If there is no pattern substitute - insert string as it is */
                                 document.execCommand('insertHTML', false, content.innerHTML);
 
                             case 12:
@@ -19260,7 +19261,7 @@ var Paste = function (_Module) {
          * Split HTML string to blocks and return it as array of Block data
          *
          * @param {string} innerHTML
-         * @returns IPasteData[]
+         * @returns {IPasteData[]}
          */
 
     }, {

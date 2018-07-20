@@ -212,7 +212,7 @@ export default class Paste extends Module {
     const htmlData  = event.clipboardData.getData('text/html'),
           plainData = event.clipboardData.getData('text/plain');
 
-    /** Add all tags can be substituted to sanitizer configuration */
+    /** Add all block tags and tags can be substituted to sanitizer configuration */
     const blockTags = $.blockElements.reduce((result, tag) => {
       result[tag.toLowerCase()] = {};
 
@@ -272,6 +272,7 @@ export default class Paste extends Module {
       }
     }
 
+    /** If there is no pattern substitute - insert string as it is */
     document.execCommand('insertHTML', false, content.innerHTML);
   }
 
@@ -332,7 +333,7 @@ export default class Paste extends Module {
    * Split HTML string to blocks and return it as array of Block data
    *
    * @param {string} innerHTML
-   * @returns IPasteData[]
+   * @returns {IPasteData[]}
    */
   private processHTML(innerHTML: string): IPasteData[] {
     const {Tools, Sanitizer} = this.Editor;

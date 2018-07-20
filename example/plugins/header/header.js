@@ -344,8 +344,14 @@ class Header {
   }
 
 
-  static async onPasteHandler(content) {
-    let level = 4
+  /**
+   * Handle H1-H6 tags on paste to substitute it with header Tool
+   *
+   * @param {HTMLElement} content - pasted element
+   * @returns {{level: number, text: *}}
+   */
+  static onPasteHandler(content) {
+    let level = 4;
 
     switch (content.tagName) {
       case 'H1':
@@ -364,6 +370,12 @@ class Header {
     };
   }
 
+  /**
+   * Used by Codex Editor paste handling API.
+   * Provides configuration to handle H1-H6 tags.
+   *
+   * @returns {{handler: (function(HTMLElement): {text: string}), tags: string[]}}
+   */
   static get onPaste() {
     return {
       handler: Header.onPasteHandler,
