@@ -47,7 +47,7 @@ var babelLoader = {
   options: {
     cacheDirectory: true,
     presets: [
-      "env", "stage-0"
+      "env"
     ],
     plugins: [
       /**

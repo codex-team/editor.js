@@ -18855,23 +18855,27 @@ var Paste = function (_Module) {
          *
          * @param {string} tool
          */
-        _this.processTool = function (tool) {
+        _this.processTool = function (_ref2) {
+            var _ref3 = _slicedToArray(_ref2, 2),
+                name = _ref3[0],
+                tool = _ref3[1];
+
             var toolPasteConfig = tool.onPaste || {};
             if (!toolPasteConfig.handler) {
-                _.log('"' + tool.name + '" Tool MUST provide paste handler.', 'warn');
+                _.log('"' + name + '" Tool MUST provide paste handler.', 'warn');
             }
             if (typeof toolPasteConfig.handler !== 'function') {
-                _.log('Paste handler for "' + tool.name + '" Tool should be a function.', 'warn');
+                _.log('Paste handler for "' + name + '" Tool should be a function.', 'warn');
             } else {
                 var tags = toolPasteConfig.tags || [];
                 tags.forEach(function (tag) {
                     if (_this.toolsTags.hasOwnProperty(tag)) {
-                        _.log('Paste handler for "' + tool.name + '" Tool on "' + tag + '" tag is skipped ' + ('because it is already used by "' + _this.toolsTags[tag].tool + '" Tool.'), 'warn');
+                        _.log('Paste handler for "' + name + '" Tool on "' + tag + '" tag is skipped ' + ('because it is already used by "' + _this.toolsTags[tag].tool + '" Tool.'), 'warn');
                         return;
                     }
                     _this.toolsTags[tag] = {
                         handler: toolPasteConfig.handler,
-                        tool: tool.name.toLowerCase()
+                        tool: name
                     };
                 });
             }
@@ -18879,12 +18883,12 @@ var Paste = function (_Module) {
                 return;
             }
             if (typeof toolPasteConfig.patternHandler !== 'function') {
-                _.log('Pattern parser for "' + tool.name + '" Tool should be a function.', 'warn');
+                _.log('Pattern parser for "' + name + '" Tool should be a function.', 'warn');
             } else {
-                Object.entries(toolPasteConfig.patterns).forEach(function (_ref2) {
-                    var _ref3 = _slicedToArray(_ref2, 2),
-                        key = _ref3[0],
-                        pattern = _ref3[1];
+                Object.entries(toolPasteConfig.patterns).forEach(function (_ref4) {
+                    var _ref5 = _slicedToArray(_ref4, 2),
+                        key = _ref5[0],
+                        pattern = _ref5[1];
 
                     /** Still need to validate pattern as it provided by user */
                     if (!(pattern instanceof RegExp)) {
@@ -18894,7 +18898,7 @@ var Paste = function (_Module) {
                         key: key,
                         pattern: pattern,
                         handler: toolPasteConfig.patternHandler,
-                        tool: tool.name.toLowerCase()
+                        tool: name
                     });
                 });
             }
@@ -18905,7 +18909,7 @@ var Paste = function (_Module) {
          * @param {ClipboardEvent} event
          */
         _this.processPastedData = function () {
-            var _ref4 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(event) {
+            var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(event) {
                 var _this$Editor, Tools, Sanitizer, BlockManager, Caret, toolsConfig, block, toolConfig, htmlData, plainData, blockTags, toolsTags, customConfig, cleanData, dataToInsert;
 
                 return regeneratorRuntime.wrap(function _callee2$(_context2) {
@@ -18970,7 +18974,7 @@ var Paste = function (_Module) {
                                 _this.splitBlock();
                                 _context2.next = 21;
                                 return Promise.all(dataToInsert.map(function () {
-                                    var _ref5 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data) {
+                                    var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data) {
                                         return regeneratorRuntime.wrap(function _callee$(_context) {
                                             while (1) {
                                                 switch (_context.prev = _context.next) {
@@ -18990,7 +18994,7 @@ var Paste = function (_Module) {
                                     }));
 
                                     return function (_x2) {
-                                        return _ref5.apply(this, arguments);
+                                        return _ref7.apply(this, arguments);
                                     };
                                 }()));
 
@@ -19006,7 +19010,7 @@ var Paste = function (_Module) {
             }));
 
             return function (_x) {
-                return _ref4.apply(this, arguments);
+                return _ref6.apply(this, arguments);
             };
         }();
         return _this;
@@ -19015,7 +19019,7 @@ var Paste = function (_Module) {
     _createClass(Paste, [{
         key: 'prepare',
         value: function () {
-            var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
+            var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee3() {
                 return regeneratorRuntime.wrap(function _callee3$(_context3) {
                     while (1) {
                         switch (_context3.prev = _context3.next) {
@@ -19032,7 +19036,7 @@ var Paste = function (_Module) {
             }));
 
             function prepare() {
-                return _ref6.apply(this, arguments);
+                return _ref8.apply(this, arguments);
             }
 
             return prepare;
@@ -19058,7 +19062,7 @@ var Paste = function (_Module) {
         key: 'processTools',
         value: function processTools() {
             var tools = this.Editor.Tools.blockTools;
-            Object.values(tools).forEach(this.processTool);
+            Object.entries(tools).forEach(this.processTool);
         }
         /**
          * Check if browser behavior suits better
@@ -19090,7 +19094,7 @@ var Paste = function (_Module) {
     }, {
         key: 'processSingleBlock',
         value: function () {
-            var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(dataToInsert) {
+            var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(dataToInsert) {
                 var initialTool, BlockManager, content, tool, blockData;
                 return regeneratorRuntime.wrap(function _callee4$(_context4) {
                     while (1) {
@@ -19132,7 +19136,7 @@ var Paste = function (_Module) {
             }));
 
             function processSingleBlock(_x3) {
-                return _ref7.apply(this, arguments);
+                return _ref9.apply(this, arguments);
             }
 
             return processSingleBlock;
@@ -19141,13 +19145,13 @@ var Paste = function (_Module) {
          * Get patterns` matches
          *
          * @param {string} text
-         * @returns Promise<IBlockData>
+         * @returns Promise<{data: IBlockToolData, tool: string}>
          */
 
     }, {
         key: 'processPattern',
         value: function () {
-            var _ref8 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(text) {
+            var _ref10 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee5(text) {
                 var pattern, data;
                 return regeneratorRuntime.wrap(function _callee5$(_context5) {
                     while (1) {
@@ -19189,7 +19193,7 @@ var Paste = function (_Module) {
             }));
 
             function processPattern(_x4) {
-                return _ref8.apply(this, arguments);
+                return _ref10.apply(this, arguments);
             }
 
             return processPattern;
@@ -19203,7 +19207,7 @@ var Paste = function (_Module) {
     }, {
         key: 'insertBlock',
         value: function () {
-            var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(data) {
+            var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(data) {
                 var blockData, BlockManager;
                 return regeneratorRuntime.wrap(function _callee6$(_context6) {
                     while (1) {
@@ -19227,7 +19231,7 @@ var Paste = function (_Module) {
             }));
 
             function insertBlock(_x5) {
-                return _ref9.apply(this, arguments);
+                return _ref11.apply(this, arguments);
             }
 
             return insertBlock;
@@ -19359,11 +19363,11 @@ var Paste = function (_Module) {
                             destNode.appendChild(element);
                             return [].concat(_toConsumableArray(nodes), [destNode]);
                         }
-                        if (tags.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref10) {
-                            var tagName = _ref10.tagName;
+                        if (tags.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref12) {
+                            var tagName = _ref12.tagName;
                             return !tags.includes(tagName.toLowerCase());
-                        }) || $.blockElements.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref11) {
-                            var tagName = _ref11.tagName;
+                        }) || $.blockElements.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref13) {
+                            var tagName = _ref13.tagName;
                             return !$.blockElements.includes(tagName.toLowerCase());
                         })) {
                             return [].concat(_toConsumableArray(nodes), [element]);
@@ -22054,6 +22058,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
@@ -22173,7 +22179,12 @@ var Tools = function (_Module) {
     get: function get() {
       var _this3 = this;
 
-      var tools = Object.values(this.available).filter(function (tool) {
+      // eslint-disable-next-line no-unused-vars
+      var tools = Object.entries(this.available).filter(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            name = _ref2[0],
+            tool = _ref2[1];
+
         if (tool[_this3.apiSettings.IS_INLINE]) {
           return false;
         }
@@ -22183,8 +22194,12 @@ var Tools = function (_Module) {
 
       var result = {};
 
-      tools.forEach(function (tool) {
-        return result[tool.name.toLowerCase()] = tool;
+      tools.forEach(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            name = _ref4[0],
+            tool = _ref4[1];
+
+        return result[name] = tool;
       });
 
       return result;
@@ -22217,9 +22232,9 @@ var Tools = function (_Module) {
   }, {
     key: 'defaultConfig',
     get: function get() {
-      var _ref;
+      var _ref5;
 
-      return _ref = {}, _defineProperty(_ref, this.apiSettings.TOOLBAR_ICON_CLASS, false), _defineProperty(_ref, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _ref;
+      return _ref5 = {}, _defineProperty(_ref5, this.apiSettings.TOOLBAR_ICON_CLASS, false), _defineProperty(_ref5, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref5, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref5, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref5, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _ref5;
     }
 
     /**
@@ -22230,8 +22245,8 @@ var Tools = function (_Module) {
 
   }]);
 
-  function Tools(_ref2) {
-    var config = _ref2.config;
+  function Tools(_ref6) {
+    var config = _ref6.config;
 
     _classCallCheck(this, Tools);
 

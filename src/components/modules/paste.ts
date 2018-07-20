@@ -92,7 +92,7 @@ export default class Paste extends Module {
    */
   private processTools(): void {
     const tools = this.Editor.Tools.blockTools;
-    Object.values(tools).forEach(this.processTool);
+    Object.entries(tools).forEach(this.processTool);
   }
 
   /**
@@ -100,20 +100,20 @@ export default class Paste extends Module {
    *
    * @param {string} tool
    */
-  private processTool = (tool) => {
+  private processTool = ([name, tool]) => {
 
     const toolPasteConfig = tool.onPaste || {};
 
     if (!toolPasteConfig.handler) {
       _.log(
-        `"${tool.name}" Tool MUST provide paste handler.`,
+        `"${name}" Tool MUST provide paste handler.`,
         'warn',
       );
     }
 
     if (typeof toolPasteConfig.handler !== 'function') {
       _.log(
-        `Paste handler for "${tool.name}" Tool should be a function.`,
+        `Paste handler for "${name}" Tool should be a function.`,
         'warn',
       );
     } else {
@@ -122,7 +122,7 @@ export default class Paste extends Module {
       tags.forEach((tag) => {
         if (this.toolsTags.hasOwnProperty(tag)) {
           _.log(
-            `Paste handler for "${tool.name}" Tool on "${tag}" tag is skipped ` +
+            `Paste handler for "${name}" Tool on "${tag}" tag is skipped ` +
             `because it is already used by "${this.toolsTags[tag].tool}" Tool.`,
             'warn',
           );
@@ -131,7 +131,7 @@ export default class Paste extends Module {
 
         this.toolsTags[tag] = {
           handler: toolPasteConfig.handler,
-          tool: tool.name.toLowerCase(),
+          tool: name,
         };
       });
     }
@@ -142,7 +142,7 @@ export default class Paste extends Module {
 
     if (typeof toolPasteConfig.patternHandler !== 'function') {
       _.log(
-        `Pattern parser for "${tool.name}" Tool should be a function.`,
+        `Pattern parser for "${name}" Tool should be a function.`,
         'warn',
       );
     } else {
@@ -159,7 +159,7 @@ export default class Paste extends Module {
           key,
           pattern,
           handler: toolPasteConfig.patternHandler,
-          tool: tool.name.toLowerCase(),
+          tool: name,
         });
       });
     }
@@ -279,9 +279,9 @@ export default class Paste extends Module {
    * Get patterns` matches
    *
    * @param {string} text
-   * @returns Promise<IBlockData>
+   * @returns Promise<{data: IBlockToolData, tool: string}>
    */
-  private async processPattern(text: string): Promise<IBlockData> {
+  private async processPattern(text: string): Promise<{data: IBlockToolData, tool: string}> {
     const pattern =  this.toolsPatterns.find((substitute) => {
       const execResult = substitute.pattern.exec(text);
 

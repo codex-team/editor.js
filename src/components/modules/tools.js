@@ -87,7 +87,8 @@ export default class Tools extends Module {
    * Return editor block tools
    */
   get blockTools() {
-    const tools = Object.values(this.available).filter( tool => {
+    // eslint-disable-next-line no-unused-vars
+    const tools = Object.entries(this.available).filter( ([name, tool]) => {
       if (tool[this.apiSettings.IS_INLINE]) {
         return false;
       }
@@ -97,7 +98,7 @@ export default class Tools extends Module {
 
     const result = {};
 
-    tools.forEach(tool => result[tool.name.toLowerCase()] = tool);
+    tools.forEach(([name, tool]) => result[name] = tool);
 
     return result;
   }
