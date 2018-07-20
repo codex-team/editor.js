@@ -6481,7 +6481,7 @@ var Toolbox = function (_Module) {
         title: toolName
       });
 
-      button.innerHTML = tool.svgIcon;
+      button.innerHTML = tool.toolboxIcon;
 
       /**
        * Save tool's name in the button data-name

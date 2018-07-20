@@ -95,7 +95,7 @@ export default class Toolbox extends Module {
       title: toolName
     });
 
-    button.innerHTML = tool.svgIcon;
+    button.innerHTML = tool.toolboxIcon;
 
     /**
      * Save tool's name in the button data-name

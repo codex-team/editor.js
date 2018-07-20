@@ -22,7 +22,7 @@ export interface IBlockTool {
    * Tool's SVG icon for Toolbox
    * @return {string}
    */
-  svgIcon(): string;
+  toolboxIcon(): string;
 
   /**
    * Create Block's settings block
