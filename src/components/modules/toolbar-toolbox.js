@@ -124,8 +124,15 @@ export default class Toolbox extends Module {
    * @param {MouseEvent} event
    */
   buttonClicked(event) {
-    let toolButton = event.target,
-      toolName = toolButton.dataset.name,
+    let toolButton = event.target;
+
+    toolButton = toolButton.closest(`.${Toolbox.CSS.toolboxButton}`);
+
+    if (!toolButton) {
+      return;
+    }
+
+    let  toolName = toolButton.dataset.name,
       tool = this.Editor.Tools.toolClasses[toolName];
 
     /**

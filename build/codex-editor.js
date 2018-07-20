@@ -6513,8 +6513,15 @@ var Toolbox = function (_Module) {
   }, {
     key: 'buttonClicked',
     value: function buttonClicked(event) {
-      var toolButton = event.target,
-          toolName = toolButton.dataset.name,
+      var toolButton = event.target;
+
+      toolButton = toolButton.closest('.' + Toolbox.CSS.toolboxButton);
+
+      if (!toolButton) {
+        return;
+      }
+
+      var toolName = toolButton.dataset.name,
           tool = this.Editor.Tools.toolClasses[toolName];
 
       /**
