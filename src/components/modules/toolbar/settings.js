@@ -20,14 +20,14 @@ module.exports = (function (settings) {
          * Append settings content
          * It's stored in tool.settings
          */
-    if ( !editor.tools[toolType] || !editor.tools[toolType].makeSettings ) {
+    if ( !editor.tools[toolType] || !editor.tools[toolType].renderSettings ) {
       return;
     }
 
     /**
          * Draw settings block
          */
-    var settingsBlock = editor.tools[toolType].makeSettings();
+    var settingsBlock = editor.tools[toolType].renderSettings();
 
     editor.nodes.pluginSettings.appendChild(settingsBlock);
 

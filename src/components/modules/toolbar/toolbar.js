@@ -38,7 +38,7 @@ module.exports = (function (toolbar) {
 
     let toolType = editor.content.currentNode.dataset.tool;
 
-    if (!editor.tools[toolType] || !editor.tools[toolType].makeSettings ) {
+    if (!editor.tools[toolType] || !editor.tools[toolType].renderSettings ) {
       editor.nodes.showSettingsButton.classList.add('hide');
     } else {
       editor.nodes.showSettingsButton.classList.remove('hide');

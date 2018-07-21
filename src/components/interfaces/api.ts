@@ -101,7 +101,7 @@ export interface ISanitizerAPI {
    * @param taintString
    * @param config
    */
-  clean: (taintString, config) => string;
+  clean: (taintString, config?) => string;
 }
 
 /**

@@ -75,7 +75,7 @@ var babelLoader = {
 module.exports = {
 
   entry: {
-    'codex-editor': './src/codex'
+    'codex-editor': ['babel-polyfill', './src/codex']
   },
   output: {
     path: path.resolve(__dirname, 'build'),

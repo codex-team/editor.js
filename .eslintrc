@@ -1,7 +1,7 @@
 {
     /** Enable ES6 features */
     "parserOptions": {
-        "ecmaVersion": 6,
+        "ecmaVersion": 2017,
         "sourceType": "module"
     },
     "rules": {
@@ -19,7 +19,7 @@
         "no-shadow": 2,
         "no-undef-init": 2,
         "no-undef": 2,
-        "no-unused-vars": 1,
+        "no-unused-vars": 0,
 
         /** Style */
         "array-bracket-spacing": [2, "never", {

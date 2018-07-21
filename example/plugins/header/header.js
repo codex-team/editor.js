@@ -104,7 +104,7 @@ class Header {
    *
    * @return {HTMLElement}
    */
-  makeSettings() {
+  renderSettings() {
     let holder = document.createElement('DIV');
 
     /** Add type selectors */
@@ -349,5 +349,53 @@ class Header {
         svg: '<svg width="20" height="14" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M2.152 1.494V4.98h4.646V1.494c0-.498.097-.871.293-1.12A.934.934 0 0 1 7.863 0c.324 0 .586.123.786.37.2.246.301.62.301 1.124v9.588c0 .503-.101.88-.304 1.128a.964.964 0 0 1-.783.374.928.928 0 0 1-.775-.378c-.194-.251-.29-.626-.29-1.124V6.989H2.152v4.093c0 .503-.101.88-.304 1.128a.964.964 0 0 1-.783.374.928.928 0 0 1-.775-.378C.097 11.955 0 11.58 0 11.082V1.494C0 .996.095.623.286.374A.929.929 0 0 1 1.066 0c.323 0 .585.123.786.37.2.246.3.62.3 1.124zm13.003 10.09v-1.252h-3.38c-.427 0-.746-.097-.96-.29-.213-.193-.32-.456-.32-.788 0-.085.016-.171.048-.259.031-.088.078-.18.141-.276.063-.097.128-.19.195-.28.068-.09.15-.2.25-.33l3.568-4.774a5.44 5.44 0 0 1 .576-.683.763.763 0 0 1 .542-.212c.682 0 1.023.39 1.023 1.171v5.212h.29c.346 0 .623.047.832.142.208.094.313.3.313.62 0 .26-.086.45-.256.568-.17.12-.427.179-.768.179h-.41v1.252c0 .346-.077.603-.23.771-.152.168-.356.253-.612.253a.78.78 0 0 1-.61-.26c-.154-.173-.232-.427-.232-.764zm-2.895-2.76h2.895V4.91L12.26 8.823z"/></svg>'
       }
     ];
+  }
+
+  /**
+   * Handle H1-H6 tags on paste to substitute it with header Tool
+   *
+   * @private
+   * @param {HTMLElement} content - pasted element
+   * @returns {{level: number, text: *}}
+   */
+  static onPasteHandler(content) {
+    let level = 4;
+
+    switch (content.tagName) {
+      case 'H1':
+      case 'H2':
+        level = 2;
+        break;
+
+      case 'H3':
+        level = 3;
+        break;
+    }
+
+    return {
+      level,
+      text: content.innerHTML
+    };
+  }
+
+  /**
+   * Used by Codex Editor paste handling API.
+   * Provides configuration to handle H1-H6 tags.
+   *
+   * @returns {{handler: (function(HTMLElement): {text: string}), tags: string[]}}
+   */
+  static get onPaste() {
+    return {
+      handler: Header.onPasteHandler,
+      tags: ['H1', 'H2', 'H3', 'H4', 'H5', 'H6']
+    };
+  }
+
+  /**
+   * Get Tool icon's SVG
+   * @return {string}
+   */
+  static get toolboxIcon() {
+    return '<svg width="11" height="14" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M7.6 8.15H2.25v4.525a1.125 1.125 0 0 1-2.25 0V1.125a1.125 1.125 0 1 1 2.25 0V5.9H7.6V1.125a1.125 1.125 0 0 1 2.25 0v11.55a1.125 1.125 0 0 1-2.25 0V8.15z"/></svg>';
   }
 }

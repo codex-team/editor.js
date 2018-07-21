@@ -21,6 +21,7 @@
     "babel-plugin-class-display-name": "^2.1.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
     "css-loader": "^0.28.11",
     "eslint": "^4.19.1",
