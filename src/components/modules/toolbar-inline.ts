@@ -49,7 +49,7 @@ export default class InlineToolbar extends Module {
   /**
    * Tools instances
    */
-  private toolsInstances: {[name: string]: InlineTool} ;
+  private toolsInstances: Map<string, InlineTool>;
 
   /**
    * @constructor
@@ -61,10 +61,18 @@ export default class InlineToolbar extends Module {
   /**
    * Inline Toolbar Tools
    * includes internal and external tools
+   *
+   * @returns Map<string, InlineTool>
    */
-  get tools(): {[name: string]: InlineTool} {
-    if (!this.toolsInstances) {
-      this.toolsInstances = {...this.internalTools, ...this.externalTools};
+  get tools(): Map<string, InlineTool> {
+    if (!this.toolsInstances || this.toolsInstances.size === 0) {
+      const allTools = {...this.internalTools, ...this.externalTools};
+      this.toolsInstances = new Map();
+      for (const tool in allTools) {
+        if (allTools.hasOwnProperty(tool)) {
+          this.toolsInstances.set(tool, allTools[tool]);
+        }
+      }
     }
     return this.toolsInstances;
   }
@@ -146,13 +154,11 @@ export default class InlineToolbar extends Module {
    */
   private open() {
     this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
-    for (const toolName in this.tools) {
-      const tool = this.tools[toolName];
-
-      if (typeof tool.clear === 'function') {
-        tool.clear();
+    this.tools.forEach( (toolInstance, toolName) => {
+      if (typeof toolInstance.clear === 'function') {
+        toolInstance.clear();
       }
-    }
+    });
   }
 
   /**
@@ -160,13 +166,11 @@ export default class InlineToolbar extends Module {
    */
   private close() {
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
-    for (const toolName in this.tools) {
-      const tool = this.tools[toolName];
-
-      if (typeof tool.clear === 'function') {
-        tool.clear();
+    this.tools.forEach( (toolInstance, toolName) => {
+      if (typeof toolInstance.clear === 'function') {
+        toolInstance.clear();
       }
-    }
+    });
   }
 
   /**
@@ -217,10 +221,9 @@ export default class InlineToolbar extends Module {
    * Fill Inline Toolbar with Tools
    */
   private addTools(): void {
-    console.log(this.tools);
-    for (const tool in this.tools) {
-      this.addTool(tool, this.tools[tool]);
-    }
+    this.tools.forEach( (toolInstance, toolName) => {
+      this.addTool(toolName, toolInstance);
+    });
   }
 
   /**
@@ -285,10 +288,9 @@ export default class InlineToolbar extends Module {
    * Check Tools` state by selection
    */
   private checkToolsState(): void {
-    for (const toolName in this.tools) {
-      const tool = this.tools[toolName];
-      tool.checkState(Selection.get());
-    }
+    this.tools.forEach( (toolInstance, toolName) => {
+      toolInstance.checkState(Selection.get());
+    });
   }
 
   /**
@@ -310,8 +312,10 @@ export default class InlineToolbar extends Module {
   private get externalTools(): {[name: string]: InlineTool} {
     const result = {};
     for (const tool in this.Editor.Tools.inline) {
-      result[tool] = new this.Editor.Tools.inline[tool](this.Editor.API.methods);
+      if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
+        result[tool] = new this.Editor.Tools.inline[tool](this.Editor.API.methods);
+      }
     }
     return result;
-  };
+  }
 }

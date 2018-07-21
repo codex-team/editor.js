@@ -17611,6 +17611,8 @@ var InlineToolbar = function (_Module) {
     /**
      * Inline Toolbar Tools
      * includes internal and external tools
+     *
+     * @returns Map<string, InlineTool>
      */
 
 
@@ -17687,12 +17689,11 @@ var InlineToolbar = function (_Module) {
         key: 'open',
         value: function open() {
             this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
-            for (var toolName in this.tools) {
-                var tool = this.tools[toolName];
-                if (typeof tool.clear === 'function') {
-                    tool.clear();
+            this.tools.forEach(function (toolInstance, toolName) {
+                if (typeof toolInstance.clear === 'function') {
+                    toolInstance.clear();
                 }
-            }
+            });
         }
         /**
          * Hides Inline Toolbar
@@ -17702,12 +17703,11 @@ var InlineToolbar = function (_Module) {
         key: 'close',
         value: function close() {
             this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
-            for (var toolName in this.tools) {
-                var tool = this.tools[toolName];
-                if (typeof tool.clear === 'function') {
-                    tool.clear();
+            this.tools.forEach(function (toolInstance, toolName) {
+                if (typeof toolInstance.clear === 'function') {
+                    toolInstance.clear();
                 }
-            }
+            });
         }
         /**
          * Need to show Inline Toolbar or not
@@ -17754,10 +17754,11 @@ var InlineToolbar = function (_Module) {
     }, {
         key: 'addTools',
         value: function addTools() {
-            console.log(this.tools);
-            for (var tool in this.tools) {
-                this.addTool(tool, this.tools[tool]);
-            }
+            var _this2 = this;
+
+            this.tools.forEach(function (toolInstance, toolName) {
+                _this2.addTool(toolName, toolInstance);
+            });
         }
         /**
          * Add tool button and activate clicks
@@ -17766,7 +17767,7 @@ var InlineToolbar = function (_Module) {
     }, {
         key: 'addTool',
         value: function addTool(toolName, tool) {
-            var _this2 = this;
+            var _this3 = this;
 
             var button = tool.render();
             if (!button) {
@@ -17779,7 +17780,7 @@ var InlineToolbar = function (_Module) {
                 this.nodes.actions.appendChild(actions);
             }
             this.Editor.Listeners.on(button, 'click', function () {
-                _this2.toolClicked(tool);
+                _this3.toolClicked(tool);
             });
             /**
              * Enable shortcuts
@@ -17799,12 +17800,12 @@ var InlineToolbar = function (_Module) {
     }, {
         key: 'enableShortcuts',
         value: function enableShortcuts(tool, shortcut) {
-            var _this3 = this;
+            var _this4 = this;
 
             this.Editor.Shortcuts.add({
                 name: shortcut,
                 handler: function handler() {
-                    _this3.toolClicked(tool);
+                    _this4.toolClicked(tool);
                 }
             });
         }
@@ -17827,10 +17828,9 @@ var InlineToolbar = function (_Module) {
     }, {
         key: 'checkToolsState',
         value: function checkToolsState() {
-            for (var toolName in this.tools) {
-                var tool = this.tools[toolName];
-                tool.checkState(_selection2.default.get());
-            }
+            this.tools.forEach(function (toolInstance, toolName) {
+                toolInstance.checkState(_selection2.default.get());
+            });
         }
         /**
          * Returns internal inline tools
@@ -17840,8 +17840,14 @@ var InlineToolbar = function (_Module) {
     }, {
         key: 'tools',
         get: function get() {
-            if (!this.toolsInstances) {
-                this.toolsInstances = Object.assign({}, this.internalTools, this.externalTools);
+            if (!this.toolsInstances || this.toolsInstances.size === 0) {
+                var allTools = Object.assign({}, this.internalTools, this.externalTools);
+                this.toolsInstances = new Map();
+                for (var tool in allTools) {
+                    if (allTools.hasOwnProperty(tool)) {
+                        this.toolsInstances.set(tool, allTools[tool]);
+                    }
+                }
             }
             return this.toolsInstances;
         }
@@ -17864,7 +17870,9 @@ var InlineToolbar = function (_Module) {
         get: function get() {
             var result = {};
             for (var tool in this.Editor.Tools.inline) {
-                result[tool] = new this.Editor.Tools.inline[tool](this.Editor.API.methods);
+                if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
+                    result[tool] = new this.Editor.Tools.inline[tool](this.Editor.API.methods);
+                }
             }
             return result;
         }
