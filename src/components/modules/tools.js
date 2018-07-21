@@ -120,7 +120,8 @@ export default class Tools extends Module {
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_IRREPLACEBLE_TOOL: 'irreplaceable',
       IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
-      IS_PASTE_DISALLOWED: 'disallowPaste'
+      IS_PASTE_DISALLOWED: 'disallowPaste',
+      SHORTCUT: 'shortcut',
     };
   }
 
@@ -135,6 +136,7 @@ export default class Tools extends Module {
       [this.apiSettings.IS_ENABLED_LINE_BREAKS] : false,
       [this.apiSettings.IS_IRREPLACEBLE_TOOL] : false,
       [this.apiSettings.IS_ENABLED_INLINE_TOOLBAR]: false,
+      [this.apiSettings.SHORTCUT]: false,
     };
   }
 

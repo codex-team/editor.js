@@ -113,8 +113,8 @@ export default class Toolbox extends Module {
     /** Enable shortcut */
     const toolsConfig = this.config.toolsConfig[toolName];
 
-    if (toolsConfig && toolsConfig.enableShortcut) {
-      this.enableShortcut(tool, toolName);
+    if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
+      this.enableShortcut(tool, toolName, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
     }
   }
 
@@ -122,10 +122,11 @@ export default class Toolbox extends Module {
    * Enable shortcut Block Tool implemented shortcut
    * @param {IBlockTool} tool - Tool class
    * @param {String} toolName - Tool name
+   * @param {String} shortcut - shortcut according to the Shortcut Module format
    */
-  enableShortcut(tool, toolName) {
+  enableShortcut(tool, toolName, shortcut) {
     this.Editor.Shortcuts.add({
-      name: tool.shortcut,
+      name: shortcut,
       handler: () => {
         this.insertNewBlock(tool, toolName);
       }
@@ -143,7 +144,8 @@ export default class Toolbox extends Module {
     /**
      * @type {Block}
      */
-    let currentBlock = this.Editor.BlockManager.currentBlock;
+    let currentBlock = this.Editor.BlockManager.currentBlock,
+      newBlock;
 
     /**
      * We do replace if:
@@ -152,10 +154,12 @@ export default class Toolbox extends Module {
      * @type {Array}
      */
     if (!tool[this.Editor.Tools.apiSettings.IS_IRREPLACEBLE_TOOL] && currentBlock.isEmpty) {
-      this.Editor.BlockManager.replace(toolName);
+      newBlock = this.Editor.BlockManager.replace(toolName);
     } else {
-      this.Editor.BlockManager.insert(toolName);
+      newBlock = this.Editor.BlockManager.insert(toolName);
     }
+
+    this.Editor.Caret.setToBlock(newBlock);
 
     /**
      * Move toolbar when node is changed

@@ -39,14 +39,6 @@ class Header {
   }
 
   /**
-   * Shortcut name
-   * @return {string}
-   */
-  static get shortcut() {
-    return 'CMD+SHIFT+L';
-  }
-
-  /**
    * Render plugin`s main Element and fill it with saved data
    * @param {HeaderData} blockData - previously saved data
    * @param {HeaderConfig} blockConfig - Tool's config from Editor

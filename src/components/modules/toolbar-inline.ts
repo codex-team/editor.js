@@ -92,11 +92,8 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   *
-   *
    *  Moving / appearance
    *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   *
    */
 
   /**
@@ -210,11 +207,8 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   *
-   *
    *  Working with Tools
    *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   *
    */
 
   /**
@@ -249,28 +243,24 @@ export default class InlineToolbar extends Module {
       this.toolClicked(tool);
     });
 
-    /** Enable shortcuts */
+    /**
+     * Enable shortcuts
+     * Ignore tool that doesn't have shortcut or empty string
+     */
     const toolsConfig = this.config.toolsConfig[toolName];
-    if (toolsConfig && toolsConfig.enableShortcut) {
-      this.enableShortcuts(tool);
+    if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
+      this.enableShortcuts(tool, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
     }
   }
 
   /**
    * Enable Tool shortcut with Editor Shortcuts Module
-   * @param {InlineTool} tool
+   * @param {InlineTool} tool - Tool instance
+   * @param {string} shortcut - shortcut according to the Shortcut Module format
    */
-  private enableShortcuts(tool: InlineTool): void {
-
-    /**
-     * Ignore tool that doesn't have shortcut name
-     */
-    if (!tool.shortcut || tool.shortcut.trim() === '') {
-      return;
-    }
-
+  private enableShortcuts(tool: InlineTool, shortcut: string): void {
     this.Editor.Shortcuts.add({
-      name: tool.shortcut,
+      name: shortcut,
       handler: () => {
         this.toolClicked(tool);
       },

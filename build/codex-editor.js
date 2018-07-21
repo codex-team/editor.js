@@ -14546,7 +14546,6 @@ var BlockManager = function (_Module) {
       } else {
         this._blocks[++this.currentBlockIndex] = block;
       }
-      this.Editor.Caret.setToBlock(block);
 
       return block;
     }
@@ -14657,7 +14656,8 @@ var BlockManager = function (_Module) {
       var block = this.composeBlock(toolName, data);
 
       this._blocks.insert(this.currentBlockIndex, block, true);
-      this.Editor.Caret.setToBlock(block);
+
+      return block;
     }
 
     /**
@@ -17250,7 +17250,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */(function(Module) {
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -17266,57 +17266,61 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Internal Shortcuts Module
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @class Shortcut
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @classdesc Allows to register new shortcut
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Register all methods to save state
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Internal Shortcuts Module
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 */
 
 
+/**
+ * Register all methods to save state
+ */
 var Shortcuts = function (_Module) {
-    _inherits(Shortcuts, _Module);
+  _inherits(Shortcuts, _Module);
 
-    /**
-     * @constructor
-     */
-    function Shortcuts(_ref) {
-        var config = _ref.config;
+  /**
+   * @constructor
+   */
+  function Shortcuts(_ref) {
+    var config = _ref.config;
 
-        _classCallCheck(this, Shortcuts);
+    _classCallCheck(this, Shortcuts);
 
-        var _this = _possibleConstructorReturn(this, (Shortcuts.__proto__ || Object.getPrototypeOf(Shortcuts)).call(this, { config: config }));
+    var _this = _possibleConstructorReturn(this, (Shortcuts.__proto__ || Object.getPrototypeOf(Shortcuts)).call(this, { config: config }));
 
-        _this.registeredShortcuts = [];
-        return _this;
+    _this.registeredShortcuts = [];
+    return _this;
+  }
+  /**
+   * Register shortcut
+   * @param {IShortcut} shortcut
+   */
+
+
+  _createClass(Shortcuts, [{
+    key: 'add',
+    value: function add(shortcut) {
+      var newShortcut = new _shortcuts2.default({
+        name: shortcut.name,
+        on: document.body,
+        callback: shortcut.handler
+      });
+      this.registeredShortcuts.push(newShortcut);
     }
     /**
-     * Register shortcut
+     * Remove shortcut
      * @param {IShortcut} shortcut
      */
 
+  }, {
+    key: 'remove',
+    value: function remove(shortcut) {
+      // Remove
+    }
+  }]);
 
-    _createClass(Shortcuts, [{
-        key: 'add',
-        value: function add(shortcut) {
-            var newShortcut = new _shortcuts2.default({
-                name: shortcut.name,
-                on: document.body,
-                callback: shortcut.handler
-            });
-            this.registeredShortcuts.push(newShortcut);
-        }
-        /**
-         * Remove shortcut
-         * @param {IShortcut} shortcut
-         */
-
-    }, {
-        key: 'remove',
-        value: function remove(shortcut) {
-            // Remove
-        }
-    }]);
-
-    return Shortcuts;
+  return Shortcuts;
 }(Module);
 
 Shortcuts.displayName = 'Shortcuts';
@@ -17624,11 +17628,8 @@ var InlineToolbar = function (_Module) {
             this.addTools();
         }
         /**
-         *
-         *
          *  Moving / appearance
          *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         *
          */
         /**
          * Shows Inline Toolbar by keyup/mouseup
@@ -17736,11 +17737,8 @@ var InlineToolbar = function (_Module) {
             return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
         }
         /**
-         *
-         *
          *  Working with Tools
          *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         *
          */
         /**
          * Fill Inline Toolbar with Tools
@@ -17776,30 +17774,28 @@ var InlineToolbar = function (_Module) {
             this.Editor.Listeners.on(button, 'click', function () {
                 _this2.toolClicked(tool);
             });
-            /** Enable shortcuts */
+            /**
+             * Enable shortcuts
+             * Ignore tool that doesn't have shortcut or empty string
+             */
             var toolsConfig = this.config.toolsConfig[toolName];
-            if (toolsConfig && toolsConfig.enableShortcut) {
-                this.enableShortcuts(tool);
+            if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
+                this.enableShortcuts(tool, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
             }
         }
         /**
          * Enable Tool shortcut with Editor Shortcuts Module
-         * @param {InlineTool} tool
+         * @param {InlineTool} tool - Tool instance
+         * @param {string} shortcut - shortcut according to the Shortcut Module format
          */
 
     }, {
         key: 'enableShortcuts',
-        value: function enableShortcuts(tool) {
+        value: function enableShortcuts(tool, shortcut) {
             var _this3 = this;
 
-            /**
-             * Ignore tool that doesn't have shortcut name
-             */
-            if (!tool.shortcut || tool.shortcut.trim() === '') {
-                return;
-            }
             this.Editor.Shortcuts.add({
-                name: tool.shortcut,
+                name: shortcut,
                 handler: function handler() {
                     _this3.toolClicked(tool);
                 }
@@ -18027,8 +18023,8 @@ var Toolbox = function (_Module) {
       /** Enable shortcut */
       var toolsConfig = this.config.toolsConfig[toolName];
 
-      if (toolsConfig && toolsConfig.enableShortcut) {
-        this.enableShortcut(tool, toolName);
+      if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
+        this.enableShortcut(tool, toolName, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
       }
     }
 
@@ -18036,15 +18032,16 @@ var Toolbox = function (_Module) {
      * Enable shortcut Block Tool implemented shortcut
      * @param {IBlockTool} tool - Tool class
      * @param {String} toolName - Tool name
+     * @param {String} shortcut - shortcut according to the Shortcut Module format
      */
 
   }, {
     key: 'enableShortcut',
-    value: function enableShortcut(tool, toolName) {
+    value: function enableShortcut(tool, toolName, shortcut) {
       var _this3 = this;
 
       this.Editor.Shortcuts.add({
-        name: tool.shortcut,
+        name: shortcut,
         handler: function handler() {
           _this3.insertNewBlock(tool, toolName);
         }
@@ -18065,7 +18062,8 @@ var Toolbox = function (_Module) {
       /**
        * @type {Block}
        */
-      var currentBlock = this.Editor.BlockManager.currentBlock;
+      var currentBlock = this.Editor.BlockManager.currentBlock,
+          newBlock = void 0;
 
       /**
        * We do replace if:
@@ -18074,10 +18072,12 @@ var Toolbox = function (_Module) {
        * @type {Array}
        */
       if (!tool[this.Editor.Tools.apiSettings.IS_IRREPLACEBLE_TOOL] && currentBlock.isEmpty) {
-        this.Editor.BlockManager.replace(toolName);
+        newBlock = this.Editor.BlockManager.replace(toolName);
       } else {
-        this.Editor.BlockManager.insert(toolName);
+        newBlock = this.Editor.BlockManager.insert(toolName);
       }
+
+      this.Editor.Caret.setToBlock(newBlock);
 
       /**
        * Move toolbar when node is changed
@@ -18676,7 +18676,8 @@ var Tools = function (_Module) {
         IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
         IS_IRREPLACEBLE_TOOL: 'irreplaceable',
         IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
-        IS_PASTE_DISALLOWED: 'disallowPaste'
+        IS_PASTE_DISALLOWED: 'disallowPaste',
+        SHORTCUT: 'shortcut'
       };
     }
 
@@ -18690,7 +18691,7 @@ var Tools = function (_Module) {
     get: function get() {
       var _ref9;
 
-      return _ref9 = {}, _defineProperty(_ref9, this.apiSettings.TOOLBAR_ICON_CLASS, false), _defineProperty(_ref9, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref9, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _ref9;
+      return _ref9 = {}, _defineProperty(_ref9, this.apiSettings.TOOLBAR_ICON_CLASS, false), _defineProperty(_ref9, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref9, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _defineProperty(_ref9, this.apiSettings.SHORTCUT, false), _ref9;
     }
 
     /**

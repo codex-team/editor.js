@@ -1,7 +1,8 @@
 /**
- * Internal Shortcuts Module
+ * @class Shortcut
+ * @classdesc Allows to register new shortcut
  *
- * Register all methods to save state
+ * Internal Shortcuts Module
  */
 import Shortcut from '@codexteam/shortcuts';
 import IShortcut from '../interfaces/shortcut';
@@ -11,6 +12,9 @@ import IShortcut from '../interfaces/shortcut';
  */
 declare var Module: any;
 
+/**
+ * Register all methods to save state
+ */
 export default class Shortcuts extends Module {
 
   /**

@@ -123,7 +123,6 @@ export default class BlockManager extends Module {
     } else {
       this._blocks[++this.currentBlockIndex] = block;
     }
-    this.Editor.Caret.setToBlock(block);
 
     return block;
   }
@@ -218,7 +217,8 @@ export default class BlockManager extends Module {
     let block = this.composeBlock(toolName, data);
 
     this._blocks.insert(this.currentBlockIndex, block, true);
-    this.Editor.Caret.setToBlock(block);
+
+    return block;
   }
 
   /**

@@ -41,10 +41,6 @@ class Term {
     };
   }
 
-  get shortcut() {
-    return 'CMD+SHIFT+O';
-  }
-
   /**
    * Specifies Tool as Inline Toolbar Tool
    *
