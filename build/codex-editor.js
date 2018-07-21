@@ -14538,13 +14538,7 @@ var BlockManager = function (_Module) {
 
       var block = this.composeBlock(toolName, data, settings);
 
-      /** If current Block is empty and new Block is not empty, replace current Block with new one */
-      if (this.currentBlock && this.currentBlock.isEmpty && !block.isEmpty) {
-        this._blocks.insert(this.currentBlockIndex, block, true);
-      } else {
-        this._blocks[++this.currentBlockIndex] = block;
-      }
-
+      this._blocks[++this.currentBlockIndex] = block;
       return block;
     }
 
@@ -16194,13 +16188,13 @@ var Paste = function (_Module) {
                                 _this.splitBlock();
                                 _context2.next = 21;
                                 return Promise.all(dataToInsert.map(function () {
-                                    var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data) {
+                                    var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, i) {
                                         return regeneratorRuntime.wrap(function _callee$(_context) {
                                             while (1) {
                                                 switch (_context.prev = _context.next) {
                                                     case 0:
                                                         _context.next = 2;
-                                                        return _this.insertBlock(data);
+                                                        return _this.insertBlock(data, i === 0);
 
                                                     case 2:
                                                         return _context.abrupt('return', _context.sent);
@@ -16213,7 +16207,7 @@ var Paste = function (_Module) {
                                         }, _callee, _this2);
                                     }));
 
-                                    return function (_x2) {
+                                    return function (_x2, _x3) {
                                         return _ref7.apply(this, arguments);
                                     };
                                 }()));
@@ -16315,7 +16309,7 @@ var Paste = function (_Module) {
         key: 'processSingleBlock',
         value: function () {
             var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(dataToInsert) {
-                var initialTool, BlockManager, content, tool, blockData, newBlock;
+                var initialTool, BlockManager, content, tool, blockData;
                 return regeneratorRuntime.wrap(function _callee4$(_context4) {
                     while (1) {
                         switch (_context4.prev = _context4.next) {
@@ -16325,7 +16319,7 @@ var Paste = function (_Module) {
                                 content = dataToInsert.content, tool = dataToInsert.tool;
 
                                 if (!(tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
-                                    _context4.next = 12;
+                                    _context4.next = 11;
                                     break;
                                 }
 
@@ -16336,21 +16330,23 @@ var Paste = function (_Module) {
                                 blockData = _context4.sent;
 
                                 if (!blockData) {
-                                    _context4.next = 12;
+                                    _context4.next = 11;
                                     break;
                                 }
 
                                 this.splitBlock();
-                                newBlock = BlockManager.insert(blockData.tool, blockData.data);
-
-                                this.Editor.Caret.setToBlock(newBlock);
+                                if (BlockManager.currentBlock.isEmpty) {
+                                    BlockManager.replace(blockData.tool, blockData.data);
+                                } else {
+                                    BlockManager.insert(blockData.tool, blockData.data);
+                                }
                                 return _context4.abrupt('return');
 
-                            case 12:
+                            case 11:
                                 /** If there is no pattern substitute - insert string as it is */
                                 document.execCommand('insertHTML', false, content.innerHTML);
 
-                            case 13:
+                            case 12:
                             case 'end':
                                 return _context4.stop();
                         }
@@ -16358,7 +16354,7 @@ var Paste = function (_Module) {
                 }, _callee4, this);
             }));
 
-            function processSingleBlock(_x3) {
+            function processSingleBlock(_x4) {
                 return _ref9.apply(this, arguments);
             }
 
@@ -16415,7 +16411,7 @@ var Paste = function (_Module) {
                 }, _callee5, this);
             }));
 
-            function processPattern(_x4) {
+            function processPattern(_x5) {
                 return _ref10.apply(this, arguments);
             }
 
@@ -16424,6 +16420,7 @@ var Paste = function (_Module) {
         /**
          *
          * @param {IPasteData} data
+         * @param {Boolean} canReplaceCurrentBlock - if true and is current Block is empty, will replace current Block
          * @returns {Promise<void>}
          */
 
@@ -16431,7 +16428,9 @@ var Paste = function (_Module) {
         key: 'insertBlock',
         value: function () {
             var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(data) {
-                var blockData, _Editor2, BlockManager, Caret, Block;
+                var canReplaceCurrentBlock = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+                var blockData, _Editor2, BlockManager, Caret, currentBlock, Block;
 
                 return regeneratorRuntime.wrap(function _callee6$(_context6) {
                     while (1) {
@@ -16443,11 +16442,22 @@ var Paste = function (_Module) {
                             case 2:
                                 blockData = _context6.sent;
                                 _Editor2 = this.Editor, BlockManager = _Editor2.BlockManager, Caret = _Editor2.Caret;
+                                currentBlock = BlockManager.currentBlock;
+
+                                if (!(canReplaceCurrentBlock && currentBlock.isEmpty)) {
+                                    _context6.next = 8;
+                                    break;
+                                }
+
+                                BlockManager.replace(data.tool, blockData);
+                                return _context6.abrupt('return');
+
+                            case 8:
                                 Block = BlockManager.insert(data.tool, blockData);
 
                                 Caret.setToBlock(Block);
 
-                            case 6:
+                            case 10:
                             case 'end':
                                 return _context6.stop();
                         }
@@ -16455,7 +16465,7 @@ var Paste = function (_Module) {
                 }, _callee6, this);
             }));
 
-            function insertBlock(_x5) {
+            function insertBlock(_x7) {
                 return _ref11.apply(this, arguments);
             }
 
