@@ -14256,12 +14256,10 @@ var BlockEvents = function (_Module) {
             }
             /**
              * Split the Current Block into two blocks
-             */
-            this.Editor.BlockManager.split();
-            /**
              * Renew local current node after split
              */
-            var newCurrent = this.Editor.BlockManager.currentBlock;
+            var newCurrent = this.Editor.BlockManager.split();
+            this.Editor.Caret.setToBlock(newCurrent);
             this.Editor.Toolbar.move();
             /**
              * If new Block is empty
@@ -14552,6 +14550,7 @@ var BlockManager = function (_Module) {
 
     /**
      * Always inserts at the end
+     * @return {Block}
      */
 
   }, {
@@ -14565,7 +14564,7 @@ var BlockManager = function (_Module) {
       /**
        * Insert initial typed block
        */
-      this.insert();
+      return this.insert();
     }
 
     /**
@@ -14615,6 +14614,8 @@ var BlockManager = function (_Module) {
      * Split current Block
      * 1. Extract content from Caret position to the Block`s end
      * 2. Insert a new Block below current one with extracted content
+     *
+     * @return {Block}
      */
 
   }, {
@@ -14639,6 +14640,7 @@ var BlockManager = function (_Module) {
       var blockInserted = this.insert(this.config.initialBlock, data);
 
       this.currentNode = blockInserted.pluginsContent;
+      return blockInserted;
     }
 
     /**
@@ -14646,6 +14648,8 @@ var BlockManager = function (_Module) {
      *
      * @param {String} toolName — plugin name
      * @param {Object} data — plugin data
+     *
+     * @return {Block}
      */
 
   }, {
@@ -15325,7 +15329,9 @@ var Caret = function (_Module) {
       if (lastBlock.isEmpty) {
         this.setToBlock(lastBlock);
       } else {
-        this.Editor.BlockManager.insertAtEnd();
+        var newBlock = this.Editor.BlockManager.insertAtEnd();
+
+        this.setToBlock(newBlock);
       }
     }
 
@@ -16312,7 +16318,7 @@ var Paste = function (_Module) {
         key: 'processSingleBlock',
         value: function () {
             var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(dataToInsert) {
-                var initialTool, BlockManager, content, tool, blockData;
+                var initialTool, BlockManager, content, tool, blockData, newBlock;
                 return regeneratorRuntime.wrap(function _callee4$(_context4) {
                     while (1) {
                         switch (_context4.prev = _context4.next) {
@@ -16322,7 +16328,7 @@ var Paste = function (_Module) {
                                 content = dataToInsert.content, tool = dataToInsert.tool;
 
                                 if (!(tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
-                                    _context4.next = 11;
+                                    _context4.next = 12;
                                     break;
                                 }
 
@@ -16333,19 +16339,21 @@ var Paste = function (_Module) {
                                 blockData = _context4.sent;
 
                                 if (!blockData) {
-                                    _context4.next = 11;
+                                    _context4.next = 12;
                                     break;
                                 }
 
                                 this.splitBlock();
-                                BlockManager.insert(blockData.tool, blockData.data);
+                                newBlock = BlockManager.insert(blockData.tool, blockData.data);
+
+                                this.Editor.Caret.setToBlock(newBlock);
                                 return _context4.abrupt('return');
 
-                            case 11:
+                            case 12:
                                 /** If there is no pattern substitute - insert string as it is */
                                 document.execCommand('insertHTML', false, content.innerHTML);
 
-                            case 12:
+                            case 13:
                             case 'end':
                                 return _context4.stop();
                         }
@@ -16426,7 +16434,8 @@ var Paste = function (_Module) {
         key: 'insertBlock',
         value: function () {
             var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(data) {
-                var blockData, BlockManager;
+                var blockData, _Editor2, BlockManager, Caret, Block;
+
                 return regeneratorRuntime.wrap(function _callee6$(_context6) {
                     while (1) {
                         switch (_context6.prev = _context6.next) {
@@ -16436,11 +16445,12 @@ var Paste = function (_Module) {
 
                             case 2:
                                 blockData = _context6.sent;
-                                BlockManager = this.Editor.BlockManager;
+                                _Editor2 = this.Editor, BlockManager = _Editor2.BlockManager, Caret = _Editor2.Caret;
+                                Block = BlockManager.insert(data.tool, blockData);
 
-                                BlockManager.insert(data.tool, blockData);
+                                Caret.setToBlock(Block);
 
-                            case 5:
+                            case 6:
                             case 'end':
                                 return _context6.stop();
                         }
@@ -16461,9 +16471,9 @@ var Paste = function (_Module) {
     }, {
         key: 'splitBlock',
         value: function splitBlock() {
-            var _Editor2 = this.Editor,
-                BlockManager = _Editor2.BlockManager,
-                Caret = _Editor2.Caret;
+            var _Editor3 = this.Editor,
+                BlockManager = _Editor3.BlockManager,
+                Caret = _Editor3.Caret;
             /** If we paste into middle of the current block:
              *  1. Split
              *  2. Navigate to the first part
@@ -16486,9 +16496,9 @@ var Paste = function (_Module) {
         value: function processHTML(innerHTML) {
             var _this3 = this;
 
-            var _Editor3 = this.Editor,
-                Tools = _Editor3.Tools,
-                Sanitizer = _Editor3.Sanitizer;
+            var _Editor4 = this.Editor,
+                Tools = _Editor4.Tools,
+                Sanitizer = _Editor4.Sanitizer;
 
             var initialTool = this.config.initialBlock;
             var wrapper = $.make('DIV');
@@ -19183,7 +19193,13 @@ var UI = function (_Module) {
         /**
          * Insert initial typed Block
          */
-        this.Editor.BlockManager.insert();
+        var newBlock = this.Editor.BlockManager.insert();
+
+        this.Editor.Caret.setToBlock(newBlock);
+
+        /**
+         * And highlight
+         */
         this.Editor.BlockManager.highlightCurrentNode();
 
         /**

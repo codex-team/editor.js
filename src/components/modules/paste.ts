@@ -267,7 +267,8 @@ export default class Paste extends Module {
       if (blockData) {
         this.splitBlock();
 
-        BlockManager.insert(blockData.tool, blockData.data);
+        const newBlock = BlockManager.insert(blockData.tool, blockData.data);
+        this.Editor.Caret.setToBlock(newBlock);
         return;
       }
     }
@@ -308,9 +309,10 @@ export default class Paste extends Module {
    */
   private async insertBlock(data: IPasteData): Promise<void> {
     const blockData = await data.handler(data.content);
-    const {BlockManager} = this.Editor;
+    const {BlockManager, Caret} = this.Editor;
 
-    BlockManager.insert(data.tool, blockData);
+    const Block = BlockManager.insert(data.tool, blockData);
+    Caret.setToBlock(Block);
   }
 
   /**

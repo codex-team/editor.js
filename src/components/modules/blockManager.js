@@ -129,6 +129,7 @@ export default class BlockManager extends Module {
 
   /**
    * Always inserts at the end
+   * @return {Block}
    */
   insertAtEnd() {
     /**
@@ -139,7 +140,7 @@ export default class BlockManager extends Module {
     /**
      * Insert initial typed block
      */
-    this.insert();
+    return this.insert();
   }
 
   /**
@@ -184,6 +185,8 @@ export default class BlockManager extends Module {
    * Split current Block
    * 1. Extract content from Caret position to the Block`s end
    * 2. Insert a new Block below current one with extracted content
+   *
+   * @return {Block}
    */
   split() {
     let extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition(),
@@ -205,6 +208,7 @@ export default class BlockManager extends Module {
     const blockInserted = this.insert(this.config.initialBlock, data);
 
     this.currentNode = blockInserted.pluginsContent;
+    return blockInserted;
   }
 
   /**
@@ -212,6 +216,8 @@ export default class BlockManager extends Module {
    *
    * @param {String} toolName — plugin name
    * @param {Object} data — plugin data
+   *
+   * @return {Block}
    */
   replace(toolName, data = {}) {
     let block = this.composeBlock(toolName, data);

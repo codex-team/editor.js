@@ -107,13 +107,10 @@ export default class BlockEvents extends Module {
 
     /**
      * Split the Current Block into two blocks
-     */
-    this.Editor.BlockManager.split();
-
-    /**
      * Renew local current node after split
      */
-    const newCurrent = this.Editor.BlockManager.currentBlock;
+    const newCurrent = this.Editor.BlockManager.split();
+    this.Editor.Caret.setToBlock(newCurrent);
 
     this.Editor.Toolbar.move();
 
