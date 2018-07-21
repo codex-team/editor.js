@@ -116,7 +116,6 @@ export default class BlockManager extends Module {
   insert(toolName = this.config.initialBlock, data = {}, settings = {}) {
     let block = this.composeBlock(toolName, data, settings);
 
-
     /** If current Block is empty and new Block is not empty, replace current Block with new one */
     if (this.currentBlock && this.currentBlock.isEmpty && !block.isEmpty) {
       this._blocks.insert(this.currentBlockIndex, block, true);
@@ -205,10 +204,7 @@ export default class BlockManager extends Module {
      * Renew current Block
      * @type {Block}
      */
-    const blockInserted = this.insert(this.config.initialBlock, data);
-
-    this.currentNode = blockInserted.pluginsContent;
-    return blockInserted;
+    return this.insert(this.config.initialBlock, data);
   }
 
   /**

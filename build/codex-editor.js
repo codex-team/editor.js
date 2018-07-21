@@ -14637,10 +14637,7 @@ var BlockManager = function (_Module) {
        * Renew current Block
        * @type {Block}
        */
-      var blockInserted = this.insert(this.config.initialBlock, data);
-
-      this.currentNode = blockInserted.pluginsContent;
-      return blockInserted;
+      return this.insert(this.config.initialBlock, data);
     }
 
     /**
