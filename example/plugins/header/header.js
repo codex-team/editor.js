@@ -343,6 +343,7 @@ class Header {
     ];
   }
 
+<<<<<<< HEAD
 
   /**
    * Handle H1-H6 tags on paste to substitute it with header Tool
@@ -382,5 +383,13 @@ class Header {
       handler: Header.onPasteHandler,
       tags: ['H1', 'H2', 'H3', 'H4', 'H5', 'H6']
     };
+=======
+  /**
+   * Get Tool icon's SVG
+   * @return {string}
+   */
+  static get toolboxIcon() {
+    return '<svg width="11" height="14" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M7.6 8.15H2.25v4.525a1.125 1.125 0 0 1-2.25 0V1.125a1.125 1.125 0 1 1 2.25 0V5.9H7.6V1.125a1.125 1.125 0 0 1 2.25 0v11.55a1.125 1.125 0 0 1-2.25 0V8.15z"/></svg>';
+>>>>>>> 83655d39d39a73046e8cc95820dea9d4ae52a678
   }
 }

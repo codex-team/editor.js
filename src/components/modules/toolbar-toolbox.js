@@ -64,7 +64,7 @@ export default class Toolbox extends Module {
    * Append Tool to the Toolbox
    *
    * @param {string} toolName  - tool name
-   * @param {Tool}  tool      - tool class
+   * @param {IBlockTool} tool - tool class
    */
   addTool(toolName, tool) {
     const api = this.Editor.Tools.apiSettings;
@@ -95,6 +95,8 @@ export default class Toolbox extends Module {
       title: toolName
     });
 
+    button.innerHTML = tool.toolboxIcon;
+
     /**
      * Save tool's name in the button data-name
      */
@@ -122,8 +124,15 @@ export default class Toolbox extends Module {
    * @param {MouseEvent} event
    */
   buttonClicked(event) {
-    let toolButton = event.target,
-      toolName = toolButton.dataset.name,
+    let toolButton = event.target;
+
+    toolButton = toolButton.closest(`.${Toolbox.CSS.toolboxButton}`);
+
+    if (!toolButton) {
+      return;
+    }
+
+    let  toolName = toolButton.dataset.name,
       tool = this.Editor.Tools.toolClasses[toolName];
 
     /**
