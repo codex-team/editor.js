@@ -67,6 +67,8 @@
 /**
  * Apply polyfills
  */
+import 'babel-core/register';
+import 'babel-polyfill';
 import 'components/polyfills';
 
 /**
@@ -279,16 +281,24 @@ export default class CodexEditor {
    * Get list of modules that needs to be prepared and return a sequence (Promise)
    * @return {Promise}
    */
-  start() {
-    let prepareDecorator = module => module.prepare();
+  async start() {
+    const modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste'];
 
-    return Promise.resolve()
-      .then(prepareDecorator(this.moduleInstances.Tools))
-      .then(prepareDecorator(this.moduleInstances.UI))
-      .then(prepareDecorator(this.moduleInstances.BlockManager))
-      .then(() => {
-        return this.moduleInstances.Renderer.render(this.config.data.items);
-      });
+    await modulesToPrepare.reduce(
+      (promise, module) => promise.then(async () => {
+        _.log(`Preparing ${module} module`, 'time');
+
+        try {
+          await this.moduleInstances[module].prepare();
+        } catch (e) {
+          _.log(`Module ${module} was skipped because of %o`, 'warn', e);
+        }
+        _.log(`Preparing ${module} module`, 'timeEnd');
+      }),
+      Promise.resolve()
+    );
+
+    return this.moduleInstances.Renderer.render(this.config.data.items);
   }
 };
 

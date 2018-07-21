@@ -343,11 +343,53 @@ class Header {
     ];
   }
 
+<<<<<<< HEAD
+
+  /**
+   * Handle H1-H6 tags on paste to substitute it with header Tool
+   *
+   * @private
+   * @param {HTMLElement} content - pasted element
+   * @returns {{level: number, text: *}}
+   */
+  static onPasteHandler(content) {
+    let level = 4;
+
+    switch (content.tagName) {
+      case 'H1':
+      case 'H2':
+        level = 2;
+        break;
+
+      case 'H3':
+        level = 3;
+        break;
+    }
+
+    return {
+      level,
+      text: content.innerHTML
+    };
+  }
+
+  /**
+   * Used by Codex Editor paste handling API.
+   * Provides configuration to handle H1-H6 tags.
+   *
+   * @returns {{handler: (function(HTMLElement): {text: string}), tags: string[]}}
+   */
+  static get onPaste() {
+    return {
+      handler: Header.onPasteHandler,
+      tags: ['H1', 'H2', 'H3', 'H4', 'H5', 'H6']
+    };
+=======
   /**
    * Get Tool icon's SVG
    * @return {string}
    */
   static get toolboxIcon() {
     return '<svg width="11" height="14" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M7.6 8.15H2.25v4.525a1.125 1.125 0 0 1-2.25 0V1.125a1.125 1.125 0 1 1 2.25 0V5.9H7.6V1.125a1.125 1.125 0 0 1 2.25 0v11.55a1.125 1.125 0 0 1-2.25 0V8.15z"/></svg>';
+>>>>>>> 83655d39d39a73046e8cc95820dea9d4ae52a678
   }
 }

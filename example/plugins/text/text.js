@@ -142,4 +142,30 @@ class Text {
 
     this._element.innerHTML = this._data.text || '';
   }
+
+   /**
+    * Handle pasted DIV and P tags.
+    *
+    * @private
+    * @param {HTMLElement} content - pasted element
+    * @returns {{text: string}}
+    */
+  static onPasteHandler(content) {
+    return {
+      text: content.innerHTML
+    };
+  }
+
+   /**
+    * Used by Codex Editor paste handling API.
+    * Provides configuration to handle DIV and P tags.
+    *
+    * @returns {{handler: (function(HTMLElement): {text: string}), tags: string[]}}
+    */
+  static get onPaste() {
+    return {
+      handler: Text.onPasteHandler,
+      tags: ['P', 'DIV']
+    };
+  }
 }

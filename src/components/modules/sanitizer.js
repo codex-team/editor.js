@@ -82,7 +82,9 @@ export default class Sanitizer extends Module {
             href: true,
             target: '_blank',
             rel: 'nofollow'
-          }
+          },
+          b: {},
+          i: {}
         }
       };
     } else {
@@ -116,7 +118,13 @@ export default class Sanitizer extends Module {
    * @return {String} clean HTML
    */
   static clean(taintString, customConfig) {
-    let newInstance = Sanitizer(customConfig);
+    let newInstance = new Sanitizer({
+      config: {
+        settings: {
+          sanitizer: customConfig
+        }
+      }
+    });
 
     return newInstance.clean(taintString);
   }

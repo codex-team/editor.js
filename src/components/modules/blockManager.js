@@ -116,7 +116,13 @@ export default class BlockManager extends Module {
   insert(toolName = this.config.initialBlock, data = {}, settings = {}) {
     let block = this.composeBlock(toolName, data, settings);
 
-    this._blocks[++this.currentBlockIndex] = block;
+
+    /** If current Block is empty and new Block is not empty, replace current Block with new one */
+    if (this.currentBlock && this.currentBlock.isEmpty && !block.isEmpty) {
+      this._blocks.insert(this.currentBlockIndex, block, true);
+    } else {
+      this._blocks[++this.currentBlockIndex] = block;
+    }
     this.Editor.Caret.setToBlock(block);
 
     return block;
@@ -301,8 +307,17 @@ export default class BlockManager extends Module {
    * @param {Node} element
    */
   set currentNode(element) {
+    if (!$.isElement(element)) {
+      element = element.parentNode;
+    }
+
     let nodes = this._blocks.nodes,
       firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`);
+
+    if (!firstLevelBlock) {
+      throw Error('Passed element is not a Block.');
+    }
+
 
     /**
      * Update current Block's index

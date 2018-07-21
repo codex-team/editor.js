@@ -84,6 +84,26 @@ export default class Tools extends Module {
   }
 
   /**
+   * Return editor block tools
+   */
+  get blockTools() {
+    // eslint-disable-next-line no-unused-vars
+    const tools = Object.entries(this.available).filter( ([name, tool]) => {
+      if (tool[this.apiSettings.IS_INLINE]) {
+        return false;
+      }
+
+      return true;
+    });
+
+    const result = {};
+
+    tools.forEach(([name, tool]) => result[name] = tool);
+
+    return result;
+  }
+
+  /**
    * Constant for available Tools Settings
    * @return {object}
    */
@@ -95,6 +115,7 @@ export default class Tools extends Module {
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_IRREPLACEBLE_TOOL: 'irreplaceable',
       IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
+      IS_PASTE_DISALLOWED: 'disallowPaste'
     };
   }
 
