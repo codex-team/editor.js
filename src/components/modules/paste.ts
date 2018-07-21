@@ -243,7 +243,9 @@ export default class Paste extends Module {
 
     this.splitBlock();
 
-    await Promise.all(dataToInsert.map(async (data) => await this.insertBlock(data)));
+    await Promise.all(dataToInsert.map(
+      async (data, i) => await this.insertBlock(data, i === 0),
+    ));
 
     Caret.setToBlock(BlockManager.currentBlock, 0, true);
   }
@@ -267,7 +269,11 @@ export default class Paste extends Module {
       if (blockData) {
         this.splitBlock();
 
-        BlockManager.insert(blockData.tool, blockData.data);
+        if (BlockManager.currentBlock.isEmpty) {
+          BlockManager.replace(blockData.tool, blockData.data);
+        } else {
+          BlockManager.insert(blockData.tool, blockData.data);
+        }
         return;
       }
     }
@@ -304,11 +310,18 @@ export default class Paste extends Module {
   /**
    *
    * @param {IPasteData} data
+   * @param {Boolean} canReplaceCurrentBlock - if true and is current Block is empty, will replace current Block
    * @returns {Promise<void>}
    */
-  private async insertBlock(data: IPasteData): Promise<void> {
+  private async insertBlock(data: IPasteData, canReplaceCurrentBlock: boolean = false): Promise<void> {
     const blockData = await data.handler(data.content);
     const {BlockManager} = this.Editor;
+    const {currentBlock} = BlockManager;
+
+    if (canReplaceCurrentBlock && currentBlock.isEmpty) {
+      BlockManager.replace(data.tool, blockData);
+      return;
+    }
 
     BlockManager.insert(data.tool, blockData);
   }
