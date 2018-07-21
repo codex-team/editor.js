@@ -17324,12 +17324,7 @@ var BlockManager = function (_Module) {
 
       var block = this.composeBlock(toolName, data, settings);
 
-      /** If current Block is empty and new Block is not empty, replace current Block with new one */
-      if (this.currentBlock && this.currentBlock.isEmpty && !block.isEmpty) {
-        this._blocks.insert(this.currentBlockIndex, block, true);
-      } else {
-        this._blocks[++this.currentBlockIndex] = block;
-      }
+      this._blocks[++this.currentBlockIndex] = block;
       this.Editor.Caret.setToBlock(block);
 
       return block;
@@ -18974,13 +18969,13 @@ var Paste = function (_Module) {
                                 _this.splitBlock();
                                 _context2.next = 21;
                                 return Promise.all(dataToInsert.map(function () {
-                                    var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data) {
+                                    var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, i) {
                                         return regeneratorRuntime.wrap(function _callee$(_context) {
                                             while (1) {
                                                 switch (_context.prev = _context.next) {
                                                     case 0:
                                                         _context.next = 2;
-                                                        return _this.insertBlock(data);
+                                                        return _this.insertBlock(data, i === 0);
 
                                                     case 2:
                                                         return _context.abrupt('return', _context.sent);
@@ -18993,7 +18988,7 @@ var Paste = function (_Module) {
                                         }, _callee, _this2);
                                     }));
 
-                                    return function (_x2) {
+                                    return function (_x2, _x3) {
                                         return _ref7.apply(this, arguments);
                                     };
                                 }()));
@@ -19121,7 +19116,11 @@ var Paste = function (_Module) {
                                 }
 
                                 this.splitBlock();
-                                BlockManager.insert(blockData.tool, blockData.data);
+                                if (BlockManager.currentBlock.isEmpty) {
+                                    BlockManager.replace(blockData.tool, blockData.data);
+                                } else {
+                                    BlockManager.insert(blockData.tool, blockData.data);
+                                }
                                 return _context4.abrupt('return');
 
                             case 11:
@@ -19136,7 +19135,7 @@ var Paste = function (_Module) {
                 }, _callee4, this);
             }));
 
-            function processSingleBlock(_x3) {
+            function processSingleBlock(_x4) {
                 return _ref9.apply(this, arguments);
             }
 
@@ -19193,7 +19192,7 @@ var Paste = function (_Module) {
                 }, _callee5, this);
             }));
 
-            function processPattern(_x4) {
+            function processPattern(_x5) {
                 return _ref10.apply(this, arguments);
             }
 
@@ -19202,6 +19201,7 @@ var Paste = function (_Module) {
         /**
          *
          * @param {IPasteData} data
+         * @param {Boolean} canReplaceCurrentBlock - if true and is current Block is empty, will replace current Block
          * @returns {Promise<void>}
          */
 
@@ -19209,7 +19209,8 @@ var Paste = function (_Module) {
         key: 'insertBlock',
         value: function () {
             var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(data) {
-                var blockData, BlockManager;
+                var canReplaceCurrentBlock = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+                var blockData, BlockManager, currentBlock;
                 return regeneratorRuntime.wrap(function _callee6$(_context6) {
                     while (1) {
                         switch (_context6.prev = _context6.next) {
@@ -19220,10 +19221,20 @@ var Paste = function (_Module) {
                             case 2:
                                 blockData = _context6.sent;
                                 BlockManager = this.Editor.BlockManager;
+                                currentBlock = BlockManager.currentBlock;
 
+                                if (!(canReplaceCurrentBlock && currentBlock.isEmpty)) {
+                                    _context6.next = 8;
+                                    break;
+                                }
+
+                                BlockManager.replace(data.tool, blockData);
+                                return _context6.abrupt('return');
+
+                            case 8:
                                 BlockManager.insert(data.tool, blockData);
 
-                            case 5:
+                            case 9:
                             case 'end':
                                 return _context6.stop();
                         }
@@ -19231,7 +19242,7 @@ var Paste = function (_Module) {
                 }, _callee6, this);
             }));
 
-            function insertBlock(_x5) {
+            function insertBlock(_x7) {
                 return _ref11.apply(this, arguments);
             }
 
