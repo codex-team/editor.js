@@ -60,7 +60,7 @@ export default class Tools extends Module {
 
   /**
    * Return Tools for the Inline Toolbar
-   * @return {Array} - array of Inline Tool's classes
+   * @return {Object} - object of Inline Tool's classes
    */
   get inline() {
     const tools = Object.entries(this.available).filter( ([name, tool]) => {
@@ -82,9 +82,13 @@ export default class Tools extends Module {
       return true;
     });
 
+    /**
+     * collected inline tools with key of tool name
+     */
     const result = {};
 
     tools.forEach(([name, tool]) => result[name] = tool);
+
     return result;
   }
 
@@ -101,6 +105,9 @@ export default class Tools extends Module {
       return true;
     });
 
+    /**
+     * collected block tools with key of tool name
+     */
     const result = {};
 
     tools.forEach(([name, tool]) => result[name] = tool);

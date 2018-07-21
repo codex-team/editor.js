@@ -64,7 +64,7 @@ export default class Toolbox extends Module {
    * Append Tool to the Toolbox
    *
    * @param {string} toolName  - tool name
-   * @param {IBlockTool}  tool      - tool class
+   * @param {IBlockTool}  tool - tool class
    */
   addTool(toolName, tool) {
     const api = this.Editor.Tools.apiSettings;

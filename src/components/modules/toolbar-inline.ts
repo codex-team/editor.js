@@ -64,7 +64,7 @@ export default class InlineToolbar extends Module {
    */
   get tools(): {[name: string]: InlineTool} {
     if (!this.toolsInstances) {
-      this.toolsInstances = {...this.internalTools, ...this.externalTools}
+      this.toolsInstances = {...this.internalTools, ...this.externalTools};
     }
     return this.toolsInstances;
   }
@@ -148,6 +148,7 @@ export default class InlineToolbar extends Module {
     this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
     for (const toolName in this.tools) {
       const tool = this.tools[toolName];
+
       if (typeof tool.clear === 'function') {
         tool.clear();
       }
@@ -161,6 +162,7 @@ export default class InlineToolbar extends Module {
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
     for (const toolName in this.tools) {
       const tool = this.tools[toolName];
+
       if (typeof tool.clear === 'function') {
         tool.clear();
       }

@@ -17969,7 +17969,7 @@ var Toolbox = function (_Module) {
      * Append Tool to the Toolbox
      *
      * @param {string} toolName  - tool name
-     * @param {IBlockTool}  tool      - tool class
+     * @param {IBlockTool}  tool - tool class
      */
 
   }, {
@@ -18581,7 +18581,7 @@ var Tools = function (_Module) {
 
     /**
      * Return Tools for the Inline Toolbar
-     * @return {Array} - array of Inline Tool's classes
+     * @return {Object} - object of Inline Tool's classes
      */
 
   }, {
@@ -18614,6 +18614,9 @@ var Tools = function (_Module) {
         return true;
       });
 
+      /**
+       * collected inline tools with key of tool name
+       */
       var result = {};
 
       tools.forEach(function (_ref3) {
@@ -18623,6 +18626,7 @@ var Tools = function (_Module) {
 
         return result[name] = tool;
       });
+
       return result;
     }
 
@@ -18648,6 +18652,9 @@ var Tools = function (_Module) {
         return true;
       });
 
+      /**
+       * collected block tools with key of tool name
+       */
       var result = {};
 
       tools.forEach(function (_ref7) {

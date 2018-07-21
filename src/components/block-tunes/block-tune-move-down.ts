@@ -5,7 +5,6 @@
  * @copyright <CodeX Team> 2018
  */
 import IBlockTune from '../interfaces/block-tune';
-import S from '@codexteam/shortcuts';
 
 declare var $: any;
 declare var _: any;
