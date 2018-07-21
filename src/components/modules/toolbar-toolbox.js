@@ -111,7 +111,11 @@ export default class Toolbox extends Module {
     });
 
     /** Enable shortcut */
-    this.enableShortcut(tool, toolName);
+    const toolsConfig = this.config.toolsConfig[toolName];
+
+    if (toolsConfig && toolsConfig.enableShortcut) {
+      this.enableShortcut(tool, toolName);
+    }
   }
 
   /**

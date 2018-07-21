@@ -17551,8 +17551,6 @@ var _selection2 = _interopRequireDefault(_selection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -17601,7 +17599,7 @@ var InlineToolbar = function (_Module) {
     }
     /**
      * Inline Toolbar Tools
-     * @todo Merge internal tools with external
+     * includes internal and external tools
      */
 
 
@@ -17681,11 +17679,12 @@ var InlineToolbar = function (_Module) {
         key: 'open',
         value: function open() {
             this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
-            this.tools.forEach(function (tool) {
+            for (var toolName in this.tools) {
+                var tool = this.tools[toolName];
                 if (typeof tool.clear === 'function') {
                     tool.clear();
                 }
-            });
+            }
         }
         /**
          * Hides Inline Toolbar
@@ -17695,11 +17694,12 @@ var InlineToolbar = function (_Module) {
         key: 'close',
         value: function close() {
             this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
-            this.tools.forEach(function (tool) {
+            for (var toolName in this.tools) {
+                var tool = this.tools[toolName];
                 if (typeof tool.clear === 'function') {
                     tool.clear();
                 }
-            });
+            }
         }
         /**
          * Need to show Inline Toolbar or not
@@ -17749,25 +17749,23 @@ var InlineToolbar = function (_Module) {
     }, {
         key: 'addTools',
         value: function addTools() {
-            var _this2 = this;
-
-            this.tools.forEach(function (tool) {
-                _this2.addTool(tool);
-            });
+            console.log(this.tools);
+            for (var tool in this.tools) {
+                this.addTool(tool, this.tools[tool]);
+            }
         }
         /**
          * Add tool button and activate clicks
-         * @param {InlineTool} tool - Tool's instance
          */
 
     }, {
         key: 'addTool',
-        value: function addTool(tool) {
-            var _this3 = this;
+        value: function addTool(toolName, tool) {
+            var _this2 = this;
 
             var button = tool.render();
             if (!button) {
-                _.log('Render method must return an instance of Node', 'warn', tool);
+                _.log('Render method must return an instance of Node', 'warn', toolName);
                 return;
             }
             this.nodes.buttons.appendChild(button);
@@ -17776,20 +17774,23 @@ var InlineToolbar = function (_Module) {
                 this.nodes.actions.appendChild(actions);
             }
             this.Editor.Listeners.on(button, 'click', function () {
-                _this3.toolClicked(tool);
+                _this2.toolClicked(tool);
             });
             /** Enable shortcuts */
-            this.enableShortcuts(tool);
+            var toolsConfig = this.config.toolsConfig[toolName];
+            if (toolsConfig && toolsConfig.enableShortcut) {
+                this.enableShortcuts(tool);
+            }
         }
         /**
-         *
+         * Enable Tool shortcut with Editor Shortcuts Module
          * @param {InlineTool} tool
          */
 
     }, {
         key: 'enableShortcuts',
         value: function enableShortcuts(tool) {
-            var _this4 = this;
+            var _this3 = this;
 
             /**
              * Ignore tool that doesn't have shortcut name
@@ -17800,7 +17801,7 @@ var InlineToolbar = function (_Module) {
             this.Editor.Shortcuts.add({
                 name: tool.shortcut,
                 handler: function handler() {
-                    _this4.toolClicked(tool);
+                    _this3.toolClicked(tool);
                 }
             });
         }
@@ -17823,21 +17824,46 @@ var InlineToolbar = function (_Module) {
     }, {
         key: 'checkToolsState',
         value: function checkToolsState() {
-            this.tools.forEach(function (tool) {
+            for (var toolName in this.tools) {
+                var tool = this.tools[toolName];
                 tool.checkState(_selection2.default.get());
-            });
+            }
         }
+        /**
+         * Returns internal inline tools
+         * Includes Bold, Italic, Link
+         */
+
     }, {
         key: 'tools',
         get: function get() {
-            var _this5 = this;
-
             if (!this.toolsInstances) {
-                this.toolsInstances = [new _inlineToolBold2.default(this.Editor.API.methods), new _inlineToolItalic2.default(this.Editor.API.methods), new _inlineToolLink2.default(this.Editor.API.methods)].concat(_toConsumableArray(this.Editor.Tools.inline.map(function (Tool) {
-                    return new Tool(_this5.Editor.API.methods);
-                })));
+                this.toolsInstances = Object.assign({}, this.internalTools, this.externalTools);
             }
             return this.toolsInstances;
+        }
+    }, {
+        key: 'internalTools',
+        get: function get() {
+            return {
+                bold: new _inlineToolBold2.default(this.Editor.API.methods),
+                italic: new _inlineToolItalic2.default(this.Editor.API.methods),
+                link: new _inlineToolLink2.default(this.Editor.API.methods)
+            };
+        }
+        /**
+         * Get external tools
+         * Tools that has isInline is true
+         */
+
+    }, {
+        key: 'externalTools',
+        get: function get() {
+            var result = {};
+            for (var tool in this.Editor.Tools.inline) {
+                result[tool] = new this.Editor.Tools.inline[tool](this.Editor.API.methods);
+            }
+            return result;
         }
     }]);
 
@@ -17999,7 +18025,11 @@ var Toolbox = function (_Module) {
       });
 
       /** Enable shortcut */
-      this.enableShortcut(tool, toolName);
+      var toolsConfig = this.config.toolsConfig[toolName];
+
+      if (toolsConfig && toolsConfig.enableShortcut) {
+        this.enableShortcut(tool, toolName);
+      }
     }
 
     /**
@@ -18559,7 +18589,11 @@ var Tools = function (_Module) {
     get: function get() {
       var _this2 = this;
 
-      return Object.values(this.available).filter(function (tool) {
+      var tools = Object.entries(this.available).filter(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            name = _ref2[0],
+            tool = _ref2[1];
+
         if (!tool[_this2.apiSettings.IS_INLINE]) {
           return false;
         }
@@ -18579,6 +18613,17 @@ var Tools = function (_Module) {
 
         return true;
       });
+
+      var result = {};
+
+      tools.forEach(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            name = _ref4[0],
+            tool = _ref4[1];
+
+        return result[name] = tool;
+      });
+      return result;
     }
 
     /**
@@ -18591,10 +18636,10 @@ var Tools = function (_Module) {
       var _this3 = this;
 
       // eslint-disable-next-line no-unused-vars
-      var tools = Object.entries(this.available).filter(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            name = _ref2[0],
-            tool = _ref2[1];
+      var tools = Object.entries(this.available).filter(function (_ref5) {
+        var _ref6 = _slicedToArray(_ref5, 2),
+            name = _ref6[0],
+            tool = _ref6[1];
 
         if (tool[_this3.apiSettings.IS_INLINE]) {
           return false;
@@ -18605,10 +18650,10 @@ var Tools = function (_Module) {
 
       var result = {};
 
-      tools.forEach(function (_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 2),
-            name = _ref4[0],
-            tool = _ref4[1];
+      tools.forEach(function (_ref7) {
+        var _ref8 = _slicedToArray(_ref7, 2),
+            name = _ref8[0],
+            tool = _ref8[1];
 
         return result[name] = tool;
       });
@@ -18643,9 +18688,9 @@ var Tools = function (_Module) {
   }, {
     key: 'defaultConfig',
     get: function get() {
-      var _ref5;
+      var _ref9;
 
-      return _ref5 = {}, _defineProperty(_ref5, this.apiSettings.TOOLBAR_ICON_CLASS, false), _defineProperty(_ref5, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref5, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref5, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref5, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _ref5;
+      return _ref9 = {}, _defineProperty(_ref9, this.apiSettings.TOOLBAR_ICON_CLASS, false), _defineProperty(_ref9, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref9, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _ref9;
     }
 
     /**
@@ -18656,8 +18701,8 @@ var Tools = function (_Module) {
 
   }]);
 
-  function Tools(_ref6) {
-    var config = _ref6.config;
+  function Tools(_ref10) {
+    var config = _ref10.config;
 
     _classCallCheck(this, Tools);
 

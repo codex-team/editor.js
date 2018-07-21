@@ -1,3 +1,5 @@
+import {IBlockToolData} from '../interfaces/block-tool';
+
 /**
  * Inline toolbar with actions that modifies selected text fragment
  *
@@ -47,7 +49,7 @@ export default class InlineToolbar extends Module {
   /**
    * Tools instances
    */
-  private toolsInstances: InlineTool[];
+  private toolsInstances: {[name: string]: InlineTool} ;
 
   /**
    * @constructor
@@ -58,16 +60,11 @@ export default class InlineToolbar extends Module {
 
   /**
    * Inline Toolbar Tools
-   * @todo Merge internal tools with external
+   * includes internal and external tools
    */
-  get tools(): InlineTool[] {
+  get tools(): {[name: string]: InlineTool} {
     if (!this.toolsInstances) {
-      this.toolsInstances = [
-        new BoldInlineTool(this.Editor.API.methods),
-        new ItalicInlineTool(this.Editor.API.methods),
-        new LinkInlineTool(this.Editor.API.methods),
-        ...this.Editor.Tools.inline.map( (Tool) => new Tool(this.Editor.API.methods) ),
-      ];
+      this.toolsInstances = {...this.internalTools, ...this.externalTools}
     }
     return this.toolsInstances;
   }
@@ -152,12 +149,12 @@ export default class InlineToolbar extends Module {
    */
   private open() {
     this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
-
-    this.tools.forEach( (tool) => {
+    for (const toolName in this.tools) {
+      const tool = this.tools[toolName];
       if (typeof tool.clear === 'function') {
         tool.clear();
       }
-    });
+    }
   }
 
   /**
@@ -165,12 +162,12 @@ export default class InlineToolbar extends Module {
    */
   private close() {
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
-
-    this.tools.forEach( (tool) => {
+    for (const toolName in this.tools) {
+      const tool = this.tools[toolName];
       if (typeof tool.clear === 'function') {
         tool.clear();
       }
-    });
+    }
   }
 
   /**
@@ -224,20 +221,20 @@ export default class InlineToolbar extends Module {
    * Fill Inline Toolbar with Tools
    */
   private addTools(): void {
-    this.tools.forEach( (tool) => {
-      this.addTool(tool);
-    });
+    console.log(this.tools);
+    for (const tool in this.tools) {
+      this.addTool(tool, this.tools[tool]);
+    }
   }
 
   /**
    * Add tool button and activate clicks
-   * @param {InlineTool} tool - Tool's instance
    */
-  private addTool(tool: InlineTool): void {
+  private addTool(toolName: string, tool: InlineTool): void {
     const button = tool.render();
 
     if (!button) {
-      _.log('Render method must return an instance of Node', 'warn', tool);
+      _.log('Render method must return an instance of Node', 'warn', toolName);
       return;
     }
 
@@ -253,11 +250,14 @@ export default class InlineToolbar extends Module {
     });
 
     /** Enable shortcuts */
-    this.enableShortcuts(tool);
+    const toolsConfig = this.config.toolsConfig[toolName];
+    if (toolsConfig && toolsConfig.enableShortcut) {
+      this.enableShortcuts(tool);
+    }
   }
 
   /**
-   *
+   * Enable Tool shortcut with Editor Shortcuts Module
    * @param {InlineTool} tool
    */
   private enableShortcuts(tool: InlineTool): void {
@@ -293,8 +293,33 @@ export default class InlineToolbar extends Module {
    * Check Tools` state by selection
    */
   private checkToolsState(): void {
-    this.tools.forEach( (tool) => {
+    for (const toolName in this.tools) {
+      const tool = this.tools[toolName];
       tool.checkState(Selection.get());
-    });
+    }
   }
+
+  /**
+   * Returns internal inline tools
+   * Includes Bold, Italic, Link
+   */
+  private get internalTools(): {[name: string]: InlineTool} {
+    return {
+      bold: new BoldInlineTool(this.Editor.API.methods),
+      italic: new ItalicInlineTool(this.Editor.API.methods),
+      link: new LinkInlineTool(this.Editor.API.methods),
+    };
+  }
+
+  /**
+   * Get external tools
+   * Tools that has isInline is true
+   */
+  private get externalTools(): {[name: string]: InlineTool} {
+    const result = {};
+    for (const tool in this.Editor.Tools.inline) {
+      result[tool] = new this.Editor.Tools.inline[tool](this.Editor.API.methods);
+    }
+    return result;
+  };
 }

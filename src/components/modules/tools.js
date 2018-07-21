@@ -63,7 +63,7 @@ export default class Tools extends Module {
    * @return {Array} - array of Inline Tool's classes
    */
   get inline() {
-    return Object.values(this.available).filter( tool => {
+    const tools = Object.entries(this.available).filter( ([name, tool]) => {
       if (!tool[this.apiSettings.IS_INLINE]) {
         return false;
       }
@@ -81,6 +81,11 @@ export default class Tools extends Module {
 
       return true;
     });
+
+    const result = {};
+
+    tools.forEach(([name, tool]) => result[name] = tool);
+    return result;
   }
 
   /**
