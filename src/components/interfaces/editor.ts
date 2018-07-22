@@ -39,7 +39,7 @@ export default interface IEditor {
 
   SaverAPI: SaverAPI;
 
-  SelectionAPI: SelectionAPI; // @todo create interface
+  SelectionAPI: SelectionAPI;
 
   Shortcuts: Module; // @todo create interface
 
