@@ -8,6 +8,7 @@
  */
 
 import {IBlockToolData} from '../interfaces/block-tool';
+import IEditorConfig from '../interfaces/editor-config';
 
 declare const Module: any;
 declare const $: any;
@@ -69,6 +70,7 @@ export default class Paste extends Module {
 
   /**
    * @constructor
+   * @param {IEditorConfig} config
    */
   constructor({config}) {
     super({config});
@@ -84,6 +86,7 @@ export default class Paste extends Module {
    */
   private setCallback(): void {
     const {Listeners, UI} = this.Editor;
+
     Listeners.on(UI.nodes.redactor, 'paste', this.processPastedData);
   }
 
@@ -92,6 +95,7 @@ export default class Paste extends Module {
    */
   private processTools(): void {
     const tools = this.Editor.Tools.blockTools;
+
     Object.entries(tools).forEach(this.processTool);
   }
 
@@ -101,7 +105,6 @@ export default class Paste extends Module {
    * @param {string} tool
    */
   private processTool = ([name, tool]) => {
-
     const toolPasteConfig = tool.onPaste || {};
 
     if (!toolPasteConfig.handler) {
@@ -402,6 +405,7 @@ export default class Paste extends Module {
     if (!plain) {
       return [];
     }
+
     const tool = initialBlock;
     const handler = Tools.blockTools[tool].onPaste.handler;
 
@@ -409,6 +413,7 @@ export default class Paste extends Module {
       const content = $.make('div');
 
       content.innerHTML = plain;
+
       return {content, tool, isBlock: false, handler};
     });
   }
@@ -431,6 +436,7 @@ export default class Paste extends Module {
       }
 
       const lastNode = nodes[nodes.length - 1];
+
       let destNode: Node = new DocumentFragment();
 
       if (lastNode && $.isFragment(lastNode)) {
@@ -445,6 +451,7 @@ export default class Paste extends Module {
          */
         case Node.ELEMENT_NODE:
           const element = node as HTMLElement;
+
           /** Append inline elements to previous fragment */
           if (
             !$.blockElements.includes(element.tagName.toLowerCase()) &&

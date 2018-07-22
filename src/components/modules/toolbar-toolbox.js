@@ -1,3 +1,5 @@
+import IEditorConfig from '../interfaces/editor-config';
+
 /**
  * @class Toolbox
  * @classdesc Holder for Tools
@@ -11,6 +13,7 @@
 export default class Toolbox extends Module {
   /**
    * @constructor
+   * @param {IEditorConfig} config
    */
   constructor({config}) {
     super({config});
@@ -63,8 +66,8 @@ export default class Toolbox extends Module {
   /**
    * Append Tool to the Toolbox
    *
-   * @param {string} toolName  - tool name
-   * @param {IBlockTool}  tool - tool class
+   * @param {string} toolName - tool name
+   * @param {IBlockTool} tool - tool class
    */
   addTool(toolName, tool) {
     const api = this.Editor.Tools.apiSettings;
@@ -135,7 +138,7 @@ export default class Toolbox extends Module {
   }
 
   /**
-   * inserts new block
+   * Inserts new block
    * Can be called when button clicked on Toolbox or by Shortcut
    *
    * @param {IBlockTool} tool - Tool Class

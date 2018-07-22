@@ -1,4 +1,13 @@
-import {IBlockToolData} from '../interfaces/block-tool';
+declare var Module: any;
+declare var $: any;
+declare var _: any;
+
+import BoldInlineTool from '../inline-tools/inline-tool-bold';
+import ItalicInlineTool from '../inline-tools/inline-tool-italic';
+import LinkInlineTool from '../inline-tools/inline-tool-link';
+import EditorConfig from '../interfaces/editor-config';
+import InlineTool from '../interfaces/inline-tool';
+import Selection from '../selection';
 
 /**
  * Inline toolbar with actions that modifies selected text fragment
@@ -7,15 +16,6 @@ import {IBlockToolData} from '../interfaces/block-tool';
  * |   B  i [link] [mark]   |
  * | _______________________|
  */
-declare var Module: any;
-declare var $: any;
-declare var _: any;
-import BoldInlineTool from '../inline-tools/inline-tool-bold';
-import ItalicInlineTool from '../inline-tools/inline-tool-italic';
-import LinkInlineTool from '../inline-tools/inline-tool-link';
-import InlineTool from '../interfaces/inline-tool';
-import Selection from '../selection';
-
 export default class InlineToolbar extends Module {
 
   /**
@@ -53,6 +53,7 @@ export default class InlineToolbar extends Module {
 
   /**
    * @constructor
+   * @param {EditorConfig} config
    */
   constructor({config}) {
     super({config});
@@ -67,6 +68,7 @@ export default class InlineToolbar extends Module {
   get tools(): Map<string, InlineTool> {
     if (!this.toolsInstances || this.toolsInstances.size === 0) {
       const allTools = {...this.internalTools, ...this.externalTools};
+
       this.toolsInstances = new Map();
       for (const tool in allTools) {
         if (allTools.hasOwnProperty(tool)) {
@@ -74,6 +76,7 @@ export default class InlineToolbar extends Module {
         }
       }
     }
+
     return this.toolsInstances;
   }
 
@@ -81,7 +84,6 @@ export default class InlineToolbar extends Module {
    * Making DOM
    */
   public make() {
-
     this.nodes.wrapper = $.make('div', this.CSS.inlineToolbar);
     this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
@@ -125,10 +127,8 @@ export default class InlineToolbar extends Module {
    * Move Toolbar to the selected text
    */
   public move(): void {
-
     const selectionRect = Selection.rect;
     const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
-
     const newCoords = {
       x: selectionRect.x - wrapperOffset.left,
       y: selectionRect.y
@@ -183,6 +183,7 @@ export default class InlineToolbar extends Module {
      * Ex. IMG tag returns null (Firefox) or Redactors wrapper (Chrome)
      */
     const tagsConflictsWithSelection = ['IMG', 'INPUT'];
+
     if (event && tagsConflictsWithSelection.includes(event.target.tagName)) {
       return false;
     }
@@ -269,9 +270,11 @@ export default class InlineToolbar extends Module {
       name: shortcut,
       handler: (event) => {
         const {currentBlock} = this.Editor.BlockManager;
+
         if (!currentBlock.settings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
           return;
         }
+
         event.preventDefault();
         this.toolClicked(tool);
       },
@@ -287,7 +290,6 @@ export default class InlineToolbar extends Module {
 
     tool.surround(range);
     this.checkToolsState();
-
   }
 
   /**
@@ -317,11 +319,13 @@ export default class InlineToolbar extends Module {
    */
   private get externalTools(): {[name: string]: InlineTool} {
     const result = {};
+
     for (const tool in this.Editor.Tools.inline) {
       if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
         result[tool] = new this.Editor.Tools.inline[tool](this.Editor.API.methods);
       }
     }
+
     return result;
   }
 }

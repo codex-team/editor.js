@@ -1,11 +1,7 @@
-/**
- * @class Shortcut
- * @classdesc Allows to register new shortcut
- *
- * Internal Shortcuts Module
- */
+
 import Shortcut from '@codexteam/shortcuts';
 import IShortcut from '../interfaces/shortcut';
+import IEditorConfig from '../interfaces/editor-config';
 
 /**
  * Contains keyboard and mouse events binded on each Block by Block Manager
@@ -13,10 +9,12 @@ import IShortcut from '../interfaces/shortcut';
 declare var Module: any;
 
 /**
- * Register all methods to save state
+ * @class Shortcut
+ * @classdesc Allows to register new shortcut
+ *
+ * Internal Shortcuts Module
  */
 export default class Shortcuts extends Module {
-
   /**
    * All registered shortcuts
    * @type {IShortcut[]}
@@ -25,6 +23,7 @@ export default class Shortcuts extends Module {
 
   /**
    * @constructor
+   * @param {IEditorConfig} config
    */
   constructor({config}) {
     super({config});
@@ -52,5 +51,4 @@ export default class Shortcuts extends Module {
   public remove(shortcut: string): void {
     // Remove
   }
-
 }
