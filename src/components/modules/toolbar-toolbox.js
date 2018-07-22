@@ -195,4 +195,8 @@ export default class Toolbox extends Module {
       this.close();
     }
   }
+
+  leaf() {
+    console.log(this.nodes.toolbox);
+  }
 }

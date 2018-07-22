@@ -14167,6 +14167,9 @@ var BlockEvents = function (_Module) {
                 case _.keyCodes.LEFT:
                     this.arrowLeftAndUp();
                     break;
+                case _.keyCodes.TAB:
+                    this.tabPressed(event);
+                    break;
                 default:
                     this.defaultHandler();
                     break;
@@ -14186,7 +14189,7 @@ var BlockEvents = function (_Module) {
             /**
              * Hide Toolbar
              */
-            this.Editor.Toolbar.close();
+            // this.Editor.Toolbar.close();
         }
         /**
          * Key up on Block:
@@ -14207,6 +14210,24 @@ var BlockEvents = function (_Module) {
         key: "mouseUp",
         value: function mouseUp(event) {
             this.Editor.InlineToolbar.handleShowingEvent(event);
+        }
+        /**
+         * Open Toolbox to leaf Tools
+         * @param event
+         */
+
+    }, {
+        key: "tabPressed",
+        value: function tabPressed(event) {
+            /** Prevent Default behaviour */
+            event.preventDefault();
+            event.stopPropagation();
+            if (this.Editor.Toolbar.opened) {
+                this.Editor.Toolbox.open();
+            }
+            if (this.Editor.Toolbox.opened) {
+                this.Editor.Toolbox.leaf();
+            }
         }
         /**
          * ENTER pressed on block
@@ -17970,6 +17991,11 @@ var Toolbox = function (_Module) {
         this.close();
       }
     }
+  }, {
+    key: 'leaf',
+    value: function leaf() {
+      console.log(this.nodes.toolbox);
+    }
   }], [{
     key: 'CSS',
     get: function get() {
@@ -18215,11 +18241,16 @@ var Toolbar = function (_Module) {
     }
 
     /**
-     * Close the Toolbar
+     * @return {*}
      */
 
   }, {
     key: 'close',
+
+
+    /**
+     * Close the Toolbar
+     */
     value: function close() {
       this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
     }
@@ -18271,6 +18302,11 @@ var Toolbar = function (_Module) {
       } else {
         this.Editor.BlockSettings.open();
       }
+    }
+  }, {
+    key: 'opened',
+    get: function get() {
+      return this.nodes.wrapper.classList.contains(Toolbar.CSS.toolbarOpened);
     }
   }, {
     key: 'plusButton',
@@ -18933,10 +18969,6 @@ var UI = function (_Module) {
       switch (event.keyCode) {
         case _.keyCodes.ENTER:
           this.enterPressed(event);
-          break;
-        case _.keyCodes.TAB:
-          this.Editor.Toolbar.open();
-          event.preventDefault();
           break;
         default:
           this.defaultBehaviour(event);

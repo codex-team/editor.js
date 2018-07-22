@@ -45,6 +45,10 @@ export default class BlockEvents extends Module {
         this.arrowLeftAndUp();
         break;
 
+      case _.keyCodes.TAB:
+        this.tabPressed(event);
+        break;
+
       default:
         this.defaultHandler();
         break;
@@ -63,7 +67,7 @@ export default class BlockEvents extends Module {
     /**
      * Hide Toolbar
      */
-    this.Editor.Toolbar.close();
+    // this.Editor.Toolbar.close();
   }
 
   /**
@@ -80,6 +84,25 @@ export default class BlockEvents extends Module {
    */
   public mouseUp(event): void {
     this.Editor.InlineToolbar.handleShowingEvent(event);
+  }
+
+  /**
+   * Open Toolbox to leaf Tools
+   * @param event
+   */
+  public tabPressed(event): void {
+
+    /** Prevent Default behaviour */
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (this.Editor.Toolbar.opened) {
+      this.Editor.Toolbox.open();
+    }
+
+    if (this.Editor.Toolbox.opened) {
+      this.Editor.Toolbox.leaf();
+    }
   }
 
   /**

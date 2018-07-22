@@ -152,10 +152,6 @@ export default class UI extends Module {
       case _.keyCodes.ENTER:
         this.enterPressed(event);
         break;
-      case _.keyCodes.TAB:
-        this.Editor.Toolbar.open();
-        event.preventDefault();
-        break;
       default:
         this.defaultBehaviour(event);
         break;

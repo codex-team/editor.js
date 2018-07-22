@@ -195,6 +195,13 @@ export default class Toolbar extends Module {
   }
 
   /**
+   * @return {*}
+   */
+  get opened() {
+    return this.nodes.wrapper.classList.contains(Toolbar.CSS.toolbarOpened);
+  }
+
+  /**
    * Close the Toolbar
    */
   close() {
