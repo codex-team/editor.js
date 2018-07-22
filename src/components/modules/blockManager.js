@@ -114,6 +114,8 @@ export default class BlockManager extends Module {
    * @return {Block}
    */
   insert(toolName = this.config.initialBlock, data = {}, settings = {}) {
+    settings = this.config.toolsConfig[toolName];
+
     let block = this.composeBlock(toolName, data, settings);
 
     this._blocks[++this.currentBlockIndex] = block;

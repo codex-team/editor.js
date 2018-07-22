@@ -14536,6 +14536,8 @@ var BlockManager = function (_Module) {
       var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
+      settings = this.config.toolsConfig[toolName];
+
       var block = this.composeBlock(toolName, data, settings);
 
       this._blocks[++this.currentBlockIndex] = block;
@@ -17814,7 +17816,13 @@ var InlineToolbar = function (_Module) {
 
             this.Editor.Shortcuts.add({
                 name: shortcut,
-                handler: function handler() {
+                handler: function handler(event) {
+                    var currentBlock = _this4.Editor.BlockManager.currentBlock;
+
+                    if (!currentBlock.settings[_this4.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
+                        return;
+                    }
+                    event.preventDefault();
                     _this4.toolClicked(tool);
                 }
             });
@@ -18067,7 +18075,8 @@ var Toolbox = function (_Module) {
 
       this.Editor.Shortcuts.add({
         name: shortcut,
-        handler: function handler() {
+        handler: function handler(event) {
+          event.preventDefault();
           _this3.insertNewBlock(tool, toolName);
         }
       });

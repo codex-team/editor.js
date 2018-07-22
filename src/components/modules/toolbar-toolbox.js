@@ -127,7 +127,8 @@ export default class Toolbox extends Module {
   enableShortcut(tool, toolName, shortcut) {
     this.Editor.Shortcuts.add({
       name: shortcut,
-      handler: () => {
+      handler: (event) => {
+        event.preventDefault();
         this.insertNewBlock(tool, toolName);
       }
     });
