@@ -23,6 +23,8 @@ Load Tools with their classes and styles.
 <link rel="stylesheet" href="text/text.css">
 ```
 
+Check out directories [plugins](../example/plugins/) and [tools-inline](../example/tools-inline/) to see Tools made by us.
+
 ## Create Editor instance
 
 Create a new variable with an instance of Editor and pass initial params [object](../src/components/interfaces/editor-config.ts).
