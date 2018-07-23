@@ -65,6 +65,36 @@ var editor = new CodexEditor({
 });
 ```
 
+## Saving Data from Editor
+
+Use module Saver's function `save()` to get a promise with data from Editor.
+
+```javascript
+editor.saver.save()
+  .then((savedData) => {
+    console.log(savedData);
+  });
+```  
+
+## Render new data
+
+Run function `render()` from module Blocks to reload Editor with a new data.
+
+Passed object should implements [IInputOutputData](../src/components/interfaces/input-output-data.ts) interface.
+
+```javascript
+editor.blocks.render({
+  items: [
+    {
+      type : 'text',
+      data : {
+        text : 'Hello from CodeX Team!'
+      }
+    }
+  ],
+});
+```  
+
 ## Example
 
 Check out our [example page](../example/example.html).
