@@ -16559,7 +16559,7 @@ var Paste = function (_Module) {
             var handler = Tools.blockTools[tool].onPaste.handler;
             return plain.split('\n\n').map(function (text) {
                 var content = $.make('div');
-                content.innerHTML = plain;
+                content.innerHTML = text;
                 return { content: content, tool: tool, isBlock: false, handler: handler };
             });
         }

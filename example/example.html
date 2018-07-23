@@ -103,4 +103,17 @@
     window.editor = editor;
 
 </script>
+
+<button onclick='editor.saver.save().then((savedData) => {
+  document.getElementById("output").innerHTML = JSON.stringify(savedData, null, 2);
+})'>save</button>
+<pre>
+<div id='output'></div>
+</pre>
+<style media="screen">
+  #output {
+    font-family: monospace;
+    word-wrap: break-word;
+  }
+</style>
 </html>
