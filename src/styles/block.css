@@ -1,0 +1,15 @@
+.ce-block {
+  &:first-of-type {
+    margin-top: 0;
+  }
+
+  &--selected {
+    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);
+    border-radius: 3px;
+  }
+
+  &__content {
+    max-width: var(--content-width);
+    margin: 0 auto;
+  }
+}

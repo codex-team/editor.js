@@ -1,0 +1,57 @@
+.ce-toolbar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  /*opacity: 0;*/
+  /*visibility: hidden;*/
+  transition: opacity 100ms ease;
+  will-change: opacity, transform;
+  display: none;
+
+  &--opened {
+    display: block;
+    /*opacity: 1;*/
+    /*visibility: visible;*/
+  }
+
+  &__content {
+    max-width: var(--content-width);
+    margin: 0 auto;
+    position: relative;
+  }
+
+  &__plus {
+    @apply --toolbox-button;
+
+    position: absolute;
+    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);
+
+    &--hidden {
+      display: none;
+    }
+  }
+
+  /**
+   * Block actions Zone
+   * -------------------------
+   */
+  &__actions {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding-right: 16px;
+
+    &-buttons {
+      text-align: right;
+    }
+  }
+
+  &__settings-btn {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    color: var(--grayText);
+    cursor: pointer;
+  }
+}

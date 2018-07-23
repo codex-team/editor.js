@@ -1,0 +1,113 @@
+:root {
+  /**
+   * Selection color
+   */
+  --selectionColor: rgba(61,166,239,0.63);
+
+  /**
+   * Toolbar buttons
+   */
+  --bg-light: #eff2f5;
+
+  /**
+   * All gray texts: placeholders, settings
+   */
+  --grayText: #707684;
+
+  /** Blue icons */
+  --color-active-icon: #388AE5;
+
+  /**
+   * Block content width
+   */
+  --content-width: 650px;
+
+  /**
+   * Toolbar buttons height and width
+   */
+  --toolbar-buttons-size: 34px;
+
+  /**
+   * Toolbar Plus Button and Toolbox buttons height and width
+   */
+  --toolbox-buttons-size: 20px;
+
+  /**
+   * Confirm deletion bg
+   */
+  --color-confirm: #E24A4A;
+
+  --overlay-pane: {
+    position: absolute;
+    background-color: #FFFFFF;
+    box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);
+    border-radius: 4px;
+    z-index: 2;
+
+    &::before {
+      content: '';
+      width: 15px;
+      height: 15px;
+      position: absolute;
+      top: -7px;
+      left: 50%;
+      margin-left: -7px;
+      transform: rotate(-45deg);
+      background-color: #fff;
+      z-index: -1;
+    }
+  };
+
+  /**
+   * Styles for Toolbox Buttons and Plus Button
+   */
+  --toolbox-button: {
+    color: var(--grayText);
+    cursor: pointer;
+    display: inline-block;
+    width: var(--toolbox-buttons-size);
+    height: var(--toolbox-buttons-size);
+    /*line-height: var(--toolbox-buttons-size);*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &:not(:last-of-type){
+      margin-right: 3px;
+    }
+
+    &:hover {
+      color: var(--color-active-icon);
+    }
+  };
+
+  /**
+   * Styles for Settings Button in Toolbar
+   */
+  --toolbar-button: {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    text-align: center;
+    border-radius: 3px;
+    cursor: pointer;
+    border: 0;
+    outline: none;
+    background-color: transparent;
+    vertical-align: bottom;
+    color: var(--grayText);
+
+    &:not(:last-of-type){
+      margin-right: 5px;
+    }
+
+    &:hover {
+      background-color: var(--bg-light);
+    }
+
+    &--active {
+      color: var(--color-active-icon);
+    }
+  };
+}

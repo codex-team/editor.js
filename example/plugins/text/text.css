@@ -1,0 +1,44 @@
+/**
+* Empty paragraph placeholder
+*/
+
+.ce-text {
+  padding: 10px 0;
+  line-height: 1.6em;
+  outline: none;
+}
+
+.ce-text p:first-of-type {
+  margin-top: 0;
+}
+
+.ce-text p:last-of-type {
+  margin-bottom: 0;
+}
+
+
+.ce-paragraph:empty::before,
+.ce-paragraph p:empty::before{
+    content : attr(data-placeholder);
+    color: #818BA1;
+    opacity: .7;
+    transition: opacity 200ms ease;
+}
+.ce-paragraph:focus::before{
+	opacity: .1;
+}
+
+.toolbar-opened .ce-paragraph::before {
+    display: none;
+}
+
+
+.ce-paragraph p {
+    margin: 1.2em 0;
+}
+.ce-paragraph p:first-of-type{
+    margin-top: 0;
+}
+.ce-paragraph p:last-of-type{
+    margin-bottom: 0;
+}

@@ -1,0 +1,8 @@
+{
+  "compilerOptions" : {
+    "sourceMap": true,
+    "target": "es2017",
+    "declaration": false,
+    "lib": ["es2017", "dom"]
+  }
+}

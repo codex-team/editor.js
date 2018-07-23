@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CodeX Editor example</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+            font-size: 14px;
+            line-height: 1.5em;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="codex-editor"></div>
+
+</body>
+
+
+
+<link rel="stylesheet" href="tools-inline/term/term.css">
+<script src="tools-inline/term/term.js"></script>
+
+<script src="plugins/text/text.js?v=100"></script>
+<link rel="stylesheet" href="plugins/text/text.css">
+
+<!--<script src="plugins/header/header.js"></script>-->
+<!--<link rel="stylesheet" href="plugins/header/header.css">-->
+
+<script src="plugins/code/code.js"></script>
+<link rel="stylesheet" href="plugins/code/code.css">
+
+<script src="plugins/header/header.js?v=100"></script>
+<link rel="stylesheet" href="plugins/header/header.css">
+
+<script src="../build/codex-editor.js?v=108"></script>
+
+<script>
+    codex = {};
+    codex.editor = 1;
+    var editor = new CodexEditor({
+        holderId : 'codex-editor',
+        initialBlock : 'text',
+        tools: {
+            text: Text,
+            header: Header,
+            term: Term,
+        },
+        toolsConfig: {
+            text: {
+              inlineToolbar : true
+            },
+        },
+        data: {
+            items: [
+                {
+                    type : 'text',
+                    data : {
+                        text : 'Привет от CodeX'
+                    }
+                },
+                {
+                    type : 'text',
+                    data : {
+                        text : 'В <b>JavaScript</b> <a href="https://ifmo.su/ts-classes">нет возможности</a> назначить свойства при объявлении класса — все необходимые значения нужно определять в конструкторе или других методах. При таком подходе объявление свойств неявное, не всегда ясно какие свойства имеет класс. TS решает эту проблему: здесь можно не только объявить свойства класса, но и назначить им начальные значения'
+                    }
+                },
+                {
+                  type: "header",
+                  data: {
+                    text: "ES6 тебя сожрет",
+                    level: 4
+                  }
+                },
+                {
+                  type : 'text',
+                  data : {
+                    text : 'Одним из недостатков ES6 классов является невозможность сделать методы и свойства приватными. В TS есть привычные модификаторы: <span class="marked">public</span>, <span class="marked">private</span> и <span class="marked">protected</span>, которые можно использовать как для методов, так и для свойств. По умолчанию, как и в других языках, все свойства имеют модификатор <span class="marked">public</span>.'
+                  }
+                },
+                {
+                  type: "header",
+                  data: {
+                    text: "Header 2",
+                    level: 2
+                  }
+                },
+                {
+                  type: "header",
+                  data: {
+                    text: "Header 3",
+                    level: 3
+                  }
+                },
+                {
+                  type: "header",
+                  data: {
+                    text: "Header 4",
+                    level: 4
+                  }
+                },
+            ]
+        }
+    });
+
+    console.log('Editor instance:', editor);
+
+    window.editor = editor;
+
+</script>
+</html>
