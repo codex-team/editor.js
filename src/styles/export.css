@@ -24,7 +24,7 @@
 .cdx-settings-button {
   @apply --toolbar-button;
 
-  &--actvie {
+  &--active {
     color: var(--color-active-icon);
   }
 }
