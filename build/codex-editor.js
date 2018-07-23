@@ -11410,7 +11410,6 @@ var CodexEditor = function () {
 
       this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
       this.config.tools = config.tools || {};
-      this.config.toolsConfig = config.toolsConfig || {};
       this.config.data = config.data || {};
 
       /**
@@ -14137,7 +14136,7 @@ var BlockEvents = function (_Module) {
         key: "enter",
         value: function enter(event) {
             var currentBlock = this.Editor.BlockManager.currentBlock,
-                toolsConfig = this.config.toolsConfig[currentBlock.name];
+                toolsConfig = this.Editor.Tools.getToolConfig(currentBlock.name);
             /**
              * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
              * Uses for Tools like <code> where line breaks should be handled by default behaviour.
@@ -17654,7 +17653,7 @@ var InlineToolbar = function (_Module) {
             if (!currentBlock) {
                 return false;
             }
-            var toolConfig = this.config.toolsConfig[currentBlock.name];
+            var toolConfig = this.Editor.Tools.getToolConfig(currentBlock.name);
             return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
         }
         /**
@@ -17700,7 +17699,7 @@ var InlineToolbar = function (_Module) {
              * Enable shortcuts
              * Ignore tool that doesn't have shortcut or empty string
              */
-            var toolsConfig = this.config.toolsConfig[toolName];
+            var toolsConfig = this.Editor.Tools.getToolConfig(toolName);
             if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
                 this.enableShortcuts(tool, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
             }
@@ -17721,7 +17720,7 @@ var InlineToolbar = function (_Module) {
                 handler: function handler(event) {
                     var currentBlock = _this4.Editor.BlockManager.currentBlock;
 
-                    var toolConfig = _this4.config.toolsConfig[currentBlock.name];
+                    var toolConfig = _this4.Editor.Tools.getToolConfig(currentBlock.name);
                     if (!toolConfig || !toolConfig[_this4.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
                         return;
                     }
@@ -17964,7 +17963,7 @@ var Toolbox = function (_Module) {
       });
 
       /** Enable shortcut */
-      var toolsConfig = this.config.toolsConfig[toolName];
+      var toolsConfig = this.Editor.Tools.getToolConfig(toolName);
 
       if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
         this.enableShortcut(tool, toolName, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
@@ -18444,6 +18443,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -18669,6 +18670,12 @@ var Tools = function (_Module) {
     _this.toolClasses = {};
 
     /**
+     * Tools configs in map {name: config, ...}
+     * @type {Object}
+     */
+    _this.toolsConfig = {};
+
+    /**
      * Available tools list
      * {name: Class, ...}
      * @type {Object}
@@ -18700,7 +18707,16 @@ var Tools = function (_Module) {
       }
 
       for (var toolName in this.config.tools) {
-        this.toolClasses[toolName] = this.config.tools[toolName];
+        this.toolsConfig[toolName] = {};
+
+        if (_typeof(this.config.tools[toolName]) === 'object') {
+          this.toolClasses[toolName] = this.config.tools[toolName].class;
+          this.toolsConfig[toolName] = this.config.tools[toolName];
+
+          // delete this.toolsConfig[toolName].class;
+        } else {
+          this.toolClasses[toolName] = this.config.tools[toolName];
+        }
       }
 
       /**
@@ -18790,7 +18806,7 @@ var Tools = function (_Module) {
     key: 'construct',
     value: function construct(tool, data) {
       var plugin = this.toolClasses[tool],
-          config = this.config.toolsConfig[tool];
+          config = this.toolsConfig[tool];
 
       var instance = new plugin(data, config || {});
 
@@ -18807,6 +18823,18 @@ var Tools = function (_Module) {
     key: 'isInitial',
     value: function isInitial(tool) {
       return tool instanceof this.available[this.config.initialBlock];
+    }
+
+    /**
+     * Return Tool's config by name
+     * @param toolname
+     * @return {IBlockToolConfig}
+     */
+
+  }, {
+    key: 'getToolConfig',
+    value: function getToolConfig(toolname) {
+      return this.toolsConfig[toolname];
     }
   }]);
 

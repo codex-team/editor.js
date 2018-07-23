@@ -208,7 +208,7 @@ export default class InlineToolbar extends Module {
       return false;
     }
 
-    const toolConfig = this.config.toolsConfig[currentBlock.name];
+    const toolConfig = this.Editor.Tools.getToolConfig(currentBlock.name);
 
     return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
   }
@@ -253,7 +253,7 @@ export default class InlineToolbar extends Module {
      * Enable shortcuts
      * Ignore tool that doesn't have shortcut or empty string
      */
-    const toolsConfig = this.config.toolsConfig[toolName];
+    const toolsConfig = this.Editor.Tools.getToolConfig(toolName);
 
     if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
       this.enableShortcuts(tool, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
@@ -270,7 +270,7 @@ export default class InlineToolbar extends Module {
       name: shortcut,
       handler: (event) => {
         const {currentBlock} = this.Editor.BlockManager;
-        const toolConfig = this.config.toolsConfig[currentBlock.name];
+        const toolConfig =  this.Editor.Tools.getToolConfig(currentBlock.name);
 
         if (!toolConfig || !toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
           return;

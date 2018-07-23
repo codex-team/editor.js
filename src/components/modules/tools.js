@@ -163,6 +163,12 @@ export default class Tools extends Module {
     this.toolClasses = {};
 
     /**
+     * Tools configs in map {name: config, ...}
+     * @type {Object}
+     */
+    this.toolsConfig = {};
+
+    /**
      * Available tools list
      * {name: Class, ...}
      * @type {Object}
@@ -187,7 +193,16 @@ export default class Tools extends Module {
     }
 
     for(let toolName in this.config.tools) {
-      this.toolClasses[toolName] = this.config.tools[toolName];
+      this.toolsConfig[toolName] = {};
+
+      if (typeof this.config.tools[toolName] === 'object') {
+        this.toolClasses[toolName] = this.config.tools[toolName].class;
+        this.toolsConfig[toolName] = this.config.tools[toolName];
+
+        // delete this.toolsConfig[toolName].class;
+      } else {
+        this.toolClasses[toolName] = this.config.tools[toolName];
+      }
     }
 
     /**
@@ -265,7 +280,7 @@ export default class Tools extends Module {
    */
   construct(tool, data) {
     let plugin = this.toolClasses[tool],
-      config = this.config.toolsConfig[tool];
+      config = this.toolsConfig[tool];
 
     let instance = new plugin(data, config || {});
 
@@ -279,5 +294,14 @@ export default class Tools extends Module {
    */
   isInitial(tool) {
     return tool instanceof this.available[this.config.initialBlock];
+  }
+
+  /**
+   * Return Tool's config by name
+   * @param toolname
+   * @return {IBlockToolConfig}
+   */
+  getToolConfig(toolname) {
+    return this.toolsConfig[toolname];
   }
 }

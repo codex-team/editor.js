@@ -114,7 +114,7 @@ export default class Toolbox extends Module {
     });
 
     /** Enable shortcut */
-    const toolsConfig = this.config.toolsConfig[toolName];
+    const toolsConfig = this.Editor.Tools.getToolConfig(toolName);
 
     if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
       this.enableShortcut(tool, toolName, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);

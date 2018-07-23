@@ -19,15 +19,10 @@ export default interface IEditorConfig {
   data: IInputOutputData;
 
   /**
-   * Map of used Tools
-   */
-  tools: {[toolName: string]: IBlockTool};
-
-  /**
-   * Tools configuration
+   * Map of used Tools with or without configuration
    * @see {@link tools#ToolConfig}
    */
-  toolsConfig: {[toolName: string]: IBlockToolConfig};
+  tools: {[toolName: string]: IBlockTool|IBlockToolConfig};
 
   /**
    * This Tool will be added by default
