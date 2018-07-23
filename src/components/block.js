@@ -270,7 +270,6 @@ export default class Block {
    * @param {Boolean} state - 'true' to enable, 'false' to disable stretched statte
    */
   set stretched(state) {
-    console.log('stretched setter', state);
     this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
   }
 }

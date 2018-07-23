@@ -115,7 +115,7 @@ Your Tool can analyze text by RegExp patterns to substitute pasted string with d
 | `patterns` | `Object` | _Optional_. `patterns` object contains RegExp patterns with their names as object's keys |
 | `patternHandler(text: string, key: string)` | `Function` | _Optional_. Gets pasted string and pattern name. Should return the same object as Tool `save` method |
 
-**Note** Editor will be check pattern's full match, so don't forget to handle all available chars in there. 
+**Note** Editor will check pattern's full match, so don't forget to handle all available chars in there. 
 
 Pattern will be processed only if paste was on `initialBlock` Tool and pasted string length is less than 450 characters.
 

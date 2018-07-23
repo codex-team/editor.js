@@ -104,7 +104,7 @@ export default class Paste extends Module {
 
     const toolPasteConfig = tool.onPaste || {};
 
-    if (!toolPasteConfig.handler) {
+    if (this.Editor.config.initialBlock === name && !toolPasteConfig.handler) {
       _.log(
         `«${name}» Tool must provide a paste handler.`,
         'warn',

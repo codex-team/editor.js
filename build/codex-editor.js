@@ -12281,7 +12281,6 @@ var Block = function () {
   }, {
     key: 'stretched',
     set: function set(state) {
-      console.log('stretched setter', state);
       this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
     }
   }], [{
@@ -16080,7 +16079,7 @@ var Paste = function (_Module) {
                 tool = _ref3[1];
 
             var toolPasteConfig = tool.onPaste || {};
-            if (!toolPasteConfig.handler) {
+            if (_this.Editor.config.initialBlock === name && !toolPasteConfig.handler) {
                 _.log('\xAB' + name + '\xBB Tool must provide a paste handler.', 'warn');
             }
             if (typeof toolPasteConfig.handler !== 'function') {
