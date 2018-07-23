@@ -14,7 +14,7 @@ Copy [codex-editor.js](../build/codex-editor.js) file to your project and load i
 
 ## Load Block Tools
 
-Each Block at the CodeX Editor represented by Tools. There are simple (or powerful) external scripts with own logic. To start using the Editor, you should connect minimum number of Tools.
+Each Block at the CodeX Editor represented by [Tools](tools.md). There are simple (or powerful) external scripts with own logic. To start using the Editor, you should connect minimum number of Tools.
 
 [Text](../example/plugins/text/) tool for an example.
 
@@ -23,30 +23,35 @@ Each Block at the CodeX Editor represented by Tools. There are simple (or powerf
 <link rel="stylesheet" href="text/text.css">
 ```
 
-Check out directories [plugins](../example/plugins/) and [tools-inline](../example/tools-inline/) to see Tools made by us.
+Check out [example/plugins](../example/plugins/) and [example/tools-inline](../example/tools-inline/) directories to see Tools examples.
 
 ## Create Editor instance
 
-Create a new variable with an instance of Editor and pass initial params [object](../src/components/interfaces/editor-config.ts).
+Create an instance of CodeX Editor and pass [Configuration Object](../src/components/interfaces/editor-config.ts). 
+Minimal params is a `holderId`, `tools` list and `initialBlock` marker.
 
+```html
+<div id="codex-editor"></div>
+```
 
 ```javascript
 var editor = new CodexEditor({
     /**
-     * ID of element which will be used as a holder for Editor
+     * Create a holder for the Editor and pass its ID
      */
     holderId : 'codex-editor',
 
     /**
-     * Block-tool name which used to
+     * What Block will be inserted by default
      */
     initialBlock : 'text',
 
     /**
-     * Default Tool for a new block
+     * Available Block Tools
      */
     tools: {
         text: Text,
+        // ...
     },
 
     /**
@@ -59,7 +64,7 @@ var editor = new CodexEditor({
     },
 
     /**
-     * Data to be loaded to Editor
+     * Previously saved data that should be rendered
      */
     data: {}
 });
