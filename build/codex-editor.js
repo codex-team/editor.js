@@ -12972,10 +12972,6 @@ var LinkInlineTool = function () {
         _classCallCheck(this, LinkInlineTool);
 
         /**
-         * Shortcut name
-         */
-        this.shortcut = 'CMD+K';
-        /**
          * Native Document's commands for link/unlink
          */
         this.commandLink = 'createLink';
@@ -17836,7 +17832,8 @@ var InlineToolbar = function (_Module) {
                 handler: function handler(event) {
                     var currentBlock = _this4.Editor.BlockManager.currentBlock;
 
-                    if (!currentBlock || !currentBlock.settings[_this4.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
+                    var toolConfig = _this4.config.toolsConfig[currentBlock.name];
+                    if (!toolConfig || !toolConfig[_this4.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
                         return;
                     }
                     event.preventDefault();

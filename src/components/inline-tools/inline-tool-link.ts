@@ -12,12 +12,6 @@ declare var _: any;
  * Wrap selected text with <a> tag
  */
 export default class LinkInlineTool implements InlineTool {
-
-  /**
-   * Shortcut name
-   */
-  public readonly shortcut: string = 'CMD+K';
-
   /**
    * Native Document's commands for link/unlink
    */

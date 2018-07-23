@@ -270,8 +270,9 @@ export default class InlineToolbar extends Module {
       name: shortcut,
       handler: (event) => {
         const {currentBlock} = this.Editor.BlockManager;
+        const toolConfig = this.config.toolsConfig[currentBlock.name];
 
-        if (!currentBlock || !currentBlock.settings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
+        if (!toolConfig || !toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
           return;
         }
 

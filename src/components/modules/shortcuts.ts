@@ -1,6 +1,6 @@
 
 import Shortcut from '@codexteam/shortcuts';
-import IShortcut from '../interfaces/shortcut';
+import {default as IShortcuts, IShortcut} from '../interfaces/shortcuts';
 import IEditorConfig from '../interfaces/editor-config';
 
 /**
@@ -14,7 +14,7 @@ declare var Module: any;
  *
  * Internal Shortcuts Module
  */
-export default class Shortcuts extends Module {
+export default class Shortcuts extends Module implements IShortcuts {
   /**
    * All registered shortcuts
    * @type {IShortcut[]}
