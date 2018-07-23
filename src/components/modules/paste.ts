@@ -413,7 +413,7 @@ export default class Paste extends Module {
     return plain.split('\n\n').map((text) => {
       const content = $.make('div');
 
-      content.innerHTML = plain;
+      content.innerHTML = text;
 
       return {content, tool, isBlock: false, handler};
     });
