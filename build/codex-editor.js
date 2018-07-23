@@ -96,6 +96,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /************************************************************************/
 /******/ ({
 
+/***/ "../../node_modules/@codexteam/shortcuts/lib/shortcuts.js":
+/*!**********************************************************************************************!*\
+  !*** /Users/talyguryn/GitHub/codex.notes/node_modules/@codexteam/shortcuts/lib/shortcuts.js ***!
+  \**********************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/*!
+ * Library for handling keyboard shortcuts
+ * @copyright undefined
+ * @license MIT
+ * @author CodeX (https://ifmo.su)
+ * @version 1.0.0
+ */
+!function(e,t){if(true)module.exports=t();else { var r, n; }}("undefined"!=typeof self?self:this,function(){return function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,t),o.l=!0,o.exports}var n={};return t.m=e,t.c=n,t.d=function(e,n,r){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i={0:48,1:49,2:50,3:51,4:52,5:53,6:54,7:55,8:56,9:57,A:65,B:66,C:67,D:68,E:69,F:70,G:71,H:72,I:73,J:74,K:75,L:76,M:77,N:78,O:79,P:80,Q:81,R:82,S:83,T:84,U:85,V:86,W:87,X:88,Y:89,Z:90,BACKSPACE:8,ENTER:13,ESCAPE:27,LEFT:37,UP:38,RIGHT:39,DOWN:40,INSERT:45,DELETE:46},u={CMD:["CMD","CONTROL","COMMAND","WINDOWS","CTRL"],SHIFT:["SHIFT"],ALT:["ALT","OPTION"]},c=function(){function e(t){var n=this;r(this,e),this.commands={},this.keys={},this.parseShortcutName(t.name),this.element=t.on,this.callback=t.callback,this.executeShortcut=function(e){n.execute(e)},this.element.addEventListener("keydown",this.executeShortcut,!1)}return o(e,[{key:"parseShortcutName",value:function(e){e=e.split("+");for(var t=0;t<e.length;t++)if(e[t]=e[t].toUpperCase(),e[t].length>1)for(var n in u)u[n].includes(e[t])&&(this.commands[n]=!0);else this.keys[e[t]]=!0}},{key:"execute",value:function(e){var t=e.ctrlKey||e.metaKey,n=e.shiftKey,r=e.altKey,o={CMD:t,SHIFT:n,ALT:r},u=void 0,c=!0;for(u in this.commands)c=c&&o[u];var a=void 0,s=!0;for(a in this.keys)s=s&&e.keyCode===i[a];c&&s&&this.callback(e)}},{key:"remove",value:function(){this.element.removeEventListener("keydown",this.executeShortcut)}}]),e}();t.default=c}])});
+
+/***/ }),
+
 /***/ "./build/sprite.svg":
 /*!**************************!*\
   !*** ./build/sprite.svg ***!
@@ -11124,8 +11142,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["api-blocks.ts","api-events.ts","api-listener.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-toolbar.ts","api.ts","block-events.ts","blockManager.js","caret.js","events.js","listeners.js","paste.ts","renderer.js","sanitizer.js","saver.js","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+var modules = ["api-blocks.ts","api-events.ts","api-listener.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-toolbar.ts","api.ts","block-events.ts","blockManager.js","caret.js","events.js","listeners.js","paste.ts","renderer.js","sanitizer.js","saver.js","shortcuts.ts","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
 });
 
 /**
@@ -13145,10 +13163,22 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
-/*!*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
-  \*****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./src/components/interfaces/editor-config.ts":
+/*!****************************************************!*\
+  !*** ./src/components/interfaces/editor-config.ts ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+/***/ }),
+
+/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -13170,6 +13200,7 @@ var map = {
 	"./renderer.js": "./src/components/modules/renderer.js",
 	"./sanitizer.js": "./src/components/modules/sanitizer.js",
 	"./saver.js": "./src/components/modules/saver.js",
+	"./shortcuts.ts": "./src/components/modules/shortcuts.ts",
 	"./toolbar-blockSettings.js": "./src/components/modules/toolbar-blockSettings.js",
 	"./toolbar-inline.ts": "./src/components/modules/toolbar-inline.ts",
 	"./toolbar-toolbox.js": "./src/components/modules/toolbar-toolbox.js",
@@ -13197,7 +13228,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
 
 /***/ }),
 
@@ -14122,12 +14153,10 @@ var BlockEvents = function (_Module) {
             }
             /**
              * Split the Current Block into two blocks
-             */
-            this.Editor.BlockManager.split();
-            /**
              * Renew local current node after split
              */
-            var newCurrent = this.Editor.BlockManager.currentBlock;
+            var newCurrent = this.Editor.BlockManager.split();
+            this.Editor.Caret.setToBlock(newCurrent);
             this.Editor.Toolbar.move();
             /**
              * If new Block is empty
@@ -14407,13 +14436,12 @@ var BlockManager = function (_Module) {
       var block = this.composeBlock(toolName, data, settings);
 
       this._blocks[++this.currentBlockIndex] = block;
-      this.Editor.Caret.setToBlock(block);
-
       return block;
     }
 
     /**
      * Always inserts at the end
+     * @return {Block}
      */
 
   }, {
@@ -14427,7 +14455,7 @@ var BlockManager = function (_Module) {
       /**
        * Insert initial typed block
        */
-      this.insert();
+      return this.insert();
     }
 
     /**
@@ -14477,6 +14505,8 @@ var BlockManager = function (_Module) {
      * Split current Block
      * 1. Extract content from Caret position to the Block`s end
      * 2. Insert a new Block below current one with extracted content
+     *
+     * @return {Block}
      */
 
   }, {
@@ -14498,9 +14528,7 @@ var BlockManager = function (_Module) {
        * Renew current Block
        * @type {Block}
        */
-      var blockInserted = this.insert(this.config.initialBlock, data);
-
-      this.currentNode = blockInserted.pluginsContent;
+      return this.insert(this.config.initialBlock, data);
     }
 
     /**
@@ -14508,6 +14536,8 @@ var BlockManager = function (_Module) {
      *
      * @param {String} toolName — plugin name
      * @param {Object} data — plugin data
+     *
+     * @return {Block}
      */
 
   }, {
@@ -14518,6 +14548,8 @@ var BlockManager = function (_Module) {
       var block = this.composeBlock(toolName, data);
 
       this._blocks.insert(this.currentBlockIndex, block, true);
+
+      return block;
     }
 
     /**
@@ -15185,7 +15217,9 @@ var Caret = function (_Module) {
       if (lastBlock.isEmpty) {
         this.setToBlock(lastBlock);
       } else {
-        this.Editor.BlockManager.insertAtEnd();
+        var newBlock = this.Editor.BlockManager.insertAtEnd();
+
+        this.setToBlock(newBlock);
       }
     }
 
@@ -15911,6 +15945,7 @@ var Paste = function (_Module) {
 
     /**
      * @constructor
+     * @param {IEditorConfig} config
      */
     function Paste(_ref) {
         var _this2 = this;
@@ -16292,7 +16327,9 @@ var Paste = function (_Module) {
         value: function () {
             var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(data) {
                 var canReplaceCurrentBlock = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-                var blockData, BlockManager, currentBlock;
+
+                var blockData, _Editor2, BlockManager, Caret, currentBlock, Block;
+
                 return regeneratorRuntime.wrap(function _callee6$(_context6) {
                     while (1) {
                         switch (_context6.prev = _context6.next) {
@@ -16302,7 +16339,7 @@ var Paste = function (_Module) {
 
                             case 2:
                                 blockData = _context6.sent;
-                                BlockManager = this.Editor.BlockManager;
+                                _Editor2 = this.Editor, BlockManager = _Editor2.BlockManager, Caret = _Editor2.Caret;
                                 currentBlock = BlockManager.currentBlock;
 
                                 if (!(canReplaceCurrentBlock && currentBlock.isEmpty)) {
@@ -16314,9 +16351,11 @@ var Paste = function (_Module) {
                                 return _context6.abrupt('return');
 
                             case 8:
-                                BlockManager.insert(data.tool, blockData);
+                                Block = BlockManager.insert(data.tool, blockData);
 
-                            case 9:
+                                Caret.setToBlock(Block);
+
+                            case 10:
                             case 'end':
                                 return _context6.stop();
                         }
@@ -16337,9 +16376,9 @@ var Paste = function (_Module) {
     }, {
         key: 'splitBlock',
         value: function splitBlock() {
-            var _Editor2 = this.Editor,
-                BlockManager = _Editor2.BlockManager,
-                Caret = _Editor2.Caret;
+            var _Editor3 = this.Editor,
+                BlockManager = _Editor3.BlockManager,
+                Caret = _Editor3.Caret;
             /** If we paste into middle of the current block:
              *  1. Split
              *  2. Navigate to the first part
@@ -16362,9 +16401,9 @@ var Paste = function (_Module) {
         value: function processHTML(innerHTML) {
             var _this3 = this;
 
-            var _Editor3 = this.Editor,
-                Tools = _Editor3.Tools,
-                Sanitizer = _Editor3.Sanitizer;
+            var _Editor4 = this.Editor,
+                Tools = _Editor4.Tools,
+                Sanitizer = _Editor4.Sanitizer;
 
             var initialTool = this.config.initialBlock;
             var wrapper = $.make('DIV');
@@ -17115,6 +17154,95 @@ module.exports = exports['default'];
 
 /***/ }),
 
+/***/ "./src/components/modules/shortcuts.ts":
+/*!*********************************************!*\
+  !*** ./src/components/modules/shortcuts.ts ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _shortcuts = __webpack_require__(/*! @codexteam/shortcuts */ "../../node_modules/@codexteam/shortcuts/lib/shortcuts.js");
+
+var _shortcuts2 = _interopRequireDefault(_shortcuts);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * @class Shortcut
+ * @classdesc Allows to register new shortcut
+ *
+ * Internal Shortcuts Module
+ */
+var Shortcuts = function (_Module) {
+    _inherits(Shortcuts, _Module);
+
+    /**
+     * @constructor
+     * @param {IEditorConfig} config
+     */
+    function Shortcuts(_ref) {
+        var config = _ref.config;
+
+        _classCallCheck(this, Shortcuts);
+
+        var _this = _possibleConstructorReturn(this, (Shortcuts.__proto__ || Object.getPrototypeOf(Shortcuts)).call(this, { config: config }));
+
+        _this.registeredShortcuts = [];
+        return _this;
+    }
+    /**
+     * Register shortcut
+     * @param {IShortcut} shortcut
+     */
+
+
+    _createClass(Shortcuts, [{
+        key: 'add',
+        value: function add(shortcut) {
+            var newShortcut = new _shortcuts2.default({
+                name: shortcut.name,
+                on: document,
+                callback: shortcut.handler
+            });
+            this.registeredShortcuts.push(newShortcut);
+        }
+        /**
+         * Remove shortcut
+         * @param {IShortcut} shortcut
+         */
+
+    }, {
+        key: 'remove',
+        value: function remove(shortcut) {
+            // Remove
+        }
+    }]);
+
+    return Shortcuts;
+}(Module);
+
+Shortcuts.displayName = 'Shortcuts';
+exports.default = Shortcuts;
+module.exports = exports['default'];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
+
+/***/ }),
+
 /***/ "./src/components/modules/toolbar-blockSettings.js":
 /*!*********************************************************!*\
   !*** ./src/components/modules/toolbar-blockSettings.js ***!
@@ -17340,19 +17468,25 @@ var _selection2 = _interopRequireDefault(_selection);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+/**
+ * Inline toolbar with actions that modifies selected text fragment
+ *
+ * |¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|
+ * |   B  i [link] [mark]   |
+ * | _______________________|
+ */
 var InlineToolbar = function (_Module) {
     _inherits(InlineToolbar, _Module);
 
     /**
      * @constructor
+     * @param {EditorConfig} config
      */
     function InlineToolbar(_ref) {
         var config = _ref.config;
@@ -17390,7 +17524,9 @@ var InlineToolbar = function (_Module) {
     }
     /**
      * Inline Toolbar Tools
-     * @todo Merge internal tools with external
+     * includes internal and external tools
+     *
+     * @returns Map<string, InlineTool>
      */
 
 
@@ -17415,11 +17551,8 @@ var InlineToolbar = function (_Module) {
             this.addTools();
         }
         /**
-         *
-         *
          *  Moving / appearance
          *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         *
          */
         /**
          * Shows Inline Toolbar by keyup/mouseup
@@ -17470,9 +17603,9 @@ var InlineToolbar = function (_Module) {
         key: 'open',
         value: function open() {
             this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
-            this.tools.forEach(function (tool) {
-                if (typeof tool.clear === 'function') {
-                    tool.clear();
+            this.tools.forEach(function (toolInstance, toolName) {
+                if (typeof toolInstance.clear === 'function') {
+                    toolInstance.clear();
                 }
             });
         }
@@ -17484,9 +17617,9 @@ var InlineToolbar = function (_Module) {
         key: 'close',
         value: function close() {
             this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
-            this.tools.forEach(function (tool) {
-                if (typeof tool.clear === 'function') {
-                    tool.clear();
+            this.tools.forEach(function (toolInstance, toolName) {
+                if (typeof toolInstance.clear === 'function') {
+                    toolInstance.clear();
                 }
             });
         }
@@ -17525,11 +17658,8 @@ var InlineToolbar = function (_Module) {
             return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
         }
         /**
-         *
-         *
          *  Working with Tools
          *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         *
          */
         /**
          * Fill Inline Toolbar with Tools
@@ -17540,23 +17670,22 @@ var InlineToolbar = function (_Module) {
         value: function addTools() {
             var _this2 = this;
 
-            this.tools.forEach(function (tool) {
-                _this2.addTool(tool);
+            this.tools.forEach(function (toolInstance, toolName) {
+                _this2.addTool(toolName, toolInstance);
             });
         }
         /**
          * Add tool button and activate clicks
-         * @param {InlineTool} tool - Tool's instance
          */
 
     }, {
         key: 'addTool',
-        value: function addTool(tool) {
+        value: function addTool(toolName, tool) {
             var _this3 = this;
 
             var button = tool.render();
             if (!button) {
-                _.log('Render method must return an instance of Node', 'warn', tool);
+                _.log('Render method must return an instance of Node', 'warn', toolName);
                 return;
             }
             this.nodes.buttons.appendChild(button);
@@ -17566,6 +17695,39 @@ var InlineToolbar = function (_Module) {
             }
             this.Editor.Listeners.on(button, 'click', function () {
                 _this3.toolClicked(tool);
+            });
+            /**
+             * Enable shortcuts
+             * Ignore tool that doesn't have shortcut or empty string
+             */
+            var toolsConfig = this.config.toolsConfig[toolName];
+            if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
+                this.enableShortcuts(tool, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
+            }
+        }
+        /**
+         * Enable Tool shortcut with Editor Shortcuts Module
+         * @param {InlineTool} tool - Tool instance
+         * @param {string} shortcut - shortcut according to the Shortcut Module format
+         */
+
+    }, {
+        key: 'enableShortcuts',
+        value: function enableShortcuts(tool, shortcut) {
+            var _this4 = this;
+
+            this.Editor.Shortcuts.add({
+                name: shortcut,
+                handler: function handler(event) {
+                    var currentBlock = _this4.Editor.BlockManager.currentBlock;
+
+                    var toolConfig = _this4.config.toolsConfig[currentBlock.name];
+                    if (!toolConfig || !toolConfig[_this4.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
+                        return;
+                    }
+                    event.preventDefault();
+                    _this4.toolClicked(tool);
+                }
             });
         }
         /**
@@ -17587,21 +17749,53 @@ var InlineToolbar = function (_Module) {
     }, {
         key: 'checkToolsState',
         value: function checkToolsState() {
-            this.tools.forEach(function (tool) {
-                tool.checkState(_selection2.default.get());
+            this.tools.forEach(function (toolInstance, toolName) {
+                toolInstance.checkState(_selection2.default.get());
             });
         }
+        /**
+         * Returns internal inline tools
+         * Includes Bold, Italic, Link
+         */
+
     }, {
         key: 'tools',
         get: function get() {
-            var _this4 = this;
-
-            if (!this.toolsInstances) {
-                this.toolsInstances = [new _inlineToolBold2.default(this.Editor.API.methods), new _inlineToolItalic2.default(this.Editor.API.methods), new _inlineToolLink2.default(this.Editor.API.methods)].concat(_toConsumableArray(this.Editor.Tools.inline.map(function (Tool) {
-                    return new Tool(_this4.Editor.API.methods);
-                })));
+            if (!this.toolsInstances || this.toolsInstances.size === 0) {
+                var allTools = Object.assign({}, this.internalTools, this.externalTools);
+                this.toolsInstances = new Map();
+                for (var tool in allTools) {
+                    if (allTools.hasOwnProperty(tool)) {
+                        this.toolsInstances.set(tool, allTools[tool]);
+                    }
+                }
             }
             return this.toolsInstances;
+        }
+    }, {
+        key: 'internalTools',
+        get: function get() {
+            return {
+                bold: new _inlineToolBold2.default(this.Editor.API.methods),
+                italic: new _inlineToolItalic2.default(this.Editor.API.methods),
+                link: new _inlineToolLink2.default(this.Editor.API.methods)
+            };
+        }
+        /**
+         * Get external tools
+         * Tools that has isInline is true
+         */
+
+    }, {
+        key: 'externalTools',
+        get: function get() {
+            var result = {};
+            for (var tool in this.Editor.Tools.inline) {
+                if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
+                    result[tool] = new this.Editor.Tools.inline[tool](this.Editor.API.methods);
+                }
+            }
+            return result;
         }
     }]);
 
@@ -17631,6 +17825,12 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _editorConfig = __webpack_require__(/*! ../interfaces/editor-config */ "./src/components/interfaces/editor-config.ts");
+
+var _editorConfig2 = _interopRequireDefault(_editorConfig);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -17652,6 +17852,7 @@ var Toolbox = function (_Module) {
 
   /**
    * @constructor
+   * @param {IEditorConfig} config
    */
   function Toolbox(_ref) {
     var config = _ref.config;
@@ -17710,7 +17911,7 @@ var Toolbox = function (_Module) {
     /**
      * Append Tool to the Toolbox
      *
-     * @param {string} toolName  - tool name
+     * @param {string} toolName - tool name
      * @param {IBlockTool} tool - tool class
      */
 
@@ -17730,10 +17931,8 @@ var Toolbox = function (_Module) {
        * @todo Add checkup for the render method
        */
       // if (typeof tool.render !== 'function') {
-      //
-      //     _.log('render method missed. Tool %o skipped', 'warn', tool);
-      //     return;
-      //
+      //   _.log('render method missed. Tool %o skipped', 'warn', tool);
+      //   return;
       // }
 
       /**
@@ -17759,13 +17958,76 @@ var Toolbox = function (_Module) {
       this.nodes.toolbox.appendChild(button);
       this.nodes.buttons.push(button);
 
-      /**
-       * @todo add event with module Listeners
-       */
-      // this.Editor.Listeners.add();
-      button.addEventListener('click', function (event) {
+      /** Add listener to click */
+      this.Editor.Listeners.on(button, 'click', function (event) {
         _this2.buttonClicked(event);
-      }, false);
+      });
+
+      /** Enable shortcut */
+      var toolsConfig = this.config.toolsConfig[toolName];
+
+      if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
+        this.enableShortcut(tool, toolName, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
+      }
+    }
+
+    /**
+     * Enable shortcut Block Tool implemented shortcut
+     * @param {IBlockTool} tool - Tool class
+     * @param {String} toolName - Tool name
+     * @param {String} shortcut - shortcut according to the Shortcut Module format
+     */
+
+  }, {
+    key: 'enableShortcut',
+    value: function enableShortcut(tool, toolName, shortcut) {
+      var _this3 = this;
+
+      this.Editor.Shortcuts.add({
+        name: shortcut,
+        handler: function handler(event) {
+          event.preventDefault();
+          _this3.insertNewBlock(tool, toolName);
+        }
+      });
+    }
+
+    /**
+     * Inserts new block
+     * Can be called when button clicked on Toolbox or by Shortcut
+     *
+     * @param {IBlockTool} tool - Tool Class
+     * @param {String} toolName - Tool name
+     */
+
+  }, {
+    key: 'insertNewBlock',
+    value: function insertNewBlock(tool, toolName) {
+      /**
+       * @type {Block}
+       */
+      var currentBlock = this.Editor.BlockManager.currentBlock;
+
+      /**
+       * We do replace if:
+       * - block is empty
+       * - block is not irreplaceable
+       * @type {Array}
+       */
+      var newBlock = void 0;
+
+      if (!tool[this.Editor.Tools.apiSettings.IS_IRREPLACEBLE_TOOL] && currentBlock.isEmpty) {
+        newBlock = this.Editor.BlockManager.replace(toolName);
+      } else {
+        newBlock = this.Editor.BlockManager.insert(toolName);
+      }
+
+      this.Editor.Caret.setToBlock(newBlock);
+
+      /**
+       * Move toolbar when node is changed
+       */
+      this.Editor.Toolbar.move();
     }
 
     /**
@@ -17779,49 +18041,11 @@ var Toolbox = function (_Module) {
   }, {
     key: 'buttonClicked',
     value: function buttonClicked(event) {
-      var toolButton = event.target;
-
-      toolButton = toolButton.closest('.' + Toolbox.CSS.toolboxButton);
-
-      if (!toolButton) {
-        return;
-      }
-
-      var toolName = toolButton.dataset.name,
+      var toolButton = event.target,
+          toolName = toolButton.dataset.name,
           tool = this.Editor.Tools.toolClasses[toolName];
 
-      /**
-       * @type {Block}
-       */
-      var currentBlock = this.Editor.BlockManager.currentBlock;
-
-      /**
-       * We do replace if:
-       * - block is empty
-       * - block is not irreplaceable
-       * @type {Array}
-       */
-      if (!tool[this.Editor.Tools.apiSettings.IS_IRREPLACEBLE_TOOL] && currentBlock.isEmpty) {
-        this.Editor.BlockManager.replace(toolName);
-      } else {
-        this.Editor.BlockManager.insert(toolName);
-      }
-
-      /**
-       * @todo set caret to the new block
-       */
-
-      // window.setTimeout(function () {
-
-      /** Set caret to current block */
-      // editor.caret.setToBlock(currentInputIndex);
-
-      // }, 10);
-
-      /**
-       * Move toolbar when node is changed
-       */
-      this.Editor.Toolbar.move();
+      this.insertNewBlock(tool, toolName);
     }
 
     /**
@@ -18302,7 +18526,7 @@ var Tools = function (_Module) {
 
     /**
      * Return Tools for the Inline Toolbar
-     * @return {Array} - array of Inline Tool's classes
+     * @return {Object} - object of Inline Tool's classes
      */
 
   }, {
@@ -18310,7 +18534,11 @@ var Tools = function (_Module) {
     get: function get() {
       var _this2 = this;
 
-      return Object.values(this.available).filter(function (tool) {
+      var tools = Object.entries(this.available).filter(function (_ref) {
+        var _ref2 = _slicedToArray(_ref, 2),
+            name = _ref2[0],
+            tool = _ref2[1];
+
         if (!tool[_this2.apiSettings.IS_INLINE]) {
           return false;
         }
@@ -18330,6 +18558,21 @@ var Tools = function (_Module) {
 
         return true;
       });
+
+      /**
+       * collected inline tools with key of tool name
+       */
+      var result = {};
+
+      tools.forEach(function (_ref3) {
+        var _ref4 = _slicedToArray(_ref3, 2),
+            name = _ref4[0],
+            tool = _ref4[1];
+
+        return result[name] = tool;
+      });
+
+      return result;
     }
 
     /**
@@ -18342,10 +18585,10 @@ var Tools = function (_Module) {
       var _this3 = this;
 
       // eslint-disable-next-line no-unused-vars
-      var tools = Object.entries(this.available).filter(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            name = _ref2[0],
-            tool = _ref2[1];
+      var tools = Object.entries(this.available).filter(function (_ref5) {
+        var _ref6 = _slicedToArray(_ref5, 2),
+            name = _ref6[0],
+            tool = _ref6[1];
 
         if (tool[_this3.apiSettings.IS_INLINE]) {
           return false;
@@ -18354,12 +18597,15 @@ var Tools = function (_Module) {
         return true;
       });
 
+      /**
+       * collected block tools with key of tool name
+       */
       var result = {};
 
-      tools.forEach(function (_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 2),
-            name = _ref4[0],
-            tool = _ref4[1];
+      tools.forEach(function (_ref7) {
+        var _ref8 = _slicedToArray(_ref7, 2),
+            name = _ref8[0],
+            tool = _ref8[1];
 
         return result[name] = tool;
       });
@@ -18382,7 +18628,8 @@ var Tools = function (_Module) {
         IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
         IS_IRREPLACEBLE_TOOL: 'irreplaceable',
         IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
-        IS_PASTE_DISALLOWED: 'disallowPaste'
+        IS_PASTE_DISALLOWED: 'disallowPaste',
+        SHORTCUT: 'shortcut'
       };
     }
 
@@ -18394,9 +18641,9 @@ var Tools = function (_Module) {
   }, {
     key: 'defaultConfig',
     get: function get() {
-      var _ref5;
+      var _ref9;
 
-      return _ref5 = {}, _defineProperty(_ref5, this.apiSettings.TOOLBAR_ICON_CLASS, false), _defineProperty(_ref5, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref5, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref5, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref5, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _ref5;
+      return _ref9 = {}, _defineProperty(_ref9, this.apiSettings.TOOLBAR_ICON_CLASS, false), _defineProperty(_ref9, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref9, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _defineProperty(_ref9, this.apiSettings.SHORTCUT, false), _ref9;
     }
 
     /**
@@ -18407,8 +18654,8 @@ var Tools = function (_Module) {
 
   }]);
 
-  function Tools(_ref6) {
-    var config = _ref6.config;
+  function Tools(_ref10) {
+    var config = _ref10.config;
 
     _classCallCheck(this, Tools);
 
@@ -18881,7 +19128,13 @@ var UI = function (_Module) {
         /**
          * Insert initial typed Block
          */
-        this.Editor.BlockManager.insert();
+        var newBlock = this.Editor.BlockManager.insert();
+
+        this.Editor.Caret.setToBlock(newBlock);
+
+        /**
+         * And highlight
+         */
         this.Editor.BlockManager.highlightCurrentNode();
 
         /**

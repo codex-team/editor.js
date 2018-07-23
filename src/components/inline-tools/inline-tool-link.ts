@@ -12,7 +12,6 @@ declare var _: any;
  * Wrap selected text with <a> tag
  */
 export default class LinkInlineTool implements InlineTool {
-
   /**
    * Native Document's commands for link/unlink
    */

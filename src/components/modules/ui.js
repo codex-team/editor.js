@@ -204,7 +204,13 @@ export default class UI extends Module {
       /**
        * Insert initial typed Block
        */
-      this.Editor.BlockManager.insert();
+      const newBlock = this.Editor.BlockManager.insert();
+
+      this.Editor.Caret.setToBlock(newBlock);
+
+      /**
+       * And highlight
+       */
       this.Editor.BlockManager.highlightCurrentNode();
 
       /**
