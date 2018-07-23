@@ -14548,8 +14548,6 @@ var BlockManager = function (_Module) {
       var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var settings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
 
-      settings = this.config.toolsConfig[toolName];
-
       var block = this.composeBlock(toolName, data, settings);
 
       this._blocks[++this.currentBlockIndex] = block;
