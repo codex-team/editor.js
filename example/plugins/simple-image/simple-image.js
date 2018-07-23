@@ -111,7 +111,7 @@ class SimpleImageTool {
   static get onPaste() {
     return {
       patterns: {
-        image: /http?s:\/\/\S+\.(gif|jpe?g|tiff|png)$/i
+        image: /https?:\/\/\S+\.(gif|jpe?g|tiff|png)$/i
       },
       patternHandler: (text) => {
         return {
@@ -129,13 +129,13 @@ class SimpleImageTool {
   renderSettings() {
     let wrapper = document.createElement('div');
 
-    this.settings.forEach( button => {
+    this.settings.forEach( tune => {
       let el = document.createElement('div');
       el.classList.add(this.CSS.settingsButton);
-      el.innerHTML = button.icon;
+      el.innerHTML = tune.icon;
 
       el.addEventListener('click', () => {
-        this._toggleTune(button.name);
+        this._toggleTune(tune.name);
         el.classList.toggle(this.CSS.settingsButtonActive);
       });
 
