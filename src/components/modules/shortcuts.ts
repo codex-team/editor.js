@@ -37,7 +37,7 @@ export default class Shortcuts extends Module {
   public add(shortcut: IShortcut): void {
     const newShortcut = new Shortcut({
       name: shortcut.name,
-      on: document.body,
+      on: document,
       callback: shortcut.handler,
     });
 
