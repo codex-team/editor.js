@@ -271,7 +271,7 @@ export default class InlineToolbar extends Module {
       handler: (event) => {
         const {currentBlock} = this.Editor.BlockManager;
 
-        if (!currentBlock.settings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
+        if (!currentBlock || !currentBlock.settings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
           return;
         }
 
