@@ -24,6 +24,7 @@
     "babel-preset-stage-0": "^6.24.1",
     "babel-runtime": "^6.26.0",
     "css-loader": "^0.28.11",
+    "@codexteam/shortcuts": "^1.0.0",
     "eslint": "^4.19.1",
     "eslint-loader": "^2.0.0",
     "extract-text-webpack-plugin": "^3.0.2",

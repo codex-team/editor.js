@@ -3,6 +3,11 @@
  */
 export default interface InlineTool {
   /**
+   * Allow Tool to determine shortcut that will fire 'surround' method
+   */
+  shortcut?: string;
+
+  /**
    * Returns button for the Inline Toolbar
    */
   render(): HTMLElement;
@@ -30,34 +35,4 @@ export default interface InlineTool {
    * Function called with Inline Toolbar closing
    */
   clear?(): void;
-
-  /**
-   * Allow Tool to determine shortcut that will fire 'surround' method
-   */
-  shortcut?(): Shortcut;
-}
-
-/**
- * Specify Shortcut structure for the Inline Tools
- */
-interface Shortcut {
-  /**
-   * Name like 'CMD+I'
-   */
-  readonly name: string;
-
-  /**
-   * Key that activates the Shortcut, for example: 73
-   */
-  readonly keyCode: number;
-
-  /**
-   * Is need to CMD or CTRL should be pressed
-   */
-  readonly cmdKey: boolean;
-
-  /**
-   * Is need to ALT should be pressed
-   */
-  readonly altKey: boolean;
 }

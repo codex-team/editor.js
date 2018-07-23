@@ -7,6 +7,7 @@ import SaverAPI from '../modules/api-saver';
 import SelectionAPI from '../modules/api-selection';
 import ToolbarAPI from '../modules/api-toolbar';
 import API from '../modules/api';
+import {IShortcuts} from './shortcuts';
 
 export default interface IEditor {
   API: API;
@@ -40,6 +41,8 @@ export default interface IEditor {
   SaverAPI: SaverAPI;
 
   SelectionAPI: SelectionAPI;
+
+  Shortcuts: IShortcuts;
 
   Toolbar: Module; // @todo create interface
 
