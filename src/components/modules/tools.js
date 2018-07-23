@@ -60,10 +60,10 @@ export default class Tools extends Module {
 
   /**
    * Return Tools for the Inline Toolbar
-   * @return {Array} - array of Inline Tool's classes
+   * @return {Object} - object of Inline Tool's classes
    */
   get inline() {
-    return Object.values(this.available).filter( tool => {
+    const tools = Object.entries(this.available).filter( ([name, tool]) => {
       if (!tool[this.apiSettings.IS_INLINE]) {
         return false;
       }
@@ -81,6 +81,15 @@ export default class Tools extends Module {
 
       return true;
     });
+
+    /**
+     * collected inline tools with key of tool name
+     */
+    const result = {};
+
+    tools.forEach(([name, tool]) => result[name] = tool);
+
+    return result;
   }
 
   /**
@@ -96,6 +105,9 @@ export default class Tools extends Module {
       return true;
     });
 
+    /**
+     * collected block tools with key of tool name
+     */
     const result = {};
 
     tools.forEach(([name, tool]) => result[name] = tool);
@@ -115,7 +127,8 @@ export default class Tools extends Module {
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_IRREPLACEBLE_TOOL: 'irreplaceable',
       IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
-      IS_PASTE_DISALLOWED: 'disallowPaste'
+      IS_PASTE_DISALLOWED: 'disallowPaste',
+      SHORTCUT: 'shortcut',
     };
   }
 
@@ -130,6 +143,7 @@ export default class Tools extends Module {
       [this.apiSettings.IS_ENABLED_LINE_BREAKS] : false,
       [this.apiSettings.IS_IRREPLACEBLE_TOOL] : false,
       [this.apiSettings.IS_ENABLED_INLINE_TOOLBAR]: false,
+      [this.apiSettings.SHORTCUT]: false,
     };
   }
 
