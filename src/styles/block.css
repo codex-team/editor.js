@@ -8,6 +8,10 @@
     border-radius: 3px;
   }
 
+  &--stretched &__content {
+    max-width: none;
+  }
+
   &__content {
     max-width: var(--content-width);
     margin: 0 auto;

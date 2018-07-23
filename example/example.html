@@ -19,11 +19,17 @@
 
 
 
+<script src="plugins/text/text.js?v=100"></script>
+<link rel="stylesheet" href="plugins/text/text.css">
+
 <link rel="stylesheet" href="tools-inline/term/term.css">
 <script src="tools-inline/term/term.js"></script>
 
-<script src="plugins/text/text.js?v=100"></script>
-<link rel="stylesheet" href="plugins/text/text.css">
+<script src="plugins/header/header.js?v=100"></script>
+<link rel="stylesheet" href="plugins/header/header.css">
+
+<script src="plugins/simple-image/simple-image.js?v=100"></script>
+<link rel="stylesheet" href="plugins/simple-image/simple-image.css">
 
 <!--<script src="plugins/header/header.js"></script>-->
 <!--<link rel="stylesheet" href="plugins/header/header.css">-->
@@ -31,8 +37,6 @@
 <script src="plugins/code/code.js"></script>
 <link rel="stylesheet" href="plugins/code/code.css">
 
-<script src="plugins/header/header.js?v=100"></script>
-<link rel="stylesheet" href="plugins/header/header.css">
 
 <script src="../build/codex-editor.js?v=108"></script>
 
@@ -46,6 +50,7 @@
             text: Text,
             header: Header,
             term: Term,
+            image: SimpleImageTool
         },
         toolsConfig: {
             text: {
@@ -80,26 +85,15 @@
                   }
                 },
                 {
-                  type: "header",
+                  type: 'image',
                   data: {
-                    text: "Header 2",
-                    level: 2
+                    url : 'https://ifmo.su/upload/redactor_images/o_d2531106b55650aa6ecee59586667c19.jpg',
+                    caption: 'Here is a boomer',
+                    stretched: true,
+                    withBorder: false,
+                    withBackground: false
                   }
-                },
-                {
-                  type: "header",
-                  data: {
-                    text: "Header 3",
-                    level: 3
-                  }
-                },
-                {
-                  type: "header",
-                  data: {
-                    text: "Header 4",
-                    level: 4
-                  }
-                },
+                }
             ]
         }
     });

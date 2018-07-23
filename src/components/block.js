@@ -48,6 +48,7 @@ export default class Block {
   static get CSS() {
     return {
       wrapper: 'ce-block',
+      wrapperStretched: 'ce-block--stretched',
       content: 'ce-block__content',
       selected: 'ce-block--selected'
     };
@@ -262,5 +263,14 @@ export default class Block {
     } else {
       this.holder.classList.remove(Block.CSS.selected);
     }
+  }
+
+  /**
+   * Set stretched state
+   * @param {Boolean} state - 'true' to enable, 'false' to disable stretched statte
+   */
+  set stretched(state) {
+    console.log('stretched setter', state);
+    this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
   }
 }
