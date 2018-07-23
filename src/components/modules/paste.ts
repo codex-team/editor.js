@@ -408,6 +408,7 @@ export default class Paste extends Module {
       const content = $.make('div');
 
       content.innerHTML = text;
+
       return {content, tool, isBlock: false, handler};
     });
   }
