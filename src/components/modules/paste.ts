@@ -114,7 +114,7 @@ export default class Paste extends Module {
       );
     }
 
-    if (typeof toolPasteConfig.handler !== 'function') {
+    if (toolPasteConfig.handler && typeof toolPasteConfig.handler !== 'function') {
       _.log(
         `Paste handler for «${name}» Tool should be a function.`,
         'warn',
