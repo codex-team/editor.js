@@ -4,7 +4,7 @@
  * implements CodeX-Team shortcuts Module
  * @see https://github.com/codex-team/codex.shortcuts
  */
-export default interface IShortcuts {
+export interface IShortcuts {
 
   /**
    * Adds shortcut
@@ -19,6 +19,12 @@ export default interface IShortcuts {
   remove(shortcut: string): void;
 }
 
+/**
+ * Shortcut interface
+ * Each shortcut must have name and handler
+ * `name` is a shortcut, like 'CMD+K', 'CMD+B' etc
+ * `handler` is a callback
+ */
 export interface IShortcut {
 
   /**

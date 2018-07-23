@@ -110,8 +110,8 @@ export default class BlockEvents extends Module {
      * Renew local current node after split
      */
     const newCurrent = this.Editor.BlockManager.split();
-    this.Editor.Caret.setToBlock(newCurrent);
 
+    this.Editor.Caret.setToBlock(newCurrent);
     this.Editor.Toolbar.move();
 
     /**

@@ -1,6 +1,6 @@
 
 import Shortcut from '@codexteam/shortcuts';
-import {default as IShortcuts, IShortcut} from '../interfaces/shortcuts';
+import {IShortcut, IShortcuts} from '../interfaces/shortcuts';
 import IEditorConfig from '../interfaces/editor-config';
 
 /**
