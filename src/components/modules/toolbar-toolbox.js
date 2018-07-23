@@ -148,8 +148,7 @@ export default class Toolbox extends Module {
     /**
      * @type {Block}
      */
-    let currentBlock = this.Editor.BlockManager.currentBlock,
-      newBlock;
+    const currentBlock = this.Editor.BlockManager.currentBlock;
 
     /**
      * We do replace if:
@@ -157,6 +156,8 @@ export default class Toolbox extends Module {
      * - block is not irreplaceable
      * @type {Array}
      */
+    let newBlock;
+
     if (!tool[this.Editor.Tools.apiSettings.IS_IRREPLACEBLE_TOOL] && currentBlock.isEmpty) {
       newBlock = this.Editor.BlockManager.replace(toolName);
     } else {

@@ -18117,8 +18117,7 @@ var Toolbox = function (_Module) {
       /**
        * @type {Block}
        */
-      var currentBlock = this.Editor.BlockManager.currentBlock,
-          newBlock = void 0;
+      var currentBlock = this.Editor.BlockManager.currentBlock;
 
       /**
        * We do replace if:
@@ -18126,6 +18125,8 @@ var Toolbox = function (_Module) {
        * - block is not irreplaceable
        * @type {Array}
        */
+      var newBlock = void 0;
+
       if (!tool[this.Editor.Tools.apiSettings.IS_IRREPLACEBLE_TOOL] && currentBlock.isEmpty) {
         newBlock = this.Editor.BlockManager.replace(toolName);
       } else {
