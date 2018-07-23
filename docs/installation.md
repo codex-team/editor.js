@@ -12,9 +12,9 @@ Copy [codex-editor.js](../build/codex-editor.js) file to your project and load i
 <script src="codex-editor.js"></script>
 ```
 
-## Load external Tools
+## Load Block Tools
 
-Load Tools with their classes and styles.
+Each Block at the CodeX Editor represented by Tools. There are simple (or powerful) external scripts with own logic. To start using the Editor, you should connect minimum number of Tools.
 
 [Text](../example/plugins/text/) tool for an example.
 
@@ -65,9 +65,9 @@ var editor = new CodexEditor({
 });
 ```
 
-## Saving Data from Editor
+## Saving Data
 
-Use module Saver's function `save()` to get a promise with data from Editor.
+Call `editor.saver.save()` and handle returned Promise with saved data.
 
 ```javascript
 editor.saver.save()
@@ -76,25 +76,6 @@ editor.saver.save()
   });
 ```  
 
-## Render new data
-
-Run function `render()` from module Blocks to reload Editor with a new data.
-
-Passed object should implements [IInputOutputData](../src/components/interfaces/input-output-data.ts) interface.
-
-```javascript
-editor.blocks.render({
-  items: [
-    {
-      type : 'text',
-      data : {
-        text : 'Hello from CodeX Team!'
-      }
-    }
-  ],
-});
-```  
-
 ## Example
 
-Check out our [example page](../example/example.html).
+Take a look at the [example.html](../example/example.html) to view more detailed examples.
