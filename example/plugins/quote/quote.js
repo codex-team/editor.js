@@ -1,532 +1,246 @@
 /**
+ * @class Quote
+ * @classdesc Quote Tool for Codex Editor
+ * @property {QuoteData} data - Tool`s input and output data
+ * @propert {object} api - Codex Editor API instance
  *
- * Quote plugin
+ * @typedef {object} QuoteData
+ * @description Quote Tool`s input and output data
+ * @property {string} quote - quote`s text
+ * @property {string} caption - quote`s caption
+ * @property {'center'|'left'} alignment - quote`s alignment
+ *
+ * @typedef {object} QuoteConfig
+ * @description Quote Tool`s initial configuration
+ * @property {string} quotePlaceholder - placeholder to show in quote`s text input
+ * @property {string} captionPlaceholder - placeholder to show in quote`s caption input
+ * @property {'center'|'left'} defaultAlignment - alignment to use as default
  */
-
-var quote = (function (quote_plugin) {
+class Quote {
   /**
-     * @private
-     *
-     * CSS styles
-     */
-  var elementClasses_ = {
-
-    ce_quote     : 'ce-quote',
-    quoteText    : 'ce_quote--text',
-    quoteAuthor  : 'ce_quote--author',
-    authorsJob   : 'ce_quote--job',
-    authorsPhoto : 'authorsPhoto',
-    authorsPhotoWrapper : 'authorsPhoto-wrapper',
-    authorsPhotoWrapper_preview : 'authorsPhotoWrapper_preview',
-
-    simple : {
-      text : 'quoteStyle-simple--text'
-    },
-
-    withCaption : {
-      blockquote : 'quoteStyle-withCaption--blockquote',
-      author     : 'quoteStyle-withCaption--author'
-    },
-
-    withPhoto : {
-      photo   : 'quoteStyle-withPhoto--photo',
-      author  : 'quoteStyle-withPhoto--author',
-      job     : 'quoteStyle-withPhoto--job',
-      quote   : 'quoteStyle-withPhoto--quote',
-      wrapper : 'quoteStyle-withPhoto--wrapper',
-      authorHolder : 'quoteStyle-withPhoto--authorWrapper'
-    },
-
-    settings  : {
-      holder  : 'cdx-plugin-settings--horisontal',
-      caption : 'ce_plugin_quote--caption',
-      buttons : 'cdx-plugin-settings__item',
-      selectedType : 'ce-quote-settings--selected'
-    }
-  };
-
-    /**
-     * @private
-     *
-     *
-     */
-  var methods_ = {
-
-    changeStyleClicked : function () {
-      var changeStyleButton = this,
-        quote = codex.editor.content.currentNode.querySelector('.' + elementClasses_.ce_quote),
-        newStyle = changeStyleButton.dataset.style,
-        styleSelectors = this.parentNode.childNodes;
-
-      quote.dataset.quoteStyle = newStyle;
-
-      /**
-             * Mark selected style button
-             */
-      for (var i = styleSelectors.length - 1; i >= 0; i--) {
-        styleSelectors[i].classList.remove(elementClasses_.settings.selectedType);
-      }
-
-      this.classList.add(elementClasses_.settings.selectedType);
-    },
-
-    /**
-         * @deprecated
-         */
-    selectTypeQuoteStyle : function (type) {
-      var quoteStyleFunction;
-
-      /**
-             *  Choose Quote style to replace
-             */
-      switch (type) {
-        case 'simple':
-          quoteStyleFunction = methods_.makeSimpleQuote;
-          break;
-        case 'withCaption':
-          quoteStyleFunction = methods_.makeQuoteWithCaption;
-          break;
-        case 'withPhoto':
-          quoteStyleFunction = methods_.makeQuoteWithPhoto;
-          break;
-      }
-
-      return quoteStyleFunction;
-    },
-
-    /**
-         * @deprecated
-         */
-    addSelectTypeClickListener : function (el, quoteStyle) {
-      el.addEventListener('click', function () {
-        /**
-                 * Parsing currentNode to JSON.
-                 */
-        var parsedOldQuote  = methods_.parseBlockQuote(),
-          newStyledQuote  = quoteStyle(parsedOldQuote);
-
-        var wrapper = codex.editor.content.composeNewBlock(newStyledQuote, 'quote');
-
-        wrapper.appendChild(newStyledQuote);
-
-        codex.editor.content.switchBlock(codex.editor.content.currentNode, newStyledQuote, 'quote');
-
-        /** Close settings after replacing */
-        codex.editor.toolbar.settings.close();
-      }, false);
-    },
-
-    /**
-         * @deprecated
-         */
-    makeSimpleQuote : function (data) {
-      var wrapper = ui_.makeBlock('BLOCKQUOTE', [elementClasses_.simple.text, elementClasses_.quoteText]);
-
-      wrapper.innerHTML = data.text || '';
-
-      wrapper.dataset.quoteStyle = 'simple';
-      wrapper.classList.add(elementClasses_.ce_quote);
-      wrapper.contentEditable = 'true';
-
-      return wrapper;
-    },
-
-    /**
-         * @deprecated
-         */
-    makeQuoteWithCaption : function (data) {
-      var wrapper = ui_.blockquote(),
-        text    = ui_.makeBlock('DIV', [elementClasses_.withCaption.blockquote, elementClasses_.quoteText]),
-        author  = ui_.makeBlock('DIV', [elementClasses_.withCaption.author, elementClasses_.quoteAuthor]);
-
-      /* make text block ontentEditable */
-      text.contentEditable = 'true';
-
-      text.innerHTML = data.text || '';
-
-      /* make Author contentEditable */
-      author.contentEditable = 'true';
-
-      author.innerHTML = data.cite || '';
-
-      /* Appending created components */
-      wrapper.dataset.quoteStyle = 'withCaption';
-      wrapper.classList.add(elementClasses_.ce_quote);
-
-      wrapper.appendChild(text);
-      wrapper.appendChild(author);
-
-      return wrapper;
-    },
-
-    makeQuoteWithPhoto : function (data) {
-      var wrapper  = ui_.blockquote(),
-        photo    = ui_.makeBlock('DIV', [ elementClasses_.withPhoto.photo ]),
-        author   = ui_.makeBlock('DIV', [elementClasses_.withPhoto.author, elementClasses_.quoteAuthor]),
-        job      = ui_.makeBlock('DIV', [elementClasses_.withPhoto.job, elementClasses_.authorsJob]),
-        quote    = ui_.makeBlock('DIV', [elementClasses_.withPhoto.quote, elementClasses_.quoteText]);
-
-      /* Default Image src */
-      if (!data.image) {
-        var icon = ui_.makeBlock('SPAN', [ 'ce-icon-picture' ]);
-
-        photo.appendChild(icon);
-      } else {
-        var authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
-
-        authorsPhoto.src = data.image;
-        authorsPhoto.dataset.bigUrl = data.image;
-
-        photo.classList.add(elementClasses_.authorsPhotoWrapper);
-        photo.appendChild(authorsPhoto);
-      }
-
-
-      photo.addEventListener('click', fileUploadClicked_, false);
-
-      /* make author block contentEditable */
-      author.contentEditable = 'true';
-      author.innerHTML = data.cite || '';
-
-      /*  Author's position and job */
-      job.contentEditable = 'true';
-      job.innerHTML = data.caption || '';
-
-      var authorsWrapper = ui_.makeBlock('DIV', [ elementClasses_.withPhoto.authorHolder ]);
-
-      authorsWrapper.appendChild(author);
-      authorsWrapper.appendChild(job);
-
-      /* make quote text contentEditable */
-      quote.contentEditable = 'true';
-      quote.innerHTML = data.text || '';
-
-      wrapper.classList.add(elementClasses_.ce_quote);
-      wrapper.classList.add(elementClasses_.withPhoto.wrapper);
-      wrapper.dataset.quoteStyle = 'withPhoto';
-
-      wrapper.appendChild(quote);
-      wrapper.appendChild(photo);
-      wrapper.appendChild(authorsWrapper);
-
-      return wrapper;
-    },
-
-    parseBlockQuote : function (block) {
-      var currentNode = block || codex.editor.content.currentNode,
-        photo       = currentNode.getElementsByTagName('img')[0],
-        author      = currentNode.querySelector('.' + elementClasses_.quoteAuthor),
-        job         = currentNode.querySelector('.' + elementClasses_.authorsJob),
-        quote ;
-
-      /** Simple quote text placed in Blockquote tag*/
-      if ( currentNode.dataset.quoteStyle == 'simple' ) {
-        quote = currentNode.innerHTML || '';
-      } else {
-        quote = currentNode.querySelector('.' + elementClasses_.quoteText).innerHTML;
-      }
-
-      if (job) {
-        job = job.innerHTML || '';
-      }
-
-      if (author) {
-        author = author.innerHTML || '';
-      }
-
-      if (photo) {
-        photo = photo.dataset.bigUrl;
-      }
-
-      var data = {
-        style       : currentNode.dataset.quoteStyle,
-        text        : quote,
-        author      : author,
-        job         : job,
-        photo       : photo
-      };
-
-      return data;
-    }
-  };
-
-    /**
-     * @private
-     *
-     * Author image Uploader
-     */
-  var fileUploadClicked_ = function () {
-    var beforeSend  = photoUploadingCallbacks_.beforeSend,
-      success     = photoUploadingCallbacks_.success,
-      error       = photoUploadingCallbacks_.error;
-
-    codex.editor.transport.selectAndUpload({
-      beforeSend: beforeSend,
-      success: success,
-      error: error
-    });
-  };
-
-    /**
-     * @private
-     *
-     */
-  var ui_ = {
-
-    wrapper : function ($classList) {
-      var el = document.createElement('DIV');
-
-      el.classList.add($classList);
-
-      return el;
-    },
-
-    blockquote : function () {
-      var el = document.createElement('BLOCKQUOTE');
-
-      return el;
-    },
-
-    img : function (attribute) {
-      var imageTag = document.createElement('IMG');
-
-      imageTag.classList.add(attribute);
-
-      return imageTag;
-    },
-
-    makeBlock : function (tag, classList) {
-      var el = document.createElement(tag);
-
-      if ( classList ) {
-        for( var i = 0; i < classList.length; i++)
-          el.className += ' ' + classList[i];
-      }
-
-      return el;
-    }
-
-  };
-
-
-
-    /**
-     * @private
-     *
-     * Callbacks
-     */
-  var photoUploadingCallbacks_ = {
-
-    preview_ : function (e) {
-      var uploadImageWrapper = codex.editor.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo),
-        authorsPhoto = ui_.img(elementClasses_.authorsPhoto);
-
-      /** Appending uploaded image */
-      uploadImageWrapper.classList.add(elementClasses_.authorsPhotoWrapper, elementClasses_.authorsPhotoWrapper_preview);
-
-      authorsPhoto.src = e.target.result;
-
-      /** Remove icon from image wrapper */
-      uploadImageWrapper.innerHTML = '';
-
-      uploadImageWrapper.appendChild(authorsPhoto);
-    },
-
-    beforeSend : function () {
-      var input = codex.editor.transport.input,
-        files = input.files,
-        file  = files[0],
-        fileReader = new FileReader();
-
-      fileReader.readAsDataURL(file);
-
-      fileReader.onload = photoUploadingCallbacks_.preview_;
-    },
-
-    /**
-         * Success callbacks for uploaded photo.
-         * Replace upload icon with uploaded photo
-         */
-    success : function (result) {
-      var parsed   = JSON.parse(result),
-        filename = parsed.filename,
-        uploadImageWrapper = codex.editor.content.currentNode.querySelector('.' + elementClasses_.withPhoto.photo);
-
-      var img = uploadImageWrapper.querySelector('IMG');
-
-      img.src = parsed.data.file.bigUrl;
-      img.dataset.bigUrl = parsed.data.file.bigUrl;
-
-      uploadImageWrapper.classList.remove(elementClasses_.authorsPhotoWrapper_preview);
-    },
-
-    /** Error callback. Sends notification to user that something happend or plugin doesn't supports method */
-    error : function (result) {
-      console.log('Can\'t upload an image');
-    }
-
-  };
-
-    /**
-     * @private
-     *
-     * Make Quote from JSON datasets
-     */
-  var make_ = function (data) {
-    var tag;
-
-    if (data && data.size) {
-      data.style = quote_plugin.config.defaultStyle;
-
-      /**
-             * Supported types
-             */
-      switch (data.style) {
-        case 'simple':
-          tag = methods_.makeSimpleQuote(data);
-          break;
-        case 'withCaption':
-          tag = methods_.makeQuoteWithCaption(data);
-          break;
-        case 'withPhoto':
-          tag = methods_.makeQuoteWithPhoto(data);
-          break;
-      }
-
-      tag.dataset.quoteStyle = data.size;
-    } else {
-      var settings = {
-        'text'   : null,
-        'format' : 'html',
-        'cite'   : null,
-        'caption': null,
-        'size'   : null,
-        'image'  : null
-      };
-
-      tag = methods_.makeQuoteWithPhoto(settings);
-    }
-
-    return tag;
-  };
-
-  var prepareDataForSave_ = function (data) {
-    if (data.size == 'withPhoto') {
-      data.size = 'small';
-    }
-
-    /** Make paragraphs */
-    data.text = codex.editor.content.wrapTextWithParagraphs(data.text);
-
-    return data;
-  };
-
-    /**
-     * @public
-     *
-     * Renderer
-     *
-     * @param data
-     */
-  quote_plugin.render = function (data) {
-    return make_(data);
-  };
-
-  quote_plugin.validate = function (output) {
-    if (typeof output.text != 'string') {
-      return;
-    }
-
-    return output;
-  };
-
-  quote_plugin.save = function (blockContent) {
-    /**
-         * Extracts JSON quote data from HTML block
-         * @param {Text} text, {Text} author, {Object} photo
-         */
-    var parsedblock = methods_.parseBlockQuote(blockContent);
-
-    var outputData = {
-      'text'   : parsedblock.text,
-      'format' : 'html',
-      'cite'   : parsedblock.author || '',
-      'caption': parsedblock.job || '',
-      'size'   : parsedblock.style,
-      'image'  : parsedblock.photo
+   * Should this tools be displayed at the Editor's Toolbox
+   *
+   * @public
+   * @returns {boolean}
+   */
+  static get displayInToolbox() {
+    return true;
+  }
+
+  /**
+   * Get Tool icon element
+   *
+   * @public
+   * @return {string}
+   */
+  static get toolboxIcon() {
+    return '<div>Q</div>';
+  }
+
+  /**
+   * Class for the Toolbox icon
+   * @public
+   * @returns {string}
+   */
+  static get iconClassName() {
+    return 'cdx-quote-icon';
+  }
+
+  /**
+   * Default placeholder for quote text
+   *
+   * @public
+   * @returns {string}
+   */
+  static get DEFAULT_QUOTE_PLACEHOLDER() {
+    return 'Enter a quote';
+  }
+
+  /**
+   * Default placeholder for quote caption
+   *
+   * @public
+   * @returns {string}
+   */
+  static get DEFAULT_CAPTION_PLACEHOLDER() {
+    return 'Enter a caption';
+  }
+
+  /**
+   * Allowed quote alignments
+   *
+   * @public
+   * @returns {{left: string, center: string}}
+   */
+  static get ALIGNMENTS() {
+    return {
+      left: 'left',
+      center: 'center'
     };
-
-    return prepareDataForSave_(outputData);
-  };
+  }
 
   /**
-     * @public
-     *
-     * Draws settings
-     */
-  quote_plugin.makeSettings = function (data) {
-    var holder  = document.createElement('DIV'),
-      types   = {
-        big : 'По центру',
-        small : 'Врезка'
+   * Default quote alignment
+   *
+   * @public
+   * @returns {string}
+   */
+  static get DEFAULT_ALIGNMENT() {
+    return Quote.ALIGNMENTS.left;
+  }
+
+  /**
+   * Tool`s styles
+   *
+   * @returns {{baseClass: string, wrapper: string, quote: string, input: string, caption: string, settingsButton: string, settingsButtonActive: string}}
+   */
+  get CSS() {
+    return {
+      baseClass: 'cdx-block',
+      wrapper: 'cdx-quote',
+      quote: 'cdx-quote__text',
+      input: 'cdx-input',
+      caption: 'cdx-quote__caption',
+      settingsButton: 'cdx-settings-button',
+      settingsButtonActive: 'cdx-settings-button--active'
+    };
+  }
+
+  /**
+   * Tool`s settings properties
+   *
+   * @returns {*[]}
+   */
+  get settings() {
+    return [
+      {
+        name: 'left',
+        icon: `<svg width="16" height="11" viewBox="0 0 16 11" xmlns="http://www.w3.org/2000/svg" ><path d="M1.069 0H13.33a1.069 1.069 0 0 1 0 2.138H1.07a1.069 1.069 0 1 1 0-2.138zm0 4.275H9.03a1.069 1.069 0 1 1 0 2.137H1.07a1.069 1.069 0 1 1 0-2.137zm0 4.275h9.812a1.069 1.069 0 0 1 0 2.137H1.07a1.069 1.069 0 0 1 0-2.137z" /></svg>`
       },
-      selectTypeButton;
-
-    /** Add holder classname */
-    holder.className = elementClasses_.settings.holder;
-
-    /** Now add type selectors */
-    for (var type in types) {
-      selectTypeButton = document.createElement('SPAN');
-
-      selectTypeButton.textContent = types[type];
-      selectTypeButton.className   = elementClasses_.settings.buttons;
-
-      selectTypeButton.dataset.style = type;
-
-      if ( type == quote_plugin.config.defaultStyle ) {
-        selectTypeButton.classList.add(quoteTools.styles.settings.selectedType);
+      {
+        name: 'center',
+        icon: `<svg width="16" height="11" viewBox="0 0 16 11" xmlns="http://www.w3.org/2000/svg" ><path d="M1.069 0H13.33a1.069 1.069 0 0 1 0 2.138H1.07a1.069 1.069 0 1 1 0-2.138zm3.15 4.275h5.962a1.069 1.069 0 0 1 0 2.137H4.22a1.069 1.069 0 1 1 0-2.137zM1.069 8.55H13.33a1.069 1.069 0 0 1 0 2.137H1.07a1.069 1.069 0 0 1 0-2.137z"/></svg>`
       }
+    ];
+  }
 
-      // var quoteStyle = quoteTools.selectTypeQuoteStyle(type);
+  /**
+   * @constructor
+   *
+   * @param {QuoteData} quoteData
+   * @param {QuoteConfig} config
+   * @param api
+   */
+  constructor(quoteData = {}, config = {}, api) {
+    const {ALIGNMENTS, DEFAULT_ALIGNMENT} = Quote;
 
-      selectTypeButton.addEventListener('click', methods_.changeStyleClicked, false);
-      // quoteTools.addSelectTypeClickListener(selectTypeButton, quoteStyle);
+    this.api = api;
 
-      holder.appendChild(selectTypeButton);
+    this.quotePlaceholder = config.quotePlaceholder || Quote.DEFAULT_QUOTE_PLACEHOLDER;
+    this.captionPlaceholder = config.captionPlaceholder || Quote.DEFAULT_CAPTION_PLACEHOLDER;
+
+    this.data = {
+      quote: quoteData.quote || '',
+      caption: quoteData.caption || '',
+      alignment: Object.values(ALIGNMENTS).includes(quoteData.alignment) && quoteData.alignment ||
+        config.defaultAlignment ||
+        DEFAULT_ALIGNMENT
+    };
+  }
+
+  render() {
+    const container = this._make('blockquote', [this.CSS.baseClass, this.CSS.wrapper]);
+    const quote = this._make('div', [this.CSS.input, this.CSS.quote], {
+      contentEditable: true,
+      innerHTML: this.data.quote
+    });
+    const caption = this._make('div', [this.CSS.input, this.CSS.caption], {
+      contentEditable: true,
+      innerHTML: this.data.caption
+    });
+
+    quote.dataset.placeholder = this.quotePlaceholder;
+    caption.dataset.placeholder = this.captionPlaceholder;
+
+    container.appendChild(quote);
+    container.appendChild(caption);
+
+    return container;
+  }
+
+  save(quoteElement) {
+    const quote = quoteElement.querySelector(`.${this.CSS.quote}`);
+    const caption = quoteElement.querySelector(`.${this.CSS.caption}`);
+
+    return Object.assign(this.data, {
+      quote: quote.innerHTML,
+      caption: caption.innerHTML
+    });
+  }
+
+  /**
+   * Create wrapper for Tool`s settings buttons:
+   * 1. Left alignment
+   * 2. Center alignment
+   *
+   * @returns {HTMLDivElement}
+   */
+  renderSettings() {
+    let wrapper = document.createElement('div');
+
+    this.settings
+      .map( tune => {
+        const el = document.createElement('div');
+
+        el.classList.add(this.CSS.settingsButton);
+        el.innerHTML = tune.icon;
+
+        el.classList.toggle(this.CSS.settingsButtonActive, tune.name === this.data.alignment);
+
+        wrapper.appendChild(el);
+
+        return el;
+      })
+      .forEach((element, index, elements) => {
+        element.addEventListener('click', () => {
+          this._toggleTune(this.settings[index].name);
+
+          elements.forEach((el, i) => {
+            const {name} = this.settings[i];
+
+            el.classList.toggle(this.CSS.settingsButtonActive, name === this.data.alignment);
+          });
+        });
+      });
+
+    return wrapper;
+  };
+
+  _toggleTune(tune) {
+    this.data.alignment = tune;
+  }
+
+  /**
+   * Helper for making Elements with attributes
+   *
+   * @param  {string} tagName           - new Element tag name
+   * @param  {array|string} classNames  - list or name of CSS classname(s)
+   * @param  {Object} attributes        - any attributes
+   * @return {Element}
+   */
+  _make(tagName, classNames = null, attributes = {}) {
+    let el = document.createElement(tagName);
+
+    if ( Array.isArray(classNames) ) {
+      el.classList.add(...classNames);
+    } else if( classNames ) {
+      el.classList.add(classNames);
     }
 
-    return holder;
-  };
+    for (let attrName in attributes) {
+      el[attrName] = attributes[attrName];
+    }
 
-  /**
-     * @public
-     * Default path to redactors images
-     * @type {null}
-     */
-  quote_plugin.path = null;
-
-  /**
-     * @public
-     *
-     * @type {null}
-     */
-  quote_plugin.config = null;
-
-  /**
-     * @public
-     *
-     * @param config
-     */
-  quote_plugin.prepare = function (config) {
-    quote_plugin.config = config;
-
-    return Promise.resolve();
-  };
-
-  quote_plugin.destroy = function () {
-    quote = null;
-  };
-
-  return quote_plugin;
-})({});
+    return el;
+  }
+}

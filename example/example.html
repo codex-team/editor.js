@@ -31,6 +31,9 @@
 <script src="plugins/simple-image/simple-image.js?v=100"></script>
 <link rel="stylesheet" href="plugins/simple-image/simple-image.css">
 
+<script src="plugins/quote/quote.js?v=100"></script>
+<link rel="stylesheet" href="plugins/quote/quote.css">
+
 <!--<script src="plugins/header/header.js"></script>-->
 <!--<link rel="stylesheet" href="plugins/header/header.css">-->
 
@@ -50,7 +53,8 @@
             text: Text,
             header: Header,
             term: Term,
-            image: SimpleImageTool
+            image: SimpleImageTool,
+            quote: Quote
         },
         toolsConfig: {
             text: {
@@ -102,7 +106,15 @@
                     withBorder: false,
                     withBackground: false,
                   }
+                },
+              {
+                type: 'quote',
+                data: {
+                  quote: 'Luke, I am You Father',
+                  caption: 'Anakin Skywalker aka Lord Darth Vader',
+                  alignment: 'center'
                 }
+              }
             ]
         }
     });
