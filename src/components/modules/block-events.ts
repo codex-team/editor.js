@@ -101,6 +101,9 @@ export default class BlockEvents extends Module {
     }
 
     if (this.Editor.Toolbox.opened) {
+      event.preventDefault();
+      event.stopPropagation();
+
       this.Editor.Toolbox.leaf();
     }
   }
@@ -113,6 +116,18 @@ export default class BlockEvents extends Module {
     const currentBlock = this.Editor.BlockManager.currentBlock,
       toolsConfig = this.config.toolsConfig[currentBlock.name];
 
+    if (this.Editor.Toolbox.opened) {
+
+      const toolName = this.Editor.Toolbox.getTool();
+      const newBlock = this.Editor.BlockManager.replace(toolName);
+
+      this.Editor.Caret.setToBlock(newBlock);
+      this.Editor.Toolbox.close();
+      this.Editor.Toolbar.move();
+      return;
+    }
+
+    console.log('going ahead');
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.

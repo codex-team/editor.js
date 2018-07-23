@@ -28,6 +28,12 @@ export default class Toolbox extends Module {
      * @type {boolean}
      */
     this.opened = false;
+
+    /**
+     * Active button index
+     * @type {number}
+     */
+    this.activeButtonIndex = -1;
   }
 
   /**
@@ -38,6 +44,7 @@ export default class Toolbox extends Module {
     return  {
       toolbox: 'ce-toolbox',
       toolboxButton: 'ce-toolbox__button',
+      toolboxButtonActive : 'ce-toolbox__button--active',
       toolboxOpened: 'ce-toolbox--opened',
     };
   }
@@ -214,7 +221,42 @@ export default class Toolbox extends Module {
     }
   }
 
+  /**
+   * Leaf
+   */
   leaf() {
-    console.log(this.nodes.toolbox);
+    const childNodes = this.nodes.toolbox.childNodes;
+
+    for (let i = 0; i < childNodes.length; i++) {
+      if (childNodes[i].classList.contains(Toolbox.CSS.toolboxButtonActive)) {
+        childNodes[this.activeButtonIndex].classList.remove(Toolbox.CSS.toolboxButtonActive);
+        this.activeButtonIndex = i;
+        break;
+      }
+    }
+
+    if (this.activeButtonIndex === -1) {
+      this.activeButtonIndex = 0;
+    } else {
+      this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
+    }
+
+    childNodes[this.activeButtonIndex].classList.add(Toolbox.CSS.toolboxButtonActive);
+  }
+
+  /**
+   * get tool name when it is selected
+   * In case when nothing selection returns null
+   *
+   * @return {String}
+   */
+  getTool() {
+    const childNodes = this.nodes.toolbox.childNodes;
+
+    if (this.activeButtonIndex === -1) {
+      return null;
+    }
+
+    return childNodes[this.activeButtonIndex].dataset.name;
   }
 }
