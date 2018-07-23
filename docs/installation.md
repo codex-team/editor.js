@@ -1,6 +1,6 @@
 # Installation Guide
 
-There are a few steps to run CodeX Editor on your site.
+There are few steps to run CodeX Editor on your site.
 
 ## Load Editor's core
 
