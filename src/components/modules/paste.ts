@@ -107,16 +107,16 @@ export default class Paste extends Module {
   private processTool = ([name, tool]) => {
     const toolPasteConfig = tool.onPaste || {};
 
-    if (!toolPasteConfig.handler) {
+    if (this.config.initialBlock === name && !toolPasteConfig.handler) {
       _.log(
-        `"${name}" Tool MUST provide paste handler.`,
+        `«${name}» Tool must provide a paste handler.`,
         'warn',
       );
     }
 
     if (typeof toolPasteConfig.handler !== 'function') {
       _.log(
-        `Paste handler for "${name}" Tool should be a function.`,
+        `Paste handler for «${name}» Tool should be a function.`,
         'warn',
       );
     } else {
@@ -125,8 +125,8 @@ export default class Paste extends Module {
       tags.forEach((tag) => {
         if (this.toolsTags.hasOwnProperty(tag)) {
           _.log(
-            `Paste handler for "${name}" Tool on "${tag}" tag is skipped ` +
-            `because it is already used by "${this.toolsTags[tag].tool}" Tool.`,
+            `Paste handler for «${name}» Tool on «${tag}» tag is skipped ` +
+            `because it is already used by «${this.toolsTags[tag].tool}» Tool.`,
             'warn',
           );
           return;

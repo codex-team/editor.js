@@ -267,7 +267,7 @@ export default class Tools extends Module {
     let plugin = this.toolClasses[tool],
       config = this.config.toolsConfig[tool];
 
-    let instance = new plugin(data, config || {});
+    let instance = new plugin(data, config || {}, this.Editor.API.methods);
 
     return instance;
   }

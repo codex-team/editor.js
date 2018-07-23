@@ -62,6 +62,13 @@ export interface IBlocksAPI {
    * @return {number}
    */
   getBlocksCount: () => number;
+
+  /**
+   * Stretch Block's content
+   * @param {number} index - index of Block
+   * @param {boolean} [status] - true to enable, false to disable
+   */
+  stretchBlock: (index: number, status: boolean) => void;
 }
 
 /**
