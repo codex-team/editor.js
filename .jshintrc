@@ -20,7 +20,7 @@
   ],
 
   // Allow ES6.
-  "esversion": 2017,
+  "esversion": 6,
 
   /*
    * ENFORCING OPTIONS

@@ -11383,7 +11383,7 @@ var CodexEditor = function () {
       };
 
       this.config.holderId = config.holderId;
-      this.config.placeholder = config.placeholder || 'write your story...';
+      this.config.placeholder = config.placeholder || 'write your story...'; // @todo is it necessary?
       this.config.sanitizer = config.sanitizer || {
         p: true,
         b: true,
@@ -11435,117 +11435,6 @@ var CodexEditor = function () {
 CodexEditor.displayName = 'CodexEditor';
 exports.default = CodexEditor;
 ;
-
-// module.exports = (function (editor) {
-//
-//     'use strict';
-//
-//     editor.version = VERSION;
-//     editor.scriptPrefix = 'cdx-script-';
-//
-//     var init = function () {
-//
-//         editor.core          = require('./modules/core');
-//         editor.tools         = require('./modules/tools');
-//         editor.ui            = require('./modules/ui');
-//         editor.transport     = require('./modules/transport');
-//         editor.renderer      = require('./modules/renderer');
-//         editor.saver         = require('./modules/saver');
-//         editor.content       = require('./modules/content');
-//         editor.toolbar       = require('./modules/toolbar/toolbar');
-//         editor.callback      = require('./modules/callbacks');
-//         editor.draw          = require('./modules/draw');
-//         editor.caret         = require('./modules/caret');
-//         editor.notifications = require('./modules/notifications');
-//         editor.parser        = require('./modules/parser');
-//         editor.sanitizer     = require('./modules/sanitizer');
-//         editor.listeners     = require('./modules/listeners');
-//         editor.destroyer     = require('./modules/destroyer');
-//         editor.paste         = require('./modules/paste');
-//
-//     };
-//
-//     /**
-//      * @public
-//      * holds initial settings
-//      */
-//     editor.settings = {
-//         tools     : ['text', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
-//         holderId  : 'codex-editor',
-//
-//         // Type of block showing on empty editor
-//         initialBlockPlugin: 'text'
-//     };
-//
-//     /**
-//      * public
-//      *
-//      * Static nodes
-//      */
-//     editor.nodes = {
-//         holder            : null,
-//         wrapper           : null,
-//         toolbar           : null,
-//         inlineToolbar     : {
-//             wrapper : null,
-//             buttons : null,
-//             actions : null
-//         },
-//         toolbox           : null,
-//         notifications     : null,
-//         plusButton        : null,
-//         showSettingsButton: null,
-//         showTrashButton   : null,
-//         blockSettings     : null,
-//         pluginSettings    : null,
-//         defaultSettings   : null,
-//         toolbarButtons    : {}, // { type : DomEl, ... }
-//         redactor          : null
-//     };
-//
-//     /**
-//      * @public
-//      *
-//      * Output state
-//      */
-//     editor.state = {
-//         jsonOutput  : [],
-//         blocks      : [],
-//         inputs      : []
-//     };
-//
-//     /**
-//     * @public
-//     * Editor plugins
-//     */
-//     editor.tools = {};
-//
-//     editor.start = function (userSettings) {
-//
-//         init();
-//
-//         editor.core.prepare(userSettings)
-//
-//         // If all ok, make UI, bind events and parse initial-content
-//             .then(editor.ui.prepare)
-//             .then(editor.tools.prepare)
-//             .then(editor.sanitizer.prepare)
-//             .then(editor.paste.prepare)
-//             .then(editor.transport.prepare)
-//             .then(editor.renderer.makeBlocksFromData)
-//             .then(editor.ui.saveInputs)
-//             .catch(function (error) {
-//
-//                 editor.core.log('Initialization failed with error: %o', 'warn', error);
-//
-//             });
-//
-//     };
-//
-//     return editor;
-//
-// })({});
-
 module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
