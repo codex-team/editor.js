@@ -58,19 +58,16 @@ class SimpleImageTool {
    * @public
    */
   render() {
-    let wrapper = document.createElement('div'),
-      loader = document.createElement('div'),
-      imageHolder = document.createElement('div'),
-      image = document.createElement('img'),
-      caption = document.createElement('div');
+    let wrapper = this._make('div', [this.CSS.baseClass, this.CSS.wrapper]),
+      loader = this._make('div', this.CSS.loading),
+      imageHolder = this._make('div', this.CSS.imageHolder),
+      image = this._make('img'),
+      caption = this._make('div', this.CSS.input, {
+        contentEditable: 'true',
+        innerHTML: this.data.caption || ''
+      });
 
-    wrapper.classList.add(this.CSS.baseClass, this.CSS.wrapper);
-    loader.classList.add(this.CSS.loading);
-    caption.classList.add(this.CSS.input);
-    caption.contentEditable = 'true';
     caption.dataset.placeholder = 'Enter a caption';
-    caption.innerHTML = this.data.caption || '';
-    imageHolder.classList.add(this.CSS.imageHolder);
 
     image.src = this.data.url;
     wrapper.appendChild(loader);
@@ -139,10 +136,36 @@ class SimpleImageTool {
         el.classList.toggle(this.CSS.settingsButtonActive);
       });
 
+      el.classList.toggle(this.CSS.settingsButtonActive, this.data[tune.name]);
+
       wrapper.appendChild(el);
     });
     return wrapper;
   };
+
+  /**
+   * Helper for making Elements with attributes
+   *
+   * @param  {string} tagName           - new Element tag name
+   * @param  {array|string} classNames  - list or name of CSS classname(s)
+   * @param  {Object} attributes        - any attributes
+   * @return {Element}
+   */
+  _make(tagName, classNames = null, attributes = {}) {
+    let el = document.createElement(tagName);
+
+    if ( Array.isArray(classNames) ) {
+      el.classList.add(...classNames);
+    } else if( classNames ) {
+      el.classList.add(classNames);
+    }
+
+    for (let attrName in attributes) {
+      el[attrName] = attributes[attrName];
+    }
+
+    return el;
+  }
 
   /**
    * Click on the Settings Button
