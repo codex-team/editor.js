@@ -104,7 +104,7 @@ export default class Caret extends Module {
     if (lastBlock.isEmpty) {
       this.setToBlock(lastBlock);
     } else {
-      let newBlock = this.Editor.BlockManager.insertAtEnd();
+      const newBlock = this.Editor.BlockManager.insertAtEnd();
 
       this.setToBlock(newBlock);
     }

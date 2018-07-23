@@ -204,7 +204,7 @@ export default class UI extends Module {
       /**
        * Insert initial typed Block
        */
-      let newBlock = this.Editor.BlockManager.insert();
+      const newBlock = this.Editor.BlockManager.insert();
 
       this.Editor.Caret.setToBlock(newBlock);
 
