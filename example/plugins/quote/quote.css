@@ -1,4 +1,6 @@
-.cdx-quote-icon {}
+.cdx-quote-icon svg {
+  transform: rotate(180deg);
+}
 
 .cdx-quote {
   margin: 0;
