@@ -197,11 +197,16 @@ class Quote {
    * @returns {HTMLDivElement}
    */
   renderSettings() {
-    let wrapper = document.createElement('div');
+    const wrapper = this._make('div');
+    const capitalize = str => str[0].toUpperCase() + str.substr(1);
+
 
     this.settings
       .map( tune => {
-        const el = document.createElement('div');
+        const el = this._make('div', this.CSS.settingsButton, {
+          innerHTML: tune.icon,
+          title: `${capitalize(tune.name)} alignment`
+        });
 
         el.classList.add(this.CSS.settingsButton);
         el.innerHTML = tune.icon;
