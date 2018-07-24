@@ -114,9 +114,12 @@ export default class BlockManager extends Module {
    * @return {Block}
    */
   insert(toolName = this.config.initialBlock, data = {}, settings = {}) {
+    // Increment index before construct,
+    // because developers can use API/Blocks/getCurrentInputIndex on the render() method
+    let newIndex = ++this.currentBlockIndex;
     let block = this.composeBlock(toolName, data, settings);
 
-    this._blocks[++this.currentBlockIndex] = block;
+    this._blocks[newIndex] = block;
     return block;
   }
 
