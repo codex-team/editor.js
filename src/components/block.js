@@ -34,6 +34,7 @@ export default class Block {
     this.settings = settings;
     this.api = apiMethods;
     this.holder = this.compose();
+    this.inputIndex = 0;
 
     /**
      * @type {IBlockTune[]}
@@ -83,6 +84,42 @@ export default class Block {
     if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
       this.tool[methodName].call(this.tool, params);
     }
+  }
+
+  get inputs() {
+    const content = this.holder;
+
+    const inputs = content.querySelectorAll('[contenteditable], textarea, input');
+
+    return _.array(inputs);
+  }
+
+  get currentInput() {
+    return this.inputs[this.inputIndex];
+  }
+
+  get nextInput() {
+    return this.inputs[this.inputIndex + 1];
+  }
+
+  get previousInput() {
+    return this.inputs[this.inputIndex - 1];
+  }
+
+  setToNextInput() {
+    this.inputIndex++;
+    this.focus();
+  }
+
+  setToPreviousInput() {
+    this.inputIndex--;
+    this.focus();
+  }
+
+  focus() {
+    const inputs = this.inputs;
+
+    inputs[this.inputIndex].focus();
   }
 
   /**

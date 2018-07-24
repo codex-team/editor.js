@@ -183,14 +183,22 @@ export default class Caret extends Module {
    * @return {Boolean}
    */
   navigateNext(force = false) {
-    let nextBlock = this.Editor.BlockManager.nextBlock;
+    const {currentBlock, nextBlock} = this.Editor.BlockManager;
+    const {nextInput} = currentBlock;
 
-    if (!nextBlock) {
+    console.log(nextInput);
+
+    if (!nextBlock && !nextInput) {
       return false;
     }
 
     if (force || this.isAtEnd) {
-      this.setToBlock(nextBlock);
+      if (!nextInput) {
+        this.setToBlock(nextBlock);
+      } else {
+        currentBlock.setToNextInput();
+      }
+
       return true;
     }
 
@@ -207,14 +215,19 @@ export default class Caret extends Module {
    * @return {Boolean}
    */
   navigatePrevious(force = false) {
-    let previousBlock = this.Editor.BlockManager.previousBlock;
+    const {currentBlock, previousBlock} = this.Editor.BlockManager;
+    const {previousInput} = currentBlock;
 
-    if (!previousBlock) {
+    if (!previousBlock && !previousInput) {
       return false;
     }
 
     if (force || this.isAtStart) {
-      this.setToBlock( previousBlock, 0, true );
+      if (!currentBlock) {
+        this.setToBlock( previousBlock, 0, true );
+      } else {
+        currentBlock.setToPreviousInput();
+      }
       return true;
     }
 
@@ -287,7 +300,7 @@ export default class Caret extends Module {
 
     let selection = Selection.get(),
       anchorNode = selection.anchorNode,
-      lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
+      lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
 
     /**
      * In case of

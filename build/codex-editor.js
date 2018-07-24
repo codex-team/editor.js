@@ -118,10 +118,10 @@ module.exports = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg xmlns=\"http:
  * Library for handling keyboard shortcuts
  * @copyright undefined
  * @license MIT
- * @author [object Object]
+ * @author CodeX (https://ifmo.su)
  * @version 1.0.0
  */
-!function(e,t){if(true)module.exports=t();else { var r, n; }}("undefined"!=typeof self?self:this,function(){return function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,t),o.l=!0,o.exports}var n={};return t.m=e,t.c=n,t.d=function(e,n,r){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i={0:48,1:49,2:50,3:51,4:52,5:53,6:54,7:55,8:56,9:57,A:65,B:66,C:67,D:68,E:69,F:70,G:71,H:72,I:73,J:74,K:75,L:76,M:77,N:78,O:79,P:80,Q:81,R:82,S:83,T:84,U:85,V:86,W:87,X:88,Y:89,Z:90,",":188,".":190,BACKSPACE:8,ENTER:13,ESCAPE:27,LEFT:37,UP:38,RIGHT:39,DOWN:40,INSERT:45,DELETE:46},u={CMD:["CMD","CONTROL","COMMAND","WINDOWS","CTRL"],SHIFT:["SHIFT"],ALT:["ALT","OPTION"]},c=function(){function e(t){var n=this;r(this,e),this.commands={},this.keys={},this.parseShortcutName(t.name),this.element=t.on,this.callback=t.callback,this.executeShortcut=function(e){n.execute(e)},this.element.addEventListener("keydown",this.executeShortcut,!1)}return o(e,[{key:"parseShortcutName",value:function(e){e=e.split("+");for(var t=0;t<e.length;t++)if(e[t]=e[t].toUpperCase(),e[t].length>1)for(var n in u)u[n].includes(e[t])&&(this.commands[n]=!0);else this.keys[e[t]]=!0}},{key:"execute",value:function(e){var t=e.ctrlKey||e.metaKey,n=e.shiftKey,r=e.altKey,o={CMD:t,SHIFT:n,ALT:r},u=void 0,c=!0;for(u in this.commands)c=c&&o[u];var a=void 0,s=!0;for(a in this.keys)s=s&&(e.keyCode===i[a]||e.whick===i[a]);c&&s&&this.callback(e)}},{key:"remove",value:function(){this.element.removeEventListener("keydown",this.executeShortcut)}}]),e}();t.default=c}])});
+!function(e,t){if(true)module.exports=t();else { var r, n; }}("undefined"!=typeof self?self:this,function(){return function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,t),o.l=!0,o.exports}var n={};return t.m=e,t.c=n,t.d=function(e,n,r){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i={0:48,1:49,2:50,3:51,4:52,5:53,6:54,7:55,8:56,9:57,A:65,B:66,C:67,D:68,E:69,F:70,G:71,H:72,I:73,J:74,K:75,L:76,M:77,N:78,O:79,P:80,Q:81,R:82,S:83,T:84,U:85,V:86,W:87,X:88,Y:89,Z:90,BACKSPACE:8,ENTER:13,ESCAPE:27,LEFT:37,UP:38,RIGHT:39,DOWN:40,INSERT:45,DELETE:46},u={CMD:["CMD","CONTROL","COMMAND","WINDOWS","CTRL"],SHIFT:["SHIFT"],ALT:["ALT","OPTION"]},c=function(){function e(t){var n=this;r(this,e),this.commands={},this.keys={},this.parseShortcutName(t.name),this.element=t.on,this.callback=t.callback,this.executeShortcut=function(e){n.execute(e)},this.element.addEventListener("keydown",this.executeShortcut,!1)}return o(e,[{key:"parseShortcutName",value:function(e){e=e.split("+");for(var t=0;t<e.length;t++)if(e[t]=e[t].toUpperCase(),e[t].length>1)for(var n in u)u[n].includes(e[t])&&(this.commands[n]=!0);else this.keys[e[t]]=!0}},{key:"execute",value:function(e){var t=e.ctrlKey||e.metaKey,n=e.shiftKey,r=e.altKey,o={CMD:t,SHIFT:n,ALT:r},u=void 0,c=!0;for(u in this.commands)c=c&&o[u];var a=void 0,s=!0;for(a in this.keys)s=s&&e.keyCode===i[a];c&&s&&this.callback(e)}},{key:"remove",value:function(){this.element.removeEventListener("keydown",this.executeShortcut)}}]),e}();t.default=c}])});
 
 /***/ }),
 
@@ -12033,6 +12033,7 @@ var Block = function () {
     this.settings = settings;
     this.api = apiMethods;
     this.holder = this.compose();
+    this.inputIndex = 0;
 
     /**
      * @type {IBlockTune[]}
@@ -12082,6 +12083,25 @@ var Block = function () {
       if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
         this.tool[methodName].call(this.tool, params);
       }
+    }
+  }, {
+    key: 'setToNextInput',
+    value: function setToNextInput() {
+      this.inputIndex++;
+      this.focus();
+    }
+  }, {
+    key: 'setToPreviousInput',
+    value: function setToPreviousInput() {
+      this.inputIndex--;
+      this.focus();
+    }
+  }, {
+    key: 'focus',
+    value: function focus() {
+      var inputs = this.inputs;
+
+      inputs[this.inputIndex].focus();
     }
 
     /**
@@ -12205,6 +12225,30 @@ var Block = function () {
      * @return {Boolean}
      */
 
+  }, {
+    key: 'inputs',
+    get: function get() {
+      var content = this.holder;
+
+      var inputs = content.querySelectorAll('[contenteditable], textarea, input');
+
+      return _.array(inputs);
+    }
+  }, {
+    key: 'currentInput',
+    get: function get() {
+      return this.inputs[this.inputIndex];
+    }
+  }, {
+    key: 'nextInput',
+    get: function get() {
+      return this.inputs[this.inputIndex + 1];
+    }
+  }, {
+    key: 'previousInput',
+    get: function get() {
+      return this.inputs[this.inputIndex - 1];
+    }
   }, {
     key: 'pluginsContent',
     get: function get() {
@@ -14576,13 +14620,7 @@ var BlockManager = function (_Module) {
       var newIndex = ++this.currentBlockIndex;
       var block = this.composeBlock(toolName, data, settings);
 
-<<<<<<< HEAD
       this._blocks[newIndex] = block;
-      this.Editor.Caret.setToBlock(block);
-
-=======
-      this._blocks[++this.currentBlockIndex] = block;
->>>>>>> rewriting-version2.0
       return block;
     }
 
@@ -15453,15 +15491,25 @@ var Caret = function (_Module) {
     key: 'navigateNext',
     value: function navigateNext() {
       var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var _Editor$BlockManager = this.Editor.BlockManager,
+          currentBlock = _Editor$BlockManager.currentBlock,
+          nextBlock = _Editor$BlockManager.nextBlock;
+      var nextInput = currentBlock.nextInput;
 
-      var nextBlock = this.Editor.BlockManager.nextBlock;
 
-      if (!nextBlock) {
+      console.log(nextInput);
+
+      if (!nextBlock && !nextInput) {
         return false;
       }
 
       if (force || this.isAtEnd) {
-        this.setToBlock(nextBlock);
+        if (!nextInput) {
+          this.setToBlock(nextBlock);
+        } else {
+          currentBlock.setToNextInput();
+        }
+
         return true;
       }
 
@@ -15482,15 +15530,22 @@ var Caret = function (_Module) {
     key: 'navigatePrevious',
     value: function navigatePrevious() {
       var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var _Editor$BlockManager2 = this.Editor.BlockManager,
+          currentBlock = _Editor$BlockManager2.currentBlock,
+          previousBlock = _Editor$BlockManager2.previousBlock;
+      var previousInput = currentBlock.previousInput;
 
-      var previousBlock = this.Editor.BlockManager.previousBlock;
 
-      if (!previousBlock) {
+      if (!previousBlock && !previousInput) {
         return false;
       }
 
       if (force || this.isAtStart) {
-        this.setToBlock(previousBlock, 0, true);
+        if (!currentBlock) {
+          this.setToBlock(previousBlock, 0, true);
+        } else {
+          currentBlock.setToPreviousInput();
+        }
         return true;
       }
 
@@ -15618,7 +15673,7 @@ var Caret = function (_Module) {
 
       var selection = _selection2.default.get(),
           anchorNode = selection.anchorNode,
-          lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
+          lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
 
       /**
        * In case of
