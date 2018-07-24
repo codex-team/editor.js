@@ -1,13 +1,4 @@
-/**
- * @class Paste
- * @classdesc Contains methods to handle paste on editor
- *
- * @module Paste
- *
- * @version 2.0.0
- */
-
-import {IBlockToolData} from '../interfaces/block-tool';
+import IBlockToolData from '../interfaces/tools/block-tool';
 import IEditorConfig from '../interfaces/editor-config';
 
 declare const Module: any;
@@ -54,7 +45,14 @@ interface IPasteData {
   isBlock: boolean;
   handler: (content: HTMLElement|string, patten?: RegExp) => IBlockToolData;
 }
-
+/**
+ * @class Paste
+ * @classdesc Contains methods to handle paste on editor
+ *
+ * @module Paste
+ *
+ * @version 2.0.0
+ */
 export default class Paste extends Module {
 
   /** If string`s length is greater than this number we don't check paste patterns */

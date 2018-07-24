@@ -6,7 +6,7 @@ import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
 import EditorConfig from '../interfaces/editor-config';
-import InlineTool from '../interfaces/inline-tool';
+import InlineTool from '../interfaces/tools/inline-tool';
 import Selection from '../selection';
 
 /**
@@ -14,7 +14,7 @@ import Selection from '../selection';
  *
  * |¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|
  * |   B  i [link] [mark]   |
- * | _______________________|
+ * |________________________|
  */
 export default class InlineToolbar extends Module {
 

@@ -1,28 +1,40 @@
-import IEditorConfig from "./editor-config";
+import IBlockToolData from './tool-settings';
 
 /**
  * Describe Block Tool object
  * @see {@link docs/tools.md}
  */
-export interface IBlockTool {
+export default interface IBlockTool {
 
   /**
    * Should this tools be displayed at the Editor's Toolbox
-   * @return {boolean}
    */
-  displayInToolbox(): boolean;
+  displayInToolbox: boolean;
 
   /**
    * Class for the Toolbox icon
-   * @return {string}
    */
-  iconClassName(): string;
+  iconClassName: string;
+
+  /**
+   * Ability to open Toolbox and change Tool if all Block's field are empty
+   */
+  irreplaceable?: boolean;
+
+  /**
+   * Define Tool type as Inline
+   */
+  isInline?: boolean;
+
+  /**
+   * Allow Tool to determine shortcut that will fire 'surround' method
+   */
+  shortcut?: string;
 
   /**
    * Tool's SVG icon for Toolbox
-   * @return {string}
    */
-  toolboxIcon(): string;
+  toolboxIcon: string;
 
   /**
    * Create Block's settings block
@@ -57,13 +69,3 @@ export interface IBlockTool {
    */
   validate(blockData: IBlockToolData): boolean;
 }
-
-/**
- * Object returned by Tool's {@link IBlockTool#save} method
- */
-export interface IBlockToolData {}
-
-/**
- * Object passed to the Tool's constructor by {@link IEditorConfig#toolsConfig}
- */
-export interface IBlockToolConfig {}

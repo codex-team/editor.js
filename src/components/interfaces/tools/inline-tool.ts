@@ -1,7 +1,23 @@
 /**
  * Base structure for the Inline Toolbar Tool
  */
-export default interface InlineTool {
+export default interface IInlineTool {
+
+  /**
+   * Class name for Tool's icon
+   */
+  iconClassName?: string;
+
+  /**
+   * Ability to open Toolbox and change Tool if all Block's field are empty
+   */
+  irreplaceable?: boolean;
+
+  /**
+   * Define Tool type as Inline
+   */
+  isInline?: boolean;
+
   /**
    * Allow Tool to determine shortcut that will fire 'surround' method
    */

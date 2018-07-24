@@ -17478,7 +17478,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  *
  * |¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|
  * |   B  i [link] [mark]   |
- * | _______________________|
+ * |________________________|
  */
 var InlineToolbar = function (_Module) {
     _inherits(InlineToolbar, _Module);
