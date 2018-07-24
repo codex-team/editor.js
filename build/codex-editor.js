@@ -18089,11 +18089,6 @@ var Toolbox = function (_Module) {
 
       button.innerHTML = tool.toolboxIcon;
 
-      /**
-       * Save tool's name in the button data-name
-       */
-      button.dataset.name = toolName;
-
       $.append(this.nodes.toolbox, button);
 
       this.nodes.toolbox.appendChild(button);
@@ -18101,7 +18096,7 @@ var Toolbox = function (_Module) {
 
       /** Add listener to click */
       this.Editor.Listeners.on(button, 'click', function (event) {
-        _this2.buttonClicked(event);
+        _this2.toolButtonClicked(event, toolName);
       });
 
       /** Enable shortcut */
@@ -18172,26 +18167,16 @@ var Toolbox = function (_Module) {
     }
 
     /**
-     * Toolbox button click listener
-     * 1) if block is empty -> replace
-     * 2) if block is not empty -> add new block below
+     * Toolbox Tool's button click handler
      *
      * @param {MouseEvent} event
+     * @param {string} toolName
      */
 
   }, {
-    key: 'buttonClicked',
-    value: function buttonClicked(event) {
-      var toolButton = event.target;
-
-      toolButton = toolButton.closest('.' + Toolbox.CSS.toolboxButton);
-
-      if (!toolButton) {
-        return;
-      }
-
-      var toolName = toolButton.dataset.name,
-          tool = this.Editor.Tools.toolClasses[toolName];
+    key: 'toolButtonClicked',
+    value: function toolButtonClicked(event, toolName) {
+      var tool = this.Editor.Tools.toolClasses[toolName];
 
       this.insertNewBlock(tool, toolName);
     }
