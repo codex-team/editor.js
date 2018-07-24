@@ -1,23 +1,23 @@
 /**
  * Object passed to the Tool's constructor by {@link IEditorConfig#toolsConfig}
  */
-import IBlockTool from './block-tool';
-import IInlineTool from './inline-tool';
+import ITool from './tool';
 
 export default interface IToolSettings {
 
   /**
    * Tool's class
    */
-  class: IBlockTool|IInlineTool;
+  class: ITool;
 
   /**
-   * Tool's configuration
+   * User configuration object that will be passed to the Tool's constructor
    */
   config?: object;
 
   /**
    * Disable module {@link Paste} for this Tool
+   * @todo remove this option
    */
   disallowPaste?: boolean;
 
@@ -29,7 +29,7 @@ export default interface IToolSettings {
   /**
    * Show inline Toolbar in this Tool
    */
-  inlineToolbar?: boolean;
+  inlineToolbar?: boolean|string[];
 
   /**
    * Define shortcut for this Tool

@@ -37,10 +37,13 @@
         tools: {
             text: {
               class: Text,
-              inlineToolbar: true
+              inlineToolbar: true,
             },
             header: Header,
-            term: Term,
+            term: {
+              class: Term,
+              shortcut: 'CMD+SHIFT+M'
+            },
         },
         data: {
             items: [

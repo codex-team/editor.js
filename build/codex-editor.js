@@ -14136,7 +14136,7 @@ var BlockEvents = function (_Module) {
         key: "enter",
         value: function enter(event) {
             var currentBlock = this.Editor.BlockManager.currentBlock,
-                toolsConfig = this.Editor.Tools.getToolConfig(currentBlock.name);
+                toolsConfig = this.Editor.Tools.getToolSettings(currentBlock.name);
             /**
              * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
              * Uses for Tools like <code> where line breaks should be handled by default behaviour.
@@ -17653,7 +17653,7 @@ var InlineToolbar = function (_Module) {
             if (!currentBlock) {
                 return false;
             }
-            var toolConfig = this.Editor.Tools.getToolConfig(currentBlock.name);
+            var toolConfig = this.Editor.Tools.getToolSettings(currentBlock.name);
             return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
         }
         /**
@@ -17699,7 +17699,7 @@ var InlineToolbar = function (_Module) {
              * Enable shortcuts
              * Ignore tool that doesn't have shortcut or empty string
              */
-            var toolsConfig = this.Editor.Tools.getToolConfig(toolName);
+            var toolsConfig = this.Editor.Tools.getToolSettings(toolName);
             if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
                 this.enableShortcuts(tool, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
             }
@@ -17720,7 +17720,7 @@ var InlineToolbar = function (_Module) {
                 handler: function handler(event) {
                     var currentBlock = _this4.Editor.BlockManager.currentBlock;
 
-                    var toolConfig = _this4.Editor.Tools.getToolConfig(currentBlock.name);
+                    var toolConfig = _this4.Editor.Tools.getToolSettings(currentBlock.name);
                     if (!toolConfig || !toolConfig[_this4.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
                         return;
                     }
@@ -17963,7 +17963,7 @@ var Toolbox = function (_Module) {
       });
 
       /** Enable shortcut */
-      var toolsConfig = this.Editor.Tools.getToolConfig(toolName);
+      var toolsConfig = this.Editor.Tools.getToolSettings(toolName);
 
       if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
         this.enableShortcut(tool, toolName, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
@@ -18497,7 +18497,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @typedef {Tools} Tools
  * @property {Tools[]} toolsAvailable - available Tools
  * @property {Tools[]} toolsUnavailable - unavailable Tools
- * @property {Object} toolsClasses - all classes
+ * @property {object} toolsClasses - all classes
+ * @property {object} toolsSettings - Tools settings
  * @property {EditorConfig} config - Editor config
  */
 var Tools = function (_Module) {
@@ -18670,10 +18671,10 @@ var Tools = function (_Module) {
     _this.toolClasses = {};
 
     /**
-     * Tools configs in map {name: config, ...}
+     * Tools settings in a map {name: settings, ...}
      * @type {Object}
      */
-    _this.toolsConfig = {};
+    _this.toolsSettings = {};
 
     /**
      * Available tools list
@@ -18706,16 +18707,43 @@ var Tools = function (_Module) {
         return Promise.reject("Can't start without tools");
       }
 
+      /**
+       * Save Tools settings to a map
+       */
       for (var toolName in this.config.tools) {
-        this.toolsConfig[toolName] = {};
-
+        /**
+         * If Tool is an object not a Tool's class then
+         * save class and settings separately
+         */
         if (_typeof(this.config.tools[toolName]) === 'object') {
+          /**
+           * Save Tool's class from 'class' field
+           * @type {ITool}
+           */
           this.toolClasses[toolName] = this.config.tools[toolName].class;
-          this.toolsConfig[toolName] = this.config.tools[toolName];
 
-          // delete this.toolsConfig[toolName].class;
+          /**
+           * Save Tool's settings
+           * @type {IToolSettings}
+           */
+          this.toolsSettings[toolName] = this.config.tools[toolName];
+
+          /**
+           * Remove Tool's class from settings
+           */
+          delete this.toolsSettings[toolName].class;
         } else {
+          /**
+           * Save Tool's class
+           * @type {ITool}
+           */
           this.toolClasses[toolName] = this.config.tools[toolName];
+
+          /**
+           * Set empty settings for Block by default
+           * @type {{}}
+           */
+          this.toolsSettings[toolName] = {};
         }
       }
 
@@ -18806,7 +18834,7 @@ var Tools = function (_Module) {
     key: 'construct',
     value: function construct(tool, data) {
       var plugin = this.toolClasses[tool],
-          config = this.toolsConfig[tool];
+          config = this.toolsSettings[tool];
 
       var instance = new plugin(data, config || {});
 
@@ -18828,13 +18856,13 @@ var Tools = function (_Module) {
     /**
      * Return Tool's config by name
      * @param toolname
-     * @return {IBlockToolConfig}
+     * @return {IToolSettings}
      */
 
   }, {
-    key: 'getToolConfig',
-    value: function getToolConfig(toolname) {
-      return this.toolsConfig[toolname];
+    key: 'getToolSettings',
+    value: function getToolSettings(toolname) {
+      return this.toolsSettings[toolname];
     }
   }]);
 

@@ -38,7 +38,8 @@
  * @typedef {Tools} Tools
  * @property {Tools[]} toolsAvailable - available Tools
  * @property {Tools[]} toolsUnavailable - unavailable Tools
- * @property {Object} toolsClasses - all classes
+ * @property {object} toolsClasses - all classes
+ * @property {object} toolsSettings - Tools settings
  * @property {EditorConfig} config - Editor config
  */
 export default class Tools extends Module {
@@ -163,10 +164,10 @@ export default class Tools extends Module {
     this.toolClasses = {};
 
     /**
-     * Tools configs in map {name: config, ...}
+     * Tools settings in a map {name: settings, ...}
      * @type {Object}
      */
-    this.toolsConfig = {};
+    this.toolsSettings = {};
 
     /**
      * Available tools list
@@ -192,16 +193,43 @@ export default class Tools extends Module {
       return Promise.reject("Can't start without tools");
     }
 
+    /**
+     * Save Tools settings to a map
+     */
     for(let toolName in this.config.tools) {
-      this.toolsConfig[toolName] = {};
-
+      /**
+       * If Tool is an object not a Tool's class then
+       * save class and settings separately
+       */
       if (typeof this.config.tools[toolName] === 'object') {
+        /**
+         * Save Tool's class from 'class' field
+         * @type {ITool}
+         */
         this.toolClasses[toolName] = this.config.tools[toolName].class;
-        this.toolsConfig[toolName] = this.config.tools[toolName];
 
-        // delete this.toolsConfig[toolName].class;
+        /**
+         * Save Tool's settings
+         * @type {IToolSettings}
+         */
+        this.toolsSettings[toolName] = this.config.tools[toolName];
+
+        /**
+         * Remove Tool's class from settings
+         */
+        delete this.toolsSettings[toolName].class;
       } else {
+        /**
+         * Save Tool's class
+         * @type {ITool}
+         */
         this.toolClasses[toolName] = this.config.tools[toolName];
+
+        /**
+         * Set empty settings for Block by default
+         * @type {{}}
+         */
+        this.toolsSettings[toolName] = {};
       }
     }
 
@@ -280,7 +308,7 @@ export default class Tools extends Module {
    */
   construct(tool, data) {
     let plugin = this.toolClasses[tool],
-      config = this.toolsConfig[tool];
+      config = this.toolsSettings[tool];
 
     let instance = new plugin(data, config || {});
 
@@ -299,9 +327,9 @@ export default class Tools extends Module {
   /**
    * Return Tool's config by name
    * @param toolname
-   * @return {IBlockToolConfig}
+   * @return {IToolSettings}
    */
-  getToolConfig(toolname) {
-    return this.toolsConfig[toolname];
+  getToolSettings(toolname) {
+    return this.toolsSettings[toolname];
   }
 }
