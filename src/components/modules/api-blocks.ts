@@ -30,6 +30,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
       getBlockByIndex: (index: number) => this.getBlockByIndex(index),
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
       getBlocksCount: () => this.getBlocksCount(),
+      stretchBlock: (index: number, status: boolean) => this.stretchBlock(index, status),
     };
   }
 
@@ -115,6 +116,17 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
   public render(data: IInputOutputData): void {
     this.Editor.BlockManager.clear();
     this.Editor.Renderer.render(data.items);
+  }
+
+  /**
+   * Stretch Block's content
+   * @param {number} index
+   * @param {boolean} status - true to enable, false to disable
+   */
+  public stretchBlock(index: number, status: boolean): void {
+    const block = this.Editor.BlockManager.getBlockByIndex(index);
+
+    block.stretched = status !== undefined ? status : true;
   }
 
 }

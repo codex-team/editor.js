@@ -14,8 +14,15 @@
    */
   --grayText: #707684;
 
-  /** Blue icons */
+  /**
+   * Blue icons
+   */
   --color-active-icon: #388AE5;
+
+  /**
+   * Gray border, loaders
+   */
+  --color-gray-border: #E8E8EB;
 
   /**
    * Block content width

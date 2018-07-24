@@ -19,14 +19,20 @@
 
 
 
-<link rel="stylesheet" href="tools-inline/term/term.css">
-<script src="tools-inline/term/term.js"></script>
-
 <script src="plugins/text/text.js?v=100"></script>
 <link rel="stylesheet" href="plugins/text/text.css">
 
+<link rel="stylesheet" href="tools-inline/term/term.css">
+<script src="tools-inline/term/term.js"></script>
+
 <script src="plugins/header/header.js?v=100"></script>
 <link rel="stylesheet" href="plugins/header/header.css">
+
+<script src="plugins/simple-image/simple-image.js?v=100"></script>
+<link rel="stylesheet" href="plugins/simple-image/simple-image.css">
+
+<script src="plugins/code/code.js"></script>
+<link rel="stylesheet" href="plugins/code/code.css">
 
 <script src="../build/codex-editor.js?v=108"></script>
 
@@ -40,17 +46,20 @@
               inlineToolbar: true,
             },
             header: Header,
+            header2: Header,
+            header3: Header,
             term: {
               class: Term,
               shortcut: 'CMD+SHIFT+M'
             },
+            image: SimpleImageTool
         },
         data: {
             items: [
                 {
                     type : 'text',
                     data : {
-                        text : 'CodeX'
+                        text : 'Привет от CodeX'
                     }
                 },
                 {
@@ -73,26 +82,15 @@
                   }
                 },
                 {
-                  type: "header",
+                  type: 'image',
                   data: {
-                    text: "Header 2",
-                    level: 2
+                    url : 'https://ifmo.su/upload/redactor_images/o_5f254690d42854ebd26d699c192295f1.jpg',
+                    caption: 'Here is a boomer',
+                    stretched: false,
+                    withBorder: false,
+                    withBackground: false,
                   }
-                },
-                {
-                  type: "header",
-                  data: {
-                    text: "Header 3",
-                    level: 3
-                  }
-                },
-                {
-                  type: "header",
-                  data: {
-                    text: "Header 4",
-                    level: 4
-                  }
-                },
+                }
             ]
         }
     });
