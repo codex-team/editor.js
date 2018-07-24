@@ -67,7 +67,6 @@
   --toolbox-button: {
     color: var(--grayText);
     cursor: pointer;
-    display: inline-block;
     width: var(--toolbox-buttons-size);
     height: var(--toolbox-buttons-size);
     /*line-height: var(--toolbox-buttons-size);*/
