@@ -195,7 +195,8 @@ export default class Toolbar extends Module {
   }
 
   /**
-   * @return {*}
+   * returns toolbar opened state
+   * @return {Boolean}
    */
   get opened() {
     return this.nodes.wrapper.classList.contains(Toolbar.CSS.toolbarOpened);

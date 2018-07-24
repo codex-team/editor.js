@@ -14201,7 +14201,7 @@ var BlockEvents = function (_Module) {
 
 
     _createClass(BlockEvents, [{
-        key: 'keydown',
+        key: "keydown",
         value: function keydown(event) {
             /**
              * Run common method for all keydown events
@@ -14238,7 +14238,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: 'beforeKeydownProcessing',
+        key: "beforeKeydownProcessing",
         value: function beforeKeydownProcessing() {
             /**
              * Clear all highlightings
@@ -14255,7 +14255,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: 'keyup',
+        key: "keyup",
         value: function keyup(event) {
             this.Editor.InlineToolbar.handleShowingEvent(event);
         }
@@ -14265,17 +14265,17 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: 'mouseUp',
+        key: "mouseUp",
         value: function mouseUp(event) {
             this.Editor.InlineToolbar.handleShowingEvent(event);
         }
         /**
          * Open Toolbox to leaf Tools
-         * @param event
+         * @param {KeyboardEvent} event
          */
 
     }, {
-        key: 'tabPressed',
+        key: "tabPressed",
         value: function tabPressed(event) {
             /** Prevent Default behaviour */
             event.preventDefault();
@@ -14295,19 +14295,18 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: 'enter',
+        key: "enter",
         value: function enter(event) {
             var currentBlock = this.Editor.BlockManager.currentBlock,
                 toolsConfig = this.config.toolsConfig[currentBlock.name];
             if (this.Editor.Toolbox.opened) {
-                var toolName = this.Editor.Toolbox.getTool();
-                var newBlock = this.Editor.BlockManager.replace(toolName);
+                var toolName = this.Editor.Toolbox.getActive,
+                    newBlock = this.Editor.BlockManager.replace(toolName);
                 this.Editor.Caret.setToBlock(newBlock);
                 this.Editor.Toolbox.close();
                 this.Editor.Toolbar.move();
                 return;
             }
-            console.log('going ahead');
             /**
              * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
              * Uses for Tools like <code> where line breaks should be handled by default behaviour.
@@ -14349,7 +14348,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: 'backspace',
+        key: "backspace",
         value: function backspace(event) {
             var _this2 = this;
 
@@ -14397,7 +14396,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: 'arrowRightAndDown',
+        key: "arrowRightAndDown",
         value: function arrowRightAndDown() {
             this.Editor.Caret.navigateNext();
         }
@@ -14406,7 +14405,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: 'arrowLeftAndUp',
+        key: "arrowLeftAndUp",
         value: function arrowLeftAndUp() {
             this.Editor.Caret.navigatePrevious();
         }
@@ -14415,16 +14414,16 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: 'defaultHandler',
+        key: "defaultHandler",
         value: function defaultHandler() {}
     }]);
 
     return BlockEvents;
 }(Module);
 
-BlockEvents.displayName = 'BlockEvents';
+BlockEvents.displayName = "BlockEvents";
 exports.default = BlockEvents;
-module.exports = exports['default'];
+module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
@@ -18257,11 +18256,15 @@ var Toolbox = function (_Module) {
 
     /**
      * Leaf
+     * flip through the toolbox items
+     * @param {String} direction - leaf direction, right is default
      */
 
   }, {
     key: 'leaf',
     value: function leaf() {
+      var direction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'right';
+
       var childNodes = this.nodes.toolbox.childNodes;
 
       for (var i = 0; i < childNodes.length; i++) {
@@ -18275,7 +18278,11 @@ var Toolbox = function (_Module) {
       if (this.activeButtonIndex === -1) {
         this.activeButtonIndex = 0;
       } else {
-        this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
+        if (direction === 'right') {
+          this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
+        } else {
+          this.activeButtonIndex = childNodes.length - (this.activeButtonIndex + 1) % childNodes.length;
+        }
       }
 
       childNodes[this.activeButtonIndex].classList.add(Toolbox.CSS.toolboxButtonActive);
@@ -18285,12 +18292,12 @@ var Toolbox = function (_Module) {
      * get tool name when it is selected
      * In case when nothing selection returns null
      *
-     * @return {String}
+     * @return {String|null}
      */
 
   }, {
-    key: 'getTool',
-    value: function getTool() {
+    key: 'getActiveTool',
+    get: function get() {
       var childNodes = this.nodes.toolbox.childNodes;
 
       if (this.activeButtonIndex === -1) {
@@ -18545,7 +18552,8 @@ var Toolbar = function (_Module) {
     }
 
     /**
-     * @return {*}
+     * returns toolbar opened state
+     * @return {Boolean}
      */
 
   }, {

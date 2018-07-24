@@ -88,7 +88,7 @@ export default class BlockEvents extends Module {
 
   /**
    * Open Toolbox to leaf Tools
-   * @param event
+   * @param {KeyboardEvent} event
    */
   public tabPressed(event): void {
 
@@ -118,8 +118,8 @@ export default class BlockEvents extends Module {
 
     if (this.Editor.Toolbox.opened) {
 
-      const toolName = this.Editor.Toolbox.getTool();
-      const newBlock = this.Editor.BlockManager.replace(toolName);
+      const toolName = this.Editor.Toolbox.getActive,
+        newBlock = this.Editor.BlockManager.replace(toolName);
 
       this.Editor.Caret.setToBlock(newBlock);
       this.Editor.Toolbox.close();
@@ -127,7 +127,6 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    console.log('going ahead');
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.

@@ -215,8 +215,10 @@ export default class Toolbox extends Module {
 
   /**
    * Leaf
+   * flip through the toolbox items
+   * @param {String} direction - leaf direction, right is default
    */
-  leaf() {
+  leaf(direction = 'right') {
     const childNodes = this.nodes.toolbox.childNodes;
 
     for (let i = 0; i < childNodes.length; i++) {
@@ -230,7 +232,11 @@ export default class Toolbox extends Module {
     if (this.activeButtonIndex === -1) {
       this.activeButtonIndex = 0;
     } else {
-      this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
+      if (direction === 'right') {
+        this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
+      } else {
+        this.activeButtonIndex = childNodes.length - (this.activeButtonIndex + 1) % childNodes.length;
+      }
     }
 
     childNodes[this.activeButtonIndex].classList.add(Toolbox.CSS.toolboxButtonActive);
@@ -240,9 +246,9 @@ export default class Toolbox extends Module {
    * get tool name when it is selected
    * In case when nothing selection returns null
    *
-   * @return {String}
+   * @return {String|null}
    */
-  getTool() {
+  get getActiveTool() {
     const childNodes = this.nodes.toolbox.childNodes;
 
     if (this.activeButtonIndex === -1) {
