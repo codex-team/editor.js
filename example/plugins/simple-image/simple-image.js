@@ -1,8 +1,7 @@
 /**
  * SimpleImage Tool for the CodeX Editor
  * Works only with pasted image URLs, don't requires server-side uploader.
- */
-/**
+ *
  * @typedef {object} SimpleImageData
  * @description Tool's input and output data format
  * @property {string} url — image URL
@@ -18,18 +17,26 @@ class SimpleImageTool {
    * @param {object} api - CodeX Editor API
    */
   constructor(imageData = {}, config = {}, api) {
-    // CodeX Editor API
+    /**
+     * CodeX Editor API
+     */
     this.api = api;
 
-    // Styles
+    /**
+     * Styles
+     */
     this.CSS = {
-      baseClass: 'cdx-block',  // @todo use api.Styles.block
+      baseClass: this.api.styles.block,
+      loading: this.api.styles.loader,
+      input: this.api.styles.input,
+      settingsButton: this.api.styles.settingsButton,
+      settingsButtonActive: this.api.styles.settingsButtonActive,
+
+      /**
+       * Tool's classes
+       */
       wrapper: 'cdx-simple-image',
       imageHolder: 'cdx-simple-image__picture',
-      loading: 'cdx-loader', // @todo use api.Styles.loader
-      input: 'cdx-input',  // @todo use api.Styles.input
-      settingsButton: 'cdx-settings-button',
-      settingsButtonActive: 'cdx-settings-button--active',
     };
 
     /**
