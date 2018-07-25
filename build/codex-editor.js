@@ -11052,7 +11052,7 @@ module.exports = g;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(_) {/**
+/* WEBPACK VAR INJECTION */(function(_, $) {/**
  * Codex Editor
  *
  * Short Description (눈_눈;)
@@ -11201,6 +11201,8 @@ var CodexEditor = function () {
     Promise.resolve().then(function () {
       _this.configuration = config;
     }).then(function () {
+      return _this.validate();
+    }).then(function () {
       return _this.init();
     }).then(function () {
       return _this.start();
@@ -11217,9 +11219,9 @@ var CodexEditor = function () {
       // todo Is it necessary?
       delete _this.moduleInstances;
     }).then(function () {
-      console.log('CodeX Editor is ready!');
+      _.log('CodeX Editor is ready!');
     }).catch(function (error) {
-      console.log('CodeX Editor does not ready because of %o', error);
+      _.log('CodeX Editor does not ready because of ' + error, 'error');
     });
   }
 
@@ -11230,14 +11232,69 @@ var CodexEditor = function () {
 
 
   _createClass(CodexEditor, [{
-    key: 'init',
+    key: 'validate',
 
+
+    /**
+     * Checks for required fields in Editor's config
+     * @returns {void|Promise<string>}
+     */
+    value: function validate() {
+      /**
+       * Check if holderId is not empty
+       */
+      if (!this.config.holderId) {
+        return Promise.reject('«holderId» param must being not empty');
+      }
+
+      /**
+       * Check for a holder element's existence
+       */
+      if (!$.get(this.config.holderId)) {
+        return Promise.reject('element with ID \xAB' + this.config.holderId + '\xBB is missing. Pass correct holder\'s ID.');
+      }
+
+      /**
+       * Check Tools object
+       */
+      if (Object.keys(this.config.tools).length === 0) {
+        return Promise.reject('«tools» param must being not empty');
+      }
+
+      /**
+       * Check Tools for a class containing
+       */
+      for (var toolName in this.config.tools) {
+        var tool = this.config.tools[toolName];
+
+        if (!_.isClass(tool) && !_.isClass(tool.class)) {
+          return Promise.reject('Tool \xAB' + toolName + '\xBB must be a class or an object with a \xABclass\xBB property');
+        }
+      }
+
+      /**
+       * Check initialBlock param
+       */
+      if (!this.config.initialBlock) {
+        return Promise.reject('«initialBlock» param must being not empty');
+      }
+
+      /**
+       * Check for a initialBlock Tool existence
+       */
+      if (!this.config.tools[this.config.initialBlock]) {
+        return Promise.reject('initial Block Tool \xAB' + this.config.initialBlock + '\xBB is missing in Tools list');
+      }
+    }
 
     /**
      * Initializes modules:
      *  - make and save instances
      *  - configure
      */
+
+  }, {
+    key: 'init',
     value: function init() {
       /**
        * Make modules instances and save it to the @property this.moduleInstances
@@ -11564,7 +11621,7 @@ exports.default = CodexEditor;
 // })({});
 
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! utils */ "./src/components/utils.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! utils */ "./src/components/utils.js"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
 
 /***/ }),
 
@@ -12494,6 +12551,19 @@ var Dom = function () {
       var selector = arguments[1];
 
       return el.querySelector(selector);
+    }
+
+    /**
+     * Get Element by Id
+     *
+     * @param {string} id
+     * @returns {HTMLElement | null}
+     */
+
+  }, {
+    key: 'get',
+    value: function get(id) {
+      return document.getElementById(id);
     }
 
     /**
@@ -19075,8 +19145,8 @@ var Tools = function (_Module) {
     value: function prepare() {
       var _this4 = this;
 
-      if (!this.config.hasOwnProperty('tools')) {
-        return Promise.reject("Can't start without tools");
+      if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
+        return Promise.reject('Can\'t start without tools');
       }
 
       /**
@@ -20365,10 +20435,10 @@ var Util = function () {
           msg = '[codex-editor]: ' + msg;
         } else {
           args = msg || 'undefined';
-          msg = '[codex-editor]:      %o';
+          msg = '[codex-editor]: %o';
         }
       } else {
-        msg = '[codex-editor]:      ' + msg;
+        msg = '[codex-editor]: ' + msg;
       }
 
       try {
@@ -20464,6 +20534,18 @@ var Util = function () {
     key: 'array',
     value: function array(collection) {
       return Array.prototype.slice.call(collection);
+    }
+
+    /**
+     * Check if passed function is a class
+     * @param {function} fn
+     * @return {boolean}
+     */
+
+  }, {
+    key: 'isClass',
+    value: function isClass(fn) {
+      return typeof fn === 'function' && /^\s*class\s+/.test(fn.toString());
     }
 
     /**

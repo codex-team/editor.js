@@ -189,8 +189,8 @@ export default class Tools extends Module {
    * @return {Promise}
    */
   prepare() {
-    if (!this.config.hasOwnProperty('tools')) {
-      return Promise.reject("Can't start without tools");
+    if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
+      return Promise.reject('Can\'t start without tools');
     }
 
     /**
