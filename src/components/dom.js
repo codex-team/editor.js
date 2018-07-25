@@ -152,7 +152,7 @@ export default class Dom {
       /**
        * special case when child is single tag that can't contain any content
        */
-      if (Dom.isSingleTag(nodeChild)) {
+      if (Dom.isSingleTag(nodeChild) && !Dom.isNativeInput(nodeChild)) {
         /**
          * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
          * from sibling

@@ -37,12 +37,12 @@ export default class BlockEvents extends Module {
 
       case _.keyCodes.DOWN:
       case _.keyCodes.RIGHT:
-        this.arrowRightAndDown();
+        this.arrowRightAndDown(event);
         break;
 
       case _.keyCodes.UP:
       case _.keyCodes.LEFT:
-        this.arrowLeftAndUp();
+        this.arrowLeftAndUp(event);
         break;
 
       default:
@@ -189,15 +189,19 @@ export default class BlockEvents extends Module {
   /**
    * Handle right and down keyboard keys
    */
-  private arrowRightAndDown(): void {
-    this.Editor.Caret.navigateNext();
+  private arrowRightAndDown(event: KeyboardEvent): void {
+    if (this.Editor.Caret.navigateNext()) {
+      event.preventDefault();
+    }
   }
 
   /**
    * Handle left and up keyboard keys
    */
-  private arrowLeftAndUp(): void {
-    this.Editor.Caret.navigatePrevious();
+  private arrowLeftAndUp(event: KeyboardEvent): void {
+    if (this.Editor.Caret.navigatePrevious()) {
+      event.preventDefault();
+    }
   }
 
   /**

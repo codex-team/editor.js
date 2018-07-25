@@ -50,16 +50,11 @@ export default class Caret extends Module {
       return;
     }
 
-    let nodeToSet = $.getDeepestNode(element, atEnd);
+    const nodeToSet = $.getDeepestNode(element, atEnd);
+    const contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
 
-    if (atEnd || offset > nodeToSet.length) {
-      offset = nodeToSet.length;
-    }
-
-    /** if found deepest node is native input */
-    if ($.isNativeInput(nodeToSet)) {
-      nodeToSet.focus();
-      return;
+    if (atEnd || offset > contentLength) {
+      offset = contentLength;
     }
 
     /**
@@ -78,14 +73,25 @@ export default class Caret extends Module {
    * @param {Number} offset - offset
    */
   set( element, offset = 0) {
-    let range     = document.createRange(),
+    const range = document.createRange(),
       selection = Selection.get();
+
+    /** if found deepest node is native input */
+    if ($.isNativeInput(element)) {
+      element.focus();
+      element.selectionStart = element.selectionEnd = offset;
+      return;
+    }
 
     range.setStart(element, offset);
     range.setEnd(element, offset);
 
     selection.removeAllRanges();
     selection.addRange(range);
+
+    const {top} = range.getBoundingClientRect();
+
+    if (top < 0) window.scrollBy(0, top);
   };
 
   /**
@@ -186,13 +192,16 @@ export default class Caret extends Module {
     const {currentBlock, nextBlock} = this.Editor.BlockManager;
     const {nextInput} = currentBlock;
 
-    console.log(nextInput);
-
     if (!nextBlock && !nextInput) {
       return false;
     }
 
-    if (force || this.isAtEnd) {
+    if (force) {
+      this.setToBlock(nextBlock);
+      return true;
+    }
+
+    if (this.isAtEnd) {
       if (!nextInput) {
         this.setToBlock(nextBlock);
       } else {
@@ -222,8 +231,12 @@ export default class Caret extends Module {
       return false;
     }
 
-    if (force || this.isAtStart) {
-      if (!currentBlock) {
+    if (force) {
+      this.setToBlock( previousBlock, 0, true );
+    }
+
+    if (this.isAtStart) {
+      if (!previousInput) {
         this.setToBlock( previousBlock, 0, true );
       } else {
         currentBlock.setToPreviousInput();
@@ -248,7 +261,11 @@ export default class Caret extends Module {
 
     let selection = Selection.get(),
       anchorNode = selection.anchorNode,
-      firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
+      firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
+
+    if ($.isNativeInput(firstNode)) {
+      return firstNode.selectionEnd === 0;
+    }
 
     /**
      * Workaround case when caret in the text like " |Hello!"
@@ -301,6 +318,10 @@ export default class Caret extends Module {
     let selection = Selection.get(),
       anchorNode = selection.anchorNode,
       lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
+
+    if ($.isNativeInput(lastNode)) {
+      return lastNode.selectionEnd === lastNode.value.length;
+    }
 
     /**
      * In case of

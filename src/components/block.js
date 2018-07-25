@@ -108,18 +108,37 @@ export default class Block {
 
   setToNextInput() {
     this.inputIndex++;
-    this.focus();
+    this.focusInput();
   }
 
   setToPreviousInput() {
     this.inputIndex--;
-    this.focus();
+    this.focusInput(null, true);
   }
 
-  focus() {
+  focusInput(element, atEnd = false) {
     const inputs = this.inputs;
 
-    inputs[this.inputIndex].focus();
+    if (element) {
+      const inputIndex = inputs.findIndex(input => input.contains(element));
+
+      if (inputIndex !== -1) {
+        this.inputIndex = inputIndex;
+      }
+      return;
+    }
+
+    const input = inputs[this.inputIndex];
+
+    if (atEnd) {
+      const nodeToSet = $.getDeepestNode(input, atEnd);
+      const contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
+
+      this.api.caret.set(nodeToSet, contentLength);
+      return;
+    }
+
+    input.focus();
   }
 
   /**

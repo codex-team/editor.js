@@ -377,6 +377,7 @@ export default class BlockManager extends Module {
 
     if (parentFirstLevelBlock) {
       this.currentNode = parentFirstLevelBlock;
+      this.currentBlock.focusInput(childNode);
     } else {
       throw new Error('Can not find a Block from this child Node');
     }

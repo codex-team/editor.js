@@ -27,7 +27,7 @@ export default class API extends Module {
   public get methods(): IAPI {
     return {
       blocks: this.Editor.BlocksAPI.methods,
-      caret: {},
+      caret: this.Editor.CaretAPI.methods,
       events: this.Editor.EventsAPI.methods,
       listener: this.Editor.ListenerAPI.methods,
       sanitizer: this.Editor.SanitizerAPI.methods,
