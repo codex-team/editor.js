@@ -68,7 +68,7 @@ export default class BlockEvents extends Module {
     /**
      * Do not close Toolbox on Tabs or on Enter with opened Toolbox
      */
-    if (event.keyCode === _.keyCodes.TAB || (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened)) {
+    if (!this.needToolbarClosing(event)) {
       return;
     }
 
@@ -244,4 +244,14 @@ export default class BlockEvents extends Module {
    * Default keydown handler
    */
   private defaultHandler(): void {}
+
+  /**
+   * Cases when we need to close Toolbar
+   */
+  private needToolbarClosing(event) {
+    const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened),
+      flippingToolboxItems = event.keyCode === _.keyCodes.TAB;
+
+    return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
+  }
 }
