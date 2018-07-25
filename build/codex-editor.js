@@ -11237,7 +11237,7 @@ var CodexEditor = function () {
 
     /**
      * Checks for required fields in Editor's config
-     * return {void|Promise<string>}
+     * @returns {void|Promise<string>}
      */
     value: function validate() {
       /**

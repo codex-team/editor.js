@@ -205,7 +205,7 @@ export default class CodexEditor {
 
   /**
    * Checks for required fields in Editor's config
-   * return {void|Promise<string>}
+   * @returns {void|Promise<string>}
    */
   validate() {
     /**
