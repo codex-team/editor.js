@@ -50,17 +50,11 @@ var editor = new CodexEditor({
      * Available Block Tools
      */
     tools: {
-        text: Text,
-        // ...
-    },
-
-    /**
-     * Tools params
-     */
-    toolsConfig: {
         text: {
+          class: Text,
           inlineToolbar : true
         },
+        // ...
     },
 
     /**
