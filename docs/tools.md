@@ -34,7 +34,8 @@ Options that Tool can specify. All settings should be passed as static propertie
 
 ### User configuration
 
-All Tools can be configured by users. You can pass class for plugin of settings object.
+All Tools can be configured by users. You can set up some of available settings along with Tool's class 
+to the `tools` property of Editor Config.
 
 ```javascript
 var editor = new CodexEditor({
@@ -44,6 +45,7 @@ var editor = new CodexEditor({
     text: {
       class: Text,
       inlineToolbar : true,
+      // other settings..
     },
     header: Header
   },
@@ -57,6 +59,7 @@ There are few options available by CodeX Editor.
 | `enableLineBreaks` | _Boolean_ | `false` | With this option, CodeX Editor won't handle Enter keydowns. Can be helpful for Tools like `<code>` where line breaks should be handled by default behaviour. |
 | `inlineToolbar` | _Boolean/Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
 | `disallowPaste` | _Boolean_ | `false` | Pass `true` if you want to prevent any paste into your Tool
+| `config` | _Object_ | `null` | User's configuration for Plugin.
 
 ### Paste handling
 
