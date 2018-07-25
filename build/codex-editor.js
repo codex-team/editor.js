@@ -16162,13 +16162,13 @@ var Paste = function (_Module) {
          */
         _this.processPastedData = function () {
             var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(event) {
-                var _this$Editor, Tools, Sanitizer, BlockManager, Caret, toolsConfig, block, toolConfig, htmlData, plainData, blockTags, toolsTags, customConfig, cleanData, dataToInsert;
+                var _this$Editor, Tools, Sanitizer, BlockManager, Caret, toolsSettings, block, toolSettings, htmlData, plainData, blockTags, toolsTags, customConfig, cleanData, dataToInsert;
 
                 return regeneratorRuntime.wrap(function _callee2$(_context2) {
                     while (1) {
                         switch (_context2.prev = _context2.next) {
                             case 0:
-                                _this$Editor = _this.Editor, Tools = _this$Editor.Tools, Sanitizer = _this$Editor.Sanitizer, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret, toolsConfig = _this.config.toolsConfig;
+                                _this$Editor = _this.Editor, Tools = _this$Editor.Tools, Sanitizer = _this$Editor.Sanitizer, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret, toolsSettings = _this.config.toolsSettings;
                                 /** If target is native input or is not Block, use browser behaviour */
 
                                 if (!_this.isNativeBehaviour(event.target)) {
@@ -16181,10 +16181,10 @@ var Paste = function (_Module) {
                             case 3:
                                 event.preventDefault();
                                 block = BlockManager.getBlock(event.target);
-                                toolConfig = toolsConfig[block.name];
+                                toolSettings = toolsSettings[block.name];
                                 /** If paste is dissalowed in block do nothing */
 
-                                if (!(toolConfig && toolConfig[Tools.apiSettings.IS_PASTE_DISALLOWED])) {
+                                if (!(toolSettings && toolSettings[Tools.apiSettings.IS_PASTE_DISALLOWED])) {
                                     _context2.next = 8;
                                     break;
                                 }
@@ -16193,7 +16193,7 @@ var Paste = function (_Module) {
 
                             case 8:
                                 htmlData = event.clipboardData.getData('text/html'), plainData = event.clipboardData.getData('text/plain');
-                                /** Add all block tags and tags can be substituted to sanitizer configuration */
+                                /** Add all block tags and tags can be substiToolConfigtuted to sanitizer configuration */
 
                                 blockTags = $.blockElements.reduce(function (result, tag) {
                                     result[tag.toLowerCase()] = {};
@@ -17794,8 +17794,8 @@ var InlineToolbar = function (_Module) {
             if (!currentBlock) {
                 return false;
             }
-            var toolConfig = this.Editor.Tools.getToolSettings(currentBlock.name);
-            return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
+            var toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
+            return toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
         }
         /**
          *  Working with Tools
@@ -17840,9 +17840,9 @@ var InlineToolbar = function (_Module) {
              * Enable shortcuts
              * Ignore tool that doesn't have shortcut or empty string
              */
-            var toolsConfig = this.Editor.Tools.getToolSettings(toolName);
-            if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
-                this.enableShortcuts(tool, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
+            var toolsSettings = this.Editor.Tools.getToolSettings(toolName);
+            if (toolsSettings && toolsSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
+                this.enableShortcuts(tool, toolsSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
             }
         }
         /**
@@ -17859,10 +17859,9 @@ var InlineToolbar = function (_Module) {
             this.Editor.Shortcuts.add({
                 name: shortcut,
                 handler: function handler(event) {
-                    var currentBlock = _this4.Editor.BlockManager.currentBlock;
-
-                    var toolConfig = _this4.Editor.Tools.getToolSettings(currentBlock.name);
-                    if (!toolConfig || !toolConfig[_this4.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
+                    var currentBlock = _this4.Editor.BlockManager.currentBlock,
+                        toolSettings = _this4.Editor.Tools.getToolSettings(currentBlock.name);
+                    if (!toolSettings || !toolSettings[_this4.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
                         return;
                     }
                     event.preventDefault();
@@ -18093,16 +18092,20 @@ var Toolbox = function (_Module) {
       this.nodes.toolbox.appendChild(button);
       this.nodes.buttons.push(button);
 
-      /** Add listener to click */
+      /**
+       * Add click listener
+       */
       this.Editor.Listeners.on(button, 'click', function (event) {
         _this2.toolButtonClicked(event, toolName);
       });
 
-      /** Enable shortcut */
-      var toolsConfig = this.Editor.Tools.getToolSettings(toolName);
+      /**
+       * Enable shortcut
+       */
+      var toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
-      if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
-        this.enableShortcut(tool, toolName, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
+      if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
+        this.enableShortcut(tool, toolName, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
       }
     }
 

@@ -192,7 +192,7 @@ export default class Paste extends Module {
   private processPastedData = async (event: ClipboardEvent): Promise<void> => {
     const {
       Editor: {Tools, Sanitizer, BlockManager, Caret},
-      config: {toolsConfig},
+      config: {toolsSettings},
     } = this;
 
     /** If target is native input or is not Block, use browser behaviour */
@@ -203,17 +203,17 @@ export default class Paste extends Module {
     event.preventDefault();
 
     const block = BlockManager.getBlock(event.target);
-    const toolConfig = toolsConfig[block.name];
+    const toolSettings = toolsSettings[block.name];
 
     /** If paste is dissalowed in block do nothing */
-    if (toolConfig && toolConfig[Tools.apiSettings.IS_PASTE_DISALLOWED]) {
+    if (toolSettings && toolSettings[Tools.apiSettings.IS_PASTE_DISALLOWED]) {
       return;
     }
 
     const htmlData  = event.clipboardData.getData('text/html'),
-          plainData = event.clipboardData.getData('text/plain');
+      plainData = event.clipboardData.getData('text/plain');
 
-    /** Add all block tags and tags can be substituted to sanitizer configuration */
+    /** Add all block tags and tags can be substiToolConfigtuted to sanitizer configuration */
     const blockTags = $.blockElements.reduce((result, tag) => {
       result[tag.toLowerCase()] = {};
 

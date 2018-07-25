@@ -8,6 +8,11 @@ import ITool from './tool';
 export default interface IBlockTool extends ITool {
 
   /**
+   * Pass `true` if Tool which represents decorative empty Block
+   */
+  contentless?: boolean;
+
+  /**
    * Should this tools be displayed at the Editor's Toolbox
    */
   displayInToolbox?: boolean;

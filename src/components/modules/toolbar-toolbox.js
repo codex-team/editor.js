@@ -103,16 +103,20 @@ export default class Toolbox extends Module {
     this.nodes.toolbox.appendChild(button);
     this.nodes.buttons.push(button);
 
-    /** Add listener to click */
+    /**
+     * Add click listener
+     */
     this.Editor.Listeners.on(button, 'click', (event) => {
       this.toolButtonClicked(event, toolName);
     });
 
-    /** Enable shortcut */
-    const toolsConfig = this.Editor.Tools.getToolSettings(toolName);
+    /**
+     * Enable shortcut
+     */
+    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
-    if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
-      this.enableShortcut(tool, toolName, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
+    if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
+      this.enableShortcut(tool, toolName, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
     }
   }
 
