@@ -107,15 +107,18 @@ export default class BlockEvents extends Module {
     const shiftKey = event.shiftKey,
       direction = shiftKey ? 'left' : 'right';
 
-    if (this.Editor.Toolbar.opened) {
+    if (this.Editor.Toolbar.opened && currentBlock.isEmpty) {
       this.Editor.Toolbox.open();
     } else if (currentBlock.isEmpty) {
       this.Editor.Toolbar.open();
+      this.Editor.Toolbox.open();
     }
 
     if (this.Editor.Toolbox.opened) {
       this.Editor.Toolbox.leaf(direction);
     }
+
+
   }
 
   /**

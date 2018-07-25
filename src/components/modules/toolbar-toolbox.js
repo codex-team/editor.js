@@ -223,6 +223,11 @@ export default class Toolbox extends Module {
 
     /** remove active item pointer */
     this.activeButtonIndex = -1;
+    const activeButton = this.nodes.toolbox.querySelector(`.${Toolbox.CSS.toolboxButtonActive}`);
+
+    if (activeButton) {
+      activeButton.classList.remove(Toolbox.CSS.toolboxButtonActive);
+    }
   }
 
   /**
@@ -244,12 +249,8 @@ export default class Toolbox extends Module {
   leaf(direction = 'right') {
     const childNodes = this.nodes.toolbox.childNodes;
 
-    for (let i = 0; i < childNodes.length; i++) {
-      if (childNodes[i].classList.contains(Toolbox.CSS.toolboxButtonActive)) {
-        this.activeButtonIndex = i;
-        childNodes[this.activeButtonIndex].classList.remove(Toolbox.CSS.toolboxButtonActive);
-        break;
-      }
+    if (this.activeButtonIndex !== -1) {
+      childNodes[this.activeButtonIndex].classList.remove(Toolbox.CSS.toolboxButtonActive);
     }
 
     /**
@@ -258,12 +259,10 @@ export default class Toolbox extends Module {
      */
     if (this.activeButtonIndex === -1) {
       this.activeButtonIndex = 0;
-    }
-
-    if (direction === 'left') {
-      this.activeButtonIndex = (childNodes.length - (this.activeButtonIndex + 1)) % childNodes.length;
-    } else {
+    } else if (direction === 'right') {
       this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
+    } else {
+      this.activeButtonIndex = (childNodes.length - (this.activeButtonIndex + 1)) % childNodes.length;
     }
 
     childNodes[this.activeButtonIndex].classList.add(Toolbox.CSS.toolboxButtonActive);
