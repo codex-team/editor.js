@@ -1,6 +1,6 @@
 declare var Module: any;
 
-import {ISelectionAPI} from '../interfaces/api';
+import ISelectionAPI from '../interfaces/modules/api/selection-api';
 import IModuleConfig from '../interfaces/module-config';
 import Selection from '../selection';
 

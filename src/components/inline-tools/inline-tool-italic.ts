@@ -1,4 +1,4 @@
-import InlineTool from '../interfaces/tools/inline-tool';
+import IInlineTool from '../interfaces/tools/inline-tool';
 
 declare var $: any;
 
@@ -9,7 +9,7 @@ declare var $: any;
  *
  * Style selected text with italic
  */
-export default class ItalicInlineTool implements InlineTool {
+export default class ItalicInlineTool implements IInlineTool {
 
   /**
    * Native Document's command that uses for Italic
@@ -58,7 +58,7 @@ export default class ItalicInlineTool implements InlineTool {
    * Check selection and set activated state to button if there are <i> tag
    * @param {Selection} selection
    */
-  public checkState(selection: Selection): boolean {
+  public checkState(selection?: Selection): boolean {
     const isActive = document.queryCommandState(this.commandName);
 
     this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);

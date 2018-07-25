@@ -1,6 +1,6 @@
 declare var Module: any;
 
-import {IEventsAPI} from '../interfaces/api';
+import IEventsAPI from '../interfaces/modules/api/events-api';
 import IModuleConfig from '../interfaces/module-config';
 
 /**

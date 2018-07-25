@@ -1,5 +1,6 @@
-import InlineTool from '../interfaces/tools/inline-tool';
+
 import Selection from '../selection';
+import IInlineTool from '../interfaces/tools/inline-tool';
 
 declare var $: any;
 declare var _: any;
@@ -11,7 +12,7 @@ declare var _: any;
  *
  * Wrap selected text with <a> tag
  */
-export default class LinkInlineTool implements InlineTool {
+export default class LinkInlineTool implements IInlineTool {
   /**
    * Native Document's commands for link/unlink
    */

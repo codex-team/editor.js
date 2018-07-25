@@ -1,5 +1,3 @@
-import IBlockTool from '../interfaces/tools/block-tool';
-
 declare var Module: any;
 declare var $: any;
 declare var _: any;

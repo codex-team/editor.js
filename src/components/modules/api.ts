@@ -9,7 +9,7 @@ declare var Module: any;
 declare var $: any;
 declare var _: any;
 
-import { IAPI } from '../interfaces/api';
+import IAPI from '../interfaces/modules/api/api';
 
 /**
  * @class API
@@ -17,8 +17,9 @@ import { IAPI } from '../interfaces/api';
 export default class API extends Module {
 
   /**
-   * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorConfig} config
+   * Save Editor config
+   * API provides passed configuration to the Blocks
+   * @param {IEditorConfig} config
    */
   constructor({config}) {
     super({config});
@@ -33,6 +34,7 @@ export default class API extends Module {
       sanitizer: this.Editor.SanitizerAPI.methods,
       saver: this.Editor.SaverAPI.methods,
       selection: this.Editor.SelectionAPI.methods,
+      styles: this.Editor.StylesAPI.classes,
       toolbar: this.Editor.ToolbarAPI.methods,
     };
   }

@@ -1,6 +1,6 @@
 declare var Module: any;
 
-import {ISaverAPI} from '../interfaces/api';
+import ISaverAPI from '../interfaces/modules/api/saver-api';
 import IInputOutputData from '../interfaces/input-output-data';
 import IModuleConfig from '../interfaces/module-config';
 
