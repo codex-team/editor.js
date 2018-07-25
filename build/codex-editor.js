@@ -14404,12 +14404,12 @@ var BlockEvents = function (_Module) {
 
 
     _createClass(BlockEvents, [{
-        key: "keydown",
+        key: 'keydown',
         value: function keydown(event) {
             /**
              * Run common method for all keydown events
              */
-            this.beforeKeydownProcessing();
+            this.beforeKeydownProcessing(event);
             /**
              * Fire keydown processor by event.keyCode
              */
@@ -14428,6 +14428,9 @@ var BlockEvents = function (_Module) {
                 case _.keyCodes.LEFT:
                     this.arrowLeftAndUp(event);
                     break;
+                case _.keyCodes.TAB:
+                    this.tabPressed(event);
+                    break;
                 default:
                     this.defaultHandler();
                     break;
@@ -14435,18 +14438,22 @@ var BlockEvents = function (_Module) {
         }
         /**
          * Fires on keydown before event processing
+         * @param {KeyboardEvent} event - keydown
          */
 
     }, {
-        key: "beforeKeydownProcessing",
-        value: function beforeKeydownProcessing() {
+        key: 'beforeKeydownProcessing',
+        value: function beforeKeydownProcessing(event) {
             /**
              * Clear all highlightings
              */
             this.Editor.BlockManager.clearHighlightings();
             /**
-             * Hide Toolbar
+             * Do not close Toolbox on Tabs or on Enter with opened Toolbox
              */
+            if (!this.needToolbarClosing(event)) {
+                return;
+            }
             this.Editor.Toolbar.close();
         }
         /**
@@ -14455,7 +14462,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "keyup",
+        key: 'keyup',
         value: function keyup(event) {
             this.Editor.InlineToolbar.handleShowingEvent(event);
         }
@@ -14465,9 +14472,35 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "mouseUp",
+        key: 'mouseUp',
         value: function mouseUp(event) {
             this.Editor.InlineToolbar.handleShowingEvent(event);
+        }
+        /**
+         * Open Toolbox to leaf Tools
+         * @param {KeyboardEvent} event
+         */
+
+    }, {
+        key: 'tabPressed',
+        value: function tabPressed(event) {
+            var currentBlock = this.Editor.BlockManager.currentBlock;
+            /** Prevent Default behaviour */
+
+            event.preventDefault();
+            event.stopPropagation();
+            /** this property defines leaf direction */
+            var shiftKey = event.shiftKey,
+                direction = shiftKey ? 'left' : 'right';
+            if (this.Editor.Toolbar.opened && currentBlock.isEmpty) {
+                this.Editor.Toolbox.open();
+            } else if (currentBlock.isEmpty) {
+                this.Editor.Toolbar.open();
+                this.Editor.Toolbox.open();
+            }
+            if (this.Editor.Toolbox.opened) {
+                this.Editor.Toolbox.leaf(direction);
+            }
         }
         /**
          * ENTER pressed on block
@@ -14475,10 +14508,16 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "enter",
+        key: 'enter',
         value: function enter(event) {
             var currentBlock = this.Editor.BlockManager.currentBlock,
                 toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
+            if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
+                return;
+            }
             /**
              * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
              * Uses for Tools like <code> where line breaks should be handled by default behaviour.
@@ -14513,6 +14552,7 @@ var BlockEvents = function (_Module) {
                 this.Editor.Toolbar.plusButton.show();
             }
             event.preventDefault();
+            event.stopImmediatePropagation();
         }
         /**
          * Handle backspace keydown on Block
@@ -14520,7 +14560,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "backspace",
+        key: 'backspace',
         value: function backspace(event) {
             var _this2 = this;
 
@@ -14568,7 +14608,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "arrowRightAndDown",
+        key: 'arrowRightAndDown',
         value: function arrowRightAndDown(event) {
             if (this.Editor.Caret.navigateNext()) {
                 /**
@@ -14582,7 +14622,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "arrowLeftAndUp",
+        key: 'arrowLeftAndUp',
         value: function arrowLeftAndUp(event) {
             if (this.Editor.Caret.navigatePrevious()) {
                 /**
@@ -14596,16 +14636,27 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "defaultHandler",
+        key: 'defaultHandler',
         value: function defaultHandler() {}
+        /**
+         * Cases when we need to close Toolbar
+         */
+
+    }, {
+        key: 'needToolbarClosing',
+        value: function needToolbarClosing(event) {
+            var toolboxItemSelected = event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened,
+                flippingToolboxItems = event.keyCode === _.keyCodes.TAB;
+            return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
+        }
     }]);
 
     return BlockEvents;
 }(Module);
 
-BlockEvents.displayName = "BlockEvents";
+BlockEvents.displayName = 'BlockEvents';
 exports.default = BlockEvents;
-module.exports = exports["default"];
+module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
@@ -18273,6 +18324,13 @@ var Toolbox = function (_Module) {
      * @type {boolean}
      */
     _this.opened = false;
+
+    /**
+     * Active button index
+     * -1 equals no chosen Tool
+     * @type {number}
+     */
+    _this.activeButtonIndex = -1;
     return _this;
   }
 
@@ -18359,7 +18417,7 @@ var Toolbox = function (_Module) {
        * Add click listener
        */
       this.Editor.Listeners.on(button, 'click', function (event) {
-        _this2.toolButtonClicked(event, toolName);
+        _this2.toolButtonActivate(event, toolName);
       });
 
       /**
@@ -18426,21 +18484,21 @@ var Toolbox = function (_Module) {
       this.Editor.Caret.setToBlock(newBlock);
 
       /**
-       * Move toolbar when node is changed
+       * close toolbar when node is changed
        */
-      this.Editor.Toolbar.move();
+      this.Editor.Toolbar.close();
     }
 
     /**
      * Toolbox Tool's button click handler
      *
-     * @param {MouseEvent} event
+     * @param {MouseEvent|KeyboardEvent} event
      * @param {string} toolName
      */
 
   }, {
-    key: 'toolButtonClicked',
-    value: function toolButtonClicked(event, toolName) {
+    key: 'toolButtonActivate',
+    value: function toolButtonActivate(event, toolName) {
       var tool = this.Editor.Tools.toolsClasses[toolName];
 
       this.insertNewBlock(tool, toolName);
@@ -18466,6 +18524,14 @@ var Toolbox = function (_Module) {
     value: function close() {
       this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpened);
       this.opened = false;
+
+      /** remove active item pointer */
+      this.activeButtonIndex = -1;
+      var activeButton = this.nodes.toolbox.querySelector('.' + Toolbox.CSS.toolboxButtonActive);
+
+      if (activeButton) {
+        activeButton.classList.remove(Toolbox.CSS.toolboxButtonActive);
+      }
     }
 
     /**
@@ -18481,12 +18547,96 @@ var Toolbox = function (_Module) {
         this.close();
       }
     }
+
+    /**
+     * Leaf
+     * flip through the toolbox items
+     * @param {String} direction - leaf direction, right is default
+     */
+
+  }, {
+    key: 'leaf',
+    value: function leaf() {
+      var direction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'right';
+
+      var childNodes = this.nodes.toolbox.childNodes;
+
+      /**
+       * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
+       */
+      if (this.activeButtonIndex === -1) {
+        /**
+         * Normalize "previous" Tool index depending on direction.
+         * We need to do this to highlight "first" Tool correctly
+         *
+         * Order of Tools: [0] [1] ... [n - 1]
+         *   [0 = n] because of: n % n = 0 % n
+         *
+         * Direction 'right': for [0] the [n - 1] is a previous index
+         *   [n - 1] -> [0]
+         *
+         * Direction 'left': for [n - 1] the [0] is a previous index
+         *   [n - 1] <- [0]
+         *
+         * @type {number}
+         */
+        this.activeButtonIndex = direction === 'right' ? -1 : 0;
+      } else {
+        /**
+         * If we have chosen Tool then remove highlighting
+         */
+        childNodes[this.activeButtonIndex].classList.remove(Toolbox.CSS.toolboxButtonActive);
+      }
+
+      /**
+       * Count index for next Tool
+       */
+      if (direction === 'right') {
+        /**
+         * If we go right then choose next (+1) Tool
+         * @type {number}
+         */
+        this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
+      } else {
+        /**
+         * If we go left then choose previous (-1) Tool
+         * Before counting module we need to add length before because of "The JavaScript Modulo Bug"
+         * @type {number}
+         */
+        this.activeButtonIndex = (childNodes.length + this.activeButtonIndex - 1) % childNodes.length;
+      }
+
+      /**
+       * Highlight new chosen Tool
+       */
+      childNodes[this.activeButtonIndex].classList.add(Toolbox.CSS.toolboxButtonActive);
+    }
+
+    /**
+     * get tool name when it is selected
+     * In case when nothing selection returns null
+     *
+     * @return {String|null}
+     */
+
+  }, {
+    key: 'getActiveTool',
+    get: function get() {
+      var childNodes = this.nodes.toolbox.childNodes;
+
+      if (this.activeButtonIndex === -1) {
+        return null;
+      }
+
+      return childNodes[this.activeButtonIndex].title;
+    }
   }], [{
     key: 'CSS',
     get: function get() {
       return {
         toolbox: 'ce-toolbox',
         toolboxButton: 'ce-toolbox__button',
+        toolboxButtonActive: 'ce-toolbox__button--active',
         toolboxOpened: 'ce-toolbox--opened'
       };
     }
@@ -18726,13 +18876,23 @@ var Toolbar = function (_Module) {
     }
 
     /**
-     * Close the Toolbar
+     * returns toolbar opened state
+     * @return {Boolean}
      */
 
   }, {
     key: 'close',
+
+
+    /**
+     * Close the Toolbar
+     */
     value: function close() {
       this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
+
+      /** Close components */
+      this.Editor.Toolbox.close();
+      this.Editor.BlockSettings.close();
     }
 
     /**
@@ -18782,6 +18942,11 @@ var Toolbar = function (_Module) {
       } else {
         this.Editor.BlockSettings.open();
       }
+    }
+  }, {
+    key: 'opened',
+    get: function get() {
+      return this.nodes.wrapper.classList.contains(Toolbar.CSS.toolbarOpened);
     }
   }, {
     key: 'plusButton',
@@ -19515,7 +19680,7 @@ var UI = function (_Module) {
 
     /**
      * All keydowns on document
-     * @param event
+     * @param {Event} event
      */
 
   }, {
@@ -19525,7 +19690,6 @@ var UI = function (_Module) {
         case _.keyCodes.ENTER:
           this.enterPressed(event);
           break;
-
         default:
           this.defaultBehaviour(event);
           break;
@@ -20594,7 +20758,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ":root {\n  /**\n   * Selection color\n   */\n  --selectionColor: rgba(61,166,239,0.63);\n\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /**\n   * Blue icons\n   */\n  --color-active-icon: #388AE5;\n\n  /**\n   * Gray border, loaders\n   */\n  --color-gray-border: #E8E8EB;\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar buttons height and width\n   */\n  --toolbar-buttons-size: 34px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbox-buttons-size: 20px;\n\n  /**\n   * Confirm deletion bg\n   */\n  --color-confirm: #E24A4A;\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n  position: relative;\n  box-sizing: border-box;\n}\n.codex-editor .hide {\n    display: none;\n  }\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    max-height: 100%;\n  }\n/**\n * Set color for native selection\n */\n::-moz-selection{\n  background-color: rgba(61,166,239,0.63);\n  background-color: var(--selectionColor);\n}\n::selection{\n  background-color: rgba(61,166,239,0.63);\n  background-color: var(--selectionColor);\n}\n/**\n * Add placeholder to content editable elements with data attribute\n * data-placeholder=\"Hello world!\"\n */\n[contentEditable=true][data-placeholder]:empty:not(:focus):before{\n  content: attr(data-placeholder);\n  color: #707684;\n  color: var(--grayText);\n}\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 20px;\n  width: var(--toolbox-buttons-size);\n  height: 20px;\n  height: var(--toolbox-buttons-size);\n    /*line-height: var(--toolbox-buttons-size);*/\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center\n  }\n.ce-toolbar__plus:not(:last-of-type){\n  margin-right: 3px;\n    }\n.ce-toolbar__plus:hover {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-toolbar__plus {\n\n    position: absolute;\n    left: calc(calc(20px + 10px) * -1);\n    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);\n  }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    padding-right: 16px;\n  }\n.ce-toolbar__actions-buttons {\n      text-align: right;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    color: #707684;\n    color: var(--grayText);\n    cursor: pointer;\n  }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-direction: row;\n        flex-direction: row;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 20px;\n  width: var(--toolbox-buttons-size);\n  height: 20px;\n  height: var(--toolbox-buttons-size);\n    /*line-height: var(--toolbox-buttons-size);*/\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center;\n    }\n.ce-toolbox__button:not(:last-of-type){\n  margin-right: 3px;\n    }\n.ce-toolbox__button:hover {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-inline-toolbar {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-tool {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.ce-inline-tool:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-inline-tool:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-inline-tool {\n  line-height: normal;\n}\n.ce-inline-tool--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-inline-tool--link .icon {\n      margin-top: -2px;\n    }\n.ce-inline-tool--link .icon--unlink {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--link {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--unlink {\n      display: inline-block;\n    }\n.ce-inline-tool-input {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    outline: none;\n    border: 0;\n    border-radius: 3px;\n    margin: 6px 0 0;\n    font-size: 13px;\n    padding: 8px;\n    width: 100%;\n    box-sizing: border-box;\n    display: none\n  }\n.ce-inline-tool-input::-webkit-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input:-ms-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input::placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input--showed {\n      display: block;\n    }\n.ce-settings {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-settings::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-settings {\n  right: 5px;\n  top: 35px;\n  min-width: 124px\n}\n.ce-settings::before{\n    left: auto;\n    right: 12px;\n  }\n.ce-settings {\n\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone:not(:empty){\n      padding: 6px 6px 0;\n    }\n.ce-settings__default-zone:not(:empty){\n      padding: 6px;\n    }\n.ce-settings__button {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n  }\n.ce-settings__button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-settings__button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-settings__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-settings__button--disabled {\n        cursor: not-allowed !important;\n        opacity: .3;\n    }\n.ce-settings__button--selected {\n      color: #388AE5;\n      color: var(--color-active-icon);\n    }\n.ce-settings__button--delete {\n      transition: background-color 300ms ease;\n      will-change: background-color;\n    }\n.ce-settings__button--delete .icon {\n        transition: transform 200ms ease-out;\n        will-change: transform;\n      }\n.ce-settings__button--confirm {\n      background-color: #E24A4A;\n      background-color: var(--color-confirm);\n      color: #fff\n    }\n.ce-settings__button--confirm:hover {\n        background-color: rgb(213, 74, 74) !important;\n        background-color: rgb(213, 74, 74) !important;\n      }\n.ce-settings__button--confirm .icon {\n        transform: rotate(90deg);\n      }\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\n    border-radius: 3px;\n  }\n.ce-block--stretched .ce-block__content {\n    max-width: none;\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n.wobble {\n  animation-name: wobble;\n  animation-duration: 400ms;\n}\n/**\n * @author Nick Pettit - https://github.com/nickpettit/glide\n */\n@keyframes wobble {\n  from {\n    transform: translate3d(0, 0, 0);\n  }\n\n  15% {\n    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\n  }\n\n  30% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\n  }\n\n  45% {\n    transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\n  }\n\n  60% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\n  }\n\n  75% {\n    transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\n  }\n\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n/**\n * Block Tool wrapper\n */\n.cdx-block {\n  padding: 0.7em 0;\n}\n/**\n * Input\n */\n.cdx-input {\n  border: 1px solid #E8E8EB;\n  border: 1px solid var(--color-gray-border);\n  box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\n  border-radius: 3px;\n  padding: 12px;\n  outline: none;\n  width: 100%;\n  box-sizing: border-box;\n}\n/**\n * Settings\n */\n.cdx-settings-button {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.cdx-settings-button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.cdx-settings-button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.cdx-settings-button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.cdx-settings-button--active {\n    color: #388AE5;\n    color: var(--color-active-icon);\n  }\n/**\n * Loader\n */\n.cdx-loader {\n  position: relative;\n  border: 1px solid #E8E8EB;\n  border: 1px solid var(--color-gray-border)\n}\n.cdx-loader::before {\n    content: '';\n    position: absolute;\n    left: 50%;\n    top: 50%;\n    width: 18px;\n    height: 18px;\n    margin: -11px 0 0 -11px;\n    border: 2px solid #E8E8EB;\n    border: 2px solid var(--color-gray-border);\n    border-left-color: #388AE5;\n    border-left-color: var(--color-active-icon);\n    border-radius: 50%;\n    animation: cdxRotation 1.2s infinite linear;\n  }\n@keyframes cdxRotation {\n  0% {\n    transform: rotate(0deg);\n  }\n  100% {\n    transform: rotate(360deg);\n  }\n}\n", ""]);
+exports.push([module.i, ":root {\n  /**\n   * Selection color\n   */\n  --selectionColor: rgba(61,166,239,0.63);\n\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /**\n   * Blue icons\n   */\n  --color-active-icon: #388AE5;\n\n  /**\n   * Gray border, loaders\n   */\n  --color-gray-border: #E8E8EB;\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar buttons height and width\n   */\n  --toolbar-buttons-size: 34px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbox-buttons-size: 20px;\n\n  /**\n   * Confirm deletion bg\n   */\n  --color-confirm: #E24A4A;\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n  position: relative;\n  box-sizing: border-box;\n}\n.codex-editor .hide {\n    display: none;\n  }\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    max-height: 100%;\n  }\n/**\n * Set color for native selection\n */\n::-moz-selection{\n  background-color: rgba(61,166,239,0.63);\n  background-color: var(--selectionColor);\n}\n::selection{\n  background-color: rgba(61,166,239,0.63);\n  background-color: var(--selectionColor);\n}\n/**\n * Add placeholder to content editable elements with data attribute\n * data-placeholder=\"Hello world!\"\n */\n[contentEditable=true][data-placeholder]:empty:not(:focus):before{\n  content: attr(data-placeholder);\n  color: #707684;\n  color: var(--grayText);\n}\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 20px;\n  width: var(--toolbox-buttons-size);\n  height: 20px;\n  height: var(--toolbox-buttons-size);\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center\n  }\n.ce-toolbar__plus:not(:last-of-type){\n  margin-right: 3px;\n    }\n.ce-toolbar__plus {\n\n    position: absolute;\n    left: calc(calc(20px + 10px) * -1);\n    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);\n  }\n.ce-toolbar__plus:hover,\n    .ce-toolbar__plus--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n  animation: bounceIn 0.75s 1;\n  animation-fill-mode: forwards;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    padding-right: 16px;\n  }\n.ce-toolbar__actions-buttons {\n      text-align: right;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    color: #707684;\n    color: var(--grayText);\n    cursor: pointer;\n  }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-direction: row;\n        flex-direction: row;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 20px;\n  width: var(--toolbox-buttons-size);\n  height: 20px;\n  height: var(--toolbox-buttons-size);\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center;\n    }\n.ce-toolbox__button:not(:last-of-type){\n  margin-right: 3px;\n    }\n.ce-toolbox__button:hover,\n    .ce-toolbox__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n  animation: bounceIn 0.75s 1;\n  animation-fill-mode: forwards;\n    }\n.ce-inline-toolbar {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-tool {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.ce-inline-tool:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-inline-tool:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-inline-tool {\n  line-height: normal;\n}\n.ce-inline-tool--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-inline-tool--link .icon {\n      margin-top: -2px;\n    }\n.ce-inline-tool--link .icon--unlink {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--link {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--unlink {\n      display: inline-block;\n    }\n.ce-inline-tool-input {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    outline: none;\n    border: 0;\n    border-radius: 3px;\n    margin: 6px 0 0;\n    font-size: 13px;\n    padding: 8px;\n    width: 100%;\n    box-sizing: border-box;\n    display: none\n  }\n.ce-inline-tool-input::-webkit-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input:-ms-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input::placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input--showed {\n      display: block;\n    }\n.ce-settings {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-settings::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-settings {\n  right: 5px;\n  top: 35px;\n  min-width: 124px\n}\n.ce-settings::before{\n    left: auto;\n    right: 12px;\n  }\n.ce-settings {\n\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone:not(:empty){\n      padding: 6px 6px 0;\n    }\n.ce-settings__default-zone:not(:empty){\n      padding: 6px;\n    }\n.ce-settings__button {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n  }\n.ce-settings__button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-settings__button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-settings__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-settings__button--disabled {\n        cursor: not-allowed !important;\n        opacity: .3;\n    }\n.ce-settings__button--selected {\n      color: #388AE5;\n      color: var(--color-active-icon);\n    }\n.ce-settings__button--delete {\n      transition: background-color 300ms ease;\n      will-change: background-color;\n    }\n.ce-settings__button--delete .icon {\n        transition: transform 200ms ease-out;\n        will-change: transform;\n      }\n.ce-settings__button--confirm {\n      background-color: #E24A4A;\n      background-color: var(--color-confirm);\n      color: #fff\n    }\n.ce-settings__button--confirm:hover {\n        background-color: rgb(213, 74, 74) !important;\n        background-color: rgb(213, 74, 74) !important;\n      }\n.ce-settings__button--confirm .icon {\n        transform: rotate(90deg);\n      }\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\n    border-radius: 3px;\n  }\n.ce-block--stretched .ce-block__content {\n    max-width: none;\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n.wobble {\n  animation-name: wobble;\n  animation-duration: 400ms;\n}\n/**\n * @author Nick Pettit - https://github.com/nickpettit/glide\n */\n@keyframes wobble {\n  from {\n    transform: translate3d(0, 0, 0);\n  }\n\n  15% {\n    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\n  }\n\n  30% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\n  }\n\n  45% {\n    transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\n  }\n\n  60% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\n  }\n\n  75% {\n    transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\n  }\n\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@keyframes bounceIn {\n  from,\n  20%,\n  40%,\n  60%,\n  80%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n\n  0% {\n    transform: scale3d(0.6, 0.6, 0.6);\n  }\n\n  20% {\n    transform: scale3d(1.1, 1.1, 1.1);\n  }\n\n  40% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n\n  60% {\n    transform: scale3d(1.03, 1.03, 1.03);\n  }\n\n  80% {\n    transform: scale3d(0.97, 0.97, 0.97);\n  }\n\n  to {\n    transform: scale3d(1, 1, 1);\n  }\n}\n/**\n * Block Tool wrapper\n */\n.cdx-block {\n  padding: 0.7em 0;\n}\n/**\n * Input\n */\n.cdx-input {\n  border: 1px solid #E8E8EB;\n  border: 1px solid var(--color-gray-border);\n  box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\n  border-radius: 3px;\n  padding: 12px;\n  outline: none;\n  width: 100%;\n  box-sizing: border-box;\n}\n/**\n * Settings\n */\n.cdx-settings-button {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.cdx-settings-button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.cdx-settings-button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.cdx-settings-button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.cdx-settings-button--active {\n    color: #388AE5;\n    color: var(--color-active-icon);\n  }\n/**\n * Loader\n */\n.cdx-loader {\n  position: relative;\n  border: 1px solid #E8E8EB;\n  border: 1px solid var(--color-gray-border)\n}\n.cdx-loader::before {\n    content: '';\n    position: absolute;\n    left: 50%;\n    top: 50%;\n    width: 18px;\n    height: 18px;\n    margin: -11px 0 0 -11px;\n    border: 2px solid #E8E8EB;\n    border: 2px solid var(--color-gray-border);\n    border-left-color: #388AE5;\n    border-left-color: var(--color-active-icon);\n    border-radius: 50%;\n    animation: cdxRotation 1.2s infinite linear;\n  }\n@keyframes cdxRotation {\n  0% {\n    transform: rotate(0deg);\n  }\n  100% {\n    transform: rotate(360deg);\n  }\n}\n", ""]);
 
 // exports
 
