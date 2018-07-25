@@ -8,12 +8,12 @@ import ITool from './tool';
 export default interface IBlockTool extends ITool {
 
   /**
-   * Pass `true` if Tool which represents decorative empty Block
+   * Pass `true` if Tool represents decorative empty Block
    */
   contentless?: boolean;
 
   /**
-   * Should this tools be displayed at the Editor's Toolbox
+   * Should this Tool be displayed in the Editor's Toolbox
    */
   displayInToolbox?: boolean;
 
@@ -54,8 +54,8 @@ export default interface IBlockTool extends ITool {
   validate?(blockData: IBlockToolData): boolean;
 
   /**
-   * Method that specified how to merge two Text blocks.
-   * Called by CodeX Editor by backspace at the beginning of the Block
+   * Method that specified how to merge two Blocks with same type.
+   * Called by backspace at the beginning of the Block
    * @param {IBlockToolData} blockData
    */
   merge?(blockData: IBlockToolData): void;

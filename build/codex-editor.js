@@ -16162,13 +16162,13 @@ var Paste = function (_Module) {
          */
         _this.processPastedData = function () {
             var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(event) {
-                var _this$Editor, Tools, Sanitizer, BlockManager, Caret, toolsSettings, block, toolSettings, htmlData, plainData, blockTags, toolsTags, customConfig, cleanData, dataToInsert;
+                var _this$Editor, Tools, Sanitizer, BlockManager, Caret, block, toolSettings, htmlData, plainData, blockTags, toolsTags, customConfig, cleanData, dataToInsert;
 
                 return regeneratorRuntime.wrap(function _callee2$(_context2) {
                     while (1) {
                         switch (_context2.prev = _context2.next) {
                             case 0:
-                                _this$Editor = _this.Editor, Tools = _this$Editor.Tools, Sanitizer = _this$Editor.Sanitizer, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret, toolsSettings = _this.config.toolsSettings;
+                                _this$Editor = _this.Editor, Tools = _this$Editor.Tools, Sanitizer = _this$Editor.Sanitizer, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret;
                                 /** If target is native input or is not Block, use browser behaviour */
 
                                 if (!_this.isNativeBehaviour(event.target)) {
@@ -16180,20 +16180,19 @@ var Paste = function (_Module) {
 
                             case 3:
                                 event.preventDefault();
-                                block = BlockManager.getBlock(event.target);
-                                toolSettings = toolsSettings[block.name];
+                                block = BlockManager.getBlock(event.target), toolSettings = Tools.getToolSettings(block.name);
                                 /** If paste is dissalowed in block do nothing */
 
                                 if (!(toolSettings && toolSettings[Tools.apiSettings.IS_PASTE_DISALLOWED])) {
-                                    _context2.next = 8;
+                                    _context2.next = 7;
                                     break;
                                 }
 
                                 return _context2.abrupt('return');
 
-                            case 8:
+                            case 7:
                                 htmlData = event.clipboardData.getData('text/html'), plainData = event.clipboardData.getData('text/plain');
-                                /** Add all block tags and tags can be substiToolConfigtuted to sanitizer configuration */
+                                /** Add all block tags and tags can be substituted to sanitizer configuration */
 
                                 blockTags = $.blockElements.reduce(function (result, tag) {
                                     result[tag.toLowerCase()] = {};
@@ -16203,8 +16202,7 @@ var Paste = function (_Module) {
                                     result[tag.toLowerCase()] = {};
                                     return result;
                                 }, {});
-                                customConfig = { tags: Object.assign({}, blockTags, toolsTags, Sanitizer.defaultConfig.tags) };
-                                cleanData = Sanitizer.clean(htmlData, customConfig);
+                                customConfig = { tags: Object.assign({}, blockTags, toolsTags, Sanitizer.defaultConfig.tags) }, cleanData = Sanitizer.clean(htmlData, customConfig);
                                 dataToInsert = [];
                                 /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
 
@@ -16215,16 +16213,16 @@ var Paste = function (_Module) {
                                 }
 
                                 if (!(dataToInsert.length === 1 && !dataToInsert[0].isBlock)) {
-                                    _context2.next = 18;
+                                    _context2.next = 16;
                                     break;
                                 }
 
                                 _this.processSingleBlock(dataToInsert.pop());
                                 return _context2.abrupt('return');
 
-                            case 18:
+                            case 16:
                                 _this.splitBlock();
-                                _context2.next = 21;
+                                _context2.next = 19;
                                 return Promise.all(dataToInsert.map(function () {
                                     var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, i) {
                                         return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -16250,10 +16248,10 @@ var Paste = function (_Module) {
                                     };
                                 }()));
 
-                            case 21:
+                            case 19:
                                 Caret.setToBlock(BlockManager.currentBlock, 0, true);
 
-                            case 22:
+                            case 20:
                             case 'end':
                                 return _context2.stop();
                         }
@@ -16352,23 +16350,21 @@ var Paste = function (_Module) {
                     while (1) {
                         switch (_context4.prev = _context4.next) {
                             case 0:
-                                initialTool = this.config.initialBlock;
-                                BlockManager = this.Editor.BlockManager;
-                                content = dataToInsert.content, tool = dataToInsert.tool;
+                                initialTool = this.config.initialBlock, BlockManager = this.Editor.BlockManager, content = dataToInsert.content, tool = dataToInsert.tool;
 
                                 if (!(tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
-                                    _context4.next = 11;
+                                    _context4.next = 9;
                                     break;
                                 }
 
-                                _context4.next = 6;
+                                _context4.next = 4;
                                 return this.processPattern(content.textContent);
 
-                            case 6:
+                            case 4:
                                 blockData = _context4.sent;
 
                                 if (!blockData) {
-                                    _context4.next = 11;
+                                    _context4.next = 9;
                                     break;
                                 }
 
@@ -16380,11 +16376,11 @@ var Paste = function (_Module) {
                                 }
                                 return _context4.abrupt('return');
 
-                            case 11:
+                            case 9:
                                 /** If there is no pattern substitute - insert string as it is */
                                 document.execCommand('insertHTML', false, content.innerHTML);
 
-                            case 12:
+                            case 10:
                             case 'end':
                                 return _context4.stop();
                         }
@@ -16479,23 +16475,25 @@ var Paste = function (_Module) {
 
                             case 2:
                                 blockData = _context6.sent;
-                                _Editor2 = this.Editor, BlockManager = _Editor2.BlockManager, Caret = _Editor2.Caret;
+                                _Editor2 = this.Editor;
+                                BlockManager = _Editor2.BlockManager;
+                                Caret = _Editor2.Caret;
                                 currentBlock = BlockManager.currentBlock;
 
                                 if (!(canReplaceCurrentBlock && currentBlock.isEmpty)) {
-                                    _context6.next = 8;
+                                    _context6.next = 10;
                                     break;
                                 }
 
                                 BlockManager.replace(data.tool, blockData);
                                 return _context6.abrupt('return');
 
-                            case 8:
+                            case 10:
                                 Block = BlockManager.insert(data.tool, blockData);
 
                                 Caret.setToBlock(Block);
 
-                            case 10:
+                            case 12:
                             case 'end':
                                 return _context6.stop();
                         }
@@ -16543,10 +16541,10 @@ var Paste = function (_Module) {
 
             var _Editor4 = this.Editor,
                 Tools = _Editor4.Tools,
-                Sanitizer = _Editor4.Sanitizer;
+                Sanitizer = _Editor4.Sanitizer,
+                initialTool = this.config.initialBlock,
+                wrapper = $.make('DIV');
 
-            var initialTool = this.config.initialBlock;
-            var wrapper = $.make('DIV');
             wrapper.innerHTML = innerHTML;
             var nodes = this.getNodes(wrapper);
             return nodes.map(function (node) {
@@ -16586,14 +16584,13 @@ var Paste = function (_Module) {
     }, {
         key: 'processPlain',
         value: function processPlain(plain) {
-            var initialBlock = this.config.initialBlock;
-            var Tools = this.Editor.Tools;
-
+            var initialBlock = this.config.initialBlock,
+                Tools = this.Editor.Tools;
             if (!plain) {
                 return [];
             }
-            var tool = initialBlock;
-            var handler = Tools.blockTools[tool].onPaste.handler;
+            var tool = initialBlock,
+                handler = Tools.blockTools[tool].onPaste.handler;
             return plain.split('\n\n').map(function (text) {
                 var content = $.make('div');
                 content.innerHTML = text;
@@ -16612,8 +16609,8 @@ var Paste = function (_Module) {
     }, {
         key: 'getNodes',
         value: function getNodes(wrapper) {
-            var children = Array.from(wrapper.childNodes);
-            var tags = Object.keys(this.toolsTags);
+            var children = Array.from(wrapper.childNodes),
+                tags = Object.keys(this.toolsTags);
             var reducer = function reducer(nodes, node) {
                 if ($.isEmpty(node)) {
                     return nodes;

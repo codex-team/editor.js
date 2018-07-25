@@ -27,12 +27,13 @@ export default interface IToolSettings {
   enableLineBreaks?: boolean;
 
   /**
-   * Show inline Toolbar in this Tool
+   * Is need to show Inline Toolbar.
+   * Can accept array of Tools for InlineToolbar or boolean.
    */
   inlineToolbar?: boolean|string[];
 
   /**
-   * Define shortcut for this Tool
+   * Define shortcut that will render Tool
    */
   shortcut?: string;
 }
