@@ -1,4 +1,4 @@
-import {IBlockToolData} from './block-tool';
+import IBlockToolData from './tools/block-tool-data';
 
 /**
  * Interface represents input CodeX Editor data
@@ -7,12 +7,17 @@ import {IBlockToolData} from './block-tool';
 export default interface IInputOutputData {
 
   /**
+   * Timestamp of saving in milliseconds
+   */
+  readonly time?: number;
+
+  /**
    * Saved Blocks
    */
   readonly items: IBlockToolData[];
 
   /**
-   * Article id. Optional
+   * Editor's version
    */
-  readonly id?: number|string;
+  readonly version?: string;
 }

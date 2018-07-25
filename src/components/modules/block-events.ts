@@ -88,13 +88,13 @@ export default class BlockEvents extends Module {
    */
   private enter(event: KeyboardEvent): void {
     const currentBlock = this.Editor.BlockManager.currentBlock,
-      toolsConfig = this.config.toolsConfig[currentBlock.name];
+      toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
 
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
-    if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+    if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
       return;
     }
 

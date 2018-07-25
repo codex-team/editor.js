@@ -40,35 +40,24 @@
 <script src="plugins/code/code.js"></script>
 <link rel="stylesheet" href="plugins/code/code.css">
 
-
 <script src="../build/codex-editor.js?v=108"></script>
 
 <script>
-    codex = {};
-    codex.editor = 1;
     var editor = new CodexEditor({
-        holderId : 'codex-editor',
-        initialBlock : 'text',
+        holderId: 'codex-editor',
+        initialBlock: 'text',
         tools: {
-            text: Text,
+            text: {
+              class: Text,
+              inlineToolbar: true,
+            },
             header: Header,
-            term: Term,
+            term: {
+              class: Term,
+              shortcut: 'CMD+SHIFT+M'
+            },
             image: SimpleImageTool,
             quote: Quote
-        },
-        toolsConfig: {
-            text: {
-              inlineToolbar : true
-            },
-            header: {
-              shortcut: 'CMD+SHIFT+H'
-            },
-            term: {
-              shortcut: 'CMD+E'
-            },
-            link: {
-              shortcut: 'CMD+K'
-            }
         },
         data: {
             items: [
@@ -118,8 +107,6 @@
             ]
         }
     });
-
-    console.log('Editor instance:', editor);
 
     window.editor = editor;
 

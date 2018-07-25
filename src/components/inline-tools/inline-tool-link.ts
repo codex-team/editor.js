@@ -1,4 +1,4 @@
-import InlineTool from '../interfaces/inline-tool';
+import InlineTool from '../interfaces/tools/inline-tool';
 import Selection from '../selection';
 
 declare var $: any;

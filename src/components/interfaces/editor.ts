@@ -10,6 +10,7 @@ import API from '../modules/api';
 import {IShortcuts} from './shortcuts';
 
 export default interface IEditor {
+
   API: API;
 
   BlockEvents: BlockEvents;
