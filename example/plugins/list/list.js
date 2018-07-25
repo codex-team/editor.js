@@ -50,13 +50,37 @@ class List {
   };
 
   /**
-   * Initialize plugin
-   * @param {ListData} listData
-   * @param {object} config
+   * @constructor
+   *
+   * @param {ListData} listdata
+   * @param {object} config - Tool settings
+   * @param {object} api - CodeX Editor API
    */
-  init(listData = {}, config = {}) {
+  constructor(listdata = {}, config = {}, api = {}) {
+    this.api = api;
+    this.listData = listdata;
+
+    this.settings = [
+      {
+        name: 'ordered',
+        icon: '<svg width="17" height="13" viewBox="0 0 17 13" xmlns="http://www.w3.org/2000/svg"> <path d="M5.625 4.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm0-4.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm0 9.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm-4.5-5a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25zm0-4.85a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25zm0 9.85a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25z"/></svg>',
+      },
+      {
+        name: 'unordered',
+        icon: '<svg width="17" height="13" viewBox="0 0 17 13" xmlns="http://www.w3.org/2000/svg"> <path d="M5.625 4.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm0-4.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm0 9.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm-4.5-5a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25zm0-4.85a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25zm0 9.85a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25z"/></svg>',
+      }
+    ];
+  }
+
+  /**
+   * List data setter
+   * @param {ListData} listData
+   */
+  set listData(listData = {}) {
     /** @type {ListData} */
     this._data = {};
+    this._data.style = listData.style || 'ordered';
+    this._data.items = listData.items || [];
 
     /**
      * @type {{}}
@@ -77,7 +101,7 @@ class List {
     listData.items = listData.items || [];
 
     for (let i = 0; i < listData.items.length; i++) {
-      let item = List.make('li', [ this.CSS.input, this.CSS.item ], {
+      let item = List.make('li', [this.CSS.input, this.CSS.item], {
         innerHTML : listData.items[i] || ''
       });
 
@@ -86,49 +110,36 @@ class List {
     }
 
     this._elements.wrapper = listEl;
-
   }
 
   /**
-   * @constructor
-   *
-   * @param {ListData} listdata
-   * @param {object} config - Tool settings
-   * @param {object} api - CodeX Editor API
+   * @param {Element} el
    */
-  constructor(listdata = {}, config = {}, api = {}) {
-
-    this.init(listdata, config);
-
-    this.api = api;
-    this.listData = listdata;
-
-    this.settings = [
-      {
-        name: 'ordered',
-        icon: '<svg width="17" height="13" viewBox="0 0 17 13" xmlns="http://www.w3.org/2000/svg"> <path d="M5.625 4.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm0-4.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm0 9.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm-4.5-5a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25zm0-4.85a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25zm0 9.85a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25z"/></svg>',
-      },
-      {
-        name: 'unordered',
-        icon: '<svg width="17" height="13" viewBox="0 0 17 13" xmlns="http://www.w3.org/2000/svg"> <path d="M5.625 4.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm0-4.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm0 9.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm-4.5-5a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25zm0-4.85a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25zm0 9.85a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25z"/></svg>',
-      }
-    ];
-
+  set listWrapper(el) {
+    this._elements.wrapper.replaceWith(el);
+    this._elements.wrapper = el;
+    this._data.style = el.tagName === 'UL' ? 'unordered' : 'ordered';
   }
 
   /**
-   * List data setter
-   * @param {ListData} data
+   * @return {string}
    */
-  set listData(data = {}) {
-    this._data.style = data.style || 'ordered';
-    this._data.items = data.items || [];
+  get listWrapper() {
+    return this._elements.wrapper;
   }
 
   /**
    * @return {ListData}
    */
   get listData() {
+    this._data.items = [];
+
+    const items = this._elements.wrapper.childNodes;
+
+    for (let i = 0; i < items.length; i++) {
+      this._data.items.push(items[i].innerHTML);
+    }
+
     return this._data;
   }
   /**
@@ -136,7 +147,7 @@ class List {
    * @return {Element}
    */
   render() {
-    return this._elements.wrapper;
+    return this.listWrapper;
   }
 
   save() {
@@ -151,6 +162,7 @@ class List {
 
     this.settings.forEach( (item) => {
       let itemEl = document.createElement('div');
+
       itemEl.classList.add(this.CSS.settingsButton);
       itemEl.innerHTML = item.icon;
 
@@ -183,8 +195,7 @@ class List {
       newListEl.appendChild(element);
     });
 
-    this._elements.wrapper.replaceWith(newListEl);
-    this._elements.wrapper = newListEl;
+    this.listWrapper = newListEl;
   }
 
   /**
@@ -197,6 +208,7 @@ class List {
    */
   static make(tagName, classNames = null, attributes = {}) {
     let el = document.createElement(tagName);
+
     if (Array.isArray(classNames)) {
       el.classList.add(...classNames);
     } else if (classNames) {
@@ -209,5 +221,4 @@ class List {
 
     return el;
   }
-
 }
