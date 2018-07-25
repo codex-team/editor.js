@@ -122,6 +122,7 @@ export default class CodexEditor {
       .then(() => {
         this.configuration = config;
       })
+      .then(() => this.validate())
       .then(() => this.init())
       .then(() => this.start())
       .then(() => {
@@ -141,7 +142,7 @@ export default class CodexEditor {
         console.log('CodeX Editor is ready!');
       })
       .catch(error => {
-        console.log('CodeX Editor does not ready because of %o', error);
+        console.warn('CodeX Editor does not ready because of %s', error);
       });
   }
 
@@ -200,6 +201,40 @@ export default class CodexEditor {
    */
   get configuration() {
     return this.config;
+  }
+
+  /**
+   * Checks for required fields in Editor's config
+   * return {void|Promise<string>}
+   */
+  validate() {
+    /**
+     * Check if holderId is not empty
+     */
+    if (!this.config.holderId) {
+      return Promise.reject('«holderId» param shouldn\'t be empty');
+    }
+
+    /**
+     * Check if a holder element existing
+     */
+    if (!document.getElementById(this.config.holderId)) {
+      return Promise.reject(`element with ID «${this.config.holderId}» is missing. Pass correct holder's ID.`);
+    }
+
+    /**
+     * Check Tools object
+     */
+    if (Object.keys(this.config.tools).length === 0) {
+      return Promise.reject('«tools» param shouldn\'t be empty');
+    }
+
+    /**
+     * Check Tools object
+     */
+    if (!this.config.initialBlock) {
+      return Promise.reject('«initialBlock» param shouldn\'t be empty');
+    }
   }
 
   /**

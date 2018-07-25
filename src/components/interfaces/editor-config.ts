@@ -14,11 +14,6 @@ export default interface IEditorConfig {
   holderId: string;
 
   /**
-   * Blocks list in JSON-format
-   */
-  data: IInputOutputData;
-
-  /**
    * Map of used Tools with or without configuration
    */
   tools: {[toolName: string]: ITool|IToolSettings};
@@ -30,18 +25,23 @@ export default interface IEditorConfig {
   initialBlock: string;
 
   /**
+   * Blocks list in JSON-format
+   */
+  data?: IInputOutputData;
+
+  /**
    * First Block placeholder
    */
-  placeholder: string;
+  placeholder?: string;
 
   /**
    * Define tags not to be stripped off while pasting
    * @see {@link sanitizer}
    */
-  sanitizer: ISanitizerConfig;
+  sanitizer?: ISanitizerConfig;
 
   /**
    * Do not show toolbar
    */
-  hideToolbar: boolean;
+  hideToolbar?: boolean;
 }
