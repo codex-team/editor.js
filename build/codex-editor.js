@@ -13505,6 +13505,17 @@ var BlocksAPI = function (_Module) {
             var block = this.Editor.BlockManager.getBlockByIndex(index);
             block.stretched = status !== undefined ? status : true;
         }
+        /**
+         * Insert new Block
+         * After set caret to this Block
+         */
+
+    }, {
+        key: "insertNewBlock",
+        value: function insertNewBlock() {
+            var newBlock = this.Editor.BlockManager.insert();
+            this.Editor.Caret.setToBlock(newBlock);
+        }
     }, {
         key: "methods",
         get: function get() {
@@ -13534,6 +13545,9 @@ var BlocksAPI = function (_Module) {
                 },
                 stretchBlock: function stretchBlock(index, status) {
                     return _this2.stretchBlock(index, status);
+                },
+                insertNewBlock: function insertNewBlock() {
+                    return _this2.insertNewBlock();
                 }
             };
         }

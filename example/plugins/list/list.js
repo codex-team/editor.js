@@ -110,6 +110,10 @@ class List {
     }
 
     this._elements.wrapper = listEl;
+
+    this._elements.wrapper.addEventListener('keydown', (event) => {
+      this.getOutofList(event);
+    }, false);
   }
 
   /**
@@ -119,6 +123,10 @@ class List {
     this._elements.wrapper.replaceWith(el);
     this._elements.wrapper = el;
     this._data.style = el.tagName === 'UL' ? 'unordered' : 'ordered';
+
+    this._elements.wrapper.addEventListener('keydown', (event) => {
+      this.getOutofList(event);
+    }, false);
   }
 
   /**
@@ -220,5 +228,28 @@ class List {
     }
 
     return el;
+  }
+
+  /**
+   * Get out from List Tool
+   * @param event
+   */
+  getOutofList(event) {
+
+    /**
+     * Handler on Enter
+     */
+    if (event.keyCode === 13) {
+      const lastChild = this.listWrapper.lastChild;
+
+      /** Prevent Default li generation if item is empty */
+      if (lastChild.textContent === '') {
+        event.preventDefault();
+        lastChild.remove();
+
+        /** Insert New Block and set caret */
+        this.api.blocks.insertNewBlock();
+      }
+    }
   }
 }

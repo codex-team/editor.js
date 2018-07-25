@@ -69,6 +69,11 @@ export interface IBlocksAPI {
    * @param {boolean} [status] - true to enable, false to disable
    */
   stretchBlock: (index: number, status: boolean) => void;
+
+  /**
+   * Insert new initial typed Block
+   */
+  insertNewBlock: () => void;
 }
 
 /**
