@@ -258,12 +258,10 @@ export default class Toolbox extends Module {
      */
     if (this.activeButtonIndex === -1) {
       this.activeButtonIndex = 0;
+    } else if (direction === 'left') {
+      this.activeButtonIndex = childNodes.length - (this.activeButtonIndex + 1) % childNodes.length - 1;
     } else {
       this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
-    }
-
-    if (direction === 'left') {
-      this.activeButtonIndex = childNodes.length - (this.activeButtonIndex + 1) % childNodes.length - 1;
     }
 
     childNodes[this.activeButtonIndex].classList.add(Toolbox.CSS.toolboxButtonActive);
