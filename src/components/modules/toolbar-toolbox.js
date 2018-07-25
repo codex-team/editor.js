@@ -190,7 +190,7 @@ export default class Toolbox extends Module {
    * handle cases when active tool in toolbox pressed
    * @param {string} toolName
    */
-  activateTool(toolName) {
+  selectItem(toolName) {
     let newBlock;
 
     /**

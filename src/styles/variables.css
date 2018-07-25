@@ -82,7 +82,7 @@
     }
 
     &--active svg {
-      fill: #e23d3d;
+      fill: var(--color-active-icon);
     }
   };
 

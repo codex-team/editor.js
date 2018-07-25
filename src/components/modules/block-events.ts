@@ -65,10 +65,14 @@ export default class BlockEvents extends Module {
      */
     this.Editor.BlockManager.clearHighlightings();
 
-    if (event.keyCode !== _.keyCodes.TAB && !this.Editor.Toolbox.opened) {
-      this.Editor.Toolbar.close();
+    /**
+     * Do not close Toolbox on Tabs or on Enter with opened Toolbox
+     */
+    if (event.keyCode === _.keyCodes.TAB || (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened)) {
+      return;
     }
 
+    this.Editor.Toolbar.close();
   }
 
   /**
@@ -121,7 +125,7 @@ export default class BlockEvents extends Module {
     if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      this.Editor.Toolbox.activateTool(this.Editor.Toolbox.getActiveTool);
+      this.Editor.Toolbox.selectItem(this.Editor.Toolbox.getActiveTool);
       return;
     }
 
