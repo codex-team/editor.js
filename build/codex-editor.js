@@ -11052,7 +11052,7 @@ module.exports = g;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(_) {/**
+/* WEBPACK VAR INJECTION */(function(_, $) {/**
  * Codex Editor
  *
  * Short Description (눈_눈;)
@@ -11219,9 +11219,9 @@ var CodexEditor = function () {
       // todo Is it necessary?
       delete _this.moduleInstances;
     }).then(function () {
-      console.log('CodeX Editor is ready!');
+      _.log('CodeX Editor is ready!');
     }).catch(function (error) {
-      console.warn('CodeX Editor does not ready because of %s', error);
+      _.log('CodeX Editor does not ready because of ' + error, 'error');
     });
   }
 
@@ -11250,7 +11250,7 @@ var CodexEditor = function () {
       /**
        * Check for a holder element's existence
        */
-      if (!document.getElementById(this.config.holderId)) {
+      if (!$.get(this.config.holderId)) {
         return Promise.reject('element with ID \xAB' + this.config.holderId + '\xBB is missing. Pass correct holder\'s ID.');
       }
 
@@ -11259,6 +11259,17 @@ var CodexEditor = function () {
        */
       if (Object.keys(this.config.tools).length === 0) {
         return Promise.reject('«tools» param must being not empty');
+      }
+
+      /**
+       * Check Tools for a class containing
+       */
+      for (var toolName in this.config.tools) {
+        var tool = this.config.tools[toolName];
+
+        if (!_.isClass(tool) && !_.isClass(tool.class)) {
+          return Promise.reject('Tool \xAB' + toolName + '\xBB must be a class or an object with a \xABclass\xBB property');
+        }
       }
 
       /**
@@ -11610,7 +11621,7 @@ exports.default = CodexEditor;
 // })({});
 
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! utils */ "./src/components/utils.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! utils */ "./src/components/utils.js"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
 
 /***/ }),
 
@@ -12540,6 +12551,19 @@ var Dom = function () {
       var selector = arguments[1];
 
       return el.querySelector(selector);
+    }
+
+    /**
+     * Get Element by Id
+     *
+     * @param {string} id
+     * @returns {HTMLElement | null}
+     */
+
+  }, {
+    key: 'get',
+    value: function get(id) {
+      return document.getElementById(id);
     }
 
     /**
@@ -20337,10 +20361,10 @@ var Util = function () {
           msg = '[codex-editor]: ' + msg;
         } else {
           args = msg || 'undefined';
-          msg = '[codex-editor]:      %o';
+          msg = '[codex-editor]: %o';
         }
       } else {
-        msg = '[codex-editor]:      ' + msg;
+        msg = '[codex-editor]: ' + msg;
       }
 
       try {
@@ -20436,6 +20460,18 @@ var Util = function () {
     key: 'array',
     value: function array(collection) {
       return Array.prototype.slice.call(collection);
+    }
+
+    /**
+     * Check if passed function is a class
+     * @param {function} fn
+     * @return {boolean}
+     */
+
+  }, {
+    key: 'isClass',
+    value: function isClass(fn) {
+      return typeof fn === 'function' && /^\s*class\s+/.test(fn.toString());
     }
 
     /**

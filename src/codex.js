@@ -139,10 +139,10 @@ export default class CodexEditor {
         delete this.moduleInstances;
       })
       .then(() => {
-        console.log('CodeX Editor is ready!');
+        _.log('CodeX Editor is ready!');
       })
       .catch(error => {
-        console.warn('CodeX Editor does not ready because of %s', error);
+        _.log(`CodeX Editor does not ready because of ${error}`, 'error');
       });
   }
 
@@ -218,7 +218,7 @@ export default class CodexEditor {
     /**
      * Check for a holder element's existence
      */
-    if (!document.getElementById(this.config.holderId)) {
+    if (!$.get(this.config.holderId)) {
       return Promise.reject(`element with ID «${this.config.holderId}» is missing. Pass correct holder's ID.`);
     }
 
@@ -227,6 +227,17 @@ export default class CodexEditor {
      */
     if (Object.keys(this.config.tools).length === 0) {
       return Promise.reject('«tools» param must being not empty');
+    }
+
+    /**
+     * Check Tools for a class containing
+     */
+    for (let toolName in this.config.tools) {
+      const tool = this.config.tools[toolName];
+
+      if (!_.isClass(tool) && !_.isClass(tool.class)) {
+        return Promise.reject(`Tool «${toolName}» must be a class or an object with a «class» property`);
+      }
     }
 
     /**
