@@ -117,8 +117,6 @@ export default class BlockEvents extends Module {
     if (this.Editor.Toolbox.opened) {
       this.Editor.Toolbox.leaf(direction);
     }
-
-
   }
 
   /**
