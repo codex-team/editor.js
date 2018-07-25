@@ -98,26 +98,25 @@ export default class Toolbox extends Module {
 
     button.innerHTML = tool.toolboxIcon;
 
-    /**
-     * Save tool's name in the button data-name
-     */
-    button.dataset.name = toolName;
-
     $.append(this.nodes.toolbox, button);
 
     this.nodes.toolbox.appendChild(button);
     this.nodes.buttons.push(button);
 
-    /** Add listener to click */
+    /**
+     * Add click listener
+     */
     this.Editor.Listeners.on(button, 'click', (event) => {
-      this.buttonClicked(event);
+      this.toolButtonClicked(event, toolName);
     });
 
-    /** Enable shortcut */
-    const toolsConfig = this.config.toolsConfig[toolName];
+    /**
+     * Enable shortcut
+     */
+    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
-    if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
-      this.enableShortcut(tool, toolName, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
+    if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
+      this.enableShortcut(tool, toolName, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
     }
   }
 
@@ -173,16 +172,13 @@ export default class Toolbox extends Module {
   }
 
   /**
-   * Toolbox button click listener
-   * 1) if block is empty -> replace
-   * 2) if block is not empty -> add new block below
+   * Toolbox Tool's button click handler
    *
    * @param {MouseEvent} event
+   * @param {string} toolName
    */
-  buttonClicked(event) {
-    let toolButton = event.target,
-      toolName = toolButton.dataset.name,
-      tool = this.Editor.Tools.toolClasses[toolName];
+  toolButtonClicked(event, toolName) {
+    const tool = this.Editor.Tools.toolsClasses[toolName];
 
     this.insertNewBlock(tool, toolName);
   }
