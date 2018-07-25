@@ -130,7 +130,7 @@ export default class BlockEvents extends Module {
     if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      this.Editor.Toolbox.selectItem(this.Editor.Toolbox.getActiveTool);
+      this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
       return;
     }
 

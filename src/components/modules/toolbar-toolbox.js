@@ -115,7 +115,7 @@ export default class Toolbox extends Module {
      * Add click listener
      */
     this.Editor.Listeners.on(button, 'click', (event) => {
-      this.toolButtonClicked(event, toolName);
+      this.toolButtonActivate(event, toolName);
     });
 
     /**
@@ -174,9 +174,9 @@ export default class Toolbox extends Module {
     this.Editor.Caret.setToBlock(newBlock);
 
     /**
-     * Move toolbar when node is changed
+     * close toolbar when node is changed
      */
-    this.Editor.Toolbar.move();
+    this.Editor.Toolbar.close();
   }
 
   /**
@@ -185,30 +185,10 @@ export default class Toolbox extends Module {
    * @param {MouseEvent} event
    * @param {string} toolName
    */
-  toolButtonClicked(event, toolName) {
+  toolButtonActivate(event, toolName) {
     const tool = this.Editor.Tools.toolsClasses[toolName];
 
     this.insertNewBlock(tool, toolName);
-  }
-
-  /**
-   * handle cases when active tool in toolbox pressed
-   * @param {string} toolName
-   */
-  selectItem(toolName) {
-    let newBlock;
-
-    /**
-     * if current block is empty then replace to selected tool
-     */
-    if (this.Editor.BlockManager.currentBlock.isEmpty) {
-      newBlock = this.Editor.BlockManager.replace(toolName);
-    } else {
-      newBlock = this.Editor.BlockManager.insert(toolName);
-    }
-
-    this.Editor.Caret.setToBlock(newBlock);
-    this.Editor.Toolbar.close();
   }
 
   /**
