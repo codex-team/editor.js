@@ -216,7 +216,7 @@ export default class CodexEditor {
     }
 
     /**
-     * Check if a holder element existing
+     * Check for a holder element's existence
      */
     if (!document.getElementById(this.config.holderId)) {
       return Promise.reject(`element with ID «${this.config.holderId}» is missing. Pass correct holder's ID.`);
