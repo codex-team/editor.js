@@ -249,6 +249,9 @@ export default class BlockEvents extends Module {
    * Cases when we need to close Toolbar
    */
   private needToolbarClosing(event) {
-    return !(event.shiftKey || event.keyCode === _.keyCodes.TAB || (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened))
+    const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened),
+      flippingToolboxItems = event.keyCode === _.keyCodes.TAB;
+
+    return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
   }
 }

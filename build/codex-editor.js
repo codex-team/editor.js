@@ -14427,7 +14427,9 @@ var BlockEvents = function (_Module) {
     }, {
         key: 'needToolbarClosing',
         value: function needToolbarClosing(event) {
-            return !(event.shiftKey || event.keyCode === _.keyCodes.TAB || event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened);
+            var toolboxItemSelected = event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened,
+                flippingToolboxItems = event.keyCode === _.keyCodes.TAB;
+            return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
         }
     }]);
 
@@ -18325,7 +18327,7 @@ var Toolbox = function (_Module) {
       }
 
       if (direction === 'left') {
-        this.activeButtonIndex = childNodes.length - this.activeButtonIndex;
+        this.activeButtonIndex = childNodes.length - this.activeButtonIndex - 1;
       }
 
       childNodes[this.activeButtonIndex].classList.add(Toolbox.CSS.toolboxButtonActive);
