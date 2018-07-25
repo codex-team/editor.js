@@ -86,36 +86,74 @@ export default class Block {
     }
   }
 
+  /**
+   * Find and return all editable elements (contenteditables and native inputs) in the Tool HTML
+   *
+   * @returns {HTMLElement[]}
+   */
   get inputs() {
     const content = this.holder;
 
-    const inputs = content.querySelectorAll('[contenteditable], textarea, input');
+    const inputs = _.array(content.querySelectorAll('[contenteditable], textarea, input'));
 
-    return _.array(inputs);
+
+    if (this.inputIndex > inputs.length - 1) {
+      this.inputIndex = inputs.length - 1;
+    }
+
+    return inputs;
   }
 
+  /**
+   * Return current Tool`s input
+   *
+   * @returns {HTMLElement}
+   */
   get currentInput() {
     return this.inputs[this.inputIndex];
   }
 
+  /**
+   * Return next Tool`s input or undefined if it doesn't exist
+   *
+   * @returns {HTMLElement}
+   */
   get nextInput() {
     return this.inputs[this.inputIndex + 1];
   }
 
+  /**
+   * Return previous Tool`s input or undefined if it doesn't exist
+   *
+   * @returns {HTMLElement}
+   */
   get previousInput() {
     return this.inputs[this.inputIndex - 1];
   }
 
+  /**
+   * Set focus to next Tool`s input
+   */
   setToNextInput() {
     this.inputIndex++;
     this.focusInput(null, 'start');
   }
 
+
+  /**
+   * Set focus to previous Tool`s input
+   */
   setToPreviousInput() {
     this.inputIndex--;
     this.focusInput(null, 'end');
   }
 
+  /**
+   * Set focus to current input
+   *
+   * @param {HTMLElement} element - if element passed, set inputIndex to point to passed element
+   * @param {'start'|'end'} position - set caret to passed position
+   */
   focusInput(element, position) {
     const inputs = this.inputs;
 
@@ -144,9 +182,6 @@ export default class Block {
 
         this.api.caret.set(nodeToSet, contentLength);
         break;
-
-      default:
-        input.focus();
     }
   }
 

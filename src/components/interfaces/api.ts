@@ -75,7 +75,6 @@ export interface IBlocksAPI {
  * Methods for working with Caret
  */
 export interface ICaretAPI {
-  isAtEnd: () => boolean;
   set: (element: HTMLElement, offset?: number) => void;
 }
 

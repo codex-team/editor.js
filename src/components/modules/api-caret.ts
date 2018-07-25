@@ -22,7 +22,6 @@ export default class CaretAPI extends Module implements ICaretAPI {
    */
   get methods(): ICaretAPI {
     return {
-      isAtEnd: () => this.isAtEnd(),
       set: (element: HTMLElement, offset?: number) => this.set(element, offset),
     };
   }
@@ -35,9 +34,5 @@ export default class CaretAPI extends Module implements ICaretAPI {
    */
   public set(element: HTMLElement, offset = 0): void {
     this.Editor.Caret.set(element, offset);
-  }
-
-  public isAtEnd(): boolean {
-    return this.Editor.Caret.isAtEnd;
   }
 }

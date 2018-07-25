@@ -89,6 +89,8 @@ export default class Caret extends Module {
     selection.removeAllRanges();
     selection.addRange(range);
 
+
+    /** If new cursor position is not visible, scroll to it */
     const {top, bottom} = range.getBoundingClientRect();
     const {innerHeight} = window;
 
@@ -182,7 +184,7 @@ export default class Caret extends Module {
   }
 
   /**
-   * Set's caret to the next Block
+   * Set's caret to the next Block or Tool`s input
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
@@ -204,6 +206,8 @@ export default class Caret extends Module {
     }
 
     if (this.isAtEnd) {
+
+      /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (!nextInput) {
         this.setToBlock(nextBlock);
       } else {
@@ -217,7 +221,7 @@ export default class Caret extends Module {
   }
 
   /**
-   * Set's caret to the previous Block
+   * Set's caret to the previous Tool`s input or Block
    * Before moving caret, we should check if caret position is start of the Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
@@ -238,6 +242,7 @@ export default class Caret extends Module {
     }
 
     if (this.isAtStart) {
+      /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
       if (!previousInput) {
         this.setToBlock( previousBlock, 0, true );
       } else {
@@ -265,6 +270,7 @@ export default class Caret extends Module {
       anchorNode = selection.anchorNode,
       firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
 
+    /** In case lastNode is native input */
     if ($.isNativeInput(firstNode)) {
       return firstNode.selectionEnd === 0;
     }
@@ -321,6 +327,7 @@ export default class Caret extends Module {
       anchorNode = selection.anchorNode,
       lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
 
+    /** In case lastNode is native input */
     if ($.isNativeInput(lastNode)) {
       return lastNode.selectionEnd === lastNode.value.length;
     }
