@@ -42,16 +42,20 @@ class Header {
    * Render plugin`s main Element and fill it with saved data
    * @param {HeaderData} blockData - previously saved data
    * @param {HeaderConfig} blockConfig - Tool's config from Editor
+   * @param {object} api - CodeX Editor API
    */
-  constructor(blockData = {}, blockConfig = {}) {
+  constructor(blockData, blockConfig, api) {
+    this.api = api;
+
     /**
      * Styles
      * @type {Object}
      */
     this._CSS = {
+      block: this.api.styles.block,
+      settingsButton: this.api.styles.settingsButton,
+      settingsButtonActive: this.api.styles.settingsButtonActive,
       wrapper: 'ce-header',
-      settingsButton: 'ce-settings__button',
-      settingsSelected: 'ce-settings__button--selected',
     };
 
     /**
@@ -109,7 +113,7 @@ class Header {
        * Highlight current level button
        */
       if (this.currentLevel.number === level.number) {
-        selectTypeButton.classList.add(this._CSS.settingsSelected);
+        selectTypeButton.classList.add(this._CSS.settingsButtonActive);
       }
 
       /**
@@ -156,7 +160,7 @@ class Header {
      * Highlight button by selected level
      */
     this.settingsButtons.forEach(button => {
-      button.classList.toggle(this._CSS.settingsSelected, parseInt(button.dataset.level) === level);
+      button.classList.toggle(this._CSS.settingsButtonActive, parseInt(button.dataset.level) === level);
     });
   }
 
