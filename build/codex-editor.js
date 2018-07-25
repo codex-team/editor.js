@@ -12083,18 +12083,43 @@ var Block = function () {
         this.tool[methodName].call(this.tool, params);
       }
     }
+
+    /**
+     * Find and return all editable elements (contenteditables and native inputs) in the Tool HTML
+     *
+     * @returns {HTMLElement[]}
+     */
+
   }, {
     key: 'setToNextInput',
+
+
+    /**
+     * Set focus to next Tool`s input
+     */
     value: function setToNextInput() {
       this.inputIndex++;
       this.focusInput(null, 'start');
     }
+
+    /**
+     * Set focus to previous Tool`s input
+     */
+
   }, {
     key: 'setToPreviousInput',
     value: function setToPreviousInput() {
       this.inputIndex--;
       this.focusInput(null, 'end');
     }
+
+    /**
+     * Set focus to current input
+     *
+     * @param {HTMLElement} element - if element passed, set inputIndex to point to passed element
+     * @param {'start'|'end'} position - set caret to passed position
+     */
+
   }, {
     key: 'focusInput',
     value: function focusInput(element, position) {
@@ -12127,9 +12152,6 @@ var Block = function () {
 
           this.api.caret.set(nodeToSet, contentLength);
           break;
-
-        default:
-          input.focus();
       }
     }
 
@@ -12259,20 +12281,45 @@ var Block = function () {
     get: function get() {
       var content = this.holder;
 
-      var inputs = content.querySelectorAll('[contenteditable], textarea, input');
+      var inputs = _.array(content.querySelectorAll('[contenteditable], textarea, input'));
 
-      return _.array(inputs);
+      if (this.inputIndex > inputs.length - 1) {
+        this.inputIndex = inputs.length - 1;
+      }
+
+      return inputs;
     }
+
+    /**
+     * Return current Tool`s input
+     *
+     * @returns {HTMLElement}
+     */
+
   }, {
     key: 'currentInput',
     get: function get() {
       return this.inputs[this.inputIndex];
     }
+
+    /**
+     * Return next Tool`s input or undefined if it doesn't exist
+     *
+     * @returns {HTMLElement}
+     */
+
   }, {
     key: 'nextInput',
     get: function get() {
       return this.inputs[this.inputIndex + 1];
     }
+
+    /**
+     * Return previous Tool`s input or undefined if it doesn't exist
+     *
+     * @returns {HTMLElement}
+     */
+
   }, {
     key: 'previousInput',
     get: function get() {
@@ -13684,19 +13731,11 @@ var CaretAPI = function (_Module) {
             this.Editor.Caret.set(element, offset);
         }
     }, {
-        key: "isAtEnd",
-        value: function isAtEnd() {
-            return this.Editor.Caret.isAtEnd;
-        }
-    }, {
         key: "methods",
         get: function get() {
             var _this2 = this;
 
             return {
-                isAtEnd: function isAtEnd() {
-                    return _this2.isAtEnd();
-                },
                 set: function set(element, offset) {
                     return _this2.set(element, offset);
                 }
@@ -14532,6 +14571,9 @@ var BlockEvents = function (_Module) {
         key: "arrowRightAndDown",
         value: function arrowRightAndDown(event) {
             if (this.Editor.Caret.navigateNext()) {
+                /**
+                 * Default behaviour moves cursor by 1 character, we need to prevent it
+                 */
                 event.preventDefault();
             }
         }
@@ -14543,6 +14585,9 @@ var BlockEvents = function (_Module) {
         key: "arrowLeftAndUp",
         value: function arrowLeftAndUp(event) {
             if (this.Editor.Caret.navigatePrevious()) {
+                /**
+                 * Default behaviour moves cursor by 1 character, we need to prevent it
+                 */
                 event.preventDefault();
             }
         }
@@ -15509,6 +15554,8 @@ var Caret = function (_Module) {
       selection.removeAllRanges();
       selection.addRange(range);
 
+      /** If new cursor position is not visible, scroll to it */
+
       var _range$getBoundingCli = range.getBoundingClientRect(),
           top = _range$getBoundingCli.top,
           bottom = _range$getBoundingCli.bottom;
@@ -15616,7 +15663,7 @@ var Caret = function (_Module) {
     }
 
     /**
-     * Set's caret to the next Block
+     * Set's caret to the next Block or Tool`s input
      * Before moving caret, we should check if caret position is at the end of Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
      *
@@ -15645,6 +15692,7 @@ var Caret = function (_Module) {
       }
 
       if (this.isAtEnd) {
+        /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
         if (!nextInput) {
           this.setToBlock(nextBlock);
         } else {
@@ -15658,7 +15706,7 @@ var Caret = function (_Module) {
     }
 
     /**
-     * Set's caret to the previous Block
+     * Set's caret to the previous Tool`s input or Block
      * Before moving caret, we should check if caret position is start of the Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
      *
@@ -15686,6 +15734,7 @@ var Caret = function (_Module) {
       }
 
       if (this.isAtStart) {
+        /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
         if (!previousInput) {
           this.setToBlock(previousBlock, 0, true);
         } else {
@@ -15764,6 +15813,7 @@ var Caret = function (_Module) {
           anchorNode = selection.anchorNode,
           firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
 
+      /** In case lastNode is native input */
       if ($.isNativeInput(firstNode)) {
         return firstNode.selectionEnd === 0;
       }
@@ -15824,6 +15874,7 @@ var Caret = function (_Module) {
           anchorNode = selection.anchorNode,
           lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
 
+      /** In case lastNode is native input */
       if ($.isNativeInput(lastNode)) {
         return lastNode.selectionEnd === lastNode.value.length;
       }

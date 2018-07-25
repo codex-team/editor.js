@@ -206,7 +206,6 @@ export default class Caret extends Module {
     }
 
     if (this.isAtEnd) {
-
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (!nextInput) {
         this.setToBlock(nextBlock);

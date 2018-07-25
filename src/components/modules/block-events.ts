@@ -191,7 +191,9 @@ export default class BlockEvents extends Module {
    */
   private arrowRightAndDown(event: KeyboardEvent): void {
     if (this.Editor.Caret.navigateNext()) {
-      /** Default behaviour moves cursor by 1 character, we need to prevent it **/
+      /**
+       * Default behaviour moves cursor by 1 character, we need to prevent it
+       */
       event.preventDefault();
     }
   }
@@ -201,7 +203,9 @@ export default class BlockEvents extends Module {
    */
   private arrowLeftAndUp(event: KeyboardEvent): void {
     if (this.Editor.Caret.navigatePrevious()) {
-      /** Default behaviour moves cursor by 1 character, we need to prevent it **/
+      /**
+       * Default behaviour moves cursor by 1 character, we need to prevent it
+       */
       event.preventDefault();
     }
   }
