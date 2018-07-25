@@ -30,35 +30,22 @@ class List {
   /**
    * Get Tool icon's SVG
    * @return {string}
+   * @public
    */
   static get toolboxIcon() {
     return '<svg width="17" height="13" viewBox="0 0 17 13" xmlns="http://www.w3.org/2000/svg"> <path d="M5.625 4.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm0-4.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm0 9.85h9.25a1.125 1.125 0 0 1 0 2.25h-9.25a1.125 1.125 0 0 1 0-2.25zm-4.5-5a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25zm0-4.85a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25zm0 9.85a1.125 1.125 0 1 1 0 2.25 1.125 1.125 0 0 1 0-2.25z"/></svg>';
   }
 
   /**
-   * Styles
-   */
-  get CSS() {
-    return {
-      wrapper: 'cdx-list',
-      item: 'cdx-list__item',
-      input: 'cdx-input',
-      settingsWrapper: 'cdx-list-settings',
-      settingsButton: 'cdx-settings-button',
-      settingsButtonActive: 'cdx-settings-button--active',
-    };
-  };
-
-  /**
    * @constructor
    *
-   * @param {ListData} listdata
+   * @param {ListData} listData
    * @param {object} config - Tool settings
    * @param {object} api - CodeX Editor API
    */
-  constructor(listdata = {}, config = {}, api = {}) {
+  constructor(listData = {}, config = {}, api = {}) {
     this.api = api;
-    this.listData = listdata;
+    this.listData = listData;
 
     this.settings = [
       {
@@ -71,6 +58,66 @@ class List {
       }
     ];
   }
+
+  /**
+   * Returns list tag with items
+   * @return {Element}
+   * @public
+   */
+  render() {
+    return this.listWrapper;
+  }
+
+  /**
+   * @return {ListData}
+   * @public
+   */
+  save() {
+    return this.listData;
+  }
+
+  /**
+   * Settings
+   * @public
+   */
+  renderSettings() {
+    let wrapper = List.make('div', [ this.CSS.settingsWrapper ], {});
+
+    this.settings.forEach( (item) => {
+      let itemEl = document.createElement('div');
+
+      itemEl.classList.add(this.CSS.settingsButton);
+      itemEl.innerHTML = item.icon;
+
+      itemEl.addEventListener('click', () => {
+        this.itemClicked(item.name);
+        itemEl.classList.toggle(this.CSS.settingsButtonActive);
+      });
+
+      if (this.listData.style === item.name) {
+        itemEl.classList.add(this.CSS.settingsButtonActive);
+      }
+
+      wrapper.appendChild(itemEl);
+    });
+
+    return wrapper;
+  }
+
+  /**
+   * Styles
+   * @private
+   */
+  get CSS() {
+    return {
+      wrapper: 'cdx-list',
+      item: 'cdx-list__item',
+      input: 'cdx-input',
+      settingsWrapper: 'cdx-list-settings',
+      settingsButton: 'cdx-settings-button',
+      settingsButtonActive: 'cdx-settings-button--active',
+    };
+  };
 
   /**
    * List data setter
@@ -150,44 +197,6 @@ class List {
 
     return this._data;
   }
-  /**
-   * Returns list tag with items
-   * @return {Element}
-   */
-  render() {
-    return this.listWrapper;
-  }
-
-  save() {
-    return this.listData;
-  }
-
-  /**
-   * Settings
-   */
-  renderSettings() {
-    let wrapper = List.make('div', [ this.CSS.settingsWrapper ], {});
-
-    this.settings.forEach( (item) => {
-      let itemEl = document.createElement('div');
-
-      itemEl.classList.add(this.CSS.settingsButton);
-      itemEl.innerHTML = item.icon;
-
-      itemEl.addEventListener('click', () => {
-        this.itemClicked(item.name);
-        itemEl.classList.toggle(this.CSS.settingsButtonActive);
-      });
-
-      if (this.listData.style === item.name) {
-        itemEl.classList.add(this.CSS.settingsButtonActive);
-      }
-
-      wrapper.appendChild(itemEl);
-    });
-
-    return wrapper;
-  }
 
   /**
    * @param itemName
@@ -232,7 +241,8 @@ class List {
 
   /**
    * Get out from List Tool
-   * @param event
+   * when last 2 items are empty
+   * @param {KeyboardEvent} event
    */
   getOutofList(event) {
 
