@@ -11244,7 +11244,7 @@ var CodexEditor = function () {
        * Check if holderId is not empty
        */
       if (!this.config.holderId) {
-        return Promise.reject('«holderId» param shouldn\'t be empty');
+        return Promise.reject('«holderId» param must being not empty');
       }
 
       /**
@@ -11258,14 +11258,21 @@ var CodexEditor = function () {
        * Check Tools object
        */
       if (Object.keys(this.config.tools).length === 0) {
-        return Promise.reject('«tools» param shouldn\'t be empty');
+        return Promise.reject('«tools» param must being not empty');
       }
 
       /**
-       * Check Tools object
+       * Check initialBlock param
        */
       if (!this.config.initialBlock) {
-        return Promise.reject('«initialBlock» param shouldn\'t be empty');
+        return Promise.reject('«initialBlock» param must being not empty');
+      }
+
+      /**
+       * Check for a initialBlock Tool existence
+       */
+      if (!this.config.tools[this.config.initialBlock]) {
+        return Promise.reject('initial Block Tool \xAB' + this.config.initialBlock + '\xBB is missing in Tools list');
       }
     }
 
