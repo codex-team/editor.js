@@ -16116,7 +16116,7 @@ var Paste = function (_Module) {
             if (_this.config.initialBlock === name && !toolPasteConfig.handler) {
                 _.log('\xAB' + name + '\xBB Tool must provide a paste handler.', 'warn');
             }
-            if (typeof toolPasteConfig.handler !== 'function') {
+            if (toolPasteConfig.handler && typeof toolPasteConfig.handler !== 'function') {
                 _.log('Paste handler for \xAB' + name + '\xBB Tool should be a function.', 'warn');
             } else {
                 var tags = toolPasteConfig.tags || [];
