@@ -73,8 +73,7 @@
     cursor: pointer;
     width: var(--toolbox-buttons-size);
     height: var(--toolbox-buttons-size);
-    /*line-height: var(--toolbox-buttons-size);*/
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
 
@@ -82,9 +81,13 @@
       margin-right: 3px;
     }
 
-    &:hover {
+    &:hover,
+    &--active {
       color: var(--color-active-icon);
+      animation: bounceIn 0.75s 1;
+      animation-fill-mode: forwards;
     }
+
   };
 
   /**

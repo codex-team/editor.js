@@ -21,7 +21,7 @@ export default class BlockEvents extends Module {
     /**
      * Run common method for all keydown events
      */
-    this.beforeKeydownProcessing();
+    this.beforeKeydownProcessing(event);
 
     /**
      * Fire keydown processor by event.keyCode
@@ -45,6 +45,10 @@ export default class BlockEvents extends Module {
         this.arrowLeftAndUp();
         break;
 
+      case _.keyCodes.TAB:
+        this.tabPressed(event);
+        break;
+
       default:
         this.defaultHandler();
         break;
@@ -53,16 +57,21 @@ export default class BlockEvents extends Module {
 
   /**
    * Fires on keydown before event processing
+   * @param {KeyboardEvent} event - keydown
    */
-  public beforeKeydownProcessing(): void {
+  public beforeKeydownProcessing(event): void {
     /**
      * Clear all highlightings
      */
     this.Editor.BlockManager.clearHighlightings();
 
     /**
-     * Hide Toolbar
+     * Do not close Toolbox on Tabs or on Enter with opened Toolbox
      */
+    if (!this.needToolbarClosing(event)) {
+      return;
+    }
+
     this.Editor.Toolbar.close();
   }
 
@@ -83,12 +92,47 @@ export default class BlockEvents extends Module {
   }
 
   /**
+   * Open Toolbox to leaf Tools
+   * @param {KeyboardEvent} event
+   */
+  public tabPressed(event): void {
+
+    const {currentBlock} = this.Editor.BlockManager;
+
+    /** Prevent Default behaviour */
+    event.preventDefault();
+    event.stopPropagation();
+
+    /** this property defines leaf direction */
+    const shiftKey = event.shiftKey,
+      direction = shiftKey ? 'left' : 'right';
+
+    if (this.Editor.Toolbar.opened && currentBlock.isEmpty) {
+      this.Editor.Toolbox.open();
+    } else if (currentBlock.isEmpty) {
+      this.Editor.Toolbar.open();
+      this.Editor.Toolbox.open();
+    }
+
+    if (this.Editor.Toolbox.opened) {
+      this.Editor.Toolbox.leaf(direction);
+    }
+  }
+
+  /**
    * ENTER pressed on block
    * @param {KeyboardEvent} event - keydown
    */
   private enter(event: KeyboardEvent): void {
     const currentBlock = this.Editor.BlockManager.currentBlock,
       toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
+
+    if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
+      return;
+    }
 
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
@@ -130,6 +174,7 @@ export default class BlockEvents extends Module {
     }
 
     event.preventDefault();
+    event.stopImmediatePropagation();
   }
 
   /**
@@ -204,4 +249,14 @@ export default class BlockEvents extends Module {
    * Default keydown handler
    */
   private defaultHandler(): void {}
+
+  /**
+   * Cases when we need to close Toolbar
+   */
+  private needToolbarClosing(event) {
+    const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened),
+      flippingToolboxItems = event.keyCode === _.keyCodes.TAB;
+
+    return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
+  }
 }
