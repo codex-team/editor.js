@@ -182,7 +182,7 @@ export default class Toolbox extends Module {
   /**
    * Toolbox Tool's button click handler
    *
-   * @param {MouseEvent} event
+   * @param {MouseEvent|KeyboardEvent} event
    * @param {string} toolName
    */
   toolButtonActivate(event, toolName) {
