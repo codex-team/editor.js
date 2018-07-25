@@ -127,15 +127,16 @@ export default class Caret extends Module {
     let selection = Selection.get();
 
     if (selection.rangeCount) {
-      let selectRange = selection.getRangeAt(0),
-        blockElem = this.Editor.BlockManager.currentBlock.pluginsContent;
+      const selectRange = selection.getRangeAt(0);
+      const currentBlockInput = this.Editor.BlockManager.currentBlock.currentInput;
+
 
       selectRange.deleteContents();
 
-      if (blockElem) {
+      if (currentBlockInput) {
         let range = selectRange.cloneRange(true);
 
-        range.selectNodeContents(blockElem);
+        range.selectNodeContents(currentBlockInput);
         range.setStart(selectRange.endContainer, selectRange.endOffset);
         return range.extractContents();
       }

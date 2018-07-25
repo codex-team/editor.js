@@ -15654,15 +15654,15 @@ var Caret = function (_Module) {
       var selection = _selection2.default.get();
 
       if (selection.rangeCount) {
-        var selectRange = selection.getRangeAt(0),
-            blockElem = this.Editor.BlockManager.currentBlock.pluginsContent;
+        var selectRange = selection.getRangeAt(0);
+        var currentBlockInput = this.Editor.BlockManager.currentBlock.currentInput;
 
         selectRange.deleteContents();
 
-        if (blockElem) {
+        if (currentBlockInput) {
           var range = selectRange.cloneRange(true);
 
-          range.selectNodeContents(blockElem);
+          range.selectNodeContents(currentBlockInput);
           range.setStart(selectRange.endContainer, selectRange.endOffset);
           return range.extractContents();
         }
