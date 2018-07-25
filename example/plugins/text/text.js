@@ -35,9 +35,14 @@ class Text {
   /**
    * Render plugin`s main Element and fill it with saved data
    * @param {TextData} savedData — previously saved data
+   * @param {object} config - user config for Tool
+   * @param {object} api - CodeX Editor API
    */
-  constructor(savedData = {}) {
+  constructor(savedData, config, api) {
+    this.api = api;
+
     this._CSS = {
+      block: this.api.styles.block,
       wrapper: 'ce-text'
     };
 
@@ -55,7 +60,7 @@ class Text {
   drawView() {
     let div = document.createElement('DIV');
 
-    div.classList.add(this._CSS.wrapper);
+    div.classList.add(this._CSS.wrapper, this._CSS.block);
     div.contentEditable = true;
 
     return div;

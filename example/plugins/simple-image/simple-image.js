@@ -16,7 +16,7 @@ class SimpleImageTool {
    * @param {object} config - user config for Tool
    * @param {object} api - CodeX Editor API
    */
-  constructor(imageData = {}, config = {}, api) {
+  constructor(imageData, config, api) {
     /**
      * CodeX Editor API
      */
