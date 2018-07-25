@@ -1,7 +1,7 @@
-import {IBlockTool} from './block-tool';
-import {IBlockToolConfig} from './block-tool';
 import ISanitizerConfig from './sanitizer-config';
 import IInputOutputData from './input-output-data';
+import IToolSettings from './tools/tool-settings';
+import ITool from './tools/tool';
 
 /**
  * Editor Instance config
@@ -19,15 +19,9 @@ export default interface IEditorConfig {
   data: IInputOutputData;
 
   /**
-   * Map of used Tools
+   * Map of used Tools with or without configuration
    */
-  tools: {[toolName: string]: IBlockTool};
-
-  /**
-   * Tools configuration
-   * @see {@link tools#ToolConfig}
-   */
-  toolsConfig: {[toolName: string]: IBlockToolConfig};
+  tools: {[toolName: string]: ITool|IToolSettings};
 
   /**
    * This Tool will be added by default

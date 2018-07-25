@@ -118,10 +118,10 @@ module.exports = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg xmlns=\"http:
  * Library for handling keyboard shortcuts
  * @copyright undefined
  * @license MIT
- * @author CodeX (https://ifmo.su)
+ * @author [object Object]
  * @version 1.0.0
  */
-!function(e,t){if(true)module.exports=t();else { var r, n; }}("undefined"!=typeof self?self:this,function(){return function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,t),o.l=!0,o.exports}var n={};return t.m=e,t.c=n,t.d=function(e,n,r){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i={0:48,1:49,2:50,3:51,4:52,5:53,6:54,7:55,8:56,9:57,A:65,B:66,C:67,D:68,E:69,F:70,G:71,H:72,I:73,J:74,K:75,L:76,M:77,N:78,O:79,P:80,Q:81,R:82,S:83,T:84,U:85,V:86,W:87,X:88,Y:89,Z:90,BACKSPACE:8,ENTER:13,ESCAPE:27,LEFT:37,UP:38,RIGHT:39,DOWN:40,INSERT:45,DELETE:46},u={CMD:["CMD","CONTROL","COMMAND","WINDOWS","CTRL"],SHIFT:["SHIFT"],ALT:["ALT","OPTION"]},c=function(){function e(t){var n=this;r(this,e),this.commands={},this.keys={},this.parseShortcutName(t.name),this.element=t.on,this.callback=t.callback,this.executeShortcut=function(e){n.execute(e)},this.element.addEventListener("keydown",this.executeShortcut,!1)}return o(e,[{key:"parseShortcutName",value:function(e){e=e.split("+");for(var t=0;t<e.length;t++)if(e[t]=e[t].toUpperCase(),e[t].length>1)for(var n in u)u[n].includes(e[t])&&(this.commands[n]=!0);else this.keys[e[t]]=!0}},{key:"execute",value:function(e){var t=e.ctrlKey||e.metaKey,n=e.shiftKey,r=e.altKey,o={CMD:t,SHIFT:n,ALT:r},u=void 0,c=!0;for(u in this.commands)c=c&&o[u];var a=void 0,s=!0;for(a in this.keys)s=s&&e.keyCode===i[a];c&&s&&this.callback(e)}},{key:"remove",value:function(){this.element.removeEventListener("keydown",this.executeShortcut)}}]),e}();t.default=c}])});
+!function(e,t){if(true)module.exports=t();else { var r, n; }}("undefined"!=typeof self?self:this,function(){return function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,t),o.l=!0,o.exports}var n={};return t.m=e,t.c=n,t.d=function(e,n,r){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i={0:48,1:49,2:50,3:51,4:52,5:53,6:54,7:55,8:56,9:57,A:65,B:66,C:67,D:68,E:69,F:70,G:71,H:72,I:73,J:74,K:75,L:76,M:77,N:78,O:79,P:80,Q:81,R:82,S:83,T:84,U:85,V:86,W:87,X:88,Y:89,Z:90,",":188,".":190,BACKSPACE:8,ENTER:13,ESCAPE:27,LEFT:37,UP:38,RIGHT:39,DOWN:40,INSERT:45,DELETE:46},u={CMD:["CMD","CONTROL","COMMAND","WINDOWS","CTRL"],SHIFT:["SHIFT"],ALT:["ALT","OPTION"]},c=function(){function e(t){var n=this;r(this,e),this.commands={},this.keys={},this.parseShortcutName(t.name),this.element=t.on,this.callback=t.callback,this.executeShortcut=function(e){n.execute(e)},this.element.addEventListener("keydown",this.executeShortcut,!1)}return o(e,[{key:"parseShortcutName",value:function(e){e=e.split("+");for(var t=0;t<e.length;t++)if(e[t]=e[t].toUpperCase(),e[t].length>1)for(var n in u)u[n].includes(e[t])&&(this.commands[n]=!0);else this.keys[e[t]]=!0}},{key:"execute",value:function(e){var t=e.ctrlKey||e.metaKey,n=e.shiftKey,r=e.altKey,o={CMD:t,SHIFT:n,ALT:r},u=void 0,c=!0;for(u in this.commands)c=c&&o[u];var a=void 0,s=!0;for(a in this.keys)s=s&&(e.keyCode===i[a]||e.whick===i[a]);c&&s&&this.callback(e)}},{key:"remove",value:function(){this.element.removeEventListener("keydown",this.executeShortcut)}}]),e}();t.default=c}])});
 
 /***/ }),
 
@@ -11410,7 +11410,6 @@ var CodexEditor = function () {
 
       this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
       this.config.tools = config.tools || {};
-      this.config.toolsConfig = config.toolsConfig || {};
       this.config.data = config.data || {};
 
       /**
@@ -14308,7 +14307,7 @@ var BlockEvents = function (_Module) {
         key: 'enter',
         value: function enter(event) {
             var currentBlock = this.Editor.BlockManager.currentBlock,
-                toolsConfig = this.config.toolsConfig[currentBlock.name];
+                toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
             if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
@@ -14319,7 +14318,7 @@ var BlockEvents = function (_Module) {
              * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
              * Uses for Tools like <code> where line breaks should be handled by default behaviour.
              */
-            if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+            if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
                 return;
             }
             /**
@@ -16168,7 +16167,7 @@ var Paste = function (_Module) {
             if (_this.config.initialBlock === name && !toolPasteConfig.handler) {
                 _.log('\xAB' + name + '\xBB Tool must provide a paste handler.', 'warn');
             }
-            if (typeof toolPasteConfig.handler !== 'function') {
+            if (toolPasteConfig.handler && typeof toolPasteConfig.handler !== 'function') {
                 _.log('Paste handler for \xAB' + name + '\xBB Tool should be a function.', 'warn');
             } else {
                 var tags = toolPasteConfig.tags || [];
@@ -16214,13 +16213,13 @@ var Paste = function (_Module) {
          */
         _this.processPastedData = function () {
             var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(event) {
-                var _this$Editor, Tools, Sanitizer, BlockManager, Caret, toolsConfig, block, toolConfig, htmlData, plainData, blockTags, toolsTags, customConfig, cleanData, dataToInsert;
+                var _this$Editor, Tools, Sanitizer, BlockManager, Caret, block, toolSettings, htmlData, plainData, blockTags, toolsTags, customConfig, cleanData, dataToInsert;
 
                 return regeneratorRuntime.wrap(function _callee2$(_context2) {
                     while (1) {
                         switch (_context2.prev = _context2.next) {
                             case 0:
-                                _this$Editor = _this.Editor, Tools = _this$Editor.Tools, Sanitizer = _this$Editor.Sanitizer, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret, toolsConfig = _this.config.toolsConfig;
+                                _this$Editor = _this.Editor, Tools = _this$Editor.Tools, Sanitizer = _this$Editor.Sanitizer, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret;
                                 /** If target is native input or is not Block, use browser behaviour */
 
                                 if (!_this.isNativeBehaviour(event.target)) {
@@ -16232,18 +16231,17 @@ var Paste = function (_Module) {
 
                             case 3:
                                 event.preventDefault();
-                                block = BlockManager.getBlock(event.target);
-                                toolConfig = toolsConfig[block.name];
+                                block = BlockManager.getBlock(event.target), toolSettings = Tools.getToolSettings(block.name);
                                 /** If paste is dissalowed in block do nothing */
 
-                                if (!(toolConfig && toolConfig[Tools.apiSettings.IS_PASTE_DISALLOWED])) {
-                                    _context2.next = 8;
+                                if (!(toolSettings && toolSettings[Tools.apiSettings.IS_PASTE_DISALLOWED])) {
+                                    _context2.next = 7;
                                     break;
                                 }
 
                                 return _context2.abrupt('return');
 
-                            case 8:
+                            case 7:
                                 htmlData = event.clipboardData.getData('text/html'), plainData = event.clipboardData.getData('text/plain');
                                 /** Add all block tags and tags can be substituted to sanitizer configuration */
 
@@ -16255,8 +16253,7 @@ var Paste = function (_Module) {
                                     result[tag.toLowerCase()] = {};
                                     return result;
                                 }, {});
-                                customConfig = { tags: Object.assign({}, blockTags, toolsTags, Sanitizer.defaultConfig.tags) };
-                                cleanData = Sanitizer.clean(htmlData, customConfig);
+                                customConfig = { tags: Object.assign({}, blockTags, toolsTags, Sanitizer.defaultConfig.tags) }, cleanData = Sanitizer.clean(htmlData, customConfig);
                                 dataToInsert = [];
                                 /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
 
@@ -16267,16 +16264,16 @@ var Paste = function (_Module) {
                                 }
 
                                 if (!(dataToInsert.length === 1 && !dataToInsert[0].isBlock)) {
-                                    _context2.next = 18;
+                                    _context2.next = 16;
                                     break;
                                 }
 
                                 _this.processSingleBlock(dataToInsert.pop());
                                 return _context2.abrupt('return');
 
-                            case 18:
+                            case 16:
                                 _this.splitBlock();
-                                _context2.next = 21;
+                                _context2.next = 19;
                                 return Promise.all(dataToInsert.map(function () {
                                     var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, i) {
                                         return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -16302,10 +16299,10 @@ var Paste = function (_Module) {
                                     };
                                 }()));
 
-                            case 21:
+                            case 19:
                                 Caret.setToBlock(BlockManager.currentBlock, 0, true);
 
-                            case 22:
+                            case 20:
                             case 'end':
                                 return _context2.stop();
                         }
@@ -16404,23 +16401,21 @@ var Paste = function (_Module) {
                     while (1) {
                         switch (_context4.prev = _context4.next) {
                             case 0:
-                                initialTool = this.config.initialBlock;
-                                BlockManager = this.Editor.BlockManager;
-                                content = dataToInsert.content, tool = dataToInsert.tool;
+                                initialTool = this.config.initialBlock, BlockManager = this.Editor.BlockManager, content = dataToInsert.content, tool = dataToInsert.tool;
 
                                 if (!(tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
-                                    _context4.next = 11;
+                                    _context4.next = 9;
                                     break;
                                 }
 
-                                _context4.next = 6;
+                                _context4.next = 4;
                                 return this.processPattern(content.textContent);
 
-                            case 6:
+                            case 4:
                                 blockData = _context4.sent;
 
                                 if (!blockData) {
-                                    _context4.next = 11;
+                                    _context4.next = 9;
                                     break;
                                 }
 
@@ -16432,11 +16427,11 @@ var Paste = function (_Module) {
                                 }
                                 return _context4.abrupt('return');
 
-                            case 11:
+                            case 9:
                                 /** If there is no pattern substitute - insert string as it is */
                                 document.execCommand('insertHTML', false, content.innerHTML);
 
-                            case 12:
+                            case 10:
                             case 'end':
                                 return _context4.stop();
                         }
@@ -16531,23 +16526,25 @@ var Paste = function (_Module) {
 
                             case 2:
                                 blockData = _context6.sent;
-                                _Editor2 = this.Editor, BlockManager = _Editor2.BlockManager, Caret = _Editor2.Caret;
+                                _Editor2 = this.Editor;
+                                BlockManager = _Editor2.BlockManager;
+                                Caret = _Editor2.Caret;
                                 currentBlock = BlockManager.currentBlock;
 
                                 if (!(canReplaceCurrentBlock && currentBlock.isEmpty)) {
-                                    _context6.next = 8;
+                                    _context6.next = 10;
                                     break;
                                 }
 
                                 BlockManager.replace(data.tool, blockData);
                                 return _context6.abrupt('return');
 
-                            case 8:
+                            case 10:
                                 Block = BlockManager.insert(data.tool, blockData);
 
                                 Caret.setToBlock(Block);
 
-                            case 10:
+                            case 12:
                             case 'end':
                                 return _context6.stop();
                         }
@@ -16595,10 +16592,10 @@ var Paste = function (_Module) {
 
             var _Editor4 = this.Editor,
                 Tools = _Editor4.Tools,
-                Sanitizer = _Editor4.Sanitizer;
+                Sanitizer = _Editor4.Sanitizer,
+                initialTool = this.config.initialBlock,
+                wrapper = $.make('DIV');
 
-            var initialTool = this.config.initialBlock;
-            var wrapper = $.make('DIV');
             wrapper.innerHTML = innerHTML;
             var nodes = this.getNodes(wrapper);
             return nodes.map(function (node) {
@@ -16638,14 +16635,13 @@ var Paste = function (_Module) {
     }, {
         key: 'processPlain',
         value: function processPlain(plain) {
-            var initialBlock = this.config.initialBlock;
-            var Tools = this.Editor.Tools;
-
+            var initialBlock = this.config.initialBlock,
+                Tools = this.Editor.Tools;
             if (!plain) {
                 return [];
             }
-            var tool = initialBlock;
-            var handler = Tools.blockTools[tool].onPaste.handler;
+            var tool = initialBlock,
+                handler = Tools.blockTools[tool].onPaste.handler;
             return plain.split('\n\n').map(function (text) {
                 var content = $.make('div');
                 content.innerHTML = text;
@@ -16664,8 +16660,8 @@ var Paste = function (_Module) {
     }, {
         key: 'getNodes',
         value: function getNodes(wrapper) {
-            var children = Array.from(wrapper.childNodes);
-            var tags = Object.keys(this.toolsTags);
+            var children = Array.from(wrapper.childNodes),
+                tags = Object.keys(this.toolsTags);
             var reducer = function reducer(nodes, node) {
                 if ($.isEmpty(node)) {
                     return nodes;
@@ -17671,7 +17667,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  *
  * |¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯|
  * |   B  i [link] [mark]   |
- * | _______________________|
+ * |________________________|
  */
 var InlineToolbar = function (_Module) {
     _inherits(InlineToolbar, _Module);
@@ -17846,8 +17842,8 @@ var InlineToolbar = function (_Module) {
             if (!currentBlock) {
                 return false;
             }
-            var toolConfig = this.config.toolsConfig[currentBlock.name];
-            return toolConfig && toolConfig[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
+            var toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
+            return toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
         }
         /**
          *  Working with Tools
@@ -17892,9 +17888,9 @@ var InlineToolbar = function (_Module) {
              * Enable shortcuts
              * Ignore tool that doesn't have shortcut or empty string
              */
-            var toolsConfig = this.config.toolsConfig[toolName];
-            if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
-                this.enableShortcuts(tool, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
+            var toolSettings = this.Editor.Tools.getToolSettings(toolName);
+            if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
+                this.enableShortcuts(tool, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
             }
         }
         /**
@@ -17911,10 +17907,9 @@ var InlineToolbar = function (_Module) {
             this.Editor.Shortcuts.add({
                 name: shortcut,
                 handler: function handler(event) {
-                    var currentBlock = _this4.Editor.BlockManager.currentBlock;
-
-                    var toolConfig = _this4.config.toolsConfig[currentBlock.name];
-                    if (!toolConfig || !toolConfig[_this4.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
+                    var currentBlock = _this4.Editor.BlockManager.currentBlock,
+                        toolSettings = _this4.Editor.Tools.getToolSettings(currentBlock.name);
+                    if (!toolSettings || !toolSettings[_this4.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
                         return;
                     }
                     event.preventDefault();
@@ -18151,16 +18146,20 @@ var Toolbox = function (_Module) {
       this.nodes.toolbox.appendChild(button);
       this.nodes.buttons.push(button);
 
-      /** Add listener to click */
+      /**
+       * Add click listener
+       */
       this.Editor.Listeners.on(button, 'click', function (event) {
         _this2.toolButtonClicked(event, toolName);
       });
 
-      /** Enable shortcut */
-      var toolsConfig = this.config.toolsConfig[toolName];
+      /**
+       * Enable shortcut
+       */
+      var toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
-      if (toolsConfig && toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]) {
-        this.enableShortcut(tool, toolName, toolsConfig[this.Editor.Tools.apiSettings.SHORTCUT]);
+      if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
+        this.enableShortcut(tool, toolName, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
       }
     }
 
@@ -18233,7 +18232,7 @@ var Toolbox = function (_Module) {
   }, {
     key: 'toolButtonClicked',
     value: function toolButtonClicked(event, toolName) {
-      var tool = this.Editor.Tools.toolClasses[toolName];
+      var tool = this.Editor.Tools.toolsClasses[toolName];
 
       this.insertNewBlock(tool, toolName);
     }
@@ -18732,6 +18731,8 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -18784,7 +18785,8 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @typedef {Tools} Tools
  * @property {Tools[]} toolsAvailable - available Tools
  * @property {Tools[]} toolsUnavailable - unavailable Tools
- * @property {Object} toolsClasses - all classes
+ * @property {object} toolsClasses - all classes
+ * @property {object} toolsSettings - Tools settings
  * @property {EditorConfig} config - Editor config
  */
 var Tools = function (_Module) {
@@ -18954,7 +18956,13 @@ var Tools = function (_Module) {
      */
     var _this = _possibleConstructorReturn(this, (Tools.__proto__ || Object.getPrototypeOf(Tools)).call(this, { config: config }));
 
-    _this.toolClasses = {};
+    _this.toolsClasses = {};
+
+    /**
+     * Tools settings in a map {name: settings, ...}
+     * @type {Object}
+     */
+    _this.toolsSettings = {};
 
     /**
      * Available tools list
@@ -18987,8 +18995,44 @@ var Tools = function (_Module) {
         return Promise.reject("Can't start without tools");
       }
 
+      /**
+       * Save Tools settings to a map
+       */
       for (var toolName in this.config.tools) {
-        this.toolClasses[toolName] = this.config.tools[toolName];
+        /**
+         * If Tool is an object not a Tool's class then
+         * save class and settings separately
+         */
+        if (_typeof(this.config.tools[toolName]) === 'object') {
+          /**
+           * Save Tool's class from 'class' field
+           * @type {ITool}
+           */
+          this.toolsClasses[toolName] = this.config.tools[toolName].class;
+
+          /**
+           * Save Tool's settings
+           * @type {IToolSettings}
+           */
+          this.toolsSettings[toolName] = this.config.tools[toolName];
+
+          /**
+           * Remove Tool's class from settings
+           */
+          delete this.toolsSettings[toolName].class;
+        } else {
+          /**
+           * Save Tool's class
+           * @type {ITool}
+           */
+          this.toolsClasses[toolName] = this.config.tools[toolName];
+
+          /**
+           * Set empty settings for Block by default
+           * @type {{}}
+           */
+          this.toolsSettings[toolName] = {};
+        }
       }
 
       /**
@@ -19023,8 +19067,8 @@ var Tools = function (_Module) {
     value: function getListOfPrepareFunctions() {
       var toolPreparationList = [];
 
-      for (var toolName in this.toolClasses) {
-        var toolClass = this.toolClasses[toolName];
+      for (var toolName in this.toolsClasses) {
+        var toolClass = this.toolsClasses[toolName];
 
         if (typeof toolClass.prepare === 'function') {
           toolPreparationList.push({
@@ -19051,7 +19095,7 @@ var Tools = function (_Module) {
   }, {
     key: 'success',
     value: function success(data) {
-      this.toolsAvailable[data.toolName] = this.toolClasses[data.toolName];
+      this.toolsAvailable[data.toolName] = this.toolsClasses[data.toolName];
     }
 
     /**
@@ -19061,7 +19105,7 @@ var Tools = function (_Module) {
   }, {
     key: 'fallback',
     value: function fallback(data) {
-      this.toolsUnavailable[data.toolName] = this.toolClasses[data.toolName];
+      this.toolsUnavailable[data.toolName] = this.toolsClasses[data.toolName];
     }
 
     /**
@@ -19077,8 +19121,8 @@ var Tools = function (_Module) {
   }, {
     key: 'construct',
     value: function construct(tool, data) {
-      var plugin = this.toolClasses[tool],
-          config = this.config.toolsConfig[tool];
+      var plugin = this.toolsClasses[tool],
+          config = this.toolsSettings[tool];
 
       var instance = new plugin(data, config || {}, this.Editor.API.methods);
 
@@ -19095,6 +19139,18 @@ var Tools = function (_Module) {
     key: 'isInitial',
     value: function isInitial(tool) {
       return tool instanceof this.available[this.config.initialBlock];
+    }
+
+    /**
+     * Return Tool's config by name
+     * @param {string} toolName
+     * @return {IToolSettings}
+     */
+
+  }, {
+    key: 'getToolSettings',
+    value: function getToolSettings(toolName) {
+      return this.toolsSettings[toolName];
     }
   }]);
 
@@ -20426,7 +20482,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ":root {\n  /**\n   * Selection color\n   */\n  --selectionColor: rgba(61,166,239,0.63);\n\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /** Blue icons */\n  --color-active-icon: #388AE5;\n\n  // gray border, loaders, etc\n  --color-gray-border: #E8E8EB;\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar buttons height and width\n   */\n  --toolbar-buttons-size: 34px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbox-buttons-size: 20px;\n\n  /**\n   * Confirm deletion bg\n   */\n  --color-confirm: #E24A4A;\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n  position: relative;\n  box-sizing: border-box;\n}\n.codex-editor .hide {\n    display: none;\n  }\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    max-height: 100%;\n  }\n/**\n * Set color for native selection\n */\n::-moz-selection{\n  background-color: rgba(61,166,239,0.63);\n  background-color: var(--selectionColor);\n}\n::selection{\n  background-color: rgba(61,166,239,0.63);\n  background-color: var(--selectionColor);\n}\n/**\n * Add placeholder to content editable elements with data attribute\n * data-placeholder=\"Hello world!\"\n */\n[contentEditable=true][data-placeholder]:empty:not(:focus):before{\n  content: attr(data-placeholder);\n  color: #707684;\n  color: var(--grayText);\n}\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 20px;\n  width: var(--toolbox-buttons-size);\n  height: 20px;\n  height: var(--toolbox-buttons-size);\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center\n  }\n.ce-toolbar__plus:not(:last-of-type){\n  margin-right: 3px;\n    }\n.ce-toolbar__plus {\n\n    position: absolute;\n    left: calc(calc(20px + 10px) * -1);\n    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);\n  }\n.ce-toolbar__plus:hover,\n    .ce-toolbar__plus--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n  animation: bounceIn 0.75s 1;\n  animation-fill-mode: forwards;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    padding-right: 16px;\n  }\n.ce-toolbar__actions-buttons {\n      text-align: right;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    color: #707684;\n    color: var(--grayText);\n    cursor: pointer;\n  }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-direction: row;\n        flex-direction: row;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 20px;\n  width: var(--toolbox-buttons-size);\n  height: 20px;\n  height: var(--toolbox-buttons-size);\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center;\n    }\n.ce-toolbox__button:not(:last-of-type){\n  margin-right: 3px;\n    }\n.ce-toolbox__button:hover,\n    .ce-toolbox__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n  animation: bounceIn 0.75s 1;\n  animation-fill-mode: forwards;\n    }\n.ce-inline-toolbar {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-tool {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.ce-inline-tool:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-inline-tool:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-inline-tool {\n  line-height: normal;\n}\n.ce-inline-tool--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-inline-tool--link .icon {\n      margin-top: -2px;\n    }\n.ce-inline-tool--link .icon--unlink {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--link {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--unlink {\n      display: inline-block;\n    }\n.ce-inline-tool-input {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    outline: none;\n    border: 0;\n    border-radius: 3px;\n    margin: 6px 0 0;\n    font-size: 13px;\n    padding: 8px;\n    width: 100%;\n    box-sizing: border-box;\n    display: none\n  }\n.ce-inline-tool-input::-webkit-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input:-ms-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input::placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input--showed {\n      display: block;\n    }\n.ce-settings {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-settings::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-settings {\n  right: 5px;\n  top: 35px;\n  min-width: 124px\n}\n.ce-settings::before{\n    left: auto;\n    right: 12px;\n  }\n.ce-settings {\n\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone:not(:empty){\n      padding: 6px 6px 0;\n    }\n.ce-settings__default-zone:not(:empty){\n      padding: 6px;\n    }\n.ce-settings__button {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n  }\n.ce-settings__button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-settings__button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-settings__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-settings__button--disabled {\n        cursor: not-allowed !important;\n        opacity: .3;\n    }\n.ce-settings__button--selected {\n      color: #388AE5;\n      color: var(--color-active-icon);\n    }\n.ce-settings__button--delete {\n      transition: background-color 300ms ease;\n      will-change: background-color;\n    }\n.ce-settings__button--delete .icon {\n        transition: transform 200ms ease-out;\n        will-change: transform;\n      }\n.ce-settings__button--confirm {\n      background-color: #E24A4A;\n      background-color: var(--color-confirm);\n      color: #fff\n    }\n.ce-settings__button--confirm:hover {\n        background-color: rgb(213, 74, 74) !important;\n        background-color: rgb(213, 74, 74) !important;\n      }\n.ce-settings__button--confirm .icon {\n        transform: rotate(90deg);\n      }\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\n    border-radius: 3px;\n  }\n.ce-block--stretched .ce-block__content {\n    max-width: none;\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n.wobble {\n  animation-name: wobble;\n  animation-duration: 400ms;\n}\n/**\n * @author Nick Pettit - https://github.com/nickpettit/glide\n */\n@keyframes wobble {\n  from {\n    transform: translate3d(0, 0, 0);\n  }\n\n  15% {\n    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\n  }\n\n  30% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\n  }\n\n  45% {\n    transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\n  }\n\n  60% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\n  }\n\n  75% {\n    transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\n  }\n\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@keyframes bounceIn {\n  from,\n  20%,\n  40%,\n  60%,\n  80%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n\n  0% {\n    transform: scale3d(0.6, 0.6, 0.6);\n  }\n\n  20% {\n    transform: scale3d(1.1, 1.1, 1.1);\n  }\n\n  40% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n\n  60% {\n    transform: scale3d(1.03, 1.03, 1.03);\n  }\n\n  80% {\n    transform: scale3d(0.97, 0.97, 0.97);\n  }\n\n  to {\n    transform: scale3d(1, 1, 1);\n  }\n}\n/**\n * Block Tool wrapper\n */\n.cdx-block {\n  padding: 0.7em 0;\n}\n/**\n * Input\n */\n.cdx-input {\n  border: 1px solid var(--color-gray-border);\n  border: 1px solid var(--color-gray-border);\n  box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\n  border-radius: 3px;\n  padding: 12px;\n  outline: none;\n  width: 100%;\n  box-sizing: border-box;\n}\n/**\n * Settings\n */\n.cdx-settings-button {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.cdx-settings-button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.cdx-settings-button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.cdx-settings-button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.cdx-settings-button--active {\n    color: #388AE5;\n    color: var(--color-active-icon);\n  }\n/**\n * Loader\n */\n.cdx-loader {\n  position: relative;\n  border: 1px solid var(--color-gray-border);\n  border: 1px solid var(--color-gray-border)\n}\n.cdx-loader::before {\n    content: '';\n    position: absolute;\n    left: 50%;\n    top: 50%;\n    width: 18px;\n    height: 18px;\n    margin: -11px 0 0 -11px;\n    border: 2px solid var(--color-gray-border);\n    border: 2px solid var(--color-gray-border);\n    border-left-color: #388AE5;\n    border-left-color: var(--color-active-icon);\n    border-radius: 50%;\n    animation: cdxRotation 1.2s infinite linear;\n  }\n@keyframes cdxRotation {\n  0% {\n    transform: rotate(0deg);\n  }\n  100% {\n    transform: rotate(360deg);\n  }\n}\n", ""]);
+exports.push([module.i, ":root {\n  /**\n   * Selection color\n   */\n  --selectionColor: rgba(61,166,239,0.63);\n\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /**\n   * Blue icons\n   */\n  --color-active-icon: #388AE5;\n\n  /**\n   * Gray border, loaders\n   */\n  --color-gray-border: #E8E8EB;\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar buttons height and width\n   */\n  --toolbar-buttons-size: 34px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbox-buttons-size: 20px;\n\n  /**\n   * Confirm deletion bg\n   */\n  --color-confirm: #E24A4A;\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n  position: relative;\n  box-sizing: border-box;\n}\n.codex-editor .hide {\n    display: none;\n  }\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    max-height: 100%;\n  }\n/**\n * Set color for native selection\n */\n::-moz-selection{\n  background-color: rgba(61,166,239,0.63);\n  background-color: var(--selectionColor);\n}\n::selection{\n  background-color: rgba(61,166,239,0.63);\n  background-color: var(--selectionColor);\n}\n/**\n * Add placeholder to content editable elements with data attribute\n * data-placeholder=\"Hello world!\"\n */\n[contentEditable=true][data-placeholder]:empty:not(:focus):before{\n  content: attr(data-placeholder);\n  color: #707684;\n  color: var(--grayText);\n}\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 20px;\n  width: var(--toolbox-buttons-size);\n  height: 20px;\n  height: var(--toolbox-buttons-size);\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center\n  }\n.ce-toolbar__plus:not(:last-of-type){\n  margin-right: 3px;\n    }\n.ce-toolbar__plus {\n\n    position: absolute;\n    left: calc(calc(20px + 10px) * -1);\n    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);\n  }\n.ce-toolbar__plus:hover,\n    .ce-toolbar__plus--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n  animation: bounceIn 0.75s 1;\n  animation-fill-mode: forwards;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 0;\n    padding-right: 16px;\n  }\n.ce-toolbar__actions-buttons {\n      text-align: right;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    color: #707684;\n    color: var(--grayText);\n    cursor: pointer;\n  }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-direction: row;\n        flex-direction: row;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 20px;\n  width: var(--toolbox-buttons-size);\n  height: 20px;\n  height: var(--toolbox-buttons-size);\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center;\n    }\n.ce-toolbox__button:not(:last-of-type){\n  margin-right: 3px;\n    }\n.ce-toolbox__button:hover,\n    .ce-toolbox__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n  animation: bounceIn 0.75s 1;\n  animation-fill-mode: forwards;\n    }\n.ce-inline-toolbar {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-tool {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.ce-inline-tool:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-inline-tool:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-inline-tool {\n  line-height: normal;\n}\n.ce-inline-tool--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-inline-tool--link .icon {\n      margin-top: -2px;\n    }\n.ce-inline-tool--link .icon--unlink {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--link {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--unlink {\n      display: inline-block;\n    }\n.ce-inline-tool-input {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    outline: none;\n    border: 0;\n    border-radius: 3px;\n    margin: 6px 0 0;\n    font-size: 13px;\n    padding: 8px;\n    width: 100%;\n    box-sizing: border-box;\n    display: none\n  }\n.ce-inline-tool-input::-webkit-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input:-ms-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input::placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input--showed {\n      display: block;\n    }\n.ce-settings {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-settings::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-settings {\n  right: 5px;\n  top: 35px;\n  min-width: 124px\n}\n.ce-settings::before{\n    left: auto;\n    right: 12px;\n  }\n.ce-settings {\n\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n  }\n.ce-settings__plugin-zone:not(:empty){\n      padding: 6px 6px 0;\n    }\n.ce-settings__default-zone:not(:empty){\n      padding: 6px;\n    }\n.ce-settings__button {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n  }\n.ce-settings__button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-settings__button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-settings__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-settings__button--disabled {\n        cursor: not-allowed !important;\n        opacity: .3;\n    }\n.ce-settings__button--selected {\n      color: #388AE5;\n      color: var(--color-active-icon);\n    }\n.ce-settings__button--delete {\n      transition: background-color 300ms ease;\n      will-change: background-color;\n    }\n.ce-settings__button--delete .icon {\n        transition: transform 200ms ease-out;\n        will-change: transform;\n      }\n.ce-settings__button--confirm {\n      background-color: #E24A4A;\n      background-color: var(--color-confirm);\n      color: #fff\n    }\n.ce-settings__button--confirm:hover {\n        background-color: rgb(213, 74, 74) !important;\n        background-color: rgb(213, 74, 74) !important;\n      }\n.ce-settings__button--confirm .icon {\n        transform: rotate(90deg);\n      }\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--selected {\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\n    border-radius: 3px;\n  }\n.ce-block--stretched .ce-block__content {\n    max-width: none;\n  }\n.ce-block__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n.wobble {\n  animation-name: wobble;\n  animation-duration: 400ms;\n}\n/**\n * @author Nick Pettit - https://github.com/nickpettit/glide\n */\n@keyframes wobble {\n  from {\n    transform: translate3d(0, 0, 0);\n  }\n\n  15% {\n    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\n  }\n\n  30% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\n  }\n\n  45% {\n    transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\n  }\n\n  60% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\n  }\n\n  75% {\n    transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\n  }\n\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@keyframes bounceIn {\n  from,\n  20%,\n  40%,\n  60%,\n  80%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n\n  0% {\n    transform: scale3d(0.6, 0.6, 0.6);\n  }\n\n  20% {\n    transform: scale3d(1.1, 1.1, 1.1);\n  }\n\n  40% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n\n  60% {\n    transform: scale3d(1.03, 1.03, 1.03);\n  }\n\n  80% {\n    transform: scale3d(0.97, 0.97, 0.97);\n  }\n\n  to {\n    transform: scale3d(1, 1, 1);\n  }\n}\n/**\n * Block Tool wrapper\n */\n.cdx-block {\n  padding: 0.7em 0;\n}\n/**\n * Input\n */\n.cdx-input {\n  border: 1px solid #E8E8EB;\n  border: 1px solid var(--color-gray-border);\n  box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\n  border-radius: 3px;\n  padding: 12px;\n  outline: none;\n  width: 100%;\n  box-sizing: border-box;\n}\n/**\n * Settings\n */\n.cdx-settings-button {\n  display: inline-block;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.cdx-settings-button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.cdx-settings-button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.cdx-settings-button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.cdx-settings-button--active {\n    color: #388AE5;\n    color: var(--color-active-icon);\n  }\n/**\n * Loader\n */\n.cdx-loader {\n  position: relative;\n  border: 1px solid #E8E8EB;\n  border: 1px solid var(--color-gray-border)\n}\n.cdx-loader::before {\n    content: '';\n    position: absolute;\n    left: 50%;\n    top: 50%;\n    width: 18px;\n    height: 18px;\n    margin: -11px 0 0 -11px;\n    border: 2px solid #E8E8EB;\n    border: 2px solid var(--color-gray-border);\n    border-left-color: #388AE5;\n    border-left-color: var(--color-active-icon);\n    border-radius: 50%;\n    animation: cdxRotation 1.2s infinite linear;\n  }\n@keyframes cdxRotation {\n  0% {\n    transform: rotate(0deg);\n  }\n  100% {\n    transform: rotate(360deg);\n  }\n}\n", ""]);
 
 // exports
 

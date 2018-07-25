@@ -1,13 +1,4 @@
-/**
- * @class Paste
- * @classdesc Contains methods to handle paste on editor
- *
- * @module Paste
- *
- * @version 2.0.0
- */
-
-import {IBlockToolData} from '../interfaces/block-tool';
+import IBlockToolData from '../interfaces/tools/block-tool';
 import IEditorConfig from '../interfaces/editor-config';
 
 declare const Module: any;
@@ -54,7 +45,14 @@ interface IPasteData {
   isBlock: boolean;
   handler: (content: HTMLElement|string, patten?: RegExp) => IBlockToolData;
 }
-
+/**
+ * @class Paste
+ * @classdesc Contains methods to handle paste on editor
+ *
+ * @module Paste
+ *
+ * @version 2.0.0
+ */
 export default class Paste extends Module {
 
   /** If string`s length is greater than this number we don't check paste patterns */
@@ -114,7 +112,7 @@ export default class Paste extends Module {
       );
     }
 
-    if (typeof toolPasteConfig.handler !== 'function') {
+    if (toolPasteConfig.handler && typeof toolPasteConfig.handler !== 'function') {
       _.log(
         `Paste handler for «${name}» Tool should be a function.`,
         'warn',
@@ -194,7 +192,6 @@ export default class Paste extends Module {
   private processPastedData = async (event: ClipboardEvent): Promise<void> => {
     const {
       Editor: {Tools, Sanitizer, BlockManager, Caret},
-      config: {toolsConfig},
     } = this;
 
     /** If target is native input or is not Block, use browser behaviour */
@@ -204,16 +201,16 @@ export default class Paste extends Module {
 
     event.preventDefault();
 
-    const block = BlockManager.getBlock(event.target);
-    const toolConfig = toolsConfig[block.name];
+    const block = BlockManager.getBlock(event.target),
+      toolSettings = Tools.getToolSettings(block.name);
 
     /** If paste is dissalowed in block do nothing */
-    if (toolConfig && toolConfig[Tools.apiSettings.IS_PASTE_DISALLOWED]) {
+    if (toolSettings && toolSettings[Tools.apiSettings.IS_PASTE_DISALLOWED]) {
       return;
     }
 
     const htmlData  = event.clipboardData.getData('text/html'),
-          plainData = event.clipboardData.getData('text/plain');
+      plainData = event.clipboardData.getData('text/plain');
 
     /** Add all block tags and tags can be substituted to sanitizer configuration */
     const blockTags = $.blockElements.reduce((result, tag) => {
@@ -227,8 +224,8 @@ export default class Paste extends Module {
       return result;
     }, {});
 
-    const customConfig = {tags: Object.assign({}, blockTags, toolsTags, Sanitizer.defaultConfig.tags)};
-    const cleanData = Sanitizer.clean(htmlData, customConfig);
+    const customConfig = {tags: Object.assign({}, blockTags, toolsTags, Sanitizer.defaultConfig.tags)},
+      cleanData = Sanitizer.clean(htmlData, customConfig);
 
     let dataToInsert = [];
 
@@ -262,9 +259,9 @@ export default class Paste extends Module {
    * @param {IPasteData} dataToInsert
    */
   private async processSingleBlock(dataToInsert: IPasteData): Promise<void> {
-    const initialTool = this.config.initialBlock;
-    const {BlockManager} = this.Editor;
-    const {content, tool} = dataToInsert;
+    const initialTool = this.config.initialBlock,
+      {BlockManager} = this.Editor,
+      {content, tool} = dataToInsert;
 
     if (tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
       const blockData = await this.processPattern(content.textContent);
@@ -317,9 +314,9 @@ export default class Paste extends Module {
    * @returns {Promise<void>}
    */
   private async insertBlock(data: IPasteData, canReplaceCurrentBlock: boolean = false): Promise<void> {
-    const blockData = await data.handler(data.content);
-    const {BlockManager, Caret} = this.Editor;
-    const {currentBlock} = BlockManager;
+    const blockData = await data.handler(data.content),
+      {BlockManager, Caret} = this.Editor,
+      {currentBlock} = BlockManager;
 
     if (canReplaceCurrentBlock && currentBlock.isEmpty) {
       BlockManager.replace(data.tool, blockData);
@@ -354,9 +351,9 @@ export default class Paste extends Module {
    * @returns {IPasteData[]}
    */
   private processHTML(innerHTML: string): IPasteData[] {
-    const {Tools, Sanitizer} = this.Editor;
-    const initialTool = this.config.initialBlock;
-    const wrapper = $.make('DIV');
+    const {Tools, Sanitizer} = this.Editor,
+      initialTool = this.config.initialBlock,
+      wrapper = $.make('DIV');
 
     wrapper.innerHTML = innerHTML;
 
@@ -400,15 +397,15 @@ export default class Paste extends Module {
    * @returns {IPasteData[]}
    */
   private processPlain(plain: string): IPasteData[] {
-    const {initialBlock} = this.config as {initialBlock: string};
-    const {Tools} = this.Editor;
+    const {initialBlock} = this.config as {initialBlock: string},
+      {Tools} = this.Editor;
 
     if (!plain) {
       return [];
     }
 
-    const tool = initialBlock;
-    const handler = Tools.blockTools[tool].onPaste.handler;
+    const tool = initialBlock,
+      handler = Tools.blockTools[tool].onPaste.handler;
 
     return plain.split('\n\n').map((text) => {
       const content = $.make('div');
@@ -428,8 +425,8 @@ export default class Paste extends Module {
    * @returns {Node[]}
    */
   private getNodes(wrapper: Node): Node[] {
-    const children = Array.from(wrapper.childNodes);
-    const tags = Object.keys(this.toolsTags);
+    const children = Array.from(wrapper.childNodes),
+      tags = Object.keys(this.toolsTags);
 
     const reducer = (nodes: Node[], node: Node): Node[] => {
       if ($.isEmpty(node)) {

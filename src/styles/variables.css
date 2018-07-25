@@ -14,10 +14,14 @@
    */
   --grayText: #707684;
 
-  /** Blue icons */
+  /**
+   * Blue icons
+   */
   --color-active-icon: #388AE5;
 
-  // gray border, loaders, etc
+  /**
+   * Gray border, loaders
+   */
   --color-gray-border: #E8E8EB;
 
   /**
