@@ -97,6 +97,8 @@ export default class BlockEvents extends Module {
    */
   public tabPressed(event): void {
 
+    const {currentBlock} = this.Editor.BlockManager;
+
     /** Prevent Default behaviour */
     event.preventDefault();
     event.stopPropagation();
@@ -107,6 +109,8 @@ export default class BlockEvents extends Module {
 
     if (this.Editor.Toolbar.opened) {
       this.Editor.Toolbox.open();
+    } else if (currentBlock.isEmpty) {
+      this.Editor.Toolbar.open();
     }
 
     if (this.Editor.Toolbox.opened) {

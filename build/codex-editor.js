@@ -14281,7 +14281,9 @@ var BlockEvents = function (_Module) {
     }, {
         key: 'tabPressed',
         value: function tabPressed(event) {
+            var currentBlock = this.Editor.BlockManager.currentBlock;
             /** Prevent Default behaviour */
+
             event.preventDefault();
             event.stopPropagation();
             /** this property defines leaf direction */
@@ -14289,6 +14291,8 @@ var BlockEvents = function (_Module) {
                 direction = shiftKey ? 'left' : 'right';
             if (this.Editor.Toolbar.opened) {
                 this.Editor.Toolbox.open();
+            } else if (currentBlock.isEmpty) {
+                this.Editor.Toolbar.open();
             }
             if (this.Editor.Toolbox.opened) {
                 this.Editor.Toolbox.leaf(direction);
@@ -18322,8 +18326,10 @@ var Toolbox = function (_Module) {
        */
       if (this.activeButtonIndex === -1) {
         this.activeButtonIndex = 0;
-      } else if (direction === 'left') {
-        this.activeButtonIndex = childNodes.length - (this.activeButtonIndex + 1) % childNodes.length - 1;
+      }
+
+      if (direction === 'left') {
+        this.activeButtonIndex = (childNodes.length - (this.activeButtonIndex + 1)) % childNodes.length;
       } else {
         this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
       }
