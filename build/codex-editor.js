@@ -14201,7 +14201,7 @@ var BlockEvents = function (_Module) {
 
 
     _createClass(BlockEvents, [{
-        key: "keydown",
+        key: 'keydown',
         value: function keydown(event) {
             /**
              * Run common method for all keydown events
@@ -14212,23 +14212,28 @@ var BlockEvents = function (_Module) {
              */
             switch (event.keyCode) {
                 case _.keyCodes.BACKSPACE:
+                    this.Editor.Toolbar.close();
                     this.backspace(event);
                     break;
                 case _.keyCodes.ENTER:
+                    this.Editor.Toolbar.close();
                     this.enter(event);
                     break;
                 case _.keyCodes.DOWN:
                 case _.keyCodes.RIGHT:
+                    this.Editor.Toolbar.close();
                     this.arrowRightAndDown();
                     break;
                 case _.keyCodes.UP:
                 case _.keyCodes.LEFT:
+                    this.Editor.Toolbar.close();
                     this.arrowLeftAndUp();
                     break;
                 case _.keyCodes.TAB:
                     this.tabPressed(event);
                     break;
                 default:
+                    this.Editor.Toolbar.close();
                     this.defaultHandler();
                     break;
             }
@@ -14238,16 +14243,12 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "beforeKeydownProcessing",
+        key: 'beforeKeydownProcessing',
         value: function beforeKeydownProcessing() {
             /**
              * Clear all highlightings
              */
             this.Editor.BlockManager.clearHighlightings();
-            /**
-             * Hide Toolbar
-             */
-            // this.Editor.Toolbar.close();
         }
         /**
          * Key up on Block:
@@ -14255,7 +14256,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "keyup",
+        key: 'keyup',
         value: function keyup(event) {
             this.Editor.InlineToolbar.handleShowingEvent(event);
         }
@@ -14265,7 +14266,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "mouseUp",
+        key: 'mouseUp',
         value: function mouseUp(event) {
             this.Editor.InlineToolbar.handleShowingEvent(event);
         }
@@ -14275,18 +14276,19 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "tabPressed",
+        key: 'tabPressed',
         value: function tabPressed(event) {
             /** Prevent Default behaviour */
             event.preventDefault();
             event.stopPropagation();
+            /** this property defines leaf direction */
+            var shiftKey = event.shiftKey,
+                direction = shiftKey ? 'left' : 'right';
             if (this.Editor.Toolbar.opened) {
                 this.Editor.Toolbox.open();
             }
             if (this.Editor.Toolbox.opened) {
-                event.preventDefault();
-                event.stopPropagation();
-                this.Editor.Toolbox.leaf();
+                this.Editor.Toolbox.leaf(direction);
             }
         }
         /**
@@ -14295,16 +14297,14 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "enter",
+        key: 'enter',
         value: function enter(event) {
             var currentBlock = this.Editor.BlockManager.currentBlock,
                 toolsConfig = this.config.toolsConfig[currentBlock.name];
-            if (this.Editor.Toolbox.opened) {
-                var toolName = this.Editor.Toolbox.getActive,
-                    newBlock = this.Editor.BlockManager.replace(toolName);
-                this.Editor.Caret.setToBlock(newBlock);
-                this.Editor.Toolbox.close();
-                this.Editor.Toolbar.move();
+            if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                this.enterOnToolboxItem(this.Editor.Toolbox.getActiveTool);
                 return;
             }
             /**
@@ -14343,12 +14343,31 @@ var BlockEvents = function (_Module) {
             event.preventDefault();
         }
         /**
+         * enterOnToolboxItem
+         * @param {string} toolName
+         */
+
+    }, {
+        key: 'enterOnToolboxItem',
+        value: function enterOnToolboxItem(toolName) {
+            console.log(toolName);
+            var newBlock = void 0;
+            if (this.Editor.BlockManager.currentBlock.isEmpty) {
+                newBlock = this.Editor.BlockManager.replace(toolName);
+            } else {
+                newBlock = this.Editor.BlockManager.insert(toolName);
+            }
+            this.Editor.Caret.setToBlock(newBlock);
+            this.Editor.Toolbox.close();
+            this.Editor.Toolbar.move();
+        }
+        /**
          * Handle backspace keydown on Block
          * @param {KeyboardEvent} event - keydown
          */
 
     }, {
-        key: "backspace",
+        key: 'backspace',
         value: function backspace(event) {
             var _this2 = this;
 
@@ -14396,7 +14415,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "arrowRightAndDown",
+        key: 'arrowRightAndDown',
         value: function arrowRightAndDown() {
             this.Editor.Caret.navigateNext();
         }
@@ -14405,7 +14424,7 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "arrowLeftAndUp",
+        key: 'arrowLeftAndUp',
         value: function arrowLeftAndUp() {
             this.Editor.Caret.navigatePrevious();
         }
@@ -14414,16 +14433,16 @@ var BlockEvents = function (_Module) {
          */
 
     }, {
-        key: "defaultHandler",
+        key: 'defaultHandler',
         value: function defaultHandler() {}
     }]);
 
     return BlockEvents;
 }(Module);
 
-BlockEvents.displayName = "BlockEvents";
+BlockEvents.displayName = 'BlockEvents';
 exports.default = BlockEvents;
-module.exports = exports["default"];
+module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! utils */ "./src/components/utils.js")))
 
 /***/ }),
@@ -18238,6 +18257,9 @@ var Toolbox = function (_Module) {
     value: function close() {
       this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpened);
       this.opened = false;
+
+      /** remove active item pointer */
+      this.activeButtonIndex = -1;
     }
 
     /**
@@ -18269,20 +18291,24 @@ var Toolbox = function (_Module) {
 
       for (var i = 0; i < childNodes.length; i++) {
         if (childNodes[i].classList.contains(Toolbox.CSS.toolboxButtonActive)) {
-          childNodes[this.activeButtonIndex].classList.remove(Toolbox.CSS.toolboxButtonActive);
           this.activeButtonIndex = i;
+          childNodes[this.activeButtonIndex].classList.remove(Toolbox.CSS.toolboxButtonActive);
           break;
         }
       }
 
+      /**
+       * if there is no active button set to first toolbox item
+       * or leaf if currently some item is active
+       */
       if (this.activeButtonIndex === -1) {
         this.activeButtonIndex = 0;
       } else {
-        if (direction === 'right') {
-          this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
-        } else {
-          this.activeButtonIndex = childNodes.length - (this.activeButtonIndex + 1) % childNodes.length;
-        }
+        this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
+      }
+
+      if (direction === 'left') {
+        this.activeButtonIndex = childNodes.length - this.activeButtonIndex;
       }
 
       childNodes[this.activeButtonIndex].classList.add(Toolbox.CSS.toolboxButtonActive);
@@ -18304,7 +18330,7 @@ var Toolbox = function (_Module) {
         return null;
       }
 
-      return childNodes[this.activeButtonIndex].dataset.name;
+      return childNodes[this.activeButtonIndex].title;
     }
   }], [{
     key: 'CSS',

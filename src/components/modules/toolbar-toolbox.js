@@ -200,6 +200,9 @@ export default class Toolbox extends Module {
   close() {
     this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpened);
     this.opened = false;
+
+    /** remove active item pointer */
+    this.activeButtonIndex = -1;
   }
 
   /**
@@ -223,20 +226,24 @@ export default class Toolbox extends Module {
 
     for (let i = 0; i < childNodes.length; i++) {
       if (childNodes[i].classList.contains(Toolbox.CSS.toolboxButtonActive)) {
-        childNodes[this.activeButtonIndex].classList.remove(Toolbox.CSS.toolboxButtonActive);
         this.activeButtonIndex = i;
+        childNodes[this.activeButtonIndex].classList.remove(Toolbox.CSS.toolboxButtonActive);
         break;
       }
     }
 
+    /**
+     * if there is no active button set to first toolbox item
+     * or leaf if currently some item is active
+     */
     if (this.activeButtonIndex === -1) {
       this.activeButtonIndex = 0;
     } else {
-      if (direction === 'right') {
-        this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
-      } else {
-        this.activeButtonIndex = childNodes.length - (this.activeButtonIndex + 1) % childNodes.length;
-      }
+      this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
+    }
+
+    if (direction === 'left') {
+      this.activeButtonIndex = childNodes.length - this.activeButtonIndex;
     }
 
     childNodes[this.activeButtonIndex].classList.add(Toolbox.CSS.toolboxButtonActive);
@@ -255,6 +262,6 @@ export default class Toolbox extends Module {
       return null;
     }
 
-    return childNodes[this.activeButtonIndex].dataset.name;
+    return childNodes[this.activeButtonIndex].title;
   }
 }
