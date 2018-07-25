@@ -8,10 +8,19 @@ import ITool from './tool';
 export default interface IBlockTool extends ITool {
 
   /**
-   * Create Block's settings block
-   * @return {HTMLElement}
+   * Should this tools be displayed at the Editor's Toolbox
    */
-  renderSettings(): HTMLElement;
+  displayInToolbox?: boolean;
+
+  /**
+   * Disable ability to replace empty Block by Toolbox
+   */
+  irreplaceable?: boolean;
+
+  /**
+   * String with an icon for Toolbox
+   */
+  toolboxIcon?: string;
 
   /**
    * Return Tool's main block-wrapper
@@ -27,16 +36,22 @@ export default interface IBlockTool extends ITool {
   save(block: HTMLElement): IBlockToolData;
 
   /**
-   * Method that specified how to merge two Text blocks.
-   * Called by CodeX Editor by backspace at the beginning of the Block
-   * @param {IBlockToolData} blockData
+   * Create Block's settings block
+   * @return {HTMLElement}
    */
-  merge(blockData: IBlockToolData): void;
+  renderSettings?(): HTMLElement;
 
   /**
    * Validate Block's data
    * @param {IBlockToolData} blockData
    * @return {boolean}
    */
-  validate(blockData: IBlockToolData): boolean;
+  validate?(blockData: IBlockToolData): boolean;
+
+  /**
+   * Method that specified how to merge two Text blocks.
+   * Called by CodeX Editor by backspace at the beginning of the Block
+   * @param {IBlockToolData} blockData
+   */
+  merge?(blockData: IBlockToolData): void;
 }

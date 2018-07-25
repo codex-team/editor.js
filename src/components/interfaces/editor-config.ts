@@ -20,7 +20,6 @@ export default interface IEditorConfig {
 
   /**
    * Map of used Tools with or without configuration
-   * @see {@link tools#ToolConfig}
    */
   tools: {[toolName: string]: ITool|IToolSettings};
 

@@ -11,12 +11,6 @@ export default interface IInlineTool extends ITool {
   render(): HTMLElement;
 
   /**
-   * Make additional element with actions
-   * For example, input for the 'link' tool or textarea for the 'comment' tool
-   */
-  renderActions?(): HTMLElement;
-
-  /**
    * Method that accepts selected range and wrap it somehow
    * @param {Range} range - selection's range
    */
@@ -28,6 +22,12 @@ export default interface IInlineTool extends ITool {
    * @param {Selection} selection - current Selection
    */
   checkState(selection: Selection): boolean;
+
+  /**
+   * Make additional element with actions
+   * For example, input for the 'link' tool or textarea for the 'comment' tool
+   */
+  renderActions?(): HTMLElement;
 
   /**
    * Function called with Inline Toolbar closing

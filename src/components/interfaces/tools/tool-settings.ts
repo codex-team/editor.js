@@ -1,5 +1,5 @@
 /**
- * Object passed to the Tool's constructor by {@link IEditorConfig#toolsConfig}
+ * Object passed to the Tool's constructor by {@link IEditorConfig#tools}
  */
 import ITool from './tool';
 
