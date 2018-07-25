@@ -145,14 +145,13 @@ export default class UI extends Module {
 
   /**
    * All keydowns on document
-   * @param event
+   * @param {Event} event
    */
   documentKeydown(event) {
     switch (event.keyCode) {
       case _.keyCodes.ENTER:
         this.enterPressed(event);
         break;
-
       default:
         this.defaultBehaviour(event);
         break;

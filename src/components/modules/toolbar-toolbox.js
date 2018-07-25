@@ -28,6 +28,13 @@ export default class Toolbox extends Module {
      * @type {boolean}
      */
     this.opened = false;
+
+    /**
+     * Active button index
+     * -1 equals no chosen Tool
+     * @type {number}
+     */
+    this.activeButtonIndex = -1;
   }
 
   /**
@@ -38,6 +45,7 @@ export default class Toolbox extends Module {
     return  {
       toolbox: 'ce-toolbox',
       toolboxButton: 'ce-toolbox__button',
+      toolboxButtonActive : 'ce-toolbox__button--active',
       toolboxOpened: 'ce-toolbox--opened',
     };
   }
@@ -107,7 +115,7 @@ export default class Toolbox extends Module {
      * Add click listener
      */
     this.Editor.Listeners.on(button, 'click', (event) => {
-      this.toolButtonClicked(event, toolName);
+      this.toolButtonActivate(event, toolName);
     });
 
     /**
@@ -166,18 +174,18 @@ export default class Toolbox extends Module {
     this.Editor.Caret.setToBlock(newBlock);
 
     /**
-     * Move toolbar when node is changed
+     * close toolbar when node is changed
      */
-    this.Editor.Toolbar.move();
+    this.Editor.Toolbar.close();
   }
 
   /**
    * Toolbox Tool's button click handler
    *
-   * @param {MouseEvent} event
+   * @param {MouseEvent|KeyboardEvent} event
    * @param {string} toolName
    */
-  toolButtonClicked(event, toolName) {
+  toolButtonActivate(event, toolName) {
     const tool = this.Editor.Tools.toolsClasses[toolName];
 
     this.insertNewBlock(tool, toolName);
@@ -197,6 +205,14 @@ export default class Toolbox extends Module {
   close() {
     this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpened);
     this.opened = false;
+
+    /** remove active item pointer */
+    this.activeButtonIndex = -1;
+    const activeButton = this.nodes.toolbox.querySelector(`.${Toolbox.CSS.toolboxButtonActive}`);
+
+    if (activeButton) {
+      activeButton.classList.remove(Toolbox.CSS.toolboxButtonActive);
+    }
   }
 
   /**
@@ -208,5 +224,80 @@ export default class Toolbox extends Module {
     } else {
       this.close();
     }
+  }
+
+  /**
+   * Leaf
+   * flip through the toolbox items
+   * @param {String} direction - leaf direction, right is default
+   */
+  leaf(direction = 'right') {
+    const childNodes = this.nodes.toolbox.childNodes;
+
+    /**
+     * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
+     */
+    if (this.activeButtonIndex === -1) {
+      /**
+       * Normalize "previous" Tool index depending on direction.
+       * We need to do this to highlight "first" Tool correctly
+       *
+       * Order of Tools: [0] [1] ... [n - 1]
+       *   [0 = n] because of: n % n = 0 % n
+       *
+       * Direction 'right': for [0] the [n - 1] is a previous index
+       *   [n - 1] -> [0]
+       *
+       * Direction 'left': for [n - 1] the [0] is a previous index
+       *   [n - 1] <- [0]
+       *
+       * @type {number}
+       */
+      this.activeButtonIndex = direction === 'right' ? -1 : 0;
+    } else {
+      /**
+       * If we have chosen Tool then remove highlighting
+       */
+      childNodes[this.activeButtonIndex].classList.remove(Toolbox.CSS.toolboxButtonActive);
+    }
+
+    /**
+     * Count index for next Tool
+     */
+    if (direction === 'right') {
+      /**
+       * If we go right then choose next (+1) Tool
+       * @type {number}
+       */
+      this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
+    } else {
+      /**
+       * If we go left then choose previous (-1) Tool
+       * Before counting module we need to add length before because of "The JavaScript Modulo Bug"
+       * @type {number}
+       */
+      this.activeButtonIndex = (childNodes.length + this.activeButtonIndex - 1) % childNodes.length;
+    }
+
+    /**
+     * Highlight new chosen Tool
+     */
+    childNodes[this.activeButtonIndex].classList.add(Toolbox.CSS.toolboxButtonActive);
+  }
+
+  /**
+   * get tool name when it is selected
+   * In case when nothing selection returns null
+   *
+   * @return {String|null}
+   */
+  get getActiveTool() {
+    const childNodes = this.nodes.toolbox.childNodes;
+
+    if (this.activeButtonIndex === -1) {
+      return null;
+    }
+
+    return childNodes[this.activeButtonIndex].title;
   }
 }
