@@ -207,6 +207,10 @@ export default class Toolbar extends Module {
    */
   close() {
     this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
+
+    /** Close components */
+    this.Editor.Toolbox.close();
+    this.Editor.BlockSettings.close();
   }
 
   /**

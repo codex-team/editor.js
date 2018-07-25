@@ -187,6 +187,26 @@ export default class Toolbox extends Module {
   }
 
   /**
+   * handle cases when active tool in toolbox pressed
+   * @param {string} toolName
+   */
+  activateTool(toolName) {
+    let newBlock;
+
+    /**
+     * if current block is empty then replace to selected tool
+     */
+    if (this.Editor.BlockManager.currentBlock.isEmpty) {
+      newBlock = this.Editor.BlockManager.replace(toolName);
+    } else {
+      newBlock = this.Editor.BlockManager.insert(toolName);
+    }
+
+    this.Editor.Caret.setToBlock(newBlock);
+    this.Editor.Toolbar.close();
+  }
+
+  /**
    * Open Toolbox with Tools
    */
   open() {

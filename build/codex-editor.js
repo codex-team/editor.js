@@ -14206,49 +14206,48 @@ var BlockEvents = function (_Module) {
             /**
              * Run common method for all keydown events
              */
-            this.beforeKeydownProcessing();
+            this.beforeKeydownProcessing(event);
             /**
              * Fire keydown processor by event.keyCode
              */
             switch (event.keyCode) {
                 case _.keyCodes.BACKSPACE:
-                    this.Editor.Toolbar.close();
                     this.backspace(event);
                     break;
                 case _.keyCodes.ENTER:
-                    this.Editor.Toolbar.close();
                     this.enter(event);
                     break;
                 case _.keyCodes.DOWN:
                 case _.keyCodes.RIGHT:
-                    this.Editor.Toolbar.close();
                     this.arrowRightAndDown();
                     break;
                 case _.keyCodes.UP:
                 case _.keyCodes.LEFT:
-                    this.Editor.Toolbar.close();
                     this.arrowLeftAndUp();
                     break;
                 case _.keyCodes.TAB:
                     this.tabPressed(event);
                     break;
                 default:
-                    this.Editor.Toolbar.close();
                     this.defaultHandler();
                     break;
             }
         }
         /**
          * Fires on keydown before event processing
+         * @param {KeyboardEvent} event - keydown
          */
 
     }, {
         key: 'beforeKeydownProcessing',
-        value: function beforeKeydownProcessing() {
+        value: function beforeKeydownProcessing(event) {
             /**
              * Clear all highlightings
              */
             this.Editor.BlockManager.clearHighlightings();
+            if (event.keyCode !== _.keyCodes.TAB && !this.Editor.Toolbox.opened) {
+                this.Editor.Toolbar.close();
+            }
         }
         /**
          * Key up on Block:
@@ -14304,7 +14303,7 @@ var BlockEvents = function (_Module) {
             if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
-                this.enterOnToolboxItem(this.Editor.Toolbox.getActiveTool);
+                this.Editor.Toolbox.activateTool(this.Editor.Toolbox.getActiveTool);
                 return;
             }
             /**
@@ -14341,25 +14340,7 @@ var BlockEvents = function (_Module) {
                 this.Editor.Toolbar.plusButton.show();
             }
             event.preventDefault();
-        }
-        /**
-         * enterOnToolboxItem
-         * @param {string} toolName
-         */
-
-    }, {
-        key: 'enterOnToolboxItem',
-        value: function enterOnToolboxItem(toolName) {
-            console.log(toolName);
-            var newBlock = void 0;
-            if (this.Editor.BlockManager.currentBlock.isEmpty) {
-                newBlock = this.Editor.BlockManager.replace(toolName);
-            } else {
-                newBlock = this.Editor.BlockManager.insert(toolName);
-            }
-            this.Editor.Caret.setToBlock(newBlock);
-            this.Editor.Toolbox.close();
-            this.Editor.Toolbar.move();
+            event.stopImmediatePropagation();
         }
         /**
          * Handle backspace keydown on Block
@@ -18238,6 +18219,29 @@ var Toolbox = function (_Module) {
     }
 
     /**
+     * handle cases when active tool in toolbox pressed
+     * @param {string} toolName
+     */
+
+  }, {
+    key: 'activateTool',
+    value: function activateTool(toolName) {
+      var newBlock = void 0;
+
+      /**
+       * if current block is empty then replace to selected tool
+       */
+      if (this.Editor.BlockManager.currentBlock.isEmpty) {
+        newBlock = this.Editor.BlockManager.replace(toolName);
+      } else {
+        newBlock = this.Editor.BlockManager.insert(toolName);
+      }
+
+      this.Editor.Caret.setToBlock(newBlock);
+      this.Editor.Toolbar.close();
+    }
+
+    /**
      * Open Toolbox with Tools
      */
 
@@ -18591,6 +18595,10 @@ var Toolbar = function (_Module) {
      */
     value: function close() {
       this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
+
+      /** Close components */
+      this.Editor.Toolbox.close();
+      this.Editor.BlockSettings.close();
     }
 
     /**

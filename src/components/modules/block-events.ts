@@ -21,31 +21,27 @@ export default class BlockEvents extends Module {
     /**
      * Run common method for all keydown events
      */
-    this.beforeKeydownProcessing();
+    this.beforeKeydownProcessing(event);
 
     /**
      * Fire keydown processor by event.keyCode
      */
     switch (event.keyCode) {
       case _.keyCodes.BACKSPACE:
-        this.Editor.Toolbar.close();
         this.backspace(event);
         break;
 
       case _.keyCodes.ENTER:
-        this.Editor.Toolbar.close();
         this.enter(event);
         break;
 
       case _.keyCodes.DOWN:
       case _.keyCodes.RIGHT:
-        this.Editor.Toolbar.close();
         this.arrowRightAndDown();
         break;
 
       case _.keyCodes.UP:
       case _.keyCodes.LEFT:
-        this.Editor.Toolbar.close();
         this.arrowLeftAndUp();
         break;
 
@@ -54,7 +50,6 @@ export default class BlockEvents extends Module {
         break;
 
       default:
-        this.Editor.Toolbar.close();
         this.defaultHandler();
         break;
     }
@@ -62,12 +57,18 @@ export default class BlockEvents extends Module {
 
   /**
    * Fires on keydown before event processing
+   * @param {KeyboardEvent} event - keydown
    */
-  public beforeKeydownProcessing(): void {
+  public beforeKeydownProcessing(event): void {
     /**
      * Clear all highlightings
      */
     this.Editor.BlockManager.clearHighlightings();
+
+    if (event.keyCode !== _.keyCodes.TAB && !this.Editor.Toolbox.opened) {
+      this.Editor.Toolbar.close();
+    }
+
   }
 
   /**
@@ -120,7 +121,7 @@ export default class BlockEvents extends Module {
     if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      this.enterOnToolboxItem(this.Editor.Toolbox.getActiveTool);
+      this.Editor.Toolbox.activateTool(this.Editor.Toolbox.getActiveTool);
       return;
     }
 
@@ -164,26 +165,7 @@ export default class BlockEvents extends Module {
     }
 
     event.preventDefault();
-  }
-
-  /**
-   * enterOnToolboxItem
-   * @param {string} toolName
-   */
-  private enterOnToolboxItem(toolName) {
-
-    console.log(toolName);
-
-    let newBlock;
-    if (this.Editor.BlockManager.currentBlock.isEmpty) {
-      newBlock = this.Editor.BlockManager.replace(toolName);
-    } else {
-      newBlock = this.Editor.BlockManager.insert(toolName);
-    }
-
-    this.Editor.Caret.setToBlock(newBlock);
-    this.Editor.Toolbox.close();
-    this.Editor.Toolbar.move();
+    event.stopImmediatePropagation();
   }
 
   /**
