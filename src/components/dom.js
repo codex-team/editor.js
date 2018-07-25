@@ -114,6 +114,16 @@ export default class Dom {
   }
 
   /**
+   * Get Element by Id
+   *
+   * @param {string} id
+   * @returns {HTMLElement | null}
+   */
+  static get(id) {
+    return document.getElementById(id);
+  }
+
+  /**
    * Selector Decorator.
    *
    * Returns all matches
