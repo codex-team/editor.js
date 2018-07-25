@@ -108,15 +108,15 @@ export default class Block {
 
   setToNextInput() {
     this.inputIndex++;
-    this.focusInput();
+    this.focusInput(null, 'start');
   }
 
   setToPreviousInput() {
     this.inputIndex--;
-    this.focusInput(null, true);
+    this.focusInput(null, 'end');
   }
 
-  focusInput(element, atEnd = false) {
+  focusInput(element, position) {
     const inputs = this.inputs;
 
     if (element) {
@@ -129,16 +129,25 @@ export default class Block {
     }
 
     const input = inputs[this.inputIndex];
+    let nodeToSet;
 
-    if (atEnd) {
-      const nodeToSet = $.getDeepestNode(input, atEnd);
-      const contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
+    switch (position) {
+      case 'start':
+        nodeToSet = $.getDeepestNode(input);
 
-      this.api.caret.set(nodeToSet, contentLength);
-      return;
+        this.api.caret.set(nodeToSet, 0);
+        break;
+
+      case 'end':
+        nodeToSet = $.getDeepestNode(input);
+        const contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
+
+        this.api.caret.set(nodeToSet, contentLength);
+        break;
+
+      default:
+        input.focus();
     }
-
-    input.focus();
   }
 
   /**

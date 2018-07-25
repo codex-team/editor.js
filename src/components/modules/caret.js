@@ -89,9 +89,11 @@ export default class Caret extends Module {
     selection.removeAllRanges();
     selection.addRange(range);
 
-    const {top} = range.getBoundingClientRect();
+    const {top, bottom} = range.getBoundingClientRect();
+    const {innerHeight} = window;
 
     if (top < 0) window.scrollBy(0, top);
+    if (bottom > innerHeight) window.scrollBy(0, bottom - innerHeight);
   };
 
   /**

@@ -12087,19 +12087,17 @@ var Block = function () {
     key: 'setToNextInput',
     value: function setToNextInput() {
       this.inputIndex++;
-      this.focusInput();
+      this.focusInput(null, 'start');
     }
   }, {
     key: 'setToPreviousInput',
     value: function setToPreviousInput() {
       this.inputIndex--;
-      this.focusInput(null, true);
+      this.focusInput(null, 'end');
     }
   }, {
     key: 'focusInput',
-    value: function focusInput(element) {
-      var atEnd = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
+    value: function focusInput(element, position) {
       var inputs = this.inputs;
 
       if (element) {
@@ -12114,16 +12112,25 @@ var Block = function () {
       }
 
       var input = inputs[this.inputIndex];
+      var nodeToSet = void 0;
 
-      if (atEnd) {
-        var nodeToSet = $.getDeepestNode(input, atEnd);
-        var contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
+      switch (position) {
+        case 'start':
+          nodeToSet = $.getDeepestNode(input);
 
-        this.api.caret.set(nodeToSet, contentLength);
-        return;
+          this.api.caret.set(nodeToSet, 0);
+          break;
+
+        case 'end':
+          nodeToSet = $.getDeepestNode(input);
+          var contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
+
+          this.api.caret.set(nodeToSet, contentLength);
+          break;
+
+        default:
+          input.focus();
       }
-
-      input.focus();
     }
 
     /**
@@ -15503,9 +15510,15 @@ var Caret = function (_Module) {
       selection.addRange(range);
 
       var _range$getBoundingCli = range.getBoundingClientRect(),
-          top = _range$getBoundingCli.top;
+          top = _range$getBoundingCli.top,
+          bottom = _range$getBoundingCli.bottom;
+
+      var _window = window,
+          innerHeight = _window.innerHeight;
+
 
       if (top < 0) window.scrollBy(0, top);
+      if (bottom > innerHeight) window.scrollBy(0, bottom - innerHeight);
     }
   }, {
     key: 'setToTheLastBlock',

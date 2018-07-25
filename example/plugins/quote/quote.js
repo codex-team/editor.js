@@ -159,9 +159,9 @@ class Quote {
       contentEditable: true,
       innerHTML: this.data.quote
     });
-    const caption = this._make('input', [this.CSS.input, this.CSS.caption], {
+    const caption = this._make('div', [this.CSS.input, this.CSS.caption], {
       contentEditable: true,
-      value: this.data.caption
+      innerHTML: this.data.caption
     });
 
     quote.dataset.placeholder = this.quotePlaceholder;
@@ -185,7 +185,7 @@ class Quote {
 
     return Object.assign(this.data, {
       quote: quote.innerHTML,
-      caption: caption.value
+      caption: caption.innerHTML
     });
   }
 
