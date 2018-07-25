@@ -1,6 +1,6 @@
 declare var Module: any;
 
-import {ISanitizerAPI} from '../interfaces/api';
+import ISanitizerAPI from '../interfaces/modules/api/sanitizer-api';
 import IModuleConfig from '../interfaces/module-config';
 
 /**

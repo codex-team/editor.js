@@ -1,4 +1,4 @@
-import InlineTool from '../interfaces/tools/inline-tool';
+import IInlineTool from '../interfaces/tools/inline-tool';
 
 declare var $: any;
 
@@ -9,7 +9,7 @@ declare var $: any;
  *
  * Makes selected text bolder
  */
-export default class BoldInlineTool implements InlineTool {
+export default class BoldInlineTool implements IInlineTool {
 
   /**
    * Native Document's command that uses for Bold
@@ -58,7 +58,7 @@ export default class BoldInlineTool implements InlineTool {
    * Check selection and set activated state to button if there are <b> tag
    * @param {Selection} selection
    */
-  public checkState(selection: Selection): boolean {
+  public checkState(selection?: Selection): boolean {
     const isActive = document.queryCommandState(this.commandName);
 
     this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);

@@ -1,6 +1,6 @@
 declare var Module: any;
 
-import {IListenerAPI} from '../interfaces/api';
+import IListenerAPI from '../interfaces/modules/api/listener-api';
 import IModuleConfig from '../interfaces/module-config';
 
 /**

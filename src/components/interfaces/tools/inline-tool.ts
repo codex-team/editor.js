@@ -21,7 +21,7 @@ export default interface IInlineTool extends ITool {
    * For example, after that Tool can highlight button or show some details
    * @param {Selection} selection - current Selection
    */
-  checkState(selection: Selection): boolean;
+  checkState(selection?: Selection): boolean;
 
   /**
    * Make additional element with actions

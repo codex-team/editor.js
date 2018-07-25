@@ -1,6 +1,6 @@
 declare var Module: any;
 
-import { IBlocksAPI } from '../interfaces/api';
+import IBlocksAPI from '../interfaces/modules/api/blocks-api';
 import IInputOutputData from '../interfaces/input-output-data';
 import IModuleConfig from '../interfaces/module-config';
 

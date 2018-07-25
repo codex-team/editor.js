@@ -8,6 +8,7 @@ declare var _: any;
 export default class BlockEvents extends Module {
   /**
    * @constructor
+   * @param {IEditorConfig} config
    */
   constructor({config}) {
     super({config});
