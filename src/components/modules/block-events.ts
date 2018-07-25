@@ -127,6 +127,11 @@ export default class BlockEvents extends Module {
     const currentBlock = this.Editor.BlockManager.currentBlock,
       toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
 
+    /** Do not prevent default behaviour */
+    if (!this.needToPreventDefault(event)) {
+      return;
+    }
+
     if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -258,5 +263,20 @@ export default class BlockEvents extends Module {
       flippingToolboxItems = event.keyCode === _.keyCodes.TAB;
 
     return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
+  }
+
+  /**
+   *
+   * @param event
+   * @return {boolean}
+   */
+  private needToPreventDefault(event) {
+    const target = event.target;
+
+    if (target.tagName === 'OL' || target.tagName === 'UL') {
+      return false;
+    }
+
+    return true;
   }
 }

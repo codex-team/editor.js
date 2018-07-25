@@ -14308,6 +14308,10 @@ var BlockEvents = function (_Module) {
         value: function enter(event) {
             var currentBlock = this.Editor.BlockManager.currentBlock,
                 toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
+            /** Do not prevent default behaviour */
+            if (!this.needToPreventDefault(event)) {
+                return;
+            }
             if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
@@ -14434,6 +14438,21 @@ var BlockEvents = function (_Module) {
             var toolboxItemSelected = event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened,
                 flippingToolboxItems = event.keyCode === _.keyCodes.TAB;
             return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
+        }
+        /**
+         *
+         * @param event
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'needToPreventDefault',
+        value: function needToPreventDefault(event) {
+            var target = event.target;
+            if (target.tagName === 'OL' || target.tagName === 'UL') {
+                return false;
+            }
+            return true;
         }
     }]);
 
