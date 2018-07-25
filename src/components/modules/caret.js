@@ -42,13 +42,13 @@ export default class Caret extends Module {
    * @param {Boolean} atEnd - put caret at the end of the text node or not
    */
   setToBlock(block, offset = 0, atEnd = false) {
-    let element = block.pluginsContent;
+    const element = atEnd ? block.lastInput : block.firstInput;
 
-    /** If Element is INPUT */
-    if ($.isNativeInput(element)) {
-      element.focus();
+    if (!element) {
       return;
     }
+
+    block.focusInput(element);
 
     const nodeToSet = $.getDeepestNode(element, atEnd);
     const contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;

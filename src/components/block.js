@@ -114,6 +114,26 @@ export default class Block {
   }
 
   /**
+   * Return first Tool`s input
+   *
+   * @returns {HTMLElement}
+   */
+  get firstInput() {
+    return this.inputs[0];
+  }
+
+  /**
+   * Return first Tool`s input
+   *
+   * @returns {HTMLElement}
+   */
+  get lastInput() {
+    const inputs = this.inputs;
+
+    return inputs[inputs.length - 1];
+  }
+
+  /**
    * Return next Tool`s input or undefined if it doesn't exist
    *
    * @returns {HTMLElement}
