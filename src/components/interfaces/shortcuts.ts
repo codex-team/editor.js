@@ -37,5 +37,4 @@ export interface IShortcut {
    * Shortcut handler
    */
   handler(event): (event) => void;
-
 }
