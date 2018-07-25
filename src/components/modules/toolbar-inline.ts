@@ -255,10 +255,10 @@ export default class InlineToolbar extends Module {
      * Enable shortcuts
      * Ignore tool that doesn't have shortcut or empty string
      */
-    const toolsSettings = this.Editor.Tools.getToolSettings(toolName);
+    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
-    if (toolsSettings && toolsSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
-      this.enableShortcuts(tool, toolsSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
+    if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
+      this.enableShortcuts(tool, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
     }
   }
 

@@ -178,7 +178,7 @@ export default class Toolbox extends Module {
    * @param {string} toolName
    */
   toolButtonClicked(event, toolName) {
-    const tool = this.Editor.Tools.toolClasses[toolName];
+    const tool = this.Editor.Tools.toolsClasses[toolName];
 
     this.insertNewBlock(tool, toolName);
   }

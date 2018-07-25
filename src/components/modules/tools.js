@@ -161,7 +161,7 @@ export default class Tools extends Module {
      *  name — block type name in JSON. Got from EditorConfig.tools keys
      * @type {Object}
      */
-    this.toolClasses = {};
+    this.toolsClasses = {};
 
     /**
      * Tools settings in a map {name: settings, ...}
@@ -206,7 +206,7 @@ export default class Tools extends Module {
          * Save Tool's class from 'class' field
          * @type {ITool}
          */
-        this.toolClasses[toolName] = this.config.tools[toolName].class;
+        this.toolsClasses[toolName] = this.config.tools[toolName].class;
 
         /**
          * Save Tool's settings
@@ -223,7 +223,7 @@ export default class Tools extends Module {
          * Save Tool's class
          * @type {ITool}
          */
-        this.toolClasses[toolName] = this.config.tools[toolName];
+        this.toolsClasses[toolName] = this.config.tools[toolName];
 
         /**
          * Set empty settings for Block by default
@@ -262,8 +262,8 @@ export default class Tools extends Module {
   getListOfPrepareFunctions() {
     let toolPreparationList = [];
 
-    for(let toolName in this.toolClasses) {
-      let toolClass = this.toolClasses[toolName];
+    for(let toolName in this.toolsClasses) {
+      let toolClass = this.toolsClasses[toolName];
 
       if (typeof toolClass.prepare === 'function') {
         toolPreparationList.push({
@@ -287,14 +287,14 @@ export default class Tools extends Module {
    * @param {ChainData.data} data - append tool to available list
    */
   success(data) {
-    this.toolsAvailable[data.toolName] = this.toolClasses[data.toolName];
+    this.toolsAvailable[data.toolName] = this.toolsClasses[data.toolName];
   }
 
   /**
    * @param {ChainData.data} data - append tool to unavailable list
    */
   fallback(data) {
-    this.toolsUnavailable[data.toolName] = this.toolClasses[data.toolName];
+    this.toolsUnavailable[data.toolName] = this.toolsClasses[data.toolName];
   }
 
   /**
@@ -307,7 +307,7 @@ export default class Tools extends Module {
    *
    */
   construct(tool, data) {
-    let plugin = this.toolClasses[tool],
+    let plugin = this.toolsClasses[tool],
       config = this.toolsSettings[tool];
 
     let instance = new plugin(data, config || {}, this.Editor.API.methods);
@@ -326,10 +326,10 @@ export default class Tools extends Module {
 
   /**
    * Return Tool's config by name
-   * @param toolname
+   * @param {string} toolName
    * @return {IToolSettings}
    */
-  getToolSettings(toolname) {
-    return this.toolsSettings[toolname];
+  getToolSettings(toolName) {
+    return this.toolsSettings[toolName];
   }
 }
