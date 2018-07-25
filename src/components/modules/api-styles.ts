@@ -24,6 +24,12 @@ export default class StylesAPI extends Module {
       block: 'cdx-block',
 
       /**
+       * Inline Tools styles
+       */
+      inlineToolButton: 'ce-inline-tool',
+      inlineToolButtonActive: 'ce-inline-tool--active',
+
+      /**
        * UI elements
        */
       input: 'cdx-input',

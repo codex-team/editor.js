@@ -173,6 +173,10 @@ export interface IStylesAPI {
 
   block: string;
 
+  inlineToolButton: string;
+
+  inlineToolButtonActive: string;
+
   input: string;
 
   loader: string;
