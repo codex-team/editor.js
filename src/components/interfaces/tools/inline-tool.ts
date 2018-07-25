@@ -1,22 +1,14 @@
 /**
  * Base structure for the Inline Toolbar Tool
  */
-export default interface InlineTool {
-  /**
-   * Allow Tool to determine shortcut that will fire 'surround' method
-   */
-  shortcut?: string;
+import ITool from './tool';
+
+export default interface IInlineTool extends ITool {
 
   /**
    * Returns button for the Inline Toolbar
    */
   render(): HTMLElement;
-
-  /**
-   * Make additional element with actions
-   * For example, input for the 'link' tool or textarea for the 'comment' tool
-   */
-  renderActions?(): HTMLElement;
 
   /**
    * Method that accepts selected range and wrap it somehow
@@ -30,6 +22,12 @@ export default interface InlineTool {
    * @param {Selection} selection - current Selection
    */
   checkState(selection: Selection): boolean;
+
+  /**
+   * Make additional element with actions
+   * For example, input for the 'link' tool or textarea for the 'comment' tool
+   */
+  renderActions?(): HTMLElement;
 
   /**
    * Function called with Inline Toolbar closing

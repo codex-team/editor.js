@@ -47,20 +47,16 @@ var editor = new CodexEditor({
     initialBlock : 'text',
 
     /**
-     * Available Block Tools
+     * Available Tools list.
+     * Pass Tool's class or Settings object for each Tool you want to use
+     * 
      */
     tools: {
-        text: Text,
-        // ...
-    },
-
-    /**
-     * Tools params
-     */
-    toolsConfig: {
         text: {
+          class: Text,
           inlineToolbar : true
         },
+        // ...
     },
 
     /**
