@@ -280,6 +280,28 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Return first Block with inputs after current Block
+   *
+   * @returns {Block | undefined}
+   */
+  get nextContentfulBlock() {
+    const nextBlocks = this.blocks.slice(this.currentBlockIndex + 1);
+
+    return nextBlocks.find(block => !!block.inputs.length);
+  }
+
+  /**
+   * Return first Block with inputs before current Block
+   *
+   * @returns {Block | undefined}
+   */
+  get previousContentfulBlock() {
+    const previousBlocks = this.blocks.slice(0, this.currentBlockIndex).reverse();
+
+    return previousBlocks.find(block => !!block.inputs.length);
+  }
+
+  /**
    * Returns previous Block instance
    * @return {Block|null}
    */

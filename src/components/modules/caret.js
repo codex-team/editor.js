@@ -194,22 +194,22 @@ export default class Caret extends Module {
    * @return {Boolean}
    */
   navigateNext(force = false) {
-    const {currentBlock, nextBlock} = this.Editor.BlockManager;
+    const {currentBlock, nextContentfulBlock} = this.Editor.BlockManager;
     const {nextInput} = currentBlock;
 
-    if (!nextBlock && !nextInput) {
+    if (!nextContentfulBlock && !nextInput) {
       return false;
     }
 
     if (force) {
-      this.setToBlock(nextBlock);
+      this.setToBlock(nextContentfulBlock);
       return true;
     }
 
     if (this.isAtEnd) {
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (!nextInput) {
-        this.setToBlock(nextBlock);
+        this.setToBlock(nextContentfulBlock);
       } else {
         currentBlock.setToNextInput();
       }
@@ -230,21 +230,21 @@ export default class Caret extends Module {
    * @return {Boolean}
    */
   navigatePrevious(force = false) {
-    const {currentBlock, previousBlock} = this.Editor.BlockManager;
+    const {currentBlock, previousContentfulBlock} = this.Editor.BlockManager;
     const {previousInput} = currentBlock;
 
-    if (!previousBlock && !previousInput) {
+    if (!previousContentfulBlock && !previousInput) {
       return false;
     }
 
     if (force) {
-      this.setToBlock( previousBlock, 0, true );
+      this.setToBlock( previousContentfulBlock, 0, true );
     }
 
     if (this.isAtStart) {
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
       if (!previousInput) {
-        this.setToBlock( previousBlock, 0, true );
+        this.setToBlock( previousContentfulBlock, 0, true );
       } else {
         currentBlock.setToPreviousInput();
       }
