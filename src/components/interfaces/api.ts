@@ -75,6 +75,12 @@ export interface IBlocksAPI {
  * Methods for working with Caret
  */
 export interface ICaretAPI {
+  /**
+   * Set caret to the provided element;
+   *
+   * @param {HTMLElement} element
+   * @param {number} offset
+   */
   set: (element: HTMLElement, offset?: number) => void;
 }
 

@@ -12283,6 +12283,9 @@ var Block = function () {
 
       var inputs = _.array(content.querySelectorAll('[contenteditable], textarea, input'));
 
+      /**
+       * If inputs amount was changed we need to check if input index is bigger then inputs array length
+       */
       if (this.inputIndex > inputs.length - 1) {
         this.inputIndex = inputs.length - 1;
       }
