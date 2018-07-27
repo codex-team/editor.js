@@ -235,8 +235,8 @@ export default class CodexEditor {
     for (let toolName in this.config.tools) {
       const tool = this.config.tools[toolName];
 
-      if (!_.isClass(tool) && !_.isClass(tool.class)) {
-        return Promise.reject(`Tool «${toolName}» must be a class or an object with a «class» property`);
+      if (!_.isFunction(tool) && !_.isFunction(tool.class)) {
+        return Promise.reject(`Tool «${toolName}» must be a constructor function or an object with that function in the «class» property`);
       }
     }
 

@@ -11267,8 +11267,8 @@ var CodexEditor = function () {
       for (var toolName in this.config.tools) {
         var tool = this.config.tools[toolName];
 
-        if (!_.isClass(tool) && !_.isClass(tool.class)) {
-          return Promise.reject('Tool \xAB' + toolName + '\xBB must be a class or an object with a \xABclass\xBB property');
+        if (!_.isFunction(tool) && !_.isFunction(tool.class)) {
+          return Promise.reject('Tool \xAB' + toolName + '\xBB must be a constructor function or an object with that function in the \xABclass\xBB property');
         }
       }
 
@@ -20539,6 +20539,18 @@ var Util = function () {
     key: 'array',
     value: function array(collection) {
       return Array.prototype.slice.call(collection);
+    }
+
+    /**
+     * Check if passed variable is a function
+     * @param {*} fn
+     * @return {boolean}
+     */
+
+  }, {
+    key: 'isFunction',
+    value: function isFunction(fn) {
+      return typeof fn === 'function';
     }
 
     /**
