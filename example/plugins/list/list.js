@@ -265,10 +265,11 @@ class List {
 
       /** Prevent Default li generation if item is empty */
       if (currentNode === lastItem && currentNode.textContent === '') {
-        event.preventDefault();
 
         /** Insert New Block and set caret */
         this.api.blocks.insertNewBlock();
+        event.preventDefault();
+        event.stopPropagation();
       }
     }
   }
