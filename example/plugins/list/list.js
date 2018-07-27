@@ -287,7 +287,7 @@ class List {
     const currentNode = window.getSelection().anchorNode;
 
     /** Prevent Default li generation if item is empty */
-    if (currentNode === lastItem && currentNode.textContent === '') {
+    if (currentNode === lastItem && !lastItem.innerHTML.replace('<br>', ' ').trim()) {
 
       /** Insert New Block and set caret */
       this.api.blocks.insertNewBlock();
