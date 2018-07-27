@@ -20,6 +20,15 @@ class List {
   }
 
   /**
+   * Allow to use native Enter behaviour
+   * @returns {boolean}
+   * @public
+   */
+  static get enableLineBreaks() {
+    return true;
+  }
+
+  /**
    * Class for the Toolbox icon
    * @returns {string}
    * @public

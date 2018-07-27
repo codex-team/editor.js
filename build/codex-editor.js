@@ -14470,22 +14470,18 @@ var BlockEvents = function (_Module) {
         key: 'enter',
         value: function enter(event) {
             var currentBlock = this.Editor.BlockManager.currentBlock,
-                toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
-            /** Do not prevent default behaviour */
-            if (!this.needToPreventDefault(event)) {
+                tool = this.Editor.Tools.toolsAvailable[currentBlock.name];
+            /**
+             * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
+             * Uses for Tools like <code> where line breaks should be handled by default behaviour.
+             */
+            if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
                 return;
             }
             if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
                 event.preventDefault();
                 event.stopImmediatePropagation();
                 this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
-                return;
-            }
-            /**
-             * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
-             * Uses for Tools like <code> where line breaks should be handled by default behaviour.
-             */
-            if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
                 return;
             }
             /**
@@ -14601,21 +14597,6 @@ var BlockEvents = function (_Module) {
             var toolboxItemSelected = event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened,
                 flippingToolboxItems = event.keyCode === _.keyCodes.TAB;
             return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
-        }
-        /**
-         *
-         * @param event
-         * @return {boolean}
-         */
-
-    }, {
-        key: 'needToPreventDefault',
-        value: function needToPreventDefault(event) {
-            var target = event.target;
-            if (target.tagName === 'OL' || target.tagName === 'UL') {
-                return false;
-            }
-            return true;
         }
     }]);
 

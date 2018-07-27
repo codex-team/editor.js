@@ -125,10 +125,13 @@ export default class BlockEvents extends Module {
    */
   private enter(event: KeyboardEvent): void {
     const currentBlock = this.Editor.BlockManager.currentBlock,
-      toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
+      tool = this.Editor.Tools.toolsAvailable[currentBlock.name];
 
-    /** Do not prevent default behaviour */
-    if (!this.needToPreventDefault(event)) {
+    /**
+     * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
+     * Uses for Tools like <code> where line breaks should be handled by default behaviour.
+     */
+    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
       return;
     }
 
@@ -136,14 +139,6 @@ export default class BlockEvents extends Module {
       event.preventDefault();
       event.stopImmediatePropagation();
       this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
-      return;
-    }
-
-    /**
-     * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
-     * Uses for Tools like <code> where line breaks should be handled by default behaviour.
-     */
-    if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
       return;
     }
 
@@ -265,18 +260,4 @@ export default class BlockEvents extends Module {
     return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
   }
 
-  /**
-   *
-   * @param event
-   * @return {boolean}
-   */
-  private needToPreventDefault(event) {
-    const target = event.target;
-
-    if (target.tagName === 'OL' || target.tagName === 'UL') {
-      return false;
-    }
-
-    return true;
-  }
 }
