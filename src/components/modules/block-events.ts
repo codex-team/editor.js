@@ -125,20 +125,20 @@ export default class BlockEvents extends Module {
    */
   private enter(event: KeyboardEvent): void {
     const currentBlock = this.Editor.BlockManager.currentBlock,
-      toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
-
-    if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
-      return;
-    }
+      tool = this.Editor.Tools.toolsAvailable[currentBlock.name];
 
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
-    if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+      return;
+    }
+
+    if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
       return;
     }
 
@@ -183,6 +183,16 @@ export default class BlockEvents extends Module {
    */
   private backspace(event: KeyboardEvent): void {
     const BM = this.Editor.BlockManager;
+    const currentBlock = this.Editor.BlockManager.currentBlock,
+      tool = this.Editor.Tools.toolsAvailable[currentBlock.name];
+
+    /**
+     * Don't handle Backspaces when Tool sets enableLineBreaks to true.
+     * Uses for Tools like <code> where line breaks should be handled by default behaviour.
+     */
+    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+      return;
+    }
 
     const isFirstBlock = BM.currentBlockIndex === 0,
       canMergeBlocks = this.Editor.Caret.isAtStart && !isFirstBlock;
@@ -259,4 +269,5 @@ export default class BlockEvents extends Module {
 
     return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
   }
+
 }

@@ -31,6 +31,9 @@
 <script src="plugins/simple-image/simple-image.js?v=100"></script>
 <link rel="stylesheet" href="plugins/simple-image/simple-image.css">
 
+<script src="plugins/list/list.js?v=100"></script>
+<link rel="stylesheet" href="plugins/list/list.css">
+
 <script src="plugins/code/code.js"></script>
 <link rel="stylesheet" href="plugins/code/code.css">
 
@@ -45,12 +48,19 @@
               class: Text,
               inlineToolbar: true,
             },
-            header: Header,
+            header: {
+              class: Header,
+              shortcut: 'CMD+SHIFT+H'
+            },
             term: {
               class: Term,
               shortcut: 'CMD+SHIFT+M'
             },
-            image: SimpleImageTool
+            image: SimpleImageTool,
+            list: {
+              class: List,
+              inlineToolbar: true
+            }
         },
         data: {
             items: [
@@ -58,6 +68,17 @@
                     type : 'text',
                     data : {
                         text : 'Привет от CodeX'
+                    }
+                },
+                {
+                    type : 'list',
+                    data : {
+                      style : 'ordered',
+                      items : [
+                          'Первый элемент',
+                          'Второй элемент',
+                          'Третий элемент'
+                      ],
                     }
                 },
                 {

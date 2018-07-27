@@ -30,6 +30,10 @@ Methods that working with Blocks
 
 ```getBlocksCount()``` - returns Blocks count
 
+```stretchBlock(index: number, status: boolean)``` - make Block stretched
+
+```insertNewBlock()``` - insert new Block after working place 
+
 #### ISanitizerAPI
 
 ```clean(taintString, config)``` - method uses HTMLJanitor to clean taint string.

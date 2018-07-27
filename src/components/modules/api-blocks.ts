@@ -31,6 +31,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
       getBlocksCount: () => this.getBlocksCount(),
       stretchBlock: (index: number, status: boolean) => this.stretchBlock(index, status),
+      insertNewBlock: () => this.insertNewBlock(),
     };
   }
 
@@ -129,4 +130,12 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
     block.stretched = status !== undefined ? status : true;
   }
 
+  /**
+   * Insert new Block
+   * After set caret to this Block
+   */
+  public insertNewBlock() {
+    const newBlock = this.Editor.BlockManager.insert();
+    this.Editor.Caret.setToBlock(newBlock);
+  }
 }
