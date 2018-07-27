@@ -15838,8 +15838,6 @@ var Caret = function (_Module) {
       var _ref2 = currentBlock || {},
           previousInput = _ref2.previousInput;
 
-      console.log(previousContentfulBlock);
-
       if (!previousContentfulBlock && !previousInput) {
         return false;
       }

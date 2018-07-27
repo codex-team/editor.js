@@ -233,8 +233,6 @@ export default class Caret extends Module {
     const {currentBlock, previousContentfulBlock} = this.Editor.BlockManager;
     const {previousInput} = currentBlock || {};
 
-    console.log(previousContentfulBlock);
-
     if (!previousContentfulBlock && !previousInput) {
       return false;
     }
