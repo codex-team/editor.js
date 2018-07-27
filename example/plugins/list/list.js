@@ -119,7 +119,23 @@ class List {
 
     // detect keydown on the last item to escape List
     this._elements.wrapper.addEventListener('keydown', (event) => {
-      this.getOutofList(event);
+      const [ENTER, BACKSPACE, A] = [13, 8, 65]; // key codes
+      const cmdPressed = event.ctrlKey || event.metaKey;
+
+      switch (event.keyCode) {
+        case ENTER:
+          this.getOutofList(event);
+          break;
+        case BACKSPACE:
+          this.backspace(event);
+          break;
+        case A:
+          if (cmdPressed){
+            this.selectItem(event);
+          }
+          break;
+      }
+
     }, false);
 
     return this._elements.wrapper;
@@ -258,22 +274,63 @@ class List {
    * @param {KeyboardEvent} event
    */
   getOutofList(event) {
+    const items = this._elements.wrapper.querySelectorAll('.' + this.CSS.item);
+
     /**
-     * Handler on Enter
+     * Save the last one.
      */
-    if (event.keyCode === 13) {
-      const items = this._elements.wrapper.querySelectorAll('.' + this.CSS.item);
-      const lastItem = items[items.length -1];
-      const currentNode = window.getSelection().anchorNode;
-
-      /** Prevent Default li generation if item is empty */
-      if (currentNode === lastItem && currentNode.textContent === '') {
-
-        /** Insert New Block and set caret */
-        this.api.blocks.insertNewBlock();
-        event.preventDefault();
-        event.stopPropagation();
-      }
+    if (items.length < 2){
+      return;
     }
+
+    const lastItem = items[items.length - 1];
+    const currentNode = window.getSelection().anchorNode;
+
+    /** Prevent Default li generation if item is empty */
+    if (currentNode === lastItem && currentNode.textContent === '') {
+
+      /** Insert New Block and set caret */
+      this.api.blocks.insertNewBlock();
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
+  /**
+   * Handle backspace
+   * @param {KeyboardEvent} event
+   */
+  backspace(event){
+    const items = this._elements.wrapper.querySelectorAll('.' + this.CSS.item),
+      firstItem = items[0];
+
+    if (!firstItem){
+      return;
+    }
+
+    /**
+     * Save the last one.
+     */
+    if (items.length < 2 && !firstItem.innerHTML.replace('<br>', ' ').trim()) {
+      event.preventDefault();
+    }
+  }
+
+  /**
+   * Select LI content by CMD+A
+   * @param {KeyboardEvent} event
+   */
+  selectItem(event){
+    event.preventDefault();
+
+    const selection = window.getSelection(),
+      currentNode = selection.anchorNode.parentNode,
+      currentItem = currentNode.closest('.' + this.CSS.item),
+      range = new Range();
+
+    range.selectNodeContents(currentItem);
+
+    selection.removeAllRanges();
+    selection.addRange(range);
   }
 }
