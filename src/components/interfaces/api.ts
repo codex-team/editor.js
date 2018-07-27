@@ -9,11 +9,12 @@ export interface IAPI {
   blocks: IBlocksAPI;
   caret: ICaretAPI;
   events: IEventsAPI;
+  listener: IListenerAPI;
   sanitizer: ISanitizerAPI;
   saver: ISaverAPI;
   selection: ISelectionAPI;
+  styles: IStylesAPI;
   toolbar: IToolbarAPI;
-  listener: IListenerAPI;
 }
 
 /**
@@ -103,6 +104,30 @@ export interface IEventsAPI {
 }
 
 /**
+ * DOM Listener API
+ */
+export interface IListenerAPI {
+
+  /**
+   * Adds event listener
+   * @param {HTMLElement} element
+   * @param {string} eventType
+   * @param {() => void} handler
+   * @param useCapture
+   * @return {boolean}
+   */
+  on: (element: HTMLElement, eventType: string, handler: () => void, useCapture: boolean) => void;
+
+  /**
+   * Remove event listener
+   * @param {HTMLElement} element
+   * @param {string} eventType
+   * @param {() => void} handler
+   */
+  off: (element: HTMLElement, eventType: string, handler: () => void) => void;
+}
+
+/**
  * Sanitizer's methods
  */
 export interface ISanitizerAPI {
@@ -149,6 +174,23 @@ export interface ISelectionAPI {
   expandToTag: (node: HTMLElement) => void;
 }
 
+export interface IStylesAPI {
+
+  block: string;
+
+  inlineToolButton: string;
+
+  inlineToolButtonActive: string;
+
+  input: string;
+
+  loader: string;
+
+  settingsButton: string;
+
+  settingsButtonActive: string;
+}
+
 /**
  * Toolbar's methods
  * Basic toolbar methods
@@ -164,28 +206,4 @@ export interface IToolbarAPI {
    * Closes toolbar. If toolbox or toolbar-blockSettings are opened then they will be closed too
    */
   close: () => void;
-}
-
-/**
- * DOM Listener API
- */
-export interface IListenerAPI {
-
-  /**
-   * Adds event listener
-   * @param {HTMLElement} element
-   * @param {string} eventType
-   * @param {() => void} handler
-   * @param useCapture
-   * @return {boolean}
-   */
-  on: (element: HTMLElement, eventType: string, handler: () => void, useCapture: boolean) => void;
-
-  /**
-   * Remove event listener
-   * @param {HTMLElement} element
-   * @param {string} eventType
-   * @param {() => void} handler
-   */
-  off: (element: HTMLElement, eventType: string, handler: () => void) => void;
 }
