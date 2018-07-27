@@ -15834,8 +15834,11 @@ var Caret = function (_Module) {
       var _Editor$BlockManager2 = this.Editor.BlockManager,
           currentBlock = _Editor$BlockManager2.currentBlock,
           previousContentfulBlock = _Editor$BlockManager2.previousContentfulBlock;
-      var previousInput = currentBlock.previousInput;
 
+      var _ref2 = currentBlock || {},
+          previousInput = _ref2.previousInput;
+
+      console.log(previousContentfulBlock);
 
       if (!previousContentfulBlock && !previousInput) {
         return false;
