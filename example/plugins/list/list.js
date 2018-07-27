@@ -219,7 +219,10 @@ class List {
     const items = this._elements.wrapper.querySelectorAll(`.${this.CSS.item}`);
 
     for (let i = 0; i < items.length; i++) {
-      this._data.items.push(items[i].innerHTML);
+      const value = items[i].innerHTML.replace('<br>', ' ').trim();
+      if (value){
+        this._data.items.push(items[i].innerHTML);
+      }
     }
 
     return this._data;
