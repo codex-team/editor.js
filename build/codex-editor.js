@@ -16270,7 +16270,7 @@ var Paste = function (_Module) {
          */
         _this.processPastedData = function () {
             var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(event) {
-                var _this$Editor, Tools, Sanitizer, BlockManager, Caret, block, toolSettings, htmlData, plainData, blockTags, toolsTags, customConfig, cleanData, dataToInsert;
+                var _this$Editor, Tools, Sanitizer, BlockManager, Caret, htmlData, plainData, toolsTags, customConfig, cleanData, dataToInsert;
 
                 return regeneratorRuntime.wrap(function _callee2$(_context2) {
                     while (1) {
@@ -16288,29 +16288,15 @@ var Paste = function (_Module) {
 
                             case 3:
                                 event.preventDefault();
-                                block = BlockManager.getBlock(event.target), toolSettings = Tools.getToolSettings(block.name);
-                                /** If paste is dissalowed in block do nothing */
-
-                                if (!(toolSettings && toolSettings[Tools.apiSettings.IS_PASTE_DISALLOWED])) {
-                                    _context2.next = 7;
-                                    break;
-                                }
-
-                                return _context2.abrupt('return');
-
-                            case 7:
                                 htmlData = event.clipboardData.getData('text/html'), plainData = event.clipboardData.getData('text/plain');
-                                /** Add all block tags and tags can be substituted to sanitizer configuration */
+                                /** Add all tags that can be substituted to sanitizer configuration */
 
-                                blockTags = $.blockElements.reduce(function (result, tag) {
-                                    result[tag.toLowerCase()] = {};
-                                    return result;
-                                }, {});
                                 toolsTags = Object.keys(_this.toolsTags).reduce(function (result, tag) {
                                     result[tag.toLowerCase()] = {};
                                     return result;
                                 }, {});
-                                customConfig = { tags: Object.assign({}, blockTags, toolsTags, Sanitizer.defaultConfig.tags) }, cleanData = Sanitizer.clean(htmlData, customConfig);
+                                customConfig = { tags: Object.assign({}, toolsTags, Sanitizer.defaultConfig.tags) };
+                                cleanData = Sanitizer.clean(htmlData, customConfig);
                                 dataToInsert = [];
                                 /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
 
@@ -16321,16 +16307,16 @@ var Paste = function (_Module) {
                                 }
 
                                 if (!(dataToInsert.length === 1 && !dataToInsert[0].isBlock)) {
-                                    _context2.next = 16;
+                                    _context2.next = 13;
                                     break;
                                 }
 
                                 _this.processSingleBlock(dataToInsert.pop());
                                 return _context2.abrupt('return');
 
-                            case 16:
+                            case 13:
                                 _this.splitBlock();
-                                _context2.next = 19;
+                                _context2.next = 16;
                                 return Promise.all(dataToInsert.map(function () {
                                     var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, i) {
                                         return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -16356,10 +16342,10 @@ var Paste = function (_Module) {
                                     };
                                 }()));
 
-                            case 19:
+                            case 16:
                                 Caret.setToBlock(BlockManager.currentBlock, 0, true);
 
-                            case 20:
+                            case 17:
                             case 'end':
                                 return _context2.stop();
                         }
@@ -16477,7 +16463,7 @@ var Paste = function (_Module) {
                                 }
 
                                 this.splitBlock();
-                                if (BlockManager.currentBlock.isEmpty) {
+                                if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
                                     BlockManager.replace(blockData.tool, blockData.data);
                                 } else {
                                     BlockManager.insert(blockData.tool, blockData.data);
@@ -16588,7 +16574,7 @@ var Paste = function (_Module) {
                                 Caret = _Editor2.Caret;
                                 currentBlock = BlockManager.currentBlock;
 
-                                if (!(canReplaceCurrentBlock && currentBlock.isEmpty)) {
+                                if (!(canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty)) {
                                     _context6.next = 10;
                                     break;
                                 }
@@ -16625,11 +16611,14 @@ var Paste = function (_Module) {
             var _Editor3 = this.Editor,
                 BlockManager = _Editor3.BlockManager,
                 Caret = _Editor3.Caret;
+
+            if (!BlockManager.currentBlock) {
+                return;
+            }
             /** If we paste into middle of the current block:
              *  1. Split
              *  2. Navigate to the first part
              */
-
             if (!BlockManager.currentBlock.isEmpty && !Caret.isAtEnd) {
                 BlockManager.split();
                 BlockManager.currentBlockIndex--;
@@ -16664,19 +16653,26 @@ var Paste = function (_Module) {
                     case Node.DOCUMENT_FRAGMENT_NODE:
                         content = $.make('div');
                         content.appendChild(node);
-                        content.innerHTML = Sanitizer.clean(content.innerHTML);
                         break;
                     /** If node is an element, then there might be a substitution */
                     case Node.ELEMENT_NODE:
                         content = node;
                         isBlock = true;
-                        content.innerHTML = Sanitizer.clean(content.innerHTML);
                         if (_this3.toolsTags[content.tagName]) {
                             tool = _this3.toolsTags[content.tagName].tool;
                         }
                         break;
                 }
-                var handler = Tools.blockTools[tool].onPaste.handler;
+                var _Tools$blockTools$too = Tools.blockTools[tool].onPaste,
+                    handler = _Tools$blockTools$too.handler,
+                    tags = _Tools$blockTools$too.tags;
+
+                var toolTags = tags.reduce(function (result, tag) {
+                    result[tag.toLowerCase()] = {};
+                    return result;
+                }, {});
+                var customConfig = { tags: Object.assign({}, toolTags, Sanitizer.defaultConfig.tags) };
+                content.innerHTML = Sanitizer.clean(content.innerHTML, customConfig);
                 return { content: content, isBlock: isBlock, handler: handler, tool: tool };
             }).filter(function (data) {
                 return !$.isNodeEmpty(data.content);
@@ -16737,15 +16733,12 @@ var Paste = function (_Module) {
                     case Node.ELEMENT_NODE:
                         var element = node;
                         /** Append inline elements to previous fragment */
-                        if (!$.blockElements.includes(element.tagName.toLowerCase()) && !tags.includes(element.tagName.toLowerCase())) {
+                        if (!$.blockElements.includes(element.tagName.toLowerCase()) && !tags.includes(element.tagName)) {
                             destNode.appendChild(element);
                             return [].concat(_toConsumableArray(nodes), [destNode]);
                         }
-                        if (tags.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref12) {
+                        if (tags.includes(element.tagName) || $.blockElements.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref12) {
                             var tagName = _ref12.tagName;
-                            return !tags.includes(tagName.toLowerCase());
-                        }) || $.blockElements.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref13) {
-                            var tagName = _ref13.tagName;
                             return !$.blockElements.includes(tagName.toLowerCase());
                         })) {
                             return [].concat(_toConsumableArray(nodes), [element]);

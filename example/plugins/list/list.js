@@ -54,7 +54,6 @@ class List {
    * @param {object} api - CodeX Editor API
    */
   constructor(listData = {}, config = {}, api = {}) {
-
     /**
      * HTML nodes
      * @private
@@ -89,8 +88,6 @@ class List {
 
     this.api = api;
     this.data = listData;
-
-
   }
 
   /**
@@ -99,14 +96,14 @@ class List {
    * @public
    */
   render() {
-    var style = this._data.style === 'ordered' ? this.CSS.wrapperOrdered : this.CSS.wrapperUnordered;
+    const style = this._data.style === 'ordered' ? this.CSS.wrapperOrdered : this.CSS.wrapperUnordered;
 
-    this._elements.wrapper = this._make('ul', [ this.CSS.baseBlock, this.CSS.wrapper, style ], {
+    this._elements.wrapper = this._make('ul', [this.CSS.baseBlock, this.CSS.wrapper, style], {
       contentEditable: true
     });
 
     // fill with data
-    if (this._data.items.length){
+    if (this._data.items.length) {
       this._data.items.forEach( item => {
         this._elements.wrapper.appendChild(this._make('li', [this.CSS.item, this.CSS.input], {
           innerHTML: item
@@ -130,12 +127,11 @@ class List {
           this.backspace(event);
           break;
         case A:
-          if (cmdPressed){
+          if (cmdPressed) {
             this.selectItem(event);
           }
           break;
       }
-
     }, false);
 
     return this._elements.wrapper;
@@ -166,6 +162,7 @@ class List {
 
         // clear other buttons
         const buttons = itemEl.parentNode.querySelectorAll('.' + this.CSS.settingsButton);
+
         Array.from(buttons).forEach( button => button.classList.remove(this.CSS.settingsButtonActive));
 
         // mark active
@@ -182,6 +179,16 @@ class List {
     return wrapper;
   }
 
+  /**
+   * List Tool on paste configuration
+   * @public
+   */
+  static get onPaste() {
+    return {
+      tags: ['OL', 'UL', 'LI'],
+      handler: List.pasteHandler
+    };
+  }
 
   /**
    * Toggles List style
@@ -236,7 +243,8 @@ class List {
 
     for (let i = 0; i < items.length; i++) {
       const value = items[i].innerHTML.replace('<br>', ' ').trim();
-      if (value){
+
+      if (value) {
         this._data.items.push(items[i].innerHTML);
       }
     }
@@ -279,7 +287,7 @@ class List {
     /**
      * Save the last one.
      */
-    if (items.length < 2){
+    if (items.length < 2) {
       return;
     }
 
@@ -288,7 +296,6 @@ class List {
 
     /** Prevent Default li generation if item is empty */
     if (currentNode === lastItem && !lastItem.innerHTML.replace('<br>', ' ').trim()) {
-
       /** Insert New Block and set caret */
       this.api.blocks.insertNewBlock();
       event.preventDefault();
@@ -300,11 +307,11 @@ class List {
    * Handle backspace
    * @param {KeyboardEvent} event
    */
-  backspace(event){
+  backspace(event) {
     const items = this._elements.wrapper.querySelectorAll('.' + this.CSS.item),
       firstItem = items[0];
 
-    if (!firstItem){
+    if (!firstItem) {
       return;
     }
 
@@ -332,5 +339,40 @@ class List {
 
     selection.removeAllRanges();
     selection.addRange(range);
+  }
+
+  /**
+   * Handle UL, OL and LI tags paste and returns List data
+   *
+   * @param {HTMLUListElement|HTMLOListElement|HTMLLIElement} element
+   * @returns {ListData}
+   */
+  static pasteHandler(element) {
+    const {tagName: tag} = element;
+    let type;
+
+    switch(tag) {
+      case 'OL':
+        type = 'ordered';
+        break;
+      case 'UL':
+      case 'LI':
+        type = 'unordered';
+    }
+
+    const data = {
+      type,
+      items: []
+    };
+
+    if (tag === 'LI') {
+      data.items = [ element.innerHTML ];
+    } else {
+      const items = Array.from(element.querySelectorAll('LI'));
+
+      data.items = items.map(li => li.innerHTML).filter(item => !!item.trim());
+    }
+
+    return data;
   }
 }
