@@ -96,13 +96,13 @@ class Quote {
    */
   get CSS() {
     return {
-      baseClass: 'cdx-block',
+      baseClass: this.api.styles.block,
       wrapper: 'cdx-quote',
       quote: 'cdx-quote__text',
-      input: 'cdx-input',
+      input: this.api.styles.input,
       caption: 'cdx-quote__caption',
-      settingsButton: 'cdx-settings-button',
-      settingsButtonActive: 'cdx-settings-button--active'
+      settingsButton: this.api.styles.settingsButton,
+      settingsButtonActive: this.api.styles.settingsButtonActive
     };
   }
 

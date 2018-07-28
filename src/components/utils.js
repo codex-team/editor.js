@@ -17,10 +17,10 @@ export default class Util {
         msg = `[codex-editor]: ${msg}`;
       } else {
         args = msg || 'undefined';
-        msg = '[codex-editor]:      %o';
+        msg = '[codex-editor]: %o';
       }
     } else {
-      msg  = '[codex-editor]:      ' + msg;
+      msg  = '[codex-editor]: ' + msg;
     }
 
     try{
@@ -128,6 +128,24 @@ export default class Util {
    */
   static array(collection) {
     return Array.prototype.slice.call(collection);
+  }
+
+  /**
+   * Check if passed variable is a function
+   * @param {*} fn
+   * @return {boolean}
+   */
+  static isFunction(fn) {
+    return typeof fn === 'function';
+  }
+
+  /**
+   * Check if passed function is a class
+   * @param {function} fn
+   * @return {boolean}
+   */
+  static isClass(fn) {
+    return typeof fn === 'function' && /^\s*class\s+/.test(fn.toString());
   }
 
   /**

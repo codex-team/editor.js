@@ -1,128 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>CodeX Editor example</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-            font-size: 14px;
-            line-height: 1.5em;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>CodeX Editor 🤩🧦🤨 example</title>
+  <link href="https://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet">
+  <link href="assets/demo.css" rel="stylesheet">
+  <script src="assets/json-preview.js"></script>
 </head>
 <body>
+  <div class="ce-example">
+    <div class="ce-example__header">
+      <a class="ce-example__header-logo" href="https://ifmo.su/editor">CodeX Editor 🤩🧦🤨</a>
 
-    <div id="codex-editor"></div>
+      <div class="ce-example__header-menu">
+        <a href="https://github.com/codex-editor" target="_blank">Plugins</a>
+      </div>
+    </div>
+    <div class="ce-example__content">
+      <div id="codex-editor"></div>
 
-</body>
+      <div class="ce-example__button" id="saveButton">
+        editor.saver.save()
+      </div>
+    </div>
+    <div class="ce-example__output">
+      <pre class="ce-example__output-content" id="output"></pre>
 
+      <div class="ce-example__output-footer">
+        <a href="https://ifmo.su" style="font-weight: bold">Made by CodeX</a>
+    </div>
+  </div>
 
+  <!--Load plugins -->
+  <script src="plugins/text/text.js?v=100"></script>
+  <link rel="stylesheet" href="plugins/text/text.css">
 
-<script src="plugins/text/text.js?v=100"></script>
-<link rel="stylesheet" href="plugins/text/text.css">
+  <script src="https://cdn.rawgit.com/codex-editor/header/25d39a1e/dist/bundle.js"></script>
 
-<link rel="stylesheet" href="tools-inline/term/term.css">
-<script src="tools-inline/term/term.js"></script>
+  <script src="plugins/simple-image/simple-image.js?v=100"></script>
+  <link rel="stylesheet" href="plugins/simple-image/simple-image.css">
 
-<script src="plugins/header/header.js?v=100"></script>
-<link rel="stylesheet" href="plugins/header/header.css">
+  <script src="plugins/list/list.js?v=100"></script>
+  <link rel="stylesheet" href="plugins/list/list.css">
 
-<script src="plugins/simple-image/simple-image.js?v=100"></script>
-<link rel="stylesheet" href="plugins/simple-image/simple-image.css">
+  <link rel="stylesheet" href="tools-inline/term/term.css">
+  <script src="tools-inline/term/term.js"></script>
 
-<script src="plugins/quote/quote.js?v=100"></script>
-<link rel="stylesheet" href="plugins/quote/quote.css">
+  <script src="plugins/quote/quote.js?v=100"></script>
+  <link rel="stylesheet" href="plugins/quote/quote.css">
 
-<script src="plugins/code/code.js"></script>
-<link rel="stylesheet" href="plugins/code/code.css">
+  <!--Load CodeX Editor -->
+  <script src="../build/codex-editor.js?v=108"></script>
 
-<script src="../build/codex-editor.js?v=108"></script>
+  <!-- Initialization -->
+  <script>
+    /**
+     * Saving button
+     */
+    const saveButton = document.getElementById('saveButton');
 
-<script>
+    /**
+     * To initialize the Editor, create a new instance with configuration object
+     * @see docs/installation.md for mode details
+     */
     var editor = new CodexEditor({
-        holderId: 'codex-editor',
-        initialBlock: 'text',
-        tools: {
-            text: {
-              class: Text,
-              inlineToolbar: true,
-            },
-            header: Header,
-            term: {
-              class: Term,
-              shortcut: 'CMD+SHIFT+M'
-            },
-            image: SimpleImageTool,
-            quote: {
-              class: Quote,
-              enableLineBreaks: true,
-              inlineToolbar: true,
-            }
+      holderId: 'codex-editor', /** wrapper of Editor */
+      tools: {  /** tools list */
+        text: { /** each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md} */
+          class: Text,
+          inlineToolbar: true,
         },
-        data: {
-            items: [
-                {
-                    type : 'text',
-                    data : {
-                        text : 'Привет от CodeX'
-                    }
-                },
-                {
-                    type : 'text',
-                    data : {
-                        text : 'В <b>JavaScript</b> <a href="https://ifmo.su/ts-classes">нет возможности</a> назначить свойства при объявлении класса — все необходимые значения нужно определять в конструкторе или других методах. При таком подходе объявление свойств неявное, не всегда ясно какие свойства имеет класс. TS решает эту проблему: здесь можно не только объявить свойства класса, но и назначить им начальные значения'
-                    }
-                },
-                {
-                  type: "header",
-                  data: {
-                    text: "ES6 тебя сожрет",
-                    level: 4
-                  }
-                },
-                {
-                  type : 'text',
-                  data : {
-                    text : 'Одним из недостатков ES6 классов является невозможность сделать методы и свойства приватными. В TS есть привычные модификаторы: <span class="marked">public</span>, <span class="marked">private</span> и <span class="marked">protected</span>, которые можно использовать как для методов, так и для свойств. По умолчанию, как и в других языках, все свойства имеют модификатор <span class="marked">public</span>.'
-                  }
-                },
-                {
-                  type: 'image',
-                  data: {
-                    url : 'https://ifmo.su/upload/redactor_images/o_5f254690d42854ebd26d699c192295f1.jpg',
-                    caption: 'Here is a boomer',
-                    stretched: false,
-                    withBorder: false,
-                    withBackground: false,
-                  }
-                },
-              {
-                type: 'quote',
-                data: {
-                  quote: 'Luke, I am You Father',
-                  caption: 'Anakin Skywalker aka Lord Darth Vader',
-                  alignment: 'center'
-                }
-              }
-            ]
+        header: Header, /** or pass class directly without any configuration */
+        term: {
+          class: Term,
+          shortcut: 'CMD+SHIFT+M'
+        },
+        image: SimpleImageTool,
+        list: {
+          class: List,
+          inlineToolbar: true
+        },
+        quote: {
+          class: Quote,
+          inlineToolbar: true,
+          enableLineBreaks: true
         }
+      },
+      initialBlock: 'text', /** this Tool will be used as default */
+      data: { /** Initial Editor data */
+        items: [
+          {
+            type : 'text',
+            data : {
+              text : 'Привет от CodeX'
+            }
+          },
+          {
+            type : 'text',
+            data : {
+              text : 'В <b>JavaScript</b> <a href="https://ifmo.su/ts-classes">нет возможности</a> назначить свойства при объявлении класса — все необходимые значения нужно определять в конструкторе или других методах. При таком подходе объявление свойств неявное, не всегда ясно какие свойства имеет класс. TS решает эту проблему: здесь можно не только объявить свойства класса, но и назначить им начальные значения'
+            }
+          },
+          {
+            type: "header",
+            data: {
+              text: "ES6 тебя сожрет",
+              level: 4
+            }
+          },
+          {
+            type : 'text',
+            data : {
+              text : 'Одним из недостатков ES6 классов является невозможность сделать методы и свойства приватными. В TS есть привычные модификаторы: <span class="marked">public</span>, <span class="marked">private</span> и <span class="marked">protected</span>, которые можно использовать как для методов, так и для свойств. По умолчанию, как и в других языках, все свойства имеют модификатор <span class="marked">public</span>.'
+            }
+          },
+          {
+            type: 'image',
+            data: {
+              url : 'https://ifmo.su/upload/redactor_images/o_5f254690d42854ebd26d699c192295f1.jpg',
+              caption: 'Here is a boomer',
+              stretched: false,
+              withBorder: false,
+              withBackground: false,
+            }
+          }
+        ]
+      },
+      onReady: function(){
+        saveButton.click();
+      }
     });
 
-    window.editor = editor;
-
-</script>
-
-<button onclick='editor.saver.save().then((savedData) => {
-  document.getElementById("output").innerHTML = JSON.stringify(savedData, null, 2);
-})'>save</button>
-<pre>
-<div id='output'></div>
-</pre>
-<style media="screen">
-  #output {
-    font-family: monospace;
-    word-wrap: break-word;
-  }
-</style>
+    /**
+     * Saving example
+     */
+    saveButton.addEventListener('click', function () {
+      editor.saver.save().then((savedData) => {
+        cPreview.show(savedData, document.getElementById("output"));
+      });
+    });
+  </script>
+</body>
 </html>
