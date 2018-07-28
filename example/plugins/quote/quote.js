@@ -208,9 +208,6 @@ class Quote {
           title: `${capitalize(tune.name)} alignment`
         });
 
-        el.classList.add(this.CSS.settingsButton);
-        el.innerHTML = tune.icon;
-
         el.classList.toggle(this.CSS.settingsButtonActive, tune.name === this.data.alignment);
 
         wrapper.appendChild(el);
