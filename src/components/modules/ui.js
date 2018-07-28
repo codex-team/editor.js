@@ -320,6 +320,8 @@ export default class UI extends Module {
   appendSVGSprite() {
     let spriteHolder = $.make('div');
 
+    spriteHolder.hidden = true;
+    spriteHolder.style.display = 'none';
     spriteHolder.innerHTML = sprite;
 
     $.append(this.nodes.wrapper, spriteHolder);

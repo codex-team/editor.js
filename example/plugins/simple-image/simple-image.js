@@ -129,6 +129,10 @@ class SimpleImageTool {
     let image = blockContent.querySelector('img'),
       caption = blockContent.querySelector('.' + this.CSS.input);
 
+    if (!image){
+      return this.data;
+    }
+
     return Object.assign(this.data, {
       url: image.src,
       caption: caption.innerHTML
