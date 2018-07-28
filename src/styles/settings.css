@@ -29,6 +29,7 @@
 
   &__button {
     @apply --toolbar-button;
+    line-height: 32px;
 
     &--disabled {
         cursor: not-allowed !important;

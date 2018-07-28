@@ -16,16 +16,18 @@ const cPreview = (function (module) {
     output = stylize( output );
     holder.innerHTML = output;
   };
+
   /**
    * Converts '>', '<', '&' symbols to entities
    */
   function encodeHTMLEntities(string) {
     return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
+
   /**
    * Some styling magic
    */
-  function stylize(string ) {
+  function stylize(string) {
     /** Stylize JSON keys */
     string = string.replace( /"(\w+)"\s?:/g, '"<span class=sc_key>$1</span>" :');
     /** Stylize tool names */
