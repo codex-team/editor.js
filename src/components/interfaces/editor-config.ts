@@ -44,4 +44,9 @@ export default interface IEditorConfig {
    * Do not show toolbar
    */
   hideToolbar?: boolean;
+
+  /**
+   * Editor initialization callback
+   */
+  onReady?(): void;
 }

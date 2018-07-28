@@ -1,0 +1,118 @@
+/**
+ * Styles for the example page
+ */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  line-height: 1.5em;
+  margin: 0;
+}
+
+.ce-example {
+  font-size: 15px;
+}
+
+.ce-example__header {
+  border-bottom: 1px solid #E8E8EB;
+  height: 50px;
+  line-height: 50px;
+  display: flex;
+  padding: 0 30px;
+  margin-bottom: 30px;
+}
+
+.ce-example__header a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.ce-example__header-logo {
+  font-weight: bold;
+}
+
+.ce-example__header-menu {
+  margin-left: auto;
+}
+
+.ce-example__header-menu a {
+  margin-left: 20px;
+}
+
+.ce-example__content {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.ce-example__output {
+  background: #1B202B;
+  overflow-x: auto;
+  padding: 0 30px;
+}
+
+.ce-example__output-content {
+  max-width: 650px;
+  margin: 30px auto;
+  color: #ABADC3;
+  font-family: 'PT Mono', Menlo, Monaco, Consolas, Courier New, monospace;
+  font-size: 13.3px;
+}
+
+.ce-example__output-content:empty {
+  display: none;
+}
+
+.ce-example__button {
+  display: block;
+  margin: 50px auto;
+  max-width: 180px;
+  background: #4A9DF8;
+  padding: 17px 30px;
+  box-shadow: 0 6px 4px -4px rgba(137, 207, 255, 0.77);
+  cursor: pointer;
+  border-radius: 31px;
+  color: #fff;
+  font-family: 'PT Mono', Menlo, Monaco, Consolas, Courier New, monospace;
+  text-align: center;
+}
+
+.ce-example__button:hover {
+  background: #3D8DE5;
+}
+
+.ce-example__output-footer {
+  padding: 30px 0;
+  font-size: 14.2px;
+  letter-spacing: 0.3px;
+  text-align: center;
+}
+
+.ce-example__output-footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+@media all and (max-width: 680px){
+  .ce-example__header,
+  .ce-example__content{
+    padding: 0 20px;
+  }
+}
+
+/**
+ * JSON highlighter
+ */
+.sc_attr {
+  color: rgb(148, 162, 192);
+}
+.sc_key {
+  color: rgb(190, 213, 255);
+}
+.sc_toolname {
+  color: rgb(15, 205, 251);
+}
+.sc_tag {
+  color: rgb(4, 131, 216);
+}
+.sc_bool {
+  color: rgb(247, 60, 173);
+}

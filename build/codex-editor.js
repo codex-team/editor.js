@@ -11098,18 +11098,6 @@ module.exports = g;
  */
 
 /**
- * @typedef {Object} EditorConfig
- * @property {String} holderId           - Element to append Editor
- * @property {Array} data                - Blocks list in JSON-format
- * @property {Object} tools              - Map for used Tools in format { name : Class, ... }
- * @property {String} initialBlock       - This Tool will be added by default
- * @property {String} placeholder        - First Block placeholder
- * @property {Object} sanitizer          - @todo fill desc
- * @property {Boolean} hideToolbar       - @todo fill desc
- * @property {Object} toolsConfig        - tools configuration {@link tools#ToolConfig}
- */
-
-/**
  * Dynamically imported utils
  *
  * @typedef {Dom}   $      - {@link components/dom.js}
@@ -11219,7 +11207,11 @@ var CodexEditor = function () {
       // todo Is it necessary?
       delete _this.moduleInstances;
     }).then(function () {
-      _.log('CodeX Editor is ready!');
+      _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧');
+
+      setTimeout(function () {
+        _this.config.onReady.call();
+      }, 500);
     }).catch(function (error) {
       _.log('CodeX Editor does not ready because of ' + error, 'error');
     });
@@ -11468,6 +11460,7 @@ var CodexEditor = function () {
       this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
       this.config.tools = config.tools || {};
       this.config.data = config.data || {};
+      this.config.onReady = config.onReady || function () {};
 
       /**
        * Initialize items to pass data to the Renderer
@@ -11509,117 +11502,6 @@ var CodexEditor = function () {
 CodexEditor.displayName = 'CodexEditor';
 exports.default = CodexEditor;
 ;
-
-// module.exports = (function (editor) {
-//
-//     'use strict';
-//
-//     editor.version = VERSION;
-//     editor.scriptPrefix = 'cdx-script-';
-//
-//     var init = function () {
-//
-//         editor.core          = require('./modules/core');
-//         editor.tools         = require('./modules/tools');
-//         editor.ui            = require('./modules/ui');
-//         editor.transport     = require('./modules/transport');
-//         editor.renderer      = require('./modules/renderer');
-//         editor.saver         = require('./modules/saver');
-//         editor.content       = require('./modules/content');
-//         editor.toolbar       = require('./modules/toolbar/toolbar');
-//         editor.callback      = require('./modules/callbacks');
-//         editor.draw          = require('./modules/draw');
-//         editor.caret         = require('./modules/caret');
-//         editor.notifications = require('./modules/notifications');
-//         editor.parser        = require('./modules/parser');
-//         editor.sanitizer     = require('./modules/sanitizer');
-//         editor.listeners     = require('./modules/listeners');
-//         editor.destroyer     = require('./modules/destroyer');
-//         editor.paste         = require('./modules/paste');
-//
-//     };
-//
-//     /**
-//      * @public
-//      * holds initial settings
-//      */
-//     editor.settings = {
-//         tools     : ['text', 'header', 'picture', 'list', 'quote', 'code', 'twitter', 'instagram', 'smile'],
-//         holderId  : 'codex-editor',
-//
-//         // Type of block showing on empty editor
-//         initialBlockPlugin: 'text'
-//     };
-//
-//     /**
-//      * public
-//      *
-//      * Static nodes
-//      */
-//     editor.nodes = {
-//         holder            : null,
-//         wrapper           : null,
-//         toolbar           : null,
-//         inlineToolbar     : {
-//             wrapper : null,
-//             buttons : null,
-//             actions : null
-//         },
-//         toolbox           : null,
-//         notifications     : null,
-//         plusButton        : null,
-//         showSettingsButton: null,
-//         showTrashButton   : null,
-//         blockSettings     : null,
-//         pluginSettings    : null,
-//         defaultSettings   : null,
-//         toolbarButtons    : {}, // { type : DomEl, ... }
-//         redactor          : null
-//     };
-//
-//     /**
-//      * @public
-//      *
-//      * Output state
-//      */
-//     editor.state = {
-//         jsonOutput  : [],
-//         blocks      : [],
-//         inputs      : []
-//     };
-//
-//     /**
-//     * @public
-//     * Editor plugins
-//     */
-//     editor.tools = {};
-//
-//     editor.start = function (userSettings) {
-//
-//         init();
-//
-//         editor.core.prepare(userSettings)
-//
-//         // If all ok, make UI, bind events and parse initial-content
-//             .then(editor.ui.prepare)
-//             .then(editor.tools.prepare)
-//             .then(editor.sanitizer.prepare)
-//             .then(editor.paste.prepare)
-//             .then(editor.transport.prepare)
-//             .then(editor.renderer.makeBlocksFromData)
-//             .then(editor.ui.saveInputs)
-//             .catch(function (error) {
-//
-//                 editor.core.log('Initialization failed with error: %o', 'warn', error);
-//
-//             });
-//
-//     };
-//
-//     return editor;
-//
-// })({});
-
 module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! utils */ "./src/components/utils.js"), __webpack_require__(/*! dom */ "./src/components/dom.js")))
 
@@ -16383,6 +16265,9 @@ var BlocksAPI = function (_Module) {
         key: "stretchBlock",
         value: function stretchBlock(index, status) {
             var block = this.Editor.BlockManager.getBlockByIndex(index);
+            if (!block) {
+                return;
+            }
             block.stretched = status !== undefined ? status : true;
         }
         /**
@@ -23522,6 +23407,8 @@ var UI = function (_Module) {
     value: function appendSVGSprite() {
       var spriteHolder = $.make('div');
 
+      spriteHolder.hidden = true;
+      spriteHolder.style.display = 'none';
       spriteHolder.innerHTML = _sprite2.default;
 
       $.append(this.nodes.wrapper, spriteHolder);
@@ -24419,7 +24306,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ":root {\r\n  /**\r\n   * Selection color\r\n   */\r\n  --selectionColor: rgba(61,166,239,0.63);\r\n\r\n  /**\r\n   * Toolbar buttons\r\n   */\r\n  --bg-light: #eff2f5;\r\n\r\n  /**\r\n   * All gray texts: placeholders, settings\r\n   */\r\n  --grayText: #707684;\r\n\r\n  /**\r\n   * Blue icons\r\n   */\r\n  --color-active-icon: #388AE5;\r\n\r\n  /**\r\n   * Gray border, loaders\r\n   */\r\n  --color-gray-border: #E8E8EB;\r\n\r\n  /**\r\n   * Block content width\r\n   */\r\n  --content-width: 650px;\r\n\r\n  /**\r\n   * Toolbar buttons height and width\r\n   */\r\n  --toolbar-buttons-size: 34px;\r\n\r\n  /**\r\n   * Toolbar Plus Button and Toolbox buttons height and width\r\n   */\r\n  --toolbox-buttons-size: 24px;\r\n\r\n  /**\r\n   * Confirm deletion bg\r\n   */\r\n  --color-confirm: #E24A4A;\r\n}\r\n/**\r\n* Editor wrapper\r\n*/\r\n.codex-editor {\r\n  position: relative;\r\n  box-sizing: border-box;\r\n}\r\n.codex-editor .hide {\r\n    display: none;\r\n  }\r\n.codex-editor__redactor {\r\n    padding-bottom: 300px;\r\n  }\r\n.codex-editor svg {\r\n    fill: currentColor;\r\n    vertical-align: middle;\r\n    max-height: 100%;\r\n  }\r\n/**\r\n * Set color for native selection\r\n */\r\n::-moz-selection{\r\n  background-color: rgba(61,166,239,0.63);\r\n  background-color: var(--selectionColor);\r\n}\r\n::selection{\r\n  background-color: rgba(61,166,239,0.63);\r\n  background-color: var(--selectionColor);\r\n}\r\n/**\r\n * Add placeholder to content editable elements with data attribute\r\n * data-placeholder=\"Hello world!\"\r\n */\r\n[contentEditable=true][data-placeholder]:empty:not(:focus):before{\r\n  content: attr(data-placeholder);\r\n  color: #707684;\r\n  color: var(--grayText);\r\n}\r\n.ce-toolbar {\r\n  position: absolute;\r\n  left: 0;\r\n  right: 0;\r\n  top: 0;\r\n  /*opacity: 0;*/\r\n  /*visibility: hidden;*/\r\n  transition: opacity 100ms ease;\r\n  will-change: opacity, transform;\r\n  display: none;\r\n}\r\n.ce-toolbar--opened {\r\n    display: block;\r\n    /*opacity: 1;*/\r\n    /*visibility: visible;*/\r\n  }\r\n.ce-toolbar__content {\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n    position: relative;\r\n  }\r\n.ce-toolbar__plus {\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  cursor: pointer;\r\n  width: 24px;\r\n  width: var(--toolbox-buttons-size);\r\n  height: 24px;\r\n  height: var(--toolbox-buttons-size);\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  -ms-flex-pack: center;\r\n      justify-content: center;\r\n  -ms-flex-align: center;\r\n      align-items: center\r\n  }\r\n.ce-toolbar__plus:not(:last-of-type){\r\n  margin-right: 10px;\r\n    }\r\n.ce-toolbar__plus {\r\n\r\n    position: absolute;\r\n    left: calc(calc(24px + 10px) * -1);\r\n    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);\r\n  }\r\n.ce-toolbar__plus:hover,\r\n    .ce-toolbar__plus--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-toolbar__plus--active{\r\n  animation: bounceIn 0.75s 1;\r\n  animation-fill-mode: forwards;\r\n    }\r\n.ce-toolbar__plus--hidden {\r\n      display: none;\r\n    }\r\n/**\r\n   * Block actions Zone\r\n   * -------------------------\r\n   */\r\n.ce-toolbar__actions {\r\n    position: absolute;\r\n    right: 0;\r\n    top: 0;\r\n    padding-right: 16px;\r\n  }\r\n.ce-toolbar__actions-buttons {\r\n      text-align: right;\r\n    }\r\n.ce-toolbar__settings-btn {\r\n    display: inline-block;\r\n    width: 24px;\r\n    height: 24px;\r\n    color: #707684;\r\n    color: var(--grayText);\r\n    cursor: pointer;\r\n  }\r\n.ce-toolbox {\r\n    position: absolute;\r\n    visibility: hidden;\r\n    transition: opacity 100ms ease;\r\n    will-change: opacity;\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-direction: row;\r\n        flex-direction: row;\r\n}\r\n.ce-toolbox--opened {\r\n        opacity: 1;\r\n        visibility: visible;\r\n    }\r\n.ce-toolbox__button {\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  cursor: pointer;\r\n  width: 24px;\r\n  width: var(--toolbox-buttons-size);\r\n  height: 24px;\r\n  height: var(--toolbox-buttons-size);\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  -ms-flex-pack: center;\r\n      justify-content: center;\r\n  -ms-flex-align: center;\r\n      align-items: center;\r\n    }\r\n.ce-toolbox__button:not(:last-of-type){\r\n  margin-right: 10px;\r\n    }\r\n.ce-toolbox__button:hover,\r\n    .ce-toolbox__button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-toolbox__button--active{\r\n  animation: bounceIn 0.75s 1;\r\n  animation-fill-mode: forwards;\r\n    }\r\n.ce-inline-toolbar {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-inline-toolbar::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n    }\r\n.ce-inline-toolbar {\r\n  padding: 6px;\r\n  transform: translateX(-50%);\r\n  display: none;\r\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\r\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\r\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\r\n}\r\n.ce-inline-toolbar--showed {\r\n    display: block;\r\n  }\r\n.ce-inline-tool {\r\n  display: inline-block;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n}\r\n.ce-inline-tool:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-inline-tool:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-inline-tool {\r\n  line-height: normal;\r\n}\r\n.ce-inline-tool--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-inline-tool--link .icon {\r\n      margin-top: -2px;\r\n    }\r\n.ce-inline-tool--link .icon--unlink {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--link {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--unlink {\r\n      display: inline-block;\r\n    }\r\n.ce-inline-tool-input {\r\n    background-color: #eff2f5;\r\n    background-color: var(--bg-light);\r\n    outline: none;\r\n    border: 0;\r\n    border-radius: 3px;\r\n    margin: 6px 0 0;\r\n    font-size: 13px;\r\n    padding: 8px;\r\n    width: 100%;\r\n    box-sizing: border-box;\r\n    display: none\r\n  }\r\n.ce-inline-tool-input::-webkit-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input:-ms-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input::placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input--showed {\r\n      display: block;\r\n    }\r\n.ce-settings {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-settings::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n    }\r\n.ce-settings {\r\n  right: 5px;\r\n  top: 35px;\r\n  min-width: 124px\r\n}\r\n.ce-settings::before{\r\n    left: auto;\r\n    right: 12px;\r\n  }\r\n.ce-settings {\r\n\r\n  display: none;\r\n}\r\n.ce-settings--opened {\r\n    display: block;\r\n  }\r\n.ce-settings__plugin-zone:not(:empty){\r\n      padding: 6px 6px 0;\r\n    }\r\n.ce-settings__default-zone:not(:empty){\r\n      padding: 6px;\r\n    }\r\n.ce-settings__button {\r\n  display: inline-block;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n  }\r\n.ce-settings__button:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-settings__button:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-settings__button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-settings__button--disabled {\r\n        cursor: not-allowed !important;\r\n        opacity: .3;\r\n    }\r\n.ce-settings__button--selected {\r\n      color: #388AE5;\r\n      color: var(--color-active-icon);\r\n    }\r\n.ce-settings__button--delete {\r\n      transition: background-color 300ms ease;\r\n      will-change: background-color;\r\n    }\r\n.ce-settings__button--delete .icon {\r\n        transition: transform 200ms ease-out;\r\n        will-change: transform;\r\n      }\r\n.ce-settings__button--confirm {\r\n      background-color: #E24A4A;\r\n      background-color: var(--color-confirm);\r\n      color: #fff\r\n    }\r\n.ce-settings__button--confirm:hover {\r\n        background-color: rgb(213, 74, 74) !important;\r\n        background-color: rgb(213, 74, 74) !important;\r\n      }\r\n.ce-settings__button--confirm .icon {\r\n        transform: rotate(90deg);\r\n      }\r\n.ce-block:first-of-type {\r\n    margin-top: 0;\r\n  }\r\n.ce-block--selected {\r\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\r\n    border-radius: 3px;\r\n  }\r\n.ce-block--stretched .ce-block__content {\r\n    max-width: none;\r\n  }\r\n.ce-block__content {\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n  }\r\n.wobble {\r\n  animation-name: wobble;\r\n  animation-duration: 400ms;\r\n}\r\n/**\r\n * @author Nick Pettit - https://github.com/nickpettit/glide\r\n */\r\n@keyframes wobble {\r\n  from {\r\n    transform: translate3d(0, 0, 0);\r\n  }\r\n\r\n  15% {\r\n    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\r\n  }\r\n\r\n  30% {\r\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\r\n  }\r\n\r\n  45% {\r\n    transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\r\n  }\r\n\r\n  60% {\r\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\r\n  }\r\n\r\n  75% {\r\n    transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\r\n  }\r\n\r\n  to {\r\n    transform: translate3d(0, 0, 0);\r\n  }\r\n}\r\n@keyframes bounceIn {\r\n  from,\r\n  20%,\r\n  40%,\r\n  60%,\r\n  80%,\r\n  to {\r\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n\r\n  0% {\r\n    transform: scale3d(0.86, 0.86, 0.86);\r\n  }\r\n\r\n  20% {\r\n    transform: scale3d(1.1, 1.1, 1.1);\r\n  }\r\n\r\n  40% {\r\n    transform: scale3d(0.9, 0.9, 0.9);\r\n  }\r\n\r\n  60% {\r\n    transform: scale3d(1.03, 1.03, 1.03);\r\n  }\r\n\r\n  80% {\r\n    transform: scale3d(0.97, 0.97, 0.97);\r\n  }\r\n\r\n  to {\r\n    transform: scale3d(1, 1, 1);\r\n  }\r\n}\r\n/**\r\n * Block Tool wrapper\r\n */\r\n.cdx-block {\r\n  padding: 0.7em 0;\r\n}\r\n/**\r\n * Input\r\n */\r\n.cdx-input {\r\n  border: 1px solid #E8E8EB;\r\n  border: 1px solid var(--color-gray-border);\r\n  box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\r\n  border-radius: 3px;\r\n  padding: 10px 12px;\r\n  outline: none;\r\n  width: 100%;\r\n  box-sizing: border-box;\r\n}\r\n/**\r\n * Settings\r\n */\r\n.cdx-settings-button {\r\n  display: inline-block;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n}\r\n.cdx-settings-button:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.cdx-settings-button:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.cdx-settings-button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.cdx-settings-button--active {\r\n    color: #388AE5;\r\n    color: var(--color-active-icon);\r\n  }\r\n/**\r\n * Loader\r\n */\r\n.cdx-loader {\r\n  position: relative;\r\n  border: 1px solid #E8E8EB;\r\n  border: 1px solid var(--color-gray-border)\r\n}\r\n.cdx-loader::before {\r\n    content: '';\r\n    position: absolute;\r\n    left: 50%;\r\n    top: 50%;\r\n    width: 18px;\r\n    height: 18px;\r\n    margin: -11px 0 0 -11px;\r\n    border: 2px solid #E8E8EB;\r\n    border: 2px solid var(--color-gray-border);\r\n    border-left-color: #388AE5;\r\n    border-left-color: var(--color-active-icon);\r\n    border-radius: 50%;\r\n    animation: cdxRotation 1.2s infinite linear;\r\n  }\r\n@keyframes cdxRotation {\r\n  0% {\r\n    transform: rotate(0deg);\r\n  }\r\n  100% {\r\n    transform: rotate(360deg);\r\n  }\r\n}\r\n", ""]);
+exports.push([module.i, ":root {\r\n  /**\r\n   * Selection color\r\n   */\r\n  --selectionColor: rgba(61,166,239,0.63);\r\n\r\n  /**\r\n   * Toolbar buttons\r\n   */\r\n  --bg-light: #eff2f5;\r\n\r\n  /**\r\n   * All gray texts: placeholders, settings\r\n   */\r\n  --grayText: #707684;\r\n\r\n  /**\r\n   * Blue icons\r\n   */\r\n  --color-active-icon: #388AE5;\r\n\r\n  /**\r\n   * Gray border, loaders\r\n   */\r\n  --color-gray-border: #E8E8EB;\r\n\r\n  /**\r\n   * Block content width\r\n   */\r\n  --content-width: 650px;\r\n\r\n  /**\r\n   * Toolbar buttons height and width\r\n   */\r\n  --toolbar-buttons-size: 34px;\r\n\r\n  /**\r\n   * Toolbar Plus Button and Toolbox buttons height and width\r\n   */\r\n  --toolbox-buttons-size: 24px;\r\n\r\n  /**\r\n   * Confirm deletion bg\r\n   */\r\n  --color-confirm: #E24A4A;\r\n}\r\n/**\r\n* Editor wrapper\r\n*/\r\n.codex-editor {\r\n  position: relative;\r\n  box-sizing: border-box;\r\n}\r\n.codex-editor .hide {\r\n    display: none;\r\n  }\r\n.codex-editor__redactor {\r\n    padding-bottom: 300px;\r\n  }\r\n.codex-editor svg {\r\n    fill: currentColor;\r\n    vertical-align: middle;\r\n    max-height: 100%;\r\n  }\r\n/**\r\n * Set color for native selection\r\n */\r\n::-moz-selection{\r\n  background-color: rgba(61,166,239,0.63);\r\n  background-color: var(--selectionColor);\r\n}\r\n::selection{\r\n  background-color: rgba(61,166,239,0.63);\r\n  background-color: var(--selectionColor);\r\n}\r\n/**\r\n * Add placeholder to content editable elements with data attribute\r\n * data-placeholder=\"Hello world!\"\r\n */\r\n[contentEditable=true][data-placeholder]:empty:not(:focus):before{\r\n  content: attr(data-placeholder);\r\n  color: #707684;\r\n  color: var(--grayText);\r\n}\r\n.ce-toolbar {\r\n  position: absolute;\r\n  left: 0;\r\n  right: 0;\r\n  top: 0;\r\n  /*opacity: 0;*/\r\n  /*visibility: hidden;*/\r\n  transition: opacity 100ms ease;\r\n  will-change: opacity, transform;\r\n  display: none;\r\n}\r\n.ce-toolbar--opened {\r\n    display: block;\r\n    /*opacity: 1;*/\r\n    /*visibility: visible;*/\r\n  }\r\n.ce-toolbar__content {\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n    position: relative;\r\n  }\r\n.ce-toolbar__plus {\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  cursor: pointer;\r\n  width: 24px;\r\n  width: var(--toolbox-buttons-size);\r\n  height: 24px;\r\n  height: var(--toolbox-buttons-size);\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  -ms-flex-pack: center;\r\n      justify-content: center;\r\n  -ms-flex-align: center;\r\n      align-items: center\r\n  }\r\n.ce-toolbar__plus:not(:last-of-type){\r\n  margin-right: 10px;\r\n    }\r\n.ce-toolbar__plus {\r\n\r\n    position: absolute;\r\n    left: calc(calc(24px + 10px) * -1);\r\n    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);\r\n  }\r\n.ce-toolbar__plus:hover,\r\n    .ce-toolbar__plus--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-toolbar__plus--active{\r\n  animation: bounceIn 0.75s 1;\r\n  animation-fill-mode: forwards;\r\n    }\r\n.ce-toolbar__plus--hidden {\r\n      display: none;\r\n    }\r\n/**\r\n   * Block actions Zone\r\n   * -------------------------\r\n   */\r\n.ce-toolbar__actions {\r\n    position: absolute;\r\n    right: 0;\r\n    top: 0;\r\n    padding-right: 16px;\r\n  }\r\n.ce-toolbar__actions-buttons {\r\n      text-align: right;\r\n    }\r\n.ce-toolbar__settings-btn {\r\n    display: inline-block;\r\n    width: 24px;\r\n    height: 24px;\r\n    color: #707684;\r\n    color: var(--grayText);\r\n    cursor: pointer;\r\n  }\r\n.ce-toolbox {\r\n    position: absolute;\r\n    visibility: hidden;\r\n    transition: opacity 100ms ease;\r\n    will-change: opacity;\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -ms-flex-direction: row;\r\n        flex-direction: row;\r\n}\r\n.ce-toolbox--opened {\r\n        opacity: 1;\r\n        visibility: visible;\r\n    }\r\n.ce-toolbox__button {\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  cursor: pointer;\r\n  width: 24px;\r\n  width: var(--toolbox-buttons-size);\r\n  height: 24px;\r\n  height: var(--toolbox-buttons-size);\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  -ms-flex-pack: center;\r\n      justify-content: center;\r\n  -ms-flex-align: center;\r\n      align-items: center;\r\n    }\r\n.ce-toolbox__button:not(:last-of-type){\r\n  margin-right: 10px;\r\n    }\r\n.ce-toolbox__button:hover,\r\n    .ce-toolbox__button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-toolbox__button--active{\r\n  animation: bounceIn 0.75s 1;\r\n  animation-fill-mode: forwards;\r\n    }\r\n.ce-inline-toolbar {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-inline-toolbar::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n    }\r\n.ce-inline-toolbar {\r\n  padding: 6px;\r\n  transform: translateX(-50%);\r\n  display: none;\r\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\r\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\r\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\r\n}\r\n.ce-inline-toolbar--showed {\r\n    display: block;\r\n  }\r\n.ce-inline-tool {\r\n  display: inline-block;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n}\r\n.ce-inline-tool:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-inline-tool:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-inline-tool {\r\n  line-height: normal;\r\n}\r\n.ce-inline-tool--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-inline-tool--link .icon {\r\n      margin-top: -2px;\r\n    }\r\n.ce-inline-tool--link .icon--unlink {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--link {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--unlink {\r\n      display: inline-block;\r\n    }\r\n.ce-inline-tool-input {\r\n    background-color: #eff2f5;\r\n    background-color: var(--bg-light);\r\n    outline: none;\r\n    border: 0;\r\n    border-radius: 3px;\r\n    margin: 6px 0 0;\r\n    font-size: 13px;\r\n    padding: 8px;\r\n    width: 100%;\r\n    box-sizing: border-box;\r\n    display: none\r\n  }\r\n.ce-inline-tool-input::-webkit-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input:-ms-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input::placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input--showed {\r\n      display: block;\r\n    }\r\n.ce-settings {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-settings::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n    }\r\n.ce-settings {\r\n  right: 5px;\r\n  top: 35px;\r\n  min-width: 124px\r\n}\r\n.ce-settings::before{\r\n    left: auto;\r\n    right: 12px;\r\n  }\r\n.ce-settings {\r\n\r\n  display: none;\r\n}\r\n.ce-settings--opened {\r\n    display: block;\r\n  }\r\n.ce-settings__plugin-zone:not(:empty){\r\n      padding: 6px 6px 0;\r\n    }\r\n.ce-settings__default-zone:not(:empty){\r\n      padding: 6px;\r\n    }\r\n.ce-settings__button {\r\n  display: inline-block;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n  }\r\n.ce-settings__button:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-settings__button:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-settings__button {\r\n    line-height: 32px;\r\n  }\r\n.ce-settings__button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-settings__button--disabled {\r\n        cursor: not-allowed !important;\r\n        opacity: .3;\r\n    }\r\n.ce-settings__button--selected {\r\n      color: #388AE5;\r\n      color: var(--color-active-icon);\r\n    }\r\n.ce-settings__button--delete {\r\n      transition: background-color 300ms ease;\r\n      will-change: background-color;\r\n    }\r\n.ce-settings__button--delete .icon {\r\n        transition: transform 200ms ease-out;\r\n        will-change: transform;\r\n      }\r\n.ce-settings__button--confirm {\r\n      background-color: #E24A4A;\r\n      background-color: var(--color-confirm);\r\n      color: #fff\r\n    }\r\n.ce-settings__button--confirm:hover {\r\n        background-color: rgb(213, 74, 74) !important;\r\n        background-color: rgb(213, 74, 74) !important;\r\n      }\r\n.ce-settings__button--confirm .icon {\r\n        transform: rotate(90deg);\r\n      }\r\n.ce-block:first-of-type {\r\n    margin-top: 0;\r\n  }\r\n.ce-block--selected {\r\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\r\n    border-radius: 3px;\r\n  }\r\n.ce-block--stretched .ce-block__content {\r\n    max-width: none;\r\n  }\r\n.ce-block__content {\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n  }\r\n.wobble {\r\n  animation-name: wobble;\r\n  animation-duration: 400ms;\r\n}\r\n/**\r\n * @author Nick Pettit - https://github.com/nickpettit/glide\r\n */\r\n@keyframes wobble {\r\n  from {\r\n    transform: translate3d(0, 0, 0);\r\n  }\r\n\r\n  15% {\r\n    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\r\n  }\r\n\r\n  30% {\r\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\r\n  }\r\n\r\n  45% {\r\n    transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\r\n  }\r\n\r\n  60% {\r\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\r\n  }\r\n\r\n  75% {\r\n    transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\r\n  }\r\n\r\n  to {\r\n    transform: translate3d(0, 0, 0);\r\n  }\r\n}\r\n@keyframes bounceIn {\r\n  from,\r\n  20%,\r\n  40%,\r\n  60%,\r\n  80%,\r\n  to {\r\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n\r\n  0% {\r\n    transform: scale3d(0.86, 0.86, 0.86);\r\n  }\r\n\r\n  20% {\r\n    transform: scale3d(1.1, 1.1, 1.1);\r\n  }\r\n\r\n  40% {\r\n    transform: scale3d(0.9, 0.9, 0.9);\r\n  }\r\n\r\n  60% {\r\n    transform: scale3d(1.03, 1.03, 1.03);\r\n  }\r\n\r\n  80% {\r\n    transform: scale3d(0.97, 0.97, 0.97);\r\n  }\r\n\r\n  to {\r\n    transform: scale3d(1, 1, 1);\r\n  }\r\n}\r\n/**\r\n * Block Tool wrapper\r\n */\r\n.cdx-block {\r\n  padding: 0.7em 0;\r\n}\r\n/**\r\n * Input\r\n */\r\n.cdx-input {\r\n  border: 1px solid #E8E8EB;\r\n  border: 1px solid var(--color-gray-border);\r\n  box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\r\n  border-radius: 3px;\r\n  padding: 10px 12px;\r\n  outline: none;\r\n  width: 100%;\r\n  box-sizing: border-box;\r\n}\r\n/**\r\n * Settings\r\n */\r\n.cdx-settings-button {\r\n  display: inline-block;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n}\r\n.cdx-settings-button:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.cdx-settings-button:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.cdx-settings-button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.cdx-settings-button--active {\r\n    color: #388AE5;\r\n    color: var(--color-active-icon);\r\n  }\r\n/**\r\n * Loader\r\n */\r\n.cdx-loader {\r\n  position: relative;\r\n  border: 1px solid #E8E8EB;\r\n  border: 1px solid var(--color-gray-border)\r\n}\r\n.cdx-loader::before {\r\n    content: '';\r\n    position: absolute;\r\n    left: 50%;\r\n    top: 50%;\r\n    width: 18px;\r\n    height: 18px;\r\n    margin: -11px 0 0 -11px;\r\n    border: 2px solid #E8E8EB;\r\n    border: 2px solid var(--color-gray-border);\r\n    border-left-color: #388AE5;\r\n    border-left-color: var(--color-active-icon);\r\n    border-radius: 50%;\r\n    animation: cdxRotation 1.2s infinite linear;\r\n  }\r\n@keyframes cdxRotation {\r\n  0% {\r\n    transform: rotate(0deg);\r\n  }\r\n  100% {\r\n    transform: rotate(360deg);\r\n  }\r\n}\r\n", ""]);
 
 // exports
 
