@@ -31,39 +31,35 @@
 <script src="plugins/simple-image/simple-image.js?v=100"></script>
 <link rel="stylesheet" href="plugins/simple-image/simple-image.css">
 
-<!--<script src="plugins/header/header.js"></script>-->
-<!--<link rel="stylesheet" href="plugins/header/header.css">-->
+<script src="plugins/list/list.js?v=100"></script>
+<link rel="stylesheet" href="plugins/list/list.css">
 
 <script src="plugins/code/code.js"></script>
 <link rel="stylesheet" href="plugins/code/code.css">
 
-
 <script src="../build/codex-editor.js?v=108"></script>
 
 <script>
-    codex = {};
-    codex.editor = 1;
     var editor = new CodexEditor({
-        holderId : 'codex-editor',
-        initialBlock : 'text',
+        holderId: 'codex-editor',
+        initialBlock: 'text',
         tools: {
-            text: Text,
-            header: Header,
-            term: Term,
-            image: SimpleImageTool
-        },
-        toolsConfig: {
             text: {
-              inlineToolbar : true
+              class: Text,
+              inlineToolbar: true,
             },
             header: {
+              class: Header,
               shortcut: 'CMD+SHIFT+H'
             },
             term: {
-              shortcut: 'CMD+E'
+              class: Term,
+              shortcut: 'CMD+SHIFT+M'
             },
-            link: {
-              shortcut: 'CMD+K'
+            image: SimpleImageTool,
+            list: {
+              class: List,
+              inlineToolbar: true
             }
         },
         data: {
@@ -72,6 +68,17 @@
                     type : 'text',
                     data : {
                         text : 'Привет от CodeX'
+                    }
+                },
+                {
+                    type : 'list',
+                    data : {
+                      style : 'ordered',
+                      items : [
+                          'Первый элемент',
+                          'Второй элемент',
+                          'Третий элемент'
+                      ],
                     }
                 },
                 {
@@ -106,8 +113,6 @@
             ]
         }
     });
-
-    console.log('Editor instance:', editor);
 
     window.editor = editor;
 

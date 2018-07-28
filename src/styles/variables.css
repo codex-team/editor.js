@@ -14,10 +14,14 @@
    */
   --grayText: #707684;
 
-  /** Blue icons */
+  /**
+   * Blue icons
+   */
   --color-active-icon: #388AE5;
 
-  // gray border, loaders, etc
+  /**
+   * Gray border, loaders
+   */
   --color-gray-border: #E8E8EB;
 
   /**
@@ -33,7 +37,7 @@
   /**
    * Toolbar Plus Button and Toolbox buttons height and width
    */
-  --toolbox-buttons-size: 20px;
+  --toolbox-buttons-size: 24px;
 
   /**
    * Confirm deletion bg
@@ -67,21 +71,26 @@
   --toolbox-button: {
     color: var(--grayText);
     cursor: pointer;
-    display: inline-block;
     width: var(--toolbox-buttons-size);
     height: var(--toolbox-buttons-size);
-    /*line-height: var(--toolbox-buttons-size);*/
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
 
     &:not(:last-of-type){
-      margin-right: 3px;
+      margin-right: 10px;
     }
 
-    &:hover {
+    &:hover,
+    &--active {
       color: var(--color-active-icon);
     }
+
+    &--active{
+      animation: bounceIn 0.75s 1;
+      animation-fill-mode: forwards;
+    }
+
   };
 
   /**

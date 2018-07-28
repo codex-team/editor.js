@@ -122,6 +122,7 @@ export default class CodexEditor {
       .then(() => {
         this.configuration = config;
       })
+      .then(() => this.validate())
       .then(() => this.init())
       .then(() => this.start())
       .then(() => {
@@ -138,10 +139,10 @@ export default class CodexEditor {
         delete this.moduleInstances;
       })
       .then(() => {
-        console.log('CodeX Editor is ready!');
+        _.log('CodeX Editor is ready!');
       })
       .catch(error => {
-        console.log('CodeX Editor does not ready because of %o', error);
+        _.log(`CodeX Editor does not ready because of ${error}`, 'error');
       });
   }
 
@@ -170,7 +171,6 @@ export default class CodexEditor {
 
     this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
     this.config.tools = config.tools || {};
-    this.config.toolsConfig = config.toolsConfig || {};
     this.config.data = config.data || {};
 
     /**
@@ -201,6 +201,58 @@ export default class CodexEditor {
    */
   get configuration() {
     return this.config;
+  }
+
+  /**
+   * Checks for required fields in Editor's config
+   * @returns {void|Promise<string>}
+   */
+  validate() {
+    /**
+     * Check if holderId is not empty
+     */
+    if (!this.config.holderId) {
+      return Promise.reject('«holderId» param must being not empty');
+    }
+
+    /**
+     * Check for a holder element's existence
+     */
+    if (!$.get(this.config.holderId)) {
+      return Promise.reject(`element with ID «${this.config.holderId}» is missing. Pass correct holder's ID.`);
+    }
+
+    /**
+     * Check Tools object
+     */
+    if (Object.keys(this.config.tools).length === 0) {
+      return Promise.reject('«tools» param must being not empty');
+    }
+
+    /**
+     * Check Tools for a class containing
+     */
+    for (let toolName in this.config.tools) {
+      const tool = this.config.tools[toolName];
+
+      if (!_.isClass(tool) && !_.isClass(tool.class)) {
+        return Promise.reject(`Tool «${toolName}» must be a class or an object with a «class» property`);
+      }
+    }
+
+    /**
+     * Check initialBlock param
+     */
+    if (!this.config.initialBlock) {
+      return Promise.reject('«initialBlock» param must being not empty');
+    }
+
+    /**
+     * Check for a initialBlock Tool existence
+     */
+    if (!this.config.tools[this.config.initialBlock]) {
+      return Promise.reject(`initial Block Tool «${this.config.initialBlock}» is missing in Tools list`);
+    }
   }
 
   /**

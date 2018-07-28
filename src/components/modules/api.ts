@@ -33,6 +33,7 @@ export default class API extends Module {
       sanitizer: this.Editor.SanitizerAPI.methods,
       saver: this.Editor.SaverAPI.methods,
       selection: this.Editor.SelectionAPI.methods,
+      styles: this.Editor.StylesAPI.classes,
       toolbar: this.Editor.ToolbarAPI.methods,
     };
   }

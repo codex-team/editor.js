@@ -1,7 +1,7 @@
-import {IBlockTool} from './block-tool';
-import {IBlockToolConfig} from './block-tool';
 import ISanitizerConfig from './sanitizer-config';
 import IInputOutputData from './input-output-data';
+import IToolSettings from './tools/tool-settings';
+import ITool from './tools/tool';
 
 /**
  * Editor Instance config
@@ -14,20 +14,9 @@ export default interface IEditorConfig {
   holderId: string;
 
   /**
-   * Blocks list in JSON-format
+   * Map of used Tools with or without configuration
    */
-  data: IInputOutputData;
-
-  /**
-   * Map of used Tools
-   */
-  tools: {[toolName: string]: IBlockTool};
-
-  /**
-   * Tools configuration
-   * @see {@link tools#ToolConfig}
-   */
-  toolsConfig: {[toolName: string]: IBlockToolConfig};
+  tools: {[toolName: string]: ITool|IToolSettings};
 
   /**
    * This Tool will be added by default
@@ -36,18 +25,23 @@ export default interface IEditorConfig {
   initialBlock: string;
 
   /**
+   * Blocks list in JSON-format
+   */
+  data?: IInputOutputData;
+
+  /**
    * First Block placeholder
    */
-  placeholder: string;
+  placeholder?: string;
 
   /**
    * Define tags not to be stripped off while pasting
    * @see {@link sanitizer}
    */
-  sanitizer: ISanitizerConfig;
+  sanitizer?: ISanitizerConfig;
 
   /**
    * Do not show toolbar
    */
-  hideToolbar: boolean;
+  hideToolbar?: boolean;
 }

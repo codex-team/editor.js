@@ -3,6 +3,8 @@
     visibility: hidden;
     transition: opacity 100ms ease;
     will-change: opacity;
+    display: flex;
+    flex-direction: row;
 
     &--opened {
         opacity: 1;

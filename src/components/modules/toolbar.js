@@ -195,10 +195,22 @@ export default class Toolbar extends Module {
   }
 
   /**
+   * returns toolbar opened state
+   * @return {Boolean}
+   */
+  get opened() {
+    return this.nodes.wrapper.classList.contains(Toolbar.CSS.toolbarOpened);
+  }
+
+  /**
    * Close the Toolbar
    */
   close() {
     this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
+
+    /** Close components */
+    this.Editor.Toolbox.close();
+    this.Editor.BlockSettings.close();
   }
 
   /**
