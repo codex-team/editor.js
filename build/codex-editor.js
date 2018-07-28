@@ -11207,7 +11207,7 @@ var CodexEditor = function () {
       // todo Is it necessary?
       delete _this.moduleInstances;
     }).then(function () {
-      _.log('CodeX Editor is ready!');
+      _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧');
 
       setTimeout(function () {
         _this.config.onReady.call();
@@ -13456,6 +13456,9 @@ var BlocksAPI = function (_Module) {
         key: "stretchBlock",
         value: function stretchBlock(index, status) {
             var block = this.Editor.BlockManager.getBlockByIndex(index);
+            if (!block) {
+                return;
+            }
             block.stretched = status !== undefined ? status : true;
         }
     }, {

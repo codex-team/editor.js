@@ -126,6 +126,10 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
   public stretchBlock(index: number, status: boolean): void {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
+    if (!block) {
+      return;
+    }
+
     block.stretched = status !== undefined ? status : true;
   }
 

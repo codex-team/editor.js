@@ -127,7 +127,7 @@ export default class CodexEditor {
         delete this.moduleInstances;
       })
       .then(() => {
-        _.log('CodeX Editor is ready!');
+        _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧');
 
         setTimeout(() => {
           this.config.onReady.call();
