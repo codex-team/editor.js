@@ -14,7 +14,7 @@ export default interface IInputOutputData {
   /**
    * Saved Blocks
    */
-  readonly items: IBlockToolData[];
+  readonly blocks: IBlockToolData[];
 
   /**
    * Editor's version

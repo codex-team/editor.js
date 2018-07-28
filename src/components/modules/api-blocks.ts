@@ -116,7 +116,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    */
   public render(data: IInputOutputData): void {
     this.Editor.BlockManager.clear();
-    this.Editor.Renderer.render(data.items);
+    this.Editor.Renderer.render(data.blocks);
   }
 
   /**
