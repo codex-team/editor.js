@@ -264,7 +264,7 @@ export default class Paste extends Module {
       if (blockData) {
         this.splitBlock();
 
-        if (BlockManager.currentBlock.isEmpty) {
+        if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
           BlockManager.replace(blockData.tool, blockData.data);
         } else {
           BlockManager.insert(blockData.tool, blockData.data);
@@ -313,7 +313,7 @@ export default class Paste extends Module {
       {BlockManager, Caret} = this.Editor,
       {currentBlock} = BlockManager;
 
-    if (canReplaceCurrentBlock && currentBlock.isEmpty) {
+    if (canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty) {
       BlockManager.replace(data.tool, blockData);
       return;
     }
@@ -328,6 +328,10 @@ export default class Paste extends Module {
    */
   private splitBlock() {
     const {BlockManager, Caret} = this.Editor;
+
+    if (!BlockManager.currentBlock) {
+      return;
+    }
 
     /** If we paste into middle of the current block:
      *  1. Split
@@ -363,14 +367,12 @@ export default class Paste extends Module {
           case Node.DOCUMENT_FRAGMENT_NODE:
             content = $.make('div');
             content.appendChild(node);
-            content.innerHTML = Sanitizer.clean(content.innerHTML);
             break;
 
           /** If node is an element, then there might be a substitution */
           case Node.ELEMENT_NODE:
             content = node as HTMLElement;
             isBlock = true;
-            content.innerHTML = Sanitizer.clean(content.innerHTML);
 
             if (this.toolsTags[content.tagName]) {
               tool = this.toolsTags[content.tagName].tool;
@@ -378,7 +380,16 @@ export default class Paste extends Module {
             break;
         }
 
-        const handler = Tools.blockTools[tool].onPaste.handler;
+        const {handler, tags} = Tools.blockTools[tool].onPaste;
+
+        const toolTags = tags.reduce((result, tag) => {
+          result[tag.toLowerCase()] = {};
+
+          return result;
+        }, {});
+        const customConfig = {tags: Object.assign({}, toolTags, Sanitizer.defaultConfig.tags)};
+
+        content.innerHTML = Sanitizer.clean(content.innerHTML, customConfig);
 
         return {content, isBlock, handler, tool};
     })
@@ -448,13 +459,13 @@ export default class Paste extends Module {
           /** Append inline elements to previous fragment */
           if (
             !$.blockElements.includes(element.tagName.toLowerCase()) &&
-            !tags.includes(element.tagName.toLowerCase())
+            !tags.includes(element.tagName)
           ) {
             destNode.appendChild(element);
             return [...nodes, destNode];
           }
 
-          if (tags.includes(element.tagName.toLowerCase()) || (
+          if (tags.includes(element.tagName) || (
               $.blockElements.includes(element.tagName.toLowerCase()) &&
               Array.from(element.children).every(
                 ({tagName}) => !$.blockElements.includes(tagName.toLowerCase()),

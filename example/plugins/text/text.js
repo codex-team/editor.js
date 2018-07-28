@@ -8,11 +8,11 @@
  * @version 2.0.1
  */
 
- /**
-  * @typedef {Object} TextData
-  * @description Tool's input and output data format
-  * @property {String} text — Paragraph's content. Can include HTML tags: <a><b><i>
-  */
+/**
+ * @typedef {Object} TextData
+ * @description Tool's input and output data format
+ * @property {String} text — Paragraph's content. Can include HTML tags: <a><b><i>
+ */
 class Text {
   /**
    * Should this tools be displayed at the Editor's Toolbox
@@ -148,15 +148,15 @@ class Text {
     this._element.innerHTML = this._data.text || '';
   }
 
-   /**
-    * Used by Codex Editor paste handling API.
-    * Provides configuration to handle DIV and P tags.
-    *
-    * @returns {{handler: (function(HTMLElement): {text: string}), tags: string[]}}
-    */
+  /**
+   * Used by Codex Editor paste handling API.
+   * Provides configuration to handle DIV and P tags.
+   *
+   * @returns {{handler: (function(HTMLElement): {text: string}), tags: string[]}}
+   */
   static get onPaste() {
     return {
-      tags: ['P', 'DIV'],
+      tags: [ 'P' ],
       handler: (content) => {
         return {
           text: content.innerHTML

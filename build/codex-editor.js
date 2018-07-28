@@ -19398,7 +19398,7 @@ var Paste = function (_Module) {
                                 }
 
                                 this.splitBlock();
-                                if (BlockManager.currentBlock.isEmpty) {
+                                if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
                                     BlockManager.replace(blockData.tool, blockData.data);
                                 } else {
                                     BlockManager.insert(blockData.tool, blockData.data);
@@ -19509,7 +19509,7 @@ var Paste = function (_Module) {
                                 Caret = _Editor2.Caret;
                                 currentBlock = BlockManager.currentBlock;
 
-                                if (!(canReplaceCurrentBlock && currentBlock.isEmpty)) {
+                                if (!(canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty)) {
                                     _context6.next = 10;
                                     break;
                                 }
@@ -19546,11 +19546,14 @@ var Paste = function (_Module) {
             var _Editor3 = this.Editor,
                 BlockManager = _Editor3.BlockManager,
                 Caret = _Editor3.Caret;
+
+            if (!BlockManager.currentBlock) {
+                return;
+            }
             /** If we paste into middle of the current block:
              *  1. Split
              *  2. Navigate to the first part
              */
-
             if (!BlockManager.currentBlock.isEmpty && !Caret.isAtEnd) {
                 BlockManager.split();
                 BlockManager.currentBlockIndex--;
@@ -19585,19 +19588,26 @@ var Paste = function (_Module) {
                     case Node.DOCUMENT_FRAGMENT_NODE:
                         content = $.make('div');
                         content.appendChild(node);
-                        content.innerHTML = Sanitizer.clean(content.innerHTML);
                         break;
                     /** If node is an element, then there might be a substitution */
                     case Node.ELEMENT_NODE:
                         content = node;
                         isBlock = true;
-                        content.innerHTML = Sanitizer.clean(content.innerHTML);
                         if (_this3.toolsTags[content.tagName]) {
                             tool = _this3.toolsTags[content.tagName].tool;
                         }
                         break;
                 }
-                var handler = Tools.blockTools[tool].onPaste.handler;
+                var _Tools$blockTools$too = Tools.blockTools[tool].onPaste,
+                    handler = _Tools$blockTools$too.handler,
+                    tags = _Tools$blockTools$too.tags;
+
+                var toolTags = tags.reduce(function (result, tag) {
+                    result[tag.toLowerCase()] = {};
+                    return result;
+                }, {});
+                var customConfig = { tags: Object.assign({}, toolTags, Sanitizer.defaultConfig.tags) };
+                content.innerHTML = Sanitizer.clean(content.innerHTML, customConfig);
                 return { content: content, isBlock: isBlock, handler: handler, tool: tool };
             }).filter(function (data) {
                 return !$.isNodeEmpty(data.content);
@@ -19658,11 +19668,11 @@ var Paste = function (_Module) {
                     case Node.ELEMENT_NODE:
                         var element = node;
                         /** Append inline elements to previous fragment */
-                        if (!$.blockElements.includes(element.tagName.toLowerCase()) && !tags.includes(element.tagName.toLowerCase())) {
+                        if (!$.blockElements.includes(element.tagName.toLowerCase()) && !tags.includes(element.tagName)) {
                             destNode.appendChild(element);
                             return [].concat(_toConsumableArray(nodes), [destNode]);
                         }
-                        if (tags.includes(element.tagName.toLowerCase()) || $.blockElements.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref12) {
+                        if (tags.includes(element.tagName) || $.blockElements.includes(element.tagName.toLowerCase()) && Array.from(element.children).every(function (_ref12) {
                             var tagName = _ref12.tagName;
                             return !$.blockElements.includes(tagName.toLowerCase());
                         })) {
