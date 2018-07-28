@@ -19194,7 +19194,7 @@ var Paste = function (_Module) {
          */
         _this.processPastedData = function () {
             var _ref6 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee2(event) {
-                var _this$Editor, Tools, Sanitizer, BlockManager, Caret, block, toolSettings, htmlData, plainData, toolsTags, customConfig, cleanData, dataToInsert;
+                var _this$Editor, Tools, Sanitizer, BlockManager, Caret, htmlData, plainData, toolsTags, customConfig, cleanData, dataToInsert;
 
                 return regeneratorRuntime.wrap(function _callee2$(_context2) {
                     while (1) {
@@ -19212,17 +19212,6 @@ var Paste = function (_Module) {
 
                             case 3:
                                 event.preventDefault();
-                                block = BlockManager.getBlock(event.target), toolSettings = Tools.getToolSettings(block.name);
-                                /** If paste is dissalowed in block do nothing */
-
-                                if (!(toolSettings && toolSettings[Tools.apiSettings.IS_PASTE_DISALLOWED])) {
-                                    _context2.next = 7;
-                                    break;
-                                }
-
-                                return _context2.abrupt('return');
-
-                            case 7:
                                 htmlData = event.clipboardData.getData('text/html'), plainData = event.clipboardData.getData('text/plain');
                                 /** Add all tags that can be substituted to sanitizer configuration */
 
@@ -19242,16 +19231,16 @@ var Paste = function (_Module) {
                                 }
 
                                 if (!(dataToInsert.length === 1 && !dataToInsert[0].isBlock)) {
-                                    _context2.next = 16;
+                                    _context2.next = 13;
                                     break;
                                 }
 
                                 _this.processSingleBlock(dataToInsert.pop());
                                 return _context2.abrupt('return');
 
-                            case 16:
+                            case 13:
                                 _this.splitBlock();
-                                _context2.next = 19;
+                                _context2.next = 16;
                                 return Promise.all(dataToInsert.map(function () {
                                     var _ref7 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee(data, i) {
                                         return regeneratorRuntime.wrap(function _callee$(_context) {
@@ -19277,10 +19266,10 @@ var Paste = function (_Module) {
                                     };
                                 }()));
 
-                            case 19:
+                            case 16:
                                 Caret.setToBlock(BlockManager.currentBlock, 0, true);
 
-                            case 20:
+                            case 17:
                             case 'end':
                                 return _context2.stop();
                         }

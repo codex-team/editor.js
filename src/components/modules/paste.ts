@@ -201,14 +201,6 @@ export default class Paste extends Module {
 
     event.preventDefault();
 
-    const block = BlockManager.getBlock(event.target),
-      toolSettings = Tools.getToolSettings(block.name);
-
-    /** If paste is dissalowed in block do nothing */
-    if (toolSettings && toolSettings[Tools.apiSettings.IS_PASTE_DISALLOWED]) {
-      return;
-    }
-
     const htmlData  = event.clipboardData.getData('text/html'),
       plainData = event.clipboardData.getData('text/plain');
 
