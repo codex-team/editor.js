@@ -369,7 +369,7 @@ class List {
   /**
    * List Tool on paste configuration
    *
-   * @returns {{tags: string[], handler: (function((HTMLUListElement|HTMLOListElement|HTMLLIElement)): {type: *})}}
+   * @returns {{tags: string[], handler: (function((HTMLUListElement|HTMLOListElement|HTMLLIElement)): ListData)}}
    */
   static get onPaste() {
     return {
