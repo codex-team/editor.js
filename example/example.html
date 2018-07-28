@@ -41,12 +41,15 @@
   <script src="plugins/simple-image/simple-image.js?v=100"></script>
   <link rel="stylesheet" href="plugins/simple-image/simple-image.css">
 
+  <script src="plugins/list/list.js?v=100"></script>
+  <link rel="stylesheet" href="plugins/list/list.css">
+
   <link rel="stylesheet" href="tools-inline/term/term.css">
   <script src="tools-inline/term/term.js"></script>
 
   <!--Load CodeX Editor -->
   <script src="../build/codex-editor.js?v=108"></script>
-
+    
   <!-- Initialization -->
   <script>
     /**
@@ -70,7 +73,11 @@
           class: Term,
           shortcut: 'CMD+SHIFT+M'
         },
-        image: SimpleImageTool
+        image: SimpleImageTool,
+        list: {
+          class: List,
+          inlineToolbar: true
+        }
       },
       initialBlock: 'text', /** this Tool will be used as default */
       data: { /** Initial Editor data */

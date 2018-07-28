@@ -37,7 +37,7 @@
   /**
    * Toolbar Plus Button and Toolbox buttons height and width
    */
-  --toolbox-buttons-size: 20px;
+  --toolbox-buttons-size: 24px;
 
   /**
    * Confirm deletion bg
@@ -78,12 +78,15 @@
     align-items: center;
 
     &:not(:last-of-type){
-      margin-right: 3px;
+      margin-right: 10px;
     }
 
     &:hover,
     &--active {
       color: var(--color-active-icon);
+    }
+
+    &--active{
       animation: bounceIn 0.75s 1;
       animation-fill-mode: forwards;
     }
