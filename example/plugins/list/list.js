@@ -179,6 +179,16 @@ class List {
     return wrapper;
   }
 
+  /**
+   * List Tool on paste configuration
+   * @public
+   */
+  static get onPaste() {
+    return {
+      tags: ['OL', 'UL', 'LI'],
+      handler: List.pasteHandler
+    };
+  }
 
   /**
    * Toggles List style
@@ -364,17 +374,5 @@ class List {
     }
 
     return data;
-  }
-
-  /**
-   * List Tool on paste configuration
-   *
-   * @returns {{tags: string[], handler: (function((HTMLUListElement|HTMLOListElement|HTMLLIElement)): ListData)}}
-   */
-  static get onPaste() {
-    return {
-      tags: ['OL', 'UL', 'LI'],
-      handler: List.pasteHandler
-    };
   }
 }
