@@ -46,6 +46,9 @@
   <link rel="stylesheet" href="tools-inline/term/term.css">
   <script src="tools-inline/term/term.js"></script>
 
+  <script src="plugins/quote/quote.js?v=100"></script>
+  <link rel="stylesheet" href="plugins/quote/quote.css">
+
   <!--Load CodeX Editor -->
   <script src="../build/codex-editor.js?v=108"></script>
 
@@ -76,6 +79,11 @@
         list: {
           class: List,
           inlineToolbar: true
+        },
+        quote: {
+          class: Quote,
+          inlineToolbar: true,
+          enableLineBreaks: true
         }
       },
       initialBlock: 'text', /** this Tool will be used as default */
