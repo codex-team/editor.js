@@ -215,19 +215,14 @@ export default class Paste extends Module {
     const htmlData  = event.clipboardData.getData('text/html'),
           plainData = event.clipboardData.getData('text/plain');
 
-    /** Add all block tags and tags can be substituted to sanitizer configuration */
-    const blockTags = $.blockElements.reduce((result, tag) => {
-      result[tag.toLowerCase()] = {};
-
-      return result;
-    }, {});
+    /** Add all tags that can be substituted to sanitizer configuration */
     const toolsTags = Object.keys(this.toolsTags).reduce((result, tag) => {
       result[tag.toLowerCase()] = {};
 
       return result;
     }, {});
 
-    const customConfig = {tags: Object.assign({}, blockTags, toolsTags, Sanitizer.defaultConfig.tags)};
+    const customConfig = {tags: Object.assign({}, toolsTags, Sanitizer.defaultConfig.tags)};
     const cleanData = Sanitizer.clean(htmlData, customConfig);
 
     let dataToInsert = [];
@@ -462,11 +457,7 @@ export default class Paste extends Module {
             return [...nodes, destNode];
           }
 
-          if (
-            (
-              tags.includes(element.tagName.toLowerCase()) &&
-              Array.from(element.children).every(({tagName}) => !tags.includes(tagName.toLowerCase()))
-            ) || (
+          if (tags.includes(element.tagName.toLowerCase()) || (
               $.blockElements.includes(element.tagName.toLowerCase()) &&
               Array.from(element.children).every(
                 ({tagName}) => !$.blockElements.includes(tagName.toLowerCase()),
