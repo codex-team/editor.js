@@ -11420,7 +11420,7 @@ var CodexEditor = function () {
                 }, Promise.resolve());
 
               case 3:
-                return _context2.abrupt('return', this.moduleInstances.Renderer.render(this.config.data.items));
+                return _context2.abrupt('return', this.moduleInstances.Renderer.render(this.config.data.blocks));
 
               case 4:
               case 'end':
@@ -11441,7 +11441,7 @@ var CodexEditor = function () {
     set: function set(config) {
       /**
        * Initlai block type
-       * Uses in case when there is no items passed
+       * Uses in case when there is no blocks passed
        * @type {{type: (*), data: {text: null}}}
        */
       var initialBlock = {
@@ -11463,14 +11463,14 @@ var CodexEditor = function () {
       this.config.onReady = config.onReady || function () {};
 
       /**
-       * Initialize items to pass data to the Renderer
+       * Initialize Blocks to pass data to the Renderer
        */
       if (_.isEmpty(this.config.data)) {
         this.config.data = {};
-        this.config.data.items = [initialBlock];
+        this.config.data.blocks = [initialBlock];
       } else {
-        if (!this.config.data.items || this.config.data.items.length === 0) {
-          this.config.data.items = [initialBlock];
+        if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
+          this.config.data.blocks = [initialBlock];
         }
       }
 
@@ -13444,7 +13444,7 @@ var BlocksAPI = function (_Module) {
         key: "render",
         value: function render(data) {
             this.Editor.BlockManager.clear();
-            this.Editor.Renderer.render(data.items);
+            this.Editor.Renderer.render(data.blocks);
         }
         /**
          * Stretch Block's content
@@ -16825,7 +16825,7 @@ var Renderer = function (_Module) {
   }
 
   /**
-   * @typedef {Object} RendererItems
+   * @typedef {Object} RendererBlocks
    * @property {String} type - tool name
    * @property {Object} data - tool data
    */
@@ -16833,32 +16833,32 @@ var Renderer = function (_Module) {
   /**
    * @example
    *
-   * items: [
-   * {
-   *    type : 'paragraph',
-   *    data : {
-   *        text : 'Hello from Codex!'
-   *    }
-   * },
-   * {
-   *   type : 'paragraph',
-   *   data : {
-   *        text : 'Leave feedback if you like it!'
-   *   }
-   * },
+   * blocks: [
+   *   {
+   *     type : 'paragraph',
+   *     data : {
+   *       text : 'Hello from Codex!'
+   *     }
+   *   },
+   *   {
+   *     type : 'paragraph',
+   *     data : {
+   *       text : 'Leave feedback if you like it!'
+   *     }
+   *   },
    * ]
    *
    */
 
   /**
    * Make plugin blocks from array of plugin`s data
-   * @param {RendererItems[]} items
+   * @param {RendererBlocks[]} blocks
    */
 
 
   _createClass(Renderer, [{
     key: 'render',
-    value: function render(items) {
+    value: function render(blocks) {
       var _this2 = this;
 
       var chainData = [];
@@ -16866,12 +16866,12 @@ var Renderer = function (_Module) {
       var _loop = function _loop(i) {
         chainData.push({
           function: function _function() {
-            return _this2.insertBlock(items[i]);
+            return _this2.insertBlock(blocks[i]);
           }
         });
       };
 
-      for (var i = 0; i < items.length; i++) {
+      for (var i = 0; i < blocks.length; i++) {
         _loop(i);
       }
 
@@ -17203,7 +17203,7 @@ var Saver = function (_Module) {
   }, {
     key: 'makeOutput',
     value: function makeOutput(allExtractedData) {
-      var items = [],
+      var blocks = [],
           totalTime = 0;
 
       console.groupCollapsed('[CodexEditor saving]:');
@@ -17212,7 +17212,7 @@ var Saver = function (_Module) {
         /** Group process info */
         console.log('\xAB' + extraction.tool + '\xBB saving info', extraction);
         totalTime += extraction.time;
-        items.push({
+        blocks.push({
           type: extraction.tool,
           data: extraction.data
         });
@@ -17223,7 +17223,7 @@ var Saver = function (_Module) {
 
       return {
         time: +new Date(),
-        items: items,
+        blocks: blocks,
         version: "2.0.0"
       };
     }

@@ -145,7 +145,7 @@ export default class CodexEditor {
   set configuration(config) {
     /**
      * Initlai block type
-     * Uses in case when there is no items passed
+     * Uses in case when there is no blocks passed
      * @type {{type: (*), data: {text: null}}}
      */
     let initialBlock = {
@@ -167,14 +167,14 @@ export default class CodexEditor {
     this.config.onReady = config.onReady || function () {};
 
     /**
-     * Initialize items to pass data to the Renderer
+     * Initialize Blocks to pass data to the Renderer
      */
     if (_.isEmpty(this.config.data)) {
       this.config.data = {};
-      this.config.data.items = [ initialBlock ];
+      this.config.data.blocks = [ initialBlock ];
     } else {
-      if (!this.config.data.items || this.config.data.items.length === 0) {
-        this.config.data.items = [ initialBlock ];
+      if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
+        this.config.data.blocks = [ initialBlock ];
       }
     }
 
@@ -343,6 +343,6 @@ export default class CodexEditor {
       Promise.resolve()
     );
 
-    return this.moduleInstances.Renderer.render(this.config.data.items);
+    return this.moduleInstances.Renderer.render(this.config.data.blocks);
   }
 };

@@ -57,7 +57,7 @@ export default class Saver extends Module {
    * @return {SavedData}
    */
   makeOutput(allExtractedData) {
-    let items = [],
+    let blocks = [],
       totalTime = 0;
 
     console.groupCollapsed('[CodexEditor saving]:');
@@ -66,7 +66,7 @@ export default class Saver extends Module {
       /** Group process info */
       console.log(`«${extraction.tool}» saving info`, extraction);
       totalTime += extraction.time;
-      items.push({
+      blocks.push({
         type: extraction.tool,
         data: extraction.data
       });
@@ -76,9 +76,9 @@ export default class Saver extends Module {
     console.groupEnd();
 
     return {
-      time    : +new Date(),
-      items   : items,
-      version : VERSION,
+      time: +new Date(),
+      blocks: blocks,
+      version: VERSION,
     };
   }
 }
