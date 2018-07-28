@@ -58,7 +58,6 @@ There are few options available by CodeX Editor.
 | Name | Type | Default Value | Description |
 | -- | -- | -- | -- |
 | `inlineToolbar` | _Boolean/Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
-| `disallowPaste` | _Boolean_ | `false` | Pass `true` if you want to prevent any paste into your Tool
 | `config` | _Object_ | `null` | User's configuration for Plugin.
 
 ### Paste handling
