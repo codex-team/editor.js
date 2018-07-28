@@ -96,7 +96,7 @@ class List {
    * @public
    */
   render() {
-    var style = this._data.style === 'ordered' ? this.CSS.wrapperOrdered : this.CSS.wrapperUnordered;
+    const style = this._data.style === 'ordered' ? this.CSS.wrapperOrdered : this.CSS.wrapperUnordered;
 
     this._elements.wrapper = this._make('ul', [this.CSS.baseBlock, this.CSS.wrapper, style], {
       contentEditable: true
@@ -360,7 +360,7 @@ class List {
     } else {
       const items = Array.from(element.querySelectorAll('LI'));
 
-      data.items = items.map(li => li.innerHTML);
+      data.items = items.map(li => li.innerHTML).filter(item => !!item.trim());
     }
 
     return data;
