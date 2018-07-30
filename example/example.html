@@ -31,25 +31,24 @@
     </div>
   </div>
 
-  <!--Load plugins -->
+  <!-- Load Tools -->
   <script src="plugins/text/text.js?v=100"></script>
   <link rel="stylesheet" href="plugins/text/text.css">
-
-  <script src="https://cdn.rawgit.com/codex-editor/header/25d39a1e/dist/bundle.js"></script>
-
-  <script src="plugins/simple-image/simple-image.js?v=100"></script>
-  <link rel="stylesheet" href="plugins/simple-image/simple-image.css">
 
   <script src="plugins/list/list.js?v=100"></script>
   <link rel="stylesheet" href="plugins/list/list.css">
 
-  <link rel="stylesheet" href="tools-inline/term/term.css">
-  <script src="tools-inline/term/term.js"></script>
-
   <script src="plugins/quote/quote.js?v=100"></script>
   <link rel="stylesheet" href="plugins/quote/quote.css">
 
-  <!--Load CodeX Editor -->
+  <script src="https://cdn.rawgit.com/codex-editor/header/ecc00aa2/dist/bundle.js"></script>
+
+  <script src="https://cdn.rawgit.com/codex-editor/simple-image/51f6f9f2/dist/bundle.js"></script>
+
+  <link rel="stylesheet" href="tools-inline/term/term.css">
+  <script src="tools-inline/term/term.js"></script>
+
+  <!-- Load CodeX Editor's Core -->
   <script src="../build/codex-editor.js?v=108"></script>
 
   <!-- Initialization -->
@@ -75,7 +74,7 @@
           class: Term,
           shortcut: 'CMD+SHIFT+M'
         },
-        image: SimpleImageTool,
+        image: SimpleImage,
         list: {
           class: List,
           inlineToolbar: true
