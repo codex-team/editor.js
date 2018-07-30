@@ -32,18 +32,15 @@
   </div>
 
   <!-- Load Tools -->
-  <script src="plugins/text/text.js?v=100"></script>
-  <link rel="stylesheet" href="plugins/text/text.css">
+  <script src="https://cdn.rawgit.com/codex-editor/paragraph/70058dd5/dist/bundle.js"></script><!-- Paragraph -->
+  <script src="https://cdn.rawgit.com/codex-editor/header/ecc00aa2/dist/bundle.js"></script> <!-- Header -->
+  <script src="https://cdn.rawgit.com/codex-editor/simple-image/51f6f9f2/dist/bundle.js"></script> <!-- Simple Image -->
 
   <script src="plugins/list/list.js?v=100"></script>
   <link rel="stylesheet" href="plugins/list/list.css">
 
   <script src="plugins/quote/quote.js?v=100"></script>
   <link rel="stylesheet" href="plugins/quote/quote.css">
-
-
-  <script src="https://cdn.rawgit.com/codex-editor/header/ecc00aa2/dist/bundle.js"></script> <!-- Header -->
-  <script src="https://cdn.rawgit.com/codex-editor/simple-image/51f6f9f2/dist/bundle.js"></script> <!-- Simple Image -->
 
   <link rel="stylesheet" href="tools-inline/term/term.css">
   <script src="tools-inline/term/term.js"></script>
@@ -63,17 +60,35 @@
      * @see docs/installation.md for mode details
      */
     var editor = new CodexEditor({
-      holderId: 'codex-editor', /** wrapper of Editor */
-      tools: {  /** tools list */
-        text: { /** each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md} */
-          class: Text,
+
+      /**
+       * Wrapper of Editor
+       */
+      holderId: 'codex-editor',
+
+      /**
+       * Tools list
+       */
+      tools: {
+
+        /**
+         * Each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md}
+         */
+        text: {
+          class: Paragraph,
           inlineToolbar: true,
         },
-        image: SimpleImage, /** or pass class directly without any configuration */
+
+        /**
+         * Or pass class directly without any configuration
+         */
+        image: SimpleImage,
+
         header: {
           class: Header,
           inlineToolbar: ['link']
         },
+
         term: {
           class: Term,
           shortcut: 'CMD+SHIFT+M'
@@ -83,14 +98,23 @@
           class: List,
           inlineToolbar: true
         },
+
         quote: {
           class: Quote,
           inlineToolbar: true,
           enableLineBreaks: true
         }
       },
-      initialBlock: 'text', /** this Tool will be used as default */
-      data: { /** Initial Editor data */
+
+      /**
+       * This Tool will be used as default
+       */
+      initialBlock: 'text',
+
+      /**
+       * Initial Editor data
+       */
+      data: {
         blocks: [
           {
             type: "header",
