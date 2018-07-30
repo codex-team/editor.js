@@ -32,18 +32,15 @@
   </div>
 
   <!-- Load Tools -->
-  <script src="plugins/text/text.js?v=100"></script>
-  <link rel="stylesheet" href="plugins/text/text.css">
+  <script src="https://cdn.rawgit.com/codex-editor/paragraph/70058dd5/dist/bundle.js"></script><!-- Paragraph -->
+  <script src="https://cdn.rawgit.com/codex-editor/header/ecc00aa2/dist/bundle.js"></script> <!-- Header -->
+  <script src="https://cdn.rawgit.com/codex-editor/simple-image/51f6f9f2/dist/bundle.js"></script> <!-- Simple Image -->
 
   <script src="plugins/list/list.js?v=100"></script>
   <link rel="stylesheet" href="plugins/list/list.css">
 
   <script src="plugins/quote/quote.js?v=100"></script>
   <link rel="stylesheet" href="plugins/quote/quote.css">
-
-
-  <script src="https://cdn.rawgit.com/codex-editor/header/ecc00aa2/dist/bundle.js"></script> <!-- Header -->
-  <script src="https://cdn.rawgit.com/codex-editor/simple-image/51f6f9f2/dist/bundle.js"></script> <!-- Simple Image -->
 
   <link rel="stylesheet" href="tools-inline/term/term.css">
   <script src="tools-inline/term/term.js"></script>
@@ -63,17 +60,33 @@
      * @see docs/installation.md for mode details
      */
     var editor = new CodexEditor({
-      holderId: 'codex-editor', /** wrapper of Editor */
-      tools: {  /** tools list */
-        text: { /** each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md} */
-          class: Text,
+      /**
+       * Wrapper of Editor
+       */
+      holderId: 'codex-editor',
+
+      /**
+       * Tools list
+       */
+      tools: {
+        /**
+         * Each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md}
+         */
+        paragraph: {
+          class: Paragraph,
           inlineToolbar: true,
         },
-        image: SimpleImage, /** or pass class directly without any configuration */
+
+        /**
+         * Or pass class directly without any configuration
+         */
+        image: SimpleImage,
+
         header: {
           class: Header,
           inlineToolbar: ['link']
         },
+
         term: {
           class: Term,
           shortcut: 'CMD+SHIFT+M'
@@ -83,14 +96,23 @@
           class: List,
           inlineToolbar: true
         },
+
         quote: {
           class: Quote,
           inlineToolbar: true,
           enableLineBreaks: true
         }
       },
-      initialBlock: 'text', /** this Tool will be used as default */
-      data: { /** Initial Editor data */
+
+      /**
+       * This Tool will be used as default
+       */
+      initialBlock: 'paragraph',
+
+      /**
+       * Initial Editor data
+       */
+      data: {
         blocks: [
           {
             type: "header",
@@ -100,7 +122,7 @@
             }
           },
           {
-            type : 'text',
+            type : 'paragraph',
             data : {
               text : 'Привет. Перед вами наш обновленный редактор. На этой странице вы можете проверить его в действии — попробуйте отредактировать или дополнить материал. Код страницы содержит пример подключения и простейшей настройки.'
             }
@@ -131,7 +153,7 @@
             }
           },
           {
-            type : 'text',
+            type : 'paragraph',
             data : {
               text : 'Блоки — это структурные элементы, из которых состоит статья. Например <span class="marked">Параграф</span>, <span class="marked">Заголовок</span>, <span class="marked">Изображение</span>, <span class="marked">Видео</span> — это все Блоки. В CodeX Editor каждый Блок определяется плагином. Есть много готовых Блоков и простой API для создания новых. Например, вы можете создать Блок для Твиттера, Инстаграма, Опроса, Игры или CTA-кнопки.'
             }
@@ -144,13 +166,13 @@
             }
           },
           {
-            type : 'text',
+            type : 'paragraph',
             data : {
               text : 'В отличие от WYSIWYG-редакторов, CodeX Editor возвращает не сгенерированный HTML-код, включающий и содержание и оформление статьи, а JSON с данными о каждом Блоке.'
             }
           },
           {
-            type : 'text',
+            type : 'paragraph',
             data : {
               text : 'Полученные данные можно использовать как угодно: выводить в вебе, рендерить в нативных мобильных приложениях, передавать в Instant Articles или Google AMP, использовать для генерации аудио-версии и тд. Это очень удобно.'
             }
@@ -166,7 +188,7 @@
             }
           },
           {
-            type : 'text',
+            type : 'paragraph',
             data : {
               text : 'Мы работали над этим редактором более двух лет. В отладке принимали участие известные медиа-проекты: vc.ru, TJ, DTF — с их помощью удалось найти и исправить много ошибок, стабилизировать ядро. Вместе с этим мы развивали API, который позволяет создавать плагины под любые задачи. Надеемся, вам понравится 😏'
             }
