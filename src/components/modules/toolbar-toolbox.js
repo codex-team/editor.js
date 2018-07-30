@@ -81,7 +81,7 @@ export default class Toolbox extends Module {
     const api = this.Editor.Tools.apiSettings;
 
     if (tool[api.IS_DISPLAYED_IN_TOOLBOX] && !tool[api.TOOLBAR_ICON]) {
-      _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
+      _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
       return;
     }
 

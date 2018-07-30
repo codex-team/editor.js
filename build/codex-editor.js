@@ -18174,7 +18174,7 @@ var Toolbox = function (_Module) {
       var api = this.Editor.Tools.apiSettings;
 
       if (tool[api.IS_DISPLAYED_IN_TOOLBOX] && !tool[api.TOOLBAR_ICON]) {
-        _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
+        _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
         return;
       }
 
@@ -18804,8 +18804,6 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -18992,19 +18990,6 @@ var Tools = function (_Module) {
     }
 
     /**
-     * Static getter for default Tool config fields
-     * @return {ToolConfig}
-     */
-
-  }, {
-    key: 'defaultConfig',
-    get: function get() {
-      var _ref9;
-
-      return _ref9 = {}, _defineProperty(_ref9, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref9, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _defineProperty(_ref9, this.apiSettings.SHORTCUT, false), _ref9;
-    }
-
-    /**
      * @constructor
      *
      * @param {EditorConfig} config
@@ -19012,8 +18997,8 @@ var Tools = function (_Module) {
 
   }]);
 
-  function Tools(_ref10) {
-    var config = _ref10.config;
+  function Tools(_ref9) {
+    var config = _ref9.config;
 
     _classCallCheck(this, Tools);
 

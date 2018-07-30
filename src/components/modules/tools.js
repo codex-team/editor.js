@@ -135,20 +135,6 @@ export default class Tools extends Module {
   }
 
   /**
-   * Static getter for default Tool config fields
-   * @return {ToolConfig}
-   */
-  get defaultConfig() {
-    return {
-      [this.apiSettings.IS_DISPLAYED_IN_TOOLBOX] : false,
-      [this.apiSettings.IS_ENABLED_LINE_BREAKS] : false,
-      [this.apiSettings.IS_IRREPLACEBLE_TOOL] : false,
-      [this.apiSettings.IS_ENABLED_INLINE_TOOLBAR]: false,
-      [this.apiSettings.SHORTCUT]: false,
-    };
-  }
-
-  /**
    * @constructor
    *
    * @param {EditorConfig} config
