@@ -8,7 +8,6 @@
  * Prebuilded sprite of SVG icons
  */
 import sprite from '../../../build/sprite.svg';
-import Selection from '../selection';
 
 /**
  * @class
@@ -47,7 +46,7 @@ export default class UI extends Module {
      * Useful property that could be used to define manipulations on Editors Area
      * @type {boolean}
      */
-    this.editorArea = false;
+    this.clickedOnEditorArea = false;
   }
 
   /**
@@ -198,14 +197,14 @@ export default class UI extends Module {
     /**
      * If Selection is out of Editor and document has some selection
      */
-    if (!this.editorArea) {
+    if (!this.clickedOnEditorArea) {
       return;
     }
 
     /**
      * If there is no selection (caret is not placed) and BlockManager points some to Block
      */
-    if (hasPointerToBlock && this.editorArea) {
+    if (hasPointerToBlock && this.clickedOnEditorArea) {
       /**
        * Insert initial typed Block
        */
@@ -223,6 +222,11 @@ export default class UI extends Module {
        */
       this.Editor.Toolbar.move();
       this.Editor.Toolbar.plusButton.show();
+
+      /**
+       * Drop property value
+       */
+      this.clickedOnEditorArea = false;
     }
   }
 
@@ -240,11 +244,11 @@ export default class UI extends Module {
 
     /** Clear highlightings and pointer on BlockManager */
     if (!clickedInsideofEditor) {
-      this.editorArea = false;
+      this.clickedOnEditorArea = false;
       this.Editor.BlockManager.dropPointer();
       this.Editor.Toolbar.close();
     } else {
-      this.editorArea = true;
+      this.clickedOnEditorArea = true;
     }
 
     if (!clickedOnInlineToolbarButton) {

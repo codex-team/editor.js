@@ -137,6 +137,7 @@ export default class BlockEvents extends Module {
 
     if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
       event.preventDefault();
+      event.stopPropagation();
       event.stopImmediatePropagation();
       this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
       return;
@@ -148,7 +149,7 @@ export default class BlockEvents extends Module {
     if (event.shiftKey) {
       return;
     }
-
+    
     /**
      * Split the Current Block into two blocks
      * Renew local current node after split
@@ -174,6 +175,7 @@ export default class BlockEvents extends Module {
     }
 
     event.preventDefault();
+    event.stopPropagation();
     event.stopImmediatePropagation();
   }
 

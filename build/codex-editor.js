@@ -14367,6 +14367,7 @@ var BlockEvents = function (_Module) {
             }
             if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
                 event.preventDefault();
+                event.stopPropagation();
                 event.stopImmediatePropagation();
                 this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
                 return;
@@ -14398,6 +14399,7 @@ var BlockEvents = function (_Module) {
                 this.Editor.Toolbar.plusButton.show();
             }
             event.preventDefault();
+            event.stopPropagation();
             event.stopImmediatePropagation();
         }
         /**
@@ -14655,7 +14657,7 @@ var BlockManager = function (_Module) {
 
       this.Editor.Listeners.on(block.holder, 'keydown', function (event) {
         return _this3.Editor.BlockEvents.keydown(event);
-      });
+      }, true);
       this.Editor.Listeners.on(block.holder, 'mouseup', function (event) {
         return _this3.Editor.BlockEvents.mouseUp(event);
       });
@@ -19237,10 +19239,6 @@ var _sprite = __webpack_require__(/*! ../../../build/sprite.svg */ "./build/spri
 
 var _sprite2 = _interopRequireDefault(_sprite);
 
-var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
-
-var _selection2 = _interopRequireDefault(_selection);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -19303,7 +19301,7 @@ var UI = function (_Module) {
      * Useful property that could be used to define manipulations on Editors Area
      * @type {boolean}
      */
-    _this.editorArea = false;
+    _this.clickedOnEditorArea = false;
     return _this;
   }
 
@@ -19519,14 +19517,14 @@ var UI = function (_Module) {
       /**
        * If Selection is out of Editor and document has some selection
        */
-      if (!this.editorArea) {
+      if (!this.clickedOnEditorArea) {
         return;
       }
 
       /**
        * If there is no selection (caret is not placed) and BlockManager points some to Block
        */
-      if (hasPointerToBlock && this.editorArea) {
+      if (hasPointerToBlock && this.clickedOnEditorArea) {
         /**
          * Insert initial typed Block
          */
@@ -19544,6 +19542,11 @@ var UI = function (_Module) {
          */
         this.Editor.Toolbar.move();
         this.Editor.Toolbar.plusButton.show();
+
+        /**
+         * Drop property value
+         */
+        this.clickedOnEditorArea = false;
       }
     }
 
@@ -19564,11 +19567,11 @@ var UI = function (_Module) {
 
       /** Clear highlightings and pointer on BlockManager */
       if (!clickedInsideofEditor) {
-        this.editorArea = false;
+        this.clickedOnEditorArea = false;
         this.Editor.BlockManager.dropPointer();
         this.Editor.Toolbar.close();
       } else {
-        this.editorArea = true;
+        this.clickedOnEditorArea = true;
       }
 
       if (!clickedOnInlineToolbarButton) {
