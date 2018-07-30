@@ -14429,7 +14429,6 @@ var BlockEvents = function (_Module) {
                 this.Editor.BlockManager.removeBlock();
                 if (this.Editor.Caret.navigatePrevious(true)) {
                     this.Editor.Toolbar.close();
-                    this.Editor.Toolbar.move();
                 }
                 return;
             }
@@ -14450,7 +14449,6 @@ var BlockEvents = function (_Module) {
             if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
                 if (this.Editor.Caret.navigatePrevious()) {
                     this.Editor.Toolbar.close();
-                    this.Editor.Toolbar.move();
                 }
                 return;
             }
@@ -14470,7 +14468,6 @@ var BlockEvents = function (_Module) {
         key: 'arrowRightAndDown',
         value: function arrowRightAndDown() {
             this.Editor.Caret.navigateNext();
-            this.Editor.Toolbar.move();
         }
         /**
          * Handle left and up keyboard keys
@@ -14480,7 +14477,6 @@ var BlockEvents = function (_Module) {
         key: 'arrowLeftAndUp',
         value: function arrowLeftAndUp() {
             this.Editor.Caret.navigatePrevious();
-            this.Editor.Toolbar.move();
         }
         /**
          * Default keydown handler
