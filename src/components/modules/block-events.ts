@@ -149,7 +149,6 @@ export default class BlockEvents extends Module {
     if (event.shiftKey) {
       return;
     }
-    
     /**
      * Split the Current Block into two blocks
      * Renew local current node after split
