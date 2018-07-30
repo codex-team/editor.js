@@ -118,10 +118,10 @@ module.exports = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<svg xmlns=\"http:
  * Library for handling keyboard shortcuts
  * @copyright undefined
  * @license MIT
- * @author CodeX (https://ifmo.su)
+ * @author [object Object]
  * @version 1.0.0
  */
-!function(e,t){if(true)module.exports=t();else { var r, n; }}("undefined"!=typeof self?self:this,function(){return function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,t),o.l=!0,o.exports}var n={};return t.m=e,t.c=n,t.d=function(e,n,r){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i={0:48,1:49,2:50,3:51,4:52,5:53,6:54,7:55,8:56,9:57,A:65,B:66,C:67,D:68,E:69,F:70,G:71,H:72,I:73,J:74,K:75,L:76,M:77,N:78,O:79,P:80,Q:81,R:82,S:83,T:84,U:85,V:86,W:87,X:88,Y:89,Z:90,BACKSPACE:8,ENTER:13,ESCAPE:27,LEFT:37,UP:38,RIGHT:39,DOWN:40,INSERT:45,DELETE:46},u={CMD:["CMD","CONTROL","COMMAND","WINDOWS","CTRL"],SHIFT:["SHIFT"],ALT:["ALT","OPTION"]},c=function(){function e(t){var n=this;r(this,e),this.commands={},this.keys={},this.parseShortcutName(t.name),this.element=t.on,this.callback=t.callback,this.executeShortcut=function(e){n.execute(e)},this.element.addEventListener("keydown",this.executeShortcut,!1)}return o(e,[{key:"parseShortcutName",value:function(e){e=e.split("+");for(var t=0;t<e.length;t++)if(e[t]=e[t].toUpperCase(),e[t].length>1)for(var n in u)u[n].includes(e[t])&&(this.commands[n]=!0);else this.keys[e[t]]=!0}},{key:"execute",value:function(e){var t=e.ctrlKey||e.metaKey,n=e.shiftKey,r=e.altKey,o={CMD:t,SHIFT:n,ALT:r},u=void 0,c=!0;for(u in this.commands)c=c&&o[u];var a=void 0,s=!0;for(a in this.keys)s=s&&e.keyCode===i[a];c&&s&&this.callback(e)}},{key:"remove",value:function(){this.element.removeEventListener("keydown",this.executeShortcut)}}]),e}();t.default=c}])});
+!function(e,t){if(true)module.exports=t();else { var r, n; }}("undefined"!=typeof self?self:this,function(){return function(e){function t(r){if(n[r])return n[r].exports;var o=n[r]={i:r,l:!1,exports:{}};return e[r].call(o.exports,o,o.exports,t),o.l=!0,o.exports}var n={};return t.m=e,t.c=n,t.d=function(e,n,r){t.o(e,n)||Object.defineProperty(e,n,{configurable:!1,enumerable:!0,get:r})},t.n=function(e){var n=e&&e.__esModule?function(){return e.default}:function(){return e};return t.d(n,"a",n),n},t.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},t.p="",t(t.s=0)}([function(e,t,n){"use strict";function r(e,t){if(!(e instanceof t))throw new TypeError("Cannot call a class as a function")}Object.defineProperty(t,"__esModule",{value:!0});var o=function(){function e(e,t){for(var n=0;n<t.length;n++){var r=t[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(e,r.key,r)}}return function(t,n,r){return n&&e(t.prototype,n),r&&e(t,r),t}}(),i={0:48,1:49,2:50,3:51,4:52,5:53,6:54,7:55,8:56,9:57,A:65,B:66,C:67,D:68,E:69,F:70,G:71,H:72,I:73,J:74,K:75,L:76,M:77,N:78,O:79,P:80,Q:81,R:82,S:83,T:84,U:85,V:86,W:87,X:88,Y:89,Z:90,",":188,".":190,BACKSPACE:8,ENTER:13,ESCAPE:27,LEFT:37,UP:38,RIGHT:39,DOWN:40,INSERT:45,DELETE:46},u={CMD:["CMD","CONTROL","COMMAND","WINDOWS","CTRL"],SHIFT:["SHIFT"],ALT:["ALT","OPTION"]},c=function(){function e(t){var n=this;r(this,e),this.commands={},this.keys={},this.parseShortcutName(t.name),this.element=t.on,this.callback=t.callback,this.executeShortcut=function(e){n.execute(e)},this.element.addEventListener("keydown",this.executeShortcut,!1)}return o(e,[{key:"parseShortcutName",value:function(e){e=e.split("+");for(var t=0;t<e.length;t++)if(e[t]=e[t].toUpperCase(),e[t].length>1)for(var n in u)u[n].includes(e[t])&&(this.commands[n]=!0);else this.keys[e[t]]=!0}},{key:"execute",value:function(e){var t=e.ctrlKey||e.metaKey,n=e.shiftKey,r=e.altKey,o={CMD:t,SHIFT:n,ALT:r},u=void 0,c=!0;for(u in this.commands)c=c&&o[u];var a=void 0,s=!0;for(a in this.keys)s=s&&(e.keyCode===i[a]||e.whick===i[a]);c&&s&&this.callback(e)}},{key:"remove",value:function(){this.element.removeEventListener("keydown",this.executeShortcut)}}]),e}();t.default=c}])});
 
 /***/ }),
 
@@ -19298,6 +19298,12 @@ var UI = function (_Module) {
       wrapper: null,
       redactor: null
     };
+
+    /**
+     * Useful property that could be used to define manipulations on Editors Area
+     * @type {boolean}
+     */
+    _this.editorArea = false;
     return _this;
   }
 
@@ -19513,14 +19519,14 @@ var UI = function (_Module) {
       /**
        * If Selection is out of Editor and document has some selection
        */
-      if (!_selection2.default.isAtEditor && _selection2.default.anchorNode) {
+      if (!this.editorArea) {
         return;
       }
 
       /**
        * If there is no selection (caret is not placed) and BlockManager points some to Block
        */
-      if (hasPointerToBlock && !_selection2.default.anchorNode) {
+      if (hasPointerToBlock && this.editorArea) {
         /**
          * Insert initial typed Block
          */
@@ -19558,8 +19564,11 @@ var UI = function (_Module) {
 
       /** Clear highlightings and pointer on BlockManager */
       if (!clickedInsideofEditor) {
+        this.editorArea = false;
         this.Editor.BlockManager.dropPointer();
         this.Editor.Toolbar.close();
+      } else {
+        this.editorArea = true;
       }
 
       if (!clickedOnInlineToolbarButton) {
@@ -19668,222 +19677,6 @@ var UI = function (_Module) {
 
   return UI;
 }(Module);
-
-// /**
-//  * Codex Editor UI module
-//  *
-//  * @author Codex Team
-//  * @version 1.2.0
-//  */
-//
-// module.exports = (function (ui) {
-//
-//     let editor = codex.editor;
-//
-//     /**
-//      * Basic editor classnames
-//      */
-//     ui.prepare = function () {
-//
-
-//
-//     };
-//
-//     /** Draw notifications holder */
-//     var makeNotificationHolder_ = function () {
-//
-//         /** Append block with notifications to the document */
-//         editor.nodes.notifications = editor.notifications.createHolder();
-//
-//     };
-//
-//
-//     var addInlineToolbarTools_ = function () {
-//
-//         var tools = {
-//
-//             bold: {
-//                 icon    : 'ce-icon-bold',
-//                 command : 'bold'
-//             },
-//
-//             italic: {
-//                 icon    : 'ce-icon-italic',
-//                 command : 'italic'
-//             },
-//
-//             link: {
-//                 icon    : 'ce-icon-link',
-//                 command : 'createLink'
-//             }
-//         };
-//
-//         var toolButton,
-//             tool;
-//
-//         for(var name in tools) {
-//
-//             tool = tools[name];
-//
-//             toolButton = editor.draw.toolbarButtonInline(name, tool.icon);
-//
-//             editor.nodes.inlineToolbar.buttons.appendChild(toolButton);
-//             /**
-//              * Add callbacks to this buttons
-//              */
-//             editor.ui.setInlineToolbarButtonBehaviour(toolButton, tool.command);
-//
-//         }
-//
-//     };
-//
-//     /**
-//      * @private
-//      * Bind editor UI events
-//      */
-//     var bindEvents_ = function () {
-//
-//         editor.core.log('ui.bindEvents fired', 'info');
-//
-//         // window.addEventListener('error', function (errorMsg, url, lineNumber) {
-//         //     editor.notifications.errorThrown(errorMsg, event);
-//         // }, false );
-//
-//         /** All keydowns on Document */
-//         editor.listeners.add(document, 'keydown', editor.callback.globalKeydown, false);
-//
-//         /** All keydowns on Redactor zone */
-//         editor.listeners.add(editor.nodes.redactor, 'keydown', editor.callback.redactorKeyDown, false);
-//
-//         /** All keydowns on Document */
-//         editor.listeners.add(document, 'keyup', editor.callback.globalKeyup, false );
-//
-//         /**
-//          * Mouse click to radactor
-//          */
-//         editor.listeners.add(editor.nodes.redactor, 'click', editor.callback.redactorClicked, false );
-//
-//         /**
-//          * Clicks to the Plus button
-//          */
-//         editor.listeners.add(editor.nodes.plusButton, 'click', editor.callback.plusButtonClicked, false);
-//
-//         /**
-//          * Clicks to SETTINGS button in toolbar
-//          */
-//         editor.listeners.add(editor.nodes.showSettingsButton, 'click', editor.callback.showSettingsButtonClicked, false );
-//
-//         /** Bind click listeners on toolbar buttons */
-//         for (var button in editor.nodes.toolbarButtons) {
-//
-//             editor.listeners.add(editor.nodes.toolbarButtons[button], 'click', editor.callback.toolbarButtonClicked, false);
-//
-//         }
-//
-//     };
-//
-//     ui.addBlockHandlers = function (block) {
-//
-//         if (!block) return;
-//
-//         /**
-//          * Block keydowns
-//          */
-//         editor.listeners.add(block, 'keydown', editor.callback.blockKeydown, false);
-//
-//         /**
-//          * Pasting content from another source
-//          * We have two type of sanitization
-//          * First - uses deep-first search algorithm to get sub nodes,
-//          * sanitizes whole Block_content and replaces cleared nodes
-//          * This method is deprecated
-//          * Method is used in editor.callback.blockPaste(event)
-//          *
-//          * Secont - uses Mutation observer.
-//          * Observer "observe" DOM changes and send changings to callback.
-//          * Callback gets changed node, not whole Block_content.
-//          * Inserted or changed node, which we've gotten have been cleared and replaced with diry node
-//          *
-//          * Method is used in editor.callback.blockPasteViaSanitize(event)
-//          *
-//          * @uses html-janitor
-//          * @example editor.callback.blockPasteViaSanitize(event), the second method.
-//          *
-//          */
-//         editor.listeners.add(block, 'paste', editor.paste.blockPasteCallback, false);
-//
-//         /**
-//          * Show inline toolbar for selected text
-//          */
-//         editor.listeners.add(block, 'mouseup', editor.toolbar.inline.show, false);
-//         editor.listeners.add(block, 'keyup', editor.toolbar.inline.show, false);
-//
-//     };
-//
-//     /** getting all contenteditable elements */
-//     ui.saveInputs = function () {
-//
-//         var redactor = editor.nodes.redactor;
-//
-//         editor.state.inputs = [];
-//
-//         /** Save all inputs in global variable state */
-//         var inputs = redactor.querySelectorAll('[contenteditable], input, textarea');
-//
-//         Array.prototype.map.call(inputs, function (current) {
-//
-//             if (!current.type || current.type == 'text' || current.type == 'textarea') {
-//
-//                 editor.state.inputs.push(current);
-//
-//             }
-//
-//         });
-//
-//     };
-//
-//     /**
-//      * Adds first initial block on empty redactor
-//      */
-//     ui.addInitialBlock = function () {
-//
-//         var initialBlockType = editor.settings.initialBlockPlugin,
-//             initialBlock;
-//
-//         if ( !editor.tools[initialBlockType] ) {
-//
-//             editor.core.log('Plugin %o was not implemented and can\'t be used as initial block', 'warn', initialBlockType);
-//             return;
-//
-//         }
-//
-//         initialBlock = editor.tools[initialBlockType].render();
-//
-//         initialBlock.setAttribute('data-placeholder', editor.settings.placeholder);
-//
-//         editor.content.insertBlock({
-//             type  : initialBlockType,
-//             block : initialBlock
-//         });
-//
-//         editor.content.workingNodeChanged(initialBlock);
-//
-//     };
-//
-//     ui.setInlineToolbarButtonBehaviour = function (button, type) {
-//
-//         editor.listeners.add(button, 'mousedown', function (event) {
-//
-//             editor.toolbar.inline.toolClicked(event, type);
-//
-//         }, false);
-//
-//     };
-//
-//     return ui;
-//
-// })({});
-
 
 UI.displayName = 'UI';
 exports.default = UI;

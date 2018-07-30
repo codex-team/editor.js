@@ -42,6 +42,12 @@ export default class UI extends Module {
       wrapper: null,
       redactor: null
     };
+
+    /**
+     * Useful property that could be used to define manipulations on Editors Area
+     * @type {boolean}
+     */
+    this.editorArea = false;
   }
 
   /**
@@ -192,14 +198,14 @@ export default class UI extends Module {
     /**
      * If Selection is out of Editor and document has some selection
      */
-    if (!Selection.isAtEditor && Selection.anchorNode) {
+    if (!this.editorArea) {
       return;
     }
 
     /**
      * If there is no selection (caret is not placed) and BlockManager points some to Block
      */
-    if (hasPointerToBlock && !Selection.anchorNode) {
+    if (hasPointerToBlock && this.editorArea) {
       /**
        * Insert initial typed Block
        */
@@ -234,8 +240,11 @@ export default class UI extends Module {
 
     /** Clear highlightings and pointer on BlockManager */
     if (!clickedInsideofEditor) {
+      this.editorArea = false;
       this.Editor.BlockManager.dropPointer();
       this.Editor.Toolbar.close();
+    } else {
+      this.editorArea = true;
     }
 
     if (!clickedOnInlineToolbarButton) {
@@ -327,218 +336,3 @@ export default class UI extends Module {
     $.append(this.nodes.wrapper, spriteHolder);
   }
 }
-
-// /**
-//  * Codex Editor UI module
-//  *
-//  * @author Codex Team
-//  * @version 1.2.0
-//  */
-//
-// module.exports = (function (ui) {
-//
-//     let editor = codex.editor;
-//
-//     /**
-//      * Basic editor classnames
-//      */
-//     ui.prepare = function () {
-//
-
-//
-//     };
-//
-//     /** Draw notifications holder */
-//     var makeNotificationHolder_ = function () {
-//
-//         /** Append block with notifications to the document */
-//         editor.nodes.notifications = editor.notifications.createHolder();
-//
-//     };
-//
-//
-//     var addInlineToolbarTools_ = function () {
-//
-//         var tools = {
-//
-//             bold: {
-//                 icon    : 'ce-icon-bold',
-//                 command : 'bold'
-//             },
-//
-//             italic: {
-//                 icon    : 'ce-icon-italic',
-//                 command : 'italic'
-//             },
-//
-//             link: {
-//                 icon    : 'ce-icon-link',
-//                 command : 'createLink'
-//             }
-//         };
-//
-//         var toolButton,
-//             tool;
-//
-//         for(var name in tools) {
-//
-//             tool = tools[name];
-//
-//             toolButton = editor.draw.toolbarButtonInline(name, tool.icon);
-//
-//             editor.nodes.inlineToolbar.buttons.appendChild(toolButton);
-//             /**
-//              * Add callbacks to this buttons
-//              */
-//             editor.ui.setInlineToolbarButtonBehaviour(toolButton, tool.command);
-//
-//         }
-//
-//     };
-//
-//     /**
-//      * @private
-//      * Bind editor UI events
-//      */
-//     var bindEvents_ = function () {
-//
-//         editor.core.log('ui.bindEvents fired', 'info');
-//
-//         // window.addEventListener('error', function (errorMsg, url, lineNumber) {
-//         //     editor.notifications.errorThrown(errorMsg, event);
-//         // }, false );
-//
-//         /** All keydowns on Document */
-//         editor.listeners.add(document, 'keydown', editor.callback.globalKeydown, false);
-//
-//         /** All keydowns on Redactor zone */
-//         editor.listeners.add(editor.nodes.redactor, 'keydown', editor.callback.redactorKeyDown, false);
-//
-//         /** All keydowns on Document */
-//         editor.listeners.add(document, 'keyup', editor.callback.globalKeyup, false );
-//
-//         /**
-//          * Mouse click to radactor
-//          */
-//         editor.listeners.add(editor.nodes.redactor, 'click', editor.callback.redactorClicked, false );
-//
-//         /**
-//          * Clicks to the Plus button
-//          */
-//         editor.listeners.add(editor.nodes.plusButton, 'click', editor.callback.plusButtonClicked, false);
-//
-//         /**
-//          * Clicks to SETTINGS button in toolbar
-//          */
-//         editor.listeners.add(editor.nodes.showSettingsButton, 'click', editor.callback.showSettingsButtonClicked, false );
-//
-//         /** Bind click listeners on toolbar buttons */
-//         for (var button in editor.nodes.toolbarButtons) {
-//
-//             editor.listeners.add(editor.nodes.toolbarButtons[button], 'click', editor.callback.toolbarButtonClicked, false);
-//
-//         }
-//
-//     };
-//
-//     ui.addBlockHandlers = function (block) {
-//
-//         if (!block) return;
-//
-//         /**
-//          * Block keydowns
-//          */
-//         editor.listeners.add(block, 'keydown', editor.callback.blockKeydown, false);
-//
-//         /**
-//          * Pasting content from another source
-//          * We have two type of sanitization
-//          * First - uses deep-first search algorithm to get sub nodes,
-//          * sanitizes whole Block_content and replaces cleared nodes
-//          * This method is deprecated
-//          * Method is used in editor.callback.blockPaste(event)
-//          *
-//          * Secont - uses Mutation observer.
-//          * Observer "observe" DOM changes and send changings to callback.
-//          * Callback gets changed node, not whole Block_content.
-//          * Inserted or changed node, which we've gotten have been cleared and replaced with diry node
-//          *
-//          * Method is used in editor.callback.blockPasteViaSanitize(event)
-//          *
-//          * @uses html-janitor
-//          * @example editor.callback.blockPasteViaSanitize(event), the second method.
-//          *
-//          */
-//         editor.listeners.add(block, 'paste', editor.paste.blockPasteCallback, false);
-//
-//         /**
-//          * Show inline toolbar for selected text
-//          */
-//         editor.listeners.add(block, 'mouseup', editor.toolbar.inline.show, false);
-//         editor.listeners.add(block, 'keyup', editor.toolbar.inline.show, false);
-//
-//     };
-//
-//     /** getting all contenteditable elements */
-//     ui.saveInputs = function () {
-//
-//         var redactor = editor.nodes.redactor;
-//
-//         editor.state.inputs = [];
-//
-//         /** Save all inputs in global variable state */
-//         var inputs = redactor.querySelectorAll('[contenteditable], input, textarea');
-//
-//         Array.prototype.map.call(inputs, function (current) {
-//
-//             if (!current.type || current.type == 'text' || current.type == 'textarea') {
-//
-//                 editor.state.inputs.push(current);
-//
-//             }
-//
-//         });
-//
-//     };
-//
-//     /**
-//      * Adds first initial block on empty redactor
-//      */
-//     ui.addInitialBlock = function () {
-//
-//         var initialBlockType = editor.settings.initialBlockPlugin,
-//             initialBlock;
-//
-//         if ( !editor.tools[initialBlockType] ) {
-//
-//             editor.core.log('Plugin %o was not implemented and can\'t be used as initial block', 'warn', initialBlockType);
-//             return;
-//
-//         }
-//
-//         initialBlock = editor.tools[initialBlockType].render();
-//
-//         initialBlock.setAttribute('data-placeholder', editor.settings.placeholder);
-//
-//         editor.content.insertBlock({
-//             type  : initialBlockType,
-//             block : initialBlock
-//         });
-//
-//         editor.content.workingNodeChanged(initialBlock);
-//
-//     };
-//
-//     ui.setInlineToolbarButtonBehaviour = function (button, type) {
-//
-//         editor.listeners.add(button, 'mousedown', function (event) {
-//
-//             editor.toolbar.inline.toolClicked(event, type);
-//
-//         }, false);
-//
-//     };
-//
-//     return ui;
-//
-// })({});
