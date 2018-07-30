@@ -72,14 +72,18 @@ export default class Renderer extends Module {
       settings = item.settings;
 
     if (tool in this.Editor.Tools.available) {
-      this.Editor.BlockManager.insert(tool, data, settings);
+      try {
+        this.Editor.BlockManager.insert(tool, data, settings);
+      } catch (error) {
+        _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
+        Promise.reject(error);
+      }
     } else {
       /**
        * @todo show warning notification message
        *
        * `${tool} blocks was skipped.`
        */
-
       _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial CodeX Editor config.`, 'warn');
     }
 
