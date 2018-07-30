@@ -11960,14 +11960,16 @@ var Block = function () {
    * @constructor
    * @param {String} toolName - Tool name that passed on initialization
    * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
+   * @param {Object} toolClass — Tool's class
    * @param {Object} settings - default settings
    * @param {Object} apiMethods - Editor API
    */
-  function Block(toolName, toolInstance, settings, apiMethods) {
+  function Block(toolName, toolInstance, toolClass, settings, apiMethods) {
     _classCallCheck(this, Block);
 
     this.name = toolName;
     this.tool = toolInstance;
+    this.class = toolClass;
     this.settings = settings;
     this.api = apiMethods;
     this.holder = this.compose();
@@ -12184,7 +12186,7 @@ var Block = function () {
        * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
        * That Tools are not empty
        */
-      if (this.tool.contentless) {
+      if (this.class.contentless) {
         return false;
       }
 
@@ -14629,7 +14631,8 @@ var BlockManager = function (_Module) {
     key: 'composeBlock',
     value: function composeBlock(toolName, data, settings) {
       var toolInstance = this.Editor.Tools.construct(toolName, data),
-          block = new _block2.default(toolName, toolInstance, settings, this.Editor.API.methods);
+          toolClass = this.Editor.Tools.available[toolName],
+          block = new _block2.default(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
 
       this.bindEvents(block);
       /**
@@ -18983,6 +18986,7 @@ var Tools = function (_Module) {
         IS_IRREPLACEBLE_TOOL: 'irreplaceable',
         IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
         IS_PASTE_DISALLOWED: 'disallowPaste',
+        IS_CONTENTLESS: 'contentless',
         SHORTCUT: 'shortcut'
       };
     }
