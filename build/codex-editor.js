@@ -19509,7 +19509,11 @@ var UI = function (_Module) {
       var hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
 
       /**
-       * If Block selected, BlockManager points some to Block and Enter press is on Body
+       * If Caret is not set anywhere, event target on Enter is always Element that we handle
+       * In our case it is document.body
+       *
+       * So, BlockManager points some Block and Enter press is on Body
+       * We can create a new block
        */
       if (hasPointerToBlock && event.target.tagName === 'BODY') {
         /**
