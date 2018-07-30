@@ -8,6 +8,7 @@
  * Prebuilded sprite of SVG icons
  */
 import sprite from '../../../build/sprite.svg';
+import Selection from '../selection';
 
 /**
  * @class
@@ -46,7 +47,7 @@ export default class UI extends Module {
      * Useful property that could be used to define manipulations on Editors Area
      * @type {boolean}
      */
-    this.clickedOnEditorArea = false;
+    this.blockSelected = false;
   }
 
   /**
@@ -195,16 +196,17 @@ export default class UI extends Module {
     let hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
 
     /**
-     * If Selection is out of Editor and document has some selection
+     * If any Block is not Selected and Enter is pressed,
+     * just ignore and do not handle
      */
-    if (!this.clickedOnEditorArea) {
+    if (!this.blockSelected) {
       return;
     }
 
     /**
-     * If there is no selection (caret is not placed) and BlockManager points some to Block
+     * If Block selected, BlockManager points some to Block and Enter press is on Body
      */
-    if (hasPointerToBlock && this.clickedOnEditorArea) {
+    if (hasPointerToBlock && this.blockSelected && event.target.tagName === 'BODY') {
       /**
        * Insert initial typed Block
        */
@@ -222,12 +224,12 @@ export default class UI extends Module {
        */
       this.Editor.Toolbar.move();
       this.Editor.Toolbar.plusButton.show();
-
-      /**
-       * Drop property value
-       */
-      this.clickedOnEditorArea = false;
     }
+
+    /**
+     * Drop property value
+     */
+    this.blockSelected = false;
   }
 
   /**
@@ -244,11 +246,11 @@ export default class UI extends Module {
 
     /** Clear highlightings and pointer on BlockManager */
     if (!clickedInsideofEditor) {
-      this.clickedOnEditorArea = false;
+      this.blockSelected = false;
       this.Editor.BlockManager.dropPointer();
       this.Editor.Toolbar.close();
     } else {
-      this.clickedOnEditorArea = true;
+      this.blockSelected = true;
     }
 
     if (!clickedOnInlineToolbarButton) {

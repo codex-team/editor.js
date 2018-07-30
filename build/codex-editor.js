@@ -19239,6 +19239,10 @@ var _sprite = __webpack_require__(/*! ../../../build/sprite.svg */ "./build/spri
 
 var _sprite2 = _interopRequireDefault(_sprite);
 
+var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
+
+var _selection2 = _interopRequireDefault(_selection);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -19301,7 +19305,7 @@ var UI = function (_Module) {
      * Useful property that could be used to define manipulations on Editors Area
      * @type {boolean}
      */
-    _this.clickedOnEditorArea = false;
+    _this.blockSelected = false;
     return _this;
   }
 
@@ -19515,16 +19519,17 @@ var UI = function (_Module) {
       var hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
 
       /**
-       * If Selection is out of Editor and document has some selection
+       * If any Block is not Selected and Enter is pressed,
+       * just ignore and do not handle
        */
-      if (!this.clickedOnEditorArea) {
+      if (!this.blockSelected) {
         return;
       }
 
       /**
-       * If there is no selection (caret is not placed) and BlockManager points some to Block
+       * If Block selected, BlockManager points some to Block and Enter press is on Body
        */
-      if (hasPointerToBlock && this.clickedOnEditorArea) {
+      if (hasPointerToBlock && this.blockSelected && event.target.tagName === 'BODY') {
         /**
          * Insert initial typed Block
          */
@@ -19542,12 +19547,12 @@ var UI = function (_Module) {
          */
         this.Editor.Toolbar.move();
         this.Editor.Toolbar.plusButton.show();
-
-        /**
-         * Drop property value
-         */
-        this.clickedOnEditorArea = false;
       }
+
+      /**
+       * Drop property value
+       */
+      this.blockSelected = false;
     }
 
     /**
@@ -19567,11 +19572,11 @@ var UI = function (_Module) {
 
       /** Clear highlightings and pointer on BlockManager */
       if (!clickedInsideofEditor) {
-        this.clickedOnEditorArea = false;
+        this.blockSelected = false;
         this.Editor.BlockManager.dropPointer();
         this.Editor.Toolbar.close();
       } else {
-        this.clickedOnEditorArea = true;
+        this.blockSelected = true;
       }
 
       if (!clickedOnInlineToolbarButton) {
