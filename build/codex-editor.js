@@ -18173,7 +18173,7 @@ var Toolbox = function (_Module) {
 
       var api = this.Editor.Tools.apiSettings;
 
-      if (tool[api.IS_DISPLAYED_IN_TOOLBOX] && !tool[api.TOOLBAR_ICON_CLASS]) {
+      if (tool[api.IS_DISPLAYED_IN_TOOLBOX] && !tool[api.TOOLBAR_ICON]) {
         _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
         return;
       }
@@ -18193,7 +18193,7 @@ var Toolbox = function (_Module) {
         return;
       }
 
-      var button = $.make('li', [Toolbox.CSS.toolboxButton, tool[api.TOOLBAR_ICON_CLASS]], {
+      var button = $.make('li', [Toolbox.CSS.toolboxButton], {
         title: toolName
       });
 
@@ -18980,7 +18980,7 @@ var Tools = function (_Module) {
     get: function get() {
       return {
         IS_INLINE: 'isInline',
-        TOOLBAR_ICON_CLASS: 'iconClassName',
+        TOOLBAR_ICON: 'toolboxIcon',
         IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
         IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
         IS_IRREPLACEBLE_TOOL: 'irreplaceable',
@@ -19001,7 +19001,7 @@ var Tools = function (_Module) {
     get: function get() {
       var _ref9;
 
-      return _ref9 = {}, _defineProperty(_ref9, this.apiSettings.TOOLBAR_ICON_CLASS, false), _defineProperty(_ref9, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref9, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _defineProperty(_ref9, this.apiSettings.SHORTCUT, false), _ref9;
+      return _ref9 = {}, _defineProperty(_ref9, this.apiSettings.IS_DISPLAYED_IN_TOOLBOX, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_LINE_BREAKS, false), _defineProperty(_ref9, this.apiSettings.IS_IRREPLACEBLE_TOOL, false), _defineProperty(_ref9, this.apiSettings.IS_ENABLED_INLINE_TOOLBAR, false), _defineProperty(_ref9, this.apiSettings.SHORTCUT, false), _ref9;
     }
 
     /**

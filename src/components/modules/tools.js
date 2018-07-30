@@ -123,7 +123,7 @@ export default class Tools extends Module {
   get apiSettings() {
     return {
       IS_INLINE: 'isInline',
-      TOOLBAR_ICON_CLASS: 'iconClassName',
+      TOOLBAR_ICON: 'toolboxIcon',
       IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_IRREPLACEBLE_TOOL: 'irreplaceable',
@@ -140,7 +140,6 @@ export default class Tools extends Module {
    */
   get defaultConfig() {
     return {
-      [this.apiSettings.TOOLBAR_ICON_CLASS] : false,
       [this.apiSettings.IS_DISPLAYED_IN_TOOLBOX] : false,
       [this.apiSettings.IS_ENABLED_LINE_BREAKS] : false,
       [this.apiSettings.IS_IRREPLACEBLE_TOOL] : false,
