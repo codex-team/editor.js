@@ -109,10 +109,9 @@ class List {
           innerHTML: item
         }));
       });
+     } else {
+      this._elements.wrapper.appendChild(this._make('li', [this.CSS.item, this.CSS.input]));
     }
-
-    // always add empty item
-    this._elements.wrapper.appendChild(this._make('li', [this.CSS.item, this.CSS.input]));
 
     // detect keydown on the last item to escape List
     this._elements.wrapper.addEventListener('keydown', (event) => {
