@@ -203,6 +203,7 @@ export default class BlockEvents extends Module {
       this.Editor.BlockManager.removeBlock();
       if (this.Editor.Caret.navigatePrevious(true)) {
         this.Editor.Toolbar.close();
+        this.Editor.Toolbar.move();
       }
       return;
     }
@@ -227,6 +228,7 @@ export default class BlockEvents extends Module {
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
       if (this.Editor.Caret.navigatePrevious()) {
         this.Editor.Toolbar.close();
+        this.Editor.Toolbar.move();
       }
 
       return;
@@ -247,6 +249,7 @@ export default class BlockEvents extends Module {
    */
   private arrowRightAndDown(): void {
     this.Editor.Caret.navigateNext();
+    this.Editor.Toolbar.move();
   }
 
   /**
@@ -254,6 +257,7 @@ export default class BlockEvents extends Module {
    */
   private arrowLeftAndUp(): void {
     this.Editor.Caret.navigatePrevious();
+    this.Editor.Toolbar.move();
   }
 
   /**
