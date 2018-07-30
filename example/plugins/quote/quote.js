@@ -47,6 +47,24 @@ class Quote {
   }
 
   /**
+   * Empty Quote is not empty Block
+   * @public
+   * @returns {boolean}
+   */
+  static get contentless() {
+    return true;
+  }
+
+  /**
+   * Allow to press Enter inside the Quote
+   * @public
+   * @returns {boolean}
+   */
+  static get enableLineBreaks() {
+    return true;
+  }
+
+  /**
    * Default placeholder for quote text
    *
    * @public

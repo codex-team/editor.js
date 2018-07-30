@@ -83,7 +83,8 @@ export default class BlockManager extends Module {
    */
   composeBlock(toolName, data, settings) {
     let toolInstance = this.Editor.Tools.construct(toolName, data),
-      block = new Block(toolName, toolInstance, settings, this.Editor.API.methods);
+      toolClass = this.Editor.Tools.available[toolName],
+      block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
 
     this.bindEvents(block);
     /**

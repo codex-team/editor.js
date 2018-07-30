@@ -129,6 +129,7 @@ export default class Tools extends Module {
       IS_IRREPLACEBLE_TOOL: 'irreplaceable',
       IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
       IS_PASTE_DISALLOWED: 'disallowPaste',
+      IS_CONTENTLESS: 'contentless',
       SHORTCUT: 'shortcut',
     };
   }
