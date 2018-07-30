@@ -8,7 +8,6 @@
  * Prebuilded sprite of SVG icons
  */
 import sprite from '../../../build/sprite.svg';
-import Selection from '../selection';
 
 /**
  * @class
@@ -42,12 +41,6 @@ export default class UI extends Module {
       wrapper: null,
       redactor: null
     };
-
-    /**
-     * Useful property that could be used to define manipulations on Editors Area
-     * @type {boolean}
-     */
-    this.blockSelected = false;
   }
 
   /**
@@ -196,17 +189,9 @@ export default class UI extends Module {
     let hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
 
     /**
-     * If any Block is not Selected and Enter is pressed,
-     * just ignore and do not handle
-     */
-    if (!this.blockSelected) {
-      return;
-    }
-
-    /**
      * If Block selected, BlockManager points some to Block and Enter press is on Body
      */
-    if (hasPointerToBlock && this.blockSelected && event.target.tagName === 'BODY') {
+    if (hasPointerToBlock && event.target.tagName === 'BODY') {
       /**
        * Insert initial typed Block
        */
@@ -225,11 +210,6 @@ export default class UI extends Module {
       this.Editor.Toolbar.move();
       this.Editor.Toolbar.plusButton.show();
     }
-
-    /**
-     * Drop property value
-     */
-    this.blockSelected = false;
   }
 
   /**
@@ -246,11 +226,8 @@ export default class UI extends Module {
 
     /** Clear highlightings and pointer on BlockManager */
     if (!clickedInsideofEditor) {
-      this.blockSelected = false;
       this.Editor.BlockManager.dropPointer();
       this.Editor.Toolbar.close();
-    } else {
-      this.blockSelected = true;
     }
 
     if (!clickedOnInlineToolbarButton) {
