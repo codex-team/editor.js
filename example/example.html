@@ -38,9 +38,7 @@
   <script src="https://cdn.rawgit.com/codex-editor/simple-image/51f6f9f2/dist/bundle.js"></script><!-- Simple Image -->
   <script src="https://cdn.rawgit.com/codex-editor/delimiter/9377e8a3/dist/bundle.js"></script><!-- Delimiter -->
   <script src="https://cdn.rawgit.com/codex-editor/list/71e7ab61/dist/bundle.js"></script><!-- List -->
-
-  <script src="plugins/quote/quote.js?v=100"></script>
-  <link rel="stylesheet" href="plugins/quote/quote.css">
+  <script src="https://cdn.rawgit.com/codex-editor/quote/1c592bcb/dist/bundle.js"></script><!-- Quote -->
 
   <link rel="stylesheet" href="tools-inline/term/term.css">
   <script src="tools-inline/term/term.js"></script>
@@ -105,6 +103,10 @@
         quote: {
           class: Quote,
           inlineToolbar: true,
+          config: {
+            quotePlaceholder: 'Enter a quote',
+            captionPlaceholder: 'Quote\'s author',
+          },
         },
 
         delimiter: Delimiter,
