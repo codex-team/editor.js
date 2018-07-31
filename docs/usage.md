@@ -10,6 +10,8 @@ So how to use the Editor after [Installation](installation.md).
 
 - Create a new Blocks by Enter or with the Plus Button
 - Press `TAB` or click on the Plus Button to view the Toolbox
+- Press `TAB` again to leaf Toolbox and select a Block you need. Then press Enter.
+
 
  ![](https://github.com/codex-editor/list/raw/master/assets/example.gif)
  
