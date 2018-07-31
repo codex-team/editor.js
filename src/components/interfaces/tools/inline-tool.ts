@@ -4,6 +4,10 @@
 import ITool from './tool';
 
 export default interface IInlineTool extends ITool {
+  /**
+   * Public getter with shortcut string
+   */
+  shortcut?: string;
 
   /**
    * Returns button for the Inline Toolbar
@@ -33,4 +37,5 @@ export default interface IInlineTool extends ITool {
    * Function called with Inline Toolbar closing
    */
   clear?(): void;
+
 }

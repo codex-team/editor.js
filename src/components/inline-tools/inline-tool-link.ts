@@ -158,6 +158,13 @@ export default class LinkInlineTool implements InlineTool {
     this.closeActions();
   }
 
+  /**
+   * Set a shortcut
+   */
+  public get shortcut(): string {
+    return 'CMD+K';
+  }
+
   private toggleActions(): void {
     if (!this.inputOpened) {
       this.openActions(true);

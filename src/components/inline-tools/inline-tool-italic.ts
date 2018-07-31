@@ -33,7 +33,6 @@ export default class ItalicInlineTool implements InlineTool {
   };
 
   constructor(api) {
-    console.log('Italic Inline Tool is ready');
   }
 
   /**
@@ -64,4 +63,12 @@ export default class ItalicInlineTool implements InlineTool {
     this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
     return isActive;
   }
+
+  /**
+   * Set a shortcut
+   */
+  public get shortcut(): string {
+    return 'CMD+I';
+  }
+
 }

@@ -41,7 +41,6 @@ to the `tools` property of Editor Config.
 ```javascript
 var editor = new CodexEditor({
   holderId : 'codex-editor',
-  initialBlock : 'text',
   tools: {
     text: {
       class: Text,
@@ -50,6 +49,7 @@ var editor = new CodexEditor({
     },
     header: Header
   },
+  initialBlock : 'text',
 });
 ```
 
