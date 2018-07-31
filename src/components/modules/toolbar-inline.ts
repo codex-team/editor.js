@@ -257,8 +257,8 @@ export default class InlineToolbar extends Module {
      */
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
-
     let shortcut = null;
+
     /**
      * 1) For internal tools, check public getter 'shortcut'
      * 2) For external tools, check tool's settings
