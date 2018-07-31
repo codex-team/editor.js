@@ -19202,7 +19202,7 @@ var Tools = function (_Module) {
       /**
        * Configuration to be passed to the Tool's constructor
        */
-      var config = this.apiSettings.CONFIG;
+      var config = this.toolsSettings[tool][this.apiSettings.CONFIG];
 
       return new plugin(data, config || {}, this.Editor.API.methods);
     }
