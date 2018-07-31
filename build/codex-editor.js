@@ -12377,7 +12377,7 @@ var Dom = function () {
      * Append one or several elements to the parent
      *
      * @param  {Element} parent    - where to append
-     * @param  {Element|Element[]} - element ore elements list
+     * @param  {Element|Element[]} - element or elements list
      */
 
   }, {
@@ -12389,6 +12389,26 @@ var Dom = function () {
         });
       } else {
         parent.appendChild(elements);
+      }
+    }
+
+    /**
+     * Append element or a couple to the beginning of the parent elements
+     *
+     * @param {Element} parent - where to append
+     * @param {Element|Element[]} elements - element or elements list
+     */
+
+  }, {
+    key: 'prepend',
+    value: function prepend(parent, elements) {
+      if (Array.isArray(elements)) {
+        elements = elements.reverse();
+        elements.forEach(function (el) {
+          return parent.prepend(el);
+        });
+      } else {
+        parent.prepend(elements);
       }
     }
 
@@ -19014,15 +19034,16 @@ var Tools = function (_Module) {
     key: 'apiSettings',
     get: function get() {
       return {
-        IS_INLINE: 'isInline',
-        TOOLBAR_ICON: 'toolboxIcon',
-        IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
-        IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
-        IS_IRREPLACEBLE_TOOL: 'irreplaceable',
-        IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
-        IS_PASTE_DISALLOWED: 'disallowPaste',
+        CONFIG: 'config',
         IS_CONTENTLESS: 'contentless',
-        SHORTCUT: 'shortcut'
+        IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
+        IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
+        IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
+        IS_INLINE: 'isInline',
+        IS_IRREPLACEBLE_TOOL: 'irreplaceable',
+        IS_PASTE_DISALLOWED: 'disallowPaste',
+        SHORTCUT: 'shortcut',
+        TOOLBAR_ICON: 'toolboxIcon'
       };
     }
 
@@ -19211,12 +19232,14 @@ var Tools = function (_Module) {
   }, {
     key: 'construct',
     value: function construct(tool, data) {
-      var plugin = this.toolsClasses[tool],
-          config = this.toolsSettings[tool];
+      var plugin = this.toolsClasses[tool];
 
-      var instance = new plugin(data, config || {}, this.Editor.API.methods);
+      /**
+       * Configuration to be passed to the Tool's constructor
+       */
+      var config = this.toolsSettings[tool][this.apiSettings.CONFIG];
 
-      return instance;
+      return new plugin(data, config || {}, this.Editor.API.methods);
     }
 
     /**
@@ -19463,9 +19486,9 @@ var UI = function (_Module) {
       });
 
       /**
-       * Append styles
+       * Append styles at the top of HEAD tag
        */
-      $.append(document.head, tag);
+      $.prepend(document.head, tag);
     }
 
     /**
@@ -19717,22 +19740,74 @@ module.exports = exports['default'];
 
 
 /**
- * Element.closest()
+ * The Element.matches() method returns true if the element
+ * would be selected by the specified selector string;
+ * otherwise, returns false.
  *
- * https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+ * {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/matches#Polyfill}
  */
-if (!Element.prototype.matches) Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
 
-if (!Element.prototype.closest) Element.prototype.closest = function (s) {
-  var el = this;
+if (!Element.prototype.matches) {
+  Element.prototype.matches = Element.prototype.matchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector || Element.prototype.webkitMatchesSelector || function (s) {
+    var matches = (this.document || this.ownerDocument).querySelectorAll(s);
+    var i = matches.length;
 
-  if (!document.documentElement.contains(el)) return null;
-  do {
-    if (el.matches(s)) return el;
-    el = el.parentElement || el.parentNode;
-  } while (el !== null);
-  return null;
-};
+    while (--i >= 0 && matches.item(i) !== this) {}
+
+    return i > -1;
+  };
+}
+
+/**
+ * The Element.closest() method returns the closest ancestor
+ * of the current element (or the current element itself) which
+ * matches the selectors given in parameter.
+ * If there isn't such an ancestor, it returns null.
+ *
+ * {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill}
+ */
+if (!Element.prototype.closest) {
+  Element.prototype.closest = function (s) {
+    var el = this;
+
+    if (!document.documentElement.contains(el)) {
+      return null;
+    }
+
+    do {
+      if (el.matches(s)) return el;
+
+      el = el.parentElement || el.parentNode;
+    } while (el !== null);
+
+    return null;
+  };
+}
+
+/**
+ * The ParentNode.prepend method inserts a set of Node objects
+ * or DOMString objects before the first child of the ParentNode.
+ * DOMString objects are inserted as equivalent Text nodes.
+ *
+ * {@link https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/prepend#Polyfill}
+ */
+if (!Element.prototype.prepend) {
+  Element.prototype.prepend = function prepend(nodes) {
+    var docFrag = document.createDocumentFragment();
+
+    if (!Array.isArray(nodes)) {
+      nodes = [nodes];
+    }
+
+    nodes.forEach(function (node) {
+      var isNode = node instanceof Node;
+
+      docFrag.appendChild(isNode ? node : document.createTextNode(String(node)));
+    });
+
+    this.insertBefore(docFrag, this.firstChild);
+  };
+}
 
 /***/ }),
 

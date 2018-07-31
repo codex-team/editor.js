@@ -128,9 +128,9 @@ export default class UI extends Module {
     });
 
     /**
-     * Append styles
+     * Append styles at the top of HEAD tag
      */
-    $.append(document.head, tag);
+    $.prepend(document.head, tag);
   }
 
   /**
