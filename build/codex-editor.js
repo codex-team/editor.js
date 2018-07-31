@@ -18999,15 +18999,16 @@ var Tools = function (_Module) {
     key: 'apiSettings',
     get: function get() {
       return {
-        IS_INLINE: 'isInline',
-        TOOLBAR_ICON: 'toolboxIcon',
-        IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
-        IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
-        IS_IRREPLACEBLE_TOOL: 'irreplaceable',
-        IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
-        IS_PASTE_DISALLOWED: 'disallowPaste',
+        CONFIG: 'config',
         IS_CONTENTLESS: 'contentless',
-        SHORTCUT: 'shortcut'
+        IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
+        IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
+        IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
+        IS_INLINE: 'isInline',
+        IS_IRREPLACEBLE_TOOL: 'irreplaceable',
+        IS_PASTE_DISALLOWED: 'disallowPaste',
+        SHORTCUT: 'shortcut',
+        TOOLBAR_ICON: 'toolboxIcon'
       };
     }
 
@@ -19201,7 +19202,7 @@ var Tools = function (_Module) {
       /**
        * Configuration to be passed to the Tool's constructor
        */
-      var config = this.toolsSettings[tool].config;
+      var config = this.apiSettings.CONFIG;
 
       return new plugin(data, config || {}, this.Editor.API.methods);
     }

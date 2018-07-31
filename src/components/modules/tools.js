@@ -122,15 +122,15 @@ export default class Tools extends Module {
    */
   get apiSettings() {
     return {
-      IS_INLINE: 'isInline',
-      TOOLBAR_ICON: 'toolboxIcon',
-      IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
-      IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
-      IS_IRREPLACEBLE_TOOL: 'irreplaceable',
-      IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
-      IS_PASTE_DISALLOWED: 'disallowPaste',
       IS_CONTENTLESS: 'contentless',
+      IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
+      IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
+      IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
+      IS_INLINE: 'isInline',
+      IS_IRREPLACEBLE_TOOL: 'irreplaceable',
+      IS_PASTE_DISALLOWED: 'disallowPaste',
       SHORTCUT: 'shortcut',
+      TOOLBAR_ICON: 'toolboxIcon',
     };
   }
 
