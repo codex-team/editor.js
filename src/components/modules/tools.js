@@ -122,6 +122,7 @@ export default class Tools extends Module {
    */
   get apiSettings() {
     return {
+      CONFIG: 'config',
       IS_CONTENTLESS: 'contentless',
       IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
       IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
@@ -298,7 +299,7 @@ export default class Tools extends Module {
     /**
      * Configuration to be passed to the Tool's constructor
      */
-    const config = this.toolsSettings[tool].config;
+    const config = this.apiSettings.CONFIG;
 
     return new plugin(data, config || {}, this.Editor.API.methods);
   }
