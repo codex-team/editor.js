@@ -293,12 +293,14 @@ export default class Tools extends Module {
    *
    */
   construct(tool, data) {
-    let plugin = this.toolsClasses[tool],
-      config = this.toolsSettings[tool];
+    const plugin = this.toolsClasses[tool];
 
-    let instance = new plugin(data, config || {}, this.Editor.API.methods);
+    /**
+     * Configuration to be passed to the Tool's constructor
+     */
+    const config = this.toolsSettings[tool].config;
 
-    return instance;
+    return new plugin(data, config || {}, this.Editor.API.methods);
   }
 
   /**
