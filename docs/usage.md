@@ -8,7 +8,7 @@ We have [many](http://github.com/codex-editor) ready-to-use Plugins and the [sim
 
 So how to use the Editor after [Installation](installation.md).
 
-- Create a new Blocks by Enter or with the Plus Button
+- Create new Blocks by Enter or with the Plus Button
 - Press `TAB` or click on the Plus Button to view the Toolbox
 - Press `TAB` again to leaf Toolbox and select a Block you need. Then press Enter.
 
@@ -26,7 +26,7 @@ or apply Tool's settings, if it provided. For example, set a Heading level or Li
 
 ## Shortcuts
 
-We are really appreciate shortcuts. So there are few presets. 
+We really appreciate shortcuts. So there are few presets. 
 
 Action | Shortcut | Restrictions
 -- | -- | --
