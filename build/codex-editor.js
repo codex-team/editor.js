@@ -12752,7 +12752,6 @@ var BoldInlineTool = function () {
     this.nodes = {
       button: null
     };
-    console.log('Bold Inline Tool is ready');
   }
   /**
    * Create button for Inline Toolbar
@@ -12788,6 +12787,15 @@ var BoldInlineTool = function () {
       var isActive = document.queryCommandState(this.commandName);
       this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
       return isActive;
+    }
+    /**
+     * Set a shortcut
+     */
+
+  }, {
+    key: 'shortcut',
+    get: function get() {
+      return 'CMD+B';
     }
   }]);
 
@@ -12848,7 +12856,6 @@ var ItalicInlineTool = function () {
     this.nodes = {
       button: null
     };
-    console.log('Italic Inline Tool is ready');
   }
   /**
    * Create button for Inline Toolbar
@@ -12884,6 +12891,15 @@ var ItalicInlineTool = function () {
       var isActive = document.queryCommandState(this.commandName);
       this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
       return isActive;
+    }
+    /**
+     * Set a shortcut
+     */
+
+  }, {
+    key: 'shortcut',
+    get: function get() {
+      return 'CMD+I';
     }
   }]);
 
@@ -13068,6 +13084,10 @@ var LinkInlineTool = function () {
         value: function clear() {
             this.closeActions();
         }
+        /**
+         * Set a shortcut
+         */
+
     }, {
         key: 'toggleActions',
         value: function toggleActions() {
@@ -13226,6 +13246,11 @@ var LinkInlineTool = function () {
         key: 'unlink',
         value: function unlink() {
             document.execCommand(this.commandUnlink);
+        }
+    }, {
+        key: 'shortcut',
+        get: function get() {
+            return 'CMD+K';
         }
     }]);
 
@@ -17948,8 +17973,18 @@ var InlineToolbar = function (_Module) {
              * Ignore tool that doesn't have shortcut or empty string
              */
             var toolSettings = this.Editor.Tools.getToolSettings(toolName);
-            if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
-                this.enableShortcuts(tool, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
+            var shortcut = null;
+            /**
+             * 1) For internal tools, check public getter 'shortcut'
+             * 2) For external tools, check tool's settings
+             */
+            if (this.internalTools[toolName]) {
+                shortcut = this.internalTools[toolName].shortcut;
+            } else if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
+                shortcut = toolSettings[this.Editor.Tools.apiSettings.SHORTCUT];
+            }
+            if (shortcut) {
+                this.enableShortcuts(tool, shortcut);
             }
         }
         /**

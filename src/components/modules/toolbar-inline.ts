@@ -257,8 +257,20 @@ export default class InlineToolbar extends Module {
      */
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
-    if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
-      this.enableShortcuts(tool, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
+
+    let shortcut = null;
+    /**
+     * 1) For internal tools, check public getter 'shortcut'
+     * 2) For external tools, check tool's settings
+     */
+    if (this.internalTools[toolName]) {
+      shortcut = this.internalTools[toolName].shortcut;
+    } else if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]){
+      shortcut = toolSettings[this.Editor.Tools.apiSettings.SHORTCUT];
+    }
+
+    if (shortcut) {
+      this.enableShortcuts(tool, shortcut);
     }
   }
 
