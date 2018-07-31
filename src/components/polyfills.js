@@ -7,7 +7,7 @@
  *
  * {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/matches#Polyfill}
  */
-if (!Element.prototype.matches)
+if (!Element.prototype.matches) {
   Element.prototype.matches = Element.prototype.matchesSelector ||
     Element.prototype.mozMatchesSelector ||
     Element.prototype.msMatchesSelector ||
@@ -17,10 +17,12 @@ if (!Element.prototype.matches)
       const matches = (this.document || this.ownerDocument).querySelectorAll(s);
       let i = matches.length;
 
-      while (--i >= 0 && matches.item(i) !== this) {}
+      while (--i >= 0 && matches.item(i) !== this) {
+      }
 
       return i > -1;
     };
+}
 
 /**
  * The Element.closest() method returns the closest ancestor
@@ -30,11 +32,13 @@ if (!Element.prototype.matches)
  *
  * {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill}
  */
-if (!Element.prototype.closest)
+if (!Element.prototype.closest) {
   Element.prototype.closest = function (s) {
     let el = this;
 
-    if (!document.documentElement.contains(el)) return null;
+    if (!document.documentElement.contains(el)) {
+      return null;
+    }
 
     do {
       if (el.matches(s)) return el;
@@ -44,6 +48,7 @@ if (!Element.prototype.closest)
 
     return null;
   };
+}
 
 /**
  * The ParentNode.prepend method inserts a set of Node objects
@@ -52,9 +57,13 @@ if (!Element.prototype.closest)
  *
  * {@link https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/prepend#Polyfill}
  */
-if (!Element.prototype.prepend)
+if (!Element.prototype.prepend) {
   Element.prototype.prepend = function prepend(nodes) {
     let docFrag = document.createDocumentFragment();
+
+    if (!Array.isArray(nodes)) {
+      nodes = [ nodes ];
+    }
 
     nodes.forEach(function (node) {
       const isNode = node instanceof Node;
@@ -64,3 +73,4 @@ if (!Element.prototype.prepend)
 
     this.insertBefore(docFrag, this.firstChild);
   };
+}

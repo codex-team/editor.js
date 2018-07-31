@@ -19709,14 +19709,16 @@ module.exports = exports['default'];
  * {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/matches#Polyfill}
  */
 
-if (!Element.prototype.matches) Element.prototype.matches = Element.prototype.matchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector || Element.prototype.webkitMatchesSelector || function (s) {
-  var matches = (this.document || this.ownerDocument).querySelectorAll(s);
-  var i = matches.length;
+if (!Element.prototype.matches) {
+  Element.prototype.matches = Element.prototype.matchesSelector || Element.prototype.mozMatchesSelector || Element.prototype.msMatchesSelector || Element.prototype.oMatchesSelector || Element.prototype.webkitMatchesSelector || function (s) {
+    var matches = (this.document || this.ownerDocument).querySelectorAll(s);
+    var i = matches.length;
 
-  while (--i >= 0 && matches.item(i) !== this) {}
+    while (--i >= 0 && matches.item(i) !== this) {}
 
-  return i > -1;
-};
+    return i > -1;
+  };
+}
 
 /**
  * The Element.closest() method returns the closest ancestor
@@ -19726,19 +19728,23 @@ if (!Element.prototype.matches) Element.prototype.matches = Element.prototype.ma
  *
  * {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/closest#Polyfill}
  */
-if (!Element.prototype.closest) Element.prototype.closest = function (s) {
-  var el = this;
+if (!Element.prototype.closest) {
+  Element.prototype.closest = function (s) {
+    var el = this;
 
-  if (!document.documentElement.contains(el)) return null;
+    if (!document.documentElement.contains(el)) {
+      return null;
+    }
 
-  do {
-    if (el.matches(s)) return el;
+    do {
+      if (el.matches(s)) return el;
 
-    el = el.parentElement || el.parentNode;
-  } while (el !== null);
+      el = el.parentElement || el.parentNode;
+    } while (el !== null);
 
-  return null;
-};
+    return null;
+  };
+}
 
 /**
  * The ParentNode.prepend method inserts a set of Node objects
@@ -19747,17 +19753,23 @@ if (!Element.prototype.closest) Element.prototype.closest = function (s) {
  *
  * {@link https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/prepend#Polyfill}
  */
-if (!Element.prototype.prepend) Element.prototype.prepend = function prepend(nodes) {
-  var docFrag = document.createDocumentFragment();
+if (!Element.prototype.prepend) {
+  Element.prototype.prepend = function prepend(nodes) {
+    var docFrag = document.createDocumentFragment();
 
-  nodes.forEach(function (node) {
-    var isNode = node instanceof Node;
+    if (!Array.isArray(nodes)) {
+      nodes = [nodes];
+    }
 
-    docFrag.appendChild(isNode ? node : document.createTextNode(String(node)));
-  });
+    nodes.forEach(function (node) {
+      var isNode = node instanceof Node;
 
-  this.insertBefore(docFrag, this.firstChild);
-};
+      docFrag.appendChild(isNode ? node : document.createTextNode(String(node)));
+    });
+
+    this.insertBefore(docFrag, this.firstChild);
+  };
+}
 
 /***/ }),
 
