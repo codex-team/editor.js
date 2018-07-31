@@ -265,7 +265,7 @@ export default class InlineToolbar extends Module {
      */
     if (this.internalTools[toolName]) {
       shortcut = this.internalTools[toolName].shortcut;
-    } else if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]){
+    } else if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
       shortcut = toolSettings[this.Editor.Tools.apiSettings.SHORTCUT];
     }
 
