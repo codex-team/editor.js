@@ -299,7 +299,7 @@ export default class Tools extends Module {
     /**
      * Configuration to be passed to the Tool's constructor
      */
-    const config = this.apiSettings.CONFIG;
+    const config = this.toolsSettings[tool][this.apiSettings.CONFIG];
 
     return new plugin(data, config || {}, this.Editor.API.methods);
   }
