@@ -18855,9 +18855,9 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -18914,149 +18914,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var Tools = function (_Module) {
   _inherits(Tools, _Module);
 
-  _createClass(Tools, [{
-    key: 'available',
-
-    /**
-     * Returns available Tools
-     * @return {Tool[]}
-     */
-    get: function get() {
-      return this.toolsAvailable;
-    }
-
-    /**
-     * Returns unavailable Tools
-     * @return {Tool[]}
-     */
-
-  }, {
-    key: 'unavailable',
-    get: function get() {
-      return this.toolsUnavailable;
-    }
-
-    /**
-     * Return Tools for the Inline Toolbar
-     * @return {Object} - object of Inline Tool's classes
-     */
-
-  }, {
-    key: 'inline',
-    get: function get() {
-      var _this2 = this;
-
-      var tools = Object.entries(this.available).filter(function (_ref) {
-        var _ref2 = _slicedToArray(_ref, 2),
-            name = _ref2[0],
-            tool = _ref2[1];
-
-        if (!tool[_this2.apiSettings.IS_INLINE]) {
-          return false;
-        }
-
-        /**
-         * Some Tools validation
-         */
-        var inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
-        var notImplementedMethods = inlineToolRequiredMethods.filter(function (method) {
-          return !new tool()[method];
-        });
-
-        if (notImplementedMethods.length) {
-          _.log('Incorrect Inline Tool: ' + tool.name + '. Some of required methods is not implemented %o', 'warn', notImplementedMethods);
-          return false;
-        }
-
-        return true;
-      });
-
-      /**
-       * collected inline tools with key of tool name
-       */
-      var result = {};
-
-      tools.forEach(function (_ref3) {
-        var _ref4 = _slicedToArray(_ref3, 2),
-            name = _ref4[0],
-            tool = _ref4[1];
-
-        return result[name] = tool;
-      });
-
-      return result;
-    }
-
-    /**
-     * Return editor block tools
-     */
-
-  }, {
-    key: 'blockTools',
-    get: function get() {
-      var _this3 = this;
-
-      // eslint-disable-next-line no-unused-vars
-      var tools = Object.entries(this.available).filter(function (_ref5) {
-        var _ref6 = _slicedToArray(_ref5, 2),
-            name = _ref6[0],
-            tool = _ref6[1];
-
-        if (tool[_this3.apiSettings.IS_INLINE]) {
-          return false;
-        }
-
-        return true;
-      });
-
-      /**
-       * collected block tools with key of tool name
-       */
-      var result = {};
-
-      tools.forEach(function (_ref7) {
-        var _ref8 = _slicedToArray(_ref7, 2),
-            name = _ref8[0],
-            tool = _ref8[1];
-
-        return result[name] = tool;
-      });
-
-      return result;
-    }
-
-    /**
-     * Constant for available Tools Settings
-     * @return {object}
-     */
-
-  }, {
-    key: 'apiSettings',
-    get: function get() {
-      return {
-        CONFIG: 'config',
-        IS_CONTENTLESS: 'contentless',
-        IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
-        IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
-        IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
-        IS_INLINE: 'isInline',
-        IS_IRREPLACEBLE_TOOL: 'irreplaceable',
-        IS_PASTE_DISALLOWED: 'disallowPaste',
-        SHORTCUT: 'shortcut',
-        TOOLBAR_ICON: 'toolboxIcon'
-      };
-    }
-
-    /**
-     * @constructor
-     *
-     * @param {EditorConfig} config
-     */
-
-  }]);
-
-  function Tools(_ref9) {
-    var config = _ref9.config;
+  /**
+   * @constructor
+   *
+   * @param {EditorConfig} config
+   */
+  function Tools(_ref) {
+    var config = _ref.config;
 
     _classCallCheck(this, Tools);
 
@@ -19088,19 +18952,32 @@ var Tools = function (_Module) {
      * @type {Object}
      */
     _this.toolsUnavailable = {};
+
+    /**
+     * Cache for the prepared inline tools
+     * @type {null|object}
+     * @private
+     */
+    _this._inlineTools = null;
     return _this;
   }
 
   /**
-   * Creates instances via passed or default configuration
-   * @return {Promise}
+   * Returns available Tools
+   * @return {Tool[]}
    */
 
 
   _createClass(Tools, [{
     key: 'prepare',
+
+
+    /**
+     * Creates instances via passed or default configuration
+     * @return {Promise}
+     */
     value: function prepare() {
-      var _this4 = this;
+      var _this2 = this;
 
       if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
         return Promise.reject('Can\'t start without tools');
@@ -19162,9 +19039,9 @@ var Tools = function (_Module) {
        * to see how it works {@link Util#sequence}
        */
       return _.sequence(sequenceData, function (data) {
-        _this4.success(data);
+        _this2.success(data);
       }, function (data) {
-        _this4.fallback(data);
+        _this2.fallback(data);
       });
     }
 
@@ -19264,6 +19141,142 @@ var Tools = function (_Module) {
     key: 'getToolSettings',
     value: function getToolSettings(toolName) {
       return this.toolsSettings[toolName];
+    }
+  }, {
+    key: 'available',
+    get: function get() {
+      return this.toolsAvailable;
+    }
+
+    /**
+     * Returns unavailable Tools
+     * @return {Tool[]}
+     */
+
+  }, {
+    key: 'unavailable',
+    get: function get() {
+      return this.toolsUnavailable;
+    }
+
+    /**
+     * Return Tools for the Inline Toolbar
+     * @return {Object} - object of Inline Tool's classes
+     */
+
+  }, {
+    key: 'inline',
+    get: function get() {
+      var _this3 = this;
+
+      if (this._inlineTools) {
+        return this._inlineTools;
+      }
+
+      var tools = Object.entries(this.available).filter(function (_ref2) {
+        var _ref3 = _slicedToArray(_ref2, 2),
+            name = _ref3[0],
+            tool = _ref3[1];
+
+        if (!tool[_this3.apiSettings.IS_INLINE]) {
+          return false;
+        }
+
+        /**
+         * Some Tools validation
+         */
+        var inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
+        var notImplementedMethods = inlineToolRequiredMethods.filter(function (method) {
+          return !new tool(_this3.Editor.API.methods)[method];
+        });
+
+        if (notImplementedMethods.length) {
+          _.log('Incorrect Inline Tool: ' + tool.name + '. Some of required methods is not implemented %o', 'warn', notImplementedMethods);
+          return false;
+        }
+
+        return true;
+      });
+
+      /**
+       * collected inline tools with key of tool name
+       */
+      var result = {};
+
+      tools.forEach(function (_ref4) {
+        var _ref5 = _slicedToArray(_ref4, 2),
+            name = _ref5[0],
+            tool = _ref5[1];
+
+        return result[name] = tool;
+      });
+
+      /**
+       * Cache prepared Tools
+       */
+      this._inlineTools = result;
+
+      return this._inlineTools;
+    }
+
+    /**
+     * Return editor block tools
+     */
+
+  }, {
+    key: 'blockTools',
+    get: function get() {
+      var _this4 = this;
+
+      // eslint-disable-next-line no-unused-vars
+      var tools = Object.entries(this.available).filter(function (_ref6) {
+        var _ref7 = _slicedToArray(_ref6, 2),
+            name = _ref7[0],
+            tool = _ref7[1];
+
+        if (tool[_this4.apiSettings.IS_INLINE]) {
+          return false;
+        }
+
+        return true;
+      });
+
+      /**
+       * collected block tools with key of tool name
+       */
+      var result = {};
+
+      tools.forEach(function (_ref8) {
+        var _ref9 = _slicedToArray(_ref8, 2),
+            name = _ref9[0],
+            tool = _ref9[1];
+
+        return result[name] = tool;
+      });
+
+      return result;
+    }
+
+    /**
+     * Constant for available Tools Settings
+     * @return {object}
+     */
+
+  }, {
+    key: 'apiSettings',
+    get: function get() {
+      return {
+        CONFIG: 'config',
+        IS_CONTENTLESS: 'contentless',
+        IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
+        IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
+        IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
+        IS_INLINE: 'isInline',
+        IS_IRREPLACEBLE_TOOL: 'irreplaceable',
+        IS_PASTE_DISALLOWED: 'disallowPaste',
+        SHORTCUT: 'shortcut',
+        TOOLBAR_ICON: 'toolboxIcon'
+      };
     }
   }]);
 

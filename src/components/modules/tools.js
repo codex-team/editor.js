@@ -44,6 +44,49 @@
  */
 export default class Tools extends Module {
   /**
+   * @constructor
+   *
+   * @param {EditorConfig} config
+   */
+  constructor({config}) {
+    super({config});
+
+    /**
+     * Map {name: Class, ...} where:
+     *  name — block type name in JSON. Got from EditorConfig.tools keys
+     * @type {Object}
+     */
+    this.toolsClasses = {};
+
+    /**
+     * Tools settings in a map {name: settings, ...}
+     * @type {Object}
+     */
+    this.toolsSettings = {};
+
+    /**
+     * Available tools list
+     * {name: Class, ...}
+     * @type {Object}
+     */
+    this.toolsAvailable = {};
+
+    /**
+     * Tools that rejected a prepare method
+     * {name: Class, ... }
+     * @type {Object}
+     */
+    this.toolsUnavailable = {};
+
+    /**
+     * Cache for the prepared inline tools
+     * @type {null|object}
+     * @private
+     */
+    this._inlineTools = null;
+  }
+
+  /**
    * Returns available Tools
    * @return {Tool[]}
    */
@@ -64,6 +107,10 @@ export default class Tools extends Module {
    * @return {Object} - object of Inline Tool's classes
    */
   get inline() {
+    if (this._inlineTools) {
+      return this._inlineTools;
+    }
+
     const tools = Object.entries(this.available).filter( ([name, tool]) => {
       if (!tool[this.apiSettings.IS_INLINE]) {
         return false;
@@ -73,7 +120,7 @@ export default class Tools extends Module {
        * Some Tools validation
        */
       const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
-      const notImplementedMethods = inlineToolRequiredMethods.filter( method => !new tool()[method] );
+      const notImplementedMethods = inlineToolRequiredMethods.filter( method => !new tool(this.Editor.API.methods)[method] );
 
       if (notImplementedMethods.length) {
         _.log(`Incorrect Inline Tool: ${tool.name}. Some of required methods is not implemented %o`, 'warn', notImplementedMethods);
@@ -90,7 +137,12 @@ export default class Tools extends Module {
 
     tools.forEach(([name, tool]) => result[name] = tool);
 
-    return result;
+    /**
+     * Cache prepared Tools
+     */
+    this._inlineTools = result;
+
+    return this._inlineTools;
   }
 
   /**
@@ -133,42 +185,6 @@ export default class Tools extends Module {
       SHORTCUT: 'shortcut',
       TOOLBAR_ICON: 'toolboxIcon',
     };
-  }
-
-  /**
-   * @constructor
-   *
-   * @param {EditorConfig} config
-   */
-  constructor({config}) {
-    super({config});
-
-    /**
-     * Map {name: Class, ...} where:
-     *  name — block type name in JSON. Got from EditorConfig.tools keys
-     * @type {Object}
-     */
-    this.toolsClasses = {};
-
-    /**
-     * Tools settings in a map {name: settings, ...}
-     * @type {Object}
-     */
-    this.toolsSettings = {};
-
-    /**
-     * Available tools list
-     * {name: Class, ...}
-     * @type {Object}
-     */
-    this.toolsAvailable = {};
-
-    /**
-     * Tools that rejected a prepare method
-     * {name: Class, ... }
-     * @type {Object}
-     */
-    this.toolsUnavailable = {};
   }
 
   /**
