@@ -10,11 +10,19 @@
   &--showed {
     display: block;
   }
+
+  [hidden] {
+    display: none !important;
+  }
 }
 
 .ce-inline-tool {
   @apply --toolbar-button;
   line-height: normal;
+
+  &--last {
+    margin-right: 0 !important;
+  }
 
   &--link {
     .icon {
