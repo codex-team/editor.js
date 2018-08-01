@@ -40,8 +40,7 @@
   <script src="https://cdn.rawgit.com/codex-editor/list/71e7ab61/dist/bundle.js"></script><!-- List -->
   <script src="https://cdn.rawgit.com/codex-editor/quote/1c592bcb/dist/bundle.js"></script><!-- Quote -->
 
-  <link rel="stylesheet" href="tools-inline/term/term.css">
-  <script src="tools-inline/term/term.js"></script>
+  <script src="https://cdn.rawgit.com/codex-editor/inline-code/da87cd79/dist/bundle.js"></script><!-- Inline Code -->
 
   <!-- Load CodeX Editor's Core -->
   <script src="../build/codex-editor.js?v=108"></script>
@@ -90,8 +89,8 @@
           }
         },
 
-        term: {
-          class: Term,
+        inlineCode: {
+          class: InlineCode,
           shortcut: 'CMD+SHIFT+M'
         },
 
@@ -163,7 +162,7 @@
           {
             type : 'text',
             data : {
-              text : 'Блоки — это структурные элементы, из которых состоит статья. Например <span class="marked">Параграф</span>, <span class="marked">Заголовок</span>, <span class="marked">Изображение</span>, <span class="marked">Видео</span> — это все Блоки. В CodeX Editor каждый Блок определяется плагином. Есть много готовых Блоков и простой API для создания новых. Например, вы можете создать Блок для Твиттера, Инстаграма, Опроса, Игры или CTA-кнопки.'
+              text : 'Блоки — это структурные элементы, из которых состоит статья. Например <span class="inline-code">Параграф</span>, <span class="inline-code">Заголовок</span>, <span class="inline-code">Изображение</span>, <span class="inline-code">Видео</span> — это все Блоки. В CodeX Editor каждый Блок определяется плагином. Есть много готовых Блоков и простой API для создания новых. Например, вы можете создать Блок для Твиттера, Инстаграма, Опроса, Игры или CTA-кнопки.'
             }
           },
           {
