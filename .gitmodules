@@ -1,0 +1,3 @@
+[submodule "example/tools/inline-code"]
+	path = example/tools/inline-code
+	url = https://github.com/codex-editor/inline-code
