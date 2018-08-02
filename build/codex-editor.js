@@ -14440,7 +14440,6 @@ var BlockEvents = function (_Module) {
              */
             var newCurrent = this.Editor.BlockManager.split();
             this.Editor.Caret.setToBlock(newCurrent);
-            this.Editor.Toolbar.move();
             /**
              * If new Block is empty
              */
@@ -14523,9 +14522,7 @@ var BlockEvents = function (_Module) {
     }, {
         key: 'arrowRightAndDown',
         value: function arrowRightAndDown() {
-            if (this.Editor.Caret.navigateNext()) {
-                this.Editor.Toolbar.move();
-            }
+            this.Editor.Caret.navigateNext();
         }
         /**
          * Handle left and up keyboard keys
@@ -14534,9 +14531,7 @@ var BlockEvents = function (_Module) {
     }, {
         key: 'arrowLeftAndUp',
         value: function arrowLeftAndUp() {
-            if (this.Editor.Caret.navigatePrevious()) {
-                this.Editor.Toolbar.move();
-            }
+            this.Editor.Caret.navigatePrevious();
         }
         /**
          * Default keydown handler
@@ -18792,6 +18787,7 @@ var Toolbar = function (_Module) {
   }, {
     key: 'open',
     value: function open() {
+      this.move();
       this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
     }
 
@@ -19787,7 +19783,6 @@ var UI = function (_Module) {
       /**
        * Move toolbar and open
        */
-      this.Editor.Toolbar.move();
       this.Editor.Toolbar.open();
 
       /**

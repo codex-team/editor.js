@@ -289,7 +289,6 @@ export default class UI extends Module {
     /**
      * Move toolbar and open
      */
-    this.Editor.Toolbar.move();
     this.Editor.Toolbar.open();
 
     /**

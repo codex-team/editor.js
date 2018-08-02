@@ -191,6 +191,7 @@ export default class Toolbar extends Module {
    * Open Toolbar with Plus Button
    */
   open() {
+    this.move();
     this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
   }
 

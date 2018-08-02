@@ -156,7 +156,6 @@ export default class BlockEvents extends Module {
     const newCurrent = this.Editor.BlockManager.split();
 
     this.Editor.Caret.setToBlock(newCurrent);
-    this.Editor.Toolbar.move();
 
     /**
      * If new Block is empty
@@ -246,18 +245,14 @@ export default class BlockEvents extends Module {
    * Handle right and down keyboard keys
    */
   private arrowRightAndDown(): void {
-    if (this.Editor.Caret.navigateNext()) {
-      this.Editor.Toolbar.move();
-    }
+    this.Editor.Caret.navigateNext();
   }
 
   /**
    * Handle left and up keyboard keys
    */
   private arrowLeftAndUp(): void {
-    if (this.Editor.Caret.navigatePrevious()) {
-      this.Editor.Toolbar.move();
-    }
+    this.Editor.Caret.navigatePrevious();
   }
 
   /**
