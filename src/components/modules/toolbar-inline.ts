@@ -381,9 +381,9 @@ export default class InlineToolbar extends Module {
    */
   private get internalTools(): {[name: string]: InlineTool} {
     return {
-      bold: new BoldInlineTool(this.Editor.API.methods),
-      italic: new ItalicInlineTool(this.Editor.API.methods),
-      link: new LinkInlineTool(this.Editor.API.methods),
+      bold: this.Editor.Tools.constructInline(BoldInlineTool),
+      italic: this.Editor.Tools.constructInline(ItalicInlineTool),
+      link: this.Editor.Tools.constructInline(LinkInlineTool),
     };
   }
 
@@ -396,7 +396,7 @@ export default class InlineToolbar extends Module {
 
     for (const tool in this.Editor.Tools.inline) {
       if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
-        result[tool] = new this.Editor.Tools.inline[tool](this.Editor.API.methods);
+        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool]);
       }
     }
 

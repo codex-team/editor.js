@@ -12751,7 +12751,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Makes selected text bolder
  */
 var BoldInlineTool = function () {
-  function BoldInlineTool(api) {
+  /**
+   * @param {{api: IAPI}} - CodeX Editor API
+   */
+  function BoldInlineTool(_ref) {
+    var api = _ref.api;
+
     _classCallCheck(this, BoldInlineTool);
 
     /**
@@ -12855,7 +12860,12 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Style selected text with italic
  */
 var ItalicInlineTool = function () {
-  function ItalicInlineTool(api) {
+  /**
+   * @param {{api: IAPI}} - CodeX Editor API
+   */
+  function ItalicInlineTool(_ref) {
+    var api = _ref.api;
+
     _classCallCheck(this, ItalicInlineTool);
 
     /**
@@ -12966,10 +12976,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 var LinkInlineTool = function () {
     /**
-     * @param {object} api - CodeX Editor API
-     * @param {object} api.toolbar - Inline Toolbar API
+     * @param {{api: IAPI}} - CodeX Editor API
      */
-    function LinkInlineTool(api) {
+    function LinkInlineTool(_ref) {
+        var api = _ref.api;
+
         _classCallCheck(this, LinkInlineTool);
 
         /**
@@ -18134,9 +18145,9 @@ var InlineToolbar = function (_Module) {
         key: 'internalTools',
         get: function get() {
             return {
-                bold: new _inlineToolBold2.default(this.Editor.API.methods),
-                italic: new _inlineToolItalic2.default(this.Editor.API.methods),
-                link: new _inlineToolLink2.default(this.Editor.API.methods)
+                bold: this.Editor.Tools.constructInline(_inlineToolBold2.default),
+                italic: this.Editor.Tools.constructInline(_inlineToolItalic2.default),
+                link: this.Editor.Tools.constructInline(_inlineToolLink2.default)
             };
         }
         /**
@@ -18150,7 +18161,7 @@ var InlineToolbar = function (_Module) {
             var result = {};
             for (var tool in this.Editor.Tools.inline) {
                 if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
-                    result[tool] = new this.Editor.Tools.inline[tool](this.Editor.API.methods);
+                    result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool]);
                 }
             }
             return result;
@@ -19154,13 +19165,11 @@ var Tools = function (_Module) {
     }
 
     /**
-     * Return tool`a instance
+     * Return Tool`s instance
      *
      * @param {String} tool — tool name
-     * @param {Object} data — initial data
-     *
-     * @todo throw exceptions if tool doesnt exist
-     *
+     * @param {IBlockToolData} data — initial data
+     * @return {IBlockTool}
      */
 
   }, {
@@ -19173,7 +19182,38 @@ var Tools = function (_Module) {
        */
       var config = this.toolsSettings[tool][this.apiSettings.CONFIG];
 
+      /**
+       * @type {{api: IAPI, config: ({}), data: IBlockToolData}}
+       */
+      // const constructorOptions = {
+      //   api: this.Editor.API.methods,
+      //   config: config || {},
+      //   data: data
+      // };
+      //
+      // return new plugin(constructorOptions);
+
       return new plugin(data, config || {}, this.Editor.API.methods);
+    }
+
+    /**
+     * Return Inline Tool's instance
+     *
+     * @param {IInlineTool} tool
+     * @return {IInlineTool} — instance
+     */
+
+  }, {
+    key: 'constructInline',
+    value: function constructInline(tool) {
+      /**
+       * @type {{api: IAPI}}
+       */
+      var constructorOptions = {
+        api: this.Editor.API.methods
+      };
+
+      return new tool(constructorOptions);
     }
 
     /**
@@ -19244,7 +19284,7 @@ var Tools = function (_Module) {
          */
         var inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
         var notImplementedMethods = inlineToolRequiredMethods.filter(function (method) {
-          return !new tool(_this3.Editor.API.methods)[method];
+          return !_this3.constructInline(tool)[method];
         });
 
         if (notImplementedMethods.length) {

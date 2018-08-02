@@ -32,7 +32,10 @@ export default class ItalicInlineTool implements InlineTool {
     button: null,
   };
 
-  constructor(api) {
+  /**
+   * @param {{api: IAPI}} - CodeX Editor API
+   */
+  constructor({api}) {
   }
 
   /**

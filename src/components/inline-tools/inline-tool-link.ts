@@ -59,10 +59,9 @@ export default class LinkInlineTool implements InlineTool {
   private inlineToolbar: any;
 
   /**
-   * @param {object} api - CodeX Editor API
-   * @param {object} api.toolbar - Inline Toolbar API
+   * @param {{api: IAPI}} - CodeX Editor API
    */
-  constructor(api) {
+  constructor({api}) {
     this.inlineToolbar = api.toolbar;
     this.selection = new Selection();
   }
