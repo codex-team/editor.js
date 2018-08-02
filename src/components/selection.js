@@ -250,17 +250,23 @@ export default class Selection {
          */
         if (parent.tagName === tagName) {
           /**
-           * Optional additional check for class-name matching
+           * Save the result
+           */
+          parentTag = parent;
+
+          /**
+           * Optional additional check for class-name mismatching
            */
           if (className && parent.classList && !parent.classList.contains(className)) {
-            continue;
+            parentTag = null;
           }
 
           /**
-           * If we have found required tag with class then save the result and go out from cycle
+           * If we have found required tag with class then go out from the cycle
            */
-          parentTag = parent;
-          break;
+          if (parentTag) {
+            break;
+          }
         }
 
         /**
