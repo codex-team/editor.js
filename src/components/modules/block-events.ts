@@ -156,7 +156,6 @@ export default class BlockEvents extends Module {
     const newCurrent = this.Editor.BlockManager.split();
 
     this.Editor.Caret.setToBlock(newCurrent);
-    this.Editor.Toolbar.move();
 
     /**
      * If new Block is empty

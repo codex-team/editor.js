@@ -97,6 +97,11 @@ export default class DeleteTune implements IBlockTune {
       this.api.events.off('block-settings-closed', this.resetConfirmation);
 
       this.api.blocks.delete();
+
+      /**
+       * Prevent firing ui~documentClicked that can drop currentBlock pointer
+       */
+      event.stopPropagation();
     }
   }
 
