@@ -120,7 +120,7 @@ export default class Tools extends Module {
        * Some Tools validation
        */
       const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
-      const notImplementedMethods = inlineToolRequiredMethods.filter( method => !new tool(this.Editor.API.methods)[method] );
+      const notImplementedMethods = inlineToolRequiredMethods.filter( method => !this.constructInline(tool)[method]);
 
       if (notImplementedMethods.length) {
         _.log(`Incorrect Inline Tool: ${tool.name}. Some of required methods is not implemented %o`, 'warn', notImplementedMethods);
@@ -301,13 +301,11 @@ export default class Tools extends Module {
   }
 
   /**
-   * Return tool`a instance
+   * Return Tool`s instance
    *
    * @param {String} tool — tool name
-   * @param {Object} data — initial data
-   *
-   * @todo throw exceptions if tool doesnt exist
-   *
+   * @param {IBlockToolData} data — initial data
+   * @return {IBlockTool}
    */
   construct(tool, data) {
     const plugin = this.toolsClasses[tool];
@@ -317,7 +315,35 @@ export default class Tools extends Module {
      */
     const config = this.toolsSettings[tool][this.apiSettings.CONFIG];
 
+    /**
+     * @type {{api: IAPI, config: ({}), data: IBlockToolData}}
+     */
+    // const constructorOptions = {
+    //   api: this.Editor.API.methods,
+    //   config: config || {},
+    //   data: data
+    // };
+    //
+    // return new plugin(constructorOptions);
+
     return new plugin(data, config || {}, this.Editor.API.methods);
+  }
+
+  /**
+   * Return Inline Tool's instance
+   *
+   * @param {IInlineTool} tool
+   * @return {IInlineTool} — instance
+   */
+  constructInline(tool) {
+    /**
+     * @type {{api: IAPI}}
+     */
+    const constructorOptions = {
+      api: this.Editor.API.methods
+    };
+
+    return new tool(constructorOptions);
   }
 
   /**
