@@ -14512,7 +14512,9 @@ var BlockEvents = function (_Module) {
     }, {
         key: 'arrowRightAndDown',
         value: function arrowRightAndDown() {
-            this.Editor.Caret.navigateNext();
+            if (this.Editor.Caret.navigateNext()) {
+                this.Editor.Toolbar.move();
+            }
         }
         /**
          * Handle left and up keyboard keys
@@ -14521,7 +14523,9 @@ var BlockEvents = function (_Module) {
     }, {
         key: 'arrowLeftAndUp',
         value: function arrowLeftAndUp() {
-            this.Editor.Caret.navigatePrevious();
+            if (this.Editor.Caret.navigatePrevious()) {
+                this.Editor.Toolbar.move();
+            }
         }
         /**
          * Default keydown handler

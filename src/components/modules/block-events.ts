@@ -246,14 +246,18 @@ export default class BlockEvents extends Module {
    * Handle right and down keyboard keys
    */
   private arrowRightAndDown(): void {
-    this.Editor.Caret.navigateNext();
+    if (this.Editor.Caret.navigateNext()) {
+      this.Editor.Toolbar.move();
+    }
   }
 
   /**
    * Handle left and up keyboard keys
    */
   private arrowLeftAndUp(): void {
-    this.Editor.Caret.navigatePrevious();
+    if (this.Editor.Caret.navigatePrevious()) {
+      this.Editor.Toolbar.move();
+    }
   }
 
   /**
