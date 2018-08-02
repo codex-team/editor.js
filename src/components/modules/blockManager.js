@@ -83,7 +83,8 @@ export default class BlockManager extends Module {
    */
   composeBlock(toolName, data, settings) {
     let toolInstance = this.Editor.Tools.construct(toolName, data),
-      block = new Block(toolName, toolInstance, settings, this.Editor.API.methods);
+      toolClass = this.Editor.Tools.available[toolName],
+      block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
 
     this.bindEvents(block);
     /**
@@ -99,7 +100,7 @@ export default class BlockManager extends Module {
    * @param {Object} block
    */
   bindEvents(block) {
-    this.Editor.Listeners.on(block.holder, 'keydown', (event) => this.Editor.BlockEvents.keydown(event));
+    this.Editor.Listeners.on(block.holder, 'keydown', (event) => this.Editor.BlockEvents.keydown(event), true);
     this.Editor.Listeners.on(block.holder, 'mouseup', (event) => this.Editor.BlockEvents.mouseUp(event));
     this.Editor.Listeners.on(block.holder, 'keyup', (event) => this.Editor.BlockEvents.keyup(event));
   }

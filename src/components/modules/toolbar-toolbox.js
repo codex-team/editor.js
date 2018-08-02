@@ -80,8 +80,8 @@ export default class Toolbox extends Module {
   addTool(toolName, tool) {
     const api = this.Editor.Tools.apiSettings;
 
-    if (tool[api.IS_DISPLAYED_IN_TOOLBOX] && !tool[api.TOOLBAR_ICON_CLASS]) {
-      _.log('Toolbar icon class name is missed. Tool %o skipped', 'warn', toolName);
+    if (tool[api.IS_DISPLAYED_IN_TOOLBOX] && !tool[api.TOOLBAR_ICON]) {
+      _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
       return;
     }
 
@@ -100,7 +100,7 @@ export default class Toolbox extends Module {
       return;
     }
 
-    let button = $.make('li', [Toolbox.CSS.toolboxButton, tool[api.TOOLBAR_ICON_CLASS]], {
+    let button = $.make('li', [ Toolbox.CSS.toolboxButton ], {
       title: toolName
     });
 

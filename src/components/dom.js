@@ -67,13 +67,28 @@ export default class Dom {
    * Append one or several elements to the parent
    *
    * @param  {Element} parent    - where to append
-   * @param  {Element|Element[]} - element ore elements list
+   * @param  {Element|Element[]} - element or elements list
    */
   static append(parent, elements) {
     if ( Array.isArray(elements) ) {
       elements.forEach( el => parent.appendChild(el) );
     } else {
       parent.appendChild(elements);
+    }
+  }
+
+  /**
+   * Append element or a couple to the beginning of the parent elements
+   *
+   * @param {Element} parent - where to append
+   * @param {Element|Element[]} elements - element or elements list
+   */
+  static prepend(parent, elements) {
+    if ( Array.isArray(elements) ) {
+      elements = elements.reverse();
+      elements.forEach( el => parent.prepend(el) );
+    } else {
+      parent.prepend(elements);
     }
   }
 
@@ -111,6 +126,16 @@ export default class Dom {
    */
   static find(el = document, selector) {
     return el.querySelector(selector);
+  }
+
+  /**
+   * Get Element by Id
+   *
+   * @param {string} id
+   * @returns {HTMLElement | null}
+   */
+  static get(id) {
+    return document.getElementById(id);
   }
 
   /**

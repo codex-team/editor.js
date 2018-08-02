@@ -16,7 +16,7 @@ export default class Renderer extends Module {
   }
 
   /**
-   * @typedef {Object} RendererItems
+   * @typedef {Object} RendererBlocks
    * @property {String} type - tool name
    * @property {Object} data - tool data
    */
@@ -24,33 +24,33 @@ export default class Renderer extends Module {
   /**
    * @example
    *
-   * items: [
-   * {
-   *    type : 'paragraph',
-   *    data : {
-   *        text : 'Hello from Codex!'
-   *    }
-   * },
-   * {
-   *   type : 'paragraph',
-   *   data : {
-   *        text : 'Leave feedback if you like it!'
-   *   }
-   * },
+   * blocks: [
+   *   {
+   *     type : 'paragraph',
+   *     data : {
+   *       text : 'Hello from Codex!'
+   *     }
+   *   },
+   *   {
+   *     type : 'paragraph',
+   *     data : {
+   *       text : 'Leave feedback if you like it!'
+   *     }
+   *   },
    * ]
    *
    */
 
   /**
    * Make plugin blocks from array of plugin`s data
-   * @param {RendererItems[]} items
+   * @param {RendererBlocks[]} blocks
    */
-  render(items) {
+  render(blocks) {
     let chainData = [];
 
-    for (let i = 0; i < items.length; i++) {
+    for (let i = 0; i < blocks.length; i++) {
       chainData.push({
-        function: () => this.insertBlock(items[i])
+        function: () => this.insertBlock(blocks[i])
       });
     }
 
@@ -72,14 +72,18 @@ export default class Renderer extends Module {
       settings = item.settings;
 
     if (tool in this.Editor.Tools.available) {
-      this.Editor.BlockManager.insert(tool, data, settings);
+      try {
+        this.Editor.BlockManager.insert(tool, data, settings);
+      } catch (error) {
+        _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
+        Promise.reject(error);
+      }
     } else {
       /**
        * @todo show warning notification message
        *
        * `${tool} blocks was skipped.`
        */
-
       _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial CodeX Editor config.`, 'warn');
     }
 

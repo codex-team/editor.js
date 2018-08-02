@@ -28,6 +28,8 @@ export default class InlineToolbar extends Module {
     inlineToolbarShowed: 'ce-inline-toolbar--showed',
     buttonsWrapper: 'ce-inline-toolbar__buttons',
     actionsWrapper: 'ce-inline-toolbar__actions',
+    inlineToolButton: 'ce-inline-tool',
+    inlineToolButtonLast: 'ce-inline-tool--last',
   };
 
   /**
@@ -155,7 +157,19 @@ export default class InlineToolbar extends Module {
    * Shows Inline Toolbar
    */
   private open() {
+    /**
+     * Filter inline-tools and show only allowed by Block's Tool
+     */
+    this.filterTools();
+
+    /**
+     * Show Inline Toolbar
+     */
     this.nodes.wrapper.classList.add(this.CSS.inlineToolbarShowed);
+
+    /**
+     * Call 'clear' method for Inline Tools (for example, 'link' want to clear input)
+     */
     this.tools.forEach( (toolInstance, toolName) => {
       if (typeof toolInstance.clear === 'function') {
         toolInstance.clear();
@@ -216,6 +230,50 @@ export default class InlineToolbar extends Module {
   }
 
   /**
+   * Show only allowed Tools
+   */
+  private filterTools(): void {
+    const currentSelection = Selection.get(),
+      currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode);
+
+    const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name),
+      inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
+
+    /**
+     * All Inline Toolbar buttons
+     * @type {HTMLElement[]}
+     */
+    const buttons = Array.from(this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`)) as HTMLElement[];
+
+    /**
+     * Show previously hided
+     */
+    buttons.forEach((button) => {
+      button.hidden = false;
+      button.classList.remove(this.CSS.inlineToolButtonLast);
+    });
+
+    /**
+     * Filter buttons if Block Tool pass config like inlineToolbar=['link']
+     */
+    if (Array.isArray(inlineToolbarSettings)) {
+      buttons.forEach((button) => {
+        button.hidden = !inlineToolbarSettings.includes(button.dataset.tool);
+      });
+    }
+
+    /**
+     * Tick for removing right-margin from last visible button.
+     * Current generation of CSS does not allow to filter :visible elements
+     */
+    const lastVisibleButton = buttons.filter((button) => !button.hidden).pop();
+
+    if (lastVisibleButton) {
+      lastVisibleButton.classList.add(this.CSS.inlineToolButtonLast);
+    }
+  }
+
+  /**
    *  Working with Tools
    *  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    */
@@ -240,6 +298,7 @@ export default class InlineToolbar extends Module {
       return;
     }
 
+    button.dataset.tool = toolName;
     this.nodes.buttons.appendChild(button);
 
     if (typeof tool.renderActions === 'function') {
@@ -257,8 +316,20 @@ export default class InlineToolbar extends Module {
      */
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
-    if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
-      this.enableShortcuts(tool, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
+    let shortcut = null;
+
+    /**
+     * 1) For internal tools, check public getter 'shortcut'
+     * 2) For external tools, check tool's settings
+     */
+    if (this.internalTools[toolName]) {
+      shortcut = this.internalTools[toolName].shortcut;
+    } else if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
+      shortcut = toolSettings[this.Editor.Tools.apiSettings.SHORTCUT];
+    }
+
+    if (shortcut) {
+      this.enableShortcuts(tool, shortcut);
     }
   }
 
@@ -310,9 +381,9 @@ export default class InlineToolbar extends Module {
    */
   private get internalTools(): {[name: string]: InlineTool} {
     return {
-      bold: new BoldInlineTool(this.Editor.API.methods),
-      italic: new ItalicInlineTool(this.Editor.API.methods),
-      link: new LinkInlineTool(this.Editor.API.methods),
+      bold: this.Editor.Tools.constructInline(BoldInlineTool),
+      italic: this.Editor.Tools.constructInline(ItalicInlineTool),
+      link: this.Editor.Tools.constructInline(LinkInlineTool),
     };
   }
 
@@ -325,7 +396,7 @@ export default class InlineToolbar extends Module {
 
     for (const tool in this.Editor.Tools.inline) {
       if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
-        result[tool] = new this.Editor.Tools.inline[tool](this.Editor.API.methods);
+        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool]);
       }
     }
 

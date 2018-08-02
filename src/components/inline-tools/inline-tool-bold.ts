@@ -32,8 +32,10 @@ export default class BoldInlineTool implements InlineTool {
     button: null,
   };
 
-  constructor(api) {
-    console.log('Bold Inline Tool is ready');
+  /**
+   * @param {{api: IAPI}} - CodeX Editor API
+   */
+  constructor({api}) {
   }
 
   /**
@@ -63,5 +65,12 @@ export default class BoldInlineTool implements InlineTool {
 
     this.nodes.button.classList.toggle(this.CSS.buttonActive, isActive);
     return isActive;
+  }
+
+  /**
+   * Set a shortcut
+   */
+  public get shortcut(): string {
+    return 'CMD+B';
   }
 }

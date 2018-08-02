@@ -25,12 +25,14 @@ export default class Block {
    * @constructor
    * @param {String} toolName - Tool name that passed on initialization
    * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
+   * @param {Object} toolClass — Tool's class
    * @param {Object} settings - default settings
    * @param {Object} apiMethods - Editor API
    */
-  constructor(toolName, toolInstance, settings, apiMethods) {
+  constructor(toolName, toolInstance, toolClass, settings, apiMethods) {
     this.name = toolName;
     this.tool = toolInstance;
+    this.class = toolClass;
     this.settings = settings;
     this.api = apiMethods;
     this.holder = this.compose();
@@ -339,7 +341,7 @@ export default class Block {
      * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
      * That Tools are not empty
      */
-    if (this.tool.contentless) {
+    if (this.class.contentless) {
       return false;
     }
 

@@ -44,111 +44,6 @@
  */
 export default class Tools extends Module {
   /**
-   * Returns available Tools
-   * @return {Tool[]}
-   */
-  get available() {
-    return this.toolsAvailable;
-  }
-
-  /**
-   * Returns unavailable Tools
-   * @return {Tool[]}
-   */
-  get unavailable() {
-    return this.toolsUnavailable;
-  }
-
-  /**
-   * Return Tools for the Inline Toolbar
-   * @return {Object} - object of Inline Tool's classes
-   */
-  get inline() {
-    const tools = Object.entries(this.available).filter( ([name, tool]) => {
-      if (!tool[this.apiSettings.IS_INLINE]) {
-        return false;
-      }
-
-      /**
-       * Some Tools validation
-       */
-      const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
-      const notImplementedMethods = inlineToolRequiredMethods.filter( method => !new tool()[method] );
-
-      if (notImplementedMethods.length) {
-        _.log(`Incorrect Inline Tool: ${tool.name}. Some of required methods is not implemented %o`, 'warn', notImplementedMethods);
-        return false;
-      }
-
-      return true;
-    });
-
-    /**
-     * collected inline tools with key of tool name
-     */
-    const result = {};
-
-    tools.forEach(([name, tool]) => result[name] = tool);
-
-    return result;
-  }
-
-  /**
-   * Return editor block tools
-   */
-  get blockTools() {
-    // eslint-disable-next-line no-unused-vars
-    const tools = Object.entries(this.available).filter( ([name, tool]) => {
-      if (tool[this.apiSettings.IS_INLINE]) {
-        return false;
-      }
-
-      return true;
-    });
-
-    /**
-     * collected block tools with key of tool name
-     */
-    const result = {};
-
-    tools.forEach(([name, tool]) => result[name] = tool);
-
-    return result;
-  }
-
-  /**
-   * Constant for available Tools Settings
-   * @return {object}
-   */
-  get apiSettings() {
-    return {
-      IS_INLINE: 'isInline',
-      TOOLBAR_ICON_CLASS: 'iconClassName',
-      IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
-      IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
-      IS_IRREPLACEBLE_TOOL: 'irreplaceable',
-      IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
-      IS_PASTE_DISALLOWED: 'disallowPaste',
-      SHORTCUT: 'shortcut',
-    };
-  }
-
-  /**
-   * Static getter for default Tool config fields
-   * @return {ToolConfig}
-   */
-  get defaultConfig() {
-    return {
-      [this.apiSettings.TOOLBAR_ICON_CLASS] : false,
-      [this.apiSettings.IS_DISPLAYED_IN_TOOLBOX] : false,
-      [this.apiSettings.IS_ENABLED_LINE_BREAKS] : false,
-      [this.apiSettings.IS_IRREPLACEBLE_TOOL] : false,
-      [this.apiSettings.IS_ENABLED_INLINE_TOOLBAR]: false,
-      [this.apiSettings.SHORTCUT]: false,
-    };
-  }
-
-  /**
    * @constructor
    *
    * @param {EditorConfig} config
@@ -182,6 +77,114 @@ export default class Tools extends Module {
      * @type {Object}
      */
     this.toolsUnavailable = {};
+
+    /**
+     * Cache for the prepared inline tools
+     * @type {null|object}
+     * @private
+     */
+    this._inlineTools = null;
+  }
+
+  /**
+   * Returns available Tools
+   * @return {Tool[]}
+   */
+  get available() {
+    return this.toolsAvailable;
+  }
+
+  /**
+   * Returns unavailable Tools
+   * @return {Tool[]}
+   */
+  get unavailable() {
+    return this.toolsUnavailable;
+  }
+
+  /**
+   * Return Tools for the Inline Toolbar
+   * @return {Object} - object of Inline Tool's classes
+   */
+  get inline() {
+    if (this._inlineTools) {
+      return this._inlineTools;
+    }
+
+    const tools = Object.entries(this.available).filter( ([name, tool]) => {
+      if (!tool[this.apiSettings.IS_INLINE]) {
+        return false;
+      }
+
+      /**
+       * Some Tools validation
+       */
+      const inlineToolRequiredMethods = ['render', 'surround', 'checkState'];
+      const notImplementedMethods = inlineToolRequiredMethods.filter( method => !this.constructInline(tool)[method]);
+
+      if (notImplementedMethods.length) {
+        _.log(`Incorrect Inline Tool: ${tool.name}. Some of required methods is not implemented %o`, 'warn', notImplementedMethods);
+        return false;
+      }
+
+      return true;
+    });
+
+    /**
+     * collected inline tools with key of tool name
+     */
+    const result = {};
+
+    tools.forEach(([name, tool]) => result[name] = tool);
+
+    /**
+     * Cache prepared Tools
+     */
+    this._inlineTools = result;
+
+    return this._inlineTools;
+  }
+
+  /**
+   * Return editor block tools
+   */
+  get blockTools() {
+    // eslint-disable-next-line no-unused-vars
+    const tools = Object.entries(this.available).filter( ([name, tool]) => {
+      if (tool[this.apiSettings.IS_INLINE]) {
+        return false;
+      }
+
+      return true;
+    });
+
+    /**
+     * collected block tools with key of tool name
+     */
+    const result = {};
+
+    tools.forEach(([name, tool]) => result[name] = tool);
+
+    return result;
+  }
+
+  /**
+   * Constant for available Tools Settings
+   * @return {object}
+   */
+  get apiSettings() {
+    return {
+      CONFIG: 'config',
+      IS_CONTENTLESS: 'contentless',
+      IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
+      IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
+      IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
+      IS_INLINE: 'isInline',
+      IS_IRREPLACEBLE_TOOL: 'irreplaceable',
+      IS_PASTE_DISALLOWED: 'disallowPaste',
+      SHORTCUT: 'shortcut',
+      TOOLBAR_ICON: 'toolboxIcon',
+    };
   }
 
   /**
@@ -189,8 +192,8 @@ export default class Tools extends Module {
    * @return {Promise}
    */
   prepare() {
-    if (!this.config.hasOwnProperty('tools')) {
-      return Promise.reject("Can't start without tools");
+    if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
+      return Promise.reject('Can\'t start without tools');
     }
 
     /**
@@ -298,21 +301,49 @@ export default class Tools extends Module {
   }
 
   /**
-   * Return tool`a instance
+   * Return Tool`s instance
    *
    * @param {String} tool — tool name
-   * @param {Object} data — initial data
-   *
-   * @todo throw exceptions if tool doesnt exist
-   *
+   * @param {IBlockToolData} data — initial data
+   * @return {IBlockTool}
    */
   construct(tool, data) {
-    let plugin = this.toolsClasses[tool],
-      config = this.toolsSettings[tool];
+    const plugin = this.toolsClasses[tool];
 
-    let instance = new plugin(data, config || {}, this.Editor.API.methods);
+    /**
+     * Configuration to be passed to the Tool's constructor
+     */
+    const config = this.toolsSettings[tool][this.apiSettings.CONFIG];
 
-    return instance;
+    /**
+     * @type {{api: IAPI, config: ({}), data: IBlockToolData}}
+     */
+    // const constructorOptions = {
+    //   api: this.Editor.API.methods,
+    //   config: config || {},
+    //   data: data
+    // };
+    //
+    // return new plugin(constructorOptions);
+
+    return new plugin(data, config || {}, this.Editor.API.methods);
+  }
+
+  /**
+   * Return Inline Tool's instance
+   *
+   * @param {IInlineTool} tool
+   * @return {IInlineTool} — instance
+   */
+  constructInline(tool) {
+    /**
+     * @type {{api: IAPI}}
+     */
+    const constructorOptions = {
+      api: this.Editor.API.methods
+    };
+
+    return new tool(constructorOptions);
   }
 
   /**
