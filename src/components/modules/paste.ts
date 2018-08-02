@@ -234,7 +234,7 @@ export default class Paste extends Module {
       async (data, i) => await this.insertBlock(data, i === 0),
     ));
 
-    Caret.setToBlock(BlockManager.currentBlock, 0, true);
+    Caret.setToBlock(BlockManager.currentBlock, 'end');
   }
 
   /**
@@ -262,7 +262,7 @@ export default class Paste extends Module {
         } else {
           insertedBlock = BlockManager.insert(blockData.tool, blockData.data);
         }
-        Caret.setToBlock(insertedBlock, 0, true);
+        Caret.setToBlock(insertedBlock, 'end');
         return;
       }
     }

@@ -21,18 +21,6 @@ export default class CaretAPI extends Module implements ICaretAPI {
    * @return {ICaretAPI}
    */
   get methods(): ICaretAPI {
-    return {
-      set: (element: HTMLElement, offset?: number) => this.set(element, offset),
-    };
-  }
-
-  /**
-   * Set caret to the provided element;
-   *
-   * @param {HTMLElement} element
-   * @param {number} offset
-   */
-  public set(element: HTMLElement, offset = 0): void {
-    this.Editor.Caret.set(element, offset);
+    return {};
   }
 }

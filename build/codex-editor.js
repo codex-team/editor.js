@@ -12036,76 +12036,6 @@ var Block = function () {
      */
 
   }, {
-    key: 'setToNextInput',
-
-
-    /**
-     * Set focus to next Tool`s input
-     */
-    value: function setToNextInput() {
-      this.inputIndex++;
-      this.focusInput(null, 'start');
-    }
-
-    /**
-     * Set focus to previous Tool`s input
-     */
-
-  }, {
-    key: 'setToPreviousInput',
-    value: function setToPreviousInput() {
-      this.inputIndex--;
-      this.focusInput(null, 'end');
-    }
-
-    /**
-     * Set focus to current input
-     *
-     * @param {HTMLElement} element - if element passed, set inputIndex to point to passed element
-     * @param {'start'|'end'} position - set caret to passed position
-     */
-
-  }, {
-    key: 'focusInput',
-    value: function focusInput(element, position) {
-      var inputs = this.inputs;
-
-      if (element) {
-        var inputIndex = inputs.findIndex(function (input) {
-          return input.contains(element);
-        });
-
-        if (inputIndex !== -1) {
-          this.inputIndex = inputIndex;
-        }
-        return;
-      }
-
-      var input = inputs[this.inputIndex];
-      var nodeToSet = void 0;
-
-      switch (position) {
-        case 'start':
-          nodeToSet = $.getDeepestNode(input);
-
-          this.api.caret.set(nodeToSet, 0);
-          break;
-
-        case 'end':
-          nodeToSet = $.getDeepestNode(input);
-          var contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
-
-          this.api.caret.set(nodeToSet, contentLength);
-          break;
-      }
-    }
-
-    /**
-     * Returns Plugins content
-     * @return {Node}
-     */
-
-  }, {
     key: 'mergeWith',
 
 
@@ -12251,6 +12181,22 @@ var Block = function () {
     }
 
     /**
+     * Set input index to the passed element
+     *
+     * @param {HTMLElement} element
+     */
+    ,
+    set: function set(element) {
+      var index = this.inputs.findIndex(function (input) {
+        return input === element || input.contains(element);
+      });
+
+      if (index !== -1) {
+        this.inputIndex = index;
+      }
+    }
+
+    /**
      * Return first Tool`s input
      *
      * @returns {HTMLElement}
@@ -12299,6 +12245,12 @@ var Block = function () {
     get: function get() {
       return this.inputs[this.inputIndex - 1];
     }
+
+    /**
+     * Returns Plugins content
+     * @return {Node}
+     */
+
   }, {
     key: 'pluginsContent',
     get: function get() {
@@ -14054,7 +14006,7 @@ module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */(function(Module) {
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -14070,52 +14022,32 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * provides with methods to work with caret
  */
 var CaretAPI = function (_Module) {
-    _inherits(CaretAPI, _Module);
+  _inherits(CaretAPI, _Module);
 
-    /**
-     * Save Editor config. API provides passed configuration to the Blocks
-     */
-    function CaretAPI(_ref) {
-        var config = _ref.config;
+  /**
+   * Save Editor config. API provides passed configuration to the Blocks
+   */
+  function CaretAPI(_ref) {
+    var config = _ref.config;
 
-        _classCallCheck(this, CaretAPI);
+    _classCallCheck(this, CaretAPI);
 
-        return _possibleConstructorReturn(this, (CaretAPI.__proto__ || Object.getPrototypeOf(CaretAPI)).call(this, { config: config }));
+    return _possibleConstructorReturn(this, (CaretAPI.__proto__ || Object.getPrototypeOf(CaretAPI)).call(this, { config: config }));
+  }
+  /**
+   * Available methods
+   * @return {ICaretAPI}
+   */
+
+
+  _createClass(CaretAPI, [{
+    key: "methods",
+    get: function get() {
+      return {};
     }
-    /**
-     * Available methods
-     * @return {ICaretAPI}
-     */
+  }]);
 
-
-    _createClass(CaretAPI, [{
-        key: "set",
-
-        /**
-         * Set caret to the provided element;
-         *
-         * @param {HTMLElement} element
-         * @param {number} offset
-         */
-        value: function set(element) {
-            var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-            this.Editor.Caret.set(element, offset);
-        }
-    }, {
-        key: "methods",
-        get: function get() {
-            var _this2 = this;
-
-            return {
-                set: function set(element, offset) {
-                    return _this2.set(element, offset);
-                }
-            };
-        }
-    }]);
-
-    return CaretAPI;
+  return CaretAPI;
 }(Module);
 
 CaretAPI.displayName = "CaretAPI";
@@ -15525,7 +15457,7 @@ var BlockManager = function (_Module) {
 
       if (parentFirstLevelBlock) {
         this.currentNode = parentFirstLevelBlock;
-        this.currentBlock.focusInput(childNode);
+        this.Editor.Caret.setToInput(childNode);
       } else {
         throw new Error('Can not find a Block from this child Node');
       }
@@ -16037,28 +15969,44 @@ var Caret = function (_Module) {
      *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
      *
      * @param {Block} block - Block class
+     * @param {default|start|end} position - position where to set caret. If default - leave default behaviour and apply offset if it's passed
      * @param {Number} offset - caret offset regarding to the text node
-     * @param {Boolean} atEnd - put caret at the end of the text node or not
      */
     value: function setToBlock(block) {
       var _this2 = this;
 
-      var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-      var atEnd = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'default';
+      var offset = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      var BlockManager = this.Editor.BlockManager;
 
-      var element = atEnd ? block.lastInput : block.firstInput;
+      var element = void 0;
+
+      switch (position) {
+        case 'start':
+          element = block.firstInput;
+          break;
+        case 'end':
+          element = block.lastInput;
+          break;
+        default:
+          element = block.currentInput;
+      }
 
       if (!element) {
         return;
       }
 
-      block.focusInput(element);
-
-      var nodeToSet = $.getDeepestNode(element, atEnd);
+      var nodeToSet = $.getDeepestNode(element, position === 'end');
       var contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
 
-      if (atEnd || offset > contentLength) {
-        offset = contentLength;
+      switch (true) {
+        case position === 'start':
+          offset = 0;
+          break;
+        case position === 'end':
+        case offset > contentLength:
+          offset = contentLength;
+          break;
       }
 
       /**
@@ -16068,7 +16016,45 @@ var Caret = function (_Module) {
         _this2.set(nodeToSet, offset);
       }, 20)();
 
-      this.Editor.BlockManager.currentNode = block.holder;
+      BlockManager.currentNode = block.holder;
+      BlockManager.currentBlock.currentInput = element;
+    }
+
+    /**
+     * Set caret to the current input of current Block.
+     *
+     * @param {HTMLElement} input - input where caret should be set
+     * @param {default|start|end} position - position of the caret. If default - leave default behaviour and apply offset if it's passed
+     * @param {number} offset - caret offset regarding to the text node
+     */
+
+  }, {
+    key: 'setToInput',
+    value: function setToInput(input) {
+      var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'default';
+      var offset = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      var currentBlock = this.Editor.BlockManager.currentBlock;
+
+      var nodeToSet = $.getDeepestNode(input);
+
+      switch (position) {
+        case 'start':
+          this.set(nodeToSet, 0);
+          break;
+
+        case 'end':
+          var contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
+
+          this.set(nodeToSet, contentLength);
+          break;
+
+        default:
+          if (offset) {
+            this.set(nodeToSet, offset);
+          }
+      }
+
+      currentBlock.currentInput = input;
     }
 
     /**
@@ -16231,16 +16217,16 @@ var Caret = function (_Module) {
       }
 
       if (force) {
-        this.setToBlock(nextContentfulBlock);
+        this.setToBlock(nextContentfulBlock, 'start');
         return true;
       }
 
       if (this.isAtEnd) {
         /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
         if (!nextInput) {
-          this.setToBlock(nextContentfulBlock);
+          this.setToBlock(nextContentfulBlock, 'start');
         } else {
-          currentBlock.setToNextInput();
+          this.setToInput(nextInput, 'start');
         }
 
         return true;
@@ -16275,15 +16261,15 @@ var Caret = function (_Module) {
       }
 
       if (force) {
-        this.setToBlock(previousContentfulBlock, 0, true);
+        this.setToBlock(previousContentfulBlock, 'end');
       }
 
       if (this.isAtStart) {
         /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
         if (!previousInput) {
-          this.setToBlock(previousContentfulBlock, 0, true);
+          this.setToBlock(previousContentfulBlock, 'end');
         } else {
-          currentBlock.setToPreviousInput();
+          this.setToInput(previousInput, 'end');
         }
         return true;
       }
@@ -17046,7 +17032,7 @@ var Paste = function (_Module) {
                                 }()));
 
                             case 16:
-                                Caret.setToBlock(BlockManager.currentBlock, 0, true);
+                                Caret.setToBlock(BlockManager.currentBlock, 'end');
 
                             case 17:
                             case 'end':
@@ -17174,7 +17160,7 @@ var Paste = function (_Module) {
                                 } else {
                                     insertedBlock = BlockManager.insert(blockData.tool, blockData.data);
                                 }
-                                Caret.setToBlock(insertedBlock, 0, true);
+                                Caret.setToBlock(insertedBlock, 'end');
                                 return _context4.abrupt('return');
 
                             case 11:

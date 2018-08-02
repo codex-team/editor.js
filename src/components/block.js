@@ -118,6 +118,19 @@ export default class Block {
   }
 
   /**
+   * Set input index to the passed element
+   *
+   * @param {HTMLElement} element
+   */
+  set currentInput(element) {
+    const index = this.inputs.findIndex(input => input === element || input.contains(element));
+
+    if (index !== -1) {
+      this.inputIndex = index;
+    }
+  }
+
+  /**
    * Return first Tool`s input
    *
    * @returns {HTMLElement}
@@ -153,60 +166,6 @@ export default class Block {
    */
   get previousInput() {
     return this.inputs[this.inputIndex - 1];
-  }
-
-  /**
-   * Set focus to next Tool`s input
-   */
-  setToNextInput() {
-    this.inputIndex++;
-    this.focusInput(null, 'start');
-  }
-
-
-  /**
-   * Set focus to previous Tool`s input
-   */
-  setToPreviousInput() {
-    this.inputIndex--;
-    this.focusInput(null, 'end');
-  }
-
-  /**
-   * Set focus to current input
-   *
-   * @param {HTMLElement} element - if element passed, set inputIndex to point to passed element
-   * @param {'start'|'end'} position - set caret to passed position
-   */
-  focusInput(element, position) {
-    const inputs = this.inputs;
-
-    if (element) {
-      const inputIndex = inputs.findIndex(input => input.contains(element));
-
-      if (inputIndex !== -1) {
-        this.inputIndex = inputIndex;
-      }
-      return;
-    }
-
-    const input = inputs[this.inputIndex];
-    let nodeToSet;
-
-    switch (position) {
-      case 'start':
-        nodeToSet = $.getDeepestNode(input);
-
-        this.api.caret.set(nodeToSet, 0);
-        break;
-
-      case 'end':
-        nodeToSet = $.getDeepestNode(input);
-        const contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
-
-        this.api.caret.set(nodeToSet, contentLength);
-        break;
-    }
   }
 
   /**
