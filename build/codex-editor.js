@@ -11582,7 +11582,7 @@ module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */(function($) {
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -11590,98 +11590,102 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var DeleteTune = function () {
+  /**
+   * DeleteTune constructor
+   *
+   * @param {Object} api
+   */
+  function DeleteTune(_ref) {
+    var _this = this;
+
+    var api = _ref.api;
+
+    _classCallCheck(this, DeleteTune);
+
     /**
-     * DeleteTune constructor
-     *
-     * @param {Object} api
+     * Styles
+     * @type {{wrapper: string}}
      */
-    function DeleteTune(_ref) {
-        var _this = this;
+    this.CSS = {
+      wrapper: 'ass',
+      button: 'ce-settings__button',
+      buttonDelete: 'ce-settings__button--delete',
+      buttonConfirm: 'ce-settings__button--confirm'
+    };
+    /**
+     * Tune nodes
+     */
+    this.nodes = {
+      button: null
+    };
+    this.api = api;
+    this.resetConfirmation = function () {
+      _this.setConfirmation(false);
+    };
+  }
+  /**
+   * Create "Delete" button and add click event listener
+   * @returns [Element}
+   */
 
-        var api = _ref.api;
 
-        _classCallCheck(this, DeleteTune);
+  _createClass(DeleteTune, [{
+    key: 'render',
+    value: function render() {
+      var _this2 = this;
 
-        /**
-         * Styles
-         * @type {{wrapper: string}}
-         */
-        this.CSS = {
-            wrapper: 'ass',
-            button: 'ce-settings__button',
-            buttonDelete: 'ce-settings__button--delete',
-            buttonConfirm: 'ce-settings__button--confirm'
-        };
-        /**
-         * Tune nodes
-         */
-        this.nodes = {
-            button: null
-        };
-        this.api = api;
-        this.resetConfirmation = function () {
-            _this.setConfirmation(false);
-        };
+      this.nodes.button = $.make('div', [this.CSS.button, this.CSS.buttonDelete], {});
+      this.nodes.button.appendChild($.svg('cross', 12, 12));
+      this.api.listener.on(this.nodes.button, 'click', function (event) {
+        return _this2.handleClick(event);
+      }, false);
+      return this.nodes.button;
     }
     /**
-     * Create "Delete" button and add click event listener
-     * @returns [Element}
+     * Delete block conditions passed
+     * @param {MouseEvent} event
      */
 
-
-    _createClass(DeleteTune, [{
-        key: 'render',
-        value: function render() {
-            var _this2 = this;
-
-            this.nodes.button = $.make('div', [this.CSS.button, this.CSS.buttonDelete], {});
-            this.nodes.button.appendChild($.svg('cross', 12, 12));
-            this.api.listener.on(this.nodes.button, 'click', function (event) {
-                return _this2.handleClick(event);
-            }, false);
-            return this.nodes.button;
-        }
+  }, {
+    key: 'handleClick',
+    value: function handleClick(event) {
+      /**
+       * if block is not waiting the confirmation, subscribe on block-settings-closing event to reset
+       * otherwise delete block
+       */
+      if (!this.needConfirmation) {
+        this.setConfirmation(true);
         /**
-         * Delete block conditions passed
-         * @param {MouseEvent} event
+         * Subscribe on event.
+         * When toolbar block settings is closed but block deletion is not confirmed,
+         * then reset confirmation state
          */
-
-    }, {
-        key: 'handleClick',
-        value: function handleClick(event) {
-            /**
-             * if block is not waiting the confirmation, subscribe on block-settings-closing event to reset
-             * otherwise delete block
-             */
-            if (!this.needConfirmation) {
-                this.setConfirmation(true);
-                /**
-                 * Subscribe on event.
-                 * When toolbar block settings is closed but block deletion is not confirmed,
-                 * then reset confirmation state
-                 */
-                this.api.events.on('block-settings-closed', this.resetConfirmation);
-            } else {
-                /**
-                 * Unsubscribe from block-settings closing event
-                 */
-                this.api.events.off('block-settings-closed', this.resetConfirmation);
-                this.api.blocks.delete();
-            }
-        }
+        this.api.events.on('block-settings-closed', this.resetConfirmation);
+      } else {
         /**
-         * change tune state
+         * Unsubscribe from block-settings closing event
          */
+        this.api.events.off('block-settings-closed', this.resetConfirmation);
+        this.api.blocks.delete();
+        /**
+         * Prevent firing ui~documentClicked that can drop currentBlock pointer
+         */
+        event.stopPropagation();
+      }
+    }
+    /**
+     * change tune state
+     */
 
-    }, {
-        key: 'setConfirmation',
-        value: function setConfirmation(state) {
-            this.needConfirmation = state;
-            this.nodes.button.classList.add(this.CSS.buttonConfirm);
-        }
-    }]);
+  }, {
+    key: 'setConfirmation',
+    value: function setConfirmation(state) {
+      this.needConfirmation = state;
+      this.nodes.button.classList.add(this.CSS.buttonConfirm);
+    }
+  }]);
 
-    return DeleteTune;
+  return DeleteTune;
 }();
 
 DeleteTune.displayName = 'DeleteTune';
