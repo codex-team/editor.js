@@ -11219,7 +11219,7 @@ var CodexEditor = function () {
 
   /**
    * Setting for configuration
-   * @param {EditorConfig} config
+   * @param {EditorConfig|string|null} config
    */
 
 
@@ -11247,13 +11247,6 @@ var CodexEditor = function () {
       }
 
       /**
-       * Check Tools object
-       */
-      if (Object.keys(this.config.tools).length === 0) {
-        return Promise.reject('«tools» param must being not empty');
-      }
-
-      /**
        * Check Tools for a class containing
        */
       for (var toolName in this.config.tools) {
@@ -11262,20 +11255,6 @@ var CodexEditor = function () {
         if (!_.isFunction(tool) && !_.isFunction(tool.class)) {
           return Promise.reject('Tool \xAB' + toolName + '\xBB must be a constructor function or an object with that function in the \xABclass\xBB property');
         }
-      }
-
-      /**
-       * Check initialBlock param
-       */
-      if (!this.config.initialBlock) {
-        return Promise.reject('«initialBlock» param must being not empty');
-      }
-
-      /**
-       * Check for a initialBlock Tool existence
-       */
-      if (!this.config.tools[this.config.initialBlock]) {
-        return Promise.reject('initial Block Tool \xAB' + this.config.initialBlock + '\xBB is missing in Tools list');
       }
     }
 
@@ -11440,12 +11419,26 @@ var CodexEditor = function () {
     key: 'configuration',
     set: function set(config) {
       /**
-       * Initlai block type
+       * Process zero-configuration or with only holderId
+       */
+      if (typeof config === 'string' || typeof config === 'undefined') {
+        config = {
+          holderId: config || 'codex-editor'
+        };
+      }
+
+      /**
+       * If initial Block's Tool was not passed, use the Paragraph Tool
+       */
+      this.config.initialBlock = config.initialBlock || 'paragraph';
+
+      /**
+       * Initial block type
        * Uses in case when there is no blocks passed
        * @type {{type: (*), data: {text: null}}}
        */
-      var initialBlock = {
-        type: config.initialBlock,
+      var initialBlockData = {
+        type: this.config.initialBlock,
         data: {}
       };
 
@@ -11467,22 +11460,11 @@ var CodexEditor = function () {
        */
       if (_.isEmpty(this.config.data)) {
         this.config.data = {};
-        this.config.data.blocks = [initialBlock];
+        this.config.data.blocks = [initialBlockData];
       } else {
         if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
-          this.config.data.blocks = [initialBlock];
+          this.config.data.blocks = [initialBlockData];
         }
-      }
-
-      /**
-       * If initial Block's Tool was not passed, use the first Tool in config.tools
-       */
-      if (!config.initialBlock) {
-        for (this.config.initialBlock in this.config.tools) {
-          break;
-        }
-      } else {
-        this.config.initialBlock = config.initialBlock;
       }
     }
 
@@ -19315,6 +19297,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+var Paragraph = __webpack_require__(/*! ../tools/paragraph/dist/bundle */ "./src/components/tools/paragraph/dist/bundle.js");
+
 /**
  * @module Codex Editor Tools Submodule
  *
@@ -19359,6 +19343,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
  * @property {object} toolsSettings - Tools settings
  * @property {EditorConfig} config - Editor config
  */
+
 var Tools = function (_Module) {
   _inherits(Tools, _Module);
 
@@ -19426,6 +19411,11 @@ var Tools = function (_Module) {
      */
     value: function prepare() {
       var _this2 = this;
+
+      this.config.tools.paragraph = {
+        class: Paragraph,
+        inlineToolbar: true
+      };
 
       if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
         return Promise.reject('Can\'t start without tools');
@@ -20675,6 +20665,27 @@ Selection.displayName = 'Selection';
 exports.default = Selection;
 module.exports = exports['default'];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! utils */ "./src/components/utils.js")))
+
+/***/ }),
+
+/***/ "./src/components/tools/paragraph/dist/bundle.js":
+/*!*******************************************************!*\
+  !*** ./src/components/tools/paragraph/dist/bundle.js ***!
+  \*******************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+!function(t,e){ true?module.exports=e():undefined}(window,function(){return function(t){var e={};function n(r){if(e[r])return e[r].exports;var o=e[r]={i:r,l:!1,exports:{}};return t[r].call(o.exports,o,o.exports,n),o.l=!0,o.exports}return n.m=t,n.c=e,n.d=function(t,e,r){n.o(t,e)||Object.defineProperty(t,e,{enumerable:!0,get:r})},n.r=function(t){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(t,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(t,"__esModule",{value:!0})},n.t=function(t,e){if(1&e&&(t=n(t)),8&e)return t;if(4&e&&"object"==typeof t&&t&&t.__esModule)return t;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:t}),2&e&&"string"!=typeof t)for(var o in t)n.d(r,o,function(e){return t[e]}.bind(null,o));return r},n.n=function(t){var e=t&&t.__esModule?function(){return t.default}:function(){return t};return n.d(e,"a",e),e},n.o=function(t,e){return Object.prototype.hasOwnProperty.call(t,e)},n.p="/",n(n.s=0)}([function(t,e,n){"use strict";var r=function(){function t(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),Object.defineProperty(t,r.key,r)}}return function(e,n,r){return n&&t(e.prototype,n),r&&t(e,r),e}}();n(1).toString();
+/**
+ * Base Paragraph Block for the CodeX Editor.
+ * Represents simple paragraph
+ *
+ * @author CodeX (team@ifmo.su)
+ * @copyright CodeX 2018
+ * @license The MIT License (MIT)
+ * @version 2.0.0
+ */
+var o=function(){function t(e){var n=e.data,r=(e.config,e.api);!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.api=r,this._CSS={block:this.api.styles.block,wrapper:"ce-paragraph"},this._data={},this._element=this.drawView(),this.data=n}return r(t,null,[{key:"displayInToolbox",get:function(){return!1}}]),r(t,[{key:"drawView",value:function(){var t=document.createElement("DIV");return t.classList.add(this._CSS.wrapper,this._CSS.block),t.contentEditable=!0,t}},{key:"render",value:function(){return this._element}},{key:"merge",value:function(t){var e={text:this.data.text+t.text};this.data=e}},{key:"validate",value:function(t){return""!==t.text.trim()}},{key:"save",value:function(t){return{text:t.innerHTML}}},{key:"data",get:function(){var t=this._element.innerHTML;return this._data.text=t,this._data},set:function(t){this._data=t||{},this._element.innerHTML=this._data.text||""}}],[{key:"onPaste",get:function(){return{tags:["P"],handler:function(t){return{text:t.innerHTML}}}}}]),t}();t.exports=o},function(t,e,n){var r=n(2);"string"==typeof r&&(r=[[t.i,r,""]]);var o={hmr:!0,transform:void 0,insertInto:void 0};n(4)(r,o);r.locals&&(t.exports=r.locals)},function(t,e,n){(t.exports=n(3)(!1)).push([t.i,".ce-paragraph {\n    line-height: 1.6em;\n    outline: none;\n}\n\n.ce-paragraph p:first-of-type{\n    margin-top: 0;\n}\n\n.ce-paragraph p:last-of-type{\n    margin-bottom: 0;\n}\n",""])},function(t,e){t.exports=function(t){var e=[];return e.toString=function(){return this.map(function(e){var n=function(t,e){var n=t[1]||"",r=t[3];if(!r)return n;if(e&&"function"==typeof btoa){var o=function(t){return"/*# sourceMappingURL=data:application/json;charset=utf-8;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(t))))+" */"}(r),i=r.sources.map(function(t){return"/*# sourceURL="+r.sourceRoot+t+" */"});return[n].concat(i).concat([o]).join("\n")}return[n].join("\n")}(e,t);return e[2]?"@media "+e[2]+"{"+n+"}":n}).join("")},e.i=function(t,n){"string"==typeof t&&(t=[[null,t,""]]);for(var r={},o=0;o<this.length;o++){var i=this[o][0];"number"==typeof i&&(r[i]=!0)}for(o=0;o<t.length;o++){var a=t[o];"number"==typeof a[0]&&r[a[0]]||(n&&!a[2]?a[2]=n:n&&(a[2]="("+a[2]+") and ("+n+")"),e.push(a))}},e}},function(t,e,n){var r={},o=function(t){var e;return function(){return void 0===e&&(e=t.apply(this,arguments)),e}}(function(){return window&&document&&document.all&&!window.atob}),i=function(t){var e={};return function(t){if("function"==typeof t)return t();if(void 0===e[t]){var n=function(t){return document.querySelector(t)}.call(this,t);if(window.HTMLIFrameElement&&n instanceof window.HTMLIFrameElement)try{n=n.contentDocument.head}catch(t){n=null}e[t]=n}return e[t]}}(),a=null,s=0,u=[],f=n(5);function c(t,e){for(var n=0;n<t.length;n++){var o=t[n],i=r[o.id];if(i){i.refs++;for(var a=0;a<i.parts.length;a++)i.parts[a](o.parts[a]);for(;a<o.parts.length;a++)i.parts.push(b(o.parts[a],e))}else{var s=[];for(a=0;a<o.parts.length;a++)s.push(b(o.parts[a],e));r[o.id]={id:o.id,refs:1,parts:s}}}}function l(t,e){for(var n=[],r={},o=0;o<t.length;o++){var i=t[o],a=e.base?i[0]+e.base:i[0],s={css:i[1],media:i[2],sourceMap:i[3]};r[a]?r[a].parts.push(s):n.push(r[a]={id:a,parts:[s]})}return n}function p(t,e){var n=i(t.insertInto);if(!n)throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");var r=u[u.length-1];if("top"===t.insertAt)r?r.nextSibling?n.insertBefore(e,r.nextSibling):n.appendChild(e):n.insertBefore(e,n.firstChild),u.push(e);else if("bottom"===t.insertAt)n.appendChild(e);else{if("object"!=typeof t.insertAt||!t.insertAt.before)throw new Error("[Style Loader]\n\n Invalid value for parameter 'insertAt' ('options.insertAt') found.\n Must be 'top', 'bottom', or Object.\n (https://github.com/webpack-contrib/style-loader#insertat)\n");var o=i(t.insertInto+" "+t.insertAt.before);n.insertBefore(e,o)}}function d(t){if(null===t.parentNode)return!1;t.parentNode.removeChild(t);var e=u.indexOf(t);e>=0&&u.splice(e,1)}function h(t){var e=document.createElement("style");return void 0===t.attrs.type&&(t.attrs.type="text/css"),v(e,t.attrs),p(t,e),e}function v(t,e){Object.keys(e).forEach(function(n){t.setAttribute(n,e[n])})}function b(t,e){var n,r,o,i;if(e.transform&&t.css){if(!(i=e.transform(t.css)))return function(){};t.css=i}if(e.singleton){var u=s++;n=a||(a=h(e)),r=m.bind(null,n,u,!1),o=m.bind(null,n,u,!0)}else t.sourceMap&&"function"==typeof URL&&"function"==typeof URL.createObjectURL&&"function"==typeof URL.revokeObjectURL&&"function"==typeof Blob&&"function"==typeof btoa?(n=function(t){var e=document.createElement("link");return void 0===t.attrs.type&&(t.attrs.type="text/css"),t.attrs.rel="stylesheet",v(e,t.attrs),p(t,e),e}(e),r=function(t,e,n){var r=n.css,o=n.sourceMap,i=void 0===e.convertToAbsoluteUrls&&o;(e.convertToAbsoluteUrls||i)&&(r=f(r));o&&(r+="\n/*# sourceMappingURL=data:application/json;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(o))))+" */");var a=new Blob([r],{type:"text/css"}),s=t.href;t.href=URL.createObjectURL(a),s&&URL.revokeObjectURL(s)}.bind(null,n,e),o=function(){d(n),n.href&&URL.revokeObjectURL(n.href)}):(n=h(e),r=function(t,e){var n=e.css,r=e.media;r&&t.setAttribute("media",r);if(t.styleSheet)t.styleSheet.cssText=n;else{for(;t.firstChild;)t.removeChild(t.firstChild);t.appendChild(document.createTextNode(n))}}.bind(null,n),o=function(){d(n)});return r(t),function(e){if(e){if(e.css===t.css&&e.media===t.media&&e.sourceMap===t.sourceMap)return;r(t=e)}else o()}}t.exports=function(t,e){if("undefined"!=typeof DEBUG&&DEBUG&&"object"!=typeof document)throw new Error("The style-loader cannot be used in a non-browser environment");(e=e||{}).attrs="object"==typeof e.attrs?e.attrs:{},e.singleton||"boolean"==typeof e.singleton||(e.singleton=o()),e.insertInto||(e.insertInto="head"),e.insertAt||(e.insertAt="bottom");var n=l(t,e);return c(n,e),function(t){for(var o=[],i=0;i<n.length;i++){var a=n[i];(s=r[a.id]).refs--,o.push(s)}t&&c(l(t,e),e);for(i=0;i<o.length;i++){var s;if(0===(s=o[i]).refs){for(var u=0;u<s.parts.length;u++)s.parts[u]();delete r[s.id]}}}};var y=function(){var t=[];return function(e,n){return t[e]=n,t.filter(Boolean).join("\n")}}();function m(t,e,n,r){var o=n?"":r.css;if(t.styleSheet)t.styleSheet.cssText=y(e,o);else{var i=document.createTextNode(o),a=t.childNodes;a[e]&&t.removeChild(a[e]),a.length?t.insertBefore(i,a[e]):t.appendChild(i)}}},function(t,e){t.exports=function(t){var e="undefined"!=typeof window&&window.location;if(!e)throw new Error("fixUrls requires window.location");if(!t||"string"!=typeof t)return t;var n=e.protocol+"//"+e.host,r=n+e.pathname.replace(/\/[^\/]*$/,"/");return t.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi,function(t,e){var o,i=e.trim().replace(/^"(.*)"$/,function(t,e){return e}).replace(/^'(.*)'$/,function(t,e){return e});return/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(i)?t:(o=0===i.indexOf("//")?i:0===i.indexOf("/")?n+i:r+i.replace(/^\.\//,""),"url("+JSON.stringify(o)+")")})}}])});
 
 /***/ }),
 
