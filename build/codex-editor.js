@@ -14678,10 +14678,22 @@ var BlockEvents = function (_Module) {
             if (this.Editor.BlockManager.currentBlock.isEmpty) {
                 this.Editor.BlockManager.removeBlock();
                 /**
+                 * in case of last block deletion
+                 * Insert new initial empty block
+                 */
+                if (this.Editor.BlockManager.blocks.length === 0) {
+                    this.Editor.BlockManager.insert();
+                }
+                /**
+                 * In case of deletion first block we need to set caret to the current Block
                  * After BlockManager removes the Block (which is current now),
                  * pointer that references to the current Block, now points to the Next
                  */
-                this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+                if (this.Editor.BlockManager.currentBlockIndex === 0) {
+                    this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+                } else {
+                    this.Editor.Caret.navigatePrevious(true);
+                }
                 this.Editor.Toolbar.close();
                 return;
             }
