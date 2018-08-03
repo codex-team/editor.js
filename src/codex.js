@@ -146,9 +146,9 @@ export default class CodexEditor {
     /**
      * Process zero-configuration with only holderId
      */
-    if (typeof config === 'string') {
+    if (typeof config === 'string' || typeof config === 'undefined') {
       config = {
-        holderId: config
+        holderId: config || 'codex-editor'
       };
     }
 

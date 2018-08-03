@@ -11421,9 +11421,9 @@ var CodexEditor = function () {
       /**
        * Process zero-configuration with only holderId
        */
-      if (typeof config === 'string') {
+      if (typeof config === 'string' || typeof config === 'undefined') {
         config = {
-          holderId: config
+          holderId: config || 'codex-editor'
         };
       }
 
@@ -19407,6 +19407,8 @@ var Tools = function (_Module) {
         class: Paragraph,
         inlineToolbar: true
       };
+
+      console.log('this.config.tools', this.config.tools);
 
       if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
         return Promise.reject('Can\'t start without tools');

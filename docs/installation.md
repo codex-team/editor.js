@@ -73,9 +73,13 @@ Minimal params is a `holderId`, `tools` list and `initialBlock` marker.
 <div id="codex-editor"></div>
 ```
 
-You can create a simple Editor only with a default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param.
+You can create a simple Editor only with a default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param or use default `codex-editor`.
 
 ```javascript
+var editor = new CodexEditor();
+
+// equals
+
 var editor = new CodexEditor('codex-editor');
 ````
 
@@ -89,11 +93,6 @@ var editor = new CodexEditor({
     holderId : 'codex-editor',
 
     /**
-     * What Block will be inserted by default
-     */
-    initialBlock : 'paragraph',
-
-    /**
      * Available Tools list.
      * Pass Tool's class or Settings object for each Tool you want to use
      */
@@ -104,6 +103,11 @@ var editor = new CodexEditor({
         },
         // ...
     },
+    
+    /**
+     * What Block will be inserted by default
+     */
+    initialBlock : 'paragraph',
 
     /**
      * Previously saved data that should be rendered
