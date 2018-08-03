@@ -19776,6 +19776,10 @@ var _sprite = __webpack_require__(/*! ../../../build/sprite.svg */ "./build/spri
 
 var _sprite2 = _interopRequireDefault(_sprite);
 
+var _selection = __webpack_require__(/*! ../selection */ "./src/components/selection.js");
+
+var _selection2 = _interopRequireDefault(_selection);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -20089,7 +20093,7 @@ var UI = function (_Module) {
       var clickedInsideofEditor = event.target.closest('.' + this.CSS.editorWrapper);
 
       /** Clear highlightings and pointer on BlockManager */
-      if (!clickedInsideofEditor) {
+      if (!clickedInsideofEditor && !_selection2.default.isAtEditor) {
         this.Editor.BlockManager.dropPointer();
         this.Editor.Toolbar.close();
       }

@@ -9,6 +9,8 @@
  */
 import sprite from '../../../build/sprite.svg';
 
+import Selection from '../selection';
+
 /**
  * @class
  *
@@ -229,7 +231,7 @@ export default class UI extends Module {
     const clickedInsideofEditor = event.target.closest(`.${this.CSS.editorWrapper}`);
 
     /** Clear highlightings and pointer on BlockManager */
-    if (!clickedInsideofEditor) {
+    if (!clickedInsideofEditor && !Selection.isAtEditor) {
       this.Editor.BlockManager.dropPointer();
       this.Editor.Toolbar.close();
     }
