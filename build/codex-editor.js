@@ -11219,7 +11219,7 @@ var CodexEditor = function () {
 
   /**
    * Setting for configuration
-   * @param {EditorConfig|string} config
+   * @param {EditorConfig|string|null} config
    */
 
 
@@ -11419,7 +11419,7 @@ var CodexEditor = function () {
     key: 'configuration',
     set: function set(config) {
       /**
-       * Process zero-configuration with only holderId
+       * Process zero-configuration or with only holderId
        */
       if (typeof config === 'string' || typeof config === 'undefined') {
         config = {
