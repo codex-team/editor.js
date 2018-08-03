@@ -15012,7 +15012,10 @@ var BlockManager = function (_Module) {
         index = this.currentBlockIndex;
       }
       this._blocks.remove(index);
-      this.currentBlockIndex--;
+
+      if (!this.blocks.length) {
+        this.currentBlockIndex = -1;
+      }
     }
 
     /**
