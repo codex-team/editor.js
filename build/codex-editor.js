@@ -20101,6 +20101,10 @@ var UI = function (_Module) {
       if (!clickedOnInlineToolbarButton) {
         this.Editor.InlineToolbar.handleShowingEvent(event);
       }
+
+      if (_selection2.default.isAtEditor) {
+        this.Editor.BlockManager.setCurrentBlockByChildNode(_selection2.default.anchorNode);
+      }
     }
 
     /**

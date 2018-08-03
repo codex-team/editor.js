@@ -239,6 +239,10 @@ export default class UI extends Module {
     if (!clickedOnInlineToolbarButton) {
       this.Editor.InlineToolbar.handleShowingEvent(event);
     }
+
+    if (Selection.isAtEditor) {
+      this.Editor.BlockManager.setCurrentBlockByChildNode(Selection.anchorNode);
+    }
   }
 
   /**
@@ -266,7 +270,7 @@ export default class UI extends Module {
    *
    */
   redactorClicked(event) {
-    let clickedNode = event.target;
+    const clickedNode = event.target;
 
     /**
      * Select clicked Block as Current
