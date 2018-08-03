@@ -19189,15 +19189,13 @@ var Tools = function (_Module) {
       /**
        * @type {{api: IAPI, config: ({}), data: IBlockToolData}}
        */
-      // const constructorOptions = {
-      //   api: this.Editor.API.methods,
-      //   config: config || {},
-      //   data: data
-      // };
-      //
-      // return new plugin(constructorOptions);
+      var constructorOptions = {
+        api: this.Editor.API.methods,
+        config: config || {},
+        data: data
+      };
 
-      return new plugin(data, config || {}, this.Editor.API.methods);
+      return new plugin(constructorOptions);
     }
 
     /**
