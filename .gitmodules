@@ -10,9 +10,6 @@
 [submodule "example/tools/list"]
 	path = example/tools/list
 	url = https://github.com/codex-editor/list
-[submodule "example/tools/paragraph"]
-	path = example/tools/paragraph
-	url = https://github.com/codex-editor/paragraph
 [submodule "example/tools/quote"]
 	path = example/tools/quote
 	url = https://github.com/codex-editor/quote
