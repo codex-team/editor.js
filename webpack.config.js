@@ -179,7 +179,10 @@ module.exports = {
             loader: 'eslint-loader?fix=true&esModules=true',
           }
         ],
-        exclude: /(node_modules|build)/, // dont need to look in '/build' to prevent analyse __tmp_babel_helper.js
+        exclude: [
+          /(node_modules|build)/, // dont need to look in '/build' to prevent analyse __tmp_babel_helper.js
+          /src\/components\/tools/
+        ]
       },
       {
         test: /\.css$/,

@@ -140,16 +140,30 @@ export default class CodexEditor {
 
   /**
    * Setting for configuration
-   * @param {EditorConfig} config
+   * @param {EditorConfig|string} config
    */
   set configuration(config) {
     /**
-     * Initlai block type
+     * Process zero-configuration with only holderId
+     */
+    if (typeof config === 'string') {
+      config = {
+        holderId: config
+      };
+    }
+
+    /**
+     * If initial Block's Tool was not passed, use the Paragraph Tool
+     */
+    this.config.initialBlock = config.initialBlock || 'paragraph';
+
+    /**
+     * Initial block type
      * Uses in case when there is no blocks passed
      * @type {{type: (*), data: {text: null}}}
      */
-    let initialBlock = {
-      type : config.initialBlock,
+    let initialBlockData = {
+      type : this.config.initialBlock,
       data : {}
     };
 
@@ -171,20 +185,11 @@ export default class CodexEditor {
      */
     if (_.isEmpty(this.config.data)) {
       this.config.data = {};
-      this.config.data.blocks = [ initialBlock ];
+      this.config.data.blocks = [ initialBlockData ];
     } else {
       if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
-        this.config.data.blocks = [ initialBlock ];
+        this.config.data.blocks = [ initialBlockData ];
       }
-    }
-
-    /**
-     * If initial Block's Tool was not passed, use the first Tool in config.tools
-     */
-    if (!config.initialBlock) {
-      for (this.config.initialBlock in this.config.tools) break;
-    } else {
-      this.config.initialBlock = config.initialBlock;
     }
   }
 
@@ -216,13 +221,6 @@ export default class CodexEditor {
     }
 
     /**
-     * Check Tools object
-     */
-    if (Object.keys(this.config.tools).length === 0) {
-      return Promise.reject('«tools» param must being not empty');
-    }
-
-    /**
      * Check Tools for a class containing
      */
     for (let toolName in this.config.tools) {
@@ -231,20 +229,6 @@ export default class CodexEditor {
       if (!_.isFunction(tool) && !_.isFunction(tool.class)) {
         return Promise.reject(`Tool «${toolName}» must be a constructor function or an object with that function in the «class» property`);
       }
-    }
-
-    /**
-     * Check initialBlock param
-     */
-    if (!this.config.initialBlock) {
-      return Promise.reject('«initialBlock» param must being not empty');
-    }
-
-    /**
-     * Check for a initialBlock Tool existence
-     */
-    if (!this.config.tools[this.config.initialBlock]) {
-      return Promise.reject(`initial Block Tool «${this.config.initialBlock}» is missing in Tools list`);
     }
   }
 

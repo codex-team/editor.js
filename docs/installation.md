@@ -52,9 +52,7 @@ Copy [codex-editor.js](../build/codex-editor.js) file to your project and load i
 
 ## Load Tools
 
-Each Block at the CodeX Editor represented by [Tools](tools.md). There are simple external scripts with own logic. To start using the Editor, you should connect at least one Block Tool.
-
-For example check out our [Paragraph](https://github.com/codex-editor/paragraph) Tool that represents simple text block.
+Each Block at the CodeX Editor represented by [Tools](tools.md). There are simple external scripts with own logic. For example check out our [Paragraph](https://github.com/codex-editor/paragraph) Tool that represents simple text block.
 
 Each Tool should have an installation guide. You can install Paragraph Tool via the same ways as an Editor (Node.js, CDN, local file).
 
@@ -74,6 +72,14 @@ Minimal params is a `holderId`, `tools` list and `initialBlock` marker.
 ```html
 <div id="codex-editor"></div>
 ```
+
+You can create a simple Editor only with a default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param.
+
+```javascript
+var editor = new CodexEditor('codex-editor');
+````
+
+Or pass a whole settings object.
 
 ```javascript
 var editor = new CodexEditor({
