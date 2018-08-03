@@ -19408,8 +19408,6 @@ var Tools = function (_Module) {
         inlineToolbar: true
       };
 
-      console.log('this.config.tools', this.config.tools);
-
       if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
         return Promise.reject('Can\'t start without tools');
       }
