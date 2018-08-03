@@ -15012,6 +15012,15 @@ var BlockManager = function (_Module) {
         index = this.currentBlockIndex;
       }
       this._blocks.remove(index);
+
+      /**
+       * If first Block was removed, insert new Initial Block and set focus on it`s first input
+       */
+      if (!this.blocks.length) {
+        this.currentBlockIndex = -1;
+        this.insert();
+        this.currentBlock.firstInput.focus();
+      }
     }
 
     /**
@@ -20158,6 +20167,10 @@ var UI = function (_Module) {
        * Hide the Plus Button
        * */
       this.Editor.Toolbar.plusButton.hide();
+
+      if (!this.Editor.BlockManager.currentBlock) {
+        this.Editor.BlockManager.insert();
+      }
 
       /**
        * Show the Plus Button if:
