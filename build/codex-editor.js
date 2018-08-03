@@ -15012,6 +15012,7 @@ var BlockManager = function (_Module) {
         index = this.currentBlockIndex;
       }
       this._blocks.remove(index);
+      this.currentBlockIndex--;
     }
 
     /**
@@ -20158,6 +20159,10 @@ var UI = function (_Module) {
        * Hide the Plus Button
        * */
       this.Editor.Toolbar.plusButton.hide();
+
+      if (!this.Editor.BlockManager.currentBlock) {
+        this.Editor.BlockManager.insert();
+      }
 
       /**
        * Show the Plus Button if:

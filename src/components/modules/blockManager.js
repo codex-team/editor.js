@@ -176,6 +176,7 @@ export default class BlockManager extends Module {
       index = this.currentBlockIndex;
     }
     this._blocks.remove(index);
+    this.currentBlockIndex--;
   }
 
   /**
