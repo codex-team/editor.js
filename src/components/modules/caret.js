@@ -32,24 +32,38 @@ export default class Caret extends Module {
   };
 
   /**
+   * Allowed caret positions in input
+   *
+   * @static
+   * @returns {{START: string, END: string, DEFAULT: string}}
+   */
+  static get positions() {
+    return {
+      START: 'start',
+      END: 'end',
+      DEFAULT: 'default'
+    };
+  }
+
+  /**
    * Method gets Block instance and puts caret to the text node with offset
    * There two ways that method applies caret position:
    *   - first found text node: sets at the beginning, but you can pass an offset
    *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
    *
    * @param {Block} block - Block class
-   * @param {default|start|end} position - position where to set caret. If default - leave default behaviour and apply offset if it's passed
+   * @param {String} position - position where to set caret. If default - leave default behaviour and apply offset if it's passed
    * @param {Number} offset - caret offset regarding to the text node
    */
-  setToBlock(block, position = 'default', offset = 0) {
+  setToBlock(block, position = Caret.positions.DEFAULT, offset = 0) {
     const {BlockManager} = this.Editor;
     let element;
 
     switch(position) {
-      case 'start':
+      case Caret.positions.START:
         element = block.firstInput;
         break;
-      case 'end':
+      case Caret.positions.END:
         element = block.lastInput;
         break;
       default:
@@ -60,14 +74,14 @@ export default class Caret extends Module {
       return;
     }
 
-    const nodeToSet = $.getDeepestNode(element, position === 'end');
-    const contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
+    const nodeToSet = $.getDeepestNode(element, position === Caret.positions.END);
+    const contentLength = $.getContentLength(nodeToSet);
 
     switch (true) {
-      case position === 'start':
+      case position === Caret.positions.START:
         offset = 0;
         break;
-      case position ==='end':
+      case position ===Caret.positions.END:
       case offset > contentLength:
         offset = contentLength;
         break;
@@ -88,20 +102,20 @@ export default class Caret extends Module {
    * Set caret to the current input of current Block.
    *
    * @param {HTMLElement} input - input where caret should be set
-   * @param {default|start|end} position - position of the caret. If default - leave default behaviour and apply offset if it's passed
+   * @param {String} position - position of the caret. If default - leave default behaviour and apply offset if it's passed
    * @param {number} offset - caret offset regarding to the text node
    */
-  setToInput(input, position = 'default', offset = 0) {
+  setToInput(input, position = Caret.positions.DEFAULT, offset = 0) {
     const {currentBlock} = this.Editor.BlockManager;
     const nodeToSet = $.getDeepestNode(input);
 
     switch (position) {
-      case 'start':
+      case Caret.positions.START:
         this.set(nodeToSet, 0);
         break;
 
-      case 'end':
-        const contentLength = $.isNativeInput(nodeToSet) ? nodeToSet.value.length : nodeToSet.length;
+      case Caret.positions.END:
+        const contentLength = $.getContentLength(nodeToSet);
 
         this.set(nodeToSet, contentLength);
         break;
@@ -250,16 +264,16 @@ export default class Caret extends Module {
     }
 
     if (force) {
-      this.setToBlock(nextContentfulBlock, 'start');
+      this.setToBlock(nextContentfulBlock, Caret.positions.START);
       return true;
     }
 
     if (this.isAtEnd) {
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (!nextInput) {
-        this.setToBlock(nextContentfulBlock, 'start');
+        this.setToBlock(nextContentfulBlock, Caret.positions.START);
       } else {
-        this.setToInput(nextInput, 'start');
+        this.setToInput(nextInput, Caret.positions.START);
       }
 
       return true;
@@ -286,15 +300,15 @@ export default class Caret extends Module {
     }
 
     if (force) {
-      this.setToBlock( previousContentfulBlock, 'end' );
+      this.setToBlock( previousContentfulBlock, Caret.positions.END );
     }
 
     if (this.isAtStart) {
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
       if (!previousInput) {
-        this.setToBlock( previousContentfulBlock, 'end' );
+        this.setToBlock( previousContentfulBlock, Caret.positions.END );
       } else {
-        this.setToInput(previousInput, 'end');
+        this.setToInput(previousInput, Caret.positions.END);
       }
       return true;
     }

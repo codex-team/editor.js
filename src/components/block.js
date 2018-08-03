@@ -95,8 +95,11 @@ export default class Block {
    */
   get inputs() {
     const content = this.holder;
+    const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
 
-    const inputs = _.array(content.querySelectorAll('[contenteditable], textarea, input'));
+    const selector = '[contenteditable], textarea, input, ' + allowedInputTypes.map(type => `input[type="${type}"]`).join(', ');
+
+    const inputs = _.array(content.querySelectorAll(selector));
 
     /**
      * If inputs amount was changed we need to check if input index is bigger then inputs array length

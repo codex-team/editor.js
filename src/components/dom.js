@@ -337,6 +337,26 @@ export default class Dom {
     return wrapper.childElementCount > 0;
   }
 
+
+  /**
+   * Return length of node`s text content
+   *
+   * @param {Node} node
+   * @returns {number}
+   */
+  static getContentLength(node) {
+    if (Dom.isNativeInput(node)) {
+      return node.value.length;
+    }
+
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.length;
+    }
+
+    return node.textContent.length;
+  }
+
+
   /**
    * Return array of names of block html elements
    *
