@@ -2,9 +2,47 @@
 
 There are few steps to run CodeX Editor on your site.
 
+1. [Load Editor's core](#load-editors-core)
+2. [Load Tools](#load-tools)
+3. [Initialize Editor's instance](#create-editor-instance)
+
 ## Load Editor's core
 
-> Installation via NPM/Yarn will be added soon.
+Firstly you need to get CodeX Editor itself. It is a [minified script](../build/codex-editor.js) with minimal available  
+
+Choose the most usable method of getting Editor for you.
+
+- Node package
+- Source from CDN
+- Local file from project
+
+### Node.js
+
+Install the package via NPM or Yarn
+
+```shell
+npm i codex.editor --save-dev
+```
+
+Include module at your application 
+
+```javascript
+const CodexEditor = require('codex.editor');
+```
+
+### Use from CDN
+
+You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/codex.editor).
+
+`https://cdn.jsdelivr.net/npm/codex.editor@2.0.0`
+
+Then require this script.
+
+```html
+<script src="..."></script>
+```
+
+### Save sources to project
 
 Copy [codex-editor.js](../build/codex-editor.js) file to your project and load it.
 
@@ -12,18 +50,21 @@ Copy [codex-editor.js](../build/codex-editor.js) file to your project and load i
 <script src="codex-editor.js"></script>
 ```
 
-## Load Block Tools
+## Load Tools
 
-Each Block at the CodeX Editor represented by [Tools](tools.md). There are simple (or powerful) external scripts with own logic. To start using the Editor, you should connect minimum number of Tools.
+Each Block at the CodeX Editor represented by [Tools](tools.md). There are simple external scripts with own logic. To start using the Editor, you should connect at least one Block Tool.
 
-[Text](../example/plugins/text/) tool for an example.
+For example check out our [Paragraph](https://github.com/codex-editor/paragraph) Tool that represents simple text block.
+
+Each Tool should have an installation guide. You can install Paragraph Tool via the same ways as an Editor (Node.js, CDN, local file).
+
+Check [CodeX Editor's community](https://github.com/codex-editor) to see Tools examples.
+
+**Example:** use Paragragh from CDN
 
 ```html
-<script src="text/text.js"></script>
-<link rel="stylesheet" href="text/text.css">
+<script src="https://cdn.jsdelivr.net/npm/codex.editor.paragraph@2.0.3/dist/bundle.js"></script>
 ```
-
-Check out [example/plugins](../example/plugins/) and [example/tools-inline](../example/tools-inline/) directories to see Tools examples.
 
 ## Create Editor instance
 
@@ -44,16 +85,15 @@ var editor = new CodexEditor({
     /**
      * What Block will be inserted by default
      */
-    initialBlock : 'text',
+    initialBlock : 'paragraph',
 
     /**
      * Available Tools list.
      * Pass Tool's class or Settings object for each Tool you want to use
-     * 
      */
     tools: {
-        text: {
-          class: Text,
+        paragraph: {
+          class: Paragraph,
           inlineToolbar : true
         },
         // ...

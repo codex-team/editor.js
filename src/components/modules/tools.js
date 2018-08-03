@@ -318,15 +318,13 @@ export default class Tools extends Module {
     /**
      * @type {{api: IAPI, config: ({}), data: IBlockToolData}}
      */
-    // const constructorOptions = {
-    //   api: this.Editor.API.methods,
-    //   config: config || {},
-    //   data: data
-    // };
-    //
-    // return new plugin(constructorOptions);
+    const constructorOptions = {
+      api: this.Editor.API.methods,
+      config: config || {},
+      data: data
+    };
 
-    return new plugin(data, config || {}, this.Editor.API.methods);
+    return new plugin(constructorOptions);
   }
 
   /**

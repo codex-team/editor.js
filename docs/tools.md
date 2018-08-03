@@ -8,6 +8,27 @@ CodeX Editor is a block-oriented editor. It means that entry composed with the l
 
 ### constructor()
 
+Each Tool's instance called with an params object.
+ 
+| Param  | Type                | Description                                     |
+| ------ | ------------------- | ----------------------------------------------- |
+| api    | [`IAPI`][iapi-link] | CodeX Editor's API methods                      |
+| config | `object`            | Special configuration params passed in «config» |
+| data   | `object`            | Data to be rendered in this Tool                |
+
+[iapi-link]: ../src/components/interfaces/api.ts
+
+#### Example
+
+```javascript
+constructor({data, config, api}) {
+  this.data = data;
+  this.api = api;
+  this.config = config;
+  // ...
+}
+```
+
 ### render()
 
 ### save()
