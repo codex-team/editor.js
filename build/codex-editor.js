@@ -14677,9 +14677,12 @@ var BlockEvents = function (_Module) {
             /** If current Block is empty just remove this Block */
             if (this.Editor.BlockManager.currentBlock.isEmpty) {
                 this.Editor.BlockManager.removeBlock();
-                if (this.Editor.Caret.navigatePrevious(true)) {
-                    this.Editor.Toolbar.close();
-                }
+                /**
+                 * After BlockManager removes the Block (which is current now),
+                 * pointer that references to the current Block, now points to the Next
+                 */
+                this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+                this.Editor.Toolbar.close();
                 return;
             }
             if (!canMergeBlocks) {
