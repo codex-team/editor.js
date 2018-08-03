@@ -11130,8 +11130,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-var modules = ["api-blocks.ts","api-events.ts","api-listener.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-styles.ts","api-toolbar.ts","api.ts","block-events.ts","blockManager.js","caret.js","events.js","listeners.js","paste.ts","renderer.js","sanitizer.js","saver.js","shortcuts.ts","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
-  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-styles.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
+var modules = ["api-blocks.ts","api-caret.ts","api-events.ts","api-listener.ts","api-sanitizer.ts","api-saver.ts","api-selection.ts","api-styles.ts","api-toolbar.ts","api.ts","block-events.ts","blockManager.js","caret.js","events.js","listeners.js","paste.ts","renderer.js","sanitizer.js","saver.js","shortcuts.ts","toolbar-blockSettings.js","toolbar-inline.ts","toolbar-toolbox.js","toolbar.js","tools.js","ui.js"].map(function (module) {
+  return __webpack_require__("./src/components/modules sync [^_](api-blocks.ts|api-caret.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-styles.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$")("./" + module);
 });
 
 /**
@@ -11977,6 +11977,7 @@ var Block = function () {
     this.settings = settings;
     this.api = apiMethods;
     this.holder = this.compose();
+    this.inputIndex = 0;
 
     /**
      * @type {IBlockTune[]}
@@ -12029,8 +12030,9 @@ var Block = function () {
     }
 
     /**
-     * Returns Plugins content
-     * @return {Node}
+     * Find and return all editable elements (contenteditables and native inputs) in the Tool HTML
+     *
+     * @returns {HTMLElement[]}
      */
 
   }, {
@@ -12147,6 +12149,111 @@ var Block = function () {
     /**
      * Check block for emptiness
      * @return {Boolean}
+     */
+
+  }, {
+    key: 'inputs',
+    get: function get() {
+      var content = this.holder;
+      var allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
+
+      var selector = '[contenteditable], textarea, input, ' + allowedInputTypes.map(function (type) {
+        return 'input[type="' + type + '"]';
+      }).join(', ');
+
+      var inputs = _.array(content.querySelectorAll(selector));
+
+      /**
+       * If inputs amount was changed we need to check if input index is bigger then inputs array length
+       */
+      if (this.inputIndex > inputs.length - 1) {
+        this.inputIndex = inputs.length - 1;
+      }
+
+      return inputs;
+    }
+
+    /**
+     * Return current Tool`s input
+     *
+     * @returns {HTMLElement}
+     */
+
+  }, {
+    key: 'currentInput',
+    get: function get() {
+      return this.inputs[this.inputIndex];
+    }
+
+    /**
+     * Set input index to the passed element
+     *
+     * @param {HTMLElement} element
+     */
+    ,
+    set: function set(element) {
+      var index = this.inputs.findIndex(function (input) {
+        return input === element || input.contains(element);
+      });
+
+      if (index !== -1) {
+        this.inputIndex = index;
+      }
+    }
+
+    /**
+     * Return first Tool`s input
+     *
+     * @returns {HTMLElement}
+     */
+
+  }, {
+    key: 'firstInput',
+    get: function get() {
+      return this.inputs[0];
+    }
+
+    /**
+     * Return first Tool`s input
+     *
+     * @returns {HTMLElement}
+     */
+
+  }, {
+    key: 'lastInput',
+    get: function get() {
+      var inputs = this.inputs;
+
+      return inputs[inputs.length - 1];
+    }
+
+    /**
+     * Return next Tool`s input or undefined if it doesn't exist
+     *
+     * @returns {HTMLElement}
+     */
+
+  }, {
+    key: 'nextInput',
+    get: function get() {
+      return this.inputs[this.inputIndex + 1];
+    }
+
+    /**
+     * Return previous Tool`s input or undefined if it doesn't exist
+     *
+     * @returns {HTMLElement}
+     */
+
+  }, {
+    key: 'previousInput',
+    get: function get() {
+      return this.inputs[this.inputIndex - 1];
+    }
+
+    /**
+     * Returns Plugins content
+     * @return {Node}
      */
 
   }, {
@@ -12524,7 +12631,7 @@ var Dom = function () {
         /**
          * special case when child is single tag that can't contain any content
          */
-        if (Dom.isSingleTag(nodeChild)) {
+        if (Dom.isSingleTag(nodeChild) && !Dom.isNativeInput(nodeChild)) {
           /**
            * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
            * from sibling
@@ -12704,6 +12811,27 @@ var Dom = function () {
       wrapper.innerHTML = string;
 
       return wrapper.childElementCount > 0;
+    }
+
+    /**
+     * Return length of node`s text content
+     *
+     * @param {Node} node
+     * @returns {number}
+     */
+
+  }, {
+    key: 'getContentLength',
+    value: function getContentLength(node) {
+      if (Dom.isNativeInput(node)) {
+        return node.value.length;
+      }
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        return node.length;
+      }
+
+      return node.textContent.length;
     }
 
     /**
@@ -13311,15 +13439,16 @@ module.exports = exports['default'];
 
 /***/ }),
 
-/***/ "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-styles.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
-/*!********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-styles.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
-  \********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./src/components/modules sync [^_](api-blocks.ts|api-caret.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-styles.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$":
+/*!*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./src/components/modules sync nonrecursive [^_](api-blocks.ts|api-caret.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-styles.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$ ***!
+  \*********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 var map = {
 	"./api-blocks.ts": "./src/components/modules/api-blocks.ts",
+	"./api-caret.ts": "./src/components/modules/api-caret.ts",
 	"./api-events.ts": "./src/components/modules/api-events.ts",
 	"./api-listener.ts": "./src/components/modules/api-listener.ts",
 	"./api-sanitizer.ts": "./src/components/modules/api-sanitizer.ts",
@@ -13365,7 +13494,7 @@ webpackContext.keys = function webpackContextKeys() {
 };
 webpackContext.resolve = webpackContextResolve;
 module.exports = webpackContext;
-webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-styles.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
+webpackContext.id = "./src/components/modules sync [^_](api-blocks.ts|api-caret.ts|api-events.ts|api-listener.ts|api-sanitizer.ts|api-saver.ts|api-selection.ts|api-styles.ts|api-toolbar.ts|api.ts|block-events.ts|blockManager.js|caret.js|events.js|listeners.js|paste.ts|renderer.js|sanitizer.js|saver.js|shortcuts.ts|toolbar-blockSettings.js|toolbar-inline.ts|toolbar-toolbox.js|toolbar.js|tools.js|ui.js)$";
 
 /***/ }),
 
@@ -13576,6 +13705,68 @@ var BlocksAPI = function (_Module) {
 
 BlocksAPI.displayName = "BlocksAPI";
 exports.default = BlocksAPI;
+module.exports = exports["default"];
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
+
+/***/ }),
+
+/***/ "./src/components/modules/api-caret.ts":
+/*!*********************************************!*\
+  !*** ./src/components/modules/api-caret.ts ***!
+  \*********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+/* WEBPACK VAR INJECTION */(function(Module) {
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * @class CaretAPI
+ * provides with methods to work with caret
+ */
+var CaretAPI = function (_Module) {
+  _inherits(CaretAPI, _Module);
+
+  /**
+   * Save Editor config. API provides passed configuration to the Blocks
+   */
+  function CaretAPI(_ref) {
+    var config = _ref.config;
+
+    _classCallCheck(this, CaretAPI);
+
+    return _possibleConstructorReturn(this, (CaretAPI.__proto__ || Object.getPrototypeOf(CaretAPI)).call(this, { config: config }));
+  }
+  /**
+   * Available methods
+   * @return {ICaretAPI}
+   */
+
+
+  _createClass(CaretAPI, [{
+    key: "methods",
+    get: function get() {
+      return {};
+    }
+  }]);
+
+  return CaretAPI;
+}(Module);
+
+CaretAPI.displayName = "CaretAPI";
+exports.default = CaretAPI;
 module.exports = exports["default"];
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
 
@@ -14246,7 +14437,7 @@ var API = function (_Module) {
         get: function get() {
             return {
                 blocks: this.Editor.BlocksAPI.methods,
-                caret: {},
+                caret: this.Editor.CaretAPI.methods,
                 events: this.Editor.EventsAPI.methods,
                 listener: this.Editor.ListenerAPI.methods,
                 sanitizer: this.Editor.SanitizerAPI.methods,
@@ -14328,11 +14519,11 @@ var BlockEvents = function (_Module) {
                     break;
                 case _.keyCodes.DOWN:
                 case _.keyCodes.RIGHT:
-                    this.arrowRightAndDown();
+                    this.arrowRightAndDown(event);
                     break;
                 case _.keyCodes.UP:
                 case _.keyCodes.LEFT:
-                    this.arrowLeftAndUp();
+                    this.arrowLeftAndUp(event);
                     break;
                 case _.keyCodes.TAB:
                     this.tabPressed(event);
@@ -14525,8 +14716,13 @@ var BlockEvents = function (_Module) {
 
     }, {
         key: 'arrowRightAndDown',
-        value: function arrowRightAndDown() {
-            this.Editor.Caret.navigateNext();
+        value: function arrowRightAndDown(event) {
+            if (this.Editor.Caret.navigateNext()) {
+                /**
+                 * Default behaviour moves cursor by 1 character, we need to prevent it
+                 */
+                event.preventDefault();
+            }
         }
         /**
          * Handle left and up keyboard keys
@@ -14534,8 +14730,13 @@ var BlockEvents = function (_Module) {
 
     }, {
         key: 'arrowLeftAndUp',
-        value: function arrowLeftAndUp() {
-            this.Editor.Caret.navigatePrevious();
+        value: function arrowLeftAndUp(event) {
+            if (this.Editor.Caret.navigatePrevious()) {
+                /**
+                 * Default behaviour moves cursor by 1 character, we need to prevent it
+                 */
+                event.preventDefault();
+            }
         }
         /**
          * Default keydown handler
@@ -14971,6 +15172,7 @@ var BlockManager = function (_Module) {
 
       if (parentFirstLevelBlock) {
         this.currentNode = parentFirstLevelBlock;
+        this.Editor.Caret.setToInput(childNode);
       } else {
         throw new Error('Can not find a Block from this child Node');
       }
@@ -15049,6 +15251,38 @@ var BlockManager = function (_Module) {
       }
 
       return this._blocks[this.currentBlockIndex + 1];
+    }
+
+    /**
+     * Return first Block with inputs after current Block
+     *
+     * @returns {Block | undefined}
+     */
+
+  }, {
+    key: 'nextContentfulBlock',
+    get: function get() {
+      var nextBlocks = this.blocks.slice(this.currentBlockIndex + 1);
+
+      return nextBlocks.find(function (block) {
+        return !!block.inputs.length;
+      });
+    }
+
+    /**
+     * Return first Block with inputs before current Block
+     *
+     * @returns {Block | undefined}
+     */
+
+  }, {
+    key: 'previousContentfulBlock',
+    get: function get() {
+      var previousBlocks = this.blocks.slice(0, this.currentBlockIndex).reverse();
+
+      return previousBlocks.find(function (block) {
+        return !!block.inputs.length;
+      });
     }
 
     /**
@@ -15450,33 +15684,44 @@ var Caret = function (_Module) {
      *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
      *
      * @param {Block} block - Block class
+     * @param {String} position - position where to set caret. If default - leave default behaviour and apply offset if it's passed
      * @param {Number} offset - caret offset regarding to the text node
-     * @param {Boolean} atEnd - put caret at the end of the text node or not
      */
     value: function setToBlock(block) {
       var _this2 = this;
 
-      var offset = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-      var atEnd = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Caret.positions.DEFAULT;
+      var offset = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      var BlockManager = this.Editor.BlockManager;
 
-      var element = block.pluginsContent;
+      var element = void 0;
 
-      /** If Element is INPUT */
-      if ($.isNativeInput(element)) {
-        element.focus();
+      switch (position) {
+        case Caret.positions.START:
+          element = block.firstInput;
+          break;
+        case Caret.positions.END:
+          element = block.lastInput;
+          break;
+        default:
+          element = block.currentInput;
+      }
+
+      if (!element) {
         return;
       }
 
-      var nodeToSet = $.getDeepestNode(element, atEnd);
+      var nodeToSet = $.getDeepestNode(element, position === Caret.positions.END);
+      var contentLength = $.getContentLength(nodeToSet);
 
-      if (atEnd || offset > nodeToSet.length) {
-        offset = nodeToSet.length;
-      }
-
-      /** if found deepest node is native input */
-      if ($.isNativeInput(nodeToSet)) {
-        nodeToSet.focus();
-        return;
+      switch (true) {
+        case position === Caret.positions.START:
+          offset = 0;
+          break;
+        case position === Caret.positions.END:
+        case offset > contentLength:
+          offset = contentLength;
+          break;
       }
 
       /**
@@ -15486,7 +15731,45 @@ var Caret = function (_Module) {
         _this2.set(nodeToSet, offset);
       }, 20)();
 
-      this.Editor.BlockManager.currentNode = block.holder;
+      BlockManager.currentNode = block.holder;
+      BlockManager.currentBlock.currentInput = element;
+    }
+
+    /**
+     * Set caret to the current input of current Block.
+     *
+     * @param {HTMLElement} input - input where caret should be set
+     * @param {String} position - position of the caret. If default - leave default behaviour and apply offset if it's passed
+     * @param {number} offset - caret offset regarding to the text node
+     */
+
+  }, {
+    key: 'setToInput',
+    value: function setToInput(input) {
+      var position = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Caret.positions.DEFAULT;
+      var offset = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
+      var currentBlock = this.Editor.BlockManager.currentBlock;
+
+      var nodeToSet = $.getDeepestNode(input);
+
+      switch (position) {
+        case Caret.positions.START:
+          this.set(nodeToSet, 0);
+          break;
+
+        case Caret.positions.END:
+          var contentLength = $.getContentLength(nodeToSet);
+
+          this.set(nodeToSet, contentLength);
+          break;
+
+        default:
+          if (offset) {
+            this.set(nodeToSet, offset);
+          }
+      }
+
+      currentBlock.currentInput = input;
     }
 
     /**
@@ -15503,11 +15786,31 @@ var Caret = function (_Module) {
       var range = document.createRange(),
           selection = _selection2.default.get();
 
+      /** if found deepest node is native input */
+      if ($.isNativeInput(element)) {
+        element.focus();
+        element.selectionStart = element.selectionEnd = offset;
+        return;
+      }
+
       range.setStart(element, offset);
       range.setEnd(element, offset);
 
       selection.removeAllRanges();
       selection.addRange(range);
+
+      /** If new cursor position is not visible, scroll to it */
+
+      var _range$getBoundingCli = range.getBoundingClientRect(),
+          top = _range$getBoundingCli.top,
+          bottom = _range$getBoundingCli.bottom;
+
+      var _window = window,
+          innerHeight = _window.innerHeight;
+
+
+      if (top < 0) window.scrollBy(0, top);
+      if (bottom > innerHeight) window.scrollBy(0, bottom - innerHeight);
     }
   }, {
     key: 'setToTheLastBlock',
@@ -15545,15 +15848,15 @@ var Caret = function (_Module) {
       var selection = _selection2.default.get();
 
       if (selection.rangeCount) {
-        var selectRange = selection.getRangeAt(0),
-            blockElem = this.Editor.BlockManager.currentBlock.pluginsContent;
+        var selectRange = selection.getRangeAt(0);
+        var currentBlockInput = this.Editor.BlockManager.currentBlock.currentInput;
 
         selectRange.deleteContents();
 
-        if (blockElem) {
+        if (currentBlockInput) {
           var range = selectRange.cloneRange(true);
 
-          range.selectNodeContents(blockElem);
+          range.selectNodeContents(currentBlockInput);
           range.setStart(selectRange.endContainer, selectRange.endOffset);
           return range.extractContents();
         }
@@ -15605,7 +15908,7 @@ var Caret = function (_Module) {
     }
 
     /**
-     * Set's caret to the next Block
+     * Set's caret to the next Block or Tool`s input
      * Before moving caret, we should check if caret position is at the end of Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
      *
@@ -15618,15 +15921,29 @@ var Caret = function (_Module) {
     key: 'navigateNext',
     value: function navigateNext() {
       var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var _Editor$BlockManager = this.Editor.BlockManager,
+          currentBlock = _Editor$BlockManager.currentBlock,
+          nextContentfulBlock = _Editor$BlockManager.nextContentfulBlock;
+      var nextInput = currentBlock.nextInput;
 
-      var nextBlock = this.Editor.BlockManager.nextBlock;
 
-      if (!nextBlock) {
+      if (!nextContentfulBlock && !nextInput) {
         return false;
       }
 
-      if (force || this.isAtEnd) {
-        this.setToBlock(nextBlock);
+      if (force) {
+        this.setToBlock(nextContentfulBlock, Caret.positions.START);
+        return true;
+      }
+
+      if (this.isAtEnd) {
+        /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
+        if (!nextInput) {
+          this.setToBlock(nextContentfulBlock, Caret.positions.START);
+        } else {
+          this.setToInput(nextInput, Caret.positions.START);
+        }
+
         return true;
       }
 
@@ -15634,7 +15951,7 @@ var Caret = function (_Module) {
     }
 
     /**
-     * Set's caret to the previous Block
+     * Set's caret to the previous Tool`s input or Block
      * Before moving caret, we should check if caret position is start of the Plugins node
      * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
      *
@@ -15647,15 +15964,28 @@ var Caret = function (_Module) {
     key: 'navigatePrevious',
     value: function navigatePrevious() {
       var force = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+      var _Editor$BlockManager2 = this.Editor.BlockManager,
+          currentBlock = _Editor$BlockManager2.currentBlock,
+          previousContentfulBlock = _Editor$BlockManager2.previousContentfulBlock;
 
-      var previousBlock = this.Editor.BlockManager.previousBlock;
+      var _ref2 = currentBlock || {},
+          previousInput = _ref2.previousInput;
 
-      if (!previousBlock) {
+      if (!previousContentfulBlock && !previousInput) {
         return false;
       }
 
-      if (force || this.isAtStart) {
-        this.setToBlock(previousBlock, 0, true);
+      if (force) {
+        this.setToBlock(previousContentfulBlock, Caret.positions.END);
+      }
+
+      if (this.isAtStart) {
+        /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
+        if (!previousInput) {
+          this.setToBlock(previousContentfulBlock, Caret.positions.END);
+        } else {
+          this.setToInput(previousInput, Caret.positions.END);
+        }
         return true;
       }
 
@@ -15727,7 +16057,12 @@ var Caret = function (_Module) {
 
       var selection = _selection2.default.get(),
           anchorNode = selection.anchorNode,
-          firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent);
+          firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
+
+      /** In case lastNode is native input */
+      if ($.isNativeInput(firstNode)) {
+        return firstNode.selectionEnd === 0;
+      }
 
       /**
        * Workaround case when caret in the text like " |Hello!"
@@ -15783,7 +16118,12 @@ var Caret = function (_Module) {
 
       var selection = _selection2.default.get(),
           anchorNode = selection.anchorNode,
-          lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.pluginsContent, true);
+          lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
+
+      /** In case lastNode is native input */
+      if ($.isNativeInput(lastNode)) {
+        return lastNode.selectionEnd === lastNode.value.length;
+      }
 
       /**
        * In case of
@@ -15822,6 +16162,23 @@ var Caret = function (_Module) {
     get: function get() {
       return {
         shadowCaret: 'cdx-shadow-caret'
+      };
+    }
+  }, {
+    key: 'positions',
+
+
+    /**
+     * Allowed caret positions in input
+     *
+     * @static
+     * @returns {{START: string, END: string, DEFAULT: string}}
+     */
+    get: function get() {
+      return {
+        START: 'start',
+        END: 'end',
+        DEFAULT: 'default'
       };
     }
   }]);
@@ -16234,6 +16591,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _caret = __webpack_require__(/*! ./caret */ "./src/components/modules/caret.js");
+
+var _caret2 = _interopRequireDefault(_caret);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -16407,7 +16770,7 @@ var Paste = function (_Module) {
                                 }()));
 
                             case 16:
-                                Caret.setToBlock(BlockManager.currentBlock, 0, true);
+                                Caret.setToBlock(BlockManager.currentBlock, _caret2.default.positions.END);
 
                             case 17:
                             case 'end':
@@ -16503,15 +16866,16 @@ var Paste = function (_Module) {
         key: 'processSingleBlock',
         value: function () {
             var _ref9 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee4(dataToInsert) {
-                var initialTool, BlockManager, content, tool, blockData;
+                var initialTool, _Editor2, BlockManager, Caret, content, tool, blockData, insertedBlock;
+
                 return regeneratorRuntime.wrap(function _callee4$(_context4) {
                     while (1) {
                         switch (_context4.prev = _context4.next) {
                             case 0:
-                                initialTool = this.config.initialBlock, BlockManager = this.Editor.BlockManager, content = dataToInsert.content, tool = dataToInsert.tool;
+                                initialTool = this.config.initialBlock, _Editor2 = this.Editor, BlockManager = _Editor2.BlockManager, Caret = _Editor2.Caret, content = dataToInsert.content, tool = dataToInsert.tool;
 
                                 if (!(tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
-                                    _context4.next = 9;
+                                    _context4.next = 11;
                                     break;
                                 }
 
@@ -16522,23 +16886,26 @@ var Paste = function (_Module) {
                                 blockData = _context4.sent;
 
                                 if (!blockData) {
-                                    _context4.next = 9;
+                                    _context4.next = 11;
                                     break;
                                 }
 
                                 this.splitBlock();
+                                insertedBlock = void 0;
+
                                 if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
                                     BlockManager.replace(blockData.tool, blockData.data);
                                 } else {
-                                    BlockManager.insert(blockData.tool, blockData.data);
+                                    insertedBlock = BlockManager.insert(blockData.tool, blockData.data);
                                 }
+                                Caret.setToBlock(insertedBlock, _caret2.default.positions.END);
                                 return _context4.abrupt('return');
 
-                            case 9:
+                            case 11:
                                 /** If there is no pattern substitute - insert string as it is */
                                 document.execCommand('insertHTML', false, content.innerHTML);
 
-                            case 10:
+                            case 12:
                             case 'end':
                                 return _context4.stop();
                         }
@@ -16622,7 +16989,7 @@ var Paste = function (_Module) {
             var _ref11 = _asyncToGenerator( /*#__PURE__*/regeneratorRuntime.mark(function _callee6(data) {
                 var canReplaceCurrentBlock = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
-                var blockData, _Editor2, BlockManager, Caret, currentBlock, Block;
+                var blockData, _Editor3, BlockManager, Caret, currentBlock, Block;
 
                 return regeneratorRuntime.wrap(function _callee6$(_context6) {
                     while (1) {
@@ -16633,9 +17000,9 @@ var Paste = function (_Module) {
 
                             case 2:
                                 blockData = _context6.sent;
-                                _Editor2 = this.Editor;
-                                BlockManager = _Editor2.BlockManager;
-                                Caret = _Editor2.Caret;
+                                _Editor3 = this.Editor;
+                                BlockManager = _Editor3.BlockManager;
+                                Caret = _Editor3.Caret;
                                 currentBlock = BlockManager.currentBlock;
 
                                 if (!(canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty)) {
@@ -16672,9 +17039,9 @@ var Paste = function (_Module) {
     }, {
         key: 'splitBlock',
         value: function splitBlock() {
-            var _Editor3 = this.Editor,
-                BlockManager = _Editor3.BlockManager,
-                Caret = _Editor3.Caret;
+            var _Editor4 = this.Editor,
+                BlockManager = _Editor4.BlockManager,
+                Caret = _Editor4.Caret;
 
             if (!BlockManager.currentBlock) {
                 return;
@@ -16700,9 +17067,9 @@ var Paste = function (_Module) {
         value: function processHTML(innerHTML) {
             var _this3 = this;
 
-            var _Editor4 = this.Editor,
-                Tools = _Editor4.Tools,
-                Sanitizer = _Editor4.Sanitizer,
+            var _Editor5 = this.Editor,
+                Tools = _Editor5.Tools,
+                Sanitizer = _Editor5.Sanitizer,
                 initialTool = this.config.initialBlock,
                 wrapper = $.make('DIV');
 

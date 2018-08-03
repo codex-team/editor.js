@@ -80,7 +80,11 @@ export interface IBlocksAPI {
 /**
  * Methods for working with Caret
  */
-export interface ICaretAPI {}
+export interface ICaretAPI {
+  /**
+   * @todo Add caret methods
+   */
+}
 
 /**
  * Events Module API methods

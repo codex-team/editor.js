@@ -1,5 +1,6 @@
 import IBlockToolData from '../interfaces/tools/block-tool';
 import IEditorConfig from '../interfaces/editor-config';
+import CaretClass from './caret';
 
 declare const Module: any;
 declare const $: any;
@@ -234,7 +235,7 @@ export default class Paste extends Module {
       async (data, i) => await this.insertBlock(data, i === 0),
     ));
 
-    Caret.setToBlock(BlockManager.currentBlock, 0, true);
+    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
   }
 
   /**
@@ -247,7 +248,7 @@ export default class Paste extends Module {
    */
   private async processSingleBlock(dataToInsert: IPasteData): Promise<void> {
     const initialTool = this.config.initialBlock,
-      {BlockManager} = this.Editor,
+      {BlockManager, Caret} = this.Editor,
       {content, tool} = dataToInsert;
 
     if (tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
@@ -255,12 +256,14 @@ export default class Paste extends Module {
 
       if (blockData) {
         this.splitBlock();
+        let insertedBlock;
 
         if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
           BlockManager.replace(blockData.tool, blockData.data);
         } else {
-          BlockManager.insert(blockData.tool, blockData.data);
+          insertedBlock = BlockManager.insert(blockData.tool, blockData.data);
         }
+        Caret.setToBlock(insertedBlock, CaretClass.positions.END);
         return;
       }
     }

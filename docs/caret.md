@@ -13,7 +13,7 @@ and default CodeX Editor instances
 ### setToBlock
 
 ```javascript
-Caret.setToBlock(block, offset, atEnd)
+Caret.setToBlock(block, position, offset)
 ```
 
 > Method gets Block instance and puts caret to the text node with offset
@@ -23,8 +23,8 @@ Caret.setToBlock(block, offset, atEnd)
 | Param        | Type | Description|
 | -------------|------ |:-------------:|
 | block        | Object | Block instance that BlockManager created|
+| position     | String | Can be 'start', 'end' or 'default'. Other values will be treated as 'default'. Shows position of the caret regarding to the Block.|
 | offset       | Number | caret offset regarding to the text node (Default: 0)|
-| atEnd        | Boolean | puts caret at the end of last text node|
 
 
 ### setToTheLastBlock

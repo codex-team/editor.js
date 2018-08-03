@@ -177,7 +177,7 @@ export default class Dom {
       /**
        * special case when child is single tag that can't contain any content
        */
-      if (Dom.isSingleTag(nodeChild)) {
+      if (Dom.isSingleTag(nodeChild) && !Dom.isNativeInput(nodeChild)) {
         /**
          * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
          * from sibling
@@ -336,6 +336,26 @@ export default class Dom {
 
     return wrapper.childElementCount > 0;
   }
+
+
+  /**
+   * Return length of node`s text content
+   *
+   * @param {Node} node
+   * @returns {number}
+   */
+  static getContentLength(node) {
+    if (Dom.isNativeInput(node)) {
+      return node.value.length;
+    }
+
+    if (node.nodeType === Node.TEXT_NODE) {
+      return node.length;
+    }
+
+    return node.textContent.length;
+  }
+
 
   /**
    * Return array of names of block html elements

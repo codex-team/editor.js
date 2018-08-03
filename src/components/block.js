@@ -36,6 +36,7 @@ export default class Block {
     this.settings = settings;
     this.api = apiMethods;
     this.holder = this.compose();
+    this.inputIndex = 0;
 
     /**
      * @type {IBlockTune[]}
@@ -85,6 +86,89 @@ export default class Block {
     if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
       this.tool[methodName].call(this.tool, params);
     }
+  }
+
+  /**
+   * Find and return all editable elements (contenteditables and native inputs) in the Tool HTML
+   *
+   * @returns {HTMLElement[]}
+   */
+  get inputs() {
+    const content = this.holder;
+    const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
+
+    const selector = '[contenteditable], textarea, input, ' + allowedInputTypes.map(type => `input[type="${type}"]`).join(', ');
+
+    const inputs = _.array(content.querySelectorAll(selector));
+
+    /**
+     * If inputs amount was changed we need to check if input index is bigger then inputs array length
+     */
+    if (this.inputIndex > inputs.length - 1) {
+      this.inputIndex = inputs.length - 1;
+    }
+
+    return inputs;
+  }
+
+  /**
+   * Return current Tool`s input
+   *
+   * @returns {HTMLElement}
+   */
+  get currentInput() {
+    return this.inputs[this.inputIndex];
+  }
+
+  /**
+   * Set input index to the passed element
+   *
+   * @param {HTMLElement} element
+   */
+  set currentInput(element) {
+    const index = this.inputs.findIndex(input => input === element || input.contains(element));
+
+    if (index !== -1) {
+      this.inputIndex = index;
+    }
+  }
+
+  /**
+   * Return first Tool`s input
+   *
+   * @returns {HTMLElement}
+   */
+  get firstInput() {
+    return this.inputs[0];
+  }
+
+  /**
+   * Return first Tool`s input
+   *
+   * @returns {HTMLElement}
+   */
+  get lastInput() {
+    const inputs = this.inputs;
+
+    return inputs[inputs.length - 1];
+  }
+
+  /**
+   * Return next Tool`s input or undefined if it doesn't exist
+   *
+   * @returns {HTMLElement}
+   */
+  get nextInput() {
+    return this.inputs[this.inputIndex + 1];
+  }
+
+  /**
+   * Return previous Tool`s input or undefined if it doesn't exist
+   *
+   * @returns {HTMLElement}
+   */
+  get previousInput() {
+    return this.inputs[this.inputIndex - 1];
   }
 
   /**
