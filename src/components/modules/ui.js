@@ -325,4 +325,11 @@ export default class UI extends Module {
 
     $.append(this.nodes.wrapper, spriteHolder);
   }
+
+  /**
+   * Clean editor`s UI
+   */
+  destroy() {
+    this.nodes.holder.innerHTML = '';
+  }
 }
