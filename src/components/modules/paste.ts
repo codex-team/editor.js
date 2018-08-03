@@ -1,5 +1,6 @@
 import IBlockToolData from '../interfaces/tools/block-tool';
 import IEditorConfig from '../interfaces/editor-config';
+import CaretClass from './caret';
 
 declare const Module: any;
 declare const $: any;
@@ -234,7 +235,7 @@ export default class Paste extends Module {
       async (data, i) => await this.insertBlock(data, i === 0),
     ));
 
-    Caret.setToBlock(BlockManager.currentBlock, 'end');
+    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
   }
 
   /**
@@ -262,7 +263,7 @@ export default class Paste extends Module {
         } else {
           insertedBlock = BlockManager.insert(blockData.tool, blockData.data);
         }
-        Caret.setToBlock(insertedBlock, 'end');
+        Caret.setToBlock(insertedBlock, CaretClass.positions.END);
         return;
       }
     }

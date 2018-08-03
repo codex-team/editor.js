@@ -16591,6 +16591,12 @@ var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = [
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _caret = __webpack_require__(/*! ./caret */ "./src/components/modules/caret.js");
+
+var _caret2 = _interopRequireDefault(_caret);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _asyncToGenerator(fn) { return function () { var gen = fn.apply(this, arguments); return new Promise(function (resolve, reject) { function step(key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { return Promise.resolve(value).then(function (value) { step("next", value); }, function (err) { step("throw", err); }); } } return step("next"); }); }; }
@@ -16764,7 +16770,7 @@ var Paste = function (_Module) {
                                 }()));
 
                             case 16:
-                                Caret.setToBlock(BlockManager.currentBlock, 'end');
+                                Caret.setToBlock(BlockManager.currentBlock, _caret2.default.positions.END);
 
                             case 17:
                             case 'end':
@@ -16892,7 +16898,7 @@ var Paste = function (_Module) {
                                 } else {
                                     insertedBlock = BlockManager.insert(blockData.tool, blockData.data);
                                 }
-                                Caret.setToBlock(insertedBlock, 'end');
+                                Caret.setToBlock(insertedBlock, _caret2.default.positions.END);
                                 return _context4.abrupt('return');
 
                             case 11:
