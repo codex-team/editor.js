@@ -1,11 +1,10 @@
 <p align="center"><img src="https://capella.pics/3c0b525b-50d9-4720-8aad-9148114cfa6e.jpg"></p>
 
----
 ![](https://flat.badgen.net/badge/CodeX%20Editor/v2.0.0/blue?icon=npm)
 
 ## Version 2.0-beta is here!
 
-We glad to introduce the next version of CodeX Editor. Totally new core, structure and plugins — it was an impressive adventure 🤓.
+We glad to introduce the next version of CodeX Editor. Totally new core, structure and plugins — that was an impressive adventure 🤓.
 
 Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_editor) where you always find a support.
 
