@@ -83,11 +83,6 @@ var editor = new CodexEditor({
     holderId : 'codex-editor',
 
     /**
-     * What Block will be inserted by default
-     */
-    initialBlock : 'paragraph',
-
-    /**
      * Available Tools list.
      * Pass Tool's class or Settings object for each Tool you want to use
      */
@@ -98,6 +93,11 @@ var editor = new CodexEditor({
         },
         // ...
     },
+    
+    /**
+     * What Block will be inserted by default
+     */
+    initialBlock : 'paragraph',
 
     /**
      * Previously saved data that should be rendered
