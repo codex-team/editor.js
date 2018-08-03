@@ -177,8 +177,13 @@ export default class BlockManager extends Module {
     }
     this._blocks.remove(index);
 
+    /**
+     * If first Block was removed, insert new Initial Block and set focus on it`s first input
+     */
     if (!this.blocks.length) {
       this.currentBlockIndex = -1;
+      this.insert();
+      this.currentBlock.firstInput.focus();
     }
   }
 
