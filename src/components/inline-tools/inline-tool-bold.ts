@@ -1,4 +1,5 @@
 import InlineTool from '../interfaces/tools/inline-tool';
+import SelectionUtils from '../selection';
 
 declare var $: any;
 
@@ -29,7 +30,7 @@ export default class BoldInlineTool implements InlineTool {
    * Elements
    */
   private nodes = {
-    button: null,
+    button: undefined,
   };
 
   /**

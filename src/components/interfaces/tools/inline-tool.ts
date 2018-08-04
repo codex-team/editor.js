@@ -21,7 +21,7 @@ export default interface IInlineTool extends ITool {
   surround(range: Range): void;
 
   /**
-   * Get Selection and detect if Tool was applied
+   * Get SelectionUtils and detect if Tool was applied
    * For example, after that Tool can highlight button or show some details
    * @param {Selection} selection - current Selection
    */

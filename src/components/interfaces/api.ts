@@ -158,7 +158,7 @@ export interface ISaverAPI {
 }
 
 /**
- * Selection's methods
+ * SelectionUtils's methods
  */
 export interface ISelectionAPI {
 
