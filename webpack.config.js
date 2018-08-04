@@ -181,7 +181,7 @@ module.exports = {
         ],
         exclude: [
           /(node_modules|build)/, // dont need to look in '/build' to prevent analyse __tmp_babel_helper.js
-          /src\/components\/tools/
+          /src[\\\/]components[\\\/]tools/
         ]
       },
       {
