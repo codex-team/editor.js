@@ -72,6 +72,7 @@ let modules = editorModules.map( module => require('./components/modules/' + mod
  *
  * @property this.config - all settings
  * @property this.moduleInstances - constructed editor components
+ * @property {Promise} isReady - resolved promise if CodeX Editor start was successfull, rejected promise otherwise
  *
  * @type {CodexEditor}
  */
@@ -106,6 +107,16 @@ export default class CodexEditor {
      */
     this.moduleInstances = {};
 
+    /**
+     * Ready promise. Resolved if CodeX Editor is ready to work, rejected otherwise
+     */
+    let onReady, onFail;
+
+    this.isReady = new Promise((resolve, reject) => {
+      onReady = resolve;
+      onFail = reject;
+    });
+
     Promise.resolve()
       .then(() => {
         this.configuration = config;
@@ -131,10 +142,12 @@ export default class CodexEditor {
 
         setTimeout(() => {
           this.config.onReady.call();
+          onReady();
         }, 500);
       })
       .catch(error => {
         _.log(`CodeX Editor does not ready because of ${error}`, 'error');
+        onFail(error);
       });
   }
 
@@ -178,7 +191,7 @@ export default class CodexEditor {
     this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
     this.config.tools = config.tools || {};
     this.config.data = config.data || {};
-    this.config.onReady = config.onReady || function () {};
+    this.config.onReady = config.onReady && typeof config.onReady === 'function' ? config.onReady : function () {};
 
     /**
      * Initialize Blocks to pass data to the Renderer
