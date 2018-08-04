@@ -1,3 +1,5 @@
+const Paragraph = require('../tools/paragraph/dist/bundle');
+
 /**
  * @module Codex Editor Tools Submodule
  *
@@ -192,6 +194,11 @@ export default class Tools extends Module {
    * @return {Promise}
    */
   prepare() {
+    this.config.tools.paragraph = {
+      class: Paragraph,
+      inlineToolbar: true
+    };
+
     if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
       return Promise.reject('Can\'t start without tools');
     }

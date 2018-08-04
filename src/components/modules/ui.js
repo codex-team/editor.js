@@ -302,6 +302,10 @@ export default class UI extends Module {
      * */
     this.Editor.Toolbar.plusButton.hide();
 
+    if (!this.Editor.BlockManager.currentBlock) {
+      this.Editor.BlockManager.insert();
+    }
+
     /**
      * Show the Plus Button if:
      * - Block is an initial-block (Text)
