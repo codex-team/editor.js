@@ -239,6 +239,10 @@ export default class UI extends Module {
     if (!clickedOnInlineToolbarButton) {
       this.Editor.InlineToolbar.handleShowingEvent(event);
     }
+
+    if (Selection.isAtEditor) {
+      this.Editor.BlockManager.setCurrentBlockByChildNode(Selection.anchorNode);
+    }
   }
 
   /**
@@ -266,7 +270,7 @@ export default class UI extends Module {
    *
    */
   redactorClicked(event) {
-    let clickedNode = event.target;
+    const clickedNode = event.target;
 
     /**
      * Select clicked Block as Current
@@ -297,6 +301,10 @@ export default class UI extends Module {
      * Hide the Plus Button
      * */
     this.Editor.Toolbar.plusButton.hide();
+
+    if (!this.Editor.BlockManager.currentBlock) {
+      this.Editor.BlockManager.insert();
+    }
 
     /**
      * Show the Plus Button if:
