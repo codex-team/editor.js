@@ -81,7 +81,7 @@ export default class Caret extends Module {
       case position === Caret.positions.START:
         offset = 0;
         break;
-      case position ===Caret.positions.END:
+      case position === Caret.positions.END:
       case offset > contentLength:
         offset = contentLength;
         break;
