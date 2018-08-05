@@ -1,8 +1,8 @@
 # CodeX Editor API
 
-Blocks have access to the public methods provided by CodeX Editor API Module. Plugin and Tune Developers 
+Blocks have access to the public methods provided by CodeX Editor API Module. Plugin and Tune Developers
 can use Editor API as they want.
- 
+
 ## Api object description
 
 Common API interface.
@@ -22,7 +22,7 @@ Methods that working with Blocks
 
 ```swap(fromIndex, toIndex)``` - swaps two Blocks by their positions
 
-```delete(blockIndex?: Number)``` - deletes Block with passed index 
+```delete(blockIndex?: Number)``` - deletes Block with passed index
 
 ```getCurrentBlockIndex()``` - current Block index
 
@@ -32,7 +32,7 @@ Methods that working with Blocks
 
 ```stretchBlock(index: number, status: boolean)``` - make Block stretched
 
-```insertNewBlock()``` - insert new Block after working place 
+```insertNewBlock()``` - insert new Block after working place
 
 #### ISanitizerAPI
 
@@ -73,8 +73,19 @@ Methods that allows to subscribe on CodeX Editor events
 ### IListenerAPI
 
 Methods that allows to work with DOM listener. Useful when you forgot to remove listener.
-Module collects all listeners and destroys automatically 
+Module collects all listeners and destroys automatically
 
 ```on(element: HTMLElement, eventType: string, handler: Function, useCapture?: boolean)``` - add event listener to HTML element
 
-```off(element: HTMLElement, eventType: string, handler: Function)``` - remove event handler from HTML element 
+```off(element: HTMLElement, eventType: string, handler: Function)``` - remove event handler from HTML element
+
+
+### Destroy API
+If there are necessity to remove CodeX Editor instance from the page you can use `destroy()` method.
+
+It makes following steps:
+1. Clear the holder element by setting it\`s innerHTML to empty string
+2. Remove all event listeners related to CodeX Editor
+3. Delete all properties from instance object and set it\`s prototype to `null`
+
+After executing the `destroy` method, editor inctance becomes an empty object. This way you will free occupied JS Heap on your page.

@@ -39,17 +39,6 @@
  *
  */
 
-/**
- * @typedef {CodexEditor} CodexEditor - editor class
- */
-
-/**
- * Dynamically imported utils
- *
- * @typedef {Dom}   $      - {@link components/dom.js}
- * @typedef {Util}  _      - {@link components/utils.js}
- */
-
 'use strict';
 
 /**
@@ -58,24 +47,8 @@
 import 'babel-core/register';
 import 'babel-polyfill';
 import 'components/polyfills';
+import Core from './components/core';
 
-/**
- * Require Editor modules places in components/modules dir
- */
-// eslint-disable-next-line
-let modules = editorModules.map( module => require('./components/modules/' + module ));
-
-/**
- * @class
- *
- * @classdesc CodeX Editor base class
- *
- * @property this.config - all settings
- * @property this.moduleInstances - constructed editor components
- * @property {Promise} isReady - resolved promise if CodeX Editor start was successfull, rejected promise otherwise
- *
- * @type {CodexEditor}
- */
 export default class CodexEditor {
   /** Editor version */
   static get version() {
@@ -83,263 +56,56 @@ export default class CodexEditor {
   }
 
   /**
-   * @param {EditorConfig} config - user configuration
+   * @constructor
    *
+   * @param {EditorConfig} configuration - user configuration
    */
-  constructor(config) {
-    /**
-     * Configuration object
-     * @type {EditorConfig}
-     */
-    this.config = {};
+  constructor(configuration) {
+    let {onReady} = configuration;
+
+    onReady = onReady && typeof onReady === 'function' ? onReady : () => {};
+
+    configuration.onReady = () => {};
+
+    const editor = new Core(configuration);
 
     /**
-     * @typedef {Object} EditorComponents
-     * @property {BlockManager} BlockManager
-     * @property {Tools} Tools
-     * @property {Events} Events
-     * @property {UI} UI
-     * @property {Toolbar} Toolbar
-     * @property {Toolbox} Toolbox
-     * @property {BlockSettings} BlockSettings
-     * @property {Renderer} Renderer
-     * @property {InlineToolbar} InlineToolbar
+     * We need to export isReady promise in the constructor as it can be used before other API methods are exported
+     * @type {Promise<any | never>}
      */
-    this.moduleInstances = {};
-
-    /**
-     * Ready promise. Resolved if CodeX Editor is ready to work, rejected otherwise
-     */
-    let onReady, onFail;
-
-    this.isReady = new Promise((resolve, reject) => {
-      onReady = resolve;
-      onFail = reject;
-    });
-
-    Promise.resolve()
-      .then(() => {
-        this.configuration = config;
-      })
-      .then(() => this.validate())
-      .then(() => this.init())
-      .then(() => this.start())
-      .then(() => {
-        let methods = this.moduleInstances.API.methods;
-
-        /**
-         * Make API methods available from inside easier
-         */
-        for (let method in methods) {
-          this[method] = methods[method];
-        }
-
-        // todo Is it necessary?
-        delete this.moduleInstances;
-      })
-      .then(() => {
-        _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧');
-
-        setTimeout(() => {
-          this.config.onReady.call();
-          onReady();
-        }, 500);
-      })
-      .catch(error => {
-        _.log(`CodeX Editor does not ready because of ${error}`, 'error');
-        onFail(error);
-      });
-  }
-
-  /**
-   * Setting for configuration
-   * @param {EditorConfig|string|null} config
-   */
-  set configuration(config) {
-    /**
-     * Process zero-configuration or with only holderId
-     */
-    if (typeof config === 'string' || typeof config === 'undefined') {
-      config = {
-        holderId: config
-      };
-    }
-
-    /**
-     * If initial Block's Tool was not passed, use the Paragraph Tool
-     */
-    this.config.initialBlock = config.initialBlock || 'paragraph';
-
-    /**
-     * Initial block type
-     * Uses in case when there is no blocks passed
-     * @type {{type: (*), data: {text: null}}}
-     */
-    let initialBlockData = {
-      type : this.config.initialBlock,
-      data : {}
-    };
-
-    this.config.holderId = config.holderId || 'codex-editor';
-    this.config.placeholder = config.placeholder || 'write your story...';
-    this.config.sanitizer = config.sanitizer || {
-      p: true,
-      b: true,
-      a: true
-    };
-
-    this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
-    this.config.tools = config.tools || {};
-    this.config.data = config.data || {};
-    this.config.onReady = config.onReady && typeof config.onReady === 'function' ? config.onReady : function () {};
-
-    /**
-     * Initialize Blocks to pass data to the Renderer
-     */
-    if (_.isEmpty(this.config.data)) {
-      this.config.data = {};
-      this.config.data.blocks = [ initialBlockData ];
-    } else {
-      if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
-        this.config.data.blocks = [ initialBlockData ];
-      }
-    }
-  }
-
-  /**
-   * Returns private property
-   * @returns {EditorConfig}
-   */
-  get configuration() {
-    return this.config;
-  }
-
-  /**
-   * Checks for required fields in Editor's config
-   * @returns {void|Promise<string>}
-   */
-  validate() {
-    /**
-     * Check if holderId is not empty
-     */
-    if (!this.config.holderId) {
-      return Promise.reject('«holderId» param must being not empty');
-    }
-
-    /**
-     * Check for a holder element's existence
-     */
-    if (!$.get(this.config.holderId)) {
-      return Promise.reject(`element with ID «${this.config.holderId}» is missing. Pass correct holder's ID.`);
-    }
-
-    /**
-     * Check Tools for a class containing
-     */
-    for (let toolName in this.config.tools) {
-      const tool = this.config.tools[toolName];
-
-      if (!_.isFunction(tool) && !_.isFunction(tool.class)) {
-        return Promise.reject(`Tool «${toolName}» must be a constructor function or an object with that function in the «class» property`);
-      }
-    }
-  }
-
-  /**
-   * Initializes modules:
-   *  - make and save instances
-   *  - configure
-   */
-  init() {
-    /**
-     * Make modules instances and save it to the @property this.moduleInstances
-     */
-    this.constructModules();
-
-    /**
-     * Modules configuration
-     */
-    this.configureModules();
-  }
-
-  /**
-   * Make modules instances and save it to the @property this.moduleInstances
-   */
-  constructModules() {
-    modules.forEach( Module => {
-      try {
-        /**
-         * We use class name provided by displayName property
-         *
-         * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
-         * To prevent this, we use 'babel-plugin-class-display-name' plugin
-         * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
-         */
-        this.moduleInstances[Module.displayName] = new Module({
-          config : this.configuration
-        });
-      } catch ( e ) {
-        console.log('Module %o skipped because %o', Module, e);
-      }
+    this.isReady = editor.isReady.then(() => {
+      this.exportAPI(editor);
+      onReady();
     });
   }
 
   /**
-   * Modules instances configuration:
-   *  - pass other modules to the 'state' property
-   *  - ...
-   */
-  configureModules() {
-    for(let name in this.moduleInstances) {
-      /**
-       * Module does not need self-instance
-       */
-      this.moduleInstances[name].state = this.getModulesDiff( name );
-    }
-  }
-
-  /**
-   * Return modules without passed name
-   */
-  getModulesDiff( name ) {
-    let diff = {};
-
-    for(let moduleName in this.moduleInstances) {
-      /**
-       * Skip module with passed name
-       */
-      if (moduleName === name) {
-        continue;
-      }
-      diff[moduleName] = this.moduleInstances[moduleName];
-    }
-
-    return diff;
-  }
-
-  /**
-   * Start Editor!
+   * Export external API methods
    *
-   * Get list of modules that needs to be prepared and return a sequence (Promise)
-   * @return {Promise}
+   * @param editor
    */
-  async start() {
-    const modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste'];
+  exportAPI(editor) {
+    const fieldsToExport = [ 'configuration' ];
+    const destroy = () => {
+      editor.moduleInstances.Listeners.removeAll();
+      editor.moduleInstances.UI.destroy();
+      editor = null;
 
-    await modulesToPrepare.reduce(
-      (promise, module) => promise.then(async () => {
-        _.log(`Preparing ${module} module`, 'time');
+      for (const field in this) {
+        delete this[field];
+      }
 
-        try {
-          await this.moduleInstances[module].prepare();
-        } catch (e) {
-          _.log(`Module ${module} was skipped because of %o`, 'warn', e);
-        }
-        _.log(`Preparing ${module} module`, 'timeEnd');
-      }),
-      Promise.resolve()
-    );
+      Object.setPrototypeOf(this, null);
+    };
 
-    return this.moduleInstances.Renderer.render(this.config.data.blocks);
+    fieldsToExport.forEach(field => {
+      this[field] = editor[field];
+    });
+
+    this.destroy = destroy;
+
+    Object.setPrototypeOf(this, editor.moduleInstances.API.methods);
+
+    delete this['exportAPI'];
   }
-};
+}
