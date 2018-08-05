@@ -31,7 +31,11 @@ constructor({data, config, api}) {
 
 ### render()
 
+Method that returns Tool's element {HTMLElement} that will be placed into Editor.
+
 ### save()
+
+Process Tool's element created by `render()` function in DOM and return Block's data.
 
 ### validate() _optional_
 
