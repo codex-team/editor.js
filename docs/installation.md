@@ -8,7 +8,7 @@ There are few steps to run CodeX Editor on your site.
 
 ## Load Editor's core
 
-Firstly you need to get CodeX Editor itself. It is a [minified script](../build/codex-editor.js) with minimal available  
+Firstly you need to get CodeX Editor itself. It is a [minified script](../build/codex-editor.js) with minimal available
 
 Choose the most usable method of getting Editor for you.
 
@@ -24,7 +24,7 @@ Install the package via NPM or Yarn
 npm i codex.editor --save-dev
 ```
 
-Include module at your application 
+Include module at your application
 
 ```javascript
 const CodexEditor = require('codex.editor');
@@ -66,7 +66,7 @@ Check [CodeX Editor's community](https://github.com/codex-editor) to see Tools e
 
 ## Create Editor instance
 
-Create an instance of CodeX Editor and pass [Configuration Object](../src/components/interfaces/editor-config.ts). 
+Create an instance of CodeX Editor and pass [Configuration Object](../src/components/interfaces/editor-config.ts).
 Minimal params is a `holderId`, `tools` list and `initialBlock` marker.
 
 ```html
@@ -103,7 +103,7 @@ var editor = new CodexEditor({
         },
         // ...
     },
-    
+
     /**
      * What Block will be inserted by default
      */
@@ -116,6 +116,59 @@ var editor = new CodexEditor({
 });
 ```
 
+## Ready callback
+
+CodeX Editor needs a bit time to initialize. It is an asynchronous action so it won't block execution of your main script.
+
+If you need to know when editor instance is ready you can use one of following ways:
+
+##### Pass `onReady` property to the configuration object. 
+
+It must be a function:
+
+```javascript
+var editor = new CodexEditor({
+   // Other configuration properties
+
+   /**
+    * onReady callback
+    */
+   onReady: () => {console.log('CodeX Editor is ready to work!')}
+});
+```
+
+#### Use `isReady` promise.
+
+After you create new `CodexEditor` object it contains `isReady` property.
+It is a Promise object resolved when editor is ready to work and rejected otherwise.
+If there is an error during initialization `isReady` promise will be rejected with error message.
+
+```javascript
+var editor = new CodexEditor();
+
+editor.isReady
+  .then(() => {
+    /** Do anything you need after editor initialization */
+  })
+  .catch((reason) => {
+    console.log(`CodeX Editor initialization failed because of ${reason}`)
+  });
+```
+
+You can use `async/await` to keep your code looking synchronous:
+
+```javascript
+var editor = new CodexEditor();
+
+try {
+  await editor.isReady;
+  /** Do anything you need after editor initialization */
+} catch (reason) {
+  console.log(`CodeX Editor initialization failed because of ${reason}`)
+}
+```
+
+
 ## Saving Data
 
 Call `editor.saver.save()` and handle returned Promise with saved data.
@@ -125,7 +178,7 @@ editor.saver.save()
   .then((savedData) => {
     console.log(savedData);
   });
-```  
+```
 
 ## Example
 

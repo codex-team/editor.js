@@ -1,28 +1,44 @@
 /**
+ * TextRange interface fot IE9-
+ */
+import _ from './utils';
+
+interface TextRange {
+  boundingTop: number;
+  boundingLeft: number;
+  boundingBottom: number;
+  boundingRight: number;
+  boundingHeight: number;
+  boundingWidth: number;
+}
+
+/**
+ * Interface for object returned by document.selection in IE9-
+ */
+interface MSSelection {
+  createRange: () => TextRange;
+  type: string;
+}
+
+/**
+ * Extends Document interface for IE9-
+ */
+interface Document {
+  selection?: MSSelection;
+}
+
+/**
  * Working with selection
  * @typedef {Selection} Selection
  */
-export default class Selection {
-  /**
-   * @constructor
-   */
-  constructor() {
-    this.instance = null;
-    this.selection = null;
-
-    /**
-     * This property can store Selection's range for restoring later
-     * @type {Range|null}
-     */
-    this.savedSelectionRange = null;
-  }
+export default class SelectionUtils {
 
   /**
    * Editor styles
    * @return {{editorWrapper: string, editorZone: string}}
    * @constructor
    */
-  static get CSS() {
+  static get CSS(): {editorWrapper: string, editorZone: string} {
     return {
       editorWrapper : 'codex-editor',
       editorZone    : 'codex-editor__redactor',
@@ -30,20 +46,11 @@ export default class Selection {
   }
 
   /**
-   * Returns window Selection
-   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
-   * @return {Selection}
-   */
-  static get() {
-    return window.getSelection();
-  }
-
-  /**
    * Returns selected anchor
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
    * @return {Node|null}
    */
-  static get anchorNode() {
+  static get anchorNode(): Node|null {
     const selection = window.getSelection();
 
     return selection ? selection.anchorNode : null;
@@ -54,7 +61,7 @@ export default class Selection {
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
    * @return {Number|null}
    */
-  static get anchorOffset() {
+  static get anchorOffset(): number|null {
     const selection = window.getSelection();
 
     return selection ? selection.anchorOffset : null;
@@ -64,7 +71,7 @@ export default class Selection {
    * Is current selection range collapsed
    * @return {boolean|null}
    */
-  static get isCollapsed() {
+  static get isCollapsed(): boolean|null {
     const selection = window.getSelection();
 
     return selection ? selection.isCollapsed : null;
@@ -74,26 +81,25 @@ export default class Selection {
    * Check current selection if it is at Editor's zone
    * @return {boolean}
    */
-  static get isAtEditor() {
-    let selection = Selection.get(),
-      selectedNode,
-      editorZone = false;
+  static get isAtEditor(): boolean {
+    const selection = SelectionUtils.get();
 
     /**
      * Something selected on document
      */
-    selectedNode = selection.anchorNode || selection.focusNode;
+    let selectedNode = (selection.anchorNode || selection.focusNode) as HTMLElement;
 
     if (selectedNode && selectedNode.nodeType === Node.TEXT_NODE) {
-      selectedNode = selectedNode.parentNode;
+      selectedNode = selectedNode.parentNode as HTMLElement;
     }
 
+    let editorZone = null;
     if (selectedNode) {
-      editorZone = selectedNode.closest(`.${Selection.CSS.editorZone}`);
+      editorZone = selectedNode.closest(`.${SelectionUtils.CSS.editorZone}`);
     }
 
     /**
-     * Selection is not out of Editor because Editor's wrapper was found
+     * SelectionUtils is not out of Editor because Editor's wrapper was found
      */
     return editorZone && editorZone.nodeType === Node.ELEMENT_NODE;
   }
@@ -102,7 +108,7 @@ export default class Selection {
    * Return first range
    * @return {Range|null}
    */
-  static get range() {
+  static get range(): Range {
     const selection = window.getSelection();
 
     return selection && selection.rangeCount ? selection.getRangeAt(0) : null;
@@ -112,17 +118,20 @@ export default class Selection {
    * Calculates position and size of selected text
    * @return {{x, y, width, height, top?, left?, bottom?, right?}}
    */
-  static get rect() {
-    let sel = document.selection, range;
+  static get rect(): DOMRect|ClientRect {
+    let sel: Selection|MSSelection = (document as Document).selection,
+      range: TextRange|Range;
+
     let rect = {
       x: 0,
       y: 0,
       width: 0,
-      height: 0
-    };
+      height: 0,
+    } as DOMRect;
 
     if (sel && sel.type !== 'Control') {
-      range = sel.createRange();
+      sel = sel as MSSelection;
+      range = sel.createRange() as TextRange;
       rect.x = range.boundingLeft;
       rect.y = range.boundingTop;
       rect.width = range.boundingWidth;
@@ -139,27 +148,27 @@ export default class Selection {
     sel = window.getSelection();
 
     if (!sel.rangeCount) {
-      _.log('Method Selection.rangeCount() is not supported', 'warn');
+      _.log('Method SelectionUtils.rangeCount() is not supported', 'warn');
       return rect;
     }
 
-    range = sel.getRangeAt(0).cloneRange();
+    range = sel.getRangeAt(0).cloneRange() as Range;
 
     if (range.getBoundingClientRect) {
-      rect = range.getBoundingClientRect();
+      rect = range.getBoundingClientRect() as DOMRect;
     }
     // Fall back to inserting a temporary element
     if (rect.x === 0 && rect.y === 0) {
-      let span = document.createElement('span');
+      const span = document.createElement('span');
 
       if (span.getBoundingClientRect) {
         // Ensure span has dimensions and position by
         // adding a zero-width space character
         span.appendChild( document.createTextNode('\u200b') );
         range.insertNode(span);
-        rect = span.getBoundingClientRect();
+        rect = span.getBoundingClientRect() as DOMRect;
 
-        let spanParent = span.parentNode;
+        const spanParent = span.parentNode;
 
         spanParent.removeChild(span);
 
@@ -175,21 +184,39 @@ export default class Selection {
    * Returns selected text as String
    * @returns {string}
    */
-  static get text() {
+  static get text(): string {
     return window.getSelection ? window.getSelection().toString() : '';
-  };
-
-  /**
-   * Save Selection's range
-   */
-  save() {
-    this.savedSelectionRange = Selection.range;
   }
 
   /**
-   * Restore saved Selection's range
+   * Returns window SelectionUtils
+   * {@link https://developer.mozilla.org/ru/docs/Web/API/Window/getSelection}
+   * @return {Selection}
    */
-  restore() {
+  public static get(): Selection {
+    return window.getSelection();
+  }
+
+  public instance: Selection = null;
+  public selection: Selection = null;
+
+  /**
+   * This property can store SelectionUtils's range for restoring later
+   * @type {Range|null}
+   */
+  public savedSelectionRange: Range = null;
+
+  /**
+   * Save SelectionUtils's range
+   */
+  public save(): void {
+    this.savedSelectionRange = SelectionUtils.range;
+  }
+
+  /**
+   * Restore saved SelectionUtils's range
+   */
+  public restore(): void {
     if (!this.savedSelectionRange) {
       return;
     }
@@ -203,7 +230,7 @@ export default class Selection {
   /**
    * Clears saved selection
    */
-  clearSaved() {
+  public clearSaved(): void {
     this.savedSelectionRange = null;
   }
 
@@ -215,9 +242,9 @@ export default class Selection {
    * @param  {Number} [searchDepth] - count of tags that can be included. For better performance.
    * @return {HTMLElement|null}
    */
-  findParentTag(tagName, className, searchDepth = 10) {
-    let selection = window.getSelection(),
-      parentTag = null;
+  public findParentTag(tagName: string, className?: string, searchDepth = 10): HTMLElement|null {
+    const selection = window.getSelection();
+    let parentTag = null;
 
     /**
      * If selection is missing or no anchorNode or focusNode were found then return null
@@ -229,18 +256,18 @@ export default class Selection {
     /**
      * Define Nodes for start and end of selection
      */
-    let boundNodes = [
+    const boundNodes = [
       /** the Node in which the selection begins */
-      selection.anchorNode,
+      selection.anchorNode as HTMLElement,
       /** the Node in which the selection ends */
-      selection.focusNode
+      selection.focusNode as HTMLElement,
     ];
 
     /**
      * For each selection parent Nodes we try to find target tag [with target class name]
      * It would be saved in parentTag variable
      */
-    boundNodes.forEach(parent => {
+    boundNodes.forEach((parent) => {
       /** Reset tags limit */
       let searchDepthIterable = searchDepth;
 
@@ -272,7 +299,7 @@ export default class Selection {
         /**
          * Target tag was not found. Go up to the parent and check it
          */
-        parent = parent.parentNode;
+        parent = parent.parentNode as HTMLElement;
         searchDepthIterable--;
       }
     });
@@ -286,15 +313,15 @@ export default class Selection {
   /**
    * Expands selection range to the passed parent node
    *
-   * @param {HTMLElement} node
+   * @param {HTMLElement} element
    */
-  expandToTag(node) {
-    let selection = window.getSelection();
+  public expandToTag(element: HTMLElement): void {
+    const selection = window.getSelection();
 
     selection.removeAllRanges();
-    let range = document.createRange();
+    const range = document.createRange();
 
-    range.selectNodeContents(node);
+    range.selectNodeContents(element);
     selection.addRange(range);
   }
 }

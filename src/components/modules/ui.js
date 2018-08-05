@@ -9,6 +9,8 @@
  */
 import sprite from '../../../build/sprite.svg';
 
+import Selection from '../selection';
+
 /**
  * @class
  *
@@ -229,13 +231,17 @@ export default class UI extends Module {
     const clickedInsideofEditor = event.target.closest(`.${this.CSS.editorWrapper}`);
 
     /** Clear highlightings and pointer on BlockManager */
-    if (!clickedInsideofEditor) {
+    if (!clickedInsideofEditor && !Selection.isAtEditor) {
       this.Editor.BlockManager.dropPointer();
       this.Editor.Toolbar.close();
     }
 
     if (!clickedOnInlineToolbarButton) {
       this.Editor.InlineToolbar.handleShowingEvent(event);
+    }
+
+    if (Selection.isAtEditor) {
+      this.Editor.BlockManager.setCurrentBlockByChildNode(Selection.anchorNode);
     }
   }
 
@@ -264,7 +270,7 @@ export default class UI extends Module {
    *
    */
   redactorClicked(event) {
-    let clickedNode = event.target;
+    const clickedNode = event.target;
 
     /**
      * Select clicked Block as Current

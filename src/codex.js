@@ -79,7 +79,7 @@ export default class CodexEditor {
    * @param editor
    */
   exportAPI(editor) {
-    const fieldsToExport = [ 'configuration' ];
+    const fieldsToExport = ['configuration', 'isReady'];
     const destroy = () => {
       editor.moduleInstances.Listeners.removeAll();
       editor.moduleInstances.UI.destroy();

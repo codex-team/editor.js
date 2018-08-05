@@ -1,5 +1,5 @@
 import InlineTool from '../interfaces/tools/inline-tool';
-import Selection from '../selection';
+import SelectionUtils from '../selection';
 
 declare var $: any;
 declare var _: any;
@@ -44,9 +44,9 @@ export default class LinkInlineTool implements InlineTool {
   };
 
   /**
-   * Selection instance
+   * SelectionUtils instance
    */
-  private selection: Selection;
+  private selection: SelectionUtils;
 
   /**
    * Input opening state
@@ -63,7 +63,7 @@ export default class LinkInlineTool implements InlineTool {
    */
   constructor({api}) {
     this.inlineToolbar = api.toolbar;
-    this.selection = new Selection();
+    this.selection = new SelectionUtils();
   }
 
   /**

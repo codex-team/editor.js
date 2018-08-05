@@ -51,6 +51,16 @@ export default class Core {
      */
     this.moduleInstances = {};
 
+    /**
+     * Ready promise. Resolved if CodeX Editor is ready to work, rejected otherwise
+     */
+    let onReady, onFail;
+
+    this.isReady = new Promise((resolve, reject) => {
+      onReady = resolve;
+      onFail = reject;
+    });
+
     Promise.resolve()
       .then(() => {
         this.configuration = config;
@@ -63,10 +73,12 @@ export default class Core {
 
         setTimeout(() => {
           this.config.onReady.call();
+          onReady();
         }, 500);
       })
       .catch(error => {
         _.log(`CodeX Editor does not ready because of ${error}`, 'error');
+        onFail(error);
       });
   }
 
