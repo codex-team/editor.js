@@ -65,12 +65,18 @@ export default class CodexEditor {
 
     onReady = onReady && typeof onReady === 'function' ? onReady : () => {};
 
-    configuration.onReady = () => {
-      this.exportAPI(editor);
-      onReady();
-    };
+    configuration.onReady = () => {};
 
     const editor = new Core(configuration);
+
+    /**
+     * We need to export isReady promise in the constructor as it can be used before other API methods are exported
+     * @type {Promise<any | never>}
+     */
+    this.isReady = editor.isReady.then(() => {
+      this.exportAPI(editor);
+      onReady();
+    });
   }
 
   /**
@@ -79,7 +85,7 @@ export default class CodexEditor {
    * @param editor
    */
   exportAPI(editor) {
-    const fieldsToExport = ['configuration', 'isReady'];
+    const fieldsToExport = [ 'configuration' ];
     const destroy = () => {
       editor.moduleInstances.Listeners.removeAll();
       editor.moduleInstances.UI.destroy();
