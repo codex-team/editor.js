@@ -1,4 +1,14 @@
 /**
+ * @typedef {Object} ChainData
+ * @property {Object} data - data that will be passed to the success or fallback
+ * @property {Function} function - function's that must be called asynchronically
+ */
+interface ChainData {
+  data: any;
+  function: (...args: any[]) => any;
+}
+
+/**
  * Codex Editor Util
  */
 export default class Util {
@@ -9,8 +19,7 @@ export default class Util {
    * @param {string} type - logging type 'log'|'warn'|'error'|'info'
    * @param {*} args      - argument to log with a message
    */
-  static log(msg, type, args) {
-    type = type || 'log';
+  public static log(msg: string, type: string = 'log', args?: any): void {
 
     if (!args) {
       if (['time', 'timeEnd'].includes(type)) {
@@ -23,12 +32,11 @@ export default class Util {
       msg  = '[codex-editor]: ' + msg;
     }
 
-    try{
+    try {
       if ( 'console' in window && window.console[ type ] ) {
-        if ( args ) window.console[ type ]( msg, args );
-        else window.console[ type ]( msg );
+        if ( args ) { window.console[ type ]( msg, args ); } else { window.console[ type ]( msg ); }
       }
-    } catch(e) {
+    } catch (e) {
       // do nothing
     }
   }
@@ -37,7 +45,7 @@ export default class Util {
    * Returns basic keycodes as constants
    * @return {{}}
    */
-  static get keyCodes() {
+  static get keyCodes(): object {
     return {
       BACKSPACE: 8,
       TAB: 9,
@@ -52,27 +60,21 @@ export default class Util {
       DOWN: 40,
       RIGHT: 39,
       DELETE: 46,
-      META: 91
+      META: 91,
     };
   }
 
   /**
-   * @typedef {Object} ChainData
-   * @property {Object} data - data that will be passed to the success or fallback
-   * @property {Function} function - function's that must be called asynchronically
-   */
-
-  /**
    * Fires a promise sequence asyncronically
    *
-   * @param {Object[]} chains - list or ChainData's
+   * @param {ChainData[]} chains - list or ChainData's
    * @param {Function} success - success callback
    * @param {Function} fallback - callback that fires in case of errors
    *
    * @return {Promise}
    */
-  static sequence(chains, success = () => {}, fallback = () => {}) {
-    return new Promise(function (resolve) {
+  public static sequence(chains: ChainData[], success = () => {}, fallback = () => {}): Promise<void> {
+    return new Promise((resolve) => {
       /**
        * pluck each element from queue
        * First, send resolved Promise as previous value
@@ -80,7 +82,7 @@ export default class Util {
        * reduce current element will not be able to continue while can't get
        * a resolved Promise
        */
-      chains.reduce(function (previousValue, currentValue, iteration) {
+      chains.reduce((previousValue, currentValue, iteration) => {
         return previousValue
           .then(() => waitNextBlock(currentValue, success, fallback))
           .then(() => {
@@ -102,14 +104,18 @@ export default class Util {
      *
      * @return {Promise}
      */
-    function waitNextBlock(chainData, successCallback, fallbackCallback) {
-      return new Promise(function (resolve) {
+    function waitNextBlock(
+      chainData: ChainData,
+      successCallback: (data: any) => void,
+      fallbackCallback: (data: any) => void,
+    ): Promise<void> {
+      return new Promise((resolve) => {
         chainData.function()
           .then(() => {
             successCallback(chainData.data || {});
           })
           .then(resolve)
-          .catch(function () {
+          .catch(() => {
             fallbackCallback(chainData.data || {});
 
             // anyway, go ahead even it falls
@@ -122,11 +128,11 @@ export default class Util {
   /**
    * Make array from array-like collection
    *
-   * @param {*} collection
+   * @param {ArrayLike} collection
    *
    * @return {Array}
    */
-  static array(collection) {
+  public static array(collection: ArrayLike<any>): any[] {
     return Array.prototype.slice.call(collection);
   }
 
@@ -135,7 +141,7 @@ export default class Util {
    * @param {*} fn
    * @return {boolean}
    */
-  static isFunction(fn) {
+  public static isFunction(fn: any): boolean {
     return typeof fn === 'function';
   }
 
@@ -144,7 +150,7 @@ export default class Util {
    * @param {function} fn
    * @return {boolean}
    */
-  static isClass(fn) {
+  public static isClass(fn: any): boolean {
     return typeof fn === 'function' && /^\s*class\s+/.test(fn.toString());
   }
 
@@ -154,7 +160,7 @@ export default class Util {
    * @param {Object} object
    * @return {boolean}
    */
-  static isEmpty(object) {
+  public static isEmpty(object: object): boolean {
     return Object.keys(object).length === 0 && object.constructor === Object;
   }
 
@@ -163,31 +169,31 @@ export default class Util {
    * @param  {*}  object - object to check
    * @return {Boolean}
    */
-  static isPromise(object) {
+  public static isPromise(object: any): boolean {
     return Promise.resolve(object) === object;
   }
 
   /**
    * Check if passed element is contenteditable
-   * @param element
+   * @param {HTMLElement} element
    * @return {boolean}
    */
-  static isContentEditable(element) {
+  public static isContentEditable(element: HTMLElement): boolean {
     return element.contentEditable === 'true';
   }
 
   /**
    * Delays method execution
    *
-   * @param method
-   * @param timeout
+   * @param {Function} method
+   * @param {Number} timeout
    */
-  static delay(method, timeout) {
-    return function () {
-      let context = this,
-        args    = arguments;
+  public static delay(method: (...args: any[]) => any, timeout: number) {
+    return function() {
+      const context = this,
+        args = arguments;
 
       window.setTimeout(() => method.apply(context, args), timeout);
     };
   }
-};
+}

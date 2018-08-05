@@ -4,13 +4,29 @@
 export default class Dom {
   /**
    * Check if passed tag has no closed tag
-   * @param  {Element}  tag
+   * @param  {HTMLElement}  tag
    * @return {Boolean}
    */
-  static isSingleTag(tag) {
-    return tag.tagName && ['AREA', 'BASE', 'BR', 'COL', 'COMMAND', 'EMBED', 'HR', 'IMG', 'INPUT', 'KEYGEN', 'LINK', 'META', 'PARAM', 'SOURCE', 'TRACK', 'WBR'].includes(tag.tagName);
-  };
-
+  public static isSingleTag(tag: HTMLElement): boolean {
+    return tag.tagName && [
+      'AREA',
+      'BASE',
+      'BR',
+      'COL',
+      'COMMAND',
+      'EMBED',
+      'HR',
+      'IMG',
+      'INPUT',
+      'KEYGEN',
+      'LINK',
+      'META',
+      'PARAM',
+      'SOURCE',
+      'TRACK',
+      'WBR',
+    ].includes(tag.tagName);
+  }
 
   /**
    * Helper for making Elements with classname and attributes
@@ -20,17 +36,19 @@ export default class Dom {
    * @param  {Object} attributes        - any attributes
    * @return {Element}
    */
-  static make(tagName, classNames = null, attributes = {}) {
-    let el = document.createElement(tagName);
+  public static make(tagName: string, classNames: string|string[] = null, attributes: object = {}): Element {
+    const el = document.createElement(tagName);
 
     if ( Array.isArray(classNames) ) {
       el.classList.add(...classNames);
-    } else if( classNames ) {
+    } else if ( classNames ) {
       el.classList.add(classNames);
     }
 
-    for (let attrName in attributes) {
-      el[attrName] = attributes[attrName];
+    for (const attrName in attributes) {
+      if (attributes.hasOwnProperty(attrName)) {
+        el[attrName] = attributes[attrName];
+      }
     }
 
     return el;
@@ -41,7 +59,7 @@ export default class Dom {
    * @param {String} content - text content
    * @return {Text}
    */
-  static text(content) {
+  public static text(content: string): Text {
     return document.createTextNode(content);
   }
 
@@ -52,8 +70,8 @@ export default class Dom {
    * @param {number} height
    * @return {SVGElement}
    */
-  static svg(name, width = 14, height = 14) {
-    let icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  public static svg(name: string, width: number = 14, height: number = 14): SVGElement {
+    const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
 
     icon.classList.add('icon', 'icon--' + name);
     icon.setAttribute('width', width + 'px');
@@ -66,12 +84,12 @@ export default class Dom {
   /**
    * Append one or several elements to the parent
    *
-   * @param  {Element} parent    - where to append
-   * @param  {Element|Element[]} - element or elements list
+   * @param  {Element|DocumentFragment} parent    - where to append
+   * @param  {Element|Element[]} elements - element or elements list
    */
-  static append(parent, elements) {
+  public static append(parent: Element|DocumentFragment, elements: Element|Element[]): void {
     if ( Array.isArray(elements) ) {
-      elements.forEach( el => parent.appendChild(el) );
+      elements.forEach( (el) => parent.appendChild(el) );
     } else {
       parent.appendChild(elements);
     }
@@ -83,10 +101,10 @@ export default class Dom {
    * @param {Element} parent - where to append
    * @param {Element|Element[]} elements - element or elements list
    */
-  static prepend(parent, elements) {
+  public static prepend(parent: Element, elements: Element|Element[]): void {
     if ( Array.isArray(elements) ) {
       elements = elements.reverse();
-      elements.forEach( el => parent.prepend(el) );
+      elements.forEach( (el) => parent.prepend(el) );
     } else {
       parent.prepend(elements);
     }
@@ -97,7 +115,7 @@ export default class Dom {
    * @param {HTMLElement} el1 - from
    * @param {HTMLElement} el2 - to
    */
-  static swap(el1, el2) {
+  public static swap(el1: HTMLElement, el2: HTMLElement): void {
     // create marker element and insert it where el1 is
     const temp = document.createElement('div'),
       parent = el1.parentNode;
@@ -124,7 +142,7 @@ export default class Dom {
    *
    * @returns {Element}
    */
-  static find(el = document, selector) {
+  public static find(el: Element|Document = document, selector: string): Element {
     return el.querySelector(selector);
   }
 
@@ -134,7 +152,7 @@ export default class Dom {
    * @param {string} id
    * @returns {HTMLElement | null}
    */
-  static get(id) {
+  public static get(id: string): HTMLElement {
     return document.getElementById(id);
   }
 
@@ -147,7 +165,7 @@ export default class Dom {
    * @param {String} selector - searching string
    * @returns {NodeList}
    */
-  static findAll(el = document, selector) {
+  public static findAll(el: Element|Document = document, selector: string): NodeList {
     return el.querySelectorAll(selector);
   }
 
@@ -157,18 +175,19 @@ export default class Dom {
    *
    * @description Method recursively goes throw the all Node until it finds the Leaf
    *
-   * @param {Node} node - root Node. From this vertex we start Deep-first search {@link https://en.wikipedia.org/wiki/Depth-first_search}
+   * @param {Node} node - root Node. From this vertex we start Deep-first search
+   *                      {@link https://en.wikipedia.org/wiki/Depth-first_search}
    * @param {Boolean} atLast - find last text node
    * @return {Node} - it can be text Node or Element Node, so that caret will able to work with it
    */
-  static getDeepestNode(node, atLast = false) {
+  public static getDeepestNode(node: Node, atLast: boolean = false): Node {
     /**
      * Current function have two directions:
      *  - starts from first child and every time gets first or nextSibling in special cases
      *  - starts from last child and gets last or previousSibling
      * @type {string}
      */
-    let child = atLast ? 'lastChild' : 'firstChild',
+    const child = atLast ? 'lastChild' : 'firstChild',
       sibling = atLast ? 'previousSibling' : 'nextSibling';
 
     if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
@@ -177,7 +196,7 @@ export default class Dom {
       /**
        * special case when child is single tag that can't contain any content
        */
-      if (Dom.isSingleTag(nodeChild) && !Dom.isNativeInput(nodeChild)) {
+      if (Dom.isSingleTag(nodeChild as HTMLElement) && !Dom.isNativeInput(nodeChild)) {
         /**
          * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
          * from sibling
@@ -208,7 +227,7 @@ export default class Dom {
    * @param {Object} node
    * @returns {boolean}
    */
-  static isElement(node) {
+  public static isElement(node: any): boolean {
     return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
   }
 
@@ -218,7 +237,7 @@ export default class Dom {
    * @param {Object} node
    * @returns {boolean}
    */
-  static isFragment(node) {
+  public static isFragment(node: any): boolean {
     return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.DOCUMENT_FRAGMENT_NODE;
   }
 
@@ -227,13 +246,13 @@ export default class Dom {
    * @param {Element|String|Node} target - HTML element or string
    * @return {Boolean}
    */
-  static isNativeInput(target) {
-    let nativeInputs = [
+  public static isNativeInput(target: any): boolean {
+    const nativeInputs = [
       'INPUT',
-      'TEXTAREA'
+      'TEXTAREA',
     ];
 
-    return target ? nativeInputs.includes(target.tagName) : false;
+    return target && target.tagName ? nativeInputs.includes(target.tagName) : false;
   }
 
   /**
@@ -245,11 +264,11 @@ export default class Dom {
    * @param {Node} node
    * @return {Boolean} true if it is empty
    */
-  static isNodeEmpty(node) {
+  public static isNodeEmpty(node: Node): boolean {
     let nodeText;
 
     if ( this.isElement(node) && this.isNativeInput(node) ) {
-      nodeText = node.value;
+      nodeText = (node as HTMLInputElement).value;
     } else {
       nodeText = node.textContent.replace('\u200B', '');
     }
@@ -262,7 +281,7 @@ export default class Dom {
    * @param {Node} node
    * @return {boolean}
    */
-  static isLeaf(node) {
+  public static isLeaf(node: Node): boolean {
     if (!node) {
       return false;
     }
@@ -279,8 +298,8 @@ export default class Dom {
    * @param {Node} node
    * @return {boolean}
    */
-  static isEmpty(node) {
-    let treeWalker = [],
+  public static isEmpty(node: Node): boolean {
+    const treeWalker = [],
       leafs = [];
 
     if (!node) {
@@ -296,7 +315,7 @@ export default class Dom {
     while ( treeWalker.length > 0 ) {
       node = treeWalker.shift();
 
-      if (!node) continue;
+      if (!node) { continue; }
 
       if ( this.isLeaf(node) ) {
         leafs.push(node);
@@ -307,7 +326,7 @@ export default class Dom {
       while ( node && node.nextSibling ) {
         node = node.nextSibling;
 
-        if (!node) continue;
+        if (!node) { continue; }
 
         treeWalker.push(node);
       }
@@ -320,23 +339,22 @@ export default class Dom {
       }
     }
 
-    return leafs.every( leaf => this.isNodeEmpty(leaf) );
+    return leafs.every( (leaf) => this.isNodeEmpty(leaf) );
   }
 
   /**
    * Check if string contains html elements
    *
-   * @param string
    * @returns {boolean}
+   * @param {String} str
    */
-  static isHTMLString(string) {
+  public static isHTMLString(str: string): boolean {
     const wrapper = Dom.make('div');
 
-    wrapper.innerHTML = string;
+    wrapper.innerHTML = str;
 
     return wrapper.childElementCount > 0;
   }
-
 
   /**
    * Return length of node`s text content
@@ -344,25 +362,24 @@ export default class Dom {
    * @param {Node} node
    * @returns {number}
    */
-  static getContentLength(node) {
+  public static getContentLength(node: Node): number {
     if (Dom.isNativeInput(node)) {
-      return node.value.length;
+      return (node as HTMLInputElement).value.length;
     }
 
     if (node.nodeType === Node.TEXT_NODE) {
-      return node.length;
+      return (node as Text).length;
     }
 
     return node.textContent.length;
   }
-
 
   /**
    * Return array of names of block html elements
    *
    * @returns {string[]}
    */
-  static get blockElements() {
+  static get blockElements(): string[] {
     return [
       'address',
       'article',
@@ -400,7 +417,7 @@ export default class Dom {
       'tr',
       'tfoot',
       'ul',
-      'video'
+      'video',
     ];
   }
-};
+}

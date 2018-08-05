@@ -1,10 +1,13 @@
+export interface IBlockTuneConstructor {
+  new (data: {api: any, settings: any});
+}
+
 /**
  * BlockTune interface
  *
  * All tunes must implement this interface
  */
-export default interface IBlockTune {
-
+export interface IBlockTune {
   /**
    * Settings will be described later
    */
@@ -22,3 +25,5 @@ export default interface IBlockTune {
    */
   handleClick(event: MouseEvent, button: HTMLElement): void;
 }
+
+export default IBlockTune;
