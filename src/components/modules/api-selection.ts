@@ -6,7 +6,7 @@ import Selection from '../selection';
 
 /**
  * @class API
- * Provides with methods working with Selection
+ * Provides with methods working with SelectionUtils
  */
 export default class SelectionAPI extends Module implements ISelectionAPI {
 

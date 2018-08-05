@@ -38,9 +38,9 @@ export default class MoveUpTune implements IBlockTune {
 
   /**
    * Create "MoveUp" button and add click event listener
-   * @returns [Element}
+   * @returns [HTMLElement}
    */
-  public render() {
+  public render(): HTMLElement {
     const moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveUpButton.appendChild($.svg('arrow-up', 14, 14));
     this.api.listener.on(moveUpButton, 'click', (event) => this.handleClick(event, moveUpButton), false);

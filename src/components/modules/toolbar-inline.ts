@@ -1,15 +1,13 @@
-import IBlockTool from '../interfaces/tools/block-tool';
-
 declare var Module: any;
 declare var $: any;
-declare var _: any;
 
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
 import EditorConfig from '../interfaces/editor-config';
 import InlineTool from '../interfaces/tools/inline-tool';
-import Selection from '../selection';
+import SelectionUtils from '../selection';
+import _ from '../utils';
 
 /**
  * Inline toolbar with actions that modifies selected text fragment
@@ -131,7 +129,7 @@ export default class InlineToolbar extends Module {
    * Move Toolbar to the selected text
    */
   public move(): void {
-    const selectionRect = Selection.rect;
+    const selectionRect = SelectionUtils.rect as DOMRect;
     const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
     const newCoords = {
       x: selectionRect.x - wrapperOffset.left,
@@ -204,8 +202,8 @@ export default class InlineToolbar extends Module {
       return false;
     }
 
-    const currentSelection = Selection.get(),
-      selectedText = Selection.text;
+    const currentSelection = SelectionUtils.get(),
+      selectedText = SelectionUtils.text;
 
     // old browsers
     if (!currentSelection || !currentSelection.anchorNode) {
@@ -233,7 +231,7 @@ export default class InlineToolbar extends Module {
    * Show only allowed Tools
    */
   private filterTools(): void {
-    const currentSelection = Selection.get(),
+    const currentSelection = SelectionUtils.get(),
       currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode);
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name),
@@ -360,7 +358,7 @@ export default class InlineToolbar extends Module {
    * @param {InlineTool} tool - Tool's instance
    */
   private toolClicked(tool: InlineTool): void {
-    const range = Selection.range;
+    const range = SelectionUtils.range;
 
     tool.surround(range);
     this.checkToolsState();
@@ -371,7 +369,7 @@ export default class InlineToolbar extends Module {
    */
   private checkToolsState(): void {
     this.tools.forEach( (toolInstance, toolName) => {
-      toolInstance.checkState(Selection.get());
+      toolInstance.checkState(SelectionUtils.get());
     });
   }
 
