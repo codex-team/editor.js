@@ -215,7 +215,7 @@ editor.saver.save()
 
 ## Example
 
-Take a look at the [example.html](../example/example.html) to view more detailed examples.
+Take a look at the [example.html](example/example.html) to view more detailed examples.
 
 
 
