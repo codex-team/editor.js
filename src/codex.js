@@ -148,7 +148,7 @@ export default class CodexEditor {
      */
     if (typeof config === 'string' || typeof config === 'undefined') {
       config = {
-        holderId: config || 'codex-editor'
+        holderId: config
       };
     }
 
@@ -167,7 +167,7 @@ export default class CodexEditor {
       data : {}
     };
 
-    this.config.holderId = config.holderId;
+    this.config.holderId = config.holderId || 'codex-editor';
     this.config.placeholder = config.placeholder || 'write your story...';
     this.config.sanitizer = config.sanitizer || {
       p: true,
