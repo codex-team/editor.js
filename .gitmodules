@@ -1,0 +1,21 @@
+[submodule "example/tools/inline-code"]
+	path = example/tools/inline-code
+	url = https://github.com/codex-editor/inline-code
+[submodule "example/tools/header"]
+	path = example/tools/header
+	url = https://github.com/codex-editor/header
+[submodule "example/tools/delimiter"]
+	path = example/tools/delimiter
+	url = https://github.com/codex-editor/delimiter
+[submodule "example/tools/list"]
+	path = example/tools/list
+	url = https://github.com/codex-editor/list
+[submodule "example/tools/quote"]
+	path = example/tools/quote
+	url = https://github.com/codex-editor/quote
+[submodule "example/tools/simple-image"]
+	path = example/tools/simple-image
+	url = https://github.com/codex-editor/simple-image
+[submodule "src/components/tools/paragraph"]
+	path = src/components/tools/paragraph
+	url = https://github.com/codex-editor/paragraph

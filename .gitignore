@@ -6,7 +6,5 @@ Thumbs.db
 /*.sublime-workspace
 
 node_modules/*
-/server/
-/uploads/
 
-plugins/personality/
+npm-debug.log
