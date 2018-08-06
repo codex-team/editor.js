@@ -4,7 +4,7 @@
 
 ## Version 2.0-beta is here!
 
-We glad to introduce the next version of CodeX Editor. Totally new core, structure and plugins — that was an impressive adventure 🤓.
+We are glad to introduce the next version of CodeX Editor. Totally new core, structure and plugins — that was an impressive adventure 🤓.
 
 Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_editor) where you always find a support.
 
@@ -28,9 +28,9 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 CodeX Editor is a Block-Styled editor. Blocks is a structural units, of which the Entry is composed. 
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by a Plugin. 
-We have [many](http://github.com/codex-editor) ready-to-use Plugins and the [simple API](tools.md) for creation new ones.
+We have [many](http://github.com/codex-editor) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
 
-So how to use the Editor after [Installation](installation.md).
+So how to use the Editor after [Installation](docs/installation.md).
 
 - Create new Blocks by Enter or with the Plus Button
 - Press `TAB` or click on the Plus Button to view the Toolbox
@@ -92,7 +92,7 @@ There are few steps to run CodeX Editor on your site.
 
 ## Load Editor's core
 
-Firstly you need to get CodeX Editor itself. It is a [minified script](../build/codex-editor.js) with minimal available  
+Firstly you need to get CodeX Editor itself. It is a [minified script](build/codex-editor.js) with minimal available  
 
 Choose the most usable method of getting Editor for you.
 
@@ -128,7 +128,7 @@ Then require this script.
 
 ### Save sources to project
 
-Copy [codex-editor.js](../build/codex-editor.js) file to your project and load it.
+Copy [codex-editor.js](build/codex-editor.js) file to your project and load it.
 
 ```html
 <script src="codex-editor.js"></script>
@@ -136,7 +136,7 @@ Copy [codex-editor.js](../build/codex-editor.js) file to your project and load i
 
 ## Load Tools
 
-Each Block at the CodeX Editor represented by [Tools](tools.md). There are simple external scripts with own logic. To start using the Editor, you should connect at least one Block Tool.
+Each Block at the CodeX Editor represented by [Tools](docs/tools.md). There are simple external scripts with own logic. To start using the Editor, you should connect at least one Block Tool.
 
 For example check out our [Paragraph](https://github.com/codex-editor/paragraph) Tool that represents simple text block.
 
@@ -152,7 +152,7 @@ Check [CodeX Editor's community](https://github.com/codex-editor) to see Tools e
 
 ## Create Editor instance
 
-Create an instance of CodeX Editor and pass [Configuration Object](../src/components/interfaces/editor-config.ts). 
+Create an instance of CodeX Editor and pass [Configuration Object](src/components/interfaces/editor-config.ts). 
 Minimal params is a `holderId`, `tools` list and `initialBlock` marker.
 
 ```html
