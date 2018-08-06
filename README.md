@@ -4,7 +4,7 @@
 
 ## Version 2.0-beta is here!
 
-We glad to introduce the next version of CodeX Editor. Totally new core, structure and plugins — that was an impressive adventure 🤓.
+We are glad to introduce the next version of CodeX Editor. Totally new core, structure and plugins — that was an impressive adventure 🤓.
 
 Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_editor) where you always find a support.
 
