@@ -4,6 +4,8 @@ CodeX Editor is a block-oriented editor. It means that entry composed with the l
 
 `Tool` — is a class that provide custom `Block` type. All Tools represented by `Plugins`.
 
+Each Tool should have an installation guide. 
+
 ## Tool class structure
 
 ### constructor()

@@ -24,7 +24,7 @@ Install the package via NPM or Yarn
 npm i codex.editor --save-dev
 ```
 
-Include module at your application
+Include module at your application 
 
 ```javascript
 const CodexEditor = require('codex.editor');
@@ -52,21 +52,23 @@ Copy [codex-editor.js](../build/codex-editor.js) file to your project and load i
 
 ## Load Tools
 
-Each Block at the CodeX Editor represented by [Tools](tools.md). There are simple external scripts with own logic. For example check out our [Paragraph](https://github.com/codex-editor/paragraph) Tool that represents simple text block.
+Each Block at the CodeX Editor represented by [Tools](tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
 
-Each Tool should have an installation guide. You can install Paragraph Tool via the same ways as an Editor (Node.js, CDN, local file).
+For example check out our [Header](https://github.com/codex-editor/header) Tool that represents heading blocks.
+
+You can install Header Tool via the same ways as an Editor (Node.js, CDN, local file).
 
 Check [CodeX Editor's community](https://github.com/codex-editor) to see Tools examples.
 
-**Example:** use Paragragh from CDN
+**Example:** use Header from CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/codex.editor.paragraph@2.0.3/dist/bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codex.editor.header@2.0.4/dist/bundle.js"></script>
 ```
 
 ## Create Editor instance
 
-Create an instance of CodeX Editor and pass [Configuration Object](../src/components/interfaces/editor-config.ts).
+Create an instance of CodeX Editor and pass [Configuration Object](../src/components/interfaces/editor-config.ts). 
 Minimal params is a `holderId`, `tools` list and `initialBlock` marker.
 
 ```html
@@ -76,7 +78,7 @@ Minimal params is a `holderId`, `tools` list and `initialBlock` marker.
 You can create a simple Editor only with a default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param or use default `codex-editor`.
 
 ```javascript
-var editor = new CodexEditor();
+var editor = new CodexEditor(); /** Zero-configuration */
 
 // equals
 
@@ -97,17 +99,12 @@ var editor = new CodexEditor({
      * Pass Tool's class or Settings object for each Tool you want to use
      */
     tools: {
-        paragraph: {
-          class: Paragraph,
+        header: {
+          class: Header,
           inlineToolbar : true
         },
         // ...
     },
-
-    /**
-     * What Block will be inserted by default
-     */
-    initialBlock : 'paragraph',
 
     /**
      * Previously saved data that should be rendered
