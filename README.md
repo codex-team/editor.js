@@ -136,13 +136,13 @@ Copy [codex-editor.js](build/codex-editor.js) file to your project and load it.
 
 ## Load Tools
 
-Each Block at the CodeX Editor represented by [Tools](docs/tools.md). There are simple external scripts with own logic. To start using the Editor, you should connect at least one Block Tool.
+Each Block at the CodeX Editor represented by [Tools](docs/tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
 
 For example check out our [Header](https://github.com/codex-editor/header) Tool that represents heading blocks.
 
-You can install Header Tool via the same ways as an Editor (Node.js, CDN, local file).
+You can install Header Tool by the same way as the Editor (Node.js, CDN, local file).
 
-Check [CodeX Editor's community](https://github.com/codex-editor) to see Tools examples.
+Check [CodeX Editor's community](https://github.com/codex-editor) to see more ready-to-use Tools.
 
 **Example:** use Header from CDN
 
@@ -152,14 +152,13 @@ Check [CodeX Editor's community](https://github.com/codex-editor) to see Tools e
 
 ## Create Editor instance
 
-Create an instance of CodeX Editor and pass [Configuration Object](src/components/interfaces/editor-config.ts). 
-Minimal params is a `holderId`, `tools` list and `initialBlock` marker.
+Create an instance of CodeX Editor and pass [Configuration Object](src/components/interfaces/editor-config.ts) with `holderId` and tools list. 
 
 ```html
 <div id="codex-editor"></div>
 ```
 
-You can create a simple Editor only with a default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param or use default `codex-editor`.
+You can create a simple Editor with only default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param. Or use the default `codex-editor` id for wrapper.
 
 ```javascript
 var editor = new CodexEditor(); /** Zero-configuration */
@@ -176,7 +175,7 @@ var editor = new CodexEditor({
     /**
      * Create a holder for the Editor and pass its ID
      */
-    // holderId : 'codex-editor',
+    holderId : 'codex-editor',
 
     /**
      * Available Tools list.
@@ -193,7 +192,7 @@ var editor = new CodexEditor({
     /**
      * Previously saved data that should be rendered
      */
-    // data: {}
+    data: {}
 });
 ```
 

@@ -52,7 +52,7 @@ Copy [codex-editor.js](../build/codex-editor.js) file to your project and load i
 
 ## Load Tools
 
-Each Block at the CodeX Editor represented by [Tools](docs/tools.md). There are simple external scripts with own logic. To start using the Editor, you should connect at least one Block Tool.
+Each Block at the CodeX Editor represented by [Tools](tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
 
 For example check out our [Header](https://github.com/codex-editor/header) Tool that represents heading blocks.
 
@@ -92,7 +92,7 @@ var editor = new CodexEditor({
     /**
      * Create a holder for the Editor and pass its ID
      */
-    // holderId : 'codex-editor',
+    holderId : 'codex-editor',
 
     /**
      * Available Tools list.
@@ -109,7 +109,7 @@ var editor = new CodexEditor({
     /**
      * Previously saved data that should be rendered
      */
-    // data: {}
+    data: {}
 });
 ```
 
