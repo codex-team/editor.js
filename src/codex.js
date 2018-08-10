@@ -4,7 +4,7 @@
  * Apply polyfills
  */
 import 'babel-core/register';
-import 'babel-polyfill';
+if (!window || !window._babelPolyfill) require('babel-polyfill');
 import 'components/polyfills';
 import Core from './components/core';
 
