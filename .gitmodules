@@ -19,3 +19,9 @@
 [submodule "src/components/tools/paragraph"]
 	path = src/components/tools/paragraph
 	url = https://github.com/codex-editor/paragraph
+[submodule "example/tools/marker"]
+	path = example/tools/marker
+	url = https://github.com/codex-editor/marker
+[submodule "example/tools/code"]
+	path = example/tools/code
+	url = https://github.com/codex-editor/code

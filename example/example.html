@@ -46,7 +46,9 @@
   <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
   <script src="./tools/list/dist/bundle.js"></script><!-- List -->
   <script src="./tools/quote/dist/bundle.js"></script><!-- Quote -->
+  <script src="./tools/code/dist/bundle.js"></script><!-- Code -->
 
+  <script src="./tools/marker/dist/bundle.js"></script><!-- Marker -->
   <script src="./tools/inline-code/dist/bundle.js"></script><!-- Inline Code -->
 
   <!-- Load CodeX Editor's Core -->
@@ -103,12 +105,21 @@
           },
         },
 
-        delimiter: Delimiter,
+        marker: {
+          class:  Marker,
+          shortcut: 'CMD+SHIFT+M'
+        },
 
+        code: {
+          class:  CodeTool,
+          shortcut: 'CMD+SHIFT+D'
+        },
+
+        delimiter: Delimiter,
 
         inlineCode: {
           class: InlineCode,
-          shortcut: 'CMD+SHIFT+M'
+          shortcut: 'CMD+SHIFT+C'
         },
       },
 
