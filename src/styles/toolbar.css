@@ -32,6 +32,12 @@
     }
   }
 
+  &__plus,
+  .ce-toolbox {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
   /**
    * Block actions Zone
    * -------------------------

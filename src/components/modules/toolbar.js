@@ -1,3 +1,4 @@
+import SelectionUtils from '../selection';
 /**
  *
  * «Toolbar» is the node that moves up/down over current block
@@ -176,23 +177,28 @@ export default class Toolbar extends Module {
     }
 
     /**
-     * @todo Compute dynamically on prepare
-     * @type {number}
+     * Set Toolbar Min Height as Selection Height (usually similar with Block's height)
+     * Plus Button and Toolbox positioned at the center of the Toolbar
      */
-    const defaultToolbarHeight = 49;
-    const defaultOffset = 34;
+    this.nodes.content.style.minHeight = SelectionUtils.rect.height + 'px';
 
-    var newYCoordinate = currentNode.offsetTop - (defaultToolbarHeight / 2) + defaultOffset;
-
-    this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(newYCoordinate)}px, 0)`;
+    /**
+     * Move Toolbar to the Top coordinate of Block
+     */
+    this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(currentNode.offsetTop)}px, 0)`;
   }
 
   /**
    * Open Toolbar with Plus Button
    */
   open() {
-    this.move();
-    this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
+    /**
+     * Wait Block rendering for correct height computing
+     */
+    setTimeout(() => {
+      this.move();
+      this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
+    }, 50);
   }
 
   /**
