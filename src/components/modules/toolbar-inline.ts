@@ -343,7 +343,7 @@ export default class InlineToolbar extends Module {
         const {currentBlock} = this.Editor.BlockManager;
 
         /** when nothing selected do nothing */
-        if (!currentBlock) {
+        if (!currentBlock || !SelectionUtils.textSelected) {
           return;
         }
 

@@ -324,4 +324,13 @@ export default class SelectionUtils {
     range.selectNodeContents(element);
     selection.addRange(range);
   }
+
+  /**
+   * Returns True if text selected
+   * @return {boolean}
+   */
+  static get textSelected(): boolean {
+    const selection = window.getSelection();
+    return !(selection.anchorNode === selection.focusNode && selection.anchorOffset === selection.focusOffset);
+  }
 }
