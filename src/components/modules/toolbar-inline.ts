@@ -342,8 +342,10 @@ export default class InlineToolbar extends Module {
       handler: (event) => {
         const {currentBlock} = this.Editor.BlockManager;
 
-        /** when nothing selected do nothing */
-        if (!currentBlock || !SelectionUtils.textSelected) {
+        /**
+         * Editor is not focused
+         */
+        if (!currentBlock) {
           return;
         }
 
