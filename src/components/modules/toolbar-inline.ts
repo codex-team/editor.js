@@ -344,11 +344,17 @@ export default class InlineToolbar extends Module {
 
         /**
          * Editor is not focused
-         * or nothing selected
          */
-        if (!currentBlock || SelectionUtils.isCollapsed) {
+        if (!currentBlock) {
           return;
         }
+
+        /**
+         * We allow to fire shortcut with empty selection (isCollapsed=true)
+         * it can be used by tools like «Mention» that works without selection:
+         * Example: by SHIFT+@ show dropdown and insert selected username
+         */
+        // if (SelectionUtils.isCollapsed) return;
 
         const toolSettings =  this.Editor.Tools.getToolSettings(currentBlock.name);
 
