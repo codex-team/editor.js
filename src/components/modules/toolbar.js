@@ -227,7 +227,12 @@ export default class Toolbar extends Module {
   get plusButton() {
     return {
       hide: () => this.nodes.plusButton.classList.add(Toolbar.CSS.plusButtonHidden),
-      show: () => this.nodes.plusButton.classList.remove(Toolbar.CSS.plusButtonHidden)
+      show: () => {
+        if (this.Editor.Toolbox.isEmpty) {
+          return;
+        }
+        this.nodes.plusButton.classList.remove(Toolbar.CSS.plusButtonHidden);
+      }
     };
   }
 
