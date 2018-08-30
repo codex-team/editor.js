@@ -344,6 +344,7 @@ export default class InlineToolbar extends Module {
 
         /**
          * Editor is not focused
+         * or nothing selected
          */
         if (!currentBlock || SelectionUtils.isCollapsed) {
           return;
