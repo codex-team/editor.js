@@ -1,6 +1,6 @@
 <p align="center"><img src="https://capella.pics/3c0b525b-50d9-4720-8aad-9148114cfa6e.jpg"></p>
 
-![](https://flat.badgen.net/badge/CodeX%20Editor/v2.0.3/blue?icon=npm)
+![](https://flat.badgen.net/badge/CodeX%20Editor/v2.0.8/blue?icon=npm)
 
 ## Version 2.0-beta is here!
 
