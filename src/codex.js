@@ -25,9 +25,9 @@ export default class CodexEditor {
   /**
    * @constructor
    *
-   * @param {EditorConfig} configuration - user configuration
+   * @param {EditorConfig|Object} configuration - user configuration
    */
-  constructor(configuration) {
+  constructor(configuration = {}) {
     let {onReady} = configuration;
 
     onReady = onReady && typeof onReady === 'function' ? onReady : () => {};
