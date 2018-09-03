@@ -25,7 +25,7 @@ export default class CodexEditor {
   /**
    * @constructor
    *
-   * @param {EditorConfig|String|undefined} configuration - user configuration
+   * @param {EditorConfig|String} [configuration] - user configuration
    */
   constructor(configuration) {
     /**
