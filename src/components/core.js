@@ -9,6 +9,8 @@
  * @typedef {Util}  _      - {@link components/utils.js}
  */
 
+import ModificationsObserver from './modules/modificationsObserver';
+
 /**
  * Require Editor modules places in components/modules dir
  */
@@ -90,7 +92,7 @@ export default class Core {
 
   /**
    * Setting for configuration
-   * @param {EditorConfig|string|null} config
+   * @param {IEditorConfig|string|null} config
    */
   set configuration(config) {
     /**
@@ -129,6 +131,7 @@ export default class Core {
     this.config.tools = config.tools || {};
     this.config.data = config.data || {};
     this.config.onReady = config.onReady || function () {};
+    this.config.onDomChanged = config.onDomChanged || function () {};
 
     /**
      * Initialize Blocks to pass data to the Renderer
@@ -261,7 +264,7 @@ export default class Core {
    * @return {Promise}
    */
   async start() {
-    const modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste'];
+    const modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste', 'ModificationsObserver'];
 
     await modulesToPrepare.reduce(
       (promise, module) => promise.then(async () => {

@@ -177,6 +177,26 @@ editor.saver.save()
   });
 ```
 
+## Features
+
+Also CodeX Editor provides useful methods to work with Editor's state.
+
+```javascript
+var editor = new CodexEditor({
+   // Other configuration properties
+
+   /**
+    * onReady callback
+    */
+   onReady: () => {console.log('CodeX Editor is ready to work!')},
+   
+   /**
+    * onDomChanged callback
+    */
+   onDomChanged: () => {console.log('Now I know that Editor\'s content changed!')}
+});
+```
+
 ## Example
 
 Take a look at the [example.html](../example/example.html) to view more detailed examples.
