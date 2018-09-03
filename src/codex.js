@@ -25,9 +25,9 @@ export default class CodexEditor {
   /**
    * @constructor
    *
-   * @param {EditorConfig|Object} configuration - user configuration
+   * @param {EditorConfig|String|undefined} configuration - user configuration
    */
-  constructor(configuration = {}) {
+  constructor(configuration) {
     /**
      * Set default onReady function
      */
