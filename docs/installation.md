@@ -69,7 +69,6 @@ Check [CodeX Editor's community](https://github.com/codex-editor) to see Tools e
 ## Create Editor instance
 
 Create an instance of CodeX Editor and pass [Configuration Object](../src/components/interfaces/editor-config.ts). 
-
 Minimal params is a `holderId`, `tools` list and `initialBlock` marker.
 
 ```html
@@ -106,11 +105,6 @@ var editor = new CodexEditor({
         },
         // ...
     },
-
-    /**
-     * What Block will be inserted by default
-     */
-    initialBlock : 'paragraph',
 
     /**
      * Previously saved data that should be rendered

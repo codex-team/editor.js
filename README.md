@@ -28,7 +28,6 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 CodeX Editor is a Block-Styled editor. Blocks is a structural units, of which the Entry is composed. 
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by a Plugin. 
-
 We have [many](http://github.com/codex-editor) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
 
 So how to use the Editor after [Installation](docs/installation.md).
@@ -189,6 +188,7 @@ var editor = new CodexEditor({
         },
         // ...
     },
+
     /**
      * Previously saved data that should be rendered
      */
