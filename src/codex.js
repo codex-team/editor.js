@@ -66,6 +66,7 @@ export default class CodexEditor {
     const destroy = () => {
       editor.moduleInstances.Listeners.removeAll();
       editor.moduleInstances.UI.destroy();
+      editor.moduleInstances.ModificationsObserver.destroy();
       editor = null;
 
       for (const field in this) {
