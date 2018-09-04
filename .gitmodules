@@ -25,3 +25,9 @@
 [submodule "example/tools/marker"]
 	path = example/tools/marker
 	url = https://github.com/codex-editor/marker
+[submodule "example\\tools\\marker"]
+	path = example\\tools\\marker
+	url = https://github.com/codex-editor/marker.git
+[submodule "example\\tools\\code"]
+	path = example\\tools\\code
+	url = https://github.com/codex-editor/code.git

@@ -80,11 +80,15 @@ export default class Paste extends Module {
     this.processTools();
   }
 
+  /**
+   * Process pasted string and devide them into Blocks
+   *
+   * @param {string} data
+   * @param {boolean} isHTML
+   */
   public async processData(data: string, isHTML: boolean = false) {
     const {Caret, BlockManager} = this.Editor;
     const dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
-
-    console.log(dataToInsert);
 
     if (!dataToInsert.length) {
       return;
