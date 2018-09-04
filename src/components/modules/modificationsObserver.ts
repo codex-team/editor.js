@@ -18,17 +18,17 @@ export default class ModificationsObserver extends Module {
   public static readonly DebounceTimer = 450;
 
   /**
+   * Used to prevent several mutation callback execution
+   * @type {null}
+   */
+  private mutationDebouncer = null;
+
+  /**
    * Constructor
    * @param {IEditorConfig} config
    */
   constructor({config}) {
     super({config});
-
-    /**
-     * Used to prevent several mutation callback execution
-     * @type {null}
-     */
-    this.mutationDebouncer = null;
   }
 
   /**
@@ -84,7 +84,7 @@ export default class ModificationsObserver extends Module {
      */
     this.mutationDebouncer = window.setTimeout( () => {
 
-      this.config.onChange.call(event);
+      this.config.onChange.call();
 
     }, ModificationsObserver.DebounceTimer);
   }
