@@ -37,6 +37,9 @@ export default class ModificationsObserver extends Module {
    */
   public async prepare(): Promise<void> {
 
+    /**
+     * wait till Browser render Editor's Blocks
+     */
     window.setTimeout( () => {
       this.setObserver();
     }, 1000);
