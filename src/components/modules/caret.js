@@ -94,7 +94,7 @@ export default class Caret extends Module {
       this.set(nodeToSet, offset);
     }, 20)();
 
-    BlockManager.currentNode = block.holder;
+    BlockManager.setCurrentBlockByChildNode(block.holder);
     BlockManager.currentBlock.currentInput = element;
   }
 
