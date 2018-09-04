@@ -8,6 +8,7 @@
 import IEditorConfig from '../interfaces/editor-config';
 
 declare const Module: any;
+declare const _: any;
 
 export default class ModificationsObserver extends Module {
 
@@ -19,9 +20,11 @@ export default class ModificationsObserver extends Module {
 
   /**
    * Used to prevent several mutation callback execution
-   * @type {null}
+   * @type {Function}
    */
-  private mutationDebouncer = null;
+  private mutationDebouncer = _.debounce( () => {
+    this.config.onChange.call();
+  }, ModificationsObserver.DebounceTimer);
 
   /**
    * Constructor
@@ -29,6 +32,13 @@ export default class ModificationsObserver extends Module {
    */
   constructor({config}) {
     super({config});
+  }
+
+  /**
+   * Clear timeout and set null to mutationDebouncer property
+   */
+  public destroy() {
+    this.mutationDebouncer = null;
   }
 
   /**
@@ -56,30 +66,8 @@ export default class ModificationsObserver extends Module {
     /**
      * Set Listener to the Editor <div> element that holds only Blocks
      */
-    Listeners.on(UI.nodes.redactor, 'DOMSubtreeModified', (event) => {
-      this.contentModified(event);
+    Listeners.on(UI.nodes.redactor, 'DOMSubtreeModified', () => {
+      this.mutationDebouncer();
     }, false);
-  }
-
-  /**
-   * Dom SubtreeModifications
-   * When something inside Editor's content area changed
-   * @param {MutationEvent} event
-   */
-  private contentModified(event) {
-    /**
-     * If timeout exist clear it and create new one
-     */
-    if (this.mutationDebouncer) {
-      window.clearTimeout(this.mutationDebouncer);
-    }
-
-    /**
-     * Call User onChange method after timeout
-     * @type {number}
-     */
-    this.mutationDebouncer = window.setTimeout( () => {
-      this.config.onChange.call();
-    }, ModificationsObserver.DebounceTimer);
   }
 }

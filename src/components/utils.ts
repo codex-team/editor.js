@@ -196,4 +196,39 @@ export default class Util {
       window.setTimeout(() => method.apply(context, args), timeout);
     };
   }
+
+  /**
+   * Debouncing method
+   * Call method after passed time
+   *
+   * Note that this method returns Function and declared variable need to be called
+   *
+   * @param {Function} func - function that we're throttling
+   * @param {Number} wait - time in milliseconds
+   * @param {Boolean} immediate - call now
+   * @return {Function}
+   */
+  public static debounce(func, wait, immediate) {
+    let timeout;
+
+    return () => {
+      const context = this,
+        args = arguments;
+
+      const later = () => {
+        timeout = null;
+        if (!immediate)  {
+          func.apply(context, args);
+        }
+      };
+
+      const callNow = immediate && !timeout;
+
+      window.clearTimeout(timeout);
+      timeout = window.setTimeout(later, wait);
+      if (callNow) {
+        func.apply(context, args);
+      }
+    };
+  }
 }
