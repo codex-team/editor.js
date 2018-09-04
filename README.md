@@ -2,7 +2,7 @@
 
 ![](https://flat.badgen.net/badge/CodeX%20Editor/v2.0.10/blue?icon=npm)
 
-## Version 2.0.10-beta is here!
+## Version 2.0-beta is here!
 
 We are glad to introduce the next version of CodeX Editor. Totally new core, structure and plugins — that was an impressive adventure 🤓.
 
