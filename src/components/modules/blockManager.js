@@ -326,39 +326,6 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Get working html element
-   *
-   * @return {HTMLElement}
-   */
-  get currentNode() {
-    return this._blocks.nodes[this.currentBlockIndex];
-  }
-
-  /**
-   * Set currentBlockIndex to passed block
-   * @param {Node} element
-   */
-  set currentNode(element) {
-    if (!$.isElement(element)) {
-      element = element.parentNode;
-    }
-
-    let nodes = this._blocks.nodes,
-      firstLevelBlock = element.closest(`.${Block.CSS.wrapper}`);
-
-    if (!firstLevelBlock) {
-      throw Error('Passed element is not a Block.');
-    }
-
-
-    /**
-     * Update current Block's index
-     * @type {number}
-     */
-    this.currentBlockIndex = nodes.indexOf(firstLevelBlock);
-  }
-
-  /**
    * Remove selection from all Blocks then highlight only Current Block
    */
   highlightCurrentNode() {
@@ -408,7 +375,12 @@ export default class BlockManager extends Module {
     let parentFirstLevelBlock = childNode.closest(`.${Block.CSS.wrapper}`);
 
     if (parentFirstLevelBlock) {
-      this.currentNode = parentFirstLevelBlock;
+      /**
+       * Update current Block's index
+       * @type {number}
+       */
+      this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock);
+
       this.Editor.Caret.setToInput(childNode);
     } else {
       throw new Error('Can not find a Block from this child Node');
