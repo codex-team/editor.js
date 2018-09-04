@@ -161,4 +161,35 @@ static get onPaste() {
 
 > Both `onPaste.handler` and `onPaste.patternHandler` can be `async` or return a `Promise`.
 
+### Drag'n'drop handling
+
+Your Tool can handle files drag'n'drop.
+
+To handle dropped file you should provide `onDrop` static property with following fields
+
+| Name | Type | Description |
+| ---- | ---- | ----------- |
+| `extensions` | `string[]` | _Optional_ Array of extensions your Tool can handle |
+| `mimeTypes` | `sring[]` | _Optional_ Array of MIME types your Tool can handle |
+| `handler` | `(file: File) => {data: any}` | Handler method should return the same object as `save` method |
+
+Example
+
+```javascript
+static get onDrop() {
+  return {
+    mimeTypes: ['image/*'],
+    extensions: ['json'],
+    handler: (file) => {
+      /* do smth with the file */
+      
+      return {
+        data // Some extracted content
+      }
+    }
+  }
+}
+```
+
+
 ### Sanitize
