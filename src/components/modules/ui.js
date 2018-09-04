@@ -292,6 +292,9 @@ export default class UI extends Module {
       this.Editor.Caret.setToTheLastBlock();
     }
 
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+
     /**
      * Move toolbar and open
      */
@@ -299,7 +302,7 @@ export default class UI extends Module {
 
     /**
      * Hide the Plus Button
-     * */
+     */
     this.Editor.Toolbar.plusButton.hide();
 
     if (!this.Editor.BlockManager.currentBlock) {

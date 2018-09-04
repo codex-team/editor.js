@@ -35,6 +35,12 @@ export default class Toolbox extends Module {
      * @type {number}
      */
     this.activeButtonIndex = -1;
+
+    /**
+     * How many tools displayed in Toolbox
+     * @type {number}
+     */
+    this.displayedToolsCount = 0;
   }
 
   /**
@@ -126,6 +132,9 @@ export default class Toolbox extends Module {
     if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
       this.enableShortcut(tool, toolName, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
     }
+
+    /** Increment Tools count */
+    this.displayedToolsCount++;
   }
 
   /**
@@ -195,6 +204,10 @@ export default class Toolbox extends Module {
    * Open Toolbox with Tools
    */
   open() {
+    if (this.isEmpty) {
+      return;
+    }
+
     this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpened);
     this.opened = true;
   }
@@ -299,5 +312,13 @@ export default class Toolbox extends Module {
     }
 
     return childNodes[this.activeButtonIndex].title;
+  }
+
+  /**
+   * Returns True if Toolbox is Empty and nothing to show
+   * @return {boolean}
+   */
+  get isEmpty() {
+    return this.displayedToolsCount === 0;
   }
 }

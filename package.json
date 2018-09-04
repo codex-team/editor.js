@@ -1,6 +1,6 @@
 {
   "name": "codex.editor",
-  "version": "2.0.0",
+  "version": "2.0.9",
   "description": "Codex Editor. Native JS, based on API and Open Source",
   "main": "build/codex-editor.js",
   "scripts": {
@@ -9,7 +9,7 @@
     "build:dev": "webpack --mode development --progress  --display-error-details --display-entrypoints"
   },
   "author": "CodeX",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/codex-team/codex.editor.git"
@@ -20,6 +20,7 @@
     "babel-loader": "^7.1.5",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-class-display-name": "^2.1.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-stage-0": "^6.24.1",

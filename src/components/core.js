@@ -72,12 +72,18 @@ export default class Core {
         _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧');
 
         setTimeout(() => {
-          this.config.onReady.call();
+          /**
+           * Resolve this.isReady promise
+           */
           onReady();
         }, 500);
       })
       .catch(error => {
         _.log(`CodeX Editor does not ready because of ${error}`, 'error');
+
+        /**
+         * Reject this.isReady promise
+         */
         onFail(error);
       });
   }
@@ -92,7 +98,7 @@ export default class Core {
      */
     if (typeof config === 'string' || typeof config === 'undefined') {
       config = {
-        holderId: config || 'codex-editor'
+        holderId: config
       };
     }
 
@@ -111,7 +117,7 @@ export default class Core {
       data : {}
     };
 
-    this.config.holderId = config.holderId;
+    this.config.holderId = config.holderId || 'codex-editor';
     this.config.placeholder = config.placeholder || 'write your story...';
     this.config.sanitizer = config.sanitizer || {
       p: true,

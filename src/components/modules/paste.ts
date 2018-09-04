@@ -244,7 +244,7 @@ export default class Paste extends Module {
    */
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
     const {
-      Editor: {Sanitizer, BlockManager, Tools},
+      Editor: {Sanitizer, BlockManager, Tools, Caret},
     } = this;
 
     /** If target is native input or is not Block, use browser behaviour */
@@ -252,8 +252,6 @@ export default class Paste extends Module {
       return;
     }
 
-    console.log(event.clipboardData.items.length);
-    console.log(event.clipboardData.files.length);
     event.preventDefault();
 
     const htmlData  = event.clipboardData.getData('text/html'),
@@ -275,6 +273,27 @@ export default class Paste extends Module {
     } else {
       await this.processData(htmlData, true);
     }
+    let dataToInsert = [];
+
+    /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
+    if (!cleanData.trim() || cleanData.trim() === plainData || !$.isHTMLString(cleanData)) {
+      dataToInsert = this.processPlain(plainData);
+    } else {
+      dataToInsert = this.processHTML(htmlData);
+    }
+
+    if (dataToInsert.length === 1 && !dataToInsert[0].isBlock) {
+      this.processSingleBlock(dataToInsert.pop());
+      return;
+    }
+
+    this.splitBlock();
+
+    await Promise.all(dataToInsert.map(
+      async (data, i) => await this.insertBlock(data, i === 0),
+    ));
+
+    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
   }
 
   /**

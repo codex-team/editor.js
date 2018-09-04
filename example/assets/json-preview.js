@@ -31,7 +31,7 @@ const cPreview = (function (module) {
     /** Stylize JSON keys */
     string = string.replace( /"(\w+)"\s?:/g, '"<span class=sc_key>$1</span>" :');
     /** Stylize tool names */
-    string = string.replace( /"(text|quote|list|header|link|code|image|delimiter)"/g, '"<span class=sc_toolname>$1</span>"');
+    string = string.replace( /"(paragraph|quote|list|header|link|code|image|delimiter|raw)"/g, '"<span class=sc_toolname>$1</span>"');
     /** Stylize HTML tags */
     string = string.replace( /(&lt;[\/a-z]+(&gt;)?)/gi, '<span class=sc_tag>$1</span>' );
     /** Stylize strings */
