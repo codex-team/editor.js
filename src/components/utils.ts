@@ -196,4 +196,24 @@ export default class Util {
       window.setTimeout(() => method.apply(context, args), timeout);
     };
   }
+
+  /**
+   * Get file extension
+   *
+   * @param {File} file
+   * @return string
+   */
+  public static getFileExtension(file: File): string {
+    return file.name.split('.').pop();
+  }
+
+  /**
+   * Check if string is MIME type
+   *
+   * @param {string} type
+   * @return boolean
+   */
+  public static isValidMimeType(type: string): boolean {
+    return /^[-\w]+\/([-+\w]+|\*)$/.test(type);
+  }
 }

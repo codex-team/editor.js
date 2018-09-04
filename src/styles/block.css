@@ -13,7 +13,20 @@
   }
 
   &__content {
+    position: relative;
     max-width: var(--content-width);
     margin: 0 auto;
+  }
+
+  &--drop-target &__content {
+     border-bottom: var(--color-gray-border) dashed 2px;
+
+     &:after {
+       content: '>';
+       position: absolute;
+       transform: translate(-150%, -60%);
+       font-size: 1.5em;
+       color: var(--color-gray-border);
+     }
   }
 }

@@ -103,6 +103,8 @@ export default class BlockManager extends Module {
     this.Editor.Listeners.on(block.holder, 'keydown', (event) => this.Editor.BlockEvents.keydown(event), true);
     this.Editor.Listeners.on(block.holder, 'mouseup', (event) => this.Editor.BlockEvents.mouseUp(event));
     this.Editor.Listeners.on(block.holder, 'keyup', (event) => this.Editor.BlockEvents.keyup(event));
+    this.Editor.Listeners.on(block.holder, 'dragover', (event) => this.Editor.BlockEvents.dragOver(event));
+    this.Editor.Listeners.on(block.holder, 'dragleave', (event) => this.Editor.BlockEvents.dragLeave(event));
   }
 
   /**
@@ -395,9 +397,10 @@ export default class BlockManager extends Module {
    * 2) Mark it as current
    *
    *  @param {Element|Text} childNode - look ahead from this node.
+   *  @param {string} caretPosition - position where to set caret
    *  @throws Error  - when passed Node is not included at the Block
    */
-  setCurrentBlockByChildNode(childNode) {
+  setCurrentBlockByChildNode(childNode, caretPosition = 'default') {
     /**
      * If node is Text TextNode
      */
@@ -405,14 +408,33 @@ export default class BlockManager extends Module {
       childNode = childNode.parentNode;
     }
 
-    let parentFirstLevelBlock = childNode.closest(`.${Block.CSS.wrapper}`);
+    const parentFirstLevelBlock = childNode.closest(`.${Block.CSS.wrapper}`);
 
     if (parentFirstLevelBlock) {
       this.currentNode = parentFirstLevelBlock;
-      this.Editor.Caret.setToInput(childNode);
+      this.Editor.Caret.setToInput(childNode, caretPosition);
     } else {
       throw new Error('Can not find a Block from this child Node');
     }
+  }
+
+  /**
+   * Return block which contents passed node
+   *
+   * @param {Node} childNode
+   * @return {Block}
+   */
+  getBlockByChildNode(childNode) {
+    /**
+     * If node is Text TextNode
+     */
+    if (!$.isElement(childNode)) {
+      childNode = childNode.parentNode;
+    }
+
+    const firstLevelBlock = childNode.closest(`.${Block.CSS.wrapper}`);
+
+    return this.blocks.find(block => block.holder === firstLevelBlock);
   }
 
   /**

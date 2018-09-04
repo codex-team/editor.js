@@ -80,13 +80,65 @@ export default class Paste extends Module {
     this.processTools();
   }
 
+  public async processData(data: string, isHTML: boolean = false) {
+    const {Caret, BlockManager} = this.Editor;
+    const dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
+
+    console.log(dataToInsert);
+
+    if (!dataToInsert.length) {
+      return;
+    }
+
+    if (dataToInsert.length === 1 && !dataToInsert[0].isBlock) {
+      this.processSingleBlock(dataToInsert.pop());
+      return;
+    }
+
+    if (!Caret.isAtEnd) {
+      this.splitBlock();
+    }
+
+    await Promise.all(dataToInsert.map(
+      async (content, i) => await this.insertBlock(content, i === 0),
+    ));
+
+    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
+  }
+
+  /**
+   * Split plain text by new line symbols and return it as array of Block data
+   *
+   * @param {string} plain
+   * @returns {IPasteData[]}
+   */
+  private processPlain(plain: string): IPasteData[] {
+    const {initialBlock} = this.config as {initialBlock: string},
+      {Tools} = this.Editor;
+
+    if (!plain) {
+      return [];
+    }
+
+    const tool = initialBlock,
+      handler = Tools.blockTools[tool].onPaste.handler;
+
+    return plain.split('\n\n').map((text) => {
+      const content = $.make('div');
+
+      content.innerHTML = text;
+
+      return {content, tool, isBlock: false, handler};
+    });
+  }
+
   /**
    * Set onPaste callback handler
    */
   private setCallback(): void {
     const {Listeners, UI} = this.Editor;
 
-    Listeners.on(UI.nodes.redactor, 'paste', this.processPastedData);
+    Listeners.on(UI.nodes.redactor, 'paste', this.handlePasteEvent);
   }
 
   /**
@@ -190,16 +242,18 @@ export default class Paste extends Module {
    *
    * @param {ClipboardEvent} event
    */
-  private processPastedData = async (event: ClipboardEvent): Promise<void> => {
+  private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
     const {
-      Editor: {Tools, Sanitizer, BlockManager, Caret},
+      Editor: {Sanitizer, BlockManager, Tools},
     } = this;
 
     /** If target is native input or is not Block, use browser behaviour */
-    if (this.isNativeBehaviour(event.target)) {
+    if (this.isNativeBehaviour(event.target) || !Tools.isInitial(BlockManager.currentBlock.tool)) {
       return;
     }
 
+    console.log(event.clipboardData.items.length);
+    console.log(event.clipboardData.files.length);
     event.preventDefault();
 
     const htmlData  = event.clipboardData.getData('text/html'),
@@ -215,27 +269,12 @@ export default class Paste extends Module {
     const customConfig = {tags: Object.assign({}, toolsTags, Sanitizer.defaultConfig.tags)};
     const cleanData = Sanitizer.clean(htmlData, customConfig);
 
-    let dataToInsert = [];
-
     /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
     if (!cleanData.trim() || cleanData.trim() === plainData || !$.isHTMLString(cleanData)) {
-      dataToInsert = this.processPlain(plainData);
+      await this.processData(plainData);
     } else {
-      dataToInsert = this.processHTML(htmlData);
+      await this.processData(htmlData, true);
     }
-
-    if (dataToInsert.length === 1 && !dataToInsert[0].isBlock) {
-      this.processSingleBlock(dataToInsert.pop());
-      return;
-    }
-
-    this.splitBlock();
-
-    await Promise.all(dataToInsert.map(
-      async (data, i) => await this.insertBlock(data, i === 0),
-    ));
-
-    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
   }
 
   /**
@@ -389,32 +428,6 @@ export default class Paste extends Module {
         return {content, isBlock, handler, tool};
     })
     .filter((data) => !$.isNodeEmpty(data.content));
-  }
-
-  /**
-   * Split plain text by new line symbols and return it as array of Block data
-   *
-   * @param {string} plain
-   * @returns {IPasteData[]}
-   */
-  private processPlain(plain: string): IPasteData[] {
-    const {initialBlock} = this.config as {initialBlock: string},
-      {Tools} = this.Editor;
-
-    if (!plain) {
-      return [];
-    }
-
-    const tool = initialBlock,
-      handler = Tools.blockTools[tool].onPaste.handler;
-
-    return plain.split('\n\n').map((text) => {
-      const content = $.make('div');
-
-      content.innerHTML = text;
-
-      return {content, tool, isBlock: false, handler};
-    });
   }
 
   /**
