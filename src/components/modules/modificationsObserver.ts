@@ -36,18 +36,19 @@ export default class ModificationsObserver extends Module {
    * @return {Promise<void>}
    */
   public async prepare(): Promise<void> {
-
     /**
      * wait till Browser render Editor's Blocks
      */
     window.setTimeout( () => {
       this.setObserver();
     }, 1000);
-
   }
 
   /**
    * setObserver
+   *
+   * sets 'DOMSubtreeModified' listener on Editor's UI.nodes.redactor
+   * so that User can handle outside from API
    */
   private setObserver(): void {
     const {Listeners, UI} = this.Editor;
@@ -56,9 +57,7 @@ export default class ModificationsObserver extends Module {
      * Set Listener to the Editor <div> element that holds only Blocks
      */
     Listeners.on(UI.nodes.redactor, 'DOMSubtreeModified', (event) => {
-
       this.contentModified(event);
-
     }, false);
   }
 
@@ -68,14 +67,11 @@ export default class ModificationsObserver extends Module {
    * @param {MutationEvent} event
    */
   private contentModified(event) {
-
     /**
      * If timeout exist clear it and create new one
      */
     if (this.mutationDebouncer) {
-
       window.clearTimeout(this.mutationDebouncer);
-
     }
 
     /**
@@ -83,9 +79,7 @@ export default class ModificationsObserver extends Module {
      * @type {number}
      */
     this.mutationDebouncer = window.setTimeout( () => {
-
       this.config.onChange.call();
-
     }, ModificationsObserver.DebounceTimer);
   }
 }
