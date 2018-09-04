@@ -191,9 +191,9 @@ var editor = new CodexEditor({
    onReady: () => {console.log('CodeX Editor is ready to work!')},
    
    /**
-    * onDomChanged callback
+    * onChange callback
     */
-   onDomChanged: () => {console.log('Now I know that Editor\'s content changed!')}
+   onChange: () => {console.log('Now I know that Editor\'s content changed!')}
 });
 ```
 

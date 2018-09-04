@@ -53,5 +53,5 @@ export default interface IEditorConfig {
   /**
    * Trigger callback if Content has beed changed
    */
-  onDomChanged?(): void;
+  onChange?(): void;
 }

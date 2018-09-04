@@ -9,8 +9,6 @@
  * @typedef {Util}  _      - {@link components/utils.js}
  */
 
-import ModificationsObserver from './modules/modificationsObserver';
-
 /**
  * Require Editor modules places in components/modules dir
  */
@@ -131,7 +129,7 @@ export default class Core {
     this.config.tools = config.tools || {};
     this.config.data = config.data || {};
     this.config.onReady = config.onReady || function () {};
-    this.config.onDomChanged = config.onDomChanged || function () {};
+    this.config.onChange = config.onChange || function () {};
 
     /**
      * Initialize Blocks to pass data to the Renderer

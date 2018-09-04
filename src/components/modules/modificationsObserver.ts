@@ -36,7 +36,11 @@ export default class ModificationsObserver extends Module {
    * @return {Promise<void>}
    */
   public async prepare(): Promise<void> {
-    this.setObserver();
+
+    window.setTimeout( () => {
+      this.setObserver();
+    }, 1000);
+
   }
 
   /**
@@ -72,12 +76,12 @@ export default class ModificationsObserver extends Module {
     }
 
     /**
-     * Call User onDomChanged method after timeout
+     * Call User onChange method after timeout
      * @type {number}
      */
     this.mutationDebouncer = window.setTimeout( () => {
 
-      this.config.onDomChanged.call(event);
+      this.config.onChange.call(event);
 
     }, ModificationsObserver.DebounceTimer);
   }
