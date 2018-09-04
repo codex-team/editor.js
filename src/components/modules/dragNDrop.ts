@@ -145,6 +145,7 @@ export default class DragNDrop extends Module {
           .from(dataTransfer.items)
           .map((item) => this.processDataTransferItem(item)),
       );
+      dataToInsert = dataToInsert.filter((data) => !!data);
     }
 
     dataToInsert.forEach(

@@ -277,27 +277,6 @@ export default class Paste extends Module {
     } else {
       await this.processData(htmlData, true);
     }
-    let dataToInsert = [];
-
-    /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
-    if (!cleanData.trim() || cleanData.trim() === plainData || !$.isHTMLString(cleanData)) {
-      dataToInsert = this.processPlain(plainData);
-    } else {
-      dataToInsert = this.processHTML(htmlData);
-    }
-
-    if (dataToInsert.length === 1 && !dataToInsert[0].isBlock) {
-      this.processSingleBlock(dataToInsert.pop());
-      return;
-    }
-
-    this.splitBlock();
-
-    await Promise.all(dataToInsert.map(
-      async (data, i) => await this.insertBlock(data, i === 0),
-    ));
-
-    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
   }
 
   /**
