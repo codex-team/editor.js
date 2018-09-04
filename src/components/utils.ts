@@ -208,7 +208,7 @@ export default class Util {
    * @param {Boolean} immediate - call now
    * @return {Function}
    */
-  public static debounce(func, wait, immediate) {
+  public static debounce(func: () => void, wait: number , immediate: boolean): () => void {
     let timeout;
 
     return () => {
