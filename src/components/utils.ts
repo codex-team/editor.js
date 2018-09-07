@@ -73,27 +73,7 @@ export default class Util {
    *
    * @return {Promise}
    */
-  public static sequence(chains: ChainData[], success = () => {}, fallback = () => {}): Promise<void> {
-    return new Promise((resolve) => {
-      /**
-       * pluck each element from queue
-       * First, send resolved Promise as previous value
-       * Each plugins "prepare" method returns a Promise, that's why
-       * reduce current element will not be able to continue while can't get
-       * a resolved Promise
-       */
-      chains.reduce((previousValue, currentValue, iteration) => {
-        return previousValue
-          .then(() => waitNextBlock(currentValue, success, fallback))
-          .then(() => {
-            // finished
-            if (iteration === chains.length - 1) {
-              resolve();
-            }
-          });
-      }, Promise.resolve());
-    });
-
+  public static async sequence(chains: ChainData[], success = () => {}, fallback = () => {}): Promise<void> {
     /**
      * Decorator
      *
@@ -104,25 +84,30 @@ export default class Util {
      *
      * @return {Promise}
      */
-    function waitNextBlock(
+    async function waitNextBlock(
       chainData: ChainData,
       successCallback: (data: any) => void,
       fallbackCallback: (data: any) => void,
     ): Promise<void> {
-      return new Promise((resolve) => {
-        chainData.function()
-          .then(() => {
-            successCallback(chainData.data || {});
-          })
-          .then(resolve)
-          .catch(() => {
-            fallbackCallback(chainData.data || {});
-
-            // anyway, go ahead even it falls
-            resolve();
-          });
-      });
+      try {
+        await chainData.function(chainData.data);
+        await successCallback(typeof chainData.data !== 'undefined' ? chainData.data : {});
+      } catch (e) {
+        fallbackCallback(typeof chainData.data !== 'undefined' ? chainData.data : {});
+      }
     }
+
+    /**
+     * pluck each element from queue
+     * First, send resolved Promise as previous value
+     * Each plugins "prepare" method returns a Promise, that's why
+     * reduce current element will not be able to continue while can't get
+     * a resolved Promise
+     */
+    return await chains.reduce(async (previousValue, currentValue) => {
+      await previousValue;
+      return waitNextBlock(currentValue, success, fallback);
+    }, Promise.resolve());
   }
 
   /**
