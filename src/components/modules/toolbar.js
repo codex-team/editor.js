@@ -1,4 +1,3 @@
-import SelectionUtils from '../selection';
 /**
  *
  * «Toolbar» is the node that moves up/down over current block
@@ -167,25 +166,25 @@ export default class Toolbar extends Module {
       this.Editor.BlockSettings.close();
     }
 
-    let currentNode = this.Editor.BlockManager.currentBlock.holder;
+    let currentBlock = this.Editor.BlockManager.currentBlock.holder;
 
     /**
      * If no one Block selected as a Current
      */
-    if (!currentNode) {
+    if (!currentBlock) {
       return;
     }
 
     /**
-     * Set Toolbar Min Height as Selection Height (usually similar with Block's height)
+     * Set Toolbar Min Height as Block's height
      * Plus Button and Toolbox positioned at the center of the Toolbar
      */
-    this.nodes.content.style.minHeight = SelectionUtils.rect.height + 'px';
+    this.nodes.content.style.minHeight = currentBlock.offsetHeight + 'px';
 
     /**
      * Move Toolbar to the Top coordinate of Block
      */
-    this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(currentNode.offsetTop)}px, 0)`;
+    this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(currentBlock.offsetTop)}px, 0)`;
   }
 
   /**
