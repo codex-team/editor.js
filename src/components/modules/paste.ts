@@ -104,66 +104,70 @@ export default class Paste extends Module {
    * @param {string} tool
    */
   private processTool = ([name, tool]) => {
-    const toolPasteConfig = tool.onPaste || {};
+    try {
+      const toolPasteConfig = tool.onPaste || {};
 
-    if (this.config.initialBlock === name && !toolPasteConfig.handler) {
-      _.log(
-        `«${name}» Tool must provide a paste handler.`,
-        'warn',
-      );
-    }
+      if (this.config.initialBlock === name && !toolPasteConfig.handler) {
+        _.log(
+          `«${name}» Tool must provide a paste handler.`,
+          'warn',
+        );
+      }
 
-    if (toolPasteConfig.handler && typeof toolPasteConfig.handler !== 'function') {
-      _.log(
-        `Paste handler for «${name}» Tool should be a function.`,
-        'warn',
-      );
-    } else {
-      const tags = toolPasteConfig.tags || [];
+      if (toolPasteConfig.handler && typeof toolPasteConfig.handler !== 'function') {
+        _.log(
+          `Paste handler for «${name}» Tool should be a function.`,
+          'warn',
+        );
+      } else {
+        const tags = toolPasteConfig.tags || [];
 
-      tags.forEach((tag) => {
-        if (this.toolsTags.hasOwnProperty(tag)) {
-          _.log(
-            `Paste handler for «${name}» Tool on «${tag}» tag is skipped ` +
-            `because it is already used by «${this.toolsTags[tag].tool}» Tool.`,
-            'warn',
-          );
-          return;
-        }
+        tags.forEach((tag) => {
+          if (this.toolsTags.hasOwnProperty(tag)) {
+            _.log(
+              `Paste handler for «${name}» Tool on «${tag}» tag is skipped ` +
+              `because it is already used by «${this.toolsTags[tag].tool}» Tool.`,
+              'warn',
+            );
+            return;
+          }
 
-        this.toolsTags[tag] = {
-          handler: toolPasteConfig.handler,
-          tool: name,
-        };
-      });
-    }
-
-    if (!toolPasteConfig.patternHandler || _.isEmpty(toolPasteConfig.patterns)) {
-      return;
-    }
-
-    if (typeof toolPasteConfig.patternHandler !== 'function') {
-      _.log(
-        `Pattern parser for "${name}" Tool should be a function.`,
-        'warn',
-      );
-    } else {
-      Object.entries(toolPasteConfig.patterns).forEach(([key, pattern]: [string, RegExp]) => {
-        /** Still need to validate pattern as it provided by user */
-        if (!(pattern instanceof RegExp)) {
-          _.log(
-            `Pattern ${pattern} for "${tool}" Tool is skipped because it should be a Regexp instance.`,
-            'warn',
-          );
-        }
-
-        this.toolsPatterns.push({
-          key,
-          pattern,
-          handler: toolPasteConfig.patternHandler,
-          tool: name,
+          this.toolsTags[tag] = {
+            handler: toolPasteConfig.handler,
+            tool: name,
+          };
         });
-      });
+      }
+
+      if (!toolPasteConfig.patternHandler || _.isEmpty(toolPasteConfig.patterns)) {
+        return;
+      }
+
+      if (typeof toolPasteConfig.patternHandler !== 'function') {
+        _.log(
+          `Pattern parser for «${name}» Tool should be a function.`,
+          'warn',
+        );
+      } else {
+        Object.entries(toolPasteConfig.patterns).forEach(([key, pattern]: [string, RegExp]) => {
+          /** Still need to validate pattern as it provided by user */
+          if (!(pattern instanceof RegExp)) {
+            _.log(
+              `Pattern ${pattern} for «${name}» Tool is skipped because it should be a Regexp instance.`,
+              'warn',
+            );
+          }
+
+          this.toolsPatterns.push({
+            key,
+            pattern,
+            handler: toolPasteConfig.patternHandler,
+            tool: name,
+          });
+        });
+      }
+    } catch (e) {
+      _.log(`Paste handling for «${name}» Tool is not enabled because of an error `, 'warn', e);
     }
   }
 
@@ -259,7 +263,7 @@ export default class Paste extends Module {
         let insertedBlock;
 
         if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
-          BlockManager.replace(blockData.tool, blockData.data);
+          insertedBlock = BlockManager.replace(blockData.tool, blockData.data);
         } else {
           insertedBlock = BlockManager.insert(blockData.tool, blockData.data);
         }
