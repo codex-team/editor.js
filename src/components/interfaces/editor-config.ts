@@ -49,4 +49,9 @@ export default interface IEditorConfig {
    * Editor initialization callback
    */
   onReady?(): void;
+
+  /**
+   * Trigger callback if Content has beed changed
+   */
+  onChange?(): void;
 }

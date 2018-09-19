@@ -279,7 +279,8 @@ export default class Tools extends Module {
         toolPreparationList.push({
           function : toolClass.prepare,
           data : {
-            toolName
+            toolName,
+            config:  this.toolsSettings[toolName]
           }
         });
       } else {
