@@ -111,6 +111,7 @@ export default class BlockEvents extends Module {
       this.Editor.Toolbox.open();
     } else if (currentBlock.isEmpty) {
       this.Editor.Toolbar.open();
+      this.Editor.Toolbar.plusButton.show();
       this.Editor.Toolbox.open();
     }
 
