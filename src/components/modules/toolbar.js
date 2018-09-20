@@ -179,8 +179,10 @@ export default class Toolbar extends Module {
      * Set Toolbar Min Height as Block's height
      * Plus Button and Toolbox positioned at the center of the Toolbar
      */
-    this.nodes.content.style.minHeight = currentBlock.offsetHeight + 'px';
+    const contentOffset = Math.floor(currentBlock.offsetHeight / 2);
 
+    this.nodes.plusButton.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
+    this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
     /**
      * Move Toolbar to the Top coordinate of Block
      */

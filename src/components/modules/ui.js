@@ -296,9 +296,9 @@ export default class UI extends Module {
     event.stopPropagation();
 
     /**
-     * Close toolbar
+     * Move and open toolbar
      */
-    this.Editor.Toolbar.close();
+    this.Editor.Toolbar.open();
 
     /**
      * Hide the Plus Button
@@ -318,7 +318,6 @@ export default class UI extends Module {
       isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
 
     if (isInitialBlock && isEmptyBlock) {
-      this.Editor.Toolbar.open();
       this.Editor.Toolbar.plusButton.show();
     }
   }
