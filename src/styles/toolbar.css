@@ -45,7 +45,7 @@
   &__actions {
     position: absolute;
     right: 0;
-    top: 0;
+    top: 10px;
     padding-right: 16px;
 
     &-buttons {
