@@ -304,8 +304,9 @@ export default class InlineToolbar extends Module {
       this.nodes.actions.appendChild(actions);
     }
 
-    this.Editor.Listeners.on(button, 'click', () => {
+    this.Editor.Listeners.on(button, 'click', (event) => {
       this.toolClicked(tool);
+      event.preventDefault();
     });
 
     /**
