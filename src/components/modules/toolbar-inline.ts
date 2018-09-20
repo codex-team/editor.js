@@ -304,8 +304,8 @@ export default class InlineToolbar extends Module {
       this.nodes.actions.appendChild(actions);
     }
 
-    this.Editor.Listeners.on(button, 'click', () => {
-      this.toolClicked(tool);
+    this.Editor.Listeners.on(button, 'click', (event) => {
+      this.toolClicked(event, tool);
     });
 
     /**
@@ -363,20 +363,23 @@ export default class InlineToolbar extends Module {
         }
 
         event.preventDefault();
-        this.toolClicked(tool);
+        this.toolClicked(event, tool);
       },
     });
   }
 
   /**
    * Inline Tool button clicks
+   * @param {MouseEvent} event - click on inline-tool
    * @param {InlineTool} tool - Tool's instance
    */
-  private toolClicked(tool: InlineTool): void {
+  private toolClicked(event: MouseEvent, tool: InlineTool): void {
     const range = SelectionUtils.range;
 
     tool.surround(range);
     this.checkToolsState();
+
+    event.preventDefault();
   }
 
   /**
