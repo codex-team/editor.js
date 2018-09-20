@@ -43,6 +43,7 @@ export default class ItalicInlineTool implements InlineTool {
    */
   public render(): HTMLElement {
     this.nodes.button = document.createElement('button');
+    this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
     this.nodes.button.appendChild($.svg('italic', 6, 15));
     return this.nodes.button;

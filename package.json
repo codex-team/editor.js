@@ -1,6 +1,6 @@
 {
   "name": "codex.editor",
-  "version": "2.0.10",
+  "version": "2.0.11",
   "description": "Codex Editor. Native JS, based on API and Open Source",
   "main": "build/codex-editor.js",
   "scripts": {
