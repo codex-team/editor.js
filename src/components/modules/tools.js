@@ -280,7 +280,7 @@ export default class Tools extends Module {
           function : toolClass.prepare,
           data : {
             toolName,
-            config:  this.toolsSettings[toolName]
+            config:  this.toolsSettings[toolName][this.apiSettings.CONFIG]
           }
         });
       } else {
