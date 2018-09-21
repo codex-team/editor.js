@@ -39,6 +39,8 @@ export default class DragNDrop extends Module {
   private bindEvents(): void {
     this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
 
+    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', () => this.Editor.InlineToolbar.close());
+
     /* Prevent default browser behavior to allow drop on non-contenteditable elements */
     this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', (e) => e.preventDefault(), true);
   }
@@ -127,7 +129,9 @@ export default class DragNDrop extends Module {
       const data = dropEvent.dataTransfer.getData('text/html') || dropEvent.dataTransfer.getData('Text');
       const p = $.make('p', null, {innerHTML: data});
 
-      Paste.processData(p.outerHTML, true);
+      await Paste.processData(p.outerHTML, true);
+
+      document.execCommand('delete');
       return;
     }
 
