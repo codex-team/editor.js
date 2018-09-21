@@ -1,6 +1,7 @@
 import IBlockToolData from '../interfaces/tools/block-tool';
 import IEditorConfig from '../interfaces/editor-config';
 import CaretClass from './caret';
+import SelectionUtils from '../selection';
 
 declare const Module: any;
 declare const $: any;
@@ -99,7 +100,7 @@ export default class Paste extends Module {
       return;
     }
 
-    if (!Caret.isAtEnd) {
+    if (SelectionUtils.isAtEditor && !Caret.isAtEnd && SelectionUtils.isCollapsed) {
       this.splitBlock();
     }
 

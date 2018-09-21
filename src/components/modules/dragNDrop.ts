@@ -37,23 +37,10 @@ export default class DragNDrop extends Module {
    * @private
    */
   private bindEvents(): void {
-
-    /**
-     * If drag starts on editor it means drag subject is text selection.
-     * We should remove html content and replace it with plain text.
-     */
-    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', (e) => {
-      e.dataTransfer.clearData('text/html');
-      const plain = e.dataTransfer.getData('text/plain');
-      e.dataTransfer.setData('text/plain', this.Editor.Sanitizer.clean(plain));
-    }, true);
-
     this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
 
-    /** Prevent default behaviour for dragend event */
-    this.Editor.Listeners.on(document, 'dragend', (e) => {
-      e.preventDefault();
-    }, true);
+    /* Prevent default browser behavior to allow drop on non-contenteditable elements */
+    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', (e) => e.preventDefault(), true);
   }
 
   /**
@@ -122,27 +109,34 @@ export default class DragNDrop extends Module {
    * @param {DragEvent} dropEvent
    */
   private processDrop = async (dropEvent: DragEvent): Promise<void> => {
-    const {dataTransfer} = dropEvent;
-    this.Editor.BlockManager.blocks.forEach((block) => block.dropTarget = false);
-    this.Editor.BlockManager.setCurrentBlockByChildNode(dropEvent.target, 'end');
+    const {
+      BlockManager,
+      Paste,
+    } = this.Editor;
 
-    /** If html content is dropped, use the same process as for paste */
-    if (dropEvent.dataTransfer.types.includes('text/html')) {
-      dropEvent.preventDefault();
-      const data = dropEvent.dataTransfer.getData('text/html');
+    dropEvent.preventDefault();
+
+    BlockManager.blocks.forEach((block) => block.dropTarget = false);
+    try {
+      BlockManager.setCurrentBlockByChildNode(dropEvent.target, 'end');
+    } catch (e) {
+      BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
+    }
+
+    if (!dropEvent.dataTransfer.files.length) {
+      const data = dropEvent.dataTransfer.getData('text/html') || dropEvent.dataTransfer.getData('Text');
       const p = $.make('p', null, {innerHTML: data});
 
-      this.Editor.Paste.processData(p.outerHTML, true);
+      Paste.processData(p.outerHTML, true);
       return;
     }
 
     let dataToInsert = [];
 
     if (dropEvent.dataTransfer.files.length) {
-      dropEvent.preventDefault();
       dataToInsert = await Promise.all(
         Array
-          .from(dataTransfer.items)
+          .from(dropEvent.dataTransfer.items)
           .map((item) => this.processDataTransferItem(item)),
       );
       dataToInsert = dataToInsert.filter((data) => !!data);
@@ -150,12 +144,12 @@ export default class DragNDrop extends Module {
 
     dataToInsert.forEach(
       (data, i) => {
-        if (i === 0 && this.Editor.BlockManager.currentBlock && this.Editor.BlockManager.currentBlock.isEmpty) {
-          this.Editor.BlockManager.replace(data.type, data.data);
+        if (i === 0 && BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
+          BlockManager.replace(data.type, data.data);
           return;
         }
 
-        this.Editor.BlockManager.insert(data.type, data.data);
+        BlockManager.insert(data.type, data.data);
       },
     );
   }

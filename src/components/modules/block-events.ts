@@ -126,10 +126,6 @@ export default class BlockEvents extends Module {
    * @param {DragEvent} e
    */
   public dragOver(e: DragEvent) {
-    if (!e.dataTransfer.types.includes('Files')) {
-      return;
-    }
-
     const block = this.Editor.BlockManager.getBlockByChildNode(e.target);
 
     block.dropTarget = true;
@@ -141,10 +137,6 @@ export default class BlockEvents extends Module {
    * @param {DragEvent} e
    */
   public dragLeave(e: DragEvent) {
-    if (!e.dataTransfer.types.includes('Files')) {
-      return;
-    }
-
     const block = this.Editor.BlockManager.getBlockByChildNode(e.target);
 
     block.dropTarget = false;
