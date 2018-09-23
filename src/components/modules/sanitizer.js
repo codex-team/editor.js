@@ -102,7 +102,12 @@ export default class Sanitizer extends Module {
     if (_.isEmpty(customConfig)) {
       return this._sanitizerInstance.clean(taintString);
     } else {
-      return Sanitizer.clean(taintString, customConfig);
+      /**
+       * API client can use custom config to manage sanitize process
+       * In this case we merge default config with custom, each rule can be rewritten by custom
+       */
+      this.defaultConfig.tags = Object.assign(this.defaultConfig.tags, customConfig);
+      return Sanitizer.clean(taintString, this.defaultConfig);
     }
   }
 
