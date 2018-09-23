@@ -95,18 +95,22 @@ export default class Sanitizer extends Module {
   /**
    * Cleans string from unwanted tags
    * @param {String} taintString - HTML string
-   * @param {Object} customConfig - custom sanitizer configuration. Method uses default if param is empty
+   * @param {Object|string} customConfig - custom sanitizer configuration. Method uses default if param is empty
    * @return {String} clean HTML
    */
   clean(taintString, customConfig = {}) {
-    if (_.isEmpty(customConfig)) {
+    if (typeof customConfig === 'object' && _.isEmpty(customConfig)) {
       return this._sanitizerInstance.clean(taintString);
     } else {
       /**
        * API client can use custom config to manage sanitize process
        * In this case we merge default config with custom, each rule can be rewritten by custom
        */
-      this.defaultConfig.tags = Object.assign(this.defaultConfig.tags, customConfig);
+      if (typeof customConfig === 'string' && customConfig === 'all') {
+        this.defaultConfig.tags = {};
+      } else {
+        this.defaultConfig.tags = Object.assign(this.defaultConfig.tags, customConfig);
+      }
       return Sanitizer.clean(taintString, this.defaultConfig);
     }
   }
