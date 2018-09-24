@@ -385,7 +385,7 @@ export default class Block {
 
     /**
      * Case 1: Block data is Array
-     * Array's on JS can not be enumerated with for..in because result will be Object not Array
+     * Array's in JS can not be enumerated with for..in because result will be Object not Array
      * which conflicts with Consistency
      */
     if (Array.isArray(blockData)) {
@@ -432,7 +432,6 @@ export default class Block {
         }
       }
 
-      console.log(cleanData);
       return cleanData;
     }
   }
