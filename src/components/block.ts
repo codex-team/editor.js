@@ -410,16 +410,12 @@ export default class Block {
        *  3. When Data is base type (string, int, bool, ...). Check if rule is passed
        */
       for (const data in blockData) {
-        if (Array.isArray(blockData[data])) {
+        if (Array.isArray(blockData[data]) || typeof blockData[data] === 'object') {
           /**
-           * Case 1
+           * Case 1 & Case 2
            */
           cleanData[data] = this.cleanExtractedBlock(blockData[data], rules[data]);
-        } else if (typeof blockData[data] === 'object') {
-          /**
-           * Case 2.
-           */
-          cleanData[data] = this.cleanExtractedBlock(blockData[data], rules[data]);
+
         } else {
           /**
            * Case 3.
