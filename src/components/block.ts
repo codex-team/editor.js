@@ -17,6 +17,7 @@ type Tool = any;
 import MoveUpTune from './block-tunes/block-tune-move-up';
 import DeleteTune from './block-tunes/block-tune-delete';
 import MoveDownTune from './block-tunes/block-tune-move-down';
+import {IAPI} from './interfaces/api';
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -227,7 +228,7 @@ export default class Block {
   public settings: object;
   public holder: HTMLDivElement;
   public tunes: IBlockTune[];
-  private readonly api: object;
+  private readonly api: IAPI;
   private inputIndex = 0;
 
   /**
@@ -238,7 +239,7 @@ export default class Block {
    * @param {Object} settings - default settings
    * @param {Object} apiMethods - Editor API
    */
-  constructor(toolName: string, toolInstance: Tool, toolClass: object, settings: object, apiMethods: object) {
+  constructor(toolName: string, toolInstance: Tool, toolClass: object, settings: object, apiMethods: IAPI) {
     this.name = toolName;
     this.tool = toolInstance;
     this.class = toolClass;
@@ -285,7 +286,17 @@ export default class Block {
    * @return {Object}
    */
   public save(): Promise<void|{tool: string, data: any, time: number}> {
-    const extractedBlock = this.tool.save(this.pluginsContent);
+    let extractedBlock = this.tool.save(this.pluginsContent);
+
+    /**
+     * if Tool provides custom sanitizer config
+     * then use this config
+     */
+    if (this.tool.sanitize) {
+      extractedBlock = this.cleanExtractedBlock(extractedBlock, this.tool.sanitize);
+    } else {
+      extractedBlock = this.cleanExtractedBlock(extractedBlock);
+    }
 
     /**
      * Measuring execution time
@@ -361,6 +372,69 @@ export default class Block {
     });
 
     return tunesElement;
+  }
+
+  /**
+   * Method recursively reduces Block's data and cleans with passed rules
+   *
+   * @param {Object} blockData
+   * @param {Object} rules
+   * @return {object|array}
+   */
+  private cleanExtractedBlock(blockData, rules = {}): object {
+
+    /**
+     * Case 1: Block data is Array
+     * Array's on JS can not be enumerated with for..in because result will be Object not Array
+     * which conflicts with Consistency
+     */
+    if (Array.isArray(blockData)) {
+      /**
+       * Create new "cleanData" array and fill in with sanitizer data
+       */
+      const cleanData = [];
+      for (let i = 0; i < blockData.length; i++) {
+        cleanData[i] = this.api.sanitizer.clean(blockData[i], rules);
+      }
+      return cleanData;
+    } else {
+      /**
+       * Create new "cleanData" object and fill with sanitized objects
+       */
+      const cleanData = {};
+
+      /**
+       * Object's may have 3 cases:
+       *  1. When Data is Array. Then call again itself and recursively clean arrays items
+       *  2. When Data is Object that can have object's inside. Do the same, call itself and clean recursively
+       *  3. When Data is base type (string, int, bool, ...). Check if rule is passed
+       */
+      for (const data in blockData) {
+        if (Array.isArray(blockData[data])) {
+          /**
+           * Case 1
+           */
+          cleanData[data] = this.cleanExtractedBlock(blockData[data], rules[data]);
+        } else if (typeof blockData[data] === 'object') {
+          /**
+           * Case 2.
+           */
+          cleanData[data] = this.cleanExtractedBlock(blockData[data], rules[data]);
+        } else {
+          /**
+           * Case 3.
+           */
+          if (rules[data]) {
+            cleanData[data] = this.api.sanitizer.clean(blockData[data], rules[data]);
+          } else {
+            cleanData[data] = this.api.sanitizer.clean(blockData[data]);
+          }
+        }
+      }
+
+      console.log(cleanData);
+      return cleanData;
+    }
   }
 
   /**

@@ -106,12 +106,17 @@ export default class Sanitizer extends Module {
        * API client can use custom config to manage sanitize process
        * In this case we merge default config with custom, each rule can be rewritten by custom
        */
+      let newConfig = {
+        tags: customConfig
+      };
+
       if (typeof customConfig === 'string' && customConfig === 'all') {
-        this.defaultConfig.tags = {};
+        newConfig.tags = {};
       } else {
-        this.defaultConfig.tags = Object.assign(this.defaultConfig.tags, customConfig);
+        newConfig.tags = customConfig || this.defaultConfig.tags;
       }
-      return Sanitizer.clean(taintString, this.defaultConfig);
+
+      return Sanitizer.clean(taintString, newConfig);
     }
   }
 

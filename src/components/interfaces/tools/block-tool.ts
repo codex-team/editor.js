@@ -28,6 +28,11 @@ export default interface IBlockTool extends ITool {
   toolboxIcon?: string;
 
   /**
+   * Sanitizer rules description
+   */
+  sanitizer?: object;
+
+  /**
    * Return Tool's main block-wrapper
    * @return {HTMLElement}
    */
