@@ -285,8 +285,8 @@ export default class Block {
    * Groups Tool's save processing time
    * @return {Object}
    */
-  public save(): Promise<void|{tool: string, data: any, time: number}> {
-    let extractedBlock = this.tool.save(this.pluginsContent);
+  public async save(): Promise<void|{tool: string, data: any, time: number}> {
+    let extractedBlock = await this.tool.save(this.pluginsContent);
 
     /**
      * if Tool provides custom sanitizer config
@@ -392,11 +392,9 @@ export default class Block {
       /**
        * Create new "cleanData" array and fill in with sanitizer data
        */
-      const cleanData = [];
-      for (let i = 0; i < blockData.length; i++) {
-        cleanData[i] = this.api.sanitizer.clean(blockData[i], rules);
-      }
-      return cleanData;
+      return blockData.map((item) => {
+        return this.api.sanitizer.clean(item, rules);
+      });
     } else {
       /**
        * Create new "cleanData" object and fill with sanitized objects
