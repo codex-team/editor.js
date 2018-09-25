@@ -1,4 +1,3 @@
-import $ from '../dom';
 import _ from '../utils';
 import IBlockToolData from '../interfaces/tools/block-tool-data';
 
@@ -126,10 +125,16 @@ export default class DragNDrop extends Module {
     }
 
     if (!dropEvent.dataTransfer.files.length) {
-      const data = dropEvent.dataTransfer.getData('text/html') || dropEvent.dataTransfer.getData('Text');
-      const p = $.make('p', null, {innerHTML: data});
+      const isHTML = dropEvent.dataTransfer.types.includes('text/html');
+      let data;
 
-      await Paste.processData(p.outerHTML, true);
+      if (isHTML) {
+        data = dropEvent.dataTransfer.getData('text/html');
+      } else {
+        data = dropEvent.dataTransfer.getData('Text');
+      }
+
+      Paste.processData(data, isHTML);
 
       document.execCommand('delete');
       return;

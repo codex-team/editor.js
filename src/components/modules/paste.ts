@@ -128,13 +128,16 @@ export default class Paste extends Module {
     const tool = initialBlock,
       handler = Tools.blockTools[tool].onPaste.handler;
 
-    return plain.split('\n\n').map((text) => {
-      const content = $.make('div');
+    return plain
+      .split(/\r?\n/)
+      .filter((text) => text.trim())
+      .map((text) => {
+        const content = $.make('div');
 
-      content.innerHTML = text;
+        content.innerHTML = text;
 
-      return {content, tool, isBlock: false, handler};
-    });
+        return {content, tool, isBlock: false, handler};
+      });
   }
 
   /**
@@ -158,7 +161,8 @@ export default class Paste extends Module {
   /**
    * Process paste config for each tools
    *
-   * @param {string} tool
+   * @param {string} name
+   * @param {Tool} tool
    */
   private processTool = ([name, tool]) => {
     try {
@@ -189,7 +193,7 @@ export default class Paste extends Module {
             return;
           }
 
-          this.toolsTags[tag] = {
+          this.toolsTags[tag.toUpperCase()] = {
             handler: toolPasteConfig.handler,
             tool: name,
           };
@@ -434,7 +438,7 @@ export default class Paste extends Module {
 
         return {content, isBlock, handler, tool};
     })
-    .filter((data) => !$.isNodeEmpty(data.content));
+    .filter((data) => !$.isNodeEmpty(data.content) || $.isSingleTag(data.content));
   }
 
   /**
@@ -450,7 +454,7 @@ export default class Paste extends Module {
       tags = Object.keys(this.toolsTags);
 
     const reducer = (nodes: Node[], node: Node): Node[] => {
-      if ($.isEmpty(node)) {
+      if ($.isEmpty(node) && !$.isSingleTag(node as HTMLElement)) {
         return nodes;
       }
 
