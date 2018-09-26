@@ -167,7 +167,7 @@ static get onPaste() {
 
 > Both `onPaste.handler` and `onPaste.patternHandler` can be `async` or return a `Promise`.
 
-### Files
+##### Files
 
 Your Tool can handle files pasted or dropped into the Editor.
 
