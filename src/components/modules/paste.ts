@@ -82,10 +82,10 @@ export default class Paste extends Module {
   }
 
   /**
-   * Process pasted string and devide them into Blocks
+   * Process pasted string and divide them into Blocks
    *
-   * @param {string} data
-   * @param {boolean} isHTML
+   * @param {string} data - string to process. Can be HTML or plain.
+   * @param {boolean} isHTML - if passed string is HTML, this parameter should be true
    */
   public async processData(data: string, isHTML: boolean = false) {
     const {Caret, BlockManager} = this.Editor;
@@ -100,6 +100,10 @@ export default class Paste extends Module {
       return;
     }
 
+    /**
+     * If caret not at the end of of the Block and there is no selection,
+     * we split the Block and insert content at the middle.
+     */
     if (SelectionUtils.isAtEditor && !Caret.isAtEnd && SelectionUtils.isCollapsed) {
       this.splitBlock();
     }

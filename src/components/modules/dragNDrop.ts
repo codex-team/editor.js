@@ -138,18 +138,29 @@ export default class DragNDrop extends Module {
 
     this.isStartedAtEditor = false;
 
+    /**
+     * Try to set current block by drop target.
+     * If drop target (error will be thrown) is not part of the Block, set last Block as current.
+     */
     try {
       BlockManager.setCurrentBlockByChildNode(dropEvent.target, 'end');
     } catch (e) {
       BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder, 'end');
     }
 
+    /**
+     * If there is no files in dropped data, use the same behaviour as in usual paste case
+     */
     if (!dropEvent.dataTransfer.files.length) {
       const isHTML = dropEvent.dataTransfer.types.includes('text/html');
       let data;
 
       if (isHTML) {
         data = dropEvent.dataTransfer.getData('text/html');
+
+        /**
+         * Wrap content with <p> because we want to insert content as new Block
+         */
         data = '<p>' + data + '</p>';
       } else {
         data = dropEvent.dataTransfer.getData('Text');
@@ -160,16 +171,14 @@ export default class DragNDrop extends Module {
       return;
     }
 
-    let dataToInsert = [];
+    let dataToInsert: Array<{type: string, data: IBlockToolData}>;
 
-    if (dropEvent.dataTransfer.files.length) {
-      dataToInsert = await Promise.all(
-        Array
-          .from(dropEvent.dataTransfer.items)
-          .map((item) => this.processDataTransferItem(item)),
-      );
-      dataToInsert = dataToInsert.filter((data) => !!data);
-    }
+    dataToInsert = await Promise.all(
+      Array
+        .from(dropEvent.dataTransfer.items)
+        .map((item) => this.processDataTransferItem(item)),
+    );
+    dataToInsert = dataToInsert.filter((data) => !!data);
 
     dataToInsert.forEach(
       (data, i) => {

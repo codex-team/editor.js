@@ -169,7 +169,7 @@ static get onPaste() {
 
 ### Drag'n'drop handling
 
-Your Tool can handle files drag'n'drop.
+Your Tool can handle files pasted by drag'n'drop.
 
 To handle dropped file you should provide `onDrop` static property with following fields
 
