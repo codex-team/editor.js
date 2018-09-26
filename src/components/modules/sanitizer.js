@@ -110,8 +110,12 @@ export default class Sanitizer extends Module {
         tags: customConfig
       };
 
-      if (typeof customConfig === 'string' && customConfig === 'all') {
-        newConfig.tags = {};
+      if (typeof customConfig === 'string') {
+        if (customConfig === 'all') {
+          newConfig.tags = {};
+        } else if (customConfig === 'ignore') {
+          return taintString;
+        }
       } else {
         newConfig.tags = customConfig || this.defaultConfig.tags;
       }

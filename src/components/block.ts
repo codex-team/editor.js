@@ -379,9 +379,8 @@ export default class Block {
    *
    * @param {Object} blockData
    * @param {Object} rules
-   * @return {object|array}
    */
-  private cleanExtractedBlock(blockData, rules = {}): object {
+  private cleanExtractedBlock(blockData, rules = {}) {
 
     /**
      * Case 1: Block data is Array
@@ -393,9 +392,10 @@ export default class Block {
        * Create new "cleanData" array and fill in with sanitizer data
        */
       return blockData.map((item) => {
-        return this.api.sanitizer.clean(item, rules);
+        return this.cleanExtractedBlock(item, rules);
       });
-    } else {
+    } else if (typeof blockData === 'object') {
+
       /**
        * Create new "cleanData" object and fill with sanitized objects
        */
@@ -412,7 +412,11 @@ export default class Block {
           /**
            * Case 1 & Case 2
            */
-          cleanData[data] = this.cleanExtractedBlock(blockData[data], rules[data]);
+          if (rules[data]) {
+            cleanData[data] = this.cleanExtractedBlock(blockData[data], rules[data]);
+          } else {
+            cleanData[data] = this.cleanExtractedBlock(blockData[data], rules);
+          }
 
         } else {
           /**
@@ -421,12 +425,14 @@ export default class Block {
           if (rules[data]) {
             cleanData[data] = this.api.sanitizer.clean(blockData[data], rules[data]);
           } else {
-            cleanData[data] = this.api.sanitizer.clean(blockData[data]);
+            cleanData[data] = this.api.sanitizer.clean(blockData[data], rules);
           }
         }
       }
 
       return cleanData;
+    } else {
+      return this.api.sanitizer.clean(blockData, rules);
     }
   }
 
