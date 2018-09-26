@@ -1,5 +1,6 @@
 import _ from '../utils';
 import IBlockToolData from '../interfaces/tools/block-tool-data';
+import SelectionUtils from '../selection';
 
 declare var Module: any;
 
@@ -10,6 +11,15 @@ interface DropConfig {
 }
 
 export default class DragNDrop extends Module {
+
+  /**
+   * If drag has been started at editor, we save it
+   *
+   * @type Boolean
+   * @private
+   */
+  private isStartedAtEditor = false;
+
   /**
    * Cache for Tools onDrop configs
    *
@@ -38,7 +48,10 @@ export default class DragNDrop extends Module {
   private bindEvents(): void {
     this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
 
-    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', () => this.Editor.InlineToolbar.close());
+    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', () => {
+      this.isStartedAtEditor = true;
+      this.Editor.InlineToolbar.close();
+    });
 
     /* Prevent default browser behavior to allow drop on non-contenteditable elements */
     this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', (e) => e.preventDefault(), true);
@@ -118,10 +131,17 @@ export default class DragNDrop extends Module {
     dropEvent.preventDefault();
 
     BlockManager.blocks.forEach((block) => block.dropTarget = false);
+
+    if (SelectionUtils.isAtEditor && this.isStartedAtEditor) {
+      document.execCommand('delete');
+    }
+
+    this.isStartedAtEditor = false;
+
     try {
       BlockManager.setCurrentBlockByChildNode(dropEvent.target, 'end');
     } catch (e) {
-      BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
+      BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder, 'end');
     }
 
     if (!dropEvent.dataTransfer.files.length) {
@@ -130,13 +150,13 @@ export default class DragNDrop extends Module {
 
       if (isHTML) {
         data = dropEvent.dataTransfer.getData('text/html');
+        data = '<p>' + data + '</p>';
       } else {
         data = dropEvent.dataTransfer.getData('Text');
       }
 
       Paste.processData(data, isHTML);
 
-      document.execCommand('delete');
       return;
     }
 

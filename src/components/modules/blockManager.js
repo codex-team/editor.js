@@ -384,7 +384,7 @@ export default class BlockManager extends Module {
        */
       this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock);
 
-      this.Editor.Caret.setToInput(childNode);
+      this.Editor.Caret.setToInput(childNode, caretPosition);
     } else {
       throw new Error('Can not find a Block from this child Node');
     }
