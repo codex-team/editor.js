@@ -122,7 +122,7 @@ export default class Paste extends Module {
    *
    * @param {DataTransfer} dataTransfer - pasted or dropped data transfer object
    */
-  public async processDataTransfer(dataTransfer: DataTransfer): Promise<void> {
+  public async processDataTransfer(dataTransfer: DataTransfer, isDragNDrop = false): Promise<void> {
     const { Sanitizer } = this.Editor;
 
     if (dataTransfer.types.includes('Files')) {
@@ -130,8 +130,15 @@ export default class Paste extends Module {
       return;
     }
 
-    const htmlData  = dataTransfer.getData('text/html'),
-      plainData = dataTransfer.getData('text/plain');
+    const plainData = dataTransfer.getData('text/plain');
+    let htmlData  = dataTransfer.getData('text/html');
+
+    /**
+     *  If text was drag'n'dropped, wrap content with P tag to insert it as the new Block
+     */
+    if (isDragNDrop) {
+      htmlData = '<p>' + ( htmlData.trim() ? htmlData : plainData ) + ' </p>';
+    }
 
     /** Add all tags that can be substituted to sanitizer configuration */
     const toolsTags = Object.keys(this.toolsTags).reduce((result, tag) => {
@@ -353,8 +360,7 @@ export default class Paste extends Module {
 
     /** If target is native input or is not Block, use browser behaviour */
     if (
-      (this.isNativeBehaviour(event.target) || !Tools.isInitial(BlockManager.currentBlock.tool))
-      && !event.clipboardData.types.includes('Files')
+      this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files')
     ) {
       return;
     }

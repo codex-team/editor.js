@@ -35,20 +35,6 @@ export default class DragNDrop extends Module {
       }
 
       this.Editor.InlineToolbar.close();
-
-      /**
-       *  If drag has been started at the editor and includes plain text,
-       *  wrap html content with P tag to insert it as the new Block
-       */
-      if (
-        dragEvent.dataTransfer.types.includes('text/html') &&
-        dragEvent.dataTransfer.types.includes('text/plain')
-      ) {
-        const data = dragEvent.dataTransfer.getData('text/html');
-
-        dragEvent.dataTransfer.clearData('text/html');
-        dragEvent.dataTransfer.setData('text/html', '<p>' + data + '</p>');
-      }
     });
 
     /* Prevent default browser behavior to allow drop on non-contenteditable elements */
@@ -86,6 +72,6 @@ export default class DragNDrop extends Module {
       BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder, 'end');
     }
 
-    Paste.processDataTransfer(dropEvent.dataTransfer);
+    Paste.processDataTransfer(dropEvent.dataTransfer, true);
   }
 }
