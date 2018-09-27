@@ -206,22 +206,25 @@ static get onPaste() {
 
 ### Sanitize
 
-CodeX Editor provides [API](https://github.com/codex-team/codex.editor/blob/master/docs/sanitizer.md) to sanitize your fields. We recommend to clean your taint 
-string before you return your data.
+CodeX Editor provides [API](https://github.com/codex-team/codex.editor/blob/master/docs/sanitizer.md) to clean taint strings at the save method or pass sanitizer config to do it automatically.
 
-Call API method
+#### Manual sanitize
+
+Call API method `sanitizer.clean()` at the save method for each field in returned data.
 
 ```javascript
 save() {
   return {
-    text: this.api.sanitizer.clean(yourText, {}) 
+    text: this.api.sanitizer.clean(taintString, sanitizerConfig) 
   }
 }
-
 ```
 
-Editor's Core automatically checks each Block and gets sanitize rules
-from getter
+`sanitizerConfig` - is a rules dictationary. 
+
+#### Automatic sanitize
+
+If you pass the sanitizer config, CodeX Editor will automatically sanitize your saved data.
 
 You can define rules to each field
 
@@ -237,7 +240,7 @@ get sanitize() {
 }
 ```
 
-In case of complicated embedded rules we set the rule that are inheritet
+In case of complicated embedded rules we set the rule that are inherited
 
 ```javascript
 get sanitize() {
