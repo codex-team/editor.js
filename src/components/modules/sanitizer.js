@@ -45,12 +45,10 @@ export default class Sanitizer extends Module {
   constructor({config}) {
     super({config});
 
-    // default config
-    this.defaultConfig = null;
     this._sanitizerInstance = null;
 
     /** Custom configuration */
-    this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
+    this.sanitizerConfig = config.settings ? config.settings.sanitizer : null;
 
     /** HTML Janitor library */
     this.sanitizerInstance = require('html-janitor');
@@ -66,61 +64,69 @@ export default class Sanitizer extends Module {
    * @param {HTMLJanitor} library - sanitizer extension
    */
   set sanitizerInstance(library) {
-    this._sanitizerInstance = new library(this.defaultConfig);
+    if (this.sanitizerConfig) {
+      this._sanitizerInstance = new library(this.sanitizerConfig);
+    }
+
+    return this._sanitizerInstance;
   }
 
   /**
    * Sets sanitizer configuration. Uses default config if user didn't pass the restriction
-   * @param {SanitizerConfig} config
    */
-  set sanitizerConfig(config) {
-    if (_.isEmpty(config)) {
-      this.defaultConfig = {
         tags: {
-          p: {},
-          a: {
-            href: true,
             target: '_blank',
             rel: 'nofollow'
-          },
-          b: {},
-          i: {}
-        }
-      };
     } else {
       this.defaultConfig = config;
-    }
+  get defaultConfig() {
+    return {
+      tags: {
+        p: {},
+        a: {
+          href: true,
+          target: '_blank',
+          rel: 'nofollow'
+        },
+        b: {},
+        i: {}
+      }
+    };
+  }
+
+  /**
+   * Return sanitizer instance
+   * @return {null|library}
+   */
+  get sanitizerInstance() {
+    return this._sanitizerInstance;
   }
 
   /**
    * Cleans string from unwanted tags
    * @param {String} taintString - HTML string
-   * @param {Object|string} customConfig - custom sanitizer configuration. Method uses default if param is empty
+   * @param {Object} customConfig - custom sanitizer configuration. Method uses default if param is empty
    * @return {String} clean HTML
    */
-  clean(taintString, customConfig = {}) {
-    if (typeof customConfig === 'object' && _.isEmpty(customConfig)) {
-      return this._sanitizerInstance.clean(taintString);
-    } else {
+  clean(taintString, customConfig) {
+    if (customConfig && typeof customConfig === 'object') {
       /**
        * API client can use custom config to manage sanitize process
-       * In this case we merge default config with custom, each rule can be rewritten by custom
        */
       let newConfig = {
         tags: customConfig
       };
 
-      if (typeof customConfig === 'string') {
-        if (customConfig === 'all') {
-          newConfig.tags = {};
-        } else if (customConfig === 'ignore') {
-          return taintString;
-        }
-      } else {
-        newConfig.tags = customConfig || this.defaultConfig.tags;
-      }
-
       return Sanitizer.clean(taintString, newConfig);
+    } else {
+      /**
+       * Ignore sanitizing when nothing passed in config
+       */
+      if (!this.sanitizerInstance) {
+        return taintString;
+      } else {
+        return this.sanitizerInstance.clean(taintString);
+      }
     }
   }
 

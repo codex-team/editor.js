@@ -168,3 +168,59 @@ static get onPaste() {
 > Both `onPaste.handler` and `onPaste.patternHandler` can be `async` or return a `Promise`.
 
 ### Sanitize
+
+CodeX Editor provides API to sanitize your fields. We recommend to clean your taint 
+string before you return your data.
+
+First way to CodeX Editor Sanitizer:
+
+Control sanitize process, call API method
+
+```javascript
+save() {
+  return {
+    text: this.api.sanitizer.clean(yourText, {}) 
+  }
+}
+
+```
+
+Second way is to define a getter:
+
+Editor's Core automatically checks each Block and gets sanitize rules
+from getter
+
+ 
+You can define rules to each field
+
+```javascript
+get sanitize() {
+  return {
+    text: {},
+    items: {
+      b: true, // leave <b>
+      a: false, // remove <a>
+    }
+  }
+}
+```
+
+In case of complicated embedded rules we set the rule that is inheritet
+
+```javascript
+get sanitize() {
+  return {
+    text: {},
+    items: {},
+    // or
+    items: {
+      subsitems: {
+        a: true,
+        b: true,
+      }
+    }
+  }
+}
+```
+
+

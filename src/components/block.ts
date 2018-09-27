@@ -293,9 +293,7 @@ export default class Block {
      * then use this config
      */
     if (this.tool.sanitize) {
-      extractedBlock = this.cleanExtractedBlock(extractedBlock, this.tool.sanitize);
-    } else {
-      extractedBlock = this.cleanExtractedBlock(extractedBlock);
+      extractedBlock = this.sanitizeBlock(extractedBlock, this.tool.sanitize);
     }
 
     /**
@@ -380,7 +378,7 @@ export default class Block {
    * @param {Object} blockData
    * @param {Object} rules
    */
-  private cleanExtractedBlock(blockData, rules = {}) {
+  private sanitizeBlock(blockData, rules) {
 
     /**
      * Case 1: Block data is Array
@@ -392,7 +390,7 @@ export default class Block {
        * Create new "cleanData" array and fill in with sanitizer data
        */
       return blockData.map((item) => {
-        return this.cleanExtractedBlock(item, rules);
+        return this.sanitizeBlock(item, rules);
       });
     } else if (typeof blockData === 'object') {
 
@@ -413,9 +411,9 @@ export default class Block {
            * Case 1 & Case 2
            */
           if (rules[data]) {
-            cleanData[data] = this.cleanExtractedBlock(blockData[data], rules[data]);
+            cleanData[data] = this.sanitizeBlock(blockData[data], rules[data]);
           } else {
-            cleanData[data] = this.cleanExtractedBlock(blockData[data], rules);
+            cleanData[data] = this.sanitizeBlock(blockData[data], rules);
           }
 
         } else {
@@ -432,6 +430,9 @@ export default class Block {
 
       return cleanData;
     } else {
+      /**
+       * In case embedded objects use parent rules
+       */
       return this.api.sanitizer.clean(blockData, rules);
     }
   }
