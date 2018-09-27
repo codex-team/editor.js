@@ -4,14 +4,14 @@ CodeX Editor is a block-oriented editor. It means that entry composed with the l
 
 `Tool` — is a class that provide custom `Block` type. All Tools represented by `Plugins`.
 
-Each Tool should have an installation guide. 
+Each Tool should have an installation guide.
 
 ## Tool class structure
 
 ### constructor()
 
 Each Tool's instance called with an params object.
- 
+
 | Param  | Type                | Description                                     |
 | ------ | ------------------- | ----------------------------------------------- |
 | api    | [`IAPI`][iapi-link] | CodeX Editor's API methods                      |
@@ -62,7 +62,7 @@ Options that Tool can specify. All settings should be passed as static propertie
 
 ### User configuration
 
-All Tools can be configured by users. You can set up some of available settings along with Tool's class 
+All Tools can be configured by users. You can set up some of available settings along with Tool's class
 to the `tools` property of Editor Config.
 
 ```javascript
@@ -103,7 +103,7 @@ To provide paste handling for your Tool you need to define static getter `onPast
 
 ##### HTML tags handling
 
-To handle pasted HTML elements object returned from `onPaste` getter should contain following fields: 
+To handle pasted HTML elements object returned from `onPaste` getter should contain following fields:
 
 | Name | Type | Description |
 | -- | -- | -- |
@@ -140,7 +140,7 @@ Your Tool can analyze text by RegExp patterns to substitute pasted string with d
 | `patterns` | `Object` | _Optional_. `patterns` object contains RegExp patterns with their names as object's keys |
 | `patternHandler(text: string, key: string)` | `Function` | _Optional_. Gets pasted string and pattern name. Should return the same object as Tool `save` method |
 
-**Note** Editor will check pattern's full match, so don't forget to handle all available chars in there. 
+**Note** Editor will check pattern's full match, so don't forget to handle all available chars in there.
 
 Pattern will be processed only if paste was on `initialBlock` Tool and pasted string length is less than 450 characters.
 
@@ -156,7 +156,7 @@ static get onPaste() {
     },
     patternHandler: (text, key) => {
       const urlData = Youtube.onPaste.patterns[key].exec(text);
-      
+
       return {
         iframe: Youtube.makeEmbededFromURL(urlData)
       };
@@ -190,12 +190,12 @@ Example
 static get onPaste() {
   return {
     files: {
-      mimeTypes: ['image/*'],
+      mimeTypes: ['image/png'],
       extensions: ['json']
     },
     fileHandler: (file) => {
       /* do smth with the file */
-      
+
       return {
         data // Some extracted content
       }
