@@ -169,12 +169,10 @@ static get onPaste() {
 
 ### Sanitize
 
-CodeX Editor provides API to sanitize your fields. We recommend to clean your taint 
+CodeX Editor provides [API](https://github.com/codex-team/codex.editor/blob/master/docs/sanitizer.md) to sanitize your fields. We recommend to clean your taint 
 string before you return your data.
 
-First way to CodeX Editor Sanitizer:
-
-Control sanitize process, call API method
+Call API method
 
 ```javascript
 save() {
@@ -184,8 +182,6 @@ save() {
 }
 
 ```
-
-Second way is to define a getter:
 
 Editor's Core automatically checks each Block and gets sanitize rules
 from getter
@@ -205,13 +201,13 @@ get sanitize() {
 }
 ```
 
-In case of complicated embedded rules we set the rule that is inheritet
+In case of complicated embedded rules we set the rule that are inheritet
 
 ```javascript
 get sanitize() {
   return {
     text: {},
-    items: {},
+    items: {}, // it will be used in all fields inside this item
     // or
     items: {
       subsitems: {
