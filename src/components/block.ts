@@ -32,12 +32,13 @@ export default class Block {
    * CSS classes for the Block
    * @return {{wrapper: string, content: string}}
    */
-  static get CSS(): {wrapper: string, wrapperStretched: string, content: string, selected: string} {
+  static get CSS(): {wrapper: string, wrapperStretched: string, content: string, selected: string, dropTarget: string} {
     return {
       wrapper: 'ce-block',
       wrapperStretched: 'ce-block--stretched',
       content: 'ce-block__content',
       selected: 'ce-block--selected',
+      dropTarget: 'ce-block--drop-target',
     };
   }
 
@@ -361,6 +362,14 @@ export default class Block {
     });
 
     return tunesElement;
+  }
+
+  /**
+   * Toggle drop target state
+   * @param {boolean} state
+   */
+  public set dropTarget(state) {
+    this.holder.classList.toggle(Block.CSS.dropTarget, state);
   }
 
   /**
