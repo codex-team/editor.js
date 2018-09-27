@@ -412,8 +412,10 @@ export default class Block {
            */
           if (rules[data]) {
             cleanData[data] = this.sanitizeBlock(blockData[data], rules[data]);
-          } else {
+          } else if (_.isEmpty(rules)) {
             cleanData[data] = this.sanitizeBlock(blockData[data], rules);
+          } else {
+            cleanData[data] = blockData[data];
           }
 
         } else {
