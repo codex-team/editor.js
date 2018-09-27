@@ -135,7 +135,7 @@ export default class Paste extends Module {
 
     /** Add all tags that can be substituted to sanitizer configuration */
     const toolsTags = Object.keys(this.toolsTags).reduce((result, tag) => {
-      result[tag.toLowerCase()] = {};
+      result[tag.toLowerCase()] = true;
 
       return result;
     }, {});
@@ -147,7 +147,7 @@ export default class Paste extends Module {
     if (!cleanData.trim() || cleanData.trim() === plainData || !$.isHTMLString(cleanData)) {
       await this.processText(plainData);
     } else {
-      await this.processText(htmlData, true);
+      await this.processText(cleanData, true);
     }
   }
 

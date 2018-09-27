@@ -29,13 +29,21 @@ export default class DragNDrop extends Module {
     this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
 
     this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', (dragEvent: DragEvent) => {
-      this.isStartedAtEditor = true;
+
+      if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed) {
+        this.isStartedAtEditor = true;
+      }
+
       this.Editor.InlineToolbar.close();
 
       /**
-       *  If drag has been started at the editor, wrap html content with P tag to insert it as the new Block
+       *  If drag has been started at the editor and includes plain text,
+       *  wrap html content with P tag to insert it as the new Block
        */
-      if (dragEvent.dataTransfer.types.includes('text/html')) {
+      if (
+        dragEvent.dataTransfer.types.includes('text/html') &&
+        dragEvent.dataTransfer.types.includes('text/plain')
+      ) {
         const data = dragEvent.dataTransfer.getData('text/html');
 
         dragEvent.dataTransfer.clearData('text/html');
@@ -62,7 +70,7 @@ export default class DragNDrop extends Module {
 
     BlockManager.blocks.forEach((block) => block.dropTarget = false);
 
-    if (SelectionUtils.isAtEditor && this.isStartedAtEditor) {
+    if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed && this.isStartedAtEditor) {
       document.execCommand('delete');
     }
 
