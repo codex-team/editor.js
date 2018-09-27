@@ -13,7 +13,40 @@
   }
 
   &__content {
+    position: relative;
     max-width: var(--content-width);
     margin: 0 auto;
+  }
+
+  &--drop-target &__content {
+    &:before {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: -20px;
+      margin-top: -1px;
+      height: 8px;
+      width: 8px;
+      border: solid var(--color-active-icon);
+      border-width: 1px 1px 0 0;
+      transform-origin: right;
+      transform: rotate(45deg);
+    }
+
+    &:after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      height: 1px;
+      width: 100%;
+      color: var(--color-active-icon);
+      background: repeating-linear-gradient(
+        90deg,
+        var(--color-active-icon),
+        var(--color-active-icon) 1px,
+        #fff 1px,
+        #fff 6px
+      );
+    }
   }
 }

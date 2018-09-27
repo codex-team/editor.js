@@ -183,6 +183,26 @@ export default class Util {
   }
 
   /**
+   * Get file extension
+   *
+   * @param {File} file
+   * @return string
+   */
+  public static getFileExtension(file: File): string {
+    return file.name.split('.').pop();
+  }
+
+  /**
+   * Check if string is MIME type
+   *
+   * @param {string} type
+   * @return boolean
+   */
+  public static isValidMimeType(type: string): boolean {
+    return /^[-\w]+\/([-+\w]+|\*)$/.test(type);
+  }
+
+  /**
    * Debouncing method
    * Call method after passed time
    *
@@ -202,7 +222,7 @@ export default class Util {
 
       const later = () => {
         timeout = null;
-        if (!immediate)  {
+        if (!immediate) {
           func.apply(context, args);
         }
       };

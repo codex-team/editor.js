@@ -121,6 +121,28 @@ export default class BlockEvents extends Module {
   }
 
   /**
+   * Add drop target styles
+   *
+   * @param {DragEvent} e
+   */
+  public dragOver(e: DragEvent) {
+    const block = this.Editor.BlockManager.getBlockByChildNode(e.target);
+
+    block.dropTarget = true;
+  }
+
+  /**
+   * Remove drop target style
+   *
+   * @param {DragEvent} e
+   */
+  public dragLeave(e: DragEvent) {
+    const block = this.Editor.BlockManager.getBlockByChildNode(e.target);
+
+    block.dropTarget = false;
+  }
+
+  /**
    * ENTER pressed on block
    * @param {KeyboardEvent} event - keydown
    */
