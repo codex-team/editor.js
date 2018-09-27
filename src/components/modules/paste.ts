@@ -136,8 +136,8 @@ export default class Paste extends Module {
     /**
      *  If text was drag'n'dropped, wrap content with P tag to insert it as the new Block
      */
-    if (isDragNDrop) {
-      htmlData = '<p>' + ( htmlData.trim() ? htmlData : plainData ) + ' </p>';
+    if (isDragNDrop && plainData.trim() && htmlData.trim()) {
+      htmlData = '<p>' + ( htmlData.trim() ? htmlData : plainData ) + '</p>';
     }
 
     /** Add all tags that can be substituted to sanitizer configuration */
