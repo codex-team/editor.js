@@ -74,11 +74,6 @@ export default class Sanitizer extends Module {
   /**
    * Sets sanitizer configuration. Uses default config if user didn't pass the restriction
    */
-        tags: {
-            target: '_blank',
-            rel: 'nofollow'
-    } else {
-      this.defaultConfig = config;
   get defaultConfig() {
     return {
       tags: {
