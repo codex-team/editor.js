@@ -186,7 +186,6 @@ save() {
 Editor's Core automatically checks each Block and gets sanitize rules
 from getter
 
- 
 You can define rules to each field
 
 ```javascript
@@ -210,7 +209,7 @@ get sanitize() {
     items: {}, // it will be used in all fields inside this item
     // or
     items: {
-      subsitems: {
+      subitems: {
         a: true,
         b: true,
       }

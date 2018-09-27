@@ -375,8 +375,8 @@ export default class Block {
   /**
    * Method recursively reduces Block's data and cleans with passed rules
    *
-   * @param {Object} blockData
-   * @param {Object} rules
+   * @param {Object|string} blockData - taint string or object/array that contains taint string
+   * @param {Object} rules - object with sanitizer rules
    */
   private sanitizeBlock(blockData, rules) {
 
