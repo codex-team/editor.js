@@ -206,7 +206,8 @@ static get onPaste() {
 
 ### Sanitize
 
-CodeX Editor provides [API](https://github.com/codex-team/codex.editor/blob/master/docs/sanitizer.md) to clean taint strings at the save method or pass ```sanitizer``` config to do it automatically.
+CodeX Editor provides [API](https://github.com/codex-team/codex.editor/blob/master/docs/sanitizer.md) to clean taint strings. 
+Use it manually at the `save()` method or or pass `sanitizer` config to do it automatically.
 
 #### Manual sanitize
 
