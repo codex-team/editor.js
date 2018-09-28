@@ -6,8 +6,6 @@ Uses lightweight npm package with simple API [html-janitor](https://www.npmjs.co
 Sanitizer class implements basic Module class that holds User configuration
 and default CodeX Editor instances
 
-You can read more about Module class [here]()
-
 ## Properties
 
 Default Editor Sanitizer configuration according to the html-janitor API

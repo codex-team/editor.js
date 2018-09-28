@@ -209,17 +209,8 @@ static get onPaste() {
 CodeX Editor provides [API](https://github.com/codex-team/codex.editor/blob/master/docs/sanitizer.md) to clean taint strings. 
 Use it manually at the `save()` method or or pass `sanitizer` config to do it automatically.
 
-#### Manual sanitize
 
-Call API method `sanitizer.clean()` at the save method for each field in returned data.
-
-```javascript
-save() {
-  return {
-    text: this.api.sanitizer.clean(taintString, sanitizerConfig) 
-  }
-}
-```
+#### Options
 
 `sanitizerConfig` - is a rules dictationary.
 
@@ -232,7 +223,38 @@ let sanitizerConfig = {
 }
 ```
 
-[Read more about sanitizer configuration](https://www.npmjs.com/package/html-janitor)
+Keys of `sanitizerConfig` is tags and the value is a rule. 
+
+You can set `true`, to allow tag with all attributes or `false|{}` to remove all attributes,
+but leave tag.
+
+Also you can pass special attributes that you to leave.
+```javascript
+a: { 
+  href: true
+}
+```
+
+If you want to use your custom handler
+
+```javascript
+b: function(el) {
+  el.textContent += ': this is bolded text';
+  return el;
+}
+```
+
+#### Manual sanitize
+
+Call API method `sanitizer.clean()` at the save method for each field in returned data.
+
+```javascript
+save() {
+  return {
+    text: this.api.sanitizer.clean(taintString, sanitizerConfig) 
+  }
+}
+```
  
 #### Automatic sanitize
 
