@@ -230,7 +230,7 @@ Rule can be boolean, object or function. Object is a dictionary of rules for tag
 You can set `true`, to allow tag with all attributes or `false|{}` to remove all attributes,
 but leave tag.
 
-Also you can pass special attributes that you to leave.
+Also you can pass special attributes that you want to leave.
 
 ```javascript
 a: { 
@@ -238,7 +238,7 @@ a: {
 }
 ```
 
-If you want to use your custom handler, use should specify a function
+If you want to use a custom handler, use should specify a function
 that returns a rule.
 
 ```javascript
@@ -296,8 +296,9 @@ get sanitize() {
 ```
 
 Don't forget to set the rule for each embedded subitems otherwise they will
-not be sanitized.  
-If you want to sanitize all and get data without any tags, use `{}` or just
+not be sanitized.
+  
+if you want to sanitize everything and and get data without any tags, use `{}` or just
 ignore field in case if you want to get pure HTML
 
 ```javascript
