@@ -232,7 +232,7 @@ let sanitizerConfig = {
 }
 ```
 
-[Read more](https://www.npmjs.com/package/html-janitor)
+[Read more about sanitizer configuration](https://www.npmjs.com/package/html-janitor)
  
 #### Automatic sanitize
 
@@ -252,7 +252,6 @@ get sanitize() {
 }
 ```
 
-In case of complicated embedded rules we set the rule that are inherited.
 Don't forget to set the rule for each embedded subitems otherwise they will
 not be sanitized.  
 If you want to sanitize all and get data without any tags, use `{}` or just
@@ -262,7 +261,7 @@ ignore field in case if you want to get pure HTML
 get sanitize() {
   return {
     text: {},
-    items: {}, // it will be used in all fields inside this item
+    items: {}, // this rules will be used for all properties of this object
     // or
     items: {
       // other objects here won't be sanitized
