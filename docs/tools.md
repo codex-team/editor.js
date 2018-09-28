@@ -206,7 +206,7 @@ static get onPaste() {
 
 ### Sanitize
 
-CodeX Editor provides [API](https://github.com/codex-team/codex.editor/blob/master/docs/sanitizer.md) to clean taint strings at the save method or pass sanitizer config to do it automatically.
+CodeX Editor provides [API](https://github.com/codex-team/codex.editor/blob/master/docs/sanitizer.md) to clean taint strings at the save method or pass ```sanitizer``` config to do it automatically.
 
 #### Manual sanitize
 
@@ -220,13 +220,24 @@ save() {
 }
 ```
 
-`sanitizerConfig` - is a rules dictationary. 
+`sanitizerConfig` - is a rules dictationary.
 
+The example of sanitizerConfig
+
+```javascript
+let sanitizerConfig = {
+  b: true, // leave <b>
+  p: true, // leave <p>
+}
+```
+
+[Read more](https://www.npmjs.com/package/html-janitor)
+ 
 #### Automatic sanitize
 
 If you pass the sanitizer config, CodeX Editor will automatically sanitize your saved data.
 
-You can define rules to each field
+You can define rules for each field
 
 ```javascript
 get sanitize() {
@@ -240,7 +251,11 @@ get sanitize() {
 }
 ```
 
-In case of complicated embedded rules we set the rule that are inherited
+In case of complicated embedded rules we set the rule that are inherited.
+Don't forget to set the rule for each embedded subitems otherwise they will
+not be sanitized.  
+If you want to sanitize all and get data without any tags, use `{}` or just
+ignore field in case if you want to get pure HTML
 
 ```javascript
 get sanitize() {
@@ -249,8 +264,10 @@ get sanitize() {
     items: {}, // it will be used in all fields inside this item
     // or
     items: {
+      // other objects here won't be sanitized
       subitems: {
-        a: true,
+        // leave <a> and <b> in subitems
+        a: true, 
         b: true,
       }
     }
