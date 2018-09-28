@@ -210,11 +210,9 @@ CodeX Editor provides [API](https://github.com/codex-team/codex.editor/blob/mast
 Use it manually at the `save()` method or or pass `sanitizer` config to do it automatically.
 
 
-#### Options
+#### Sanitizer Configuration
 
-`sanitizerConfig` - is a rules dictationary.
-
-The example of sanitizerConfig
+The example of sanitizer configuration
 
 ```javascript
 let sanitizerConfig = {
@@ -223,24 +221,47 @@ let sanitizerConfig = {
 }
 ```
 
-Keys of `sanitizerConfig` is tags and the value is a rule. 
+Keys of config object is tags and the values is a rules. 
+
+##### Rule
+
+Rule can be boolean, object or function. Object is a dictionary of rules for tag's attributes.
 
 You can set `true`, to allow tag with all attributes or `false|{}` to remove all attributes,
 but leave tag.
 
 Also you can pass special attributes that you to leave.
+
 ```javascript
 a: { 
   href: true
 }
 ```
 
-If you want to use your custom handler
+If you want to use your custom handler, use should specify a function
+that returns a rule.
 
 ```javascript
 b: function(el) {
-  el.textContent += ': this is bolded text';
-  return el;
+  return !el.textContent.includes('bad text');
+}
+```
+
+or
+
+```javascript
+a: function(el) {
+  let anchorHref = el.getAttribute('href');
+  if (anchorHref && anchorHref.substring(0, 4) === 'http') {
+    return {
+      href: true,
+      target: '_blank'
+    }
+  } else {
+    return {
+      href: true
+    }
+  }
 }
 ```
 
