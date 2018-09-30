@@ -293,7 +293,7 @@ export default class Block {
      * if Tool provides custom sanitizer config
      * then use this config
      */
-    if (this.tool.sanitize) {
+    if (this.tool.sanitize && typeof this.tool.sanitize === 'object') {
       extractedBlock = this.sanitizeBlock(extractedBlock, this.tool.sanitize);
     }
 
