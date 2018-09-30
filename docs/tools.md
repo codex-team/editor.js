@@ -298,7 +298,7 @@ get sanitize() {
 Don't forget to set the rule for each embedded subitems otherwise they will
 not be sanitized.
   
-if you want to sanitize everything and and get data without any tags, use `{}` or just
+if you want to sanitize everything and get data without any tags, use `{}` or just
 ignore field in case if you want to get pure HTML
 
 ```javascript
