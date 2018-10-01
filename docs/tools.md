@@ -205,3 +205,118 @@ static get onPaste() {
 ```
 
 ### Sanitize
+
+CodeX Editor provides [API](sanitizer.md) to clean taint strings. 
+Use it manually at the `save()` method or or pass `sanitizer` config to do it automatically.
+
+
+#### Sanitizer Configuration
+
+The example of sanitizer configuration
+
+```javascript
+let sanitizerConfig = {
+  b: true, // leave <b>
+  p: true, // leave <p>
+}
+```
+
+Keys of config object is tags and the values is a rules. 
+
+##### Rule
+
+Rule can be boolean, object or function. Object is a dictionary of rules for tag's attributes.
+
+You can set `true`, to allow tag with all attributes or `false|{}` to remove all attributes,
+but leave tag.
+
+Also you can pass special attributes that you want to leave.
+
+```javascript
+a: { 
+  href: true
+}
+```
+
+If you want to use a custom handler, use should specify a function
+that returns a rule.
+
+```javascript
+b: function(el) {
+  return !el.textContent.includes('bad text');
+}
+```
+
+or
+
+```javascript
+a: function(el) {
+  let anchorHref = el.getAttribute('href');
+  if (anchorHref && anchorHref.substring(0, 4) === 'http') {
+    return {
+      href: true,
+      target: '_blank'
+    }
+  } else {
+    return {
+      href: true
+    }
+  }
+}
+```
+
+#### Manual sanitize
+
+Call API method `sanitizer.clean()` at the save method for each field in returned data.
+
+```javascript
+save() {
+  return {
+    text: this.api.sanitizer.clean(taintString, sanitizerConfig) 
+  }
+}
+```
+ 
+#### Automatic sanitize
+
+If you pass the sanitizer config, CodeX Editor will automatically sanitize your saved data.
+
+You can define rules for each field
+
+```javascript
+get sanitize() {
+  return {
+    text: {},
+    items: {
+      b: true, // leave <b>
+      a: false, // remove <a>
+    }
+  }
+}
+```
+
+Don't forget to set the rule for each embedded subitems otherwise they will
+not be sanitized.
+  
+if you want to sanitize everything and get data without any tags, use `{}` or just
+ignore field in case if you want to get pure HTML
+
+```javascript
+get sanitize() {
+  return {
+    text: {},
+    items: {}, // this rules will be used for all properties of this object
+    // or
+    items: {
+      // other objects here won't be sanitized
+      subitems: {
+        // leave <a> and <b> in subitems
+        a: true, 
+        b: true,
+      }
+    }
+  }
+}
+```
+
+

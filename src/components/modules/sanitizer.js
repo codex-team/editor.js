@@ -45,12 +45,10 @@ export default class Sanitizer extends Module {
   constructor({config}) {
     super({config});
 
-    // default config
-    this.defaultConfig = null;
     this._sanitizerInstance = null;
 
     /** Custom configuration */
-    this.sanitizerConfig = config.settings ? config.settings.sanitizer : {};
+    this.sanitizerConfig = config.settings ? config.settings.sanitizer : null;
 
     /** HTML Janitor library */
     this.sanitizerInstance = require('html-janitor');
@@ -66,30 +64,37 @@ export default class Sanitizer extends Module {
    * @param {HTMLJanitor} library - sanitizer extension
    */
   set sanitizerInstance(library) {
-    this._sanitizerInstance = new library(this.defaultConfig);
+    if (this.sanitizerConfig) {
+      this._sanitizerInstance = new library(this.sanitizerConfig);
+    }
+
+    return this._sanitizerInstance;
   }
 
   /**
    * Sets sanitizer configuration. Uses default config if user didn't pass the restriction
-   * @param {SanitizerConfig} config
    */
-  set sanitizerConfig(config) {
-    if (_.isEmpty(config)) {
-      this.defaultConfig = {
-        tags: {
-          p: {},
-          a: {
-            href: true,
-            target: '_blank',
-            rel: 'nofollow'
-          },
-          b: {},
-          i: {}
-        }
-      };
-    } else {
-      this.defaultConfig = config;
-    }
+  get defaultConfig() {
+    return {
+      tags: {
+        p: {},
+        a: {
+          href: true,
+          target: '_blank',
+          rel: 'nofollow'
+        },
+        b: {},
+        i: {}
+      }
+    };
+  }
+
+  /**
+   * Return sanitizer instance
+   * @return {null|library}
+   */
+  get sanitizerInstance() {
+    return this._sanitizerInstance;
   }
 
   /**
@@ -98,11 +103,25 @@ export default class Sanitizer extends Module {
    * @param {Object} customConfig - custom sanitizer configuration. Method uses default if param is empty
    * @return {String} clean HTML
    */
-  clean(taintString, customConfig = {}) {
-    if (_.isEmpty(customConfig)) {
-      return this._sanitizerInstance.clean(taintString);
+  clean(taintString, customConfig) {
+    if (customConfig && typeof customConfig === 'object') {
+      /**
+       * API client can use custom config to manage sanitize process
+       */
+      let newConfig = {
+        tags: customConfig
+      };
+
+      return Sanitizer.clean(taintString, newConfig);
     } else {
-      return Sanitizer.clean(taintString, customConfig);
+      /**
+       * Ignore sanitizing when nothing passed in config
+       */
+      if (!this.sanitizerInstance) {
+        return taintString;
+      } else {
+        return this.sanitizerInstance.clean(taintString);
+      }
     }
   }
 
