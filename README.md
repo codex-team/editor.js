@@ -8,6 +8,18 @@ We are glad to introduce the next version of CodeX Editor. Totally new core, str
 
 Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_editor) where you always find a support.
 
+### 2.1-beta changelog
+
+- `New` *Tools API* — support pasted content via drag-n-drop or from the Buffer. See [documentation](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#paste-handling) and [example](https://github.com/codex-editor/simple-image/blob/master/src/index.js#L177) at the Simple Image Tool.
+- `New` *Tools API* — new `sanitize` getter for Tools for automatic HTML sanitizing of returned data. See [documentation](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#sanitize) and [example](https://github.com/codex-editor/paragraph/blob/master/src/index.js#L121) at the Paragraph Tool
+- `New` Added `onChange`-callback, fired after any modifications at the Editor. See [documentation](https://github.com/codex-team/codex.editor/blob/master/docs/installation.md#features).
+- `New` New Inline Tool example — [Marker](https://github.com/codex-editor/marker)
+- `New` New Inline Tool example — [Code](https://github.com/codex-editor/code)
+- `New` New [CodeX Editor PHP](http://github.com/codex-team/codex.editor.backend) — example of server-side implementation with HTML purifying and data validation. 
+- `Improvements` - Improvements of Toolbar's position calculation. 
+- `Improvements` — Improved zero-configuration initialization.
+- and many little improvements. 
+
 ## Documentation
 
 While we develop the new Documentation Site with all stuff, you can check some available docs at the [docs/](docs/) dir.
