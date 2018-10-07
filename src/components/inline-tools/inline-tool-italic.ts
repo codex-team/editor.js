@@ -75,4 +75,14 @@ export default class ItalicInlineTool implements InlineTool {
     return 'CMD+I';
   }
 
+  /**
+   * Sanitizer Rule
+   * Leave <i> tags
+   * @return {object}
+   */
+  get sanitize(): object {
+    return {
+      i: true,
+    };
+  }
 }

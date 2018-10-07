@@ -75,6 +75,12 @@ export interface IBlocksAPI {
    * Insert new initial typed Block
    */
   insertNewBlock: () => void;
+
+  /**
+   * Returns tool config
+   * @param {string} name
+   */
+  getSanitizerConfig: (name: string) => object;
 }
 
 /**

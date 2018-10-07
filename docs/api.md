@@ -34,10 +34,15 @@ Methods that working with Blocks
 
 ```insertNewBlock()``` - insert new Block after working place
 
+```getSanitizerConfig()``` - method return allowed inline-tool's sanitizer rules
+
 #### ISanitizerAPI
 
 ```clean(taintString, config)``` - method uses HTMLJanitor to clean taint string.
 CodeX Editor provides basic config without attributes, but you can inherit by passing your own config.
+
+If Tool enables inline-tools, we get it's sanitizing rules and merge with your passed custom
+rules.
 
 Usage:
 

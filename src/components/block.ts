@@ -290,11 +290,18 @@ export default class Block {
     let extractedBlock = await this.tool.save(this.pluginsContent);
 
     /**
+     * get sanitizer config from enabled inline-tools
+     */
+    const baseConfig = this.api.blocks.getSanitizerConfig(this.name);
+
+    /**
      * if Tool provides custom sanitizer config
      * then use this config
+     *
+     * Merge custom config with base config
      */
     if (this.tool.sanitize && typeof this.tool.sanitize === 'object') {
-      extractedBlock = this.sanitizeBlock(extractedBlock, this.tool.sanitize);
+      extractedBlock = this.sanitizeBlock(extractedBlock, this.tool.sanitize, baseConfig);
     }
 
     /**
@@ -378,8 +385,9 @@ export default class Block {
    *
    * @param {Object|string} blockData - taint string or object/array that contains taint string
    * @param {Object} rules - object with sanitizer rules
+   * @param {Object} baseConfig - object with sanitizer rules from inline-tools
    */
-  private sanitizeBlock(blockData, rules) {
+  private sanitizeBlock(blockData, rules, baseConfig) {
 
     /**
      * Case 1: Block data is Array
@@ -391,7 +399,7 @@ export default class Block {
        * Create new "cleanData" array and fill in with sanitizer data
        */
       return blockData.map((item) => {
-        return this.sanitizeBlock(item, rules);
+        return this.sanitizeBlock(item, rules, baseConfig);
       });
     } else if (typeof blockData === 'object') {
 
@@ -412,9 +420,9 @@ export default class Block {
            * Case 1 & Case 2
            */
           if (rules[data]) {
-            cleanData[data] = this.sanitizeBlock(blockData[data], rules[data]);
+            cleanData[data] = this.sanitizeBlock(blockData[data], rules[data], baseConfig);
           } else if (_.isEmpty(rules)) {
-            cleanData[data] = this.sanitizeBlock(blockData[data], rules);
+            cleanData[data] = this.sanitizeBlock(blockData[data], rules, baseConfig);
           } else {
             cleanData[data] = blockData[data];
           }
@@ -424,9 +432,9 @@ export default class Block {
            * Case 3.
            */
           if (rules[data]) {
-            cleanData[data] = this.api.sanitizer.clean(blockData[data], rules[data]);
+            cleanData[data] = this.api.sanitizer.clean(blockData[data], Object.assign(baseConfig, rules[data]));
           } else {
-            cleanData[data] = this.api.sanitizer.clean(blockData[data], rules);
+            cleanData[data] = this.api.sanitizer.clean(blockData[data], Object.assign(baseConfig, rules));
           }
         }
       }

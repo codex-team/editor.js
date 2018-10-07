@@ -314,4 +314,19 @@ export default class LinkInlineTool implements InlineTool {
   private unlink(): void {
     document.execCommand(this.commandUnlink);
   }
+
+  /**
+   * Sanitizer Rule
+   * Leave <a> tags
+   * @return {object}
+   */
+  get sanitize(): object {
+    return {
+      a: {
+        href: true,
+        target: '_blank',
+        rel: 'nofollow',
+      },
+    };
+  }
 }

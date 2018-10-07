@@ -280,6 +280,8 @@ save() {
 #### Automatic sanitize
 
 If you pass the sanitizer config, CodeX Editor will automatically sanitize your saved data.
+Note that if your tool is allowed to use inline-tools, we get it's sanitizing rules
+and merge with your passed config.
 
 You can define rules for each field
 

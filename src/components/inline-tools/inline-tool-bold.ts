@@ -75,4 +75,15 @@ export default class BoldInlineTool implements InlineTool {
   public get shortcut(): string {
     return 'CMD+B';
   }
+
+  /**
+   * Sanitizer Rule
+   * Leave <b> tags
+   * @return {object}
+   */
+  get sanitize(): object {
+    return {
+      b: true,
+    };
+  }
 }
