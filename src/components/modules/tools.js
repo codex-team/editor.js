@@ -1,5 +1,7 @@
 const Paragraph = require('../tools/paragraph/dist/bundle');
 
+import Module from '../__module';
+
 /**
  * @module Codex Editor Tools Submodule
  *

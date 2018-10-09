@@ -10,6 +10,7 @@
  */
 
 import Selection from '../selection';
+import Module from '../__module';
 
 /**
  * @typedef {Caret} Caret

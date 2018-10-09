@@ -1,5 +1,4 @@
-declare var Module: any;
-
+import Module from '../__module';
 import { IBlocksAPI } from '../interfaces/api';
 import IInputOutputData from '../interfaces/input-output-data';
 import IModuleConfig from '../interfaces/module-config';

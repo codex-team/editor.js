@@ -6,6 +6,7 @@
  * @version 2.0.0
  */
 
+import Module from '../__module';
 /**
  * @typedef {Object} SavedData
  * @property {Date} time - saving proccess time

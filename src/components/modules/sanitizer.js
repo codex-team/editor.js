@@ -16,7 +16,7 @@
  * {@link SanitizerConfig}
  */
 
-
+import Module from '../__module';
 /**
  * @typedef {Object} SanitizerConfig
  * @property {Object} tags - define tags restrictions

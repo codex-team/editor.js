@@ -1,6 +1,6 @@
 import SelectionUtils from '../selection';
 
-declare var Module: any;
+import Module from '../__module';
 
 export default class DragNDrop extends Module {
 

@@ -1,3 +1,13 @@
 {
-  "plugins": ["transform-runtime"]
+  "presets": [
+    ["@babel/preset-env", {
+      "modules": "umd",
+      "useBuiltIns": "entry"
+    }]
+  ],
+  "plugins": [
+    "babel-plugin-add-module-exports",
+    "babel-plugin-class-display-name",
+    "@babel/plugin-transform-runtime"
+  ]
 }

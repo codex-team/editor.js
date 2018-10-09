@@ -6,7 +6,7 @@ import IEditorConfig from '../interfaces/editor-config';
 /**
  * Contains keyboard and mouse events binded on each Block by Block Manager
  */
-declare var Module: any;
+import Module from '../__module';
 
 /**
  * @class Shortcut
