@@ -8,6 +8,7 @@
  */
 
 import Block from '../block';
+import Module from '../__module';
 
 /**
  * @typedef {BlockManager} BlockManager

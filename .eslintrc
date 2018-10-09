@@ -83,6 +83,7 @@
         "Symbol": true,
         "$": true,
         "_": true,
-        "setTimeout": true
+        "setTimeout": true,
+        "process": true
     }
 }

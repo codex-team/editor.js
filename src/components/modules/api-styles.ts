@@ -1,4 +1,4 @@
-declare var Module: any;
+import Module from '../__module';
 
 import IModuleConfig from '../interfaces/module-config';
 import {IStylesAPI} from '../interfaces/api';

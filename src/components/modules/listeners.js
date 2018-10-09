@@ -8,6 +8,7 @@
  * @author Codex Team
  * @version 2.0.0
  */
+import Module from '../__module';
 
 /**
  * @typedef {Listeners} Listeners

@@ -1,3 +1,5 @@
+import Module from '../__module';
+
 /**
  *
  * «Toolbar» is the node that moves up/down over current block

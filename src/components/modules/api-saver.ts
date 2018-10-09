@@ -1,4 +1,4 @@
-declare var Module: any;
+import Module from '../__module';
 
 import {ISaverAPI} from '../interfaces/api';
 import IInputOutputData from '../interfaces/input-output-data';

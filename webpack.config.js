@@ -6,26 +6,26 @@
  */
 'use strict';
 
-var pkg  = require('./package.json');
-var path = require('path');
+const pkg = require('./package.json');
+const path = require('path');
 
 /**
  * Environment
  * @type {any}
  */
 const NODE_ENV = process.env.NODE_ENV || 'development';
-const VERSION  = process.env.VERSION || pkg.version;
+const VERSION = process.env.VERSION || pkg.version;
 
 /**
  * Plugins for bundle
  * @type {webpack}
  */
-var webpack        = require('webpack');
+const webpack = require('webpack');
 
 /**
  * File system
  */
-var fs = require('fs');
+const fs = require('fs');
 
 /**
  * Available CodeX Editor modules placed in components/modules folder
@@ -33,7 +33,7 @@ var fs = require('fs');
  * Folders and files starting with '_' will be skipped
  * @type {Array}
  */
-var editorModules = fs.readdirSync('./src/components/modules').filter( name => /.(j|t)s$/.test(name) && name.substring(0,1) !== '_' );
+const editorModules = fs.readdirSync('./src/components/modules').filter( name => /.(j|t)s$/.test(name) && name.substring(0,1) !== '_' );
 
 editorModules.forEach( name => {
   console.log('Require modules/' + name);
@@ -42,31 +42,10 @@ editorModules.forEach( name => {
 /**
  * Options for the Babel
  */
-var babelLoader = {
+const babelLoader = {
   loader: 'babel-loader',
   options: {
-    cacheDirectory: true,
-    presets: [
-      "env"
-    ],
-    plugins: [
-      /**
-       * Dont need to use «.default» after «export default Class Ui {}»
-       * @see  {@link https://github.com/59naga/babel-plugin-add-module-exports}
-       */
-      'add-module-exports',
-      /**
-       * Babel transforms some awesome ES6 features to ES5 with extra code, such as Class, JSX.
-       * This plugin makes all generated extra codes to one module which significantly reduces the bundle code size.
-       *
-       * {@link https://github.com/brianZeng/babel-plugin-transform-helper}
-       * @since 11 dec 2017 - removed due to plugin does not supports class inheritance
-       */
-      // ['babel-plugin-transform-helper', {
-      //   helperFilename:'build/__tmp_babel_helpers.js'
-      // }],
-      'class-display-name',
-    ]
+    cacheDirectory: true
   }
 };
 
@@ -113,7 +92,7 @@ module.exports = {
 
   plugins: [
 
-    /** Pass variables into modules */
+    /** Pass constiables into modules */
     new webpack.DefinePlugin({
       NODE_ENV: JSON.stringify(NODE_ENV),
       VERSION: JSON.stringify(VERSION),
@@ -140,8 +119,7 @@ module.exports = {
      */
     new webpack.ProvidePlugin({
       '_': 'utils',
-      '$': 'dom',
-      'Module': './../__module.ts',
+      '$': 'dom'
     }),
 
     /** Минифицируем CSS и JS */

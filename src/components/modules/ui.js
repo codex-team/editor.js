@@ -10,6 +10,7 @@
 import sprite from '../../../build/sprite.svg';
 
 import Selection from '../selection';
+import Module from '../__module';
 
 /**
  * @class

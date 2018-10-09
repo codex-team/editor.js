@@ -3,7 +3,7 @@ import IEditorConfig from '../interfaces/editor-config';
 import CaretClass from './caret';
 import SelectionUtils from '../selection';
 
-declare const Module: any;
+import Module from '../__module';
 declare const $: any;
 declare const _: any;
 

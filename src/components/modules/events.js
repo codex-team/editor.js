@@ -1,3 +1,5 @@
+import Module from '../__module';
+
 /**
  * @module eventDispatcher
  *

@@ -1,4 +1,4 @@
-declare var Module: any;
+import Module from '../__module';
 
 import {IToolbarAPI} from '../interfaces/api';
 import IModuleConfig from '../interfaces/module-config';

@@ -1,4 +1,5 @@
 import IEditorConfig from '../interfaces/editor-config';
+import Module from '../__module';
 
 /**
  * @class Toolbox

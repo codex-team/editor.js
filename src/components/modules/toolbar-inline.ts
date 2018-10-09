@@ -1,4 +1,4 @@
-declare var Module: any;
+import Module from '../__module';
 declare var $: any;
 
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
