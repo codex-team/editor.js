@@ -147,7 +147,7 @@ export default class Paste extends Module {
       return result;
     }, {});
 
-    const customConfig = {tags: Object.assign({}, toolsTags, Sanitizer.defaultConfig.tags)};
+    const customConfig = Object.assign({}, toolsTags, Sanitizer.defaultConfig.tags);
     const cleanData = Sanitizer.clean(htmlData, customConfig);
 
     /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
@@ -515,7 +515,7 @@ export default class Paste extends Module {
 
           return result;
         }, {});
-        const customConfig = {tags: Object.assign({}, toolTags, Sanitizer.defaultConfig.tags)};
+        const customConfig = Object.assign({}, toolTags, Sanitizer.defaultConfig.tags);
 
         content.innerHTML = Sanitizer.clean(content.innerHTML, customConfig);
 
