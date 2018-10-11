@@ -1,12 +1,15 @@
 'use strict';
 
+declare const VERSION: string;
+
 /**
  * Apply polyfills
  */
-import 'babel-core/register';
-if (!window || !window._babelPolyfill) require('babel-polyfill');
+import '@babel/register';
+
 import 'components/polyfills';
 import Core from './components/core';
+import {Configuration} from './components/interfaces/data-format';
 
 /**
  * Codex Editor
@@ -17,17 +20,20 @@ import Core from './components/core';
  * @author CodeX-Team <https://ifmo.su>
  */
 export default class CodexEditor {
+  public isReady: Promise<void>;
+  public destroy: () => void;
+
   /** Editor version */
-  static get version() {
+  static get version(): string {
     return VERSION;
   }
 
   /**
    * @constructor
    *
-   * @param {EditorConfig|String} [configuration] - user configuration
+   * @param {Configuration|String|undefined} [configuration] - user configuration
    */
-  constructor(configuration) {
+  public constructor(configuration?: Configuration|string) {
     /**
      * Set default onReady function
      */
@@ -48,7 +54,7 @@ export default class CodexEditor {
     /**
      * We need to export isReady promise in the constructor
      * as it can be used before other API methods are exported
-     * @type {Promise<any | never>}
+     * @type {Promise<void>}
      */
     this.isReady = editor.isReady.then(() => {
       this.exportAPI(editor);
@@ -61,7 +67,7 @@ export default class CodexEditor {
    *
    * @param editor
    */
-  exportAPI(editor) {
+  public exportAPI(editor: Core): void {
     const fieldsToExport = [ 'configuration' ];
     const destroy = () => {
       editor.moduleInstances.Listeners.removeAll();
@@ -70,13 +76,15 @@ export default class CodexEditor {
       editor = null;
 
       for (const field in this) {
-        delete this[field];
+        if (this.hasOwnProperty(field)) {
+          delete this[field];
+        }
       }
 
       Object.setPrototypeOf(this, null);
     };
 
-    fieldsToExport.forEach(field => {
+    fieldsToExport.forEach((field) => {
       this[field] = editor[field];
     });
 
@@ -84,6 +92,6 @@ export default class CodexEditor {
 
     Object.setPrototypeOf(this, editor.moduleInstances.API.methods);
 
-    delete this['exportAPI'];
+    delete this.exportAPI;
   }
 }

@@ -1,8 +1,8 @@
-declare var Module: any;
+import Module from '../../__module';
 
-import {ISaverAPI} from '../interfaces/api';
-import IInputOutputData from '../interfaces/input-output-data';
-import IModuleConfig from '../interfaces/module-config';
+import {ISaverAPI} from '../../interfaces/api';
+import IModuleConfig from '../../interfaces/module-config';
+import {EditorData} from '../../interfaces/data-format';
 
 /**
  * @class SaverAPI
@@ -30,7 +30,7 @@ export default class SaverAPI extends Module implements ISaverAPI {
   /**
    * Return Editor's data
    */
-  public save(): IInputOutputData {
+  public save(): Promise<EditorData> {
     return this.Editor.Saver.save();
   }
 }

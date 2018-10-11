@@ -275,11 +275,8 @@ export default class Block {
    * Call plugins merge method
    * @param {Object} data
    */
-  public mergeWith(data: object): Promise<void> {
-    return Promise.resolve()
-      .then(() => {
-        this.tool.merge(data);
-      });
+  public async mergeWith(data: object): Promise<void> {
+      await this.tool.merge(data);
   }
   /**
    * Extracts data from Block

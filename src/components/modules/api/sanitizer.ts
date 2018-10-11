@@ -1,7 +1,7 @@
-declare var Module: any;
+import Module from '../../__module';
 
-import {ISanitizerAPI} from '../interfaces/api';
-import IModuleConfig from '../interfaces/module-config';
+import {ISanitizerAPI} from '../../interfaces/api';
+import IModuleConfig from '../../interfaces/module-config';
 
 /**
  * @class API

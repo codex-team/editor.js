@@ -1,13 +1,13 @@
-declare var Module: any;
+import Module from '../../__module';
 declare var $: any;
 
-import BoldInlineTool from '../inline-tools/inline-tool-bold';
-import ItalicInlineTool from '../inline-tools/inline-tool-italic';
-import LinkInlineTool from '../inline-tools/inline-tool-link';
-import EditorConfig from '../interfaces/editor-config';
-import InlineTool from '../interfaces/tools/inline-tool';
-import SelectionUtils from '../selection';
-import _ from '../utils';
+import BoldInlineTool from '../../inline-tools/inline-tool-bold';
+import ItalicInlineTool from '../../inline-tools/inline-tool-italic';
+import LinkInlineTool from '../../inline-tools/inline-tool-link';
+import EditorConfig from '../../interfaces/editor-config';
+import InlineTool from '../../interfaces/tools/inline-tool';
+import SelectionUtils from '../../selection';
+import _ from '../../utils';
 
 /**
  * Inline toolbar with actions that modifies selected text fragment
@@ -17,6 +17,55 @@ import _ from '../utils';
  * |________________________|
  */
 export default class InlineToolbar extends Module {
+
+  /**
+   * Inline Toolbar Tools
+   * includes internal and external tools
+   *
+   * @returns Map<string, InlineTool>
+   */
+  get tools(): Map<string, InlineTool> {
+    if (!this.toolsInstances || this.toolsInstances.size === 0) {
+      const allTools = {...this.internalTools, ...this.externalTools};
+
+      this.toolsInstances = new Map();
+      for (const tool in allTools) {
+        if (allTools.hasOwnProperty(tool)) {
+          this.toolsInstances.set(tool, allTools[tool]);
+        }
+      }
+    }
+
+    return this.toolsInstances;
+  }
+
+  /**
+   * Returns internal inline tools
+   * Includes Bold, Italic, Link
+   */
+  private get internalTools(): {[name: string]: InlineTool} {
+    return {
+      bold: this.Editor.Tools.constructInline(BoldInlineTool),
+      italic: this.Editor.Tools.constructInline(ItalicInlineTool),
+      link: this.Editor.Tools.constructInline(LinkInlineTool),
+    };
+  }
+
+  /**
+   * Get external tools
+   * Tools that has isInline is true
+   */
+  private get externalTools(): {[name: string]: InlineTool} {
+    const result = {};
+
+    for (const tool in this.Editor.Tools.inline) {
+      if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
+        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool]);
+      }
+    }
+
+    return result;
+  }
 
   /**
    * CSS styles
@@ -59,27 +108,6 @@ export default class InlineToolbar extends Module {
    */
   constructor({config}) {
     super({config});
-  }
-
-  /**
-   * Inline Toolbar Tools
-   * includes internal and external tools
-   *
-   * @returns Map<string, InlineTool>
-   */
-  get tools(): Map<string, InlineTool> {
-    if (!this.toolsInstances || this.toolsInstances.size === 0) {
-      const allTools = {...this.internalTools, ...this.externalTools};
-
-      this.toolsInstances = new Map();
-      for (const tool in allTools) {
-        if (allTools.hasOwnProperty(tool)) {
-          this.toolsInstances.set(tool, allTools[tool]);
-        }
-      }
-    }
-
-    return this.toolsInstances;
   }
 
   /**
@@ -152,9 +180,21 @@ export default class InlineToolbar extends Module {
   }
 
   /**
+   * Hides Inline Toolbar
+   */
+  public close(): void {
+    this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
+    this.tools.forEach( (toolInstance, toolName) => {
+      if (typeof toolInstance.clear === 'function') {
+        toolInstance.clear();
+      }
+    });
+  }
+
+  /**
    * Shows Inline Toolbar
    */
-  private open() {
+  private open(): void {
     /**
      * Filter inline-tools and show only allowed by Block's Tool
      */
@@ -168,19 +208,7 @@ export default class InlineToolbar extends Module {
     /**
      * Call 'clear' method for Inline Tools (for example, 'link' want to clear input)
      */
-    this.tools.forEach( (toolInstance, toolName) => {
-      if (typeof toolInstance.clear === 'function') {
-        toolInstance.clear();
-      }
-    });
-  }
-
-  /**
-   * Hides Inline Toolbar
-   */
-  private close() {
-    this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
-    this.tools.forEach( (toolInstance, toolName) => {
+    this.tools.forEach( (toolInstance: InlineTool) => {
       if (typeof toolInstance.clear === 'function') {
         toolInstance.clear();
       }
@@ -216,7 +244,7 @@ export default class InlineToolbar extends Module {
     }
 
     // is enabled by current Block's Tool
-    const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode);
+    const currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
     if (!currentBlock) {
       return false;
@@ -232,7 +260,7 @@ export default class InlineToolbar extends Module {
    */
   private filterTools(): void {
     const currentSelection = SelectionUtils.get(),
-      currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode);
+      currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name),
       inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
@@ -335,7 +363,7 @@ export default class InlineToolbar extends Module {
   /**
    * Enable Tool shortcut with Editor Shortcuts Module
    * @param {InlineTool} tool - Tool instance
-   * @param {string} shortcut - shortcut according to the Shortcut Module format
+   * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
   private enableShortcuts(tool: InlineTool, shortcut: string): void {
     this.Editor.Shortcuts.add({
@@ -387,33 +415,5 @@ export default class InlineToolbar extends Module {
     this.tools.forEach( (toolInstance, toolName) => {
       toolInstance.checkState(SelectionUtils.get());
     });
-  }
-
-  /**
-   * Returns internal inline tools
-   * Includes Bold, Italic, Link
-   */
-  private get internalTools(): {[name: string]: InlineTool} {
-    return {
-      bold: this.Editor.Tools.constructInline(BoldInlineTool),
-      italic: this.Editor.Tools.constructInline(ItalicInlineTool),
-      link: this.Editor.Tools.constructInline(LinkInlineTool),
-    };
-  }
-
-  /**
-   * Get external tools
-   * Tools that has isInline is true
-   */
-  private get externalTools(): {[name: string]: InlineTool} {
-    const result = {};
-
-    for (const tool in this.Editor.Tools.inline) {
-      if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
-        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool]);
-      }
-    }
-
-    return result;
   }
 }

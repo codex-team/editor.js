@@ -1,4 +1,5 @@
 import IInputOutputData from './input-output-data';
+import {EditorData} from "./data-format";
 
 /**
  * CodeX Editor Public API
@@ -154,7 +155,7 @@ export interface ISaverAPI {
    *
    * @return {IInputOutputData}
    */
-  save: () => IInputOutputData;
+  save: () => Promise<EditorData>;
 }
 
 /**

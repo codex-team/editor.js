@@ -1,3 +1,6 @@
+import Module from '../../__module';
+import $ from '../../dom';
+
 /**
  * Block Settings
  *
@@ -10,24 +13,12 @@
  *  |________________________|
  */
 export default class BlockSettings extends Module {
-  /**
-   * @constructor
-   */
-  constructor({config}) {
-    super({config});
-
-    this.nodes = {
-      wrapper: null,
-      toolSettings: null,
-      defaultSettings: null
-    };
-  }
 
   /**
    * Module Events
    * @return {{opened: string, closed: string}}
    */
-  get events() {
+  public get events(): {opened: string, closed: string} {
     return {
       opened: 'block-settings-opened',
       closed: 'block-settings-closed',
@@ -46,7 +37,33 @@ export default class BlockSettings extends Module {
       toolSettings: 'ce-settings__plugin-zone',
       defaultSettings: 'ce-settings__default-zone',
 
-      button: 'ce-settings__button'
+      button: 'ce-settings__button',
+    };
+  }
+
+  /**
+   * Is Block Settings opened or not
+   * @returns {boolean}
+   */
+  public get opened(): boolean {
+    return this.nodes.wrapper.classList.contains(BlockSettings.CSS.wrapperOpened);
+  }
+  public nodes: {
+    wrapper: HTMLElement,
+    toolSettings: HTMLElement,
+    defaultSettings: HTMLElement,
+  };
+
+  /**
+   * @constructor
+   */
+  constructor({config}) {
+    super({config});
+
+    this.nodes = {
+      wrapper: null,
+      toolSettings: null,
+      defaultSettings: null,
     };
   }
 
@@ -57,7 +74,7 @@ export default class BlockSettings extends Module {
    *
    * @return {Element}
    */
-  make() {
+  public make(): void {
     this.nodes.wrapper = $.make('div', BlockSettings.CSS.wrapper);
 
     this.nodes.toolSettings = $.make('div', BlockSettings.CSS.toolSettings);
@@ -67,33 +84,9 @@ export default class BlockSettings extends Module {
   }
 
   /**
-   * Add Tool's settings
-   */
-  addToolSettings() {
-    if (typeof this.Editor.BlockManager.currentBlock.tool.renderSettings === 'function') {
-      $.append(this.nodes.toolSettings, this.Editor.BlockManager.currentBlock.tool.renderSettings());
-    }
-  }
-
-  /**
-   * Add default settings
-   */
-  addDefaultSettings() {
-    $.append(this.nodes.defaultSettings, this.Editor.BlockManager.currentBlock.renderTunes());
-  }
-
-  /**
-   * Is Block Settings opened or not
-   * @returns {boolean}
-   */
-  get opened() {
-    return this.nodes.wrapper.classList.contains(BlockSettings.CSS.wrapperOpened);
-  }
-
-  /**
    * Open Block Settings pane
    */
-  open() {
+  public open(): void {
     this.nodes.wrapper.classList.add(BlockSettings.CSS.wrapperOpened);
 
     /**
@@ -113,7 +106,7 @@ export default class BlockSettings extends Module {
   /**
    * Close Block Settings pane
    */
-  close() {
+  public close(): void {
     this.nodes.wrapper.classList.remove(BlockSettings.CSS.wrapperOpened);
 
     /** Clear settings */
@@ -122,5 +115,21 @@ export default class BlockSettings extends Module {
 
     /** Tell to subscribers that block settings is closed */
     this.Editor.Events.emit(this.events.closed);
+  }
+
+  /**
+   * Add Tool's settings
+   */
+  private addToolSettings(): void {
+    if (typeof this.Editor.BlockManager.currentBlock.tool.renderSettings === 'function') {
+      $.append(this.nodes.toolSettings, this.Editor.BlockManager.currentBlock.tool.renderSettings());
+    }
+  }
+
+  /**
+   * Add default settings
+   */
+  private addDefaultSettings(): void {
+    $.append(this.nodes.defaultSettings, this.Editor.BlockManager.currentBlock.renderTunes());
   }
 }

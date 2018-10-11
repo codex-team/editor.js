@@ -1,60 +1,59 @@
-import BlockEvents from '../modules/block-events';
-import InlineToolbar from '../modules/toolbar-inline';
-import ListenerAPI from '../modules/api-listener';
-import Module from '../__module';
-import SanitizerAPI from '../modules/api-sanitizer';
-import SaverAPI from '../modules/api-saver';
-import SelectionAPI from '../modules/api-selection';
-import ToolbarAPI from '../modules/api-toolbar';
-import API from '../modules/api';
-import StylesAPI from '../modules/api-styles';
-import Shortcuts from '../modules/shortcuts';
+import UI from '../modules/ui';
+import BlockEvents from '../modules/blockEvents';
+import Listeners from '../modules/listeners'
+import Toolbar from "../modules/toolbar";
+import InlineToolbar from "../modules/toolbar/inline";
+import Toolbox from "../modules/toolbar/toolbox";
+import BlockSettings from "../modules/toolbar/blockSettings";
+import Events from "../modules/events";
+import Shortcuts from "../modules/shortcuts";
+import Paste from "../modules/paste";
+import DragNDrop from "../modules/dragNDrop";
+import ModificationsObserver from "../modules/modificationsObserver";
+import Renderer from "../modules/renderer";
+import Sanitizer from "../modules/sanitizer";
+import Tools from "../modules/tools";
+import API from "../modules/api";
+import Caret from "../modules/caret";
+import BlockManager from "../modules/blockManager";
+import BlocksAPI from "../modules/api/blocks";
+import CaretAPI from "../modules/api/caret";
+import EventsAPI from "../modules/api/events";
+import ListenerAPI from "../modules/api/listener";
+import SanitizerAPI from "../modules/api/sanitizer";
+import ToolbarAPI from "../modules/api/toolbar";
+import StylesAPI from "../modules/api/styles";
+import SelectionAPI from "../modules/api/selection";
+import SaverAPI from "../modules/api/saver";
+import Saver from "../modules/saver";
 
-export default interface IEditor {
-
-  API: API;
-
-  BlockEvents: BlockEvents;
-
-  BlockSettings: Module; // @todo create interface
-
-  BlocksAPI: Module; // @todo create interface
-
-  Caret: Module; // @todo create interface
-
-  Events: Module; // @todo create interface
-
-  EventsAPI: Module; // @todo create interface
-
-  InlineToolbar: InlineToolbar;
-
-  ListenerAPI: ListenerAPI;
-
-  Listeners: Module; // @todo create interface
-
-  Renderer: Module; // @todo create interface
-
-  Sanitizer: Module; // @todo create interface
-
-  SanitizerAPI: SanitizerAPI;
-
-  Saver: Module; // @todo create interface
-
-  SaverAPI: SaverAPI;
-
-  SelectionAPI: SelectionAPI;
-
-  Shortcuts: Shortcuts;
-
-  StylesAPI: StylesAPI;
-
-  Toolbar: Module; // @todo create interface
-
-  ToolbarAPI: ToolbarAPI;
-
-  Toolbox: Module; // @todo create interface
-
-  Tools: Module; // @todo create interface
-
-  UI: Module; // @todo create interface
+export default interface EditorModules {
+  UI: UI,
+  BlockEvents: BlockEvents,
+  Listeners: Listeners
+  Toolbar: Toolbar,
+  InlineToolbar: InlineToolbar,
+  Toolbox: Toolbox,
+  BlockSettings: BlockSettings,
+  Events: Events,
+  Shortcuts: Shortcuts,
+  Paste: Paste,
+  DragNDrop: DragNDrop,
+  ModificationsObserver: ModificationsObserver,
+  Renderer: Renderer,
+  Sanitizer: Sanitizer,
+  Tools: Tools,
+  API: API,
+  Caret: Caret,
+  Saver: Saver,
+  BlockManager: BlockManager,
+  BlocksAPI: BlocksAPI,
+  CaretAPI: CaretAPI,
+  EventsAPI: EventsAPI,
+  ListenerAPI: ListenerAPI,
+  SanitizerAPI: SanitizerAPI,
+  SaverAPI: SaverAPI,
+  SelectionAPI: SelectionAPI,
+  StylesAPI: StylesAPI,
+  ToolbarAPI: ToolbarAPI,
 }

@@ -1,3 +1,8 @@
+import Module from '../__module';
+import {Configuration} from '../interfaces/data-format';
+import IBlockToolData from '../interfaces/tools/block-tool-data';
+import _ from '../utils';
+
 /**
  * Codex Editor Renderer Module
  *
@@ -9,9 +14,9 @@
 export default class Renderer extends Module {
   /**
    * @constructor
-   * @param {EditorConfig} config
+   * @param {Configuration} config
    */
-  constructor({config}) {
+  constructor({config}: {config: Configuration}) {
     super({config});
   }
 
@@ -45,14 +50,8 @@ export default class Renderer extends Module {
    * Make plugin blocks from array of plugin`s data
    * @param {RendererBlocks[]} blocks
    */
-  render(blocks) {
-    let chainData = [];
-
-    for (let i = 0; i < blocks.length; i++) {
-      chainData.push({
-        function: () => this.insertBlock(blocks[i])
-      });
-    }
+  public render(blocks: IBlockToolData[]): Promise<void> {
+    const chainData = blocks.map((block) => ({function: () => this.insertBlock(block)}));
 
     return _.sequence(chainData);
   }
@@ -63,20 +62,20 @@ export default class Renderer extends Module {
    * Insert block to working zone
    *
    * @param {Object} item
-   * @returns {Promise.<T>}
+   * @returns {Promise<void>}
    * @private
    */
-  insertBlock(item) {
-    let tool = item.type,
-      data = item.data,
-      settings = item.settings;
+  public async insertBlock(item): Promise<void> {
+    const tool = item.type;
+    const data = item.data;
+    const settings = item.settings;
 
     if (tool in this.Editor.Tools.available) {
       try {
         this.Editor.BlockManager.insert(tool, data, settings);
       } catch (error) {
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
-        Promise.reject(error);
+        throw Error(error);
       }
     } else {
       /**
@@ -86,7 +85,5 @@ export default class Renderer extends Module {
        */
       _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial CodeX Editor config.`, 'warn');
     }
-
-    return Promise.resolve();
   }
 }

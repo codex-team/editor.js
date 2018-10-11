@@ -15,7 +15,7 @@
  *
  * {@link SanitizerConfig}
  */
-
+import Module from '../__module';
 
 /**
  * @typedef {Object} SanitizerConfig
@@ -33,6 +33,33 @@
  * }
  */
 export default class Sanitizer extends Module {
+  /**
+   * Cleans string from unwanted tags
+   * @static
+   *
+   * Method allows to use default config
+   *
+   * @param {String} taintString - taint string
+   * @param {SanitizerConfig} customConfig - allowed tags
+   *
+   * @return {String} clean HTML
+   */
+  public static clean(taintString: string, customConfig: object): string {
+    const newInstance = new Sanitizer({
+      config: {
+        settings: {
+          sanitizer: customConfig,
+        },
+      },
+    });
+
+    return newInstance.clean(taintString);
+  }
+
+  // tslint:disable-next-line
+  private _sanitizerInstance: any;
+  private readonly sanitizerConfig: object;
+
   /**
    * Initializes Sanitizer module
    * Sets default configuration if custom not exists
@@ -63,38 +90,36 @@ export default class Sanitizer extends Module {
    *
    * @param {HTMLJanitor} library - sanitizer extension
    */
-  set sanitizerInstance(library) {
+  private set sanitizerInstance(library: any) {
     if (this.sanitizerConfig) {
       this._sanitizerInstance = new library(this.sanitizerConfig);
     }
+  }
 
+  /**
+   * Return sanitizer instance
+   * @return {*}
+   */
+  private get sanitizerInstance(): any {
     return this._sanitizerInstance;
   }
 
   /**
    * Sets sanitizer configuration. Uses default config if user didn't pass the restriction
    */
-  get defaultConfig() {
+  public get defaultConfig(): any {
     return {
       tags: {
         p: {},
         a: {
           href: true,
           target: '_blank',
-          rel: 'nofollow'
+          rel: 'nofollow',
         },
         b: {},
-        i: {}
-      }
+        i: {},
+      },
     };
-  }
-
-  /**
-   * Return sanitizer instance
-   * @return {null|library}
-   */
-  get sanitizerInstance() {
-    return this._sanitizerInstance;
   }
 
   /**
@@ -103,13 +128,13 @@ export default class Sanitizer extends Module {
    * @param {Object} customConfig - custom sanitizer configuration. Method uses default if param is empty
    * @return {String} clean HTML
    */
-  clean(taintString, customConfig) {
+  public clean(taintString: string, customConfig?: object): string {
     if (customConfig && typeof customConfig === 'object') {
       /**
        * API client can use custom config to manage sanitize process
        */
-      let newConfig = {
-        tags: customConfig
+      const newConfig = {
+        tags: customConfig,
       };
 
       return Sanitizer.clean(taintString, newConfig);
@@ -123,28 +148,5 @@ export default class Sanitizer extends Module {
         return this.sanitizerInstance.clean(taintString);
       }
     }
-  }
-
-  /**
-   * Cleans string from unwanted tags
-   * @static
-   *
-   * Method allows to use default config
-   *
-   * @param {String} taintString - taint string
-   * @param {SanitizerConfig} customConfig - allowed tags
-   *
-   * @return {String} clean HTML
-   */
-  static clean(taintString, customConfig) {
-    let newInstance = new Sanitizer({
-      config: {
-        settings: {
-          sanitizer: customConfig
-        }
-      }
-    });
-
-    return newInstance.clean(taintString);
   }
 }

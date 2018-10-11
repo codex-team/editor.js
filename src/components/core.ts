@@ -1,19 +1,24 @@
-/**
- * @typedef {Core} Core - editor core class
- */
+import $ from './dom';
+import _ from './utils';
+import {Configuration, ToolData} from './interfaces/data-format';
 
 /**
- * Dynamically imported utils
- *
- * @typedef {Dom}   $      - {@link components/dom.js}
- * @typedef {Util}  _      - {@link components/utils.js}
+ * @typedef {Core} Core - editor core class
  */
 
 /**
  * Require Editor modules places in components/modules dir
  */
 // eslint-disable-next-line
-let modules = editorModules.map( module => require('./modules/' + module ));
+const context = require.context('./modules', true);
+
+const modules = [];
+
+context.keys().forEach((key) => {
+  if (key.match(/^\.\/[^_][\w/]*\.([tj])s$/)) {
+    modules.push(context(key));
+  }
+});
 
 /**
  * @class Core
@@ -26,17 +31,15 @@ let modules = editorModules.map( module => require('./modules/' + module ));
  * @type {Core}
  */
 export default class Core {
+  public config: Configuration;
+  public moduleInstances: any;
+  public isReady: Promise<void>;
+
   /**
-   * @param {EditorConfig} config - user configuration
+   * @param {Configuration} config - user configuration
    *
    */
-  constructor(config) {
-    /**
-     * Configuration object
-     * @type {EditorConfig}
-     */
-    this.config = {};
-
+  constructor(config?: Configuration|string) {
     /**
      * @typedef {Object} EditorComponents
      * @property {BlockManager} BlockManager
@@ -62,13 +65,13 @@ export default class Core {
     });
 
     Promise.resolve()
-      .then(() => {
+      .then(async () => {
         this.configuration = config;
-      })
-      .then(() => this.validate())
-      .then(() => this.init())
-      .then(() => this.start())
-      .then(() => {
+
+        await this.validate();
+        await this.init();
+        await this.start();
+
         _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧');
 
         setTimeout(() => {
@@ -78,7 +81,7 @@ export default class Core {
           onReady();
         }, 500);
       })
-      .catch(error => {
+      .catch((error) => {
         _.log(`CodeX Editor does not ready because of ${error}`, 'error');
 
         /**
@@ -90,17 +93,21 @@ export default class Core {
 
   /**
    * Setting for configuration
-   * @param {IEditorConfig|string|null} config
+   * @param {Configuration|string|undefined} config
    */
-  set configuration(config) {
+  set configuration(config: Configuration|string) {
     /**
      * Process zero-configuration or with only holderId
      */
     if (typeof config === 'string' || typeof config === 'undefined') {
-      config = {
-        holderId: config
+      this.config = {
+        holderId: config || 'codex-editor',
       };
+    } else {
+      this.config = config;
     }
+
+    config = config as Configuration;
 
     /**
      * If initial Block's Tool was not passed, use the Paragraph Tool
@@ -112,24 +119,23 @@ export default class Core {
      * Uses in case when there is no blocks passed
      * @type {{type: (*), data: {text: null}}}
      */
-    let initialBlockData = {
+    const initialBlockData = {
       type : this.config.initialBlock,
-      data : {}
+      data : {},
     };
 
-    this.config.holderId = config.holderId || 'codex-editor';
     this.config.placeholder = config.placeholder || 'write your story...';
     this.config.sanitizer = config.sanitizer || {
       p: true,
       b: true,
-      a: true
+      a: true,
     };
 
     this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
     this.config.tools = config.tools || {};
     this.config.data = config.data || {};
-    this.config.onReady = config.onReady || function () {};
-    this.config.onChange = config.onChange || function () {};
+    this.config.onReady = config.onReady || (() => {});
+    this.config.onChange = config.onChange || (() => {});
 
     /**
      * Initialize Blocks to pass data to the Renderer
@@ -146,39 +152,43 @@ export default class Core {
 
   /**
    * Returns private property
-   * @returns {EditorConfig}
+   * @returns {Configuration}
    */
-  get configuration() {
+  get configuration(): Configuration|string {
     return this.config;
   }
 
   /**
    * Checks for required fields in Editor's config
-   * @returns {void|Promise<string>}
+   * @returns {Promise<void>}
    */
-  validate() {
+  public async validate(): Promise<void> {
     /**
      * Check if holderId is not empty
      */
     if (!this.config.holderId) {
-      return Promise.reject('«holderId» param must being not empty');
+      throw Error('«holderId» param must being not empty');
     }
 
     /**
      * Check for a holder element's existence
      */
     if (!$.get(this.config.holderId)) {
-      return Promise.reject(`element with ID «${this.config.holderId}» is missing. Pass correct holder's ID.`);
+      throw Error(`element with ID «${this.config.holderId}» is missing. Pass correct holder's ID.`);
     }
 
     /**
      * Check Tools for a class containing
      */
-    for (let toolName in this.config.tools) {
-      const tool = this.config.tools[toolName];
+    for (const toolName in this.config.tools) {
+      if (this.config.tools.hasOwnProperty(toolName)) {
+        const tool = this.config.tools[toolName];
 
-      if (!_.isFunction(tool) && !_.isFunction(tool.class)) {
-        return Promise.reject(`Tool «${toolName}» must be a constructor function or an object with that function in the «class» property`);
+        if (!_.isFunction(tool) && !_.isFunction((tool as ToolData).class)) {
+          throw Error(
+            `Tool «${toolName}» must be a constructor function or an object with function in the «class» property`,
+          );
+        }
       }
     }
   }
@@ -188,7 +198,7 @@ export default class Core {
    *  - make and save instances
    *  - configure
    */
-  init() {
+  public init() {
     /**
      * Make modules instances and save it to the @property this.moduleInstances
      */
@@ -203,8 +213,8 @@ export default class Core {
   /**
    * Make modules instances and save it to the @property this.moduleInstances
    */
-  constructModules() {
-    modules.forEach( Module => {
+  public constructModules(): void {
+    modules.forEach( (Module) => {
       try {
         /**
          * We use class name provided by displayName property
@@ -214,7 +224,7 @@ export default class Core {
          * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
          */
         this.moduleInstances[Module.displayName] = new Module({
-          config : this.configuration
+          config : this.configuration,
         });
       } catch ( e ) {
         console.log('Module %o skipped because %o', Module, e);
@@ -227,22 +237,24 @@ export default class Core {
    *  - pass other modules to the 'state' property
    *  - ...
    */
-  configureModules() {
-    for(let name in this.moduleInstances) {
-      /**
-       * Module does not need self-instance
-       */
-      this.moduleInstances[name].state = this.getModulesDiff( name );
+  public configureModules(): void {
+    for (const name in this.moduleInstances) {
+      if (this.moduleInstances.hasOwnProperty(name)) {
+        /**
+         * Module does not need self-instance
+         */
+        this.moduleInstances[name].state = this.getModulesDiff(name);
+      }
     }
   }
 
   /**
    * Return modules without passed name
    */
-  getModulesDiff( name ) {
-    let diff = {};
+  public getModulesDiff( name ) {
+    const diff = {};
 
-    for(let moduleName in this.moduleInstances) {
+    for (const moduleName in this.moduleInstances) {
       /**
        * Skip module with passed name
        */
@@ -261,7 +273,7 @@ export default class Core {
    * Get list of modules that needs to be prepared and return a sequence (Promise)
    * @return {Promise}
    */
-  async start() {
+  public async start() {
     const modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste', 'DragNDrop', 'ModificationsObserver'];
 
     await modulesToPrepare.reduce(
@@ -275,9 +287,9 @@ export default class Core {
         }
         _.log(`Preparing ${module} module`, 'timeEnd');
       }),
-      Promise.resolve()
+      Promise.resolve(),
     );
 
     return this.moduleInstances.Renderer.render(this.config.data.blocks);
   }
-};
+}

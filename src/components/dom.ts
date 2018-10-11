@@ -34,9 +34,9 @@ export default class Dom {
    * @param  {string} tagName           - new Element tag name
    * @param  {array|string} classNames  - list or name of CSS classname(s)
    * @param  {Object} attributes        - any attributes
-   * @return {Element}
+   * @return {HTMLElement}
    */
-  public static make(tagName: string, classNames: string|string[] = null, attributes: object = {}): Element {
+  public static make(tagName: string, classNames: string|string[] = null, attributes: object = {}): HTMLElement {
     const el = document.createElement(tagName);
 
     if ( Array.isArray(classNames) ) {
@@ -87,7 +87,7 @@ export default class Dom {
    * @param  {Element|DocumentFragment} parent    - where to append
    * @param  {Element|Element[]} elements - element or elements list
    */
-  public static append(parent: Element|DocumentFragment, elements: Element|Element[]): void {
+  public static append(parent: Element|DocumentFragment, elements: Element|Element[]|DocumentFragment): void {
     if ( Array.isArray(elements) ) {
       elements.forEach( (el) => parent.appendChild(el) );
     } else {

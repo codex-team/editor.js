@@ -1,12 +1,11 @@
-
 import Shortcut from '@codexteam/shortcuts';
-import {IShortcut, IShortcuts} from '../interfaces/shortcuts';
+import {ShortcutData} from '../interfaces/shortcuts';
 import IEditorConfig from '../interfaces/editor-config';
 
 /**
  * Contains keyboard and mouse events binded on each Block by Block Manager
  */
-declare var Module: any;
+import Module from '../__module';
 
 /**
  * @class Shortcut
@@ -14,12 +13,12 @@ declare var Module: any;
  *
  * Internal Shortcuts Module
  */
-export default class Shortcuts extends Module implements IShortcuts {
+export default class Shortcuts extends Module {
   /**
    * All registered shortcuts
-   * @type {IShortcut[]}
+   * @type {Shortcut[]}
    */
-  private registeredShortcuts: IShortcut[];
+  private registeredShortcuts: Shortcut[];
 
   /**
    * @constructor
@@ -32,9 +31,9 @@ export default class Shortcuts extends Module implements IShortcuts {
 
   /**
    * Register shortcut
-   * @param {IShortcut} shortcut
+   * @param {ShortcutData} shortcut
    */
-  public add(shortcut: IShortcut): void {
+  public add(shortcut: ShortcutData): void {
     const newShortcut = new Shortcut({
       name: shortcut.name,
       on: document,
@@ -46,9 +45,12 @@ export default class Shortcuts extends Module implements IShortcuts {
 
   /**
    * Remove shortcut
-   * @param {IShortcut} shortcut
+   * @param {ShortcutData} shortcut
    */
   public remove(shortcut: string): void {
-    // Remove
+    const index = this.registeredShortcuts.findIndex((shc) => shc.name === shortcut);
+
+    this.registeredShortcuts[index].remove();
+    this.registeredShortcuts.splice(index, 1);
   }
 }

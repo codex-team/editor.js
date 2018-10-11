@@ -13,5 +13,8 @@
       "named-imports-order": "case-insensitive"
     }],
     "no-empty": false
+  },
+  "globals": {
+    "require": true
   }
 }

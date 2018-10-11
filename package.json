@@ -15,16 +15,17 @@
     "url": "git+https://github.com/codex-team/codex.editor.git"
   },
   "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/plugin-transform-runtime": "^7.1.0",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "@babel/register": "^7.0.0",
+    "@babel/runtime": "^7.1.2",
     "@codexteam/shortcuts": "^1.0.0",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.5",
+    "@types/webpack": "^4.4.16",
+    "babel-loader": "^8.0.4",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-class-display-name": "^2.1.0",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-stage-0": "^6.24.1",
-    "babel-runtime": "^6.26.0",
     "css-loader": "^0.28.11",
     "eslint": "^4.19.1",
     "eslint-loader": "^2.1.0",
@@ -47,6 +48,7 @@
     "postcss-nesting": "^6.0.0",
     "postcss-smart-import": "^0.7.6",
     "raw-loader": "^0.5.1",
+    "require-dir": "^1.1.0",
     "rimraf": "^2.6.2",
     "stylelint": "^9.3.0",
     "svg-sprite-generator": "0.0.7",
@@ -54,7 +56,10 @@
     "tslint": "^5.11.0",
     "tslint-loader": "^3.6.0",
     "typescript": "^2.9.2",
-    "webpack": "^4.16.2",
+    "webpack": "4.20.2",
     "webpack-cli": "^3.1.0"
+  },
+  "dependencies": {
+    "@types/webpack-env": "^1.13.6"
   }
 }

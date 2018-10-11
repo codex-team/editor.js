@@ -1,8 +1,8 @@
-declare var Module: any;
+import Module from '../../__module';
 
-import {ISelectionAPI} from '../interfaces/api';
-import IModuleConfig from '../interfaces/module-config';
-import Selection from '../selection';
+import {ISelectionAPI} from '../../interfaces/api';
+import IModuleConfig from '../../interfaces/module-config';
+import Selection from '../../selection';
 
 /**
  * @class API

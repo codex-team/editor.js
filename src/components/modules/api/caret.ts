@@ -1,7 +1,7 @@
-declare var Module: any;
+import Module from '../../__module';
 
-import {ICaretAPI} from '../interfaces/api';
-import IModuleConfig from '../interfaces/module-config';
+import {ICaretAPI} from '../../interfaces/api';
+import IModuleConfig from '../../interfaces/module-config';
 
 /**
  * @class CaretAPI

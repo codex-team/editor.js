@@ -1,7 +1,7 @@
-declare var Module: any;
+import Module from '../../__module';
 
-import {IEventsAPI} from '../interfaces/api';
-import IModuleConfig from '../interfaces/module-config';
+import {IEventsAPI} from '../../interfaces/api';
+import IModuleConfig from '../../interfaces/module-config';
 
 /**
  * @class EventsAPI

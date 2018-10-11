@@ -1,3 +1,5 @@
+import Module from '../__module';
+
 /**
  * @module eventDispatcher
  *
@@ -12,6 +14,8 @@
  * @property {Object} subscribers - all subscribers grouped by event name
  */
 export default class Events extends Module {
+  private subscribers: any;
+
   /**
    * @constructor
    */
@@ -26,7 +30,7 @@ export default class Events extends Module {
    * @param {String} eventName - event name
    * @param {Function} callback - subscriber
    */
-  on(eventName, callback) {
+  public on(eventName: string, callback: (data: any) => void) {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }
@@ -41,13 +45,13 @@ export default class Events extends Module {
    * @param {String} eventName - event name
    * @param {Object} data - subscribers get this data when they were fired
    */
-  emit(eventName, data) {
+  public emit(eventName: string, data?: any): void {
     if (!this.subscribers[eventName]) {
       return;
     }
 
-    this.subscribers[eventName].reduce(function (previousData, currentHandler) {
-      let newData = currentHandler(previousData);
+    this.subscribers[eventName].reduce((previousData, currentHandler) => {
+      const newData = currentHandler(previousData);
 
       return newData ? newData : previousData;
     }, data);
@@ -59,8 +63,8 @@ export default class Events extends Module {
    * @param eventName
    * @param callback
    */
-  off(eventName, callback) {
-    for(let i = 0; i < this.subscribers[eventName].length; i++) {
+  public off(eventName: string, callback: (data: any) => void): void {
+    for (let i = 0; i < this.subscribers[eventName].length; i++) {
       if (this.subscribers[eventName][i] === callback) {
         delete this.subscribers[eventName][i];
         break;
@@ -72,7 +76,7 @@ export default class Events extends Module {
    * Destroyer
    * clears subsribers list
    */
-  destroy() {
+  public destroy(): void {
     this.subscribers = null;
   }
 }

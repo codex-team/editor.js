@@ -1,3 +1,6 @@
+import Module from '../../__module';
+import $ from '../../dom';
+
 /**
  *
  * «Toolbar» is the node that moves up/down over current block
@@ -50,6 +53,15 @@
  * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
  */
 export default class Toolbar extends Module {
+  public nodes: {
+    wrapper: HTMLElement,
+    content: HTMLElement,
+    actions: HTMLElement,
+    plusButton: HTMLElement,
+    blockActionsButtons: HTMLElement,
+    settingsToggler: HTMLElement,
+  };
+
   /**
    * @constructor
    */
@@ -96,17 +108,16 @@ export default class Toolbar extends Module {
   /**
    * Makes toolbar
    */
-  make() {
+  public make(): void {
     this.nodes.wrapper = $.make('div', Toolbar.CSS.toolbar);
 
     /**
      * Make Content Zone and Actions Zone
      */
-    ['content',  'actions'].forEach( el => {
+    ['content',  'actions'].forEach( (el) => {
       this.nodes[el] = $.make('div', Toolbar.CSS[el]);
       $.append(this.nodes.wrapper, this.nodes[el]);
     });
-
 
     /**
      * Fill Content Zone:
@@ -116,8 +127,7 @@ export default class Toolbar extends Module {
     this.nodes.plusButton = $.make('div', Toolbar.CSS.plusButton);
     $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
     $.append(this.nodes.content, this.nodes.plusButton);
-    this.nodes.plusButton.addEventListener('click', event => this.plusButtonClicked(event), false);
-
+    this.Editor.Listeners.on(this.nodes.plusButton, 'click', () => this.plusButtonClicked(), false);
 
     /**
      * Make a Toolbox
@@ -159,14 +169,14 @@ export default class Toolbar extends Module {
    * Move Toolbar to the Current Block
    * @param {Boolean} forceClose - force close Toolbar Settings and Toolbar
    */
-  move(forceClose = true) {
+  public move(forceClose: boolean = true): void {
     if (forceClose) {
       /** Close Toolbox when we move toolbar */
       this.Editor.Toolbox.close();
       this.Editor.BlockSettings.close();
     }
 
-    let currentBlock = this.Editor.BlockManager.currentBlock.holder;
+    const currentBlock = this.Editor.BlockManager.currentBlock.holder;
 
     /**
      * If no one Block selected as a Current
@@ -192,7 +202,7 @@ export default class Toolbar extends Module {
   /**
    * Open Toolbar with Plus Button
    */
-  open() {
+  public open(): void {
     /**
      * Wait Block rendering for correct height computing
      */
@@ -206,14 +216,14 @@ export default class Toolbar extends Module {
    * returns toolbar opened state
    * @return {Boolean}
    */
-  get opened() {
+  public get opened(): boolean {
     return this.nodes.wrapper.classList.contains(Toolbar.CSS.toolbarOpened);
   }
 
   /**
    * Close the Toolbar
    */
-  close() {
+  public close(): void {
     this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
 
     /** Close components */
@@ -225,7 +235,7 @@ export default class Toolbar extends Module {
    * Plus Button public methods
    * @return {{hide: function(): void, show: function(): void}}
    */
-  get plusButton() {
+  public get plusButton(): {hide: () => void, show: () => void} {
     return {
       hide: () => this.nodes.plusButton.classList.add(Toolbar.CSS.plusButtonHidden),
       show: () => {
@@ -233,7 +243,7 @@ export default class Toolbar extends Module {
           return;
         }
         this.nodes.plusButton.classList.remove(Toolbar.CSS.plusButtonHidden);
-      }
+      },
     };
   }
 
@@ -241,7 +251,7 @@ export default class Toolbar extends Module {
    * Handler for Plus Button
    * @param {MouseEvent} event
    */
-  plusButtonClicked() {
+  private plusButtonClicked(): void {
     this.Editor.Toolbox.toggle();
   }
 
@@ -249,19 +259,17 @@ export default class Toolbar extends Module {
    * Bind events on the Toolbar Elements:
    * - Block Settings
    */
-  bindEvents() {
+  private bindEvents(): void {
     /**
      * Settings toggler
      */
-    this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', (event) => {
-      this.settingsTogglerClicked(event);
-    });
+    this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', () => this.settingsTogglerClicked());
   }
 
   /**
    * Clicks on the Block Settings toggler
    */
-  settingsTogglerClicked() {
+  private settingsTogglerClicked(): void {
     if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
     } else {

@@ -31,7 +31,7 @@ interface Document {
  * Working with selection
  * @typedef {Selection} Selection
  */
-export default class SelectionUtils {
+export default class SelectionUtils extends Selection {
 
   /**
    * Editor styles

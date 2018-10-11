@@ -1,18 +1,11 @@
 /**
  * Contains keyboard and mouse events binded on each Block by Block Manager
  */
-declare var Module: any;
+import Module from '../__module';
 declare var $: any;
 declare var _: any;
 
 export default class BlockEvents extends Module {
-  /**
-   * @constructor
-   */
-  constructor({config}) {
-    super({config});
-  }
-
   /**
    * All keydowns on Block
    * @param {KeyboardEvent} event - keydown
@@ -126,7 +119,7 @@ export default class BlockEvents extends Module {
    * @param {DragEvent} e
    */
   public dragOver(e: DragEvent) {
-    const block = this.Editor.BlockManager.getBlockByChildNode(e.target);
+    const block = this.Editor.BlockManager.getBlockByChildNode(e.target as Node);
 
     block.dropTarget = true;
   }
@@ -137,7 +130,7 @@ export default class BlockEvents extends Module {
    * @param {DragEvent} e
    */
   public dragLeave(e: DragEvent) {
-    const block = this.Editor.BlockManager.getBlockByChildNode(e.target);
+    const block = this.Editor.BlockManager.getBlockByChildNode(e.target as Node);
 
     block.dropTarget = false;
   }
@@ -276,7 +269,7 @@ export default class BlockEvents extends Module {
     BM.mergeBlocks(targetBlock, blockToMerge)
       .then( () => {
         /** Restore caret position after merge */
-        this.Editor.Caret.restoreCaret(targetBlock.pluginsContent);
+        this.Editor.Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
         targetBlock.pluginsContent.normalize();
         this.Editor.Toolbar.close();
       });

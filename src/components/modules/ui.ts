@@ -7,9 +7,13 @@
 /**
  * Prebuilded sprite of SVG icons
  */
-import sprite from '../../../build/sprite.svg';
+import * as sprite from '../../../build/sprite.svg';
+import Module from '../__module';
+import $ from '../dom';
+import _ from '../utils';
 
 import Selection from '../selection';
+import {Configuration} from '../interfaces/data-format';
 
 /**
  * @class
@@ -22,7 +26,7 @@ import Selection from '../selection';
  *                </codex-editor>
  *
  * @typedef {UI} UI
- * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
+ * @property {Configuration} config   - editor configuration {@link CodexEditor#configuration}
  * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
  * @property {Object} nodes          -
  * @property {Element} nodes.holder  - element where we need to append redactor
@@ -30,25 +34,42 @@ import Selection from '../selection';
  * @property {Element} nodes.redactor - <ce-redactor>
  */
 export default class UI extends Module {
+
+  /**
+   * CodeX Editor UI CSS class names
+   * @return {{editorWrapper: string, editorZone: string, block: string}}
+   */
+  public get CSS(): {editorWrapper: string, editorZone: string} {
+    return {
+      editorWrapper : 'codex-editor',
+      editorZone    : 'codex-editor__redactor',
+    };
+  }
+  public nodes: {
+    holder: HTMLElement,
+    wrapper: HTMLElement,
+    redactor: HTMLElement,
+  };
+
   /**
    * @constructor
    *
-   * @param  {EditorConfig} config
+   * @param  {Configuration} config
    */
-  constructor({config}) {
+  constructor({config}: {config: Configuration}) {
     super({config});
 
     this.nodes = {
       holder: null,
       wrapper: null,
-      redactor: null
+      redactor: null,
     };
   }
 
   /**
    * Making main interface
    */
-  async prepare() {
+  public async prepare(): Promise<void> {
     await this.make();
 
     /**
@@ -78,21 +99,17 @@ export default class UI extends Module {
   }
 
   /**
-   * CodeX Editor UI CSS class names
-   * @return {{editorWrapper: string, editorZone: string, block: string}}
+   * Clean editor`s UI
    */
-  get CSS() {
-    return {
-      editorWrapper : 'codex-editor',
-      editorZone    : 'codex-editor__redactor',
-    };
+  public destroy(): void {
+    this.nodes.holder.innerHTML = '';
   }
 
   /**
-     * Makes CodeX Editor interface
-     * @return {Promise<any>}
-     */
-  async make() {
+   * Makes CodeX Editor interface
+   * @return {Promise<void>}
+   */
+  private async make(): Promise<void> {
     /**
      * Element where we need to append CodeX Editor
      * @type {Element}
@@ -100,7 +117,7 @@ export default class UI extends Module {
     this.nodes.holder = document.getElementById(this.config.holderId);
 
     if (!this.nodes.holder) {
-      throw Error("Holder wasn't found by ID: #" + this.config.holderId);
+      throw Error('Holder wasn\'t found by ID: #' + this.config.holderId);
     }
 
     /**
@@ -116,17 +133,17 @@ export default class UI extends Module {
   /**
    * Appends CSS
    */
-  loadStyles() {
+  private loadStyles(): void {
     /**
      * Load CSS
      */
-    let styles = require('../../styles/main.css');
+    const styles = require('../../styles/main.css');
 
     /**
      * Make tag
      */
-    let tag = $.make('style', null, {
-      textContent: styles.toString()
+    const tag = $.make('style', null, {
+      textContent: styles.toString(),
     });
 
     /**
@@ -138,17 +155,22 @@ export default class UI extends Module {
   /**
    * Bind events on the CodeX Editor interface
    */
-  bindEvents() {
-    this.Editor.Listeners.on(this.nodes.redactor, 'click', event => this.redactorClicked(event), false );
-    this.Editor.Listeners.on(document, 'keydown', event => this.documentKeydown(event), true );
-    this.Editor.Listeners.on(document, 'click', event => this.documentClicked(event), false );
+  private bindEvents(): void {
+    this.Editor.Listeners.on(
+      this.nodes.redactor,
+      'click',
+      (event) => this.redactorClicked(event as MouseEvent),
+      false,
+    );
+    this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true );
+    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), false );
   }
 
   /**
    * All keydowns on document
    * @param {Event} event
    */
-  documentKeydown(event) {
+  private documentKeydown(event: KeyboardEvent): void {
     switch (event.keyCode) {
       case _.keyCodes.ENTER:
         this.enterPressed(event);
@@ -163,8 +185,8 @@ export default class UI extends Module {
    * Ignore all other document's keydown events
    * @param {KeyboardEvent} event
    */
-  defaultBehaviour(event) {
-    const keyDownOnEditor = event.target.closest(`.${this.CSS.editorWrapper}`);
+  private defaultBehaviour(event: KeyboardEvent): void {
+    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
 
     /**
      * Ignore keydowns on document
@@ -187,8 +209,8 @@ export default class UI extends Module {
    * Enter pressed on document
    * @param event
    */
-  enterPressed(event) {
-    let hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
+  private enterPressed(event: KeyboardEvent): void {
+    const hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
 
     /**
      * If Caret is not set anywhere, event target on Enter is always Element that we handle
@@ -197,7 +219,7 @@ export default class UI extends Module {
      * So, BlockManager points some Block and Enter press is on Body
      * We can create a new block
      */
-    if (hasPointerToBlock && event.target.tagName === 'BODY') {
+    if (hasPointerToBlock && (event.target as HTMLElement).tagName === 'BODY') {
       /**
        * Insert initial typed Block
        */
@@ -222,13 +244,14 @@ export default class UI extends Module {
    * All clicks on document
    * @param {MouseEvent} event - Click
    */
-  documentClicked(event) {
+  private documentClicked(event: MouseEvent): void {
     /**
      * Close Inline Toolbar when nothing selected
      * Do not fire check on clicks at the Inline Toolbar buttons
      */
-    const clickedOnInlineToolbarButton = event.target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
-    const clickedInsideofEditor = event.target.closest(`.${this.CSS.editorWrapper}`);
+    const target = event.target as HTMLElement;
+    const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
+    const clickedInsideofEditor = target.closest(`.${this.CSS.editorWrapper}`);
 
     /** Clear highlightings and pointer on BlockManager */
     if (!clickedInsideofEditor && !Selection.isAtEditor) {
@@ -269,8 +292,8 @@ export default class UI extends Module {
    * @see selectClickedBlock
    *
    */
-  redactorClicked(event) {
-    const clickedNode = event.target;
+  private redactorClicked(event: MouseEvent): void {
+    const clickedNode = event.target as HTMLElement;
 
     /**
      * Select clicked Block as Current
@@ -314,7 +337,7 @@ export default class UI extends Module {
      * - Block is an initial-block (Text)
      * - Block is empty
      */
-    let isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool),
+    const isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool),
       isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
 
     if (isInitialBlock && isEmptyBlock) {
@@ -325,20 +348,13 @@ export default class UI extends Module {
   /**
    * Append prebuilded sprite with SVG icons
    */
-  appendSVGSprite() {
-    let spriteHolder = $.make('div');
+  private appendSVGSprite(): void {
+    const spriteHolder = $.make('div');
 
     spriteHolder.hidden = true;
     spriteHolder.style.display = 'none';
     spriteHolder.innerHTML = sprite;
 
     $.append(this.nodes.wrapper, spriteHolder);
-  }
-
-  /**
-   * Clean editor`s UI
-   */
-  destroy() {
-    this.nodes.holder.innerHTML = '';
   }
 }

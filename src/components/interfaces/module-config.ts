@@ -1,12 +1,12 @@
-import IEditorConfig from './editor-config';
+import {Configuration} from "./data-format";
 
 /**
  * Internal Module's construction parameters
  */
-export default interface IModuleConfig {
+export default interface ModuleConfiguration {
 
   /**
    * Editor's config
    */
-  config: IEditorConfig;
+  config: Configuration;
 }

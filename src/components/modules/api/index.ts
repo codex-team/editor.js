@@ -5,11 +5,11 @@
  * Each block has an Editor API instance to use provided public methods
  * if you cant to read more about how API works, please see docs
  */
-declare var Module: any;
+import Module from '../../__module';
 declare var $: any;
 declare var _: any;
 
-import { IAPI } from '../interfaces/api';
+import { IAPI } from '../../interfaces/api';
 
 /**
  * @class API

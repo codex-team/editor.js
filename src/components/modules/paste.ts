@@ -3,7 +3,7 @@ import IEditorConfig from '../interfaces/editor-config';
 import CaretClass from './caret';
 import SelectionUtils from '../selection';
 
-declare const Module: any;
+import Module from '../__module';
 declare const $: any;
 declare const _: any;
 
@@ -64,7 +64,7 @@ interface IPasteData {
 /**
  * Tool onPaste configuration object
  */
-interface IPasteConfig {
+export interface IPasteConfig {
   tags?: string[];
   handler?: (element: HTMLElement) => IBlockToolData;
   patterns?: {[key: string]: RegExp};
@@ -343,7 +343,7 @@ export default class Paste extends Module {
       return true;
     }
 
-    const block = BlockManager.getBlock(element);
+    const block = BlockManager.getBlock(element as HTMLElement);
 
     return !block;
   }
