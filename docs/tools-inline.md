@@ -17,6 +17,7 @@ Also, you can provide optional methods
 
 - `renderActions()` — create additional element below the buttons
 - `clear()` — clear Tool's stuff on opening/closing of Inline Toolbar
+- `shortcut()` — shortcut that handles Tool
 
 At the constructor of Tool's class exemplar you will accept an object with the [API](api.md) as a parameter.
 
