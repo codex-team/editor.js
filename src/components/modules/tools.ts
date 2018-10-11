@@ -369,7 +369,7 @@ export default class Tools extends Module {
     const toolPreparationList: Array<{function: (data: ToolPreparationData) => void, data: ToolPreparationData}> = [];
 
     for (const toolName in this.toolsClasses) {
-      if (this.toolsAvailable.hasOwnProperty(toolName)) {
+      if (this.toolsClasses.hasOwnProperty(toolName)) {
         const toolClass = this.toolsClasses[toolName];
 
         if (typeof toolClass.prepare === 'function') {

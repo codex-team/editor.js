@@ -1,6 +1,6 @@
 import InlineTool from '../interfaces/tools/inline-tool';
 
-declare var $: any;
+import $ from '../dom';
 
 /**
  * Italic Tool

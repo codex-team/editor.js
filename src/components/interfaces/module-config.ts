@@ -1,4 +1,4 @@
-import {Configuration} from "./data-format";
+import {Configuration} from './data-format';
 
 /**
  * Internal Module's construction parameters

@@ -1,8 +1,8 @@
 import InlineTool from '../interfaces/tools/inline-tool';
 import SelectionUtils from '../selection';
 
-declare var $: any;
-declare var _: any;
+import $ from '../dom';
+import _ from '../utils';
 
 /**
  * Link Tool

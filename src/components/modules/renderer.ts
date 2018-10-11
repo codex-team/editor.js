@@ -1,7 +1,7 @@
 import Module from '../__module';
 import {Configuration} from '../interfaces/data-format';
 import IBlockToolData from '../interfaces/tools/block-tool-data';
-import _ from '../utils';
+import _, {ChainData} from '../utils';
 
 /**
  * Codex Editor Renderer Module
@@ -53,7 +53,7 @@ export default class Renderer extends Module {
   public render(blocks: IBlockToolData[]): Promise<void> {
     const chainData = blocks.map((block) => ({function: () => this.insertBlock(block)}));
 
-    return _.sequence(chainData);
+    return _.sequence(chainData as ChainData[]);
   }
 
   /**

@@ -1,13 +1,13 @@
-import IBlockToolData from "./tools/block-tool-data";
-import {ToolConfig, ToolConstructable} from "./tools";
+import IBlockToolData from './tools/block-tool-data';
+import {ToolConfig, ToolConstructable} from './tools';
 
-export type ToolLike = ToolData | ToolConstructable
+export type ToolLike = ToolData | ToolConstructable;
 
 export interface ToolData {
-  class: ToolConstructable,
-  inlineToolbar?: string[] | boolean,
+  class: ToolConstructable;
+  inlineToolbar?: string[] | boolean;
   shortcut?: string;
-  config?: ToolConfig
+  config?: ToolConfig;
 }
 
 export interface Configuration {
@@ -18,15 +18,15 @@ export interface Configuration {
   hideToolbar?: boolean;
   tools?: { [name: string]: ToolLike };
 
+  data?: EditorData;
+
   onReady?(): void;
 
   onChange?(): void;
-
-  data?: EditorData
 }
 
 export interface EditorData {
-  time?: number,
-  version?: string,
-  blocks?: IBlockToolData[]
+  time?: number;
+  version?: string;
+  blocks?: IBlockToolData[];
 }

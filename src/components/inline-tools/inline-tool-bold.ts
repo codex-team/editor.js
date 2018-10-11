@@ -1,7 +1,6 @@
 import InlineTool from '../interfaces/tools/inline-tool';
-import SelectionUtils from '../selection';
 
-declare var $: any;
+import $ from '../dom';
 
 /**
  * Bold Tool

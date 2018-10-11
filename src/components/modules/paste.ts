@@ -4,8 +4,8 @@ import CaretClass from './caret';
 import SelectionUtils from '../selection';
 
 import Module from '../__module';
-declare const $: any;
-declare const _: any;
+import $ from '../dom';
+import _ from '../utils';
 
 /**
  * Tag substitute object.

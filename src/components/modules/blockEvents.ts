@@ -2,8 +2,7 @@
  * Contains keyboard and mouse events binded on each Block by Block Manager
  */
 import Module from '../__module';
-declare var $: any;
-declare var _: any;
+import _ from '../utils';
 
 export default class BlockEvents extends Module {
   /**

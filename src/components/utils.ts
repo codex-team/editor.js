@@ -3,7 +3,7 @@
  * @property {Object} data - data that will be passed to the success or fallback
  * @property {Function} function - function's that must be called asynchronically
  */
-interface ChainData {
+export interface ChainData {
   data?: any;
   function: (...args: any[]) => any;
 }
@@ -217,7 +217,7 @@ export default class Util {
    * @param {Boolean} immediate - call now
    * @return {Function}
    */
-  public static debounce(func: () => void, wait: number , immediate: boolean): () => void {
+  public static debounce(func: () => void, wait?: number , immediate?: boolean): () => void {
     let timeout;
 
     return () => {

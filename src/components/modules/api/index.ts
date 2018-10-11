@@ -6,7 +6,7 @@
  * if you cant to read more about how API works, please see docs
  */
 import Module from '../../__module';
-declare var $: any;
+
 declare var _: any;
 
 import { IAPI } from '../../interfaces/api';

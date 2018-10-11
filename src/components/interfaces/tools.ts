@@ -1,4 +1,4 @@
-import {IPasteConfig} from "../modules/paste";
+import {IPasteConfig} from '../modules/paste';
 
 export type ToolData = any;
 export type ToolConfig = any;
@@ -9,9 +9,9 @@ export interface ToolPreparationData {
 }
 
 export interface ToolConstructable {
-  new (config: {api: any, config?: ToolConfig, data?: ToolData})
   name: string;
   isInline: boolean;
+  new (config: {api: any, config?: ToolConfig, data?: ToolData});
   prepare(data: ToolPreparationData): void;
 }
 
@@ -20,30 +20,30 @@ export interface InlineToolConstructable extends ToolConstructable {
 }
 
 export interface BlockToolConstructable extends ToolConstructable {
-  new (config: {api: any, config: ToolConfig, data: ToolData}): BlockTool;
 
   displayInToolbox?: boolean;
-  toolboxIcon?: string
+  toolboxIcon?: string;
   enableLineBreaks?: boolean;
   irreplaceable?: boolean;
   contentless?: boolean;
-  onPaste?: IPasteConfig
+  onPaste?: IPasteConfig;
+  new (config: {api: any, config: ToolConfig, data: ToolData}): BlockTool;
 }
 
 interface Tool {
-  render (): HTMLElement;
+  render(): HTMLElement;
 }
 
 interface BlockTool extends Tool {
-  save (element: HTMLElement): ToolData;
-  validate? (data: ToolData): boolean;
-  merge? (data: ToolData): ToolData;
-  renderSettings? (): HTMLElement;
+  save(element: HTMLElement): ToolData;
+  validate?(data: ToolData): boolean;
+  merge?(data: ToolData): ToolData;
+  renderSettings?(): HTMLElement;
 }
 
 interface InlineTool extends Tool {
-  surround (range: Range): void;
-  checkState (selection: Selection): boolean;
-  renderActions? (): HTMLElement;
-  clear? (): void
+  surround(range: Range): void;
+  checkState(selection: Selection): boolean;
+  renderActions?(): HTMLElement;
+  clear?(): void;
 }

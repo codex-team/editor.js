@@ -1,5 +1,5 @@
 import Module from '../../__module';
-declare var $: any;
+import $ from '../../dom';
 
 import BoldInlineTool from '../../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../../inline-tools/inline-tool-italic';

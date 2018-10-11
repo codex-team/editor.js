@@ -8,7 +8,7 @@
 import IEditorConfig from '../interfaces/editor-config';
 
 import Module from '../__module';
-declare const _: any;
+import _ from '../utils';
 
 export default class ModificationsObserver extends Module {
 

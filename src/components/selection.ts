@@ -31,12 +31,11 @@ interface Document {
  * Working with selection
  * @typedef {Selection} Selection
  */
-export default class SelectionUtils extends Selection {
+export default class SelectionUtils {
 
   /**
    * Editor styles
    * @return {{editorWrapper: string, editorZone: string}}
-   * @constructor
    */
   static get CSS(): {editorWrapper: string, editorZone: string} {
     return {
