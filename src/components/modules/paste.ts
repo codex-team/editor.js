@@ -694,36 +694,28 @@ export default class Paste extends Module {
         case Node.ELEMENT_NODE:
           const element = node as HTMLElement;
 
+          const {tool = ''} = this.toolsTags[element.tagName] || {};
+          const toolTags = this.tagsByTool[tool] || [];
+
+          const isSubstitutable = tags.includes(element.tagName);
+          const isBlockElement = $.blockElements.includes(element.tagName.toLowerCase());
+          const isContainsAnotherToolTags = Array
+                                              .from(element.children)
+                                              .some(
+                                                ({tagName}) => tags.includes(tagName) && !toolTags.includes(tagName),
+                                              );
+
+          const isContainsBlockElements = Array.from(element.children).some(
+            ({tagName}) => $.blockElements.includes(tagName.toLowerCase()),
+          );
+
           /** Append inline elements to previous fragment */
-          if (
-            !$.blockElements.includes(element.tagName.toLowerCase()) &&
-            !tags.includes(element.tagName)
-          ) {
+          if (!isBlockElement && !isSubstitutable) {
             destNode.appendChild(element);
             return [...nodes, destNode];
           }
 
-          const {tool = ''} = this.toolsTags[element.tagName] || {};
-          const toolTags = this.tagsByTool[tool] || [];
-
-          if (
-            (
-              tags.includes(element.tagName) &&
-              !Array.from(element.children).some(
-                ({tagName}) => tags.includes(tagName) && !toolTags.includes(tagName),
-              )
-            ) || (
-              $.blockElements.includes(element.tagName.toLowerCase()) &&
-              !Array.from(element.children).some(
-                ({tagName}) => {
-                  const isBlockElement = $.blockElements.includes(tagName.toLowerCase());
-                  const isAnotherToolTags = tags.includes(tagName) && !toolTags.includes(tagName);
-
-                  return isBlockElement || isAnotherToolTags;
-                },
-              )
-            )
-          ) {
+          if ((isSubstitutable && !isContainsAnotherToolTags) || (isBlockElement && !isContainsBlockElements)) {
             return [...nodes, element];
           }
           break;
