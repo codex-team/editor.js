@@ -91,6 +91,11 @@ export default class Paste extends Module {
    */
   private toolsTags: {[tag: string]: ITagSubstitute} = {};
 
+  /**
+   * Store tags to substitute by tool name
+   */
+  private tagsByTool: {[tools: string]: string[]} = {};
+
   /** Patterns` substitutions parameters */
   private toolsPatterns: IPatternSubstitute[] = [];
 
@@ -242,6 +247,8 @@ export default class Paste extends Module {
         tool: name,
       };
     });
+
+    this.tagsByTool[name] = tags.map((t) => t.toUpperCase());
   }
 
   /**
@@ -696,10 +703,24 @@ export default class Paste extends Module {
             return [...nodes, destNode];
           }
 
-          if (tags.includes(element.tagName) || (
+          const {tool = ''} = this.toolsTags[element.tagName] || {};
+          const toolTags = this.tagsByTool[tool] || [];
+
+          if (
+            (
+              tags.includes(element.tagName) &&
+              !Array.from(element.children).some(
+                ({tagName}) => tags.includes(tagName) && !toolTags.includes(tagName),
+              )
+            ) || (
               $.blockElements.includes(element.tagName.toLowerCase()) &&
-              Array.from(element.children).every(
-                ({tagName}) => !$.blockElements.includes(tagName.toLowerCase()),
+              !Array.from(element.children).some(
+                ({tagName}) => {
+                  const isBlockElement = $.blockElements.includes(tagName.toLowerCase());
+                  const isAnotherToolTags = tags.includes(tagName) && !toolTags.includes(tagName);
+
+                  return isBlockElement || isAnotherToolTags;
+                },
               )
             )
           ) {
