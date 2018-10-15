@@ -699,13 +699,13 @@ export default class Paste extends Module {
 
           const isSubstitutable = tags.includes(element.tagName);
           const isBlockElement = $.blockElements.includes(element.tagName.toLowerCase());
-          const isContainsAnotherToolTags = Array
+          const containsAnotherToolTags = Array
                                               .from(element.children)
                                               .some(
                                                 ({tagName}) => tags.includes(tagName) && !toolTags.includes(tagName),
                                               );
 
-          const isContainsBlockElements = Array.from(element.children).some(
+          const containsBlockElements = Array.from(element.children).some(
             ({tagName}) => $.blockElements.includes(tagName.toLowerCase()),
           );
 
@@ -715,8 +715,11 @@ export default class Paste extends Module {
             return [...nodes, destNode];
           }
 
-          if ((isSubstitutable && !isContainsAnotherToolTags) || (isBlockElement && !isContainsBlockElements)) {
-            return [...nodes, element];
+          if (
+            (isSubstitutable && !containsAnotherToolTags) ||
+            (isBlockElement && !containsBlockElements && !containsAnotherToolTags )
+          ) {
+            return [...nodes, destNode, element];
           }
           break;
 
