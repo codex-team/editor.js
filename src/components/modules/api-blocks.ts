@@ -32,36 +32,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
       getBlocksCount: () => this.getBlocksCount(),
       stretchBlock: (index: number, status: boolean) => this.stretchBlock(index, status),
       insertNewBlock: () => this.insertNewBlock(),
-      getSanitizerConfig: (name: string) => this.getSanitizerConfig(name),
     };
-  }
-
-  /**
-   * Returns Sanitizer config
-   * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
-   * otherwise get only enabled
-   */
-  public getSanitizerConfig(name: string): object {
-    const toolsConfig = this.Editor.Tools.getToolSettings(name),
-      enableInlineTools = toolsConfig.inlineToolbar || [];
-
-    let config = {};
-    if (typeof enableInlineTools === 'boolean' && enableInlineTools) {
-      /**
-       * getting all tools sanitizer rule
-       */
-      this.Editor.InlineToolbar.tools.forEach( (inlineTool) => {
-        config = Object.assign(config, inlineTool.sanitize);
-      });
-    } else {
-      /**
-       * getting only enabled
-       */
-      enableInlineTools.map( (inlineToolName) => {
-        config = Object.assign(config, this.Editor.InlineToolbar.tools.get(inlineToolName).sanitize);
-      });
-    }
-    return config;
   }
 
   /**
