@@ -91,6 +91,11 @@ export default class Paste extends Module {
    */
   private toolsTags: {[tag: string]: ITagSubstitute} = {};
 
+  /**
+   * Store tags to substitute by tool name
+   */
+  private tagsByTool: {[tools: string]: string[]} = {};
+
   /** Patterns` substitutions parameters */
   private toolsPatterns: IPatternSubstitute[] = [];
 
@@ -242,6 +247,8 @@ export default class Paste extends Module {
         tool: name,
       };
     });
+
+    this.tagsByTool[name] = tags.map((t) => t.toUpperCase());
   }
 
   /**
@@ -687,23 +694,32 @@ export default class Paste extends Module {
         case Node.ELEMENT_NODE:
           const element = node as HTMLElement;
 
+          const {tool = ''} = this.toolsTags[element.tagName] || {};
+          const toolTags = this.tagsByTool[tool] || [];
+
+          const isSubstitutable = tags.includes(element.tagName);
+          const isBlockElement = $.blockElements.includes(element.tagName.toLowerCase());
+          const containsAnotherToolTags = Array
+                                              .from(element.children)
+                                              .some(
+                                                ({tagName}) => tags.includes(tagName) && !toolTags.includes(tagName),
+                                              );
+
+          const containsBlockElements = Array.from(element.children).some(
+            ({tagName}) => $.blockElements.includes(tagName.toLowerCase()),
+          );
+
           /** Append inline elements to previous fragment */
-          if (
-            !$.blockElements.includes(element.tagName.toLowerCase()) &&
-            !tags.includes(element.tagName)
-          ) {
+          if (!isBlockElement && !isSubstitutable) {
             destNode.appendChild(element);
             return [...nodes, destNode];
           }
 
-          if (tags.includes(element.tagName) || (
-              $.blockElements.includes(element.tagName.toLowerCase()) &&
-              Array.from(element.children).every(
-                ({tagName}) => !$.blockElements.includes(tagName.toLowerCase()),
-              )
-            )
+          if (
+            (isSubstitutable && !containsAnotherToolTags) ||
+            (isBlockElement && !containsBlockElements && !containsAnotherToolTags )
           ) {
-            return [...nodes, element];
+            return [...nodes, destNode, element];
           }
           break;
 
