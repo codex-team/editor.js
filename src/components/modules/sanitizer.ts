@@ -41,6 +41,11 @@ import HTMLJanitor from 'html-janitor';
 
 export default class Sanitizer extends Module {
   /**
+   * Memoize tools config
+   */
+  private configCache: {[toolName: string]: ISanitizerConfig} = {};
+
+  /**
    * Initializes Sanitizer module
    * Sets default configuration if custom not exists
    *
@@ -57,21 +62,44 @@ export default class Sanitizer extends Module {
   }
 
   /**
-   * Sets sanitizer configuration. Uses default config if user didn't pass the restriction
+   * Sanitize Blocks
+   *
+   * Enumerate blocks and clean data
+   *
+   * @param {{tool, data: IBlockToolData}[]} blocksData[]
    */
-  public get defaultConfig() {
-    return {
-      tags: {
-        p: {},
-        a: {
-          href: true,
-          target: '_blank',
-          rel: 'nofollow',
-        },
-        b: {},
-        i: {},
-      },
-    };
+  public sanitizeBlocks(blocksData) {
+    let toolClass;
+
+    return blocksData.map((block) => {
+      toolClass = this.Editor.Tools.toolsAvailable[block.tool];
+
+      const output = {
+        time: block.time,
+        tool: block.tool,
+        data: block.data,
+      };
+
+      /**
+       * Enable sanitizing if Tool provides config
+       */
+      if (toolClass.sanitize && !_.isEmpty(toolClass.sanitize)) {
+        /**
+         * If cache is empty, then compose tool config and put it to the cache object
+         */
+        if (!this.configCache[block.tool]) {
+          this.configCache[block.tool] = this.composeToolConfig(block.tool, toolClass.sanitize);
+        }
+
+        /**
+         * get from cache
+         */
+        const toolConfig = this.configCache[block.tool];
+        output.data = this.deepSanitize(block.data, toolConfig);
+      }
+
+      return output;
+    });
   }
 
   /**
@@ -79,10 +107,8 @@ export default class Sanitizer extends Module {
    *
    * @param {Object|string} blockData - taint string or object/array that contains taint string
    * @param {Object} rules - object with sanitizer rules
-   * @param {Object} baseConfig - object with sanitizer rules from inline-tools
    */
-  public deepSanitize(blockData, rules, baseConfig) {
-
+  public deepSanitize(blockData, rules) {
     /**
      * Case 1: Block data is Array
      * Array's in JS can not be enumerated with for..in because result will be Object not Array
@@ -93,10 +119,9 @@ export default class Sanitizer extends Module {
        * Create new "cleanData" array and fill in with sanitizer data
        */
       return blockData.map((item) => {
-        return this.sanitizeBlock(item, rules, baseConfig);
+        return this.deepSanitize(item, rules);
       });
     } else if (typeof blockData === 'object') {
-
       /**
        * Create new "cleanData" object and fill with sanitized objects
        */
@@ -109,26 +134,58 @@ export default class Sanitizer extends Module {
        *  3. When Data is base type (string, int, bool, ...). Check if rule is passed
        */
       for (const data in blockData) {
-        if (Array.isArray(blockData[data]) || typeof blockData[data] === 'object') {
+        if (Array.isArray(blockData[data])) {
           /**
-           * Case 1 & Case 2
+           * Case 1: BlockData is array
+           *
+           * Clean recursively blockdata[data] with passed rule
+           * Each array item clened by passed parent rule
+           *
+           * 1) If rule exists, then clean with rules extended by inline tools sanitize
+           * 2) If rule is false, which means clean all
+           * 3) Do nothing
            */
           if (rules[data]) {
-            cleanData[data] = this.sanitizeBlock(blockData[data], rules[data], baseConfig);
-          } else if (_.isEmpty(rules)) {
-            cleanData[data] = this.sanitizeBlock(blockData[data], rules, baseConfig);
+            cleanData[data] = this.deepSanitize(blockData[data], rules[data]);
+          } else if (rules[data] === false) {
+            cleanData[data] = this.deepSanitize(blockData[data], {});
           } else {
             cleanData[data] = blockData[data];
           }
 
+        } else if (typeof blockData[data] === 'object') {
+          /**
+           * Case 2: BlockData is Object
+           * Clean each child with passed parents rule
+           *
+           * In this case we need to create a subObject that contains cleaned childs of current Object
+           */
+          const cleanedChilds = {};
+          for (const childData in blockData[data]) {
+            /**
+             * Case 1 & Case 2
+             */
+            if (rules[data]) {
+              cleanedChilds[childData] = this.clean(blockData[data][childData], rules[data]);
+            } else if (rules[data] === false) {
+              cleanedChilds[childData] = this.clean(blockData[data][childData], {});
+            } else {
+              cleanedChilds[childData] = blockData[data];
+            }
+          }
+
+          cleanData[data] = cleanedChilds;
+
         } else {
           /**
-           * Case 3.
+           * Case 3: When blockData[data] is base typed
            */
           if (rules[data]) {
-            cleanData[data] = this.clean(blockData[data], Object.assign(baseConfig, rules[data]));
+            cleanData[data] = this.clean(blockData[data], rules[data]);
+          } else if (rules[data] === false) {
+            cleanData[data] = this.clean(blockData[data], {});
           } else {
-            cleanData[data] = this.clean(blockData[data], Object.assign(baseConfig, rules));
+            cleanData[data] = blockData[data];
           }
         }
       }
@@ -153,17 +210,14 @@ export default class Sanitizer extends Module {
    */
   public clean(taintString: string, customConfig: ISanitizerConfig) {
 
-    if (customConfig && typeof customConfig === 'object' && _.isEmpty(customConfig)) {
-      /**
-       * Ignore sanitizing when nothing passed in config
-       */
-      return taintString;
-    }
+    const sanitizerConfig = {
+      tags: customConfig,
+    };
 
     /**
      * API client can use custom config to manage sanitize process
      */
-    const sanitizerInstance = this.createHTMLJanitorInstance(customConfig);
+    const sanitizerInstance = this.createHTMLJanitorInstance(sanitizerConfig);
     return sanitizerInstance.clean(taintString);
   }
 
@@ -178,9 +232,59 @@ export default class Sanitizer extends Module {
    */
   private createHTMLJanitorInstance(config) {
     if (config) {
-      this._sanitizerInstance = new HTMLJanitor(config);
+      return new HTMLJanitor(config);
     }
     return null;
   }
 
+  /**
+   * Merge with inline tool config
+   *
+   * @param {string} toolName
+   * @param {ISanitizerConfig} blockRules
+   * @return {ISanitizerConfig}
+   */
+  private composeToolConfig(toolName: string, blockRules: ISanitizerConfig): ISanitizerConfig {
+    const baseConfig = this.getInlineToolsConfig(toolName);
+
+    const toolConfig = {};
+    for (const blockRule in blockRules) {
+      if (blockRules[blockRule]) {
+        toolConfig[blockRule] = Object.assign({}, baseConfig, blockRules[blockRule]);
+      } else {
+        toolConfig[blockRule] = false;
+      }
+    }
+    return toolConfig;
+  }
+
+  /**
+   * Returns Sanitizer config
+   * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
+   * otherwise get only enabled
+   */
+  private getInlineToolsConfig(name) {
+    const toolsConfig = this.Editor.Tools.getToolSettings(name),
+      enableInlineTools = toolsConfig.inlineToolbar || [];
+
+    let config = {};
+
+    if (typeof enableInlineTools === 'boolean' && enableInlineTools) {
+      /**
+       * getting all tools sanitizer rule
+       */
+      this.Editor.InlineToolbar.tools.forEach( (inlineTool) => {
+        config = Object.assign(config, inlineTool.sanitize);
+      });
+    } else {
+      /**
+       * getting only enabled
+       */
+      enableInlineTools.map( (inlineToolName) => {
+        config = Object.assign(config, this.Editor.InlineToolbar.tools.get(inlineToolName).sanitize);
+      });
+    }
+
+    return config;
+  }
 }

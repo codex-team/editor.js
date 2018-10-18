@@ -23351,29 +23351,68 @@ var Sanitizer = function (_Module) {
         var config = _ref.config;
         (0, _classCallCheck3.default)(this, Sanitizer);
 
-        /** Custom configuration */
+        /**
+         * Memoize tools config
+         */
         var _this = (0, _possibleConstructorReturn3.default)(this, (Sanitizer.__proto__ || (0, _getPrototypeOf2.default)(Sanitizer)).call(this, { config: config }));
 
+        _this.configCache = {};
+        /** Custom configuration */
         _this.sanitizerConfig = config.settings ? config.settings.sanitizer : null;
         return _this;
     }
     /**
-     * Sets sanitizer configuration. Uses default config if user didn't pass the restriction
+     * Sanitize Blocks
+     *
+     * Enumerate blocks and clean data
+     *
+     * @param {{tool, data: IBlockToolData}[]} blocksData[]
      */
 
 
     (0, _createClass3.default)(Sanitizer, [{
-        key: 'deepSanitize',
+        key: 'sanitizeBlocks',
+        value: function sanitizeBlocks(blocksData) {
+            var _this2 = this;
 
+            var toolClass = void 0;
+            return blocksData.map(function (block) {
+                toolClass = _this2.Editor.Tools.toolsAvailable[block.tool];
+                var output = {
+                    time: block.time,
+                    tool: block.tool,
+                    data: block.data
+                };
+                /**
+                 * Enable sanitizing if Tool provides config
+                 */
+                if (toolClass.sanitize && !_.isEmpty(toolClass.sanitize)) {
+                    /**
+                     * If cache is empty, then compose tool config and put it to the cache object
+                     */
+                    if (!_this2.configCache[block.tool]) {
+                        _this2.configCache[block.tool] = _this2.composeToolConfig(block.tool, toolClass.sanitize);
+                    }
+                    /**
+                     * get from cache
+                     */
+                    var toolConfig = _this2.configCache[block.tool];
+                    output.data = _this2.deepSanitize(block.data, toolConfig);
+                }
+                return output;
+            });
+        }
         /**
          * Method recursively reduces Block's data and cleans with passed rules
          *
          * @param {Object|string} blockData - taint string or object/array that contains taint string
          * @param {Object} rules - object with sanitizer rules
-         * @param {Object} baseConfig - object with sanitizer rules from inline-tools
          */
-        value: function deepSanitize(blockData, rules, baseConfig) {
-            var _this2 = this;
+
+    }, {
+        key: 'deepSanitize',
+        value: function deepSanitize(blockData, rules) {
+            var _this3 = this;
 
             /**
              * Case 1: Block data is Array
@@ -23385,7 +23424,7 @@ var Sanitizer = function (_Module) {
                  * Create new "cleanData" array and fill in with sanitizer data
                  */
                 return blockData.map(function (item) {
-                    return _this2.sanitizeBlock(item, rules, baseConfig);
+                    return _this3.deepSanitize(item, rules);
                 });
             } else if ((typeof blockData === 'undefined' ? 'undefined' : (0, _typeof3.default)(blockData)) === 'object') {
                 /**
@@ -23399,25 +23438,55 @@ var Sanitizer = function (_Module) {
                  *  3. When Data is base type (string, int, bool, ...). Check if rule is passed
                  */
                 for (var data in blockData) {
-                    if (Array.isArray(blockData[data]) || (0, _typeof3.default)(blockData[data]) === 'object') {
+                    if (Array.isArray(blockData[data])) {
                         /**
-                         * Case 1 & Case 2
+                         * Case 1: BlockData is array
+                         *
+                         * Clean recursively blockdata[data] with passed rule
+                         * Each array item clened by passed parent rule
+                         *
+                         * 1) If rule exists, then clean with rules extended by inline tools sanitize
+                         * 2) If rule is false, which means clean all
+                         * 3) Do nothing
                          */
                         if (rules[data]) {
-                            cleanData[data] = this.sanitizeBlock(blockData[data], rules[data], baseConfig);
-                        } else if (_.isEmpty(rules)) {
-                            cleanData[data] = this.sanitizeBlock(blockData[data], rules, baseConfig);
+                            cleanData[data] = this.deepSanitize(blockData[data], rules[data]);
+                        } else if (rules[data] === false) {
+                            cleanData[data] = this.deepSanitize(blockData[data], {});
                         } else {
                             cleanData[data] = blockData[data];
                         }
+                    } else if ((0, _typeof3.default)(blockData[data]) === 'object') {
+                        /**
+                         * Case 2: BlockData is Object
+                         * Clean each child with passed parents rule
+                         *
+                         * In this case we need to create a subObject that contains cleaned childs of current Object
+                         */
+                        var cleanedChilds = {};
+                        for (var childData in blockData[data]) {
+                            /**
+                             * Case 1 & Case 2
+                             */
+                            if (rules[data]) {
+                                cleanedChilds[childData] = this.clean(blockData[data][childData], rules[data]);
+                            } else if (rules[data] === false) {
+                                cleanedChilds[childData] = this.clean(blockData[data][childData], {});
+                            } else {
+                                cleanedChilds[childData] = blockData[data];
+                            }
+                        }
+                        cleanData[data] = cleanedChilds;
                     } else {
                         /**
-                         * Case 3.
+                         * Case 3: When blockData[data] is base typed
                          */
                         if (rules[data]) {
-                            cleanData[data] = this.clean(blockData[data], (0, _assign2.default)(baseConfig, rules[data]));
+                            cleanData[data] = this.clean(blockData[data], rules[data]);
+                        } else if (rules[data] === false) {
+                            cleanData[data] = this.clean(blockData[data], {});
                         } else {
-                            cleanData[data] = this.clean(blockData[data], (0, _assign2.default)(baseConfig, rules));
+                            cleanData[data] = blockData[data];
                         }
                     }
                 }
@@ -23442,16 +23511,13 @@ var Sanitizer = function (_Module) {
     }, {
         key: 'clean',
         value: function clean(taintString, customConfig) {
-            if (customConfig && (typeof customConfig === 'undefined' ? 'undefined' : (0, _typeof3.default)(customConfig)) === 'object' && _.isEmpty(customConfig)) {
-                /**
-                 * Ignore sanitizing when nothing passed in config
-                 */
-                return taintString;
-            }
+            var sanitizerConfig = {
+                tags: customConfig
+            };
             /**
              * API client can use custom config to manage sanitize process
              */
-            var sanitizerInstance = this.createHTMLJanitorInstance(customConfig);
+            var sanitizerInstance = this.createHTMLJanitorInstance(sanitizerConfig);
             return sanitizerInstance.clean(taintString);
         }
         /**
@@ -23468,25 +23534,62 @@ var Sanitizer = function (_Module) {
         key: 'createHTMLJanitorInstance',
         value: function createHTMLJanitorInstance(config) {
             if (config) {
-                this._sanitizerInstance = new _htmlJanitor2.default(config);
+                return new _htmlJanitor2.default(config);
             }
             return null;
         }
+        /**
+         * Merge with inline tool config
+         *
+         * @param {string} toolName
+         * @param {ISanitizerConfig} blockRules
+         * @return {ISanitizerConfig}
+         */
+
     }, {
-        key: 'defaultConfig',
-        get: function get() {
-            return {
-                tags: {
-                    p: {},
-                    a: {
-                        href: true,
-                        target: '_blank',
-                        rel: 'nofollow'
-                    },
-                    b: {},
-                    i: {}
+        key: 'composeToolConfig',
+        value: function composeToolConfig(toolName, blockRules) {
+            var baseConfig = this.getInlineToolsConfig(toolName);
+            var toolConfig = {};
+            for (var blockRule in blockRules) {
+                if (blockRules[blockRule]) {
+                    toolConfig[blockRule] = (0, _assign2.default)({}, baseConfig, blockRules[blockRule]);
+                } else {
+                    toolConfig[blockRule] = false;
                 }
-            };
+            }
+            return toolConfig;
+        }
+        /**
+         * Returns Sanitizer config
+         * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
+         * otherwise get only enabled
+         */
+
+    }, {
+        key: 'getInlineToolsConfig',
+        value: function getInlineToolsConfig(name) {
+            var _this4 = this;
+
+            var toolsConfig = this.Editor.Tools.getToolSettings(name),
+                enableInlineTools = toolsConfig.inlineToolbar || [];
+            var config = {};
+            if (typeof enableInlineTools === 'boolean' && enableInlineTools) {
+                /**
+                 * getting all tools sanitizer rule
+                 */
+                this.Editor.InlineToolbar.tools.forEach(function (inlineTool) {
+                    config = (0, _assign2.default)(config, inlineTool.sanitize);
+                });
+            } else {
+                /**
+                 * getting only enabled
+                 */
+                enableInlineTools.map(function (inlineToolName) {
+                    config = (0, _assign2.default)(config, _this4.Editor.InlineToolbar.tools.get(inlineToolName).sanitize);
+                });
+            }
+            return config;
         }
     }]);
     return Sanitizer;
@@ -23530,17 +23633,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _assign = __webpack_require__(/*! babel-runtime/core-js/object/assign */ "./node_modules/babel-runtime/core-js/object/assign.js");
-
-var _assign2 = _interopRequireDefault(_assign);
-
 var _promise = __webpack_require__(/*! babel-runtime/core-js/promise */ "./node_modules/babel-runtime/core-js/promise.js");
 
 var _promise2 = _interopRequireDefault(_promise);
-
-var _typeof2 = __webpack_require__(/*! babel-runtime/helpers/typeof */ "./node_modules/babel-runtime/helpers/typeof.js");
-
-var _typeof3 = _interopRequireDefault(_typeof2);
 
 var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "./node_modules/babel-runtime/core-js/object/get-prototype-of.js");
 
@@ -23601,24 +23696,12 @@ var Saver = function (_Module) {
 
             var blocks = this.Editor.BlockManager.blocks,
                 chainData = [];
-            var baseConfig = void 0,
-                cleanData = void 0;
             blocks.forEach(function (block) {
-                baseConfig = _this2.getSanitizerConfig(block.name);
-                /**
-                 * if Tool provides custom sanitizer config
-                 * then use this config
-                 *
-                 * Merge custom config with base config
-                 */
-                if (block.sanitize && (0, _typeof3.default)(block.sanitize) === 'object') {
-                    cleanData = _this2.Editor.Sanitizer.deepSanitize(block.data, block.sanitize, baseConfig);
-                } else {
-                    cleanData = block.data;
-                }
-                chainData.push(cleanData);
+                chainData.push(block.data);
             });
-            return _promise2.default.all(chainData).then(function (allExtractedData) {
+            return _promise2.default.all(chainData).then(function (extractedData) {
+                return _this2.Editor.Sanitizer.sanitizeBlocks(extractedData);
+            }).then(function (allExtractedData) {
                 return _this2.makeOutput(allExtractedData);
             }).then(function (outputData) {
                 return outputData;
@@ -23652,37 +23735,6 @@ var Saver = function (_Module) {
                 version: "2.2.0",
                 blocks: blocks
             };
-        }
-        /**
-         * Returns Sanitizer config
-         * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
-         * otherwise get only enabled
-         */
-
-    }, {
-        key: 'getSanitizerConfig',
-        value: function getSanitizerConfig(name) {
-            var _this3 = this;
-
-            var toolsConfig = this.Editor.Tools.getToolSettings(name),
-                enableInlineTools = toolsConfig.inlineToolbar || [];
-            var config = {};
-            if (typeof enableInlineTools === 'boolean' && enableInlineTools) {
-                /**
-                 * getting all tools sanitizer rule
-                 */
-                this.Editor.InlineToolbar.tools.forEach(function (inlineTool) {
-                    config = (0, _assign2.default)(config, inlineTool.sanitize);
-                });
-            } else {
-                /**
-                 * getting only enabled
-                 */
-                enableInlineTools.map(function (inlineToolName) {
-                    config = (0, _assign2.default)(config, _this3.Editor.InlineToolbar.tools.get(inlineToolName).sanitize);
-                });
-            }
-            return config;
         }
     }]);
     return Saver;
@@ -26698,7 +26750,7 @@ module.exports = exports['default'];
  * @license The MIT License (MIT)
  * @version 2.0.0
  */
-var o=function(){function t(e){var n=e.data,r=(e.config,e.api);!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.api=r,this._CSS={block:this.api.styles.block,wrapper:"ce-paragraph"},this._data={},this._element=this.drawView(),this.data=n}return r(t,null,[{key:"displayInToolbox",get:function(){return!1}}]),r(t,[{key:"drawView",value:function(){var t=document.createElement("DIV");return t.classList.add(this._CSS.wrapper,this._CSS.block),t.contentEditable=!0,t}},{key:"render",value:function(){return this._element}},{key:"merge",value:function(t){var e={text:this.data.text+t.text};this.data=e}},{key:"validate",value:function(t){return""!==t.text.trim()}},{key:"save",value:function(t){return{text:t.innerHTML}}},{key:"sanitize",get:function(){return{text:{br:!0}}}},{key:"data",get:function(){var t=this._element.innerHTML;return this._data.text=t,this._data},set:function(t){this._data=t||{},this._element.innerHTML=this._data.text||""}}],[{key:"onPaste",get:function(){return{tags:["P"],handler:function(t){return{text:t.innerHTML}}}}}]),t}();t.exports=o},function(t,e,n){var r=n(2);"string"==typeof r&&(r=[[t.i,r,""]]);var o={hmr:!0,transform:void 0,insertInto:void 0};n(4)(r,o);r.locals&&(t.exports=r.locals)},function(t,e,n){(t.exports=n(3)(!1)).push([t.i,".ce-paragraph {\n    line-height: 1.6em;\n    outline: none;\n}\n\n.ce-paragraph p:first-of-type{\n    margin-top: 0;\n}\n\n.ce-paragraph p:last-of-type{\n    margin-bottom: 0;\n}\n",""])},function(t,e){t.exports=function(t){var e=[];return e.toString=function(){return this.map(function(e){var n=function(t,e){var n=t[1]||"",r=t[3];if(!r)return n;if(e&&"function"==typeof btoa){var o=function(t){return"/*# sourceMappingURL=data:application/json;charset=utf-8;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(t))))+" */"}(r),i=r.sources.map(function(t){return"/*# sourceURL="+r.sourceRoot+t+" */"});return[n].concat(i).concat([o]).join("\n")}return[n].join("\n")}(e,t);return e[2]?"@media "+e[2]+"{"+n+"}":n}).join("")},e.i=function(t,n){"string"==typeof t&&(t=[[null,t,""]]);for(var r={},o=0;o<this.length;o++){var i=this[o][0];"number"==typeof i&&(r[i]=!0)}for(o=0;o<t.length;o++){var a=t[o];"number"==typeof a[0]&&r[a[0]]||(n&&!a[2]?a[2]=n:n&&(a[2]="("+a[2]+") and ("+n+")"),e.push(a))}},e}},function(t,e,n){var r={},o=function(t){var e;return function(){return void 0===e&&(e=t.apply(this,arguments)),e}}(function(){return window&&document&&document.all&&!window.atob}),i=function(t){var e={};return function(t){if("function"==typeof t)return t();if(void 0===e[t]){var n=function(t){return document.querySelector(t)}.call(this,t);if(window.HTMLIFrameElement&&n instanceof window.HTMLIFrameElement)try{n=n.contentDocument.head}catch(t){n=null}e[t]=n}return e[t]}}(),a=null,s=0,u=[],f=n(5);function c(t,e){for(var n=0;n<t.length;n++){var o=t[n],i=r[o.id];if(i){i.refs++;for(var a=0;a<i.parts.length;a++)i.parts[a](o.parts[a]);for(;a<o.parts.length;a++)i.parts.push(b(o.parts[a],e))}else{var s=[];for(a=0;a<o.parts.length;a++)s.push(b(o.parts[a],e));r[o.id]={id:o.id,refs:1,parts:s}}}}function l(t,e){for(var n=[],r={},o=0;o<t.length;o++){var i=t[o],a=e.base?i[0]+e.base:i[0],s={css:i[1],media:i[2],sourceMap:i[3]};r[a]?r[a].parts.push(s):n.push(r[a]={id:a,parts:[s]})}return n}function p(t,e){var n=i(t.insertInto);if(!n)throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");var r=u[u.length-1];if("top"===t.insertAt)r?r.nextSibling?n.insertBefore(e,r.nextSibling):n.appendChild(e):n.insertBefore(e,n.firstChild),u.push(e);else if("bottom"===t.insertAt)n.appendChild(e);else{if("object"!=typeof t.insertAt||!t.insertAt.before)throw new Error("[Style Loader]\n\n Invalid value for parameter 'insertAt' ('options.insertAt') found.\n Must be 'top', 'bottom', or Object.\n (https://github.com/webpack-contrib/style-loader#insertat)\n");var o=i(t.insertInto+" "+t.insertAt.before);n.insertBefore(e,o)}}function d(t){if(null===t.parentNode)return!1;t.parentNode.removeChild(t);var e=u.indexOf(t);e>=0&&u.splice(e,1)}function h(t){var e=document.createElement("style");return void 0===t.attrs.type&&(t.attrs.type="text/css"),v(e,t.attrs),p(t,e),e}function v(t,e){Object.keys(e).forEach(function(n){t.setAttribute(n,e[n])})}function b(t,e){var n,r,o,i;if(e.transform&&t.css){if(!(i=e.transform(t.css)))return function(){};t.css=i}if(e.singleton){var u=s++;n=a||(a=h(e)),r=m.bind(null,n,u,!1),o=m.bind(null,n,u,!0)}else t.sourceMap&&"function"==typeof URL&&"function"==typeof URL.createObjectURL&&"function"==typeof URL.revokeObjectURL&&"function"==typeof Blob&&"function"==typeof btoa?(n=function(t){var e=document.createElement("link");return void 0===t.attrs.type&&(t.attrs.type="text/css"),t.attrs.rel="stylesheet",v(e,t.attrs),p(t,e),e}(e),r=function(t,e,n){var r=n.css,o=n.sourceMap,i=void 0===e.convertToAbsoluteUrls&&o;(e.convertToAbsoluteUrls||i)&&(r=f(r));o&&(r+="\n/*# sourceMappingURL=data:application/json;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(o))))+" */");var a=new Blob([r],{type:"text/css"}),s=t.href;t.href=URL.createObjectURL(a),s&&URL.revokeObjectURL(s)}.bind(null,n,e),o=function(){d(n),n.href&&URL.revokeObjectURL(n.href)}):(n=h(e),r=function(t,e){var n=e.css,r=e.media;r&&t.setAttribute("media",r);if(t.styleSheet)t.styleSheet.cssText=n;else{for(;t.firstChild;)t.removeChild(t.firstChild);t.appendChild(document.createTextNode(n))}}.bind(null,n),o=function(){d(n)});return r(t),function(e){if(e){if(e.css===t.css&&e.media===t.media&&e.sourceMap===t.sourceMap)return;r(t=e)}else o()}}t.exports=function(t,e){if("undefined"!=typeof DEBUG&&DEBUG&&"object"!=typeof document)throw new Error("The style-loader cannot be used in a non-browser environment");(e=e||{}).attrs="object"==typeof e.attrs?e.attrs:{},e.singleton||"boolean"==typeof e.singleton||(e.singleton=o()),e.insertInto||(e.insertInto="head"),e.insertAt||(e.insertAt="bottom");var n=l(t,e);return c(n,e),function(t){for(var o=[],i=0;i<n.length;i++){var a=n[i];(s=r[a.id]).refs--,o.push(s)}t&&c(l(t,e),e);for(i=0;i<o.length;i++){var s;if(0===(s=o[i]).refs){for(var u=0;u<s.parts.length;u++)s.parts[u]();delete r[s.id]}}}};var y=function(){var t=[];return function(e,n){return t[e]=n,t.filter(Boolean).join("\n")}}();function m(t,e,n,r){var o=n?"":r.css;if(t.styleSheet)t.styleSheet.cssText=y(e,o);else{var i=document.createTextNode(o),a=t.childNodes;a[e]&&t.removeChild(a[e]),a.length?t.insertBefore(i,a[e]):t.appendChild(i)}}},function(t,e){t.exports=function(t){var e="undefined"!=typeof window&&window.location;if(!e)throw new Error("fixUrls requires window.location");if(!t||"string"!=typeof t)return t;var n=e.protocol+"//"+e.host,r=n+e.pathname.replace(/\/[^\/]*$/,"/");return t.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi,function(t,e){var o,i=e.trim().replace(/^"(.*)"$/,function(t,e){return e}).replace(/^'(.*)'$/,function(t,e){return e});return/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(i)?t:(o=0===i.indexOf("//")?i:0===i.indexOf("/")?n+i:r+i.replace(/^\.\//,""),"url("+JSON.stringify(o)+")")})}}])});
+var o=function(){function t(e){var n=e.data,r=(e.config,e.api);!function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}(this,t),this.api=r,this._CSS={block:this.api.styles.block,wrapper:"ce-paragraph"},this._data={},this._element=this.drawView(),this.data=n}return r(t,null,[{key:"displayInToolbox",get:function(){return!1}}]),r(t,[{key:"drawView",value:function(){var t=document.createElement("DIV");return t.classList.add(this._CSS.wrapper,this._CSS.block),t.contentEditable=!0,t}},{key:"render",value:function(){return this._element}},{key:"merge",value:function(t){var e={text:this.data.text+t.text};this.data=e}},{key:"validate",value:function(t){return""!==t.text.trim()}},{key:"save",value:function(t){return{text:t.innerHTML,marker:["<span>sdfsdfsdf</span>","sdfsdfsdf"],holder:{mem:"<b>sdfsdf</b>"}}}},{key:"data",get:function(){var t=this._element.innerHTML;return this._data.text=t,this._data},set:function(t){this._data=t||{},this._element.innerHTML=this._data.text||""}}],[{key:"sanitize",get:function(){return{text:{br:!0},marker:{span:!0},holder:!1}}},{key:"onPaste",get:function(){return{tags:["P"],handler:function(t){return{text:t.innerHTML}}}}}]),t}();t.exports=o},function(t,e,n){var r=n(2);"string"==typeof r&&(r=[[t.i,r,""]]);var o={hmr:!0,transform:void 0,insertInto:void 0};n(4)(r,o);r.locals&&(t.exports=r.locals)},function(t,e,n){(t.exports=n(3)(!1)).push([t.i,".ce-paragraph {\n    line-height: 1.6em;\n    outline: none;\n}\n\n.ce-paragraph p:first-of-type{\n    margin-top: 0;\n}\n\n.ce-paragraph p:last-of-type{\n    margin-bottom: 0;\n}\n",""])},function(t,e){t.exports=function(t){var e=[];return e.toString=function(){return this.map(function(e){var n=function(t,e){var n=t[1]||"",r=t[3];if(!r)return n;if(e&&"function"==typeof btoa){var o=function(t){return"/*# sourceMappingURL=data:application/json;charset=utf-8;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(t))))+" */"}(r),i=r.sources.map(function(t){return"/*# sourceURL="+r.sourceRoot+t+" */"});return[n].concat(i).concat([o]).join("\n")}return[n].join("\n")}(e,t);return e[2]?"@media "+e[2]+"{"+n+"}":n}).join("")},e.i=function(t,n){"string"==typeof t&&(t=[[null,t,""]]);for(var r={},o=0;o<this.length;o++){var i=this[o][0];"number"==typeof i&&(r[i]=!0)}for(o=0;o<t.length;o++){var a=t[o];"number"==typeof a[0]&&r[a[0]]||(n&&!a[2]?a[2]=n:n&&(a[2]="("+a[2]+") and ("+n+")"),e.push(a))}},e}},function(t,e,n){var r={},o=function(t){var e;return function(){return void 0===e&&(e=t.apply(this,arguments)),e}}(function(){return window&&document&&document.all&&!window.atob}),i=function(t){var e={};return function(t){if("function"==typeof t)return t();if(void 0===e[t]){var n=function(t){return document.querySelector(t)}.call(this,t);if(window.HTMLIFrameElement&&n instanceof window.HTMLIFrameElement)try{n=n.contentDocument.head}catch(t){n=null}e[t]=n}return e[t]}}(),a=null,s=0,u=[],f=n(5);function c(t,e){for(var n=0;n<t.length;n++){var o=t[n],i=r[o.id];if(i){i.refs++;for(var a=0;a<i.parts.length;a++)i.parts[a](o.parts[a]);for(;a<o.parts.length;a++)i.parts.push(b(o.parts[a],e))}else{var s=[];for(a=0;a<o.parts.length;a++)s.push(b(o.parts[a],e));r[o.id]={id:o.id,refs:1,parts:s}}}}function l(t,e){for(var n=[],r={},o=0;o<t.length;o++){var i=t[o],a=e.base?i[0]+e.base:i[0],s={css:i[1],media:i[2],sourceMap:i[3]};r[a]?r[a].parts.push(s):n.push(r[a]={id:a,parts:[s]})}return n}function p(t,e){var n=i(t.insertInto);if(!n)throw new Error("Couldn't find a style target. This probably means that the value for the 'insertInto' parameter is invalid.");var r=u[u.length-1];if("top"===t.insertAt)r?r.nextSibling?n.insertBefore(e,r.nextSibling):n.appendChild(e):n.insertBefore(e,n.firstChild),u.push(e);else if("bottom"===t.insertAt)n.appendChild(e);else{if("object"!=typeof t.insertAt||!t.insertAt.before)throw new Error("[Style Loader]\n\n Invalid value for parameter 'insertAt' ('options.insertAt') found.\n Must be 'top', 'bottom', or Object.\n (https://github.com/webpack-contrib/style-loader#insertat)\n");var o=i(t.insertInto+" "+t.insertAt.before);n.insertBefore(e,o)}}function d(t){if(null===t.parentNode)return!1;t.parentNode.removeChild(t);var e=u.indexOf(t);e>=0&&u.splice(e,1)}function h(t){var e=document.createElement("style");return void 0===t.attrs.type&&(t.attrs.type="text/css"),v(e,t.attrs),p(t,e),e}function v(t,e){Object.keys(e).forEach(function(n){t.setAttribute(n,e[n])})}function b(t,e){var n,r,o,i;if(e.transform&&t.css){if(!(i=e.transform(t.css)))return function(){};t.css=i}if(e.singleton){var u=s++;n=a||(a=h(e)),r=m.bind(null,n,u,!1),o=m.bind(null,n,u,!0)}else t.sourceMap&&"function"==typeof URL&&"function"==typeof URL.createObjectURL&&"function"==typeof URL.revokeObjectURL&&"function"==typeof Blob&&"function"==typeof btoa?(n=function(t){var e=document.createElement("link");return void 0===t.attrs.type&&(t.attrs.type="text/css"),t.attrs.rel="stylesheet",v(e,t.attrs),p(t,e),e}(e),r=function(t,e,n){var r=n.css,o=n.sourceMap,i=void 0===e.convertToAbsoluteUrls&&o;(e.convertToAbsoluteUrls||i)&&(r=f(r));o&&(r+="\n/*# sourceMappingURL=data:application/json;base64,"+btoa(unescape(encodeURIComponent(JSON.stringify(o))))+" */");var a=new Blob([r],{type:"text/css"}),s=t.href;t.href=URL.createObjectURL(a),s&&URL.revokeObjectURL(s)}.bind(null,n,e),o=function(){d(n),n.href&&URL.revokeObjectURL(n.href)}):(n=h(e),r=function(t,e){var n=e.css,r=e.media;r&&t.setAttribute("media",r);if(t.styleSheet)t.styleSheet.cssText=n;else{for(;t.firstChild;)t.removeChild(t.firstChild);t.appendChild(document.createTextNode(n))}}.bind(null,n),o=function(){d(n)});return r(t),function(e){if(e){if(e.css===t.css&&e.media===t.media&&e.sourceMap===t.sourceMap)return;r(t=e)}else o()}}t.exports=function(t,e){if("undefined"!=typeof DEBUG&&DEBUG&&"object"!=typeof document)throw new Error("The style-loader cannot be used in a non-browser environment");(e=e||{}).attrs="object"==typeof e.attrs?e.attrs:{},e.singleton||"boolean"==typeof e.singleton||(e.singleton=o()),e.insertInto||(e.insertInto="head"),e.insertAt||(e.insertAt="bottom");var n=l(t,e);return c(n,e),function(t){for(var o=[],i=0;i<n.length;i++){var a=n[i];(s=r[a.id]).refs--,o.push(s)}t&&c(l(t,e),e);for(i=0;i<o.length;i++){var s;if(0===(s=o[i]).refs){for(var u=0;u<s.parts.length;u++)s.parts[u]();delete r[s.id]}}}};var y=function(){var t=[];return function(e,n){return t[e]=n,t.filter(Boolean).join("\n")}}();function m(t,e,n,r){var o=n?"":r.css;if(t.styleSheet)t.styleSheet.cssText=y(e,o);else{var i=document.createTextNode(o),a=t.childNodes;a[e]&&t.removeChild(a[e]),a.length?t.insertBefore(i,a[e]):t.appendChild(i)}}},function(t,e){t.exports=function(t){var e="undefined"!=typeof window&&window.location;if(!e)throw new Error("fixUrls requires window.location");if(!t||"string"!=typeof t)return t;var n=e.protocol+"//"+e.host,r=n+e.pathname.replace(/\/[^\/]*$/,"/");return t.replace(/url\s*\(((?:[^)(]|\((?:[^)(]+|\([^)(]*\))*\))*)\)/gi,function(t,e){var o,i=e.trim().replace(/^"(.*)"$/,function(t,e){return e}).replace(/^'(.*)'$/,function(t,e){return e});return/^(#|data:|http:\/\/|https:\/\/|file:\/\/\/|\s*$)/i.test(i)?t:(o=0===i.indexOf("//")?i:0===i.indexOf("/")?n+i:r+i.replace(/^\.\//,""),"url("+JSON.stringify(o)+")")})}}])});
 
 /***/ }),
 

@@ -49,28 +49,12 @@ export default class Saver extends Module {
     const  blocks = this.Editor.BlockManager.blocks,
       chainData = [];
 
-    let baseConfig,
-      cleanData;
-
     blocks.forEach((block) => {
-      baseConfig = this.getSanitizerConfig(block.name);
-
-      /**
-       * if Tool provides custom sanitizer config
-       * then use this config
-       *
-       * Merge custom config with base config
-       */
-      if (block.sanitize && typeof block.sanitize === 'object') {
-        cleanData = this.Editor.Sanitizer.deepSanitize(block.data, block.sanitize, baseConfig);
-      } else {
-        cleanData = block.data;
-      }
-
-      chainData.push(cleanData);
+      chainData.push(block.data);
     });
 
     return Promise.all(chainData)
+      .then((extractedData) => this.Editor.Sanitizer.sanitizeBlocks(extractedData))
       .then((allExtractedData) => this.makeOutput(allExtractedData))
       .then((outputData) => {
         return outputData;
@@ -106,34 +90,5 @@ export default class Saver extends Module {
       version: VERSION,
       blocks,
     };
-  }
-
-  /**
-   * Returns Sanitizer config
-   * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
-   * otherwise get only enabled
-   */
-  private getSanitizerConfig(name) {
-    const toolsConfig = this.Editor.Tools.getToolSettings(name),
-      enableInlineTools = toolsConfig.inlineToolbar || [];
-
-    let config = {};
-
-    if (typeof enableInlineTools === 'boolean' && enableInlineTools) {
-      /**
-       * getting all tools sanitizer rule
-       */
-      this.Editor.InlineToolbar.tools.forEach( (inlineTool) => {
-        config = Object.assign(config, inlineTool.sanitize);
-      });
-    } else {
-      /**
-       * getting only enabled
-       */
-      enableInlineTools.map( (inlineToolName) => {
-        config = Object.assign(config, this.Editor.InlineToolbar.tools.get(inlineToolName).sanitize);
-      });
-    }
-    return config;
   }
 }
