@@ -115,88 +115,32 @@ export default class Sanitizer extends Module {
   /**
    * Method recursively reduces Block's data and cleans with passed rules
    *
-   * @param {IBlockToolData} blockData - taint string or object/array that contains taint string
+   * @param {IBlockToolData|object|*} dataToSanitize - taint string or object/array that contains taint string
    * @param {ISanitizerConfig} rules - object with sanitizer rules
-   * @param {number} depth
    */
-  public deepSanitize(blockData, rules, depth = 0) {
-
-    console.log('start: depth', depth);
-
-    if (typeof blockData === 'object') {
-      const cleanData = {};
-
-      /**
-       * Enumerate BlockData items
-       *
-       * It may contain 3 types:
-       *
-       * 1) Array - we need to save as array, thats why we do Array.map and call itself recursively
-       * 2) Object - we make new object with clean data and call itself
-       * 3) Basic type - we clean data
-       */
-      for (const data in blockData) {
-
-        if (!blockData.hasOwnProperty(data)) {
-          continue;
-        }
-
-        /**
-         * Current iteration item
-         */
-        const currentIterationItem = blockData[data];
-
-        if (Array.isArray(currentIterationItem)) {
-          /**
-           * Case 1:
-           *
-           *  - if passed config is valid, then call itself with this config of current iteration item
-           *  - if passed config is not valid, call itself with parent's config
-           */
-          if (this.isConfigValid(rules[data])) {
-            cleanData[data] = currentIterationItem.map( (arrayData) => {
-              return this.deepSanitize(arrayData, rules[data], depth + 1);
-            });
-          } else {
-            cleanData[data] = currentIterationItem.map( (arrayData) => {
-              return this.deepSanitize(arrayData, rules, depth + 1);
-            });
-          }
-
-        } else if (typeof currentIterationItem === 'object') {
-          /**
-           * Case 2:
-           *
-           * Working with objects is easier. We just make another object
-           * Doing the same as with Array
-           */
-          if (this.isConfigValid(rules[data])) {
-            cleanData[data] = this.deepSanitize(currentIterationItem, rules[data], depth + 1);
-          } else {
-            cleanData[data] = this.deepSanitize(currentIterationItem, rules, depth + 1);
-          }
-        } else {
-          /**
-           * Case 3:
-           *
-           * Clean currentIterationItem because it is basic typed object
-           * - Use parent config if it's config is not valid
-           */
-          if (this.isConfigValid(rules[data])) {
-            cleanData[data] = this.cleanOneItem(currentIterationItem, rules[data]);
-          } else {
-            cleanData[data] = this.cleanOneItem(currentIterationItem, rules);
-          }
-        }
-      }
-      return cleanData;
-    }
-
-    console.log('finish with depth:', depth);
+  public deepSanitize(dataToSanitize, rules) {
     /**
-     * Array items are not object
+     * BlockData It may contain 3 types:
+     *  - Array
+     *  - Object
+     *  - Primitive
      */
-    return this.cleanOneItem(blockData, rules);
+    if (Array.isArray(dataToSanitize)) {
+      /**
+       * Array: call sanitize for each item
+       */
+      return this.cleanArray(dataToSanitize, rules);
+    } else if (typeof dataToSanitize === 'object') {
+      /**
+       * Objects: just clean object deeper.
+       */
+      return this.cleanObject(dataToSanitize, rules);
+    } else {
+      /**
+       * Primitives (number|string|boolean): clean this item
+       */
+      return this.cleanOneItem(dataToSanitize, rules);
+    }
   }
 
   /**
@@ -222,6 +166,43 @@ export default class Sanitizer extends Module {
   }
 
   /**
+   * Clean array
+   * @param {array} array - [1, 2, {}, []]
+   * @param {object} ruleForItem
+   */
+  private cleanArray(array, ruleForItem) {
+    return array.map( (arrayItem) => this.deepSanitize(arrayItem, ruleForItem));
+  }
+
+  /**
+   * Clean object
+   * @param {object} object  - {level: 0, text: 'adada', items: [1,2,3]}}
+   * @param {object} rules - { b: true } or true|false
+   * @return {object}
+   */
+  private cleanObject(object, rules) {
+    const cleanData = {};
+
+    for (const fieldName in object) {
+      if (!object.hasOwnProperty(fieldName)) {
+        continue;
+      }
+
+      const currentIterationItem = object[fieldName];
+
+      /**
+       *  Get object from config by field name
+       *   - if it is a HTML Janitor rule, call with this rule
+       *   - otherwise, call with parent's config
+       */
+      const ruleForItem = this.isRule(rules[fieldName]) ? rules[fieldName] : rules;
+
+      cleanData[fieldName] = this.deepSanitize(currentIterationItem, ruleForItem);
+    }
+    return cleanData;
+  }
+
+  /**
    * @param {string} taintString
    * @param {ISanitizerConfig|boolean} rule
    * @return {string}
@@ -236,11 +217,16 @@ export default class Sanitizer extends Module {
     }
   }
 
+
+
   /**
+   * Check if passed item is a HTML Janitor rule:
+   *  { a : true }, {}, false, true, function(){} — correct rules
+   *  undefined, null, 0, 1, 2 — not a rules
    * @param config
    */
-  private isConfigValid(config): boolean {
-    return (typeof config === 'object' || config === false || config === true);
+  private isRule(config): boolean {
+    return typeof config === 'object' || typeof config === 'boolean' || typeof config === 'function';
   }
 
   /**
