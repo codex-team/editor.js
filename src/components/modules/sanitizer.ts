@@ -38,6 +38,7 @@ declare const Module: any;
 declare const _: any;
 
 import HTMLJanitor from 'html-janitor';
+import {hasOwnProperty} from 'tslint/lib/utils';
 
 export default class Sanitizer extends Module {
   /**
@@ -52,13 +53,26 @@ export default class Sanitizer extends Module {
    * @property {SanitizerConfig} this.defaultConfig
    * @property {HTMLJanitor} this._sanitizerInstance - Sanitizer library
    *
-   * @param {SanitizerConfig} config
+   * @param {IEditorConfig} config
    */
   constructor({config}) {
     super({config});
+  }
 
-    /** Custom configuration */
-    this.sanitizerConfig = config.settings ? config.settings.sanitizer : null;
+  /**
+   * Sets sanitizer configuration. Uses default config if user didn't pass the restriction
+   */
+  get defaultConfig() {
+    return {
+      p: {},
+      a: {
+        href: true,
+        target: '_blank',
+        rel: 'nofollow',
+      },
+      b: {},
+      i: {},
+    };
   }
 
   /**
@@ -74,129 +88,115 @@ export default class Sanitizer extends Module {
     return blocksData.map((block) => {
       toolClass = this.Editor.Tools.toolsAvailable[block.tool];
 
-      const output = {
-        time: block.time,
-        tool: block.tool,
-        data: block.data,
-      };
-
       /**
-       * Enable sanitizing if Tool provides config
+       * If Tools doesn't provide sanitizer config or it is empty
        */
-      if (toolClass.sanitize && !_.isEmpty(toolClass.sanitize)) {
-        /**
-         * If cache is empty, then compose tool config and put it to the cache object
-         */
-        if (!this.configCache[block.tool]) {
-          this.configCache[block.tool] = this.composeToolConfig(block.tool, toolClass.sanitize);
-        }
-
-        /**
-         * get from cache
-         */
-        const toolConfig = this.configCache[block.tool];
-        output.data = this.deepSanitize(block.data, toolConfig);
+      if (!toolClass.sanitize || (toolClass.sanitize && _.isEmpty(toolClass.sanitize))) {
+        return block;
       }
 
-      return output;
+      /**
+       * If cache is empty, then compose tool config and put it to the cache object
+       */
+      if (!this.configCache[block.tool]) {
+        this.configCache[block.tool] = this.composeToolConfig(block.tool, toolClass.sanitize);
+      }
+
+      /**
+       * get from cache
+       */
+      const toolConfig = this.configCache[block.tool];
+      block.data = this.deepSanitize(block.data, toolConfig);
+
+      return block;
     });
   }
 
   /**
    * Method recursively reduces Block's data and cleans with passed rules
    *
-   * @param {Object|string} blockData - taint string or object/array that contains taint string
-   * @param {Object} rules - object with sanitizer rules
+   * @param {IBlockToolData} blockData - taint string or object/array that contains taint string
+   * @param {ISanitizerConfig} rules - object with sanitizer rules
+   * @param {number} depth
    */
-  public deepSanitize(blockData, rules) {
-    /**
-     * Case 1: Block data is Array
-     * Array's in JS can not be enumerated with for..in because result will be Object not Array
-     * which conflicts with Consistency
-     */
-    if (Array.isArray(blockData)) {
-      /**
-       * Create new "cleanData" array and fill in with sanitizer data
-       */
-      return blockData.map((item) => {
-        return this.deepSanitize(item, rules);
-      });
-    } else if (typeof blockData === 'object') {
-      /**
-       * Create new "cleanData" object and fill with sanitized objects
-       */
+  public deepSanitize(blockData, rules, depth = 0) {
+
+    console.log('start: depth', depth);
+
+    if (typeof blockData === 'object') {
       const cleanData = {};
 
       /**
-       * Object's may have 3 cases:
-       *  1. When Data is Array. Then call again itself and recursively clean arrays items
-       *  2. When Data is Object that can have object's inside. Do the same, call itself and clean recursively
-       *  3. When Data is base type (string, int, bool, ...). Check if rule is passed
+       * Enumerate BlockData items
+       *
+       * It may contain 3 types:
+       *
+       * 1) Array - we need to save as array, thats why we do Array.map and call itself recursively
+       * 2) Object - we make new object with clean data and call itself
+       * 3) Basic type - we clean data
        */
       for (const data in blockData) {
-        if (Array.isArray(blockData[data])) {
+
+        if (!blockData.hasOwnProperty(data)) {
+          continue;
+        }
+
+        /**
+         * Current iteration item
+         */
+        const currentIterationItem = blockData[data];
+
+        if (Array.isArray(currentIterationItem)) {
           /**
-           * Case 1: BlockData is array
+           * Case 1:
            *
-           * Clean recursively blockdata[data] with passed rule
-           * Each array item clened by passed parent rule
-           *
-           * 1) If rule exists, then clean with rules extended by inline tools sanitize
-           * 2) If rule is false, which means clean all
-           * 3) Do nothing
+           *  - if passed config is valid, then call itself with this config of current iteration item
+           *  - if passed config is not valid, call itself with parent's config
            */
-          if (rules[data]) {
-            cleanData[data] = this.deepSanitize(blockData[data], rules[data]);
-          } else if (rules[data] === false) {
-            cleanData[data] = this.deepSanitize(blockData[data], {});
+          if (this.isConfigValid(rules[data])) {
+            cleanData[data] = currentIterationItem.map( (arrayData) => {
+              return this.deepSanitize(arrayData, rules[data], depth + 1);
+            });
           } else {
-            cleanData[data] = blockData[data];
+            cleanData[data] = currentIterationItem.map( (arrayData) => {
+              return this.deepSanitize(arrayData, rules, depth + 1);
+            });
           }
 
-        } else if (typeof blockData[data] === 'object') {
+        } else if (typeof currentIterationItem === 'object') {
           /**
-           * Case 2: BlockData is Object
-           * Clean each child with passed parents rule
+           * Case 2:
            *
-           * In this case we need to create a subObject that contains cleaned childs of current Object
+           * Working with objects is easier. We just make another object
+           * Doing the same as with Array
            */
-          const cleanedChilds = {};
-          for (const childData in blockData[data]) {
-            /**
-             * Case 1 & Case 2
-             */
-            if (rules[data]) {
-              cleanedChilds[childData] = this.clean(blockData[data][childData], rules[data]);
-            } else if (rules[data] === false) {
-              cleanedChilds[childData] = this.clean(blockData[data][childData], {});
-            } else {
-              cleanedChilds[childData] = blockData[data];
-            }
+          if (this.isConfigValid(rules[data])) {
+            cleanData[data] = this.deepSanitize(currentIterationItem, rules[data], depth + 1);
+          } else {
+            cleanData[data] = this.deepSanitize(currentIterationItem, rules, depth + 1);
           }
-
-          cleanData[data] = cleanedChilds;
-
         } else {
           /**
-           * Case 3: When blockData[data] is base typed
+           * Case 3:
+           *
+           * Clean currentIterationItem because it is basic typed object
+           * - Use parent config if it's config is not valid
            */
-          if (rules[data]) {
-            cleanData[data] = this.clean(blockData[data], rules[data]);
-          } else if (rules[data] === false) {
-            cleanData[data] = this.clean(blockData[data], {});
+          if (this.isConfigValid(rules[data])) {
+            cleanData[data] = this.cleanOneItem(currentIterationItem, rules[data]);
           } else {
-            cleanData[data] = blockData[data];
+            cleanData[data] = this.cleanOneItem(currentIterationItem, rules);
           }
         }
       }
-
       return cleanData;
-    } else {
-      /**
-       * In case embedded objects use parent rules
-       */
-      return this.clean(blockData, rules);
     }
+
+    console.log('finish with depth:', depth);
+    /**
+     * Array items are not object
+     */
+    return this.cleanOneItem(blockData, rules);
   }
 
   /**
@@ -208,7 +208,7 @@ export default class Sanitizer extends Module {
    *
    * @return {String} clean HTML
    */
-  public clean(taintString: string, customConfig: ISanitizerConfig) {
+  public clean(taintString: string, customConfig: ISanitizerConfig): string {
 
     const sanitizerConfig = {
       tags: customConfig,
@@ -219,6 +219,28 @@ export default class Sanitizer extends Module {
      */
     const sanitizerInstance = this.createHTMLJanitorInstance(sanitizerConfig);
     return sanitizerInstance.clean(taintString);
+  }
+
+  /**
+   * @param {string} taintString
+   * @param {ISanitizerConfig|boolean} rule
+   * @return {string}
+   */
+  private cleanOneItem(taintString: string, rule: ISanitizerConfig|boolean): string {
+    if (typeof rule === 'object') {
+      return this.clean(taintString, rule);
+    } else if (rule === false) {
+      return this.clean(taintString, {});
+    } else {
+      return taintString;
+    }
+  }
+
+  /**
+   * @param config
+   */
+  private isConfigValid(config): boolean {
+    return (typeof config === 'object' || config === false || config === true);
   }
 
   /**
@@ -241,18 +263,18 @@ export default class Sanitizer extends Module {
    * Merge with inline tool config
    *
    * @param {string} toolName
-   * @param {ISanitizerConfig} blockRules
+   * @param {ISanitizerConfig} toolRules
    * @return {ISanitizerConfig}
    */
-  private composeToolConfig(toolName: string, blockRules: ISanitizerConfig): ISanitizerConfig {
+  private composeToolConfig(toolName: string, toolRules: ISanitizerConfig): ISanitizerConfig {
     const baseConfig = this.getInlineToolsConfig(toolName);
 
     const toolConfig = {};
-    for (const blockRule in blockRules) {
-      if (blockRules[blockRule]) {
-        toolConfig[blockRule] = Object.assign({}, baseConfig, blockRules[blockRule]);
+    for (const toolRule in toolRules) {
+      if (typeof toolRules[toolRule] === 'object') {
+        toolConfig[toolRule] = Object.assign({}, baseConfig, toolRules[toolRule]);
       } else {
-        toolConfig[blockRule] = false;
+        toolConfig[toolRule] = toolRules[toolRule];
       }
     }
     return toolConfig;

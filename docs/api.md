@@ -34,8 +34,6 @@ Methods that working with Blocks
 
 ```insertNewBlock()``` - insert new Block after working place
 
-```getSanitizerConfig()``` - method return allowed inline-tool's sanitizer rules
-
 #### ISanitizerAPI
 
 ```clean(taintString, config)``` - method uses HTMLJanitor to clean taint string.
