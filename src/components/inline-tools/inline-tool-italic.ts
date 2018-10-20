@@ -12,6 +12,11 @@ declare var $: any;
  */
 export default class ItalicInlineTool implements InlineTool {
 
+  /**
+   * Specifies Tool as Inline Toolbar Tool
+   *
+   * @return {boolean}
+   */
   public static isInline = true;
 
   /**

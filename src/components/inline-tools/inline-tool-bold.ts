@@ -12,6 +12,11 @@ declare var $: any;
  */
 export default class BoldInlineTool implements InlineTool {
 
+  /**
+   * Specifies Tool as Inline Toolbar Tool
+   *
+   * @return {boolean}
+   */
   public static isInline = true;
 
   /**

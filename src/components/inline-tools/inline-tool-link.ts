@@ -14,6 +14,11 @@ declare var _: any;
  */
 export default class LinkInlineTool implements InlineTool {
 
+  /**
+   * Specifies Tool as Inline Toolbar Tool
+   *
+   * @return {boolean}
+   */
   public static isInline = true;
 
   /**

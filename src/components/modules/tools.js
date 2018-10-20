@@ -198,11 +198,6 @@ export default class Tools extends Module {
    * @return {Promise}
    */
   prepare() {
-    this.config.tools.paragraph = {
-      class: Paragraph,
-      inlineToolbar: true
-    };
-
     /**
      * Assign internal tools
      */
@@ -388,6 +383,10 @@ export default class Tools extends Module {
       bold: BoldInlineTool,
       italic: ItalicInlineTool,
       link: LinkInlineTool,
+      paragraph: {
+        class: Paragraph,
+        inlineToolbar: true
+      }
     };
   }
 }

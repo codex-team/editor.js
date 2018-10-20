@@ -1,9 +1,8 @@
+import ITool from '../interfaces/tools/tool';
+
 declare var Module: any;
 declare var $: any;
 
-import BoldInlineTool from '../inline-tools/inline-tool-bold';
-import ItalicInlineTool from '../inline-tools/inline-tool-italic';
-import LinkInlineTool from '../inline-tools/inline-tool-link';
 import EditorConfig from '../interfaces/editor-config';
 import InlineTool from '../interfaces/tools/inline-tool';
 import SelectionUtils from '../selection';
@@ -288,6 +287,11 @@ export default class InlineToolbar extends Module {
    * Add tool button and activate clicks
    */
   private addTool(toolName: string, tool: InlineTool): void {
+    const {
+      Listeners,
+      Tools,
+    } = this.Editor;
+
     const button = tool.render();
 
     if (!button) {
@@ -303,7 +307,7 @@ export default class InlineToolbar extends Module {
       this.nodes.actions.appendChild(actions);
     }
 
-    this.Editor.Listeners.on(button, 'click', (event) => {
+    Listeners.on(button, 'click', (event) => {
       this.toolClicked(tool);
       event.preventDefault();
     });
@@ -312,19 +316,26 @@ export default class InlineToolbar extends Module {
      * Enable shortcuts
      * Ignore tool that doesn't have shortcut or empty string
      */
-    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+    const toolSettings = Tools.getToolSettings(toolName);
 
     let shortcut = null;
 
-    const internalTools = ['link', 'bold', 'italic'];
+    /**
+     * Get internal inline tools
+     */
+    const internalTools: string[] = Object
+      .entries(Tools.internalTools)
+      .filter(([name, toolClass]: [string, ITool]) => toolClass[Tools.apiSettings.IS_INLINE])
+      .map(([name, toolClass]: [string, ITool]) => name);
+
     /**
      * 1) For internal tools, check public getter 'shortcut'
      * 2) For external tools, check tool's settings
      */
     if (internalTools.includes(toolName)) {
       shortcut = this.inlineTools[toolName].shortcut;
-    } else if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
-      shortcut = toolSettings[this.Editor.Tools.apiSettings.SHORTCUT];
+    } else if (toolSettings && toolSettings[Tools.apiSettings.SHORTCUT]) {
+      shortcut = toolSettings[Tools.apiSettings.SHORTCUT];
     }
 
     if (shortcut) {
