@@ -53,7 +53,7 @@ export default class Sanitizer extends Module {
   /**
    * Initializes Sanitizer module
    * Sets default configuration if custom not exists
-    *
+   *
    * @property {HTMLJanitor} this._sanitizerInstance - Sanitizer library
    *
    * @param {IEditorConfig} config
