@@ -108,7 +108,7 @@ export default class Sanitizer extends Module {
    * @param {IBlockToolData|object|*} dataToSanitize - taint string or object/array that contains taint string
    * @param {ISanitizerConfig} rules - object with sanitizer rules
    */
-  public deepSanitize(dataToSanitize: IBlockToolData, rules: ISanitizerConfig): IBlockToolData {
+  public deepSanitize(dataToSanitize: any, rules: ISanitizerConfig): any {
     /**
      * BlockData It may contain 3 types:
      *  - Array
