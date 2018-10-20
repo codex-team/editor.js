@@ -1,4 +1,5 @@
 import InlineTool from '../interfaces/tools/inline-tool';
+import ISanitizerConfig from '../interfaces/sanitizer-config';
 
 declare var $: any;
 
@@ -10,6 +11,8 @@ declare var $: any;
  * Style selected text with italic
  */
 export default class ItalicInlineTool implements InlineTool {
+
+  public static isInline = true;
 
   /**
    * Native Document's command that uses for Italic
@@ -80,7 +83,7 @@ export default class ItalicInlineTool implements InlineTool {
    * Leave <i> tags
    * @return {object}
    */
-  get sanitize(): object {
+  get sanitize(): ISanitizerConfig {
     return {
       i: true,
     };

@@ -1,3 +1,7 @@
+import BoldInlineTool from '../inline-tools/inline-tool-bold';
+import ItalicInlineTool from '../inline-tools/inline-tool-italic';
+import LinkInlineTool from '../inline-tools/inline-tool-link';
+
 const Paragraph = require('../tools/paragraph/dist/bundle');
 
 /**
@@ -199,6 +203,11 @@ export default class Tools extends Module {
       inlineToolbar: true
     };
 
+    /**
+     * Assign internal tools
+     */
+    Object.assign(this.config.tools, this.internalTools);
+
     if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
       return Promise.reject('Can\'t start without tools');
     }
@@ -368,5 +377,17 @@ export default class Tools extends Module {
    */
   getToolSettings(toolName) {
     return this.toolsSettings[toolName];
+  }
+
+  /**
+   * Returns internal inline tools
+   * Includes Bold, Italic, Link
+   */
+  get internalTools() {
+    return {
+      bold: BoldInlineTool,
+      italic: ItalicInlineTool,
+      link: LinkInlineTool,
+    };
   }
 }

@@ -1,5 +1,6 @@
 import InlineTool from '../interfaces/tools/inline-tool';
 import SelectionUtils from '../selection';
+import ISanitizerConfig from '../interfaces/sanitizer-config';
 
 declare var $: any;
 declare var _: any;
@@ -12,6 +13,9 @@ declare var _: any;
  * Wrap selected text with <a> tag
  */
 export default class LinkInlineTool implements InlineTool {
+
+  public static isInline = true;
+
   /**
    * Native Document's commands for link/unlink
    */
@@ -320,7 +324,7 @@ export default class LinkInlineTool implements InlineTool {
    * Leave <a> tags
    * @return {object}
    */
-  get sanitize(): object {
+  get sanitize(): ISanitizerConfig {
     return {
       a: {
         href: true,

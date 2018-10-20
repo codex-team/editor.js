@@ -63,13 +63,12 @@ export default class InlineToolbar extends Module {
 
   /**
    * Inline Toolbar Tools
-   * includes internal and external tools
    *
    * @returns Map<string, InlineTool>
    */
   get tools(): Map<string, InlineTool> {
     if (!this.toolsInstances || this.toolsInstances.size === 0) {
-      const allTools = {...this.internalTools, ...this.externalTools};
+      const allTools = this.inlineTools;
 
       this.toolsInstances = new Map();
       for (const tool in allTools) {
@@ -317,12 +316,13 @@ export default class InlineToolbar extends Module {
 
     let shortcut = null;
 
+    const internalTools = ['link', 'bold', 'italic'];
     /**
      * 1) For internal tools, check public getter 'shortcut'
      * 2) For external tools, check tool's settings
      */
-    if (this.internalTools[toolName]) {
-      shortcut = this.internalTools[toolName].shortcut;
+    if (internalTools.includes(toolName)) {
+      shortcut = this.inlineTools[toolName].shortcut;
     } else if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
       shortcut = toolSettings[this.Editor.Tools.apiSettings.SHORTCUT];
     }
@@ -390,22 +390,10 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   * Returns internal inline tools
-   * Includes Bold, Italic, Link
-   */
-  private get internalTools(): {[name: string]: InlineTool} {
-    return {
-      bold: this.Editor.Tools.constructInline(BoldInlineTool),
-      italic: this.Editor.Tools.constructInline(ItalicInlineTool),
-      link: this.Editor.Tools.constructInline(LinkInlineTool),
-    };
-  }
-
-  /**
-   * Get external tools
+   * Get inline tools tools
    * Tools that has isInline is true
    */
-  private get externalTools(): {[name: string]: InlineTool} {
+  private get inlineTools(): {[name: string]: InlineTool} {
     const result = {};
 
     for (const tool in this.Editor.Tools.inline) {

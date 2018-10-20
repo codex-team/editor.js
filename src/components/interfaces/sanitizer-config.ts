@@ -32,5 +32,5 @@ export default interface ISanitizerConfig {
    *   }
    * }
    */
-  [key: string]: boolean|object|(() => any);
+  [key: string]: boolean|{[attr: string]: boolean|string}|(() => any);
 }

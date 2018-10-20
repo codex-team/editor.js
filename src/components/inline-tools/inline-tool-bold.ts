@@ -1,5 +1,5 @@
 import InlineTool from '../interfaces/tools/inline-tool';
-import SelectionUtils from '../selection';
+import ISanitizerConfig from '../interfaces/sanitizer-config';
 
 declare var $: any;
 
@@ -11,6 +11,8 @@ declare var $: any;
  * Makes selected text bolder
  */
 export default class BoldInlineTool implements InlineTool {
+
+  public static isInline = true;
 
   /**
    * Native Document's command that uses for Bold
@@ -81,7 +83,7 @@ export default class BoldInlineTool implements InlineTool {
    * Leave <b> tags
    * @return {object}
    */
-  get sanitize(): object {
+  get sanitize(): ISanitizerConfig {
     return {
       b: true,
     };
