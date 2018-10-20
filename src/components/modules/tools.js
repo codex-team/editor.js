@@ -190,6 +190,7 @@ export default class Tools extends Module {
       IS_PASTE_DISALLOWED: 'disallowPaste',
       SHORTCUT: 'shortcut',
       TOOLBAR_ICON: 'toolboxIcon',
+      SANITIZE_CONFIG: 'sanitize'
     };
   }
 

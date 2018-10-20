@@ -22,6 +22,21 @@ export default class LinkInlineTool implements InlineTool {
   public static isInline = true;
 
   /**
+   * Sanitizer Rule
+   * Leave <a> tags
+   * @return {object}
+   */
+  static get sanitize(): ISanitizerConfig {
+    return {
+      a: {
+        href: true,
+        target: '_blank',
+        rel: 'nofollow',
+      },
+    };
+  }
+
+  /**
    * Native Document's commands for link/unlink
    */
   private readonly commandLink: string = 'createLink';
@@ -47,7 +62,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Elements
    */
-  private nodes = {
+  private nodes: {button: HTMLButtonElement, input: HTMLInputElement} = {
     button: null,
     input: null,
   };
@@ -322,20 +337,5 @@ export default class LinkInlineTool implements InlineTool {
    */
   private unlink(): void {
     document.execCommand(this.commandUnlink);
-  }
-
-  /**
-   * Sanitizer Rule
-   * Leave <a> tags
-   * @return {object}
-   */
-  get sanitize(): ISanitizerConfig {
-    return {
-      a: {
-        href: true,
-        target: '_blank',
-        rel: 'nofollow',
-      },
-    };
   }
 }

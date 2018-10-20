@@ -20,6 +20,17 @@ export default class ItalicInlineTool implements InlineTool {
   public static isInline = true;
 
   /**
+   * Sanitizer Rule
+   * Leave <i> tags
+   * @return {object}
+   */
+  static get sanitize(): ISanitizerConfig {
+    return {
+      i: true,
+    };
+  }
+
+  /**
    * Native Document's command that uses for Italic
    */
   private readonly commandName: string = 'italic';
@@ -36,7 +47,7 @@ export default class ItalicInlineTool implements InlineTool {
   /**
    * Elements
    */
-  private nodes = {
+  private nodes: {button: HTMLButtonElement} = {
     button: null,
   };
 
@@ -81,16 +92,5 @@ export default class ItalicInlineTool implements InlineTool {
    */
   public get shortcut(): string {
     return 'CMD+I';
-  }
-
-  /**
-   * Sanitizer Rule
-   * Leave <i> tags
-   * @return {object}
-   */
-  get sanitize(): ISanitizerConfig {
-    return {
-      i: true,
-    };
   }
 }

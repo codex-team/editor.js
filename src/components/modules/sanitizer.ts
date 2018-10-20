@@ -39,6 +39,7 @@ declare const _: any;
 
 import HTMLJanitor from 'html-janitor';
 import IBlockToolData from '../interfaces/tools/block-tool-data';
+import IInlineTool from '../interfaces/tools/inline-tool';
 
 export default class Sanitizer extends Module {
   /**
@@ -73,6 +74,7 @@ export default class Sanitizer extends Module {
   public sanitizeBlocks(
     blocksData: Array<{tool: string, data: IBlockToolData}>,
   ): Array<{tool: string, data: IBlockToolData}> {
+    const fieldName = this.Editor.Tools.apiSettings.SANITIZE_CONFIG;
     let toolClass;
 
     return blocksData.map((block) => {
@@ -81,7 +83,7 @@ export default class Sanitizer extends Module {
       /**
        * If Tools doesn't provide sanitizer config or it is empty
        */
-      if (!toolClass.sanitize || (toolClass.sanitize && _.isEmpty(toolClass.sanitize))) {
+      if (!toolClass.sanitize || (toolClass[fieldName] && _.isEmpty(toolClass[fieldName]))) {
         return block;
       }
 
@@ -89,7 +91,7 @@ export default class Sanitizer extends Module {
        * If cache is empty, then compose tool config and put it to the cache object
        */
       if (!this.configCache[block.tool]) {
-        this.configCache[block.tool] = this.composeToolConfig(block.tool, toolClass.sanitize);
+        this.configCache[block.tool] = this.composeToolConfig(block.tool, toolClass[fieldName]);
       }
 
       /**
@@ -182,7 +184,9 @@ export default class Sanitizer extends Module {
    * otherwise get only enabled
    */
   public getInlineToolsConfig(name: string): ISanitizerConfig {
-    const toolsConfig = this.Editor.Tools.getToolSettings(name),
+    const {Tools} = this.Editor;
+
+    const toolsConfig = Tools.getToolSettings(name),
       enableInlineTools = toolsConfig.inlineToolbar || [];
 
     let config = {};
@@ -197,7 +201,7 @@ export default class Sanitizer extends Module {
        * getting only enabled
        */
       enableInlineTools.map( (inlineToolName) => {
-        config = Object.assign(config, this.Editor.InlineToolbar.tools.get(inlineToolName).sanitize);
+        config = Object.assign(config, Tools.inline[inlineToolName][Tools.apiSettings.SANITIZE_CONFIG]);
       });
     }
 
@@ -208,14 +212,17 @@ export default class Sanitizer extends Module {
    * Return general config for all inline tools
    */
   public getAllInlineToolsConfig(): ISanitizerConfig {
+    const {Tools} = this.Editor;
+
     if (this.inlineToolsConfigCache) {
       return this.inlineToolsConfigCache;
     }
 
     const config: ISanitizerConfig = {};
 
-    this.Editor.InlineToolbar.tools.forEach( (inlineTool) => {
-      Object.assign(config, inlineTool.sanitize);
+    Object.entries(Tools.inline)
+      .forEach( ([name, inlineTool]: [string, IInlineTool]) => {
+      Object.assign(config, inlineTool[Tools.apiSettings.SANITIZE_CONFIG]);
     });
 
     this.inlineToolsConfigCache = config;

@@ -20,6 +20,17 @@ export default class BoldInlineTool implements InlineTool {
   public static isInline = true;
 
   /**
+   * Sanitizer Rule
+   * Leave <b> tags
+   * @return {object}
+   */
+  static get sanitize(): ISanitizerConfig {
+    return {
+      b: true,
+    };
+  }
+
+  /**
    * Native Document's command that uses for Bold
    */
   private readonly commandName: string = 'bold';
@@ -36,7 +47,7 @@ export default class BoldInlineTool implements InlineTool {
   /**
    * Elements
    */
-  private nodes = {
+  private nodes: {button: HTMLButtonElement} = {
     button: undefined,
   };
 
@@ -81,16 +92,5 @@ export default class BoldInlineTool implements InlineTool {
    */
   public get shortcut(): string {
     return 'CMD+B';
-  }
-
-  /**
-   * Sanitizer Rule
-   * Leave <b> tags
-   * @return {object}
-   */
-  get sanitize(): ISanitizerConfig {
-    return {
-      b: true,
-    };
   }
 }
