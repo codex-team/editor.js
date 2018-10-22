@@ -376,8 +376,8 @@ export default class Tools extends Module {
   }
 
   /**
-   * Returns internal inline tools
-   * Includes Bold, Italic, Link
+   * Returns internal tools
+   * Includes Bold, Italic, Link and Paragraph
    */
   get internalTools() {
     return {
