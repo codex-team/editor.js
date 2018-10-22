@@ -571,7 +571,7 @@ export default class Paste extends Module {
    */
   private async processSingleBlock(dataToInsert: IPasteData): Promise<void> {
     const initialTool = this.config.initialBlock,
-      {BlockManager, Caret} = this.Editor,
+      {BlockManager, Caret, Sanitizer} = this.Editor,
       {content, tool} = dataToInsert;
 
     if (tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
@@ -580,6 +580,10 @@ export default class Paste extends Module {
       if (blockData) {
         this.splitBlock();
         let insertedBlock;
+
+        const sanitizeConfig = Sanitizer.getInlineToolsConfig(tool);
+
+        blockData.data = Sanitizer.clean(blockData.data, sanitizeConfig);
 
         if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
           insertedBlock = BlockManager.replace(blockData.tool, blockData.data);
@@ -591,8 +595,10 @@ export default class Paste extends Module {
       }
     }
 
+    const currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
+
     /** If there is no pattern substitute - insert string as it is */
-    document.execCommand('insertHTML', false, content.innerHTML);
+    document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig));
   }
 
   /**

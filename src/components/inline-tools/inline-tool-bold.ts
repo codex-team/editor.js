@@ -26,7 +26,7 @@ export default class BoldInlineTool implements InlineTool {
    */
   static get sanitize(): ISanitizerConfig {
     return {
-      b: true,
+      b: {},
     };
   }
 

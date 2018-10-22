@@ -26,7 +26,7 @@ export default class ItalicInlineTool implements InlineTool {
    */
   static get sanitize(): ISanitizerConfig {
     return {
-      i: true,
+      i: {},
     };
   }
 
