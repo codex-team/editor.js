@@ -583,7 +583,9 @@ export default class Paste extends Module {
 
         const sanitizeConfig = Sanitizer.composeToolConfig(tool);
 
-        blockData.data = Sanitizer.deepSanitize(blockData.data, sanitizeConfig);
+        if (!_.isEmpty(sanitizeConfig)) {
+          blockData.data = Sanitizer.deepSanitize(blockData.data, sanitizeConfig);
+        }
 
         if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
           insertedBlock = BlockManager.replace(blockData.tool, blockData.data);

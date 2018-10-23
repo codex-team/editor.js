@@ -78,6 +78,10 @@ export default class Sanitizer extends Module {
     return blocksData.map((block) => {
       const toolConfig = this.composeToolConfig(block.tool);
 
+      if (_.isEmpty(toolConfig)) {
+        return block;
+      }
+
       block.data = this.deepSanitize(block.data, toolConfig);
 
       return block;
@@ -154,16 +158,16 @@ export default class Sanitizer extends Module {
 
     const sanitizeGetter = this.Editor.Tools.apiSettings.SANITIZE_CONFIG;
     const toolClass = this.Editor.Tools.available[toolName];
+    const baseConfig = this.getInlineToolsConfig(toolName);
 
     /**
      * If Tools doesn't provide sanitizer config or it is empty
      */
     if (!toolClass.sanitize || (toolClass[sanitizeGetter] && _.isEmpty(toolClass[sanitizeGetter]))) {
-      return {};
+      return baseConfig;
     }
 
     const toolRules = toolClass.sanitize;
-    const baseConfig = this.getInlineToolsConfig(toolName);
 
     const toolConfig = {};
     for (const fieldName in toolRules) {
