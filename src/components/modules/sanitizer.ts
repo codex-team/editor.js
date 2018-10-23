@@ -74,30 +74,10 @@ export default class Sanitizer extends Module {
   public sanitizeBlocks(
     blocksData: Array<{tool: string, data: IBlockToolData}>,
   ): Array<{tool: string, data: IBlockToolData}> {
-    const sanitizeGetter = this.Editor.Tools.apiSettings.SANITIZE_CONFIG;
-    let toolClass;
 
     return blocksData.map((block) => {
-      toolClass = this.Editor.Tools.toolsAvailable[block.tool];
+      const toolConfig = this.composeToolConfig(block.tool);
 
-      /**
-       * If Tools doesn't provide sanitizer config or it is empty
-       */
-      if (!toolClass.sanitize || (toolClass[sanitizeGetter] && _.isEmpty(toolClass[sanitizeGetter]))) {
-        return block;
-      }
-
-      /**
-       * If cache is empty, then compose tool config and put it to the cache object
-       */
-      if (!this.configCache[block.tool]) {
-        this.configCache[block.tool] = this.composeToolConfig(block.tool, toolClass[sanitizeGetter]);
-      }
-
-      /**
-       * get from cache
-       */
-      const toolConfig = this.configCache[block.tool];
       block.data = this.deepSanitize(block.data, toolConfig);
 
       return block;
@@ -164,7 +144,25 @@ export default class Sanitizer extends Module {
    * @param {ISanitizerConfig} toolRules
    * @return {ISanitizerConfig}
    */
-  public composeToolConfig(toolName: string, toolRules: ISanitizerConfig): ISanitizerConfig {
+  public composeToolConfig(toolName: string): ISanitizerConfig {
+    /**
+     * If cache is empty, then compose tool config and put it to the cache object
+     */
+    if (this.configCache[toolName]) {
+      return this.configCache[toolName];
+    }
+
+    const sanitizeGetter = this.Editor.Tools.apiSettings.SANITIZE_CONFIG;
+    const toolClass = this.Editor.Tools.toolsAvailable[toolName];
+
+    /**
+     * If Tools doesn't provide sanitizer config or it is empty
+     */
+    if (!toolClass.sanitize || (toolClass[sanitizeGetter] && _.isEmpty(toolClass[sanitizeGetter]))) {
+      return {};
+    }
+
+    const toolRules = toolClass.sanitize;
     const baseConfig = this.getInlineToolsConfig(toolName);
 
     const toolConfig = {};
@@ -178,6 +176,8 @@ export default class Sanitizer extends Module {
         }
       }
     }
+    this.configCache[toolName] = toolConfig;
+
     return toolConfig;
   }
 

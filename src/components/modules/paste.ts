@@ -581,9 +581,9 @@ export default class Paste extends Module {
         this.splitBlock();
         let insertedBlock;
 
-        const sanitizeConfig = Sanitizer.getInlineToolsConfig(tool);
+        const sanitizeConfig = Sanitizer.composeToolConfig(tool);
 
-        blockData.data = Sanitizer.clean(blockData.data, sanitizeConfig);
+        blockData.data = Sanitizer.deepSanitize(blockData.data, sanitizeConfig);
 
         if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
           insertedBlock = BlockManager.replace(blockData.tool, blockData.data);
