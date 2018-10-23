@@ -108,7 +108,7 @@ Method should not return a value.
 
 We recommend to specify the Sanitizer config that corresponds with inline tags that is used by your Tool. 
 In that case, your config will be merged with sanitizer configuration of Block Tool 
-that is used the Inline Toolbar with your Tool.
+that is using the Inline Toolbar with your Tool.
 
 Example:
 
