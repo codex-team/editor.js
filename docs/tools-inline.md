@@ -115,7 +115,7 @@ Example:
 If your Tool wrapps selected text with `<b>` tag, the sanitizer config should looks like this:
 
 ```js
-static get sanitizer() {
+static get sanitize() {
   return {
     b: {} // {} means clean all attributes. true — leave all attributes
   }
