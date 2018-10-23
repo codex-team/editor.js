@@ -150,6 +150,14 @@ export default class Block {
   }
 
   /**
+   * Returns tool's sanitizer config
+   * @return {object}
+   */
+  get sanitize(): object {
+    return this.tool.sanitize;
+  }
+
+  /**
    * is block mergeable
    * We plugin have merge function then we call it mergable
    * @return {boolean}
@@ -287,15 +295,7 @@ export default class Block {
    * @return {Object}
    */
   public async save(): Promise<void|{tool: string, data: any, time: number}> {
-    let extractedBlock = await this.tool.save(this.pluginsContent);
-
-    /**
-     * if Tool provides custom sanitizer config
-     * then use this config
-     */
-    if (this.tool.sanitize && typeof this.tool.sanitize === 'object') {
-      extractedBlock = this.sanitizeBlock(extractedBlock, this.tool.sanitize);
-    }
+    const extractedBlock = await this.tool.save(this.pluginsContent);
 
     /**
      * Measuring execution time
@@ -371,73 +371,6 @@ export default class Block {
     });
 
     return tunesElement;
-  }
-
-  /**
-   * Method recursively reduces Block's data and cleans with passed rules
-   *
-   * @param {Object|string} blockData - taint string or object/array that contains taint string
-   * @param {Object} rules - object with sanitizer rules
-   */
-  private sanitizeBlock(blockData, rules) {
-
-    /**
-     * Case 1: Block data is Array
-     * Array's in JS can not be enumerated with for..in because result will be Object not Array
-     * which conflicts with Consistency
-     */
-    if (Array.isArray(blockData)) {
-      /**
-       * Create new "cleanData" array and fill in with sanitizer data
-       */
-      return blockData.map((item) => {
-        return this.sanitizeBlock(item, rules);
-      });
-    } else if (typeof blockData === 'object') {
-
-      /**
-       * Create new "cleanData" object and fill with sanitized objects
-       */
-      const cleanData = {};
-
-      /**
-       * Object's may have 3 cases:
-       *  1. When Data is Array. Then call again itself and recursively clean arrays items
-       *  2. When Data is Object that can have object's inside. Do the same, call itself and clean recursively
-       *  3. When Data is base type (string, int, bool, ...). Check if rule is passed
-       */
-      for (const data in blockData) {
-        if (Array.isArray(blockData[data]) || typeof blockData[data] === 'object') {
-          /**
-           * Case 1 & Case 2
-           */
-          if (rules[data]) {
-            cleanData[data] = this.sanitizeBlock(blockData[data], rules[data]);
-          } else if (_.isEmpty(rules)) {
-            cleanData[data] = this.sanitizeBlock(blockData[data], rules);
-          } else {
-            cleanData[data] = blockData[data];
-          }
-
-        } else {
-          /**
-           * Case 3.
-           */
-          if (rules[data]) {
-            cleanData[data] = this.api.sanitizer.clean(blockData[data], rules[data]);
-          } else {
-            cleanData[data] = this.api.sanitizer.clean(blockData[data], rules);
-          }
-        }
-      }
-
-      return cleanData;
-    } else {
-      /**
-       * In case embedded objects use parent rules
-       */
-      return this.api.sanitizer.clean(blockData, rules);
-    }
   }
 
   /**

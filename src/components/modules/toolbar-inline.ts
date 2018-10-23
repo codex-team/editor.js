@@ -1,9 +1,8 @@
+import ITool from '../interfaces/tools/tool';
+
 declare var Module: any;
 declare var $: any;
 
-import BoldInlineTool from '../inline-tools/inline-tool-bold';
-import ItalicInlineTool from '../inline-tools/inline-tool-italic';
-import LinkInlineTool from '../inline-tools/inline-tool-link';
 import EditorConfig from '../interfaces/editor-config';
 import InlineTool from '../interfaces/tools/inline-tool';
 import SelectionUtils from '../selection';
@@ -63,13 +62,12 @@ export default class InlineToolbar extends Module {
 
   /**
    * Inline Toolbar Tools
-   * includes internal and external tools
    *
    * @returns Map<string, InlineTool>
    */
   get tools(): Map<string, InlineTool> {
     if (!this.toolsInstances || this.toolsInstances.size === 0) {
-      const allTools = {...this.internalTools, ...this.externalTools};
+      const allTools = this.inlineTools;
 
       this.toolsInstances = new Map();
       for (const tool in allTools) {
@@ -289,6 +287,11 @@ export default class InlineToolbar extends Module {
    * Add tool button and activate clicks
    */
   private addTool(toolName: string, tool: InlineTool): void {
+    const {
+      Listeners,
+      Tools,
+    } = this.Editor;
+
     const button = tool.render();
 
     if (!button) {
@@ -304,7 +307,7 @@ export default class InlineToolbar extends Module {
       this.nodes.actions.appendChild(actions);
     }
 
-    this.Editor.Listeners.on(button, 'click', (event) => {
+    Listeners.on(button, 'click', (event) => {
       this.toolClicked(tool);
       event.preventDefault();
     });
@@ -313,18 +316,26 @@ export default class InlineToolbar extends Module {
      * Enable shortcuts
      * Ignore tool that doesn't have shortcut or empty string
      */
-    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+    const toolSettings = Tools.getToolSettings(toolName);
 
     let shortcut = null;
+
+    /**
+     * Get internal inline tools
+     */
+    const internalTools: string[] = Object
+      .entries(Tools.internalTools)
+      .filter(([name, toolClass]: [string, ITool]) => toolClass[Tools.apiSettings.IS_INLINE])
+      .map(([name, toolClass]: [string, ITool]) => name);
 
     /**
      * 1) For internal tools, check public getter 'shortcut'
      * 2) For external tools, check tool's settings
      */
-    if (this.internalTools[toolName]) {
-      shortcut = this.internalTools[toolName].shortcut;
-    } else if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
-      shortcut = toolSettings[this.Editor.Tools.apiSettings.SHORTCUT];
+    if (internalTools.includes(toolName)) {
+      shortcut = this.inlineTools[toolName].shortcut;
+    } else if (toolSettings && toolSettings[Tools.apiSettings.SHORTCUT]) {
+      shortcut = toolSettings[Tools.apiSettings.SHORTCUT];
     }
 
     if (shortcut) {
@@ -390,22 +401,10 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   * Returns internal inline tools
-   * Includes Bold, Italic, Link
-   */
-  private get internalTools(): {[name: string]: InlineTool} {
-    return {
-      bold: this.Editor.Tools.constructInline(BoldInlineTool),
-      italic: this.Editor.Tools.constructInline(ItalicInlineTool),
-      link: this.Editor.Tools.constructInline(LinkInlineTool),
-    };
-  }
-
-  /**
-   * Get external tools
+   * Get inline tools tools
    * Tools that has isInline is true
    */
-  private get externalTools(): {[name: string]: InlineTool} {
+  private get inlineTools(): {[name: string]: InlineTool} {
     const result = {};
 
     for (const tool in this.Editor.Tools.inline) {

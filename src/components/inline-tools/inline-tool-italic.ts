@@ -1,4 +1,5 @@
 import InlineTool from '../interfaces/tools/inline-tool';
+import ISanitizerConfig from '../interfaces/sanitizer-config';
 
 declare var $: any;
 
@@ -10,6 +11,24 @@ declare var $: any;
  * Style selected text with italic
  */
 export default class ItalicInlineTool implements InlineTool {
+
+  /**
+   * Specifies Tool as Inline Toolbar Tool
+   *
+   * @return {boolean}
+   */
+  public static isInline = true;
+
+  /**
+   * Sanitizer Rule
+   * Leave <i> tags
+   * @return {object}
+   */
+  static get sanitize(): ISanitizerConfig {
+    return {
+      i: {},
+    };
+  }
 
   /**
    * Native Document's command that uses for Italic
@@ -28,7 +47,7 @@ export default class ItalicInlineTool implements InlineTool {
   /**
    * Elements
    */
-  private nodes = {
+  private nodes: {button: HTMLButtonElement} = {
     button: null,
   };
 
@@ -74,5 +93,4 @@ export default class ItalicInlineTool implements InlineTool {
   public get shortcut(): string {
     return 'CMD+I';
   }
-
 }

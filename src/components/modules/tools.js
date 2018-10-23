@@ -1,3 +1,7 @@
+import BoldInlineTool from '../inline-tools/inline-tool-bold';
+import ItalicInlineTool from '../inline-tools/inline-tool-italic';
+import LinkInlineTool from '../inline-tools/inline-tool-link';
+
 const Paragraph = require('../tools/paragraph/dist/bundle');
 
 /**
@@ -186,6 +190,7 @@ export default class Tools extends Module {
       IS_PASTE_DISALLOWED: 'disallowPaste',
       SHORTCUT: 'shortcut',
       TOOLBAR_ICON: 'toolboxIcon',
+      SANITIZE_CONFIG: 'sanitize'
     };
   }
 
@@ -194,10 +199,10 @@ export default class Tools extends Module {
    * @return {Promise}
    */
   prepare() {
-    this.config.tools.paragraph = {
-      class: Paragraph,
-      inlineToolbar: true
-    };
+    /**
+     * Assign internal tools
+     */
+    Object.assign(this.config.tools, this.internalTools);
 
     if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
       return Promise.reject('Can\'t start without tools');
@@ -368,5 +373,21 @@ export default class Tools extends Module {
    */
   getToolSettings(toolName) {
     return this.toolsSettings[toolName];
+  }
+
+  /**
+   * Returns internal tools
+   * Includes Bold, Italic, Link and Paragraph
+   */
+  get internalTools() {
+    return {
+      bold: BoldInlineTool,
+      italic: ItalicInlineTool,
+      link: LinkInlineTool,
+      paragraph: {
+        class: Paragraph,
+        inlineToolbar: true
+      }
+    };
   }
 }
