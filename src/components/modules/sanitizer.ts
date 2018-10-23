@@ -74,7 +74,7 @@ export default class Sanitizer extends Module {
   public sanitizeBlocks(
     blocksData: Array<{tool: string, data: IBlockToolData}>,
   ): Array<{tool: string, data: IBlockToolData}> {
-    const fieldName = this.Editor.Tools.apiSettings.SANITIZE_CONFIG;
+    const sanitizeGetter = this.Editor.Tools.apiSettings.SANITIZE_CONFIG;
     let toolClass;
 
     return blocksData.map((block) => {
@@ -83,7 +83,7 @@ export default class Sanitizer extends Module {
       /**
        * If Tools doesn't provide sanitizer config or it is empty
        */
-      if (!toolClass.sanitize || (toolClass[fieldName] && _.isEmpty(toolClass[fieldName]))) {
+      if (!toolClass.sanitize || (toolClass[sanitizeGetter] && _.isEmpty(toolClass[sanitizeGetter]))) {
         return block;
       }
 
@@ -91,7 +91,7 @@ export default class Sanitizer extends Module {
        * If cache is empty, then compose tool config and put it to the cache object
        */
       if (!this.configCache[block.tool]) {
-        this.configCache[block.tool] = this.composeToolConfig(block.tool, toolClass[fieldName]);
+        this.configCache[block.tool] = this.composeToolConfig(block.tool, toolClass[sanitizeGetter]);
       }
 
       /**
@@ -168,11 +168,14 @@ export default class Sanitizer extends Module {
     const baseConfig = this.getInlineToolsConfig(toolName);
 
     const toolConfig = {};
-    for (const toolRule in toolRules) {
-      if (typeof toolRules[toolRule] === 'object') {
-        toolConfig[toolRule] = Object.assign({}, baseConfig, toolRules[toolRule]);
-      } else {
-        toolConfig[toolRule] = toolRules[toolRule];
+    for (const fieldName in toolRules) {
+      if (toolRules.hasOwnProperty(fieldName)) {
+        const rule = toolRules[fieldName];
+        if (typeof rule === 'object') {
+          toolConfig[fieldName] = Object.assign({}, baseConfig, rule);
+        } else {
+          toolConfig[fieldName] = rule;
+        }
       }
     }
     return toolConfig;

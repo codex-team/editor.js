@@ -209,7 +209,6 @@ static get onPaste() {
 CodeX Editor provides [API](sanitizer.md) to clean taint strings. 
 Use it manually at the `save()` method or or pass `sanitizer` config to do it automatically.
 
-
 #### Sanitizer Configuration
 
 The example of sanitizer configuration
@@ -279,14 +278,15 @@ save() {
  
 #### Automatic sanitize
 
-If you pass the sanitizer config, CodeX Editor will automatically sanitize your saved data.
-Note that if your tool is allowed to use inline-tools, we get it's sanitizing rules
+If you pass the sanitizer config as static getter, CodeX Editor will automatically sanitize your saved data.
+
+Note that if your Tool is allowed to use the Inline Toolbar, we will get sanitizing rules for each Inline Tool
 and merge with your passed config.
 
 You can define rules for each field
 
 ```javascript
-get sanitize() {
+static get sanitize() {
   return {
     text: {},
     items: {
@@ -304,7 +304,7 @@ if you want to sanitize everything and get data without any tags, use `{}` or ju
 ignore field in case if you want to get pure HTML
 
 ```javascript
-get sanitize() {
+static get sanitize() {
   return {
     text: {},
     items: {}, // this rules will be used for all properties of this object
