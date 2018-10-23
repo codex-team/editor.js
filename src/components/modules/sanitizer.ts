@@ -153,7 +153,7 @@ export default class Sanitizer extends Module {
     }
 
     const sanitizeGetter = this.Editor.Tools.apiSettings.SANITIZE_CONFIG;
-    const toolClass = this.Editor.Tools.toolsAvailable[toolName];
+    const toolClass = this.Editor.Tools.available[toolName];
 
     /**
      * If Tools doesn't provide sanitizer config or it is empty
