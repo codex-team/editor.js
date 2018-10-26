@@ -1,5 +1,6 @@
 import InlineTool from '../interfaces/tools/inline-tool';
 import SelectionUtils from '../selection';
+import ISanitizerConfig from '../interfaces/sanitizer-config';
 
 import $ from '../dom';
 import _ from '../utils';
@@ -12,6 +13,29 @@ import _ from '../utils';
  * Wrap selected text with <a> tag
  */
 export default class LinkInlineTool implements InlineTool {
+
+  /**
+   * Specifies Tool as Inline Toolbar Tool
+   *
+   * @return {boolean}
+   */
+  public static isInline = true;
+
+  /**
+   * Sanitizer Rule
+   * Leave <a> tags
+   * @return {object}
+   */
+  static get sanitize(): ISanitizerConfig {
+    return {
+      a: {
+        href: true,
+        target: '_blank',
+        rel: 'nofollow',
+      },
+    };
+  }
+
   /**
    * Native Document's commands for link/unlink
    */
@@ -38,7 +62,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Elements
    */
-  private nodes = {
+  private nodes: {button: HTMLButtonElement, input: HTMLInputElement} = {
     button: null,
     input: null,
   };

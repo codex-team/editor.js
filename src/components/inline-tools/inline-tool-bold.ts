@@ -1,4 +1,5 @@
 import InlineTool from '../interfaces/tools/inline-tool';
+import ISanitizerConfig from '../interfaces/sanitizer-config';
 
 import $ from '../dom';
 
@@ -10,6 +11,24 @@ import $ from '../dom';
  * Makes selected text bolder
  */
 export default class BoldInlineTool implements InlineTool {
+
+  /**
+   * Specifies Tool as Inline Toolbar Tool
+   *
+   * @return {boolean}
+   */
+  public static isInline = true;
+
+  /**
+   * Sanitizer Rule
+   * Leave <b> tags
+   * @return {object}
+   */
+  static get sanitize(): ISanitizerConfig {
+    return {
+      b: {},
+    };
+  }
 
   /**
    * Native Document's command that uses for Bold
@@ -28,7 +47,7 @@ export default class BoldInlineTool implements InlineTool {
   /**
    * Elements
    */
-  private nodes = {
+  private nodes: {button: HTMLButtonElement} = {
     button: undefined,
   };
 

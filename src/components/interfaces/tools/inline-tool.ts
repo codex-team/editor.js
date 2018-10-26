@@ -2,12 +2,18 @@
  * Base structure for the Inline Toolbar Tool
  */
 import ITool from './tool';
+import ISanitizerConfig from '../sanitizer-config';
 
 export default interface IInlineTool extends ITool {
   /**
    * Public getter with shortcut string
    */
   shortcut?: string;
+
+  /**
+   * Inline tool sanitize configuration
+   */
+  sanitize?: ISanitizerConfig;
 
   /**
    * Returns button for the Inline Toolbar
@@ -37,5 +43,4 @@ export default interface IInlineTool extends ITool {
    * Function called with Inline Toolbar closing
    */
   clear?(): void;
-
 }

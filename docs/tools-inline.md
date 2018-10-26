@@ -17,6 +17,7 @@ Also, you can provide optional methods
 
 - `renderActions()` — create additional element below the buttons
 - `clear()` — clear Tool's stuff on opening/closing of Inline Toolbar
+- `sanitize()` — sanitizer configuration
 
 At the constructor of Tool's class exemplar you will accept an object with the [API](api.md) as a parameter.
 
@@ -102,3 +103,23 @@ Method does not accept any parameters
 #### Return value
 
 Method should not return a value. 
+
+### static get sanitize()
+
+We recommend to specify the Sanitizer config that corresponds with inline tags that is used by your Tool. 
+In that case, your config will be merged with sanitizer configuration of Block Tool 
+that is using the Inline Toolbar with your Tool.
+
+Example:
+
+If your Tool wrapps selected text with `<b>` tag, the sanitizer config should looks like this:
+
+```js
+static get sanitize() {
+  return {
+    b: {} // {} means clean all attributes. true — leave all attributes
+  }
+}
+``` 
+
+Read more about Sanitizer configuration at the [Tools#sanitize](tools.md#sanitize)

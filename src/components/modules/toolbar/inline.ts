@@ -8,6 +8,8 @@ import EditorConfig from '../../interfaces/editor-config';
 import InlineTool from '../../interfaces/tools/inline-tool';
 import SelectionUtils from '../../selection';
 import _ from '../../utils';
+import {ToolConstructable} from '../../interfaces/tools';
+import IToolSettings from '../../interfaces/tools/tool-settings';
 
 /**
  * Inline toolbar with actions that modifies selected text fragment
@@ -17,27 +19,6 @@ import _ from '../../utils';
  * |________________________|
  */
 export default class InlineToolbar extends Module {
-
-  /**
-   * Inline Toolbar Tools
-   * includes internal and external tools
-   *
-   * @returns Map<string, InlineTool>
-   */
-  get tools(): Map<string, InlineTool> {
-    if (!this.toolsInstances || this.toolsInstances.size === 0) {
-      const allTools = {...this.internalTools, ...this.externalTools};
-
-      this.toolsInstances = new Map();
-      for (const tool in allTools) {
-        if (allTools.hasOwnProperty(tool)) {
-          this.toolsInstances.set(tool, allTools[tool]);
-        }
-      }
-    }
-
-    return this.toolsInstances;
-  }
 
   /**
    * Returns internal inline tools
@@ -108,6 +89,26 @@ export default class InlineToolbar extends Module {
    */
   constructor({config}) {
     super({config});
+  }
+
+  /**
+   * Inline Toolbar Tools
+   *
+   * @returns Map<string, InlineTool>
+   */
+  get tools(): Map<string, InlineTool> {
+    if (!this.toolsInstances || this.toolsInstances.size === 0) {
+      const allTools = this.inlineTools;
+
+      this.toolsInstances = new Map();
+      for (const tool in allTools) {
+        if (allTools.hasOwnProperty(tool)) {
+          this.toolsInstances.set(tool, allTools[tool]);
+        }
+      }
+    }
+
+    return this.toolsInstances;
   }
 
   /**
@@ -317,6 +318,11 @@ export default class InlineToolbar extends Module {
    * Add tool button and activate clicks
    */
   private addTool(toolName: string, tool: InlineTool): void {
+    const {
+      Listeners,
+      Tools,
+    } = this.Editor;
+
     const button = tool.render();
 
     if (!button) {
@@ -332,7 +338,7 @@ export default class InlineToolbar extends Module {
       this.nodes.actions.appendChild(actions);
     }
 
-    this.Editor.Listeners.on(button, 'click', (event) => {
+    Listeners.on(button, 'click', (event) => {
       this.toolClicked(tool);
       event.preventDefault();
     });
@@ -341,18 +347,32 @@ export default class InlineToolbar extends Module {
      * Enable shortcuts
      * Ignore tool that doesn't have shortcut or empty string
      */
-    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+    const toolSettings = Tools.getToolSettings(toolName);
 
     let shortcut = null;
+
+    /**
+     * Get internal inline tools
+     */
+    const internalTools: string[] = Object
+      .entries(Tools.internalTools)
+      .filter(([name, toolClass]: [string, ToolConstructable|IToolSettings]) => {
+        if (_.isFunction(toolClass)) {
+          return toolClass[Tools.apiSettings.IS_INLINE];
+        }
+
+        return (toolClass as IToolSettings).class[Tools.apiSettings.IS_INLINE];
+      })
+      .map(([name, toolClass]: [string, ToolConstructable|IToolSettings]) => name);
 
     /**
      * 1) For internal tools, check public getter 'shortcut'
      * 2) For external tools, check tool's settings
      */
-    if (this.internalTools[toolName]) {
-      shortcut = this.internalTools[toolName].shortcut;
-    } else if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
-      shortcut = toolSettings[this.Editor.Tools.apiSettings.SHORTCUT];
+    if (internalTools.includes(toolName)) {
+      shortcut = this.inlineTools[toolName].shortcut;
+    } else if (toolSettings && toolSettings[Tools.apiSettings.SHORTCUT]) {
+      shortcut = toolSettings[Tools.apiSettings.SHORTCUT];
     }
 
     if (shortcut) {
@@ -415,5 +435,21 @@ export default class InlineToolbar extends Module {
     this.tools.forEach( (toolInstance, toolName) => {
       toolInstance.checkState(SelectionUtils.get());
     });
+  }
+
+  /**
+   * Get inline tools tools
+   * Tools that has isInline is true
+   */
+  private get inlineTools(): {[name: string]: InlineTool} {
+    const result = {};
+
+    for (const tool in this.Editor.Tools.inline) {
+      if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
+        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool]);
+      }
+    }
+
+    return result;
   }
 }

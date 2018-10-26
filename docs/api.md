@@ -39,6 +39,9 @@ Methods that working with Blocks
 ```clean(taintString, config)``` - method uses HTMLJanitor to clean taint string.
 CodeX Editor provides basic config without attributes, but you can inherit by passing your own config.
 
+If Tool enables inline-tools, we get it's sanitizing rules and merge with your passed custom
+rules.
+
 Usage:
 
 ```js

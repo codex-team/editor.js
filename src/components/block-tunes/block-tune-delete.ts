@@ -5,9 +5,7 @@
  * @copyright <CodeX Team> 2018
  */
 import IBlockTune from '../interfaces/block-tune';
-
-declare var $: any;
-declare var _: any;
+import $ from '../dom';
 
 export default class DeleteTune implements IBlockTune {
 

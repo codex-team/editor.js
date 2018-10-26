@@ -1,4 +1,5 @@
 import {IPasteConfig} from '../modules/paste';
+import ISanitizerConfig from './sanitizer-config';
 
 export type ToolData = any;
 export type ToolConfig = any;
@@ -12,7 +13,8 @@ export interface ToolConstructable {
   name: string;
   isInline: boolean;
   new (config: {api: any, config?: ToolConfig, data?: ToolData});
-  prepare(data: ToolPreparationData): void;
+  prepare?(data: ToolPreparationData): void;
+  sanitize?: ISanitizerConfig
 }
 
 export interface InlineToolConstructable extends ToolConstructable {

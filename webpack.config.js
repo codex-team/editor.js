@@ -132,6 +132,9 @@ module.exports = {
       }
     ]
   },
+  externals: {
+    svg: '../src/components/modules/svg.ts'
+  },
   optimization: {
     minimize: true
   },

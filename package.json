@@ -1,6 +1,6 @@
 {
   "name": "codex.editor",
-  "version": "2.1.3",
+  "version": "2.2.1",
   "description": "Codex Editor. Native JS, based on API and Open Source",
   "main": "build/codex-editor.js",
   "scripts": {
@@ -23,6 +23,7 @@
     "@babel/runtime": "^7.1.2",
     "@codexteam/shortcuts": "^1.0.0",
     "@types/webpack": "^4.4.16",
+    "@types/webpack-env": "^1.13.6",
     "babel-loader": "^8.0.4",
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-class-display-name": "^2.1.0",
@@ -58,8 +59,5 @@
     "typescript": "^2.9.2",
     "webpack": "4.20.2",
     "webpack-cli": "^3.1.0"
-  },
-  "dependencies": {
-    "@types/webpack-env": "^1.13.6"
   }
 }

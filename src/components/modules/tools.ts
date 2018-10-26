@@ -8,6 +8,10 @@ import {
   ToolConstructable,
   ToolPreparationData,
 } from '../interfaces/tools';
+import BoldInlineTool from '../inline-tools/inline-tool-bold';
+import ItalicInlineTool from '../inline-tools/inline-tool-italic';
+import LinkInlineTool from '../inline-tools/inline-tool-link';
+import ITool from '../interfaces/tools/tool';
 
 /**
  * @module Codex Editor Tools Submodule
@@ -154,6 +158,7 @@ export default class Tools extends Module {
       IS_PASTE_DISALLOWED: 'disallowPaste',
       SHORTCUT: 'shortcut',
       TOOLBAR_ICON: 'toolboxIcon',
+      SANITIZE_CONFIG: 'sanitize',
     };
   }
   public toolsAvailable: {[name: string]: ToolConstructable};
@@ -210,11 +215,11 @@ export default class Tools extends Module {
    * Creates instances via passed or default configuration
    * @return {Promise}
    */
-  public async prepare(): Promise<void> {
-    this.config.tools.paragraph = {
-      class: Paragraph,
-      inlineToolbar: true,
-    };
+  public prepare() {
+    /**
+     * Assign internal tools
+     */
+    Object.assign(this.config.tools, this.internalTools);
 
     if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
       throw Error('Can\'t start without tools');
@@ -366,7 +371,7 @@ export default class Tools extends Module {
     function: (data: ToolPreparationData) => void,
     data: ToolPreparationData,
   }> {
-    const toolPreparationList: Array<{function: (data: ToolPreparationData) => void, data: ToolPreparationData}> = [];
+    const toolPreparationList: Array<{ function: (data: ToolPreparationData) => void, data: ToolPreparationData }> = [];
 
     for (const toolName in this.toolsClasses) {
       if (this.toolsClasses.hasOwnProperty(toolName)) {
@@ -390,5 +395,21 @@ export default class Tools extends Module {
     }
 
     return toolPreparationList;
+  }
+
+  /**
+   * Returns internal tools
+   * Includes Bold, Italic, Link and Paragraph
+   */
+  get internalTools() {
+    return {
+      bold: BoldInlineTool,
+      italic: ItalicInlineTool,
+      link: LinkInlineTool,
+      paragraph: {
+        class: Paragraph,
+        inlineToolbar: true,
+      },
+    };
   }
 }

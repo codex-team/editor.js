@@ -7,7 +7,9 @@
 /**
  * Prebuilded sprite of SVG icons
  */
-import * as sprite from '../../../build/sprite.svg';
+// tslint:disable-next-line
+const sprite = require('../../../build/sprite.svg');
+
 import Module from '../__module';
 import $ from '../dom';
 import _ from '../utils';

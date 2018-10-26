@@ -13,9 +13,15 @@ declare const VERSION: string;
 /**
  * @typedef {Object} SavedData
  * @property {Date} time - saving proccess time
- * @property {Object} items - extracted data
+ * @property {String} version - CodexEditor version
+ * @property {Object} blocks - extracted data
  * @property {String} version - CodexEditor version
  */
+interface SavedData {
+  time: number;
+  blocks: object[];
+  version: string;
+}
 
 /**
  * @classdesc This method reduces all Blocks asyncronically and calls Block's save method to extract data
@@ -26,6 +32,7 @@ declare const VERSION: string;
  */
 export default class Saver extends Module {
   private output: EditorData;
+  private readonly blocksData: any[];
 
   /**
    * @constructor
@@ -35,13 +42,14 @@ export default class Saver extends Module {
     super({config});
 
     this.output = null;
+    this.blocksData = [];
   }
 
   /**
    * Composes new chain of Promises to fire them alternatelly
    * @return {SavedData}
    */
-  public async save(): Promise<EditorData> {
+  public async save(): Promise<SavedData> {
     const blocks = this.Editor.BlockManager.blocks,
       chainData = [];
 
@@ -49,9 +57,10 @@ export default class Saver extends Module {
       chainData.push(block.data);
     });
 
-    const savedData = await Promise.all(chainData);
+    const extractedData = await Promise.all(chainData);
 
-    return this.makeOutput(savedData);
+    const sanitizedData = await this.Editor.Sanitizer.sanitizeBlocks(extractedData);
+    return this.makeOutput(sanitizedData);
   }
 
   /**
@@ -59,9 +68,9 @@ export default class Saver extends Module {
    * @param {Object} allExtractedData
    * @return {SavedData}
    */
-  private makeOutput(allExtractedData): EditorData {
-    const blocks = [];
+  private makeOutput(allExtractedData): SavedData {
     let totalTime = 0;
+    const blocks = [];
 
     console.groupCollapsed('[CodexEditor saving]:');
 
