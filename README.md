@@ -64,7 +64,7 @@ or apply Tool's settings, if it provided. For example, set a Heading level or Li
 
 We really appreciate shortcuts. So there are few presets.
 
-Action | ShortcutData | Restrictions
+Shortcut | Action | Restrictions
 -- | -- | --
 `TAB` | Show/leaf a Toolbox. | On empty block
 `SHIFT+TAB` | Leaf back a Toolbox. | While Toolbox is opened
