@@ -68,6 +68,13 @@ export default class BlockManager extends Module {
         get: Blocks.get
       });
 
+      this.Editor.Shortcuts.add({
+        name: 'CMD+C',
+        handler: (event) => {
+          console.log('coping');
+        }
+      });
+
       resolve();
     });
   }
@@ -340,14 +347,48 @@ export default class BlockManager extends Module {
      * Mark current Block as selected
      * @type {boolean}
      */
-    this.currentBlock.selected = true;
+    this.currentBlock.focused = true;
+  }
+
+  /**
+   * select Block
+   */
+  selectBlockByIndex(index) {
+    /**
+     * Remove previous selected Block's state
+     */
+    this.clearHighlightings();
+
+    let block;
+
+    if (isNaN(index)) {
+      block = this.currentBlock;
+    } else {
+      block = this.getBlockByIndex(index);
+    }
+
+    block.selected = true;
+  }
+
+  /**
+   * Select All Blocks
+   */
+  selectAllBlocks() {
+    this.blocks.forEach( block => block.selected = true);
+  }
+
+  /**
+   * Clear selection from Blocks
+   */
+  clearSelection() {
+    this.blocks.forEach( block => block.selected = false);
   }
 
   /**
    * Remove selection from all Blocks
    */
   clearHighlightings() {
-    this.blocks.forEach( block => block.selected = false);
+    this.blocks.forEach( block => block.focused = false);
   }
 
   /**
