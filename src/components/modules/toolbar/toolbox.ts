@@ -1,8 +1,7 @@
 import Module from '../../__module';
-import IEditorConfig from '../../interfaces/editor-config';
 import $ from '../../dom';
 import _ from '../../utils';
-import {BlockToolConstructable, ToolConstructable} from '../../interfaces/tools';
+import {ToolConstructable} from '../../../../types/tools';
 
 /**
  * @class Toolbox
@@ -25,7 +24,7 @@ export default class Toolbox extends Module {
 
   /**
    * @constructor
-   * @param {IEditorConfig} config
+   * @param {EditorConfig} config
    */
   constructor({config}) {
     super({config});
@@ -287,7 +286,7 @@ export default class Toolbox extends Module {
 
   /**
    * Enable shortcut Block Tool implemented shortcut
-   * @param {IBlockTool} tool - Tool class
+   * @param {BlockTool} tool - Tool class
    * @param {String} toolName - Tool name
    * @param {String} shortcut - shortcut according to the ShortcutData Module format
    */

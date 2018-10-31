@@ -1,35 +1,35 @@
-namespace EditorJS {
+import {ToolConfig} from './tool-config';
+import {ToolConstructable} from './tool';
+
+/**
+ * Object passed to the Tool's constructor by {@link IEditorConfig#tools}
+ */
+export interface ToolSettings {
 
   /**
-   * Object passed to the Tool's constructor by {@link IEditorConfig#tools}
+   * Tool's class
    */
-  export default interface ToolSettings {
+  class: ToolConstructable;
 
-    /**
-     * Tool's class
-     */
-    class: Tool;
+  /**
+   * User configuration object that will be passed to the Tool's constructor
+   */
+  config?: ToolConfig;
 
-    /**
-     * User configuration object that will be passed to the Tool's constructor
-     */
-    config?: BlockToolConfig;
+  /**
+   * Is user available to add line brakes in Tool (for example by Shift+Enter)
+   */
+  enableLineBreaks?: boolean;
 
-    /**
-     * Is user available to add line brakes in Tool (for example by Shift+Enter)
-     */
-    enableLineBreaks?: boolean;
+  /**
+   * Is need to show Inline Toolbar.
+   * Can accept array of Tools for InlineToolbar or boolean.
+   */
+  inlineToolbar?: boolean | string[];
 
-    /**
-     * Is need to show Inline Toolbar.
-     * Can accept array of Tools for InlineToolbar or boolean.
-     */
-    inlineToolbar?: boolean | string[];
-
-    /**
-     * Define shortcut that will render Tool
-     */
-    shortcut?: string;
-  }
-
+  /**
+   * Define shortcut that will render Tool
+   */
+  shortcut?: string;
 }
+

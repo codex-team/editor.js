@@ -1,6 +1,4 @@
-namespace EditorJS.API {
-  export interface Toolbar {
-    close(): void;
-    open(): void;
-  }
+export interface Toolbar {
+  close(): void;
+  open(): void;
 }

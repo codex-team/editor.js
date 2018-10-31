@@ -5,5 +5,5 @@ export interface BlockTune {
 }
 
 export interface BlockTuneConstructable {
-  new (config: {api: API}): BlockTune
+  new (config: {api: API, settings?: any}): BlockTune;
 }

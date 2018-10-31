@@ -1,8 +1,8 @@
-import InlineTool from '../interfaces/tools/inline-tool';
 import SelectionUtils from '../selection';
 
 import $ from '../dom';
 import _ from '../utils';
+import {InlineTool} from '../../../types/tools';
 
 /**
  * Link Tool
@@ -38,7 +38,10 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Elements
    */
-  private nodes = {
+  private nodes: {
+    button: HTMLButtonElement;
+    input: HTMLInputElement;
+  } = {
     button: null,
     input: null,
   };
@@ -59,7 +62,7 @@ export default class LinkInlineTool implements InlineTool {
   private inlineToolbar: any;
 
   /**
-   * @param {{api: IAPI}} - CodeX Editor API
+   * @param {{api: API}} - CodeX Editor API
    */
   constructor({api}) {
     this.inlineToolbar = api.toolbar;
@@ -70,7 +73,7 @@ export default class LinkInlineTool implements InlineTool {
    * Create button for Inline Toolbar
    */
   public render(): HTMLElement {
-    this.nodes.button = document.createElement('button');
+    this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
     this.nodes.button.appendChild($.svg('link', 15, 14));
@@ -82,10 +85,10 @@ export default class LinkInlineTool implements InlineTool {
    * Input for the link
    */
   public renderActions(): HTMLElement {
-    this.nodes.input = document.createElement('input');
+    this.nodes.input = document.createElement('input') as HTMLInputElement;
     this.nodes.input.placeholder = 'Add a link';
     this.nodes.input.classList.add(this.CSS.input);
-    this.nodes.input.addEventListener('keydown', (event) => {
+    this.nodes.input.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.keyCode === this.ENTER_KEY ) {
         this.enterPressed(event);
       }

@@ -1,13 +1,7 @@
-import {ToolData} from '../interfaces/data-format';
 import Paragraph from '../tools/paragraph/dist/bundle';
 import Module from '../__module';
 import _ from '../utils';
-import {
-  BlockToolConstructable,
-  InlineToolConstructable,
-  ToolConstructable,
-  ToolPreparationData,
-} from '../interfaces/tools';
+import {BlockToolConstructable, ToolConfig, ToolConstructable, ToolSettings} from '../../../types/tools';
 
 /**
  * @module Codex Editor Tools Submodule
@@ -76,7 +70,7 @@ export default class Tools extends Module {
    * Return Tools for the Inline Toolbar
    * @return {Object} - object of Inline Tool's classes
    */
-  public get inline(): {[name: string]: InlineToolConstructable} {
+  public get inline(): {[name: string]: ToolConstructable} {
     if (this._inlineTools) {
       return this._inlineTools;
     }
@@ -158,10 +152,10 @@ export default class Tools extends Module {
   }
   public toolsAvailable: {[name: string]: ToolConstructable};
   public toolsUnavailable: {[name: string]: ToolConstructable};
-  public toolsSettings: {[name: string]: ToolData};
+  public toolsSettings: {[name: string]: ToolSettings};
   public toolsClasses: {[name: string]: ToolConstructable};
   // tslint:disable-next-line
-  private _inlineTools: {[name: string]: InlineToolConstructable};
+  private _inlineTools: {[name: string]: ToolConstructable};
 
   /**
    * @constructor
@@ -231,15 +225,15 @@ export default class Tools extends Module {
       if (typeof this.config.tools[toolName] === 'object') {
         /**
          * Save Tool's class from 'class' field
-         * @type {ITool}
+         * @type {Tool}
          */
-        this.toolsClasses[toolName] = (this.config.tools[toolName] as ToolData).class;
+        this.toolsClasses[toolName] = (this.config.tools[toolName] as ToolSettings).class;
 
         /**
          * Save Tool's settings
-         * @type {IToolSettings}
+         * @type {ToolSettings}
          */
-        this.toolsSettings[toolName] = this.config.tools[toolName] as ToolData;
+        this.toolsSettings[toolName] = this.config.tools[toolName] as ToolSettings;
 
         /**
          * Remove Tool's class from settings
@@ -248,7 +242,7 @@ export default class Tools extends Module {
       } else {
         /**
          * Save Tool's class
-         * @type {ITool}
+         * @type {Tool}
          */
         this.toolsClasses[toolName] = this.config.tools[toolName] as ToolConstructable;
 
@@ -300,8 +294,8 @@ export default class Tools extends Module {
    * Return Tool`s instance
    *
    * @param {String} tool — tool name
-   * @param {IBlockToolData} data — initial data
-   * @return {IBlockTool}
+   * @param {BlockToolData} data — initial data
+   * @return {BlockTool}
    */
   public construct(tool, data) {
     const plugin = this.toolsClasses[tool];
@@ -312,7 +306,7 @@ export default class Tools extends Module {
     const config = this.toolsSettings[tool][this.apiSettings.CONFIG];
 
     /**
-     * @type {{api: IAPI, config: ({}), data: IBlockToolData}}
+     * @type {{api: API, config: ({}), data: BlockToolData}}
      */
     const constructorOptions = {
       api: this.Editor.API.methods,
@@ -326,12 +320,12 @@ export default class Tools extends Module {
   /**
    * Return Inline Tool's instance
    *
-   * @param {IInlineTool} tool
-   * @return {IInlineTool} — instance
+   * @param {InlineTool} tool
+   * @return {InlineTool} — instance
    */
   public constructInline(tool) {
     /**
-     * @type {{api: IAPI}}
+     * @type {{api: API}}
      */
     const constructorOptions = {
       api: this.Editor.API.methods,
@@ -352,7 +346,7 @@ export default class Tools extends Module {
   /**
    * Return Tool's config by name
    * @param {string} toolName
-   * @return {IToolSettings}
+   * @return {ToolSettings}
    */
   public getToolSettings(toolName) {
     return this.toolsSettings[toolName];
@@ -363,10 +357,13 @@ export default class Tools extends Module {
    * @return {Array} list of functions that needs to be fired sequentially
    */
   private getListOfPrepareFunctions(): Array<{
-    function: (data: ToolPreparationData) => void,
-    data: ToolPreparationData,
+    function: (data: {toolName: string, config: ToolConfig}) => void,
+    data: {toolName: string, config: ToolConfig},
   }> {
-    const toolPreparationList: Array<{function: (data: ToolPreparationData) => void, data: ToolPreparationData}> = [];
+    const toolPreparationList: Array<{
+      function: (data: {toolName: string, config: ToolConfig}) => void,
+      data: {toolName: string, config: ToolConfig}}
+      > = [];
 
     for (const toolName in this.toolsClasses) {
       if (this.toolsClasses.hasOwnProperty(toolName)) {

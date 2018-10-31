@@ -1,7 +1,5 @@
-import IInputOutputData from '../input-output-data';
+import {OutputData} from '../data-formats/output-data';
 
-namespace EditorJS.API {
-  export interface Saver {
-    save(): Promise<IInputOutputData>;
-  }
+export interface Saver {
+  save(): Promise<OutputData>;
 }

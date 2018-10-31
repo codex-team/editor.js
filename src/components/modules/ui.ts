@@ -13,7 +13,7 @@ import $ from '../dom';
 import _ from '../utils';
 
 import Selection from '../selection';
-import {Configuration} from '../interfaces/data-format';
+import {EditorConfig, ModuleConfig} from '../../../types/configs';
 
 /**
  * @class
@@ -56,7 +56,7 @@ export default class UI extends Module {
    *
    * @param  {Configuration} config
    */
-  constructor({config}: {config: Configuration}) {
+  constructor({config}: ModuleConfig) {
     super({config});
 
     this.nodes = {

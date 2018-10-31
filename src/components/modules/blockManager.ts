@@ -6,13 +6,11 @@
  *
  * @version 2.0.0
  */
-
 import Block from '../block';
 import Module from '../__module';
-import IBlockToolData from '../interfaces/tools/block-tool-data';
 import $ from '../dom';
-import {ToolConfig} from '../interfaces/tools';
 import Blocks from '../blocks';
+import {BlockToolData, ToolConfig} from '../../../types/tools';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -163,7 +161,7 @@ export default class BlockManager extends Module {
    *
    * @return {Block}
    */
-  public composeBlock(toolName: string, data: IBlockToolData, settings?: ToolConfig): Block {
+  public composeBlock(toolName: string, data: BlockToolData, settings?: ToolConfig): Block {
     const toolInstance = this.Editor.Tools.construct(toolName, data);
     const toolClass = this.Editor.Tools.available[toolName];
     const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
@@ -188,7 +186,7 @@ export default class BlockManager extends Module {
    */
   public insert(
     toolName: string = this.config.initialBlock,
-    data: IBlockToolData = {},
+    data: BlockToolData = {},
     settings: ToolConfig = {},
   ): Block {
     // Increment index before construct,
@@ -293,7 +291,7 @@ export default class BlockManager extends Module {
    *
    * @return {Block}
    */
-  public replace(toolName: string, data: IBlockToolData = {}): Block {
+  public replace(toolName: string, data: BlockToolData = {}): Block {
     const block = this.composeBlock(toolName, data);
 
     this._blocks.insert(this.currentBlockIndex, block, true);

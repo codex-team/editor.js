@@ -1,7 +1,7 @@
 import Module from '../__module';
-import {Configuration} from '../interfaces/data-format';
-import IBlockToolData from '../interfaces/tools/block-tool-data';
 import _, {ChainData} from '../utils';
+import {EditorConfig} from '../../../types/configs';
+import {BlockToolData} from '../../../types/tools';
 
 /**
  * Codex Editor Renderer Module
@@ -16,7 +16,7 @@ export default class Renderer extends Module {
    * @constructor
    * @param {Configuration} config
    */
-  constructor({config}: {config: Configuration}) {
+  constructor({config}: {config: EditorConfig}) {
     super({config});
   }
 
@@ -50,7 +50,7 @@ export default class Renderer extends Module {
    * Make plugin blocks from array of plugin`s data
    * @param {RendererBlocks[]} blocks
    */
-  public render(blocks: IBlockToolData[]): Promise<void> {
+  public render(blocks: BlockToolData[]): Promise<void> {
     const chainData = blocks.map((block) => ({function: () => this.insertBlock(block)}));
 
     return _.sequence(chainData as ChainData[]);

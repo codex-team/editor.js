@@ -6,10 +6,7 @@
  * if you cant to read more about how API works, please see docs
  */
 import Module from '../../__module';
-
-declare var _: any;
-
-import { IAPI } from '../../interfaces/api';
+import * as APIMethods from '../../../../types/api';
 
 /**
  * @class API
@@ -24,7 +21,7 @@ export default class API extends Module {
     super({config});
   }
 
-  public get methods(): IAPI {
+  public get methods(): APIMethods {
     return {
       blocks: this.Editor.BlocksAPI.methods,
       caret: this.Editor.CaretAPI.methods,

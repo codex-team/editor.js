@@ -1,36 +1,35 @@
 import Module from '../../__module';
 
-import {ISaverAPI} from '../../interfaces/api';
-import IModuleConfig from '../../interfaces/module-config';
-import {EditorData} from '../../interfaces/data-format';
+import * as API from '../../../../types/api';
+import {OutputData} from '../../../../types/data-formats/output-data';
 
 /**
  * @class SaverAPI
  * provides with methods to save data
  */
-export default class SaverAPI extends Module implements ISaverAPI {
+export default class SaverAPI extends Module {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
    */
-  constructor({config}: IModuleConfig) {
+  constructor({config}) {
     super({config});
   }
 
   /**
    * Available methods
-   * @return {ISaverAPI}
+   * @return {API.saver}
    */
-  get methods(): ISaverAPI {
+  get methods(): API.saver {
     return {
       save: () => this.save(),
-    };
+    } as API.saver;
   }
 
   /**
    * Return Editor's data
    */
-  public save(): Promise<EditorData> {
+  public save(): Promise<OutputData> {
     return this.Editor.Saver.save();
   }
 }

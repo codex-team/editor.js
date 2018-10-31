@@ -1,6 +1,9 @@
 import $ from './dom';
 import _ from './utils';
-import {Configuration, ToolData} from './interfaces/data-format';
+import {EditorConfig} from '../../types/configs';
+import SanitizerConfig from '../../types/configs/sanitizer-config';
+import {OutputData} from '../../types/data-formats/output-data';
+import ToolSettings from '../../types/tools/tool-settings';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -31,7 +34,7 @@ context.keys().forEach((key) => {
  * @type {Core}
  */
 export default class Core {
-  public config: Configuration;
+  public config: EditorConfig;
   public moduleInstances: any;
   public isReady: Promise<void>;
 
@@ -39,7 +42,7 @@ export default class Core {
    * @param {Configuration} config - user configuration
    *
    */
-  constructor(config?: Configuration|string) {
+  constructor(config?: EditorConfig|string) {
     /**
      * @typedef {Object} EditorComponents
      * @property {BlockManager} BlockManager
@@ -95,7 +98,7 @@ export default class Core {
    * Setting for configuration
    * @param {Configuration|string|undefined} config
    */
-  set configuration(config: Configuration|string) {
+  set configuration(config: EditorConfig|string) {
     /**
      * Process zero-configuration or with only holderId
      */
@@ -107,7 +110,7 @@ export default class Core {
       this.config = config;
     }
 
-    config = config as Configuration;
+    config = config as EditorConfig;
 
     /**
      * If initial Block's Tool was not passed, use the Paragraph Tool
@@ -129,11 +132,11 @@ export default class Core {
       p: true,
       b: true,
       a: true,
-    };
+    } as SanitizerConfig;
 
     this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
     this.config.tools = config.tools || {};
-    this.config.data = config.data || {};
+    this.config.data = config.data || {} as OutputData;
     this.config.onReady = config.onReady || (() => {});
     this.config.onChange = config.onChange || (() => {});
 
@@ -141,7 +144,7 @@ export default class Core {
      * Initialize Blocks to pass data to the Renderer
      */
     if (_.isEmpty(this.config.data)) {
-      this.config.data = {};
+      this.config.data = {} as OutputData;
       this.config.data.blocks = [ initialBlockData ];
     } else {
       if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
@@ -154,7 +157,7 @@ export default class Core {
    * Returns private property
    * @returns {Configuration}
    */
-  get configuration(): Configuration|string {
+  get configuration(): EditorConfig|string {
     return this.config;
   }
 
@@ -184,7 +187,7 @@ export default class Core {
       if (this.config.tools.hasOwnProperty(toolName)) {
         const tool = this.config.tools[toolName];
 
-        if (!_.isFunction(tool) && !_.isFunction((tool as ToolData).class)) {
+        if (!_.isFunction(tool) && !_.isFunction((tool as ToolSettings).class)) {
           throw Error(
             `Tool «${toolName}» must be a constructor function or an object with function in the «class» property`,
           );

@@ -1,1 +1,1 @@
-export type BlockToolConfig = object;
+export type ToolConfig = object;

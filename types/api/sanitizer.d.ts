@@ -1,7 +1,5 @@
-import ISanitizerConfig from '../sanitizer-config';
+import ISanitizerConfig from '../../src/components/types/sanitizer-config';
 
-namespace EditorJS.API {
-  export interface Sanitizer {
-    clean(taintString: string, config: ISanitizerConfig): string;
-  }
+export interface Sanitizer {
+  clean(taintString: string, config: ISanitizerConfig): string;
 }

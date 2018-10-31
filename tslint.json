@@ -12,7 +12,8 @@
       "import-sources-order": "any",
       "named-imports-order": "case-insensitive"
     }],
-    "no-empty": false
+    "no-empty": false,
+    "no-namespace": false
   },
   "globals": {
     "require": true

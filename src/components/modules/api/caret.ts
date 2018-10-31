@@ -1,26 +1,25 @@
 import Module from '../../__module';
-
-import {ICaretAPI} from '../../interfaces/api';
-import IModuleConfig from '../../interfaces/module-config';
+import * as API from '../../../../types/api';
+import {ModuleConfig} from '../../../../types/configs';
 
 /**
  * @class CaretAPI
  * provides with methods to work with caret
  */
-export default class CaretAPI extends Module implements ICaretAPI {
+export default class CaretAPI extends Module {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
    */
-  constructor({config}: IModuleConfig) {
+  constructor({config}: ModuleConfig) {
     super({config});
   }
 
   /**
    * Available methods
-   * @return {ICaretAPI}
+   * @return {API.caret}
    */
-  get methods(): ICaretAPI {
+  get methods(): API.caret {
     return {};
   }
 }

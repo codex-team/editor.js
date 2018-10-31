@@ -1,7 +1,6 @@
-import InlineTool from '../interfaces/tools/inline-tool';
-
 import $ from '../dom';
-
+import {InlineTool} from '../../../types/tools';
+import * as API from '../../../types/api';
 /**
  * Bold Tool
  *
@@ -33,9 +32,9 @@ export default class BoldInlineTool implements InlineTool {
   };
 
   /**
-   * @param {{api: IAPI}} - CodeX Editor API
+   * @param {{api: API}} - CodeX Editor API
    */
-  constructor({api}) {
+  constructor({api}: {api: API}) {
   }
 
   /**

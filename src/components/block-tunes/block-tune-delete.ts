@@ -4,18 +4,17 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import IBlockTune from '../interfaces/block-tune';
+import * as API from '../../../types/api';
+import {BlockTune} from '../../../types/block-tunes';
+import $ from '../dom';
 
-declare var $: any;
-declare var _: any;
-
-export default class DeleteTune implements IBlockTune {
+export default class DeleteTune implements BlockTune {
 
   /**
    * Property that contains CodeX Editor API methods
    * @see {docs/api.md}
    */
-  private readonly api: any;
+  private readonly api: API;
 
   /**
    * Styles
@@ -41,7 +40,7 @@ export default class DeleteTune implements IBlockTune {
   /**
    * Tune nodes
    */
-  private nodes = {
+  private nodes: {button: HTMLElement} = {
     button: null,
   };
 
@@ -50,7 +49,7 @@ export default class DeleteTune implements IBlockTune {
    *
    * @param {Object} api
    */
-  constructor({api}) {
+  constructor({api}: {api: API}) {
     this.api = api;
 
     this.resetConfirmation = () => {

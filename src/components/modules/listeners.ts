@@ -1,6 +1,12 @@
 import Module from '../__module';
-import {Configuration} from '../interfaces/data-format';
-import {ListenerData} from '../interfaces/listeners';
+import {EditorConfig} from '../../../types/configs';
+
+export interface ListenerData {
+  element: EventTarget;
+  eventType: string;
+  handler: (event: Event) => void;
+  useCapture: boolean;
+}
 
 /**
  * Codex Editor Listeners module
@@ -24,7 +30,7 @@ export default class Listeners extends Module {
    * @constructor
    * @param {Configuration} config
    */
-  constructor({config}: {config: Configuration}) {
+  constructor({config}: {config: EditorConfig}) {
     super({config});
     this.allListeners = [];
   }

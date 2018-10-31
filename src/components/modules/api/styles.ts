@@ -1,7 +1,5 @@
 import Module from '../../__module';
-
-import IModuleConfig from '../../interfaces/module-config';
-import {IStylesAPI} from '../../interfaces/api';
+import * as API from '../../../../types/api';
 
 /**
  *
@@ -12,11 +10,11 @@ export default class StylesAPI extends Module {
    * Save Editor config
    * API provides passed configuration to the Blocks
    */
-  constructor({config}: IModuleConfig) {
+  constructor({config}) {
     super({config});
   }
 
-  get classes(): IStylesAPI {
+  get classes(): API.styles {
     return {
       /**
        * Base Block styles

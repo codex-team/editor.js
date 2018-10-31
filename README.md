@@ -28,7 +28,7 @@ While we develop the new Documentation Site with all stuff, you can check some a
 - [How to use](docs/usage.md)
 - [How to create a Block Tool Plugin](docs/tools.md)
 - [How to create an Inline Tool Plugin](docs/tools-inline.md)
-- [API for Tools](src/components/interfaces/api.ts)
+- [API for Tools](src/components/types/api.ts)
 
 Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor) and ask a question.
 
@@ -164,7 +164,7 @@ Check [CodeX Editor's community](https://github.com/codex-editor) to see more re
 
 ## Create Editor instance
 
-Create an instance of CodeX Editor and pass [Configuration Object](src/components/interfaces/editor-config.ts) with `holderId` and tools list.
+Create an instance of CodeX Editor and pass [Configuration Object](src/components/types/editor-config.ts) with `holderId` and tools list.
 
 ```html
 <div id="codex-editor"></div>

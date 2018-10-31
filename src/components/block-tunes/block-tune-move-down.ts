@@ -4,12 +4,11 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import IBlockTune from '../interfaces/block-tune';
 
-declare var $: any;
-declare var _: any;
+import $ from '../dom';
+import {BlockTune} from '../../../types/block-tunes';
 
-export default class MoveDownTune implements IBlockTune {
+export default class MoveDownTune implements BlockTune {
   /**
    * Property that contains CodeX Editor API methods
    * @see {api.md}

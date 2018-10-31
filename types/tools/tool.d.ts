@@ -1,39 +1,34 @@
-import {ToolConfig, ToolData, ToolPreparationData} from '../tools';
+import * as API from '../api/index';
+import {ToolConfig} from './tool-config';
 
 /**
  * Abstract interface of all Tools
  */
-namespace EditorJS {
+export interface Tool {
+  /**
+   * Tool`s render method
+   * For inline Tools returns inline toolbar button
+   * For block Tools returns tool`s wrapper
+   */
+  render(): HTMLElement;
+}
 
-  export default interface Tool {
+export interface ToolConstructable {
+  /**
+   * Tool name
+   */
+  name: string;
 
-    constructor: ToolConstructable;
+  /**
+   * Define Tool type as Inline
+   */
+  isInline?: boolean;
 
-    /**
-     * Tool`s render method
-     * For inline Tools returns inline toolbar button
-     * For block Tools returns tool`s wrapper
-     */
-    render(): HTMLElement;
-  }
+  new (config: {api: API}): Tool;
 
-  export interface ToolConstructable {
-    /**
-     * Tool name
-     */
-    name: string;
-
-    /**
-     * Define Tool type as Inline
-     */
-    isInline?: boolean;
-
-    new (config: {api: any}): Tool;
-
-    /**
-     * Tool`s prepare method. Can be async
-     * @param data
-     */
-    prepare?(data: ToolPreparationData): void | Promise<void>;
-  }
+  /**
+   * Tool`s prepare method. Can be async
+   * @param data
+   */
+  prepare?(data: {toolName: string, config: ToolConfig}): void | Promise<void>;
 }

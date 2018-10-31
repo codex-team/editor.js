@@ -4,10 +4,13 @@ import $ from '../../dom';
 import BoldInlineTool from '../../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../../inline-tools/inline-tool-link';
-import EditorConfig from '../../interfaces/editor-config';
-import InlineTool from '../../interfaces/tools/inline-tool';
 import SelectionUtils from '../../selection';
 import _ from '../../utils';
+import {InlineTool, Tool} from '../../../../types/tools';
+
+interface InlineTool extends Tool {
+  shortcut?: string;
+}
 
 /**
  * Inline toolbar with actions that modifies selected text fragment
@@ -82,7 +85,7 @@ export default class InlineToolbar extends Module {
   /**
    * Inline Toolbar elements
    */
-  private nodes = {
+  private nodes: {wrapper: HTMLElement, buttons: HTMLElement, actions: HTMLElement} = {
     wrapper: null,
     buttons: null,
     /**
@@ -412,7 +415,7 @@ export default class InlineToolbar extends Module {
    * Check Tools` state by selection
    */
   private checkToolsState(): void {
-    this.tools.forEach( (toolInstance, toolName) => {
+    this.tools.forEach( (toolInstance) => {
       toolInstance.checkState(SelectionUtils.get());
     });
   }
