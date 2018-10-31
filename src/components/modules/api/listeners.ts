@@ -1,7 +1,7 @@
 import Module from '../../__module';
 
-import {IListenerAPI} from '../../interfaces/api';
-import IModuleConfig from '../../interfaces/module-config';
+import {IListenerAPI} from '../../types/api';
+import IModuleConfig from '../../types/module-config';
 
 /**
  * @class API
