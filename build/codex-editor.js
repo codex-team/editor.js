@@ -16898,6 +16898,16 @@ var Block = function () {
             }
         }
         /**
+         * Returns True if it is Selected
+         * @return {boolean}
+         */
+
+    }, {
+        key: 'isSelected',
+        get: function get() {
+            return this.holder.classList.contains(Block.CSS.selected);
+        }
+        /**
          * Set stretched state
          * @param {Boolean} state - 'true' to enable, 'false' to disable stretched statte
          */
@@ -20062,13 +20072,6 @@ var BlockManager = function (_Module) {
           get: Blocks.get
         });
 
-        _this2.Editor.Shortcuts.add({
-          name: 'CMD+C',
-          handler: function handler(event) {
-            console.log('coping');
-          }
-        });
-
         resolve();
       });
     }
@@ -20832,11 +20835,15 @@ module.exports = exports['default'];
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/* WEBPACK VAR INJECTION */(function(Module) {
+/* WEBPACK VAR INJECTION */(function(Module, $, _) {
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+var _assign = __webpack_require__(/*! babel-runtime/core-js/object/assign */ "./node_modules/babel-runtime/core-js/object/assign.js");
+
+var _assign2 = _interopRequireDefault(_assign);
 
 var _getPrototypeOf = __webpack_require__(/*! babel-runtime/core-js/object/get-prototype-of */ "./node_modules/babel-runtime/core-js/object/get-prototype-of.js");
 
@@ -20887,13 +20894,21 @@ var BlockSelection = function (_Module) {
         value: function prepare() {
             var _this2 = this;
 
+            var Shortcuts = this.Editor.Shortcuts;
             /**
              * Register Shortcut
              */
-            this.Editor.Shortcuts.add({
+
+            Shortcuts.add({
                 name: 'CMD+A',
                 handler: function handler(event) {
                     _this2.handleShortcut(event);
+                }
+            });
+            Shortcuts.add({
+                name: 'CMD+C',
+                handler: function handler(event) {
+                    _this2.handleShortcut1(event);
                 }
             });
         }
@@ -20927,6 +20942,29 @@ var BlockSelection = function (_Module) {
                 this.selectBlockByIndex();
                 this.needToSelectAll = true;
             }
+        }
+        /**
+         * @param event
+         */
+
+    }, {
+        key: 'handleShortcut1',
+        value: function handleShortcut1(event) {
+            var _Editor = this.Editor,
+                BlockManager = _Editor.BlockManager,
+                Sanitizer = _Editor.Sanitizer;
+
+            var allBlocks = $.make('div');
+            BlockManager.blocks.forEach(function (block) {
+                if (block.isSelected) {
+                    var customConfig = (0, _assign2.default)({}, Sanitizer.getInlineToolsConfig(block.name));
+                    var cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig);
+                    var fragment = $.make('div');
+                    fragment.innerHTML = cleanHTML;
+                    allBlocks.appendChild(fragment);
+                }
+            });
+            _.copyTextToClipboard(allBlocks.innerHTML);
         }
         /**
          * Select All Blocks
@@ -20969,7 +21007,7 @@ var BlockSelection = function (_Module) {
 BlockSelection.displayName = 'BlockSelection';
 exports.default = BlockSelection;
 module.exports = exports['default'];
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.ts"), __webpack_require__(/*! utils */ "./src/components/utils.ts")))
 
 /***/ }),
 
@@ -27394,6 +27432,21 @@ var Util = function () {
                     func.apply(context, args);
                 }
             };
+        }
+        /**
+         * Copies passed text to the clipboard
+         * @param text
+         */
+
+    }, {
+        key: 'copyTextToClipboard',
+        value: function copyTextToClipboard(text) {
+            var textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
         }
     }, {
         key: 'keyCodes',

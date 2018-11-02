@@ -68,13 +68,6 @@ export default class BlockManager extends Module {
         get: Blocks.get
       });
 
-      this.Editor.Shortcuts.add({
-        name: 'CMD+C',
-        handler: (event) => {
-          console.log('coping');
-        }
-      });
-
       resolve();
     });
   }

@@ -240,6 +240,14 @@ export default class Block {
   }
 
   /**
+   * Returns True if it is Selected
+   * @return {boolean}
+   */
+  get isSelected(): boolean {
+    return this.holder.classList.contains(Block.CSS.selected);
+  }
+
+  /**
    * Set stretched state
    * @param {Boolean} state - 'true' to enable, 'false' to disable stretched statte
    */

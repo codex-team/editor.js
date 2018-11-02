@@ -236,4 +236,17 @@ export default class Util {
       }
     };
   }
+
+  /**
+   * Copies passed text to the clipboard
+   * @param text
+   */
+  public static copyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textArea);
+  }
 }
