@@ -35,9 +35,11 @@ export default class Shortcuts extends Module implements IShortcuts {
    * @param {IShortcut} shortcut
    */
   public add(shortcut: IShortcut): void {
+    const { UI } = this.Editor;
+
     const newShortcut = new Shortcut({
       name: shortcut.name,
-      on: document,
+      on: UI.nodes.redactor,
       callback: shortcut.handler,
     });
 

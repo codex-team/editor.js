@@ -262,7 +262,7 @@ export default class Core {
    * @return {Promise}
    */
   async start() {
-    const modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste', 'DragNDrop', 'ModificationsObserver'];
+    const modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste', 'DragNDrop', 'ModificationsObserver', 'BlockSelection'];
 
     await modulesToPrepare.reduce(
       (promise, module) => promise.then(async () => {

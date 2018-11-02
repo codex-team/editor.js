@@ -351,40 +351,6 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * select Block
-   */
-  selectBlockByIndex(index) {
-    /**
-     * Remove previous selected Block's state
-     */
-    this.clearHighlightings();
-
-    let block;
-
-    if (isNaN(index)) {
-      block = this.currentBlock;
-    } else {
-      block = this.getBlockByIndex(index);
-    }
-
-    block.selected = true;
-  }
-
-  /**
-   * Select All Blocks
-   */
-  selectAllBlocks() {
-    this.blocks.forEach( block => block.selected = true);
-  }
-
-  /**
-   * Clear selection from Blocks
-   */
-  clearSelection() {
-    this.blocks.forEach( block => block.selected = false);
-  }
-
-  /**
    * Remove selection from all Blocks
    */
   clearHighlightings() {

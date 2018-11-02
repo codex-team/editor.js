@@ -9,7 +9,7 @@
   }
 
   &--selected {
-    background: #ABADC3;
+    background: #f3f4f5;
   }
 
   &--stretched &__content {

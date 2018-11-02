@@ -142,19 +142,6 @@ export default class UI extends Module {
     this.Editor.Listeners.on(this.nodes.redactor, 'click', event => this.redactorClicked(event), false );
     this.Editor.Listeners.on(document, 'keydown', event => this.documentKeydown(event), true );
     this.Editor.Listeners.on(document, 'click', event => this.documentClicked(event), false );
-
-    /**
-     * Register Shortcut
-     */
-    this.Editor.Shortcuts.add({
-      name: 'CMD+A',
-      handler: (event) => {
-        /** Prevent default selection */
-        event.preventDefault();
-
-        this.Editor.BlockManager.selectBlockByIndex();
-      }
-    });
   }
 
   /**
@@ -258,7 +245,7 @@ export default class UI extends Module {
     }
 
     /** Clear selection */
-    this.Editor.BlockManager.clearSelection();
+    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
@@ -338,7 +325,7 @@ export default class UI extends Module {
     }
 
     /** Clear selection */
-    this.Editor.BlockManager.clearSelection();
+    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
