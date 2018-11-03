@@ -242,11 +242,19 @@ export default class Util {
    * @param text
    */
   public static copyTextToClipboard(text) {
-    const textArea = document.createElement('textarea');
-    textArea.value = text;
-    document.body.appendChild(textArea);
-    textArea.select();
+    const el = document.createElement('div');
+    el.innerHTML = text;
+    el.className = 'codex-editor__copyable';
+
+    document.body.appendChild(el);
+
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNode(el);
+
+    window.getSelection().removeAllRanges();
+    selection.addRange(range);
+
     document.execCommand('copy');
-    document.body.removeChild(textArea);
   }
 }

@@ -13,6 +13,11 @@
     padding-bottom: 300px;
   }
 
+  &__copyable {
+     position: absolute;
+     top: -400%;
+  }
+
   svg {
     fill: currentColor;
     vertical-align: middle;
