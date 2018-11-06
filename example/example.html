@@ -42,7 +42,7 @@
    https://github.com/codex-editor/header#installation
    -->
   <script src="./tools/header/dist/bundle.js"></script><!-- Header -->
-  <script src="file:///Users/specc/codex/image/dist/bundle.js"></script><!-- Simple Image -->
+  <script src="./tools/image/dist/bundle.js"></script><!-- Simple Image -->
   <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
   <script src="./tools/list/dist/bundle.js"></script><!-- List -->
   <script src="./tools/quote/dist/bundle.js"></script><!-- Quote -->
@@ -92,8 +92,9 @@
         image: {
           class: ImageTool,
           config: {
-            url: 'http://localhost:8008'
-          }
+            url: 'http://localhost:8008',
+          },
+          inlineToolbar: ['link'],
         },
 
         list: {
@@ -143,16 +144,6 @@
             data: {
               text: "CodeX Editor",
               level: 2
-            }
-          },
-          {
-            type: 'image',
-            data: {
-              url : 'https://ifmo.su/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',
-              caption: '',
-              stretched: false,
-              withBorder: true,
-              withBackground: false,
             }
           },
           {
@@ -225,6 +216,18 @@
             type : 'paragraph',
             data : {
               text : 'Мы работали над этим редактором более двух лет. В отладке принимали участие известные медиа-проекты: vc.ru, TJ, DTF — с их помощью удалось найти и исправить много ошибок, стабилизировать ядро. Вместе с этим мы развивали API, который позволяет создавать плагины под любые задачи. Надеемся, вам понравится 😏'
+            }
+          },
+          {
+            type: 'image',
+            data: {
+              file: {
+                url : 'https://ifmo.su/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',
+              },
+              caption: '',
+              stretched: false,
+              withBorder: true,
+              withBackground: false,
             }
           },
         ]
