@@ -3,8 +3,8 @@
 /**
  * Apply polyfills
  */
-import 'babel-core/register';
-if (!window || !window._babelPolyfill) require('babel-polyfill');
+import '@babel/register';
+if (!window || !window._babelPolyfill) require('@babel/polyfill');
 import 'components/polyfills';
 import Core from './components/core';
 
