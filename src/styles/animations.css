@@ -47,26 +47,14 @@
   }
 
   0% {
-    transform: scale3d(0.86, 0.86, 0.86);
-  }
-
-  20% {
-    transform: scale3d(1.1, 1.1, 1.1);
-  }
-
-  40% {
     transform: scale3d(0.9, 0.9, 0.9);
   }
 
-  60% {
+  20% {
     transform: scale3d(1.03, 1.03, 1.03);
   }
 
-  80% {
-    transform: scale3d(0.97, 0.97, 0.97);
-  }
-
-  to {
+  60% {
     transform: scale3d(1, 1, 1);
   }
 }

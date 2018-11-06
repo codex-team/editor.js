@@ -190,6 +190,8 @@ export interface IStylesAPI {
 
   loader: string;
 
+  button: string;
+
   settingsButton: string;
 
   settingsButtonActive: string;

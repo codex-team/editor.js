@@ -34,6 +34,7 @@ export default class StylesAPI extends Module {
        */
       input: 'cdx-input',
       loader: 'cdx-loader',
+      button: 'cdx-button',
 
       /**
        * Settings styles
