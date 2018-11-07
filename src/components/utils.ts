@@ -238,6 +238,8 @@ export default class Util {
   }
 
   /**
+   * @todo discuss with others
+   *
    * Copies passed text to the clipboard
    * @param text
    */

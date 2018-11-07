@@ -20885,7 +20885,8 @@ var BlockSelection = function (_Module) {
     }
     /**
      * Module Preparation
-     * Registers new Shortcut
+     * Registers Shortcuts CMD+A and CMD+C
+     * to select all and copy them
      */
 
 
@@ -20895,20 +20896,19 @@ var BlockSelection = function (_Module) {
             var _this2 = this;
 
             var Shortcuts = this.Editor.Shortcuts;
-            /**
-             * Register Shortcut
-             */
+            /** Selection shortcut */
 
             Shortcuts.add({
                 name: 'CMD+A',
                 handler: function handler(event) {
-                    _this2.handleShortcut(event);
+                    _this2.handleCommandA(event);
                 }
             });
+            /** shortcut to copy all selected blocks */
             Shortcuts.add({
                 name: 'CMD+C',
                 handler: function handler(event) {
-                    _this2.handleShortcut1(event);
+                    _this2.copySelectedBlocks(event);
                 }
             });
         }
@@ -20927,12 +20927,15 @@ var BlockSelection = function (_Module) {
             });
         }
         /**
-         * @param event
+         * First CMD+A Selects current focused blocks,
+         * and consequent second CMD+A keypress selects all blocks
+         *
+         * @param {keydown} event
          */
 
     }, {
-        key: 'handleShortcut',
-        value: function handleShortcut(event) {
+        key: 'handleCommandA',
+        value: function handleCommandA(event) {
             /** Prevent default selection */
             event.preventDefault();
             if (this.needToSelectAll) {
@@ -20944,12 +20947,15 @@ var BlockSelection = function (_Module) {
             }
         }
         /**
+         * Copying selected blocks
+         * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
+         *
          * @param event
          */
 
     }, {
-        key: 'handleShortcut1',
-        value: function handleShortcut1(event) {
+        key: 'copySelectedBlocks',
+        value: function copySelectedBlocks(event) {
             var _Editor = this.Editor,
                 BlockManager = _Editor.BlockManager,
                 Sanitizer = _Editor.Sanitizer;
@@ -20957,9 +20963,9 @@ var BlockSelection = function (_Module) {
             var allBlocks = $.make('div');
             BlockManager.blocks.forEach(function (block) {
                 if (block.isSelected) {
-                    var customConfig = (0, _assign2.default)({}, Sanitizer.getInlineToolsConfig(block.name));
-                    var cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig);
-                    var fragment = $.make('div');
+                    var customConfig = (0, _assign2.default)({}, Sanitizer.getInlineToolsConfig(block.name)),
+                        cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig),
+                        fragment = $.make('div');
                     fragment.innerHTML = cleanHTML;
                     allBlocks.appendChild(fragment);
                 }
@@ -20968,6 +20974,7 @@ var BlockSelection = function (_Module) {
         }
         /**
          * Select All Blocks
+         * Each Block has selected setter that makes Block copyable
          */
 
     }, {
@@ -20981,6 +20988,7 @@ var BlockSelection = function (_Module) {
         }
         /**
          * select Block
+         * @param {number?} index - Block index according to the BlockManager's indexes
          */
 
     }, {
@@ -27434,6 +27442,8 @@ var Util = function () {
             };
         }
         /**
+         * @todo discuss with others
+         *
          * Copies passed text to the clipboard
          * @param text
          */

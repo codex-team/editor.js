@@ -23,25 +23,26 @@ export default class BlockSelection extends Module {
 
   /**
    * Module Preparation
-   * Registers new Shortcut
+   * Registers Shortcuts CMD+A and CMD+C
+   * to select all and copy them
    */
   public prepare(): void {
 
     const { Shortcuts } = this.Editor;
-    /**
-     * Register Shortcut
-     */
+
+    /** Selection shortcut */
     Shortcuts.add({
       name: 'CMD+A',
       handler: (event) => {
-        this.handleShortcut(event);
+        this.handleCommandA(event);
       },
     });
 
+    /** shortcut to copy all selected blocks */
     Shortcuts.add({
       name: 'CMD+C',
       handler: (event) => {
-        this.handleShortcut1(event);
+        this.copySelectedBlocks(event);
       },
     });
   }
@@ -50,15 +51,19 @@ export default class BlockSelection extends Module {
    * Clear selection from Blocks
    */
   public clearSelection() {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
+
     this.needToSelectAll = false;
     BlockManager.blocks.forEach( (block) => block.selected = false);
   }
 
   /**
-   * @param event
+   * First CMD+A Selects current focused blocks,
+   * and consequent second CMD+A keypress selects all blocks
+   *
+   * @param {keydown} event
    */
-  private handleShortcut(event): void {
+  private handleCommandA(event): void {
     /** Prevent default selection */
     event.preventDefault();
 
@@ -72,21 +77,25 @@ export default class BlockSelection extends Module {
   }
 
   /**
+   * Copying selected blocks
+   * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
+   *
    * @param event
    */
-  private handleShortcut1(event): void {
+  private copySelectedBlocks(event): void {
     const { BlockManager, Sanitizer } = this.Editor;
 
     const allBlocks = $.make('div');
 
     BlockManager.blocks.forEach( (block) => {
-        if (block.isSelected) {
-          const customConfig = Object.assign({}, Sanitizer.getInlineToolsConfig(block.name));
-          const cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig);
-          const fragment = $.make('div');
-          fragment.innerHTML = cleanHTML;
-          allBlocks.appendChild(fragment);
-        }
+      if (block.isSelected) {
+        const customConfig = Object.assign({}, Sanitizer.getInlineToolsConfig(block.name)),
+          cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig),
+          fragment = $.make('div');
+
+        fragment.innerHTML = cleanHTML;
+        allBlocks.appendChild(fragment);
+      }
     });
 
     _.copyTextToClipboard(allBlocks.innerHTML);
@@ -94,6 +103,7 @@ export default class BlockSelection extends Module {
 
   /**
    * Select All Blocks
+   * Each Block has selected setter that makes Block copyable
    */
   private selectAllBlocks() {
     const { BlockManager } = this.Editor;
@@ -102,6 +112,7 @@ export default class BlockSelection extends Module {
 
   /**
    * select Block
+   * @param {number?} index - Block index according to the BlockManager's indexes
    */
   private selectBlockByIndex(index?) {
 
