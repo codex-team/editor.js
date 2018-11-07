@@ -28,3 +28,7 @@
 [submodule "example/tools/image"]
 	path = example/tools/image
 	url = git@github.com:codex-editor/image.git
+[submodule "example/tools/warning"]
+	path = example/tools/warning
+	url = https://github.com/codex-editor/warning
+	branch = initial-version
