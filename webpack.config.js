@@ -46,15 +46,12 @@ var babelLoader = {
   loader: 'babel-loader',
   options: {
     cacheDirectory: true,
-    presets: [
-      "env"
-    ],
     plugins: [
       /**
        * Dont need to use «.default» after «export default Class Ui {}»
        * @see  {@link https://github.com/59naga/babel-plugin-add-module-exports}
        */
-      'add-module-exports',
+      // 'add-module-exports',
       /**
        * Babel transforms some awesome ES6 features to ES5 with extra code, such as Class, JSX.
        * This plugin makes all generated extra codes to one module which significantly reduces the bundle code size.
@@ -65,7 +62,7 @@ var babelLoader = {
       // ['babel-plugin-transform-helper', {
       //   helperFilename:'build/__tmp_babel_helpers.js'
       // }],
-      'class-display-name',
+      // 'class-display-name',
     ]
   }
 };

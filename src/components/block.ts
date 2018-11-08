@@ -211,12 +211,10 @@ export default class Block {
 
   /**
    * Set focused state
+   * We don't need to mark Block as focused when it is not empty
    * @param {Boolean} state - 'true' to select, 'false' to remove selection
    */
   set focused(state: boolean) {
-    /**
-     * We don't need to mark Block as focused when it is not empty
-     */
     if (state === true && !this.isEmpty) {
       this.holder.classList.add(Block.CSS.focused);
     } else {
@@ -226,12 +224,10 @@ export default class Block {
 
   /**
    * Set selected state
+   * We don't need to mark Block as Selected when it is not empty
    * @param {Boolean} state - 'true' to select, 'false' to remove selection
    */
   set selected(state: boolean) {
-    /**
-     * We don't need to mark Block as Selected when it is not empty
-     */
     if (state) {
       this.holder.classList.add(Block.CSS.selected);
     } else {
