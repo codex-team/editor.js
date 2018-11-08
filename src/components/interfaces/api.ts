@@ -1,4 +1,5 @@
 import IInputOutputData from './input-output-data';
+import {ConfirmNotificationOptions, NotificationOptions, PromptNotificationOptions} from '../modules/notifier';
 
 /**
  * CodeX Editor Public API
@@ -10,6 +11,7 @@ export interface IAPI {
   caret: ICaretAPI;
   events: IEventsAPI;
   listener: IListenerAPI;
+  notifier: INotifierAPI;
   sanitizer: ISanitizerAPI;
   saver: ISaverAPI;
   selection: ISelectionAPI;
@@ -129,6 +131,19 @@ export interface IListenerAPI {
    * @param {() => void} handler
    */
   off: (element: HTMLElement, eventType: string, handler: () => void) => void;
+}
+
+/**
+ * Notifier API
+ */
+export interface INotifierAPI {
+
+  /**
+   * Show web notification
+   *
+   * @param {NotificationOptions | ConfirmNotificationOptions  |PromptNotificationOptions}
+   */
+  show: (options: NotificationOptions | ConfirmNotificationOptions | PromptNotificationOptions) => void;
 }
 
 /**
