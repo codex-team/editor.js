@@ -10,24 +10,16 @@ declare var _: any;
 declare var $: any;
 
 export default class BlockSelection extends Module {
-
   /**
-   * @constructor
-   * @param {EditorConfig} config
+   * @type {boolean}
    */
-  constructor({config}) {
-    super({config});
-
-    this.needToSelectAll = false;
-  }
-
+  private needToSelectAll: boolean = false;
   /**
    * Module Preparation
    * Registers Shortcuts CMD+A and CMD+C
    * to select all and copy them
    */
   public prepare(): void {
-
     const { Shortcuts } = this.Editor;
 
     /** Selection shortcut */
@@ -84,14 +76,13 @@ export default class BlockSelection extends Module {
    */
   private copySelectedBlocks(event): void {
     const { BlockManager, Sanitizer } = this.Editor;
-
     const allBlocks = $.make('div');
 
     BlockManager.blocks.forEach( (block) => {
       if (block.isSelected) {
-        const customConfig = Object.assign({}, Sanitizer.getInlineToolsConfig(block.name)),
-          cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig),
-          fragment = $.make('div');
+        const customConfig = Object.assign({}, Sanitizer.getInlineToolsConfig(block.name));
+        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig);
+        const fragment = $.make('div');
 
         fragment.innerHTML = cleanHTML;
         allBlocks.appendChild(fragment);
@@ -107,6 +98,7 @@ export default class BlockSelection extends Module {
    */
   private selectAllBlocks() {
     const { BlockManager } = this.Editor;
+
     BlockManager.blocks.forEach( (block) => block.selected = true);
   }
 
@@ -115,7 +107,6 @@ export default class BlockSelection extends Module {
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
   private selectBlockByIndex(index?) {
-
     const { BlockManager } = this.Editor;
 
     /**

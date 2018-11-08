@@ -215,7 +215,7 @@ export default class Block {
    */
   set focused(state: boolean) {
     /**
-     * We don't need to mark Block as Selected when it is not empty
+     * We don't need to mark Block as focused when it is not empty
      */
     if (state === true && !this.isEmpty) {
       this.holder.classList.add(Block.CSS.focused);

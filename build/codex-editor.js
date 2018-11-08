@@ -16872,7 +16872,7 @@ var Block = function () {
         key: 'focused',
         set: function set(state) {
             /**
-             * We don't need to mark Block as Selected when it is not empty
+             * We don't need to mark Block as focused when it is not empty
              */
             if (state === true && !this.isEmpty) {
                 this.holder.classList.add(Block.CSS.focused);
@@ -20870,15 +20870,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var BlockSelection = function (_Module) {
     (0, _inherits3.default)(BlockSelection, _Module);
 
-    /**
-     * @constructor
-     * @param {EditorConfig} config
-     */
-    function BlockSelection(_ref) {
-        var config = _ref.config;
+    function BlockSelection() {
         (0, _classCallCheck3.default)(this, BlockSelection);
 
-        var _this = (0, _possibleConstructorReturn3.default)(this, (BlockSelection.__proto__ || (0, _getPrototypeOf2.default)(BlockSelection)).call(this, { config: config }));
+        /**
+         * @type {boolean}
+         */
+        var _this = (0, _possibleConstructorReturn3.default)(this, (BlockSelection.__proto__ || (0, _getPrototypeOf2.default)(BlockSelection)).apply(this, arguments));
 
         _this.needToSelectAll = false;
         return _this;
@@ -20963,9 +20961,9 @@ var BlockSelection = function (_Module) {
             var allBlocks = $.make('div');
             BlockManager.blocks.forEach(function (block) {
                 if (block.isSelected) {
-                    var customConfig = (0, _assign2.default)({}, Sanitizer.getInlineToolsConfig(block.name)),
-                        cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig),
-                        fragment = $.make('div');
+                    var customConfig = (0, _assign2.default)({}, Sanitizer.getInlineToolsConfig(block.name));
+                    var cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig);
+                    var fragment = $.make('div');
                     fragment.innerHTML = cleanHTML;
                     allBlocks.appendChild(fragment);
                 }
