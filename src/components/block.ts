@@ -211,7 +211,7 @@ export default class Block {
 
   /**
    * Set focused state
-   * We don't need to mark Block as focused when it is not empty
+   * We don't need to mark Block as focused when it is empty
    * @param {Boolean} state - 'true' to select, 'false' to remove selection
    */
   set focused(state: boolean) {
@@ -224,7 +224,7 @@ export default class Block {
 
   /**
    * Set selected state
-   * We don't need to mark Block as Selected when it is not empty
+   * We don't need to mark Block as Selected when it is empty
    * @param {Boolean} state - 'true' to select, 'false' to remove selection
    */
   set selected(state: boolean) {
