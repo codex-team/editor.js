@@ -2,7 +2,7 @@
   /**
    * Selection color
    */
-  --selectionColor: rgba(61,166,239,0.63);
+  --selectionColor: #a8d6ff;
 
   /**
    * Toolbar buttons
@@ -29,7 +29,7 @@
    */
   --content-width: 650px;
 
-  /**
+  /**--selectionColor
    * Toolbar buttons height and width
    */
   --toolbar-buttons-size: 34px;

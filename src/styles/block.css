@@ -8,8 +8,12 @@
     border-radius: 3px;
   }
 
-  &--selected {
-    background: #f3f4f5;
+  &--selected &__content {
+    background: var(--selectionColor);
+    /*box-shadow: 0 31px 23px -22px rgba(175, 220, 255, 1);
+    animation: bounceIn 0.4s 1;
+    animation-fill-mode: forwards;
+    */
   }
 
   &--stretched &__content {
