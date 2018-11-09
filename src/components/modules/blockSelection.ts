@@ -9,6 +9,8 @@ declare var Module: any;
 declare var _: any;
 declare var $: any;
 
+import SelectionUtils from '../selection';
+
 export default class BlockSelection extends Module {
   /**
    * @type {boolean}
@@ -34,7 +36,7 @@ export default class BlockSelection extends Module {
     Shortcuts.add({
       name: 'CMD+C',
       handler: (event) => {
-        this.copySelectedBlocks(event);
+        this.fakeClipboard(event);
       },
     });
   }
@@ -74,19 +76,20 @@ export default class BlockSelection extends Module {
    *
    * @param event
    */
-  private copySelectedBlocks(event): void {
+  private fakeClipboard(event): void {
     const { BlockManager, Sanitizer } = this.Editor;
     const allBlocks = $.make('div');
 
-    BlockManager.blocks.forEach( (block) => {
-      if (block.isSelected) {
-        const customConfig = Object.assign({}, Sanitizer.getInlineToolsConfig(block.name));
-        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig);
-        const fragment = $.make('div');
+    BlockManager.blocks.filter( (block) => block.isSelected )
+      .forEach( (block) => {
+        if (block.isSelected) {
+          const customConfig = Object.assign({}, Sanitizer.getInlineToolsConfig(block.name));
+          const cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig);
+          const fragment = $.make('div');
 
-        fragment.innerHTML = cleanHTML;
-        allBlocks.appendChild(fragment);
-      }
+          fragment.innerHTML = cleanHTML;
+          allBlocks.appendChild(fragment);
+        }
     });
 
     _.copyTextToClipboard(allBlocks.innerHTML);
@@ -121,6 +124,9 @@ export default class BlockSelection extends Module {
     } else {
       block = BlockManager.getBlockByIndex(index);
     }
+
+    SelectionUtils.get()
+      .removeAllRanges();
 
     block.selected = true;
   }

@@ -49,6 +49,9 @@ export default class BlockEvents extends Module {
         this.tabPressed(event);
         break;
 
+      case _.keyCodes.ESC:
+        this.escapePressed(event);
+        break;
       default:
         this.defaultHandler();
         break;
@@ -118,6 +121,17 @@ export default class BlockEvents extends Module {
     if (this.Editor.Toolbox.opened) {
       this.Editor.Toolbox.leaf(direction);
     }
+  }
+
+  /**
+   * Escape pressed
+   * @param event
+   */
+  public escapePressed(event): void {
+    const { BlockSelection } = this.Editor;
+
+    /** Clear Block selection */
+    BlockSelection.clearSelection();
   }
 
   /**
