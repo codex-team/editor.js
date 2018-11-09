@@ -123,12 +123,12 @@ export default class Sanitizer extends Module {
    * Cleans string from unwanted tags
    * Method allows to use default config
    *
-   * @param {String} taintString - taint string
+   * @param {String|number|object} taintString - taint string
    * @param {SanitizerConfig} customConfig - allowed tags
    *
-   * @return {String} clean HTML
+   * @return {object|number|string} clean HTML
    */
-  public clean(taintString: string, customConfig: ISanitizerConfig = {}): string {
+  public clean(taintString: any, customConfig: ISanitizerConfig = {}): any {
 
     const sanitizerConfig = {
       tags: customConfig,
@@ -138,7 +138,13 @@ export default class Sanitizer extends Module {
      * API client can use custom config to manage sanitize process
      */
     const sanitizerInstance = this.createHTMLJanitorInstance(sanitizerConfig);
-    return sanitizerInstance.clean(taintString);
+    const cleanData = sanitizerInstance.clean(taintString);
+
+    if (typeof taintString === 'number') {
+      return parseInt(cleanData, 10);
+    }
+
+    return cleanData;
   }
 
   /**

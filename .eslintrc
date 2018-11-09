@@ -59,7 +59,7 @@
         "camelcase": [2, {
             "properties": "always"
         }],
-        "newline-after-var": [1, "always"],
+        "newline-after-var": [1, "always"]
 
     },
     "globals":{
@@ -79,10 +79,12 @@
         "Module": true,
         "Node": true,
         "Element": true,
+        "DocumentFragment": true,
         "Proxy": true,
         "Symbol": true,
         "$": true,
         "_": true,
-        "setTimeout": true
+        "setTimeout": true,
+        "Map": true
     }
 }
