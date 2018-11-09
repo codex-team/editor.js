@@ -16,6 +16,17 @@ export default class BlockSelection extends Module {
    * @type {boolean}
    */
   private needToSelectAll: boolean = false;
+
+  /**
+   * @type {boolean}
+   */
+  private anyBlockSelected: boolean = false;
+
+  /**
+   * @type {SelectionUtils}
+   */
+  private selection: SelectionUtils;
+
   /**
    * Module Preparation
    * Registers Shortcuts CMD+A and CMD+C
@@ -39,6 +50,8 @@ export default class BlockSelection extends Module {
         this.handleCommandC(event);
       },
     });
+
+    this.selection = new SelectionUtils();
   }
 
   /**
@@ -47,8 +60,15 @@ export default class BlockSelection extends Module {
   public clearSelection() {
     const { BlockManager } = this.Editor;
 
+    if (!this.anyBlockSelected) {
+      return;
+    }
+    this.anyBlockSelected = false;
     this.needToSelectAll = false;
     BlockManager.blocks.forEach( (block) => block.selected = false);
+
+    /** restore selection */
+    this.selection.restore();
   }
 
   /**
@@ -68,6 +88,7 @@ export default class BlockSelection extends Module {
       this.selectBlockByIndex();
       this.needToSelectAll = true;
     }
+    this.anyBlockSelected = true;
   }
 
   /**
@@ -127,6 +148,8 @@ export default class BlockSelection extends Module {
       block = BlockManager.getBlockByIndex(index);
     }
 
+    /** Save selection */
+    this.selection.save();
     SelectionUtils.get()
       .removeAllRanges();
 
