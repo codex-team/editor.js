@@ -114,8 +114,13 @@ export default class Sanitizer extends Module {
     } else {
       /**
        * Primitives (number|string|boolean): clean this item
+       *
+       * Clean only strings
        */
-      return this.cleanOneItem(dataToSanitize, rules);
+      if (typeof dataToSanitize === 'string') {
+        return this.cleanOneItem(dataToSanitize, rules);
+      }
+      return dataToSanitize;
     }
   }
 
@@ -123,10 +128,10 @@ export default class Sanitizer extends Module {
    * Cleans string from unwanted tags
    * Method allows to use default config
    *
-   * @param {String} taintString - taint string
+   * @param {string} taintString - taint string
    * @param {SanitizerConfig} customConfig - allowed tags
    *
-   * @return {String} clean HTML
+   * @return {string} clean HTML
    */
   public clean(taintString: string, customConfig: ISanitizerConfig = {}): string {
 
