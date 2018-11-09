@@ -25,7 +25,7 @@
     "babel-loader": "^8.0.4",
     "babel-plugin-add-module-exports": "^1.0.0",
     "babel-plugin-class-display-name": "^2.1.0",
-    "codex-notifier": "^1.0.4",
+    "codex-notifier": "^1.1.0",
     "css-loader": "^0.28.11",
     "eslint": "^4.19.1",
     "eslint-loader": "^2.1.0",

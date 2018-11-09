@@ -1,5 +1,5 @@
 import IInputOutputData from './input-output-data';
-import {ConfirmNotificationOptions, NotificationOptions, PromptNotificationOptions} from '../modules/notifier';
+import {ConfirmNotifierOptions, NotifierOptions, PromptNotifierOptions} from 'codex-notifier';
 
 /**
  * CodeX Editor Public API
@@ -141,9 +141,9 @@ export interface INotifierAPI {
   /**
    * Show web notification
    *
-   * @param {NotificationOptions | ConfirmNotificationOptions  |PromptNotificationOptions}
+   * @param {NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions}
    */
-  show: (options: NotificationOptions | ConfirmNotificationOptions | PromptNotificationOptions) => void;
+  show: (options: NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions) => void;
 }
 
 /**

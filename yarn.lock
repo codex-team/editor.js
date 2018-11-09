@@ -1374,9 +1374,9 @@ code-point-at@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
 
-codex-notifier@^1.0.4:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/codex-notifier/-/codex-notifier-1.0.6.tgz#fb0a2d46bfcdd88b845c6d8a553eb3b668a68c5c"
+codex-notifier@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/codex-notifier/-/codex-notifier-1.1.0.tgz#2374eaa365109f788f74b67782cee3d91db46a20"
 
 collapse-white-space@^1.0.2:
   version "1.0.4"
