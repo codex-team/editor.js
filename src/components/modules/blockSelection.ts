@@ -36,7 +36,7 @@ export default class BlockSelection extends Module {
     Shortcuts.add({
       name: 'CMD+C',
       handler: (event) => {
-        this.fakeClipboard(event);
+        this.handleCommandC(event);
       },
     });
   }
@@ -76,16 +76,18 @@ export default class BlockSelection extends Module {
    *
    * @param event
    */
-  private fakeClipboard(event): void {
+  private handleCommandC(event): void {
     const { BlockManager, Sanitizer } = this.Editor;
     const allBlocks = $.make('div');
 
     BlockManager.blocks.filter( (block) => block.isSelected )
       .forEach( (block) => {
         if (block.isSelected) {
+
+          /** FakeClipboard */
           const customConfig = Object.assign({}, Sanitizer.getInlineToolsConfig(block.name));
           const cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig);
-          const fragment = $.make('div');
+          const fragment = $.make('p');
 
           fragment.innerHTML = cleanHTML;
           allBlocks.appendChild(fragment);

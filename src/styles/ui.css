@@ -13,9 +13,11 @@
     padding-bottom: 300px;
   }
 
-  &__copyable {
-     position: absolute;
-     top: -400%;
+  &-copyable {
+    position: absolute;
+    height: 1px;
+    width: 1px;
+    top: -400%;
   }
 
   svg {

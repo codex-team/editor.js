@@ -76,6 +76,17 @@ export default class BlockEvents extends Module {
     }
 
     this.Editor.Toolbar.close();
+
+    const cmdKey = event.ctrlKey || event.metaKey;
+    const altKey = event.altKey;
+    const shiftKey = event.shiftKey;
+
+    if (cmdKey || altKey || shiftKey) {
+      return;
+    }
+
+    /** Clear Block selection */
+    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
@@ -127,12 +138,7 @@ export default class BlockEvents extends Module {
    * Escape pressed
    * @param event
    */
-  public escapePressed(event): void {
-    const { BlockSelection } = this.Editor;
-
-    /** Clear Block selection */
-    BlockSelection.clearSelection();
-  }
+  public escapePressed(event): void { }
 
   /**
    * Add drop target styles

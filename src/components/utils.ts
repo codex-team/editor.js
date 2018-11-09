@@ -238,15 +238,13 @@ export default class Util {
   }
 
   /**
-   * @todo discuss with others
-   *
    * Copies passed text to the clipboard
    * @param text
    */
   public static copyTextToClipboard(text) {
     const el = document.createElement('div');
     el.innerHTML = text;
-    el.className = 'codex-editor__copyable';
+    el.className = 'codex-editor-clipboard';
 
     document.body.appendChild(el);
 
@@ -258,5 +256,6 @@ export default class Util {
     selection.addRange(range);
 
     document.execCommand('copy');
+    document.body.removeChild(el);
   }
 }
