@@ -25,6 +25,3 @@
 [submodule "example/tools/code"]
 	path = example/tools/code
 	url = https://github.com/codex-editor/code
-[submodule "example/tools/image"]
-	path = example/tools/image
-	url = https://github.com/codex-editor/image.git
