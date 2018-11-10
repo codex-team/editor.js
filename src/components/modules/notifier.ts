@@ -21,5 +21,3 @@ export default class Notifier extends Module {
     notifier.show(options);
   }
 }
-
-
