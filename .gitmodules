@@ -27,4 +27,4 @@
 	url = https://github.com/codex-editor/code
 [submodule "example/tools/image"]
 	path = example/tools/image
-	url = git@github.com:codex-editor/image.git
+	url = https://github.com/codex-editor/image
