@@ -1,6 +1,6 @@
 {
   "name": "codex.editor",
-  "version": "2.3.0",
+  "version": "2.4.2",
   "description": "Codex Editor. Native JS, based on API and Open Source",
   "main": "build/codex-editor.js",
   "scripts": {
@@ -25,6 +25,7 @@
     "babel-loader": "^8.0.4",
     "babel-plugin-add-module-exports": "^1.0.0",
     "babel-plugin-class-display-name": "^2.1.0",
+    "codex-notifier": "^1.1.0",
     "css-loader": "^0.28.11",
     "eslint": "^4.19.1",
     "eslint-loader": "^2.1.0",
