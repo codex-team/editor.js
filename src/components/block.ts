@@ -239,7 +239,7 @@ export default class Block {
    * Returns True if it is Selected
    * @return {boolean}
    */
-  get isSelected(): boolean {
+  get selected(): boolean {
     return this.holder.classList.contains(Block.CSS.selected);
   }
 

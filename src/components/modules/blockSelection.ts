@@ -107,7 +107,7 @@ export default class BlockSelection extends Module {
     const { BlockManager, Sanitizer } = this.Editor;
     const allBlocks = $.make('div');
 
-    BlockManager.blocks.filter( (block) => block.isSelected )
+    BlockManager.blocks.filter( (block) => block.selected )
       .forEach( (block) => {
         /** FakeClipboard */
         const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
