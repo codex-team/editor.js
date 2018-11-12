@@ -66,7 +66,7 @@ export default class BlockEvents extends Module {
     /**
      * Clear all highlightings
      */
-    this.Editor.BlockManager.clearHighlightings();
+    this.Editor.BlockManager.clearFocused();
 
     /**
      * Do not close Toolbox on Tabs or on Enter with opened Toolbox
@@ -81,12 +81,13 @@ export default class BlockEvents extends Module {
     const altKey = event.altKey;
     const shiftKey = event.shiftKey;
 
+    /** clear selecton when it is not CMD, SHIFT, ALT keys */
     if (cmdKey || altKey || shiftKey) {
       return;
     }
 
-    /** Clear Block selection */
-    this.Editor.BlockSelection.clearSelection();
+    /** Clear Block selection and restore caret */
+    this.Editor.BlockSelection.clearSelection(true);
   }
 
   /**

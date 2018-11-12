@@ -13,16 +13,20 @@ import SelectionUtils from '../selection';
 
 export default class BlockSelection extends Module {
   /**
+   * Flag used to define block selection
+   * First CMD+A defines it as true and then second CMD+A selects all Blocks
    * @type {boolean}
    */
   private needToSelectAll: boolean = false;
 
   /**
+   * Flag defines any block selection
    * @type {boolean}
    */
   private anyBlockSelected: boolean = false;
 
   /**
+   * SelectionUtils instance
    * @type {SelectionUtils}
    */
   private selection: SelectionUtils;
@@ -57,7 +61,7 @@ export default class BlockSelection extends Module {
   /**
    * Clear selection from Blocks
    */
-  public clearSelection() {
+  public clearSelection(restoreSelection = false) {
     const { BlockManager } = this.Editor;
 
     if (!this.anyBlockSelected) {
@@ -68,7 +72,9 @@ export default class BlockSelection extends Module {
     BlockManager.blocks.forEach( (block) => block.selected = false);
 
     /** restore selection */
-    this.selection.restore();
+    if (restoreSelection) {
+      this.selection.restore();
+    }
   }
 
   /**
@@ -103,16 +109,12 @@ export default class BlockSelection extends Module {
 
     BlockManager.blocks.filter( (block) => block.isSelected )
       .forEach( (block) => {
-        if (block.isSelected) {
+        /** FakeClipboard */
+        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+        const fragment = $.make('p');
 
-          /** FakeClipboard */
-          const customConfig = Object.assign({}, Sanitizer.getInlineToolsConfig(block.name));
-          const cleanHTML = Sanitizer.clean(block.holder.innerHTML, customConfig);
-          const fragment = $.make('p');
-
-          fragment.innerHTML = cleanHTML;
-          allBlocks.appendChild(fragment);
-        }
+        fragment.innerHTML = cleanHTML;
+        allBlocks.appendChild(fragment);
     });
 
     _.copyTextToClipboard(allBlocks.innerHTML);
@@ -138,7 +140,7 @@ export default class BlockSelection extends Module {
     /**
      * Remove previous selected Block's state
      */
-    BlockManager.clearHighlightings();
+    BlockManager.clearFocused();
 
     let block;
 
@@ -154,5 +156,36 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     block.selected = true;
+  }
+
+  /**
+   * Sanitizer Config
+   * @return {SanitizerConfig}
+   */
+  private get sanitizerConfig() {
+    return {
+      p: {},
+      h1: {},
+      h2: {},
+      h3: {},
+      h4: {},
+      h5: {},
+      h6: {},
+      ol: {},
+      ul: {},
+      li: {},
+      br: true,
+      img: {
+        src: true,
+        width: true,
+        height: true,
+      },
+      a: {
+        href: true,
+      },
+      b: {},
+      i: {},
+      u: {},
+    };
   }
 }

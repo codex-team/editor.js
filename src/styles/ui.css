@@ -18,6 +18,7 @@
     height: 1px;
     width: 1px;
     top: -400%;
+    opacity: 0.001;
   }
 
   svg {
