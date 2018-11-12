@@ -64,11 +64,6 @@ export default class BlockEvents extends Module {
    */
   public beforeKeydownProcessing(event): void {
     /**
-     * Clear all highlightings
-     */
-    this.Editor.BlockManager.clearFocused();
-
-    /**
      * Do not close Toolbox on Tabs or on Enter with opened Toolbox
      */
     if (!this.needToolbarClosing(event)) {
@@ -85,6 +80,11 @@ export default class BlockEvents extends Module {
     if (cmdKey || altKey || shiftKey) {
       return;
     }
+
+    /**
+     * Clear all highlightings
+     */
+    this.Editor.BlockManager.clearFocused();
 
     /** Clear Block selection and restore caret */
     this.Editor.BlockSelection.clearSelection(true);
