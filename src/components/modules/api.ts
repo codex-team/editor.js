@@ -30,6 +30,7 @@ export default class API extends Module {
       caret: this.Editor.CaretAPI.methods,
       events: this.Editor.EventsAPI.methods,
       listener: this.Editor.ListenerAPI.methods,
+      notifier: this.Editor.NotifierAPI.methods,
       sanitizer: this.Editor.SanitizerAPI.methods,
       saver: this.Editor.SaverAPI.methods,
       selection: this.Editor.SelectionAPI.methods,

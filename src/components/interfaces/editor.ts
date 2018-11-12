@@ -32,6 +32,8 @@ export default interface IEditor {
 
   Listeners: Module; // @todo create interface
 
+  Notifier: Module; // @todo create interface
+
   Renderer: Module; // @todo create interface
 
   Sanitizer: Module; // @todo create interface
