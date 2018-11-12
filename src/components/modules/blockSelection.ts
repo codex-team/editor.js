@@ -20,12 +20,6 @@ export default class BlockSelection extends Module {
   private needToSelectAll: boolean = false;
 
   /**
-   * Flag defines any block selection
-   * @type {boolean}
-   */
-  private anyBlockSelected: boolean = false;
-
-  /**
    * SelectionUtils instance
    * @type {SelectionUtils}
    */
@@ -63,15 +57,19 @@ export default class BlockSelection extends Module {
    */
   public clearSelection(restoreSelection = false) {
     const { BlockManager } = this.Editor;
+    const anyBlockSelected = BlockManager.blocks.findIndex( (block) => block.selected === true) !== -1;
 
-    if (!this.anyBlockSelected) {
+    if (!anyBlockSelected) {
       return;
     }
-    this.anyBlockSelected = false;
+
     this.needToSelectAll = false;
     BlockManager.blocks.forEach( (block) => block.selected = false);
 
-    /** restore selection */
+    /**
+     * restore selection when Block is already selected
+     * but someone tries to write something.
+     */
     if (restoreSelection) {
       this.selection.restore();
     }
@@ -94,7 +92,6 @@ export default class BlockSelection extends Module {
       this.selectBlockByIndex();
       this.needToSelectAll = true;
     }
-    this.anyBlockSelected = true;
   }
 
   /**
@@ -105,19 +102,21 @@ export default class BlockSelection extends Module {
    */
   private handleCommandC(event): void {
     const { BlockManager, Sanitizer } = this.Editor;
-    const allBlocks = $.make('div');
+    const fakeClipboard = $.make('div');
 
     BlockManager.blocks.filter( (block) => block.selected )
       .forEach( (block) => {
-        /** FakeClipboard */
+        /**
+         * Make <p> tag that holds clean HTML
+         */
         const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
         const fragment = $.make('p');
 
         fragment.innerHTML = cleanHTML;
-        allBlocks.appendChild(fragment);
+        fakeClipboard.appendChild(fragment);
     });
 
-    _.copyTextToClipboard(allBlocks.innerHTML);
+    _.copyTextToClipboard(fakeClipboard.innerHTML);
   }
 
   /**
@@ -138,7 +137,7 @@ export default class BlockSelection extends Module {
     const { BlockManager } = this.Editor;
 
     /**
-     * Remove previous selected Block's state
+     * Remove previous focused Block's state
      */
     BlockManager.clearFocused();
 
