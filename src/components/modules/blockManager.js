@@ -334,7 +334,7 @@ export default class BlockManager extends Module {
     /**
      * Remove previous selected Block's state
      */
-    this.clearHighlightings();
+    this.clearFocused();
 
     /**
      * Mark current Block as selected
@@ -346,7 +346,7 @@ export default class BlockManager extends Module {
   /**
    * Remove selection from all Blocks
    */
-  clearHighlightings() {
+  clearFocused() {
     this.blocks.forEach( block => block.focused = false);
   }
 
@@ -428,7 +428,7 @@ export default class BlockManager extends Module {
    */
   dropPointer() {
     this.currentBlockIndex = -1;
-    this.clearHighlightings();
+    this.clearFocused();
   }
 
   /**
