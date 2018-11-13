@@ -87,11 +87,6 @@ export default class BlockManager extends Module {
       block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
 
     this.bindEvents(block);
-    /**
-     * Apply callback before inserting html
-     */
-    block.call('appendCallback', {});
-
     return block;
   }
 
@@ -113,14 +108,22 @@ export default class BlockManager extends Module {
    * @param {String} toolName — plugin name, by default method inserts initial block type
    * @param {Object} data — plugin data
    * @param {Object} settings - default settings
+   * @param {Boolean} needAppendCallback - fire Plugin's appendCallback function if needed
    *
    * @return {Block}
    */
-  insert(toolName = this.config.initialBlock, data = {}, settings = {}) {
+  insert(toolName = this.config.initialBlock, data = {}, settings = {}, needAppendCallback = true) {
     // Increment index before construct,
     // because developers can use API/Blocks/getCurrentInputIndex on the render() method
-    let newIndex = ++this.currentBlockIndex;
-    let block = this.composeBlock(toolName, data, settings);
+    const newIndex = ++this.currentBlockIndex;
+    const block = this.composeBlock(toolName, data, settings);
+
+    if (needAppendCallback) {
+      /**
+       * Apply callback before inserting html
+       */
+      block.call('appendCallback', {});
+    }
 
     this._blocks[newIndex] = block;
     return block;
@@ -221,11 +224,19 @@ export default class BlockManager extends Module {
    *
    * @param {String} toolName — plugin name
    * @param {Object} data — plugin data
+   * @param {Boolean} needAppendCallback - fire Plugin's appendCallback function if needed
    *
    * @return {Block}
    */
-  replace(toolName, data = {}) {
+  replace(toolName, data = {}, needAppendCallback = true) {
     let block = this.composeBlock(toolName, data);
+
+    if (needAppendCallback) {
+      /**
+       * Apply callback before inserting html
+       */
+      block.call('appendCallback', {});
+    }
 
     this._blocks.insert(this.currentBlockIndex, block, true);
 

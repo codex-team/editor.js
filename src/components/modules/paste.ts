@@ -644,7 +644,7 @@ export default class Paste extends Module {
       return;
     }
 
-    const Block = BlockManager.insert(data.tool, blockData);
+    const Block = BlockManager.insert(data.tool, blockData, {}, false);
 
     Caret.setToBlock(Block);
   }
