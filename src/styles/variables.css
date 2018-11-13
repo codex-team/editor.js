@@ -2,7 +2,7 @@
   /**
    * Selection color
    */
-  --selectionColor: rgba(61,166,239,0.63);
+  --selectionColor: #a8d6ff;
 
   /**
    * Toolbar buttons
@@ -22,7 +22,7 @@
   /**
    * Gray border, loaders
    */
-  --color-gray-border: #E8E8EB;
+  --color-gray-border: rgba(201, 201, 204, 0.48);
 
   /**
    * Block content width

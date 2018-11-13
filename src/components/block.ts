@@ -33,11 +33,12 @@ export default class Block {
    * CSS classes for the Block
    * @return {{wrapper: string, content: string}}
    */
-  static get CSS(): {wrapper: string, wrapperStretched: string, content: string, selected: string, dropTarget: string} {
+  static get CSS() {
     return {
       wrapper: 'ce-block',
       wrapperStretched: 'ce-block--stretched',
       content: 'ce-block__content',
+      focused: 'ce-block--focused',
       selected: 'ce-block--selected',
       dropTarget: 'ce-block--drop-target',
     };
@@ -209,18 +210,37 @@ export default class Block {
   }
 
   /**
+   * Set focused state
+   * We don't need to mark Block as focused when it is empty
+   * @param {Boolean} state - 'true' to select, 'false' to remove selection
+   */
+  set focused(state: boolean) {
+    if (state === true && !this.isEmpty) {
+      this.holder.classList.add(Block.CSS.focused);
+    } else {
+      this.holder.classList.remove(Block.CSS.focused);
+    }
+  }
+
+  /**
    * Set selected state
+   * We don't need to mark Block as Selected when it is empty
    * @param {Boolean} state - 'true' to select, 'false' to remove selection
    */
   set selected(state: boolean) {
-    /**
-     * We don't need to mark Block as Selected when it is not empty
-     */
-    if (state === true && !this.isEmpty) {
+    if (state) {
       this.holder.classList.add(Block.CSS.selected);
     } else {
       this.holder.classList.remove(Block.CSS.selected);
     }
+  }
+
+  /**
+   * Returns True if it is Selected
+   * @return {boolean}
+   */
+  get selected(): boolean {
+    return this.holder.classList.contains(Block.CSS.selected);
   }
 
   /**

@@ -216,6 +216,8 @@ export default class UI extends Module {
       this.Editor.Toolbar.move();
       this.Editor.Toolbar.plusButton.show();
     }
+
+    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
@@ -243,6 +245,9 @@ export default class UI extends Module {
     if (Selection.isAtEditor) {
       this.Editor.BlockManager.setCurrentBlockByChildNode(Selection.anchorNode);
     }
+
+    /** Clear selection */
+    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
@@ -320,6 +325,9 @@ export default class UI extends Module {
     if (isInitialBlock && isEmptyBlock) {
       this.Editor.Toolbar.plusButton.show();
     }
+
+    /** Clear selection */
+    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
