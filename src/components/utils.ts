@@ -1,4 +1,10 @@
 /**
+ * Class Util
+ */
+
+import Dom from './dom';
+
+/**
  * @typedef {Object} ChainData
  * @property {Object} data - data that will be passed to the success or fallback
  * @property {Function} function - function's that must be called asynchronically
@@ -242,9 +248,9 @@ export default class Util {
    * @param text
    */
   public static copyTextToClipboard(text) {
-    const el = document.createElement('div');
-    el.innerHTML = text;
-    el.className = 'codex-editor-clipboard';
+    const el = Dom.make('div', 'codex-editor-clipboard', {
+      innerHTML: text,
+    });
 
     document.body.appendChild(el);
 

@@ -102,7 +102,7 @@ export default class BlockSelection extends Module {
    */
   private handleCommandC(event): void {
     const { BlockManager, Sanitizer } = this.Editor;
-    const anyBlockSelected = BlockManager.blocks.findIndex( (block) => block.selected === true) !== -1;
+    const anyBlockSelected = BlockManager.blocks.some( (block) => block.selected === true);
 
     if (!anyBlockSelected) {
       return;
