@@ -21,6 +21,30 @@
     opacity: 0.001;
   }
 
+  &-overlay {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: 999;
+    pointer-events: none;
+    overflow: hidden;
+
+    &__container {
+      position: relative;
+      pointer-events: auto;
+      z-index: 0;
+    }
+
+    &__rectangle {
+       position: absolute;
+       pointer-events: none;
+       background-color: rgba(46, 170, 220, 0.2);
+       border: 1px solid transparent;
+    }
+  }
+
   svg {
     fill: currentColor;
     vertical-align: middle;

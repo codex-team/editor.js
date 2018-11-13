@@ -31,7 +31,7 @@ export default class BlockSelection extends Module {
    * to select all and copy them
    */
   public prepare(): void {
-    const { Shortcuts } = this.Editor;
+    const { Shortcuts, Listener } = this.Editor;
 
     /** Selection shortcut */
     Shortcuts.add({
@@ -50,6 +50,62 @@ export default class BlockSelection extends Module {
     });
 
     this.selection = new SelectionUtils();
+
+    /** Mouse Selection */
+    const overlay = $.make('div', 'codex-editor-overlay', {});
+    const overlayContainer = $.make('div', 'codex-editor-overlay__container', {});
+    const overlayRectangle = $.make('div', 'codex-editor-overlay__rectangle', {});
+
+    overlay.appendChild(overlayContainer);
+    document.body.appendChild(overlay);
+
+    let mousedown = false;
+    let startX = 0;
+    let startY = 0;
+
+    let options = {
+      root: this.Editor.UI.nodes.redactor,
+    };
+
+    let callback = function(entries, observer) {
+      /* Content excerpted, show below */
+      console.log('entries', entries);
+      console.log('observer', observer);
+    };
+
+    const observer = new IntersectionObserver(callback, options);
+    observer.observe(overlayRectangle);
+
+    document.body.addEventListener('mousedown', (event) => {
+      mousedown = true;
+      startX = event.clientX;
+      startY = event.clientY;
+
+      overlayRectangle.style.left = `${startX}px`;
+      overlayRectangle.style.top = `${startY}px`;
+
+      overlayContainer.appendChild(overlayRectangle);
+    }, false);
+
+    document.body.addEventListener('mousemove', (event) => {
+      if (mousedown) {
+        event.preventDefault();
+
+        overlayRectangle.style.width = `${(event.clientX - startX)}px`;
+        overlayRectangle.style.height = `${(event.clientY - startY)}px`;
+      }
+    }, false);
+
+    document.body.addEventListener('mouseup', (event) => {
+      mousedown = false;
+      overlayContainer.removeChild(overlayRectangle);
+
+      overlayRectangle.style.width  = 0;
+      overlayRectangle.style.height = 0;
+
+      startX = 0;
+      startY = 0;
+    }, false);
   }
 
   /**
