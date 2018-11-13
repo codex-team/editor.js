@@ -13,6 +13,10 @@
     box-shadow: 0 31px 23px -22px rgba(175, 220, 255, 1);
     animation: selectionBounce 0.2s 1;
     animation-fill-mode: forwards;
+
+    img {
+      opacity: 0.55;
+    }
   }
 
   &--stretched &__content {

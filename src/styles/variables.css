@@ -22,7 +22,7 @@
   /**
    * Gray border, loaders
    */
-  --color-gray-border: #E8E8EB;
+  --color-gray-border: rgba(201, 201, 204, 0.48);
 
   /**
    * Block content width
