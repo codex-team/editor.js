@@ -1,4 +1,4 @@
-import {ToolSettings, Tool} from '../tools';
+import {Tool, ToolSettings} from '../tools';
 import {OutputData} from '../data-formats/output-data';
 import {SanitizerConfig} from './sanitizer-config';
 

@@ -327,6 +327,11 @@ export default class Toolbox extends Module {
       newBlock = this.Editor.BlockManager.insert(toolName);
     }
 
+    /**
+     * Apply callback before inserting html
+     */
+    newBlock.call('appendCallback', {});
+
     this.Editor.Caret.setToBlock(newBlock);
 
     /**

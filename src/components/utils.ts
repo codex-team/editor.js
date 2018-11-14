@@ -1,4 +1,10 @@
 /**
+ * Class Util
+ */
+
+import Dom from './dom';
+
+/**
  * @typedef {Object} ChainData
  * @property {Object} data - data that will be passed to the success or fallback
  * @property {Function} function - function's that must be called asynchronically
@@ -239,5 +245,27 @@ export default class Util {
         func.apply(context, args);
       }
     };
+  }
+
+  /**
+   * Copies passed text to the clipboard
+   * @param text
+   */
+  public static copyTextToClipboard(text) {
+    const el = Dom.make('div', 'codex-editor-clipboard', {
+      innerHTML: text,
+    });
+
+    document.body.appendChild(el);
+
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNode(el);
+
+    window.getSelection().removeAllRanges();
+    selection.addRange(range);
+
+    document.execCommand('copy');
+    document.body.removeChild(el);
   }
 }

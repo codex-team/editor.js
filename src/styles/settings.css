@@ -13,6 +13,8 @@
 
   &--opened {
     display: block;
+    animation-duration: 0.5s;
+    animation-name: bounceIn;
   }
 
   &__plugin-zone {

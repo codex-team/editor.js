@@ -167,10 +167,6 @@ export default class BlockManager extends Module {
     const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
 
     this.bindEvents(block);
-    /**
-     * Apply callback before inserting html
-     */
-    block.call('appendCallback', {});
 
     return block;
   }
@@ -334,13 +330,20 @@ export default class BlockManager extends Module {
     /**
      * Remove previous selected Block's state
      */
-    this.clearHighlightings();
+    this.clearFocused();
 
     /**
      * Mark current Block as selected
      * @type {boolean}
      */
-    this.currentBlock.selected = true;
+    this.currentBlock.focused = true;
+  }
+
+  /**
+   * Remove selection from all Blocks
+   */
+  public clearFocused(): void {
+    this.blocks.forEach( (block) => block.focused = false);
   }
 
   /**
@@ -419,7 +422,7 @@ export default class BlockManager extends Module {
    */
   public dropPointer(): void {
     this.currentBlockIndex = -1;
-    this.clearHighlightings();
+    this.clearFocused();
   }
 
   /**

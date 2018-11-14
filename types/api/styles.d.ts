@@ -36,4 +36,9 @@ export interface Styles {
    * Styles for active Settings box buttons
    */
   settingsButtonActive: string;
+
+  /**
+   * Styles for buttons
+   */
+  button: string;
 }

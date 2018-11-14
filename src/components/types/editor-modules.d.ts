@@ -8,6 +8,7 @@ import BlockSettings from '../modules/toolbar/blockSettings';
 import Events from '../modules/events';
 import Shortcuts from '../modules/shortcuts';
 import Paste from '../modules/paste';
+import Notifier from '../modules/notifier';
 import DragNDrop from '../modules/dragNDrop';
 import ModificationsObserver from '../modules/modificationsObserver';
 import Renderer from '../modules/renderer';
@@ -24,12 +25,15 @@ import SanitizerAPI from '../modules/api/sanitizer';
 import ToolbarAPI from '../modules/api/toolbar';
 import StylesAPI from '../modules/api/styles';
 import SelectionAPI from '../modules/api/selection';
+import NotifierAPI from '../modules/api/notifier';
 import SaverAPI from '../modules/api/saver';
 import Saver from '../modules/saver';
+import BlockSelection from '../modules/blockSelection';
 
 export interface EditorModules {
   UI: UI;
   BlockEvents: BlockEvents;
+  BlockSelection: BlockSelection;
   Listeners: Listeners;
   Toolbar: Toolbar;
   InlineToolbar: InlineToolbar;
@@ -46,6 +50,7 @@ export interface EditorModules {
   API: API;
   Caret: Caret;
   Saver: Saver;
+  Notifier: Notifier;
   BlockManager: BlockManager;
   BlocksAPI: BlocksAPI;
   CaretAPI: CaretAPI;
@@ -56,4 +61,5 @@ export interface EditorModules {
   SelectionAPI: SelectionAPI;
   StylesAPI: StylesAPI;
   ToolbarAPI: ToolbarAPI;
+  NotifierAPI: NotifierAPI;
 }

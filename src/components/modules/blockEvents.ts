@@ -41,6 +41,9 @@ export default class BlockEvents extends Module {
         this.tabPressed(event);
         break;
 
+      case _.keyCodes.ESC:
+        this.escapePressed(event);
+        break;
       default:
         this.defaultHandler();
         break;
@@ -53,11 +56,6 @@ export default class BlockEvents extends Module {
    */
   public beforeKeydownProcessing(event): void {
     /**
-     * Clear all highlightings
-     */
-    this.Editor.BlockManager.clearHighlightings();
-
-    /**
      * Do not close Toolbox on Tabs or on Enter with opened Toolbox
      */
     if (!this.needToolbarClosing(event)) {
@@ -65,6 +63,23 @@ export default class BlockEvents extends Module {
     }
 
     this.Editor.Toolbar.close();
+
+    const cmdKey = event.ctrlKey || event.metaKey;
+    const altKey = event.altKey;
+    const shiftKey = event.shiftKey;
+
+    /** clear selecton when it is not CMD, SHIFT, ALT keys */
+    if (cmdKey || altKey || shiftKey) {
+      return;
+    }
+
+    /**
+     * Clear all highlightings
+     */
+    this.Editor.BlockManager.clearFocused();
+
+    /** Clear Block selection and restore caret */
+    this.Editor.BlockSelection.clearSelection(true);
   }
 
   /**
@@ -111,6 +126,12 @@ export default class BlockEvents extends Module {
       this.Editor.Toolbox.leaf(direction);
     }
   }
+
+  /**
+   * Escape pressed
+   * @param event
+   */
+  public escapePressed(event): void { }
 
   /**
    * Add drop target styles

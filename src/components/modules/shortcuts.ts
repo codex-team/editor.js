@@ -52,9 +52,11 @@ export default class Shortcuts extends Module {
    * @param {ShortcutData} shortcut
    */
   public add(shortcut: ShortcutData): void {
+    const { UI } = this.Editor;
+
     const newShortcut = new Shortcut({
       name: shortcut.name,
-      on: document,
+      on: UI.nodes.redactor,
       callback: shortcut.handler,
     });
 

@@ -30,6 +30,7 @@ declare namespace EditorJS {
     styles: APIMethods.styles;
     caret: APIMethods.caret;
     toolbar: APIMethods.toolbar;
+    notifier: APIMethods.notifier;
   }
 }
 
