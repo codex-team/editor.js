@@ -4,10 +4,11 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import IBlockTune from '../interfaces/block-tune';
-import $ from '../dom';
 
-export default class MoveDownTune implements IBlockTune {
+import $ from '../dom';
+import {BlockTune} from '../../../types';
+
+export default class MoveDownTune implements BlockTune {
   /**
    * Property that contains CodeX Editor API methods
    * @see {api.md}
@@ -39,7 +40,7 @@ export default class MoveDownTune implements IBlockTune {
   public render() {
     const moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveDownButton.appendChild($.svg('arrow-down', 14, 14));
-    this.api.listener.on(moveDownButton, 'click', (event) => this.handleClick(event, moveDownButton), false);
+    this.api.listeners.on(moveDownButton, 'click', (event) => this.handleClick(event, moveDownButton), false);
     return moveDownButton;
   }
 

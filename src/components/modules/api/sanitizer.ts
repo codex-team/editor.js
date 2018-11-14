@@ -1,26 +1,25 @@
 import Module from '../../__module';
 
-import {ISanitizerAPI} from '../../interfaces/api';
-import IModuleConfig from '../../interfaces/module-config';
+import * as API from '../../../../types/api';
 
 /**
- * @class API
+ * @class SanitizerAPI
  * Provides CodeX Editor Sanitizer that allows developers to clean their HTML
  */
-export default class SanitizerAPI extends Module implements ISanitizerAPI {
+export default class SanitizerAPI extends Module {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
    */
-  constructor({config}: IModuleConfig) {
+  constructor({config}) {
     super({config});
   }
 
   /**
    * Available methods
-   * @return {ISanitizerAPI}
+   * @return {API.sanitizer}
    */
-  get methods(): ISanitizerAPI {
+  get methods(): API.sanitizer {
     return {
       clean: (taintString, config) => this.clean(taintString, config),
     };

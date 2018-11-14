@@ -1,7 +1,7 @@
-import InlineTool from '../interfaces/tools/inline-tool';
-import ISanitizerConfig from '../interfaces/sanitizer-config';
-
 import $ from '../dom';
+import {InlineTool} from '../../../types';
+import {API} from '../../../types';
+import {SanitizerConfig} from '../../../types';
 
 /**
  * Bold Tool
@@ -24,10 +24,10 @@ export default class BoldInlineTool implements InlineTool {
    * Leave <b> tags
    * @return {object}
    */
-  static get sanitize(): ISanitizerConfig {
+  static get sanitize(): SanitizerConfig {
     return {
       b: {},
-    };
+    } as SanitizerConfig;
   }
 
   /**
@@ -52,16 +52,16 @@ export default class BoldInlineTool implements InlineTool {
   };
 
   /**
-   * @param {{api: IAPI}} - CodeX Editor API
+   * @param {{api: API}} - CodeX Editor API
    */
-  constructor({api}) {
+  constructor({api}: {api: API}) {
   }
 
   /**
    * Create button for Inline Toolbar
    */
   public render(): HTMLElement {
-    this.nodes.button = document.createElement('button');
+    this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
     this.nodes.button.appendChild($.svg('bold', 13, 15));

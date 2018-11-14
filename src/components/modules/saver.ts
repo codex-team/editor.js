@@ -6,7 +6,7 @@
  * @version 2.0.0
  */
 import Module from '../__module';
-import {EditorData} from '../interfaces/data-format';
+import {OutputData} from '../../../types';
 
 declare const VERSION: string;
 
@@ -31,8 +31,7 @@ interface SavedData {
  * @property {String} json - Editor JSON output
  */
 export default class Saver extends Module {
-  private output: EditorData;
-  private readonly blocksData: any[];
+  private output: OutputData;
 
   /**
    * @constructor
@@ -42,14 +41,13 @@ export default class Saver extends Module {
     super({config});
 
     this.output = null;
-    this.blocksData = [];
   }
 
   /**
    * Composes new chain of Promises to fire them alternatelly
-   * @return {SavedData}
+   * @return {OutputData}
    */
-  public async save(): Promise<SavedData> {
+  public async save(): Promise<OutputData> {
     const blocks = this.Editor.BlockManager.blocks,
       chainData = [];
 
@@ -66,9 +64,9 @@ export default class Saver extends Module {
   /**
    * Creates output object with saved data, time and version of editor
    * @param {Object} allExtractedData
-   * @return {SavedData}
+   * @return {OutputData}
    */
-  private makeOutput(allExtractedData): SavedData {
+  private makeOutput(allExtractedData): OutputData {
     let totalTime = 0;
     const blocks = [];
 

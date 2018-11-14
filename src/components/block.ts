@@ -1,14 +1,13 @@
-import IBlockTune, {IBlockTuneConstructor} from './interfaces/block-tune';
+import {API, BlockTune, BlockTuneConstructable} from '../../types';
+
 import $ from './dom';
 import _ from './utils';
-
-type Tool = any;
 
 /**
  * @class Block
  * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
  *
- * @property {Tool} tool — current block tool (Paragraph, for example)
+ * @property {BlockTool} tool — current block tool (Paragraph, for example)
  * @property {Object} CSS — block`s css classes
  *
  */
@@ -17,7 +16,7 @@ type Tool = any;
 import MoveUpTune from './block-tunes/block-tune-move-up';
 import DeleteTune from './block-tunes/block-tune-delete';
 import MoveDownTune from './block-tunes/block-tune-move-down';
-import {IAPI} from './interfaces/api';
+import {BlockTool} from '../../types';
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -232,12 +231,12 @@ export default class Block {
   }
 
   public name: string;
-  public tool: Tool;
+  public tool: BlockTool;
   public class: any;
   public settings: object;
   public holder: HTMLDivElement;
-  public tunes: IBlockTune[];
-  private readonly api: IAPI;
+  public tunes: BlockTune[];
+  private readonly api: API;
   private inputIndex = 0;
 
   /**
@@ -248,7 +247,7 @@ export default class Block {
    * @param {Object} settings - default settings
    * @param {Object} apiMethods - Editor API
    */
-  constructor(toolName: string, toolInstance: Tool, toolClass: object, settings: object, apiMethods: IAPI) {
+  constructor(toolName: string, toolInstance: BlockTool, toolClass: object, settings: object, apiMethods: API) {
     this.name = toolName;
     this.tool = toolInstance;
     this.class = toolClass;
@@ -257,7 +256,7 @@ export default class Block {
     this.holder = this.compose();
 
     /**
-     * @type {IBlockTune[]}
+     * @type {BlockTune[]}
      */
     this.tunes = this.makeTunes();
   }
@@ -292,7 +291,7 @@ export default class Block {
    * @return {Object}
    */
   public async save(): Promise<void|{tool: string, data: any, time: number}> {
-    const extractedBlock = await this.tool.save(this.pluginsContent);
+    const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
 
     /**
      * Measuring execution time
@@ -311,8 +310,8 @@ export default class Block {
           time : measuringEnd - measuringStart,
         };
       })
-      .catch(function(error) {
-        _.log(`Saving proccess for ${this.tool.name} tool failed due to the ${error}`, 'log', 'red');
+      .catch((error) => {
+        _.log(`Saving proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
       });
   }
 
@@ -342,13 +341,13 @@ export default class Block {
   /**
    * Make an array with default settings
    * Each block has default tune instance that have states
-   * @return {IBlockTune[]}
+   * @return {BlockTune[]}
    */
-  public makeTunes(): IBlockTune[] {
+  public makeTunes(): BlockTune[] {
     const tunesList = [MoveUpTune, DeleteTune, MoveDownTune];
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
-    return tunesList.map( (tune: IBlockTuneConstructor) => {
+    return tunesList.map( (tune: BlockTuneConstructable) => {
       return new tune({
         api: this.api,
         settings: this.settings,

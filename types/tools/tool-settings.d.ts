@@ -1,25 +1,20 @@
-/**
- * Object passed to the Tool's constructor by {@link IEditorConfig#tools}
- */
-import ITool from './tool';
+import {ToolConfig} from './tool-config';
+import {ToolConstructable} from './tool';
 
-export default interface IToolSettings {
+/**
+ * Object passed to the Tool's constructor by {@link EditorConfig#tools}
+ */
+export interface ToolSettings {
 
   /**
    * Tool's class
    */
-  class: ITool;
+  class: ToolConstructable;
 
   /**
    * User configuration object that will be passed to the Tool's constructor
    */
-  config?: object;
-
-  /**
-   * Disable module {@link Paste} for this Tool
-   * @todo remove this option
-   */
-  disallowPaste?: boolean;
+  config?: ToolConfig;
 
   /**
    * Is user available to add line brakes in Tool (for example by Shift+Enter)
@@ -30,7 +25,7 @@ export default interface IToolSettings {
    * Is need to show Inline Toolbar.
    * Can accept array of Tools for InlineToolbar or boolean.
    */
-  inlineToolbar?: boolean|string[];
+  inlineToolbar?: boolean | string[];
 
   /**
    * Define shortcut that will render Tool

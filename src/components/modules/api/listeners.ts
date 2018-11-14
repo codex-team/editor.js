@@ -1,30 +1,29 @@
 import Module from '../../__module';
 
-import {IListenerAPI} from '../../interfaces/api';
-import IModuleConfig from '../../interfaces/module-config';
+import * as API from '../../../../types/api';
 
 /**
- * @class API
+ * @class ListenersAPI
  * Provides with methods working with DOM Listener
  */
-export default class ListenerAPI extends Module implements IListenerAPI {
+export default class ListenersAPI extends Module {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
    */
-  constructor({config}: IModuleConfig) {
+  constructor({config}) {
     super({config});
   }
 
   /**
    * Available methods
-   * @return {IToolbarAPI}
+   * @return {API.listeners}
    */
-  get methods(): IListenerAPI {
+  get methods(): API.listeners {
     return {
-      on: (element, eventType, handler, useCapture) => this.on(element, eventType, handler, useCapture),
+      on: (element: HTMLElement, eventType, handler, useCapture) => this.on(element, eventType, handler, useCapture),
       off: (element, eventType, handler) => this.off(element, eventType, handler),
-    };
+    } as API.listeners;
   }
 
   /**

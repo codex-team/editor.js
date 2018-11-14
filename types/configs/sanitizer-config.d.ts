@@ -1,5 +1,4 @@
-export default interface ISanitizerConfig {
-
+export interface SanitizerConfig {
   /**
    * Tag name and params not to be stripped off
    * @see {@link https://github.com/guardian/html-janitor}

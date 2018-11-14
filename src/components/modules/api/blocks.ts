@@ -1,38 +1,39 @@
 import Module from '../../__module';
 
-import { IBlocksAPI } from '../../interfaces/api';
-import IInputOutputData from '../../interfaces/input-output-data';
-import IModuleConfig from '../../interfaces/module-config';
+import * as API from '../../../../types/api';
+import {OutputData} from '../../../../types';
+import Block from '../../block';
+import {ModuleConfig} from '../../types/module-config';
 
 /**
  * @class BlocksAPI
  * provides with methods working with Block
  */
-export default class BlocksAPI extends Module implements IBlocksAPI {
+export default class BlocksAPI extends Module {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
    */
-  constructor({config}: IModuleConfig) {
+  constructor({config}: ModuleConfig) {
     super({config});
   }
 
   /**
    * Available methods
-   * @return {IBlocksAPI}
+   * @return {API.blocks}
    */
-  get methods(): IBlocksAPI {
+  get methods(): API.blocks {
     return {
       clear: () => this.clear(),
-      render: (data: IInputOutputData) => this.render(data),
+      render: (data: OutputData) => this.render(data),
       delete: () => this.delete(),
       swap: (fromIndex: number, toIndex: number) => this.swap(fromIndex, toIndex),
       getBlockByIndex: (index: number) => this.getBlockByIndex(index),
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
       getBlocksCount: () => this.getBlocksCount(),
-      stretchBlock: (index: number, status: boolean) => this.stretchBlock(index, status),
+      stretchBlock: (index: number, status: boolean = true) => this.stretchBlock(index, status),
       insertNewBlock: () => this.insertNewBlock(),
-    };
+    } as API.blocks;
   }
 
   /**
@@ -57,7 +58,7 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    *
    * @return {Object}
    */
-  public getBlockByIndex(index: number): object {
+  public getBlockByIndex(index: number): Block {
     return this.Editor.BlockManager.getBlockByIndex(index);
   }
 
@@ -112,11 +113,11 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
 
   /**
    * Fills Editor with Blocks data
-   * @param {IInputOutputData} data — Saved Editor data
+   * @param {OutputData} data — Saved Editor data
    */
-  public render(data: IInputOutputData): void {
+  public render(data: OutputData): Promise<void> {
     this.Editor.BlockManager.clear();
-    this.Editor.Renderer.render(data.blocks);
+    return this.Editor.Renderer.render(data.blocks);
   }
 
   /**
@@ -124,14 +125,14 @@ export default class BlocksAPI extends Module implements IBlocksAPI {
    * @param {number} index
    * @param {boolean} status - true to enable, false to disable
    */
-  public stretchBlock(index: number, status: boolean): void {
+  public stretchBlock(index: number, status: boolean = true): void {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
 
     if (!block) {
       return;
     }
 
-    block.stretched = status !== undefined ? status : true;
+    block.stretched = status;
   }
 
   /**

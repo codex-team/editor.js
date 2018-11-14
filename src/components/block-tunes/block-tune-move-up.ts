@@ -4,10 +4,10 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import IBlockTune from '../interfaces/block-tune';
 import $ from '../dom';
+import {BlockTune} from '../../../types';
 
-export default class MoveUpTune implements IBlockTune {
+export default class MoveUpTune implements BlockTune {
 
   /**
    * Property that contains CodeX Editor API methods
@@ -41,7 +41,7 @@ export default class MoveUpTune implements IBlockTune {
   public render(): HTMLElement {
     const moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveUpButton.appendChild($.svg('arrow-up', 14, 14));
-    this.api.listener.on(moveUpButton, 'click', (event) => this.handleClick(event, moveUpButton), false);
+    this.api.listeners.on(moveUpButton, 'click', (event) => this.handleClick(event, moveUpButton), false);
     return moveUpButton;
   }
 

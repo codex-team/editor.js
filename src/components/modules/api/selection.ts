@@ -1,29 +1,28 @@
 import Module from '../../__module';
 
-import {ISelectionAPI} from '../../interfaces/api';
-import IModuleConfig from '../../interfaces/module-config';
 import Selection from '../../selection';
+import * as API from '../../../../types/api';
 
 /**
- * @class API
+ * @class SelectionAPI
  * Provides with methods working with SelectionUtils
  */
-export default class SelectionAPI extends Module implements ISelectionAPI {
+export default class SelectionAPI extends Module {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
    */
-  constructor({config}: IModuleConfig) {
+  constructor({config}) {
     super({config});
   }
 
   /**
    * Available methods
-   * @return {ISelectionAPI}
+   * @return {API.selection}
    */
-  get methods(): ISelectionAPI {
+  get methods(): API.selection {
     return {
-      findParentTag: (tagName: string, className: string) => this.findParentTag(tagName, className),
+      findParentTag: (tagName: string, className?: string) => this.findParentTag(tagName, className),
       expandToTag: (node: HTMLElement) => this.expandToTag(node),
     };
   }
@@ -34,7 +33,7 @@ export default class SelectionAPI extends Module implements ISelectionAPI {
    * @param {string} className - tag's class name
    * @return {HTMLElement|null}
    */
-  public findParentTag(tagName: string, className: string): HTMLElement|null {
+  public findParentTag(tagName: string, className?: string): HTMLElement|null {
     return new Selection().findParentTag(tagName, className);
   }
 

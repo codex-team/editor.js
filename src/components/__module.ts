@@ -1,6 +1,6 @@
-import EditorModules from './interfaces/editor';
-import ModuleConfiguration from './interfaces/module-config';
-import {Configuration} from './interfaces/data-format';
+import {EditorModules} from './types/editor-modules';
+import {EditorConfig} from '../../types';
+import {ModuleConfig} from './types/module-config';
 
 /**
  * @abstract
@@ -9,27 +9,27 @@ import {Configuration} from './interfaces/data-format';
  *
  * @typedef {Module} Module
  * @property {Object} config - Editor user settings
- * @property {IEditorConfig} Editor - List of Editor modules
+ * @property {EditorModules} Editor - List of Editor modules
  */
 export default class Module {
 
   /**
    * Editor modules list
-   * @type {IEditor}
+   * @type {EditorModules}
    */
   protected Editor: EditorModules;
 
   /**
    * Editor configuration object
-   * @type {Configuration}
+   * @type {EditorConfig}
    */
-  protected config: Configuration;
+  protected config: EditorConfig;
 
   /**
    * @constructor
-   * @param {ModuleConfiguration}
+   * @param {EditorConfig}
    */
-  constructor({config}: {config: Configuration}) {
+  constructor({config}: ModuleConfig) {
     if (new.target === Module) {
       throw new TypeError('Constructors for abstract class Module are not allowed.');
     }
@@ -39,7 +39,7 @@ export default class Module {
 
   /**
    * Editor modules setter
-   * @param {IEditor} Editor
+   * @param {EditorModules} Editor
    */
   set state(Editor: EditorModules) {
     this.Editor = Editor;

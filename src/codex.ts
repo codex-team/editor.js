@@ -1,5 +1,7 @@
 'use strict';
 
+import {EditorConfig} from '../types';
+
 declare const VERSION: string;
 
 /**
@@ -9,7 +11,6 @@ import '@babel/register';
 
 import 'components/polyfills';
 import Core from './components/core';
-import {Configuration} from './components/interfaces/data-format';
 
 /**
  * Codex Editor
@@ -33,7 +34,7 @@ export default class CodexEditor {
    *
    * @param {Configuration|String|undefined} [configuration] - user configuration
    */
-  public constructor(configuration?: Configuration|string) {
+  public constructor(configuration?: EditorConfig|string) {
     /**
      * Set default onReady function
      */

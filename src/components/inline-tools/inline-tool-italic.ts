@@ -1,7 +1,5 @@
-import InlineTool from '../interfaces/tools/inline-tool';
-import ISanitizerConfig from '../interfaces/sanitizer-config';
-
 import $ from '../dom';
+import {InlineTool, SanitizerConfig} from '../../../types';
 
 /**
  * Italic Tool
@@ -24,10 +22,10 @@ export default class ItalicInlineTool implements InlineTool {
    * Leave <i> tags
    * @return {object}
    */
-  static get sanitize(): ISanitizerConfig {
+  static get sanitize(): SanitizerConfig {
     return {
       i: {},
-    };
+    } as SanitizerConfig;
   }
 
   /**
@@ -52,7 +50,7 @@ export default class ItalicInlineTool implements InlineTool {
   };
 
   /**
-   * @param {{api: IAPI}} - CodeX Editor API
+   * @param {{api: API}} - CodeX Editor API
    */
   constructor({api}) {
   }
@@ -61,7 +59,7 @@ export default class ItalicInlineTool implements InlineTool {
    * Create button for Inline Toolbar
    */
   public render(): HTMLElement {
-    this.nodes.button = document.createElement('button');
+    this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
     this.nodes.button.appendChild($.svg('italic', 6, 15));

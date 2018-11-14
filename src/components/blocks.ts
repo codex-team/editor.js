@@ -1,6 +1,6 @@
 import _ from './utils';
-import Block from './block';
 import $ from './dom';
+import Block from './block';
 
 /**
  * @class Blocks

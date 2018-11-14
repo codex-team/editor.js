@@ -1,8 +1,7 @@
 import Module from '../../__module';
-import IEditorConfig from '../../interfaces/editor-config';
 import $ from '../../dom';
 import _ from '../../utils';
-import {BlockToolConstructable, ToolConstructable} from '../../interfaces/tools';
+import {BlockToolConstructable} from '../../../../types';
 
 /**
  * @class Toolbox
@@ -25,7 +24,7 @@ export default class Toolbox extends Module {
 
   /**
    * @constructor
-   * @param {IEditorConfig} config
+   * @param {EditorConfig} config
    */
   constructor({config}) {
     super({config});
@@ -85,7 +84,7 @@ export default class Toolbox extends Module {
    * @param {string} toolName
    */
   public toolButtonActivate(event: MouseEvent|KeyboardEvent, toolName: string): void {
-    const tool = this.Editor.Tools.toolsClasses[toolName];
+    const tool = this.Editor.Tools.toolsClasses[toolName] as BlockToolConstructable;
 
     this.insertNewBlock(tool, toolName);
   }
@@ -216,11 +215,11 @@ export default class Toolbox extends Module {
    * Iterates available tools and appends them to the Toolbox
    */
   private addTools(): void {
-    const tools = this.Editor.Tools.toolsAvailable;
+    const tools = this.Editor.Tools.available;
 
     for (const toolName in tools) {
       if (tools.hasOwnProperty(toolName)) {
-        this.addTool(toolName, tools[toolName]);
+        this.addTool(toolName, tools[toolName]  as BlockToolConstructable);
       }
     }
   }
@@ -229,7 +228,7 @@ export default class Toolbox extends Module {
    * Append Tool to the Toolbox
    *
    * @param {string} toolName - tool name
-   * @param {IBlockTool} tool - tool class
+   * @param {BlockToolConstructable} tool - tool class
    */
   private addTool(toolName: string, tool: BlockToolConstructable): void {
     const api = this.Editor.Tools.apiSettings;
@@ -287,11 +286,11 @@ export default class Toolbox extends Module {
 
   /**
    * Enable shortcut Block Tool implemented shortcut
-   * @param {IBlockTool} tool - Tool class
+   * @param {BlockToolConstructable} tool - Tool class
    * @param {String} toolName - Tool name
    * @param {String} shortcut - shortcut according to the ShortcutData Module format
    */
-  private enableShortcut(tool: ToolConstructable, toolName: string, shortcut: string) {
+  private enableShortcut(tool: BlockToolConstructable, toolName: string, shortcut: string) {
     this.Editor.Shortcuts.add({
       name: shortcut,
       handler: (event: KeyboardEvent) => {
@@ -305,10 +304,10 @@ export default class Toolbox extends Module {
    * Inserts new block
    * Can be called when button clicked on Toolbox or by ShortcutData
    *
-   * @param {IBlockTool} tool - Tool Class
+   * @param {BlockToolConstructable} tool - Tool Class
    * @param {String} toolName - Tool name
    */
-  private insertNewBlock(tool: ToolConstructable, toolName: string) {
+  private insertNewBlock(tool: BlockToolConstructable, toolName: string) {
     /**
      * @type {Block}
      */

@@ -1,26 +1,24 @@
 import Module from '../../__module';
-
-import {IToolbarAPI} from '../../interfaces/api';
-import IModuleConfig from '../../interfaces/module-config';
+import * as API from '../../../../types/api';
 
 /**
- * @class ToolbarsAPI
+ * @class ToolbarAPI
  * provides with methods working with Toolbar
  */
-export default class ToolbarAPI extends Module implements IToolbarAPI {
+export default class ToolbarAPI extends Module {
 
   /**
    * Save Editor config. API provides passed configuration to the Blocks
    */
-  constructor({config}: IModuleConfig) {
+  constructor({config}) {
     super({config});
   }
 
   /**
    * Available methods
-   * @return {IToolbarAPI}
+   * @return {API.toolbar}
    */
-  get methods(): IToolbarAPI {
+  get methods(): API.toolbar {
     return {
       close: () => this.close(),
       open: () => this.open(),

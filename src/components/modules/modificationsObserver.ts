@@ -5,8 +5,6 @@
  * and gives opportunity to handle outside
  */
 
-import IEditorConfig from '../interfaces/editor-config';
-
 import Module from '../__module';
 import _ from '../utils';
 
@@ -28,7 +26,7 @@ export default class ModificationsObserver extends Module {
 
   /**
    * Constructor
-   * @param {IEditorConfig} config
+   * @param {EditorConfig} config
    */
   constructor({config}) {
     super({config});

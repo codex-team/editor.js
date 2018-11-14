@@ -1,6 +1,24 @@
 import Shortcut from '@codexteam/shortcuts';
-import {ShortcutData} from '../interfaces/shortcuts';
-import IEditorConfig from '../interfaces/editor-config';
+
+/**
+ * ShortcutData interface
+ * Each shortcut must have name and handler
+ * `name` is a shortcut, like 'CMD+K', 'CMD+B' etc
+ * `handler` is a callback
+ */
+export interface ShortcutData {
+
+  /**
+   * Shortcut name
+   * Ex. CMD+I, CMD+B ....
+   */
+  name: string;
+
+  /**
+   * Shortcut handler
+   */
+  handler(event): void;
+}
 
 /**
  * Contains keyboard and mouse events binded on each Block by Block Manager
@@ -22,7 +40,7 @@ export default class Shortcuts extends Module {
 
   /**
    * @constructor
-   * @param {IEditorConfig} config
+   * @param {EditorConfig} config
    */
   constructor({config}) {
     super({config});

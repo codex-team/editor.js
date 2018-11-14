@@ -1,24 +1,9 @@
+import {Tool} from './tool';
 /**
  * Base structure for the Inline Toolbar Tool
  */
-import ITool from './tool';
-import ISanitizerConfig from '../sanitizer-config';
-
-export default interface IInlineTool extends ITool {
-  /**
-   * Public getter with shortcut string
-   */
+export interface InlineTool extends Tool {
   shortcut?: string;
-
-  /**
-   * Inline tool sanitize configuration
-   */
-  sanitize?: ISanitizerConfig;
-
-  /**
-   * Returns button for the Inline Toolbar
-   */
-  render(): HTMLElement;
 
   /**
    * Method that accepts selected range and wrap it somehow
