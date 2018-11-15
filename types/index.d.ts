@@ -4,34 +4,32 @@ import * as APIMethods from './api';
 /**
  * Interfaces used for development
  */
-declare namespace EditorJS {
-  export {
-    Tool,
-    ToolConstructable,
-    InlineTool,
-    BlockToolConstructable,
-    BlockTool,
-    BlockToolData,
-    ToolSettings,
-    ToolConfig,
-  } from './tools';
-  export {BlockTune, BlockTuneConstructable} from './block-tunes';
-  export {EditorConfig, SanitizerConfig} from './configs';
-  export {OutputData} from './data-formats/output-data';
-  export {Block} from './block';
+export {
+  Tool,
+  ToolConstructable,
+  InlineTool,
+  BlockToolConstructable,
+  BlockTool,
+  BlockToolData,
+  ToolSettings,
+  ToolConfig,
+} from './tools';
+export {BlockTune, BlockTuneConstructable} from './block-tunes';
+export {EditorConfig, SanitizerConfig, PasteConfig} from './configs';
+export {OutputData} from './data-formats/output-data';
+export {Block} from './block';
 
-  export interface API {
-    blocks: APIMethods.blocks;
-    events: APIMethods.events;
-    listeners: APIMethods.listeners;
-    sanitizer: APIMethods.sanitizer;
-    saver: APIMethods.saver;
-    selection: APIMethods.selection;
-    styles: APIMethods.styles;
-    caret: APIMethods.caret;
-    toolbar: APIMethods.toolbar;
-    notifier: APIMethods.notifier;
-  }
+export interface API {
+  blocks: APIMethods.blocks;
+  events: APIMethods.events;
+  listeners: APIMethods.listeners;
+  sanitizer: APIMethods.sanitizer;
+  saver: APIMethods.saver;
+  selection: APIMethods.selection;
+  styles: APIMethods.styles;
+  caret: APIMethods.caret;
+  toolbar: APIMethods.toolbar;
+  notifier: APIMethods.notifier;
 }
 
 /**
@@ -57,4 +55,5 @@ declare class EditorJS {
   public destroy(): void;
 }
 
-export = EditorJS;
+export as namespace EditorJS;
+export default EditorJS;

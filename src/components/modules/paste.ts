@@ -4,7 +4,7 @@ import SelectionUtils from '../selection';
 import Module from '../__module';
 import $ from '../dom';
 import _ from '../utils';
-import {BlockToolData} from '../../../types';
+import {BlockToolData, PasteConfig} from '../../../types';
 
 /**
  * Tag substitute object.
@@ -58,18 +58,6 @@ interface PasteData {
   content: HTMLElement;
   isBlock: boolean;
   handler: (content: HTMLElement|string, patten?: RegExp) => BlockToolData;
-}
-
-/**
- * Tool onPaste configuration object
- */
-export interface PasteConfig {
-  tags?: string[];
-  handler?: (element: HTMLElement) => BlockToolData;
-  patterns?: {[key: string]: RegExp};
-  patternHandler?: (text: string, key: string) => BlockToolData;
-  files?: {extensions?: string[], mimeTypes?: string[]};
-  fileHandler?: (file: File) => BlockToolData;
 }
 
 /**

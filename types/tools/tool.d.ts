@@ -1,4 +1,4 @@
-import * as API from '../api/index';
+import {API} from '../index';
 import {ToolConfig} from './tool-config';
 import {SanitizerConfig} from '../configs';
 

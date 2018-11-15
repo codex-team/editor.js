@@ -1,8 +1,8 @@
-import {PasteConfig} from '../../src/components/modules/paste';
+import {PasteConfig} from '../configs';
 import {BlockToolData} from './block-tool-data';
 import {Tool, ToolConstructable} from './tool';
 import {ToolConfig} from './tool-config';
-import * as API from '../api';
+import {API} from '../index';
 /**
  * Describe Block Tool object
  * @see {@link docs/tools.md}
