@@ -38,8 +38,8 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 ## Basics
 
-CodeX Editor is a Block-Styled editor. Blocks is a structural units, of which the Entry is composed.
-For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by a Plugin.
+CodeX Editor is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
+For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
 We have [many](http://github.com/codex-editor) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
 
 So how to use the Editor after [Installation](docs/installation.md).
@@ -104,7 +104,7 @@ There are few steps to run CodeX Editor on your site.
 
 ## Load Editor's core
 
-Firstly you need to get CodeX Editor itself. It is a [minified script](build/codex-editor.js) with minimal available
+Firstly you need to get CodeX Editor itself. It is a [minified script](build/codex-editor.js) with Editor's core and some default must-have tools.
 
 Choose the most usable method of getting Editor for you.
 
@@ -120,7 +120,7 @@ Install the package via NPM or Yarn
 npm i codex.editor --save-dev
 ```
 
-Include module at your application
+Include module in your application
 
 ```javascript
 const CodexEditor = require('codex.editor');
