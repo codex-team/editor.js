@@ -31,3 +31,6 @@
 [submodule "example/tools/embed"]
 	path = example/tools/embed
 	url = https://github.com/codex-editor/embed
+[submodule "example/tools/table"]
+	path = example/tools/table
+	url = https://github.com/codex-editor/table.git
