@@ -27,6 +27,9 @@ export interface ToolConstructable {
 
   sanitize?: SanitizerConfig;
 
+  /**
+   * Describe constructor parameters
+   */
   new (config: {api: API}): Tool;
 
   /**

@@ -1,3 +1,10 @@
+/**
+ * For export type there should be one entry point,
+ * so we export all types from this file
+ * ------------------------------------
+ */
+
+
 import {EditorConfig} from './configs';
 import * as APIMethods from './api';
 
@@ -19,6 +26,11 @@ export {EditorConfig, SanitizerConfig, PasteConfig} from './configs';
 export {OutputData} from './data-formats/output-data';
 export {Block} from './block';
 
+
+/**
+ * We have a namespace API {@link ./api/index.d.ts} (APIMethods) but we can not use it as interface
+ * So we should create new interface for exporting API type
+ */
 export interface API {
   blocks: APIMethods.blocks;
   events: APIMethods.events;

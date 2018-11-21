@@ -9,4 +9,7 @@ export { Caret as caret } from './caret';
 export { Toolbar as toolbar } from './toolbar';
 export { Notifier as notifier } from './notifier';
 
+/**
+ * All objects will be exported as API.blocks, API.events etc
+ */
 export as namespace API;

@@ -32,7 +32,7 @@ context.keys().forEach((key) => {
  */
 export default class Core {
   public config: EditorConfig;
-  public moduleInstances: any;
+  public moduleInstances: any; // @todo add type
   public isReady: Promise<void>;
 
   /**
@@ -51,6 +51,7 @@ export default class Core {
      * @property {BlockSettings} BlockSettings
      * @property {Renderer} Renderer
      * @property {InlineToolbar} InlineToolbar
+     * @todo remove EditorComponents from all places (change to EditorModules)
      */
     this.moduleInstances = {};
 
