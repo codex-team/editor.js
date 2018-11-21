@@ -32,8 +32,20 @@ context.keys().forEach((key) => {
  * @type {Core}
  */
 export default class Core {
+
+  /**
+   * Editor configuration passed by user to the constructor
+   */
   public config: EditorConfig;
+
+  /**
+   * Object with core modules instances
+   */
   public moduleInstances: EditorModules;
+
+  /**
+   * Promise that resolves when all core modules are prepared and UI is rendered on the page
+   */
   public isReady: Promise<void>;
 
   /**

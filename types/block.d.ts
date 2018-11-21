@@ -109,11 +109,34 @@ export declare class Block {
    */
   public stretched: boolean;
 
+  /**
+   * Block Tool`s name
+   */
   public name: string;
+
+  /**
+   * Instance of the Tool Block represents
+   */
   public tool: BlockTool;
+
+  /**
+   * Class blueprint of the ool Block represents
+   */
   public class: BlockToolConstructable;
+
+  /**
+   * User Tool configuration
+   */
   public settings: ToolConfig;
+
+  /**
+   * Wrapper for Block`s content
+   */
   public holder: HTMLDivElement;
+
+  /**
+   * Tunes used by Tool
+   */
   public tunes: BlockTune[];
 
   /**
