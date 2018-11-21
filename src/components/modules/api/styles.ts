@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import * as API from '../../../../types/api';
+import {Styles} from '../../../../types/api';
 
 /**
  *
@@ -14,7 +14,7 @@ export default class StylesAPI extends Module {
     super({config});
   }
 
-  get classes(): API.styles {
+  get classes(): Styles {
     return {
       /**
        * Base Block styles

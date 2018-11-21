@@ -1,6 +1,5 @@
 import Module from '../../__module';
-
-import * as API from '../../../../types/api';
+import {Sanitizer} from '../../../../types/api';
 
 /**
  * @class SanitizerAPI
@@ -17,9 +16,9 @@ export default class SanitizerAPI extends Module {
 
   /**
    * Available methods
-   * @return {API.sanitizer}
+   * @return {Sanitizer}
    */
-  get methods(): API.sanitizer {
+  get methods(): Sanitizer {
     return {
       clean: (taintString, config) => this.clean(taintString, config),
     };

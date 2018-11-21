@@ -29,7 +29,7 @@ interface Document {
 
 /**
  * Working with selection
- * @typedef {Selection} Selection
+ * @typedef {SelectionUtils} SelectionUtils
  */
 export default class SelectionUtils {
 

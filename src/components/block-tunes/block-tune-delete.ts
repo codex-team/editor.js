@@ -4,8 +4,7 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import { API } from '../../../types';
-import {BlockTune} from '../../../types';
+import {API, BlockTune} from '../../../types';
 import $ from '../dom';
 
 export default class DeleteTune implements BlockTune {

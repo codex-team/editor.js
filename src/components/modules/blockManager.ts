@@ -10,7 +10,7 @@ import Block from '../block';
 import Module from '../__module';
 import $ from '../dom';
 import Blocks from '../blocks';
-import {BlockTool, BlockToolData, ToolConfig} from '../../../types';
+import {BlockTool, BlockToolConstructable, BlockToolData, ToolConfig} from '../../../types';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -163,7 +163,7 @@ export default class BlockManager extends Module {
    */
   public composeBlock(toolName: string, data: BlockToolData, settings?: ToolConfig): Block {
     const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
-    const toolClass = this.Editor.Tools.available[toolName];
+    const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
     const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
 
     this.bindEvents(block);

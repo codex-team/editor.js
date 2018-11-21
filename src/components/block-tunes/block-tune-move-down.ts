@@ -6,14 +6,14 @@
  */
 
 import $ from '../dom';
-import {BlockTune} from '../../../types';
+import {API, BlockTune} from '../../../types';
 
 export default class MoveDownTune implements BlockTune {
   /**
    * Property that contains CodeX Editor API methods
    * @see {api.md}
    */
-  private readonly api: any;
+  private readonly api: API;
 
   /**
    * Styles
@@ -40,7 +40,12 @@ export default class MoveDownTune implements BlockTune {
   public render() {
     const moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveDownButton.appendChild($.svg('arrow-down', 14, 14));
-    this.api.listeners.on(moveDownButton, 'click', (event) => this.handleClick(event, moveDownButton), false);
+    this.api.listeners.on(
+      moveDownButton,
+      'click',
+      (event) => this.handleClick(event as MouseEvent, moveDownButton),
+      false,
+    );
     return moveDownButton;
   }
 

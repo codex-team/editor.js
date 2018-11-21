@@ -1,4 +1,11 @@
-import {API, BlockTune, BlockTuneConstructable} from '../../types';
+import {
+  API,
+  BlockToolConstructable, BlockToolData,
+  BlockTune,
+  BlockTuneConstructable,
+  SanitizerConfig,
+  ToolConfig,
+} from '../../types';
 
 import $ from './dom';
 import _ from './utils';
@@ -153,7 +160,7 @@ export default class Block {
    * Returns tool's sanitizer config
    * @return {object}
    */
-  get sanitize(): object {
+  get sanitize(): SanitizerConfig {
     return this.tool.sanitize;
   }
 
@@ -252,8 +259,8 @@ export default class Block {
 
   public name: string;
   public tool: BlockTool;
-  public class: any;
-  public settings: object;
+  public class: BlockToolConstructable;
+  public settings: ToolConfig;
   public holder: HTMLDivElement;
   public tunes: BlockTune[];
   private readonly api: API;
@@ -267,7 +274,13 @@ export default class Block {
    * @param {Object} settings - default settings
    * @param {Object} apiMethods - Editor API
    */
-  constructor(toolName: string, toolInstance: BlockTool, toolClass: object, settings: object, apiMethods: API) {
+  constructor(
+    toolName: string,
+    toolInstance: BlockTool,
+    toolClass: BlockToolConstructable,
+    settings: ToolConfig,
+    apiMethods: API,
+  ) {
     this.name = toolName;
     this.tool = toolInstance;
     this.class = toolClass;
@@ -302,7 +315,7 @@ export default class Block {
    * Call plugins merge method
    * @param {Object} data
    */
-  public async mergeWith(data: object): Promise<void> {
+  public async mergeWith(data: BlockToolData): Promise<void> {
       await this.tool.merge(data);
   }
   /**
@@ -310,7 +323,7 @@ export default class Block {
    * Groups Tool's save processing time
    * @return {Object}
    */
-  public async save(): Promise<void|{tool: string, data: any, time: number}> {
+  public async save(): Promise<void|{tool: string, data: BlockToolData, time: number}> {
     const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
 
     /**
@@ -344,7 +357,7 @@ export default class Block {
    * @param {Object} data
    * @returns {Boolean|Object} valid
    */
-  public validateData(data: object): object|false {
+  public validateData(data: BlockToolData): BlockToolData|false {
     let isValid = true;
 
     if (this.tool.validate instanceof Function) {

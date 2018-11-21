@@ -34,6 +34,7 @@ import _ from '../utils';
  *     }
  * }
  */
+
 import HTMLJanitor from 'html-janitor';
 import {BlockToolData, SanitizerConfig, ToolConstructable} from '../../../types';
 
@@ -312,7 +313,7 @@ export default class Sanitizer extends Module {
    *
    * @param {SanitizerConfig} config - sanitizer extension
    */
-  private createHTMLJanitorInstance(config: {tags: SanitizerConfig}): any {
+  private createHTMLJanitorInstance(config: {tags: SanitizerConfig}): HTMLJanitor|null {
     if (config) {
       return new HTMLJanitor(config);
     }

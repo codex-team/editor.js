@@ -47,7 +47,13 @@ export interface Blocks {
    * @param {number} index - Block to mark
    * @param {boolean} status - stretch status
    */
-  stretchBlock(index: number, status: boolean = true): void;
+  stretchBlock(index: number, status?: boolean): void;
+
+  /**
+   * Returns Blocks count
+   * @return {number}
+   */
+  getBlocksCount(): number;
 
   /**
    * Insert new Initial Block after current Block

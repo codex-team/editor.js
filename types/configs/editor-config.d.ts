@@ -1,5 +1,5 @@
-import {Tool, ToolSettings} from '../tools';
-import {OutputData} from '../data-formats/output-data';
+import {Tool, ToolConstructable, ToolSettings} from '../tools';
+import {OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 
 export interface EditorConfig {
@@ -34,7 +34,7 @@ export interface EditorConfig {
   /**
    * Map of Tools to use
    */
-  tools?: {[toolName: string]: Tool|ToolSettings};
+  tools?: {[toolName: string]: ToolConstructable|ToolSettings};
 
   /**
    * Data to render on Editor start

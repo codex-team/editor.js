@@ -1,4 +1,4 @@
-import {API} from '../index';
+import {API, ToolConfig} from '../index';
 
 /**
  * Describes BLockTune blueprint
@@ -16,5 +16,5 @@ export interface BlockTune {
  * Describes BlockTune class constructor function
  */
 export interface BlockTuneConstructable {
-  new (config: {api: API, settings?: any}): BlockTune;
+  new (config: {api: API, settings?: ToolConfig}): BlockTune;
 }

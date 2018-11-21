@@ -1,7 +1,5 @@
 import $ from '../dom';
-import {InlineTool} from '../../../types';
-import {API} from '../../../types';
-import {SanitizerConfig} from '../../../types';
+import {API, InlineTool, SanitizerConfig} from '../../../types';
 
 /**
  * Bold Tool

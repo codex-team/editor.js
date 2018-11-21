@@ -1,21 +1,19 @@
 /**
+ * Prebuilded sprite of SVG icons
+ */
+import sprite from '../../../build/sprite.svg';
+
+/**
  * Module UI
  *
  * @type {UI}
  */
-
-/**
- * Prebuilded sprite of SVG icons
- */
-// tslint:disable-next-line
-const sprite = require('../../../build/sprite.svg');
-
 import Module from '../__module';
 import $ from '../dom';
 import _ from '../utils';
 
 import Selection from '../selection';
-import {ModuleConfig} from '../types/module-config';
+import {ModuleConfig} from '../../types-internal/module-config';
 
 /**
  * @class
@@ -28,7 +26,7 @@ import {ModuleConfig} from '../types/module-config';
  *                </codex-editor>
  *
  * @typedef {UI} UI
- * @property {Configuration} config   - editor configuration {@link CodexEditor#configuration}
+ * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
  * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
  * @property {Object} nodes          -
  * @property {Element} nodes.holder  - element where we need to append redactor
@@ -56,7 +54,7 @@ export default class UI extends Module {
   /**
    * @constructor
    *
-   * @param  {Configuration} config
+   * @param  {EditorConfig} config
    */
   constructor({config}: ModuleConfig) {
     super({config});

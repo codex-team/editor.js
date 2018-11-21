@@ -1,15 +1,10 @@
-export { Blocks as blocks } from './blocks';
-export { Events as events }  from './events';
-export { Listeners as listeners } from './listeners';
-export { Sanitizer as sanitizer } from './sanitizer';
-export { Saver as saver } from './saver';
-export { Selection as selection } from './selection';
-export { Styles as styles } from './styles';
-export { Caret as caret } from './caret';
-export { Toolbar as toolbar } from './toolbar';
-export { Notifier as notifier } from './notifier';
-
-/**
- * All objects will be exported as API.blocks, API.events etc
- */
-export as namespace API;
+export * from './blocks';
+export * from './events';
+export * from './listeners';
+export * from './sanitizer';
+export * from './saver';
+export * from './selection';
+export * from './styles';
+export * from './caret';
+export * from './toolbar';
+export * from './notifier';

@@ -1,9 +1,9 @@
 import Module from '../../__module';
 
-import * as API from '../../../../types/api';
+import {Blocks} from '../../../../types/api';
 import {OutputData} from '../../../../types';
 import Block from '../../block';
-import {ModuleConfig} from '../../types/module-config';
+import {ModuleConfig} from '../../../types-internal/module-config';
 
 /**
  * @class BlocksAPI
@@ -20,9 +20,9 @@ export default class BlocksAPI extends Module {
 
   /**
    * Available methods
-   * @return {API.blocks}
+   * @return {Blocks}
    */
-  get methods(): API.blocks {
+  get methods(): Blocks {
     return {
       clear: () => this.clear(),
       render: (data: OutputData) => this.render(data),
@@ -33,7 +33,7 @@ export default class BlocksAPI extends Module {
       getBlocksCount: () => this.getBlocksCount(),
       stretchBlock: (index: number, status: boolean = true) => this.stretchBlock(index, status),
       insertNewBlock: () => this.insertNewBlock(),
-    } as API.blocks;
+    };
   }
 
   /**

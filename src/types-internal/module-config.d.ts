@@ -1,4 +1,4 @@
-import {EditorConfig} from '../../../types';
+import {EditorConfig} from '../../types/index';
 
 /**
  * Describes object passed to Editor modules constructor

@@ -4,9 +4,8 @@
  * ------------------------------------
  */
 
-
 import {EditorConfig} from './configs';
-import * as APIMethods from './api';
+import {Blocks, Caret, Events, Listeners, Notifier, Sanitizer, Saver, Selection, Styles, Toolbar} from './api';
 
 /**
  * Interfaces used for development
@@ -26,22 +25,21 @@ export {EditorConfig, SanitizerConfig, PasteConfig} from './configs';
 export {OutputData} from './data-formats/output-data';
 export {Block} from './block';
 
-
 /**
  * We have a namespace API {@link ./api/index.d.ts} (APIMethods) but we can not use it as interface
  * So we should create new interface for exporting API type
  */
 export interface API {
-  blocks: APIMethods.blocks;
-  events: APIMethods.events;
-  listeners: APIMethods.listeners;
-  sanitizer: APIMethods.sanitizer;
-  saver: APIMethods.saver;
-  selection: APIMethods.selection;
-  styles: APIMethods.styles;
-  caret: APIMethods.caret;
-  toolbar: APIMethods.toolbar;
-  notifier: APIMethods.notifier;
+  blocks: Blocks;
+  caret: Caret;
+  events: Events;
+  listeners: Listeners;
+  notifier: Notifier;
+  sanitizer: Sanitizer;
+  saver: Saver;
+  selection: Selection;
+  styles: Styles;
+  toolbar: Toolbar;
 }
 
 /**
@@ -52,15 +50,15 @@ declare class EditorJS {
 
   public isReady: Promise<void>;
 
-  public saver: APIMethods.saver;
-  public blocks: APIMethods.blocks;
-  public events: APIMethods.events;
-  public listeners: APIMethods.listeners;
-  public sanitizer: APIMethods.sanitizer;
-  public selection: APIMethods.selection;
-  public styles: APIMethods.styles;
-  public caret: APIMethods.caret;
-  public toolbar: APIMethods.toolbar;
+  public blocks: Blocks;
+  public caret: Caret;
+  public events: Events;
+  public listeners: Listeners;
+  public sanitizer: Sanitizer;
+  public saver: Saver;
+  public selection: Selection;
+  public styles: Styles;
+  public toolbar: Toolbar;
 
   constructor(configuration?: EditorConfig|string);
 

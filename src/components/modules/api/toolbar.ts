@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import * as API from '../../../../types/api';
+import {Toolbar} from '../../../../types/api';
 
 /**
  * @class ToolbarAPI
@@ -16,9 +16,9 @@ export default class ToolbarAPI extends Module {
 
   /**
    * Available methods
-   * @return {API.toolbar}
+   * @return {Toolbar}
    */
-  get methods(): API.toolbar {
+  get methods(): Toolbar {
     return {
       close: () => this.close(),
       open: () => this.open(),

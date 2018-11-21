@@ -1,6 +1,5 @@
 import Module from '../../__module';
-
-import * as API from '../../../../types/api';
+import {Events} from '../../../../types/api';
 
 /**
  * @class EventsAPI
@@ -17,9 +16,9 @@ export default class EventsAPI extends Module {
 
   /**
    * Available methods
-   * @return {API.events}
+   * @return {Events}
    */
-  get methods(): API.events {
+  get methods(): Events {
     return {
       emit: (eventName: string, data: object) => this.emit(eventName, data),
       off: (eventName: string, callback: () => void) => this.off(eventName, callback),

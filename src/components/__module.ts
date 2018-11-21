@@ -1,6 +1,6 @@
-import {EditorModules} from './types/editor-modules';
+import {EditorModules} from '../types-internal/editor-modules';
 import {EditorConfig} from '../../types';
-import {ModuleConfig} from './types/module-config';
+import {ModuleConfig} from '../types-internal/module-config';
 
 /**
  * @abstract

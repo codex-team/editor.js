@@ -18,7 +18,7 @@ Each Tool's instance called with an params object.
 | config | `object`            | Special configuration params passed in «config» |
 | data   | `object`            | Data to be rendered in this Tool                |
 
-[iapi-link]: ../src/components/types/api.ts
+[iapi-link]: ../src/types-internal/api.ts
 
 #### Example
 

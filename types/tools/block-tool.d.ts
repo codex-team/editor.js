@@ -1,4 +1,4 @@
-import {PasteConfig} from '../configs';
+import {PasteConfig, SanitizerConfig} from '../configs';
 import {BlockToolData} from './block-tool-data';
 import {Tool, ToolConstructable} from './tool';
 import {ToolConfig} from './tool-config';
@@ -11,7 +11,7 @@ export interface BlockTool extends Tool {
   /**
    * Sanitizer rules description
    */
-  sanitize?: object;
+  sanitize?: SanitizerConfig;
 
   /**
    * @constructor

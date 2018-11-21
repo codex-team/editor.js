@@ -1,7 +1,6 @@
 import Module from '../../__module';
-
-import Selection from '../../selection';
-import * as API from '../../../../types/api';
+import SelectionUtils from '../../selection';
+import {Selection as SelectionAPIInterface} from '../../../../types/api';
 
 /**
  * @class SelectionAPI
@@ -18,9 +17,9 @@ export default class SelectionAPI extends Module {
 
   /**
    * Available methods
-   * @return {API.selection}
+   * @return {SelectionAPIInterface}
    */
-  get methods(): API.selection {
+  get methods(): SelectionAPIInterface {
     return {
       findParentTag: (tagName: string, className?: string) => this.findParentTag(tagName, className),
       expandToTag: (node: HTMLElement) => this.expandToTag(node),
@@ -34,7 +33,7 @@ export default class SelectionAPI extends Module {
    * @return {HTMLElement|null}
    */
   public findParentTag(tagName: string, className?: string): HTMLElement|null {
-    return new Selection().findParentTag(tagName, className);
+    return new SelectionUtils().findParentTag(tagName, className);
   }
 
   /**
@@ -42,7 +41,7 @@ export default class SelectionAPI extends Module {
    * @param {HTMLElement} node - tag that should contain selection
    */
   public expandToTag(node: HTMLElement): void {
-    new Selection().expandToTag(node);
+    new SelectionUtils().expandToTag(node);
   }
 
 }

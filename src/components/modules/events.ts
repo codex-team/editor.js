@@ -14,7 +14,7 @@ import Module from '../__module';
  * @property {Object} subscribers - all subscribers grouped by event name
  */
 export default class Events extends Module {
-  private subscribers: any;
+  private subscribers: {[name: string]: Array<(data?: any) => void>};
 
   /**
    * @constructor

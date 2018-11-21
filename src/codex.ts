@@ -32,7 +32,7 @@ export default class CodexEditor {
   /**
    * @constructor
    *
-   * @param {Configuration|String|undefined} [configuration] - user configuration
+   * @param {EditorConfig|String|undefined} [configuration] - user configuration
    */
   public constructor(configuration?: EditorConfig|string) {
     /**

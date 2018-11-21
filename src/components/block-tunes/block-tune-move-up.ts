@@ -5,7 +5,7 @@
  * @copyright <CodeX Team> 2018
  */
 import $ from '../dom';
-import {BlockTune} from '../../../types';
+import {API, BlockTune} from '../../../types';
 
 export default class MoveUpTune implements BlockTune {
 
@@ -13,7 +13,7 @@ export default class MoveUpTune implements BlockTune {
    * Property that contains CodeX Editor API methods
    * @see {api.md}
    */
-  private readonly api: any;
+  private readonly api: API;
 
   /**
    * Styles
@@ -41,7 +41,12 @@ export default class MoveUpTune implements BlockTune {
   public render(): HTMLElement {
     const moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveUpButton.appendChild($.svg('arrow-up', 14, 14));
-    this.api.listeners.on(moveUpButton, 'click', (event) => this.handleClick(event, moveUpButton), false);
+    this.api.listeners.on(
+      moveUpButton,
+      'click',
+      (event) => this.handleClick(event as MouseEvent, moveUpButton),
+      false,
+      );
     return moveUpButton;
   }
 

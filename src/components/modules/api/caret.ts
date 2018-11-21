@@ -1,6 +1,6 @@
 import Module from '../../__module';
-import * as API from '../../../../types/api';
-import {ModuleConfig} from '../../types/module-config';
+import {Caret} from '../../../../types/api';
+import {ModuleConfig} from '../../../types-internal/module-config';
 
 /**
  * @class CaretAPI
@@ -17,9 +17,9 @@ export default class CaretAPI extends Module {
 
   /**
    * Available methods
-   * @return {API.caret}
+   * @return {Caret}
    */
-  get methods(): API.caret {
+  get methods(): Caret {
     return {};
   }
 }

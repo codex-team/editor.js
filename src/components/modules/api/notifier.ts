@@ -1,5 +1,5 @@
 import Module from '../../__module';
-import * as APIMethods from '../../../../types/api';
+import {Notifier} from '../../../../types/api';
 import {ConfirmNotifierOptions, NotifierOptions, PromptNotifierOptions} from 'codex-notifier';
 
 export default class NotifierAPI extends Module {
@@ -7,7 +7,7 @@ export default class NotifierAPI extends Module {
   /**
    * Available methods
    */
-  get methods(): APIMethods.notifier {
+  get methods(): Notifier {
     return {
       show: (options: NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions) => this.show(options),
     };

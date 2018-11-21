@@ -1,6 +1,7 @@
 import $ from './dom';
 import _ from './utils';
 import {EditorConfig, OutputData, SanitizerConfig, ToolSettings} from '../../types';
+import {EditorModules} from '../types-internal/editor-modules';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -32,28 +33,15 @@ context.keys().forEach((key) => {
  */
 export default class Core {
   public config: EditorConfig;
-  public moduleInstances: any; // @todo add type
+  public moduleInstances: EditorModules;
   public isReady: Promise<void>;
 
   /**
-   * @param {Configuration} config - user configuration
+   * @param {EditorConfig} config - user configuration
    *
    */
   constructor(config?: EditorConfig|string) {
-    /**
-     * @typedef {Object} EditorComponents
-     * @property {BlockManager} BlockManager
-     * @property {Tools} Tools
-     * @property {Events} Events
-     * @property {UI} UI
-     * @property {Toolbar} Toolbar
-     * @property {Toolbox} Toolbox
-     * @property {BlockSettings} BlockSettings
-     * @property {Renderer} Renderer
-     * @property {InlineToolbar} InlineToolbar
-     * @todo remove EditorComponents from all places (change to EditorModules)
-     */
-    this.moduleInstances = {};
+    this.moduleInstances = {} as EditorModules;
 
     /**
      * Ready promise. Resolved if CodeX Editor is ready to work, rejected otherwise
@@ -94,7 +82,7 @@ export default class Core {
 
   /**
    * Setting for configuration
-   * @param {Configuration|string|undefined} config
+   * @param {EditorConfig|string|undefined} config
    */
   set configuration(config: EditorConfig|string) {
     /**
@@ -153,7 +141,7 @@ export default class Core {
 
   /**
    * Returns private property
-   * @returns {Configuration}
+   * @returns {EditorConfig}
    */
   get configuration(): EditorConfig|string {
     return this.config;
@@ -275,7 +263,15 @@ export default class Core {
    * @return {Promise}
    */
   public async start() {
-    const modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste', 'DragNDrop', 'ModificationsObserver', 'BlockSelection'];
+    const modulesToPrepare = [
+      'Tools',
+      'UI',
+      'BlockManager',
+      'Paste',
+      'DragNDrop',
+      'ModificationsObserver',
+      'BlockSelection',
+    ];
 
     await modulesToPrepare.reduce(
       (promise, module) => promise.then(async () => {

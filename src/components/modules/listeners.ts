@@ -28,7 +28,7 @@ export default class Listeners extends Module {
 
   /**
    * @constructor
-   * @param {Configuration} config
+   * @param {EditorConfig} config
    */
   constructor({config}: {config: EditorConfig}) {
     super({config});

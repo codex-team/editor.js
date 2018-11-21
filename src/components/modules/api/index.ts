@@ -6,7 +6,7 @@
  * if you cant to read more about how API works, please see docs
  */
 import Module from '../../__module';
-import {API as APIMethods} from '../../../../types';
+import {API as APIInterfaces} from '../../../../types';
 
 /**
  * @class API
@@ -21,19 +21,18 @@ export default class API extends Module {
     super({config});
   }
 
-  public get methods(): APIMethods {
+  public get methods(): APIInterfaces {
     return {
       blocks: this.Editor.BlocksAPI.methods,
       caret: this.Editor.CaretAPI.methods,
       events: this.Editor.EventsAPI.methods,
       listeners: this.Editor.ListenersAPI.methods,
-      listener: this.Editor.ListenersAPI.methods,
       notifier: this.Editor.NotifierAPI.methods,
       sanitizer: this.Editor.SanitizerAPI.methods,
       saver: this.Editor.SaverAPI.methods,
       selection: this.Editor.SelectionAPI.methods,
       styles: this.Editor.StylesAPI.classes,
       toolbar: this.Editor.ToolbarAPI.methods,
-    } as APIMethods;
+    } as APIInterfaces;
   }
 }

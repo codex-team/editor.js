@@ -1,6 +1,5 @@
 import Module from '../../__module';
-
-import * as API from '../../../../types/api';
+import {Saver} from '../../../../types/api';
 import {OutputData} from '../../../../types';
 
 /**
@@ -18,12 +17,12 @@ export default class SaverAPI extends Module {
 
   /**
    * Available methods
-   * @return {API.saver}
+   * @return {Saver}
    */
-  get methods(): API.saver {
+  get methods(): Saver {
     return {
       save: () => this.save(),
-    } as API.saver;
+    };
   }
 
   /**

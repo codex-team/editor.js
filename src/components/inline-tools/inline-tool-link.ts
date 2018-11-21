@@ -2,7 +2,8 @@ import SelectionUtils from '../selection';
 
 import $ from '../dom';
 import _ from '../utils';
-import {InlineTool, SanitizerConfig} from '../../../types';
+import {API, InlineTool, SanitizerConfig} from '../../../types';
+import {Toolbar} from '../../../types/api';
 /**
  * Link Tool
  *
@@ -81,7 +82,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Available Inline Toolbar methods (open/close)
    */
-  private inlineToolbar: any;
+  private inlineToolbar: Toolbar;
 
   /**
    * @param {{api: API}} - CodeX Editor API

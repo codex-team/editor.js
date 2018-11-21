@@ -1,6 +1,5 @@
 import Module from '../../__module';
-
-import * as API from '../../../../types/api';
+import {Listeners} from '../../../../types/api';
 
 /**
  * @class ListenersAPI
@@ -17,13 +16,13 @@ export default class ListenersAPI extends Module {
 
   /**
    * Available methods
-   * @return {API.listeners}
+   * @return {Listeners}
    */
-  get methods(): API.listeners {
+  get methods(): Listeners {
     return {
       on: (element: HTMLElement, eventType, handler, useCapture) => this.on(element, eventType, handler, useCapture),
       off: (element, eventType, handler) => this.off(element, eventType, handler),
-    } as API.listeners;
+    };
   }
 
   /**
