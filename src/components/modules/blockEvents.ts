@@ -161,7 +161,7 @@ export default class BlockEvents extends Module {
    */
   private enter(event: KeyboardEvent): void {
     const currentBlock = this.Editor.BlockManager.currentBlock,
-      tool = this.Editor.Tools.toolsAvailable[currentBlock.name];
+      tool = this.Editor.Tools.available[currentBlock.name];
 
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
@@ -220,7 +220,7 @@ export default class BlockEvents extends Module {
   private backspace(event: KeyboardEvent): void {
     const BM = this.Editor.BlockManager;
     const currentBlock = this.Editor.BlockManager.currentBlock,
-      tool = this.Editor.Tools.toolsAvailable[currentBlock.name];
+      tool = this.Editor.Tools.available[currentBlock.name];
 
     /**
      * Don't handle Backspaces when Tool sets enableLineBreaks to true.

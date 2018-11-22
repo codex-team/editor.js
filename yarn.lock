@@ -1190,10 +1190,12 @@ babel-loader@^8.0.4:
     mkdirp "^0.5.1"
     util.promisify "^1.0.0"
 
-babel-plugin-add-module-exports@^0.2.1:
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/babel-plugin-add-module-exports/-/babel-plugin-add-module-exports-0.2.1.tgz#9ae9a1f4a8dc67f0cdec4f4aeda1e43a5ff65e25"
-  integrity sha1-mumh9KjcZ/DN7E9K7aHkOl/2XiU=
+babel-plugin-add-module-exports@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-add-module-exports/-/babel-plugin-add-module-exports-1.0.0.tgz#72b5424d941a336c6a35357f373d8b8366263031"
+  integrity sha512-m0sMxPL4FaN2K69GQgaRJa4Ny15qKSdoknIcpN+gz+NaJlAW9pge/povs13tPYsKDboflrEQC+/3kfIsONBTaw==
+  optionalDependencies:
+    chokidar "^2.0.4"
 
 babel-plugin-class-display-name@^2.1.0:
   version "2.1.0"
@@ -1592,7 +1594,7 @@ cheerio@^0.19.0:
     htmlparser2 "~3.8.1"
     lodash "^3.2.0"
 
-chokidar@^2.0.2:
+chokidar@^2.0.2, chokidar@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/chokidar/-/chokidar-2.0.4.tgz#356ff4e2b0e8e43e322d18a372460bbcf3accd26"
   integrity sha512-z9n7yt9rOvIJrMhvDtDictKrkFHeihkNl6uWMmZlmL6tJtX9Cs+87oK+teBx+JIgzvbX3yZHT3eF8vpbDxHJXQ==
@@ -6036,11 +6038,6 @@ replace-ext@1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/replace-ext/-/replace-ext-1.0.0.tgz#de63128373fcbf7c3ccfa4de5a480c45a67958eb"
   integrity sha1-3mMSg3P8v3w8z6TeWkgMRaZ5WOs=
-
-require-dir@^1.1.0:
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/require-dir/-/require-dir-1.1.0.tgz#1ce24f41b57bcc31210fe0a9c4ede85b28cfa907"
-  integrity sha512-XwZR1Gdv8rme0xLSRmxWNue/xQ5mgIfFGwbBJaF7TbFqQBgEBTr/M1/73a4dfn/keF5WDDiUr6RAF4nA1LskrQ==
 
 require-directory@^2.1.1:
   version "2.1.1"

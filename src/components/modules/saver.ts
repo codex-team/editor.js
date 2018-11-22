@@ -11,19 +11,6 @@ import {OutputData} from '../../../types';
 declare const VERSION: string;
 
 /**
- * @typedef {Object} SavedData
- * @property {Date} time - saving proccess time
- * @property {String} version - CodexEditor version
- * @property {Object} blocks - extracted data
- * @property {String} version - CodexEditor version
- */
-interface SavedData {
-  time: number;
-  blocks: object[];
-  version: string;
-}
-
-/**
  * @classdesc This method reduces all Blocks asyncronically and calls Block's save method to extract data
  *
  * @typedef {Saver} Saver
@@ -31,18 +18,6 @@ interface SavedData {
  * @property {String} json - Editor JSON output
  */
 export default class Saver extends Module {
-  private output: OutputData;
-
-  /**
-   * @constructor
-   * @param config
-   */
-  constructor({config}) {
-    super({config});
-
-    this.output = null;
-  }
-
   /**
    * Composes new chain of Promises to fire them alternatelly
    * @return {OutputData}

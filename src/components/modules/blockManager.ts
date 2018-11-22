@@ -11,6 +11,7 @@ import Module from '../__module';
 import $ from '../dom';
 import Blocks from '../blocks';
 import {BlockTool, BlockToolConstructable, BlockToolData, ToolConfig} from '../../../types';
+import Caret from './caret';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -94,9 +95,15 @@ export default class BlockManager extends Module {
   public get blocks(): Block[] {
     return this._blocks.array;
   }
+
+  /**
+   * Index of Block user is interact with at the moment
+   */
   public currentBlockIndex: number;
 
-  // tslint:disable-next-line
+  /**
+   * Array of Block instances in order of addition
+   */
   private _blocks: Blocks;
 
   /**
@@ -347,13 +354,6 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Remove selection from all Blocks
-   */
-  public clearHighlightings(): void {
-    this.blocks.forEach( (block) => block.selected = false);
-  }
-
-  /**
    * 1) Find first-level Block from passed child Node
    * 2) Mark it as current
    *
@@ -361,7 +361,7 @@ export default class BlockManager extends Module {
    *  @param {string} caretPosition - position where to set caret
    *  @throws Error  - when passed Node is not included at the Block
    */
-  public setCurrentBlockByChildNode(childNode: Node, caretPosition: string = 'default'): void {
+  public setCurrentBlockByChildNode(childNode: Node, caretPosition: string = Caret.positions.DEFAULT): void {
     /**
      * If node is Text TextNode
      */

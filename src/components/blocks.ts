@@ -75,7 +75,15 @@ export default class Blocks {
 
     return instance.get(index);
   }
+
+  /**
+   * Array of Block instances in order of addition
+   */
   public blocks: Block[];
+
+  /**
+   * Editor`s area where to add Block`s HTML
+   */
   public workingArea: HTMLElement;
 
   /**
@@ -89,7 +97,7 @@ export default class Blocks {
   }
 
   /**
-   * Push back new Block
+   * Push new Block to the blocks array and append it to working area
    *
    * @param {Block} block
    */

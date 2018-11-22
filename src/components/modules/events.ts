@@ -14,15 +14,12 @@ import Module from '../__module';
  * @property {Object} subscribers - all subscribers grouped by event name
  */
 export default class Events extends Module {
-  private subscribers: {[name: string]: Array<(data?: any) => void>};
 
   /**
-   * @constructor
+   * Object with events` names as key and array of callback functions as value
+   * @type {{}}
    */
-  constructor({config}) {
-    super({config});
-    this.subscribers = {};
-  }
+  private subscribers: {[name: string]: Array<(data?: any) => void>} = {};
 
   /**
    * Subscribe any event on callback

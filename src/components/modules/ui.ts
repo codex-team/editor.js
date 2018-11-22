@@ -37,34 +37,23 @@ export default class UI extends Module {
 
   /**
    * CodeX Editor UI CSS class names
-   * @return {{editorWrapper: string, editorZone: string, block: string}}
+   * @return {{editorWrapper: string, editorZone: string}}
    */
-  public get CSS(): {editorWrapper: string, editorZone: string} {
+  private get CSS(): {editorWrapper: string, editorZone: string} {
     return {
       editorWrapper : 'codex-editor',
       editorZone    : 'codex-editor__redactor',
     };
   }
-  public nodes: {
-    holder: HTMLElement,
-    wrapper: HTMLElement,
-    redactor: HTMLElement,
-  };
 
   /**
-   * @constructor
-   *
-   * @param  {EditorConfig} config
+   * HTML Elements used for UI
    */
-  constructor({config}: ModuleConfig) {
-    super({config});
-
-    this.nodes = {
-      holder: null,
-      wrapper: null,
-      redactor: null,
-    };
-  }
+  public nodes: {[key: string]: HTMLElement} = {
+    holder: null,
+    wrapper: null,
+    redactor: null,
+  };
 
   /**
    * Making main interface

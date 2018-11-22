@@ -25,6 +25,9 @@ export interface ToolConstructable {
    */
   isInline?: boolean;
 
+  /**
+   * Tool`s sanitizer configuration
+   */
   sanitize?: SanitizerConfig;
 
   /**

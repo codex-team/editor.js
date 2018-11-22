@@ -1,10 +1,30 @@
 import Module from '../__module';
 import {EditorConfig} from '../../../types';
 
+/**
+ * Event listener information
+ */
 export interface ListenerData {
+  /**
+   * Element where to listen to dispatched events
+   */
   element: EventTarget;
+
+  /**
+   * Event to listen
+   */
   eventType: string;
+
+  /**
+   * Event handler
+   *
+   * @param {Event} event
+   */
   handler: (event: Event) => void;
+
+  /**
+   * Should event bubbling be used or not
+   */
   useCapture: boolean;
 }
 
@@ -24,16 +44,12 @@ export interface ListenerData {
  * @property {Array} allListeners
  */
 export default class Listeners extends Module {
-  private allListeners: ListenerData[];
 
   /**
-   * @constructor
-   * @param {EditorConfig} config
+   * Stores all listeners data to find/remove/process it
+   * @type {ListenerData[]}
    */
-  constructor({config}: {config: EditorConfig}) {
-    super({config});
-    this.allListeners = [];
-  }
+  private allListeners: ListenerData[] = [];
 
   /**
    * Assigns event listener on element

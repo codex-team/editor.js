@@ -29,7 +29,7 @@ export default class BlockSettings extends Module {
    * Block Settings CSS
    * @return {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
    */
-  static get CSS() {
+  private static get CSS() {
     return {
       // Settings Panel
       wrapper: 'ce-settings',
@@ -48,24 +48,15 @@ export default class BlockSettings extends Module {
   public get opened(): boolean {
     return this.nodes.wrapper.classList.contains(BlockSettings.CSS.wrapperOpened);
   }
-  public nodes: {
-    wrapper: HTMLElement,
-    toolSettings: HTMLElement,
-    defaultSettings: HTMLElement,
-  };
 
   /**
-   * @constructor
+   * Block settings UI HTML elements
    */
-  constructor({config}) {
-    super({config});
-
-    this.nodes = {
-      wrapper: null,
-      toolSettings: null,
-      defaultSettings: null,
-    };
-  }
+  public nodes: {[key: string]: HTMLElement} = {
+    wrapper: null,
+    toolSettings: null,
+    defaultSettings: null,
+  };
 
   /**
    * Panel with block settings with 2 sections:

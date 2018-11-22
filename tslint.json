@@ -18,7 +18,8 @@
       "named-imports-order": "case-insensitive"
     }],
     "no-empty": false,
-    "no-namespace": false
+    "no-namespace": false,
+    "variable-name": [true, "allow-leading-underscore", "allow-pascal-case"]
   },
   "globals": {
     "require": true

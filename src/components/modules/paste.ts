@@ -8,55 +8,109 @@ import {BlockToolData, PasteConfig} from '../../../types';
 
 /**
  * Tag substitute object.
- *
- * @param {string} tool - name of related Tool
- * @param {Function} handler - callback to handle pasted element
  */
 interface TagSubstitute {
+  /**
+   * Name of related Tool
+   * @type {string}
+   */
   tool: string;
+
+  /**
+   * Callback to handle pasted element
+   *
+   * @param {HTMLElement} element
+   * @return {BlockToolData}
+   */
   handler: (element: HTMLElement) => BlockToolData;
 }
 
 /**
  * Pattern substitute object.
- *
- * @param {string} key - pattern`s key
- * @param {RegExp} pattern - pasted pattern
- * @param {Function} handler - callback to handle pasted pattern
- * @param {string} tool - name of related Tool
  */
 interface PatternSubstitute {
+  /**
+   * Pattern`s key
+   * @type {string}
+   */
   key: string;
+
+  /**
+   * Pattern regexp
+   * @type {RegExp}
+   */
   pattern: RegExp;
+
+  /**
+   * Callback to handle pasted pattern
+   *
+   * @param {string} text
+   * @param {string} key
+   * @return {BlockToolData}
+   */
   handler: (text: string, key: string) => BlockToolData;
+
+  /**
+   * Name of related Tool
+   * @type {string}
+   */
   tool: string;
 }
 
 /**
  * Files` types substitutions object.
- *
- * @param {string[]} extensions - array of extenstions Tool can handle
- * @param {string[]} mimeTypes - array of MIME types Tool can handle
- * @param {Function} handler - callback to handle pasted File
  */
 interface FilesSubstitution {
+  /**
+   * Array of file extensions Tool can handle
+   * @type {string[]}
+   */
   extensions: string[];
+
+  /**
+   * Array of MIME types Tool can handle
+   * @type {string[]}
+   */
   mimeTypes: string[];
+
+  /**
+   * Callback to handle pasted File
+   *
+   * @param {File} file
+   * @return {BlockToolData}
+   */
   handler: (file: File) => BlockToolData;
 }
 
 /**
  * Processed paste data object.
- *
- * @param {string} tool - name of related Tool
- * @param {HTMLElement} content - processed pasted content
- * @param {boolean} isBlock - true if content should be inserted as new Block
- * @param {Function} handler - callback that returns pasted data in BlockToolData format
  */
 interface PasteData {
+  /**
+   * Name of related Tool
+   * @type {string}
+   */
   tool: string;
+
+  /**
+   * Pasted data. Processed and wrapped to HTML element
+   * @type {HTMLElement}
+   */
   content: HTMLElement;
+
+  /**
+   * True if content should be inserted as new Block
+   * @type {boolean}
+   */
   isBlock: boolean;
+
+  /**
+   * Callback that returns pasted data in BlockToolData format
+   *
+   * @param {HTMLElement | string} content
+   * @param {RegExp} patten
+   * @return {BlockToolData}
+   */
   handler: (content: HTMLElement|string, patten?: RegExp) => BlockToolData;
 }
 
@@ -628,9 +682,9 @@ export default class Paste extends Module {
       return;
     }
 
-    const Block = BlockManager.insert(data.tool, blockData);
+    const block = BlockManager.insert(data.tool, blockData);
 
-    Caret.setToBlock(Block);
+    Caret.setToBlock(block);
   }
 
   /**

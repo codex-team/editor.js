@@ -154,11 +154,30 @@ export default class Tools extends Module {
       SANITIZE_CONFIG: 'sanitize',
     };
   }
-  public toolsAvailable: {[name: string]: ToolConstructable};
-  public toolsUnavailable: {[name: string]: ToolConstructable};
-  public toolsSettings: {[name: string]: ToolSettings};
-  public toolsClasses: {[name: string]: ToolConstructable};
-  // tslint:disable-next-line
+
+  /**
+   * All passed Tools` classes
+   */
+  public readonly toolsClasses: {[name: string]: ToolConstructable};
+
+  /**
+   * Tools` classes available to use
+   */
+  private toolsAvailable: {[name: string]: ToolConstructable};
+
+  /**
+   * Tools` classes not availbale to use beacause of validation failure
+   */
+  private readonly toolsUnavailable: {[name: string]: ToolConstructable};
+
+  /**
+   * Configuration for each tool
+   */
+  private readonly toolsSettings: {[name: string]: ToolSettings};
+
+  /**
+   * Inline Tools` classes available to use
+   */
   private _inlineTools: {[name: string]: ToolConstructable};
 
   /**

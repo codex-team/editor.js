@@ -14,45 +14,41 @@ import {BlockToolConstructable} from '../../../../types';
  *
  */
 export default class Toolbox extends Module {
-  public opened: boolean;
+
+  private static LEAF_DIRECTIONS = {
+    RIGHT: 'right',
+    LEFT: 'left',
+  };
+
+  /**
+   * Opening state
+   * @type {boolean}
+   */
+  public opened: boolean = false;
+
+  /**
+   * HTMLElements used for Toolbox UI
+   */
   public nodes: {
     toolbox: HTMLElement,
     buttons: HTMLElement[],
+  } = {
+    toolbox: null,
+    buttons: [],
   };
-  private activeButtonIndex: number;
-  private displayedToolsCount: number;
 
   /**
-   * @constructor
-   * @param {EditorConfig} config
+   * Active button index
+   * -1 equals no chosen Tool
+   * @type {number}
    */
-  constructor({config}) {
-    super({config});
+  private activeButtonIndex: number = -1;
 
-    this.nodes = {
-      toolbox: null,
-      buttons: [],
-    };
-
-    /**
-     * Opening state
-     * @type {boolean}
-     */
-    this.opened = false;
-
-    /**
-     * Active button index
-     * -1 equals no chosen Tool
-     * @type {number}
-     */
-    this.activeButtonIndex = -1;
-
-    /**
-     * How many tools displayed in Toolbox
-     * @type {number}
-     */
-    this.displayedToolsCount = 0;
-  }
+  /**
+   * How many tools displayed in Toolbox
+   * @type {number}
+   */
+  private displayedToolsCount: number = 0;
 
   /**
    * CSS styles
@@ -133,7 +129,7 @@ export default class Toolbox extends Module {
    * flip through the toolbox items
    * @param {String} direction - leaf direction, right is default
    */
-  public leaf(direction: string = 'right'): void {
+  public leaf(direction: string = Toolbox.LEAF_DIRECTIONS.RIGHT): void {
     const childNodes = this.nodes.toolbox.childNodes;
 
     /**
@@ -155,7 +151,7 @@ export default class Toolbox extends Module {
        *
        * @type {number}
        */
-      this.activeButtonIndex = direction === 'right' ? -1 : 0;
+      this.activeButtonIndex = direction === Toolbox.LEAF_DIRECTIONS.RIGHT ? -1 : 0;
     } else {
       /**
        * If we have chosen Tool then remove highlighting
@@ -166,7 +162,7 @@ export default class Toolbox extends Module {
     /**
      * Count index for next Tool
      */
-    if (direction === 'right') {
+    if (direction === Toolbox.LEAF_DIRECTIONS.RIGHT) {
       /**
        * If we go right then choose next (+1) Tool
        * @type {number}

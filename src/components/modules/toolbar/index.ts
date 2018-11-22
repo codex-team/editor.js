@@ -53,41 +53,28 @@ import $ from '../../dom';
  * @property {Element} nodes.defaultSettings   - Default Settings section of Settings Panel
  */
 export default class Toolbar extends Module {
-  public nodes: {
-    wrapper: HTMLElement,
-    content: HTMLElement,
-    actions: HTMLElement,
-    plusButton: HTMLElement,
-    blockActionsButtons: HTMLElement,
-    settingsToggler: HTMLElement,
-  };
-
   /**
-   * @constructor
+   * HTML Elements used for Toolbar UI
    */
-  constructor({config}) {
-    super({config});
+  public nodes: {[key: string]: HTMLElement} = {
+    wrapper : null,
+    content : null,
+    actions : null,
 
-    this.nodes = {
-      wrapper : null,
-      content : null,
-      actions : null,
+    // Content Zone
+    plusButton : null,
 
-      // Content Zone
-      plusButton : null,
-
-      // Actions Zone
-      blockActionsButtons: null,
-      settingsToggler : null,
-    };
-  }
+    // Actions Zone
+    blockActionsButtons: null,
+    settingsToggler : null,
+  };
 
   /**
    * CSS styles
    * @return {Object}
    * @constructor
    */
-  static get CSS() {
+  private static get CSS() {
     return {
       toolbar: 'ce-toolbar',
       content: 'ce-toolbar__content',

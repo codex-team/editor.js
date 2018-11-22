@@ -21,7 +21,15 @@ import Core from './components/core';
  * @author CodeX-Team <https://ifmo.su>
  */
 export default class CodexEditor {
+  /**
+   * Promise that resolves when core modules are ready and UI is rendered on the page
+   */
   public isReady: Promise<void>;
+
+  /**
+   * Stores destroy method implementation.
+   * Clear heap occupied by Editor and remove UI components from the DOM.
+   */
   public destroy: () => void;
 
   /** Editor version */

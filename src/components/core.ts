@@ -10,14 +10,14 @@ import {EditorModules} from '../types-internal/editor-modules';
 /**
  * Require Editor modules places in components/modules dir
  */
-// eslint-disable-next-line
-const context = require.context('./modules', true);
+const contextRequire = require.context('./modules', true);
 
 const modules = [];
 
-context.keys().forEach((key) => {
-  if (key.match(/^\.\/[^_][\w/]*\.([tj])s$/)) {
-    modules.push(context(key));
+contextRequire.keys().forEach((filename) => {
+  /** If file name starts with _ symbol, we don't include it to bundle */
+  if (filename.match(/^\.\/[^_][\w/]*\.([tj])s$/)) {
+    modules.push(contextRequire(filename));
   }
 });
 
@@ -41,7 +41,7 @@ export default class Core {
   /**
    * Object with core modules instances
    */
-  public moduleInstances: EditorModules;
+  public moduleInstances: EditorModules = {} as EditorModules;
 
   /**
    * Promise that resolves when all core modules are prepared and UI is rendered on the page
@@ -53,8 +53,6 @@ export default class Core {
    *
    */
   constructor(config?: EditorConfig|string) {
-    this.moduleInstances = {} as EditorModules;
-
     /**
      * Ready promise. Resolved if CodeX Editor is ready to work, rejected otherwise
      */
@@ -212,63 +210,6 @@ export default class Core {
   }
 
   /**
-   * Make modules instances and save it to the @property this.moduleInstances
-   */
-  public constructModules(): void {
-    modules.forEach( (Module) => {
-      try {
-        /**
-         * We use class name provided by displayName property
-         *
-         * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
-         * To prevent this, we use 'babel-plugin-class-display-name' plugin
-         * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
-         */
-        this.moduleInstances[Module.displayName] = new Module({
-          config : this.configuration,
-        });
-      } catch ( e ) {
-        console.log('Module %o skipped because %o', Module, e);
-      }
-    });
-  }
-
-  /**
-   * Modules instances configuration:
-   *  - pass other modules to the 'state' property
-   *  - ...
-   */
-  public configureModules(): void {
-    for (const name in this.moduleInstances) {
-      if (this.moduleInstances.hasOwnProperty(name)) {
-        /**
-         * Module does not need self-instance
-         */
-        this.moduleInstances[name].state = this.getModulesDiff(name);
-      }
-    }
-  }
-
-  /**
-   * Return modules without passed name
-   */
-  public getModulesDiff( name ) {
-    const diff = {};
-
-    for (const moduleName in this.moduleInstances) {
-      /**
-       * Skip module with passed name
-       */
-      if (moduleName === name) {
-        continue;
-      }
-      diff[moduleName] = this.moduleInstances[moduleName];
-    }
-
-    return diff;
-  }
-
-  /**
    * Start Editor!
    *
    * Get list of modules that needs to be prepared and return a sequence (Promise)
@@ -300,5 +241,63 @@ export default class Core {
     );
 
     return this.moduleInstances.Renderer.render(this.config.data.blocks);
+  }
+
+  /**
+   * Make modules instances and save it to the @property this.moduleInstances
+   */
+  private constructModules(): void {
+    modules.forEach( (Module) => {
+      try {
+        /**
+         * We use class name provided by displayName property
+         *
+         * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
+         * To prevent this, we use 'babel-plugin-class-display-name' plugin
+         * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
+         */
+        this.moduleInstances[Module.displayName] = new Module({
+          config : this.configuration,
+        });
+      } catch ( e ) {
+        console.log('Module %o skipped because %o', Module, e);
+      }
+    });
+  }
+
+  /**
+   * Modules instances configuration:
+   *  - pass other modules to the 'state' property
+   *  - ...
+   */
+  private configureModules(): void {
+    for (const name in this.moduleInstances) {
+      if (this.moduleInstances.hasOwnProperty(name)) {
+        /**
+         * Module does not need self-instance
+         */
+        this.moduleInstances[name].state = this.getModulesDiff(name);
+      }
+    }
+  }
+
+  /**
+   * Return modules without passed name
+   * @param {string} name - module for witch modules difference should be calculated
+   */
+  private getModulesDiff(name: string): EditorModules {
+    const diff = {} as EditorModules;
+
+    for (const moduleName in this.moduleInstances) {
+      /**
+       * Skip module with passed name
+       */
+      if (moduleName === name) {
+        continue;
+      }
+      diff[moduleName] = this.moduleInstances[moduleName];
+    }
+
+    return diff;
   }
 }

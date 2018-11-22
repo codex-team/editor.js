@@ -21,15 +21,6 @@ import _ from '../utils';
 export default class Caret extends Module {
 
   /**
-   * Elements styles that can be useful for Caret Module
-   */
-  public static get CSS(): {shadowCaret: string} {
-    return {
-      shadowCaret: 'cdx-shadow-caret',
-    };
-  }
-
-  /**
    * Allowed caret positions in input
    *
    * @static
@@ -40,6 +31,15 @@ export default class Caret extends Module {
       START: 'start',
       END: 'end',
       DEFAULT: 'default',
+    };
+  }
+
+  /**
+   * Elements styles that can be useful for Caret Module
+   */
+  private static get CSS(): {shadowCaret: string} {
+    return {
+      shadowCaret: 'cdx-shadow-caret',
     };
   }
 
@@ -278,7 +278,9 @@ export default class Caret extends Module {
   public setToTheLastBlock(): void {
     const lastBlock = this.Editor.BlockManager.lastBlock;
 
-    if (!lastBlock) { return; }
+    if (!lastBlock) {
+      return;
+    }
 
     /**
      * If last block is empty and it is an initialBlock, set to that.

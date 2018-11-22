@@ -1,6 +1,8 @@
 import {
   API,
-  BlockToolConstructable, BlockToolData,
+  BlockTool,
+  BlockToolConstructable,
+  BlockToolData,
   BlockTune,
   BlockTuneConstructable,
   SanitizerConfig,
@@ -23,7 +25,6 @@ import _ from './utils';
 import MoveUpTune from './block-tunes/block-tune-move-up';
 import DeleteTune from './block-tunes/block-tune-delete';
 import MoveDownTune from './block-tunes/block-tune-move-down';
-import {BlockTool} from '../../types';
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -257,13 +258,45 @@ export default class Block {
     this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
   }
 
+  /**
+   * Block Tool`s name
+   */
   public name: string;
+
+  /**
+   * Instance of the Tool Block represents
+   */
   public tool: BlockTool;
+
+  /**
+   * Class blueprint of the ool Block represents
+   */
   public class: BlockToolConstructable;
+
+  /**
+   * User Tool configuration
+   */
   public settings: ToolConfig;
+
+  /**
+   * Wrapper for Block`s content
+   */
   public holder: HTMLDivElement;
+
+  /**
+   * Tunes used by Tool
+   */
   public tunes: BlockTune[];
+
+  /**
+   * Editor`s API
+   */
   private readonly api: API;
+
+  /**
+   * Focused input index
+   * @type {number}
+   */
   private inputIndex = 0;
 
   /**
