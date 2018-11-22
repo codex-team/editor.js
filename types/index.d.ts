@@ -23,7 +23,6 @@ export {
 export {BlockTune, BlockTuneConstructable} from './block-tunes';
 export {EditorConfig, SanitizerConfig, PasteConfig} from './configs';
 export {OutputData} from './data-formats/output-data';
-export {Block} from './block';
 
 /**
  * We have a namespace API {@link ./api/index.d.ts} (APIMethods) but we can not use it as interface

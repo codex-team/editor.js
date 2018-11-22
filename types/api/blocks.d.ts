@@ -30,11 +30,11 @@ export interface Blocks {
   swap(fromIndex: number, toIndex: number): void;
 
   /**
-   * Returns Block by passed index
+   * Returns Block HTML content by passed index
    * @param {number} index
-   * @returns {Block}
+   * @returns {HTMLElement}
    */
-  getBlockByIndex(index: number): Block;
+  getBlockHTMLByIndex(index: number): HTMLElement;
 
   /**
    * Returns current Block index
