@@ -6,7 +6,7 @@ import ItalicInlineTool from '../../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../../inline-tools/inline-tool-link';
 import SelectionUtils from '../../selection';
 import _ from '../../utils';
-import {InlineTool, ToolConstructable, ToolSettings} from '../../../../types';
+import {InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings} from '../../../../types';
 
 /**
  * Inline toolbar with actions that modifies selected text fragment
@@ -355,7 +355,7 @@ export default class InlineToolbar extends Module {
 
         return (toolClass as ToolSettings).class[Tools.apiSettings.IS_INLINE];
       })
-      .map(([name, toolClass]: [string, ToolConstructable|ToolSettings]) => name);
+      .map(([name, toolClass]: [string, InlineToolConstructable|ToolSettings]) => name);
 
     /**
      * 1) For internal tools, check public getter 'shortcut'

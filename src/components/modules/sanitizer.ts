@@ -36,7 +36,7 @@ import _ from '../utils';
  */
 
 import HTMLJanitor from 'html-janitor';
-import {BlockToolData, SanitizerConfig, ToolConstructable} from '../../../types';
+import {BlockToolData, InlineToolConstructable, SanitizerConfig} from '../../../types';
 
 export default class Sanitizer extends Module {
   /**
@@ -221,7 +221,7 @@ export default class Sanitizer extends Module {
     const config: SanitizerConfig = {} as SanitizerConfig;
 
     Object.entries(Tools.inline)
-      .forEach( ([name, inlineTool]: [string, ToolConstructable]) => {
+      .forEach( ([name, inlineTool]: [string, InlineToolConstructable]) => {
         Object.assign(config, inlineTool[Tools.apiSettings.SANITIZE_CONFIG]);
       });
 

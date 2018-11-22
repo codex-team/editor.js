@@ -14,6 +14,7 @@ export {
   Tool,
   ToolConstructable,
   InlineTool,
+  InlineToolConstructable,
   BlockToolConstructable,
   BlockTool,
   BlockToolData,
