@@ -1,4 +1,4 @@
-import {Tool, ToolConstructable, ToolSettings} from '../tools';
+import {ToolConstructable, ToolSettings} from '../tools';
 import {OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 

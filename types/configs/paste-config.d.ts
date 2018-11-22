@@ -1,5 +1,4 @@
-import {BlockToolData} from "../index";
-
+import {BlockToolData} from '../index';
 
 /**
  * Tool onPaste configuration object

@@ -110,12 +110,10 @@ export default class Core {
       this.config = config;
     }
 
-    config = config as EditorConfig;
-
     /**
      * If initial Block's Tool was not passed, use the Paragraph Tool
      */
-    this.config.initialBlock = config.initialBlock || 'paragraph';
+    this.config.initialBlock = this.config.initialBlock || 'paragraph';
 
     /**
      * Initial block type
@@ -127,18 +125,18 @@ export default class Core {
       data : {},
     };
 
-    this.config.placeholder = config.placeholder || 'write your story...';
-    this.config.sanitizer = config.sanitizer || {
+    this.config.placeholder = this.config.placeholder || 'write your story...';
+    this.config.sanitizer = this.config.sanitizer || {
       p: true,
       b: true,
       a: true,
     } as SanitizerConfig;
 
-    this.config.hideToolbar = config.hideToolbar ? config.hideToolbar : false;
-    this.config.tools = config.tools || {};
-    this.config.data = config.data || {} as OutputData;
-    this.config.onReady = config.onReady || (() => {});
-    this.config.onChange = config.onChange || (() => {});
+    this.config.hideToolbar = this.config.hideToolbar ? this.config.hideToolbar : false;
+    this.config.tools = this.config.tools || {};
+    this.config.data = this.config.data || {} as OutputData;
+    this.config.onReady = this.config.onReady || (() => {});
+    this.config.onChange = this.config.onChange || (() => {});
 
     /**
      * Initialize Blocks to pass data to the Renderer
