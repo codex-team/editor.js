@@ -68,8 +68,8 @@ export default class MoveUpTune implements BlockTune {
       return;
     }
 
-    const currentBlockElement = this.api.blocks.getBlockHTMLByIndex(currentBlockIndex);
-    const previousBlockElement = this.api.blocks.getBlockHTMLByIndex(currentBlockIndex - 1);
+    const currentBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex);
+    const previousBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
 
     /**
      * Here is two cases:

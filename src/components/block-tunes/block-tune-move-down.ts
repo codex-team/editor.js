@@ -68,7 +68,7 @@ export default class MoveDownTune implements BlockTune {
       return;
     }
 
-    const nextBlockElement = this.api.blocks.getBlockHTMLByIndex(currentBlockIndex + 1);
+    const nextBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
     const nextBlockCoords = nextBlockElement.getBoundingClientRect();
 
     let scrollOffset = Math.abs(window.innerHeight - nextBlockElement.offsetHeight);

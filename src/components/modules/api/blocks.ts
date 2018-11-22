@@ -28,7 +28,7 @@ export default class BlocksAPI extends Module {
       render: (data: OutputData) => this.render(data),
       delete: () => this.delete(),
       swap: (fromIndex: number, toIndex: number) => this.swap(fromIndex, toIndex),
-      getBlockHTMLByIndex: (index: number) => this.getBlockHTMLByIndex(index),
+      getBlockByIndex: (index: number) => this.getBlockByIndex(index),
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
       getBlocksCount: () => this.getBlocksCount(),
       stretchBlock: (index: number, status: boolean = true) => this.stretchBlock(index, status),
@@ -53,12 +53,12 @@ export default class BlocksAPI extends Module {
   }
 
   /**
-   * Returns current Block HTML holder
+   * Returns Block holder by Block index
    * @param {Number} index
    *
    * @return {HTMLElement}
    */
-  public getBlockHTMLByIndex(index: number): HTMLElement {
+  public getBlockByIndex(index: number): HTMLElement {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
     return block.holder;
   }

@@ -15,10 +15,10 @@ const contextRequire = require.context('./modules', true);
 const modules = [];
 
 contextRequire.keys().forEach((filename) => {
-  /** 
-   * Include files if: 
-   * - extension is .js or .ts 
-   * - does not starts with _ 
+  /**
+   * Include files if:
+   * - extension is .js or .ts
+   * - does not starts with _
    */
   if (filename.match(/^\.\/[^_][\w/]*\.([tj])s$/)) {
     modules.push(contextRequire(filename));

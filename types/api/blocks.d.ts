@@ -1,4 +1,3 @@
-import {Block} from '../block';
 import {OutputData} from '../data-formats/output-data';
 
 /**
@@ -30,11 +29,11 @@ export interface Blocks {
   swap(fromIndex: number, toIndex: number): void;
 
   /**
-   * Returns Block HTML content by passed index
+   * Returns Block holder by Block index
    * @param {number} index
    * @returns {HTMLElement}
    */
-  getBlockHTMLByIndex(index: number): HTMLElement;
+  getBlockByIndex(index: number): HTMLElement;
 
   /**
    * Returns current Block index
