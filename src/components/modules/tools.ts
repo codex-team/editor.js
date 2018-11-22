@@ -166,7 +166,7 @@ export default class Tools extends Module {
   private toolsAvailable: {[name: string]: ToolConstructable};
 
   /**
-   * Tools` classes not availbale to use beacause of validation failure
+   * Tools` classes not availbale to use beacause of preparation failure
    */
   private readonly toolsUnavailable: {[name: string]: ToolConstructable};
 
