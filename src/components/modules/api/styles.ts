@@ -5,15 +5,6 @@ import {Styles} from '../../../../types/api';
  *
  */
 export default class StylesAPI extends Module {
-
-  /**
-   * Save Editor config
-   * API provides passed configuration to the Blocks
-   */
-  constructor({config}) {
-    super({config});
-  }
-
   get classes(): Styles {
     return {
       /**

@@ -50,18 +50,6 @@ export default class Sanitizer extends Module {
   private inlineToolsConfigCache: SanitizerConfig | null = null;
 
   /**
-   * Initializes Sanitizer module
-   * Sets default configuration if custom not exists
-   *
-   * @property {HTMLJanitor} this._sanitizerInstance - Sanitizer library
-   *
-   * @param {EditorConfig} config
-   */
-  constructor({config}) {
-    super({config});
-  }
-
-  /**
    * Sanitize Blocks
    *
    * Enumerate blocks and clean data

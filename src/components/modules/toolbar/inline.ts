@@ -81,14 +81,6 @@ export default class InlineToolbar extends Module {
   private toolsInstances: Map<string, InlineTool>;
 
   /**
-   * @constructor
-   * @param {EditorConfig} config
-   */
-  constructor({config}) {
-    super({config});
-  }
-
-  /**
    * Inline Toolbar Tools
    *
    * @returns Map<string, InlineTool>

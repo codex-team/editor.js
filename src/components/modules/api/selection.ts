@@ -7,14 +7,6 @@ import {Selection as SelectionAPIInterface} from '../../../../types/api';
  * Provides with methods working with SelectionUtils
  */
 export default class SelectionAPI extends Module {
-
-  /**
-   * Save Editor config. API provides passed configuration to the Blocks
-   */
-  constructor({config}) {
-    super({config});
-  }
-
   /**
    * Available methods
    * @return {SelectionAPIInterface}

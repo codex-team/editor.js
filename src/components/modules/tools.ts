@@ -156,29 +156,34 @@ export default class Tools extends Module {
   }
 
   /**
-   * All passed Tools` classes
+   * Map {name: Class, ...} where:
+   *  name — block type name in JSON. Got from EditorConfig.tools keys
+   * @type {Object}
    */
-  public readonly toolsClasses: {[name: string]: ToolConstructable};
+  public readonly toolsClasses: {[name: string]: ToolConstructable} = {};
 
   /**
    * Tools` classes available to use
    */
-  private toolsAvailable: {[name: string]: ToolConstructable};
+  private readonly toolsAvailable: {[name: string]: ToolConstructable} = {};
 
   /**
    * Tools` classes not availbale to use beacause of preparation failure
    */
-  private readonly toolsUnavailable: {[name: string]: ToolConstructable};
+  private readonly toolsUnavailable: {[name: string]: ToolConstructable} = {};
 
   /**
-   * Configuration for each tool
+   * Tools settings in a map {name: settings, ...}
+   * @type {Object}
    */
-  private readonly toolsSettings: {[name: string]: ToolSettings};
+  private readonly toolsSettings: {[name: string]: ToolSettings} = {};
 
   /**
-   * Inline Tools` classes available to use
+   * Cache for the prepared inline tools
+   * @type {null|object}
+   * @private
    */
-  private _inlineTools: {[name: string]: ToolConstructable};
+  private _inlineTools: {[name: string]: ToolConstructable} = {};
 
   /**
    * @constructor
@@ -188,17 +193,8 @@ export default class Tools extends Module {
   constructor({config}) {
     super({config});
 
-    /**
-     * Map {name: Class, ...} where:
-     *  name — block type name in JSON. Got from EditorConfig.tools keys
-     * @type {Object}
-     */
     this.toolsClasses = {};
 
-    /**
-     * Tools settings in a map {name: settings, ...}
-     * @type {Object}
-     */
     this.toolsSettings = {};
 
     /**
@@ -215,11 +211,6 @@ export default class Tools extends Module {
      */
     this.toolsUnavailable = {};
 
-    /**
-     * Cache for the prepared inline tools
-     * @type {null|object}
-     * @private
-     */
     this._inlineTools = null;
   }
 

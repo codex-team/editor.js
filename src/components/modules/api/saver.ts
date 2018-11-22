@@ -7,14 +7,6 @@ import {OutputData} from '../../../../types';
  * provides with methods to save data
  */
 export default class SaverAPI extends Module {
-
-  /**
-   * Save Editor config. API provides passed configuration to the Blocks
-   */
-  constructor({config}) {
-    super({config});
-  }
-
   /**
    * Available methods
    * @return {Saver}

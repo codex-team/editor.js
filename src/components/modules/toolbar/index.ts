@@ -72,7 +72,6 @@ export default class Toolbar extends Module {
   /**
    * CSS styles
    * @return {Object}
-   * @constructor
    */
   private static get CSS() {
     return {

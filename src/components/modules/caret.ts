@@ -149,12 +149,6 @@ export default class Caret extends Module {
      */
     return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
   }
-  /**
-   * @constructor
-   */
-  constructor({config}) {
-    super({config});
-  }
 
   /**
    * Method gets Block instance and puts caret to the text node with offset

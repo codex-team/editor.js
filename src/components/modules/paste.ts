@@ -146,14 +146,6 @@ export default class Paste extends Module {
   } = {};
 
   /**
-   * @constructor
-   * @param {EditorConfig} config
-   */
-  constructor({config}) {
-    super({config});
-  }
-
-  /**
    * Set onPaste callback and collect tools` paste configurations
    *
    * @public

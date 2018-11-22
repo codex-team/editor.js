@@ -10,14 +10,6 @@ import {ModuleConfig} from '../../../types-internal/module-config';
  * provides with methods working with Block
  */
 export default class BlocksAPI extends Module {
-
-  /**
-   * Save Editor config. API provides passed configuration to the Blocks
-   */
-  constructor({config}: ModuleConfig) {
-    super({config});
-  }
-
   /**
    * Available methods
    * @return {Blocks}

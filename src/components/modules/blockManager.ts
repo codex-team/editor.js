@@ -97,38 +97,19 @@ export default class BlockManager extends Module {
   }
 
   /**
-   * Index of Block user is interact with at the moment
+   * Index of current working block
+   *
+   * @type {number}
    */
-  public currentBlockIndex: number;
+  public currentBlockIndex: number = -1;
 
   /**
-   * Array of Block instances in order of addition
+   * Proxy for Blocks instance {@link Blocks}
+   *
+   * @type {Proxy}
+   * @private
    */
-  private _blocks: Blocks;
-
-  /**
-   * @constructor
-   * @param {EditorConfig} config
-   */
-  constructor({config}) {
-    super({config});
-
-    /**
-     * Proxy for Blocks instance {@link Blocks}
-     *
-     * @type {Proxy}
-     * @private
-     */
-    this._blocks = null;
-
-    /**
-     * Index of current working block
-     *
-     * @type {number}
-     * @private
-     */
-    this.currentBlockIndex = -1;
-  }
+  private _blocks: Blocks = null;
 
   /**
    * Should be called after Editor.UI preparation

@@ -36,16 +36,7 @@ export default class Shortcuts extends Module {
    * All registered shortcuts
    * @type {Shortcut[]}
    */
-  private registeredShortcuts: Shortcut[];
-
-  /**
-   * @constructor
-   * @param {EditorConfig} config
-   */
-  constructor({config}) {
-    super({config});
-    this.registeredShortcuts = [];
-  }
+  private registeredShortcuts: Shortcut[] = [];
 
   /**
    * Register shortcut

@@ -12,15 +12,6 @@ import {API as APIInterfaces} from '../../../../types';
  * @class API
  */
 export default class API extends Module {
-
-  /**
-   * Save Editor config. API provides passed configuration to the Blocks
-   * @param {EditorConfig} config
-   */
-  constructor({config}) {
-    super({config});
-  }
-
   public get methods(): APIInterfaces {
     return {
       blocks: this.Editor.BlocksAPI.methods,

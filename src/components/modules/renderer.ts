@@ -12,14 +12,6 @@ import {BlockToolData} from '../../../types';
  */
 export default class Renderer extends Module {
   /**
-   * @constructor
-   * @param {ModuleConfig} config
-   */
-  constructor({config}) {
-    super({config});
-  }
-
-  /**
    * @typedef {Object} RendererBlocks
    * @property {String} type - tool name
    * @property {Object} data - tool data

@@ -25,14 +25,6 @@ export default class ModificationsObserver extends Module {
   }, ModificationsObserver.DebounceTimer);
 
   /**
-   * Constructor
-   * @param {EditorConfig} config
-   */
-  constructor({config}) {
-    super({config});
-  }
-
-  /**
    * Clear timeout and set null to mutationDebouncer property
    */
   public destroy() {

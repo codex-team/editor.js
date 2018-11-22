@@ -6,14 +6,6 @@ import {Listeners} from '../../../../types/api';
  * Provides with methods working with DOM Listener
  */
 export default class ListenersAPI extends Module {
-
-  /**
-   * Save Editor config. API provides passed configuration to the Blocks
-   */
-  constructor({config}) {
-    super({config});
-  }
-
   /**
    * Available methods
    * @return {Listeners}

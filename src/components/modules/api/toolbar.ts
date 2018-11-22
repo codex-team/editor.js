@@ -6,14 +6,6 @@ import {Toolbar} from '../../../../types/api';
  * provides with methods working with Toolbar
  */
 export default class ToolbarAPI extends Module {
-
-  /**
-   * Save Editor config. API provides passed configuration to the Blocks
-   */
-  constructor({config}) {
-    super({config});
-  }
-
   /**
    * Available methods
    * @return {Toolbar}
