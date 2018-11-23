@@ -4,17 +4,16 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import IBlockTune from '../interfaces/block-tune';
 
-declare var $: any;
-declare var _: any;
+import $ from '../dom';
+import {API, BlockTune} from '../../../types';
 
-export default class MoveDownTune implements IBlockTune {
+export default class MoveDownTune implements BlockTune {
   /**
    * Property that contains CodeX Editor API methods
    * @see {api.md}
    */
-  private readonly api: any;
+  private readonly api: API;
 
   /**
    * Styles
@@ -29,7 +28,7 @@ export default class MoveDownTune implements IBlockTune {
   /**
    * MoveDownTune constructor
    *
-   * @param {Object} api
+   * @param {{api: API}} api
    */
   public constructor({api}) {
     this.api = api;
@@ -41,7 +40,12 @@ export default class MoveDownTune implements IBlockTune {
   public render() {
     const moveDownButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveDownButton.appendChild($.svg('arrow-down', 14, 14));
-    this.api.listener.on(moveDownButton, 'click', (event) => this.handleClick(event, moveDownButton), false);
+    this.api.listeners.on(
+      moveDownButton,
+      'click',
+      (event) => this.handleClick(event as MouseEvent, moveDownButton),
+      false,
+    );
     return moveDownButton;
   }
 
@@ -64,8 +68,8 @@ export default class MoveDownTune implements IBlockTune {
       return;
     }
 
-    const nextBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex + 1).holder,
-        nextBlockCoords = nextBlockElement.getBoundingClientRect();
+    const nextBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex + 1);
+    const nextBlockCoords = nextBlockElement.getBoundingClientRect();
 
     let scrollOffset = Math.abs(window.innerHeight - nextBlockElement.offsetHeight);
 

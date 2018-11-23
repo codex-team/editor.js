@@ -1,8 +1,9 @@
 {
   "name": "codex.editor",
-  "version": "2.4.3",
+  "version": "2.5.0",
   "description": "Codex Editor. Native JS, based on API and Open Source",
   "main": "build/codex-editor.js",
+  "types": "./types/index.d.ts",
   "scripts": {
     "build": "rimraf dist && yarn svg && yarn build:dev",
     "svg": "svg-sprite-generate -d src/assets/ -o build/sprite.svg",
@@ -22,6 +23,8 @@
     "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.1.2",
     "@codexteam/shortcuts": "^1.0.0",
+    "@types/webpack": "^4.4.16",
+    "@types/webpack-env": "^1.13.6",
     "babel-loader": "^8.0.4",
     "babel-plugin-add-module-exports": "^1.0.0",
     "babel-plugin-class-display-name": "^2.1.0",
@@ -51,11 +54,11 @@
     "rimraf": "^2.6.2",
     "stylelint": "^9.3.0",
     "svg-sprite-generator": "0.0.7",
-    "ts-loader": "^4.4.2",
+    "ts-loader": "^5.3.0",
     "tslint": "^5.11.0",
     "tslint-loader": "^3.6.0",
     "typescript": "^2.9.2",
-    "webpack": "^4.16.2",
+    "webpack": "4.20.2",
     "webpack-cli": "^3.1.0"
   }
 }

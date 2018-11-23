@@ -5,10 +5,8 @@
  * and gives opportunity to handle outside
  */
 
-import IEditorConfig from '../interfaces/editor-config';
-
-declare const Module: any;
-declare const _: any;
+import Module from '../__module';
+import _ from '../utils';
 
 export default class ModificationsObserver extends Module {
 
@@ -23,16 +21,8 @@ export default class ModificationsObserver extends Module {
    * @type {Function}
    */
   private mutationDebouncer = _.debounce( () => {
-    this.config.onChange.call();
+    this.config.onChange();
   }, ModificationsObserver.DebounceTimer);
-
-  /**
-   * Constructor
-   * @param {IEditorConfig} config
-   */
-  constructor({config}) {
-    super({config});
-  }
 
   /**
    * Clear timeout and set null to mutationDebouncer property

@@ -6,8 +6,8 @@
  */
 'use strict';
 
-var pkg  = require('./package.json');
-var path = require('path');
+const pkg = require('./package.json');
+const path = require('path');
 
 /**
  * Environment
@@ -20,29 +20,12 @@ const VERSION  = process.env.VERSION || pkg.version;
  * Plugins for bundle
  * @type {webpack}
  */
-var webpack        = require('webpack');
-
-/**
- * File system
- */
-var fs = require('fs');
-
-/**
- * Available CodeX Editor modules placed in components/modules folder
- * They will required automatically.
- * Folders and files starting with '_' will be skipped
- * @type {Array}
- */
-var editorModules = fs.readdirSync('./src/components/modules').filter( name => /.(j|t)s$/.test(name) && name.substring(0,1) !== '_' );
-
-editorModules.forEach( name => {
-  console.log('Require modules/' + name);
-});
+const webpack = require('webpack');
 
 /**
  * Options for the Babel
  */
-var babelLoader = {
+const babelLoader = {
   loader: 'babel-loader',
   options: {
     cacheDirectory: true,
@@ -72,7 +55,7 @@ var babelLoader = {
 module.exports = {
 
   entry: {
-    'codex-editor': [ './src/codex' ]
+    'codex-editor': ['@babel/polyfill/noConflict', './src/codex.ts']
   },
   output: {
     path: path.resolve(__dirname, 'build'),
@@ -86,68 +69,27 @@ module.exports = {
     aggregateTimeout: 50
   },
 
-  devtool: NODE_ENV == 'development' ? 'source-map' : null,
+  devtool: NODE_ENV === 'development' ? 'source-map' : null,
 
   /**
    * Tell webpack what directories should be searched when resolving modules.
    */
   resolve : {
-    // fallback: path.join(__dirname, 'node_modules'),
-    modules : [ path.join(__dirname, "src"),  "node_modules"],
+    modules : [path.join(__dirname, 'src'),  'node_modules'],
     extensions: ['.js', '.ts'],
     alias: {
       'utils': path.resolve(__dirname + '/src/components/', './utils'),
       'dom': path.resolve(__dirname + '/src/components/', './dom'),
     }
   },
-  //
-
-  // resolveLoader : {
-    // modules: [ path.resolve(__dirname, "src"), "node_modules" ],
-    // moduleTemplates: ['*-webpack-loader', '*-web-loader', '*-loader', '*'],
-    // extensions: ['.js']
-  // },
 
   plugins: [
 
     /** Pass variables into modules */
     new webpack.DefinePlugin({
       NODE_ENV: JSON.stringify(NODE_ENV),
-      VERSION: JSON.stringify(VERSION),
-      editorModules: JSON.stringify(editorModules)
+      VERSION: JSON.stringify(VERSION)
     }),
-
-    /**
-     * Setting up a dynamic requires that we use to autoload Editor Modules from 'components/modules' dir
-     * {@link https://webpack.js.org/plugins/context-replacement-plugin/}
-     */
-    new webpack.ContextReplacementPlugin(
-      /src\/components\/modules/,
-      false, // newContentRecursive=false because we dont need to include folders
-      new RegExp(
-        '[^_]' + // dont match names started with '_'
-        `(${editorModules.join('|')})` + // module names pattern: (events.js|ui.js|...)
-        '$' // at the end of path
-      )
-    ),
-
-    /**
-     * Automatically load global visible modules
-     * instead of having to import/require them everywhere.
-     */
-    new webpack.ProvidePlugin({
-      '_': 'utils',
-      '$': 'dom',
-      'Module': './../__module.ts',
-    }),
-
-    /** Минифицируем CSS и JS */
-    // new webpack.optimize.UglifyJsPlugin({
-    /** Disable warning messages. Cant disable uglify for 3rd party libs such as html-janitor */
-    // compress: {
-    //   warnings: false
-    // }
-    // }),
 
     /** Block biuld if errors found */
     // new webpack.NoErrorsPlugin(),
@@ -165,6 +107,9 @@ module.exports = {
           },
           {
             loader: 'tslint-loader',
+            options: {
+              fix: true
+            }
           }
         ]
       },
@@ -204,6 +149,9 @@ module.exports = {
         ]
       }
     ]
+  },
+  externals: {
+    svg: '../src/components/modules/svg.ts'
   },
   optimization: {
     minimize: true

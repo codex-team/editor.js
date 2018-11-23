@@ -1,10 +1,9 @@
-import InlineTool from '../interfaces/tools/inline-tool';
 import SelectionUtils from '../selection';
-import ISanitizerConfig from '../interfaces/sanitizer-config';
 
-declare var $: any;
-declare var _: any;
-
+import $ from '../dom';
+import _ from '../utils';
+import {API, InlineTool, SanitizerConfig} from '../../../types';
+import {Toolbar} from '../../../types/api';
 /**
  * Link Tool
  *
@@ -26,14 +25,14 @@ export default class LinkInlineTool implements InlineTool {
    * Leave <a> tags
    * @return {object}
    */
-  static get sanitize(): ISanitizerConfig {
+  static get sanitize(): SanitizerConfig {
     return {
       a: {
         href: true,
         target: '_blank',
         rel: 'nofollow',
       },
-    };
+    } as SanitizerConfig;
   }
 
   /**
@@ -62,7 +61,10 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Elements
    */
-  private nodes: {button: HTMLButtonElement, input: HTMLInputElement} = {
+  private nodes: {
+    button: HTMLButtonElement;
+    input: HTMLInputElement;
+  } = {
     button: null,
     input: null,
   };
@@ -80,10 +82,10 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Available Inline Toolbar methods (open/close)
    */
-  private inlineToolbar: any;
+  private inlineToolbar: Toolbar;
 
   /**
-   * @param {{api: IAPI}} - CodeX Editor API
+   * @param {{api: API}} - CodeX Editor API
    */
   constructor({api}) {
     this.inlineToolbar = api.toolbar;
@@ -94,7 +96,7 @@ export default class LinkInlineTool implements InlineTool {
    * Create button for Inline Toolbar
    */
   public render(): HTMLElement {
-    this.nodes.button = document.createElement('button');
+    this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
     this.nodes.button.appendChild($.svg('link', 15, 14));
@@ -106,10 +108,10 @@ export default class LinkInlineTool implements InlineTool {
    * Input for the link
    */
   public renderActions(): HTMLElement {
-    this.nodes.input = document.createElement('input');
+    this.nodes.input = document.createElement('input') as HTMLInputElement;
     this.nodes.input.placeholder = 'Add a link';
     this.nodes.input.classList.add(this.CSS.input);
-    this.nodes.input.addEventListener('keydown', (event) => {
+    this.nodes.input.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.keyCode === this.ENTER_KEY ) {
         this.enterPressed(event);
       }

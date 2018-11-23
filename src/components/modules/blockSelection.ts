@@ -5,9 +5,9 @@
  * @module BlockSelection
  * @version 1.0.0
  */
-declare var Module: any;
-declare var _: any;
-declare var $: any;
+import Module from '../__module';
+import _ from '../utils';
+import $ from '../dom';
 
 import SelectionUtils from '../selection';
 

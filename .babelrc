@@ -1,7 +1,8 @@
 {
-  "presets": [
+ "presets": [
     ["@babel/preset-env", {
-      "modules": "umd"
+      "modules": "umd",
+      "useBuiltIns": "entry"
     }]
   ],
   "plugins": [

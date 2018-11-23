@@ -5,18 +5,10 @@
  * @author Codex Team
  * @version 2.0.0
  */
+import Module from '../__module';
+import {OutputData} from '../../../types';
 
-/**
- * @typedef {Object} SavedData
- * @property {Date} time - saving proccess time
- * @property {Object} blocks - extracted data
- * @property {String} version - CodexEditor version
- */
-interface SavedData {
-  time: number;
-  blocks: object[];
-  version: string;
-}
+declare const VERSION: string;
 
 /**
  * @classdesc This method reduces all Blocks asyncronically and calls Block's save method to extract data
@@ -25,48 +17,31 @@ interface SavedData {
  * @property {Element} html - Editor HTML content
  * @property {String} json - Editor JSON output
  */
-
-declare const Module: any;
-declare const VERSION: string;
-
 export default class Saver extends Module {
   /**
-   * @constructor
-   * @param config
-   */
-  constructor({config}) {
-    super({config});
-
-    this.output = null;
-    this.blocksData = [];
-  }
-
-  /**
    * Composes new chain of Promises to fire them alternatelly
-   * @return {SavedData}
+   * @return {OutputData}
    */
-  public save(): Promise<SavedData> {
-    const  blocks = this.Editor.BlockManager.blocks,
+  public async save(): Promise<OutputData> {
+    const blocks = this.Editor.BlockManager.blocks,
       chainData = [];
 
     blocks.forEach((block) => {
       chainData.push(block.data);
     });
 
-    return Promise.all(chainData)
-      .then((extractedData) => this.Editor.Sanitizer.sanitizeBlocks(extractedData))
-      .then((allExtractedData) => this.makeOutput(allExtractedData))
-      .then((outputData) => {
-        return outputData;
-      });
+    const extractedData = await Promise.all(chainData);
+
+    const sanitizedData = await this.Editor.Sanitizer.sanitizeBlocks(extractedData);
+    return this.makeOutput(sanitizedData);
   }
 
   /**
    * Creates output object with saved data, time and version of editor
    * @param {Object} allExtractedData
-   * @return {SavedData}
+   * @return {OutputData}
    */
-  private makeOutput(allExtractedData): SavedData {
+  private makeOutput(allExtractedData): OutputData {
     let totalTime = 0;
     const blocks = [];
 
@@ -87,8 +62,8 @@ export default class Saver extends Module {
 
     return {
       time: +new Date(),
-      version: VERSION,
       blocks,
+      version: VERSION,
     };
   }
 }

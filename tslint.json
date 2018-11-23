@@ -1,5 +1,10 @@
 {
   "extends": "tslint:recommended",
+  "linterOptions": {
+    "exclude": [
+      "node_modules"
+    ]
+  },
   "rules": {
     "indent": [true, "spaces", 2],
     "interface-name": false,
@@ -12,6 +17,11 @@
       "import-sources-order": "any",
       "named-imports-order": "case-insensitive"
     }],
-    "no-empty": false
+    "no-empty": false,
+    "no-namespace": false,
+    "variable-name": [true, "allow-leading-underscore", "allow-pascal-case"]
+  },
+  "globals": {
+    "require": true
   }
 }

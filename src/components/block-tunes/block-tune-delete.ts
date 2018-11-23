@@ -4,18 +4,16 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import IBlockTune from '../interfaces/block-tune';
+import {API, BlockTune} from '../../../types';
+import $ from '../dom';
 
-declare var $: any;
-declare var _: any;
-
-export default class DeleteTune implements IBlockTune {
+export default class DeleteTune implements BlockTune {
 
   /**
    * Property that contains CodeX Editor API methods
    * @see {docs/api.md}
    */
-  private readonly api: any;
+  private readonly api: API;
 
   /**
    * Styles
@@ -41,14 +39,14 @@ export default class DeleteTune implements IBlockTune {
   /**
    * Tune nodes
    */
-  private nodes = {
+  private nodes: {button: HTMLElement} = {
     button: null,
   };
 
   /**
    * DeleteTune constructor
    *
-   * @param {Object} api
+   * @param {{api: API}} api
    */
   constructor({api}) {
     this.api = api;
@@ -65,7 +63,7 @@ export default class DeleteTune implements IBlockTune {
   public render() {
     this.nodes.button = $.make('div', [this.CSS.button, this.CSS.buttonDelete], {});
     this.nodes.button.appendChild($.svg('cross', 12, 12));
-    this.api.listener.on(this.nodes.button, 'click', (event) => this.handleClick(event), false);
+    this.api.listeners.on(this.nodes.button, 'click', (event: MouseEvent) => this.handleClick(event), false);
     return this.nodes.button;
   }
 

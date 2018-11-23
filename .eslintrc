@@ -85,6 +85,8 @@
         "$": true,
         "_": true,
         "setTimeout": true,
+        "process": true,
+        "__dirname": true,
         "Map": true
     }
 }

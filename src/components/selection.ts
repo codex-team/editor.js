@@ -29,14 +29,13 @@ interface Document {
 
 /**
  * Working with selection
- * @typedef {Selection} Selection
+ * @typedef {SelectionUtils} SelectionUtils
  */
 export default class SelectionUtils {
 
   /**
    * Editor styles
    * @return {{editorWrapper: string, editorZone: string}}
-   * @constructor
    */
   static get CSS(): {editorWrapper: string, editorZone: string} {
     return {

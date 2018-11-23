@@ -9,6 +9,7 @@ interface Element {
   oMatchesSelector: (selector: string) => boolean;
 
   prepend: (nodes: Node|Node[]|any) => void;
+  append: (nodes: Node|Node[]|DocumentFragment|void) => void;
 }
 
 /**
