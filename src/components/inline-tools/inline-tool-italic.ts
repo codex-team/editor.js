@@ -50,12 +50,6 @@ export default class ItalicInlineTool implements InlineTool {
   };
 
   /**
-   * @param {{api: API}} - CodeX Editor API
-   */
-  constructor({api}) {
-  }
-
-  /**
    * Create button for Inline Toolbar
    */
   public render(): HTMLElement {

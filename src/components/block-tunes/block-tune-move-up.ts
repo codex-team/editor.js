@@ -28,7 +28,7 @@ export default class MoveUpTune implements BlockTune {
   /**
    * MoveUpTune constructor
    *
-   * @param {Object} api
+   * @param {{api: API}} api
    */
   public constructor({api}) {
     this.api = api;

@@ -50,12 +50,6 @@ export default class BoldInlineTool implements InlineTool {
   };
 
   /**
-   * @param {{api: API}} - CodeX Editor API
-   */
-  constructor({api}: {api: API}) {
-  }
-
-  /**
    * Create button for Inline Toolbar
    */
   public render(): HTMLElement {

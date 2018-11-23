@@ -46,9 +46,9 @@ export default class DeleteTune implements BlockTune {
   /**
    * DeleteTune constructor
    *
-   * @param {Object} api
+   * @param {{api: API}} api
    */
-  constructor({api}: {api: API}) {
+  constructor({api}) {
     this.api = api;
 
     this.resetConfirmation = () => {
