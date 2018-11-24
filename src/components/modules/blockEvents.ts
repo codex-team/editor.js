@@ -204,7 +204,7 @@ export default class BlockEvents extends Module {
       /**
        * Show Toolbar
        */
-      this.Editor.Toolbar.open();
+      this.Editor.Toolbar.open(false);
 
       /**
        * Show Plus Button
