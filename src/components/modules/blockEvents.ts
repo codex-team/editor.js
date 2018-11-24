@@ -235,6 +235,9 @@ export default class BlockEvents extends Module {
     const currentBlock = BlockManager.currentBlock,
       tool = this.Editor.Tools.available[currentBlock.name];
 
+    /**
+    * Check if Block should be removed by current Backspace keydown
+    */
     if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
       if (BlockSelection.allBlocksSelected) {
         this.removeAllBlocks();
