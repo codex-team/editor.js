@@ -262,7 +262,7 @@ export default class Core {
           config : this.configuration,
         });
       } catch ( e ) {
-        console.log('Module %o skipped because %o', Module, e);
+        _.log(`Module ${Module.displayName} skipped because`, 'warn',  e);
       }
     });
   }
