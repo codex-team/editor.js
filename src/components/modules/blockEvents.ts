@@ -3,6 +3,7 @@
  */
 import Module from '../__module';
 import _ from '../utils';
+import Caret from './caret';
 
 export default class BlockEvents extends Module {
   /**
@@ -230,6 +231,8 @@ export default class BlockEvents extends Module {
      * Remove all Blocks
      */
     if (BlockSelection.allBlocksSelected) {
+      console.log('removing all');
+      BlockSelection.clearSelection();
       BlockManager.removeAllBlocks();
       return;
     }
@@ -238,6 +241,7 @@ export default class BlockEvents extends Module {
      * If only one Block is selected
      */
     if (currentBlock.selected) {
+      console.log('removing current');
       BlockSelection.clearSelection();
       BlockManager.removeBlock();
 
@@ -249,7 +253,7 @@ export default class BlockEvents extends Module {
       if (BlockManager.currentBlockIndex === 0) {
         Caret.setToBlock(BlockManager.currentBlock);
       } else {
-        Caret.navigatePrevious(true);
+        Caret.setToBlock(BlockManager.previousBlock, 'end');
       }
 
       return;
@@ -278,7 +282,7 @@ export default class BlockEvents extends Module {
       if (BlockManager.currentBlockIndex === 0) {
         Caret.setToBlock(BlockManager.currentBlock);
       } else {
-        Caret.navigatePrevious(true);
+        Caret.setToBlock(BlockManager.previousBlock, 'end');
       }
 
       this.Editor.Toolbar.close();

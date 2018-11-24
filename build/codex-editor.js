@@ -15258,6 +15258,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
         if (BlockSelection.allBlocksSelected) {
+          console.log('removing all');
+          BlockSelection.clearSelection();
           BlockManager.removeAllBlocks();
           return;
         }
@@ -15267,6 +15269,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
         if (currentBlock.selected) {
+          console.log('removing current');
           BlockSelection.clearSelection();
           BlockManager.removeBlock();
           /**
@@ -15278,7 +15281,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           if (BlockManager.currentBlockIndex === 0) {
             Caret.setToBlock(BlockManager.currentBlock);
           } else {
-            Caret.navigatePrevious(true);
+            Caret.setToBlock(BlockManager.previousBlock, 'end');
           }
 
           return;
@@ -15308,7 +15311,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           if (BlockManager.currentBlockIndex === 0) {
             Caret.setToBlock(BlockManager.currentBlock);
           } else {
-            Caret.navigatePrevious(true);
+            Caret.setToBlock(BlockManager.previousBlock, 'end');
           }
 
           this.Editor.Toolbar.close();
@@ -16156,6 +16159,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (restoreSelection) {
           this.selection.restore();
         }
+        /** nothing selected */
+
+
+        this.allBlocksSelected = false;
       }
       /**
        * First CMD+A Selects current focused blocks,
@@ -16260,6 +16267,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.selection.save();
 
         _selection.default.get().removeAllRanges();
+        /** because only one Block is selected */
+
 
         this.allBlocksSelected = false;
         block.selected = true;
@@ -16619,13 +16628,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var previousInput = currentBlock.previousInput;
 
-        if (!previousContentfulBlock && !previousInput) {
-          return false;
-        }
-
         if (force) {
           this.setToBlock(previousContentfulBlock, Caret.positions.END);
           return true;
+        }
+
+        if (!previousContentfulBlock && !previousInput) {
+          return false;
         }
 
         if (this.isAtStart) {

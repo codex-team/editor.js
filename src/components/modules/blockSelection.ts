@@ -110,6 +110,9 @@ export default class BlockSelection extends Module {
     if (restoreSelection) {
       this.selection.restore();
     }
+
+    /** nothing selected */
+    this.allBlocksSelected = false;
   }
 
   /**
@@ -198,6 +201,7 @@ export default class BlockSelection extends Module {
     SelectionUtils.get()
       .removeAllRanges();
 
+    /** because only one Block is selected */
     this.allBlocksSelected = false;
 
     block.selected = true;
