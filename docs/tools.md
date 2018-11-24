@@ -47,7 +47,7 @@ Method that specifies how to merge two `Blocks` of the same type, for example on
 Method does accept data object in same format as the `Render` and it should provide logic how to combine new
 data with the currently stored value.
 
-### Internal Tool Settings
+## Internal Tool Settings
 
 Options that Tool can specify. All settings should be passed as static properties of Tool's class.
 
@@ -60,7 +60,7 @@ Options that Tool can specify. All settings should be passed as static propertie
 | `contentless` | _Boolean_ | `false` | Pass `true` for Tool which represents decorative empty `Blocks` |
 | `isInline` | _Boolean_ | `false` | Describes Tool as a [Tool for the Inline Toolbar](tools-inline.md) |
 
-### User configuration
+## User configuration
 
 All Tools can be configured by users. You can set up some of available settings along with Tool's class
 to the `tools` property of Editor Config.
@@ -87,7 +87,7 @@ There are few options available by CodeX Editor.
 | `inlineToolbar` | _Boolean/Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
 | `config` | _Object_ | `null` | User's configuration for Plugin.
 
-### Paste handling
+## Paste handling
 
 CodeX Editor handles paste on Blocks and provides API for Tools to process the pasted data.
 
@@ -101,7 +101,7 @@ Also Editor API allows you to define RegExp patterns to substitute them by your 
 To provide paste handling for your Tool you need to define static getter `pasteConfig` in Tool class.
 `pasteConfig` getter should return object with fields described below.
 
-##### HTML tags
+### HTML tags
 
 To handle pasted HTML elements object returned from `pasteConfig` getter should contain following field:
 
@@ -125,7 +125,7 @@ static get pasteConfig() {
 
 > One tag can be handled by one Tool only.
 
-##### Patterns
+### Patterns
 
 Your Tool can analyze text by RegExp patterns to substitute pasted string with data you want. Object returned from `pasteConfig` getter should contain following field to use patterns:
 
@@ -151,7 +151,7 @@ static get pasteConfig() {
 }
 ```
 
-##### Files
+### Files
 
 Your Tool can handle files pasted or dropped into the Editor.
 
@@ -177,7 +177,7 @@ static get pasteConfig() {
 }
 ```
 
-##### Handling
+### Handling
 
 If you registered some paste substitutions in `pasteConfig` property, you should provide `onPaste` callback in your Tool class.
 `onPaste` should be public non-static method. It accepts custom PasteEvent object as argument.
@@ -217,12 +217,12 @@ onPaste (event) {
 }
 ```
 
-### Sanitize
+## Sanitize
 
 CodeX Editor provides [API](sanitizer.md) to clean taint strings. 
 Use it manually at the `save()` method or or pass `sanitizer` config to do it automatically.
 
-#### Sanitizer Configuration
+### Sanitizer Configuration
 
 The example of sanitizer configuration
 
@@ -235,7 +235,7 @@ let sanitizerConfig = {
 
 Keys of config object is tags and the values is a rules. 
 
-##### Rule
+#### Rule
 
 Rule can be boolean, object or function. Object is a dictionary of rules for tag's attributes.
 
@@ -277,7 +277,7 @@ a: function(el) {
 }
 ```
 
-#### Manual sanitize
+### Manual sanitize
 
 Call API method `sanitizer.clean()` at the save method for each field in returned data.
 
@@ -289,7 +289,7 @@ save() {
 }
 ```
  
-#### Automatic sanitize
+### Automatic sanitize
 
 If you pass the sanitizer config as static getter, CodeX Editor will automatically sanitize your saved data.
 
