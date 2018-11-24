@@ -223,6 +223,8 @@ editor.saver.save()
 
 Take a look at the [example.html](example/example.html) to view more detailed examples.
 
+## Credits and references
 
+- We use [HTMLJanitor](https://github.com/guardian/html-janitor) module in our Sanitizer module. 
 
 
