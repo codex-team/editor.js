@@ -335,7 +335,7 @@ export default class UI extends Module {
 
     if (isInitialBlock) {
       /**
-       * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with may nodes (for ex. Table)
+       * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
        */
       const isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
 
