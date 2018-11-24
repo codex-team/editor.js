@@ -3,6 +3,7 @@
  */
 import Module from '../__module';
 import _ from '../utils';
+import CaretClass from './caret';
 
 export default class BlockEvents extends Module {
   /**
@@ -234,25 +235,15 @@ export default class BlockEvents extends Module {
     const currentBlock = BlockManager.currentBlock,
       tool = this.Editor.Tools.available[currentBlock.name];
 
-    let alreadyRemoved = false;
-
-    if (BlockSelection.allBlocksSelected) {
-      /** Clear selection */
-      BlockSelection.clearSelection();
-
-      alreadyRemoved = this.removeAllBlocks();
-    } else if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+    if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+      if (BlockSelection.allBlocksSelected) {
+        this.removeAllBlocks();
+      } else {
+        this.removeCurrentBlock();
+      }
 
       /** Clear selection */
       BlockSelection.clearSelection();
-
-      alreadyRemoved = this.removeCurrentBlock();
-    }
-
-    /**
-     * We have removed Block on previous step
-     */
-    if (alreadyRemoved) {
       return;
     }
 
@@ -307,7 +298,7 @@ export default class BlockEvents extends Module {
     if (BlockManager.currentBlockIndex === 0) {
       Caret.setToBlock(BlockManager.currentBlock);
     } else {
-      Caret.setToBlock(BlockManager.previousBlock, 'end');
+      Caret.setToBlock(BlockManager.previousBlock, CaretClass.positions.END);
     }
 
     this.Editor.Toolbar.close();

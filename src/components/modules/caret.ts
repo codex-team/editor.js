@@ -365,13 +365,13 @@ export default class Caret extends Module {
 
     const {previousInput} = currentBlock;
 
+    if (!previousContentfulBlock && !previousInput) {
+      return false;
+    }
+
     if (force) {
       this.setToBlock( previousContentfulBlock, Caret.positions.END );
       return true;
-    }
-
-    if (!previousContentfulBlock && !previousInput) {
-      return false;
     }
 
     if (this.isAtStart) {

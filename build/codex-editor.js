@@ -14973,12 +14973,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ./caret */ "./src/components/modules/caret.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _utils) {
+})(this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _utils, _caret) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -14994,6 +14994,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _inherits2 = _interopRequireDefault(_inherits2);
   _module = _interopRequireDefault(_module);
   _utils = _interopRequireDefault(_utils);
+  _caret = _interopRequireDefault(_caret);
 
   /**
    * Contains keyboard and mouse events binded on each Block by Block Manager
@@ -15260,23 +15261,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             Caret = _this$Editor.Caret;
         var currentBlock = BlockManager.currentBlock,
             tool = this.Editor.Tools.available[currentBlock.name];
-        var alreadyRemoved = false;
 
-        if (BlockSelection.allBlocksSelected) {
+        if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+          if (BlockSelection.allBlocksSelected) {
+            this.removeAllBlocks();
+          } else {
+            this.removeCurrentBlock();
+          }
           /** Clear selection */
-          BlockSelection.clearSelection();
-          alreadyRemoved = this.removeAllBlocks();
-        } else if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
-          /** Clear selection */
-          BlockSelection.clearSelection();
-          alreadyRemoved = this.removeCurrentBlock();
-        }
-        /**
-         * We have removed Block on previous step
-         */
 
 
-        if (alreadyRemoved) {
+          BlockSelection.clearSelection();
           return;
         }
         /**
@@ -15337,7 +15332,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (BlockManager.currentBlockIndex === 0) {
           Caret.setToBlock(BlockManager.currentBlock);
         } else {
-          Caret.setToBlock(BlockManager.previousBlock, 'end');
+          Caret.setToBlock(BlockManager.previousBlock, _caret.default.positions.END);
         }
 
         this.Editor.Toolbar.close();
@@ -16167,25 +16162,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function clearSelection() {
         var restoreSelection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
         var BlockManager = this.Editor.BlockManager;
-        var anyBlockSelected = BlockManager.blocks.findIndex(function (block) {
+        var anyBlockSelected = BlockManager.blocks.some(function (block) {
           return block.selected === true;
-        }) !== -1;
+        });
+        this.allBlocksSelected = false;
+        this.needToSelectAll = false;
 
         if (!anyBlockSelected) {
           return;
         }
-
-        this.needToSelectAll = false;
-        BlockManager.blocks.forEach(function (block) {
-          return block.selected = false;
-        });
-        /** nothing selected */
-
-        this.allBlocksSelected = false;
         /**
          * restore selection when Block is already selected
          * but someone tries to write something.
          */
+
 
         if (restoreSelection) {
           this.selection.restore();
@@ -16263,9 +16253,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function selectAllBlocks() {
         var BlockManager = this.Editor.BlockManager;
         this.allBlocksSelected = true;
-        BlockManager.blocks.forEach(function (block) {
-          return block.selected = true;
-        });
       }
       /**
        * select Block
@@ -16294,10 +16281,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.selection.save();
 
         _selection.default.get().removeAllRanges();
-        /** because only one Block is selected */
 
-
-        this.allBlocksSelected = false;
         block.selected = true;
       }
     }, {
@@ -16327,6 +16311,30 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           i: {},
           u: {}
         };
+      }
+      /**
+       * Flag that identifies all Blocks selection
+       * @return {boolean}
+       */
+
+    }, {
+      key: "allBlocksSelected",
+      get: function get() {
+        var BlockManager = this.Editor.BlockManager;
+        return BlockManager.blocks.every(function (block) {
+          return block.selected === true;
+        });
+      }
+      /**
+       * Set selected all blocks
+       * @param {boolean} state
+       */
+      ,
+      set: function set(state) {
+        var BlockManager = this.Editor.BlockManager;
+        BlockManager.blocks.forEach(function (block) {
+          return block.selected = state;
+        });
       }
     }]);
     return BlockSelection;
@@ -16655,13 +16663,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var previousInput = currentBlock.previousInput;
 
+        if (!previousContentfulBlock && !previousInput) {
+          return false;
+        }
+
         if (force) {
           this.setToBlock(previousContentfulBlock, Caret.positions.END);
           return true;
-        }
-
-        if (!previousContentfulBlock && !previousInput) {
-          return false;
         }
 
         if (this.isAtStart) {

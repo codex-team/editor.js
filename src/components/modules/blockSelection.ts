@@ -45,11 +45,6 @@ export default class BlockSelection extends Module {
   }
 
   /**
-   * Flag that identifies all Blocks selection
-   * @type {boolean}
-   */
-  public allBlocksSelected: boolean;
-  /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
    * @type {boolean}
@@ -61,6 +56,26 @@ export default class BlockSelection extends Module {
    * @type {SelectionUtils}
    */
   private selection: SelectionUtils;
+
+  /**
+   * Flag that identifies all Blocks selection
+   * @return {boolean}
+   */
+  public get allBlocksSelected(): boolean {
+    const { BlockManager } = this.Editor;
+
+    return BlockManager.blocks.every( (block) => block.selected === true);
+  }
+
+  /**
+   * Set selected all blocks
+   * @param {boolean} state
+   */
+  public set allBlocksSelected(state: boolean) {
+    const { BlockManager } = this.Editor;
+
+    BlockManager.blocks.forEach( (block) => block.selected = state);
+  }
 
   /**
    * Module Preparation
@@ -94,17 +109,14 @@ export default class BlockSelection extends Module {
    */
   public clearSelection(restoreSelection = false) {
     const { BlockManager } = this.Editor;
-    const anyBlockSelected = BlockManager.blocks.findIndex( (block) => block.selected === true) !== -1;
+    const anyBlockSelected = BlockManager.blocks.some( (block) => block.selected === true);
+
+    this.allBlocksSelected = false;
+    this.needToSelectAll = false;
 
     if (!anyBlockSelected) {
       return;
     }
-
-    this.needToSelectAll = false;
-    BlockManager.blocks.forEach( (block) => block.selected = false);
-
-    /** nothing selected */
-    this.allBlocksSelected = false;
 
     /**
      * restore selection when Block is already selected
@@ -173,7 +185,6 @@ export default class BlockSelection extends Module {
     const { BlockManager } = this.Editor;
 
     this.allBlocksSelected = true;
-    BlockManager.blocks.forEach( (block) => block.selected = true);
   }
 
   /**
@@ -200,9 +211,6 @@ export default class BlockSelection extends Module {
     this.selection.save();
     SelectionUtils.get()
       .removeAllRanges();
-
-    /** because only one Block is selected */
-    this.allBlocksSelected = false;
 
     block.selected = true;
   }
