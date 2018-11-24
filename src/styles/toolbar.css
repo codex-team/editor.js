@@ -47,6 +47,11 @@
     right: 0;
     top: 10px;
     padding-right: 16px;
+    opacity: 0;
+
+    &--opened {
+      opacity: 1;
+    }
 
     &-buttons {
       text-align: right;
