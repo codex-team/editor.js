@@ -179,14 +179,6 @@ export default class Block {
    * @return {Boolean}
    */
   get isEmpty(): boolean {
-    /**
-     * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
-     * That Tools are not empty
-     */
-    if (this.class.contentless) {
-      return false;
-    }
-
     const emptyText = $.isEmpty(this.pluginsContent),
       emptyMedia = !this.hasMedia;
 
@@ -218,15 +210,10 @@ export default class Block {
 
   /**
    * Set focused state
-   * We don't need to mark Block as focused when it is empty
    * @param {Boolean} state - 'true' to select, 'false' to remove selection
    */
   set focused(state: boolean) {
-    if (state === true && !this.isEmpty) {
-      this.holder.classList.add(Block.CSS.focused);
-    } else {
-      this.holder.classList.remove(Block.CSS.focused);
-    }
+    this.holder.classList.toggle(Block.CSS.focused, state);
   }
 
   /**
