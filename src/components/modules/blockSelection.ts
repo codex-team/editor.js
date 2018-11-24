@@ -12,6 +12,43 @@ import $ from '../dom';
 import SelectionUtils from '../selection';
 
 export default class BlockSelection extends Module {
+
+  /**
+   * Sanitizer Config
+   * @return {SanitizerConfig}
+   */
+  private get sanitizerConfig() {
+    return {
+      p: {},
+      h1: {},
+      h2: {},
+      h3: {},
+      h4: {},
+      h5: {},
+      h6: {},
+      ol: {},
+      ul: {},
+      li: {},
+      br: true,
+      img: {
+        src: true,
+        width: true,
+        height: true,
+      },
+      a: {
+        href: true,
+      },
+      b: {},
+      i: {},
+      u: {},
+    };
+  }
+
+  /**
+   * Flag that identifies all Blocks selection
+   * @type {boolean}
+   */
+  public allBlocksSelected: boolean;
   /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
@@ -132,6 +169,7 @@ export default class BlockSelection extends Module {
   private selectAllBlocks() {
     const { BlockManager } = this.Editor;
 
+    this.allBlocksSelected = true;
     BlockManager.blocks.forEach( (block) => block.selected = true);
   }
 
@@ -160,37 +198,8 @@ export default class BlockSelection extends Module {
     SelectionUtils.get()
       .removeAllRanges();
 
-    block.selected = true;
-  }
+    this.allBlocksSelected = false;
 
-  /**
-   * Sanitizer Config
-   * @return {SanitizerConfig}
-   */
-  private get sanitizerConfig() {
-    return {
-      p: {},
-      h1: {},
-      h2: {},
-      h3: {},
-      h4: {},
-      h5: {},
-      h6: {},
-      ol: {},
-      ul: {},
-      li: {},
-      br: true,
-      img: {
-        src: true,
-        width: true,
-        height: true,
-      },
-      a: {
-        href: true,
-      },
-      b: {},
-      i: {},
-      u: {},
-    };
+    block.selected = true;
   }
 }

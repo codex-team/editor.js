@@ -241,6 +241,21 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Attention!
+   * After removing insert new initial typed Block and focus on it
+   * Removes all blocks
+   */
+  public removeAllBlocks(): void {
+    for (let index = this.blocks.length - 1; index >= 0; index--) {
+      this._blocks.remove(index);
+    }
+
+    this.currentBlockIndex = -1;
+    this.insert();
+    this.currentBlock.firstInput.focus();
+  }
+
+  /**
    * Split current Block
    * 1. Extract content from Caret position to the Block`s end
    * 2. Insert a new Block below current one with extracted content
