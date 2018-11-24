@@ -101,9 +101,9 @@ Also Editor API allows you to define your own pasting scenario. You can either:
 1. Specify **HTML tags**, that can be represented by your Tool. For example, Image Tool can handle `<img>` tags. 
 If tags you specified will be found on content pasting, your Tool will be rendered.
 2. Specify **RegExp** for pasted strings. If pattern has been matched, your Tool will be rendered.
-3. Specify **MIME type** of files that can be handled by your Tool on pasting by drag-n-drop or from clipboard.
+3. Specify **MIME type** or **extensions** of files that can be handled by your Tool on pasting by drag-n-drop or from clipboard.
  
-For each scenario, you should to 2 things:
+For each scenario, you should do 2 next things:
 
 1. Define static getter `pasteConfig` in Tool class. Specify handled patterns there.
 2. Define public method `onPaste` that will handle PasteEvent to process pasted data. 
