@@ -10835,7 +10835,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /** Editor version */
       get: function get() {
-        return "2.5.3";
+        return "2.5.5";
       }
       /**
        * @constructor
@@ -11818,14 +11818,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "isEmpty",
       get: function get() {
-        /**
-         * Allow Tool to represent decorative contentless blocks: for example "* * *"-tool
-         * That Tools are not empty
-         */
-        if (this.class.contentless) {
-          return false;
-        }
-
         var emptyText = _dom.default.isEmpty(this.pluginsContent),
             emptyMedia = !this.hasMedia;
 
@@ -11848,18 +11840,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Set focused state
-       * We don't need to mark Block as focused when it is empty
        * @param {Boolean} state - 'true' to select, 'false' to remove selection
        */
 
     }, {
       key: "focused",
       set: function set(state) {
-        if (state === true && !this.isEmpty) {
-          this.holder.classList.add(Block.CSS.focused);
-        } else {
-          this.holder.classList.remove(Block.CSS.focused);
-        }
+        this.holder.classList.toggle(Block.CSS.focused, state);
       }
       /**
        * Set selected state
@@ -12209,12 +12196,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(this, function (_exports, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _dom, _utils) {
+})(this, function (_exports, _typeof2, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _dom, _utils) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -12223,6 +12210,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     value: true
   });
   _exports.default = void 0;
+  _typeof2 = _interopRequireDefault(_typeof2);
   _regenerator = _interopRequireDefault(_regenerator);
   _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
@@ -12572,13 +12560,26 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       set: function set(config) {
         /**
          * Process zero-configuration or with only holderId
+         * Make config object
          */
-        if (typeof config === 'string' || typeof config === 'undefined') {
-          this.config = {
-            holderId: config || 'codex-editor'
+        if ((0, _typeof2.default)(config) !== 'object') {
+          config = {
+            holderId: config
           };
-        } else {
-          this.config = config;
+        }
+        /**
+         * Place config into the class property
+         * @type {EditorConfig}
+         */
+
+
+        this.config = config;
+        /**
+         * If holderId is empty then set a default value
+         */
+
+        if (!this.config.holderId || typeof this.config.holderId !== 'string') {
+          this.config.holderId = 'codex-editor';
         }
         /**
          * If initial Block's Tool was not passed, use the Paragraph Tool
@@ -15130,12 +15131,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var shiftKey = event.shiftKey,
             direction = shiftKey ? 'left' : 'right';
+        /**
+         * Don't show Plus and Toolbox near not-inital Tools
+         */
 
-        if (this.Editor.Toolbar.opened && currentBlock.isEmpty) {
-          this.Editor.Toolbox.open();
-        } else if (currentBlock.isEmpty) {
-          this.Editor.Toolbar.open();
-          this.Editor.Toolbar.plusButton.show();
+        if (!this.Editor.Tools.isInitial(currentBlock.tool)) {
+          return;
+        }
+
+        if (currentBlock.isEmpty) {
+          if (!this.Editor.Toolbar.opened) {
+            this.Editor.Toolbar.open(false, false);
+            this.Editor.Toolbar.plusButton.show();
+          }
+
           this.Editor.Toolbox.open();
         }
 
@@ -15245,45 +15254,29 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "backspace",
       value: function backspace(event) {
-        var _this = this;
-
         var _this$Editor = this.Editor,
             BlockManager = _this$Editor.BlockManager,
             BlockSelection = _this$Editor.BlockSelection,
             Caret = _this$Editor.Caret;
         var currentBlock = BlockManager.currentBlock,
             tool = this.Editor.Tools.available[currentBlock.name];
-        /**
-         * Remove all Blocks
-         */
+        var alreadyRemoved = false;
 
         if (BlockSelection.allBlocksSelected) {
-          console.log('removing all');
+          /** Clear selection */
           BlockSelection.clearSelection();
-          BlockManager.removeAllBlocks();
-          return;
+          alreadyRemoved = this.removeAllBlocks();
+        } else if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+          /** Clear selection */
+          BlockSelection.clearSelection();
+          alreadyRemoved = this.removeCurrentBlock();
         }
         /**
-         * If only one Block is selected
+         * We have removed Block on previous step
          */
 
 
-        if (currentBlock.selected) {
-          console.log('removing current');
-          BlockSelection.clearSelection();
-          BlockManager.removeBlock();
-          /**
-           * In case of deletion first block we need to set caret to the current Block
-           * After BlockManager removes the Block (which is current now),
-           * pointer that references to the current Block, now points to the Next
-           */
-
-          if (BlockManager.currentBlockIndex === 0) {
-            Caret.setToBlock(BlockManager.currentBlock);
-          } else {
-            Caret.setToBlock(BlockManager.previousBlock, 'end');
-          }
-
+        if (alreadyRemoved) {
           return;
         }
         /**
@@ -15298,32 +15291,69 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var isFirstBlock = BlockManager.currentBlockIndex === 0,
             canMergeBlocks = Caret.isAtStart && !isFirstBlock;
-        /** If current Block is empty just remove this Block */
 
-        if (BlockManager.currentBlock.isEmpty) {
-          BlockManager.removeBlock();
+        if (canMergeBlocks) {
           /**
-           * In case of deletion first block we need to set caret to the current Block
-           * After BlockManager removes the Block (which is current now),
-           * pointer that references to the current Block, now points to the Next
+           * preventing browser default behaviour
+           */
+          event.preventDefault();
+          /**
+           * Merge Blocks
            */
 
-          if (BlockManager.currentBlockIndex === 0) {
-            Caret.setToBlock(BlockManager.currentBlock);
-          } else {
-            Caret.setToBlock(BlockManager.previousBlock, 'end');
-          }
+          this.mergeBlocks();
+        }
+      }
+      /**
+       * remove all selected Blocks
+       */
 
-          this.Editor.Toolbar.close();
-          return;
+    }, {
+      key: "removeAllBlocks",
+      value: function removeAllBlocks() {
+        var BlockManager = this.Editor.BlockManager;
+        BlockManager.removeAllBlocks();
+        return true;
+      }
+      /**
+       * remove current Block and sets Caret to the correct position
+       */
+
+    }, {
+      key: "removeCurrentBlock",
+      value: function removeCurrentBlock() {
+        var _this$Editor2 = this.Editor,
+            BlockManager = _this$Editor2.BlockManager,
+            Caret = _this$Editor2.Caret;
+        /** If current Block is empty just remove this Block */
+
+        BlockManager.removeBlock();
+        /**
+         * In case of deletion first block we need to set caret to the current Block
+         * After BlockManager removes the Block (which is current now),
+         * pointer that references to the current Block, now points to the Next
+         */
+
+        if (BlockManager.currentBlockIndex === 0) {
+          Caret.setToBlock(BlockManager.currentBlock);
+        } else {
+          Caret.setToBlock(BlockManager.previousBlock, 'end');
         }
 
-        if (!canMergeBlocks) {
-          return;
-        } // preventing browser default behaviour
+        this.Editor.Toolbar.close();
+        return true;
+      }
+      /**
+       * Merge current and previous Blocks if they have the same type
+       */
 
-
-        event.preventDefault();
+    }, {
+      key: "mergeBlocks",
+      value: function mergeBlocks() {
+        var _this$Editor3 = this.Editor,
+            BlockManager = _this$Editor3.BlockManager,
+            Caret = _this$Editor3.Caret,
+            Toolbar = _this$Editor3.Toolbar;
         var targetBlock = BlockManager.getBlockByIndex(BlockManager.currentBlockIndex - 1),
             blockToMerge = BlockManager.currentBlock;
         /**
@@ -15336,7 +15366,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
           if (Caret.navigatePrevious()) {
-            this.Editor.Toolbar.close();
+            Toolbar.close();
           }
 
           return;
@@ -15345,11 +15375,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         Caret.createShadow(targetBlock.pluginsContent);
         BlockManager.mergeBlocks(targetBlock, blockToMerge).then(function () {
           /** Restore caret position after merge */
-          _this.Editor.Caret.restoreCaret(targetBlock.pluginsContent);
-
+          Caret.restoreCaret(targetBlock.pluginsContent);
           targetBlock.pluginsContent.normalize();
-
-          _this.Editor.Toolbar.close();
+          Toolbar.close();
         });
       }
       /**
@@ -16151,6 +16179,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         BlockManager.blocks.forEach(function (block) {
           return block.selected = false;
         });
+        /** nothing selected */
+
+        this.allBlocksSelected = false;
         /**
          * restore selection when Block is already selected
          * but someone tries to write something.
@@ -16159,10 +16190,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (restoreSelection) {
           this.selection.restore();
         }
-        /** nothing selected */
-
-
-        this.allBlocksSelected = false;
       }
       /**
        * First CMD+A Selects current focused blocks,
@@ -19405,7 +19432,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return {
           time: +new Date(),
           blocks: blocks,
-          version: "2.5.3"
+          version: "2.5.5"
         };
       }
     }]);
@@ -19944,6 +19971,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Open Toolbar with Plus Button and Actions
        * @param {boolean} withBlockActions - by default, Toolbar opens with Block Actions.
        *                                     This flag allows to open Toolbar without Actions.
+       * @param {boolean} needToCloseToolbox - by default, Toolbar will be moved with opening
+       *                                      (by click on Block, or by enter)
+       *                                      with closing Toolbox and Block Settings
+       *                                      This flag allows to open Toolbar with Toolbox
        */
 
     }, {
@@ -19952,12 +19983,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _this3 = this;
 
         var withBlockActions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-        /**
-         * Wait Block rendering for correct height computing
-         */
+        var needToCloseToolbox = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
         setTimeout(function () {
-          _this3.move();
+          _this3.move(needToCloseToolbox);
 
           _this3.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
 
@@ -20987,16 +21015,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * @type {Block}
          */
         var currentBlock = this.Editor.BlockManager.currentBlock;
-        /**
-         * We do replace if:
-         * - block is empty
-         * - block is not irreplaceable
-         * @type {Array}
-         */
-
         var newBlock;
 
-        if (!tool[this.Editor.Tools.apiSettings.IS_IRREPLACEBLE_TOOL] && currentBlock.isEmpty) {
+        if (currentBlock.isEmpty) {
           newBlock = this.Editor.BlockManager.replace(toolName);
         } else {
           newBlock = this.Editor.BlockManager.insert(toolName);
@@ -21101,35 +21122,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @module Codex Editor Tools Submodule
    *
    * Creates Instances from Plugins and binds external config to the instances
-   */
-
-  /**
-   * Each Tool must contain the following important objects:
-   *
-   * @typedef {Object} ToolConfig {@link docs/tools.md}
-   * @property {String} iconClassname - this a icon in toolbar
-   * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
-   * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
-   * @property {Boolean|String[]} inlineToolbar - Pass `true` to enable the Inline Toolbar with all Tools,
-   *                                              all pass an array with specified Tools list
-   * @property render @todo add description
-   * @property save @todo add description
-   * @property settings @todo add description
-   * @property validate - method that validates output data before saving
-   */
-
-  /**
-   * @typedef {Function} Tool {@link docs/tools.md}
-   * @property {Boolean}      displayInToolbox      - By default, tools won't be added in the Toolbox. Pass true to add.
-   * @property {String}       iconClassName         - CSS class name for the Toolbox button
-   * @property {Boolean}      irreplaceable         - Toolbox behaviour: replace or add new block below
-   * @property render
-   * @property save
-   * @property settings
-   * @property validate
-   *
-   * @todo update according to current API
-   * @todo describe Tool in the {@link docs/tools.md}
    */
 
   /**
@@ -21539,12 +21531,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       get: function get() {
         return {
           CONFIG: 'config',
-          IS_CONTENTLESS: 'contentless',
           IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
           IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
           IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
           IS_INLINE: 'isInline',
-          IS_IRREPLACEBLE_TOOL: 'irreplaceable',
           IS_PASTE_DISALLOWED: 'disallowPaste',
           SHORTCUT: 'shortcut',
           TOOLBAR_ICON: 'toolboxIcon',
@@ -22600,7 +22590,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        var editorLabelText = "Editor.js ".concat("2.5.3");
+        var editorLabelText = "Editor.js ".concat("2.5.5");
         var editorLabelStyle = "line-height: 1em;\n            color: #006FEA;\n            display: inline-block;\n            font-size: 11px;\n            line-height: 1em;\n            background-color: #fff;\n            padding: 4px 9px;\n            border-radius: 30px;\n            border: 1px solid rgba(56, 138, 229, 0.16);\n            margin: 4px 5px 4px 0;";
 
         try {

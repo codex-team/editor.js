@@ -3,7 +3,6 @@
  */
 import Module from '../__module';
 import _ from '../utils';
-import Caret from './caret';
 
 export default class BlockEvents extends Module {
   /**
@@ -119,11 +118,19 @@ export default class BlockEvents extends Module {
     const shiftKey = event.shiftKey,
       direction = shiftKey ? 'left' : 'right';
 
-    if (this.Editor.Toolbar.opened && currentBlock.isEmpty) {
-      this.Editor.Toolbox.open();
-    } else if (currentBlock.isEmpty) {
-      this.Editor.Toolbar.open();
-      this.Editor.Toolbar.plusButton.show();
+    /**
+     * Don't show Plus and Toolbox near not-inital Tools
+     */
+    if (!this.Editor.Tools.isInitial(currentBlock.tool)) {
+      return;
+    }
+
+    if (currentBlock.isEmpty) {
+      if (!this.Editor.Toolbar.opened) {
+        this.Editor.Toolbar.open(false , false);
+        this.Editor.Toolbar.plusButton.show();
+      }
+
       this.Editor.Toolbox.open();
     }
 
@@ -227,35 +234,25 @@ export default class BlockEvents extends Module {
     const currentBlock = BlockManager.currentBlock,
       tool = this.Editor.Tools.available[currentBlock.name];
 
-    /**
-     * Remove all Blocks
-     */
+    let alreadyRemoved = false;
+
     if (BlockSelection.allBlocksSelected) {
-      console.log('removing all');
+      /** Clear selection */
       BlockSelection.clearSelection();
-      BlockManager.removeAllBlocks();
-      return;
+
+      alreadyRemoved = this.removeAllBlocks();
+    } else if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+
+      /** Clear selection */
+      BlockSelection.clearSelection();
+
+      alreadyRemoved = this.removeCurrentBlock();
     }
 
     /**
-     * If only one Block is selected
+     * We have removed Block on previous step
      */
-    if (currentBlock.selected) {
-      console.log('removing current');
-      BlockSelection.clearSelection();
-      BlockManager.removeBlock();
-
-      /**
-       * In case of deletion first block we need to set caret to the current Block
-       * After BlockManager removes the Block (which is current now),
-       * pointer that references to the current Block, now points to the Next
-       */
-      if (BlockManager.currentBlockIndex === 0) {
-        Caret.setToBlock(BlockManager.currentBlock);
-      } else {
-        Caret.setToBlock(BlockManager.previousBlock, 'end');
-      }
-
+    if (alreadyRemoved) {
       return;
     }
 
@@ -270,32 +267,58 @@ export default class BlockEvents extends Module {
     const isFirstBlock = BlockManager.currentBlockIndex === 0,
       canMergeBlocks = Caret.isAtStart && !isFirstBlock;
 
-    /** If current Block is empty just remove this Block */
-    if (BlockManager.currentBlock.isEmpty) {
-      BlockManager.removeBlock();
+    if (canMergeBlocks) {
+      /**
+       * preventing browser default behaviour
+       */
+      event.preventDefault();
 
       /**
-       * In case of deletion first block we need to set caret to the current Block
-       * After BlockManager removes the Block (which is current now),
-       * pointer that references to the current Block, now points to the Next
+       * Merge Blocks
        */
-      if (BlockManager.currentBlockIndex === 0) {
-        Caret.setToBlock(BlockManager.currentBlock);
-      } else {
-        Caret.setToBlock(BlockManager.previousBlock, 'end');
-      }
+      this.mergeBlocks();
+    }
+  }
 
-      this.Editor.Toolbar.close();
-      return;
+  /**
+   * remove all selected Blocks
+   */
+  private removeAllBlocks(): boolean {
+    const { BlockManager } = this.Editor;
+
+    BlockManager.removeAllBlocks();
+    return true;
+  }
+
+  /**
+   * remove current Block and sets Caret to the correct position
+   */
+  private removeCurrentBlock(): boolean {
+    const { BlockManager, Caret } = this.Editor;
+
+    /** If current Block is empty just remove this Block */
+    BlockManager.removeBlock();
+
+    /**
+     * In case of deletion first block we need to set caret to the current Block
+     * After BlockManager removes the Block (which is current now),
+     * pointer that references to the current Block, now points to the Next
+     */
+    if (BlockManager.currentBlockIndex === 0) {
+      Caret.setToBlock(BlockManager.currentBlock);
+    } else {
+      Caret.setToBlock(BlockManager.previousBlock, 'end');
     }
 
-    if (!canMergeBlocks) {
-      return;
-    }
+    this.Editor.Toolbar.close();
+    return true;
+  }
 
-    // preventing browser default behaviour
-    event.preventDefault();
-
+  /**
+   * Merge current and previous Blocks if they have the same type
+   */
+  private mergeBlocks() {
+    const { BlockManager, Caret, Toolbar } = this.Editor;
     const targetBlock = BlockManager.getBlockByIndex(BlockManager.currentBlockIndex - 1),
       blockToMerge = BlockManager.currentBlock;
 
@@ -308,7 +331,7 @@ export default class BlockEvents extends Module {
      */
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
       if (Caret.navigatePrevious()) {
-        this.Editor.Toolbar.close();
+        Toolbar.close();
       }
 
       return;
@@ -318,9 +341,9 @@ export default class BlockEvents extends Module {
     BlockManager.mergeBlocks(targetBlock, blockToMerge)
       .then( () => {
         /** Restore caret position after merge */
-        this.Editor.Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
+        Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
         targetBlock.pluginsContent.normalize();
-        this.Editor.Toolbar.close();
+        Toolbar.close();
       });
   }
 

@@ -103,6 +103,9 @@ export default class BlockSelection extends Module {
     this.needToSelectAll = false;
     BlockManager.blocks.forEach( (block) => block.selected = false);
 
+    /** nothing selected */
+    this.allBlocksSelected = false;
+
     /**
      * restore selection when Block is already selected
      * but someone tries to write something.
@@ -110,9 +113,6 @@ export default class BlockSelection extends Module {
     if (restoreSelection) {
       this.selection.restore();
     }
-
-    /** nothing selected */
-    this.allBlocksSelected = false;
   }
 
   /**
