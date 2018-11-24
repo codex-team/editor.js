@@ -98,47 +98,40 @@ When user pastes content into Editor, pasted content is splitted into blocks.
 
 Also Editor API allows you to define RegExp patterns to substitute them by your data.
 
-To provide paste handling for your Tool you need to define static getter `onPaste` in Tool class.
-`onPaste` getter should return object with fields described below.
+To provide paste handling for your Tool you need to define static getter `pasteConfig` in Tool class.
+`pasteConfig` getter should return object with fields described below.
 
-##### HTML tags handling
+##### HTML tags
 
-To handle pasted HTML elements object returned from `onPaste` getter should contain following fields:
+To handle pasted HTML elements object returned from `pasteConfig` getter should contain following field:
 
 | Name | Type | Description |
 | -- | -- | -- |
-| `handler(content: HTMLElement)` | `Function` | _Optional_. Pasted HTML elements handler. Gets one argument `content`. `content` is HTML element extracted from pasted data. Handler should return the same object as Tool's `save` method |
 | `tags` | `String[]` | _Optional_. Should contain all tag names you want to be extracted from pasted data and be passed to your `handler` method |
 
-
-For correct work you MUST provide `onPaste.handler` at least for `initialBlock` Tool.
+For correct work you MUST provide `onPaste` handler at least for `initialBlock` Tool.
 
 > Example
 
 Header tool can handle `H1`-`H6` tags using paste handling API
 
 ```javascript
-static get onPaste() {
+static get pasteConfig() {
   return {
     tags: ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'],
-    handler: (element) => ({
-      type: element.tagName,
-      text: element.innerHTML
-    })
   }
 }
 ```
 
 > One tag can be handled by one Tool only.
 
-##### Patterns handling
+##### Patterns
 
-Your Tool can analyze text by RegExp patterns to substitute pasted string with data you want. Object returned from `onPaste` getter should contain following fields to use patterns:
+Your Tool can analyze text by RegExp patterns to substitute pasted string with data you want. Object returned from `pasteConfig` getter should contain following field to use patterns:
 
 | Name | Type | Description |
 | -- | -- | -- |
 | `patterns` | `Object` | _Optional_. `patterns` object contains RegExp patterns with their names as object's keys |
-| `patternHandler(text: string, key: string)` | `Function` | _Optional_. Gets pasted string and pattern name. Should return the same object as Tool `save` method |
 
 **Note** Editor will check pattern's full match, so don't forget to handle all available chars in there.
 
@@ -149,57 +142,77 @@ Pattern will be processed only if paste was on `initialBlock` Tool and pasted st
 You can handle youtube links and insert embeded video instead:
 
 ```javascript
-static get onPaste() {
+static get pasteConfig() {
   return {
     patterns: {
       youtube: /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?[\w\?‌​=]*)?/
     },
-    patternHandler: (text, key) => {
-      const urlData = Youtube.onPaste.patterns[key].exec(text);
-
-      return {
-        iframe: Youtube.makeEmbededFromURL(urlData)
-      };
-    }
   }
 }
 ```
-
-> Both `onPaste.handler` and `onPaste.patternHandler` can be `async` or return a `Promise`.
 
 ##### Files
 
 Your Tool can handle files pasted or dropped into the Editor.
 
-To handle file you should provide `files` and `fileHandler` properties in your `onPaste` configuration object.
+To handle file you should provide `files`  property in your `pasteConfig` configuration object.
 
-`fileHandler` property should be a function which takes File object as an argument and returns the same object as Tool\`s `save` method.
-
-`file` property is an object with the following fields:
+`files` property is an object with the following fields:
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | `extensions` | `string[]` | _Optional_ Array of extensions your Tool can handle |
 | `mimeTypes` | `sring[]` | _Optional_ Array of MIME types your Tool can handle |
 
-
-
 Example
 
 ```javascript
-static get onPaste() {
+static get pasteConfig() {
   return {
     files: {
       mimeTypes: ['image/png'],
       extensions: ['json']
-    },
-    fileHandler: (file) => {
-      /* do smth with the file */
-
-      return {
-        data // Some extracted content
-      }
     }
+  }
+}
+```
+
+##### Handling
+
+If you registered some paste substitutions in `pasteConfig` property, you should provide `onPaste` callback in your Tool class.
+`onPaste` should be public non-static method. It accepts custom PasteEvent object as argument.
+
+PasteEvent is an alias for three types of events - `tag`, `pattern` and `file`. You can get the type from event object `type` property. Each of these events provide `detail` property with info about pasted content.
+
+| Type  | Detail | 
+| ----- | ------ |
+| `tag` | `tag` - pasted element tagName (in upper case) <br /> `data` - pasted HTML element |
+| `pattern` | `key` - matched pattern key you specified in `pasteConfig` object <br /> `data` - pasted string |
+| `file` | `file` - pasted file |
+
+Example
+
+```javascript
+onPaste (event) {
+  switch (event.type) {
+    case 'tag':
+      const element = event.detail.data;
+      
+      this.handleHTMLPaste(element);
+      break;
+
+    case 'pattern':
+      const text = event.detail.data;
+      const key = event.detail.key;
+      
+      this.handlePatternPaste(key, text);
+      break;
+
+    case 'file':
+      const file = event.detail.file;
+
+      this.handleFilePaste(file);
+      break;
   }
 }
 ```
