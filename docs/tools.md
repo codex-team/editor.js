@@ -56,8 +56,6 @@ Options that Tool can specify. All settings should be passed as static propertie
 | `displayInToolbox` | _Boolean_ | `false` | Pass `true` to display this `Tool` in the Editor's `Toolbox` |
 | `toolboxIcon` | _String_ | — | Icon for Toolbox HTML string |
 | `enableLineBreaks` | _Boolean_ | `false` | With this option, CodeX Editor won't handle Enter keydowns. Can be helpful for Tools like `<code>` where line breaks should be handled by default behaviour. |
-| `irreplaceable` | _Boolean_ | `false` | By default, **empty** `Blocks` can be **replaced** by other `Blocks` with the `Toolbox`. Some tools with media-content may prefer another behaviour. Pass `true` and `Toolbox` will add a new block below yours.  |
-| `contentless` | _Boolean_ | `false` | Pass `true` for Tool which represents decorative empty `Blocks` |
 | `isInline` | _Boolean_ | `false` | Describes Tool as a [Tool for the Inline Toolbar](tools-inline.md) |
 
 ### User configuration
