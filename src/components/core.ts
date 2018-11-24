@@ -75,7 +75,7 @@ export default class Core {
         await this.init();
         await this.start();
 
-        _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧');
+        _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
 
         setTimeout(() => {
           /**
@@ -230,14 +230,14 @@ export default class Core {
 
     await modulesToPrepare.reduce(
       (promise, module) => promise.then(async () => {
-        _.log(`Preparing ${module} module`, 'time');
+        // _.log(`Preparing ${module} module`, 'time');
 
         try {
           await this.moduleInstances[module].prepare();
         } catch (e) {
           _.log(`Module ${module} was skipped because of %o`, 'warn', e);
         }
-        _.log(`Preparing ${module} module`, 'timeEnd');
+        // _.log(`Preparing ${module} module`, 'timeEnd');
       }),
       Promise.resolve(),
     );
