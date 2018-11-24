@@ -101,13 +101,25 @@ export default class Core {
   set configuration(config: EditorConfig|string) {
     /**
      * Process zero-configuration or with only holderId
+     * Make config object
      */
-    if (typeof config === 'string' || typeof config === 'undefined') {
-      this.config = {
-        holderId: config || 'codex-editor',
+    if (typeof config !== 'object') {
+      config = {
+        holderId: config,
       };
-    } else {
-      this.config = config;
+    }
+
+    /**
+     * Place config into the class property
+     * @type {EditorConfig}
+     */
+    this.config = config;
+
+    /**
+     * If holderId is empty then set a default value
+     */
+    if (!this.config.holderId || typeof this.config.holderId !== 'string') {
+      this.config.holderId = 'codex-editor';
     }
 
     /**

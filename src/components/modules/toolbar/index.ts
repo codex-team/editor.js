@@ -190,7 +190,8 @@ export default class Toolbar extends Module {
    * Open Toolbar with Plus Button and Actions
    * @param {boolean} withBlockActions - by default, Toolbar opens with Block Actions.
    *                                     This flag allows to open Toolbar without Actions.
-   * @param {boolean} needToCloseToolbox - by default, Toolbar will be moved with opening (by click on Block, or by enter)
+   * @param {boolean} needToCloseToolbox - by default, Toolbar will be moved with opening
+   *                                      (by click on Block, or by enter)
    *                                      with closing Toolbox and Block Settings
    *                                      This flag allows to open Toolbar with Toolbox
    */
