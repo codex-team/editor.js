@@ -1,6 +1,6 @@
 {
   "name": "codex.editor",
-  "version": "2.5.5",
+  "version": "2.5.6",
   "description": "Codex Editor. Native JS, based on API and Open Source",
   "main": "build/codex-editor.js",
   "types": "./types/index.d.ts",
@@ -33,7 +33,7 @@
     "eslint": "^4.19.1",
     "eslint-loader": "^2.1.0",
     "extract-text-webpack-plugin": "^3.0.2",
-    "html-janitor": "^2.0.2",
+    "html-janitor": "^2.0.4",
     "path": "^0.12.7",
     "postcss-apply": "^0.10.0",
     "postcss-color-hex-alpha": "^3.0.0",
