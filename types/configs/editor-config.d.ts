@@ -6,7 +6,7 @@ export interface EditorConfig {
   /**
    * Element where Editor will be append
    */
-  holderId: string;
+  holderId?: string;
 
   /**
    * This Tool will be used as default

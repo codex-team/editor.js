@@ -57,19 +57,9 @@ export interface BlockTool extends Tool {
 
 export interface BlockToolConstructable extends ToolConstructable {
   /**
-   * Pass `true` if Tool represents decorative empty Block
-   */
-  contentless?: boolean;
-
-  /**
    * Should this Tool be displayed in the Editor's Toolbox
    */
   displayInToolbox?: boolean;
-
-  /**
-   * Disable ability to replace empty Block by Toolbox
-   */
-  irreplaceable?: boolean;
 
   /**
    * String with an icon for Toolbox
