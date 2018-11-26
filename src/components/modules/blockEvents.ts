@@ -232,12 +232,12 @@ export default class BlockEvents extends Module {
    */
   private backspace(event: KeyboardEvent): void {
     const { BlockManager, BlockSelection, Caret } = this.Editor;
-    const currentBlock = BlockManager.currentBlock,
-      tool = this.Editor.Tools.available[currentBlock.name];
+    const currentBlock = BlockManager.currentBlock;
+    const tool = this.Editor.Tools.available[currentBlock.name];
 
     /**
-    * Check if Block should be removed by current Backspace keydown
-    */
+     * Check if Block should be removed by current Backspace keydown
+     */
     if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
       if (BlockSelection.allBlocksSelected) {
         this.removeAllBlocks();
@@ -258,8 +258,8 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const isFirstBlock = BlockManager.currentBlockIndex === 0,
-      canMergeBlocks = Caret.isAtStart && !isFirstBlock;
+    const isFirstBlock = BlockManager.currentBlockIndex === 0;
+    const canMergeBlocks = Caret.isAtStart && !isFirstBlock;
 
     if (canMergeBlocks) {
       /**
