@@ -12,6 +12,38 @@ import $ from '../dom';
 import SelectionUtils from '../selection';
 
 export default class BlockSelection extends Module {
+
+  /**
+   * Sanitizer Config
+   * @return {SanitizerConfig}
+   */
+  private get sanitizerConfig() {
+    return {
+      p: {},
+      h1: {},
+      h2: {},
+      h3: {},
+      h4: {},
+      h5: {},
+      h6: {},
+      ol: {},
+      ul: {},
+      li: {},
+      br: true,
+      img: {
+        src: true,
+        width: true,
+        height: true,
+      },
+      a: {
+        href: true,
+      },
+      b: {},
+      i: {},
+      u: {},
+    };
+  }
+
   /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
@@ -24,6 +56,26 @@ export default class BlockSelection extends Module {
    * @type {SelectionUtils}
    */
   private selection: SelectionUtils;
+
+  /**
+   * Flag that identifies all Blocks selection
+   * @return {boolean}
+   */
+  public get allBlocksSelected(): boolean {
+    const { BlockManager } = this.Editor;
+
+    return BlockManager.blocks.every( (block) => block.selected === true);
+  }
+
+  /**
+   * Set selected all blocks
+   * @param {boolean} state
+   */
+  public set allBlocksSelected(state: boolean) {
+    const { BlockManager } = this.Editor;
+
+    BlockManager.blocks.forEach( (block) => block.selected = state);
+  }
 
   /**
    * Module Preparation
@@ -57,14 +109,14 @@ export default class BlockSelection extends Module {
    */
   public clearSelection(restoreSelection = false) {
     const { BlockManager } = this.Editor;
-    const anyBlockSelected = BlockManager.blocks.findIndex( (block) => block.selected === true) !== -1;
+    const anyBlockSelected = BlockManager.blocks.some( (block) => block.selected === true);
+
+    this.allBlocksSelected = false;
+    this.needToSelectAll = false;
 
     if (!anyBlockSelected) {
       return;
     }
-
-    this.needToSelectAll = false;
-    BlockManager.blocks.forEach( (block) => block.selected = false);
 
     /**
      * restore selection when Block is already selected
@@ -132,7 +184,7 @@ export default class BlockSelection extends Module {
   private selectAllBlocks() {
     const { BlockManager } = this.Editor;
 
-    BlockManager.blocks.forEach( (block) => block.selected = true);
+    this.allBlocksSelected = true;
   }
 
   /**
@@ -161,36 +213,5 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     block.selected = true;
-  }
-
-  /**
-   * Sanitizer Config
-   * @return {SanitizerConfig}
-   */
-  private get sanitizerConfig() {
-    return {
-      p: {},
-      h1: {},
-      h2: {},
-      h3: {},
-      h4: {},
-      h5: {},
-      h6: {},
-      ol: {},
-      ul: {},
-      li: {},
-      br: true,
-      img: {
-        src: true,
-        width: true,
-        height: true,
-      },
-      a: {
-        href: true,
-      },
-      b: {},
-      i: {},
-      u: {},
-    };
   }
 }
