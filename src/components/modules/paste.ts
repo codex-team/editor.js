@@ -136,6 +136,7 @@ export default class Paste extends Module {
     const { Sanitizer } = this.Editor;
 
     if (dataTransfer.types.includes('Files')) {
+      console.log('here');
       await this.processFiles(dataTransfer.items);
       return;
     }

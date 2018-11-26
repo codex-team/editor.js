@@ -6,10 +6,11 @@
 interface Element {
   matchesSelector: (selector: string) => boolean;
   mozMatchesSelector: (selector: string) => boolean;
+  msMatchesSelector: (selector: string) => boolean;
   oMatchesSelector: (selector: string) => boolean;
 
-  prepend: (nodes: Node|Node[]|any) => void;
-  append: (nodes: Node|Node[]|DocumentFragment|void) => void;
+  prepend: (nodes: Node|Node[]|DocumentFragment) => void;
+  append: (nodes: Node|Node[]|DocumentFragment) => void;
 }
 
 /**

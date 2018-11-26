@@ -3,7 +3,6 @@
     "sourceMap": true,
     "target": "es2017",
     "declaration": false,
-    "moduleResolution": "node", // This resolution strategy attempts to mimic the Node.js module resolution mechanism at runtime
-    "lib": ["es2017", "dom"]
+    "moduleResolution": "node" // This resolution strategy attempts to mimic the Node.js module resolution mechanism at runtime
   }
 }
