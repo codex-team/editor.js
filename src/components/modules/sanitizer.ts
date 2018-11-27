@@ -298,6 +298,7 @@ export default class Sanitizer extends Module {
    * At least, if there is no config overrides, that API uses Default configuration
    *
    * @uses https://www.npmjs.com/package/html-janitor
+   * @license https://github.com/guardian/html-janitor/blob/master/LICENSE
    *
    * @param {SanitizerConfig} config - sanitizer extension
    */

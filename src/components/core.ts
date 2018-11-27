@@ -75,7 +75,7 @@ export default class Core {
         await this.init();
         await this.start();
 
-        _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧');
+        _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
 
         setTimeout(() => {
           /**
@@ -101,13 +101,25 @@ export default class Core {
   set configuration(config: EditorConfig|string) {
     /**
      * Process zero-configuration or with only holderId
+     * Make config object
      */
-    if (typeof config === 'string' || typeof config === 'undefined') {
-      this.config = {
-        holderId: config || 'codex-editor',
+    if (typeof config !== 'object') {
+      config = {
+        holderId: config,
       };
-    } else {
-      this.config = config;
+    }
+
+    /**
+     * Place config into the class property
+     * @type {EditorConfig}
+     */
+    this.config = config;
+
+    /**
+     * If holderId is empty then set a default value
+     */
+    if (!this.config.holderId || typeof this.config.holderId !== 'string') {
+      this.config.holderId = 'codex-editor';
     }
 
     /**
@@ -230,14 +242,14 @@ export default class Core {
 
     await modulesToPrepare.reduce(
       (promise, module) => promise.then(async () => {
-        _.log(`Preparing ${module} module`, 'time');
+        // _.log(`Preparing ${module} module`, 'time');
 
         try {
           await this.moduleInstances[module].prepare();
         } catch (e) {
           _.log(`Module ${module} was skipped because of %o`, 'warn', e);
         }
-        _.log(`Preparing ${module} module`, 'timeEnd');
+        // _.log(`Preparing ${module} module`, 'timeEnd');
       }),
       Promise.resolve(),
     );
@@ -262,7 +274,7 @@ export default class Core {
           config : this.configuration,
         });
       } catch ( e ) {
-        console.log('Module %o skipped because %o', Module, e);
+        _.log(`Module ${Module.displayName} skipped because`, 'warn',  e);
       }
     });
   }

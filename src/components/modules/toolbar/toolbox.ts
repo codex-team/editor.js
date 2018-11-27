@@ -309,15 +309,9 @@ export default class Toolbox extends Module {
      */
     const currentBlock = this.Editor.BlockManager.currentBlock;
 
-    /**
-     * We do replace if:
-     * - block is empty
-     * - block is not irreplaceable
-     * @type {Array}
-     */
     let newBlock;
 
-    if (!tool[this.Editor.Tools.apiSettings.IS_IRREPLACEBLE_TOOL] && currentBlock.isEmpty) {
+    if (currentBlock.isEmpty) {
       newBlock = this.Editor.BlockManager.replace(toolName);
     } else {
       newBlock = this.Editor.BlockManager.insert(toolName);

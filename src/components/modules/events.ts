@@ -19,7 +19,7 @@ export default class Events extends Module {
    * Object with events` names as key and array of callback functions as value
    * @type {{}}
    */
-  private subscribers: {[name: string]: Array<(data?: any) => void>} = {};
+  private subscribers: {[name: string]: Array<(data?: any) => any>} = {};
 
   /**
    * Subscribe any event on callback
@@ -27,7 +27,7 @@ export default class Events extends Module {
    * @param {String} eventName - event name
    * @param {Function} callback - subscriber
    */
-  public on(eventName: string, callback: (data: any) => void) {
+  public on(eventName: string, callback: (data: any) => any) {
     if (!(eventName in this.subscribers)) {
       this.subscribers[eventName] = [];
     }

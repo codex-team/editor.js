@@ -13,35 +13,6 @@ import LinkInlineTool from '../inline-tools/inline-tool-link';
  */
 
 /**
- * Each Tool must contain the following important objects:
- *
- * @typedef {Object} ToolConfig {@link docs/tools.md}
- * @property {String} iconClassname - this a icon in toolbar
- * @property {Boolean} displayInToolbox - will be displayed in toolbox. Default value is TRUE
- * @property {Boolean} enableLineBreaks - inserts new block or break lines. Default value is FALSE
- * @property {Boolean|String[]} inlineToolbar - Pass `true` to enable the Inline Toolbar with all Tools,
- *                                              all pass an array with specified Tools list
- * @property render @todo add description
- * @property save @todo add description
- * @property settings @todo add description
- * @property validate - method that validates output data before saving
- */
-
-/**
- * @typedef {Function} Tool {@link docs/tools.md}
- * @property {Boolean}      displayInToolbox      - By default, tools won't be added in the Toolbox. Pass true to add.
- * @property {String}       iconClassName         - CSS class name for the Toolbox button
- * @property {Boolean}      irreplaceable         - Toolbox behaviour: replace or add new block below
- * @property render
- * @property save
- * @property settings
- * @property validate
- *
- * @todo update according to current API
- * @todo describe Tool in the {@link docs/tools.md}
- */
-
-/**
  * Class properties:
  *
  * @typedef {Tools} Tools
@@ -142,12 +113,10 @@ export default class Tools extends Module {
   public get apiSettings() {
     return {
       CONFIG: 'config',
-      IS_CONTENTLESS: 'contentless',
       IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
       IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_INLINE: 'isInline',
-      IS_IRREPLACEBLE_TOOL: 'irreplaceable',
       IS_PASTE_DISALLOWED: 'disallowPaste',
       SHORTCUT: 'shortcut',
       TOOLBAR_ICON: 'toolboxIcon',

@@ -78,6 +78,7 @@ export default class Toolbar extends Module {
       toolbar: 'ce-toolbar',
       content: 'ce-toolbar__content',
       actions: 'ce-toolbar__actions',
+      actionsOpened: 'ce-toolbar__actions--opened',
 
       toolbarOpened: 'ce-toolbar--opened',
 
@@ -186,15 +187,24 @@ export default class Toolbar extends Module {
   }
 
   /**
-   * Open Toolbar with Plus Button
+   * Open Toolbar with Plus Button and Actions
+   * @param {boolean} withBlockActions - by default, Toolbar opens with Block Actions.
+   *                                     This flag allows to open Toolbar without Actions.
+   * @param {boolean} needToCloseToolbox - by default, Toolbar will be moved with opening
+   *                                      (by click on Block, or by enter)
+   *                                      with closing Toolbox and Block Settings
+   *                                      This flag allows to open Toolbar with Toolbox
    */
-  public open(): void {
-    /**
-     * Wait Block rendering for correct height computing
-     */
+  public open(withBlockActions: boolean = true, needToCloseToolbox: boolean = true): void {
     setTimeout(() => {
-      this.move();
+      this.move(needToCloseToolbox);
       this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
+
+      if (withBlockActions) {
+        this.blockActions.show();
+      } else {
+        this.blockActions.hide();
+      }
     }, 50);
   }
 
@@ -213,6 +223,7 @@ export default class Toolbar extends Module {
     this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
 
     /** Close components */
+    this.blockActions.hide();
     this.Editor.Toolbox.close();
     this.Editor.BlockSettings.close();
   }
@@ -229,6 +240,21 @@ export default class Toolbar extends Module {
           return;
         }
         this.nodes.plusButton.classList.remove(Toolbar.CSS.plusButtonHidden);
+      },
+    };
+  }
+
+  /**
+   * Block actions appearance manipulations
+   * @return {{hide: function(): void, show: function(): void}}
+   */
+  private get blockActions(): {hide: () => void, show: () => void} {
+    return {
+      hide: () => {
+        this.nodes.actions.classList.remove(Toolbar.CSS.actionsOpened);
+      },
+      show : () => {
+        this.nodes.actions.classList.add(Toolbar.CSS.actionsOpened);
       },
     };
   }

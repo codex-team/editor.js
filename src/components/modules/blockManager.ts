@@ -280,7 +280,7 @@ export default class BlockManager extends Module {
     const extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition();
     const wrapper = $.make('div');
 
-    wrapper.append(extractedFragment);
+    wrapper.append(extractedFragment as DocumentFragment);
 
     /**
      * @todo make object in accordance with Tool
