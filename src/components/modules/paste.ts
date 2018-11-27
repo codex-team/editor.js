@@ -136,8 +136,7 @@ export default class Paste extends Module {
     const { Sanitizer } = this.Editor;
 
     if (dataTransfer.types.includes('Files')) {
-      console.log('here');
-      await this.processFiles(dataTransfer.items);
+      await this.processFiles(dataTransfer.files);
       return;
     }
 
@@ -355,9 +354,9 @@ export default class Paste extends Module {
   /**
    * Get files from data transfer object and insert related Tools
    *
-   * @param {DataTransferItemList} items - pasted or dropped items
+   * @param {FileList} items - pasted or dropped items
    */
-  private async processFiles(items: DataTransferItemList) {
+  private async processFiles(items: FileList) {
     const {BlockManager} = this.Editor;
 
     let dataToInsert: Array<{type: string, event: PasteEvent}>;
@@ -376,7 +375,7 @@ export default class Paste extends Module {
           return;
         }
 
-        BlockManager.insert(data.type, data.event);
+        BlockManager.paste(data.type, data.event);
       },
     );
   }
@@ -384,14 +383,9 @@ export default class Paste extends Module {
   /**
    * Get information about file and find Tool to handle it
    *
-   * @param {DataTransferItem} item
+   * @param {File} file
    */
-  private async processFile(item: DataTransferItem) {
-    if (item.kind === 'string') {
-      return;
-    }
-
-    const file = item.getAsFile();
+  private async processFile(file: File) {
     const extension = _.getFileExtension(file);
 
     const foundConfig = Object
@@ -433,8 +427,6 @@ export default class Paste extends Module {
   private async processText(data: string, isHTML: boolean = false) {
     const {Caret, BlockManager} = this.Editor;
     const dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
-
-    console.log(dataToInsert);
 
     if (!dataToInsert.length) {
       return;
@@ -574,7 +566,7 @@ export default class Paste extends Module {
         if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
           insertedBlock = BlockManager.paste(blockData.tool, blockData.event, true);
         } else {
-          insertedBlock = BlockManager.insert(blockData.tool, blockData.event);
+          insertedBlock = BlockManager.paste(blockData.tool, blockData.event);
         }
         Caret.setToBlock(insertedBlock, CaretClass.positions.END);
         return;
