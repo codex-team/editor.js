@@ -206,7 +206,7 @@ export default class BlockManager extends Module {
     try {
       block.call('onPaste', pasteEvent);
     } catch (e) {
-      _.log('onPaste callback call is failed', 'error');
+      _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
     }
     return block;
   }
