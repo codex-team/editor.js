@@ -425,7 +425,7 @@ export default class Paste extends Module {
    * @param {boolean} isHTML - if passed string is HTML, this parameter should be true
    */
   private async processText(data: string, isHTML: boolean = false) {
-    const {Caret, BlockManager} = this.Editor;
+    const {Caret, BlockManager, Tools} = this.Editor;
     const dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
 
     if (!dataToInsert.length) {
@@ -437,16 +437,11 @@ export default class Paste extends Module {
       return;
     }
 
-    /**
-     * If caret not at the end of of the Block and there is no selection,
-     * we split the Block and insert content at the middle.
-     */
-    if (SelectionUtils.isAtEditor && !Caret.isAtEnd && SelectionUtils.isCollapsed) {
-      this.splitBlock();
-    }
+    const isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
+    const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
 
     await Promise.all(dataToInsert.map(
-      async (content, i) => await this.insertBlock(content, i === 0),
+      async (content, i) => await this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
     ));
 
     Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
@@ -501,7 +496,6 @@ export default class Paste extends Module {
         content.innerHTML = Sanitizer.clean(content.innerHTML, customConfig);
 
         const event = this.composePasteEvent('tag', {
-          tag: content.tagName,
           data: content,
         });
 
@@ -535,7 +529,6 @@ export default class Paste extends Module {
         content.innerHTML = text;
 
         const event = this.composePasteEvent('tag', {
-          tag: content.tagName,
           data: content,
         });
 
@@ -553,21 +546,21 @@ export default class Paste extends Module {
    */
   private async processSingleBlock(dataToInsert: PasteData): Promise<void> {
     const initialTool = this.config.initialBlock,
-      {BlockManager, Caret, Sanitizer} = this.Editor,
+      {BlockManager, Caret, Sanitizer, Tools} = this.Editor,
       {content, tool} = dataToInsert;
 
     if (tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
       const blockData = await this.processPattern(content.textContent);
 
       if (blockData) {
-        this.splitBlock();
         let insertedBlock;
 
-        if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
-          insertedBlock = BlockManager.paste(blockData.tool, blockData.event, true);
-        } else {
-          insertedBlock = BlockManager.paste(blockData.tool, blockData.event);
-        }
+        const needToReplaceCurrentBlock = BlockManager.currentBlock
+          && Tools.isInitial(BlockManager.currentBlock.tool)
+          && BlockManager.currentBlock.isEmpty;
+
+        insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
+
         Caret.setToBlock(insertedBlock, CaretClass.positions.END);
         return;
       }
@@ -629,26 +622,6 @@ export default class Paste extends Module {
     const block = BlockManager.paste(data.tool, data.event);
 
     Caret.setToBlock(block);
-  }
-
-  /**
-   * Split current block if paste isn't in the end of the block
-   */
-  private splitBlock() {
-    const {BlockManager, Caret} = this.Editor;
-
-    if (!BlockManager.currentBlock) {
-      return;
-    }
-
-    /** If we paste into middle of the current block:
-     *  1. Split
-     *  2. Navigate to the first part
-     */
-    if (!BlockManager.currentBlock.isEmpty && !Caret.isAtEnd) {
-      BlockManager.split();
-      BlockManager.currentBlockIndex--;
-    }
   }
 
   /**

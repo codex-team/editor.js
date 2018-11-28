@@ -3,11 +3,6 @@
  */
 export interface HTMLPasteEventDetail {
   /**
-   * Pasted element tag name
-   */
-  tag: string;
-
-  /**
    * Pasted element
    */
   data: HTMLElement;
