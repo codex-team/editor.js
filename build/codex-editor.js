@@ -7684,7 +7684,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         try {
           block.call('onPaste', pasteEvent);
         } catch (e) {
-          _utils.default.log('onPaste callback call is failed', 'error');
+          _utils.default.log("".concat(toolName, ": onPaste callback call is failed"), 'error', e);
         }
 
         return block;
