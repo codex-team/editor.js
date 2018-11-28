@@ -154,6 +154,6 @@ module.exports = {
     svg: '../src/components/modules/svg.ts'
   },
   optimization: {
-    minimize: false
+    minimize: true
   },
 };
