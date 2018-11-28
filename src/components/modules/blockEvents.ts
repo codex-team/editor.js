@@ -3,6 +3,7 @@
  */
 import Module from '../__module';
 import _ from '../utils';
+import CaretClass from './caret';
 
 export default class BlockEvents extends Module {
   /**
@@ -78,8 +79,12 @@ export default class BlockEvents extends Module {
      */
     this.Editor.BlockManager.clearFocused();
 
-    /** Clear Block selection and restore caret */
-    this.Editor.BlockSelection.clearSelection(true);
+    if (event.keyCode !== _.keyCodes.ENTER && event.keyCode !== _.keyCodes.BACKSPACE) {
+      /**
+       * Clear selection and restore caret before navigation
+       */
+      this.Editor.BlockSelection.clearSelection(true);
+    }
   }
 
   /**
@@ -226,9 +231,24 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private backspace(event: KeyboardEvent): void {
-    const BM = this.Editor.BlockManager;
-    const currentBlock = this.Editor.BlockManager.currentBlock,
-      tool = this.Editor.Tools.available[currentBlock.name];
+    const { BlockManager, BlockSelection, Caret } = this.Editor;
+    const currentBlock = BlockManager.currentBlock;
+    const tool = this.Editor.Tools.available[currentBlock.name];
+
+    /**
+     * Check if Block should be removed by current Backspace keydown
+     */
+    if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+      if (BlockSelection.allBlocksSelected) {
+        this.removeAllBlocks();
+      } else {
+        this.removeCurrentBlock();
+      }
+
+      /** Clear selection */
+      BlockSelection.clearSelection();
+      return;
+    }
 
     /**
      * Don't handle Backspaces when Tool sets enableLineBreaks to true.
@@ -238,45 +258,63 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const isFirstBlock = BM.currentBlockIndex === 0,
-      canMergeBlocks = this.Editor.Caret.isAtStart && !isFirstBlock;
+    const isFirstBlock = BlockManager.currentBlockIndex === 0;
+    const canMergeBlocks = Caret.isAtStart && !isFirstBlock;
+
+    if (canMergeBlocks) {
+      /**
+       * preventing browser default behaviour
+       */
+      event.preventDefault();
+
+      /**
+       * Merge Blocks
+       */
+      this.mergeBlocks();
+    }
+  }
+
+  /**
+   * remove all selected Blocks
+   */
+  private removeAllBlocks(): boolean {
+    const { BlockManager } = this.Editor;
+
+    BlockManager.removeAllBlocks();
+    return true;
+  }
+
+  /**
+   * remove current Block and sets Caret to the correct position
+   */
+  private removeCurrentBlock(): boolean {
+    const { BlockManager, Caret } = this.Editor;
 
     /** If current Block is empty just remove this Block */
-    if (this.Editor.BlockManager.currentBlock.isEmpty) {
-      this.Editor.BlockManager.removeBlock();
+    BlockManager.removeBlock();
 
-      /**
-       * in case of last block deletion
-       * Insert new initial empty block
-       */
-      if (this.Editor.BlockManager.blocks.length === 0) {
-        this.Editor.BlockManager.insert();
-      }
-
-      /**
-       * In case of deletion first block we need to set caret to the current Block
-       * After BlockManager removes the Block (which is current now),
-       * pointer that references to the current Block, now points to the Next
-       */
-      if (this.Editor.BlockManager.currentBlockIndex === 0) {
-        this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
-      } else {
-        this.Editor.Caret.navigatePrevious(true);
-      }
-
-      this.Editor.Toolbar.close();
-      return;
+    /**
+     * In case of deletion first block we need to set caret to the current Block
+     * After BlockManager removes the Block (which is current now),
+     * pointer that references to the current Block, now points to the Next
+     */
+    if (BlockManager.currentBlockIndex === 0) {
+      Caret.setToBlock(BlockManager.currentBlock);
+    } else {
+      Caret.setToBlock(BlockManager.previousBlock, CaretClass.positions.END);
     }
 
-    if (!canMergeBlocks) {
-      return;
-    }
+    this.Editor.Toolbar.close();
+    return true;
+  }
 
-    // preventing browser default behaviour
-    event.preventDefault();
-
-    const targetBlock = BM.getBlockByIndex(BM.currentBlockIndex - 1),
-      blockToMerge = BM.currentBlock;
+  /**
+   * Merge current and previous Blocks if they have the same type
+   */
+  private mergeBlocks() {
+    const { BlockManager, Caret, Toolbar } = this.Editor;
+    const targetBlock = BlockManager.getBlockByIndex(BlockManager.currentBlockIndex - 1),
+      blockToMerge = BlockManager.currentBlock;
 
     /**
      * Blocks that can be merged:
@@ -286,20 +324,20 @@ export default class BlockEvents extends Module {
      * other case will handle as usual ARROW LEFT behaviour
      */
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
-      if (this.Editor.Caret.navigatePrevious()) {
-        this.Editor.Toolbar.close();
+      if (Caret.navigatePrevious()) {
+        Toolbar.close();
       }
 
       return;
     }
 
-    this.Editor.Caret.createShadow(targetBlock.pluginsContent);
-    BM.mergeBlocks(targetBlock, blockToMerge)
+    Caret.createShadow(targetBlock.pluginsContent);
+    BlockManager.mergeBlocks(targetBlock, blockToMerge)
       .then( () => {
         /** Restore caret position after merge */
-        this.Editor.Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
+        Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
         targetBlock.pluginsContent.normalize();
-        this.Editor.Toolbar.close();
+        Toolbar.close();
       });
   }
 

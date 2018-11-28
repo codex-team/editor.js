@@ -371,6 +371,7 @@ export default class Caret extends Module {
 
     if (force) {
       this.setToBlock( previousContentfulBlock, Caret.positions.END );
+      return true;
     }
 
     if (this.isAtStart) {
