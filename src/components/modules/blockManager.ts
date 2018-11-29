@@ -319,7 +319,10 @@ export default class BlockManager extends Module {
    *
    * @return {Block}
    */
-  public replace(toolName: string, data: BlockToolData = {}): Block {
+  public replace(
+    toolName: string = this.config.initialBlock,
+    data: BlockToolData = {},
+  ): Block {
     const block = this.composeBlock(toolName, data);
 
     this._blocks.insert(this.currentBlockIndex, block, true);
