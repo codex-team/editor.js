@@ -118,7 +118,6 @@ export default class BlockSelection extends Module {
    * Clear selection from Blocks
    */
   public clearSelection(restoreSelection = false) {
-    this.allBlocksSelected = false;
     this.needToSelectAll = false;
 
     if (!this.anyBlockSelected) {
@@ -132,6 +131,9 @@ export default class BlockSelection extends Module {
     if (restoreSelection) {
       this.selection.restore();
     }
+
+    /** Now all blocks cleared */
+    this.allBlocksSelected = false;
   }
 
   /**
