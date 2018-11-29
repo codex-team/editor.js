@@ -192,7 +192,7 @@ Each of these events provide `detail` property with info about pasted content.
 
 | Type  | Detail | 
 | ----- | ------ |
-| `tag` | `tag` - pasted element tagName (in upper case) <br /> `data` - pasted HTML element |
+| `tag` | `data` - pasted HTML element |
 | `pattern` | `key` - matched pattern key you specified in `pasteConfig` object <br /> `data` - pasted string |
 | `file` | `file` - pasted file |
 
