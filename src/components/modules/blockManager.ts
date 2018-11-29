@@ -9,8 +9,9 @@
 import Block from '../block';
 import Module from '../__module';
 import $ from '../dom';
+import _ from '../utils';
 import Blocks from '../blocks';
-import {BlockTool, BlockToolConstructable, BlockToolData, ToolConfig} from '../../../types';
+import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
 import Caret from './caret';
 
 /**
@@ -149,7 +150,7 @@ export default class BlockManager extends Module {
    *
    * @return {Block}
    */
-  public composeBlock(toolName: string, data: BlockToolData, settings?: ToolConfig): Block {
+  public composeBlock(toolName: string, data: BlockToolData = {}, settings: ToolConfig = {}): Block {
     const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
     const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
     const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
@@ -179,6 +180,34 @@ export default class BlockManager extends Module {
     const block = this.composeBlock(toolName, data, settings);
 
     this._blocks[newIndex] = block;
+    return block;
+  }
+
+  /**
+   * Insert pasted content. Call onPaste callback after insert.
+   *
+   * @param {string} toolName
+   * @param {PasteEvent} pasteEvent - pasted data
+   * @param {boolean} replace - should replace current block
+   */
+  public paste(
+    toolName: string,
+    pasteEvent: PasteEvent,
+    replace: boolean = false,
+  ): Block {
+    let block;
+
+    if (replace) {
+      block = this.replace(toolName);
+    } else {
+      block = this.insert(toolName);
+    }
+
+    try {
+      block.call('onPaste', pasteEvent);
+    } catch (e) {
+      _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
+    }
     return block;
   }
 
@@ -266,7 +295,7 @@ export default class BlockManager extends Module {
     const extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition();
     const wrapper = $.make('div');
 
-    wrapper.append(extractedFragment);
+    wrapper.append(extractedFragment as DocumentFragment);
 
     /**
      * @todo make object in accordance with Tool

@@ -4,7 +4,7 @@ import SelectionUtils from '../selection';
 import Module from '../__module';
 import $ from '../dom';
 import _ from '../utils';
-import {BlockToolData, PasteConfig} from '../../../types';
+import {BlockTool, BlockToolConstructable, PasteConfig, PasteEvent, PasteEventDetail} from '../../../types';
 
 /**
  * Tag substitute object.
@@ -15,14 +15,6 @@ interface TagSubstitute {
    * @type {string}
    */
   tool: string;
-
-  /**
-   * Callback to handle pasted element
-   *
-   * @param {HTMLElement} element
-   * @return {BlockToolData}
-   */
-  handler: (element: HTMLElement) => BlockToolData;
 }
 
 /**
@@ -40,15 +32,6 @@ interface PatternSubstitute {
    * @type {RegExp}
    */
   pattern: RegExp;
-
-  /**
-   * Callback to handle pasted pattern
-   *
-   * @param {string} text
-   * @param {string} key
-   * @return {BlockToolData}
-   */
-  handler: (text: string, key: string) => BlockToolData;
 
   /**
    * Name of related Tool
@@ -72,14 +55,6 @@ interface FilesSubstitution {
    * @type {string[]}
    */
   mimeTypes: string[];
-
-  /**
-   * Callback to handle pasted File
-   *
-   * @param {File} file
-   * @return {BlockToolData}
-   */
-  handler: (file: File) => BlockToolData;
 }
 
 /**
@@ -99,19 +74,15 @@ interface PasteData {
   content: HTMLElement;
 
   /**
+   * Pasted data
+   */
+  event: PasteEvent;
+
+  /**
    * True if content should be inserted as new Block
    * @type {boolean}
    */
   isBlock: boolean;
-
-  /**
-   * Callback that returns pasted data in BlockToolData format
-   *
-   * @param {HTMLElement | string} content
-   * @param {RegExp} patten
-   * @return {BlockToolData}
-   */
-  handler: (content: HTMLElement|string, patten?: RegExp) => BlockToolData;
 }
 
 /**
@@ -165,7 +136,7 @@ export default class Paste extends Module {
     const { Sanitizer } = this.Editor;
 
     if (dataTransfer.types.includes('Files')) {
-      await this.processFiles(dataTransfer.items);
+      await this.processFiles(dataTransfer.files);
       return;
     }
 
@@ -222,9 +193,19 @@ export default class Paste extends Module {
    * @param {string} name
    * @param {Tool} tool
    */
-  private processTool = ([name, tool]) => {
+  private processTool = ([name, tool]: [string, BlockToolConstructable]): void => {
     try {
-      const toolPasteConfig = tool.onPaste || {};
+      const toolInstance = new this.Editor.Tools.blockTools[name]({
+        api: this.Editor.API.methods,
+        config: {},
+        data: {},
+      }) as BlockTool;
+
+      if (!toolInstance.onPaste || typeof toolInstance.onPaste !== 'function') {
+        return;
+      }
+
+      const toolPasteConfig = tool.pasteConfig || {};
 
       this.getTagsConfig(name, toolPasteConfig);
       this.getFilesConfig(name, toolPasteConfig);
@@ -245,26 +226,6 @@ export default class Paste extends Module {
    * @param {PasteConfig} toolPasteConfig - Tool onPaste configuration
    */
   private getTagsConfig(name: string, toolPasteConfig: PasteConfig): void {
-    if (this.config.initialBlock === name && !toolPasteConfig.handler) {
-      _.log(
-        `«${name}» Tool must provide a paste handler.`,
-        'warn',
-      );
-    }
-
-    if (!toolPasteConfig.handler) {
-      return;
-    }
-
-    if (typeof toolPasteConfig.handler !== 'function') {
-      _.log(
-        `Paste handler for «${name}» Tool should be a function.`,
-        'warn',
-      );
-
-      return;
-    }
-
     const tags = toolPasteConfig.tags || [];
 
     tags.forEach((tag) => {
@@ -278,7 +239,6 @@ export default class Paste extends Module {
       }
 
       this.toolsTags[tag.toUpperCase()] = {
-        handler: toolPasteConfig.handler,
         tool: name,
       };
     });
@@ -294,15 +254,10 @@ export default class Paste extends Module {
    */
   private getFilesConfig(name: string, toolPasteConfig: PasteConfig): void {
 
-    const {fileHandler, files = {}} = toolPasteConfig;
+    const {files = {}} = toolPasteConfig;
     let {extensions, mimeTypes} = files;
 
-    if (!fileHandler || (!extensions && !mimeTypes)) {
-      return;
-    }
-
-    if (typeof fileHandler !== 'function') {
-      _.log(`Drop handler for «${name}» Tool should be a function.`);
+    if (!extensions && !mimeTypes) {
       return;
     }
 
@@ -330,7 +285,6 @@ export default class Paste extends Module {
     this.toolsFiles[name] = {
       extensions: extensions || [],
       mimeTypes: mimeTypes || [],
-      handler: fileHandler,
     };
   }
 
@@ -341,16 +295,7 @@ export default class Paste extends Module {
    * @param {PasteConfig} toolPasteConfig - Tool onPaste configuration
    */
   private getPatternsConfig(name: string, toolPasteConfig: PasteConfig): void {
-    if (!toolPasteConfig.patternHandler || _.isEmpty(toolPasteConfig.patterns)) {
-      return;
-    }
-
-    if (typeof toolPasteConfig.patternHandler !== 'function') {
-      _.log(
-        `Pattern parser for «${name}» Tool should be a function.`,
-        'warn',
-      );
-
+    if (!toolPasteConfig.patterns || _.isEmpty(toolPasteConfig.patterns)) {
       return;
     }
 
@@ -366,7 +311,6 @@ export default class Paste extends Module {
       this.toolsPatterns.push({
         key,
         pattern,
-        handler: toolPasteConfig.patternHandler,
         tool: name,
       });
     });
@@ -410,12 +354,12 @@ export default class Paste extends Module {
   /**
    * Get files from data transfer object and insert related Tools
    *
-   * @param {DataTransferItemList} items - pasted or dropped items
+   * @param {FileList} items - pasted or dropped items
    */
-  private async processFiles(items: DataTransferItemList) {
+  private async processFiles(items: FileList) {
     const {BlockManager} = this.Editor;
 
-    let dataToInsert: Array<{type: string, data: BlockToolData}>;
+    let dataToInsert: Array<{type: string, event: PasteEvent}>;
 
     dataToInsert = await Promise.all(
       Array
@@ -427,11 +371,11 @@ export default class Paste extends Module {
     dataToInsert.forEach(
       (data, i) => {
         if (i === 0 && BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
-          BlockManager.replace(data.type, data.data);
+          BlockManager.paste(data.type, data.event, true);
           return;
         }
 
-        BlockManager.insert(data.type, data.data);
+        BlockManager.paste(data.type, data.event);
       },
     );
   }
@@ -439,14 +383,9 @@ export default class Paste extends Module {
   /**
    * Get information about file and find Tool to handle it
    *
-   * @param {DataTransferItem} item
+   * @param {File} file
    */
-  private async processFile(item: DataTransferItem) {
-    if (item.kind === 'string') {
-      return;
-    }
-
-    const file = item.getAsFile();
+  private async processFile(file: File) {
     const extension = _.getFileExtension(file);
 
     const foundConfig = Object
@@ -468,9 +407,13 @@ export default class Paste extends Module {
       return;
     }
 
-    const [tool, {handler}] = foundConfig;
+    const [tool] = foundConfig;
+    const pasteEvent = this.composePasteEvent('file', {
+      file,
+    });
+
     return {
-      data: await handler(file),
+      event: pasteEvent,
       type: tool,
     };
   }
@@ -482,7 +425,7 @@ export default class Paste extends Module {
    * @param {boolean} isHTML - if passed string is HTML, this parameter should be true
    */
   private async processText(data: string, isHTML: boolean = false) {
-    const {Caret, BlockManager} = this.Editor;
+    const {Caret, BlockManager, Tools} = this.Editor;
     const dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
 
     if (!dataToInsert.length) {
@@ -494,16 +437,11 @@ export default class Paste extends Module {
       return;
     }
 
-    /**
-     * If caret not at the end of of the Block and there is no selection,
-     * we split the Block and insert content at the middle.
-     */
-    if (SelectionUtils.isAtEditor && !Caret.isAtEnd && SelectionUtils.isCollapsed) {
-      this.splitBlock();
-    }
+    const isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
+    const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
 
     await Promise.all(dataToInsert.map(
-      async (content, i) => await this.insertBlock(content, i === 0),
+      async (content, i) => await this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
     ));
 
     Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
@@ -516,9 +454,9 @@ export default class Paste extends Module {
    * @returns {PasteData[]}
    */
   private processHTML(innerHTML: string): PasteData[] {
-    const {Tools, Sanitizer} = this.Editor,
-      initialTool = this.config.initialBlock,
-      wrapper = $.make('DIV');
+    const {Tools, Sanitizer} = this.Editor;
+    const initialTool = this.config.initialBlock;
+    const wrapper = $.make('DIV');
 
     wrapper.innerHTML = innerHTML;
 
@@ -546,7 +484,7 @@ export default class Paste extends Module {
             break;
         }
 
-        const {handler, tags} = Tools.blockTools[tool].onPaste;
+        const {tags} = Tools.blockTools[tool].pasteConfig;
 
         const toolTags = tags.reduce((result, tag) => {
           result[tag.toLowerCase()] = {};
@@ -557,7 +495,11 @@ export default class Paste extends Module {
 
         content.innerHTML = Sanitizer.clean(content.innerHTML, customConfig);
 
-        return {content, isBlock, handler, tool};
+        const event = this.composePasteEvent('tag', {
+          data: content,
+        });
+
+        return {content, isBlock, tool, event};
       })
       .filter((data) => !$.isNodeEmpty(data.content) || $.isSingleTag(data.content));
   }
@@ -576,8 +518,7 @@ export default class Paste extends Module {
       return [];
     }
 
-    const tool = initialBlock,
-      handler = Tools.blockTools[tool].onPaste.handler;
+    const tool = initialBlock;
 
     return plain
       .split(/\r?\n/)
@@ -587,7 +528,11 @@ export default class Paste extends Module {
 
         content.innerHTML = text;
 
-        return {content, tool, isBlock: false, handler};
+        const event = this.composePasteEvent('tag', {
+          data: content,
+        });
+
+        return {content, tool, isBlock: false, event};
       });
   }
 
@@ -601,27 +546,21 @@ export default class Paste extends Module {
    */
   private async processSingleBlock(dataToInsert: PasteData): Promise<void> {
     const initialTool = this.config.initialBlock,
-      {BlockManager, Caret, Sanitizer} = this.Editor,
+      {BlockManager, Caret, Sanitizer, Tools} = this.Editor,
       {content, tool} = dataToInsert;
 
     if (tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
       const blockData = await this.processPattern(content.textContent);
 
       if (blockData) {
-        this.splitBlock();
         let insertedBlock;
 
-        const sanitizeConfig = Sanitizer.composeToolConfig(tool);
+        const needToReplaceCurrentBlock = BlockManager.currentBlock
+          && Tools.isInitial(BlockManager.currentBlock.tool)
+          && BlockManager.currentBlock.isEmpty;
 
-        if (!_.isEmpty(sanitizeConfig)) {
-          blockData.data = Sanitizer.deepSanitize(blockData.data, sanitizeConfig);
-        }
+        insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
 
-        if (BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
-          insertedBlock = BlockManager.replace(blockData.tool, blockData.data);
-        } else {
-          insertedBlock = BlockManager.insert(blockData.tool, blockData.data);
-        }
         Caret.setToBlock(insertedBlock, CaretClass.positions.END);
         return;
       }
@@ -639,7 +578,7 @@ export default class Paste extends Module {
    * @param {string} text
    * @returns Promise<{data: BlockToolData, tool: string}>
    */
-  private async processPattern(text: string): Promise<{data: BlockToolData, tool: string}> {
+  private async processPattern(text: string): Promise<{event: PasteEvent, tool: string}> {
     const pattern =  this.toolsPatterns.find((substitute) => {
       const execResult = substitute.pattern.exec(text);
 
@@ -650,10 +589,17 @@ export default class Paste extends Module {
       return text === execResult.shift();
     });
 
-    const data = pattern && await pattern.handler(text, pattern.key);
+    if (!pattern) {
+      return;
+    }
 
-    return data && {
-      data,
+    const event = this.composePasteEvent('pattern', {
+      key: pattern.key,
+      data: text,
+    });
+
+    return {
+      event,
       tool: pattern.tool,
     };
   }
@@ -665,38 +611,17 @@ export default class Paste extends Module {
    * @returns {Promise<void>}
    */
   private async insertBlock(data: PasteData, canReplaceCurrentBlock: boolean = false): Promise<void> {
-    const blockData = await data.handler(data.content),
-      {BlockManager, Caret} = this.Editor,
-      {currentBlock} = BlockManager;
+    const {BlockManager, Caret} = this.Editor;
+    const {currentBlock} = BlockManager;
 
     if (canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty) {
-      BlockManager.replace(data.tool, blockData);
+      BlockManager.paste(data.tool, data.event, true);
       return;
     }
 
-    const block = BlockManager.insert(data.tool, blockData);
+    const block = BlockManager.paste(data.tool, data.event);
 
     Caret.setToBlock(block);
-  }
-
-  /**
-   * Split current block if paste isn't in the end of the block
-   */
-  private splitBlock() {
-    const {BlockManager, Caret} = this.Editor;
-
-    if (!BlockManager.currentBlock) {
-      return;
-    }
-
-    /** If we paste into middle of the current block:
-     *  1. Split
-     *  2. Navigate to the first part
-     */
-    if (!BlockManager.currentBlock.isEmpty && !Caret.isAtEnd) {
-      BlockManager.split();
-      BlockManager.currentBlockIndex--;
-    }
   }
 
   /**
@@ -777,5 +702,17 @@ export default class Paste extends Module {
     };
 
     return children.reduce(reducer, []);
+  }
+
+  /**
+   * Compose paste event with passed type and detail
+   *
+   * @param {string} type
+   * @param {PasteEventDetail} detail
+   */
+  private composePasteEvent(type: string, detail: PasteEventDetail): PasteEvent {
+    return new CustomEvent(type, {
+      detail,
+    }) as PasteEvent;
   }
 }

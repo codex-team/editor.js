@@ -191,7 +191,7 @@ export default class Dom {
       sibling = atLast ? 'previousSibling' : 'nextSibling';
 
     if (node && node.nodeType === Node.ELEMENT_NODE && node[child]) {
-      let nodeChild = node[child];
+      let nodeChild = node[child] as Node;
 
       /**
        * special case when child is single tag that can't contain any content

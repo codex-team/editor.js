@@ -27,7 +27,7 @@
       <pre class="ce-example__output-content" id="output"></pre>
 
       <div class="ce-example__output-footer">
-        <a href="https://ifmo.su" style="font-weight: bold">Made by CodeX</a>
+        <a href="https://ifmo.su" style="font-weight: bold;">Made by CodeX</a>
       </div>
     </div>
   </div>
@@ -42,6 +42,7 @@
    https://github.com/codex-editor/header#installation
    -->
   <script src="./tools/header/dist/bundle.js"></script><!-- Header -->
+  <script src="./tools/simple-image/dist/bundle.js"></script><!-- Image -->
   <script src="./tools/image/dist/bundle.js"></script><!-- Image -->
   <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
   <script src="./tools/list/dist/bundle.js"></script><!-- List -->
@@ -94,7 +95,10 @@
         image: {
           class: ImageTool,
           config: {
-            url: 'http://localhost:8008',
+            endpoints: {
+              byFile: 'http://localhost:8008/uploadFile',
+              byUrl: 'http://localhost:8008/fetchUrl',
+            },
           },
           inlineToolbar: ['link'],
         },
@@ -232,7 +236,7 @@
             type: 'image',
             data: {
               file: {
-                url : 'https://ifmo.su/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',
+                url: 'https://ifmo.su/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',
               },
               caption: '',
               stretched: false,

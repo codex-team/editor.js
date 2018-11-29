@@ -4,3 +4,4 @@ export * from './inline-tool';
 export * from './tool';
 export * from './tool-config';
 export * from './tool-settings';
+export * from './paste-events';

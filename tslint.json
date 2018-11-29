@@ -17,6 +17,7 @@
       "import-sources-order": "any",
       "named-imports-order": "case-insensitive"
     }],
+    "no-string-literal": false,
     "no-empty": false,
     "no-namespace": false,
     "variable-name": [true, "allow-leading-underscore", "allow-pascal-case"]

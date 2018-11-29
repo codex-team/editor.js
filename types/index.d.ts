@@ -20,6 +20,14 @@ export {
   BlockToolData,
   ToolSettings,
   ToolConfig,
+  PasteEvent,
+  PasteEventDetail,
+  PatternPasteEvent,
+  PatternPasteEventDetail,
+  HTMLPasteEvent,
+  HTMLPasteEventDetail,
+  FilePasteEvent,
+  FilePasteEventDetail,
 } from './tools';
 export {BlockTune, BlockTuneConstructable} from './block-tunes';
 export {EditorConfig, SanitizerConfig, PasteConfig} from './configs';
