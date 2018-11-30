@@ -113,13 +113,12 @@ export default class Tools extends Module {
   public get apiSettings() {
     return {
       CONFIG: 'config',
-      IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
       IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_INLINE: 'isInline',
       IS_PASTE_DISALLOWED: 'disallowPaste',
       SHORTCUT: 'shortcut',
-      TOOLBAR_ICON: 'toolboxIcon',
+      TOOLBOX: 'toolbox',
       SANITIZE_CONFIG: 'sanitize',
     };
   }
