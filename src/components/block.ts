@@ -154,7 +154,13 @@ export default class Block {
    * @return {Object}
    */
   get data(): object {
-    return this.save();
+    return this.save().then((savedObject) => {
+      if (savedObject && !_.isEmpty(savedObject.data)) {
+        return savedObject.data;
+      } else {
+        return {};
+      }
+    });
   }
 
   /**

@@ -27,12 +27,12 @@ export default class Saver extends Module {
       chainData = [];
 
     blocks.forEach((block) => {
-      chainData.push(block.data);
+      chainData.push(block.save());
     });
 
     const extractedData = await Promise.all(chainData);
-
     const sanitizedData = await this.Editor.Sanitizer.sanitizeBlocks(extractedData);
+
     return this.makeOutput(sanitizedData);
   }
 
