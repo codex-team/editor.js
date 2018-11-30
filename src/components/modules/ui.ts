@@ -13,7 +13,6 @@ import $ from '../dom';
 import _ from '../utils';
 
 import Selection from '../selection';
-import {ModuleConfig} from '../../types-internal/module-config';
 
 /**
  * @class
@@ -200,6 +199,10 @@ export default class UI extends Module {
    */
   private enterPressed(event: KeyboardEvent): void {
     const hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
+
+    if (this.Editor.BlockSelection.anyBlockSelected) {
+      return;
+    }
 
     /**
      * If Caret is not set anywhere, event target on Enter is always Element that we handle

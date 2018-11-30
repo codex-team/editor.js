@@ -78,6 +78,16 @@ export default class BlockSelection extends Module {
   }
 
   /**
+   * Flag that identifies any Block selection
+   * @return {boolean}
+   */
+  public get anyBlockSelected(): boolean {
+    const { BlockManager } = this.Editor;
+
+    return BlockManager.blocks.some( (block) => block.selected === true);
+  }
+
+  /**
    * Module Preparation
    * Registers Shortcuts CMD+A and CMD+C
    * to select all and copy them
@@ -108,13 +118,9 @@ export default class BlockSelection extends Module {
    * Clear selection from Blocks
    */
   public clearSelection(restoreSelection = false) {
-    const { BlockManager } = this.Editor;
-    const anyBlockSelected = BlockManager.blocks.some( (block) => block.selected === true);
-
-    this.allBlocksSelected = false;
     this.needToSelectAll = false;
 
-    if (!anyBlockSelected) {
+    if (!this.anyBlockSelected) {
       return;
     }
 
@@ -125,6 +131,9 @@ export default class BlockSelection extends Module {
     if (restoreSelection) {
       this.selection.restore();
     }
+
+    /** Now all blocks cleared */
+    this.allBlocksSelected = false;
   }
 
   /**
@@ -154,9 +163,8 @@ export default class BlockSelection extends Module {
    */
   private handleCommandC(event): void {
     const { BlockManager, Sanitizer } = this.Editor;
-    const anyBlockSelected = BlockManager.blocks.some( (block) => block.selected === true);
 
-    if (!anyBlockSelected) {
+    if (!this.anyBlockSelected) {
       return;
     }
 
