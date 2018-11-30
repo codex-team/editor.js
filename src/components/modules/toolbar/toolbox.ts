@@ -247,7 +247,7 @@ export default class Toolbox extends Module {
     /**
      * Skip tools that don't pass 'toolbox' property
      */
-    if (!toolToolboxSettings) {
+    if (_.isEmpty(toolToolboxSettings)) {
       return;
     }
 
