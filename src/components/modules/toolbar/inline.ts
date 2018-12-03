@@ -109,6 +109,11 @@ export default class InlineToolbar extends Module {
     this.nodes.buttons = $.make('div', this.CSS.buttonsWrapper);
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
 
+    // To prevent reset of a selection when click on the wrapper
+    this.nodes.wrapper.addEventListener('mousedown', (event) => {
+      event.preventDefault();
+    });
+
     /**
      * Append Inline Toolbar to the Editor
      */
