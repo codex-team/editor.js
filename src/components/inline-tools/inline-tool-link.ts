@@ -41,6 +41,8 @@ export default class LinkInlineTool implements InlineTool {
    */
   private readonly commandLink: string = 'createLink';
   private readonly commandUnlink: string = 'unlink';
+  private readonly commandBackground: string = 'backColor';
+  private readonly commandRemoveFormat: string = 'removeFormat';
 
   /**
    * Enter key code
@@ -130,13 +132,12 @@ export default class LinkInlineTool implements InlineTool {
      */
     if (range) {
 
-      /** Create blue background insted selection */
-      document.execCommand('backColor', false, '#a7d6fe');
+      /** Create blue background instead selection */
+      document.execCommand(this.commandBackground, false, '#a7d6fe');
 
       /**
        * Save selection before change focus to the input
        */
-
       this.selection.save();
       const parentAnchor = this.selection.findParentTag('A');
 
@@ -357,6 +358,6 @@ export default class LinkInlineTool implements InlineTool {
    * Removes fake background
    */
   private removeFakeBackground() {
-    document.execCommand('removeFormat');
+    document.execCommand(this.commandRemoveFormat);
   }
 }
