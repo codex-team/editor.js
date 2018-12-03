@@ -21,7 +21,7 @@ export default class InlineToolbar extends Module {
    * Returns internal inline tools
    * Includes Bold, Italic, Link
    */
-  private get internalTools(): {[name: string]: InlineTool} {
+  private get internalTools(): { [name: string]: InlineTool } {
     return {
       bold: this.Editor.Tools.constructInline(BoldInlineTool),
       italic: this.Editor.Tools.constructInline(ItalicInlineTool),
@@ -33,7 +33,7 @@ export default class InlineToolbar extends Module {
    * Get external tools
    * Tools that has isInline is true
    */
-  private get externalTools(): {[name: string]: InlineTool} {
+  private get externalTools(): { [name: string]: InlineTool } {
     const result = {};
 
     for (const tool in this.Editor.Tools.inline) {
@@ -55,12 +55,13 @@ export default class InlineToolbar extends Module {
     actionsWrapper: 'ce-inline-toolbar__actions',
     inlineToolButton: 'ce-inline-tool',
     inlineToolButtonLast: 'ce-inline-tool--last',
+    inputField: 'cdx-input',
   };
 
   /**
    * Inline Toolbar elements
    */
-  private nodes: {wrapper: HTMLElement, buttons: HTMLElement, actions: HTMLElement} = {
+  private nodes: { wrapper: HTMLElement, buttons: HTMLElement, actions: HTMLElement } = {
     wrapper: null,
     buttons: null,
     /**
@@ -155,10 +156,10 @@ export default class InlineToolbar extends Module {
     const newCoords = {
       x: selectionRect.x - wrapperOffset.left,
       y: selectionRect.y
-          + selectionRect.height
-          // + window.scrollY
-          - wrapperOffset.top
-          + this.toolbarVerticalMargin,
+        + selectionRect.height
+        // + window.scrollY
+        - wrapperOffset.top
+        + this.toolbarVerticalMargin,
     };
 
     /**
@@ -177,7 +178,7 @@ export default class InlineToolbar extends Module {
    */
   public close(): void {
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
-    this.tools.forEach( (toolInstance, toolName) => {
+    this.tools.forEach((toolInstance, toolName) => {
       if (typeof toolInstance.clear === 'function') {
         toolInstance.clear();
       }
@@ -201,7 +202,7 @@ export default class InlineToolbar extends Module {
     /**
      * Call 'clear' method for Inline Tools (for example, 'link' want to clear input)
      */
-    this.tools.forEach( (toolInstance: InlineTool) => {
+    this.tools.forEach((toolInstance: InlineTool) => {
       if (typeof toolInstance.clear === 'function') {
         toolInstance.clear();
       }
@@ -220,6 +221,12 @@ export default class InlineToolbar extends Module {
     const tagsConflictsWithSelection = ['IMG', 'INPUT'];
 
     if (event && tagsConflictsWithSelection.includes(event.target.tagName)) {
+      return false;
+    }
+
+    // The selection of the element only in contenteditable
+    const contenteditable = event.target.closest('[contenteditable="true"]');
+    if (contenteditable === null) {
       return false;
     }
 
@@ -301,7 +308,7 @@ export default class InlineToolbar extends Module {
    * Fill Inline Toolbar with Tools
    */
   private addTools(): void {
-    this.tools.forEach( (toolInstance, toolName) => {
+    this.tools.forEach((toolInstance, toolName) => {
       this.addTool(toolName, toolInstance);
     });
   }
@@ -348,14 +355,14 @@ export default class InlineToolbar extends Module {
      */
     const internalTools: string[] = Object
       .entries(Tools.internalTools)
-      .filter(([name, toolClass]: [string, ToolConstructable|ToolSettings]) => {
+      .filter(([name, toolClass]: [string, ToolConstructable | ToolSettings]) => {
         if (_.isFunction(toolClass)) {
           return toolClass[Tools.apiSettings.IS_INLINE];
         }
 
         return (toolClass as ToolSettings).class[Tools.apiSettings.IS_INLINE];
       })
-      .map(([name, toolClass]: [string, InlineToolConstructable|ToolSettings]) => name);
+      .map(([name, toolClass]: [string, InlineToolConstructable | ToolSettings]) => name);
 
     /**
      * 1) For internal tools, check public getter 'shortcut'
@@ -395,9 +402,9 @@ export default class InlineToolbar extends Module {
          * it can be used by tools like «Mention» that works without selection:
          * Example: by SHIFT+@ show dropdown and insert selected username
          */
-        // if (SelectionUtils.isCollapsed) return;
+          // if (SelectionUtils.isCollapsed) return;
 
-        const toolSettings =  this.Editor.Tools.getToolSettings(currentBlock.name);
+        const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
 
         if (!toolSettings || !toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
           return;
@@ -424,7 +431,7 @@ export default class InlineToolbar extends Module {
    * Check Tools` state by selection
    */
   private checkToolsState(): void {
-    this.tools.forEach( (toolInstance) => {
+    this.tools.forEach((toolInstance) => {
       toolInstance.checkState(SelectionUtils.get());
     });
   }
@@ -433,7 +440,7 @@ export default class InlineToolbar extends Module {
    * Get inline tools tools
    * Tools that has isInline is true
    */
-  private get inlineTools(): {[name: string]: InlineTool} {
+  private get inlineTools(): { [name: string]: InlineTool } {
     const result = {};
 
     for (const tool in this.Editor.Tools.inline) {
