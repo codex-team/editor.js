@@ -4,6 +4,7 @@ import $ from '../dom';
 import _ from '../utils';
 import {API, InlineTool, SanitizerConfig} from '../../../types';
 import {Toolbar} from '../../../types/api';
+
 /**
  * Link Tool
  *
@@ -112,7 +113,7 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.input.placeholder = 'Add a link';
     this.nodes.input.classList.add(this.CSS.input);
     this.nodes.input.addEventListener('keydown', (event: KeyboardEvent) => {
-      if (event.keyCode === this.ENTER_KEY ) {
+      if (event.keyCode === this.ENTER_KEY) {
         this.enterPressed(event);
       }
     });
@@ -128,9 +129,14 @@ export default class LinkInlineTool implements InlineTool {
      * Range will be null when user makes second click on the 'link icon' to close opened input
      */
     if (range) {
+
+      /** Create blue background insted selection */
+      document.execCommand('backColor', false, '#a7d6fe');
+
       /**
        * Save selection before change focus to the input
        */
+
       this.selection.save();
       const parentAnchor = this.selection.findParentTag('A');
 
@@ -216,6 +222,9 @@ export default class LinkInlineTool implements InlineTool {
    *                                        on toggle-clicks on the icon of opened Toolbar
    */
   private closeActions(clearSavedSelection: boolean = true): void {
+    this.selection.restore();
+    this.removeFakeBackground();
+
     this.nodes.input.classList.remove(this.CSS.inputShowed);
     this.nodes.input.value = '';
     if (clearSavedSelection) {
@@ -249,6 +258,8 @@ export default class LinkInlineTool implements InlineTool {
     value = this.prepareLink(value);
 
     this.selection.restore();
+    this.removeFakeBackground();
+
     this.insertLink(value);
 
     /**
@@ -338,6 +349,14 @@ export default class LinkInlineTool implements InlineTool {
    * Removes <a> tag
    */
   private unlink(): void {
+    this.removeFakeBackground();
     document.execCommand(this.commandUnlink);
+  }
+
+  /**
+   * Removes fake background
+   */
+  private removeFakeBackground() {
+    document.execCommand('removeFormat');
   }
 }
