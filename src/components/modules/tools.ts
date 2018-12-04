@@ -330,7 +330,7 @@ export default class Tools extends Module {
    * @param {string} toolName
    * @return {ToolSettings}
    */
-  public getToolSettings(toolName) {
+  public getToolSettings(toolName): ToolSettings {
     return this.toolsSettings[toolName];
   }
 

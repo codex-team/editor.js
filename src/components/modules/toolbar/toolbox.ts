@@ -1,7 +1,7 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import _ from '../../utils';
-import {BlockToolConstructable} from '../../../../types';
+import {BlockToolConstructable, ToolboxConfig} from '../../../../types';
 
 /**
  * @class Toolbox
@@ -231,6 +231,13 @@ export default class Toolbox extends Module {
 
     const toolToolboxSettings = tool[api.TOOLBOX];
 
+    /**
+     * Skip tools that don't pass 'toolbox' property
+     */
+    if (_.isEmpty(toolToolboxSettings)) {
+      return;
+    }
+
     if (toolToolboxSettings && !toolToolboxSettings.icon) {
       _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
       return;
@@ -244,19 +251,14 @@ export default class Toolbox extends Module {
     //   return;
     // }
 
-    /**
-     * Skip tools that don't pass 'toolbox' property
-     */
-    if (_.isEmpty(toolToolboxSettings)) {
-      return;
-    }
+    const {toolbox: userToolboxSettings = {} as ToolboxConfig} = this.Editor.Tools.getToolSettings(toolName);
 
     const button = $.make('li', [ Toolbox.CSS.toolboxButton ], {
-      title: toolToolboxSettings.title || toolName,
+      title: userToolboxSettings.title || toolToolboxSettings.title || toolName,
     });
 
     button.dataset.tool = toolName;
-    button.innerHTML = toolToolboxSettings.icon;
+    button.innerHTML = userToolboxSettings.icon || toolToolboxSettings.icon;
 
     $.append(this.nodes.toolbox, button);
 
