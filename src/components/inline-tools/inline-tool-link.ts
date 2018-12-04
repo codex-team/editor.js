@@ -132,13 +132,13 @@ export default class LinkInlineTool implements InlineTool {
      */
     if (range) {
 
-      /** Create blue background instead selection */
-      document.execCommand(this.commandBackground, false, '#a8d6ff');
-
       /**
        * Save selection before change focus to the input
        */
       if (!this.inputOpened) {
+        /** Create blue background instead selection */
+        document.execCommand(this.commandBackground, false, '#a8d6ff');
+
         this.selection.save();
       }
       const parentAnchor = this.selection.findParentTag('A');
