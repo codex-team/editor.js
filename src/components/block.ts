@@ -153,8 +153,14 @@ export default class Block {
    * Get Block's JSON data
    * @return {Object}
    */
-  get data(): object {
-    return this.save();
+  get data(): BlockToolData {
+    return this.save().then((savedObject) => {
+      if (savedObject && !_.isEmpty(savedObject.data)) {
+        return savedObject.data;
+      } else {
+        return {};
+      }
+    });
   }
 
   /**
