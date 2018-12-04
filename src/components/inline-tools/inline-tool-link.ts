@@ -133,12 +133,15 @@ export default class LinkInlineTool implements InlineTool {
     if (range) {
 
       /** Create blue background instead selection */
-      document.execCommand(this.commandBackground, false, '#a7d6fe');
+      console.log('hek:' + window.getSelection().toString());
+      document.execCommand(this.commandBackground, false, '#a8d6ff');
 
       /**
        * Save selection before change focus to the input
        */
-      this.selection.save();
+      if (!this.inputOpened) {
+        this.selection.save();
+      }
       const parentAnchor = this.selection.findParentTag('A');
 
       /**
@@ -223,8 +226,11 @@ export default class LinkInlineTool implements InlineTool {
    *                                        on toggle-clicks on the icon of opened Toolbar
    */
   private closeActions(clearSavedSelection: boolean = true): void {
+    console.log(window.getSelection().toString());
     this.selection.restore();
+    console.log(window.getSelection().toString());
     this.removeFakeBackground();
+    console.log(window.getSelection().toString());
 
     this.nodes.input.classList.remove(this.CSS.inputShowed);
     this.nodes.input.value = '';
@@ -259,7 +265,9 @@ export default class LinkInlineTool implements InlineTool {
     value = this.prepareLink(value);
 
     this.selection.restore();
+    console.log(window.getSelection().toString());
     this.removeFakeBackground();
+    console.log(window.getSelection().toString());
 
     this.insertLink(value);
 
@@ -350,7 +358,9 @@ export default class LinkInlineTool implements InlineTool {
    * Removes <a> tag
    */
   private unlink(): void {
+    console.log(window.getSelection().toString());
     this.removeFakeBackground();
+    console.log(window.getSelection().toString());
     document.execCommand(this.commandUnlink);
   }
 
