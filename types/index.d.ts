@@ -18,6 +18,7 @@ export {
   BlockToolConstructable,
   BlockTool,
   BlockToolData,
+  ToolboxConfig,
   ToolSettings,
   ToolConfig,
   PasteEvent,

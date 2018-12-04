@@ -1,7 +1,7 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import _ from '../../utils';
-import {BlockToolConstructable} from '../../../../types';
+import {BlockToolConstructable, ToolboxConfig} from '../../../../types';
 
 /**
  * @class Toolbox
@@ -196,7 +196,7 @@ export default class Toolbox extends Module {
       return null;
     }
 
-    return (childNodes[this.activeButtonIndex] as HTMLElement).title;
+    return (childNodes[this.activeButtonIndex] as HTMLElement).dataset.tool;
   }
 
   /**
@@ -229,7 +229,16 @@ export default class Toolbox extends Module {
   private addTool(toolName: string, tool: BlockToolConstructable): void {
     const api = this.Editor.Tools.apiSettings;
 
-    if (tool[api.IS_DISPLAYED_IN_TOOLBOX] && !tool[api.TOOLBAR_ICON]) {
+    const toolToolboxSettings = tool[api.TOOLBOX];
+
+    /**
+     * Skip tools that don't pass 'toolbox' property
+     */
+    if (_.isEmpty(toolToolboxSettings)) {
+      return;
+    }
+
+    if (toolToolboxSettings && !toolToolboxSettings.icon) {
       _.log('Toolbar icon is missed. Tool %o skipped', 'warn', toolName);
       return;
     }
@@ -242,18 +251,14 @@ export default class Toolbox extends Module {
     //   return;
     // }
 
-    /**
-     * Skip tools that pass 'displayInToolbox=false'
-     */
-    if (!tool[api.IS_DISPLAYED_IN_TOOLBOX]) {
-      return;
-    }
+    const {toolbox: userToolboxSettings = {} as ToolboxConfig} = this.Editor.Tools.getToolSettings(toolName);
 
     const button = $.make('li', [ Toolbox.CSS.toolboxButton ], {
-      title: toolName,
+      title: userToolboxSettings.title || toolToolboxSettings.title || toolName,
     });
 
-    button.innerHTML = tool.toolboxIcon;
+    button.dataset.tool = toolName;
+    button.innerHTML = userToolboxSettings.icon || toolToolboxSettings.icon;
 
     $.append(this.nodes.toolbox, button);
 

@@ -57,14 +57,19 @@ export interface BlockTool extends Tool {
 
 export interface BlockToolConstructable extends ToolConstructable {
   /**
-   * Should this Tool be displayed in the Editor's Toolbox
+   * Tool's Toolbox settings
    */
-  displayInToolbox?: boolean;
+  toolbox?: {
+    /**
+     * HTML string with an icon for Toolbox
+     */
+    icon: string;
 
-  /**
-   * String with an icon for Toolbox
-   */
-  toolboxIcon?: string;
+    /**
+     * Tool title for Toolbox
+     */
+    title?: string;
+  };
 
   /**
    * Paste substitutions configuration
