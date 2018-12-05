@@ -5,6 +5,7 @@ import {BlockToolConstructable, ToolConfig, ToolConstructable, ToolSettings} fro
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
+import Stub from '../tools/stub';
 
 /**
  * @module Codex Editor Tools Submodule
@@ -23,6 +24,13 @@ import LinkInlineTool from '../inline-tools/inline-tool-link';
  * @property {EditorConfig} config - Editor config
  */
 export default class Tools extends Module {
+
+  /**
+   * Name of Stub Tool
+   * Stub Tool is used to substitute unavailable block Tools and store their data
+   * @type {string}
+   */
+  public stubTool = 'stub';
 
   /**
    * Returns available Tools
@@ -384,6 +392,7 @@ export default class Tools extends Module {
         class: Paragraph,
         inlineToolbar: true,
       },
+      stub: Stub,
     };
   }
 }

@@ -1,0 +1,26 @@
+.ce-stub {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 3.5em 0;
+  margin: 17px 0;
+  border-radius: 3px;
+  background: #fcf7f7;
+  color: #b46262;
+
+  &__info {
+    margin-left: 20px;
+  }
+
+  &__title {
+    margin-bottom: 3px;
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: capitalize;
+  }
+
+  &__subtitle {
+    font-size: 16px;
+  }
+}

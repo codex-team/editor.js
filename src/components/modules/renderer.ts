@@ -1,6 +1,7 @@
 import Module from '../__module';
 import _, {ChainData} from '../utils';
 import {BlockToolData} from '../../../types';
+import {BlockToolConstructable} from '../../../types/tools';
 
 /**
  * Codex Editor Renderer Module
@@ -57,23 +58,40 @@ export default class Renderer extends Module {
    * @private
    */
   public async insertBlock(item): Promise<void> {
+    const { Tools, BlockManager } = this.Editor;
     const tool = item.type;
     const data = item.data;
     const settings = item.settings;
 
-    if (tool in this.Editor.Tools.available) {
+    if (tool in Tools.available) {
       try {
-        this.Editor.BlockManager.insert(tool, data, settings);
+        BlockManager.insert(tool, data, settings);
       } catch (error) {
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
         throw Error(error);
       }
     } else {
-      /**
-       * @todo show warning notification message
-       *
-       * `${tool} blocks was skipped.`
-       */
+
+      /** If Tool is unavailable, create stub Block for it */
+      const stubData = {
+        savedData: {
+          type: tool,
+          data,
+        },
+        title: tool,
+      };
+
+      if (tool in Tools.unavailable) {
+        const toolToolboxSettings = (Tools.unavailable[tool] as BlockToolConstructable).toolbox;
+        const userToolboxSettings = Tools.getToolSettings(tool).toolbox;
+
+        stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
+      }
+
+      const stub = BlockManager.insert(Tools.stubTool, stubData, settings);
+
+      stub.stretched = true;
+
       _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial CodeX Editor config.`, 'warn');
     }
   }

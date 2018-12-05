@@ -7,6 +7,7 @@
  */
 import Module from '../__module';
 import {OutputData} from '../../../types';
+import Block from '../block';
 
 declare const VERSION: string;
 
@@ -26,7 +27,7 @@ export default class Saver extends Module {
     const blocks = this.Editor.BlockManager.blocks,
       chainData = [];
 
-    blocks.forEach((block) => {
+    blocks.forEach((block: Block) => {
       chainData.push(block.save());
     });
 
@@ -51,6 +52,13 @@ export default class Saver extends Module {
       /** Group process info */
       console.log(`«${extraction.tool}» saving info`, extraction);
       totalTime += extraction.time;
+
+      /** If it was stub Block, get original data */
+      if (extraction.tool === this.Editor.Tools.stubTool) {
+        blocks.push(extraction.data);
+        return;
+      }
+
       blocks.push({
         type: extraction.tool,
         data: extraction.data,
