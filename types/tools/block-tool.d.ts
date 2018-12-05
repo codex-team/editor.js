@@ -15,11 +15,6 @@ export interface BlockTool extends Tool {
   sanitize?: SanitizerConfig;
 
   /**
-   * @constructor
-   */
-  constructor: BlockToolConstructable;
-
-  /**
    * Return Tool's main block-wrapper
    * @return {HTMLElement}
    */
@@ -74,12 +69,7 @@ export interface BlockToolConstructable extends ToolConstructable {
   /**
    * Paste substitutions configuration
    */
-  onPaste?: PasteConfig;
-
-  /**
-   * Paste substitutions configuration
-   */
-  pasteConfig: PasteConfig;
+  pasteConfig?: PasteConfig;
 
   new (config: {api: API, config: ToolConfig, data: BlockToolData}): BlockTool;
 }
