@@ -1,7 +1,7 @@
 /**
  * Prebuilded sprite of SVG icons
  */
-import sprite from '../../../build/sprite.svg';
+import sprite from '../../../dist/sprite.svg';
 
 /**
  * Module UI

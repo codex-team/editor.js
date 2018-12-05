@@ -1,5 +1,4 @@
 'use strict';
-
 import {EditorConfig} from '../types';
 
 declare const VERSION: string;
@@ -18,6 +17,7 @@ import Core from './components/core';
  * Short Description (눈_눈;)
  * @version 2.0
  *
+ * @licence Apache-2.0
  * @author CodeX-Team <https://ifmo.su>
  */
 export default class CodexEditor {

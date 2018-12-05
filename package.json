@@ -5,9 +5,12 @@
   "main": "build/codex-editor.js",
   "types": "./types/index.d.ts",
   "scripts": {
-    "build": "rimraf dist && yarn svg && yarn build:dev",
-    "svg": "svg-sprite-generate -d src/assets/ -o build/sprite.svg",
-    "build:dev": "webpack --mode development --progress  --display-error-details --display-entrypoints"
+    "build": "rimraf dist && yarn svg && yarn build:prod",
+    "build:win": "rimraf dist && yarn svg:win && yarn build:prod",
+    "build:dev": "webpack --mode development --progress  --display-error-details --display-entrypoints",
+    "build:prod": "webpack --mode production --progress  --display-error-details --display-entrypoints",
+    "svg:win": "if not exist dist md dist && yarn svg",
+    "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
@@ -34,6 +37,7 @@
     "eslint-loader": "^2.1.0",
     "extract-text-webpack-plugin": "^3.0.2",
     "html-janitor": "^2.0.4",
+    "license-webpack-plugin": "^2.0.4",
     "path": "^0.12.7",
     "postcss-apply": "^0.10.0",
     "postcss-color-hex-alpha": "^3.0.0",
@@ -54,6 +58,7 @@
     "rimraf": "^2.6.2",
     "stylelint": "^9.3.0",
     "svg-sprite-generator": "0.0.7",
+    "terser-webpack-plugin": "^1.1.0",
     "ts-loader": "^5.3.0",
     "tslint": "^5.11.0",
     "tslint-loader": "^3.6.0",
