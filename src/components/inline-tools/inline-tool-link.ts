@@ -4,7 +4,6 @@ import $ from '../dom';
 import _ from '../utils';
 import {API, InlineTool, SanitizerConfig} from '../../../types';
 import {Toolbar} from '../../../types/api';
-
 /**
  * Link Tool
  *
@@ -129,7 +128,6 @@ export default class LinkInlineTool implements InlineTool {
      * Range will be null when user makes second click on the 'link icon' to close opened input
      */
     if (range) {
-
       /**
        * Save selection before change focus to the input
        */
@@ -251,7 +249,6 @@ export default class LinkInlineTool implements InlineTool {
     value = this.prepareLink(value);
 
     this.selection.restore();
-
     this.insertLink(value);
 
     /**
