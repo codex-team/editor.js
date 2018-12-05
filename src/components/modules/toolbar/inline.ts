@@ -110,7 +110,7 @@ export default class InlineToolbar extends Module {
     this.nodes.actions = $.make('div', this.CSS.actionsWrapper);
 
     // To prevent reset of a selection when click on the wrapper
-    this.nodes.wrapper.addEventListener('mousedown', (event) => {
+    this.Editor.Listeners.on(this.nodes.wrapper, 'mousedown', (event) => {
       event.preventDefault();
     });
 
