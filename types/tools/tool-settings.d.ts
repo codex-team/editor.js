@@ -2,6 +2,21 @@ import {ToolConfig} from './tool-config';
 import {ToolConstructable} from './tool';
 
 /**
+ * Tool's Toolbox settings
+ */
+export interface ToolboxConfig {
+  /**
+   * Tool title for Toolbox
+   */
+  title?: string;
+
+  /**
+   * HTML string with an icon for Toolbox
+   */
+  icon?: string;
+}
+
+/**
  * Object passed to the Tool's constructor by {@link EditorConfig#tools}
  */
 export interface ToolSettings {
@@ -31,4 +46,9 @@ export interface ToolSettings {
    * Define shortcut that will render Tool
    */
   shortcut?: string;
+
+  /**
+   * Tool's Toolbox settings
+   */
+  toolbox?: ToolboxConfig;
 }

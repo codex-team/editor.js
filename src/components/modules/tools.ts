@@ -5,6 +5,7 @@ import {BlockToolConstructable, ToolConfig, ToolConstructable, ToolSettings} fro
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
+import Stub from '../tools/stub';
 
 /**
  * @module Codex Editor Tools Submodule
@@ -23,6 +24,13 @@ import LinkInlineTool from '../inline-tools/inline-tool-link';
  * @property {EditorConfig} config - Editor config
  */
 export default class Tools extends Module {
+
+  /**
+   * Name of Stub Tool
+   * Stub Tool is used to substitute unavailable block Tools and store their data
+   * @type {string}
+   */
+  public stubTool = 'stub';
 
   /**
    * Returns available Tools
@@ -113,13 +121,12 @@ export default class Tools extends Module {
   public get apiSettings() {
     return {
       CONFIG: 'config',
-      IS_DISPLAYED_IN_TOOLBOX: 'displayInToolbox',
       IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_INLINE: 'isInline',
       IS_PASTE_DISALLOWED: 'disallowPaste',
       SHORTCUT: 'shortcut',
-      TOOLBAR_ICON: 'toolboxIcon',
+      TOOLBOX: 'toolbox',
       SANITIZE_CONFIG: 'sanitize',
     };
   }
@@ -331,7 +338,7 @@ export default class Tools extends Module {
    * @param {string} toolName
    * @return {ToolSettings}
    */
-  public getToolSettings(toolName) {
+  public getToolSettings(toolName): ToolSettings {
     return this.toolsSettings[toolName];
   }
 
@@ -385,6 +392,7 @@ export default class Tools extends Module {
         class: Paragraph,
         inlineToolbar: true,
       },
+      stub: Stub,
     };
   }
 }

@@ -15,11 +15,6 @@ export interface BlockTool extends Tool {
   sanitize?: SanitizerConfig;
 
   /**
-   * @constructor
-   */
-  constructor: BlockToolConstructable;
-
-  /**
    * Return Tool's main block-wrapper
    * @return {HTMLElement}
    */
@@ -57,24 +52,24 @@ export interface BlockTool extends Tool {
 
 export interface BlockToolConstructable extends ToolConstructable {
   /**
-   * Should this Tool be displayed in the Editor's Toolbox
+   * Tool's Toolbox settings
    */
-  displayInToolbox?: boolean;
+  toolbox?: {
+    /**
+     * HTML string with an icon for Toolbox
+     */
+    icon: string;
 
-  /**
-   * String with an icon for Toolbox
-   */
-  toolboxIcon?: string;
+    /**
+     * Tool title for Toolbox
+     */
+    title?: string;
+  };
 
   /**
    * Paste substitutions configuration
    */
-  onPaste?: PasteConfig;
-
-  /**
-   * Paste substitutions configuration
-   */
-  pasteConfig: PasteConfig;
+  pasteConfig?: PasteConfig;
 
   new (config: {api: API, config: ToolConfig, data: BlockToolData}): BlockTool;
 }
