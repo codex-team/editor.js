@@ -26,7 +26,8 @@ import Stub from '../tools/stub';
 export default class Tools extends Module {
 
   /**
-   * Name of stub tool
+   * Name of Stub Tool
+   * Stub Tool is used to substitute unavailable block Tools and store their data
    * @type {string}
    */
   public stubTool = 'stub';
