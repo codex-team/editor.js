@@ -41,8 +41,6 @@ export default class LinkInlineTool implements InlineTool {
    */
   private readonly commandLink: string = 'createLink';
   private readonly commandUnlink: string = 'unlink';
-  private readonly commandBackground: string = 'backColor';
-  private readonly commandRemoveFormat: string = 'removeFormat';
 
   /**
    * Enter key code
@@ -135,12 +133,7 @@ export default class LinkInlineTool implements InlineTool {
       /**
        * Save selection before change focus to the input
        */
-      if (!this.inputOpened) {
-        /** Create blue background instead selection */
-        document.execCommand(this.commandBackground, false, '#a8d6ff');
-
-        this.selection.save();
-      }
+      this.selection.save();
       const parentAnchor = this.selection.findParentTag('A');
 
       /**
@@ -225,9 +218,6 @@ export default class LinkInlineTool implements InlineTool {
    *                                        on toggle-clicks on the icon of opened Toolbar
    */
   private closeActions(clearSavedSelection: boolean = true): void {
-    this.selection.restore();
-    this.removeFakeBackground();
-
     this.nodes.input.classList.remove(this.CSS.inputShowed);
     this.nodes.input.value = '';
     if (clearSavedSelection) {
@@ -261,7 +251,6 @@ export default class LinkInlineTool implements InlineTool {
     value = this.prepareLink(value);
 
     this.selection.restore();
-    this.removeFakeBackground();
 
     this.insertLink(value);
 
@@ -352,14 +341,6 @@ export default class LinkInlineTool implements InlineTool {
    * Removes <a> tag
    */
   private unlink(): void {
-    this.removeFakeBackground();
     document.execCommand(this.commandUnlink);
-  }
-
-  /**
-   * Removes fake background
-   */
-  private removeFakeBackground() {
-    document.execCommand(this.commandRemoveFormat);
   }
 }
