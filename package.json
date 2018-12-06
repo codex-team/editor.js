@@ -5,7 +5,7 @@
   "main": "dist/codex-editor.js",
   "types": "./types/index.d.ts",
   "scripts": {
-    "build": "rimraf dist/*.js && yarn svg && yarn build:prod",
+    "build": "rimraf dist/* && yarn svg && yarn build:prod",
     "build:win": "rimraf dist && yarn svg:win && yarn build:prod",
     "build:dev": "webpack --mode development --progress  --display-error-details --display-entrypoints",
     "build:prod": "webpack --mode production --progress  --display-error-details --display-entrypoints",
