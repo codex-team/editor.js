@@ -118,7 +118,7 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.input.placeholder = 'Add a link';
     this.nodes.input.classList.add(this.CSS.input);
     this.nodes.input.addEventListener('keydown', (event: KeyboardEvent) => {
-      if (event.keyCode === this.ENTER_KEY ) {
+      if (event.keyCode === this.ENTER_KEY) {
         this.enterPressed(event);
       }
     });
