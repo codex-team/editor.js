@@ -96,6 +96,8 @@ export default class DeleteTune implements BlockTune {
 
       this.api.blocks.delete();
 
+      this.api.toolbar.close();
+
       /**
        * Prevent firing ui~documentClicked that can drop currentBlock pointer
        */
