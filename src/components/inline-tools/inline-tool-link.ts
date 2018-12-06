@@ -3,7 +3,7 @@ import SelectionUtils from '../selection';
 import $ from '../dom';
 import _ from '../utils';
 import {API, InlineTool, SanitizerConfig} from '../../../types';
-import {Toolbar} from '../../../types/api';
+import {Notifier, Toolbar} from '../../../types/api';
 /**
  * Link Tool
  *
@@ -85,10 +85,16 @@ export default class LinkInlineTool implements InlineTool {
   private inlineToolbar: Toolbar;
 
   /**
+   * Notifier API methods
+   */
+  private notifier: Notifier;
+
+  /**
    * @param {{api: API}} - CodeX Editor API
    */
   constructor({api}) {
     this.inlineToolbar = api.toolbar;
+    this.notifier = api.notifier;
     this.selection = new SelectionUtils();
   }
 
@@ -239,9 +245,12 @@ export default class LinkInlineTool implements InlineTool {
     }
 
     if (!this.validateURL(value)) {
-      /**
-       * @todo show notification 'Incorrect Link'
-       */
+
+      this.notifier.show({
+        message: 'Pasted link is not valid.',
+        style: 'error',
+      });
+
       _.log('Incorrect Link pasted', 'warn', value);
       return;
     }
