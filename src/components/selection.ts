@@ -146,7 +146,7 @@ export default class SelectionUtils {
 
     sel = window.getSelection();
 
-    if (!isNaN(sel.rangeCount)) {
+    if (isNaN(sel.rangeCount)) {
       _.log('Method SelectionUtils.rangeCount is not supported', 'warn');
       return rect;
     }

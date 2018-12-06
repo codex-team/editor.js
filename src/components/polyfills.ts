@@ -9,8 +9,8 @@ interface Element {
   msMatchesSelector: (selector: string) => boolean;
   oMatchesSelector: (selector: string) => boolean;
 
-  prepend: (nodes: Node|Node[]|DocumentFragment) => void;
-  append: (nodes: Node|Node[]|DocumentFragment) => void;
+  prepend: (...nodes: Array<string | Node>) => void;
+  append: (...nodes: Array<string | Node>) => void;
 }
 
 /**
