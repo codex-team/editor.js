@@ -7,6 +7,7 @@
 
 import Module from '../__module';
 import _ from '../utils';
+import Block from '../block';
 
 export default class ModificationsObserver extends Module {
 
@@ -15,6 +16,11 @@ export default class ModificationsObserver extends Module {
    * @type {number}
    */
   public static readonly DebounceTimer = 450;
+
+  /**
+   * MutationObserver instance
+   */
+  private observer: MutationObserver;
 
   /**
    * Used to prevent several mutation callback execution
@@ -51,13 +57,39 @@ export default class ModificationsObserver extends Module {
    * so that User can handle outside from API
    */
   private setObserver(): void {
-    const {Listeners, UI} = this.Editor;
+    const {UI} = this.Editor;
+    const observerOptions = {
+      childList: true,
+      attributes: true,
+      subtree: true,
+    };
 
-    /**
-     * Set Listener to the Editor <div> element that holds only Blocks
-     */
-    Listeners.on(UI.nodes.redactor, 'DOMSubtreeModified', () => {
-      this.mutationDebouncer();
-    }, false);
+    this.observer = new MutationObserver((mutationList, observer) => {
+      this.mutationHandler(mutationList, observer);
+    });
+    this.observer.observe(UI.nodes.redactor, observerOptions);
+  }
+
+  /**
+   * @param mutationList
+   * @param observer
+   */
+  private mutationHandler(mutationList, observer) {
+    mutationList.forEach((mutation) => {
+      switch (mutation.type) {
+        case 'childList':
+          console.log('childList', mutation);
+          this.config.onChange();
+          break;
+        case 'attributes':
+          const mutatedTarget = mutation.target as Element;
+          if (mutatedTarget.classList.contains(Block.CSS.wrapper)) {
+            return;
+          }
+          console.log('attributes', mutation);
+          this.config.onChange();
+          break;
+      }
+    });
   }
 }
