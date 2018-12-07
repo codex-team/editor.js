@@ -35,6 +35,8 @@ export default class ModificationsObserver extends Module {
    */
   public destroy() {
     this.mutationDebouncer = null;
+    this.observer.disconnect();
+    this.observer = null;
   }
 
   /**
@@ -62,6 +64,8 @@ export default class ModificationsObserver extends Module {
       childList: true,
       attributes: true,
       subtree: true,
+      characterData: true,
+      characterDataOldValue: true,
     };
 
     this.observer = new MutationObserver((mutationList, observer) => {
@@ -75,21 +79,28 @@ export default class ModificationsObserver extends Module {
    * @param observer
    */
   private mutationHandler(mutationList, observer) {
+    let contentMutated = false;
     mutationList.forEach((mutation) => {
       switch (mutation.type) {
         case 'childList':
-          console.log('childList', mutation);
-          this.config.onChange();
+        case 'subtree':
+        case 'characterData':
+        case 'characterDataOldValue':
+          contentMutated = true;
           break;
         case 'attributes':
           const mutatedTarget = mutation.target as Element;
-          if (mutatedTarget.classList.contains(Block.CSS.wrapper)) {
+          if (!mutatedTarget.classList.contains(Block.CSS.wrapper)) {
+            contentMutated = true;
             return;
           }
-          console.log('attributes', mutation);
-          this.config.onChange();
           break;
       }
     });
+
+    /** call once */
+    if (contentMutated) {
+      this.mutationDebouncer();
+    }
   }
 }
