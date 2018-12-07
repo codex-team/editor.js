@@ -103,7 +103,7 @@ export default class BlockSelection extends Module {
       },
     });
 
-    /** shortcut to copy all selected blocks */
+    /** Shortcut to copy selected blocks */
     Shortcuts.add({
       name: 'CMD+C',
       handler: (event) => {
@@ -167,6 +167,12 @@ export default class BlockSelection extends Module {
     if (!this.anyBlockSelected) {
       return;
     }
+
+    /**
+     * Prevent default copy
+     * Remove "decline sound" on macOS
+     */
+    event.preventDefault();
 
     const fakeClipboard = $.make('div');
 
