@@ -75,11 +75,18 @@ export default class ModificationsObserver extends Module {
   }
 
   /**
+   * MutationObserver events handler
    * @param mutationList
    * @param observer
    */
   private mutationHandler(mutationList, observer) {
+    /**
+     * We divide two Mutation types:
+     * 1) we mutations concerns client changes. For example, settings changes, symbol added, deletion, insertions and so on
+     * 2) functional changes. On each client actions we set functional identifiers to interact with user
+     */
     let contentMutated = false;
+
     mutationList.forEach((mutation) => {
       switch (mutation.type) {
         case 'childList':
@@ -90,6 +97,10 @@ export default class ModificationsObserver extends Module {
           break;
         case 'attributes':
           const mutatedTarget = mutation.target as Element;
+
+          /**
+           * Changes on Element.ce-block usually is functional
+           */
           if (!mutatedTarget.classList.contains(Block.CSS.wrapper)) {
             contentMutated = true;
             return;
