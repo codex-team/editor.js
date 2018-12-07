@@ -82,7 +82,7 @@ export default class ModificationsObserver extends Module {
   private mutationHandler(mutationList, observer) {
     /**
      * We divide two Mutation types:
-     * 1) we mutations concerns client changes. For example, settings changes, symbol added, deletion, insertions and so on
+     * 1) mutations that concerns client changes. For example, settings changes, symbol added, deletion, insertions and so on
      * 2) functional changes. On each client actions we set functional identifiers to interact with user
      */
     let contentMutated = false;
