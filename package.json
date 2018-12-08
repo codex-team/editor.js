@@ -1,6 +1,6 @@
 {
   "name": "codex.editor",
-  "version": "2.7.9",
+  "version": "2.7.10",
   "description": "Codex Editor. Native JS, based on API and Open Source",
   "main": "dist/codex-editor.js",
   "types": "./types/index.d.ts",
@@ -10,7 +10,8 @@
     "build:dev": "webpack --mode development --progress  --display-error-details --display-entrypoints",
     "build:prod": "webpack --mode production --progress  --display-error-details --display-entrypoints",
     "svg:win": "if not exist dist md dist && yarn svg",
-    "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg"
+    "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
+    "pull_tools": "git submodule update --init --recursive"
   },
   "author": "CodeX",
   "license": "Apache-2.0",
