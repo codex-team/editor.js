@@ -13547,7 +13547,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            */
           if (!this.inputOpened) {
             /** Create blue background instead of selection */
-            document.execCommand(this.commandBackground, false, '#a8d6ff');
+            this.setFakeBackground();
             this.fakeBackground = true;
             this.selection.save();
           } else {
@@ -13817,7 +13817,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         this.fakeBackground = false;
+        var fakeBack = this.selection.findParentTag('SPAN');
+        fakeBack.style.paddingTop = '';
         document.execCommand(this.commandRemoveFormat);
+      }
+      /**
+       * Sets fake background
+       */
+
+    }, {
+      key: "setFakeBackground",
+      value: function setFakeBackground() {
+        document.execCommand(this.commandBackground, false, '#a8d6ff');
+        var fakeBack = this.selection.findParentTag('SPAN');
+        fakeBack.style.paddingTop = '0.30em';
       }
     }, {
       key: "shortcut",

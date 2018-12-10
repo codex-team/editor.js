@@ -143,7 +143,7 @@ export default class LinkInlineTool implements InlineTool {
        */
       if (!this.inputOpened) {
         /** Create blue background instead of selection */
-        document.execCommand(this.commandBackground, false, '#a8d6ff');
+        this.setFakeBackground();
         this.fakeBackground = true;
         this.selection.save();
       } else {
@@ -387,6 +387,17 @@ export default class LinkInlineTool implements InlineTool {
       return;
     }
     this.fakeBackground = false;
+    const fakeBack = this.selection.findParentTag('SPAN');
+    fakeBack.style.paddingTop = '';
     document.execCommand(this.commandRemoveFormat);
+  }
+
+  /**
+   * Sets fake background
+   */
+  private setFakeBackground() {
+    document.execCommand(this.commandBackground, false, '#a8d6ff');
+    const fakeBack = this.selection.findParentTag('SPAN');
+    fakeBack.style.paddingTop = '0.30em';
   }
 }
