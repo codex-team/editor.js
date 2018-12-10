@@ -4,6 +4,7 @@ import $ from '../dom';
 import _ from '../utils';
 import {API, InlineTool, SanitizerConfig} from '../../../types';
 import {Notifier, Toolbar} from '../../../types/api';
+
 /**
  * Link Tool
  *
@@ -19,6 +20,7 @@ export default class LinkInlineTool implements InlineTool {
    * @return {boolean}
    */
   public static isInline = true;
+  private fakeBackground = false;
 
   /**
    * Sanitizer Rule
@@ -40,6 +42,8 @@ export default class LinkInlineTool implements InlineTool {
    */
   private readonly commandLink: string = 'createLink';
   private readonly commandUnlink: string = 'unlink';
+  private readonly commandBackground: string = 'backColor';
+  private readonly commandRemoveFormat: string = 'removeFormat';
 
   /**
    * Enter key code
@@ -137,7 +141,16 @@ export default class LinkInlineTool implements InlineTool {
       /**
        * Save selection before change focus to the input
        */
-      this.selection.save();
+      if (!this.inputOpened) {
+        /** Create blue background instead of selection */
+        document.execCommand(this.commandBackground, false, '#a8d6ff');
+        this.fakeBackground = true;
+        this.selection.save();
+      } else {
+        this.selection.restore();
+        this.removeFakeBackground();
+      }
+      console.log(window.getSelection().toString());
       const parentAnchor = this.selection.findParentTag('A');
 
       /**
@@ -187,6 +200,7 @@ export default class LinkInlineTool implements InlineTool {
    * Function called with Inline Toolbar closing
    */
   public clear(): void {
+    console.log('that 1');
     this.closeActions();
   }
 
@@ -222,6 +236,18 @@ export default class LinkInlineTool implements InlineTool {
    *                                        on toggle-clicks on the icon of opened Toolbar
    */
   private closeActions(clearSavedSelection: boolean = true): void {
+    console.log(window.getSelection().toString());
+    const tmp = window.getSelection().getRangeAt(0);
+    console.log(tmp);
+    this.selection.restore();
+    this.removeFakeBackground();
+    console.log(window.getSelection().toString());
+    if (tmp !== null) {
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(tmp);
+    }
+    console.log(window.getSelection().toString());
+
     this.nodes.input.classList.remove(this.CSS.inputShowed);
     this.nodes.input.value = '';
     if (clearSavedSelection) {
@@ -257,7 +283,10 @@ export default class LinkInlineTool implements InlineTool {
 
     value = this.prepareLink(value);
 
+    console.log(window.getSelection().toString());
     this.selection.restore();
+    this.removeFakeBackground();
+    console.log(window.getSelection().toString());
     this.insertLink(value);
 
     /**
@@ -348,5 +377,16 @@ export default class LinkInlineTool implements InlineTool {
    */
   private unlink(): void {
     document.execCommand(this.commandUnlink);
+  }
+
+  /**
+   * Removes fake background
+   */
+  private removeFakeBackground() {
+    if (!this.fakeBackground) {
+      return;
+    }
+    this.fakeBackground = false;
+    document.execCommand(this.commandRemoveFormat);
   }
 }
