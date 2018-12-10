@@ -144,13 +144,11 @@ export default class LinkInlineTool implements InlineTool {
       if (!this.inputOpened) {
         /** Create blue background instead of selection */
         this.setFakeBackground();
-        this.fakeBackground = true;
         this.selection.save();
       } else {
         this.selection.restore();
         this.removeFakeBackground();
       }
-      console.log(window.getSelection().toString());
       const parentAnchor = this.selection.findParentTag('A');
 
       /**
@@ -200,7 +198,6 @@ export default class LinkInlineTool implements InlineTool {
    * Function called with Inline Toolbar closing
    */
   public clear(): void {
-    console.log('that 1');
     this.closeActions();
   }
 
@@ -236,17 +233,13 @@ export default class LinkInlineTool implements InlineTool {
    *                                        on toggle-clicks on the icon of opened Toolbar
    */
   private closeActions(clearSavedSelection: boolean = true): void {
-    console.log(window.getSelection().toString());
-    const tmp = window.getSelection().getRangeAt(0);
-    console.log(tmp);
+    const tmp = SelectionUtils.range;
     this.selection.restore();
     this.removeFakeBackground();
-    console.log(window.getSelection().toString());
     if (tmp !== null) {
       window.getSelection().removeAllRanges();
       window.getSelection().addRange(tmp);
     }
-    console.log(window.getSelection().toString());
 
     this.nodes.input.classList.remove(this.CSS.inputShowed);
     this.nodes.input.value = '';
@@ -283,10 +276,9 @@ export default class LinkInlineTool implements InlineTool {
 
     value = this.prepareLink(value);
 
-    console.log(window.getSelection().toString());
     this.selection.restore();
     this.removeFakeBackground();
-    console.log(window.getSelection().toString());
+
     this.insertLink(value);
 
     /**
@@ -398,6 +390,8 @@ export default class LinkInlineTool implements InlineTool {
   private setFakeBackground() {
     document.execCommand(this.commandBackground, false, '#a8d6ff');
     const fakeBack = this.selection.findParentTag('SPAN');
+    // The matched value to be slightly compared with the actual height of the selection
     fakeBack.style.paddingTop = '0.30em';
+    this.fakeBackground = true;
   }
 }
