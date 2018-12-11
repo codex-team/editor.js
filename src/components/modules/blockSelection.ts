@@ -31,7 +31,7 @@ export default class BlockSelection extends Module {
    * to select all and copy them
    */
   public prepare(): void {
-    const { Shortcuts, Listener } = this.Editor;
+    const {Shortcuts, Listener} = this.Editor;
 
     /** Selection shortcut */
     Shortcuts.add({
@@ -67,7 +67,7 @@ export default class BlockSelection extends Module {
       root: this.Editor.UI.nodes.redactor,
     };
 
-    let callback = function(entries, observer) {
+    let callback = function (entries, observer) {
       /* Content excerpted, show below */
       console.log('entries', entries);
       console.log('observer', observer);
@@ -83,6 +83,8 @@ export default class BlockSelection extends Module {
 
       overlayRectangle.style.left = `${startX}px`;
       overlayRectangle.style.top = `${startY}px`;
+      overlayRectangle.style.bottom = `calc(100% - ${startY}px`;
+      overlayRectangle.style.right = `calc(100% - ${startX}px`;
 
       overlayContainer.appendChild(overlayRectangle);
     }, false);
@@ -91,17 +93,29 @@ export default class BlockSelection extends Module {
       if (mousedown) {
         event.preventDefault();
 
-        overlayRectangle.style.width = `${(event.clientX - startX)}px`;
-        overlayRectangle.style.height = `${(event.clientY - startY)}px`;
+        // Depending on the position of the mouse relative to the starting point,
+        // change the distance from the desired edge of the screen*/
+        if (event.clientY >= startY) {
+          overlayRectangle.style.top = `${startY}px`;
+          overlayRectangle.style.bottom = `calc(100% - ${event.clientY}px`;
+        } else {
+          overlayRectangle.style.bottom = `calc(100% - ${startY}px`;
+          overlayRectangle.style.top = `${event.clientY}px`;
+        }
+
+        if (event.clientX >= startX) {
+          overlayRectangle.style.left = `${startX}px`;
+          overlayRectangle.style.right = `calc(100% - ${event.clientX}px`;
+        } else {
+          overlayRectangle.style.right = `calc(100% - ${startX}px`;
+          overlayRectangle.style.left = `${event.clientX}px`;
+        }
       }
     }, false);
 
     document.body.addEventListener('mouseup', (event) => {
       mousedown = false;
       overlayContainer.removeChild(overlayRectangle);
-
-      overlayRectangle.style.width  = 0;
-      overlayRectangle.style.height = 0;
 
       startX = 0;
       startY = 0;
@@ -112,15 +126,15 @@ export default class BlockSelection extends Module {
    * Clear selection from Blocks
    */
   public clearSelection(restoreSelection = false) {
-    const { BlockManager } = this.Editor;
-    const anyBlockSelected = BlockManager.blocks.findIndex( (block) => block.selected === true) !== -1;
+    const {BlockManager} = this.Editor;
+    const anyBlockSelected = BlockManager.blocks.findIndex((block) => block.selected === true) !== -1;
 
     if (!anyBlockSelected) {
       return;
     }
 
     this.needToSelectAll = false;
-    BlockManager.blocks.forEach( (block) => block.selected = false);
+    BlockManager.blocks.forEach((block) => block.selected = false);
 
     /**
      * restore selection when Block is already selected
@@ -157,8 +171,8 @@ export default class BlockSelection extends Module {
    * @param event
    */
   private handleCommandC(event): void {
-    const { BlockManager, Sanitizer } = this.Editor;
-    const anyBlockSelected = BlockManager.blocks.some( (block) => block.selected === true);
+    const {BlockManager, Sanitizer} = this.Editor;
+    const anyBlockSelected = BlockManager.blocks.some((block) => block.selected === true);
 
     if (!anyBlockSelected) {
       return;
@@ -166,8 +180,8 @@ export default class BlockSelection extends Module {
 
     const fakeClipboard = $.make('div');
 
-    BlockManager.blocks.filter( (block) => block.selected )
-      .forEach( (block) => {
+    BlockManager.blocks.filter((block) => block.selected)
+      .forEach((block) => {
         /**
          * Make <p> tag that holds clean HTML
          */
@@ -176,7 +190,7 @@ export default class BlockSelection extends Module {
 
         fragment.innerHTML = cleanHTML;
         fakeClipboard.appendChild(fragment);
-    });
+      });
 
     _.copyTextToClipboard(fakeClipboard.innerHTML);
   }
@@ -186,9 +200,9 @@ export default class BlockSelection extends Module {
    * Each Block has selected setter that makes Block copyable
    */
   private selectAllBlocks() {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
-    BlockManager.blocks.forEach( (block) => block.selected = true);
+    BlockManager.blocks.forEach((block) => block.selected = true);
   }
 
   /**
@@ -196,7 +210,7 @@ export default class BlockSelection extends Module {
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
   private selectBlockByIndex(index?) {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
     /**
      * Remove previous focused Block's state
