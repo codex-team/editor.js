@@ -230,12 +230,15 @@ export default class LinkInlineTool implements InlineTool {
    *                                        on toggle-clicks on the icon of opened Toolbar
    */
   private closeActions(clearSavedSelection: boolean = true): void {
-    const tmp = SelectionUtils.range;
+    // if actions is broken by other selection We need to save new selection
+    const currentSelection = SelectionUtils.range;
     this.selection.restore();
     SelectionUtils.removeFakeBackground(this.selection);
-    if (tmp !== null) {
+
+    // and recover new selection after removing fake background
+    if (currentSelection !== null) {
       window.getSelection().removeAllRanges();
-      window.getSelection().addRange(tmp);
+      window.getSelection().addRange(currentSelection);
     }
 
     this.nodes.input.classList.remove(this.CSS.inputShowed);
