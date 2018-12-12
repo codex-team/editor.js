@@ -196,43 +196,6 @@ export default class SelectionUtils {
     return window.getSelection();
   }
 
-  /**
-   * Removes fake background
-   */
-  public static removeFakeBackground(selection) {
-    if (!this.fakeBackground) {
-      return;
-    }
-    this.fakeBackground = false;
-    const fakeBack = selection.findParentTag('SPAN');
-    fakeBack.style.paddingTop = '';
-    document.execCommand(this.commandRemoveFormat);
-  }
-
-  /**
-   * Sets fake background
-   */
-  public static setFakeBackground(selection) {
-    document.execCommand(this.commandBackground, false, '#a8d6ff');
-    const fakeBack = selection.findParentTag('SPAN');
-    // The matched value to be slightly compared with the actual height of the selection
-    fakeBack.style.paddingTop = '0.30em';
-    this.fakeBackground = true;
-  }
-
-  /**
-   * Fake background is active
-   *
-   * @return {boolean}
-   */
-  private static fakeBackground = false;
-
-  /**
-   * Native Document's commands for fake background
-   */
-  private static readonly commandBackground: string = 'backColor';
-  private static readonly commandRemoveFormat: string = 'removeFormat';
-
   public instance: Selection = null;
   public selection: Selection = null;
 
@@ -241,6 +204,45 @@ export default class SelectionUtils {
    * @type {Range|null}
    */
   public savedSelectionRange: Range = null;
+
+  /**
+   * Fake background is active
+   *
+   * @return {boolean}
+   */
+  private fakeBackground = false;
+
+  /**
+   * Native Document's commands for fake background
+   */
+  private readonly commandBackground: string = 'backColor';
+  private readonly commandRemoveFormat: string = 'removeFormat';
+
+  /**
+   * Removes fake background
+   */
+  public removeFakeBackground() {
+    if (!this.fakeBackground) {
+      return;
+    }
+    const fakeBack = this.findParentTag('SPAN');
+
+    fakeBack.style.paddingTop = '';
+    this.fakeBackground = false;
+    document.execCommand(this.commandRemoveFormat);
+  }
+
+  /**
+   * Sets fake background
+   */
+  public setFakeBackground() {
+    document.execCommand(this.commandBackground, false, '#a8d6ff');
+    const fakeBack = this.findParentTag('SPAN');
+
+    // The matched value to be slightly compared with the actual height of the selection
+    fakeBack.style.paddingTop = '0.30em';
+    this.fakeBackground = true;
+  }
 
   /**
    * Save SelectionUtils's range

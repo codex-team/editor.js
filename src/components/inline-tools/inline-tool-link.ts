@@ -140,11 +140,11 @@ export default class LinkInlineTool implements InlineTool {
        */
       if (!this.inputOpened) {
         /** Create blue background instead of selection */
-        SelectionUtils.setFakeBackground(this.selection);
+        this.selection.setFakeBackground();
         this.selection.save();
       } else {
         this.selection.restore();
-        SelectionUtils.removeFakeBackground(this.selection);
+        this.selection.removeFakeBackground();
       }
       const parentAnchor = this.selection.findParentTag('A');
 
@@ -235,7 +235,7 @@ export default class LinkInlineTool implements InlineTool {
     currentSelection.save();
 
     this.selection.restore();
-    SelectionUtils.removeFakeBackground(this.selection);
+    this.selection.removeFakeBackground();
 
     // and recover new selection after removing fake background
     currentSelection.restore();
@@ -276,7 +276,7 @@ export default class LinkInlineTool implements InlineTool {
     value = this.prepareLink(value);
 
     this.selection.restore();
-    SelectionUtils.removeFakeBackground(this.selection);
+    this.selection.removeFakeBackground();
 
     this.insertLink(value);
 
