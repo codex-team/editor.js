@@ -231,15 +231,14 @@ export default class LinkInlineTool implements InlineTool {
    */
   private closeActions(clearSavedSelection: boolean = true): void {
     // if actions is broken by other selection We need to save new selection
-    const currentSelection = SelectionUtils.range;
+    const currentSelection = new SelectionUtils();
+    currentSelection.save();
+
     this.selection.restore();
     SelectionUtils.removeFakeBackground(this.selection);
 
     // and recover new selection after removing fake background
-    if (currentSelection !== null) {
-      window.getSelection().removeAllRanges();
-      window.getSelection().addRange(currentSelection);
-    }
+    currentSelection.restore();
 
     this.nodes.input.classList.remove(this.CSS.inputShowed);
     this.nodes.input.value = '';
