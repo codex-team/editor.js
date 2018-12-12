@@ -20,7 +20,6 @@ export default class LinkInlineTool implements InlineTool {
    * @return {boolean}
    */
   public static isInline = true;
-  private fakeBackground = false;
 
   /**
    * Sanitizer Rule
@@ -42,8 +41,6 @@ export default class LinkInlineTool implements InlineTool {
    */
   private readonly commandLink: string = 'createLink';
   private readonly commandUnlink: string = 'unlink';
-  private readonly commandBackground: string = 'backColor';
-  private readonly commandRemoveFormat: string = 'removeFormat';
 
   /**
    * Enter key code
@@ -143,11 +140,11 @@ export default class LinkInlineTool implements InlineTool {
        */
       if (!this.inputOpened) {
         /** Create blue background instead of selection */
-        this.setFakeBackground();
+        SelectionUtils.setFakeBackground(this.selection);
         this.selection.save();
       } else {
         this.selection.restore();
-        this.removeFakeBackground();
+        SelectionUtils.removeFakeBackground(this.selection);
       }
       const parentAnchor = this.selection.findParentTag('A');
 
@@ -235,7 +232,7 @@ export default class LinkInlineTool implements InlineTool {
   private closeActions(clearSavedSelection: boolean = true): void {
     const tmp = SelectionUtils.range;
     this.selection.restore();
-    this.removeFakeBackground();
+    SelectionUtils.removeFakeBackground(this.selection);
     if (tmp !== null) {
       window.getSelection().removeAllRanges();
       window.getSelection().addRange(tmp);
@@ -277,7 +274,7 @@ export default class LinkInlineTool implements InlineTool {
     value = this.prepareLink(value);
 
     this.selection.restore();
-    this.removeFakeBackground();
+    SelectionUtils.removeFakeBackground(this.selection);
 
     this.insertLink(value);
 
@@ -369,29 +366,5 @@ export default class LinkInlineTool implements InlineTool {
    */
   private unlink(): void {
     document.execCommand(this.commandUnlink);
-  }
-
-  /**
-   * Removes fake background
-   */
-  private removeFakeBackground() {
-    if (!this.fakeBackground) {
-      return;
-    }
-    this.fakeBackground = false;
-    const fakeBack = this.selection.findParentTag('SPAN');
-    fakeBack.style.paddingTop = '';
-    document.execCommand(this.commandRemoveFormat);
-  }
-
-  /**
-   * Sets fake background
-   */
-  private setFakeBackground() {
-    document.execCommand(this.commandBackground, false, '#a8d6ff');
-    const fakeBack = this.selection.findParentTag('SPAN');
-    // The matched value to be slightly compared with the actual height of the selection
-    fakeBack.style.paddingTop = '0.30em';
-    this.fakeBackground = true;
   }
 }

@@ -37,10 +37,10 @@ export default class SelectionUtils {
    * Editor styles
    * @return {{editorWrapper: string, editorZone: string}}
    */
-  static get CSS(): {editorWrapper: string, editorZone: string} {
+  static get CSS(): { editorWrapper: string, editorZone: string } {
     return {
-      editorWrapper : 'codex-editor',
-      editorZone    : 'codex-editor__redactor',
+      editorWrapper: 'codex-editor',
+      editorZone: 'codex-editor__redactor',
     };
   }
 
@@ -49,7 +49,7 @@ export default class SelectionUtils {
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorNode}
    * @return {Node|null}
    */
-  static get anchorNode(): Node|null {
+  static get anchorNode(): Node | null {
     const selection = window.getSelection();
 
     return selection ? selection.anchorNode : null;
@@ -60,7 +60,7 @@ export default class SelectionUtils {
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
    * @return {Number|null}
    */
-  static get anchorOffset(): number|null {
+  static get anchorOffset(): number | null {
     const selection = window.getSelection();
 
     return selection ? selection.anchorOffset : null;
@@ -70,7 +70,7 @@ export default class SelectionUtils {
    * Is current selection range collapsed
    * @return {boolean|null}
    */
-  static get isCollapsed(): boolean|null {
+  static get isCollapsed(): boolean | null {
     const selection = window.getSelection();
 
     return selection ? selection.isCollapsed : null;
@@ -117,9 +117,9 @@ export default class SelectionUtils {
    * Calculates position and size of selected text
    * @return {{x, y, width, height, top?, left?, bottom?, right?}}
    */
-  static get rect(): DOMRect|ClientRect {
-    let sel: Selection|MSSelection = (document as Document).selection,
-      range: TextRange|Range;
+  static get rect(): DOMRect | ClientRect {
+    let sel: Selection | MSSelection = (document as Document).selection,
+      range: TextRange | Range;
 
     let rect = {
       x: 0,
@@ -163,7 +163,7 @@ export default class SelectionUtils {
       if (span.getBoundingClientRect) {
         // Ensure span has dimensions and position by
         // adding a zero-width space character
-        span.appendChild( document.createTextNode('\u200b') );
+        span.appendChild(document.createTextNode('\u200b'));
         range.insertNode(span);
         rect = span.getBoundingClientRect() as DOMRect;
 
@@ -195,6 +195,43 @@ export default class SelectionUtils {
   public static get(): Selection {
     return window.getSelection();
   }
+
+  /**
+   * Removes fake background
+   */
+  public static removeFakeBackground(selection) {
+    if (!this.fakeBackground) {
+      return;
+    }
+    this.fakeBackground = false;
+    const fakeBack = selection.findParentTag('SPAN');
+    fakeBack.style.paddingTop = '';
+    document.execCommand(this.commandRemoveFormat);
+  }
+
+  /**
+   * Sets fake background
+   */
+  public static setFakeBackground(selection) {
+    document.execCommand(this.commandBackground, false, '#a8d6ff');
+    const fakeBack = selection.findParentTag('SPAN');
+    // The matched value to be slightly compared with the actual height of the selection
+    fakeBack.style.paddingTop = '0.30em';
+    this.fakeBackground = true;
+  }
+
+  /**
+   * Fake background is active
+   *
+   * @return {boolean}
+   */
+  private static fakeBackground = false;
+
+  /**
+   * Native Document's commands for fake background
+   */
+  private static readonly commandBackground: string = 'backColor';
+  private static readonly commandRemoveFormat: string = 'removeFormat';
 
   public instance: Selection = null;
   public selection: Selection = null;
@@ -241,7 +278,7 @@ export default class SelectionUtils {
    * @param  {Number} [searchDepth] - count of tags that can be included. For better performance.
    * @return {HTMLElement|null}
    */
-  public findParentTag(tagName: string, className?: string, searchDepth = 10): HTMLElement|null {
+  public findParentTag(tagName: string, className?: string, searchDepth = 10): HTMLElement | null {
     const selection = window.getSelection();
     let parentTag = null;
 
