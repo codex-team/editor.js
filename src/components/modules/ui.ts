@@ -290,6 +290,11 @@ export default class UI extends Module {
    *
    */
   private redactorClicked(event: MouseEvent): void {
+
+    if (!Selection.isCollapsed) {
+      return;
+    }
+
     const clickedNode = event.target as HTMLElement;
 
     /**
