@@ -1,6 +1,7 @@
 import SelectionUtils from '../selection';
 
-declare var Module: any;
+import Module from '../__module';
+import Caret from './caret';
 
 export default class DragNDrop extends Module {
 
@@ -67,9 +68,9 @@ export default class DragNDrop extends Module {
      * If drop target (error will be thrown) is not part of the Block, set last Block as current.
      */
     try {
-      BlockManager.setCurrentBlockByChildNode(dropEvent.target, 'end');
+      BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node, Caret.positions.END);
     } catch (e) {
-      BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder, 'end');
+      BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder, Caret.positions.END);
     }
 
     Paste.processDataTransfer(dropEvent.dataTransfer, true);

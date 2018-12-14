@@ -4,18 +4,16 @@
  *
  * @copyright <CodeX Team> 2018
  */
-import IBlockTune from '../interfaces/block-tune';
+import $ from '../dom';
+import {API, BlockTune} from '../../../types';
 
-declare var $: any;
-declare var _: any;
-
-export default class MoveUpTune implements IBlockTune {
+export default class MoveUpTune implements BlockTune {
 
   /**
    * Property that contains CodeX Editor API methods
    * @see {api.md}
    */
-  private readonly api: any;
+  private readonly api: API;
 
   /**
    * Styles
@@ -30,7 +28,7 @@ export default class MoveUpTune implements IBlockTune {
   /**
    * MoveUpTune constructor
    *
-   * @param {Object} api
+   * @param {{api: API}} api
    */
   public constructor({api}) {
     this.api = api;
@@ -43,7 +41,12 @@ export default class MoveUpTune implements IBlockTune {
   public render(): HTMLElement {
     const moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveUpButton.appendChild($.svg('arrow-up', 14, 14));
-    this.api.listener.on(moveUpButton, 'click', (event) => this.handleClick(event, moveUpButton), false);
+    this.api.listeners.on(
+      moveUpButton,
+      'click',
+      (event) => this.handleClick(event as MouseEvent, moveUpButton),
+      false,
+      );
     return moveUpButton;
   }
 
@@ -65,8 +68,8 @@ export default class MoveUpTune implements IBlockTune {
       return;
     }
 
-    const currentBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex).holder,
-      previousBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex - 1).holder;
+    const currentBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex);
+    const previousBlockElement = this.api.blocks.getBlockByIndex(currentBlockIndex - 1);
 
     /**
      * Here is two cases:

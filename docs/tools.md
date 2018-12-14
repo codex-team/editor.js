@@ -18,7 +18,7 @@ Each Tool's instance called with an params object.
 | config | `object`            | Special configuration params passed in «config» |
 | data   | `object`            | Data to be rendered in this Tool                |
 
-[iapi-link]: ../src/components/interfaces/api.ts
+[iapi-link]: ../src/types-internal/api.ts
 
 #### Example
 
@@ -47,20 +47,17 @@ Method that specifies how to merge two `Blocks` of the same type, for example on
 Method does accept data object in same format as the `Render` and it should provide logic how to combine new
 data with the currently stored value.
 
-### Internal Tool Settings
+## Internal Tool Settings
 
 Options that Tool can specify. All settings should be passed as static properties of Tool's class.
 
 | Name | Type | Default Value | Description |
 | -- | -- | -- | -- |
-| `displayInToolbox` | _Boolean_ | `false` | Pass `true` to display this `Tool` in the Editor's `Toolbox` |
-| `toolboxIcon` | _String_ | — | Icon for Toolbox HTML string |
+| `toolbox` | _Object_ | `undefined` | Pass here `icon` and `title` to display this `Tool` in the Editor's `Toolbox` <br /> `icon` - HTML string with icon for Toolbox <br /> `title` - optional title to display in Toolbox |
 | `enableLineBreaks` | _Boolean_ | `false` | With this option, CodeX Editor won't handle Enter keydowns. Can be helpful for Tools like `<code>` where line breaks should be handled by default behaviour. |
-| `irreplaceable` | _Boolean_ | `false` | By default, **empty** `Blocks` can be **replaced** by other `Blocks` with the `Toolbox`. Some tools with media-content may prefer another behaviour. Pass `true` and `Toolbox` will add a new block below yours.  |
-| `contentless` | _Boolean_ | `false` | Pass `true` for Tool which represents decorative empty `Blocks` |
 | `isInline` | _Boolean_ | `false` | Describes Tool as a [Tool for the Inline Toolbar](tools-inline.md) |
 
-### User configuration
+## User configuration
 
 All Tools can be configured by users. You can set up some of available settings along with Tool's class
 to the `tools` property of Editor Config.
@@ -87,58 +84,58 @@ There are few options available by CodeX Editor.
 | `inlineToolbar` | _Boolean/Array_ | `false` | Pass `true` to enable the Inline Toolbar with all Tools, or pass an array with specified Tools list |
 | `config` | _Object_ | `null` | User's configuration for Plugin.
 
-### Paste handling
+## Paste handling
 
 CodeX Editor handles paste on Blocks and provides API for Tools to process the pasted data.
 
-When user pastes content into Editor, pasted content is splitted into blocks.
+When user pastes content into Editor, pasted content will be splitted into blocks.
 
-1. If plain text has been pasted, it is split by new line characters
-2. If HTML string has been pasted, it is split by block tags
+1. If plain text will be pasted, it will be splitted by new line characters
+2. If HTML string will be pasted, it will be splitted by block tags
 
-Also Editor API allows you to define RegExp patterns to substitute them by your data.
+Also Editor API allows you to define your own pasting scenario. You can either:
 
-To provide paste handling for your Tool you need to define static getter `onPaste` in Tool class.
-`onPaste` getter should return object with fields described below.
+1. Specify **HTML tags**, that can be represented by your Tool. For example, Image Tool can handle `<img>` tags.
+If tags you specified will be found on content pasting, your Tool will be rendered.
+2. Specify **RegExp** for pasted strings. If pattern has been matched, your Tool will be rendered.
+3. Specify **MIME type** or **extensions** of files that can be handled by your Tool on pasting by drag-n-drop or from clipboard.
 
-##### HTML tags handling
+For each scenario, you should do 2 next things:
 
-To handle pasted HTML elements object returned from `onPaste` getter should contain following fields:
+1. Define static getter `pasteConfig` in Tool class. Specify handled patterns there.
+2. Define public method `onPaste` that will handle PasteEvent to process pasted data.
+
+### HTML tags handling
+
+To handle pasted HTML elements object returned from `pasteConfig` getter should contain following field:
 
 | Name | Type | Description |
 | -- | -- | -- |
-| `handler(content: HTMLElement)` | `Function` | _Optional_. Pasted HTML elements handler. Gets one argument `content`. `content` is HTML element extracted from pasted data. Handler should return the same object as Tool's `save` method |
-| `tags` | `String[]` | _Optional_. Should contain all tag names you want to be extracted from pasted data and be passed to your `handler` method |
+| `tags` | `String[]` | _Optional_. Should contain all tag names you want to be extracted from pasted data and processed by your `onPaste` method |
 
-
-For correct work you MUST provide `onPaste.handler` at least for `initialBlock` Tool.
+For correct work you MUST provide `onPaste` handler at least for `initialBlock` Tool.
 
 > Example
 
-Header tool can handle `H1`-`H6` tags using paste handling API
+Header Tool can handle `H1`-`H6` tags using paste handling API
 
 ```javascript
-static get onPaste() {
+static get pasteConfig() {
   return {
     tags: ['H1', 'H2', 'H3', 'H4', 'H5', 'H6'],
-    handler: (element) => ({
-      type: element.tagName,
-      text: element.innerHTML
-    })
   }
 }
 ```
 
-> One tag can be handled by one Tool only.
+> Same tag can be handled by one (first specified) Tool only.
 
-##### Patterns handling
+### RegExp patterns handling
 
-Your Tool can analyze text by RegExp patterns to substitute pasted string with data you want. Object returned from `onPaste` getter should contain following fields to use patterns:
+Your Tool can analyze text by RegExp patterns to substitute pasted string with data you want. Object returned from `pasteConfig` getter should contain following field to use patterns:
 
 | Name | Type | Description |
 | -- | -- | -- |
 | `patterns` | `Object` | _Optional_. `patterns` object contains RegExp patterns with their names as object's keys |
-| `patternHandler(text: string, key: string)` | `Function` | _Optional_. Gets pasted string and pattern name. Should return the same object as Tool `save` method |
 
 **Note** Editor will check pattern's full match, so don't forget to handle all available chars in there.
 
@@ -146,70 +143,91 @@ Pattern will be processed only if paste was on `initialBlock` Tool and pasted st
 
 > Example
 
-You can handle youtube links and insert embeded video instead:
+You can handle YouTube links and insert embeded video instead:
 
 ```javascript
-static get onPaste() {
+static get pasteConfig() {
   return {
     patterns: {
       youtube: /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?[\w\?‌​=]*)?/
     },
-    patternHandler: (text, key) => {
-      const urlData = Youtube.onPaste.patterns[key].exec(text);
-
-      return {
-        iframe: Youtube.makeEmbededFromURL(urlData)
-      };
-    }
   }
 }
 ```
 
-> Both `onPaste.handler` and `onPaste.patternHandler` can be `async` or return a `Promise`.
-
-##### Files
+### Files pasting
 
 Your Tool can handle files pasted or dropped into the Editor.
 
-To handle file you should provide `files` and `fileHandler` properties in your `onPaste` configuration object.
+To handle file you should provide `files`  property in your `pasteConfig` configuration object.
 
-`fileHandler` property should be a function which takes File object as an argument and returns the same object as Tool\`s `save` method.
-
-`file` property is an object with the following fields:
+`files` property is an object with the following fields:
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
 | `extensions` | `string[]` | _Optional_ Array of extensions your Tool can handle |
 | `mimeTypes` | `sring[]` | _Optional_ Array of MIME types your Tool can handle |
 
-
-
 Example
 
 ```javascript
-static get onPaste() {
+static get pasteConfig() {
   return {
     files: {
       mimeTypes: ['image/png'],
       extensions: ['json']
-    },
-    fileHandler: (file) => {
-      /* do smth with the file */
-
-      return {
-        data // Some extracted content
-      }
     }
   }
 }
 ```
 
-### Sanitize
+### Pasted data handling
 
-CodeX Editor provides [API](sanitizer.md) to clean taint strings. 
+If you registered some paste substitutions in `pasteConfig` property, you **should** provide `onPaste` callback in your Tool class.
+`onPaste` should be public non-static method. It accepts custom _PasteEvent_ object as argument.
+
+PasteEvent is an alias for three types of events - `tag`, `pattern` and `file`. You can get the type from _PasteEvent_ object's `type` property.
+Each of these events provide `detail` property with info about pasted content.
+
+| Type  | Detail |
+| ----- | ------ |
+| `tag` | `data` - pasted HTML element |
+| `pattern` | `key` - matched pattern key you specified in `pasteConfig` object <br /> `data` - pasted string |
+| `file` | `file` - pasted file |
+
+Example
+
+```javascript
+onPaste (event) {
+  switch (event.type) {
+    case 'tag':
+      const element = event.detail.data;
+
+      this.handleHTMLPaste(element);
+      break;
+
+    case 'pattern':
+      const text = event.detail.data;
+      const key = event.detail.key;
+
+      this.handlePatternPaste(key, text);
+      break;
+
+    case 'file':
+      const file = event.detail.file;
+
+      this.handleFilePaste(file);
+      break;
+  }
+}
+```
+
+## Sanitize
+
+CodeX Editor provides [API](sanitizer.md) to clean taint strings.
 Use it manually at the `save()` method or or pass `sanitizer` config to do it automatically.
 
-#### Sanitizer Configuration
+### Sanitizer Configuration
 
 The example of sanitizer configuration
 
@@ -220,9 +238,9 @@ let sanitizerConfig = {
 }
 ```
 
-Keys of config object is tags and the values is a rules. 
+Keys of config object is tags and the values is a rules.
 
-##### Rule
+#### Rule
 
 Rule can be boolean, object or function. Object is a dictionary of rules for tag's attributes.
 
@@ -232,7 +250,7 @@ but leave tag.
 Also you can pass special attributes that you want to leave.
 
 ```javascript
-a: { 
+a: {
   href: true
 }
 ```
@@ -264,19 +282,19 @@ a: function(el) {
 }
 ```
 
-#### Manual sanitize
+### Manual sanitize
 
 Call API method `sanitizer.clean()` at the save method for each field in returned data.
 
 ```javascript
 save() {
   return {
-    text: this.api.sanitizer.clean(taintString, sanitizerConfig) 
+    text: this.api.sanitizer.clean(taintString, sanitizerConfig)
   }
 }
 ```
- 
-#### Automatic sanitize
+
+### Automatic sanitize
 
 If you pass the sanitizer config as static getter, CodeX Editor will automatically sanitize your saved data.
 
@@ -299,7 +317,7 @@ static get sanitize() {
 
 Don't forget to set the rule for each embedded subitems otherwise they will
 not be sanitized.
-  
+
 if you want to sanitize everything and get data without any tags, use `{}` or just
 ignore field in case if you want to get pure HTML
 
@@ -313,7 +331,7 @@ static get sanitize() {
       // other objects here won't be sanitized
       subitems: {
         // leave <a> and <b> in subitems
-        a: true, 
+        a: true,
         b: true,
       }
     }

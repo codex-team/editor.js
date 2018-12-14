@@ -5,13 +5,45 @@
  * @module BlockSelection
  * @version 1.0.0
  */
-declare var Module: any;
-declare var _: any;
-declare var $: any;
+import Module from '../__module';
+import _ from '../utils';
+import $ from '../dom';
 
 import SelectionUtils from '../selection';
 
 export default class BlockSelection extends Module {
+
+  /**
+   * Sanitizer Config
+   * @return {SanitizerConfig}
+   */
+  private get sanitizerConfig() {
+    return {
+      p: {},
+      h1: {},
+      h2: {},
+      h3: {},
+      h4: {},
+      h5: {},
+      h6: {},
+      ol: {},
+      ul: {},
+      li: {},
+      br: true,
+      img: {
+        src: true,
+        width: true,
+        height: true,
+      },
+      a: {
+        href: true,
+      },
+      b: {},
+      i: {},
+      u: {},
+    };
+  }
+
   /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
@@ -20,10 +52,47 @@ export default class BlockSelection extends Module {
   private needToSelectAll: boolean = false;
 
   /**
+   * Flag used to define native input selection
+   * In this case we allow double CMD+A to select Block
+   * @type {boolean}
+   */
+  private nativeInputSelected: boolean = false;
+
+  /**
    * SelectionUtils instance
    * @type {SelectionUtils}
    */
   private selection: SelectionUtils;
+
+  /**
+   * Flag that identifies all Blocks selection
+   * @return {boolean}
+   */
+  public get allBlocksSelected(): boolean {
+    const { BlockManager } = this.Editor;
+
+    return BlockManager.blocks.every( (block) => block.selected === true);
+  }
+
+  /**
+   * Set selected all blocks
+   * @param {boolean} state
+   */
+  public set allBlocksSelected(state: boolean) {
+    const { BlockManager } = this.Editor;
+
+    BlockManager.blocks.forEach( (block) => block.selected = state);
+  }
+
+  /**
+   * Flag that identifies any Block selection
+   * @return {boolean}
+   */
+  public get anyBlockSelected(): boolean {
+    const { BlockManager } = this.Editor;
+
+    return BlockManager.blocks.some( (block) => block.selected === true);
+  }
 
   /**
    * Module Preparation
@@ -31,7 +100,7 @@ export default class BlockSelection extends Module {
    * to select all and copy them
    */
   public prepare(): void {
-    const {Shortcuts, Listener} = this.Editor;
+    const { Shortcuts } = this.Editor;
 
     /** Selection shortcut */
     Shortcuts.add({
@@ -41,7 +110,7 @@ export default class BlockSelection extends Module {
       },
     });
 
-    /** shortcut to copy all selected blocks */
+    /** Shortcut to copy selected blocks */
     Shortcuts.add({
       name: 'CMD+C',
       handler: (event) => {
@@ -159,15 +228,12 @@ export default class BlockSelection extends Module {
    * Clear selection from Blocks
    */
   public clearSelection(restoreSelection = false) {
-    const {BlockManager} = this.Editor;
-    const anyBlockSelected = BlockManager.blocks.findIndex((block) => block.selected === true) !== -1;
+    this.needToSelectAll = false;
+    this.nativeInputSelected = false;
 
-    if (!anyBlockSelected) {
+    if (!this.anyBlockSelected) {
       return;
     }
-
-    this.needToSelectAll = false;
-    BlockManager.blocks.forEach((block) => block.selected = false);
 
     /**
      * restore selection when Block is already selected
@@ -176,6 +242,9 @@ export default class BlockSelection extends Module {
     if (restoreSelection) {
       this.selection.restore();
     }
+
+    /** Now all blocks cleared */
+    this.allBlocksSelected = false;
   }
 
   /**
@@ -185,6 +254,12 @@ export default class BlockSelection extends Module {
    * @param {keydown} event
    */
   private handleCommandA(event): void {
+    /** allow default selection on native inputs */
+    if ($.isNativeInput(event.target) && !this.nativeInputSelected) {
+      this.nativeInputSelected = true;
+      return;
+    }
+
     /** Prevent default selection */
     event.preventDefault();
 
@@ -204,17 +279,22 @@ export default class BlockSelection extends Module {
    * @param event
    */
   private handleCommandC(event): void {
-    const {BlockManager, Sanitizer} = this.Editor;
-    const anyBlockSelected = BlockManager.blocks.some((block) => block.selected === true);
+    const { BlockManager, Sanitizer } = this.Editor;
 
-    if (!anyBlockSelected) {
+    if (!this.anyBlockSelected) {
       return;
     }
 
+    /**
+     * Prevent default copy
+     * Remove "decline sound" on macOS
+     */
+    event.preventDefault();
+
     const fakeClipboard = $.make('div');
 
-    BlockManager.blocks.filter((block) => block.selected)
-      .forEach((block) => {
+    BlockManager.blocks.filter( (block) => block.selected )
+      .forEach( (block) => {
         /**
          * Make <p> tag that holds clean HTML
          */
@@ -223,7 +303,7 @@ export default class BlockSelection extends Module {
 
         fragment.innerHTML = cleanHTML;
         fakeClipboard.appendChild(fragment);
-      });
+    });
 
     _.copyTextToClipboard(fakeClipboard.innerHTML);
   }
@@ -233,9 +313,9 @@ export default class BlockSelection extends Module {
    * Each Block has selected setter that makes Block copyable
    */
   private selectAllBlocks() {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
 
-    BlockManager.blocks.forEach((block) => block.selected = true);
+    this.allBlocksSelected = true;
   }
 
   /**
@@ -243,7 +323,7 @@ export default class BlockSelection extends Module {
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
   private selectBlockByIndex(index?) {
-    const {BlockManager} = this.Editor;
+    const { BlockManager } = this.Editor;
 
     /**
      * Remove previous focused Block's state
@@ -264,36 +344,5 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     block.selected = true;
-  }
-
-  /**
-   * Sanitizer Config
-   * @return {SanitizerConfig}
-   */
-  private get sanitizerConfig() {
-    return {
-      p: {},
-      h1: {},
-      h2: {},
-      h3: {},
-      h4: {},
-      h5: {},
-      h6: {},
-      ol: {},
-      ul: {},
-      li: {},
-      br: true,
-      img: {
-        src: true,
-        width: true,
-        height: true,
-      },
-      a: {
-        href: true,
-      },
-      b: {},
-      i: {},
-      u: {},
-    };
   }
 }

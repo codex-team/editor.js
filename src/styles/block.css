@@ -14,7 +14,8 @@
     animation: selectionBounce 0.2s 1;
     animation-fill-mode: forwards;
 
-    img {
+    img,
+    .ce-stub {
       opacity: 0.55;
     }
   }

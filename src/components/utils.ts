@@ -5,12 +5,17 @@
 import Dom from './dom';
 
 /**
+ * Allow to use global VERSION, that will be overwritten by Webpack
+ */
+declare const VERSION: string;
+
+/**
  * @typedef {Object} ChainData
  * @property {Object} data - data that will be passed to the success or fallback
  * @property {Function} function - function's that must be called asynchronically
  */
-interface ChainData {
-  data: any;
+export interface ChainData {
+  data?: any;
   function: (...args: any[]) => any;
 }
 
@@ -23,35 +28,43 @@ export default class Util {
    *
    * @param {string} msg  - message
    * @param {string} type - logging type 'log'|'warn'|'error'|'info'
-   * @param {*} args      - argument to log with a message
+   * @param {*} [args]      - argument to log with a message
+   * @param {string} style  - additional styling to message
    */
-  public static log(msg: string, type: string = 'log', args?: any): void {
+  public static log(msg: string, type: string = 'log', args?: any, style: string = 'color: inherit'): void {
 
-    if (!args) {
-      if (['time', 'timeEnd'].includes(type)) {
-        msg = `[codex-editor]: ${msg}`;
-      } else {
-        args = msg || 'undefined';
-        msg = '[codex-editor]: %o';
-      }
-    } else {
-      msg  = '[codex-editor]: ' + msg;
+    if ( !('console' in window) || !window.console[ type ] ) {
+      return;
     }
+
+    const editorLabelText = `Editor.js ${VERSION}`;
+    const editorLabelStyle = `line-height: 1em;
+            color: #006FEA;
+            display: inline-block;
+            font-size: 11px;
+            line-height: 1em;
+            background-color: #fff;
+            padding: 4px 9px;
+            border-radius: 30px;
+            border: 1px solid rgba(56, 138, 229, 0.16);
+            margin: 4px 5px 4px 0;`;
 
     try {
-      if ( 'console' in window && window.console[ type ] ) {
-        if ( args ) { window.console[ type ]( msg, args ); } else { window.console[ type ]( msg ); }
+      if (['time', 'timeEnd'].includes(type)) {
+        console[type](`( ${editorLabelText} ) ${msg}`);
+      } else if (args) {
+        console[type](`%c${editorLabelText}%c ${msg} %o`, editorLabelStyle, style, args);
+      } else {
+        console[type](`%c${editorLabelText}%c ${msg}`, editorLabelStyle, style);
       }
-    } catch (e) {
-      // do nothing
-    }
+    } catch (ignored) {}
   }
 
   /**
    * Returns basic keycodes as constants
    * @return {{}}
    */
-  static get keyCodes(): object {
+  static get keyCodes() {
     return {
       BACKSPACE: 8,
       TAB: 9,
@@ -79,7 +92,11 @@ export default class Util {
    *
    * @return {Promise}
    */
-  public static async sequence(chains: ChainData[], success = () => {}, fallback = () => {}): Promise<void> {
+  public static async sequence(
+    chains: ChainData[],
+    success: (data: any) => void = () => {},
+    fallback: (data: any) => void = () => {},
+  ): Promise<void> {
     /**
      * Decorator
      *
@@ -152,6 +169,10 @@ export default class Util {
    * @return {boolean}
    */
   public static isEmpty(object: object): boolean {
+    if (!object) {
+      return true;
+    }
+
     return Object.keys(object).length === 0 && object.constructor === Object;
   }
 
@@ -219,7 +240,7 @@ export default class Util {
    * @param {Boolean} immediate - call now
    * @return {Function}
    */
-  public static debounce(func: () => void, wait: number , immediate: boolean): () => void {
+  public static debounce(func: () => void, wait?: number , immediate?: boolean): () => void {
     let timeout;
 
     return () => {

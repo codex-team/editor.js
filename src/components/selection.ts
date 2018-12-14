@@ -29,14 +29,13 @@ interface Document {
 
 /**
  * Working with selection
- * @typedef {Selection} Selection
+ * @typedef {SelectionUtils} SelectionUtils
  */
 export default class SelectionUtils {
 
   /**
    * Editor styles
    * @return {{editorWrapper: string, editorZone: string}}
-   * @constructor
    */
   static get CSS(): {editorWrapper: string, editorZone: string} {
     return {
@@ -147,8 +146,8 @@ export default class SelectionUtils {
 
     sel = window.getSelection();
 
-    if (!sel.rangeCount) {
-      _.log('Method SelectionUtils.rangeCount() is not supported', 'warn');
+    if (sel.rangeCount === null || isNaN(sel.rangeCount)) {
+      _.log('Method SelectionUtils.rangeCount is not supported', 'warn');
       return rect;
     }
 
