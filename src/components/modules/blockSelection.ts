@@ -63,10 +63,9 @@ export default class BlockSelection extends Module {
     overlay.appendChild(overlayBottomScrollZone);
     document.body.appendChild(overlay);
 
-    const scrollSpeed = 5;
+    const scrollSpeed = 3;
     let mousedown = false;
-    let inScrollZone = null;
-    let sideMoveRect = null;
+    let inScrollZone = false;
     let startX = 0;
     let startY = 0;
 
@@ -83,29 +82,30 @@ export default class BlockSelection extends Module {
     const observer = new IntersectionObserver(callback, options);
     observer.observe(overlayRectangle);
 
+    // activates scrolling if blockSelection is active and mouse is in scroll zone
     function scrollVertical(n) {
       if (inScrollZone && mousedown) {
         window.scrollBy(0, n);
-        setImmediate(scrollVertical.bind(this, n));
+        setTimeout(scrollVertical.bind(this, n), 0);
       }
     }
 
     overlayBottomScrollZone.addEventListener('mouseenter', (event) => {
-      inScrollZone = 'bot';
+      inScrollZone = true;
       scrollVertical(scrollSpeed);
     });
 
     overlayTopScrollZone.addEventListener('mouseenter', (event) => {
-      inScrollZone = 'top';
+      inScrollZone = true;
       scrollVertical(-scrollSpeed);
     });
 
     overlayBottomScrollZone.addEventListener('mouseleave', (event) => {
-      inScrollZone = null;
+      inScrollZone = false;
     });
 
     overlayTopScrollZone.addEventListener('mouseleave', (event) => {
-      inScrollZone = null;
+      inScrollZone = false;
     });
 
     document.body.addEventListener('mousedown', (event) => {
@@ -128,11 +128,9 @@ export default class BlockSelection extends Module {
         // Depending on the position of the mouse relative to the starting point,
         // change the distance from the desired edge of the screen*/
         if (event.pageY >= startY) {
-          sideMoveRect = 'down';
           overlayRectangle.style.top = `${startY - window.pageYOffset}px`;
           overlayRectangle.style.bottom = `calc(100% - ${event.clientY}px`;
         } else {
-          sideMoveRect = 'up';
           overlayRectangle.style.bottom = `calc(100% - ${startY - window.pageYOffset}px`;
           overlayRectangle.style.top = `${event.clientY}px`;
         }
