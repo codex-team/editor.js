@@ -55,11 +55,17 @@ export default class BlockSelection extends Module {
     const overlay = $.make('div', 'codex-editor-overlay', {});
     const overlayContainer = $.make('div', 'codex-editor-overlay__container', {});
     const overlayRectangle = $.make('div', 'codex-editor-overlay__rectangle', {});
+    const overlayTopScrollZone = $.make('div', 'codex-editor-overlay__scroll-zone--top', {});
+    const overlayBottomScrollZone = $.make('div', 'codex-editor-overlay__scroll-zone--bottom', {});
 
     overlay.appendChild(overlayContainer);
+    overlay.appendChild(overlayTopScrollZone);
+    overlay.appendChild(overlayBottomScrollZone);
     document.body.appendChild(overlay);
 
+    const scrollSpeed = 2;
     let mousedown = false;
+    let inScrollZone = false;
     let startX = 0;
     let startY = 0;
 
@@ -75,6 +81,31 @@ export default class BlockSelection extends Module {
 
     const observer = new IntersectionObserver(callback, options);
     observer.observe(overlayRectangle);
+
+    function scrollVertical(n) {
+      if (inScrollZone && mousedown) {
+        window.scrollBy(0, n);
+        setImmediate(scrollVertical.bind(this, n));
+      }
+    }
+
+    overlayBottomScrollZone.addEventListener('mouseenter', (event) => {
+      inScrollZone = true;
+      scrollVertical(scrollSpeed);
+    });
+
+    overlayTopScrollZone.addEventListener('mouseenter', (event) => {
+      inScrollZone = true;
+      scrollVertical(-scrollSpeed);
+    });
+
+    overlayBottomScrollZone.addEventListener('mouseleave', (event) => {
+      inScrollZone = false;
+    });
+
+    overlayTopScrollZone.addEventListener('mouseleave', (event) => {
+      inScrollZone = false;
+    });
 
     document.body.addEventListener('mousedown', (event) => {
       mousedown = true;
@@ -120,6 +151,11 @@ export default class BlockSelection extends Module {
       startX = 0;
       startY = 0;
     }, false);
+
+    window.addEventListener('scroll', () => {
+
+    });
+
   }
 
   /**

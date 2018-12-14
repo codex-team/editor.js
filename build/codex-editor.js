@@ -10045,6 +10045,201 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (roo
 
 /***/ }),
 
+/***/ "./node_modules/process/browser.js":
+/*!*****************************************!*\
+  !*** ./node_modules/process/browser.js ***!
+  \*****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
+(function () {
+    try {
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
+        }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
+    }
+    try {
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
+        }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+process.prependListener = noop;
+process.prependOnceListener = noop;
+
+process.listeners = function (name) { return [] }
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+
+/***/ }),
+
 /***/ "./node_modules/regenerator-runtime/runtime.js":
 /*!*****************************************************!*\
   !*** ./node_modules/regenerator-runtime/runtime.js ***!
@@ -10780,6 +10975,279 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (roo
   (function() { return this })() || Function("return this")()
 );
 
+
+/***/ }),
+
+/***/ "./node_modules/setimmediate/setImmediate.js":
+/*!***************************************************!*\
+  !*** ./node_modules/setimmediate/setImmediate.js ***!
+  \***************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
+    "use strict";
+
+    if (global.setImmediate) {
+        return;
+    }
+
+    var nextHandle = 1; // Spec says greater than zero
+    var tasksByHandle = {};
+    var currentlyRunningATask = false;
+    var doc = global.document;
+    var registerImmediate;
+
+    function setImmediate(callback) {
+      // Callback can either be a function or a string
+      if (typeof callback !== "function") {
+        callback = new Function("" + callback);
+      }
+      // Copy function arguments
+      var args = new Array(arguments.length - 1);
+      for (var i = 0; i < args.length; i++) {
+          args[i] = arguments[i + 1];
+      }
+      // Store and register the task
+      var task = { callback: callback, args: args };
+      tasksByHandle[nextHandle] = task;
+      registerImmediate(nextHandle);
+      return nextHandle++;
+    }
+
+    function clearImmediate(handle) {
+        delete tasksByHandle[handle];
+    }
+
+    function run(task) {
+        var callback = task.callback;
+        var args = task.args;
+        switch (args.length) {
+        case 0:
+            callback();
+            break;
+        case 1:
+            callback(args[0]);
+            break;
+        case 2:
+            callback(args[0], args[1]);
+            break;
+        case 3:
+            callback(args[0], args[1], args[2]);
+            break;
+        default:
+            callback.apply(undefined, args);
+            break;
+        }
+    }
+
+    function runIfPresent(handle) {
+        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
+        // So if we're currently running a task, we'll need to delay this invocation.
+        if (currentlyRunningATask) {
+            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
+            // "too much recursion" error.
+            setTimeout(runIfPresent, 0, handle);
+        } else {
+            var task = tasksByHandle[handle];
+            if (task) {
+                currentlyRunningATask = true;
+                try {
+                    run(task);
+                } finally {
+                    clearImmediate(handle);
+                    currentlyRunningATask = false;
+                }
+            }
+        }
+    }
+
+    function installNextTickImplementation() {
+        registerImmediate = function(handle) {
+            process.nextTick(function () { runIfPresent(handle); });
+        };
+    }
+
+    function canUsePostMessage() {
+        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
+        // where `global.postMessage` means something completely different and can't be used for this purpose.
+        if (global.postMessage && !global.importScripts) {
+            var postMessageIsAsynchronous = true;
+            var oldOnMessage = global.onmessage;
+            global.onmessage = function() {
+                postMessageIsAsynchronous = false;
+            };
+            global.postMessage("", "*");
+            global.onmessage = oldOnMessage;
+            return postMessageIsAsynchronous;
+        }
+    }
+
+    function installPostMessageImplementation() {
+        // Installs an event handler on `global` for the `message` event: see
+        // * https://developer.mozilla.org/en/DOM/window.postMessage
+        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
+
+        var messagePrefix = "setImmediate$" + Math.random() + "$";
+        var onGlobalMessage = function(event) {
+            if (event.source === global &&
+                typeof event.data === "string" &&
+                event.data.indexOf(messagePrefix) === 0) {
+                runIfPresent(+event.data.slice(messagePrefix.length));
+            }
+        };
+
+        if (global.addEventListener) {
+            global.addEventListener("message", onGlobalMessage, false);
+        } else {
+            global.attachEvent("onmessage", onGlobalMessage);
+        }
+
+        registerImmediate = function(handle) {
+            global.postMessage(messagePrefix + handle, "*");
+        };
+    }
+
+    function installMessageChannelImplementation() {
+        var channel = new MessageChannel();
+        channel.port1.onmessage = function(event) {
+            var handle = event.data;
+            runIfPresent(handle);
+        };
+
+        registerImmediate = function(handle) {
+            channel.port2.postMessage(handle);
+        };
+    }
+
+    function installReadyStateChangeImplementation() {
+        var html = doc.documentElement;
+        registerImmediate = function(handle) {
+            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
+            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
+            var script = doc.createElement("script");
+            script.onreadystatechange = function () {
+                runIfPresent(handle);
+                script.onreadystatechange = null;
+                html.removeChild(script);
+                script = null;
+            };
+            html.appendChild(script);
+        };
+    }
+
+    function installSetTimeoutImplementation() {
+        registerImmediate = function(handle) {
+            setTimeout(runIfPresent, 0, handle);
+        };
+    }
+
+    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
+    var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
+    attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
+
+    // Don't get fooled by e.g. browserify environments.
+    if ({}.toString.call(global.process) === "[object process]") {
+        // For Node.js before 0.9
+        installNextTickImplementation();
+
+    } else if (canUsePostMessage()) {
+        // For non-IE10 modern browsers
+        installPostMessageImplementation();
+
+    } else if (global.MessageChannel) {
+        // For web workers, where supported
+        installMessageChannelImplementation();
+
+    } else if (doc && "onreadystatechange" in doc.createElement("script")) {
+        // For IE 6–8
+        installReadyStateChangeImplementation();
+
+    } else {
+        // For older browsers
+        installSetTimeoutImplementation();
+    }
+
+    attachTo.setImmediate = setImmediate;
+    attachTo.clearImmediate = clearImmediate;
+}(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
+
+/***/ }),
+
+/***/ "./node_modules/timers-browserify/main.js":
+/*!************************************************!*\
+  !*** ./node_modules/timers-browserify/main.js ***!
+  \************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+/* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
+            (typeof self !== "undefined" && self) ||
+            window;
+var apply = Function.prototype.apply;
+
+// DOM APIs, for completeness
+
+exports.setTimeout = function() {
+  return new Timeout(apply.call(setTimeout, scope, arguments), clearTimeout);
+};
+exports.setInterval = function() {
+  return new Timeout(apply.call(setInterval, scope, arguments), clearInterval);
+};
+exports.clearTimeout =
+exports.clearInterval = function(timeout) {
+  if (timeout) {
+    timeout.close();
+  }
+};
+
+function Timeout(id, clearFn) {
+  this._id = id;
+  this._clearFn = clearFn;
+}
+Timeout.prototype.unref = Timeout.prototype.ref = function() {};
+Timeout.prototype.close = function() {
+  this._clearFn.call(scope, this._id);
+};
+
+// Does not start the time, just sets up the members needed.
+exports.enroll = function(item, msecs) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = msecs;
+};
+
+exports.unenroll = function(item) {
+  clearTimeout(item._idleTimeoutId);
+  item._idleTimeout = -1;
+};
+
+exports._unrefActive = exports.active = function(item) {
+  clearTimeout(item._idleTimeoutId);
+
+  var msecs = item._idleTimeout;
+  if (msecs >= 0) {
+    item._idleTimeoutId = setTimeout(function onTimeout() {
+      if (item._onTimeout)
+        item._onTimeout();
+    }, msecs);
+  }
+};
+
+// setimmediate attaches itself to the global object
+__webpack_require__(/*! setimmediate */ "./node_modules/setimmediate/setImmediate.js");
+// On some exotic environments, it's not clear which object `setimmediate` was
+// able to install onto.  Search each possibility in the same order as the
+// `setimmediate` library.
+exports.setImmediate = (typeof self !== "undefined" && self.setImmediate) ||
+                       (typeof global !== "undefined" && global.setImmediate) ||
+                       (this && this.setImmediate);
+exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
+                         (typeof global !== "undefined" && global.clearImmediate) ||
+                         (this && this.clearImmediate);
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
 /***/ }),
 
@@ -16150,7 +16618,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(Module, $, _) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+/* WEBPACK VAR INJECTION */(function(Module, $, setImmediate, _) {var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
     !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
@@ -16229,9 +16697,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var overlay = $.make('div', 'codex-editor-overlay', {});
         var overlayContainer = $.make('div', 'codex-editor-overlay__container', {});
         var overlayRectangle = $.make('div', 'codex-editor-overlay__rectangle', {});
+        var overlayTopScrollZone = $.make('div', 'codex-editor-overlay__scroll-zone--top', {});
+        var overlayBottomScrollZone = $.make('div', 'codex-editor-overlay__scroll-zone--bottom', {});
         overlay.appendChild(overlayContainer);
+        overlay.appendChild(overlayTopScrollZone);
+        overlay.appendChild(overlayBottomScrollZone);
         document.body.appendChild(overlay);
+        var scrollSpeed = 2;
         var mousedown = false;
+        var inScrollZone = false;
         var startX = 0;
         var startY = 0;
         var options = {
@@ -16246,6 +16720,28 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var observer = new IntersectionObserver(callback, options);
         observer.observe(overlayRectangle);
+
+        function scrollVertical(n) {
+          if (inScrollZone && mousedown) {
+            window.scrollBy(0, n);
+            setImmediate(scrollVertical.bind(this, n));
+          }
+        }
+
+        overlayBottomScrollZone.addEventListener('mouseenter', function (event) {
+          inScrollZone = true;
+          scrollVertical(scrollSpeed);
+        });
+        overlayTopScrollZone.addEventListener('mouseenter', function (event) {
+          inScrollZone = true;
+          scrollVertical(-scrollSpeed);
+        });
+        overlayBottomScrollZone.addEventListener('mouseleave', function (event) {
+          inScrollZone = false;
+        });
+        overlayTopScrollZone.addEventListener('mouseleave', function (event) {
+          inScrollZone = false;
+        });
         document.body.addEventListener('mousedown', function (event) {
           mousedown = true;
           startX = event.clientX;
@@ -16284,6 +16780,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           startX = 0;
           startY = 0;
         }, false);
+        window.addEventListener('scroll', function () {});
       }
       /**
        * Clear selection from Blocks
@@ -16458,7 +16955,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   BlockSelection.displayName = "BlockSelection";
   module.exports = exports.default;
 });
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.ts"), __webpack_require__(/*! utils */ "./src/components/utils.ts")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../__module.ts */ "./src/components/__module.ts"), __webpack_require__(/*! dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./../../../node_modules/timers-browserify/main.js */ "./node_modules/timers-browserify/main.js").setImmediate, __webpack_require__(/*! utils */ "./src/components/utils.ts")))
 
 /***/ }),
 
@@ -22955,7 +23452,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ":root {\r\n  /**\r\n   * Selection color\r\n   */\r\n  --selectionColor: #a8d6ff;\r\n\r\n  /**\r\n   * Toolbar buttons\r\n   */\r\n  --bg-light: #eff2f5;\r\n\r\n  /**\r\n   * All gray texts: placeholders, settings\r\n   */\r\n  --grayText: #707684;\r\n\r\n  /**\r\n   * Blue icons\r\n   */\r\n  --color-active-icon: #388AE5;\r\n\r\n  /**\r\n   * Gray border, loaders\r\n   */\r\n  --color-gray-border: rgba(201, 201, 204, 0.48);\r\n\r\n  /**\r\n   * Block content width\r\n   */\r\n  --content-width: 650px;\r\n\r\n  /**\r\n   * Toolbar buttons height and width\r\n   */\r\n  --toolbar-buttons-size: 34px;\r\n\r\n  /**\r\n   * Toolbar Plus Button and Toolbox buttons height and width\r\n   */\r\n  --toolbox-buttons-size: 24px;\r\n\r\n  /**\r\n   * Confirm deletion bg\r\n   */\r\n  --color-confirm: #E24A4A;\r\n}\r\n/**\r\n* Editor wrapper\r\n*/\r\n.codex-editor {\r\n  position: relative;\r\n  -webkit-box-sizing: border-box;\r\n          box-sizing: border-box;\r\n}\r\n.codex-editor .hide {\r\n    display: none;\r\n  }\r\n.codex-editor__redactor {\r\n    padding-bottom: 300px;\r\n  }\r\n.codex-editor-copyable {\r\n    position: absolute;\r\n    height: 1px;\r\n    width: 1px;\r\n    top: -400%;\r\n    opacity: 0.001;\r\n  }\r\n.codex-editor-overlay {\r\n    position: fixed;\r\n    top: 0px;\r\n    left: 0px;\r\n    right: 0px;\r\n    bottom: 0px;\r\n    z-index: 999;\r\n    pointer-events: none;\r\n    overflow: hidden;\r\n  }\r\n.codex-editor-overlay__container {\r\n      position: relative;\r\n      pointer-events: auto;\r\n      z-index: 0;\r\n    }\r\n.codex-editor-overlay__rectangle {\r\n       position: absolute;\r\n       pointer-events: none;\r\n       background-color: rgba(46, 170, 220, 0.2);\r\n       border: 1px solid transparent;\r\n    }\r\n.codex-editor svg {\r\n    fill: currentColor;\r\n    vertical-align: middle;\r\n    max-height: 100%;\r\n  }\r\n/**\r\n * Set color for native selection\r\n */\r\n::-moz-selection{\r\n  background-color: #a8d6ff;\r\n  background-color: var(--selectionColor);\r\n}\r\n::selection{\r\n  background-color: #a8d6ff;\r\n  background-color: var(--selectionColor);\r\n}\r\n/**\r\n * Add placeholder to content editable elements with data attribute\r\n * data-placeholder=\"Hello world!\"\r\n */\r\n[contentEditable=true][data-placeholder]:empty::before{\r\n  content: attr(data-placeholder);\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  font-weight: normal;\r\n}\r\n[contentEditable=true][data-placeholder]:empty:focus::before {\r\n  opacity: 0.3;\r\n}\r\n.ce-toolbar {\r\n  position: absolute;\r\n  left: 0;\r\n  right: 0;\r\n  top: 0;\r\n  /*opacity: 0;*/\r\n  /*visibility: hidden;*/\r\n  -webkit-transition: opacity 100ms ease;\r\n  transition: opacity 100ms ease;\r\n  will-change: opacity, transform;\r\n  display: none;\r\n}\r\n.ce-toolbar--opened {\r\n    display: block;\r\n    /*opacity: 1;*/\r\n    /*visibility: visible;*/\r\n  }\r\n.ce-toolbar__content {\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n    position: relative;\r\n  }\r\n.ce-toolbar__plus {\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  cursor: pointer;\r\n  width: 24px;\r\n  width: var(--toolbox-buttons-size);\r\n  height: 24px;\r\n  height: var(--toolbox-buttons-size);\r\n  display: -webkit-inline-box;\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  -webkit-box-pack: center;\r\n      -ms-flex-pack: center;\r\n          justify-content: center;\r\n  -webkit-box-align: center;\r\n      -ms-flex-align: center;\r\n          align-items: center\r\n  }\r\n.ce-toolbar__plus:not(:last-of-type){\r\n  margin-right: 10px;\r\n    }\r\n.ce-toolbar__plus {\r\n\r\n    position: absolute;\r\n    left: calc(calc(24px + 10px) * -1);\r\n    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);\r\n  }\r\n.ce-toolbar__plus:hover,\r\n    .ce-toolbar__plus--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-toolbar__plus--active{\r\n  -webkit-animation: bounceIn 0.75s 1;\r\n          animation: bounceIn 0.75s 1;\r\n  -webkit-animation-fill-mode: forwards;\r\n          animation-fill-mode: forwards;\r\n    }\r\n.ce-toolbar__plus--hidden {\r\n      display: none;\r\n    }\r\n.ce-toolbar__plus,\r\n  .ce-toolbar .ce-toolbox {\r\n    top: 50%;\r\n    -webkit-transform: translateY(-50%);\r\n            transform: translateY(-50%);\r\n  }\r\n/**\r\n   * Block actions Zone\r\n   * -------------------------\r\n   */\r\n.ce-toolbar__actions {\r\n    position: absolute;\r\n    right: 0;\r\n    top: 10px;\r\n    padding-right: 16px;\r\n  }\r\n.ce-toolbar__actions-buttons {\r\n      text-align: right;\r\n    }\r\n.ce-toolbar__settings-btn {\r\n    display: inline-block;\r\n    width: 24px;\r\n    height: 24px;\r\n    color: #707684;\r\n    color: var(--grayText);\r\n    cursor: pointer;\r\n  }\r\n.ce-toolbox {\r\n    position: absolute;\r\n    visibility: hidden;\r\n    -webkit-transition: opacity 100ms ease;\r\n    transition: opacity 100ms ease;\r\n    will-change: opacity;\r\n    display: -webkit-box;\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -webkit-box-orient: horizontal;\r\n    -webkit-box-direction: normal;\r\n        -ms-flex-direction: row;\r\n            flex-direction: row;\r\n}\r\n.ce-toolbox--opened {\r\n        opacity: 1;\r\n        visibility: visible;\r\n    }\r\n.ce-toolbox__button {\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  cursor: pointer;\r\n  width: 24px;\r\n  width: var(--toolbox-buttons-size);\r\n  height: 24px;\r\n  height: var(--toolbox-buttons-size);\r\n  display: -webkit-inline-box;\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  -webkit-box-pack: center;\r\n      -ms-flex-pack: center;\r\n          justify-content: center;\r\n  -webkit-box-align: center;\r\n      -ms-flex-align: center;\r\n          align-items: center;\r\n    }\r\n.ce-toolbox__button:not(:last-of-type){\r\n  margin-right: 10px;\r\n    }\r\n.ce-toolbox__button:hover,\r\n    .ce-toolbox__button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-toolbox__button--active{\r\n  -webkit-animation: bounceIn 0.75s 1;\r\n          animation: bounceIn 0.75s 1;\r\n  -webkit-animation-fill-mode: forwards;\r\n          animation-fill-mode: forwards;\r\n    }\r\n.ce-inline-toolbar {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  -webkit-box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n          box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-inline-toolbar::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  -webkit-transform: rotate(-45deg);\r\n          transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n    }\r\n.ce-inline-toolbar {\r\n  padding: 6px;\r\n  -webkit-transform: translateX(-50%);\r\n          transform: translateX(-50%);\r\n  display: none;\r\n  -webkit-box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\r\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\r\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\r\n          box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\r\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\r\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\r\n}\r\n.ce-inline-toolbar--showed {\r\n    display: block;\r\n  }\r\n.ce-inline-toolbar [hidden] {\r\n    display: none !important;\r\n  }\r\n.ce-inline-tool {\r\n  display: -webkit-inline-box;\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n}\r\n.ce-inline-tool:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-inline-tool:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-inline-tool {\r\n  line-height: normal;\r\n}\r\n.ce-inline-tool > svg,\r\n    .ce-inline-tool .icon {\r\n  margin: auto;\r\n    }\r\n.ce-inline-tool--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-inline-tool--last {\r\n    margin-right: 0 !important;\r\n  }\r\n.ce-inline-tool--link .icon {\r\n      margin-top: -2px;\r\n    }\r\n.ce-inline-tool--link .icon--unlink {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--link {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--unlink {\r\n      display: inline-block;\r\n    }\r\n.ce-inline-tool-input {\r\n    background-color: #eff2f5;\r\n    background-color: var(--bg-light);\r\n    outline: none;\r\n    border: 0;\r\n    border-radius: 3px;\r\n    margin: 6px 0 0;\r\n    font-size: 13px;\r\n    padding: 8px;\r\n    width: 100%;\r\n    -webkit-box-sizing: border-box;\r\n            box-sizing: border-box;\r\n    display: none\r\n  }\r\n.ce-inline-tool-input::-webkit-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input::-ms-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input::placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input--showed {\r\n      display: block;\r\n    }\r\n.ce-settings {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  -webkit-box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n          box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-settings::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  -webkit-transform: rotate(-45deg);\r\n          transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n    }\r\n.ce-settings {\r\n  right: 5px;\r\n  top: 35px;\r\n  min-width: 124px\r\n}\r\n.ce-settings::before{\r\n    left: auto;\r\n    right: 12px;\r\n  }\r\n.ce-settings {\r\n\r\n  display: none;\r\n}\r\n.ce-settings--opened {\r\n    display: block;\r\n    -webkit-animation-duration: 0.5s;\r\n            animation-duration: 0.5s;\r\n    -webkit-animation-name: bounceIn;\r\n            animation-name: bounceIn;\r\n  }\r\n.ce-settings__plugin-zone:not(:empty){\r\n      padding: 6px 6px 0;\r\n    }\r\n.ce-settings__default-zone:not(:empty){\r\n      padding: 6px;\r\n    }\r\n.ce-settings__button {\r\n  display: -webkit-inline-box;\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n  }\r\n.ce-settings__button:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-settings__button:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-settings__button {\r\n    line-height: 32px;\r\n  }\r\n.ce-settings__button > svg,\r\n    .ce-settings__button .icon {\r\n  margin: auto;\r\n    }\r\n.ce-settings__button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-settings__button--disabled {\r\n        cursor: not-allowed !important;\r\n        opacity: .3;\r\n    }\r\n.ce-settings__button--selected {\r\n      color: #388AE5;\r\n      color: var(--color-active-icon);\r\n    }\r\n.ce-settings__button--delete {\r\n      -webkit-transition: background-color 300ms ease;\r\n      transition: background-color 300ms ease;\r\n      will-change: background-color;\r\n    }\r\n.ce-settings__button--delete .icon {\r\n        -webkit-transition: -webkit-transform 200ms ease-out;\r\n        transition: -webkit-transform 200ms ease-out;\r\n        transition: transform 200ms ease-out;\r\n        transition: transform 200ms ease-out, -webkit-transform 200ms ease-out;\r\n        will-change: transform;\r\n      }\r\n.ce-settings__button--confirm {\r\n      background-color: #E24A4A;\r\n      background-color: var(--color-confirm);\r\n      color: #fff\r\n    }\r\n.ce-settings__button--confirm:hover {\r\n        background-color: rgb(213, 74, 74) !important;\r\n        background-color: rgb(213, 74, 74) !important;\r\n      }\r\n.ce-settings__button--confirm .icon {\r\n        -webkit-transform: rotate(90deg);\r\n                transform: rotate(90deg);\r\n      }\r\n.ce-block:first-of-type {\r\n    margin-top: 0;\r\n  }\r\n.ce-block--focused {\r\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\r\n    border-radius: 3px;\r\n  }\r\n.ce-block--selected .ce-block__content {\r\n    background: #a8d6ff;\r\n    background: var(--selectionColor);\r\n    -webkit-box-shadow: 0 31px 23px -22px rgba(175, 220, 255, 1);\r\n            box-shadow: 0 31px 23px -22px rgba(175, 220, 255, 1);\r\n    -webkit-animation: selectionBounce 0.2s 1;\r\n            animation: selectionBounce 0.2s 1;\r\n    -webkit-animation-fill-mode: forwards;\r\n            animation-fill-mode: forwards;\r\n  }\r\n.ce-block--selected .ce-block__content img {\r\n      opacity: 0.55;\r\n    }\r\n.ce-block--stretched .ce-block__content {\r\n    max-width: none;\r\n  }\r\n.ce-block__content {\r\n    position: relative;\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n  }\r\n.ce-block--drop-target .ce-block__content:before {\r\n      content: '';\r\n      position: absolute;\r\n      top: 100%;\r\n      left: -20px;\r\n      margin-top: -1px;\r\n      height: 8px;\r\n      width: 8px;\r\n      border: solid #388AE5;\r\n      border: solid var(--color-active-icon);\r\n      border-width: 1px 1px 0 0;\r\n      -webkit-transform-origin: right;\r\n              transform-origin: right;\r\n      -webkit-transform: rotate(45deg);\r\n              transform: rotate(45deg);\r\n    }\r\n.ce-block--drop-target .ce-block__content:after {\r\n      content: '';\r\n      position: absolute;\r\n      top: 100%;\r\n      height: 1px;\r\n      width: 100%;\r\n      color: #388AE5;\r\n      color: var(--color-active-icon);\r\n      background: repeating-linear-gradient(\r\n        90deg,\r\n        #388AE5,\r\n        #388AE5 1px,\r\n        #fff 1px,\r\n        #fff 6px\r\n      );\r\n      background: repeating-linear-gradient(\r\n        90deg,\r\n        var(--color-active-icon),\r\n        var(--color-active-icon) 1px,\r\n        #fff 1px,\r\n        #fff 6px\r\n      );\r\n    }\r\n.wobble {\r\n  -webkit-animation-name: wobble;\r\n          animation-name: wobble;\r\n  -webkit-animation-duration: 400ms;\r\n          animation-duration: 400ms;\r\n}\r\n/**\r\n * @author Nick Pettit - https://github.com/nickpettit/glide\r\n */\r\n@-webkit-keyframes wobble {\r\n  from {\r\n    -webkit-transform: translate3d(0, 0, 0);\r\n            transform: translate3d(0, 0, 0);\r\n  }\r\n\r\n  15% {\r\n    -webkit-transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\r\n            transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\r\n  }\r\n\r\n  30% {\r\n    -webkit-transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\r\n            transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\r\n  }\r\n\r\n  45% {\r\n    -webkit-transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\r\n            transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\r\n  }\r\n\r\n  60% {\r\n    -webkit-transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\r\n            transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\r\n  }\r\n\r\n  75% {\r\n    -webkit-transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\r\n            transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\r\n  }\r\n\r\n  to {\r\n    -webkit-transform: translate3d(0, 0, 0);\r\n            transform: translate3d(0, 0, 0);\r\n  }\r\n}\r\n@keyframes wobble {\r\n  from {\r\n    -webkit-transform: translate3d(0, 0, 0);\r\n            transform: translate3d(0, 0, 0);\r\n  }\r\n\r\n  15% {\r\n    -webkit-transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\r\n            transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\r\n  }\r\n\r\n  30% {\r\n    -webkit-transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\r\n            transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\r\n  }\r\n\r\n  45% {\r\n    -webkit-transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\r\n            transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\r\n  }\r\n\r\n  60% {\r\n    -webkit-transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\r\n            transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\r\n  }\r\n\r\n  75% {\r\n    -webkit-transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\r\n            transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\r\n  }\r\n\r\n  to {\r\n    -webkit-transform: translate3d(0, 0, 0);\r\n            transform: translate3d(0, 0, 0);\r\n  }\r\n}\r\n@-webkit-keyframes bounceIn {\r\n  from,\r\n  20%,\r\n  40%,\r\n  60%,\r\n  80%,\r\n  to {\r\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n\r\n  0% {\r\n    -webkit-transform: scale3d(0.9, 0.9, 0.9);\r\n            transform: scale3d(0.9, 0.9, 0.9);\r\n  }\r\n\r\n  20% {\r\n    -webkit-transform: scale3d(1.03, 1.03, 1.03);\r\n            transform: scale3d(1.03, 1.03, 1.03);\r\n  }\r\n\r\n  60% {\r\n    -webkit-transform: scale3d(1, 1, 1);\r\n            transform: scale3d(1, 1, 1);\r\n  }\r\n}\r\n@keyframes bounceIn {\r\n  from,\r\n  20%,\r\n  40%,\r\n  60%,\r\n  80%,\r\n  to {\r\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n\r\n  0% {\r\n    -webkit-transform: scale3d(0.9, 0.9, 0.9);\r\n            transform: scale3d(0.9, 0.9, 0.9);\r\n  }\r\n\r\n  20% {\r\n    -webkit-transform: scale3d(1.03, 1.03, 1.03);\r\n            transform: scale3d(1.03, 1.03, 1.03);\r\n  }\r\n\r\n  60% {\r\n    -webkit-transform: scale3d(1, 1, 1);\r\n            transform: scale3d(1, 1, 1);\r\n  }\r\n}\r\n@-webkit-keyframes selectionBounce {\r\n  from,\r\n  20%,\r\n  40%,\r\n  60%,\r\n  80%,\r\n  to {\r\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n\r\n  50% {\r\n    -webkit-transform: scale3d(1.01, 1.01, 1.01);\r\n            transform: scale3d(1.01, 1.01, 1.01);\r\n  }\r\n\r\n  70% {\r\n    -webkit-transform: scale3d(1, 1, 1);\r\n            transform: scale3d(1, 1, 1);\r\n  }\r\n}\r\n@keyframes selectionBounce {\r\n  from,\r\n  20%,\r\n  40%,\r\n  60%,\r\n  80%,\r\n  to {\r\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n\r\n  50% {\r\n    -webkit-transform: scale3d(1.01, 1.01, 1.01);\r\n            transform: scale3d(1.01, 1.01, 1.01);\r\n  }\r\n\r\n  70% {\r\n    -webkit-transform: scale3d(1, 1, 1);\r\n            transform: scale3d(1, 1, 1);\r\n  }\r\n}\r\n/**\r\n * Block Tool wrapper\r\n */\r\n.cdx-block {\r\n  padding: 0.7em 0;\r\n}\r\n/**\r\n * Input\r\n */\r\n.cdx-input {\r\n  border: 1px solid rgba(201, 201, 204, 0.48);\r\n  border: 1px solid var(--color-gray-border);\r\n  -webkit-box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\r\n          box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\r\n  border-radius: 3px;\r\n  padding: 10px 12px;\r\n  outline: none;\r\n  width: 100%;\r\n  -webkit-box-sizing: border-box;\r\n          box-sizing: border-box;\r\n}\r\n/**\r\n * Settings\r\n */\r\n.cdx-settings-button {\r\n  display: -webkit-inline-box;\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n}\r\n.cdx-settings-button:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.cdx-settings-button:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.cdx-settings-button > svg,\r\n    .cdx-settings-button .icon {\r\n  margin: auto;\r\n    }\r\n.cdx-settings-button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.cdx-settings-button--active {\r\n    color: #388AE5;\r\n    color: var(--color-active-icon);\r\n  }\r\n/**\r\n * Loader\r\n */\r\n.cdx-loader {\r\n  position: relative;\r\n  border: 1px solid rgba(201, 201, 204, 0.48);\r\n  border: 1px solid var(--color-gray-border)\r\n}\r\n.cdx-loader::before {\r\n    content: '';\r\n    position: absolute;\r\n    left: 50%;\r\n    top: 50%;\r\n    width: 18px;\r\n    height: 18px;\r\n    margin: -11px 0 0 -11px;\r\n    border: 2px solid rgba(201, 201, 204, 0.48);\r\n    border: 2px solid var(--color-gray-border);\r\n    border-left-color: #388AE5;\r\n    border-left-color: var(--color-active-icon);\r\n    border-radius: 50%;\r\n    -webkit-animation: cdxRotation 1.2s infinite linear;\r\n            animation: cdxRotation 1.2s infinite linear;\r\n  }\r\n@-webkit-keyframes cdxRotation {\r\n  0% {\r\n    -webkit-transform: rotate(0deg);\r\n            transform: rotate(0deg);\r\n  }\r\n  100% {\r\n    -webkit-transform: rotate(360deg);\r\n            transform: rotate(360deg);\r\n  }\r\n}\r\n@keyframes cdxRotation {\r\n  0% {\r\n    -webkit-transform: rotate(0deg);\r\n            transform: rotate(0deg);\r\n  }\r\n  100% {\r\n    -webkit-transform: rotate(360deg);\r\n            transform: rotate(360deg);\r\n  }\r\n}\r\n/**\r\n * Button\r\n */\r\n.cdx-button {\r\n  padding: 13px;\r\n  border-radius: 3px;\r\n  border: 1px solid rgba(201, 201, 204, 0.48);\r\n  border: 1px solid var(--color-gray-border);\r\n  font-size: 14.9px;\r\n  background: #fff;\r\n  -webkit-box-shadow: 0 2px 2px 0 rgba(18,30,57,0.04);\r\n          box-shadow: 0 2px 2px 0 rgba(18,30,57,0.04);\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  text-align: center;\r\n  cursor: pointer\r\n}\r\n.cdx-button:hover {\r\n    background: #FBFCFE;\r\n    -webkit-box-shadow: 0 1px 3px 0 rgba(18,30,57,0.08);\r\n            box-shadow: 0 1px 3px 0 rgba(18,30,57,0.08);\r\n  }\r\n.cdx-button svg {\r\n    height: 20px;\r\n    margin-right: 0.2em;\r\n    margin-top: -2px;\r\n  }\r\n", ""]);
+exports.push([module.i, ":root {\r\n  /**\r\n   * Selection color\r\n   */\r\n  --selectionColor: #a8d6ff;\r\n\r\n  /**\r\n   * Toolbar buttons\r\n   */\r\n  --bg-light: #eff2f5;\r\n\r\n  /**\r\n   * All gray texts: placeholders, settings\r\n   */\r\n  --grayText: #707684;\r\n\r\n  /**\r\n   * Blue icons\r\n   */\r\n  --color-active-icon: #388AE5;\r\n\r\n  /**\r\n   * Gray border, loaders\r\n   */\r\n  --color-gray-border: rgba(201, 201, 204, 0.48);\r\n\r\n  /**\r\n   * Block content width\r\n   */\r\n  --content-width: 650px;\r\n\r\n  /**\r\n   * Toolbar buttons height and width\r\n   */\r\n  --toolbar-buttons-size: 34px;\r\n\r\n  /**\r\n   * Toolbar Plus Button and Toolbox buttons height and width\r\n   */\r\n  --toolbox-buttons-size: 24px;\r\n\r\n  /**\r\n   * Confirm deletion bg\r\n   */\r\n  --color-confirm: #E24A4A;\r\n}\r\n/**\n* Editor wrapper\n*/\r\n.codex-editor {\n  position: relative;\n  -webkit-box-sizing: border-box;\n          box-sizing: border-box;\n}\r\n.codex-editor .hide {\n    display: none;\n  }\r\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\r\n.codex-editor-copyable {\n    position: absolute;\n    height: 1px;\n    width: 1px;\n    top: -400%;\n    opacity: 0.001;\n  }\r\n.codex-editor-overlay {\n    position: fixed;\n    top: 0px;\n    left: 0px;\n    right: 0px;\n    bottom: 0px;\n    z-index: 999;\n    pointer-events: none;\n    overflow: hidden;\n  }\r\n.codex-editor-overlay__container {\n      position: relative;\n      pointer-events: auto;\n      z-index: 0;\n    }\r\n.codex-editor-overlay__rectangle {\n       position: absolute;\n       pointer-events: none;\n       background-color: rgba(46, 170, 220, 0.2);\n       border: 1px solid transparent;\n    }\r\n.codex-editor-overlay__scroll-zone--top {\n           top: 0;\n           width: 100%;\n           height: 10%;\n           position: absolute;\n            pointer-events: auto;\n         }\r\n.codex-editor-overlay__scroll-zone--bottom {\n            bottom: 0;\n            width: 100%;\n            height: 10%;\n            position: absolute;\n            pointer-events: auto;\n          }\r\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    max-height: 100%;\n  }\r\n/**\n * Set color for native selection\n */\r\n::-moz-selection{\n  background-color: #a8d6ff;\n  background-color: var(--selectionColor);\n}\r\n::selection{\n  background-color: #a8d6ff;\n  background-color: var(--selectionColor);\n}\r\n/**\n * Add placeholder to content editable elements with data attribute\n * data-placeholder=\"Hello world!\"\n */\r\n[contentEditable=true][data-placeholder]:empty::before{\n  content: attr(data-placeholder);\n  color: #707684;\n  color: var(--grayText);\n  font-weight: normal;\n}\r\n[contentEditable=true][data-placeholder]:empty:focus::before {\n  opacity: 0.3;\n}\r\n.ce-toolbar {\r\n  position: absolute;\r\n  left: 0;\r\n  right: 0;\r\n  top: 0;\r\n  /*opacity: 0;*/\r\n  /*visibility: hidden;*/\r\n  -webkit-transition: opacity 100ms ease;\r\n  transition: opacity 100ms ease;\r\n  will-change: opacity, transform;\r\n  display: none;\r\n}\r\n.ce-toolbar--opened {\r\n    display: block;\r\n    /*opacity: 1;*/\r\n    /*visibility: visible;*/\r\n  }\r\n.ce-toolbar__content {\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n    position: relative;\r\n  }\r\n.ce-toolbar__plus {\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  cursor: pointer;\r\n  width: 24px;\r\n  width: var(--toolbox-buttons-size);\r\n  height: 24px;\r\n  height: var(--toolbox-buttons-size);\r\n  display: -webkit-inline-box;\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  -webkit-box-pack: center;\r\n      -ms-flex-pack: center;\r\n          justify-content: center;\r\n  -webkit-box-align: center;\r\n      -ms-flex-align: center;\r\n          align-items: center\r\n  }\r\n.ce-toolbar__plus:not(:last-of-type){\r\n  margin-right: 10px;\r\n    }\r\n.ce-toolbar__plus {\r\n\r\n    position: absolute;\r\n    left: calc(calc(24px + 10px) * -1);\r\n    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);\r\n  }\r\n.ce-toolbar__plus:hover,\r\n    .ce-toolbar__plus--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-toolbar__plus--active{\r\n  -webkit-animation: bounceIn 0.75s 1;\r\n          animation: bounceIn 0.75s 1;\r\n  -webkit-animation-fill-mode: forwards;\r\n          animation-fill-mode: forwards;\r\n    }\r\n.ce-toolbar__plus--hidden {\r\n      display: none;\r\n    }\r\n.ce-toolbar__plus,\r\n  .ce-toolbar .ce-toolbox {\r\n    top: 50%;\r\n    -webkit-transform: translateY(-50%);\r\n            transform: translateY(-50%);\r\n  }\r\n/**\r\n   * Block actions Zone\r\n   * -------------------------\r\n   */\r\n.ce-toolbar__actions {\r\n    position: absolute;\r\n    right: 0;\r\n    top: 10px;\r\n    padding-right: 16px;\r\n  }\r\n.ce-toolbar__actions-buttons {\r\n      text-align: right;\r\n    }\r\n.ce-toolbar__settings-btn {\r\n    display: inline-block;\r\n    width: 24px;\r\n    height: 24px;\r\n    color: #707684;\r\n    color: var(--grayText);\r\n    cursor: pointer;\r\n  }\r\n.ce-toolbox {\r\n    position: absolute;\r\n    visibility: hidden;\r\n    -webkit-transition: opacity 100ms ease;\r\n    transition: opacity 100ms ease;\r\n    will-change: opacity;\r\n    display: -webkit-box;\r\n    display: -ms-flexbox;\r\n    display: flex;\r\n    -webkit-box-orient: horizontal;\r\n    -webkit-box-direction: normal;\r\n        -ms-flex-direction: row;\r\n            flex-direction: row;\r\n}\r\n.ce-toolbox--opened {\r\n        opacity: 1;\r\n        visibility: visible;\r\n    }\r\n.ce-toolbox__button {\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  cursor: pointer;\r\n  width: 24px;\r\n  width: var(--toolbox-buttons-size);\r\n  height: 24px;\r\n  height: var(--toolbox-buttons-size);\r\n  display: -webkit-inline-box;\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  -webkit-box-pack: center;\r\n      -ms-flex-pack: center;\r\n          justify-content: center;\r\n  -webkit-box-align: center;\r\n      -ms-flex-align: center;\r\n          align-items: center;\r\n    }\r\n.ce-toolbox__button:not(:last-of-type){\r\n  margin-right: 10px;\r\n    }\r\n.ce-toolbox__button:hover,\r\n    .ce-toolbox__button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-toolbox__button--active{\r\n  -webkit-animation: bounceIn 0.75s 1;\r\n          animation: bounceIn 0.75s 1;\r\n  -webkit-animation-fill-mode: forwards;\r\n          animation-fill-mode: forwards;\r\n    }\r\n.ce-inline-toolbar {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  -webkit-box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n          box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-inline-toolbar::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  -webkit-transform: rotate(-45deg);\r\n          transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n    }\r\n.ce-inline-toolbar {\r\n  padding: 6px;\r\n  -webkit-transform: translateX(-50%);\r\n          transform: translateX(-50%);\r\n  display: none;\r\n  -webkit-box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\r\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\r\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\r\n          box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\r\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\r\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\r\n}\r\n.ce-inline-toolbar--showed {\r\n    display: block;\r\n  }\r\n.ce-inline-toolbar [hidden] {\r\n    display: none !important;\r\n  }\r\n.ce-inline-tool {\r\n  display: -webkit-inline-box;\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n}\r\n.ce-inline-tool:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-inline-tool:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-inline-tool {\r\n  line-height: normal;\r\n}\r\n.ce-inline-tool > svg,\r\n    .ce-inline-tool .icon {\r\n  margin: auto;\r\n    }\r\n.ce-inline-tool--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-inline-tool--last {\r\n    margin-right: 0 !important;\r\n  }\r\n.ce-inline-tool--link .icon {\r\n      margin-top: -2px;\r\n    }\r\n.ce-inline-tool--link .icon--unlink {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--link {\r\n      display: none;\r\n    }\r\n.ce-inline-tool--unlink .icon--unlink {\r\n      display: inline-block;\r\n    }\r\n.ce-inline-tool-input {\r\n    background-color: #eff2f5;\r\n    background-color: var(--bg-light);\r\n    outline: none;\r\n    border: 0;\r\n    border-radius: 3px;\r\n    margin: 6px 0 0;\r\n    font-size: 13px;\r\n    padding: 8px;\r\n    width: 100%;\r\n    -webkit-box-sizing: border-box;\r\n            box-sizing: border-box;\r\n    display: none\r\n  }\r\n.ce-inline-tool-input::-webkit-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input::-ms-input-placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input::placeholder {\r\n      color: #707684;\r\n      color: var(--grayText);\r\n    }\r\n.ce-inline-tool-input--showed {\r\n      display: block;\r\n    }\r\n.ce-settings {\r\n  position: absolute;\r\n  background-color: #FFFFFF;\r\n  -webkit-box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n          box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\r\n  border-radius: 4px;\r\n  z-index: 2\r\n}\r\n.ce-settings::before {\r\n  content: '';\r\n  width: 15px;\r\n  height: 15px;\r\n  position: absolute;\r\n  top: -7px;\r\n  left: 50%;\r\n  margin-left: -7px;\r\n  -webkit-transform: rotate(-45deg);\r\n          transform: rotate(-45deg);\r\n  background-color: #fff;\r\n  z-index: -1;\r\n    }\r\n.ce-settings {\r\n  right: 5px;\r\n  top: 35px;\r\n  min-width: 124px\r\n}\r\n.ce-settings::before{\r\n    left: auto;\r\n    right: 12px;\r\n  }\r\n.ce-settings {\r\n\r\n  display: none;\r\n}\r\n.ce-settings--opened {\r\n    display: block;\r\n    -webkit-animation-duration: 0.5s;\r\n            animation-duration: 0.5s;\r\n    -webkit-animation-name: bounceIn;\r\n            animation-name: bounceIn;\r\n  }\r\n.ce-settings__plugin-zone:not(:empty){\r\n      padding: 6px 6px 0;\r\n    }\r\n.ce-settings__default-zone:not(:empty){\r\n      padding: 6px;\r\n    }\r\n.ce-settings__button {\r\n  display: -webkit-inline-box;\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n  }\r\n.ce-settings__button:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.ce-settings__button:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.ce-settings__button {\r\n    line-height: 32px;\r\n  }\r\n.ce-settings__button > svg,\r\n    .ce-settings__button .icon {\r\n  margin: auto;\r\n    }\r\n.ce-settings__button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.ce-settings__button--disabled {\r\n        cursor: not-allowed !important;\r\n        opacity: .3;\r\n    }\r\n.ce-settings__button--selected {\r\n      color: #388AE5;\r\n      color: var(--color-active-icon);\r\n    }\r\n.ce-settings__button--delete {\r\n      -webkit-transition: background-color 300ms ease;\r\n      transition: background-color 300ms ease;\r\n      will-change: background-color;\r\n    }\r\n.ce-settings__button--delete .icon {\r\n        -webkit-transition: -webkit-transform 200ms ease-out;\r\n        transition: -webkit-transform 200ms ease-out;\r\n        transition: transform 200ms ease-out;\r\n        transition: transform 200ms ease-out, -webkit-transform 200ms ease-out;\r\n        will-change: transform;\r\n      }\r\n.ce-settings__button--confirm {\r\n      background-color: #E24A4A;\r\n      background-color: var(--color-confirm);\r\n      color: #fff\r\n    }\r\n.ce-settings__button--confirm:hover {\r\n        background-color: rgb(213, 74, 74) !important;\r\n        background-color: rgb(213, 74, 74) !important;\r\n      }\r\n.ce-settings__button--confirm .icon {\r\n        -webkit-transform: rotate(90deg);\r\n                transform: rotate(90deg);\r\n      }\r\n.ce-block:first-of-type {\r\n    margin-top: 0;\r\n  }\r\n.ce-block--focused {\r\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\r\n    border-radius: 3px;\r\n  }\r\n.ce-block--selected .ce-block__content {\r\n    background: #a8d6ff;\r\n    background: var(--selectionColor);\r\n    -webkit-box-shadow: 0 31px 23px -22px rgba(175, 220, 255, 1);\r\n            box-shadow: 0 31px 23px -22px rgba(175, 220, 255, 1);\r\n    -webkit-animation: selectionBounce 0.2s 1;\r\n            animation: selectionBounce 0.2s 1;\r\n    -webkit-animation-fill-mode: forwards;\r\n            animation-fill-mode: forwards;\r\n  }\r\n.ce-block--selected .ce-block__content img {\r\n      opacity: 0.55;\r\n    }\r\n.ce-block--stretched .ce-block__content {\r\n    max-width: none;\r\n  }\r\n.ce-block__content {\r\n    position: relative;\r\n    max-width: 650px;\r\n    max-width: var(--content-width);\r\n    margin: 0 auto;\r\n  }\r\n.ce-block--drop-target .ce-block__content:before {\r\n      content: '';\r\n      position: absolute;\r\n      top: 100%;\r\n      left: -20px;\r\n      margin-top: -1px;\r\n      height: 8px;\r\n      width: 8px;\r\n      border: solid #388AE5;\r\n      border: solid var(--color-active-icon);\r\n      border-width: 1px 1px 0 0;\r\n      -webkit-transform-origin: right;\r\n              transform-origin: right;\r\n      -webkit-transform: rotate(45deg);\r\n              transform: rotate(45deg);\r\n    }\r\n.ce-block--drop-target .ce-block__content:after {\r\n      content: '';\r\n      position: absolute;\r\n      top: 100%;\r\n      height: 1px;\r\n      width: 100%;\r\n      color: #388AE5;\r\n      color: var(--color-active-icon);\r\n      background: repeating-linear-gradient(\r\n        90deg,\r\n        #388AE5,\r\n        #388AE5 1px,\r\n        #fff 1px,\r\n        #fff 6px\r\n      );\r\n      background: repeating-linear-gradient(\r\n        90deg,\r\n        var(--color-active-icon),\r\n        var(--color-active-icon) 1px,\r\n        #fff 1px,\r\n        #fff 6px\r\n      );\r\n    }\r\n.wobble {\r\n  -webkit-animation-name: wobble;\r\n          animation-name: wobble;\r\n  -webkit-animation-duration: 400ms;\r\n          animation-duration: 400ms;\r\n}\r\n/**\r\n * @author Nick Pettit - https://github.com/nickpettit/glide\r\n */\r\n@-webkit-keyframes wobble {\r\n  from {\r\n    -webkit-transform: translate3d(0, 0, 0);\r\n            transform: translate3d(0, 0, 0);\r\n  }\r\n\r\n  15% {\r\n    -webkit-transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\r\n            transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\r\n  }\r\n\r\n  30% {\r\n    -webkit-transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\r\n            transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\r\n  }\r\n\r\n  45% {\r\n    -webkit-transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\r\n            transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\r\n  }\r\n\r\n  60% {\r\n    -webkit-transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\r\n            transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\r\n  }\r\n\r\n  75% {\r\n    -webkit-transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\r\n            transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\r\n  }\r\n\r\n  to {\r\n    -webkit-transform: translate3d(0, 0, 0);\r\n            transform: translate3d(0, 0, 0);\r\n  }\r\n}\r\n@keyframes wobble {\r\n  from {\r\n    -webkit-transform: translate3d(0, 0, 0);\r\n            transform: translate3d(0, 0, 0);\r\n  }\r\n\r\n  15% {\r\n    -webkit-transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\r\n            transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\r\n  }\r\n\r\n  30% {\r\n    -webkit-transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\r\n            transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\r\n  }\r\n\r\n  45% {\r\n    -webkit-transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\r\n            transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\r\n  }\r\n\r\n  60% {\r\n    -webkit-transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\r\n            transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\r\n  }\r\n\r\n  75% {\r\n    -webkit-transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\r\n            transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\r\n  }\r\n\r\n  to {\r\n    -webkit-transform: translate3d(0, 0, 0);\r\n            transform: translate3d(0, 0, 0);\r\n  }\r\n}\r\n@-webkit-keyframes bounceIn {\r\n  from,\r\n  20%,\r\n  40%,\r\n  60%,\r\n  80%,\r\n  to {\r\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n\r\n  0% {\r\n    -webkit-transform: scale3d(0.9, 0.9, 0.9);\r\n            transform: scale3d(0.9, 0.9, 0.9);\r\n  }\r\n\r\n  20% {\r\n    -webkit-transform: scale3d(1.03, 1.03, 1.03);\r\n            transform: scale3d(1.03, 1.03, 1.03);\r\n  }\r\n\r\n  60% {\r\n    -webkit-transform: scale3d(1, 1, 1);\r\n            transform: scale3d(1, 1, 1);\r\n  }\r\n}\r\n@keyframes bounceIn {\r\n  from,\r\n  20%,\r\n  40%,\r\n  60%,\r\n  80%,\r\n  to {\r\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n\r\n  0% {\r\n    -webkit-transform: scale3d(0.9, 0.9, 0.9);\r\n            transform: scale3d(0.9, 0.9, 0.9);\r\n  }\r\n\r\n  20% {\r\n    -webkit-transform: scale3d(1.03, 1.03, 1.03);\r\n            transform: scale3d(1.03, 1.03, 1.03);\r\n  }\r\n\r\n  60% {\r\n    -webkit-transform: scale3d(1, 1, 1);\r\n            transform: scale3d(1, 1, 1);\r\n  }\r\n}\r\n@-webkit-keyframes selectionBounce {\r\n  from,\r\n  20%,\r\n  40%,\r\n  60%,\r\n  80%,\r\n  to {\r\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n\r\n  50% {\r\n    -webkit-transform: scale3d(1.01, 1.01, 1.01);\r\n            transform: scale3d(1.01, 1.01, 1.01);\r\n  }\r\n\r\n  70% {\r\n    -webkit-transform: scale3d(1, 1, 1);\r\n            transform: scale3d(1, 1, 1);\r\n  }\r\n}\r\n@keyframes selectionBounce {\r\n  from,\r\n  20%,\r\n  40%,\r\n  60%,\r\n  80%,\r\n  to {\r\n    -webkit-animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n            animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\r\n  }\r\n\r\n  50% {\r\n    -webkit-transform: scale3d(1.01, 1.01, 1.01);\r\n            transform: scale3d(1.01, 1.01, 1.01);\r\n  }\r\n\r\n  70% {\r\n    -webkit-transform: scale3d(1, 1, 1);\r\n            transform: scale3d(1, 1, 1);\r\n  }\r\n}\r\n/**\r\n * Block Tool wrapper\r\n */\r\n.cdx-block {\r\n  padding: 0.7em 0;\r\n}\r\n/**\r\n * Input\r\n */\r\n.cdx-input {\r\n  border: 1px solid rgba(201, 201, 204, 0.48);\r\n  border: 1px solid var(--color-gray-border);\r\n  -webkit-box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\r\n          box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\r\n  border-radius: 3px;\r\n  padding: 10px 12px;\r\n  outline: none;\r\n  width: 100%;\r\n  -webkit-box-sizing: border-box;\r\n          box-sizing: border-box;\r\n}\r\n/**\r\n * Settings\r\n */\r\n.cdx-settings-button {\r\n  display: -webkit-inline-box;\r\n  display: -ms-inline-flexbox;\r\n  display: inline-flex;\r\n  width: 34px;\r\n  height: 34px;\r\n  line-height: 34px;\r\n  text-align: center;\r\n  border-radius: 3px;\r\n  cursor: pointer;\r\n  border: 0;\r\n  outline: none;\r\n  background-color: transparent;\r\n  vertical-align: bottom;\r\n  color: #707684;\r\n  color: var(--grayText)\r\n}\r\n.cdx-settings-button:not(:last-of-type){\r\n  margin-right: 5px;\r\n    }\r\n.cdx-settings-button:hover {\r\n  background-color: #eff2f5;\r\n  background-color: var(--bg-light);\r\n    }\r\n.cdx-settings-button > svg,\r\n    .cdx-settings-button .icon {\r\n  margin: auto;\r\n    }\r\n.cdx-settings-button--active {\r\n  color: #388AE5;\r\n  color: var(--color-active-icon);\r\n    }\r\n.cdx-settings-button--active {\r\n    color: #388AE5;\r\n    color: var(--color-active-icon);\r\n  }\r\n/**\r\n * Loader\r\n */\r\n.cdx-loader {\r\n  position: relative;\r\n  border: 1px solid rgba(201, 201, 204, 0.48);\r\n  border: 1px solid var(--color-gray-border)\r\n}\r\n.cdx-loader::before {\r\n    content: '';\r\n    position: absolute;\r\n    left: 50%;\r\n    top: 50%;\r\n    width: 18px;\r\n    height: 18px;\r\n    margin: -11px 0 0 -11px;\r\n    border: 2px solid rgba(201, 201, 204, 0.48);\r\n    border: 2px solid var(--color-gray-border);\r\n    border-left-color: #388AE5;\r\n    border-left-color: var(--color-active-icon);\r\n    border-radius: 50%;\r\n    -webkit-animation: cdxRotation 1.2s infinite linear;\r\n            animation: cdxRotation 1.2s infinite linear;\r\n  }\r\n@-webkit-keyframes cdxRotation {\r\n  0% {\r\n    -webkit-transform: rotate(0deg);\r\n            transform: rotate(0deg);\r\n  }\r\n  100% {\r\n    -webkit-transform: rotate(360deg);\r\n            transform: rotate(360deg);\r\n  }\r\n}\r\n@keyframes cdxRotation {\r\n  0% {\r\n    -webkit-transform: rotate(0deg);\r\n            transform: rotate(0deg);\r\n  }\r\n  100% {\r\n    -webkit-transform: rotate(360deg);\r\n            transform: rotate(360deg);\r\n  }\r\n}\r\n/**\r\n * Button\r\n */\r\n.cdx-button {\r\n  padding: 13px;\r\n  border-radius: 3px;\r\n  border: 1px solid rgba(201, 201, 204, 0.48);\r\n  border: 1px solid var(--color-gray-border);\r\n  font-size: 14.9px;\r\n  background: #fff;\r\n  -webkit-box-shadow: 0 2px 2px 0 rgba(18,30,57,0.04);\r\n          box-shadow: 0 2px 2px 0 rgba(18,30,57,0.04);\r\n  color: #707684;\r\n  color: var(--grayText);\r\n  text-align: center;\r\n  cursor: pointer\r\n}\r\n.cdx-button:hover {\r\n    background: #FBFCFE;\r\n    -webkit-box-shadow: 0 1px 3px 0 rgba(18,30,57,0.08);\r\n            box-shadow: 0 1px 3px 0 rgba(18,30,57,0.08);\r\n  }\r\n.cdx-button svg {\r\n    height: 20px;\r\n    margin-right: 0.2em;\r\n    margin-top: -2px;\r\n  }\r\n", ""]);
 
 // exports
 
