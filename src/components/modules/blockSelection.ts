@@ -63,9 +63,10 @@ export default class BlockSelection extends Module {
     overlay.appendChild(overlayBottomScrollZone);
     document.body.appendChild(overlay);
 
-    const scrollSpeed = 2;
+    const scrollSpeed = 5;
     let mousedown = false;
-    let inScrollZone = false;
+    let inScrollZone = null;
+    let sideMoveRect = null;
     let startX = 0;
     let startY = 0;
 
@@ -90,27 +91,27 @@ export default class BlockSelection extends Module {
     }
 
     overlayBottomScrollZone.addEventListener('mouseenter', (event) => {
-      inScrollZone = true;
+      inScrollZone = 'bot';
       scrollVertical(scrollSpeed);
     });
 
     overlayTopScrollZone.addEventListener('mouseenter', (event) => {
-      inScrollZone = true;
+      inScrollZone = 'top';
       scrollVertical(-scrollSpeed);
     });
 
     overlayBottomScrollZone.addEventListener('mouseleave', (event) => {
-      inScrollZone = false;
+      inScrollZone = null;
     });
 
     overlayTopScrollZone.addEventListener('mouseleave', (event) => {
-      inScrollZone = false;
+      inScrollZone = null;
     });
 
     document.body.addEventListener('mousedown', (event) => {
       mousedown = true;
-      startX = event.clientX;
-      startY = event.clientY;
+      startX = event.pageX;
+      startY = event.pageY;
 
       overlayRectangle.style.left = `${startX}px`;
       overlayRectangle.style.top = `${startY}px`;
@@ -126,19 +127,21 @@ export default class BlockSelection extends Module {
 
         // Depending on the position of the mouse relative to the starting point,
         // change the distance from the desired edge of the screen*/
-        if (event.clientY >= startY) {
-          overlayRectangle.style.top = `${startY}px`;
+        if (event.pageY >= startY) {
+          sideMoveRect = 'down';
+          overlayRectangle.style.top = `${startY - window.pageYOffset}px`;
           overlayRectangle.style.bottom = `calc(100% - ${event.clientY}px`;
         } else {
-          overlayRectangle.style.bottom = `calc(100% - ${startY}px`;
+          sideMoveRect = 'up';
+          overlayRectangle.style.bottom = `calc(100% - ${startY - window.pageYOffset}px`;
           overlayRectangle.style.top = `${event.clientY}px`;
         }
 
-        if (event.clientX >= startX) {
-          overlayRectangle.style.left = `${startX}px`;
+        if (event.pageX >= startX) {
+          overlayRectangle.style.left = `${startX - window.pageXOffset}px`;
           overlayRectangle.style.right = `calc(100% - ${event.clientX}px`;
         } else {
-          overlayRectangle.style.right = `calc(100% - ${startX}px`;
+          overlayRectangle.style.right = `calc(100% - ${startX - window.pageXOffset}px`;
           overlayRectangle.style.left = `${event.clientX}px`;
         }
       }
@@ -151,10 +154,6 @@ export default class BlockSelection extends Module {
       startX = 0;
       startY = 0;
     }, false);
-
-    window.addEventListener('scroll', () => {
-
-    });
 
   }
 

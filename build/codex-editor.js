@@ -16703,9 +16703,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         overlay.appendChild(overlayTopScrollZone);
         overlay.appendChild(overlayBottomScrollZone);
         document.body.appendChild(overlay);
-        var scrollSpeed = 2;
+        var scrollSpeed = 5;
         var mousedown = false;
-        var inScrollZone = false;
+        var inScrollZone = null;
+        var sideMoveRect = null;
         var startX = 0;
         var startY = 0;
         var options = {
@@ -16729,23 +16730,23 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         overlayBottomScrollZone.addEventListener('mouseenter', function (event) {
-          inScrollZone = true;
+          inScrollZone = 'bot';
           scrollVertical(scrollSpeed);
         });
         overlayTopScrollZone.addEventListener('mouseenter', function (event) {
-          inScrollZone = true;
+          inScrollZone = 'top';
           scrollVertical(-scrollSpeed);
         });
         overlayBottomScrollZone.addEventListener('mouseleave', function (event) {
-          inScrollZone = false;
+          inScrollZone = null;
         });
         overlayTopScrollZone.addEventListener('mouseleave', function (event) {
-          inScrollZone = false;
+          inScrollZone = null;
         });
         document.body.addEventListener('mousedown', function (event) {
           mousedown = true;
-          startX = event.clientX;
-          startY = event.clientY;
+          startX = event.pageX;
+          startY = event.pageY;
           overlayRectangle.style.left = "".concat(startX, "px");
           overlayRectangle.style.top = "".concat(startY, "px");
           overlayRectangle.style.bottom = "calc(100% - ".concat(startY, "px");
@@ -16757,19 +16758,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             event.preventDefault(); // Depending on the position of the mouse relative to the starting point,
             // change the distance from the desired edge of the screen*/
 
-            if (event.clientY >= startY) {
-              overlayRectangle.style.top = "".concat(startY, "px");
+            if (event.pageY >= startY) {
+              sideMoveRect = 'down';
+              overlayRectangle.style.top = "".concat(startY - window.pageYOffset, "px");
               overlayRectangle.style.bottom = "calc(100% - ".concat(event.clientY, "px");
             } else {
-              overlayRectangle.style.bottom = "calc(100% - ".concat(startY, "px");
+              sideMoveRect = 'up';
+              overlayRectangle.style.bottom = "calc(100% - ".concat(startY - window.pageYOffset, "px");
               overlayRectangle.style.top = "".concat(event.clientY, "px");
             }
 
-            if (event.clientX >= startX) {
-              overlayRectangle.style.left = "".concat(startX, "px");
+            if (event.pageX >= startX) {
+              overlayRectangle.style.left = "".concat(startX - window.pageXOffset, "px");
               overlayRectangle.style.right = "calc(100% - ".concat(event.clientX, "px");
             } else {
-              overlayRectangle.style.right = "calc(100% - ".concat(startX, "px");
+              overlayRectangle.style.right = "calc(100% - ".concat(startX - window.pageXOffset, "px");
               overlayRectangle.style.left = "".concat(event.clientX, "px");
             }
           }
@@ -16780,7 +16783,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           startX = 0;
           startY = 0;
         }, false);
-        window.addEventListener('scroll', function () {});
       }
       /**
        * Clear selection from Blocks
