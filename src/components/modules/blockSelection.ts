@@ -52,6 +52,13 @@ export default class BlockSelection extends Module {
   private needToSelectAll: boolean = false;
 
   /**
+   * Flag used to define native input selection
+   * In this case we allow double CMD+A to select Block
+   * @type {boolean}
+   */
+  private nativeInputSelected: boolean = false;
+
+  /**
    * SelectionUtils instance
    * @type {SelectionUtils}
    */
@@ -119,6 +126,7 @@ export default class BlockSelection extends Module {
    */
   public clearSelection(restoreSelection = false) {
     this.needToSelectAll = false;
+    this.nativeInputSelected = false;
 
     if (!this.anyBlockSelected) {
       return;
@@ -143,6 +151,12 @@ export default class BlockSelection extends Module {
    * @param {keydown} event
    */
   private handleCommandA(event): void {
+    /** allow default selection on native inputs */
+    if ($.isNativeInput(event.target) && !this.nativeInputSelected) {
+      this.nativeInputSelected = true;
+      return;
+    }
+
     /** Prevent default selection */
     event.preventDefault();
 
