@@ -232,7 +232,6 @@ export default class BlockSelection extends Module {
 
     Listeners.on(document.body, 'mouseup', (event) => {
       mousedown = false;
-      console.log('lol');
       overlayContainer.removeChild(overlayRectangle);
 
       startX = 0;
