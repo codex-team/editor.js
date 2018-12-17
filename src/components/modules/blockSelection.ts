@@ -137,6 +137,8 @@ export default class BlockSelection extends Module {
     let inScrollZone = false;
     let startX = 0;
     let startY = 0;
+    let mouseX = 0;
+    let mouseY = 0;
 
     const options = {
       root: this.Editor.UI.nodes.redactor,
@@ -192,13 +194,17 @@ export default class BlockSelection extends Module {
       overlayContainer.appendChild(overlayRectangle);
     }, false);
 
-    Listeners.on(document.body, 'mousemove', (event: MouseEvent) => {
+    const handlerRect = (event) => {
       if (mousedown) {
         event.preventDefault();
+        if (event.pageY !== undefined) {
+          mouseX = event.clientX;
+          mouseY = event.clientY;
+        }
 
         // Depending on the position of the mouse relative to the starting point,
         // change the distance from the desired edge of the screen*/
-        if (event.pageY >= startY) {
+        if (mouseY + window.pageYOffset >= startY) {
           overlayRectangle.style.top = `${startY - window.pageYOffset}px`;
           overlayRectangle.style.bottom = `calc(100% - ${event.clientY}px`;
         } else {
@@ -206,7 +212,7 @@ export default class BlockSelection extends Module {
           overlayRectangle.style.top = `${event.clientY}px`;
         }
 
-        if (event.pageX >= startX) {
+        if (mouseX + window.pageXOffset >= startX) {
           overlayRectangle.style.left = `${startX - window.pageXOffset}px`;
           overlayRectangle.style.right = `calc(100% - ${event.clientX}px`;
         } else {
@@ -214,10 +220,19 @@ export default class BlockSelection extends Module {
           overlayRectangle.style.left = `${event.clientX}px`;
         }
       }
+    };
+
+    Listeners.on(document.body, 'mousemove', (event) => {
+      handlerRect(event);
+    }, false);
+
+    Listeners.on(window, 'scroll', (event) => {
+      handlerRect(event);
     }, false);
 
     Listeners.on(document.body, 'mouseup', (event) => {
       mousedown = false;
+      console.log('lol');
       overlayContainer.removeChild(overlayRectangle);
 
       startX = 0;
