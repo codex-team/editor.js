@@ -69,9 +69,9 @@ export default class BlockSelection extends Module {
    * @return {boolean}
    */
   public get allBlocksSelected(): boolean {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
-    return BlockManager.blocks.every( (block) => block.selected === true);
+    return BlockManager.blocks.every((block) => block.selected === true);
   }
 
   /**
@@ -79,9 +79,9 @@ export default class BlockSelection extends Module {
    * @param {boolean} state
    */
   public set allBlocksSelected(state: boolean) {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
-    BlockManager.blocks.forEach( (block) => block.selected = state);
+    BlockManager.blocks.forEach((block) => block.selected = state);
   }
 
   /**
@@ -89,9 +89,9 @@ export default class BlockSelection extends Module {
    * @return {boolean}
    */
   public get anyBlockSelected(): boolean {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
-    return BlockManager.blocks.some( (block) => block.selected === true);
+    return BlockManager.blocks.some((block) => block.selected === true);
   }
 
   /**
@@ -100,7 +100,7 @@ export default class BlockSelection extends Module {
    * to select all and copy them
    */
   public prepare(): void {
-    const { Shortcuts } = this.Editor;
+    const {Shortcuts, Listeners} = this.Editor;
 
     /** Selection shortcut */
     Shortcuts.add({
@@ -155,29 +155,31 @@ export default class BlockSelection extends Module {
     function scrollVertical(n) {
       if (inScrollZone && mousedown) {
         window.scrollBy(0, n);
-        setTimeout(scrollVertical.bind(this, n), 0);
+        setTimeout(() => {
+          scrollVertical(n);
+        }, 0);
       }
     }
 
-    overlayBottomScrollZone.addEventListener('mouseenter', (event) => {
+    Listeners.on(overlayBottomScrollZone, 'mouseenter', (event) => {
       inScrollZone = true;
       scrollVertical(scrollSpeed);
     });
 
-    overlayTopScrollZone.addEventListener('mouseenter', (event) => {
+    Listeners.on(overlayTopScrollZone, 'mouseenter', (event) => {
       inScrollZone = true;
       scrollVertical(-scrollSpeed);
     });
 
-    overlayBottomScrollZone.addEventListener('mouseleave', (event) => {
+    Listeners.on(overlayBottomScrollZone, 'mouseleave', (event) => {
       inScrollZone = false;
     });
 
-    overlayTopScrollZone.addEventListener('mouseleave', (event) => {
+    Listeners.on(overlayTopScrollZone, 'mouseleave', (event) => {
       inScrollZone = false;
     });
 
-    document.body.addEventListener('mousedown', (event) => {
+    Listeners.on(document.body, 'mousedown', (event: MouseEvent) => {
       mousedown = true;
       startX = event.pageX;
       startY = event.pageY;
@@ -190,7 +192,7 @@ export default class BlockSelection extends Module {
       overlayContainer.appendChild(overlayRectangle);
     }, false);
 
-    document.body.addEventListener('mousemove', (event) => {
+    Listeners.on(document.body, 'mousemove', (event: MouseEvent) => {
       if (mousedown) {
         event.preventDefault();
 
@@ -214,7 +216,7 @@ export default class BlockSelection extends Module {
       }
     }, false);
 
-    document.body.addEventListener('mouseup', (event) => {
+    Listeners.on(document.body, 'mouseup', (event) => {
       mousedown = false;
       overlayContainer.removeChild(overlayRectangle);
 
@@ -279,7 +281,7 @@ export default class BlockSelection extends Module {
    * @param event
    */
   private handleCommandC(event): void {
-    const { BlockManager, Sanitizer } = this.Editor;
+    const {BlockManager, Sanitizer} = this.Editor;
 
     if (!this.anyBlockSelected) {
       return;
@@ -293,8 +295,8 @@ export default class BlockSelection extends Module {
 
     const fakeClipboard = $.make('div');
 
-    BlockManager.blocks.filter( (block) => block.selected )
-      .forEach( (block) => {
+    BlockManager.blocks.filter((block) => block.selected)
+      .forEach((block) => {
         /**
          * Make <p> tag that holds clean HTML
          */
@@ -303,7 +305,7 @@ export default class BlockSelection extends Module {
 
         fragment.innerHTML = cleanHTML;
         fakeClipboard.appendChild(fragment);
-    });
+      });
 
     _.copyTextToClipboard(fakeClipboard.innerHTML);
   }
@@ -313,7 +315,7 @@ export default class BlockSelection extends Module {
    * Each Block has selected setter that makes Block copyable
    */
   private selectAllBlocks() {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
     this.allBlocksSelected = true;
   }
@@ -323,7 +325,7 @@ export default class BlockSelection extends Module {
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
   private selectBlockByIndex(index?) {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
     /**
      * Remove previous focused Block's state
