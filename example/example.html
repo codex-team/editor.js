@@ -27,7 +27,7 @@
       <pre class="ce-example__output-content" id="output"></pre>
 
       <div class="ce-example__output-footer">
-        <a href="https://ifmo.su" style="font-weight: bold">Made by CodeX</a>
+        <a href="https://ifmo.su" style="font-weight: bold;">Made by CodeX</a>
       </div>
     </div>
   </div>
@@ -42,17 +42,20 @@
    https://github.com/codex-editor/header#installation
    -->
   <script src="./tools/header/dist/bundle.js"></script><!-- Header -->
+  <script src="./tools/simple-image/dist/bundle.js"></script><!-- Image -->
   <script src="./tools/image/dist/bundle.js"></script><!-- Image -->
   <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
   <script src="./tools/list/dist/bundle.js"></script><!-- List -->
   <script src="./tools/quote/dist/bundle.js"></script><!-- Quote -->
   <script src="./tools/code/dist/bundle.js"></script><!-- Code -->
+  <script src="./tools/embed/dist/bundle.js"></script><!-- Embed -->
+  <script src="./tools/table/dist/bundle.js"></script><!-- Table -->
 
   <script src="./tools/marker/dist/bundle.js"></script><!-- Marker -->
   <script src="./tools/inline-code/dist/bundle.js"></script><!-- Inline Code -->
 
   <!-- Load CodeX Editor's Core -->
-  <script src="../build/codex-editor.js"></script>
+  <script src="../dist/codex-editor.js"></script>
 
   <!-- Initialization -->
   <script>
@@ -92,7 +95,10 @@
         image: {
           class: ImageTool,
           config: {
-            url: 'http://localhost:8008',
+            endpoints: {
+              byFile: 'http://localhost:8008/uploadFile',
+              byUrl: 'http://localhost:8008/fetchUrl',
+            },
           },
           inlineToolbar: ['link'],
         },
@@ -127,6 +133,14 @@
           class: InlineCode,
           shortcut: 'CMD+SHIFT+C'
         },
+
+        embed: Embed,
+
+        table: {
+          class: Table,
+          inlineToolbar: true
+        },
+
       },
 
       /**
@@ -180,7 +194,7 @@
           {
             type : 'paragraph',
             data : {
-              text : 'Блоки — это структурные элементы, из которых состоит статья. Например <span class="inline-code">Параграф</span>, <span class="inline-code">Заголовок</span>, <span class="inline-code">Изображение</span>, <span class="inline-code">Видео</span> — это все Блоки. В CodeX Editor каждый Блок определяется плагином. Есть много готовых Блоков и простой API для создания новых. Например, вы можете создать Блок для Твиттера, Инстаграма, Опроса, Игры или CTA-кнопки.'
+              text : 'Блоки — это структурные элементы, из которых состоит статья. Например <code class="inline-code">Параграф</code>, <code class="inline-code">Заголовок</code>, <code class="inline-code">Изображение</code>, <code class="inline-code">Видео</code> — это все Блоки. В CodeX Editor каждый Блок определяется плагином. Есть много готовых Блоков и простой API для создания новых. Например, вы можете создать Блок для Твиттера, Инстаграма, Опроса, Игры или CTA-кнопки.'
             }
           },
           {
@@ -222,7 +236,7 @@
             type: 'image',
             data: {
               file: {
-                url : 'https://ifmo.su/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',
+                url: 'https://ifmo.su/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',
               },
               caption: '',
               stretched: false,
