@@ -238,7 +238,6 @@ export default class BlockSelection extends Module {
       startX = 0;
       startY = 0;
     }, false);
-
   }
 
   /**
