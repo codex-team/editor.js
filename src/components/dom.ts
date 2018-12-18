@@ -298,6 +298,10 @@ export default class Dom {
   public static isNodeEmpty(node: Node): boolean {
     let nodeText;
 
+    if (this.isSingleTag(node as HTMLElement)) {
+      return false;
+    }
+
     if ( this.isElement(node) && this.isNativeInput(node) ) {
       nodeText = (node as HTMLInputElement).value;
     } else {
