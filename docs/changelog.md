@@ -18,6 +18,7 @@
 - `Improvements` — `Inline Toolbar`: when you add a Link to the selected fragment, Editor will highlight this fragment event when Caret will be placed into the URL-input.
 - `Improvements` — Block Settings won't be showed near empty Blocks of `initialType`. You should click on them instead.
 - `Improvements` — `onChange`-callback now will fired event on children attributes changing.
+- `Improvements` — HTMLJantior package was updated due to found vulnerability
 - `Improvements` — Logging improved: now all Editor's logs will be preceded by beautiful label with current Editor version.
 - `Improvements` — Internal `isEmpty` checking was improved for Blocks with many children nodes (200 and more)
 - `Improvements` — Paste improvements: tags that can be substituted by Tool now will matched even on deep-level of pasted DOM three.
