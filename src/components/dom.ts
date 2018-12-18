@@ -242,6 +242,15 @@ export default class Dom {
   }
 
   /**
+   * Check if passed element is contenteditable
+   * @param {HTMLElement} element
+   * @return {boolean}
+   */
+  public static isContentEditable(element: HTMLElement): boolean {
+    return element.contentEditable === 'true';
+  }
+
+  /**
    * Checks target if it is native input
    * @param {Element|String|Node} target - HTML element or string
    * @return {Boolean}
@@ -253,6 +262,28 @@ export default class Dom {
     ];
 
     return target && target.tagName ? nativeInputs.includes(target.tagName) : false;
+  }
+
+  /**
+   * Checks if we can set caret
+   * @param {HTMLElement} target
+   * @return {boolean}
+   */
+  public static canSetCaret(target: HTMLElement): boolean {
+    let result = true;
+    if (Dom.isNativeInput(target)) {
+      const inputElement = target as HTMLInputElement;
+      switch (inputElement.type) {
+        case 'file':
+        case 'checkbox':
+        case 'radio':
+          result = false;
+          break;
+      }
+    } else {
+      result = Dom.isContentEditable(target);
+    }
+    return result;
   }
 
   /**
