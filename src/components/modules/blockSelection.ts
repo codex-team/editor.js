@@ -132,11 +132,11 @@ export default class BlockSelection extends Module {
     let startX = 0;
     let startY = 0;
 
-    let options = {
+    const options = {
       root: this.Editor.UI.nodes.redactor,
     };
 
-    let callback = function (entries, observer) {
+    const callback = function(entries, observer) {
       /* Content excerpted, show below */
       console.log('entries', entries);
       console.log('observer', observer);
