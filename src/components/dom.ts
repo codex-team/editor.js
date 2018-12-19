@@ -277,6 +277,11 @@ export default class Dom {
         case 'file':
         case 'checkbox':
         case 'radio':
+        case 'hidden':
+        case 'submit':
+        case 'button':
+        case 'image':
+        case 'reset':
           result = false;
           break;
       }
