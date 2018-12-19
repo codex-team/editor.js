@@ -4,6 +4,7 @@ import $ from '../dom';
 import _ from '../utils';
 import {API, InlineTool, SanitizerConfig} from '../../../types';
 import {Notifier, Toolbar} from '../../../types/api';
+
 /**
  * Link Tool
  *
@@ -137,7 +138,14 @@ export default class LinkInlineTool implements InlineTool {
       /**
        * Save selection before change focus to the input
        */
-      this.selection.save();
+      if (!this.inputOpened) {
+        /** Create blue background instead of selection */
+        this.selection.setFakeBackground();
+        this.selection.save();
+      } else {
+        this.selection.restore();
+        this.selection.removeFakeBackground();
+      }
       const parentAnchor = this.selection.findParentTag('A');
 
       /**
@@ -222,6 +230,16 @@ export default class LinkInlineTool implements InlineTool {
    *                                        on toggle-clicks on the icon of opened Toolbar
    */
   private closeActions(clearSavedSelection: boolean = true): void {
+    // if actions is broken by other selection We need to save new selection
+    const currentSelection = new SelectionUtils();
+    currentSelection.save();
+
+    this.selection.restore();
+    this.selection.removeFakeBackground();
+
+    // and recover new selection after removing fake background
+    currentSelection.restore();
+
     this.nodes.input.classList.remove(this.CSS.inputShowed);
     this.nodes.input.value = '';
     if (clearSavedSelection) {
@@ -258,6 +276,8 @@ export default class LinkInlineTool implements InlineTool {
     value = this.prepareLink(value);
 
     this.selection.restore();
+    this.selection.removeFakeBackground();
+
     this.insertLink(value);
 
     /**
