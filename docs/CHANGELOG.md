@@ -15,7 +15,7 @@
 - `Improvements` — All Projects code now on TypeScript
 - `Improvements` — NPM package size decreased from 1300kb to 422kb
 - `Improvements` — Bundle size decreased from 438kb to 252kb
-- `Improvements` — `Inline Toolbar`: when you add a Link to the selected fragment, Editor will highlight this fragment even when Caret will be placed into the URL-input.
+- `Improvements` — `Inline Toolbar`: when you add a Link to the selected fragment, Editor will highlight this fragment even when Caret is placed into the URL-input.
 - `Improvements` — Block Settings won't be shown near empty Blocks of `initialType` by default. You should click on them instead.
 - `Improvements` — `onChange`-callback now will be fired even with children attributes changing.
 - `Improvements` — HTMLJantior package was updated due to found vulnerability
