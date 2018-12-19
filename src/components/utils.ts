@@ -186,15 +186,6 @@ export default class Util {
   }
 
   /**
-   * Check if passed element is contenteditable
-   * @param {HTMLElement} element
-   * @return {boolean}
-   */
-  public static isContentEditable(element: HTMLElement): boolean {
-    return element.contentEditable === 'true';
-  }
-
-  /**
    * Delays method execution
    *
    * @param {Function} method
