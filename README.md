@@ -11,11 +11,11 @@ Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_edi
 ### 2.2—2.7 changelog
 
 - `New` *Sanitize API* — [Sanitize Config](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.
-- `New` *Block Selection* — Ability to select Block by `CMD+A`, and the whole Editor by secondary `CMD+A`. After that, you can copy (`CMD+C`), remove(`Backspace`)or clear (`Enter`) selected Blocks.
+- `New` *Block Selection* — Ability to select Block by `CMD+A`, and the whole Editor by double `CMD+A`. After that, you can copy (`CMD+C`), remove (`Backspace`) or clear (`Enter`) selected Blocks.
 - `New` *[Styles API](https://github.com/codex-team/codex.editor/blob/master/types/api/styles.d.ts)* — Added `button` class for stylization of any buttons provided by Tools with one unified style.
 - `New` *[Notifier API](https://github.com/codex-team/codex.editor/blob/master/docs/api.md#notifierapi)* — methods for showing user notifications: on success, errors, warnings, etc. 
 - `New` *Block Tool* — [Table](http://github.com/codex-editor/table) constructor 💪 
-- `New` If one of Tools is unavailable on Editor initialization with saved data, its Blocks will be rendered with *Dummy Block*, describing that user can not edit content of this Block. Dummy Blocks can be moved, removed and saved as normal Blocks. So saved data won't be lost if one of Tools will failed 
+- `New` If one of the Tools is unavailable on Editor initialization, its Blocks will be rendered with *Dummy Block*, describing that user can not edit content of this Block. Dummy Blocks can be moved, removed and saved as normal Blocks. So saved data won't be lost if one of the Tools is failed 
 - `New` [Public TS-types](https://github.com/codex-team/codex.editor/tree/master/types) are presented.
 - `Changes` *Tools API*  — options `irreplaceable` and `contentless` was removed.
 - `Changes` *Tools API* — [Paste API](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#paste-handling): tags, patterns and mime-types now should be specified by Tool's `pasteConfig` static property. Custom Paste Event should be handled by `onPaste(event)` that should not be static from now.
@@ -23,9 +23,9 @@ Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_edi
 - `Improvements` — All Projects code now on TypeScript
 - `Improvements` — NPM package size decreased from 1300kb to 422kb
 - `Improvements` — Bundle size decreased from 438kb to 252kb
-- `Improvements` — `Inline Toolbar`: when you add a Link to the selected fragment, Editor will highlight this fragment event when Caret will be placed into the URL-input.
-- `Improvements` — Block Settings won't be showed near empty Blocks of `initialType`. You should click on them instead.
-- `Improvements` — `onChange`-callback now will fired event on children attributes changing.
+- `Improvements` — `Inline Toolbar`: when you add a Link to the selected fragment, Editor will highlight this fragment even when Caret will be placed into the URL-input.
+- `Improvements` — Block Settings won't be shown near empty Blocks of `initialType` by default. You should click on them instead.
+- `Improvements` — `onChange`-callback now will be fired even with children attributes changing.
 - `Improvements` — HTMLJantior package was updated due to found vulnerability
 - `Improvements` — Logging improved: now all Editor's logs will be preceded by beautiful label with current Editor version.
 - `Improvements` — Internal `isEmpty` checking was improved for Blocks with many children nodes (200 and more)
