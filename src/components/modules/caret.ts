@@ -247,6 +247,10 @@ export default class Caret extends Module {
 
     /** if found deepest node is native input */
     if ($.isNativeInput(element)) {
+      if (!$.canSetCaret(element)) {
+        return;
+      }
+
       element.focus();
       (element as HTMLInputElement).selectionStart = (element as HTMLInputElement).selectionEnd = offset;
       return;
