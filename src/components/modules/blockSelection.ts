@@ -15,6 +15,17 @@ export default class BlockSelection extends Module {
   private rectSelection: boolean;
 
   /**
+   * CSS classes for the Block
+   * @return {{wrapper: string, content: string}}
+   */
+  static get CSS() {
+    return {
+      contentBlock: 'ce-block__content',
+      blockSelected: 'ce-block--selected',
+    };
+  }
+
+  /**
    * Sanitizer Config
    * @return {SanitizerConfig}
    */
@@ -141,6 +152,7 @@ export default class BlockSelection extends Module {
     let mouseX = 0;
     let mouseY = 0;
     let stack = [];
+    let isIn: boolean;
 
     // activates scrolling if blockSelection is active and mouse is in scroll zone
     function scrollVertical(n) {
@@ -221,22 +233,46 @@ export default class BlockSelection extends Module {
         }
         const index = this.Editor.BlockManager.blocks.findIndex((block) => block.holder === blockInCurrentPos.holder);
 
-        if (stack[stack.length - 1] === index) {
-          return;
-        }
+        const contentElement = this.Editor.BlockManager.lastBlock.holder.querySelector('.' + BlockSelection.CSS.contentBlock);
+        const centerOfblock = Number.parseInt(window.getComputedStyle(contentElement).width, 10) / 2;
+        const leftPos = centerOfRedactor - centerOfblock;
+        const rightPos = centerOfRedactor + centerOfblock;
 
-        if (stack[stack.length - 2] === index) {
-          if (mouseY + window.pageYOffset >= startY) {
-            this.unSelectBlockByIndex(index + 1);
-          } else {
-            this.unSelectBlockByIndex(index - 1);
-          }
-          stack.pop();
+        if ((startX < leftPos && mouseX < leftPos) || (startX > rightPos && mouseX > rightPos)) {
+          isIn = false;
         } else {
-          this.selectBlockByIndex(index);
-          stack.push(index);
+          isIn = true;
         }
 
+        if (stack[stack.length - 1] !== index) {
+          if (stack[stack.length - 2] === index) {
+            if (isIn) {
+              if (mouseY + window.pageYOffset >= startY) {
+                this.unSelectBlockByIndex(index + 1);
+              } else {
+                this.unSelectBlockByIndex(index - 1);
+              }
+            }
+            stack.pop();
+          } else {
+            if (isIn) {
+              this.selectBlockByIndex(index);
+            }
+            stack.push(index);
+          }
+        }
+
+        if (isIn && !this.Editor.BlockManager.getBlockByIndex(stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
+          for (let i = 0; i < stack.length; i++) {
+            this.selectBlockByIndex(stack[i]);
+          }
+        }
+
+        if (!isIn && this.Editor.BlockManager.getBlockByIndex(stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
+          for (let i = 0; i < stack.length; i++) {
+            this.unSelectBlockByIndex(stack[i]);
+          }
+        }
       }
     };
 
@@ -263,8 +299,6 @@ export default class BlockSelection extends Module {
   public clearSelection(restoreSelection = false) {
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
-
-    console.log(this.rectSelection);
 
     if (!this.anyBlockSelected || this.rectSelection) {
       this.rectSelection = false;

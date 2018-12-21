@@ -16274,8 +16274,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       return _this;
     }
     /**
-     * Sanitizer Config
-     * @return {SanitizerConfig}
+     * CSS classes for the Block
+     * @return {{wrapper: string, content: string}}
      */
 
 
@@ -16333,7 +16333,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var startY = 0;
         var mouseX = 0;
         var mouseY = 0;
-        var stack = []; // activates scrolling if blockSelection is active and mouse is in scroll zone
+        var stack = [];
+        var isIn; // activates scrolling if blockSelection is active and mouse is in scroll zone
 
         function scrollVertical(n) {
           if (inScrollZone && mousedown) {
@@ -16414,22 +16415,48 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               return block.holder === blockInCurrentPos.holder;
             });
 
-            if (stack[stack.length - 1] === index) {
-              return;
+            var contentElement = _this2.Editor.BlockManager.lastBlock.holder.querySelector('.' + BlockSelection.CSS.contentBlock);
+
+            var centerOfblock = Number.parseInt(window.getComputedStyle(contentElement).width, 10) / 2;
+            var leftPos = centerOfRedactor - centerOfblock;
+            var rightPos = centerOfRedactor + centerOfblock;
+
+            if (startX < leftPos && mouseX < leftPos || startX > rightPos && mouseX > rightPos) {
+              isIn = false;
+            } else {
+              isIn = true;
             }
 
-            if (stack[stack.length - 2] === index) {
-              if (mouseY + window.pageYOffset >= startY) {
-                _this2.unSelectBlockByIndex(index + 1);
+            if (stack[stack.length - 1] !== index) {
+              if (stack[stack.length - 2] === index) {
+                if (isIn) {
+                  if (mouseY + window.pageYOffset >= startY) {
+                    _this2.unSelectBlockByIndex(index + 1);
+                  } else {
+                    _this2.unSelectBlockByIndex(index - 1);
+                  }
+                }
+
+                stack.pop();
               } else {
-                _this2.unSelectBlockByIndex(index - 1);
+                if (isIn) {
+                  _this2.selectBlockByIndex(index);
+                }
+
+                stack.push(index);
               }
+            }
 
-              stack.pop();
-            } else {
-              _this2.selectBlockByIndex(index);
+            if (isIn && !_this2.Editor.BlockManager.getBlockByIndex(stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
+              for (var i = 0; i < stack.length; i++) {
+                _this2.selectBlockByIndex(stack[i]);
+              }
+            }
 
-              stack.push(index);
+            if (!isIn && _this2.Editor.BlockManager.getBlockByIndex(stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
+              for (var _i = 0; _i < stack.length; _i++) {
+                _this2.unSelectBlockByIndex(stack[_i]);
+              }
             }
           }
         };
@@ -16457,7 +16484,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var restoreSelection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
         this.needToSelectAll = false;
         this.nativeInputSelected = false;
-        console.log(this.rectSelection);
 
         if (!this.anyBlockSelected || this.rectSelection) {
           this.rectSelection = false;
@@ -16614,6 +16640,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
     }, {
       key: "sanitizerConfig",
+
+      /**
+       * Sanitizer Config
+       * @return {SanitizerConfig}
+       */
       get: function get() {
         return {
           p: {},
@@ -16676,6 +16707,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return BlockManager.blocks.some(function (block) {
           return block.selected === true;
         });
+      }
+    }], [{
+      key: "CSS",
+      get: function get() {
+        return {
+          contentBlock: 'ce-block__content',
+          blockSelected: 'ce-block--selected'
+        };
       }
     }]);
     return BlockSelection;
