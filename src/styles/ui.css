@@ -50,17 +50,17 @@
         &--top {
            top: 0;
            width: 100%;
-           height: 10%;
+           height: 30px;
            position: absolute;
-            pointer-events: auto;
+           pointer-events: auto;
          }
 
-         &--bottom {
-            bottom: 0;
-            width: 100%;
-            height: 10%;
-            position: absolute;
-            pointer-events: auto;
+        &--bottom {
+           bottom: 0;
+           width: 100%;
+           height: 30px;
+           position: absolute;
+           pointer-events: auto;
           }
       }
   }

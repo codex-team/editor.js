@@ -12,6 +12,7 @@ import $ from '../dom';
 import SelectionUtils from '../selection';
 
 export default class BlockSelection extends Module {
+  private rectSelection: boolean;
 
   /**
    * Sanitizer Config
@@ -134,24 +135,12 @@ export default class BlockSelection extends Module {
 
     const scrollSpeed = 3;
     let mousedown = false;
-    let inScrollZone = false;
+    let inScrollZone = null;
     let startX = 0;
     let startY = 0;
     let mouseX = 0;
     let mouseY = 0;
-
-    const options = {
-      root: this.Editor.UI.nodes.redactor,
-    };
-
-    const callback = function(entries, observer) {
-      /* Content excerpted, show below */
-      console.log('entries', entries);
-      console.log('observer', observer);
-    };
-
-    const observer = new IntersectionObserver(callback, options);
-    observer.observe(overlayRectangle);
+    let stack = [];
 
     // activates scrolling if blockSelection is active and mouse is in scroll zone
     function scrollVertical(n) {
@@ -164,27 +153,29 @@ export default class BlockSelection extends Module {
     }
 
     Listeners.on(overlayBottomScrollZone, 'mouseenter', (event) => {
-      inScrollZone = true;
+      inScrollZone = 'bot';
       scrollVertical(scrollSpeed);
     });
 
     Listeners.on(overlayTopScrollZone, 'mouseenter', (event) => {
-      inScrollZone = true;
+      inScrollZone = 'top';
       scrollVertical(-scrollSpeed);
     });
 
     Listeners.on(overlayBottomScrollZone, 'mouseleave', (event) => {
-      inScrollZone = false;
+      inScrollZone = null;
     });
 
     Listeners.on(overlayTopScrollZone, 'mouseleave', (event) => {
-      inScrollZone = false;
+      inScrollZone = null;
     });
 
     Listeners.on(document.body, 'mousedown', (event: MouseEvent) => {
+      this.clearSelection();
       mousedown = true;
       startX = event.pageX;
       startY = event.pageY;
+      stack = [];
 
       overlayRectangle.style.left = `${startX}px`;
       overlayRectangle.style.top = `${startY}px`;
@@ -197,6 +188,7 @@ export default class BlockSelection extends Module {
     const handlerRect = (event) => {
       if (mousedown) {
         event.preventDefault();
+        this.rectSelection = true;
         if (event.pageY !== undefined) {
           mouseX = event.clientX;
           mouseY = event.clientY;
@@ -219,6 +211,32 @@ export default class BlockSelection extends Module {
           overlayRectangle.style.right = `calc(100% - ${startX - window.pageXOffset}px`;
           overlayRectangle.style.left = `${event.clientX}px`;
         }
+
+        const centerOfRedactor = Number.parseInt(window.getComputedStyle(this.Editor.UI.nodes.redactor).width, 10) / 2;
+        const Y = inScrollZone === 'top' ? mouseY + 25 : (inScrollZone === 'bot' ? mouseY - 25 : mouseY);
+        const elementUnderPos = document.elementFromPoint(centerOfRedactor, Y);
+        const blockInCurrentPos = this.Editor.BlockManager.getBlockByChildNode(elementUnderPos);
+        if (blockInCurrentPos === undefined) {
+          return;
+        }
+        const index = this.Editor.BlockManager.blocks.findIndex((block) => block.holder === blockInCurrentPos.holder);
+
+        if (stack[stack.length - 1] === index) {
+          return;
+        }
+
+        if (stack[stack.length - 2] === index) {
+          if (mouseY + window.pageYOffset >= startY) {
+            this.unSelectBlockByIndex(index + 1);
+          } else {
+            this.unSelectBlockByIndex(index - 1);
+          }
+          stack.pop();
+        } else {
+          this.selectBlockByIndex(index);
+          stack.push(index);
+        }
+
       }
     };
 
@@ -246,7 +264,10 @@ export default class BlockSelection extends Module {
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
 
-    if (!this.anyBlockSelected) {
+    console.log(this.rectSelection);
+
+    if (!this.anyBlockSelected || this.rectSelection) {
+      this.rectSelection = false;
       return;
     }
 
@@ -269,6 +290,7 @@ export default class BlockSelection extends Module {
    * @param {keydown} event
    */
   private handleCommandA(event): void {
+    this.rectSelection = false;
     /** allow default selection on native inputs */
     if ($.isNativeInput(event.target) && !this.nativeInputSelected) {
       this.nativeInputSelected = true;
@@ -359,5 +381,23 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     block.selected = true;
+  }
+
+  /**
+   * remove selection of Block
+   * @param {number?} index - Block index according to the BlockManager's indexes
+   */
+  private unSelectBlockByIndex(index?) {
+    const {BlockManager} = this.Editor;
+
+    let block;
+
+    if (isNaN(index)) {
+      block = BlockManager.currentBlock;
+    } else {
+      block = BlockManager.getBlockByIndex(index);
+    }
+
+    block.selected = false;
   }
 }

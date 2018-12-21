@@ -38,17 +38,17 @@ export default class UI extends Module {
    * CodeX Editor UI CSS class names
    * @return {{editorWrapper: string, editorZone: string}}
    */
-  private get CSS(): {editorWrapper: string, editorZone: string} {
+  private get CSS(): { editorWrapper: string, editorZone: string } {
     return {
-      editorWrapper : 'codex-editor',
-      editorZone    : 'codex-editor__redactor',
+      editorWrapper: 'codex-editor',
+      editorZone: 'codex-editor__redactor',
     };
   }
 
   /**
    * HTML Elements used for UI
    */
-  public nodes: {[key: string]: HTMLElement} = {
+  public nodes: { [key: string]: HTMLElement } = {
     holder: null,
     wrapper: null,
     redactor: null,
@@ -111,7 +111,7 @@ export default class UI extends Module {
     /**
      * Create and save main UI elements
      */
-    this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
+    this.nodes.wrapper = $.make('div', this.CSS.editorWrapper);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
@@ -150,8 +150,8 @@ export default class UI extends Module {
       (event) => this.redactorClicked(event as MouseEvent),
       false,
     );
-    this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true );
-    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), false );
+    this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
+    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), false);
   }
 
   /**
