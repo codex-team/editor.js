@@ -43,6 +43,26 @@
        background-color: rgba(46, 170, 220, 0.2);
        border: 1px solid transparent;
     }
+
+     &__scroll-zone {
+
+
+        &--top {
+           top: 0;
+           width: 100%;
+           height: 10%;
+           position: absolute;
+            pointer-events: auto;
+         }
+
+         &--bottom {
+            bottom: 0;
+            width: 100%;
+            height: 10%;
+            position: absolute;
+            pointer-events: auto;
+          }
+      }
   }
 
   svg {
