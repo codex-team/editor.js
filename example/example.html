@@ -43,7 +43,6 @@
    -->
   <script src="./tools/header/dist/bundle.js"></script><!-- Header -->
   <script src="./tools/simple-image/dist/bundle.js"></script><!-- Image -->
-  <script src="./tools/image/dist/bundle.js"></script><!-- Image -->
   <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
   <script src="./tools/list/dist/bundle.js"></script><!-- List -->
   <script src="./tools/quote/dist/bundle.js"></script><!-- Quote -->
@@ -93,13 +92,7 @@
          * Or pass class directly without any configuration
          */
         image: {
-          class: ImageTool,
-          config: {
-            endpoints: {
-              byFile: 'http://localhost:8008/uploadFile',
-              byUrl: 'http://localhost:8008/fetchUrl',
-            },
-          },
+          class: SimpleImage,
           inlineToolbar: ['link'],
         },
 
@@ -235,9 +228,7 @@
           {
             type: 'image',
             data: {
-              file: {
-                url: 'https://ifmo.su/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',
-              },
+              url: 'https://ifmo.su/upload/redactor_images/o_e48549d1855c7fc1807308dd14990126.jpg',
               caption: '',
               stretched: false,
               withBorder: true,
