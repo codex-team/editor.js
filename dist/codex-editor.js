@@ -16330,31 +16330,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var overlayBottomScrollZone = _dom.default.make('div', 'codex-editor-overlay__scroll-zone--bottom', {});
 
+        overlayContainer.appendChild(overlayRectangle);
         overlay.appendChild(overlayContainer);
         overlay.appendChild(overlayTopScrollZone);
         overlay.appendChild(overlayBottomScrollZone);
         document.body.appendChild(overlay);
-        this.overlayRectangle = overlayRectangle; // activates scrolling if blockSelection is active and mouse is in scroll zone
-
-        var scrollVertical = function scrollVertical(n) {
-          console.log(_this2);
-
-          if (_this2.inScrollZone && _this2.mousedown) {
-            window.scrollBy(0, n);
-            setTimeout(function () {
-              scrollVertical(n);
-            }, 0);
-          }
-        };
-
+        this.overlayRectangle = overlayRectangle;
         Listeners.on(overlayBottomScrollZone, 'mouseenter', function (event) {
           console.log(_this2);
           _this2.inScrollZone = 'bot';
-          scrollVertical(_this2.scrollSpeed);
+
+          _this2.scrollVertical(_this2.scrollSpeed);
         });
         Listeners.on(overlayTopScrollZone, 'mouseenter', function (event) {
           _this2.inScrollZone = 'top';
-          scrollVertical(-_this2.scrollSpeed);
+
+          _this2.scrollVertical(-_this2.scrollSpeed);
         });
         Listeners.on(overlayBottomScrollZone, 'mouseleave', function (event) {
           _this2.inScrollZone = null;
@@ -16363,116 +16354,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           _this2.inScrollZone = null;
         });
         Listeners.on(document.body, 'mousedown', function (event) {
-          _this2.clearSelection();
-
-          _this2.mousedown = true;
-          _this2.startX = event.pageX;
-          _this2.startY = event.pageY;
-          _this2.stack = [];
-          overlayRectangle.style.left = "".concat(_this2.startX, "px");
-          overlayRectangle.style.top = "".concat(_this2.startY, "px");
-          overlayRectangle.style.bottom = "calc(100% - ".concat(_this2.startY, "px");
-          overlayRectangle.style.right = "calc(100% - ".concat(_this2.startX, "px");
-          overlayContainer.appendChild(overlayRectangle);
+          _this2.handleStartRectSelection(event);
         }, false);
-
-        var handlerRect = function handlerRect(event) {
-          if (_this2.mousedown) {
-            event.preventDefault();
-            _this2.rectSelection = true;
-
-            if (event.pageY !== undefined) {
-              _this2.mouseX = event.clientX;
-              _this2.mouseY = event.clientY;
-            } // Depending on the position of the mouse relative to the starting point,
-            // change the distance from the desired edge of the screen*/
-
-
-            if (_this2.mouseY + window.pageYOffset >= _this2.startY) {
-              overlayRectangle.style.top = "".concat(_this2.startY - window.pageYOffset, "px");
-              overlayRectangle.style.bottom = "calc(100% - ".concat(event.clientY, "px");
-            } else {
-              overlayRectangle.style.bottom = "calc(100% - ".concat(_this2.startY - window.pageYOffset, "px");
-              overlayRectangle.style.top = "".concat(event.clientY, "px");
-            }
-
-            if (_this2.mouseX + window.pageXOffset >= _this2.startX) {
-              overlayRectangle.style.left = "".concat(_this2.startX - window.pageXOffset, "px");
-              overlayRectangle.style.right = "calc(100% - ".concat(event.clientX, "px");
-            } else {
-              overlayRectangle.style.right = "calc(100% - ".concat(_this2.startX - window.pageXOffset, "px");
-              overlayRectangle.style.left = "".concat(event.clientX, "px");
-            }
-
-            var centerOfRedactor = Number.parseInt(window.getComputedStyle(_this2.Editor.UI.nodes.redactor).width, 10) / 2;
-            var Y = _this2.inScrollZone === 'top' ? _this2.mouseY + 25 : _this2.inScrollZone === 'bot' ? _this2.mouseY - 25 : _this2.mouseY;
-            var elementUnderPos = document.elementFromPoint(centerOfRedactor, Y);
-
-            var blockInCurrentPos = _this2.Editor.BlockManager.getBlockByChildNode(elementUnderPos);
-
-            if (blockInCurrentPos === undefined) {
-              return;
-            }
-
-            var index = _this2.Editor.BlockManager.blocks.findIndex(function (block) {
-              return block.holder === blockInCurrentPos.holder;
-            });
-
-            var contentElement = _this2.Editor.BlockManager.lastBlock.holder.querySelector('.' + BlockSelection.CSS.contentBlock);
-
-            var centerOfblock = Number.parseInt(window.getComputedStyle(contentElement).width, 10) / 2;
-            var leftPos = centerOfRedactor - centerOfblock;
-            var rightPos = centerOfRedactor + centerOfblock;
-
-            if (_this2.startX < leftPos && _this2.mouseX < leftPos || _this2.startX > rightPos && _this2.mouseX > rightPos) {
-              _this2.isIn = false;
-            } else {
-              _this2.isIn = true;
-            }
-
-            if (_this2.stack[_this2.stack.length - 1] !== index) {
-              if (_this2.stack[_this2.stack.length - 2] === index) {
-                if (_this2.isIn) {
-                  if (_this2.mouseY + window.pageYOffset >= _this2.startY) {
-                    _this2.unSelectBlockByIndex(index + 1);
-                  } else {
-                    _this2.unSelectBlockByIndex(index - 1);
-                  }
-                }
-
-                _this2.stack.pop();
-              } else {
-                if (_this2.isIn) {
-                  _this2.selectBlockByIndex(index);
-                }
-
-                _this2.stack.push(index);
-              }
-            }
-
-            if (_this2.isIn && !_this2.Editor.BlockManager.getBlockByIndex(_this2.stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
-              for (var i = 0; i < _this2.stack.length; i++) {
-                _this2.selectBlockByIndex(_this2.stack[i]);
-              }
-            }
-
-            if (!_this2.isIn && _this2.Editor.BlockManager.getBlockByIndex(_this2.stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
-              for (var _i = 0; _i < _this2.stack.length; _i++) {
-                _this2.unSelectBlockByIndex(_this2.stack[_i]);
-              }
-            }
-          }
-        };
-
         Listeners.on(document.body, 'mousemove', function (event) {
-          handlerRect(event);
+          _this2.handleRectSelection(event);
         }, false);
         Listeners.on(window, 'scroll', function (event) {
-          handlerRect(event);
+          _this2.handleRectSelection(event);
         }, false);
         Listeners.on(document.body, 'mouseup', function (event) {
           _this2.mousedown = false;
-          overlayContainer.removeChild(overlayRectangle);
+          _this2.overlayRectangle.style.display = 'none';
           _this2.startX = 0;
           _this2.startY = 0;
         }, false);
@@ -16505,7 +16397,171 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
         this.allBlocksSelected = false;
+      } // TODO START
+
+    }, {
+      key: "handleRectSelection",
+      value: function handleRectSelection(event) {
+        if (!this.mousedown) {
+          return;
+        }
+
+        event.preventDefault();
+        this.rectSelection = true;
+
+        if (event.pageY !== undefined) {
+          this.mouseX = event.clientX;
+          this.mouseY = event.clientY;
+        }
+
+        this.updateSizeOfRectangle(event);
+        var info = this.genInfoForMouseSelection();
+
+        if (info.index === -1) {
+          return;
+        }
+
+        if (this.startX < info.leftPos && this.mouseX < info.leftPos || this.startX > info.rightPos && this.mouseX > info.rightPos) {
+          this.isIn = false;
+        } else {
+          this.isIn = true;
+        }
+
+        this.handleNextBlock(info);
+        this.correctSelection();
       }
+    }, {
+      key: "correctSelection",
+      value: function correctSelection() {
+        var firstBlockInStack = this.Editor.BlockManager.getBlockByIndex(this.stack[0]);
+        var isSelected = firstBlockInStack.holder.classList.contains(BlockSelection.CSS.blockSelected);
+
+        if (this.isIn && !isSelected) {
+          for (var i = 0; i < this.stack.length; i++) {
+            this.selectBlockByIndex(this.stack[i]);
+          }
+        }
+
+        if (!this.isIn && isSelected) {
+          for (var _i = 0; _i < this.stack.length; _i++) {
+            this.unSelectBlockByIndex(this.stack[_i]);
+          }
+        }
+      }
+    }, {
+      key: "handleNextBlock",
+      value: function handleNextBlock(info) {
+        if (this.stack[this.stack.length - 1] === info.index) {
+          return;
+        } // If the selection area is reduced
+
+
+        if (this.stack[this.stack.length - 2] === info.index) {
+          if (this.isIn) {
+            if (this.mouseY + window.pageYOffset >= this.startY) {
+              this.unSelectBlockByIndex(info.index + 1);
+            } else {
+              this.unSelectBlockByIndex(info.index - 1);
+            }
+          }
+
+          this.stack.pop();
+        } else {
+          if (this.isIn) {
+            this.selectBlockByIndex(info.index);
+          }
+
+          this.stack.push(info.index);
+        }
+      }
+    }, {
+      key: "genInfoForMouseSelection",
+      value: function genInfoForMouseSelection() {
+        var widthOfRedactor = window.getComputedStyle(this.Editor.UI.nodes.redactor).width;
+        var centerOfRedactor = Number.parseInt(widthOfRedactor, 10) / 2;
+        var heightOfScrollZone = 25;
+        var Y = this.mouseY; // To look at the item below the zone
+
+        if (this.inScrollZone === 'top') {
+          Y += heightOfScrollZone;
+        }
+
+        if (this.inScrollZone === 'bot') {
+          Y -= heightOfScrollZone;
+        }
+
+        var elementUnderPos = document.elementFromPoint(centerOfRedactor, Y);
+        var blockInCurrentPos = this.Editor.BlockManager.getBlockByChildNode(elementUnderPos);
+        var index = -1;
+
+        if (blockInCurrentPos !== undefined) {
+          index = this.Editor.BlockManager.blocks.findIndex(function (block) {
+            return block.holder === blockInCurrentPos.holder;
+          });
+        }
+
+        var template = '.' + BlockSelection.CSS.contentBlock;
+        var contentElement = this.Editor.BlockManager.lastBlock.holder.querySelector(template);
+        var centerOfBlock = Number.parseInt(window.getComputedStyle(contentElement).width, 10) / 2;
+        var leftPos = centerOfRedactor - centerOfBlock;
+        var rightPos = centerOfRedactor + centerOfBlock;
+        return {
+          index: index,
+          leftPos: leftPos,
+          rightPos: rightPos
+        };
+      }
+    }, {
+      key: "updateSizeOfRectangle",
+      value: function updateSizeOfRectangle(event) {
+        // Depending on the position of the mouse relative to the starting point,
+        // change ththis.e distance from the desired edge of the screen*/
+        if (this.mouseY + window.pageYOffset >= this.startY) {
+          this.overlayRectangle.style.top = "".concat(this.startY - window.pageYOffset, "px");
+          this.overlayRectangle.style.bottom = "calc(100% - ".concat(event.clientY, "px");
+        } else {
+          this.overlayRectangle.style.bottom = "calc(100% - ".concat(this.startY - window.pageYOffset, "px");
+          this.overlayRectangle.style.top = "".concat(event.clientY, "px");
+        }
+
+        if (this.mouseX + window.pageXOffset >= this.startX) {
+          this.overlayRectangle.style.left = "".concat(this.startX - window.pageXOffset, "px");
+          this.overlayRectangle.style.right = "calc(100% - ".concat(event.clientX, "px");
+        } else {
+          this.overlayRectangle.style.right = "calc(100% - ".concat(this.startX - window.pageXOffset, "px");
+          this.overlayRectangle.style.left = "".concat(event.clientX, "px");
+        }
+      }
+    }, {
+      key: "handleStartRectSelection",
+      value: function handleStartRectSelection(event) {
+        this.clearSelection();
+        this.mousedown = true;
+        this.startX = event.pageX;
+        this.startY = event.pageY;
+        this.stack = [];
+        this.overlayRectangle.style.left = "".concat(this.startX, "px");
+        this.overlayRectangle.style.top = "".concat(this.startY, "px");
+        this.overlayRectangle.style.bottom = "calc(100% - ".concat(this.startY, "px");
+        this.overlayRectangle.style.right = "calc(100% - ".concat(this.startX, "px");
+        this.overlayRectangle.style.display = 'block';
+      } // activates scrolling if blockSelection is active and mouse is in scroll zone
+
+    }, {
+      key: "scrollVertical",
+      value: function scrollVertical(n) {
+        var _this3 = this;
+
+        console.log(this);
+
+        if (this.inScrollZone && this.mousedown) {
+          window.scrollBy(0, n);
+          setTimeout(function () {
+            _this3.scrollVertical(n);
+          }, 0);
+        }
+      } // TODO END
+
       /**
        * First CMD+A Selects current focused blocks,
        * and consequent second CMD+A keypress selects all blocks
@@ -16546,7 +16602,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "handleCommandC",
       value: function handleCommandC(event) {
-        var _this3 = this;
+        var _this4 = this;
 
         var _this$Editor2 = this.Editor,
             BlockManager = _this$Editor2.BlockManager,
@@ -16571,7 +16627,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           /**
            * Make <p> tag that holds clean HTML
            */
-          var cleanHTML = Sanitizer.clean(block.holder.innerHTML, _this3.sanitizerConfig);
+          var cleanHTML = Sanitizer.clean(block.holder.innerHTML, _this4.sanitizerConfig);
 
           var fragment = _dom.default.make('p');
 

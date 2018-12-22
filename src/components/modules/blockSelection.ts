@@ -154,6 +154,7 @@ export default class BlockSelection extends Module {
     const overlayTopScrollZone = $.make('div', 'codex-editor-overlay__scroll-zone--top', {});
     const overlayBottomScrollZone = $.make('div', 'codex-editor-overlay__scroll-zone--bottom', {});
 
+    overlayContainer.appendChild(overlayRectangle);
     overlay.appendChild(overlayContainer);
     overlay.appendChild(overlayTopScrollZone);
     overlay.appendChild(overlayBottomScrollZone);
@@ -161,26 +162,14 @@ export default class BlockSelection extends Module {
 
     this.overlayRectangle = overlayRectangle as HTMLDivElement;
 
-    // activates scrolling if blockSelection is active and mouse is in scroll zone
-    const scrollVertical = (n) => {
-      console.log(this);
-      if (this.inScrollZone && this.mousedown) {
-        window.scrollBy(0, n);
-        setTimeout(() => {
-          scrollVertical(n);
-        }, 0);
-      }
-    };
-
     Listeners.on(overlayBottomScrollZone, 'mouseenter', (event) => {
-      console.log(this);
       this.inScrollZone = 'bot';
-      scrollVertical(this.scrollSpeed);
+      this.scrollVertical(this.scrollSpeed);
     });
 
     Listeners.on(overlayTopScrollZone, 'mouseenter', (event) => {
       this.inScrollZone = 'top';
-      scrollVertical(-this.scrollSpeed);
+      this.scrollVertical(-this.scrollSpeed);
     });
 
     Listeners.on(overlayBottomScrollZone, 'mouseleave', (event) => {
@@ -192,110 +181,20 @@ export default class BlockSelection extends Module {
     });
 
     Listeners.on(document.body, 'mousedown', (event: MouseEvent) => {
-      this.clearSelection();
-      this.mousedown = true;
-      this.startX = event.pageX;
-      this.startY = event.pageY;
-      this.stack = [];
-
-      overlayRectangle.style.left = `${this.startX}px`;
-      overlayRectangle.style.top = `${this.startY}px`;
-      overlayRectangle.style.bottom = `calc(100% - ${this.startY}px`;
-      overlayRectangle.style.right = `calc(100% - ${this.startX}px`;
-
-      overlayContainer.appendChild(overlayRectangle);
+      this.handleStartRectSelection(event);
     }, false);
 
-    const handlerRect = (event) => {
-      if (this.mousedown) {
-        event.preventDefault();
-        this.rectSelection = true;
-        if (event.pageY !== undefined) {
-          this.mouseX = event.clientX;
-          this.mouseY = event.clientY;
-        }
-
-        // Depending on the position of the mouse relative to the starting point,
-        // change the distance from the desired edge of the screen*/
-        if (this.mouseY + window.pageYOffset >= this.startY) {
-          overlayRectangle.style.top = `${this.startY - window.pageYOffset}px`;
-          overlayRectangle.style.bottom = `calc(100% - ${event.clientY}px`;
-        } else {
-          overlayRectangle.style.bottom = `calc(100% - ${this.startY - window.pageYOffset}px`;
-          overlayRectangle.style.top = `${event.clientY}px`;
-        }
-
-        if (this.mouseX + window.pageXOffset >= this.startX) {
-          overlayRectangle.style.left = `${this.startX - window.pageXOffset}px`;
-          overlayRectangle.style.right = `calc(100% - ${event.clientX}px`;
-        } else {
-          overlayRectangle.style.right = `calc(100% - ${this.startX - window.pageXOffset}px`;
-          overlayRectangle.style.left = `${event.clientX}px`;
-        }
-
-        const centerOfRedactor = Number.parseInt(window.getComputedStyle(this.Editor.UI.nodes.redactor).width, 10) / 2;
-        const Y = this.inScrollZone === 'top' ? this.mouseY + 25 : (this.inScrollZone === 'bot' ? this.mouseY - 25 : this.mouseY);
-        const elementUnderPos = document.elementFromPoint(centerOfRedactor, Y);
-        const blockInCurrentPos = this.Editor.BlockManager.getBlockByChildNode(elementUnderPos);
-        if (blockInCurrentPos === undefined) {
-          return;
-        }
-        const index = this.Editor.BlockManager.blocks.findIndex((block) => block.holder === blockInCurrentPos.holder);
-
-        const contentElement = this.Editor.BlockManager.lastBlock.holder.querySelector('.' + BlockSelection.CSS.contentBlock);
-        const centerOfblock = Number.parseInt(window.getComputedStyle(contentElement).width, 10) / 2;
-        const leftPos = centerOfRedactor - centerOfblock;
-        const rightPos = centerOfRedactor + centerOfblock;
-
-        if ((this.startX < leftPos && this.mouseX < leftPos) || (this.startX > rightPos && this.mouseX > rightPos)) {
-          this.isIn = false;
-        } else {
-          this.isIn = true;
-        }
-
-        if (this.stack[this.stack.length - 1] !== index) {
-          if (this.stack[this.stack.length - 2] === index) {
-            if (this.isIn) {
-              if (this.mouseY + window.pageYOffset >= this.startY) {
-                this.unSelectBlockByIndex(index + 1);
-              } else {
-                this.unSelectBlockByIndex(index - 1);
-              }
-            }
-            this.stack.pop();
-          } else {
-            if (this.isIn) {
-              this.selectBlockByIndex(index);
-            }
-            this.stack.push(index);
-          }
-        }
-
-        if (this.isIn && !this.Editor.BlockManager.getBlockByIndex(this.stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
-          for (let i = 0; i < this.stack.length; i++) {
-            this.selectBlockByIndex(this.stack[i]);
-          }
-        }
-
-        if (!this.isIn && this.Editor.BlockManager.getBlockByIndex(this.stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
-          for (let i = 0; i < this.stack.length; i++) {
-            this.unSelectBlockByIndex(this.stack[i]);
-          }
-        }
-      }
-    };
-
     Listeners.on(document.body, 'mousemove', (event) => {
-      handlerRect(event);
+      this.handleRectSelection(event);
     }, false);
 
     Listeners.on(window, 'scroll', (event) => {
-      handlerRect(event);
+      this.handleRectSelection(event);
     }, false);
 
     Listeners.on(document.body, 'mouseup', (event) => {
       this.mousedown = false;
-      overlayContainer.removeChild(overlayRectangle);
+      this.overlayRectangle.style.display = 'none';
 
       this.startX = 0;
       this.startY = 0;
@@ -326,6 +225,153 @@ export default class BlockSelection extends Module {
     this.allBlocksSelected = false;
   }
 
+  // TODO START
+
+  private handleRectSelection(event) {
+    if (!this.mousedown) {
+      return;
+    }
+    event.preventDefault();
+    this.rectSelection = true;
+    if (event.pageY !== undefined) {
+      this.mouseX = event.clientX;
+      this.mouseY = event.clientY;
+    }
+
+    this.updateSizeOfRectangle(event);
+
+    const info = this.genInfoForMouseSelection();
+    if (info.index === -1) {
+      return;
+    }
+
+    if ((this.startX < info.leftPos && this.mouseX < info.leftPos) ||
+      (this.startX > info.rightPos && this.mouseX > info.rightPos)) {
+      this.isIn = false;
+    } else {
+      this.isIn = true;
+    }
+
+    this.handleNextBlock(info);
+    this.correctSelection();
+  }
+
+  private correctSelection() {
+    const firstBlockInStack = this.Editor.BlockManager.getBlockByIndex(this.stack[0]);
+    const isSelected = firstBlockInStack.holder.classList.contains(BlockSelection.CSS.blockSelected);
+
+    if (this.isIn && !isSelected) {
+      for (let i = 0; i < this.stack.length; i++) {
+        this.selectBlockByIndex(this.stack[i]);
+      }
+    }
+
+    if (!this.isIn && isSelected) {
+      for (let i = 0; i < this.stack.length; i++) {
+        this.unSelectBlockByIndex(this.stack[i]);
+      }
+    }
+  }
+
+  private handleNextBlock(info) {
+    if (this.stack[this.stack.length - 1] === info.index) {
+      return;
+    }
+    // If the selection area is reduced
+    if (this.stack[this.stack.length - 2] === info.index) {
+      if (this.isIn) {
+        if (this.mouseY + window.pageYOffset >= this.startY) {
+          this.unSelectBlockByIndex(info.index + 1);
+        } else {
+          this.unSelectBlockByIndex(info.index - 1);
+        }
+      }
+      this.stack.pop();
+    } else {
+      if (this.isIn) {
+        this.selectBlockByIndex(info.index);
+      }
+      this.stack.push(info.index);
+    }
+  }
+
+  private genInfoForMouseSelection() {
+    const widthOfRedactor = window.getComputedStyle(this.Editor.UI.nodes.redactor).width;
+    const centerOfRedactor = Number.parseInt(widthOfRedactor, 10) / 2;
+    const heightOfScrollZone = 25;
+    let Y = this.mouseY;
+    // To look at the item below the zone
+    if (this.inScrollZone === 'top') {
+      Y += heightOfScrollZone;
+    }
+    if (this.inScrollZone === 'bot') {
+      Y -= heightOfScrollZone;
+    }
+    const elementUnderPos = document.elementFromPoint(centerOfRedactor, Y);
+    const blockInCurrentPos = this.Editor.BlockManager.getBlockByChildNode(elementUnderPos);
+    let index = -1;
+    if (blockInCurrentPos !== undefined) {
+      index = this.Editor.BlockManager.blocks.findIndex((block) => block.holder === blockInCurrentPos.holder);
+    }
+    const template = '.' + BlockSelection.CSS.contentBlock;
+    const contentElement = this.Editor.BlockManager.lastBlock.holder.querySelector(template);
+    const centerOfBlock = Number.parseInt(window.getComputedStyle(contentElement).width, 10) / 2;
+    const leftPos = centerOfRedactor - centerOfBlock;
+    const rightPos = centerOfRedactor + centerOfBlock;
+
+    return {
+      index,
+      leftPos,
+      rightPos,
+    };
+  }
+
+  private updateSizeOfRectangle(event) {
+    // Depending on the position of the mouse relative to the starting point,
+    // change ththis.e distance from the desired edge of the screen*/
+    if (this.mouseY + window.pageYOffset >= this.startY) {
+      this.overlayRectangle.style.top = `${this.startY - window.pageYOffset}px`;
+      this.overlayRectangle.style.bottom = `calc(100% - ${event.clientY}px`;
+    } else {
+      this.overlayRectangle.style.bottom = `calc(100% - ${this.startY - window.pageYOffset}px`;
+      this.overlayRectangle.style.top = `${event.clientY}px`;
+    }
+
+    if (this.mouseX + window.pageXOffset >= this.startX) {
+      this.overlayRectangle.style.left = `${this.startX - window.pageXOffset}px`;
+      this.overlayRectangle.style.right = `calc(100% - ${event.clientX}px`;
+    } else {
+      this.overlayRectangle.style.right = `calc(100% - ${this.startX - window.pageXOffset}px`;
+      this.overlayRectangle.style.left = `${event.clientX}px`;
+    }
+  }
+
+  private handleStartRectSelection(event: MouseEvent) {
+    this.clearSelection();
+    this.mousedown = true;
+    this.startX = event.pageX;
+    this.startY = event.pageY;
+    this.stack = [];
+
+    this.overlayRectangle.style.left = `${this.startX}px`;
+    this.overlayRectangle.style.top = `${this.startY}px`;
+    this.overlayRectangle.style.bottom = `calc(100% - ${this.startY}px`;
+    this.overlayRectangle.style.right = `calc(100% - ${this.startX}px`;
+
+    this.overlayRectangle.style.display = 'block';
+  }
+
+  // activates scrolling if blockSelection is active and mouse is in scroll zone
+  private scrollVertical(n) {
+    if (this.inScrollZone && this.mousedown) {
+      window.scrollBy(0, n);
+      setTimeout(() => {
+        this.scrollVertical(n);
+      }, 0);
+    }
+  }
+
+  // TODO END
   /**
    * First CMD+A Selects current focused blocks,
    * and consequent second CMD+A keypress selects all blocks
