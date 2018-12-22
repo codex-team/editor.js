@@ -16396,7 +16396,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
         this.allBlocksSelected = false;
-      } // TODO START
+      }
+      /**
+       * Handles the change in the rectangle and its effect
+       * @param {MouseEvent} event
+       */
 
     }, {
       key: "handleRectSelection",
@@ -16447,14 +16451,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           }
         }
       }
+      /**
+       * Adds a block to the selection and determines which blocks should be selected
+       * @param {object} info - information needed to determine the behavior of the rectangle
+       */
+
     }, {
       key: "handleNextBlock",
       value: function handleNextBlock(info) {
+        var _this3 = this;
+
         if (this.stackOfSelected[this.stackOfSelected.length - 1] === info.index) {
           return;
         }
 
-        console.log(this.stackOfSelected);
         var sizeStack = this.stackOfSelected.length;
         var direction;
 
@@ -16474,43 +16484,48 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           reduction = true;
         }
 
-        console.log(reduction);
+        var addBlockInSelection = function addBlockInSelection(i) {
+          if (_this3.rectCrossesBlocks) {
+            _this3.selectBlockByIndex(i);
+          }
+
+          _this3.stackOfSelected.push(i);
+        };
 
         if (!reduction && (info.index > this.stackOfSelected[sizeStack - 1] || this.stackOfSelected[sizeStack - 1] === undefined)) {
-          console.log('1');
           var i = this.stackOfSelected[sizeStack - 1] + 1 || info.index;
 
           for (i; i <= info.index; i++) {
-            if (this.rectCrossesBlocks) {
-              this.selectBlockByIndex(i);
-            }
-
-            this.stackOfSelected.push(i);
+            addBlockInSelection(i);
           }
 
           return;
         }
 
         if (!reduction && info.index < this.stackOfSelected[sizeStack - 1]) {
-          console.log('2');
-
           for (var _i2 = this.stackOfSelected[sizeStack - 1] - 1; _i2 >= info.index; _i2--) {
-            if (this.rectCrossesBlocks) {
-              this.selectBlockByIndex(_i2);
-            }
-
-            this.stackOfSelected.push(_i2);
+            addBlockInSelection(_i2);
           }
 
           return;
         }
 
-        if (reduction && info.index < this.stackOfSelected[sizeStack - 1]) {
-          console.log('3');
-
+        if (reduction) {
           var _i3 = sizeStack - 1;
 
-          while (info.index < this.stackOfSelected[_i3]) {
+          var cmp;
+
+          if (info.index > this.stackOfSelected[sizeStack - 1]) {
+            cmp = function cmp() {
+              return info.index > _this3.stackOfSelected[_i3];
+            };
+          } else {
+            cmp = function cmp() {
+              return info.index < _this3.stackOfSelected[_i3];
+            };
+          }
+
+          while (cmp()) {
             if (this.rectCrossesBlocks) {
               this.unSelectBlockByIndex(this.stackOfSelected[_i3]);
             }
@@ -16521,24 +16536,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
           return;
         }
-
-        if (reduction && info.index > this.stackOfSelected[sizeStack - 1]) {
-          console.log('4');
-
-          var _i4 = sizeStack - 1;
-
-          while (info.index > this.stackOfSelected[_i4]) {
-            if (this.rectCrossesBlocks) {
-              this.unSelectBlockByIndex(this.stackOfSelected[_i4]);
-            }
-
-            this.stackOfSelected.pop();
-            _i4--;
-          }
-
-          return;
-        }
       }
+      /**
+       * collects information needed to determine the behavior of the rectangle
+       * @return {object} index - index next block, leftPos - start of left border of block, rightPos - right border
+       */
+
     }, {
       key: "genInfoForMouseSelection",
       value: function genInfoForMouseSelection() {
@@ -16576,6 +16579,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           rightPos: rightPos
         };
       }
+      /**
+       * updates size of rectangle
+       * @param {MouseEvent} event
+       */
+
     }, {
       key: "updateSizeOfRectangle",
       value: function updateSizeOfRectangle(event) {
@@ -16597,6 +16605,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           this.overlayRectangle.style.left = "".concat(event.clientX, "px");
         }
       }
+      /**
+       * init rect params
+       * @param {MouseEvent} event
+       */
+
     }, {
       key: "handleStartRectSelection",
       value: function handleStartRectSelection(event) {
@@ -16610,21 +16623,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.overlayRectangle.style.bottom = "calc(100% - ".concat(this.startY, "px");
         this.overlayRectangle.style.right = "calc(100% - ".concat(this.startX, "px");
         this.overlayRectangle.style.display = 'block';
-      } // activates scrolling if blockSelection is active and mouse is in scroll zone
+      }
+      /**
+       * activates scrolling if blockSelection is active and mouse is in scroll zone
+       * @param {number} speed - speed of scrolling
+       */
 
     }, {
       key: "scrollVertical",
-      value: function scrollVertical(n) {
-        var _this3 = this;
+      value: function scrollVertical(speed) {
+        var _this4 = this;
 
         if (this.inScrollZone && this.mousedown) {
-          window.scrollBy(0, n);
+          window.scrollBy(0, speed);
           setTimeout(function () {
-            _this3.scrollVertical(n);
+            _this4.scrollVertical(speed);
           }, 0);
         }
-      } // TODO END
-
+      }
       /**
        * First CMD+A Selects current focused blocks,
        * and consequent second CMD+A keypress selects all blocks
@@ -16665,7 +16681,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "handleCommandC",
       value: function handleCommandC(event) {
-        var _this4 = this;
+        var _this5 = this;
 
         var _this$Editor2 = this.Editor,
             BlockManager = _this$Editor2.BlockManager,
@@ -16690,7 +16706,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           /**
            * Make <p> tag that holds clean HTML
            */
-          var cleanHTML = Sanitizer.clean(block.holder.innerHTML, _this4.sanitizerConfig);
+          var cleanHTML = Sanitizer.clean(block.holder.innerHTML, _this5.sanitizerConfig);
 
           var fragment = _dom.default.make('p');
 

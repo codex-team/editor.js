@@ -225,8 +225,10 @@ export default class BlockSelection extends Module {
     this.allBlocksSelected = false;
   }
 
-  // TODO START
-
+  /**
+   * Handles the change in the rectangle and its effect
+   * @param {MouseEvent} event
+   */
   private handleRectSelection(event) {
     if (!this.mousedown) {
       return;
@@ -273,12 +275,14 @@ export default class BlockSelection extends Module {
     }
   }
 
+  /**
+   * Adds a block to the selection and determines which blocks should be selected
+   * @param {object} info - information needed to determine the behavior of the rectangle
+   */
   private handleNextBlock(info) {
     if (this.stackOfSelected[this.stackOfSelected.length - 1] === info.index) {
       return;
     }
-
-    console.log(this.stackOfSelected);
 
     const sizeStack = this.stackOfSelected.length;
     let direction;
@@ -298,48 +302,37 @@ export default class BlockSelection extends Module {
       reduction = true;
     }
 
-    console.log(reduction);
+    const addBlockInSelection = (i) => {
+      if (this.rectCrossesBlocks) {
+        this.selectBlockByIndex(i);
+      }
+      this.stackOfSelected.push(i);
+    };
 
     if (!reduction && (info.index > this.stackOfSelected[sizeStack - 1] || this.stackOfSelected[sizeStack - 1] === undefined)) {
-      console.log('1');
       let i = this.stackOfSelected[sizeStack - 1] + 1 || info.index;
       for (i; i <= info.index; i++) {
-        if (this.rectCrossesBlocks) {
-          this.selectBlockByIndex(i);
-        }
-        this.stackOfSelected.push(i);
+        addBlockInSelection(i);
       }
       return;
     }
 
     if (!reduction && (info.index < this.stackOfSelected[sizeStack - 1])) {
-      console.log('2');
       for (let i = this.stackOfSelected[sizeStack - 1] - 1; i >= info.index; i--) {
-        if (this.rectCrossesBlocks) {
-          this.selectBlockByIndex(i);
-        }
-        this.stackOfSelected.push(i);
+        addBlockInSelection(i);
       }
       return;
     }
 
-    if (reduction && (info.index < this.stackOfSelected[sizeStack - 1])) {
-      console.log('3');
+    if (reduction) {
       let i = sizeStack - 1;
-      while (info.index < this.stackOfSelected[i]) {
-        if (this.rectCrossesBlocks) {
-          this.unSelectBlockByIndex(this.stackOfSelected[i]);
-        }
-        this.stackOfSelected.pop();
-        i--;
+      let cmp;
+      if (info.index > this.stackOfSelected[sizeStack - 1]) {
+        cmp = () => info.index > this.stackOfSelected[i];
+      } else {
+        cmp = () => info.index < this.stackOfSelected[i];
       }
-      return;
-    }
-
-    if (reduction && (info.index > this.stackOfSelected[sizeStack - 1])) {
-      console.log('4');
-      let i = sizeStack - 1;
-      while (info.index > this.stackOfSelected[i]) {
+      while (cmp()) {
         if (this.rectCrossesBlocks) {
           this.unSelectBlockByIndex(this.stackOfSelected[i]);
         }
@@ -350,6 +343,10 @@ export default class BlockSelection extends Module {
     }
   }
 
+  /**
+   * collects information needed to determine the behavior of the rectangle
+   * @return {object} index - index next block, leftPos - start of left border of block, rightPos - right border
+   */
   private genInfoForMouseSelection() {
     const widthOfRedactor = window.getComputedStyle(this.Editor.UI.nodes.redactor).width;
     const centerOfRedactor = Number.parseInt(widthOfRedactor, 10) / 2;
@@ -381,6 +378,10 @@ export default class BlockSelection extends Module {
     };
   }
 
+  /**
+   * updates size of rectangle
+   * @param {MouseEvent} event
+   */
   private updateSizeOfRectangle(event) {
     // Depending on the position of the mouse relative to the starting point,
     // change ththis.e distance from the desired edge of the screen*/
@@ -401,6 +402,10 @@ export default class BlockSelection extends Module {
     }
   }
 
+  /**
+   * init rect params
+   * @param {MouseEvent} event
+   */
   private handleStartRectSelection(event: MouseEvent) {
     this.clearSelection();
     this.mousedown = true;
@@ -416,17 +421,19 @@ export default class BlockSelection extends Module {
     this.overlayRectangle.style.display = 'block';
   }
 
-  // activates scrolling if blockSelection is active and mouse is in scroll zone
-  private scrollVertical(n) {
+  /**
+   * activates scrolling if blockSelection is active and mouse is in scroll zone
+   * @param {number} speed - speed of scrolling
+   */
+  private scrollVertical(speed) {
     if (this.inScrollZone && this.mousedown) {
-      window.scrollBy(0, n);
+      window.scrollBy(0, speed);
       setTimeout(() => {
-        this.scrollVertical(n);
+        this.scrollVertical(speed);
       }, 0);
     }
   }
 
-  // TODO END
   /**
    * First CMD+A Selects current focused blocks,
    * and consequent second CMD+A keypress selects all blocks
