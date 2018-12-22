@@ -80,15 +80,42 @@ export default class BlockSelection extends Module {
    */
   private rectSelection: boolean;
 
+  /**
+   *  speed of Scrolling
+   */
   private readonly scrollSpeed: number = 3;
+
+  /**
+   * have you started the selection rectangle
+   */
   private mousedown: boolean = false;
+
+  /**
+   * mous is in scroll zone
+   */
   private inScrollZone: string | null = null;
+
+  /**
+   * coords of rect
+   */
   private startX: number = 0;
   private startY: number = 0;
   private mouseX: number = 0;
   private mouseY: number = 0;
+
+  /**
+   * selected blocks
+   */
   private stackOfSelected: number[] = [];
+
+  /**
+   * does the rectangle intersect blocks
+   */
   private rectCrossesBlocks: boolean;
+
+  /**
+   * Selection rectangle
+   */
   private overlayRectangle: HTMLDivElement;
 
   /**
