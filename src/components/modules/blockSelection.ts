@@ -69,9 +69,9 @@ export default class BlockSelection extends Module {
    * @return {boolean}
    */
   public get allBlocksSelected(): boolean {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
-    return BlockManager.blocks.every( (block) => block.selected === true);
+    return BlockManager.blocks.every((block) => block.selected === true);
   }
 
   /**
@@ -79,9 +79,9 @@ export default class BlockSelection extends Module {
    * @param {boolean} state
    */
   public set allBlocksSelected(state: boolean) {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
-    BlockManager.blocks.forEach( (block) => block.selected = state);
+    BlockManager.blocks.forEach((block) => block.selected = state);
   }
 
   /**
@@ -89,9 +89,9 @@ export default class BlockSelection extends Module {
    * @return {boolean}
    */
   public get anyBlockSelected(): boolean {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
-    return BlockManager.blocks.some( (block) => block.selected === true);
+    return BlockManager.blocks.some((block) => block.selected === true);
   }
 
   /**
@@ -100,7 +100,7 @@ export default class BlockSelection extends Module {
    * to select all and copy them
    */
   public prepare(): void {
-    const { Shortcuts } = this.Editor;
+    const {Shortcuts, Listeners} = this.Editor;
 
     /** Selection shortcut */
     Shortcuts.add({
@@ -124,13 +124,21 @@ export default class BlockSelection extends Module {
     const overlay = $.make('div', 'codex-editor-overlay', {});
     const overlayContainer = $.make('div', 'codex-editor-overlay__container', {});
     const overlayRectangle = $.make('div', 'codex-editor-overlay__rectangle', {});
+    const overlayTopScrollZone = $.make('div', 'codex-editor-overlay__scroll-zone--top', {});
+    const overlayBottomScrollZone = $.make('div', 'codex-editor-overlay__scroll-zone--bottom', {});
 
     overlay.appendChild(overlayContainer);
+    overlay.appendChild(overlayTopScrollZone);
+    overlay.appendChild(overlayBottomScrollZone);
     document.body.appendChild(overlay);
 
+    const scrollSpeed = 3;
     let mousedown = false;
+    let inScrollZone = false;
     let startX = 0;
     let startY = 0;
+    let mouseX = 0;
+    let mouseY = 0;
 
     const options = {
       root: this.Editor.UI.nodes.redactor,
@@ -145,10 +153,38 @@ export default class BlockSelection extends Module {
     const observer = new IntersectionObserver(callback, options);
     observer.observe(overlayRectangle);
 
-    document.body.addEventListener('mousedown', (event) => {
+    // activates scrolling if blockSelection is active and mouse is in scroll zone
+    function scrollVertical(n) {
+      if (inScrollZone && mousedown) {
+        window.scrollBy(0, n);
+        setTimeout(() => {
+          scrollVertical(n);
+        }, 0);
+      }
+    }
+
+    Listeners.on(overlayBottomScrollZone, 'mouseenter', (event) => {
+      inScrollZone = true;
+      scrollVertical(scrollSpeed);
+    });
+
+    Listeners.on(overlayTopScrollZone, 'mouseenter', (event) => {
+      inScrollZone = true;
+      scrollVertical(-scrollSpeed);
+    });
+
+    Listeners.on(overlayBottomScrollZone, 'mouseleave', (event) => {
+      inScrollZone = false;
+    });
+
+    Listeners.on(overlayTopScrollZone, 'mouseleave', (event) => {
+      inScrollZone = false;
+    });
+
+    Listeners.on(document.body, 'mousedown', (event: MouseEvent) => {
       mousedown = true;
-      startX = event.clientX;
-      startY = event.clientY;
+      startX = event.pageX;
+      startY = event.pageY;
 
       overlayRectangle.style.left = `${startX}px`;
       overlayRectangle.style.top = `${startY}px`;
@@ -158,31 +194,43 @@ export default class BlockSelection extends Module {
       overlayContainer.appendChild(overlayRectangle);
     }, false);
 
-    document.body.addEventListener('mousemove', (event) => {
+    const handlerRect = (event) => {
       if (mousedown) {
         event.preventDefault();
+        if (event.pageY !== undefined) {
+          mouseX = event.clientX;
+          mouseY = event.clientY;
+        }
 
         // Depending on the position of the mouse relative to the starting point,
         // change the distance from the desired edge of the screen*/
-        if (event.clientY >= startY) {
-          overlayRectangle.style.top = `${startY}px`;
+        if (mouseY + window.pageYOffset >= startY) {
+          overlayRectangle.style.top = `${startY - window.pageYOffset}px`;
           overlayRectangle.style.bottom = `calc(100% - ${event.clientY}px`;
         } else {
-          overlayRectangle.style.bottom = `calc(100% - ${startY}px`;
+          overlayRectangle.style.bottom = `calc(100% - ${startY - window.pageYOffset}px`;
           overlayRectangle.style.top = `${event.clientY}px`;
         }
 
-        if (event.clientX >= startX) {
-          overlayRectangle.style.left = `${startX}px`;
+        if (mouseX + window.pageXOffset >= startX) {
+          overlayRectangle.style.left = `${startX - window.pageXOffset}px`;
           overlayRectangle.style.right = `calc(100% - ${event.clientX}px`;
         } else {
-          overlayRectangle.style.right = `calc(100% - ${startX}px`;
+          overlayRectangle.style.right = `calc(100% - ${startX - window.pageXOffset}px`;
           overlayRectangle.style.left = `${event.clientX}px`;
         }
       }
+    };
+
+    Listeners.on(document.body, 'mousemove', (event) => {
+      handlerRect(event);
     }, false);
 
-    document.body.addEventListener('mouseup', (event) => {
+    Listeners.on(window, 'scroll', (event) => {
+      handlerRect(event);
+    }, false);
+
+    Listeners.on(document.body, 'mouseup', (event) => {
       mousedown = false;
       overlayContainer.removeChild(overlayRectangle);
 
@@ -246,7 +294,7 @@ export default class BlockSelection extends Module {
    * @param event
    */
   private handleCommandC(event): void {
-    const { BlockManager, Sanitizer } = this.Editor;
+    const {BlockManager, Sanitizer} = this.Editor;
 
     if (!this.anyBlockSelected) {
       return;
@@ -260,8 +308,8 @@ export default class BlockSelection extends Module {
 
     const fakeClipboard = $.make('div');
 
-    BlockManager.blocks.filter( (block) => block.selected )
-      .forEach( (block) => {
+    BlockManager.blocks.filter((block) => block.selected)
+      .forEach((block) => {
         /**
          * Make <p> tag that holds clean HTML
          */
@@ -270,7 +318,7 @@ export default class BlockSelection extends Module {
 
         fragment.innerHTML = cleanHTML;
         fakeClipboard.appendChild(fragment);
-    });
+      });
 
     _.copyTextToClipboard(fakeClipboard.innerHTML);
   }
@@ -280,7 +328,7 @@ export default class BlockSelection extends Module {
    * Each Block has selected setter that makes Block copyable
    */
   private selectAllBlocks() {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
     this.allBlocksSelected = true;
   }
@@ -290,7 +338,7 @@ export default class BlockSelection extends Module {
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
   private selectBlockByIndex(index?) {
-    const { BlockManager } = this.Editor;
+    const {BlockManager} = this.Editor;
 
     /**
      * Remove previous focused Block's state
