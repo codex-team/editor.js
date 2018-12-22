@@ -87,8 +87,8 @@ export default class BlockSelection extends Module {
   private startY: number = 0;
   private mouseX: number = 0;
   private mouseY: number = 0;
-  private stack: number[] = [];
-  private isIn: boolean;
+  private stackOfSelected: number[] = [];
+  private rectCrossesBlocks: boolean;
   private overlayRectangle: HTMLDivElement;
 
   /**
@@ -247,9 +247,9 @@ export default class BlockSelection extends Module {
 
     if ((this.startX < info.leftPos && this.mouseX < info.leftPos) ||
       (this.startX > info.rightPos && this.mouseX > info.rightPos)) {
-      this.isIn = false;
+      this.rectCrossesBlocks = false;
     } else {
-      this.isIn = true;
+      this.rectCrossesBlocks = true;
     }
 
     this.handleNextBlock(info);
@@ -257,41 +257,41 @@ export default class BlockSelection extends Module {
   }
 
   private correctSelection() {
-    const firstBlockInStack = this.Editor.BlockManager.getBlockByIndex(this.stack[0]);
+    const firstBlockInStack = this.Editor.BlockManager.getBlockByIndex(this.stackOfSelected[0]);
     const isSelected = firstBlockInStack.holder.classList.contains(BlockSelection.CSS.blockSelected);
 
-    if (this.isIn && !isSelected) {
-      for (let i = 0; i < this.stack.length; i++) {
-        this.selectBlockByIndex(this.stack[i]);
+    if (this.rectCrossesBlocks && !isSelected) {
+      for (let i = 0; i < this.stackOfSelected.length; i++) {
+        this.selectBlockByIndex(this.stackOfSelected[i]);
       }
     }
 
-    if (!this.isIn && isSelected) {
-      for (let i = 0; i < this.stack.length; i++) {
-        this.unSelectBlockByIndex(this.stack[i]);
+    if (!this.rectCrossesBlocks && isSelected) {
+      for (let i = 0; i < this.stackOfSelected.length; i++) {
+        this.unSelectBlockByIndex(this.stackOfSelected[i]);
       }
     }
   }
 
   private handleNextBlock(info) {
-    if (this.stack[this.stack.length - 1] === info.index) {
+    if (this.stackOfSelected[this.stackOfSelected.length - 1] === info.index) {
       return;
     }
     // If the selection area is reduced
-    if (this.stack[this.stack.length - 2] === info.index) {
-      if (this.isIn) {
+    if (this.stackOfSelected[this.stackOfSelected.length - 2] === info.index) {
+      if (this.rectCrossesBlocks) {
         if (this.mouseY + window.pageYOffset >= this.startY) {
           this.unSelectBlockByIndex(info.index + 1);
         } else {
           this.unSelectBlockByIndex(info.index - 1);
         }
       }
-      this.stack.pop();
+      this.stackOfSelected.pop();
     } else {
-      if (this.isIn) {
+      if (this.rectCrossesBlocks) {
         this.selectBlockByIndex(info.index);
       }
-      this.stack.push(info.index);
+      this.stackOfSelected.push(info.index);
     }
   }
 
@@ -351,7 +351,7 @@ export default class BlockSelection extends Module {
     this.mousedown = true;
     this.startX = event.pageX;
     this.startY = event.pageY;
-    this.stack = [];
+    this.stackOfSelected = [];
 
     this.overlayRectangle.style.left = `${this.startX}px`;
     this.overlayRectangle.style.top = `${this.startY}px`;
