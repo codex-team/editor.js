@@ -12,8 +12,6 @@ import $ from '../dom';
 import SelectionUtils from '../selection';
 
 export default class BlockSelection extends Module {
-  private rectSelection: boolean;
-
   /**
    * CSS classes for the Block
    * @return {{wrapper: string, content: string}}
@@ -75,6 +73,23 @@ export default class BlockSelection extends Module {
    * @type {SelectionUtils}
    */
   private selection: SelectionUtils;
+
+  /**
+   * Using the selection rectangle
+   * @type {boolean}
+   */
+  private rectSelection: boolean;
+
+  private readonly scrollSpeed: number = 3;
+  private mousedown: boolean = false;
+  private inScrollZone: string | null = null;
+  private startX: number = 0;
+  private startY: number = 0;
+  private mouseX: number = 0;
+  private mouseY: number = 0;
+  private stack: number[] = [];
+  private isIn: boolean;
+  private overlayRectangle: HTMLDivElement;
 
   /**
    * Flag that identifies all Blocks selection
@@ -144,88 +159,82 @@ export default class BlockSelection extends Module {
     overlay.appendChild(overlayBottomScrollZone);
     document.body.appendChild(overlay);
 
-    const scrollSpeed = 3;
-    let mousedown = false;
-    let inScrollZone = null;
-    let startX = 0;
-    let startY = 0;
-    let mouseX = 0;
-    let mouseY = 0;
-    let stack = [];
-    let isIn: boolean;
+    this.overlayRectangle = overlayRectangle as HTMLDivElement;
 
     // activates scrolling if blockSelection is active and mouse is in scroll zone
-    function scrollVertical(n) {
-      if (inScrollZone && mousedown) {
+    const scrollVertical = (n) => {
+      console.log(this);
+      if (this.inScrollZone && this.mousedown) {
         window.scrollBy(0, n);
         setTimeout(() => {
           scrollVertical(n);
         }, 0);
       }
-    }
+    };
 
     Listeners.on(overlayBottomScrollZone, 'mouseenter', (event) => {
-      inScrollZone = 'bot';
-      scrollVertical(scrollSpeed);
+      console.log(this);
+      this.inScrollZone = 'bot';
+      scrollVertical(this.scrollSpeed);
     });
 
     Listeners.on(overlayTopScrollZone, 'mouseenter', (event) => {
-      inScrollZone = 'top';
-      scrollVertical(-scrollSpeed);
+      this.inScrollZone = 'top';
+      scrollVertical(-this.scrollSpeed);
     });
 
     Listeners.on(overlayBottomScrollZone, 'mouseleave', (event) => {
-      inScrollZone = null;
+      this.inScrollZone = null;
     });
 
     Listeners.on(overlayTopScrollZone, 'mouseleave', (event) => {
-      inScrollZone = null;
+      this.inScrollZone = null;
     });
 
     Listeners.on(document.body, 'mousedown', (event: MouseEvent) => {
       this.clearSelection();
-      mousedown = true;
-      startX = event.pageX;
-      startY = event.pageY;
-      stack = [];
+      this.mousedown = true;
+      this.startX = event.pageX;
+      this.startY = event.pageY;
+      this.stack = [];
 
-      overlayRectangle.style.left = `${startX}px`;
-      overlayRectangle.style.top = `${startY}px`;
-      overlayRectangle.style.bottom = `calc(100% - ${startY}px`;
-      overlayRectangle.style.right = `calc(100% - ${startX}px`;
+      overlayRectangle.style.left = `${this.startX}px`;
+      overlayRectangle.style.top = `${this.startY}px`;
+      overlayRectangle.style.bottom = `calc(100% - ${this.startY}px`;
+      overlayRectangle.style.right = `calc(100% - ${this.startX}px`;
 
       overlayContainer.appendChild(overlayRectangle);
     }, false);
 
     const handlerRect = (event) => {
-      if (mousedown) {
+      if (this.mousedown) {
         event.preventDefault();
         this.rectSelection = true;
         if (event.pageY !== undefined) {
-          mouseX = event.clientX;
-          mouseY = event.clientY;
+          this.mouseX = event.clientX;
+          this.mouseY = event.clientY;
         }
 
         // Depending on the position of the mouse relative to the starting point,
         // change the distance from the desired edge of the screen*/
-        if (mouseY + window.pageYOffset >= startY) {
-          overlayRectangle.style.top = `${startY - window.pageYOffset}px`;
+        if (this.mouseY + window.pageYOffset >= this.startY) {
+          overlayRectangle.style.top = `${this.startY - window.pageYOffset}px`;
           overlayRectangle.style.bottom = `calc(100% - ${event.clientY}px`;
         } else {
-          overlayRectangle.style.bottom = `calc(100% - ${startY - window.pageYOffset}px`;
+          overlayRectangle.style.bottom = `calc(100% - ${this.startY - window.pageYOffset}px`;
           overlayRectangle.style.top = `${event.clientY}px`;
         }
 
-        if (mouseX + window.pageXOffset >= startX) {
-          overlayRectangle.style.left = `${startX - window.pageXOffset}px`;
+        if (this.mouseX + window.pageXOffset >= this.startX) {
+          overlayRectangle.style.left = `${this.startX - window.pageXOffset}px`;
           overlayRectangle.style.right = `calc(100% - ${event.clientX}px`;
         } else {
-          overlayRectangle.style.right = `calc(100% - ${startX - window.pageXOffset}px`;
+          overlayRectangle.style.right = `calc(100% - ${this.startX - window.pageXOffset}px`;
           overlayRectangle.style.left = `${event.clientX}px`;
         }
 
         const centerOfRedactor = Number.parseInt(window.getComputedStyle(this.Editor.UI.nodes.redactor).width, 10) / 2;
-        const Y = inScrollZone === 'top' ? mouseY + 25 : (inScrollZone === 'bot' ? mouseY - 25 : mouseY);
+        const Y = this.inScrollZone === 'top' ? this.mouseY + 25 : (this.inScrollZone === 'bot' ? this.mouseY - 25 : this.mouseY);
         const elementUnderPos = document.elementFromPoint(centerOfRedactor, Y);
         const blockInCurrentPos = this.Editor.BlockManager.getBlockByChildNode(elementUnderPos);
         if (blockInCurrentPos === undefined) {
@@ -238,39 +247,39 @@ export default class BlockSelection extends Module {
         const leftPos = centerOfRedactor - centerOfblock;
         const rightPos = centerOfRedactor + centerOfblock;
 
-        if ((startX < leftPos && mouseX < leftPos) || (startX > rightPos && mouseX > rightPos)) {
-          isIn = false;
+        if ((this.startX < leftPos && this.mouseX < leftPos) || (this.startX > rightPos && this.mouseX > rightPos)) {
+          this.isIn = false;
         } else {
-          isIn = true;
+          this.isIn = true;
         }
 
-        if (stack[stack.length - 1] !== index) {
-          if (stack[stack.length - 2] === index) {
-            if (isIn) {
-              if (mouseY + window.pageYOffset >= startY) {
+        if (this.stack[this.stack.length - 1] !== index) {
+          if (this.stack[this.stack.length - 2] === index) {
+            if (this.isIn) {
+              if (this.mouseY + window.pageYOffset >= this.startY) {
                 this.unSelectBlockByIndex(index + 1);
               } else {
                 this.unSelectBlockByIndex(index - 1);
               }
             }
-            stack.pop();
+            this.stack.pop();
           } else {
-            if (isIn) {
+            if (this.isIn) {
               this.selectBlockByIndex(index);
             }
-            stack.push(index);
+            this.stack.push(index);
           }
         }
 
-        if (isIn && !this.Editor.BlockManager.getBlockByIndex(stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
-          for (let i = 0; i < stack.length; i++) {
-            this.selectBlockByIndex(stack[i]);
+        if (this.isIn && !this.Editor.BlockManager.getBlockByIndex(this.stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
+          for (let i = 0; i < this.stack.length; i++) {
+            this.selectBlockByIndex(this.stack[i]);
           }
         }
 
-        if (!isIn && this.Editor.BlockManager.getBlockByIndex(stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
-          for (let i = 0; i < stack.length; i++) {
-            this.unSelectBlockByIndex(stack[i]);
+        if (!this.isIn && this.Editor.BlockManager.getBlockByIndex(this.stack[0]).holder.classList.contains(BlockSelection.CSS.blockSelected)) {
+          for (let i = 0; i < this.stack.length; i++) {
+            this.unSelectBlockByIndex(this.stack[i]);
           }
         }
       }
@@ -285,11 +294,11 @@ export default class BlockSelection extends Module {
     }, false);
 
     Listeners.on(document.body, 'mouseup', (event) => {
-      mousedown = false;
+      this.mousedown = false;
       overlayContainer.removeChild(overlayRectangle);
 
-      startX = 0;
-      startY = 0;
+      this.startX = 0;
+      this.startY = 0;
     }, false);
   }
 
@@ -325,6 +334,7 @@ export default class BlockSelection extends Module {
    */
   private handleCommandA(event): void {
     this.rectSelection = false;
+
     /** allow default selection on native inputs */
     if ($.isNativeInput(event.target) && !this.nativeInputSelected) {
       this.nativeInputSelected = true;
