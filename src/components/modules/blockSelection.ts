@@ -277,21 +277,76 @@ export default class BlockSelection extends Module {
     if (this.stackOfSelected[this.stackOfSelected.length - 1] === info.index) {
       return;
     }
-    // If the selection area is reduced
-    if (this.stackOfSelected[this.stackOfSelected.length - 2] === info.index) {
-      if (this.rectCrossesBlocks) {
-        if (this.mouseY + window.pageYOffset >= this.startY) {
-          this.unSelectBlockByIndex(info.index + 1);
-        } else {
-          this.unSelectBlockByIndex(info.index - 1);
-        }
-      }
-      this.stackOfSelected.pop();
+
+    console.log(this.stackOfSelected);
+
+    const sizeStack = this.stackOfSelected.length;
+    let direction;
+    if (this.stackOfSelected.length <= 1) {
+      direction = 0; // undefined
+    } else if (this.stackOfSelected[sizeStack - 1] - this.stackOfSelected[sizeStack - 2] > 0) {
+      direction = 1; // down
     } else {
-      if (this.rectCrossesBlocks) {
-        this.selectBlockByIndex(info.index);
+      direction = -1; // up
+    }
+
+    let reduction;
+    if ((info.index > this.stackOfSelected[sizeStack - 1] && direction === 1) ||
+      (info.index < this.stackOfSelected[sizeStack - 1] && direction === -1) || direction === 0) {
+      reduction = false;
+    } else {
+      reduction = true;
+    }
+
+    console.log(reduction);
+
+    if (!reduction && (info.index > this.stackOfSelected[sizeStack - 1] || this.stackOfSelected[sizeStack - 1] === undefined)) {
+      console.log('1');
+      let i = this.stackOfSelected[sizeStack - 1] + 1 || info.index;
+      for (i; i <= info.index; i++) {
+        if (this.rectCrossesBlocks) {
+          this.selectBlockByIndex(i);
+        }
+        this.stackOfSelected.push(i);
       }
-      this.stackOfSelected.push(info.index);
+      return;
+    }
+
+    if (!reduction && (info.index < this.stackOfSelected[sizeStack - 1])) {
+      console.log('2');
+      for (let i = this.stackOfSelected[sizeStack - 1] - 1; i >= info.index; i--) {
+        if (this.rectCrossesBlocks) {
+          this.selectBlockByIndex(i);
+        }
+        this.stackOfSelected.push(i);
+      }
+      return;
+    }
+
+    if (reduction && (info.index < this.stackOfSelected[sizeStack - 1])) {
+      console.log('3');
+      let i = sizeStack - 1;
+      while (info.index < this.stackOfSelected[i]) {
+        if (this.rectCrossesBlocks) {
+          this.unSelectBlockByIndex(this.stackOfSelected[i]);
+        }
+        this.stackOfSelected.pop();
+        i--;
+      }
+      return;
+    }
+
+    if (reduction && (info.index > this.stackOfSelected[sizeStack - 1])) {
+      console.log('4');
+      let i = sizeStack - 1;
+      while (info.index > this.stackOfSelected[i]) {
+        if (this.rectCrossesBlocks) {
+          this.unSelectBlockByIndex(this.stackOfSelected[i]);
+        }
+        this.stackOfSelected.pop();
+        i--;
+      }
+      return;
     }
   }
 

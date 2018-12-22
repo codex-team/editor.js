@@ -16278,7 +16278,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.startY = 0;
       _this.mouseX = 0;
       _this.mouseY = 0;
-      _this.stack = [];
+      _this.stackOfSelected = [];
       return _this;
     }
     /**
@@ -16337,7 +16337,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         document.body.appendChild(overlay);
         this.overlayRectangle = overlayRectangle;
         Listeners.on(overlayBottomScrollZone, 'mouseenter', function (event) {
-          console.log(_this2);
           _this2.inScrollZone = 'bot';
 
           _this2.scrollVertical(_this2.scrollSpeed);
@@ -16422,9 +16421,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         if (this.startX < info.leftPos && this.mouseX < info.leftPos || this.startX > info.rightPos && this.mouseX > info.rightPos) {
-          this.isIn = false;
+          this.rectCrossesBlocks = false;
         } else {
-          this.isIn = true;
+          this.rectCrossesBlocks = true;
         }
 
         this.handleNextBlock(info);
@@ -16433,45 +16432,111 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "correctSelection",
       value: function correctSelection() {
-        var firstBlockInStack = this.Editor.BlockManager.getBlockByIndex(this.stack[0]);
+        var firstBlockInStack = this.Editor.BlockManager.getBlockByIndex(this.stackOfSelected[0]);
         var isSelected = firstBlockInStack.holder.classList.contains(BlockSelection.CSS.blockSelected);
 
-        if (this.isIn && !isSelected) {
-          for (var i = 0; i < this.stack.length; i++) {
-            this.selectBlockByIndex(this.stack[i]);
+        if (this.rectCrossesBlocks && !isSelected) {
+          for (var i = 0; i < this.stackOfSelected.length; i++) {
+            this.selectBlockByIndex(this.stackOfSelected[i]);
           }
         }
 
-        if (!this.isIn && isSelected) {
-          for (var _i = 0; _i < this.stack.length; _i++) {
-            this.unSelectBlockByIndex(this.stack[_i]);
+        if (!this.rectCrossesBlocks && isSelected) {
+          for (var _i = 0; _i < this.stackOfSelected.length; _i++) {
+            this.unSelectBlockByIndex(this.stackOfSelected[_i]);
           }
         }
       }
     }, {
       key: "handleNextBlock",
       value: function handleNextBlock(info) {
-        if (this.stack[this.stack.length - 1] === info.index) {
+        if (this.stackOfSelected[this.stackOfSelected.length - 1] === info.index) {
           return;
-        } // If the selection area is reduced
+        }
 
+        console.log(this.stackOfSelected);
+        var sizeStack = this.stackOfSelected.length;
+        var direction;
 
-        if (this.stack[this.stack.length - 2] === info.index) {
-          if (this.isIn) {
-            if (this.mouseY + window.pageYOffset >= this.startY) {
-              this.unSelectBlockByIndex(info.index + 1);
-            } else {
-              this.unSelectBlockByIndex(info.index - 1);
-            }
-          }
-
-          this.stack.pop();
+        if (this.stackOfSelected.length <= 1) {
+          direction = 0; // undefined
+        } else if (this.stackOfSelected[sizeStack - 1] - this.stackOfSelected[sizeStack - 2] > 0) {
+          direction = 1; // down
         } else {
-          if (this.isIn) {
-            this.selectBlockByIndex(info.index);
+          direction = -1; // up
+        }
+
+        var reduction;
+
+        if (info.index > this.stackOfSelected[sizeStack - 1] && direction === 1 || info.index < this.stackOfSelected[sizeStack - 1] && direction === -1 || direction === 0) {
+          reduction = false;
+        } else {
+          reduction = true;
+        }
+
+        console.log(reduction);
+
+        if (!reduction && (info.index > this.stackOfSelected[sizeStack - 1] || this.stackOfSelected[sizeStack - 1] === undefined)) {
+          console.log('1');
+          var i = this.stackOfSelected[sizeStack - 1] + 1 || info.index;
+
+          for (i; i <= info.index; i++) {
+            if (this.rectCrossesBlocks) {
+              this.selectBlockByIndex(i);
+            }
+
+            this.stackOfSelected.push(i);
           }
 
-          this.stack.push(info.index);
+          return;
+        }
+
+        if (!reduction && info.index < this.stackOfSelected[sizeStack - 1]) {
+          console.log('2');
+
+          for (var _i2 = this.stackOfSelected[sizeStack - 1] - 1; _i2 >= info.index; _i2--) {
+            if (this.rectCrossesBlocks) {
+              this.selectBlockByIndex(_i2);
+            }
+
+            this.stackOfSelected.push(_i2);
+          }
+
+          return;
+        }
+
+        if (reduction && info.index < this.stackOfSelected[sizeStack - 1]) {
+          console.log('3');
+
+          var _i3 = sizeStack - 1;
+
+          while (info.index < this.stackOfSelected[_i3]) {
+            if (this.rectCrossesBlocks) {
+              this.unSelectBlockByIndex(this.stackOfSelected[_i3]);
+            }
+
+            this.stackOfSelected.pop();
+            _i3--;
+          }
+
+          return;
+        }
+
+        if (reduction && info.index > this.stackOfSelected[sizeStack - 1]) {
+          console.log('4');
+
+          var _i4 = sizeStack - 1;
+
+          while (info.index > this.stackOfSelected[_i4]) {
+            if (this.rectCrossesBlocks) {
+              this.unSelectBlockByIndex(this.stackOfSelected[_i4]);
+            }
+
+            this.stackOfSelected.pop();
+            _i4--;
+          }
+
+          return;
         }
       }
     }, {
@@ -16539,7 +16604,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.mousedown = true;
         this.startX = event.pageX;
         this.startY = event.pageY;
-        this.stack = [];
+        this.stackOfSelected = [];
         this.overlayRectangle.style.left = "".concat(this.startX, "px");
         this.overlayRectangle.style.top = "".concat(this.startY, "px");
         this.overlayRectangle.style.bottom = "calc(100% - ".concat(this.startY, "px");
@@ -16551,8 +16616,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "scrollVertical",
       value: function scrollVertical(n) {
         var _this3 = this;
-
-        console.log(this);
 
         if (this.inScrollZone && this.mousedown) {
           window.scrollBy(0, n);
