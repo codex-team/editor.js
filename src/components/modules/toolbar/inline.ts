@@ -137,7 +137,7 @@ export default class InlineToolbar extends Module {
    * @param {KeyboardEvent|MouseEvent} event
    */
   public handleShowingEvent(event): void {
-    if (!this.allowedToShow(event)) {
+    if (!this.allowedToShow()) {
       this.close();
       return;
     }
@@ -183,7 +183,7 @@ export default class InlineToolbar extends Module {
    */
   public close(): void {
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
-    this.tools.forEach((toolInstance, toolName) => {
+    this.tools.forEach((toolInstance) => {
       if (typeof toolInstance.clear === 'function') {
         toolInstance.clear();
       }
@@ -216,27 +216,15 @@ export default class InlineToolbar extends Module {
 
   /**
    * Need to show Inline Toolbar or not
-   * @param {KeyboardEvent|MouseEvent} event
    */
-  private allowedToShow(event): boolean {
+  private allowedToShow(): boolean {
     /**
      * Tags conflicts with window.selection function.
      * Ex. IMG tag returns null (Firefox) or Redactors wrapper (Chrome)
      */
     const tagsConflictsWithSelection = ['IMG', 'INPUT'];
-
-    if (event && tagsConflictsWithSelection.includes(event.target.tagName)) {
-      return false;
-    }
-
-    // The selection of the element only in contenteditable
-    const contenteditable = event.target.closest('[contenteditable="true"]');
-    if (contenteditable === null) {
-      return false;
-    }
-
-    const currentSelection = SelectionUtils.get(),
-      selectedText = SelectionUtils.text;
+    const currentSelection = SelectionUtils.get();
+    const selectedText = SelectionUtils.text;
 
     // old browsers
     if (!currentSelection || !currentSelection.anchorNode) {
@@ -245,6 +233,18 @@ export default class InlineToolbar extends Module {
 
     // empty selection
     if (currentSelection.isCollapsed || selectedText.length < 1) {
+      return false;
+    }
+
+    const target = currentSelection.anchorNode.parentElement;
+
+    if (currentSelection && tagsConflictsWithSelection.includes(target.tagName)) {
+      return false;
+    }
+
+    // The selection of the element only in contenteditable
+    const contenteditable = target.closest('[contenteditable="true"]');
+    if (contenteditable === null) {
       return false;
     }
 
@@ -367,7 +367,7 @@ export default class InlineToolbar extends Module {
 
         return (toolClass as ToolSettings).class[Tools.apiSettings.IS_INLINE];
       })
-      .map(([name, toolClass]: [string, InlineToolConstructable | ToolSettings]) => name);
+      .map(([name]: [string, InlineToolConstructable | ToolSettings]) => name);
 
     /**
      * 1) For internal tools, check public getter 'shortcut'
