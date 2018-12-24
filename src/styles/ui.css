@@ -4,6 +4,7 @@
 .codex-editor {
   position: relative;
   box-sizing: border-box;
+  z-index: 1;
 
   .hide {
     display: none;
