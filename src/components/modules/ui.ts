@@ -38,10 +38,11 @@ export default class UI extends Module {
    * CodeX Editor UI CSS class names
    * @return {{editorWrapper: string, editorZone: string}}
    */
-  private get CSS(): {editorWrapper: string, editorZone: string} {
+  private get CSS(): {editorWrapper: string, editorZone: string, editorLoader: string} {
     return {
       editorWrapper : 'codex-editor',
       editorZone    : 'codex-editor__redactor',
+      editorLoader  : 'codex-editor__loader',
     };
   }
 
@@ -53,6 +54,21 @@ export default class UI extends Module {
     wrapper: null,
     redactor: null,
   };
+
+  /**
+   * Adds loader to editor while content is not ready
+   */
+  public addLoader(): void {
+    this.nodes.loader = $.make('div', this.CSS.editorLoader);
+    this.nodes.redactor.appendChild(this.nodes.loader);
+  }
+
+  /**
+   * Removes loader when content has loaded
+   */
+  public removeLoader(): void {
+    this.nodes.redactor.removeChild(this.nodes.loader);
+  }
 
   /**
    * Making main interface

@@ -43,6 +43,7 @@ export default class Renderer extends Module {
    * @param {RendererBlocks[]} blocks
    */
   public render(blocks: BlockToolData[]): Promise<void> {
+    this.Editor.UI.addLoader();
     const chainData = blocks.map((block) => ({function: () => this.insertBlock(block)}));
 
     return _.sequence(chainData as ChainData[]);

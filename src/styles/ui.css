@@ -14,6 +14,32 @@
     padding-bottom: 300px;
   }
 
+  &__loader {
+    position: relative;
+    height: 200px;
+    box-sizing: border-box;
+    border-radius: 5px;
+    border: 1px solid #e6e9eb;
+
+    &::before {
+      content: '';
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      top: 50%;
+      width: 30px;
+      height: 30px;
+      margin-top: -25px;
+      margin-left: -15px;
+      border-radius: 50%;
+      border: 2px solid #cdd1e0;
+      border-top-color: #388ae5;
+      box-sizing: border-box;
+      animation: editor-loader-spin 2s infinite linear;
+    }
+  }
+
+
   &-copyable {
     position: absolute;
     height: 1px;
@@ -48,4 +74,13 @@
 
 [contentEditable=true][data-placeholder]:empty:focus::before {
   opacity: 0.3;
+}
+
+@keyframes editor-loader-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

@@ -254,7 +254,10 @@ export default class Core {
       Promise.resolve(),
     );
 
-    return this.moduleInstances.Renderer.render(this.config.data.blocks);
+    return this.moduleInstances.Renderer.render(this.config.data.blocks)
+        .then(() => {
+          this.moduleInstances.UI.removeLoader();
+        });
   }
 
   /**
