@@ -24,15 +24,23 @@ export default class Saver extends Module {
    * @return {OutputData}
    */
   public async save(): Promise<OutputData> {
-    const blocks = this.Editor.BlockManager.blocks,
+    const {BlockManager, Sanitizer, ModificationsObserver} = this.Editor;
+    const blocks = BlockManager.blocks,
       chainData = [];
+
+    /**
+     * Disable modifications observe while saving
+     */
+    ModificationsObserver.disable();
 
     blocks.forEach((block: Block) => {
       chainData.push(block.save());
     });
 
     const extractedData = await Promise.all(chainData);
-    const sanitizedData = await this.Editor.Sanitizer.sanitizeBlocks(extractedData);
+    const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
+
+    ModificationsObserver.enable();
 
     return this.makeOutput(sanitizedData);
   }

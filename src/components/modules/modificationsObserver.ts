@@ -23,6 +23,11 @@ export default class ModificationsObserver extends Module {
   private observer: MutationObserver;
 
   /**
+   * Allows to temporary disable mutations handling
+   */
+  private disabled: boolean;
+
+  /**
    * Used to prevent several mutation callback execution
    * @type {Function}
    */
@@ -50,6 +55,22 @@ export default class ModificationsObserver extends Module {
     window.setTimeout( () => {
       this.setObserver();
     }, 1000);
+  }
+
+  /**
+   * Allows to disable observer,
+   * for example when Editor wants to stealthy mutate DOM
+   */
+  public disable() {
+    this.disabled = true;
+  }
+
+  /**
+   * Enables mutation handling
+   * Should be called after .disable()
+   */
+  public enable() {
+    this.disabled = false;
   }
 
   /**
@@ -81,8 +102,15 @@ export default class ModificationsObserver extends Module {
    */
   private mutationHandler(mutationList, observer) {
     /**
+     * Skip mutations in stealth mode
+     */
+    if (this.disabled) {
+      return;
+    }
+
+    /**
      * We divide two Mutation types:
-     * 1) mutations that concerns client changes. For example, settings changes, symbol added, deletion, insertions and so on
+     * 1) mutations that concerns client changes: settings changes, symbol added, deletion, insertions and so on
      * 2) functional changes. On each client actions we set functional identifiers to interact with user
      */
     let contentMutated = false;
