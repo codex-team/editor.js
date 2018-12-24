@@ -290,7 +290,19 @@ export default class UI extends Module {
    *
    */
   private redactorClicked(event: MouseEvent): void {
-    const clickedNode = event.target as HTMLElement;
+
+    if (!Selection.isCollapsed) {
+      return;
+    }
+
+    let clickedNode = event.target as HTMLElement;
+
+    /**
+     * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
+     */
+    if (clickedNode === this.nodes.redactor) {
+      clickedNode = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement;
+    }
 
     /**
      * Select clicked Block as Current
