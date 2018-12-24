@@ -210,7 +210,7 @@ export default class SelectionUtils {
    *
    * @return {boolean}
    */
-  private fakeBackground = false;
+  public fakeBackground = false;
 
   /**
    * Native Document's commands for fake background
