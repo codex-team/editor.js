@@ -295,7 +295,14 @@ export default class UI extends Module {
       return;
     }
 
-    const clickedNode = event.target as HTMLElement;
+    let clickedNode = event.target as HTMLElement;
+
+    /**
+     * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
+     */
+    if (clickedNode === this.nodes.redactor) {
+      clickedNode = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement;
+    }
 
     /**
      * Select clicked Block as Current
