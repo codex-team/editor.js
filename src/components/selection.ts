@@ -210,7 +210,7 @@ export default class SelectionUtils {
    *
    * @return {boolean}
    */
-  private fakeBackground = false;
+  public isFakeBackgroundEnabled = false;
 
   /**
    * Native Document's commands for fake background
@@ -222,13 +222,13 @@ export default class SelectionUtils {
    * Removes fake background
    */
   public removeFakeBackground() {
-    if (!this.fakeBackground) {
+    if (!this.isFakeBackgroundEnabled) {
       return;
     }
     const fakeBack = this.findParentTag('SPAN');
 
     fakeBack.style.paddingTop = '';
-    this.fakeBackground = false;
+    this.isFakeBackgroundEnabled = false;
     document.execCommand(this.commandRemoveFormat);
   }
 
@@ -241,7 +241,7 @@ export default class SelectionUtils {
 
     // The matched value to be slightly compared with the actual height of the selection
     fakeBack.style.paddingTop = '0.30em';
-    this.fakeBackground = true;
+    this.isFakeBackgroundEnabled = true;
   }
 
   /**
