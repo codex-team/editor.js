@@ -1,14 +1,14 @@
 {
   "name": "codex.editor",
-  "version": "2.7.12",
-  "description": "Codex Editor. Native JS, based on API and Open Source",
+  "version": "2.7.16",
+  "description": "CodeX Editor. Native JS, based on API and Open Source",
   "main": "dist/codex-editor.js",
   "types": "./types/index.d.ts",
   "scripts": {
     "build": "rimraf dist/* && yarn svg && yarn build:prod",
     "build:win": "rimraf dist && yarn svg:win && yarn build:prod",
-    "build:dev": "webpack --mode development --progress  --display-error-details --display-entrypoints",
-    "build:prod": "webpack --mode production --progress  --display-error-details --display-entrypoints",
+    "build:dev": "webpack --mode development --progress  --display-error-details --display-entrypoints --watch",
+    "build:prod": "webpack --mode production",
     "svg:win": "if not exist dist md dist && yarn svg",
     "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
     "pull_tools": "git submodule update --init --recursive"

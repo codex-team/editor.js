@@ -242,6 +242,15 @@ export default class Dom {
   }
 
   /**
+   * Check if passed element is contenteditable
+   * @param {HTMLElement} element
+   * @return {boolean}
+   */
+  public static isContentEditable(element: HTMLElement): boolean {
+    return element.contentEditable === 'true';
+  }
+
+  /**
    * Checks target if it is native input
    * @param {Element|String|Node} target - HTML element or string
    * @return {Boolean}
@@ -256,6 +265,33 @@ export default class Dom {
   }
 
   /**
+   * Checks if we can set caret
+   * @param {HTMLElement} target
+   * @return {boolean}
+   */
+  public static canSetCaret(target: HTMLElement): boolean {
+    let result = true;
+    if (Dom.isNativeInput(target)) {
+      const inputElement = target as HTMLInputElement;
+      switch (inputElement.type) {
+        case 'file':
+        case 'checkbox':
+        case 'radio':
+        case 'hidden':
+        case 'submit':
+        case 'button':
+        case 'image':
+        case 'reset':
+          result = false;
+          break;
+      }
+    } else {
+      result = Dom.isContentEditable(target);
+    }
+    return result;
+  }
+
+  /**
    * Checks node if it is empty
    *
    * @description Method checks simple Node without any childs for emptiness
@@ -266,6 +302,10 @@ export default class Dom {
    */
   public static isNodeEmpty(node: Node): boolean {
     let nodeText;
+
+    if (this.isSingleTag(node as HTMLElement)) {
+      return false;
+    }
 
     if ( this.isElement(node) && this.isNativeInput(node) ) {
       nodeText = (node as HTMLInputElement).value;

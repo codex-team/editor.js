@@ -29,6 +29,7 @@ module.exports = (env, argv) => {
     entry: {
       'codex-editor': ['@babel/polyfill/noConflict', './src/codex.ts']
     },
+
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: '[name].js',
@@ -36,7 +37,6 @@ module.exports = (env, argv) => {
       libraryTarget: 'umd'
     },
 
-    watch: true,
     watchOptions: {
       aggregateTimeout: 50
     },
@@ -44,13 +44,12 @@ module.exports = (env, argv) => {
     /**
      * Tell webpack what directories should be searched when resolving modules.
      */
-    resolve : {
-      modules : [path.join(__dirname, 'src'),  'node_modules'],
+    resolve: {
+      modules: [path.join(__dirname, 'src'),  'node_modules'],
       extensions: ['.js', '.ts']
     },
 
     plugins: [
-
       /** Pass variables into modules */
       new webpack.DefinePlugin({
         NODE_ENV: JSON.stringify(NODE_ENV),
@@ -64,8 +63,8 @@ module.exports = (env, argv) => {
       new LicenseWebpackPlugin()
     ],
 
-    module : {
-      rules : [
+    module: {
+      rules: [
         {
           test: /\.ts$/,
           use: [
