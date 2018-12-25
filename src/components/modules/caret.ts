@@ -284,7 +284,7 @@ export default class Caret extends Module {
      * If last block is empty and it is an initialBlock, set to that.
      * Otherwise, append new empty block and set to that
      */
-    if (lastBlock.isEmpty) {
+    if (this.Editor.Tools.isInitial(lastBlock.tool) && lastBlock.isEmpty) {
       this.setToBlock(lastBlock);
     } else {
       const newBlock = this.Editor.BlockManager.insertAtEnd();

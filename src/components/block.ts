@@ -185,8 +185,8 @@ export default class Block {
    * @return {Boolean}
    */
   get isEmpty(): boolean {
-    const emptyText = $.isEmpty(this.pluginsContent),
-      emptyMedia = !this.hasMedia;
+    const emptyText = $.isEmpty(this.pluginsContent);
+    const emptyMedia = !this.hasMedia;
 
     return emptyText && emptyMedia;
   }
