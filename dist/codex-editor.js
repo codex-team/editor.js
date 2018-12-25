@@ -1,7 +1,7 @@
 /*!
  * Codex Editor
  * 
- * @version 2.7.16
+ * @version 2.7.20
  * 
  * @licence Apache-2.0
  * @author CodeX-Team <https://ifmo.su>
@@ -11280,7 +11280,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /** Editor version */
       get: function get() {
-        return "2.7.16";
+        return "2.7.20";
       }
       /**
        * @constructor
@@ -12274,9 +12274,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "isEmpty",
       get: function get() {
-        var emptyText = _dom.default.isEmpty(this.pluginsContent),
-            emptyMedia = !this.hasMedia;
+        var emptyText = _dom.default.isEmpty(this.pluginsContent);
 
+        var emptyMedia = !this.hasMedia;
         return emptyText && emptyMedia;
       }
       /**
@@ -14134,13 +14134,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "closeActions",
       value: function closeActions() {
         var clearSavedSelection = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-        // if actions is broken by other selection We need to save new selection
-        var currentSelection = new _selection.default();
-        currentSelection.save();
-        this.selection.restore();
-        this.selection.removeFakeBackground(); // and recover new selection after removing fake background
 
-        currentSelection.restore();
+        if (this.selection.isFakeBackgroundEnabled) {
+          // if actions is broken by other selection We need to save new selection
+          var currentSelection = new _selection.default();
+          currentSelection.save();
+          this.selection.restore();
+          this.selection.removeFakeBackground(); // and recover new selection after removing fake background
+
+          currentSelection.restore();
+        }
+
         this.nodes.input.classList.remove(this.CSS.inputShowed);
         this.nodes.input.value = '';
 
@@ -15885,10 +15889,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (BlockManager.currentBlockIndex === 0) {
           Caret.setToBlock(BlockManager.currentBlock);
-        } else {
-          Caret.setToBlock(BlockManager.previousBlock, _caret.default.positions.END);
+        } else if (BlockManager.currentBlock.inputs.length === 0) {
+          /** If previous (now current) block doesn't contain inputs, remove it */
+          BlockManager.removeBlock();
+          BlockManager.insert();
         }
 
+        Caret.setToBlock(BlockManager.currentBlock, _caret.default.positions.END);
         this.Editor.Toolbar.close();
         return true;
       }
@@ -15903,8 +15910,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             BlockManager = _this$Editor4.BlockManager,
             Caret = _this$Editor4.Caret,
             Toolbar = _this$Editor4.Toolbar;
-        var targetBlock = BlockManager.getBlockByIndex(BlockManager.currentBlockIndex - 1),
-            blockToMerge = BlockManager.currentBlock;
+        var targetBlock = BlockManager.previousBlock;
+        var blockToMerge = BlockManager.currentBlock;
         /**
          * Blocks that can be merged:
          * 1) with the same Name
@@ -15914,6 +15921,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
         if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
+          /** If target Block doesn't contain inputs, remove it */
+          if (targetBlock.inputs.length === 0) {
+            BlockManager.removeBlock(BlockManager.currentBlockIndex - 1);
+            Caret.setToBlock(BlockManager.currentBlock);
+            Toolbar.close();
+            return;
+          }
+
           if (Caret.navigatePrevious()) {
             Toolbar.close();
           }
@@ -16287,6 +16302,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         this._blocks.remove(index);
+
+        if (this.currentBlockIndex >= index) {
+          this.currentBlockIndex--;
+        }
         /**
          * If first Block was removed, insert new Initial Block and set focus on it`s first input
          */
@@ -17200,7 +17219,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
 
-        if (lastBlock.isEmpty) {
+        if (this.Editor.Tools.isInitial(lastBlock.tool) && lastBlock.isEmpty) {
           this.setToBlock(lastBlock);
         } else {
           var newBlock = this.Editor.BlockManager.insertAtEnd();
@@ -18615,7 +18634,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                     result[tag.toLowerCase()] = true;
                     return result;
                   }, {});
-                  customConfig = Object.assign({}, toolsTags, Sanitizer.getAllInlineToolsConfig());
+                  customConfig = Object.assign({}, toolsTags, Sanitizer.getAllInlineToolsConfig(), {
+                    br: {}
+                  });
                   cleanData = Sanitizer.clean(htmlData, customConfig);
                   /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
 
@@ -19349,6 +19370,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
              */
             case Node.ELEMENT_NODE:
               var element = node;
+
+              if (element.tagName === 'BR') {
+                return (0, _toConsumableArray2.default)(nodes).concat([destNode, new DocumentFragment()]);
+              }
 
               var _ref9 = _this8.toolsTags[element.tagName] || {},
                   _ref9$tool = _ref9.tool,
@@ -20146,7 +20171,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return {
           time: +new Date(),
           blocks: blocks,
-          version: "2.7.16"
+          version: "2.7.20"
         };
       }
     }]);
@@ -20979,7 +21004,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "handleShowingEvent",
       value: function handleShowingEvent(event) {
-        if (!this.allowedToShow(event)) {
+        if (!this.allowedToShow()) {
           this.close();
           return;
         }
@@ -21026,7 +21051,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "close",
       value: function close() {
         this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
-        this.tools.forEach(function (toolInstance, toolName) {
+        this.tools.forEach(function (toolInstance) {
           if (typeof toolInstance.clear === 'function') {
             toolInstance.clear();
           }
@@ -21060,32 +21085,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Need to show Inline Toolbar or not
-       * @param {KeyboardEvent|MouseEvent} event
        */
 
     }, {
       key: "allowedToShow",
-      value: function allowedToShow(event) {
+      value: function allowedToShow() {
         /**
          * Tags conflicts with window.selection function.
          * Ex. IMG tag returns null (Firefox) or Redactors wrapper (Chrome)
          */
         var tagsConflictsWithSelection = ['IMG', 'INPUT'];
 
-        if (event && tagsConflictsWithSelection.includes(event.target.tagName)) {
-          return false;
-        } // The selection of the element only in contenteditable
+        var currentSelection = _selection.default.get();
 
-
-        var contenteditable = event.target.closest('[contenteditable="true"]');
-
-        if (contenteditable === null) {
-          return false;
-        }
-
-        var currentSelection = _selection.default.get(),
-            selectedText = _selection.default.text; // old browsers
-
+        var selectedText = _selection.default.text; // old browsers
 
         if (!currentSelection || !currentSelection.anchorNode) {
           return false;
@@ -21093,6 +21106,19 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
         if (currentSelection.isCollapsed || selectedText.length < 1) {
+          return false;
+        }
+
+        var target = currentSelection.anchorNode.parentElement;
+
+        if (currentSelection && tagsConflictsWithSelection.includes(target.tagName)) {
+          return false;
+        } // The selection of the element only in contenteditable
+
+
+        var contenteditable = target.closest('[contenteditable="true"]');
+
+        if (contenteditable === null) {
           return false;
         } // is enabled by current Block's Tool
 
@@ -21230,9 +21256,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
           return toolClass.class[Tools.apiSettings.IS_INLINE];
         }).map(function (_ref3) {
-          var _ref4 = (0, _slicedToArray2.default)(_ref3, 2),
-              name = _ref4[0],
-              toolClass = _ref4[1];
+          var _ref4 = (0, _slicedToArray2.default)(_ref3, 1),
+              name = _ref4[0];
 
           return name;
         });
@@ -21742,16 +21767,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "insertNewBlock",
       value: function insertNewBlock(tool, toolName) {
+        var _this$Editor = this.Editor,
+            BlockManager = _this$Editor.BlockManager,
+            Caret = _this$Editor.Caret;
         /**
          * @type {Block}
          */
-        var currentBlock = this.Editor.BlockManager.currentBlock;
+
+        var currentBlock = BlockManager.currentBlock;
         var newBlock;
 
         if (currentBlock.isEmpty) {
-          newBlock = this.Editor.BlockManager.replace(toolName);
+          newBlock = BlockManager.replace(toolName);
         } else {
-          newBlock = this.Editor.BlockManager.insert(toolName);
+          newBlock = BlockManager.insert(toolName);
         }
         /**
          * Apply callback before inserting html
@@ -21760,9 +21789,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         newBlock.call('appendCallback', {});
         this.Editor.Caret.setToBlock(newBlock);
+        /** If new block doesn't contain inpus, insert new paragraph above */
+
+        if (newBlock.inputs.length === 0) {
+          if (newBlock === BlockManager.lastBlock) {
+            BlockManager.insertAtEnd();
+            Caret.setToBlock(BlockManager.lastBlock);
+          } else {
+            Caret.setToBlock(BlockManager.nextBlock);
+          }
+        }
         /**
          * close toolbar when node is changed
          */
+
 
         this.Editor.Toolbar.close();
       }
@@ -22719,10 +22759,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "redactorClicked",
       value: function redactorClicked(event) {
+        if (!_selection.default.isCollapsed) {
+          return;
+        }
+
         var clickedNode = event.target;
+        /**
+         * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
+         */
+
+        if (clickedNode === this.nodes.redactor) {
+          clickedNode = document.elementFromPoint(event.clientX, event.clientY);
+        }
         /**
          * Select clicked Block as Current
          */
+
 
         try {
           /**
@@ -22961,7 +23013,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @return {boolean}
        */
 
-      this.fakeBackground = false;
+      this.isFakeBackgroundEnabled = false;
       /**
        * Native Document's commands for fake background
        */
@@ -22982,13 +23034,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Removes fake background
        */
       value: function removeFakeBackground() {
-        if (!this.fakeBackground) {
+        if (!this.isFakeBackgroundEnabled) {
           return;
         }
 
         var fakeBack = this.findParentTag('SPAN');
         fakeBack.style.paddingTop = '';
-        this.fakeBackground = false;
+        this.isFakeBackgroundEnabled = false;
         document.execCommand(this.commandRemoveFormat);
       }
       /**
@@ -23002,7 +23054,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var fakeBack = this.findParentTag('SPAN'); // The matched value to be slightly compared with the actual height of the selection
 
         fakeBack.style.paddingTop = '0.30em';
-        this.fakeBackground = true;
+        this.isFakeBackgroundEnabled = true;
       }
       /**
        * Save SelectionUtils's range
@@ -23511,7 +23563,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        var editorLabelText = "Editor.js ".concat("2.7.16");
+        var editorLabelText = "Editor.js ".concat("2.7.20");
         var editorLabelStyle = "line-height: 1em;\n            color: #006FEA;\n            display: inline-block;\n            font-size: 11px;\n            line-height: 1em;\n            background-color: #fff;\n            padding: 4px 9px;\n            border-radius: 30px;\n            border: 1px solid rgba(56, 138, 229, 0.16);\n            margin: 4px 5px 4px 0;";
 
         try {

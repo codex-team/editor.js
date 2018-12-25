@@ -317,9 +317,13 @@ export default class BlockEvents extends Module {
      */
     if (BlockManager.currentBlockIndex === 0) {
       Caret.setToBlock(BlockManager.currentBlock);
-    } else {
-      Caret.setToBlock(BlockManager.previousBlock, CaretClass.positions.END);
+    } else if (BlockManager.currentBlock.inputs.length === 0) {
+      /** If previous (now current) block doesn't contain inputs, remove it */
+      BlockManager.removeBlock();
+      BlockManager.insert();
     }
+
+    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
 
     this.Editor.Toolbar.close();
     return true;
@@ -330,8 +334,8 @@ export default class BlockEvents extends Module {
    */
   private mergeBlocks() {
     const { BlockManager, Caret, Toolbar } = this.Editor;
-    const targetBlock = BlockManager.getBlockByIndex(BlockManager.currentBlockIndex - 1),
-      blockToMerge = BlockManager.currentBlock;
+    const targetBlock = BlockManager.previousBlock;
+    const blockToMerge = BlockManager.currentBlock;
 
     /**
      * Blocks that can be merged:
@@ -341,6 +345,15 @@ export default class BlockEvents extends Module {
      * other case will handle as usual ARROW LEFT behaviour
      */
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
+      /** If target Block doesn't contain inputs, remove it */
+      if (targetBlock.inputs.length === 0) {
+        BlockManager.removeBlock(BlockManager.currentBlockIndex - 1);
+
+        Caret.setToBlock(BlockManager.currentBlock);
+        Toolbar.close();
+        return;
+      }
+
       if (Caret.navigatePrevious()) {
         Toolbar.close();
       }
