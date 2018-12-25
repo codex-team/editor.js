@@ -22,8 +22,6 @@
     position: relative;
     height: 200px;
     box-sizing: border-box;
-    border-radius: 5px;
-    border: 1px solid #e6e9eb;
 
     &::before {
       content: '';
