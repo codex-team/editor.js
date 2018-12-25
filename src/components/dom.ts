@@ -460,4 +460,27 @@ export default class Dom {
       'video',
     ];
   }
+
+  /**
+   * Check if passed content includes only inline elements
+   *
+   * @param {string|HTMLElement} data - element or html string
+   * @return {boolean}
+   */
+  public static containsOnlyInlineElements(data: string | HTMLElement): boolean {
+    const wrapper = document.createElement('template');
+
+    if (typeof data === 'string') {
+      wrapper.innerHTML = data;
+    } else {
+      wrapper.appendChild(data);
+    }
+
+    const check = (element: HTMLElement) => {
+      return !Dom.blockElements.includes(element.tagName.toLowerCase())
+        && Array.from(element.children).every(check);
+    };
+
+    return check(wrapper);
+  }
 }
