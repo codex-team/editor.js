@@ -157,7 +157,7 @@ export default class Paste extends Module {
       return result;
     }, {});
 
-    const customConfig = Object.assign({}, toolsTags, Sanitizer.getAllInlineToolsConfig());
+    const customConfig = Object.assign({}, toolsTags, Sanitizer.getAllInlineToolsConfig(), {br: {}});
 
     const cleanData = Sanitizer.clean(htmlData, customConfig);
 
@@ -657,6 +657,10 @@ export default class Paste extends Module {
          */
         case Node.ELEMENT_NODE:
           const element = node as HTMLElement;
+
+          if (element.tagName === 'BR') {
+            return [...nodes, destNode, new DocumentFragment()];
+          }
 
           const {tool = ''} = this.toolsTags[element.tagName] || {};
           const toolTags = this.tagsByTool[tool] || [];
