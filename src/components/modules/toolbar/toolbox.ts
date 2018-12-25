@@ -309,17 +309,18 @@ export default class Toolbox extends Module {
    * @param {String} toolName - Tool name
    */
   private insertNewBlock(tool: BlockToolConstructable, toolName: string) {
+    const {BlockManager, Caret} = this.Editor;
     /**
      * @type {Block}
      */
-    const currentBlock = this.Editor.BlockManager.currentBlock;
+    const {currentBlock} = BlockManager;
 
     let newBlock;
 
     if (currentBlock.isEmpty) {
-      newBlock = this.Editor.BlockManager.replace(toolName);
+      newBlock = BlockManager.replace(toolName);
     } else {
-      newBlock = this.Editor.BlockManager.insert(toolName);
+      newBlock = BlockManager.insert(toolName);
     }
 
     /**
@@ -328,6 +329,16 @@ export default class Toolbox extends Module {
     newBlock.call('appendCallback', {});
 
     this.Editor.Caret.setToBlock(newBlock);
+
+    /** If new block doesn't contain inpus, insert new paragraph above */
+    if (newBlock.inputs.length === 0) {
+      if (newBlock === BlockManager.lastBlock) {
+        BlockManager.insertAtEnd();
+        Caret.setToBlock(BlockManager.lastBlock);
+      } else {
+        Caret.setToBlock(BlockManager.nextBlock);
+      }
+    }
 
     /**
      * close toolbar when node is changed
