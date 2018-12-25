@@ -10,6 +10,7 @@ import {
   PasteEvent,
   PasteEventDetail,
 } from '../../../types';
+import Block from '../block';
 
 /**
  * Tag substitute object.
@@ -551,14 +552,14 @@ export default class Paste extends Module {
    * @param {PasteData} dataToInsert
    */
   private async processSingleBlock(dataToInsert: PasteData): Promise<void> {
-    const {Caret, BlockManager} = this.Editor;
+    const {Caret, BlockManager, Tools} = this.Editor;
     const {currentBlock} = BlockManager;
 
     /**
      * If pasted tool isn`t equal current Block or if pasted content contains block elements, insert it as new Block
      */
     if (dataToInsert.tool !== currentBlock.name || !$.containsOnlyInlineElements(dataToInsert.content.innerHTML)) {
-      this.insertBlock(dataToInsert);
+      this.insertBlock(dataToInsert, Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty);
       return;
     }
 
@@ -642,15 +643,17 @@ export default class Paste extends Module {
   private async insertBlock(data: PasteData, canReplaceCurrentBlock: boolean = false): Promise<void> {
     const {BlockManager, Caret} = this.Editor;
     const {currentBlock} = BlockManager;
+    let block: Block;
 
     if (canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty) {
-      BlockManager.paste(data.tool, data.event, true);
+      block = BlockManager.paste(data.tool, data.event, true);
+      Caret.setToBlock(block, CaretClass.positions.END);
       return;
     }
 
-    const block = BlockManager.paste(data.tool, data.event);
+    block = BlockManager.paste(data.tool, data.event);
 
-    Caret.setToBlock(block);
+    Caret.setToBlock(block, CaretClass.positions.END);
   }
 
   /**
