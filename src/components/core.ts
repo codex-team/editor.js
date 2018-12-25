@@ -81,6 +81,7 @@ export default class Core {
           /**
            * Resolve this.isReady promise
            */
+          this.moduleInstances.UI.removeLoader();
           onReady();
         }, 500);
       })
@@ -254,10 +255,7 @@ export default class Core {
       Promise.resolve(),
     );
 
-    return this.moduleInstances.Renderer.render(this.config.data.blocks)
-        .then(() => {
-          this.moduleInstances.UI.removeLoader();
-        });
+    return this.moduleInstances.Renderer.render(this.config.data.blocks);
   }
 
   /**

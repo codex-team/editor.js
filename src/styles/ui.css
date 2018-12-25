@@ -12,6 +12,10 @@
 
   &__redactor {
     padding-bottom: 300px;
+
+    &--hidden {
+      visibility: hidden;
+    }
   }
 
   &__loader {

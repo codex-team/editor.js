@@ -12758,6 +12758,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                   /**
                    * Resolve this.isReady promise
                    */
+                  _this.moduleInstances.UI.removeLoader();
+
                   onReady();
                 }, 500);
 
@@ -12932,9 +12934,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                   }, Promise.resolve());
 
                 case 3:
-                  return _context4.abrupt("return", this.moduleInstances.Renderer.render(this.config.data.blocks).then(function () {
-                    _this2.moduleInstances.UI.removeLoader();
-                  }));
+                  return _context4.abrupt("return", this.moduleInstances.Renderer.render(this.config.data.blocks));
 
                 case 4:
                 case "end":
@@ -19537,7 +19537,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function render(blocks) {
         var _this = this;
 
-        this.Editor.UI.addLoader();
         var chainData = blocks.map(function (block) {
           return {
             function: function _function() {
@@ -22441,19 +22440,63 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Adds loader to editor while content is not ready
        */
-      value: function addLoader() {
-        this.nodes.loader = _dom.default.make('div', this.CSS.editorLoader);
-        this.nodes.redactor.appendChild(this.nodes.loader);
-      }
+      value: function () {
+        var _addLoader = (0, _asyncToGenerator2.default)(
+        /*#__PURE__*/
+        _regenerator.default.mark(function _callee() {
+          return _regenerator.default.wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  this.nodes.loader = _dom.default.make('div', this.CSS.editorLoader);
+                  this.nodes.wrapper.prepend(this.nodes.loader);
+                  this.nodes.redactor.classList.add(this.CSS.editorZoneHidden);
+
+                case 3:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee, this);
+        }));
+
+        function addLoader() {
+          return _addLoader.apply(this, arguments);
+        }
+
+        return addLoader;
+      }()
       /**
        * Removes loader when content has loaded
        */
 
     }, {
       key: "removeLoader",
-      value: function removeLoader() {
-        this.nodes.redactor.removeChild(this.nodes.loader);
-      }
+      value: function () {
+        var _removeLoader = (0, _asyncToGenerator2.default)(
+        /*#__PURE__*/
+        _regenerator.default.mark(function _callee2() {
+          return _regenerator.default.wrap(function _callee2$(_context2) {
+            while (1) {
+              switch (_context2.prev = _context2.next) {
+                case 0:
+                  this.nodes.wrapper.removeChild(this.nodes.loader);
+                  this.nodes.redactor.classList.remove(this.CSS.editorZoneHidden);
+
+                case 2:
+                case "end":
+                  return _context2.stop();
+              }
+            }
+          }, _callee2, this);
+        }));
+
+        function removeLoader() {
+          return _removeLoader.apply(this, arguments);
+        }
+
+        return removeLoader;
+      }()
       /**
        * Making main interface
        */
@@ -22463,40 +22506,44 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function () {
         var _prepare = (0, _asyncToGenerator2.default)(
         /*#__PURE__*/
-        _regenerator.default.mark(function _callee() {
-          return _regenerator.default.wrap(function _callee$(_context) {
+        _regenerator.default.mark(function _callee3() {
+          return _regenerator.default.wrap(function _callee3$(_context3) {
             while (1) {
-              switch (_context.prev = _context.next) {
+              switch (_context3.prev = _context3.next) {
                 case 0:
-                  _context.next = 2;
+                  _context3.next = 2;
                   return this.make();
 
                 case 2:
-                  _context.next = 4;
-                  return this.appendSVGSprite();
+                  _context3.next = 4;
+                  return this.addLoader();
 
                 case 4:
-                  _context.next = 6;
-                  return this.Editor.Toolbar.make();
+                  _context3.next = 6;
+                  return this.appendSVGSprite();
 
                 case 6:
-                  _context.next = 8;
-                  return this.Editor.InlineToolbar.make();
+                  _context3.next = 8;
+                  return this.Editor.Toolbar.make();
 
                 case 8:
-                  _context.next = 10;
-                  return this.loadStyles();
+                  _context3.next = 10;
+                  return this.Editor.InlineToolbar.make();
 
                 case 10:
-                  _context.next = 12;
-                  return this.bindEvents();
+                  _context3.next = 12;
+                  return this.loadStyles();
 
                 case 12:
+                  _context3.next = 14;
+                  return this.bindEvents();
+
+                case 14:
                 case "end":
-                  return _context.stop();
+                  return _context3.stop();
               }
             }
-          }, _callee, this);
+          }, _callee3, this);
         }));
 
         function prepare() {
@@ -22524,10 +22571,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function () {
         var _make = (0, _asyncToGenerator2.default)(
         /*#__PURE__*/
-        _regenerator.default.mark(function _callee2() {
-          return _regenerator.default.wrap(function _callee2$(_context2) {
+        _regenerator.default.mark(function _callee4() {
+          return _regenerator.default.wrap(function _callee4$(_context4) {
             while (1) {
-              switch (_context2.prev = _context2.next) {
+              switch (_context4.prev = _context4.next) {
                 case 0:
                   /**
                    * Element where we need to append CodeX Editor
@@ -22536,7 +22583,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                   this.nodes.holder = document.getElementById(this.config.holderId);
 
                   if (this.nodes.holder) {
-                    _context2.next = 3;
+                    _context4.next = 3;
                     break;
                   }
 
@@ -22553,10 +22600,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
                 case 7:
                 case "end":
-                  return _context2.stop();
+                  return _context4.stop();
               }
             }
-          }, _callee2, this);
+          }, _callee4, this);
         }));
 
         function make() {
@@ -22854,6 +22901,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return {
           editorWrapper: 'codex-editor',
           editorZone: 'codex-editor__redactor',
+          editorZoneHidden: 'codex-editor__redactor--hidden',
           editorLoader: 'codex-editor__loader'
         };
       }
@@ -23903,7 +23951,7 @@ exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader
 
 
 // module
-exports.push([module.i, ":root {\n  /**\n   * Selection color\n   */\n  --selectionColor: #a8d6ff;\n\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /**\n   * Blue icons\n   */\n  --color-active-icon: #388AE5;\n\n  /**\n   * Gray border, loaders\n   */\n  --color-gray-border: rgba(201, 201, 204, 0.48);\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar buttons height and width\n   */\n  --toolbar-buttons-size: 34px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbox-buttons-size: 24px;\n\n  /**\n   * Confirm deletion bg\n   */\n  --color-confirm: #E24A4A;\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n  position: relative;\n  box-sizing: border-box;\n  z-index: 1;\n}\n.codex-editor .hide {\n    display: none;\n  }\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\n.codex-editor__loader {\n    position: relative;\n    height: 200px;\n    box-sizing: border-box;\n    border-radius: 5px;\n    border: 1px solid #e6e9eb\n  }\n.codex-editor__loader::before {\n      content: '';\n      position: absolute;\n      z-index: 3;\n      left: 50%;\n      top: 50%;\n      width: 30px;\n      height: 30px;\n      margin-top: -25px;\n      margin-left: -15px;\n      border-radius: 50%;\n      border: 2px solid #cdd1e0;\n      border-top-color: #388ae5;\n      box-sizing: border-box;\n      animation: editor-loader-spin 2s infinite linear;\n    }\n.codex-editor-copyable {\n    position: absolute;\n    height: 1px;\n    width: 1px;\n    top: -400%;\n    opacity: 0.001;\n  }\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    max-height: 100%;\n  }\n/**\n * Set color for native selection\n */\n::selection{\n  background-color: #a8d6ff;\n  background-color: var(--selectionColor);\n}\n/**\n * Add placeholder to content editable elements with data attribute\n * data-placeholder=\"Hello world!\"\n */\n[contentEditable=true][data-placeholder]:empty::before{\n  content: attr(data-placeholder);\n  color: #707684;\n  color: var(--grayText);\n  font-weight: normal;\n}\n[contentEditable=true][data-placeholder]:empty:focus::before {\n  opacity: 0.3;\n}\n@keyframes editor-loader-spin {\n  0% {\n    transform: rotate(0deg);\n  }\n  100% {\n    transform: rotate(360deg);\n  }\n}\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 24px;\n  width: var(--toolbox-buttons-size);\n  height: 24px;\n  height: var(--toolbox-buttons-size);\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center\n  }\n.ce-toolbar__plus:not(:last-of-type){\n  margin-right: 10px;\n    }\n.ce-toolbar__plus {\n\n    position: absolute;\n    left: calc(calc(24px + 10px) * -1);\n    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);\n  }\n.ce-toolbar__plus:hover,\n    .ce-toolbar__plus--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-toolbar__plus--active{\n  animation: bounceIn 0.75s 1;\n  animation-fill-mode: forwards;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n.ce-toolbar__plus,\n  .ce-toolbar .ce-toolbox {\n    top: 50%;\n    transform: translateY(-50%);\n  }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 10px;\n    padding-right: 16px;\n    opacity: 0;\n  }\n.ce-toolbar__actions--opened {\n      opacity: 1;\n    }\n.ce-toolbar__actions-buttons {\n      text-align: right;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    color: #707684;\n    color: var(--grayText);\n    cursor: pointer;\n  }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-direction: row;\n        flex-direction: row;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 24px;\n  width: var(--toolbox-buttons-size);\n  height: 24px;\n  height: var(--toolbox-buttons-size);\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center;\n    }\n.ce-toolbox__button:not(:last-of-type){\n  margin-right: 10px;\n    }\n.ce-toolbox__button:hover,\n    .ce-toolbox__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-toolbox__button--active{\n  animation: bounceIn 0.75s 1;\n  animation-fill-mode: forwards;\n    }\n.ce-inline-toolbar {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-toolbar [hidden] {\n    display: none !important;\n  }\n.ce-inline-tool {\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.ce-inline-tool:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-inline-tool:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-inline-tool {\n  line-height: normal;\n}\n.ce-inline-tool > svg,\n    .ce-inline-tool .icon {\n  margin: auto;\n    }\n.ce-inline-tool--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-inline-tool--last {\n    margin-right: 0 !important;\n  }\n.ce-inline-tool--link .icon {\n      margin-top: -2px;\n    }\n.ce-inline-tool--link .icon--unlink {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--link {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--unlink {\n      display: inline-block;\n    }\n.ce-inline-tool-input {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    outline: none;\n    border: 0;\n    border-radius: 3px;\n    margin: 6px 0 0;\n    font-size: 13px;\n    padding: 8px;\n    width: 100%;\n    box-sizing: border-box;\n    display: none\n  }\n.ce-inline-tool-input:-ms-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input::placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input--showed {\n      display: block;\n    }\n.ce-settings {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-settings::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-settings {\n  right: 5px;\n  top: 35px;\n  min-width: 124px\n}\n.ce-settings::before{\n    left: auto;\n    right: 12px;\n  }\n.ce-settings {\n\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n    animation-duration: 0.5s;\n    animation-name: bounceIn;\n  }\n.ce-settings__plugin-zone:not(:empty){\n      padding: 6px 6px 0;\n    }\n.ce-settings__default-zone:not(:empty){\n      padding: 6px;\n    }\n.ce-settings__button {\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n  }\n.ce-settings__button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-settings__button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-settings__button {\n    line-height: 32px;\n  }\n.ce-settings__button > svg,\n    .ce-settings__button .icon {\n  margin: auto;\n    }\n.ce-settings__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-settings__button--disabled {\n        cursor: not-allowed !important;\n        opacity: .3;\n    }\n.ce-settings__button--selected {\n      color: #388AE5;\n      color: var(--color-active-icon);\n    }\n.ce-settings__button--delete {\n      transition: background-color 300ms ease;\n      will-change: background-color;\n    }\n.ce-settings__button--delete .icon {\n        transition: transform 200ms ease-out;\n        will-change: transform;\n      }\n.ce-settings__button--confirm {\n      background-color: #E24A4A;\n      background-color: var(--color-confirm);\n      color: #fff\n    }\n.ce-settings__button--confirm:hover {\n        background-color: rgb(213, 74, 74) !important;\n        background-color: rgb(213, 74, 74) !important;\n      }\n.ce-settings__button--confirm .icon {\n        transform: rotate(90deg);\n      }\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--focused {\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\n    border-radius: 3px;\n  }\n.ce-block--selected .ce-block__content {\n    background: #a8d6ff;\n    background: var(--selectionColor);\n    box-shadow: 0 31px 23px -22px rgba(175, 220, 255, 1);\n    animation: selectionBounce 0.2s 1;\n    animation-fill-mode: forwards;\n  }\n.ce-block--selected .ce-block__content img,\n    .ce-block--selected .ce-block__content .ce-stub {\n      opacity: 0.55;\n    }\n.ce-block--stretched .ce-block__content {\n    max-width: none;\n  }\n.ce-block__content {\n    position: relative;\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n.ce-block--drop-target .ce-block__content:before {\n      content: '';\n      position: absolute;\n      top: 100%;\n      left: -20px;\n      margin-top: -1px;\n      height: 8px;\n      width: 8px;\n      border: solid #388AE5;\n      border: solid var(--color-active-icon);\n      border-width: 1px 1px 0 0;\n      transform-origin: right;\n      transform: rotate(45deg);\n    }\n.ce-block--drop-target .ce-block__content:after {\n      content: '';\n      position: absolute;\n      top: 100%;\n      height: 1px;\n      width: 100%;\n      color: #388AE5;\n      color: var(--color-active-icon);\n      background: repeating-linear-gradient(\n        90deg,\n        #388AE5,\n        #388AE5 1px,\n        #fff 1px,\n        #fff 6px\n      );\n      background: repeating-linear-gradient(\n        90deg,\n        var(--color-active-icon),\n        var(--color-active-icon) 1px,\n        #fff 1px,\n        #fff 6px\n      );\n    }\n.ce-block a {\n    cursor: pointer;\n    text-decoration: underline;\n  }\n.ce-block b {\n    font-weight: bold;\n  }\n.ce-block i {\n    font-style: italic;\n  }\n.wobble {\n  animation-name: wobble;\n  animation-duration: 400ms;\n}\n/**\n * @author Nick Pettit - https://github.com/nickpettit/glide\n */\n@keyframes wobble {\n  from {\n    transform: translate3d(0, 0, 0);\n  }\n\n  15% {\n    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\n  }\n\n  30% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\n  }\n\n  45% {\n    transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\n  }\n\n  60% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\n  }\n\n  75% {\n    transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\n  }\n\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@keyframes bounceIn {\n  from,\n  20%,\n  40%,\n  60%,\n  80%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n\n  0% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n\n  20% {\n    transform: scale3d(1.03, 1.03, 1.03);\n  }\n\n  60% {\n    transform: scale3d(1, 1, 1);\n  }\n}\n@keyframes selectionBounce {\n  from,\n  20%,\n  40%,\n  60%,\n  80%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n\n  50% {\n    transform: scale3d(1.01, 1.01, 1.01);\n  }\n\n  70% {\n    transform: scale3d(1, 1, 1);\n  }\n}\n/**\n * Block Tool wrapper\n */\n.cdx-block {\n  padding: 0.7em 0;\n}\n/**\n * Input\n */\n.cdx-input {\n  border: 1px solid rgba(201, 201, 204, 0.48);\n  border: 1px solid var(--color-gray-border);\n  box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\n  border-radius: 3px;\n  padding: 10px 12px;\n  outline: none;\n  width: 100%;\n  box-sizing: border-box;\n}\n/**\n * Settings\n */\n.cdx-settings-button {\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.cdx-settings-button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.cdx-settings-button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.cdx-settings-button > svg,\n    .cdx-settings-button .icon {\n  margin: auto;\n    }\n.cdx-settings-button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.cdx-settings-button--active {\n    color: #388AE5;\n    color: var(--color-active-icon);\n  }\n/**\n * Loader\n */\n.cdx-loader {\n  position: relative;\n  border: 1px solid rgba(201, 201, 204, 0.48);\n  border: 1px solid var(--color-gray-border)\n}\n.cdx-loader::before {\n    content: '';\n    position: absolute;\n    left: 50%;\n    top: 50%;\n    width: 18px;\n    height: 18px;\n    margin: -11px 0 0 -11px;\n    border: 2px solid rgba(201, 201, 204, 0.48);\n    border: 2px solid var(--color-gray-border);\n    border-left-color: #388AE5;\n    border-left-color: var(--color-active-icon);\n    border-radius: 50%;\n    animation: cdxRotation 1.2s infinite linear;\n  }\n@keyframes cdxRotation {\n  0% {\n    transform: rotate(0deg);\n  }\n  100% {\n    transform: rotate(360deg);\n  }\n}\n/**\n * Button\n */\n.cdx-button {\n  padding: 13px;\n  border-radius: 3px;\n  border: 1px solid rgba(201, 201, 204, 0.48);\n  border: 1px solid var(--color-gray-border);\n  font-size: 14.9px;\n  background: #fff;\n  box-shadow: 0 2px 2px 0 rgba(18,30,57,0.04);\n  color: #707684;\n  color: var(--grayText);\n  text-align: center;\n  cursor: pointer\n}\n.cdx-button:hover {\n    background: #FBFCFE;\n    box-shadow: 0 1px 3px 0 rgba(18,30,57,0.08);\n  }\n.cdx-button svg {\n    height: 20px;\n    margin-right: 0.2em;\n    margin-top: -2px;\n  }\n.ce-stub {\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-align: center;\n      align-items: center;\n  -ms-flex-pack: center;\n      justify-content: center;\n  width: 100%;\n  padding: 3.5em 0;\n  margin: 17px 0;\n  border-radius: 3px;\n  background: #fcf7f7;\n  color: #b46262;\n}\n.ce-stub__info {\n    margin-left: 20px;\n  }\n.ce-stub__title {\n    margin-bottom: 3px;\n    font-weight: 600;\n    font-size: 18px;\n    text-transform: capitalize;\n  }\n.ce-stub__subtitle {\n    font-size: 16px;\n  }\n", ""]);
+exports.push([module.i, ":root {\n  /**\n   * Selection color\n   */\n  --selectionColor: #a8d6ff;\n\n  /**\n   * Toolbar buttons\n   */\n  --bg-light: #eff2f5;\n\n  /**\n   * All gray texts: placeholders, settings\n   */\n  --grayText: #707684;\n\n  /**\n   * Blue icons\n   */\n  --color-active-icon: #388AE5;\n\n  /**\n   * Gray border, loaders\n   */\n  --color-gray-border: rgba(201, 201, 204, 0.48);\n\n  /**\n   * Block content width\n   */\n  --content-width: 650px;\n\n  /**\n   * Toolbar buttons height and width\n   */\n  --toolbar-buttons-size: 34px;\n\n  /**\n   * Toolbar Plus Button and Toolbox buttons height and width\n   */\n  --toolbox-buttons-size: 24px;\n\n  /**\n   * Confirm deletion bg\n   */\n  --color-confirm: #E24A4A;\n}\n/**\n* Editor wrapper\n*/\n.codex-editor {\n  position: relative;\n  box-sizing: border-box;\n  z-index: 1;\n}\n.codex-editor .hide {\n    display: none;\n  }\n.codex-editor__redactor {\n    padding-bottom: 300px;\n  }\n.codex-editor__redactor--hidden {\n      visibility: hidden;\n    }\n.codex-editor__loader {\n    position: relative;\n    height: 200px;\n    box-sizing: border-box;\n    border-radius: 5px;\n    border: 1px solid #e6e9eb\n  }\n.codex-editor__loader::before {\n      content: '';\n      position: absolute;\n      z-index: 3;\n      left: 50%;\n      top: 50%;\n      width: 30px;\n      height: 30px;\n      margin-top: -25px;\n      margin-left: -15px;\n      border-radius: 50%;\n      border: 2px solid #cdd1e0;\n      border-top-color: #388ae5;\n      box-sizing: border-box;\n      animation: editor-loader-spin 2s infinite linear;\n    }\n.codex-editor-copyable {\n    position: absolute;\n    height: 1px;\n    width: 1px;\n    top: -400%;\n    opacity: 0.001;\n  }\n.codex-editor svg {\n    fill: currentColor;\n    vertical-align: middle;\n    max-height: 100%;\n  }\n/**\n * Set color for native selection\n */\n::selection{\n  background-color: #a8d6ff;\n  background-color: var(--selectionColor);\n}\n/**\n * Add placeholder to content editable elements with data attribute\n * data-placeholder=\"Hello world!\"\n */\n[contentEditable=true][data-placeholder]:empty::before{\n  content: attr(data-placeholder);\n  color: #707684;\n  color: var(--grayText);\n  font-weight: normal;\n}\n[contentEditable=true][data-placeholder]:empty:focus::before {\n  opacity: 0.3;\n}\n@keyframes editor-loader-spin {\n  0% {\n    transform: rotate(0deg);\n  }\n  100% {\n    transform: rotate(360deg);\n  }\n}\n.ce-toolbar {\n  position: absolute;\n  left: 0;\n  right: 0;\n  top: 0;\n  /*opacity: 0;*/\n  /*visibility: hidden;*/\n  transition: opacity 100ms ease;\n  will-change: opacity, transform;\n  display: none;\n}\n.ce-toolbar--opened {\n    display: block;\n    /*opacity: 1;*/\n    /*visibility: visible;*/\n  }\n.ce-toolbar__content {\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n    position: relative;\n  }\n.ce-toolbar__plus {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 24px;\n  width: var(--toolbox-buttons-size);\n  height: 24px;\n  height: var(--toolbox-buttons-size);\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center\n  }\n.ce-toolbar__plus:not(:last-of-type){\n  margin-right: 10px;\n    }\n.ce-toolbar__plus {\n\n    position: absolute;\n    left: calc(calc(24px + 10px) * -1);\n    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);\n  }\n.ce-toolbar__plus:hover,\n    .ce-toolbar__plus--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-toolbar__plus--active{\n  animation: bounceIn 0.75s 1;\n  animation-fill-mode: forwards;\n    }\n.ce-toolbar__plus--hidden {\n      display: none;\n    }\n.ce-toolbar__plus,\n  .ce-toolbar .ce-toolbox {\n    top: 50%;\n    transform: translateY(-50%);\n  }\n/**\n   * Block actions Zone\n   * -------------------------\n   */\n.ce-toolbar__actions {\n    position: absolute;\n    right: 0;\n    top: 10px;\n    padding-right: 16px;\n    opacity: 0;\n  }\n.ce-toolbar__actions--opened {\n      opacity: 1;\n    }\n.ce-toolbar__actions-buttons {\n      text-align: right;\n    }\n.ce-toolbar__settings-btn {\n    display: inline-block;\n    width: 24px;\n    height: 24px;\n    color: #707684;\n    color: var(--grayText);\n    cursor: pointer;\n  }\n.ce-toolbox {\n    position: absolute;\n    visibility: hidden;\n    transition: opacity 100ms ease;\n    will-change: opacity;\n    display: -ms-flexbox;\n    display: flex;\n    -ms-flex-direction: row;\n        flex-direction: row;\n}\n.ce-toolbox--opened {\n        opacity: 1;\n        visibility: visible;\n    }\n.ce-toolbox__button {\n  color: #707684;\n  color: var(--grayText);\n  cursor: pointer;\n  width: 24px;\n  width: var(--toolbox-buttons-size);\n  height: 24px;\n  height: var(--toolbox-buttons-size);\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  -ms-flex-pack: center;\n      justify-content: center;\n  -ms-flex-align: center;\n      align-items: center;\n    }\n.ce-toolbox__button:not(:last-of-type){\n  margin-right: 10px;\n    }\n.ce-toolbox__button:hover,\n    .ce-toolbox__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-toolbox__button--active{\n  animation: bounceIn 0.75s 1;\n  animation-fill-mode: forwards;\n    }\n.ce-inline-toolbar {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-inline-toolbar::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-inline-toolbar {\n  padding: 6px;\n  transform: translateX(-50%);\n  display: none;\n  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),\n              5px -12px 34px -13px rgba(97, 105, 134, 0.6),\n              0 26px 52px 3px rgba(147, 165, 186, 0.24);\n}\n.ce-inline-toolbar--showed {\n    display: block;\n  }\n.ce-inline-toolbar [hidden] {\n    display: none !important;\n  }\n.ce-inline-tool {\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.ce-inline-tool:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-inline-tool:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-inline-tool {\n  line-height: normal;\n}\n.ce-inline-tool > svg,\n    .ce-inline-tool .icon {\n  margin: auto;\n    }\n.ce-inline-tool--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-inline-tool--last {\n    margin-right: 0 !important;\n  }\n.ce-inline-tool--link .icon {\n      margin-top: -2px;\n    }\n.ce-inline-tool--link .icon--unlink {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--link {\n      display: none;\n    }\n.ce-inline-tool--unlink .icon--unlink {\n      display: inline-block;\n    }\n.ce-inline-tool-input {\n    background-color: #eff2f5;\n    background-color: var(--bg-light);\n    outline: none;\n    border: 0;\n    border-radius: 3px;\n    margin: 6px 0 0;\n    font-size: 13px;\n    padding: 8px;\n    width: 100%;\n    box-sizing: border-box;\n    display: none\n  }\n.ce-inline-tool-input:-ms-input-placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input::placeholder {\n      color: #707684;\n      color: var(--grayText);\n    }\n.ce-inline-tool-input--showed {\n      display: block;\n    }\n.ce-settings {\n  position: absolute;\n  background-color: #FFFFFF;\n  box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);\n  border-radius: 4px;\n  z-index: 2\n}\n.ce-settings::before {\n  content: '';\n  width: 15px;\n  height: 15px;\n  position: absolute;\n  top: -7px;\n  left: 50%;\n  margin-left: -7px;\n  transform: rotate(-45deg);\n  background-color: #fff;\n  z-index: -1;\n    }\n.ce-settings {\n  right: 5px;\n  top: 35px;\n  min-width: 124px\n}\n.ce-settings::before{\n    left: auto;\n    right: 12px;\n  }\n.ce-settings {\n\n  display: none;\n}\n.ce-settings--opened {\n    display: block;\n    animation-duration: 0.5s;\n    animation-name: bounceIn;\n  }\n.ce-settings__plugin-zone:not(:empty){\n      padding: 6px 6px 0;\n    }\n.ce-settings__default-zone:not(:empty){\n      padding: 6px;\n    }\n.ce-settings__button {\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n  }\n.ce-settings__button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.ce-settings__button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.ce-settings__button {\n    line-height: 32px;\n  }\n.ce-settings__button > svg,\n    .ce-settings__button .icon {\n  margin: auto;\n    }\n.ce-settings__button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.ce-settings__button--disabled {\n        cursor: not-allowed !important;\n        opacity: .3;\n    }\n.ce-settings__button--selected {\n      color: #388AE5;\n      color: var(--color-active-icon);\n    }\n.ce-settings__button--delete {\n      transition: background-color 300ms ease;\n      will-change: background-color;\n    }\n.ce-settings__button--delete .icon {\n        transition: transform 200ms ease-out;\n        will-change: transform;\n      }\n.ce-settings__button--confirm {\n      background-color: #E24A4A;\n      background-color: var(--color-confirm);\n      color: #fff\n    }\n.ce-settings__button--confirm:hover {\n        background-color: rgb(213, 74, 74) !important;\n        background-color: rgb(213, 74, 74) !important;\n      }\n.ce-settings__button--confirm .icon {\n        transform: rotate(90deg);\n      }\n.ce-block:first-of-type {\n    margin-top: 0;\n  }\n.ce-block--focused {\n    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);\n    border-radius: 3px;\n  }\n.ce-block--selected .ce-block__content {\n    background: #a8d6ff;\n    background: var(--selectionColor);\n    box-shadow: 0 31px 23px -22px rgba(175, 220, 255, 1);\n    animation: selectionBounce 0.2s 1;\n    animation-fill-mode: forwards;\n  }\n.ce-block--selected .ce-block__content img,\n    .ce-block--selected .ce-block__content .ce-stub {\n      opacity: 0.55;\n    }\n.ce-block--stretched .ce-block__content {\n    max-width: none;\n  }\n.ce-block__content {\n    position: relative;\n    max-width: 650px;\n    max-width: var(--content-width);\n    margin: 0 auto;\n  }\n.ce-block--drop-target .ce-block__content:before {\n      content: '';\n      position: absolute;\n      top: 100%;\n      left: -20px;\n      margin-top: -1px;\n      height: 8px;\n      width: 8px;\n      border: solid #388AE5;\n      border: solid var(--color-active-icon);\n      border-width: 1px 1px 0 0;\n      transform-origin: right;\n      transform: rotate(45deg);\n    }\n.ce-block--drop-target .ce-block__content:after {\n      content: '';\n      position: absolute;\n      top: 100%;\n      height: 1px;\n      width: 100%;\n      color: #388AE5;\n      color: var(--color-active-icon);\n      background: repeating-linear-gradient(\n        90deg,\n        #388AE5,\n        #388AE5 1px,\n        #fff 1px,\n        #fff 6px\n      );\n      background: repeating-linear-gradient(\n        90deg,\n        var(--color-active-icon),\n        var(--color-active-icon) 1px,\n        #fff 1px,\n        #fff 6px\n      );\n    }\n.ce-block a {\n    cursor: pointer;\n    text-decoration: underline;\n  }\n.ce-block b {\n    font-weight: bold;\n  }\n.ce-block i {\n    font-style: italic;\n  }\n.wobble {\n  animation-name: wobble;\n  animation-duration: 400ms;\n}\n/**\n * @author Nick Pettit - https://github.com/nickpettit/glide\n */\n@keyframes wobble {\n  from {\n    transform: translate3d(0, 0, 0);\n  }\n\n  15% {\n    transform: translate3d(-5%, 0, 0) rotate3d(0, 0, 1, -5deg);\n  }\n\n  30% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 3deg);\n  }\n\n  45% {\n    transform: translate3d(-3%, 0, 0) rotate3d(0, 0, 1, -3deg);\n  }\n\n  60% {\n    transform: translate3d(2%, 0, 0) rotate3d(0, 0, 1, 2deg);\n  }\n\n  75% {\n    transform: translate3d(-1%, 0, 0) rotate3d(0, 0, 1, -1deg);\n  }\n\n  to {\n    transform: translate3d(0, 0, 0);\n  }\n}\n@keyframes bounceIn {\n  from,\n  20%,\n  40%,\n  60%,\n  80%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n\n  0% {\n    transform: scale3d(0.9, 0.9, 0.9);\n  }\n\n  20% {\n    transform: scale3d(1.03, 1.03, 1.03);\n  }\n\n  60% {\n    transform: scale3d(1, 1, 1);\n  }\n}\n@keyframes selectionBounce {\n  from,\n  20%,\n  40%,\n  60%,\n  80%,\n  to {\n    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);\n  }\n\n  50% {\n    transform: scale3d(1.01, 1.01, 1.01);\n  }\n\n  70% {\n    transform: scale3d(1, 1, 1);\n  }\n}\n/**\n * Block Tool wrapper\n */\n.cdx-block {\n  padding: 0.7em 0;\n}\n/**\n * Input\n */\n.cdx-input {\n  border: 1px solid rgba(201, 201, 204, 0.48);\n  border: 1px solid var(--color-gray-border);\n  box-shadow: inset 0 1px 2px 0 rgba(35, 44, 72, 0.06);\n  border-radius: 3px;\n  padding: 10px 12px;\n  outline: none;\n  width: 100%;\n  box-sizing: border-box;\n}\n/**\n * Settings\n */\n.cdx-settings-button {\n  display: -ms-inline-flexbox;\n  display: inline-flex;\n  width: 34px;\n  height: 34px;\n  line-height: 34px;\n  text-align: center;\n  border-radius: 3px;\n  cursor: pointer;\n  border: 0;\n  outline: none;\n  background-color: transparent;\n  vertical-align: bottom;\n  color: #707684;\n  color: var(--grayText)\n}\n.cdx-settings-button:not(:last-of-type){\n  margin-right: 5px;\n    }\n.cdx-settings-button:hover {\n  background-color: #eff2f5;\n  background-color: var(--bg-light);\n    }\n.cdx-settings-button > svg,\n    .cdx-settings-button .icon {\n  margin: auto;\n    }\n.cdx-settings-button--active {\n  color: #388AE5;\n  color: var(--color-active-icon);\n    }\n.cdx-settings-button--active {\n    color: #388AE5;\n    color: var(--color-active-icon);\n  }\n/**\n * Loader\n */\n.cdx-loader {\n  position: relative;\n  border: 1px solid rgba(201, 201, 204, 0.48);\n  border: 1px solid var(--color-gray-border)\n}\n.cdx-loader::before {\n    content: '';\n    position: absolute;\n    left: 50%;\n    top: 50%;\n    width: 18px;\n    height: 18px;\n    margin: -11px 0 0 -11px;\n    border: 2px solid rgba(201, 201, 204, 0.48);\n    border: 2px solid var(--color-gray-border);\n    border-left-color: #388AE5;\n    border-left-color: var(--color-active-icon);\n    border-radius: 50%;\n    animation: cdxRotation 1.2s infinite linear;\n  }\n@keyframes cdxRotation {\n  0% {\n    transform: rotate(0deg);\n  }\n  100% {\n    transform: rotate(360deg);\n  }\n}\n/**\n * Button\n */\n.cdx-button {\n  padding: 13px;\n  border-radius: 3px;\n  border: 1px solid rgba(201, 201, 204, 0.48);\n  border: 1px solid var(--color-gray-border);\n  font-size: 14.9px;\n  background: #fff;\n  box-shadow: 0 2px 2px 0 rgba(18,30,57,0.04);\n  color: #707684;\n  color: var(--grayText);\n  text-align: center;\n  cursor: pointer\n}\n.cdx-button:hover {\n    background: #FBFCFE;\n    box-shadow: 0 1px 3px 0 rgba(18,30,57,0.08);\n  }\n.cdx-button svg {\n    height: 20px;\n    margin-right: 0.2em;\n    margin-top: -2px;\n  }\n.ce-stub {\n  display: -ms-flexbox;\n  display: flex;\n  -ms-flex-align: center;\n      align-items: center;\n  -ms-flex-pack: center;\n      justify-content: center;\n  width: 100%;\n  padding: 3.5em 0;\n  margin: 17px 0;\n  border-radius: 3px;\n  background: #fcf7f7;\n  color: #b46262;\n}\n.ce-stub__info {\n    margin-left: 20px;\n  }\n.ce-stub__title {\n    margin-bottom: 3px;\n    font-weight: 600;\n    font-size: 18px;\n    text-transform: capitalize;\n  }\n.ce-stub__subtitle {\n    font-size: 16px;\n  }\n", ""]);
 
 // exports
 
