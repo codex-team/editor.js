@@ -5,7 +5,6 @@ import _ from '../utils';
 import {
   BlockTool,
   BlockToolConstructable,
-  BlockToolData,
   PasteConfig,
   PasteEvent,
   PasteEventDetail,

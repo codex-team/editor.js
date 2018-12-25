@@ -439,17 +439,27 @@ export default class Caret extends Module {
    * @param {string} content - content to insert
    */
   public insertContentAtCaretPosition(content: string): void {
-    const fragmet = document.createDocumentFragment();
+    const fragment = document.createDocumentFragment();
     const wrapper = document.createElement('div');
+    const selection = Selection.get();
     const range = Selection.range;
 
     wrapper.innerHTML = content;
 
-    Array.from(wrapper.childNodes).forEach((child: Node) => fragmet.appendChild(child));
+    Array.from(wrapper.childNodes).forEach((child: Node) => fragment.appendChild(child));
+
+    const lastChild = fragment.lastChild;
 
     range.deleteContents();
-    range.insertNode(fragmet);
-    range.collapse();
+    range.insertNode(fragment);
+
+    /** Cross-browser caret insertion */
+    const newRange = document.createRange();
+
+    newRange.setStart(lastChild, lastChild.textContent.length);
+
+    selection.removeAllRanges();
+    selection.addRange(newRange);
   }
 
   /**
