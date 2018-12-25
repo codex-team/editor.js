@@ -709,7 +709,7 @@ export default class Paste extends Module {
           );
 
           /** Append inline elements to previous fragment */
-          if (!isBlockElement && !isSubstitutable) {
+          if (!isBlockElement && !isSubstitutable && !containsAnotherToolTags) {
             destNode.appendChild(element);
             return [...nodes, destNode];
           }
