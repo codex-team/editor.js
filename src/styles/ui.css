@@ -21,7 +21,6 @@
   &__loader {
     position: relative;
     height: 200px;
-    box-sizing: border-box;
 
     &::before {
       content: '';
