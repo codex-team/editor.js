@@ -59,7 +59,7 @@ export default class UI extends Module {
   /**
    * Adds loader to editor while content is not ready
    */
-  public async addLoader(): Promise<void> {
+  public addLoader(): void {
     this.nodes.loader = $.make('div', this.CSS.editorLoader);
     this.nodes.wrapper.prepend(this.nodes.loader);
     this.nodes.redactor.classList.add(this.CSS.editorZoneHidden);
@@ -68,8 +68,8 @@ export default class UI extends Module {
   /**
    * Removes loader when content has loaded
    */
-  public async removeLoader(): Promise<void> {
-    this.nodes.wrapper.removeChild(this.nodes.loader);
+  public removeLoader(): void {
+    this.nodes.loader.remove();
     this.nodes.redactor.classList.remove(this.CSS.editorZoneHidden);
   }
 
@@ -79,7 +79,7 @@ export default class UI extends Module {
   public async prepare(): Promise<void> {
     await this.make();
 
-    await this.addLoader();
+    this.addLoader();
 
     /**
      * Append SVG sprite
