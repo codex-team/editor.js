@@ -3,7 +3,6 @@
  */
 import Module from '../__module';
 import _ from '../utils';
-import CaretClass from './caret';
 
 export default class BlockEvents extends Module {
   /**
@@ -323,7 +322,7 @@ export default class BlockEvents extends Module {
       BlockManager.insert();
     }
 
-    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
+    Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
 
     this.Editor.Toolbar.close();
     return true;

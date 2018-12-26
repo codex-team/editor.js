@@ -1,6 +1,3 @@
-import CaretClass from './caret';
-import SelectionUtils from '../selection';
-
 import Module from '../__module';
 import $ from '../dom';
 import _ from '../utils';
@@ -444,7 +441,7 @@ export default class Paste extends Module {
       async (content, i) => await this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
     ));
 
-    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
+    Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
   }
 
   /**
@@ -561,7 +558,7 @@ export default class Paste extends Module {
 
         insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
 
-        Caret.setToBlock(insertedBlock, CaretClass.positions.END);
+        Caret.setToBlock(insertedBlock, Caret.positions.END);
         return;
       }
     }
