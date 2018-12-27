@@ -14,32 +14,31 @@
     padding-bottom: 300px;
 
     &--hidden {
-      visibility: hidden;
+      display: none;
     }
   }
 
   &__loader {
     position: relative;
-    height: 200px;
+    height: 30vh;
 
     &::before {
       content: '';
       position: absolute;
-      z-index: 3;
       left: 50%;
       top: 50%;
       width: 30px;
       height: 30px;
-      margin-top: -25px;
+      margin-top: -15px;
       margin-left: -15px;
       border-radius: 50%;
-      border: 2px solid #cdd1e0;
-      border-top-color: #388ae5;
+      border: 2px solid var(--color-gray-border);
+      border-top-color: transparent;
       box-sizing: border-box;
-      animation: editor-loader-spin 2s infinite linear;
+      animation: editor-loader-spin 800ms infinite linear;
+      will-change: transform;
     }
   }
-
 
   &-copyable {
     position: absolute;
@@ -81,6 +80,7 @@
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
