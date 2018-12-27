@@ -79,6 +79,11 @@ export default class Core {
 
         setTimeout(() => {
           /**
+           * Remove loader, show content
+           */
+          this.moduleInstances.UI.removeLoader();
+
+          /**
            * Resolve this.isReady promise
            */
           onReady();

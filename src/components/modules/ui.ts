@@ -38,10 +38,12 @@ export default class UI extends Module {
    * CodeX Editor UI CSS class names
    * @return {{editorWrapper: string, editorZone: string}}
    */
-  private get CSS(): {editorWrapper: string, editorZone: string} {
+  private get CSS(): {editorWrapper: string, editorZone: string, editorZoneHidden: string, editorLoader: string} {
     return {
-      editorWrapper : 'codex-editor',
-      editorZone    : 'codex-editor__redactor',
+      editorWrapper    : 'codex-editor',
+      editorZone       : 'codex-editor__redactor',
+      editorZoneHidden : 'codex-editor__redactor--hidden',
+      editorLoader     : 'codex-editor__loader',
     };
   }
 
@@ -55,10 +57,29 @@ export default class UI extends Module {
   };
 
   /**
+   * Adds loader to editor while content is not ready
+   */
+  public addLoader(): void {
+    this.nodes.loader = $.make('div', this.CSS.editorLoader);
+    this.nodes.wrapper.prepend(this.nodes.loader);
+    this.nodes.redactor.classList.add(this.CSS.editorZoneHidden);
+  }
+
+  /**
+   * Removes loader when content has loaded
+   */
+  public removeLoader(): void {
+    this.nodes.loader.remove();
+    this.nodes.redactor.classList.remove(this.CSS.editorZoneHidden);
+  }
+
+  /**
    * Making main interface
    */
   public async prepare(): Promise<void> {
     await this.make();
+
+    this.addLoader();
 
     /**
      * Append SVG sprite
