@@ -180,7 +180,7 @@ export default class Paste extends Module {
   private setCallback(): void {
     const {Listeners, UI} = this.Editor;
 
-    Listeners.on(UI.nodes.redactor, 'paste', this.handlePasteEvent);
+    Listeners.on(document,  'paste', this.handlePasteEvent);
   }
 
   /**
@@ -345,15 +345,20 @@ export default class Paste extends Module {
    * @param {ClipboardEvent} event
    */
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
+    const {BlockManager, Toolbar} = this.Editor;
+
     /** If target is native input or is not Block, use browser behaviour */
     if (
-      this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files')
+      !BlockManager.currentBlock || this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files')
     ) {
       return;
     }
 
     event.preventDefault();
     this.processDataTransfer(event.clipboardData);
+
+    BlockManager.clearFocused();
+    Toolbar.close();
   }
 
   /**
@@ -362,7 +367,7 @@ export default class Paste extends Module {
    * @param {FileList} items - pasted or dropped items
    */
   private async processFiles(items: FileList) {
-    const {BlockManager} = this.Editor;
+    const {BlockManager, Tools} = this.Editor;
 
     let dataToInsert: Array<{type: string, event: PasteEvent}>;
 
@@ -373,14 +378,12 @@ export default class Paste extends Module {
     );
     dataToInsert = dataToInsert.filter((data) => !!data);
 
+    const isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
+    const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+
     dataToInsert.forEach(
       (data, i) => {
-        if (i === 0 && BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
-          BlockManager.paste(data.type, data.event, true);
-          return;
-        }
-
-        BlockManager.paste(data.type, data.event);
+        BlockManager.paste(data.type, data.event, i === 0 && needToReplaceCurrentBlock);
       },
     );
   }
