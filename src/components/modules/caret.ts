@@ -434,6 +434,35 @@ export default class Caret extends Module {
   }
 
   /**
+   * Inserts passed content at caret position
+   *
+   * @param {string} content - content to insert
+   */
+  public insertContentAtCaretPosition(content: string): void {
+    const fragment = document.createDocumentFragment();
+    const wrapper = document.createElement('div');
+    const selection = Selection.get();
+    const range = Selection.range;
+
+    wrapper.innerHTML = content;
+
+    Array.from(wrapper.childNodes).forEach((child: Node) => fragment.appendChild(child));
+
+    const lastChild = fragment.lastChild;
+
+    range.deleteContents();
+    range.insertNode(fragment);
+
+    /** Cross-browser caret insertion */
+    const newRange = document.createRange();
+
+    newRange.setStart(lastChild, lastChild.textContent.length);
+
+    selection.removeAllRanges();
+    selection.addRange(newRange);
+  }
+
+  /**
    * Get all first-level (first child of [contenteditabel]) siblings from passed node
    * Then you can check it for emptiness
    *
