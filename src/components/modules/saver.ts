@@ -5,6 +5,7 @@
  * @author Codex Team
  * @version 2.0.0
  */
+import _ from '../utils';
 import Module from '../__module';
 import {OutputData} from '../../../types';
 import Block from '../block';
@@ -67,10 +68,19 @@ export default class Saver extends Module {
         return;
       }
 
-      blocks.push({
+      let outputData: {[key: string]: any} = {
         type: extraction.tool,
         data: extraction.data,
-      });
+      };
+
+      if (!_.isEmpty(extraction.settings)) {
+        outputData = {
+          settings: extraction.settings,
+          ...outputData,
+        };
+      }
+
+      blocks.push(outputData);
     });
 
     console.log('Total', totalTime);

@@ -279,7 +279,7 @@ export default class Block {
   /**
    * Tunes used by Tool
    */
-  public tunes: BlockTune[];
+  public tunes: {[name: string]: BlockTune};
 
   /**
    * Editor`s API
@@ -305,6 +305,7 @@ export default class Block {
     toolInstance: BlockTool,
     toolClass: BlockToolConstructable,
     settings: ToolConfig,
+    tunes: {[name: string]: BlockTuneConstructable},
     apiMethods: API,
   ) {
     this.name = toolName;
@@ -317,7 +318,7 @@ export default class Block {
     /**
      * @type {BlockTune[]}
      */
-    this.tunes = this.makeTunes();
+    this.tunes = this.makeTunes(tunes);
   }
 
   /**
@@ -349,29 +350,42 @@ export default class Block {
    * Groups Tool's save processing time
    * @return {Object}
    */
-  public async save(): Promise<void|{tool: string, data: BlockToolData, time: number}> {
-    const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
+  public async save(): Promise<void|{tool: string, data: BlockToolData, time: number, settings: object}> {
+    try {
+      /**
+       * Measuring execution time
+       */
+      const measuringStart = window.performance.now();
 
-    /**
-     * Measuring execution time
-     */
-    const measuringStart = window.performance.now();
-    let measuringEnd;
+      const data = await this.tool.save(this.pluginsContent as HTMLElement);
 
-    return Promise.resolve(extractedBlock)
-      .then((finishedExtraction) => {
-        /** measure promise execution */
-        measuringEnd = window.performance.now();
+      /**
+       * Save Block's Tunes data
+       */
+      const settings = await Object.entries(this.tunes).reduce(async (result, [name, tune]) => {
+        const savedData = await this.saveTuneState(tune);
+
+        if (savedData === null) {
+          return result;
+        }
 
         return {
-          tool: this.name,
-          data: finishedExtraction,
-          time : measuringEnd - measuringStart,
+          ...result,
+          [name]: savedData,
         };
-      })
-      .catch((error) => {
-        _.log(`Saving proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
-      });
+      }, {});
+
+      const measuringEnd = window.performance.now();
+
+      return {
+        tool: this.name,
+        data,
+        settings,
+        time: measuringEnd - measuringStart,
+      };
+    } catch (error) {
+      _.log(`Saving proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
+    }
   }
 
   /**
@@ -402,16 +416,26 @@ export default class Block {
    * Each block has default tune instance that have states
    * @return {BlockTune[]}
    */
-  public makeTunes(): BlockTune[] {
-    const tunesList = [MoveUpTune, DeleteTune, MoveDownTune];
+  public makeTunes(tunes: {[name: string]: BlockTuneConstructable}): {[name: string]: BlockTune} {
+    const tunesList = {
+      MoveUpTune,
+      DeleteTune,
+      MoveDownTune,
+      ...tunes,
+    };
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
-    return tunesList.map( (tune: BlockTuneConstructable) => {
-      return new tune({
+    return Object.entries(tunesList).reduce((result, [name, Tune]: [string, BlockTuneConstructable]) => {
+      const tune = new Tune({
         api: this.api,
-        settings: this.settings,
+        settings: this.settings[name],
       });
-    });
+
+      return {
+        [name]: tune,
+        ...result,
+      };
+    }, {});
   }
 
   /**
@@ -421,7 +445,7 @@ export default class Block {
   public renderTunes(): DocumentFragment {
     const tunesElement = document.createDocumentFragment();
 
-    this.tunes.forEach( (tune) => {
+    Object.values(this.tunes).forEach( (tune) => {
       $.append(tunesElement, tune.render());
     });
 
@@ -448,5 +472,13 @@ export default class Block {
     contentNode.appendChild(pluginsContent);
     wrapper.appendChild(contentNode);
     return wrapper;
+  }
+
+  private async saveTuneState(tune: BlockTune): Promise<object> {
+    if (!tune.save || typeof tune.save !== 'function') {
+      return null;
+    }
+
+    return tune.save();
   }
 }

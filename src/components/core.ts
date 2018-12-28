@@ -165,6 +165,10 @@ export default class Core {
       if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
         this.config.data.blocks = [ initialBlockData ];
       }
+
+      if (_.isEmpty(this.config.tunes)) {
+        this.config.tunes = {} as any;
+      }
     }
   }
 

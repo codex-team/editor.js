@@ -4,7 +4,7 @@ Toolbar Module has space for Block settings. Settings divided into:
  - space for plugin's settings, that is described by «Plugin»'s Developer
  - space for default settings. This option is also can be implemented and expanded
 
-They difference between zones is that the first option is specified by plugin
+The difference between zones is that the first option is specified by plugin
 and each Block can have different options, when second option is for every Block
 regardless to the plugin's option.
 

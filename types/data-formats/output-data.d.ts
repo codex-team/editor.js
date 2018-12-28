@@ -18,4 +18,6 @@ export interface OutputData {
     type: string;
     data: BlockToolData
   }>;
+
+  settings?: {[tune: string]: object};
 }

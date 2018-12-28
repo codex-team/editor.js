@@ -1,5 +1,5 @@
 import {ToolConstructable, ToolSettings} from '../tools';
-import {OutputData} from '../index';
+import {BlockTuneConstructable, OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 
 export interface EditorConfig {
@@ -35,6 +35,8 @@ export interface EditorConfig {
    * Map of Tools to use
    */
   tools?: {[toolName: string]: ToolConstructable|ToolSettings};
+
+  tunes?: {[name: string]: BlockTuneConstructable};
 
   /**
    * Data to render on Editor start
