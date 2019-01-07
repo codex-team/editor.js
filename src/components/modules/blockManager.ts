@@ -22,6 +22,30 @@ import Caret from './caret';
 export default class BlockManager extends Module {
 
   /**
+   * Returns current Block index
+   * @return {number}
+   */
+  public get currentBlockIndex(): number {
+    return this._currentBlockIndex;
+  }
+
+  /**
+   * Set current Block index and fire Block lifecycle callbacks
+   * @param newIndex
+   */
+  public set currentBlockIndex(newIndex: number) {
+    if (this._blocks[this._currentBlockIndex]) {
+      this._blocks[this._currentBlockIndex].willUnselect();
+    }
+
+    if (this._blocks[newIndex]) {
+      this._blocks[newIndex].willSelect();
+    }
+
+    this._currentBlockIndex = newIndex;
+  }
+
+  /**
    * returns last Block
    * @return {Block}
    */
@@ -102,7 +126,7 @@ export default class BlockManager extends Module {
    *
    * @type {number}
    */
-  public currentBlockIndex: number = -1;
+  private _currentBlockIndex: number = -1;
 
   /**
    * Proxy for Blocks instance {@link Blocks}
@@ -301,7 +325,7 @@ export default class BlockManager extends Module {
     const extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition();
     const wrapper = $.make('div');
 
-    wrapper.append(extractedFragment as DocumentFragment);
+    wrapper.appendChild(extractedFragment as DocumentFragment);
 
     /**
      * @todo make object in accordance with Tool

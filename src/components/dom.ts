@@ -468,12 +468,13 @@ export default class Dom {
    * @return {boolean}
    */
   public static containsOnlyInlineElements(data: string | HTMLElement): boolean {
-    const wrapper = document.createElement('template');
+    let wrapper: HTMLElement;
 
     if (typeof data === 'string') {
+      wrapper = document.createElement('div');
       wrapper.innerHTML = data;
     } else {
-      wrapper.appendChild(data);
+      wrapper = data;
     }
 
     const check = (element: HTMLElement) => {
@@ -481,6 +482,23 @@ export default class Dom {
         && Array.from(element.children).every(check);
     };
 
-    return check(wrapper);
+    return Array.from(wrapper.children).every(check);
+  }
+
+  /**
+   * Find and return all block elements in the passed parent (including subtree)
+   *
+   * @param {HTMLElement} parent
+   *
+   * @return {HTMLElement[]}
+   */
+  public static getDeepestBlockElements(parent: HTMLElement): HTMLElement[] {
+    if (Dom.containsOnlyInlineElements(parent)) {
+      return [parent];
+    }
+
+    return Array.from(parent.children).reduce((result, element) => {
+      return [...result, ...Dom.getDeepestBlockElements(element as HTMLElement)];
+    }, []);
   }
 }

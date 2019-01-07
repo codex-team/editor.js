@@ -25,6 +25,7 @@ import _ from './utils';
 import MoveUpTune from './block-tunes/block-tune-move-up';
 import DeleteTune from './block-tunes/block-tune-delete';
 import MoveDownTune from './block-tunes/block-tune-move-down';
+import SelectionUtils from './selection';
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -63,7 +64,18 @@ export default class Block {
     const selector = '[contenteditable], textarea, input, '
       + allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
 
-    const inputs = _.array(content.querySelectorAll(selector));
+    let inputs = _.array(content.querySelectorAll(selector));
+
+    /**
+     * If contenteditable element contains block elements, treat them as inputs.
+     */
+    inputs = inputs.reduce((result, input) => {
+      if ($.isNativeInput(input) || $.containsOnlyInlineElements(input)) {
+        return [...result, input];
+      }
+
+      return [...result, ...$.getDeepestBlockElements(input)];
+    }, []);
 
     /**
      * If inputs amount was changed we need to check if input index is bigger then inputs array length
@@ -80,7 +92,7 @@ export default class Block {
    *
    * @returns {HTMLElement}
    */
-  get currentInput(): HTMLElement {
+  get currentInput(): HTMLElement | Node {
     return this.inputs[this.inputIndex];
   }
 
@@ -89,7 +101,7 @@ export default class Block {
    *
    * @param {HTMLElement} element
    */
-  set currentInput(element: HTMLElement) {
+  set currentInput(element: HTMLElement | Node) {
     const index = this.inputs.findIndex((input) => input === element || input.contains(element));
 
     if (index !== -1) {
@@ -293,6 +305,12 @@ export default class Block {
   private inputIndex = 0;
 
   /**
+   * Mutation observer to handle DOM mutations
+   * @type {MutationObserver}
+   */
+  private mutationObserver: MutationObserver;
+
+  /**
    * @constructor
    * @param {String} toolName - Tool name that passed on initialization
    * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
@@ -313,6 +331,8 @@ export default class Block {
     this.settings = settings;
     this.api = apiMethods;
     this.holder = this.compose();
+
+    this.mutationObserver = new MutationObserver(this.didMutated);
 
     /**
      * @type {BlockTune[]}
@@ -434,6 +454,34 @@ export default class Block {
    */
   public set dropTarget(state) {
     this.holder.classList.toggle(Block.CSS.dropTarget, state);
+  }
+
+  /**
+   * Update current input index with selection anchor node
+   */
+  public updateInputs(): void {
+    this.currentInput = SelectionUtils.anchorNode;
+  }
+
+  /**
+   * Is fired when Block will be selected as current
+   */
+  public willSelect(): void {
+    this.mutationObserver.observe(this.holder, {childList: true, subtree: true});
+  }
+
+  /**
+   * Is fired when Block will be unselected
+   */
+  public willUnselect() {
+    this.mutationObserver.disconnect();
+  }
+
+  /**
+   * Is fired when DOM mutation has been happened
+   */
+  private didMutated = () => {
+    this.updateInputs();
   }
 
   /**

@@ -380,6 +380,13 @@ export default class BlockEvents extends Module {
        * Default behaviour moves cursor by 1 character, we need to prevent it
        */
       event.preventDefault();
+    } else {
+      /**
+       * After caret is set, update Block input index
+       */
+      _.delay(() => {
+        this.Editor.BlockManager.currentBlock.updateInputs();
+      }, 20)();
     }
   }
 
@@ -392,6 +399,13 @@ export default class BlockEvents extends Module {
        * Default behaviour moves cursor by 1 character, we need to prevent it
        */
       event.preventDefault();
+    } else {
+      /**
+       * After caret is set, update Block input index
+       */
+      _.delay(() => {
+        this.Editor.BlockManager.currentBlock.updateInputs();
+      }, 20)();
     }
   }
 
