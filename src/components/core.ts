@@ -85,6 +85,11 @@ export default class Core {
           }
 
           /**
+           * Remove loader, show content
+           */
+          this.moduleInstances.UI.removeLoader();
+
+          /**
            * Resolve this.isReady promise
            */
           onReady();
