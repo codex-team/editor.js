@@ -55,9 +55,9 @@ export default class Caret extends Module {
       return false;
     }
 
-    const selection = Selection.get(),
-      anchorNode = selection.anchorNode,
-      firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
+    const selection = Selection.get();
+    const firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
+    let anchorNode = selection.anchorNode;
 
     /** In case lastNode is native input */
     if ($.isNativeInput(firstNode)) {
@@ -92,10 +92,25 @@ export default class Caret extends Module {
     }
 
     /**
+     * If caret was set by external code, it might be set to text node wrapper.
+     * <div>|hello</div> <---- Selection references to <div> instead of text node
+     *
+     * In this case, anchor node has ELEMENT_NODE node type.
+     * Anchor offset shows amount of children between start of the element and caret position.
+     *
+     * So we use child with anchorOffset index as new anchorNode.
+     */
+    let anchorOffset = selection.anchorOffset;
+    if (anchorNode.nodeType !== Node.TEXT_NODE) {
+      anchorNode = anchorNode.childNodes[anchorOffset];
+      anchorOffset = 0;
+    }
+
+    /**
      * We use <= comparison for case:
      * "| Hello"  <--- selection.anchorOffset is 0, but firstLetterPosition is 1
      */
-    return firstNode === null || anchorNode === firstNode && selection.anchorOffset <= firstLetterPosition;
+    return firstNode === null || anchorNode === firstNode && anchorOffset <= firstLetterPosition;
   }
 
   /**

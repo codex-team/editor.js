@@ -61,7 +61,7 @@ export default class Block {
     const content = this.holder;
     const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
 
-    const selector = '[contenteditable], textarea, input, '
+    const selector = '[contenteditable], textarea, '
       + allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
 
     let inputs = _.array(content.querySelectorAll(selector));
@@ -467,6 +467,9 @@ export default class Block {
    * Is fired when Block will be selected as current
    */
   public willSelect(): void {
+    /**
+     * Observe DOM mutations to update Block inputs
+     */
     this.mutationObserver.observe(this.holder, {childList: true, subtree: true});
   }
 
