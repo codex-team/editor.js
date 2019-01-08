@@ -12,6 +12,32 @@
 
   &__redactor {
     padding-bottom: 300px;
+
+    &--hidden {
+      display: none;
+    }
+  }
+
+  &__loader {
+    position: relative;
+    height: 30vh;
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 30px;
+      height: 30px;
+      margin-top: -15px;
+      margin-left: -15px;
+      border-radius: 50%;
+      border: 2px solid var(--color-gray-border);
+      border-top-color: transparent;
+      box-sizing: border-box;
+      animation: editor-loader-spin 800ms infinite linear;
+      will-change: transform;
+    }
   }
 
   &-copyable {
@@ -48,4 +74,14 @@
 
 [contentEditable=true][data-placeholder]:empty:focus::before {
   opacity: 0.3;
+}
+
+@keyframes editor-loader-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
