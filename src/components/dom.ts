@@ -29,6 +29,19 @@ export default class Dom {
   }
 
   /**
+   * Check if element is BR or WBR
+   *
+   * @param {HTMLElement} element
+   * @return {boolean}
+   */
+  public static isLineBreakTag(element: HTMLElement) {
+    return element.tagName && [
+      'BR',
+      'WBR',
+    ].includes(element.tagName);
+  }
+
+  /**
    * Helper for making Elements with classname and attributes
    *
    * @param  {string} tagName           - new Element tag name
@@ -196,7 +209,11 @@ export default class Dom {
       /**
        * special case when child is single tag that can't contain any content
        */
-      if (Dom.isSingleTag(nodeChild as HTMLElement) && !Dom.isNativeInput(nodeChild)) {
+      if (
+        Dom.isSingleTag(nodeChild as HTMLElement) &&
+        !Dom.isNativeInput(nodeChild) &&
+        !Dom.isLineBreakTag(nodeChild as HTMLElement)
+      ) {
         /**
          * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
          * from sibling

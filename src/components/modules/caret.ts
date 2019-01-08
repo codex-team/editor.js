@@ -76,22 +76,6 @@ export default class Caret extends Module {
     }
 
     /**
-     * In case of
-     * <div contenteditable>
-     *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
-     *     |adaddad         <-- anchor node
-     * </div>
-     */
-    if ($.isEmpty(firstNode)) {
-      const leftSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'left'),
-        nothingAtLeft = leftSiblings.every( (node) => $.isEmpty(node) );
-
-      if (nothingAtLeft && selection.anchorOffset === firstLetterPosition) {
-        return true;
-      }
-    }
-
-    /**
      * If caret was set by external code, it might be set to text node wrapper.
      * <div>|hello</div> <---- Selection references to <div> instead of text node
      *
@@ -101,9 +85,30 @@ export default class Caret extends Module {
      * So we use child with anchorOffset index as new anchorNode.
      */
     let anchorOffset = selection.anchorOffset;
-    if (anchorNode.nodeType !== Node.TEXT_NODE) {
-      anchorNode = anchorNode.childNodes[anchorOffset];
-      anchorOffset = 0;
+    if (anchorNode.nodeType !== Node.TEXT_NODE && anchorNode.childNodes.length) {
+      if (anchorNode.childNodes[anchorOffset]) {
+        anchorNode = anchorNode.childNodes[anchorOffset];
+        anchorOffset = 0;
+      } else {
+        anchorNode = anchorNode.childNodes[anchorOffset - 1];
+        anchorOffset = anchorNode.textContent.length;
+      }
+    }
+
+    /**
+     * In case of
+     * <div contenteditable>
+     *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
+     *     |adaddad         <-- anchor node
+     * </div>
+     */
+    if ($.isLineBreakTag(firstNode as HTMLElement) || $.isEmpty(firstNode)) {
+      const leftSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'left');
+      const nothingAtLeft = leftSiblings.every((node, i) => $.isEmpty(node));
+
+      if (nothingAtLeft && anchorOffset === firstLetterPosition) {
+        return true;
+      }
     }
 
     /**
@@ -136,17 +141,39 @@ export default class Caret extends Module {
     }
 
     /**
+     * If caret was set by external code, it might be set to text node wrapper.
+     * <div>hello|</div> <---- Selection references to <div> instead of text node
+     *
+     * In this case, anchor node has ELEMENT_NODE node type.
+     * Anchor offset shows amount of children between start of the element and caret position.
+     *
+     * So we use child with anchorOffset - 1 as new anchorNode.
+     */
+    let anchorOffset = selection.anchorOffset;
+    if (anchorNode.nodeType !== Node.TEXT_NODE && anchorNode.childNodes.length) {
+      if (anchorNode.childNodes[anchorOffset - 1]) {
+        anchorNode = anchorNode.childNodes[anchorOffset - 1];
+        anchorOffset = anchorNode.textContent.length;
+      } else {
+        anchorNode = anchorNode.childNodes[0];
+        anchorOffset = 0;
+      }
+    }
+
+    /**
      * In case of
      * <div contenteditable>
      *     adaddad|         <-- anchor node
      *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
      * </div>
      */
-    if ($.isEmpty(lastNode)) {
-      const leftSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'right');
-      const nothingAtRight = leftSiblings.every( (node) => $.isEmpty(node) );
+    if ($.isLineBreakTag(lastNode as HTMLElement) || $.isEmpty(lastNode)) {
+      const rightSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'right');
+      const nothingAtRight = rightSiblings.every((node, i) => {
+        return i === 0 && $.isLineBreakTag(node as HTMLElement) || $.isEmpty(node);
+      });
 
-      if (nothingAtRight && selection.anchorOffset === anchorNode.textContent.length) {
+      if (nothingAtRight && anchorOffset === anchorNode.textContent.length) {
         return true;
       }
     }
@@ -158,21 +185,6 @@ export default class Caret extends Module {
      *  in case of ' hello |' trim() will also remove space at the beginning, so length will be lower than anchorOffset
      */
     const rightTrimmedText = lastNode.textContent.replace(/\s+$/, '');
-
-    /**
-     * If caret was set by external code, it might be set to text node wrapper.
-     * <div>hello|</div> <---- Selection references to <div> instead of text node
-     *
-     * In this case, anchor node has ELEMENT_NODE node type.
-     * Anchor offset shows amount of children between start of the element and caret position.
-     *
-     * So we use child with anchorOffset - 1 as new anchorNode.
-     */
-    let anchorOffset = selection.anchorOffset;
-    if (anchorNode.nodeType !== Node.TEXT_NODE) {
-      anchorNode = anchorNode.childNodes[anchorOffset - 1];
-      anchorOffset = anchorNode.textContent.length;
-    }
 
     /**
      * We use >= comparison for case:
