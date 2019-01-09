@@ -243,7 +243,7 @@ export default class InlineToolbar extends Module {
     // Array.from(this.nodes.actions.children).forEach((child) => child.remove());
 
     Object.entries(this.toolsButtons).forEach(([name, button]) => {
-      button.classList.remove(this.CSS.actionsWrapperOpened);
+      button.classList.remove(this.CSS.inlineToolButtonPinch);
     });
 
     this.nodes.buttons.style.minWidth = '';

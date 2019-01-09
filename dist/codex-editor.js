@@ -21347,7 +21347,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               name = _ref4[0],
               button = _ref4[1];
 
-          button.classList.remove(_this3.CSS.actionsWrapperOpened);
+          button.classList.remove(_this3.CSS.inlineToolButtonPinch);
         });
         this.nodes.buttons.style.minWidth = '';
         this.nodes.actions.style.width = '';
