@@ -308,17 +308,12 @@ export default class BlockEvents extends Module {
     const { BlockManager, Caret } = this.Editor;
     const index = BlockManager.currentBlockIndex;
 
-    /** If current Block is empty just remove this Block */
-    BlockManager.removeBlock();
-    if (BlockManager.currentBlock.inputs.length === 0) {
-      const isFirstBlock = BlockManager.currentBlockIndex === 0;
-
-      /** If previous (now current) block doesn't contain inputs, remove it */
+    if (BlockManager.previousBlock && BlockManager.previousBlock.inputs.length === 0) {
+      /** If previous block doesn't contain inputs, remove it */
+      BlockManager.removeBlock(index - 1);
+    } else {
+      /** If current Block is empty just remove this Block */
       BlockManager.removeBlock();
-
-      if (!isFirstBlock) {
-        BlockManager.insert();
-      }
     }
 
     /**

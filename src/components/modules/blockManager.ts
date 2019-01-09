@@ -295,7 +295,7 @@ export default class BlockManager extends Module {
    * @param {Number|null} index
    */
   public removeBlock(index?: number): void {
-    if (!index) {
+    if (index === undefined) {
       index = this.currentBlockIndex;
     }
     this._blocks.remove(index);
