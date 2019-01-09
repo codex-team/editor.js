@@ -203,15 +203,10 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    /**
-     * Copy Blocks before removing
-     */
-    BlockSelection.copySelectedBlocks();
-
-    /**
-     * Check if Block should be removed by current Backspace keydown
-     */
+    /** Copy Blocks before removing */
     if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+      BlockSelection.copySelectedBlocks();
+
       if (BlockSelection.allBlocksSelected) {
         this.removeAllBlocks();
       } else {

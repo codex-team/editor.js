@@ -15786,17 +15786,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (!currentBlock) {
           return;
         }
-        /**
-         * Copy Blocks before removing
-         */
+        /** Copy Blocks before removing */
 
-
-        BlockSelection.copySelectedBlocks();
-        /**
-         * Check if Block should be removed by current Backspace keydown
-         */
 
         if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+          BlockSelection.copySelectedBlocks();
+
           if (BlockSelection.allBlocksSelected) {
             this.removeAllBlocks();
           } else {
