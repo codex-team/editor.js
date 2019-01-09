@@ -358,23 +358,16 @@ export default class Block {
     const measuringStart = window.performance.now();
     let measuringEnd;
 
-    return Promise.resolve(extractedBlock)
-      .then((finishedExtraction) => {
-        /** measure promise execution */
-        measuringEnd = window.performance.now();
-        if (this.validateData(finishedExtraction)) {
-          return {
-            tool: this.name,
-            data: finishedExtraction,
-            time : measuringEnd - measuringStart,
-          };
-        } else {
-          throw new Error(`Failed to validate ${this.name} data`);
-        }
-      })
-      .catch((error) => {
-        _.log(`Saving proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
-      });
+    measuringEnd = window.performance.now();
+    if (await this.validateData(extractedBlock)) {
+      return {
+        tool: this.name,
+        data: extractedBlock,
+        time : measuringEnd - measuringStart,
+      };
+    } else {
+      throw new Error(`Failed to validate ${this.name} data`);
+    }
   }
 
   /**

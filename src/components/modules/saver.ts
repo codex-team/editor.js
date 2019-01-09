@@ -39,7 +39,7 @@ export default class Saver extends Module {
           const blockData =  await block.save();
           chainData.push(blockData);
         } catch (err) {
-          console.error(`Error ${err.message}`);
+          console.error(`${err.message}`);
         }
       }),
     );
