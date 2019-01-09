@@ -225,7 +225,7 @@ export default class LinkInlineTool implements InlineTool {
    * @param {boolean} needFocus - on link creation we need to focus input. On editing - nope.
    */
   private openActions(needFocus: boolean = false): void {
-    this.nodes.input.classList.add(this.CSS.inputShowed);
+    // this.nodes.input.classList.add(this.CSS.inputShowed);
     if (needFocus) {
       this.nodes.input.focus();
     }

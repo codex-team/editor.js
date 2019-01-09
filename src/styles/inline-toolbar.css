@@ -11,6 +11,28 @@
     display: block;
   }
 
+  &__buttons {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: right;
+  }
+
+  &__actions {
+    display: inline-block;
+    width: 0;
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    transition: width 0.5s ease, padding 0.5s ease;
+
+    &--opened {
+      height: initial;
+      padding: initial;
+      margin-right: 5px;
+      overflow: initial;
+    }
+  }
+
   [hidden] {
     display: none !important;
   }
@@ -19,6 +41,15 @@
 .ce-inline-tool {
   @apply --toolbar-button;
   line-height: normal;
+  transition: padding 0.5s ease, margin 0.5s ease, width 0.5s ease;
+
+  &--pinch {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 0 !important;
+  }
 
   &--last {
     margin-right: 0 !important;
@@ -48,12 +79,10 @@
     outline: none;
     border: 0;
     border-radius: 3px;
-    margin: 6px 0 0;
     font-size: 13px;
     padding: 8px;
     width: 100%;
     box-sizing: border-box;
-    display: none;
 
     &::placeholder {
       color: var(--grayText);

@@ -53,7 +53,9 @@ export default class InlineToolbar extends Module {
     inlineToolbarShowed: 'ce-inline-toolbar--showed',
     buttonsWrapper: 'ce-inline-toolbar__buttons',
     actionsWrapper: 'ce-inline-toolbar__actions',
+    actionsWrapperOpened: 'ce-inline-toolbar__actions--opened',
     inlineToolButton: 'ce-inline-tool',
+    inlineToolButtonPinch: 'ce-inline-tool--pinch',
     inlineToolButtonLast: 'ce-inline-tool--last',
     inputField: 'cdx-input',
   };
@@ -121,7 +123,7 @@ export default class InlineToolbar extends Module {
     /**
      * Append Inline Toolbar to the Editor
      */
-    $.append(this.nodes.wrapper, [this.nodes.buttons, this.nodes.actions]);
+    $.append(this.nodes.wrapper, this.nodes.buttons);
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
 
     /**
@@ -217,16 +219,36 @@ export default class InlineToolbar extends Module {
     }
 
     this.currentActionsTool = toolName;
-    Object.entries(this.toolsButtons).forEach(([name, button]) => button.hidden = name !== toolName);
+
+    const toolbarWidth = this.nodes.buttons.clientWidth;
+    this.nodes.buttons.style.minWidth = `${toolbarWidth}px`;
+
+    Array.from(this.nodes.actions.children).forEach((child) => child.remove());
     this.nodes.actions.appendChild(this.toolsActions[toolName]);
+    this.nodes.buttons.insertBefore(this.nodes.actions, this.toolsButtons[toolName]);
+
+    setImmediate(() => {
+      Object.entries(this.toolsButtons).forEach(([name, button]) => {
+        button.classList.toggle(this.CSS.inlineToolButtonPinch, name !== toolName);
+      });
+
+      this.nodes.actions.style.width = `${toolbarWidth - 34}px`;
+      this.nodes.actions.classList.add(this.CSS.actionsWrapperOpened);
+    });
   }
 
   private closeActions() {
     this.currentActionsTool = null;
 
-    Array.from(this.nodes.actions.children).forEach((child) => child.remove());
+    // Array.from(this.nodes.actions.children).forEach((child) => child.remove());
 
-    this.filterTools();
+    Object.entries(this.toolsButtons).forEach(([name, button]) => {
+      button.classList.remove(this.CSS.actionsWrapperOpened);
+    });
+
+    this.nodes.buttons.style.minWidth = '';
+    this.nodes.actions.style.width = '';
+    this.nodes.actions.classList.remove(this.CSS.actionsWrapperOpened);
   }
 
   /**
