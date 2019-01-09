@@ -169,6 +169,44 @@ export default class BlockEvents extends Module {
   }
 
   /**
+   * remove all selected Blocks
+   */
+  public removeAllBlocks(): boolean {
+    const { BlockManager } = this.Editor;
+
+    BlockManager.removeAllBlocks();
+    return true;
+  }
+
+  /**
+   * remove current Block and sets Caret to the correct position
+   */
+  public removeCurrentBlock(): boolean {
+    const { BlockManager, Caret } = this.Editor;
+
+    /** If current Block is empty just remove this Block */
+    BlockManager.removeBlock();
+
+    /**
+     * In case of deletion first block we need to set caret to the current Block
+     * After BlockManager removes the Block (which is current now),
+     * pointer that references to the current Block, now points to the Next
+     */
+    if (BlockManager.currentBlockIndex === 0) {
+      Caret.setToBlock(BlockManager.currentBlock);
+    } else if (BlockManager.currentBlock.inputs.length === 0) {
+      /** If previous (now current) block doesn't contain inputs, remove it */
+      BlockManager.removeBlock();
+      BlockManager.insert();
+    }
+
+    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
+
+    this.Editor.Toolbar.close();
+    return true;
+  }
+
+  /**
    * ENTER pressed on block
    * @param {KeyboardEvent} event - keydown
    */
@@ -289,44 +327,6 @@ export default class BlockEvents extends Module {
        */
       this.mergeBlocks();
     }
-  }
-
-  /**
-   * remove all selected Blocks
-   */
-  private removeAllBlocks(): boolean {
-    const { BlockManager } = this.Editor;
-
-    BlockManager.removeAllBlocks();
-    return true;
-  }
-
-  /**
-   * remove current Block and sets Caret to the correct position
-   */
-  private removeCurrentBlock(): boolean {
-    const { BlockManager, Caret } = this.Editor;
-
-    /** If current Block is empty just remove this Block */
-    BlockManager.removeBlock();
-
-    /**
-     * In case of deletion first block we need to set caret to the current Block
-     * After BlockManager removes the Block (which is current now),
-     * pointer that references to the current Block, now points to the Next
-     */
-    if (BlockManager.currentBlockIndex === 0) {
-      Caret.setToBlock(BlockManager.currentBlock);
-    } else if (BlockManager.currentBlock.inputs.length === 0) {
-      /** If previous (now current) block doesn't contain inputs, remove it */
-      BlockManager.removeBlock();
-      BlockManager.insert();
-    }
-
-    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
-
-    this.Editor.Toolbar.close();
-    return true;
   }
 
   /**

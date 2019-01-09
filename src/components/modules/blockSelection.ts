@@ -118,6 +118,13 @@ export default class BlockSelection extends Module {
       },
     });
 
+    Shortcuts.add({
+      name: 'CMD+X',
+      handler: (event) => {
+        this.handleCommandX(event);
+      },
+    });
+
     this.selection = new SelectionUtils();
   }
 
@@ -176,7 +183,6 @@ export default class BlockSelection extends Module {
    * @param event
    */
   private handleCommandC(event): void {
-    const { BlockManager, Sanitizer } = this.Editor;
 
     if (!this.anyBlockSelected) {
       return;
@@ -188,21 +194,40 @@ export default class BlockSelection extends Module {
      */
     event.preventDefault();
 
-    const fakeClipboard = $.make('div');
+    // Copy Selected Blocks
+    this.copySelectedBlocks();
+  }
 
-    BlockManager.blocks.filter( (block) => block.selected )
-      .forEach( (block) => {
-        /**
-         * Make <p> tag that holds clean HTML
-         */
-        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
-        const fragment = $.make('p');
+  /**
+   * Copy and Delete selected Blocks
+   * @param event
+   */
+  private handleCommandX(event): void {
+    const { BlockEvents, BlockManager } = this.Editor;
+    const currentBlock = BlockManager.currentBlock;
 
-        fragment.innerHTML = cleanHTML;
-        fakeClipboard.appendChild(fragment);
-    });
+    if (!currentBlock) {
+      return;
+    }
 
-    _.copyTextToClipboard(fakeClipboard.innerHTML);
+    /**
+     * Copy Blocks before removing
+     */
+    this.copySelectedBlocks();
+
+    /**
+     * Check if Block should be removed by current Backspace keydown
+     */
+    if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+      if (this.allBlocksSelected) {
+        BlockEvents.removeAllBlocks();
+      } else {
+        BlockEvents.removeCurrentBlock();
+      }
+
+      /** Clear selection */
+      this.clearSelection();
+    }
   }
 
   /**
@@ -210,8 +235,6 @@ export default class BlockSelection extends Module {
    * Each Block has selected setter that makes Block copyable
    */
   private selectAllBlocks() {
-    const { BlockManager } = this.Editor;
-
     this.allBlocksSelected = true;
   }
 
@@ -241,5 +264,27 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     block.selected = true;
+  }
+
+  /**
+   * Reduce each Block and copy its content
+   */
+  private copySelectedBlocks(): void {
+    const { BlockManager, Sanitizer } = this.Editor;
+    const fakeClipboard = $.make('div');
+
+    BlockManager.blocks.filter( (block) => block.selected )
+      .forEach( (block) => {
+        /**
+         * Make <p> tag that holds clean HTML
+         */
+        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+        const fragment = $.make('p');
+
+        fragment.innerHTML = cleanHTML;
+        fakeClipboard.appendChild(fragment);
+      });
+
+    _.copyTextToClipboard(fakeClipboard.innerHTML);
   }
 }
