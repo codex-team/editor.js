@@ -110,21 +110,6 @@ export default class BlockSelection extends Module {
       },
     });
 
-    /** Shortcut to copy selected blocks */
-    Shortcuts.add({
-      name: 'CMD+C',
-      handler: (event) => {
-        this.handleCommandC(event);
-      },
-    });
-
-    Shortcuts.add({
-      name: 'CMD+X',
-      handler: (event) => {
-        this.handleCommandX(event);
-      },
-    });
-
     this.selection = new SelectionUtils();
   }
 
@@ -152,6 +137,28 @@ export default class BlockSelection extends Module {
   }
 
   /**
+   * Reduce each Block and copy its content
+   */
+  public copySelectedBlocks(): void {
+    const { BlockManager, Sanitizer } = this.Editor;
+    const fakeClipboard = $.make('div');
+
+    BlockManager.blocks.filter( (block) => block.selected )
+      .forEach( (block) => {
+        /**
+         * Make <p> tag that holds clean HTML
+         */
+        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+        const fragment = $.make('p');
+
+        fragment.innerHTML = cleanHTML;
+        fakeClipboard.appendChild(fragment);
+      });
+
+    _.copyTextToClipboard(fakeClipboard.innerHTML);
+  }
+
+  /**
    * First CMD+A Selects current focused blocks,
    * and consequent second CMD+A keypress selects all blocks
    *
@@ -173,60 +180,6 @@ export default class BlockSelection extends Module {
     } else {
       this.selectBlockByIndex();
       this.needToSelectAll = true;
-    }
-  }
-
-  /**
-   * Copying selected blocks
-   * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
-   *
-   * @param event
-   */
-  private handleCommandC(event): void {
-
-    if (!this.anyBlockSelected) {
-      return;
-    }
-
-    /**
-     * Prevent default copy
-     * Remove "decline sound" on macOS
-     */
-    event.preventDefault();
-
-    // Copy Selected Blocks
-    this.copySelectedBlocks();
-  }
-
-  /**
-   * Copy and Delete selected Blocks
-   * @param event
-   */
-  private handleCommandX(event): void {
-    const { BlockEvents, BlockManager } = this.Editor;
-    const currentBlock = BlockManager.currentBlock;
-
-    if (!currentBlock) {
-      return;
-    }
-
-    /**
-     * Copy Blocks before removing
-     */
-    this.copySelectedBlocks();
-
-    /**
-     * Check if Block should be removed by current Backspace keydown
-     */
-    if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
-      if (this.allBlocksSelected) {
-        BlockEvents.removeAllBlocks();
-      } else {
-        BlockEvents.removeCurrentBlock();
-      }
-
-      /** Clear selection */
-      this.clearSelection();
     }
   }
 
@@ -264,27 +217,5 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     block.selected = true;
-  }
-
-  /**
-   * Reduce each Block and copy its content
-   */
-  private copySelectedBlocks(): void {
-    const { BlockManager, Sanitizer } = this.Editor;
-    const fakeClipboard = $.make('div');
-
-    BlockManager.blocks.filter( (block) => block.selected )
-      .forEach( (block) => {
-        /**
-         * Make <p> tag that holds clean HTML
-         */
-        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
-        const fragment = $.make('p');
-
-        fragment.innerHTML = cleanHTML;
-        fakeClipboard.appendChild(fragment);
-      });
-
-    _.copyTextToClipboard(fakeClipboard.innerHTML);
   }
 }

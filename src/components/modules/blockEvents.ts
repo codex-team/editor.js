@@ -169,9 +169,64 @@ export default class BlockEvents extends Module {
   }
 
   /**
+   * Copying selected blocks
+   * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
+   *
+   * @param event
+   */
+  public handleCommandC(event): void {
+    const { BlockSelection } = this.Editor;
+
+    if (!BlockSelection.anyBlockSelected) {
+      return;
+    }
+
+    /**
+     * Prevent default copy
+     * Remove "decline sound" on macOS
+     */
+    event.preventDefault();
+
+    // Copy Selected Blocks
+    BlockSelection.copySelectedBlocks();
+  }
+
+  /**
+   * Copy and Delete selected Blocks
+   * @param event
+   */
+  public handleCommandX(event): void {
+    const { BlockSelection, BlockManager } = this.Editor;
+    const currentBlock = BlockManager.currentBlock;
+
+    if (!currentBlock) {
+      return;
+    }
+
+    /**
+     * Copy Blocks before removing
+     */
+    BlockSelection.copySelectedBlocks();
+
+    /**
+     * Check if Block should be removed by current Backspace keydown
+     */
+    if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+      if (BlockSelection.allBlocksSelected) {
+        this.removeAllBlocks();
+      } else {
+        this.removeCurrentBlock();
+      }
+
+      /** Clear selection */
+      BlockSelection.clearSelection();
+    }
+  }
+
+  /**
    * remove all selected Blocks
    */
-  public removeAllBlocks(): boolean {
+  private removeAllBlocks(): boolean {
     const { BlockManager } = this.Editor;
 
     BlockManager.removeAllBlocks();
@@ -181,7 +236,7 @@ export default class BlockEvents extends Module {
   /**
    * remove current Block and sets Caret to the correct position
    */
-  public removeCurrentBlock(): boolean {
+  private removeCurrentBlock(): boolean {
     const { BlockManager, Caret } = this.Editor;
 
     /** If current Block is empty just remove this Block */
@@ -409,5 +464,4 @@ export default class BlockEvents extends Module {
 
     return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
   }
-
 }
