@@ -3,7 +3,7 @@ import SelectionUtils from '../selection';
 import $ from '../dom';
 import _ from '../utils';
 import {API, InlineTool, SanitizerConfig} from '../../../types';
-import {Notifier, Toolbar} from '../../../types/api';
+import {InlineToolbar, Notifier, Toolbar} from '../../../types/api';
 
 /**
  * Link Tool
@@ -81,9 +81,14 @@ export default class LinkInlineTool implements InlineTool {
   private inputOpened: boolean = false;
 
   /**
-   * Available Inline Toolbar methods (open/close)
+   * Available Toolbar methods (open/close)
    */
-  private inlineToolbar: Toolbar;
+  private toolbar: Toolbar;
+
+  /**
+   * Available Inline Toolbar methods
+   */
+  private inlineToolbar: InlineToolbar;
 
   /**
    * Notifier API methods
@@ -94,7 +99,8 @@ export default class LinkInlineTool implements InlineTool {
    * @param {{api: API}} - CodeX Editor API
    */
   constructor({api}) {
-    this.inlineToolbar = api.toolbar;
+    this.inlineToolbar = api.inlineToolbar;
+    this.toolbar = api.toolbar;
     this.notifier = api.notifier;
     this.selection = new SelectionUtils();
   }
@@ -156,7 +162,7 @@ export default class LinkInlineTool implements InlineTool {
         this.unlink();
         this.closeActions();
         this.checkState();
-        this.inlineToolbar.close();
+        this.toolbar.close();
         return;
       }
     }
@@ -206,6 +212,8 @@ export default class LinkInlineTool implements InlineTool {
   }
 
   private toggleActions(): void {
+    this.inlineToolbar.toggleActions('link');
+
     if (!this.inputOpened) {
       this.openActions(true);
     } else {
@@ -290,7 +298,7 @@ export default class LinkInlineTool implements InlineTool {
     event.stopImmediatePropagation();
 
     this.closeActions();
-    this.inlineToolbar.close();
+    this.toolbar.close();
     this.checkState();
   }
 

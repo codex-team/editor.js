@@ -14,7 +14,7 @@ export default class ToolbarAPI extends Module {
     return {
       close: () => this.close(),
       open: () => this.open(),
-    };
+    } as Toolbar;
   }
 
   /**

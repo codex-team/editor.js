@@ -29,6 +29,7 @@ import NotifierAPI from '../components/modules/api/notifier';
 import SaverAPI from '../components/modules/api/saver';
 import Saver from '../components/modules/saver';
 import BlockSelection from '../components/modules/blockSelection';
+import InlineToolbarAPI from '../components/modules/api/inlineToolbar';
 
 export interface EditorModules {
   UI: UI;
@@ -55,6 +56,7 @@ export interface EditorModules {
   BlocksAPI: BlocksAPI;
   CaretAPI: CaretAPI;
   EventsAPI: EventsAPI;
+  InlineToolbarAPI: InlineToolbarAPI;
   ListenersAPI: ListenersAPI;
   SanitizerAPI: SanitizerAPI;
   SaverAPI: SaverAPI;

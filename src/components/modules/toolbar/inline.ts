@@ -71,6 +71,10 @@ export default class InlineToolbar extends Module {
     actions: null,
   };
 
+  private toolsButtons: {[name: string]: HTMLElement} = {};
+  private toolsActions: {[name: string]: HTMLElement} = {};
+  private currentActionsTool: string;
+
   /**
    * Margin above/below the Toolbar
    */
@@ -182,6 +186,8 @@ export default class InlineToolbar extends Module {
    * Hides Inline Toolbar
    */
   public close(): void {
+    this.currentActionsTool = null;
+
     this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
     this.tools.forEach((toolInstance) => {
       if (typeof toolInstance.clear === 'function') {
@@ -190,10 +196,45 @@ export default class InlineToolbar extends Module {
     });
   }
 
+  public toggleActions(toolName: string) {
+    if (!this.currentActionsTool) {
+      this.openActions(toolName);
+      return;
+    }
+
+    if (this.currentActionsTool === toolName) {
+      this.closeActions();
+      return;
+    }
+
+    this.closeActions();
+    this.openActions(toolName);
+  }
+
+  private openActions(toolName: string) {
+    if (!this.toolsActions[toolName]) {
+      return;
+    }
+
+    this.currentActionsTool = toolName;
+    Object.entries(this.toolsButtons).forEach(([name, button]) => button.hidden = name !== toolName);
+    this.nodes.actions.appendChild(this.toolsActions[toolName]);
+  }
+
+  private closeActions() {
+    this.currentActionsTool = null;
+
+    Array.from(this.nodes.actions.children).forEach((child) => child.remove());
+
+    this.filterTools();
+  }
+
   /**
    * Shows Inline Toolbar
    */
   private open(): void {
+    this.currentActionsTool = null;
+
     /**
      * Filter inline-tools and show only allowed by Block's Tool
      */
@@ -257,7 +298,7 @@ export default class InlineToolbar extends Module {
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
 
-    return toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
+    return toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR] as boolean;
   }
 
   /**
@@ -274,7 +315,7 @@ export default class InlineToolbar extends Module {
      * All Inline Toolbar buttons
      * @type {HTMLElement[]}
      */
-    const buttons = Array.from(this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`)) as HTMLElement[];
+    const buttons = Object.values(this.toolsButtons);
 
     /**
      * Show previously hided
@@ -329,6 +370,8 @@ export default class InlineToolbar extends Module {
 
     const button = tool.render();
 
+    this.toolsButtons[toolName] = button;
+
     if (!button) {
       _.log('Render method must return an instance of Node', 'warn', toolName);
       return;
@@ -338,12 +381,11 @@ export default class InlineToolbar extends Module {
     this.nodes.buttons.appendChild(button);
 
     if (typeof tool.renderActions === 'function') {
-      const actions = tool.renderActions();
-      this.nodes.actions.appendChild(actions);
+      this.toolsActions[toolName] = tool.renderActions();
     }
 
     Listeners.on(button, 'click', (event) => {
-      this.toolClicked(tool);
+      this.toolClicked(toolName, tool);
       event.preventDefault();
     });
 
@@ -380,7 +422,7 @@ export default class InlineToolbar extends Module {
     }
 
     if (shortcut) {
-      this.enableShortcuts(tool, shortcut);
+      this.enableShortcuts(toolName, tool, shortcut);
     }
   }
 
@@ -389,7 +431,7 @@ export default class InlineToolbar extends Module {
    * @param {InlineTool} tool - Tool instance
    * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
-  private enableShortcuts(tool: InlineTool, shortcut: string): void {
+  private enableShortcuts(toolName: string, tool: InlineTool, shortcut: string): void {
     this.Editor.Shortcuts.add({
       name: shortcut,
       handler: (event) => {
@@ -416,7 +458,7 @@ export default class InlineToolbar extends Module {
         }
 
         event.preventDefault();
-        this.toolClicked(tool);
+        this.toolClicked(toolName, tool);
       },
     });
   }
@@ -425,7 +467,7 @@ export default class InlineToolbar extends Module {
    * Inline Tool button clicks
    * @param {InlineTool} tool - Tool's instance
    */
-  private toolClicked(tool: InlineTool): void {
+  private toolClicked(toolName: string, tool: InlineTool): void {
     const range = SelectionUtils.range;
 
     tool.surround(range);
