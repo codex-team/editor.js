@@ -255,7 +255,7 @@ export default class BlockEvents extends Module {
     /**
      * Check if Block should be removed by current Backspace keydown
      */
-    if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+    if (currentBlock.selected || currentBlock.isEmpty) {
       if (BlockSelection.allBlocksSelected) {
         this.removeAllBlocks();
       } else {
@@ -271,7 +271,7 @@ export default class BlockEvents extends Module {
      * Don't handle Backspaces when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
-    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS] && !Caret.isAtStart) {
       return;
     }
 
@@ -306,24 +306,29 @@ export default class BlockEvents extends Module {
    */
   private removeCurrentBlock(): boolean {
     const { BlockManager, Caret } = this.Editor;
+    const index = BlockManager.currentBlockIndex;
 
     /** If current Block is empty just remove this Block */
     BlockManager.removeBlock();
+    if (BlockManager.currentBlock.inputs.length === 0) {
+      const isFirstBlock = BlockManager.currentBlockIndex === 0;
 
-    /**
-     * In case of deletion first block we need to set caret to the current Block
-     * After BlockManager removes the Block (which is current now),
-     * pointer that references to the current Block, now points to the Next
-     */
-    if (BlockManager.currentBlockIndex === 0) {
-      Caret.setToBlock(BlockManager.currentBlock);
-    } else if (BlockManager.currentBlock.inputs.length === 0) {
       /** If previous (now current) block doesn't contain inputs, remove it */
       BlockManager.removeBlock();
-      BlockManager.insert();
+
+      if (!isFirstBlock) {
+        BlockManager.insert();
+      }
     }
 
-    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
+    /**
+     * In case of deletion of the first Block we need to set caret to the start of the new first Block
+     */
+    if (index === 0) {
+      Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.START);
+    } else  {
+      Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
+    }
 
     this.Editor.Toolbar.close();
     return true;
@@ -345,8 +350,8 @@ export default class BlockEvents extends Module {
      * other case will handle as usual ARROW LEFT behaviour
      */
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
-      /** If target Block doesn't contain inputs, remove it */
-      if (targetBlock.inputs.length === 0) {
+      /** If target Block doesn't contain inputs or empty, remove it */
+      if (targetBlock.inputs.length === 0 || targetBlock.isEmpty) {
         BlockManager.removeBlock(BlockManager.currentBlockIndex - 1);
 
         Caret.setToBlock(BlockManager.currentBlock);

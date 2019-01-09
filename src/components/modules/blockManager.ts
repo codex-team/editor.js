@@ -12,7 +12,7 @@ import $ from '../dom';
 import _ from '../utils';
 import Blocks from '../blocks';
 import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
-import Caret from './caret';
+import CaretClass from './caret';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -235,6 +235,21 @@ export default class BlockManager extends Module {
     return block;
   }
 
+  public insertAtIndex(index: number, needToFocus: boolean = false) {
+    const block = this.composeBlock(this.config.initialBlock, {}, {});
+
+    this._blocks[index] = block;
+
+    if (needToFocus) {
+      this.currentBlockIndex = index;
+      this.Editor.Caret.setToBlock(block);
+    } else if (index <= this.currentBlockIndex) {
+      this.currentBlockIndex++;
+    }
+
+    return block;
+  }
+
   /**
    * Always inserts at the end
    * @return {Block}
@@ -295,7 +310,9 @@ export default class BlockManager extends Module {
     if (!this.blocks.length) {
       this.currentBlockIndex = -1;
       this.insert();
-      this.currentBlock.firstInput.focus();
+      return;
+    } else if (index === 0) {
+      this.currentBlockIndex = 0;
     }
   }
 
@@ -322,6 +339,14 @@ export default class BlockManager extends Module {
    * @return {Block}
    */
   public split(): Block {
+    /**
+     * If enter has been pressed at the start of the text, just insert paragraph Block above
+     */
+    if (this.Editor.Caret.isAtStart && !this.currentBlock.hasMedia) {
+      this.insertAtIndex(this.currentBlockIndex);
+      return this.currentBlock;
+    }
+
     const extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition();
     const wrapper = $.make('div');
 
@@ -419,7 +444,7 @@ export default class BlockManager extends Module {
    *  @param {string} caretPosition - position where to set caret
    *  @throws Error  - when passed Node is not included at the Block
    */
-  public setCurrentBlockByChildNode(childNode: Node, caretPosition: string = Caret.positions.DEFAULT): void {
+  public setCurrentBlockByChildNode(childNode: Node, caretPosition: string = CaretClass.positions.DEFAULT): void {
     /**
      * If node is Text TextNode
      */

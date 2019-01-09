@@ -35,7 +35,7 @@ export default class Dom {
    * @return {boolean}
    */
   public static isLineBreakTag(element: HTMLElement) {
-    return element.tagName && [
+    return element && element.tagName && [
       'BR',
       'WBR',
     ].includes(element.tagName);
@@ -320,7 +320,7 @@ export default class Dom {
   public static isNodeEmpty(node: Node): boolean {
     let nodeText;
 
-    if (this.isSingleTag(node as HTMLElement)) {
+    if (this.isSingleTag(node as HTMLElement) && !this.isLineBreakTag(node as HTMLElement)) {
       return false;
     }
 
