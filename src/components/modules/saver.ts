@@ -34,23 +34,22 @@ export default class Saver extends Module {
      */
     ModificationsObserver.disable();
 
-    await Promise.all(
-      blocks.map(async (block: Block) => {
-        const blockData = await block.save();
+    blocks.forEach((block: Block) => {
+      chainData.push(block.save().then((blockData) => {
+        if (blockData) {
+          const isValid = block.validate(blockData.data);
 
-        if (blockData && blockData.data) {
-          const validData = block.validate(blockData.data);
-
-          if (validData) {
-            chainData.push(blockData);
-          } else {
+          if (!isValid) {
             _.log(`Block «${blockData.tool}» skipped because saved data is invalid`, 'log');
           }
-        }
-      }),
-    );
 
-    const extractedData = await Promise.all(chainData);
+          return {...blockData, isValid};
+        }
+      }));
+    });
+
+    const extractedData = (await Promise.all(chainData)).filter((blockData) => blockData.isValid);
+
     const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
 
     ModificationsObserver.enable();
