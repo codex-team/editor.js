@@ -387,7 +387,7 @@ export default class Block {
     let isValid = true;
 
     if (this.tool.validate instanceof Function) {
-        isValid = this.tool.validate(data);
+      isValid = this.tool.validate(data);
     }
 
     if (!isValid) {
