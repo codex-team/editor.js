@@ -33,12 +33,9 @@ export default class Saver extends Module {
      */
     ModificationsObserver.disable();
 
-    await Promise.all(
-      blocks.map(async (block: Block) => {
-        const blockData =  await block.save();
-        chainData.push(blockData);
-      }),
-    );
+    blocks.forEach((block: Block) => {
+      chainData.push(block.save());
+    });
 
     const extractedData = await Promise.all(chainData);
     const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
