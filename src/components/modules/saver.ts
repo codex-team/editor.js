@@ -34,22 +34,24 @@ export default class Saver extends Module {
      */
     ModificationsObserver.disable();
 
-    blocks.forEach((block: Block) => {
-      chainData.push(block.save());
-    });
-
-    const extractedData = await Promise.all(chainData);
-    const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
-
     await Promise.all(
-      blocks.map(async (block: Block, index) => {
-        const validData = await block.validate(sanitizedData[index].data);
-        if (!validData) {
-          _.log(`Block «${sanitizedData[index].tool}» skipped because saved data is invalid`, 'log');
-          sanitizedData.splice(index, 1);
+      blocks.map(async (block: Block) => {
+        const blockData = await block.save();
+
+        if (blockData && blockData.data) {
+          const validData = await block.validate(blockData.data);
+
+          if (validData) {
+            chainData.push(blockData);
+          } else {
+            _.log(`Block «${blockData.tool}» skipped because saved data is invalid`, 'log');
+          }
         }
       }),
     );
+
+    const extractedData = await Promise.all(chainData);
+    const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
 
     ModificationsObserver.enable();
 
