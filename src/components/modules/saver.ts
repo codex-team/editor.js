@@ -35,9 +35,9 @@ export default class Saver extends Module {
     ModificationsObserver.disable();
 
     blocks.forEach((block: Block) => {
-      chainData.push(block.save().then((blockData) => {
+      chainData.push(block.save().then(async (blockData) => {
         if (blockData) {
-          const isValid = block.validate(blockData.data);
+          const isValid = await block.validate(blockData.data);
 
           if (!isValid) {
             _.log(`Block «${blockData.tool}» skipped because saved data is invalid`, 'log');

@@ -381,9 +381,9 @@ export default class Block {
    * @description Method returns true|false whether data passed the validation or not
    *
    * @param {Object} data
-   * @returns {boolean} valid
+   * @returns {Promise<boolean>} valid
    */
-  public validate(data: BlockToolData): boolean {
+  public async validate(data: BlockToolData): Promise<boolean> {
     let isValid = true;
 
     if (this.tool.validate instanceof Function) {
