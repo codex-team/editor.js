@@ -35,17 +35,22 @@ export default class Saver extends Module {
 
     await Promise.all(
       blocks.map(async (block: Block) => {
-        try {
-          const blockData =  await block.save();
-          chainData.push(blockData);
-        } catch (err) {
-          console.error(`${err.message}`);
-        }
+        const blockData =  await block.save();
+        chainData.push(blockData);
       }),
     );
 
     const extractedData = await Promise.all(chainData);
     const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
+
+    await Promise.all(
+        blocks.map(async (block: Block, index) => {
+            const validData = await block.validateData(sanitizedData[index].data);
+            if (!validData) {
+              console.warn(`Invalid data in ${sanitizedData[index].tool} Tool!`);
+            }
+        }),
+    );
 
     ModificationsObserver.enable();
 

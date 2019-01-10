@@ -358,16 +358,20 @@ export default class Block {
     const measuringStart = window.performance.now();
     let measuringEnd;
 
-    measuringEnd = window.performance.now();
-    if (await this.validateData(extractedBlock)) {
-      return {
-        tool: this.name,
-        data: extractedBlock,
-        time : measuringEnd - measuringStart,
-      };
-    } else {
-      throw new Error(`Failed to validate ${this.name} data`);
-    }
+    return Promise.resolve(extractedBlock)
+      .then((finishedExtraction) => {
+        /** measure promise execution */
+        measuringEnd = window.performance.now();
+
+        return {
+          tool: this.name,
+          data: finishedExtraction,
+          time : measuringEnd - measuringStart,
+        };
+      })
+      .catch((error) => {
+        _.log(`Saving proccess for ${this.name} tool failed due to the ${error}`, 'log', 'red');
+      });
   }
 
   /**
@@ -377,13 +381,13 @@ export default class Block {
    * @description Method also can return data if it passed the validation
    *
    * @param {Object} data
-   * @returns {Boolean|Object} valid
+   * @returns {Promise<BlockToolData|boolean>} valid
    */
-  public validateData(data: BlockToolData): BlockToolData|false {
+  public async validateData(data: BlockToolData): Promise<BlockToolData|false> {
     let isValid = true;
 
     if (this.tool.validate instanceof Function) {
-      isValid = this.tool.validate(data);
+        isValid = this.tool.validate(data);
     }
 
     if (!isValid) {
