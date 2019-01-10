@@ -44,12 +44,12 @@ export default class Saver extends Module {
     const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
 
     await Promise.all(
-        blocks.map(async (block: Block, index) => {
-            const validData = await block.validateData(sanitizedData[index].data);
-            if (!validData) {
-              console.warn(`Invalid data in ${sanitizedData[index].tool} Tool!`);
-            }
-        }),
+      blocks.map(async (block: Block, index) => {
+        const validData = await block.validateData(sanitizedData[index].data);
+        if (!validData) {
+          console.warn(`Invalid data in ${sanitizedData[index].tool} Tool!`);
+        }
+      }),
     );
 
     ModificationsObserver.enable();
