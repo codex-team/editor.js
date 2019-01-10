@@ -45,7 +45,7 @@ export default class Saver extends Module {
       blocks.map(async (block: Block, index) => {
         const validData = await block.validate(sanitizedData[index].data);
         if (!validData) {
-          _.log(`Block «${sanitizedData[index].tool}» skipped because saved data is invalid`, 'warn');
+          _.log(`Block «${sanitizedData[index].tool}» skipped because saved data is invalid`, 'log');
           sanitizedData.splice(index, 1);
         }
       }),
