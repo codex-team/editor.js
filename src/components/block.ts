@@ -378,23 +378,19 @@ export default class Block {
    * Uses Tool's validation method to check the correctness of output data
    * Tool's validation method is optional
    *
-   * @description Method also can return data if it passed the validation
+   * @description Method returns true|false whether data passed the validation or not
    *
    * @param {Object} data
-   * @returns {Promise<BlockToolData|boolean>} valid
+   * @returns {Promise<boolean>} valid
    */
-  public async validateData(data: BlockToolData): Promise<BlockToolData|false> {
+  public async validate(data: BlockToolData): Promise<boolean> {
     let isValid = true;
 
     if (this.tool.validate instanceof Function) {
       isValid = this.tool.validate(data);
     }
 
-    if (!isValid) {
-      return false;
-    }
-
-    return data;
+    return isValid;
   }
 
   /**

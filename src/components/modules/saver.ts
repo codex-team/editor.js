@@ -8,6 +8,7 @@
 import Module from '../__module';
 import {OutputData} from '../../../types';
 import Block from '../block';
+import _ from '../utils';
 
 declare const VERSION: string;
 
@@ -42,9 +43,10 @@ export default class Saver extends Module {
 
     await Promise.all(
       blocks.map(async (block: Block, index) => {
-        const validData = await block.validateData(sanitizedData[index].data);
+        const validData = await block.validate(sanitizedData[index].data);
         if (!validData) {
-          console.warn(`Invalid data in ${sanitizedData[index].tool} Tool!`);
+          _.log(`Block «${sanitizedData[index].tool}» skipped because saved data is invalid`, 'warn');
+          sanitizedData.splice(index, 1);
         }
       }),
     );
