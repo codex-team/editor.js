@@ -39,7 +39,7 @@ export default class Saver extends Module {
         const blockData = await block.save();
 
         if (blockData && blockData.data) {
-          const validData = await block.validate(blockData.data);
+          const validData = block.validate(blockData.data);
 
           if (validData) {
             chainData.push(blockData);
