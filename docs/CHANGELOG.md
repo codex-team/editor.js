@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.2.24 changelog
+
+- `Improvements` *Paste handling — minor paste handling improvements
+
 ### 2.2.23 changelog
 
 - `New` *Shortcuts — copy and cut Blocks selected by CMD+A
