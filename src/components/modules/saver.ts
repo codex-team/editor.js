@@ -39,18 +39,23 @@ export default class Saver extends Module {
      chainData.push(this.getSavedData(block));
     });
 
-    const extractedData = (await Promise.all(chainData)).filter((blockData) => blockData.isValid);
+    console.groupCollapsed('[CodexEditor saving]:');
 
+    const extractedData = (await Promise.all(chainData)).filter((blockData) => blockData.isValid);
     const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
 
     ModificationsObserver.enable();
 
-    return this.makeOutput(sanitizedData);
+    const output = this.makeOutput(sanitizedData);
+    console.groupEnd();
+
+    return output;
   }
 
   /**
    * Saves and validates
    * @param {Block} block - Editor's Tool
+   * @return {ValidatedData} - Tool's validated data
    */
   private async getSavedData(block: Block): Promise<ValidatedData> {
       const blockData = await block.save();
@@ -72,11 +77,14 @@ export default class Saver extends Module {
     let totalTime = 0;
     const blocks = [];
 
-    console.groupCollapsed('[CodexEditor saving]:');
-
     allExtractedData.forEach((extraction) => {
       /** Group process info */
-      console.log(`«${extraction.tool}» saving info`, extraction);
+      console.log(`«${extraction.tool}» saving info`, {
+        tool: extraction.tool,
+        data: extraction.data,
+        time: extraction.time},
+      );
+
       totalTime += extraction.time;
 
       /** If it was stub Block, get original data */
@@ -92,7 +100,6 @@ export default class Saver extends Module {
     });
 
     console.log('Total', totalTime);
-    console.groupEnd();
 
     return {
       time: +new Date(),
