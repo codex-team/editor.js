@@ -85,15 +85,6 @@
     justify-content: center;
     align-items: center;
 
-
-    @media (--mobile) {
-
-    }
-
-    &:not(:last-of-type){
-      //margin-right: 10px;
-    }
-
     &:hover,
     &--active {
       color: var(--color-active-icon);
