@@ -26,8 +26,14 @@
 
   /**
    * Block content width
+   * Can be set in a constant at the modules/ui.js
    */
   --content-width: 650px;
+
+  /**
+   * In narrow mode, we increase right zone contained Block Actions button
+   */
+  --narrow-mode-right-padding: 50px;
 
   /**
    * Toolbar buttons height and width

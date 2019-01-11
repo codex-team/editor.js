@@ -38,14 +38,24 @@ export default class UI extends Module {
    * CodeX Editor UI CSS class names
    * @return {{editorWrapper: string, editorZone: string}}
    */
-  private get CSS(): {editorWrapper: string, editorZone: string, editorZoneHidden: string, editorLoader: string} {
+  private get CSS(): {
+    editorWrapper: string, editorWrapperNarrow: string, editorZone: string, editorZoneHidden: string,
+    editorLoader: string,
+  } {
     return {
       editorWrapper    : 'codex-editor',
+      editorWrapperNarrow : 'codex-editor--narrow',
       editorZone       : 'codex-editor__redactor',
       editorZoneHidden : 'codex-editor__redactor--hidden',
       editorLoader     : 'codex-editor__loader',
     };
   }
+
+  /**
+   * Width of center column of Editor
+   * @type {number}
+   */
+  public contentWidth: number = 650;
 
   /**
    * HTML Elements used for UI
@@ -135,8 +145,16 @@ export default class UI extends Module {
     this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
+    /**
+     * If Editor has injected into the narrow container, enable Narrow Mode
+     */
+    if (this.nodes.holder.offsetWidth < this.contentWidth) {
+      this.nodes.wrapper.classList.add(this.CSS.editorWrapperNarrow);
+    }
+
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.holder.appendChild(this.nodes.wrapper);
+
   }
 
   /**

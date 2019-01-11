@@ -43,6 +43,13 @@ body {
   margin: 0 auto;
 }
 
+.ce-example__content--small {
+  max-width: 500px;
+  border-left: 1px solid #eee;
+  border-right: 1px solid #eee;
+  padding: 0 15px;
+}
+
 .ce-example__output {
   background: #1B202B;
   overflow-x: auto;

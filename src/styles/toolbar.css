@@ -49,7 +49,7 @@
     @apply --toolbox-button;
 
     position: absolute;
-    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);
+    left: calc(var(--toolbox-buttons-size) * -1);
 
     &--hidden {
       display: none;
@@ -98,6 +98,12 @@
   }
 }
 
+/**
+ * Styles for Narrow mode
+ */
+.codex-editor--narrow .ce-toolbar__plus {
+  left: 5px;
+}
 
 /**
  * On mobile devices, we show Toolbox (fixed to bottom) instead of Plus Button
