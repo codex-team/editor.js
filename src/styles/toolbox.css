@@ -1,17 +1,24 @@
 .ce-toolbox {
-    position: absolute;
-    visibility: hidden;
-    transition: opacity 100ms ease;
-    will-change: opacity;
-    display: flex;
-    flex-direction: row;
+  position: absolute;
+  visibility: hidden;
+  transition: opacity 100ms ease;
+  will-change: opacity;
+  display: flex;
+  flex-direction: row;
 
-    &--opened {
-        opacity: 1;
-        visibility: visible;
-    }
+  @media (--mobile){
+    position: static;
+    transform: none !important;
+    align-items: center;
+    visibility: visible !important;
+  }
 
-    &__button {
-        @apply --toolbox-button;
-    }
+  &--opened {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  &__button {
+    @apply --toolbox-button;
+  }
 }

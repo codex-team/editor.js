@@ -81,6 +81,7 @@ export default class Toolbar extends Module {
       actionsOpened: 'ce-toolbar__actions--opened',
 
       toolbarOpened: 'ce-toolbar--opened',
+      toolbarWithPlusButton: 'ce-toolbar--with-plus-button',
 
       // Content Zone
       plusButton: 'ce-toolbar__plus',
@@ -234,12 +235,21 @@ export default class Toolbar extends Module {
    */
   public get plusButton(): {hide: () => void, show: () => void} {
     return {
-      hide: () => this.nodes.plusButton.classList.add(Toolbar.CSS.plusButtonHidden),
+      hide: () => {
+        this.nodes.plusButton.classList.add(Toolbar.CSS.plusButtonHidden);
+        this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarWithPlusButton);
+      },
       show: () => {
         if (this.Editor.Toolbox.isEmpty) {
           return;
         }
         this.nodes.plusButton.classList.remove(Toolbar.CSS.plusButtonHidden);
+
+        /**
+         * Modifier on Toolbar used to show Toolbox instead of Plus Button
+         * on mobile devices
+         */
+        this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarWithPlusButton);
       },
     };
   }

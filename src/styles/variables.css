@@ -37,12 +37,14 @@
   /**
    * Toolbar Plus Button and Toolbox buttons height and width
    */
-  --toolbox-buttons-size: 24px;
+  --toolbox-buttons-size: 34px;
 
   /**
    * Confirm deletion bg
    */
   --color-confirm: #E24A4A;
+
+  @custom-media --mobile (max-width: 650px);
 
   --overlay-pane: {
     position: absolute;
@@ -77,8 +79,13 @@
     justify-content: center;
     align-items: center;
 
+
+    @media (--mobile) {
+
+    }
+
     &:not(:last-of-type){
-      margin-right: 10px;
+      //margin-right: 10px;
     }
 
     &:hover,

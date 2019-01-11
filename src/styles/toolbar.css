@@ -9,16 +9,38 @@
   will-change: opacity, transform;
   display: none;
 
+  @media (--mobile) {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    z-index: 9;
+    height: 50px;
+    background: #fff;
+    box-shadow:  0 -2px 12px rgba(60, 67, 81, 0.18);
+    transform: none !important;
+  }
+
   &--opened {
     display: block;
-    /*opacity: 1;*/
-    /*visibility: visible;*/
+
+    @media (--mobile){
+      display: flex;
+    }
   }
 
   &__content {
     max-width: var(--content-width);
     margin: 0 auto;
     position: relative;
+
+    @media (--mobile){
+      display: flex;
+      align-content: center;
+      margin: 0;
+      padding: 0 10px;
+    }
   }
 
   &__plus {
@@ -49,6 +71,13 @@
     padding-right: 16px;
     opacity: 0;
 
+    @media (--mobile){
+      position: static;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+    }
+
     &--opened {
       opacity: 1;
     }
@@ -64,5 +93,17 @@
     height: 24px;
     color: var(--grayText);
     cursor: pointer;
+  }
+}
+
+
+/**
+ * On mobile devices, we show Toolbox (fixed to bottom) instead of Plus Button
+ */
+@media (--mobile){
+  .ce-toolbar--with-plus-button {
+    .ce-toolbar__plus {
+      display: none !important;
+    }
   }
 }
