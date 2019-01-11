@@ -328,15 +328,7 @@ export default class Paste extends Module {
    * @returns {boolean}
    */
   private isNativeBehaviour(element: EventTarget): boolean {
-    const {Editor: {BlockManager}} = this;
-
-    if ( $.isNativeInput(element) ) {
-      return true;
-    }
-
-    const block = BlockManager.getBlock(element as HTMLElement);
-
-    return !block;
+    return $.isNativeInput(element);
   }
 
   /**
@@ -557,6 +549,8 @@ export default class Paste extends Module {
     const {Caret, BlockManager, Tools} = this.Editor;
     const {currentBlock} = BlockManager;
 
+    console.log(dataToInsert.content);
+
     /**
      * If pasted tool isn`t equal current Block or if pasted content contains block elements, insert it as new Block
      */
@@ -601,7 +595,11 @@ export default class Paste extends Module {
     const currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
 
     /** If there is no pattern substitute - insert string as it is */
-    document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig));
+    if (BlockManager.currentBlock.currentInput) {
+      document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig));
+    } else {
+      this.insertBlock(dataToInsert);
+    }
   }
 
   /**
