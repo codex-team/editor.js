@@ -35,7 +35,7 @@ export default class Saver extends Module {
     ModificationsObserver.disable();
 
     blocks.forEach((block: Block) => {
-     chainData.push(this.pushValidData(block));
+     chainData.push(this.getSavedData(block));
     });
 
     const extractedData = (await Promise.all(chainData)).filter((blockData) => blockData.isValid);
@@ -51,19 +51,15 @@ export default class Saver extends Module {
    * Calls block's save method and pushes only valid data to blocks array
    * @param {Block} block - Editor's Tool
    */
-  private pushValidData(block: Block): Promise<void|{isValid: boolean}> {
-    return Promise.resolve().then(
-      async () => {
-          const blockData = await block.save();
-          const isValid = blockData && await block.validate(blockData.data);
+  private async getSavedData(block: Block): Promise<void|{isValid: boolean}> {
+      const blockData = await block.save();
+      const isValid = blockData && await block.validate(blockData.data);
 
-          if (blockData && !isValid) {
-            _.log(`Block «${blockData.tool}» skipped because saved data is invalid`, 'log');
-          }
+      if (blockData && !isValid) {
+          _.log(`Block «${blockData.tool}» skipped because saved data is invalid`, 'log');
+      }
 
-          return {...blockData, isValid};
-      },
-    );
+      return {...blockData, isValid};
   }
 
   /**
