@@ -54,6 +54,10 @@
     &--hidden {
       display: none;
     }
+
+    @media (--mobile){
+      display: none !important;
+    }
   }
 
   &__plus,
@@ -103,15 +107,4 @@
  */
 .codex-editor--narrow .ce-toolbar__plus {
   left: 5px;
-}
-
-/**
- * On mobile devices, we show Toolbox (fixed to bottom) instead of Plus Button
- */
-@media (--mobile){
-  .ce-toolbar--with-plus-button {
-    .ce-toolbar__plus {
-      display: none !important;
-    }
-  }
 }
