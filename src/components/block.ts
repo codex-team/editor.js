@@ -9,6 +9,7 @@ import {
   ToolConfig,
 } from '../../types';
 
+import {SavedData} from '../types-internal/block-data';
 import $ from './dom';
 import _ from './utils';
 
@@ -349,7 +350,7 @@ export default class Block {
    * Groups Tool's save processing time
    * @return {Object}
    */
-  public async save(): Promise<void|{tool: string, data: BlockToolData, time: number}> {
+  public async save(): Promise<void|SavedData> {
     const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
 
     /**

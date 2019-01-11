@@ -7,6 +7,7 @@
  */
 import Module from '../__module';
 import {OutputData} from '../../../types';
+import {ValidatedData} from '../../types-internal/block-data';
 import Block from '../block';
 import _ from '../utils';
 
@@ -48,10 +49,10 @@ export default class Saver extends Module {
   }
 
   /**
-   * Calls block's save method and pushes only valid data to blocks array
+   * Saves and validates
    * @param {Block} block - Editor's Tool
    */
-  private async getSavedData(block: Block): Promise<void|{isValid: boolean}> {
+  private async getSavedData(block: Block): Promise<ValidatedData> {
       const blockData = await block.save();
       const isValid = blockData && await block.validate(blockData.data);
 
