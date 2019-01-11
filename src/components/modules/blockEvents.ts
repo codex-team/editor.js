@@ -196,7 +196,7 @@ export default class BlockEvents extends Module {
    * @param event
    */
   public handleCommandX(event): void {
-    const { BlockSelection, BlockManager } = this.Editor;
+    const { BlockSelection, BlockManager, Caret } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
 
     if (!currentBlock) {
@@ -208,52 +208,15 @@ export default class BlockEvents extends Module {
       BlockSelection.copySelectedBlocks();
 
       if (BlockSelection.allBlocksSelected) {
-        this.removeAllBlocks();
+        BlockManager.removeAllBlocks();
       } else {
-        this.removeCurrentBlock();
+        BlockManager.removeBlock();
+        Caret.setToBlock(BlockManager.insert(), CaretClass.positions.START);
       }
 
       /** Clear selection */
       BlockSelection.clearSelection();
     }
-  }
-
-  /**
-   * remove all selected Blocks
-   */
-  private removeAllBlocks(): boolean {
-    const { BlockManager } = this.Editor;
-
-    BlockManager.removeAllBlocks();
-    return true;
-  }
-
-  /**
-   * remove current Block and sets Caret to the correct position
-   */
-  private removeCurrentBlock(): boolean {
-    const { BlockManager, Caret } = this.Editor;
-
-    /** If current Block is empty just remove this Block */
-    BlockManager.removeBlock();
-
-    /**
-     * In case of deletion first block we need to set caret to the current Block
-     * After BlockManager removes the Block (which is current now),
-     * pointer that references to the current Block, now points to the Next
-     */
-    if (BlockManager.currentBlockIndex === 0) {
-      Caret.setToBlock(BlockManager.currentBlock);
-    } else if (BlockManager.currentBlock.inputs.length === 0) {
-      /** If previous (now current) block doesn't contain inputs, remove it */
-      BlockManager.removeBlock();
-      BlockManager.insert();
-    }
-
-    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
-
-    this.Editor.Toolbar.close();
-    return true;
   }
 
   /**
@@ -345,10 +308,28 @@ export default class BlockEvents extends Module {
      */
     if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
       if (BlockSelection.allBlocksSelected) {
-        this.removeAllBlocks();
+        BlockManager.removeAllBlocks();
       } else {
-        this.removeCurrentBlock();
+        BlockManager.removeBlock();
+
+        /**
+         * In case of deletion first block we need to set caret to the current Block
+         * After BlockManager removes the Block (which is current now),
+         * pointer that references to the current Block, now points to the Next
+         */
+        if (BlockManager.currentBlockIndex === 0) {
+          Caret.setToBlock(BlockManager.currentBlock);
+        } else if (BlockManager.currentBlock.inputs.length === 0) {
+          /** If previous (now current) block doesn't contain inputs, remove it */
+          BlockManager.removeBlock();
+          BlockManager.insert();
+        }
+
+        Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
       }
+
+      /** Close Toolbar */
+      this.Editor.Toolbar.close();
 
       /** Clear selection */
       BlockSelection.clearSelection();
