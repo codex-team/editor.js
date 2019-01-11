@@ -203,6 +203,10 @@ export default class BlockEvents extends Module {
       return;
     }
 
+    /**
+     * Prevent default copy
+     * Remove "decline sound" on macOS
+     */
     event.preventDefault();
 
     /** Copy Blocks before removing */
