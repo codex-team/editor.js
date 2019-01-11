@@ -41,7 +41,7 @@ Process Tool's element created by `render()` function in DOM and return Block's 
 
 ### validate() _optional_
 
-Allows to check correctness of Tool's `data`. If Tool's data didn't pass the validation it won't be saved.
+Allows to check correctness of Tool's data. If data didn't pass the validation it won't be saved. Receives Tool's `data` as input param and returns `boolean` result of validation.
 
 ### merge() _optional_
 
