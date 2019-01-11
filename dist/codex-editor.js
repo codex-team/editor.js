@@ -1,7 +1,7 @@
 /*!
  * Codex Editor
  * 
- * @version 2.7.22
+ * @version 2.7.23
  * 
  * @licence Apache-2.0
  * @author CodeX-Team <https://ifmo.su>
@@ -10847,7 +10847,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /** Editor version */
       get: function get() {
-        return "2.7.22";
+        return "2.7.23";
       }
       /**
        * @constructor
@@ -15313,6 +15313,72 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         block.dropTarget = false;
       }
       /**
+       * Copying selected blocks
+       * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
+       *
+       * @param event
+       */
+
+    }, {
+      key: "handleCommandC",
+      value: function handleCommandC(event) {
+        var BlockSelection = this.Editor.BlockSelection;
+
+        if (!BlockSelection.anyBlockSelected) {
+          return;
+        }
+        /**
+         * Prevent default copy
+         * Remove "decline sound" on macOS
+         */
+
+
+        event.preventDefault(); // Copy Selected Blocks
+
+        BlockSelection.copySelectedBlocks();
+      }
+      /**
+       * Copy and Delete selected Blocks
+       * @param event
+       */
+
+    }, {
+      key: "handleCommandX",
+      value: function handleCommandX(event) {
+        var _this$Editor = this.Editor,
+            BlockSelection = _this$Editor.BlockSelection,
+            BlockManager = _this$Editor.BlockManager,
+            Caret = _this$Editor.Caret;
+        var currentBlock = BlockManager.currentBlock;
+
+        if (!currentBlock) {
+          return;
+        }
+        /**
+         * Prevent default copy
+         * Remove "decline sound" on macOS
+         */
+
+
+        event.preventDefault();
+        /** Copy Blocks before removing */
+
+        if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+          BlockSelection.copySelectedBlocks();
+
+          if (BlockSelection.allBlocksSelected) {
+            BlockManager.removeAllBlocks();
+          } else {
+            BlockManager.removeBlock();
+            Caret.setToBlock(BlockManager.insert(), _caret.default.positions.START);
+          }
+          /** Clear selection */
+
+
+          BlockSelection.clearSelection();
+        }
+      }
+      /**
        * ENTER pressed on block
        * @param {KeyboardEvent} event - keydown
        */
@@ -15320,11 +15386,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "enter",
       value: function enter(event) {
-        var _this$Editor = this.Editor,
-            BlockSelection = _this$Editor.BlockSelection,
-            BlockManager = _this$Editor.BlockManager,
-            Tools = _this$Editor.Tools,
-            Caret = _this$Editor.Caret;
+        var _this$Editor2 = this.Editor,
+            BlockSelection = _this$Editor2.BlockSelection,
+            BlockManager = _this$Editor2.BlockManager,
+            Tools = _this$Editor2.Tools,
+            Caret = _this$Editor2.Caret;
         var currentBlock = BlockManager.currentBlock;
         var tool = Tools.available[currentBlock.name];
 
@@ -15405,10 +15471,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "backspace",
       value: function backspace(event) {
-        var _this$Editor2 = this.Editor,
-            BlockManager = _this$Editor2.BlockManager,
-            BlockSelection = _this$Editor2.BlockSelection,
-            Caret = _this$Editor2.Caret;
+        var _this$Editor3 = this.Editor,
+            BlockManager = _this$Editor3.BlockManager,
+            BlockSelection = _this$Editor3.BlockSelection,
+            Caret = _this$Editor3.Caret;
         var currentBlock = BlockManager.currentBlock;
         var tool = this.Editor.Tools.available[currentBlock.name];
         /**
@@ -15417,12 +15483,30 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
           if (BlockSelection.allBlocksSelected) {
-            this.removeAllBlocks();
+            BlockManager.removeAllBlocks();
           } else {
-            this.removeCurrentBlock();
-          }
-          /** Clear selection */
+            BlockManager.removeBlock();
+            /**
+             * In case of deletion first block we need to set caret to the current Block
+             * After BlockManager removes the Block (which is current now),
+             * pointer that references to the current Block, now points to the Next
+             */
 
+            if (BlockManager.currentBlockIndex === 0) {
+              Caret.setToBlock(BlockManager.currentBlock);
+            } else if (BlockManager.currentBlock.inputs.length === 0) {
+              /** If previous (now current) block doesn't contain inputs, remove it */
+              BlockManager.removeBlock();
+              BlockManager.insert();
+            }
+
+            Caret.setToBlock(BlockManager.currentBlock, _caret.default.positions.END);
+          }
+          /** Close Toolbar */
+
+
+          this.Editor.Toolbar.close();
+          /** Clear selection */
 
           BlockSelection.clearSelection();
           return;
@@ -15451,48 +15535,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
           this.mergeBlocks();
         }
-      }
-      /**
-       * remove all selected Blocks
-       */
-
-    }, {
-      key: "removeAllBlocks",
-      value: function removeAllBlocks() {
-        var BlockManager = this.Editor.BlockManager;
-        BlockManager.removeAllBlocks();
-        return true;
-      }
-      /**
-       * remove current Block and sets Caret to the correct position
-       */
-
-    }, {
-      key: "removeCurrentBlock",
-      value: function removeCurrentBlock() {
-        var _this$Editor3 = this.Editor,
-            BlockManager = _this$Editor3.BlockManager,
-            Caret = _this$Editor3.Caret;
-        /** If current Block is empty just remove this Block */
-
-        BlockManager.removeBlock();
-        /**
-         * In case of deletion first block we need to set caret to the current Block
-         * After BlockManager removes the Block (which is current now),
-         * pointer that references to the current Block, now points to the Next
-         */
-
-        if (BlockManager.currentBlockIndex === 0) {
-          Caret.setToBlock(BlockManager.currentBlock);
-        } else if (BlockManager.currentBlock.inputs.length === 0) {
-          /** If previous (now current) block doesn't contain inputs, remove it */
-          BlockManager.removeBlock();
-          BlockManager.insert();
-        }
-
-        Caret.setToBlock(BlockManager.currentBlock, _caret.default.positions.END);
-        this.Editor.Toolbar.close();
-        return true;
       }
       /**
        * Merge current and previous Blocks if they have the same type
@@ -15693,12 +15735,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _prepare = (0, _asyncToGenerator2.default)(
         /*#__PURE__*/
         _regenerator.default.mark(function _callee() {
-          var blocks;
+          var blocks, _this$Editor, BlockEvents, Shortcuts;
+
           return _regenerator.default.wrap(function _callee$(_context) {
             while (1) {
               switch (_context.prev = _context.next) {
                 case 0:
                   blocks = new _blocks.default(this.Editor.UI.nodes.redactor);
+                  _this$Editor = this.Editor, BlockEvents = _this$Editor.BlockEvents, Shortcuts = _this$Editor.Shortcuts;
                   /**
                    * We need to use Proxy to overload set/get [] operator.
                    * So we can use array-like syntax to access blocks
@@ -15718,8 +15762,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                     set: _blocks.default.set,
                     get: _blocks.default.get
                   });
+                  /** Copy shortcut */
 
-                case 2:
+                  Shortcuts.add({
+                    name: 'CMD+C',
+                    handler: function handler(event) {
+                      BlockEvents.handleCommandC(event);
+                    }
+                  });
+                  /** Copy and cut */
+
+                  Shortcuts.add({
+                    name: 'CMD+X',
+                    handler: function handler(event) {
+                      BlockEvents.handleCommandX(event);
+                    }
+                  });
+
+                case 5:
                 case "end":
                   return _context.stop();
               }
@@ -16151,9 +16211,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "bindEvents",
       value: function bindEvents(block) {
-        var _this$Editor = this.Editor,
-            BlockEvents = _this$Editor.BlockEvents,
-            Listeners = _this$Editor.Listeners;
+        var _this$Editor2 = this.Editor,
+            BlockEvents = _this$Editor2.BlockEvents,
+            Listeners = _this$Editor2.Listeners;
         Listeners.on(block.holder, 'keydown', function (event) {
           return BlockEvents.keydown(event);
         }, true);
@@ -16360,14 +16420,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             _this2.handleCommandA(event);
           }
         });
-        /** Shortcut to copy selected blocks */
-
-        Shortcuts.add({
-          name: 'CMD+C',
-          handler: function handler(event) {
-            _this2.handleCommandC(event);
-          }
-        });
         this.selection = new _selection.default();
       }
       /**
@@ -16399,6 +16451,37 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.allBlocksSelected = false;
       }
       /**
+       * Reduce each Block and copy its content
+       */
+
+    }, {
+      key: "copySelectedBlocks",
+      value: function copySelectedBlocks() {
+        var _this3 = this;
+
+        var _this$Editor = this.Editor,
+            BlockManager = _this$Editor.BlockManager,
+            Sanitizer = _this$Editor.Sanitizer;
+
+        var fakeClipboard = _dom.default.make('div');
+
+        BlockManager.blocks.filter(function (block) {
+          return block.selected;
+        }).forEach(function (block) {
+          /**
+           * Make <p> tag that holds clean HTML
+           */
+          var cleanHTML = Sanitizer.clean(block.holder.innerHTML, _this3.sanitizerConfig);
+
+          var fragment = _dom.default.make('p');
+
+          fragment.innerHTML = cleanHTML;
+          fakeClipboard.appendChild(fragment);
+        });
+
+        _utils.default.copyTextToClipboard(fakeClipboard.innerHTML);
+      }
+      /**
        * First CMD+A Selects current focused blocks,
        * and consequent second CMD+A keypress selects all blocks
        *
@@ -16427,51 +16510,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
       }
       /**
-       * Copying selected blocks
-       * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
-       *
-       * @param event
-       */
-
-    }, {
-      key: "handleCommandC",
-      value: function handleCommandC(event) {
-        var _this3 = this;
-
-        var _this$Editor = this.Editor,
-            BlockManager = _this$Editor.BlockManager,
-            Sanitizer = _this$Editor.Sanitizer;
-
-        if (!this.anyBlockSelected) {
-          return;
-        }
-        /**
-         * Prevent default copy
-         * Remove "decline sound" on macOS
-         */
-
-
-        event.preventDefault();
-
-        var fakeClipboard = _dom.default.make('div');
-
-        BlockManager.blocks.filter(function (block) {
-          return block.selected;
-        }).forEach(function (block) {
-          /**
-           * Make <p> tag that holds clean HTML
-           */
-          var cleanHTML = Sanitizer.clean(block.holder.innerHTML, _this3.sanitizerConfig);
-
-          var fragment = _dom.default.make('p');
-
-          fragment.innerHTML = cleanHTML;
-          fakeClipboard.appendChild(fragment);
-        });
-
-        _utils.default.copyTextToClipboard(fakeClipboard.innerHTML);
-      }
-      /**
        * Select All Blocks
        * Each Block has selected setter that makes Block copyable
        */
@@ -16479,7 +16517,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "selectAllBlocks",
       value: function selectAllBlocks() {
-        var BlockManager = this.Editor.BlockManager;
         this.allBlocksSelected = true;
       }
       /**
@@ -19849,7 +19886,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return {
           time: +new Date(),
           blocks: blocks,
-          version: "2.7.22"
+          version: "2.7.23"
         };
       }
     }]);
@@ -23274,7 +23311,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        var editorLabelText = "Editor.js ".concat("2.7.22");
+        var editorLabelText = "Editor.js ".concat("2.7.23");
         var editorLabelStyle = "line-height: 1em;\n            color: #006FEA;\n            display: inline-block;\n            font-size: 11px;\n            line-height: 1em;\n            background-color: #fff;\n            padding: 4px 9px;\n            border-radius: 30px;\n            border: 1px solid rgba(56, 138, 229, 0.16);\n            margin: 4px 5px 4px 0;";
 
         try {
