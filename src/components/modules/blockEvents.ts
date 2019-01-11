@@ -203,6 +203,8 @@ export default class BlockEvents extends Module {
       return;
     }
 
+    event.preventDefault();
+
     /** Copy Blocks before removing */
     if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
       BlockSelection.copySelectedBlocks();

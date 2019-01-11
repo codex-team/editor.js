@@ -15894,8 +15894,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (!currentBlock) {
           return;
         }
-        /** Copy Blocks before removing */
 
+        event.preventDefault();
+        /** Copy Blocks before removing */
 
         if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
           BlockSelection.copySelectedBlocks();
