@@ -40,6 +40,8 @@
       align-content: center;
       margin: 0;
       padding: 0 10px;
+      max-width: calc(100% - 70px);
+      overflow-x: auto;
     }
   }
 
