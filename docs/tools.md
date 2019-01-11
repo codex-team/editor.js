@@ -41,6 +41,8 @@ Process Tool's element created by `render()` function in DOM and return Block's 
 
 ### validate() _optional_
 
+Allows to check correctness of Tool's `data`. If Tool's data didn't pass the validation it won't be saved.
+
 ### merge() _optional_
 
 Method that specifies how to merge two `Blocks` of the same type, for example on `Backspace` keypress.
