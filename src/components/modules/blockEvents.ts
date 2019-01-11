@@ -312,26 +312,24 @@ export default class BlockEvents extends Module {
     /**
      * Check if Block should be removed by current Backspace keydown
      */
-    if (currentBlock.selected || currentBlock.isEmpty) {
+    if (currentBlock.selected || currentBlock.isEmpty && currentBlock.currentInput === currentBlock.firstInput) {
       if (BlockSelection.allBlocksSelected) {
         BlockManager.removeAllBlocks();
       } else {
-        BlockManager.removeBlock();
+        const index = BlockManager.currentBlockIndex;
 
-        /**
-         * In case of deletion first block we need to set caret to the current Block
-         * After BlockManager removes the Block (which is current now),
-         * pointer that references to the current Block, now points to the Next
-         */
-        if (BlockManager.currentBlockIndex === 0) {
-          Caret.setToBlock(BlockManager.currentBlock);
-        } else if (BlockManager.currentBlock.inputs.length === 0) {
-          /** If previous (now current) block doesn't contain inputs, remove it */
+        if (BlockManager.previousBlock && BlockManager.previousBlock.inputs.length === 0) {
+          /** If previous block doesn't contain inputs, remove it */
+          BlockManager.removeBlock(index - 1);
+        } else {
+          /** If block is empty, just remove it */
           BlockManager.removeBlock();
-          BlockManager.insert();
         }
 
-        Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
+        Caret.setToBlock(
+          BlockManager.currentBlock,
+          index ? CaretClass.positions.END : CaretClass.positions.START,
+        );
       }
 
       /** Close Toolbar */
@@ -351,7 +349,7 @@ export default class BlockEvents extends Module {
     }
 
     const isFirstBlock = BlockManager.currentBlockIndex === 0;
-    const canMergeBlocks = Caret.isAtStart && !isFirstBlock;
+    const canMergeBlocks = Caret.isAtStart && currentBlock.currentInput === currentBlock.firstInput && !isFirstBlock;
 
     if (canMergeBlocks) {
       /**
@@ -364,44 +362,6 @@ export default class BlockEvents extends Module {
        */
       this.mergeBlocks();
     }
-  }
-
-  /**
-   * remove all selected Blocks
-   */
-  private removeAllBlocks(): boolean {
-    const { BlockManager } = this.Editor;
-
-    BlockManager.removeAllBlocks();
-    return true;
-  }
-
-  /**
-   * remove current Block and sets Caret to the correct position
-   */
-  private removeCurrentBlock(): boolean {
-    const { BlockManager, Caret } = this.Editor;
-    const index = BlockManager.currentBlockIndex;
-
-    if (BlockManager.previousBlock && BlockManager.previousBlock.inputs.length === 0) {
-      /** If previous block doesn't contain inputs, remove it */
-      BlockManager.removeBlock(index - 1);
-    } else {
-      /** If current Block is empty just remove this Block */
-      BlockManager.removeBlock();
-    }
-
-    /**
-     * In case of deletion of the first Block we need to set caret to the start of the new first Block
-     */
-    if (index === 0) {
-      Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.START);
-    } else  {
-      Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
-    }
-
-    this.Editor.Toolbar.close();
-    return true;
   }
 
   /**
