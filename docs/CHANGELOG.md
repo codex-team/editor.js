@@ -1,8 +1,10 @@
 # Changelog
 
-### 2.2.23 changelog
+### 2.8+ changelog
 
-- `New` *Shortcuts — copy and cut Blocks selected by CMD+A
+- `New` *Shortcuts* — copy and cut Blocks selected by CMD+A
+- `New` *Mobile view* — Editor now adopted for mobile devices
+- `New` *Narrow mode* — Editor now adopted for narrow containers
 
 ### 2.2—2.7 changelog
 
