@@ -26,7 +26,7 @@
 
   /**
    * Block content width
-   * Can be set in a constant at the modules/ui.js
+   * Should be set in a constant at the modules/ui.js
    */
   --content-width: 650px;
 
