@@ -61,7 +61,7 @@ export default class Saver extends Module {
 
   /**
    * Creates output object with saved data, time and version of editor
-   * @param {Object} allExtractedData
+   * @param {ValidatedData} allExtractedData
    * @return {OutputData}
    */
   private makeOutput(allExtractedData): OutputData {
