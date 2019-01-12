@@ -9,6 +9,7 @@
 
     @media (--mobile){
       background-image: none;
+      background-color: rgba(200, 199, 219, 0.17);
     }
   }
 
