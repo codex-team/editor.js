@@ -1,5 +1,13 @@
 # Changelog
 
+### 2.2.24 changelog
+
+- `Improvements` *Paste handling — minor paste handling improvements
+
+### 2.2.23 changelog
+
+- `New` *Shortcuts — copy and cut Blocks selected by CMD+A
+
 ### 2.2—2.7 changelog
 
 - `New` *Sanitize API* — [Sanitize Config](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.
