@@ -61,8 +61,14 @@ export default class Saver extends Module {
       const blockData = await block.save();
       const isValid = blockData && await block.validate(blockData.data);
 
-      if (blockData && !isValid) {
-          _.log(`Block «${blockData.tool}» skipped because saved data is invalid`, 'log');
+      if (blockData) {
+        const {tool, data, time} = blockData;
+
+        if (!isValid) {
+          _.log(`Block «${tool}» skipped because saved data is invalid`, 'log');
+        } else {
+          console.log(`«${tool}» saving info`, {tool, data, time});
+        }
       }
 
       return {...blockData, isValid};
@@ -78,9 +84,6 @@ export default class Saver extends Module {
     const blocks = [];
 
     allExtractedData.forEach(({tool, data, time}) => {
-
-      /** Group process info */
-      console.log(`«${tool}» saving info`, {tool, data, time});
 
       totalTime += time;
 
