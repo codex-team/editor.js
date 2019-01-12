@@ -73,11 +73,18 @@ export default class Saver extends Module {
     allExtractedData.forEach(({tool, data, time, isValid}) => {
       totalTime += time;
 
+      /**
+       * Capitalize Tool name
+       */
+      console.group(`${tool.charAt(0).toUpperCase() + tool.slice(1)}`);
+
       if (isValid) {
         /** Group process info */
-        console.log(`«${tool}» saving info`, {tool, data, time});
+        console.log(data);
+        console.groupEnd();
       } else {
-        _.log(`Block «${tool}» skipped because saved data is invalid`, 'log');
+        console.log(`Block «${tool}» skipped because saved data is invalid`);
+        console.groupEnd();
         return;
       }
 
@@ -94,7 +101,6 @@ export default class Saver extends Module {
     });
 
     console.log('Total', totalTime);
-
     console.groupEnd();
 
     return {
