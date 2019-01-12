@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.7.24 changelog
+
+- `New` [Tools Validation](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#validate-optional) is added.
+
+
 ### 2.2—2.7 changelog
 
 - `New` *Sanitize API* — [Sanitize Config](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.
@@ -9,7 +14,6 @@
 - `New` *Block Tool* — [Table](http://github.com/codex-editor/table) constructor 💪 
 - `New` If one of the Tools is unavailable on Editor initialization, its Blocks will be rendered with *Dummy Block*, describing that user can not edit content of this Block. Dummy Blocks can be moved, removed and saved as normal Blocks. So saved data won't be lost if one of the Tools is failed 
 - `New` [Public TS-types](https://github.com/codex-team/codex.editor/tree/master/types) are presented.
-- `New` [Tools Validation](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#validate-optional) is added.
 - `Changes` *Tools API*  — options `irreplaceable` and `contentless` was removed.
 - `Changes` *Tools API* — [Paste API](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#paste-handling): tags, patterns and mime-types now should be specified by Tool's `pasteConfig` static property. Custom Paste Event should be handled by `onPaste(event)` that should not be static from now.
 - `Changes` *Tools API* — options `displayInToolbox ` and `toolboxIcon` was removed. Use [`toolbox`](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#internal-tool-settings) instead, that should return object with `icon` and `title` field, or `false` if Tool should not be placed at the Toolbox. Also, there are a way to override `toolbox {icon, title}` settings provided by Tool with you own settings at the Initial Config.
