@@ -98,7 +98,7 @@ body {
   text-decoration: none;
 }
 
-@media all and (max-width: 680px){
+@media all and (max-width: 730px){
   .ce-example__header,
   .ce-example__content{
     padding: 0 20px;
