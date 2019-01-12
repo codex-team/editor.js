@@ -26,7 +26,7 @@ export default class Caret extends Module {
    * @static
    * @returns {{START: string, END: string, DEFAULT: string}}
    */
-  public static get positions(): {START: string, END: string, DEFAULT: string} {
+  public get positions(): {START: string, END: string, DEFAULT: string} {
     return {
       START: 'start',
       END: 'end',
@@ -55,9 +55,9 @@ export default class Caret extends Module {
       return false;
     }
 
-    const selection = Selection.get(),
-      anchorNode = selection.anchorNode,
-      firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
+    const selection = Selection.get();
+    const firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
+    let anchorNode = selection.anchorNode;
 
     /** In case lastNode is native input */
     if ($.isNativeInput(firstNode)) {
@@ -76,17 +76,37 @@ export default class Caret extends Module {
     }
 
     /**
+     * If caret was set by external code, it might be set to text node wrapper.
+     * <div>|hello</div> <---- Selection references to <div> instead of text node
+     *
+     * In this case, anchor node has ELEMENT_NODE node type.
+     * Anchor offset shows amount of children between start of the element and caret position.
+     *
+     * So we use child with anchorOffset index as new anchorNode.
+     */
+    let anchorOffset = selection.anchorOffset;
+    if (anchorNode.nodeType !== Node.TEXT_NODE && anchorNode.childNodes.length) {
+      if (anchorNode.childNodes[anchorOffset]) {
+        anchorNode = anchorNode.childNodes[anchorOffset];
+        anchorOffset = 0;
+      } else {
+        anchorNode = anchorNode.childNodes[anchorOffset - 1];
+        anchorOffset = anchorNode.textContent.length;
+      }
+    }
+
+    /**
      * In case of
      * <div contenteditable>
      *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
      *     |adaddad         <-- anchor node
      * </div>
      */
-    if ($.isEmpty(firstNode)) {
-      const leftSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'left'),
-        nothingAtLeft = leftSiblings.every( (node) => $.isEmpty(node) );
+    if ($.isLineBreakTag(firstNode as HTMLElement) || $.isEmpty(firstNode)) {
+      const leftSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'left');
+      const nothingAtLeft = leftSiblings.every((node, i) => $.isEmpty(node));
 
-      if (nothingAtLeft && selection.anchorOffset === firstLetterPosition) {
+      if (nothingAtLeft && anchorOffset === firstLetterPosition) {
         return true;
       }
     }
@@ -95,7 +115,7 @@ export default class Caret extends Module {
      * We use <= comparison for case:
      * "| Hello"  <--- selection.anchorOffset is 0, but firstLetterPosition is 1
      */
-    return firstNode === null || anchorNode === firstNode && selection.anchorOffset <= firstLetterPosition;
+    return firstNode === null || anchorNode === firstNode && anchorOffset <= firstLetterPosition;
   }
 
   /**
@@ -110,13 +130,34 @@ export default class Caret extends Module {
       return false;
     }
 
-    const selection = Selection.get(),
-      anchorNode = selection.anchorNode,
-      lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
+    const selection = Selection.get();
+    let anchorNode = selection.anchorNode;
+
+    const lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
 
     /** In case lastNode is native input */
     if ($.isNativeInput(lastNode)) {
       return (lastNode as HTMLInputElement).selectionEnd === (lastNode as HTMLInputElement).value.length;
+    }
+
+    /**
+     * If caret was set by external code, it might be set to text node wrapper.
+     * <div>hello|</div> <---- Selection references to <div> instead of text node
+     *
+     * In this case, anchor node has ELEMENT_NODE node type.
+     * Anchor offset shows amount of children between start of the element and caret position.
+     *
+     * So we use child with anchorOffset - 1 as new anchorNode.
+     */
+    let anchorOffset = selection.anchorOffset;
+    if (anchorNode.nodeType !== Node.TEXT_NODE && anchorNode.childNodes.length) {
+      if (anchorNode.childNodes[anchorOffset - 1]) {
+        anchorNode = anchorNode.childNodes[anchorOffset - 1];
+        anchorOffset = anchorNode.textContent.length;
+      } else {
+        anchorNode = anchorNode.childNodes[0];
+        anchorOffset = 0;
+      }
     }
 
     /**
@@ -126,11 +167,13 @@ export default class Caret extends Module {
      *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
      * </div>
      */
-    if ($.isEmpty(lastNode)) {
-      const leftSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'right'),
-        nothingAtRight = leftSiblings.every( (node) => $.isEmpty(node) );
+    if ($.isLineBreakTag(lastNode as HTMLElement) || $.isEmpty(lastNode)) {
+      const rightSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'right');
+      const nothingAtRight = rightSiblings.every((node, i) => {
+        return i === 0 && $.isLineBreakTag(node as HTMLElement) || $.isEmpty(node);
+      });
 
-      if (nothingAtRight && selection.anchorOffset === anchorNode.textContent.length) {
+      if (nothingAtRight && anchorOffset === anchorNode.textContent.length) {
         return true;
       }
     }
@@ -147,7 +190,7 @@ export default class Caret extends Module {
      * We use >= comparison for case:
      * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
      */
-    return anchorNode === lastNode && selection.anchorOffset >= rightTrimmedText.length;
+    return anchorNode === lastNode && anchorOffset >= rightTrimmedText.length;
   }
 
   /**
@@ -161,15 +204,15 @@ export default class Caret extends Module {
    *                            If default - leave default behaviour and apply offset if it's passed
    * @param {Number} offset - caret offset regarding to the text node
    */
-  public setToBlock(block: Block, position: string = Caret.positions.DEFAULT, offset: number = 0): void {
+  public setToBlock(block: Block, position: string = this.positions.DEFAULT, offset: number = 0): void {
     const {BlockManager} = this.Editor;
     let element;
 
     switch (position) {
-      case Caret.positions.START:
+      case this.positions.START:
         element = block.firstInput;
         break;
-      case Caret.positions.END:
+      case this.positions.END:
         element = block.lastInput;
         break;
       default:
@@ -180,14 +223,14 @@ export default class Caret extends Module {
       return;
     }
 
-    const nodeToSet = $.getDeepestNode(element, position === Caret.positions.END);
+    const nodeToSet = $.getDeepestNode(element, position === this.positions.END);
     const contentLength = $.getContentLength(nodeToSet);
 
     switch (true) {
-      case position === Caret.positions.START:
+      case position === this.positions.START:
         offset = 0;
         break;
-      case position === Caret.positions.END:
+      case position === this.positions.END:
       case offset > contentLength:
         offset = contentLength;
         break;
@@ -212,16 +255,16 @@ export default class Caret extends Module {
    *                            If default - leave default behaviour and apply offset if it's passed
    * @param {number} offset - caret offset regarding to the text node
    */
-  public setToInput(input: HTMLElement, position: string = Caret.positions.DEFAULT, offset: number = 0): void {
+  public setToInput(input: HTMLElement, position: string = this.positions.DEFAULT, offset: number = 0): void {
     const {currentBlock} = this.Editor.BlockManager;
     const nodeToSet = $.getDeepestNode(input);
 
     switch (position) {
-      case Caret.positions.START:
+      case this.positions.START:
         this.set(nodeToSet as HTMLElement, 0);
         break;
 
-      case Caret.positions.END:
+      case this.positions.END:
         const contentLength = $.getContentLength(nodeToSet);
 
         this.set(nodeToSet as HTMLElement, contentLength);
@@ -263,7 +306,9 @@ export default class Caret extends Module {
     selection.addRange(range);
 
     /** If new cursor position is not visible, scroll to it */
-    const {top, bottom} = range.getBoundingClientRect();
+    const {top, bottom} = element.nodeType === Node.ELEMENT_NODE
+      ? element.getBoundingClientRect()
+      : range.getBoundingClientRect();
     const {innerHeight} = window;
 
     if (top < 0) { window.scrollBy(0, top); }
@@ -332,17 +377,12 @@ export default class Caret extends Module {
       return false;
     }
 
-    if (force) {
-      this.setToBlock(nextContentfulBlock, Caret.positions.START);
-      return true;
-    }
-
-    if (this.isAtEnd) {
+    if (force || this.isAtEnd) {
       /** If next Tool`s input exists, focus on it. Otherwise set caret to the next Block */
       if (!nextInput) {
-        this.setToBlock(nextContentfulBlock, Caret.positions.START);
+        this.setToBlock(nextContentfulBlock, this.positions.START);
       } else {
-        this.setToInput(nextInput, Caret.positions.START);
+        this.setToInput(nextInput, this.positions.START);
       }
 
       return true;
@@ -373,17 +413,12 @@ export default class Caret extends Module {
       return false;
     }
 
-    if (force) {
-      this.setToBlock( previousContentfulBlock, Caret.positions.END );
-      return true;
-    }
-
-    if (this.isAtStart) {
+    if (force || this.isAtStart) {
       /** If previous Tool`s input exists, focus on it. Otherwise set caret to the previous Block */
       if (!previousInput) {
-        this.setToBlock( previousContentfulBlock, Caret.positions.END );
+        this.setToBlock( previousContentfulBlock, this.positions.END );
       } else {
-        this.setToInput(previousInput, Caret.positions.END);
+        this.setToInput(previousInput, this.positions.END);
       }
       return true;
     }

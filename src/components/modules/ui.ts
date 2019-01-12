@@ -214,22 +214,25 @@ export default class UI extends Module {
    */
   private defaultBehaviour(event: KeyboardEvent): void {
     const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
+    const {currentBlock} = this.Editor.BlockManager;
+    const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
     /**
-     * Ignore keydowns on document
-     * clear pointer and close toolbar
+     * Ignore keydowns on editor and meta keys
      */
-    if (!keyDownOnEditor) {
-      /**
-       * Remove all highlights and remove caret
-       */
-      this.Editor.BlockManager.dropPointer();
-
-      /**
-       * Close Toolbar
-       */
-      this.Editor.Toolbar.close();
+    if (keyDownOnEditor || currentBlock && isMetaKey) {
+      return;
     }
+
+    /**
+     * Remove all highlights and remove caret
+     */
+    this.Editor.BlockManager.dropPointer();
+
+    /**
+     * Close Toolbar
+     */
+    this.Editor.Toolbar.close();
   }
 
   /**
