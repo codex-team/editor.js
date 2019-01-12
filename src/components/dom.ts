@@ -468,12 +468,13 @@ export default class Dom {
    * @return {boolean}
    */
   public static containsOnlyInlineElements(data: string | HTMLElement): boolean {
-    const wrapper = document.createElement('template');
+    let wrapper: HTMLElement;
 
     if (typeof data === 'string') {
+      wrapper = document.createElement('div');
       wrapper.innerHTML = data;
     } else {
-      wrapper.appendChild(data);
+      wrapper = data;
     }
 
     const check = (element: HTMLElement) => {
@@ -481,6 +482,6 @@ export default class Dom {
         && Array.from(element.children).every(check);
     };
 
-    return check(wrapper);
+    return Array.from(wrapper.children).every(check);
   }
 }

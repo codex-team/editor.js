@@ -90,11 +90,7 @@ export default class Block {
    * @param {HTMLElement} element
    */
   set currentInput(element: HTMLElement) {
-    const index = this.inputs.findIndex((input) => input === element || input.contains(element));
-
-    if (index !== -1) {
-      this.inputIndex = index;
-    }
+    this.inputIndex = this.inputs.findIndex((input) => input === element || input.contains(element));
   }
 
   /**

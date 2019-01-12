@@ -56,3 +56,17 @@ var editor = CodexEditor({
  });
 
 ```
+
+## Autofocus
+
+If you want to focus Editor after page has been loaded, you can enable autofocus by passing `autofocus` to the initial config
+
+
+```js
+var editor = CodexEditor({
+  //...
+  autofocus: true
+  //...
+ });
+
+```

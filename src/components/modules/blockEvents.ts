@@ -3,7 +3,6 @@
  */
 import Module from '../__module';
 import _ from '../utils';
-import CaretClass from './caret';
 
 export default class BlockEvents extends Module {
   /**
@@ -169,6 +168,63 @@ export default class BlockEvents extends Module {
   }
 
   /**
+   * Copying selected blocks
+   * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
+   *
+   * @param event
+   */
+  public handleCommandC(event): void {
+    const { BlockSelection } = this.Editor;
+
+    if (!BlockSelection.anyBlockSelected) {
+      return;
+    }
+
+    /**
+     * Prevent default copy
+     * Remove "decline sound" on macOS
+     */
+    event.preventDefault();
+
+    // Copy Selected Blocks
+    BlockSelection.copySelectedBlocks();
+  }
+
+  /**
+   * Copy and Delete selected Blocks
+   * @param event
+   */
+  public handleCommandX(event): void {
+    const { BlockSelection, BlockManager, Caret } = this.Editor;
+    const currentBlock = BlockManager.currentBlock;
+
+    if (!currentBlock) {
+      return;
+    }
+
+    /**
+     * Prevent default copy
+     * Remove "decline sound" on macOS
+     */
+    event.preventDefault();
+
+    /** Copy Blocks before removing */
+    if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+      BlockSelection.copySelectedBlocks();
+
+      if (BlockSelection.allBlocksSelected) {
+        BlockManager.removeAllBlocks();
+      } else {
+        BlockManager.removeBlock();
+        Caret.setToBlock(BlockManager.insert(), Caret.positions.START);
+      }
+
+      /** Clear selection */
+      BlockSelection.clearSelection();
+    }
+  }
+
+  /**
    * ENTER pressed on block
    * @param {KeyboardEvent} event - keydown
    */
@@ -257,10 +313,28 @@ export default class BlockEvents extends Module {
      */
     if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
       if (BlockSelection.allBlocksSelected) {
-        this.removeAllBlocks();
+        BlockManager.removeAllBlocks();
       } else {
-        this.removeCurrentBlock();
+        BlockManager.removeBlock();
+
+        /**
+         * In case of deletion first block we need to set caret to the current Block
+         * After BlockManager removes the Block (which is current now),
+         * pointer that references to the current Block, now points to the Next
+         */
+        if (BlockManager.currentBlockIndex === 0) {
+          Caret.setToBlock(BlockManager.currentBlock);
+        } else if (BlockManager.currentBlock.inputs.length === 0) {
+          /** If previous (now current) block doesn't contain inputs, remove it */
+          BlockManager.removeBlock();
+          BlockManager.insert();
+        }
+
+        Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
       }
+
+      /** Close Toolbar */
+      this.Editor.Toolbar.close();
 
       /** Clear selection */
       BlockSelection.clearSelection();
@@ -289,44 +363,6 @@ export default class BlockEvents extends Module {
        */
       this.mergeBlocks();
     }
-  }
-
-  /**
-   * remove all selected Blocks
-   */
-  private removeAllBlocks(): boolean {
-    const { BlockManager } = this.Editor;
-
-    BlockManager.removeAllBlocks();
-    return true;
-  }
-
-  /**
-   * remove current Block and sets Caret to the correct position
-   */
-  private removeCurrentBlock(): boolean {
-    const { BlockManager, Caret } = this.Editor;
-
-    /** If current Block is empty just remove this Block */
-    BlockManager.removeBlock();
-
-    /**
-     * In case of deletion first block we need to set caret to the current Block
-     * After BlockManager removes the Block (which is current now),
-     * pointer that references to the current Block, now points to the Next
-     */
-    if (BlockManager.currentBlockIndex === 0) {
-      Caret.setToBlock(BlockManager.currentBlock);
-    } else if (BlockManager.currentBlock.inputs.length === 0) {
-      /** If previous (now current) block doesn't contain inputs, remove it */
-      BlockManager.removeBlock();
-      BlockManager.insert();
-    }
-
-    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
-
-    this.Editor.Toolbar.close();
-    return true;
   }
 
   /**
@@ -409,5 +445,4 @@ export default class BlockEvents extends Module {
 
     return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
   }
-
 }

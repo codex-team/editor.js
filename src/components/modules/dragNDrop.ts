@@ -1,8 +1,6 @@
 import SelectionUtils from '../selection';
 
 import Module from '../__module';
-import Caret from './caret';
-
 export default class DragNDrop extends Module {
 
   /**
@@ -50,6 +48,7 @@ export default class DragNDrop extends Module {
   private processDrop = async (dropEvent: DragEvent): Promise<void> => {
     const {
       BlockManager,
+      Caret,
       Paste,
     } = this.Editor;
 

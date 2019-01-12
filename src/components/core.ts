@@ -78,6 +78,12 @@ export default class Core {
         _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
 
         setTimeout(() => {
+          if ((this.configuration as EditorConfig).autofocus) {
+            const {BlockManager, Caret} = this.moduleInstances;
+
+            Caret.setToBlock(BlockManager.blocks[0], Caret.positions.START);
+          }
+
           /**
            * Remove loader, show content
            */

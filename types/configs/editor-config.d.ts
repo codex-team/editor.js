@@ -9,6 +9,11 @@ export interface EditorConfig {
   holderId?: string;
 
   /**
+   * If true, set caret at the first Block after Editor is ready
+   */
+  autofocus?: boolean;
+
+  /**
    * This Tool will be used as default
    * Name should be equal to one of Tool`s keys of passed tools
    * If not specified, Paragraph Tool will be used
