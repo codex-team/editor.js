@@ -77,25 +77,22 @@ export default class Saver extends Module {
     let totalTime = 0;
     const blocks = [];
 
-    allExtractedData.forEach((extraction) => {
-      /** Group process info */
-      console.log(`«${extraction.tool}» saving info`, {
-        tool: extraction.tool,
-        data: extraction.data,
-        time: extraction.time},
-      );
+    allExtractedData.forEach(({tool, data, time}, {}) => {
 
-      totalTime += extraction.time;
+      /** Group process info */
+      console.log(`«${tool}» saving info`, {tool, data, time});
+
+      totalTime += time;
 
       /** If it was stub Block, get original data */
-      if (extraction.tool === this.Editor.Tools.stubTool) {
-        blocks.push(extraction.data);
+      if (tool === this.Editor.Tools.stubTool) {
+        blocks.push(data);
         return;
       }
 
       blocks.push({
-        type: extraction.tool,
-        data: extraction.data,
+        type: tool,
+        data,
       });
     });
 
