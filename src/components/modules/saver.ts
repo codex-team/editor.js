@@ -39,9 +39,22 @@ export default class Saver extends Module {
      chainData.push(this.getSavedData(block));
     });
 
+    const extractedData = await Promise.all(chainData);
+
     console.groupCollapsed('[CodexEditor saving]:');
 
-    const extractedData = (await Promise.all(chainData)).filter((blockData) => blockData.isValid);
+    extractedData.forEach((blockData) => {
+        const {tool, data, time} = blockData;
+
+        if (blockData.isValid) {
+            console.log(`«${tool}» saving info`, {tool, data, time});
+        } else {
+            _.log(`Block «${tool}» skipped because saved data is invalid`, 'log');
+        }
+    });
+
+    extractedData.filter((blockData) => blockData.isValid);
+
     const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
 
     ModificationsObserver.enable();
@@ -60,16 +73,6 @@ export default class Saver extends Module {
   private async getSavedData(block: Block): Promise<ValidatedData> {
       const blockData = await block.save();
       const isValid = blockData && await block.validate(blockData.data);
-
-      if (blockData) {
-        const {tool, data, time} = blockData;
-
-        if (!isValid) {
-          _.log(`Block «${tool}» skipped because saved data is invalid`, 'log');
-        } else {
-          console.log(`«${tool}» saving info`, {tool, data, time});
-        }
-      }
 
       return {...blockData, isValid};
   }
