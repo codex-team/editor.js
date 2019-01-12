@@ -1,22 +1,27 @@
 # Changelog
 
-### 2.2.26 changelog
+### 2.2.27
+
+- `New` *Mobile view* — Editor now adopted for mobile devices
+- `New` *Narrow mode* — Editor now adopted for narrow containers
+
+### 2.2.26
 
 - `Improvements` *Caret* — Improvements of the caret behaviour: arrows, backspace and enter keys better handling.
 
-### 2.2.25 changelog
+### 2.2.25
 
 - `New` *Autofocus* — Now you can set focus at Editor after page has been loaded
 
-### 2.2.24 changelog
+### 2.2.24
 
 - `Improvements` *Paste* handling — minor paste handling improvements
 
-### 2.2.23 changelog
+### 2.2.23
 
 - `New` *Shortcuts* — copy and cut Blocks selected by CMD+A
 
-### 2.2—2.7 changelog
+### 2.2—2.7
 
 - `New` *Sanitize API* — [Sanitize Config](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.
 - `New` *Block Selection* — Ability to select Block by `CMD+A`, and the whole Editor by double `CMD+A`. After that, you can copy (`CMD+C`), remove (`Backspace`) or clear (`Enter`) selected Blocks.

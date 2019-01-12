@@ -18,6 +18,21 @@
     }
   }
 
+  /**
+   * Styles for narrow holder
+   */
+  &--narrow &__redactor {
+    @media (--not-mobile) {
+      margin-right: var(--narrow-mode-right-padding);
+    }
+  }
+
+  &--narrow .ce-toolbar__actions {
+    @media (--not-mobile) {
+      right: -5px;
+    }
+  }
+
   &__loader {
     position: relative;
     height: 30vh;
