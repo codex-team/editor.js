@@ -4,9 +4,19 @@
   top: 35px;
   min-width: 124px;
 
+  @media (--mobile){
+    bottom: 50px;
+    top: auto;
+  }
+
   &::before{
     left: auto;
     right: 12px;
+
+    @media (--mobile){
+      bottom: -5px;
+      top: auto;
+    }
   }
 
   display: none;

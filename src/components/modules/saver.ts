@@ -40,7 +40,6 @@ export default class Saver extends Module {
     });
 
     const extractedData = await Promise.all(chainData);
-
     const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
 
     ModificationsObserver.enable();
@@ -72,7 +71,6 @@ export default class Saver extends Module {
     console.groupCollapsed('[CodexEditor saving]:');
 
     allExtractedData.forEach(({tool, data, time, isValid}) => {
-
       totalTime += time;
 
       if (isValid) {
