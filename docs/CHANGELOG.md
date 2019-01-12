@@ -2,7 +2,6 @@
 
 ### 2.2.27
 
-- `New` *Shortcuts* — copy and cut Blocks selected by CMD+A
 - `New` *Mobile view* — Editor now adopted for mobile devices
 - `New` *Narrow mode* — Editor now adopted for narrow containers
 
