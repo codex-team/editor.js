@@ -39,7 +39,7 @@ Method that returns Tool's element {HTMLElement} that will be placed into Editor
 
 Process Tool's element created by `render()` function in DOM and return Block's data.
 
-### validate() _optional_
+### validate(data: BlockToolData): boolean|Promise\<boolean\> _optional_
 
 Allows to check correctness of Tool's data. If data didn't pass the validation it won't be saved. Receives Tool's `data` as input param and returns `boolean` result of validation.
 
