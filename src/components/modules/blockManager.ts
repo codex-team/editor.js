@@ -12,7 +12,6 @@ import $ from '../dom';
 import _ from '../utils';
 import Blocks from '../blocks';
 import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
-import CaretClass from './caret';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -461,7 +460,10 @@ export default class BlockManager extends Module {
    *  @param {string} caretPosition - position where to set caret
    *  @throws Error  - when passed Node is not included at the Block
    */
-  public setCurrentBlockByChildNode(childNode: Node, caretPosition: string = CaretClass.positions.DEFAULT): void {
+  public setCurrentBlockByChildNode(
+    childNode: Node,
+    caretPosition: string = this.Editor.Caret.positions.DEFAULT,
+  ): void {
     /**
      * If node is Text TextNode
      */

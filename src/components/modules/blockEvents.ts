@@ -3,7 +3,6 @@
  */
 import Module from '../__module';
 import _ from '../utils';
-import CaretClass from './caret';
 
 export default class BlockEvents extends Module {
   /**
@@ -217,7 +216,7 @@ export default class BlockEvents extends Module {
         BlockManager.removeAllBlocks();
       } else {
         BlockManager.removeBlock();
-        Caret.setToBlock(BlockManager.insert(), CaretClass.positions.START);
+        Caret.setToBlock(BlockManager.insert(), Caret.positions.START);
       }
 
       /** Clear selection */
@@ -328,7 +327,7 @@ export default class BlockEvents extends Module {
 
         Caret.setToBlock(
           BlockManager.currentBlock,
-          index ? CaretClass.positions.END : CaretClass.positions.START,
+          index ? Caret.positions.END : Caret.positions.START,
         );
       }
 
