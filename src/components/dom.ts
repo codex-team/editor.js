@@ -29,6 +29,19 @@ export default class Dom {
   }
 
   /**
+   * Check if element is BR or WBR
+   *
+   * @param {HTMLElement} element
+   * @return {boolean}
+   */
+  public static isLineBreakTag(element: HTMLElement) {
+    return element && element.tagName && [
+      'BR',
+      'WBR',
+    ].includes(element.tagName);
+  }
+
+  /**
    * Helper for making Elements with classname and attributes
    *
    * @param  {string} tagName           - new Element tag name
@@ -196,7 +209,11 @@ export default class Dom {
       /**
        * special case when child is single tag that can't contain any content
        */
-      if (Dom.isSingleTag(nodeChild as HTMLElement) && !Dom.isNativeInput(nodeChild)) {
+      if (
+        Dom.isSingleTag(nodeChild as HTMLElement) &&
+        !Dom.isNativeInput(nodeChild) &&
+        !Dom.isLineBreakTag(nodeChild as HTMLElement)
+      ) {
         /**
          * 1) We need to check the next sibling. If it is Node Element then continue searching for deepest
          * from sibling
@@ -303,7 +320,7 @@ export default class Dom {
   public static isNodeEmpty(node: Node): boolean {
     let nodeText;
 
-    if (this.isSingleTag(node as HTMLElement)) {
+    if (this.isSingleTag(node as HTMLElement) && !this.isLineBreakTag(node as HTMLElement)) {
       return false;
     }
 
@@ -483,5 +500,22 @@ export default class Dom {
     };
 
     return Array.from(wrapper.children).every(check);
+  }
+
+  /**
+   * Find and return all block elements in the passed parent (including subtree)
+   *
+   * @param {HTMLElement} parent
+   *
+   * @return {HTMLElement[]}
+   */
+  public static getDeepestBlockElements(parent: HTMLElement): HTMLElement[] {
+    if (Dom.containsOnlyInlineElements(parent)) {
+      return [parent];
+    }
+
+    return Array.from(parent.children).reduce((result, element) => {
+      return [...result, ...Dom.getDeepestBlockElements(element as HTMLElement)];
+    }, []);
   }
 }

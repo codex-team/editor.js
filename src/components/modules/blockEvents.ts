@@ -3,6 +3,7 @@
  */
 import Module from '../__module';
 import _ from '../utils';
+import Block from '../block';
 
 export default class BlockEvents extends Module {
   /**
@@ -271,11 +272,21 @@ export default class BlockEvents extends Module {
     if (event.shiftKey) {
       return;
     }
+
+    let newCurrent = this.Editor.BlockManager.currentBlock;
+
     /**
-     * Split the Current Block into two blocks
-     * Renew local current node after split
+     * If enter has been pressed at the start of the text, just insert paragraph Block above
      */
-    const newCurrent = this.Editor.BlockManager.split();
+    if (this.Editor.Caret.isAtStart && !this.Editor.BlockManager.currentBlock.hasMedia) {
+      this.Editor.BlockManager.insertAtIndex(this.Editor.BlockManager.currentBlockIndex);
+    } else {
+      /**
+       * Split the Current Block into two blocks
+       * Renew local current node after split
+       */
+      newCurrent = this.Editor.BlockManager.split();
+    }
 
     this.Editor.Caret.setToBlock(newCurrent);
 
@@ -311,26 +322,24 @@ export default class BlockEvents extends Module {
     /**
      * Check if Block should be removed by current Backspace keydown
      */
-    if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
+    if (currentBlock.selected || currentBlock.isEmpty && currentBlock.currentInput === currentBlock.firstInput) {
       if (BlockSelection.allBlocksSelected) {
         BlockManager.removeAllBlocks();
       } else {
-        BlockManager.removeBlock();
+        const index = BlockManager.currentBlockIndex;
 
-        /**
-         * In case of deletion first block we need to set caret to the current Block
-         * After BlockManager removes the Block (which is current now),
-         * pointer that references to the current Block, now points to the Next
-         */
-        if (BlockManager.currentBlockIndex === 0) {
-          Caret.setToBlock(BlockManager.currentBlock);
-        } else if (BlockManager.currentBlock.inputs.length === 0) {
-          /** If previous (now current) block doesn't contain inputs, remove it */
+        if (BlockManager.previousBlock && BlockManager.previousBlock.inputs.length === 0) {
+          /** If previous block doesn't contain inputs, remove it */
+          BlockManager.removeBlock(index - 1);
+        } else {
+          /** If block is empty, just remove it */
           BlockManager.removeBlock();
-          BlockManager.insert();
         }
 
-        Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
+        Caret.setToBlock(
+          BlockManager.currentBlock,
+          index ? Caret.positions.END : Caret.positions.START,
+        );
       }
 
       /** Close Toolbar */
@@ -344,13 +353,15 @@ export default class BlockEvents extends Module {
     /**
      * Don't handle Backspaces when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
+     *
+     * But if caret is at start of the block, we allow to remove it by backspaces
      */
-    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS] && !Caret.isAtStart) {
       return;
     }
 
     const isFirstBlock = BlockManager.currentBlockIndex === 0;
-    const canMergeBlocks = Caret.isAtStart && !isFirstBlock;
+    const canMergeBlocks = Caret.isAtStart && currentBlock.currentInput === currentBlock.firstInput && !isFirstBlock;
 
     if (canMergeBlocks) {
       /**
@@ -381,8 +392,8 @@ export default class BlockEvents extends Module {
      * other case will handle as usual ARROW LEFT behaviour
      */
     if (blockToMerge.name !== targetBlock.name || !targetBlock.mergeable) {
-      /** If target Block doesn't contain inputs, remove it */
-      if (targetBlock.inputs.length === 0) {
+      /** If target Block doesn't contain inputs or empty, remove it */
+      if (targetBlock.inputs.length === 0 || targetBlock.isEmpty) {
         BlockManager.removeBlock(BlockManager.currentBlockIndex - 1);
 
         Caret.setToBlock(BlockManager.currentBlock);
@@ -416,6 +427,13 @@ export default class BlockEvents extends Module {
        * Default behaviour moves cursor by 1 character, we need to prevent it
        */
       event.preventDefault();
+    } else {
+      /**
+       * After caret is set, update Block input index
+       */
+      _.delay(() => {
+        this.Editor.BlockManager.currentBlock.updateCurrentInput();
+      }, 20)();
     }
   }
 
@@ -428,6 +446,13 @@ export default class BlockEvents extends Module {
        * Default behaviour moves cursor by 1 character, we need to prevent it
        */
       event.preventDefault();
+    } else {
+      /**
+       * After caret is set, update Block input index
+       */
+      _.delay(() => {
+        this.Editor.BlockManager.currentBlock.updateCurrentInput();
+      }, 20)();
     }
   }
 

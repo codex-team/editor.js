@@ -21,6 +21,30 @@ import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig
 export default class BlockManager extends Module {
 
   /**
+   * Returns current Block index
+   * @return {number}
+   */
+  public get currentBlockIndex(): number {
+    return this._currentBlockIndex;
+  }
+
+  /**
+   * Set current Block index and fire Block lifecycle callbacks
+   * @param newIndex
+   */
+  public set currentBlockIndex(newIndex: number) {
+    if (this._blocks[this._currentBlockIndex]) {
+      this._blocks[this._currentBlockIndex].willUnselect();
+    }
+
+    if (this._blocks[newIndex]) {
+      this._blocks[newIndex].willSelect();
+    }
+
+    this._currentBlockIndex = newIndex;
+  }
+
+  /**
    * returns last Block
    * @return {Block}
    */
@@ -101,7 +125,7 @@ export default class BlockManager extends Module {
    *
    * @type {number}
    */
-  public currentBlockIndex: number = -1;
+  private _currentBlockIndex: number = -1;
 
   /**
    * Proxy for Blocks instance {@link Blocks}
@@ -228,6 +252,28 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Insert new initial block at passed index
+   *
+   * @param {number} index - index where Block should be inserted
+   * @param {boolean} needToFocus - if true, updates current Block index
+   *
+   * @return {Block} inserted Block
+   */
+  public insertAtIndex(index: number, needToFocus: boolean = false) {
+    const block = this.composeBlock(this.config.initialBlock, {}, {});
+
+    this._blocks[index] = block;
+
+    if (needToFocus) {
+      this.currentBlockIndex = index;
+    } else if (index <= this.currentBlockIndex) {
+      this.currentBlockIndex++;
+    }
+
+    return block;
+  }
+
+  /**
    * Always inserts at the end
    * @return {Block}
    */
@@ -272,7 +318,7 @@ export default class BlockManager extends Module {
    * @param {Number|null} index
    */
   public removeBlock(index?: number): void {
-    if (!index) {
+    if (index === undefined) {
       index = this.currentBlockIndex;
     }
     this._blocks.remove(index);
@@ -287,7 +333,9 @@ export default class BlockManager extends Module {
     if (!this.blocks.length) {
       this.currentBlockIndex = -1;
       this.insert();
-      this.currentBlock.firstInput.focus();
+      return;
+    } else if (index === 0) {
+      this.currentBlockIndex = 0;
     }
   }
 
@@ -317,7 +365,7 @@ export default class BlockManager extends Module {
     const extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition();
     const wrapper = $.make('div');
 
-    wrapper.append(extractedFragment as DocumentFragment);
+    wrapper.appendChild(extractedFragment as DocumentFragment);
 
     /**
      * @todo make object in accordance with Tool
@@ -411,10 +459,7 @@ export default class BlockManager extends Module {
    *  @param {string} caretPosition - position where to set caret
    *  @throws Error  - when passed Node is not included at the Block
    */
-  public setCurrentBlockByChildNode(
-    childNode: Node,
-    caretPosition: string = this.Editor.Caret.positions.DEFAULT,
-  ): void {
+  public setCurrentBlockByChildNode(childNode: Node): Block {
     /**
      * If node is Text TextNode
      */
@@ -430,8 +475,7 @@ export default class BlockManager extends Module {
        * @type {number}
        */
       this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
-
-      this.Editor.Caret.setToInput(childNode as HTMLElement, caretPosition);
+      return this.currentBlock;
     } else {
       throw new Error('Can not find a Block from this child Node');
     }

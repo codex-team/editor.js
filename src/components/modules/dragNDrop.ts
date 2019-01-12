@@ -67,9 +67,13 @@ export default class DragNDrop extends Module {
      * If drop target (error will be thrown) is not part of the Block, set last Block as current.
      */
     try {
-      BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node, Caret.positions.END);
+      const targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node);
+
+      this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
     } catch (e) {
-      BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder, Caret.positions.END);
+      const targetBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
+
+      this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
     }
 
     Paste.processDataTransfer(dropEvent.dataTransfer, true);
