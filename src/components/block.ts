@@ -91,11 +91,7 @@ export default class Block {
    * @param {HTMLElement} element
    */
   set currentInput(element: HTMLElement) {
-    const index = this.inputs.findIndex((input) => input === element || input.contains(element));
-
-    if (index !== -1) {
-      this.inputIndex = index;
-    }
+    this.inputIndex = this.inputs.findIndex((input) => input === element || input.contains(element));
   }
 
   /**
@@ -186,8 +182,8 @@ export default class Block {
    * @return {Boolean}
    */
   get isEmpty(): boolean {
-    const emptyText = $.isEmpty(this.pluginsContent),
-      emptyMedia = !this.hasMedia;
+    const emptyText = $.isEmpty(this.pluginsContent);
+    const emptyMedia = !this.hasMedia;
 
     return emptyText && emptyMedia;
   }

@@ -12,7 +12,6 @@ import $ from '../dom';
 import _ from '../utils';
 import Blocks from '../blocks';
 import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
-import Caret from './caret';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -120,6 +119,7 @@ export default class BlockManager extends Module {
    */
   public async prepare() {
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
+    const { BlockEvents, Shortcuts } = this.Editor;
 
     /**
      * We need to use Proxy to overload set/get [] operator.
@@ -138,6 +138,22 @@ export default class BlockManager extends Module {
     this._blocks = new Proxy(blocks, {
       set: Blocks.set,
       get: Blocks.get,
+    });
+
+    /** Copy shortcut */
+    Shortcuts.add({
+      name: 'CMD+C',
+      handler: (event) => {
+        BlockEvents.handleCommandC(event);
+      },
+    });
+
+    /** Copy and cut */
+    Shortcuts.add({
+      name: 'CMD+X',
+      handler: (event) => {
+        BlockEvents.handleCommandX(event);
+      },
     });
   }
 
@@ -260,6 +276,10 @@ export default class BlockManager extends Module {
       index = this.currentBlockIndex;
     }
     this._blocks.remove(index);
+
+    if (this.currentBlockIndex >= index) {
+      this.currentBlockIndex--;
+    }
 
     /**
      * If first Block was removed, insert new Initial Block and set focus on it`s first input
@@ -391,7 +411,10 @@ export default class BlockManager extends Module {
    *  @param {string} caretPosition - position where to set caret
    *  @throws Error  - when passed Node is not included at the Block
    */
-  public setCurrentBlockByChildNode(childNode: Node, caretPosition: string = Caret.positions.DEFAULT): void {
+  public setCurrentBlockByChildNode(
+    childNode: Node,
+    caretPosition: string = this.Editor.Caret.positions.DEFAULT,
+  ): void {
     /**
      * If node is Text TextNode
      */

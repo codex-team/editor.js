@@ -110,14 +110,6 @@ export default class BlockSelection extends Module {
       },
     });
 
-    /** Shortcut to copy selected blocks */
-    Shortcuts.add({
-      name: 'CMD+C',
-      handler: (event) => {
-        this.handleCommandC(event);
-      },
-    });
-
     this.selection = new SelectionUtils();
   }
 
@@ -142,6 +134,28 @@ export default class BlockSelection extends Module {
 
     /** Now all blocks cleared */
     this.allBlocksSelected = false;
+  }
+
+  /**
+   * Reduce each Block and copy its content
+   */
+  public copySelectedBlocks(): void {
+    const { BlockManager, Sanitizer } = this.Editor;
+    const fakeClipboard = $.make('div');
+
+    BlockManager.blocks.filter( (block) => block.selected )
+      .forEach( (block) => {
+        /**
+         * Make <p> tag that holds clean HTML
+         */
+        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+        const fragment = $.make('p');
+
+        fragment.innerHTML = cleanHTML;
+        fakeClipboard.appendChild(fragment);
+      });
+
+    _.copyTextToClipboard(fakeClipboard.innerHTML);
   }
 
   /**
@@ -170,48 +184,10 @@ export default class BlockSelection extends Module {
   }
 
   /**
-   * Copying selected blocks
-   * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
-   *
-   * @param event
-   */
-  private handleCommandC(event): void {
-    const { BlockManager, Sanitizer } = this.Editor;
-
-    if (!this.anyBlockSelected) {
-      return;
-    }
-
-    /**
-     * Prevent default copy
-     * Remove "decline sound" on macOS
-     */
-    event.preventDefault();
-
-    const fakeClipboard = $.make('div');
-
-    BlockManager.blocks.filter( (block) => block.selected )
-      .forEach( (block) => {
-        /**
-         * Make <p> tag that holds clean HTML
-         */
-        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
-        const fragment = $.make('p');
-
-        fragment.innerHTML = cleanHTML;
-        fakeClipboard.appendChild(fragment);
-    });
-
-    _.copyTextToClipboard(fakeClipboard.innerHTML);
-  }
-
-  /**
    * Select All Blocks
    * Each Block has selected setter that makes Block copyable
    */
   private selectAllBlocks() {
-    const { BlockManager } = this.Editor;
-
     this.allBlocksSelected = true;
   }
 
