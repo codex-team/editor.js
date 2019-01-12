@@ -1,4 +1,3 @@
-import CaretClass from './caret';
 import Module from '../__module';
 import $ from '../dom';
 import _ from '../utils';
@@ -448,7 +447,7 @@ export default class Paste extends Module {
       async (content, i) => await this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
     ));
 
-    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
+    Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
   }
 
   /**
@@ -585,7 +584,7 @@ export default class Paste extends Module {
 
         insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
 
-        Caret.setToBlock(insertedBlock, CaretClass.positions.END);
+        Caret.setToBlock(insertedBlock, Caret.positions.END);
         return;
       }
     }
@@ -645,13 +644,13 @@ export default class Paste extends Module {
 
     if (canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty) {
       block = BlockManager.paste(data.tool, data.event, true);
-      Caret.setToBlock(block, CaretClass.positions.END);
+      Caret.setToBlock(block, Caret.positions.END);
       return;
     }
 
     block = BlockManager.paste(data.tool, data.event);
 
-    Caret.setToBlock(block, CaretClass.positions.END);
+    Caret.setToBlock(block, Caret.positions.END);
   }
 
   /**
