@@ -1,20 +1,24 @@
 # Changelog
 
-### 2.7.26 changelog
+### 2.7.27 changelog
 
 - `New` [Tools Validation](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#validate-optional) is added.
 
+### 2.2.26 changelog
+
+- `Improvements` *Caret* — Improvements of the caret behaviour: arrows, backspace and enter keys better handling.
+
 ### 2.2.25 changelog
 
-- `New` *Autofocus — Now you can set focus at Editor after page has been loaded
+- `New` *Autofocus* — Now you can set focus at Editor after page has been loaded
 
 ### 2.2.24 changelog
 
-- `Improvements` *Paste handling — minor paste handling improvements
+- `Improvements` *Paste* handling — minor paste handling improvements
 
 ### 2.2.23 changelog
 
-- `New` *Shortcuts — copy and cut Blocks selected by CMD+A
+- `New` *Shortcuts* — copy and cut Blocks selected by CMD+A
 
 ### 2.2—2.7 changelog
 
