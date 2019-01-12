@@ -459,7 +459,7 @@ export default class Block {
   /**
    * Update current input index with selection anchor node
    */
-  public updateInputs(): void {
+  public updateCurrentInput(): void {
     this.currentInput = SelectionUtils.anchorNode;
   }
 
@@ -484,7 +484,7 @@ export default class Block {
    * Is fired when DOM mutation has been happened
    */
   private didMutated = () => {
-    this.updateInputs();
+    this.updateCurrentInput();
   }
 
   /**

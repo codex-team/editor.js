@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.2.26 changelog
+
+- `Improvements` *Caret — Improvements of the caret behaviour: arrows, backspace and enter keys better handling.
+
 ### 2.2.25 changelog
 
 - `New` *Autofocus — Now you can set focus at Editor after page has been loaded

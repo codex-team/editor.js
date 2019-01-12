@@ -251,6 +251,14 @@ export default class BlockManager extends Module {
     return block;
   }
 
+  /**
+   * Insert new initial block at passed index
+   *
+   * @param {number} index - index where Block should be inserted
+   * @param {boolean} needToFocus - if true, updates current Block index
+   *
+   * @return {Block} inserted Block
+   */
   public insertAtIndex(index: number, needToFocus: boolean = false) {
     const block = this.composeBlock(this.config.initialBlock, {}, {});
 
@@ -258,7 +266,6 @@ export default class BlockManager extends Module {
 
     if (needToFocus) {
       this.currentBlockIndex = index;
-      this.Editor.Caret.setToBlock(block);
     } else if (index <= this.currentBlockIndex) {
       this.currentBlockIndex++;
     }
@@ -355,14 +362,6 @@ export default class BlockManager extends Module {
    * @return {Block}
    */
   public split(): Block {
-    /**
-     * If enter has been pressed at the start of the text, just insert paragraph Block above
-     */
-    if (this.Editor.Caret.isAtStart && !this.currentBlock.hasMedia) {
-      this.insertAtIndex(this.currentBlockIndex);
-      return this.currentBlock;
-    }
-
     const extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition();
     const wrapper = $.make('div');
 
@@ -460,10 +459,7 @@ export default class BlockManager extends Module {
    *  @param {string} caretPosition - position where to set caret
    *  @throws Error  - when passed Node is not included at the Block
    */
-  public setCurrentBlockByChildNode(
-    childNode: Node,
-    caretPosition: string = this.Editor.Caret.positions.DEFAULT,
-  ): void {
+  public setCurrentBlockByChildNode(childNode: Node): Block {
     /**
      * If node is Text TextNode
      */
@@ -479,8 +475,7 @@ export default class BlockManager extends Module {
        * @type {number}
        */
       this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
-
-      this.Editor.Caret.setToInput(childNode as HTMLElement, caretPosition);
+      return this.currentBlock;
     } else {
       throw new Error('Can not find a Block from this child Node');
     }

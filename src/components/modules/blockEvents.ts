@@ -3,6 +3,7 @@
  */
 import Module from '../__module';
 import _ from '../utils';
+import Block from '../block';
 
 export default class BlockEvents extends Module {
   /**
@@ -271,11 +272,21 @@ export default class BlockEvents extends Module {
     if (event.shiftKey) {
       return;
     }
+
+    let newCurrent = this.Editor.BlockManager.currentBlock;
+
     /**
-     * Split the Current Block into two blocks
-     * Renew local current node after split
+     * If enter has been pressed at the start of the text, just insert paragraph Block above
      */
-    const newCurrent = this.Editor.BlockManager.split();
+    if (this.Editor.Caret.isAtStart && !this.Editor.BlockManager.currentBlock.hasMedia) {
+      this.Editor.BlockManager.insertAtIndex(this.Editor.BlockManager.currentBlockIndex);
+    } else {
+      /**
+       * Split the Current Block into two blocks
+       * Renew local current node after split
+       */
+      newCurrent = this.Editor.BlockManager.split();
+    }
 
     this.Editor.Caret.setToBlock(newCurrent);
 
@@ -342,6 +353,8 @@ export default class BlockEvents extends Module {
     /**
      * Don't handle Backspaces when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
+     *
+     * But if caret is at start of the block, we allow to remove it by backspaces
      */
     if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS] && !Caret.isAtStart) {
       return;
@@ -419,7 +432,7 @@ export default class BlockEvents extends Module {
        * After caret is set, update Block input index
        */
       _.delay(() => {
-        this.Editor.BlockManager.currentBlock.updateInputs();
+        this.Editor.BlockManager.currentBlock.updateCurrentInput();
       }, 20)();
     }
   }
@@ -438,7 +451,7 @@ export default class BlockEvents extends Module {
        * After caret is set, update Block input index
        */
       _.delay(() => {
-        this.Editor.BlockManager.currentBlock.updateInputs();
+        this.Editor.BlockManager.currentBlock.updateCurrentInput();
       }, 20)();
     }
   }
