@@ -401,7 +401,7 @@ export default class Block {
    *
    * @description Method returns true|false whether data passed the validation or not
    *
-   * @param {Object} data
+   * @param {BlockToolData} data
    * @returns {Promise<boolean>} valid
    */
   public async validate(data: BlockToolData): Promise<boolean> {
