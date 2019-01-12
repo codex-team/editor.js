@@ -28,6 +28,8 @@
  * Styles for Narrow mode
  */
 .codex-editor--narrow .ce-toolbox {
-  background: #fff;
-  z-index: 2;
+  @media (--not-mobile) {
+    background: #fff;
+    z-index: 2;
+  }
 }

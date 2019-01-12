@@ -51,6 +51,7 @@
   --color-confirm: #E24A4A;
 
   @custom-media --mobile (max-width: 650px);
+  @custom-media --not-mobile (min-width: 651px);
 
   --overlay-pane: {
     position: absolute;
