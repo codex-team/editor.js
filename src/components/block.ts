@@ -422,15 +422,20 @@ export default class Block {
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
     return Object.entries(tunesList).reduce((result, [name, Tune]: [string, BlockTuneConstructable]) => {
-      const tune = new Tune({
-        api: this.api,
-        settings: this.settings[name],
-      });
+      try {
+        const tune = new Tune({
+          api: this.api,
+          settings: this.settings[name],
+        });
 
-      return {
-        [name]: tune,
-        ...result,
-      };
+        return {
+          [name]: tune,
+          ...result,
+        };
+      } catch (e) {
+        _.log(`Tune «${name}» was skipped because of %o`, 'warn', e);
+        return result;
+      }
     }, {});
   }
 
