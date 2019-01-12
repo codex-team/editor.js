@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.2.25 changelog
+
+- `New` *Autofocus — Now you can set focus at Editor after page has been loaded
+
 ### 2.2.24 changelog
 
 - `Improvements` *Paste handling — minor paste handling improvements
