@@ -41,28 +41,11 @@ export default class Saver extends Module {
 
     const extractedData = await Promise.all(chainData);
 
-    console.groupCollapsed('[CodexEditor saving]:');
-
-    extractedData.forEach((blockData) => {
-        const {tool, data, time} = blockData;
-
-        if (blockData.isValid) {
-            console.log(`«${tool}» saving info`, {tool, data, time});
-        } else {
-            _.log(`Block «${tool}» skipped because saved data is invalid`, 'log');
-        }
-    });
-
-    extractedData.filter((blockData) => blockData.isValid);
-
     const sanitizedData = await Sanitizer.sanitizeBlocks(extractedData);
 
     ModificationsObserver.enable();
 
-    const output = this.makeOutput(sanitizedData);
-    console.groupEnd();
-
-    return output;
+    return this.makeOutput(sanitizedData);
   }
 
   /**
@@ -86,9 +69,19 @@ export default class Saver extends Module {
     let totalTime = 0;
     const blocks = [];
 
-    allExtractedData.forEach(({tool, data, time}) => {
+    console.groupCollapsed('[CodexEditor saving]:');
+
+    allExtractedData.forEach(({tool, data, time, isValid}) => {
 
       totalTime += time;
+
+      if (isValid) {
+        /** Group process info */
+        console.log(`«${tool}» saving info`, {tool, data, time});
+      } else {
+        _.log(`Block «${tool}» skipped because saved data is invalid`, 'log');
+        return;
+      }
 
       /** If it was stub Block, get original data */
       if (tool === this.Editor.Tools.stubTool) {
@@ -103,6 +96,8 @@ export default class Saver extends Module {
     });
 
     console.log('Total', totalTime);
+
+    console.groupEnd();
 
     return {
       time: +new Date(),
