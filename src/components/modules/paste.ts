@@ -549,8 +549,6 @@ export default class Paste extends Module {
     const {Caret, BlockManager, Tools} = this.Editor;
     const {currentBlock} = BlockManager;
 
-    console.log(dataToInsert.content);
-
     /**
      * If pasted tool isn`t equal current Block or if pasted content contains block elements, insert it as new Block
      */
