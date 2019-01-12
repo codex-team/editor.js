@@ -9,6 +9,7 @@ import {
   ToolConfig,
 } from '../../types';
 
+import {SavedData} from '../types-internal/block-data';
 import $ from './dom';
 import _ from './utils';
 
@@ -369,7 +370,7 @@ export default class Block {
    * Groups Tool's save processing time
    * @return {Object}
    */
-  public async save(): Promise<void|{tool: string, data: BlockToolData, time: number}> {
+  public async save(): Promise<void|SavedData> {
     const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
 
     /**
@@ -398,23 +399,19 @@ export default class Block {
    * Uses Tool's validation method to check the correctness of output data
    * Tool's validation method is optional
    *
-   * @description Method also can return data if it passed the validation
+   * @description Method returns true|false whether data passed the validation or not
    *
-   * @param {Object} data
-   * @returns {Boolean|Object} valid
+   * @param {BlockToolData} data
+   * @returns {Promise<boolean>} valid
    */
-  public validateData(data: BlockToolData): BlockToolData|false {
+  public async validate(data: BlockToolData): Promise<boolean> {
     let isValid = true;
 
     if (this.tool.validate instanceof Function) {
-      isValid = this.tool.validate(data);
+      isValid = await this.tool.validate(data);
     }
 
-    if (!isValid) {
-      return false;
-    }
-
-    return data;
+    return isValid;
   }
 
   /**

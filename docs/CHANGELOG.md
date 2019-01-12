@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.7.28 
+
+- `New` [Tools Validation](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#validate-optional) is added.
+
 ### 2.2.27
 
 - `New` *Mobile view* — Editor now adopted for mobile devices
