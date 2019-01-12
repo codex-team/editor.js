@@ -77,7 +77,7 @@ export default class Saver extends Module {
     let totalTime = 0;
     const blocks = [];
 
-    allExtractedData.forEach(({tool, data, time}, {}) => {
+    allExtractedData.forEach(({tool, data, time}) => {
 
       /** Group process info */
       console.log(`«${tool}» saving info`, {tool, data, time});
