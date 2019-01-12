@@ -1,6 +1,6 @@
 # Changelog
 
-### 2.7.25 changelog
+### 2.7.26 changelog
 
 - `New` [Tools Validation](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#validate-optional) is added.
 
