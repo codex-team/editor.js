@@ -14,7 +14,7 @@ import SelectionUtils from '../selection';
 export default class BlockSelection extends Module {
   /**
    * CSS classes for the Block
-   * @return {{wrapper: string, content: string}}
+   * @return {{wrapper: string, content: stringa}}
    */
   static get CSS() {
     return {
@@ -78,7 +78,7 @@ export default class BlockSelection extends Module {
    * Using the selection rectangle
    * @type {boolean}
    */
-  private rectSelection: boolean;
+  private rectSelection: boolean = false;
 
   /**
    *  speed of Scrolling
@@ -86,12 +86,12 @@ export default class BlockSelection extends Module {
   private readonly scrollSpeed: number = 3;
 
   /**
-   * have you started the selection rectangle
+   *  Mouse is clamped
    */
   private mousedown: boolean = false;
 
   /**
-   * mous is in scroll zone
+   * mouse is in scroll zone
    */
   private inScrollZone: string | null = null;
 
@@ -250,6 +250,7 @@ export default class BlockSelection extends Module {
 
     /** Now all blocks cleared */
     this.allBlocksSelected = false;
+    this.stackOfSelected = [];
   }
 
   /**
@@ -260,11 +261,37 @@ export default class BlockSelection extends Module {
     if (!this.mousedown) {
       return;
     }
-    event.preventDefault();
-    this.rectSelection = true;
+
     if (event.pageY !== undefined) {
       this.mouseX = event.clientX;
       this.mouseY = event.clientY;
+    }
+
+    const selection = SelectionUtils.get();
+    let textSelection = !!selection.rangeCount;
+    if (textSelection && selection.isCollapsed) {
+      textSelection = false;
+    }
+
+    const rectIsWideEnough = Math.abs(this.mouseX - this.startX + window.pageXOffset) > 15;
+    const rectIsHighEnough = Math.abs(this.mouseY - this.startY + window.pageYOffset) > 15;
+    const rectIsBigEnough = rectIsHighEnough && rectIsWideEnough;
+    if ((!rectIsBigEnough || textSelection) && !this.rectSelection) {
+      return;
+    }
+
+    selection.removeAllRanges();
+    event.preventDefault();
+
+    if (!this.rectSelection) {
+      this.rectSelection = true;
+
+      this.overlayRectangle.style.left = `${this.startX}px`;
+      this.overlayRectangle.style.top = `${this.startY}px`;
+      this.overlayRectangle.style.bottom = `calc(100% - ${this.startY}px`;
+      this.overlayRectangle.style.right = `calc(100% - ${this.startX}px`;
+
+      this.overlayRectangle.style.display = 'block';
     }
 
     this.updateSizeOfRectangle(event);
@@ -375,7 +402,7 @@ export default class BlockSelection extends Module {
    * @return {object} index - index next block, leftPos - start of left border of block, rightPos - right border
    */
   private genInfoForMouseSelection() {
-    const widthOfRedactor = window.getComputedStyle(this.Editor.UI.nodes.redactor).width;
+    const widthOfRedactor = window.getComputedStyle(document.body).width;
     const centerOfRedactor = Number.parseInt(widthOfRedactor, 10) / 2;
     const heightOfScrollZone = 25;
     let Y = this.mouseY;
@@ -438,14 +465,6 @@ export default class BlockSelection extends Module {
     this.mousedown = true;
     this.startX = event.pageX;
     this.startY = event.pageY;
-    this.stackOfSelected = [];
-
-    this.overlayRectangle.style.left = `${this.startX}px`;
-    this.overlayRectangle.style.top = `${this.startY}px`;
-    this.overlayRectangle.style.bottom = `calc(100% - ${this.startY}px`;
-    this.overlayRectangle.style.right = `calc(100% - ${this.startX}px`;
-
-    this.overlayRectangle.style.display = 'block';
   }
 
   /**
