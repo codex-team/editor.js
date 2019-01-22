@@ -225,9 +225,7 @@ export default class SelectionUtils {
     if (!this.isFakeBackgroundEnabled) {
       return;
     }
-    const fakeBack = this.findParentTag('SPAN');
 
-    fakeBack.style.paddingTop = '';
     this.isFakeBackgroundEnabled = false;
     document.execCommand(this.commandRemoveFormat);
   }
@@ -237,10 +235,7 @@ export default class SelectionUtils {
    */
   public setFakeBackground() {
     document.execCommand(this.commandBackground, false, '#a8d6ff');
-    const fakeBack = this.findParentTag('SPAN');
 
-    // The matched value to be slightly compared with the actual height of the selection
-    fakeBack.style.paddingTop = '0.30em';
     this.isFakeBackgroundEnabled = true;
   }
 

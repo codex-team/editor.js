@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.7.29
+
+- `Fix` Fixed selection behavior when text has modifiers from Inline Toolbar
+
 ### 2.7.28 
 
 - `New` [Tools Validation](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#validate-optional) is added.
