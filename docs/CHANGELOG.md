@@ -2,7 +2,7 @@
 
 ### 2.7.29
 
-- `Fix` Fixed selection behavior when text has modifiers form Inline Toolbar
+- `Fix` Fixed selection behavior when text has modifiers from Inline Toolbar
 
 ### 2.7.28 
 
