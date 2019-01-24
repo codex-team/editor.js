@@ -62,7 +62,7 @@ export default class Block {
     const content = this.holder;
     const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
 
-    const selector = '[contenteditable], textarea, '
+    const selector = '[contenteditable], textarea, input:not([type]), '
       + allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
 
     let inputs = _.array(content.querySelectorAll(selector));
