@@ -1,8 +1,12 @@
 # Changelog
 
+### 2.7.30
+
+- `Fix` Fixed selection behavior when text has modifiers form Inline Toolbar
+
 ### 2.7.29
 
-- `Fix` Fixed selection behavior when text has modifiers from Inline Toolbar
+- `Fix` cmd+x works only for custom selection now
 
 ### 2.7.28 
 
