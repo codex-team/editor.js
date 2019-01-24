@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.7.31
+
+- `Fix` Caret now goes through <input> elements without `type` attribute
+
 ### 2.7.30
 
 - `Fix` Fixed selection behavior when text has modifiers form Inline Toolbar
