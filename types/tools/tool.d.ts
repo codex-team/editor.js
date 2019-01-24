@@ -5,7 +5,7 @@ import {SanitizerConfig} from '../configs';
 /**
  * Abstract interface of all Tools
  */
-export interface Tool {
+export interface BaseTool {
   /**
    * Tool`s render method
    * For inline Tools returns inline toolbar button
@@ -14,11 +14,7 @@ export interface Tool {
   render(): HTMLElement;
 }
 
-export interface ToolConstructable {
-  /**
-   * Tool name
-   */
-  name: string;
+export interface BaseToolConstructable {
 
   /**
    * Define Tool type as Inline
@@ -33,7 +29,7 @@ export interface ToolConstructable {
   /**
    * Describe constructor parameters
    */
-  new (config: {api: API}): Tool;
+  new (config: {api: API}): BaseTool;
 
   /**
    * Tool`s prepare method. Can be async
