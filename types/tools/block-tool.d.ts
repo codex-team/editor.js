@@ -1,6 +1,6 @@
 import {PasteConfig, SanitizerConfig} from '../configs';
 import {BlockToolData} from './block-tool-data';
-import {Tool, ToolConstructable} from './tool';
+import {BaseTool, BaseToolConstructable} from './tool';
 import {ToolConfig} from './tool-config';
 import {API} from '../index';
 import {PasteEvent} from './paste-events';
@@ -8,17 +8,11 @@ import {PasteEvent} from './paste-events';
  * Describe Block Tool object
  * @see {@link docs/tools.md}
  */
-export interface BlockTool extends Tool {
+export interface BlockTool extends BaseTool {
   /**
    * Sanitizer rules description
    */
   sanitize?: SanitizerConfig;
-
-  /**
-   * Return Tool's main block-wrapper
-   * @return {HTMLElement}
-   */
-  render(): HTMLElement;
 
   /**
    * Process Tool's element in DOM and return raw data
@@ -47,10 +41,14 @@ export interface BlockTool extends Tool {
    */
   merge?(blockData: BlockToolData): void;
 
-  onPaste?(event: PasteEvent);
+  /**
+   * On paste callback. Fired when pasted content can be substituted by a Tool
+   * @param {PasteEvent} event
+   */
+  onPaste?(event: PasteEvent): void;
 }
 
-export interface BlockToolConstructable extends ToolConstructable {
+export interface BlockToolConstructable extends BaseToolConstructable {
   /**
    * Tool's Toolbox settings
    */

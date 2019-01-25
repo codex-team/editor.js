@@ -1,8 +1,12 @@
-import {Tool, ToolConstructable} from './tool';
+import {BaseTool, BaseToolConstructable} from './tool';
 /**
  * Base structure for the Inline Toolbar Tool
  */
-export interface InlineTool extends Tool {
+export interface InlineTool extends BaseTool {
+  /**
+   * Shortcut for Tool
+   * @type {string}
+   */
   shortcut?: string;
 
   /**
@@ -30,4 +34,4 @@ export interface InlineTool extends Tool {
   clear?(): void;
 }
 
-export interface InlineToolConstructable extends ToolConstructable {}
+export interface InlineToolConstructable extends BaseToolConstructable {}
