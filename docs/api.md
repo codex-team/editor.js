@@ -98,7 +98,7 @@ Each method accept `position` and `offset` parameters. `Offset` should be used t
 | `end`     | Caret will be set at the Block end
 | `default` | More or less emulates browser behaviour, in most cases behaves as `start`  
 
-Each method returns boolean value: true if caret is set successfully and false otherwise (e.g. when there is no Block at index);
+Each method returns `boolean` value: true if caret is set successfully or false otherwise (e.g. when there is no Block at index);
 
 `setToFirstBlock(position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the first Block
 
