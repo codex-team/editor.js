@@ -98,15 +98,17 @@ Each method accept `position` and `offset` parameters. `Offset` should be used t
 | `end`     | Caret will be set at the Block end
 | `default` | More or less emulates browser behaviour, in most cases behaves as `start`  
 
-`setToFirstBlock(position?: 'end'|'start'|'default', offset?: number): void;` — set caret to the first Block
+Each method returns boolean value: true if caret is set successfully and false otherwise (e.g. when there is no Block at index);
 
-`setToLastBlock(position?: 'end'|'start'|'default', offset?: number): void;` — set caret to the last Block
+`setToFirstBlock(position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the first Block
 
-`setToNextBlock(position?: 'end'|'start'|'default', offset?: number): void;` — set caret to the next Block
+`setToLastBlock(position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the last Block
 
-`setToPreviousBlock(position?: 'end'|'start'|'default', offset?: number): void;` — set caret to the previous Block
+`setToNextBlock(position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the next Block
 
-`setToBlock(index: number, position?: 'end'|'start'|'default', offset?: number): void;` — set caret to the Block by passed `index`
+`setToPreviousBlock(position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the previous Block
+
+`setToBlock(index: number, position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the Block by passed `index`
 
 ### NotifierAPI
 
