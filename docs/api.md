@@ -94,7 +94,7 @@ Each method accept `position` and `offset` parameters. `Offset` should be used t
 
 | Value     | Description 
 | --------- | ----------- 
-| `start`   | Caret will be set at the Block start
+| `start`   | Caret will be set at the Block's beginning
 | `end`     | Caret will be set at the Block end
 | `default` | More or less emulates browser behaviour, in most cases behaves as `start`  
 
