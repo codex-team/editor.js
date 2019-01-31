@@ -90,7 +90,7 @@ Methods to manage caret position.
 
 Each method accept `position` and `offset` parameters. `Offset` should be used to shift caret by passed amount of characters.
 
-`Position` can be one of following values:
+`Position` can be one of the following values:
 
 | Value     | Description 
 | --------- | ----------- 
