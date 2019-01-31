@@ -15,6 +15,46 @@ import {BlockToolConstructable, ToolboxConfig} from '../../../../types';
  */
 export default class Toolbox extends Module {
 
+  /**
+   * CSS styles
+   * @return {{toolbox: string, toolboxButton: string, toolboxOpened: string, tooltip: string}}
+   */
+  get CSS() {
+    return  {
+      toolbox: 'ce-toolbox',
+      toolboxButton: 'ce-toolbox__button',
+      toolboxButtonActive : 'ce-toolbox__button--active',
+      toolboxOpened: 'ce-toolbox--opened',
+      tooltip: 'ce-toolbox__tooltip',
+      tooltipShown: 'ce-toolbox__tooltip--shown',
+      tooltipShortcut: 'ce-toolbox__tooltip-shortcut',
+    };
+  }
+
+  /**
+   * get tool name when it is selected
+   * In case when nothing selection returns null
+   *
+   * @return {String|null}
+   */
+  public get getActiveTool(): string {
+    const childNodes = this.nodes.toolbox.childNodes;
+
+    if (this.activeButtonIndex === -1) {
+      return null;
+    }
+
+    return (childNodes[this.activeButtonIndex] as HTMLElement).dataset.tool;
+  }
+
+  /**
+   * Returns True if Toolbox is Empty and nothing to show
+   * @return {boolean}
+   */
+  public get isEmpty(): boolean {
+    return this.displayedToolsCount === 0;
+  }
+
   private static LEAF_DIRECTIONS = {
     RIGHT: 'right',
     LEFT: 'left',
@@ -31,9 +71,11 @@ export default class Toolbox extends Module {
    */
   public nodes: {
     toolbox: HTMLElement,
+    tooltip: HTMLElement,
     buttons: HTMLElement[],
   } = {
     toolbox: null,
+    tooltip: null,
     buttons: [],
   };
 
@@ -51,26 +93,14 @@ export default class Toolbox extends Module {
   private displayedToolsCount: number = 0;
 
   /**
-   * CSS styles
-   * @return {{toolbox: string, toolboxButton: string, toolboxOpened: string}}
-   */
-  static get CSS() {
-    return  {
-      toolbox: 'ce-toolbox',
-      toolboxButton: 'ce-toolbox__button',
-      toolboxButtonActive : 'ce-toolbox__button--active',
-      toolboxOpened: 'ce-toolbox--opened',
-    };
-  }
-
-  /**
    * Makes the Toolbox
    */
   public make(): void {
-    this.nodes.toolbox = $.make('div', Toolbox.CSS.toolbox);
+    this.nodes.toolbox = $.make('div', this.CSS.toolbox);
     $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
 
     this.addTools();
+    this.addTooltip();
   }
 
   /**
@@ -93,7 +123,7 @@ export default class Toolbox extends Module {
       return;
     }
 
-    this.nodes.toolbox.classList.add(Toolbox.CSS.toolboxOpened);
+    this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
     this.opened = true;
   }
 
@@ -101,15 +131,17 @@ export default class Toolbox extends Module {
    * Close Toolbox
    */
   public close(): void {
-    this.nodes.toolbox.classList.remove(Toolbox.CSS.toolboxOpened);
+    this.hideTooltip();
+
+    this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
     this.opened = false;
 
     /** remove active item pointer */
     this.activeButtonIndex = -1;
-    const activeButton = this.nodes.toolbox.querySelector(`.${Toolbox.CSS.toolboxButtonActive}`);
+    const activeButton = this.nodes.toolbox.querySelector(`.${this.CSS.toolboxButtonActive}`);
 
     if (activeButton) {
-      activeButton.classList.remove(Toolbox.CSS.toolboxButtonActive);
+      activeButton.classList.remove(this.CSS.toolboxButtonActive);
     }
   }
 
@@ -156,7 +188,7 @@ export default class Toolbox extends Module {
       /**
        * If we have chosen Tool then remove highlighting
        */
-      (childNodes[this.activeButtonIndex] as HTMLElement).classList.remove(Toolbox.CSS.toolboxButtonActive);
+      (childNodes[this.activeButtonIndex] as HTMLElement).classList.remove(this.CSS.toolboxButtonActive);
     }
 
     /**
@@ -180,31 +212,14 @@ export default class Toolbox extends Module {
     /**
      * Highlight new chosen Tool
      */
-    (childNodes[this.activeButtonIndex] as HTMLElement).classList.add(Toolbox.CSS.toolboxButtonActive);
+    (childNodes[this.activeButtonIndex] as HTMLElement).classList.add(this.CSS.toolboxButtonActive);
   }
 
   /**
-   * get tool name when it is selected
-   * In case when nothing selection returns null
-   *
-   * @return {String|null}
+   * Hide toolbox tooltip
    */
-  public get getActiveTool(): string {
-    const childNodes = this.nodes.toolbox.childNodes;
-
-    if (this.activeButtonIndex === -1) {
-      return null;
-    }
-
-    return (childNodes[this.activeButtonIndex] as HTMLElement).dataset.tool;
-  }
-
-  /**
-   * Returns True if Toolbox is Empty and nothing to show
-   * @return {boolean}
-   */
-  public get isEmpty(): boolean {
-    return this.displayedToolsCount === 0;
+  public hideTooltip(): void {
+    this.nodes.tooltip.classList.remove(this.CSS.tooltipShown);
   }
 
   /**
@@ -253,9 +268,7 @@ export default class Toolbox extends Module {
 
     const {toolbox: userToolboxSettings = {} as ToolboxConfig} = this.Editor.Tools.getToolSettings(toolName);
 
-    const button = $.make('li', [ Toolbox.CSS.toolboxButton ], {
-      title: userToolboxSettings.title || toolToolboxSettings.title || toolName,
-    });
+    const button = $.make('li', [ this.CSS.toolboxButton ]);
 
     button.dataset.tool = toolName;
     button.innerHTML = userToolboxSettings.icon || toolToolboxSettings.icon;
@@ -273,6 +286,17 @@ export default class Toolbox extends Module {
     });
 
     /**
+     * Add listeners to show/hide toolbox tooltip
+     */
+    this.Editor.Listeners.on(button, 'mouseenter', () => {
+      this.showTooltip(button, toolName);
+    });
+
+    this.Editor.Listeners.on(button, 'mouseleave', () => {
+      this.hideTooltip();
+    });
+
+    /**
      * Enable shortcut
      */
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
@@ -283,6 +307,71 @@ export default class Toolbox extends Module {
 
     /** Increment Tools count */
     this.displayedToolsCount++;
+  }
+
+  /**
+   * Add toolbox tooltip to page
+   */
+  private addTooltip(): void {
+    this.nodes.tooltip = $.make('div', this.CSS.tooltip, {
+      innerHTML: 'Press <b>Enter</b> or use <b>CMD+H</b>',
+    });
+
+    $.append(this.Editor.Toolbar.nodes.content, this.nodes.tooltip);
+  }
+
+  /**
+   * Show tooltip for toolbox button
+   * @param {HTMLElement} button
+   * @param {string} toolName
+   */
+  private showTooltip(button: HTMLElement, toolName: string): void {
+    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+    const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.apiSettings.TOOLBOX] || {};
+    const userToolboxSettings = toolSettings.toolbox || {};
+    const name = userToolboxSettings.title || toolboxSettings.title || toolName;
+
+    let shortcut = toolSettings[this.Editor.Tools.apiSettings.SHORTCUT];
+
+    const fragment = document.createDocumentFragment();
+    const hint = document.createTextNode(_.capitalize(name));
+
+    fragment.appendChild(hint);
+
+    if (shortcut) {
+      const OS = _.getUserOS();
+
+      shortcut = shortcut
+        .replace(/shift/gi, '⇧')
+        .replace(/backspace/gi, '⌫')
+        .replace(/enter/gi, '⏎')
+        .replace(/up/gi, '↑')
+        .replace(/left/gi, '→')
+        .replace(/down/gi, '↓')
+        .replace(/right/gi, '←')
+        .replace(/escape/gi, '⎋')
+        .replace(/insert/gi, 'Ins')
+        .replace(/delete/gi, '␡');
+
+      if (OS.mac) {
+        shortcut = shortcut.replace(/ctrl|cmd/gi, '⌘').replace(/alt/gi, '⌥');
+      } else {
+        shortcut = shortcut.replace(/cmd/gi, 'Ctrl').replace(/windows/gi, 'WIN');
+      }
+
+      fragment.appendChild($.make('p', this.CSS.tooltipShortcut, {
+        textContent: shortcut,
+      }));
+    }
+
+    const offset = 16;
+    const coordinate = button.offsetLeft;
+
+    this.nodes.tooltip.innerHTML = '';
+    this.nodes.tooltip.appendChild(fragment);
+
+    this.nodes.tooltip.style.left = `${coordinate + offset}px`;
+    this.nodes.tooltip.classList.add(this.CSS.tooltipShown);
   }
 
   /**
