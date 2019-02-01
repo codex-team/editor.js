@@ -1,5 +1,13 @@
 # Changelog
 
+### 2.8.0
+
+- `Imporvements` *API* - Added [API methods](api.md#caretapi) to manage caret position
+
+### 2.7.32
+
+- `Improvements` *Types* - TypeScript types sre updated
+
 ### 2.7.31
 
 - `Fix` Caret now goes through <input> elements without `type` attribute

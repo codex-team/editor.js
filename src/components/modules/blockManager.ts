@@ -45,6 +45,14 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * returns first Block
+   * @return {Block}
+   */
+  public get firstBlock(): Block {
+    return this._blocks[0];
+  }
+
+  /**
    * returns last Block
    * @return {Block}
    */
