@@ -25,9 +25,9 @@ export default class DragNDrop extends Module {
    * @private
    */
   private bindEvents(): void {
-    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
+    this.Editor.Listeners.add(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
 
-    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', (dragEvent: DragEvent) => {
+    this.Editor.Listeners.add(this.Editor.UI.nodes.holder, 'dragstart', (dragEvent: DragEvent) => {
 
       if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed) {
         this.isStartedAtEditor = true;
@@ -37,7 +37,7 @@ export default class DragNDrop extends Module {
     });
 
     /* Prevent default browser behavior to allow drop on non-contenteditable elements */
-    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', (e) => e.preventDefault(), true);
+    this.Editor.Listeners.add(this.Editor.UI.nodes.holder, 'dragover', (e) => e.preventDefault(), true);
   }
 
   /**

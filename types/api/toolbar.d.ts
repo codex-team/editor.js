@@ -11,4 +11,7 @@ export interface Toolbar {
    * Opens Toolbar
    */
   open(): void;
+
+  on(event: string, callback: (data: any) => void);
+  off(event: string, callback: (data: any) => void);
 }

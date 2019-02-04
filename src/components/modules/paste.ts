@@ -179,7 +179,7 @@ export default class Paste extends Module {
   private setCallback(): void {
     const {Listeners, UI} = this.Editor;
 
-    Listeners.on(document,  'paste', this.handlePasteEvent);
+    Listeners.add(document,  'paste', this.handlePasteEvent);
   }
 
   /**

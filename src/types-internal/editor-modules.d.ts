@@ -5,7 +5,7 @@ import Toolbar from '../components/modules/toolbar/index';
 import InlineToolbar from '../components/modules/toolbar/inline';
 import Toolbox from '../components/modules/toolbar/toolbox';
 import BlockSettings from '../components/modules/toolbar/blockSettings';
-import Events from '../components/modules/events';
+import {EventEmitter} from '../components/eventEmitter';
 import Shortcuts from '../components/modules/shortcuts';
 import Paste from '../components/modules/paste';
 import Notifier from '../components/modules/notifier';
@@ -19,7 +19,6 @@ import Caret from '../components/modules/caret';
 import BlockManager from '../components/modules/blockManager';
 import BlocksAPI from '../components/modules/api/blocks';
 import CaretAPI from '../components/modules/api/caret';
-import EventsAPI from '../components/modules/api/events';
 import ListenersAPI from '../components/modules/api/listeners';
 import SanitizerAPI from '../components/modules/api/sanitizer';
 import ToolbarAPI from '../components/modules/api/toolbar';
@@ -29,6 +28,7 @@ import NotifierAPI from '../components/modules/api/notifier';
 import SaverAPI from '../components/modules/api/saver';
 import Saver from '../components/modules/saver';
 import BlockSelection from '../components/modules/blockSelection';
+import OTManager from '../components/modules/OTManager';
 
 export interface EditorModules {
   UI: UI;
@@ -39,7 +39,6 @@ export interface EditorModules {
   InlineToolbar: InlineToolbar;
   Toolbox: Toolbox;
   BlockSettings: BlockSettings;
-  Events: Events;
   Shortcuts: Shortcuts;
   Paste: Paste;
   DragNDrop: DragNDrop;
@@ -54,7 +53,6 @@ export interface EditorModules {
   BlockManager: BlockManager;
   BlocksAPI: BlocksAPI;
   CaretAPI: CaretAPI;
-  EventsAPI: EventsAPI;
   ListenersAPI: ListenersAPI;
   SanitizerAPI: SanitizerAPI;
   SaverAPI: SaverAPI;
@@ -62,4 +60,5 @@ export interface EditorModules {
   StylesAPI: StylesAPI;
   ToolbarAPI: ToolbarAPI;
   NotifierAPI: NotifierAPI;
+  OTManager: OTManager;
 }

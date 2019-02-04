@@ -41,7 +41,7 @@ export default class MoveUpTune implements BlockTune {
   public render(): HTMLElement {
     const moveUpButton = $.make('div', [this.CSS.button, this.CSS.wrapper], {});
     moveUpButton.appendChild($.svg('arrow-up', 14, 14));
-    this.api.listeners.on(
+    this.api.listeners.add(
       moveUpButton,
       'click',
       (event) => this.handleClick(event as MouseEvent, moveUpButton),

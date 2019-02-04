@@ -114,7 +114,7 @@ export default class Toolbar extends Module {
     this.nodes.plusButton = $.make('div', Toolbar.CSS.plusButton);
     $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
     $.append(this.nodes.content, this.nodes.plusButton);
-    this.Editor.Listeners.on(this.nodes.plusButton, 'click', () => this.plusButtonClicked(), false);
+    this.Editor.Listeners.add(this.nodes.plusButton, 'click', () => this.plusButtonClicked(), false);
 
     /**
      * Make a Toolbox
@@ -275,7 +275,7 @@ export default class Toolbar extends Module {
     /**
      * Settings toggler
      */
-    this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', () => this.settingsTogglerClicked());
+    this.Editor.Listeners.add(this.nodes.settingsToggler, 'click', () => this.settingsTogglerClicked());
   }
 
   /**

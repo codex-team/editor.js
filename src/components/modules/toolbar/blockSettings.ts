@@ -20,8 +20,8 @@ export default class BlockSettings extends Module {
    */
   public get events(): {opened: string, closed: string} {
     return {
-      opened: 'block-settings-opened',
-      closed: 'block-settings-closed',
+      opened: 'block-settings/opened',
+      closed: 'block-settings/closed',
     };
   }
 
@@ -91,7 +91,7 @@ export default class BlockSettings extends Module {
     this.addDefaultSettings();
 
     /** Tell to subscribers that block settings is opened */
-    this.Editor.Events.emit(this.events.opened);
+    this.emit(this.events.opened);
   }
 
   /**
@@ -105,7 +105,7 @@ export default class BlockSettings extends Module {
     this.nodes.defaultSettings.innerHTML = '';
 
     /** Tell to subscribers that block settings is closed */
-    this.Editor.Events.emit(this.events.closed);
+    this.emit(this.events.closed);
   }
 
   /**

@@ -10,7 +10,7 @@ export interface Listeners {
    * @param {(event: Event) => void}handler
    * @param {boolean} useCapture
    */
-  on(element: Element, eventType: string, handler: (event?: Event) => void, useCapture?: boolean): void;
+  add(element: Element, eventType: string, handler: (event?: Event) => void, useCapture?: boolean): void;
 
   /**
    * Unsubscribe from event dispatched on passed element
@@ -20,5 +20,5 @@ export interface Listeners {
    * @param {(event: Event) => void}handler
    * @param {boolean} useCapture
    */
-  off(element: Element, eventType: string, handler: (event?: Event) => void, useCapture?: boolean): void;
+  remove(element: Element, eventType: string, handler: (event?: Event) => void, useCapture?: boolean): void;
 }

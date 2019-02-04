@@ -5,7 +5,7 @@
  */
 
 import {EditorConfig} from './configs';
-import {Blocks, Caret, Events, Listeners, Notifier, Sanitizer, Saver, Selection, Styles, Toolbar} from './api';
+import {Blocks, Caret, Listeners, Notifier, Sanitizer, Saver, Selection, Styles, Toolbar} from './api';
 
 /**
  * Interfaces used for development

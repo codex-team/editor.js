@@ -195,6 +195,9 @@ export default class BlockManager extends Module {
     const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
     const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
 
+    block.on('text/insert', (d) => this.emit('text/insert', {...d, block: this.currentBlockIndex}));
+    block.on('text/delete', (d) => this.emit('text/delete', {...d, block: this.currentBlockIndex}));
+
     this.bindEvents(block);
 
     return block;
@@ -220,6 +223,13 @@ export default class BlockManager extends Module {
     const block = this.composeBlock(toolName, data, settings);
 
     this._blocks[newIndex] = block;
+
+    this.emit('block/insert', {
+      block,
+      index: newIndex,
+      data,
+    });
+
     return block;
   }
 
@@ -269,6 +279,12 @@ export default class BlockManager extends Module {
     } else if (index <= this.currentBlockIndex) {
       this.currentBlockIndex++;
     }
+
+    this.emit('block/insert', {
+      block,
+      index,
+      data: {},
+    });
 
     return block;
   }
@@ -321,6 +337,12 @@ export default class BlockManager extends Module {
     if (index === undefined) {
       index = this.currentBlockIndex;
     }
+
+    this.emit('block/delete', {
+      block: this.blocks[index],
+      index,
+    });
+
     this._blocks.remove(index);
 
     if (this.currentBlockIndex >= index) {
@@ -396,6 +418,12 @@ export default class BlockManager extends Module {
     const block = this.composeBlock(toolName, data);
 
     this._blocks.insert(this.currentBlockIndex, block, true);
+
+    this.emit('block/insert', {
+      block,
+      index: this.currentBlockIndex,
+      data,
+    });
 
     return block;
   }
@@ -544,10 +572,10 @@ export default class BlockManager extends Module {
   private bindEvents(block: Block): void {
     const {BlockEvents, Listeners} = this.Editor;
 
-    Listeners.on(block.holder, 'keydown', (event) => BlockEvents.keydown(event as KeyboardEvent), true);
-    Listeners.on(block.holder, 'mouseup', (event) => BlockEvents.mouseUp(event));
-    Listeners.on(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
-    Listeners.on(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));
-    Listeners.on(block.holder, 'dragleave', (event) => BlockEvents.dragLeave(event as DragEvent));
+    Listeners.add(block.holder, 'keydown', (event) => BlockEvents.keydown(event as KeyboardEvent), true);
+    Listeners.add(block.holder, 'mouseup', (event) => BlockEvents.mouseUp(event));
+    Listeners.add(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
+    Listeners.add(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));
+    Listeners.add(block.holder, 'dragleave', (event) => BlockEvents.dragLeave(event as DragEvent));
   }
 }

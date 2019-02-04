@@ -14,7 +14,9 @@ export default class ToolbarAPI extends Module {
     return {
       close: () => this.close(),
       open: () => this.open(),
-    };
+      on: (event: string, callback: (data: any) => void) => this.Editor.Toolbar.on(event, callback),
+      off: (event: string, callback: (data: any) => void) => this.Editor.Toolbar.off(event, callback),
+    } as Toolbar;
   }
 
   /**

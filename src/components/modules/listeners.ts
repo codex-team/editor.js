@@ -59,7 +59,7 @@ export default class Listeners extends Module {
    * @param {Function} handler - method that will be fired on event
    * @param {Boolean} useCapture - use event bubbling
    */
-  public on(
+  public add(
     element: EventTarget,
     eventType: string,
     handler: (event: Event) => void,
@@ -88,7 +88,7 @@ export default class Listeners extends Module {
    * @param {Function} handler - remove handler, if element listens several handlers on the same event type
    * @param {Boolean} useCapture - use event bubbling
    */
-  public off(
+  public remove(
     element: EventTarget,
     eventType: string,
     handler: (event: Event) => void,

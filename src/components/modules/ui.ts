@@ -183,14 +183,14 @@ export default class UI extends Module {
    * Bind events on the CodeX Editor interface
    */
   private bindEvents(): void {
-    this.Editor.Listeners.on(
+    this.Editor.Listeners.add(
       this.nodes.redactor,
       'click',
       (event) => this.redactorClicked(event as MouseEvent),
       false,
     );
-    this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true );
-    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), false );
+    this.Editor.Listeners.add(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true );
+    this.Editor.Listeners.add(document, 'click', (event) => this.documentClicked(event as MouseEvent), false );
   }
 
   /**

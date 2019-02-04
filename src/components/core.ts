@@ -65,7 +65,7 @@ export default class Core {
     this.isReady = new Promise((resolve, reject) => {
       onReady = resolve;
       onFail = reject;
-    });
+    }) as Promise<void>;
 
     Promise.resolve()
       .then(async () => {
@@ -249,6 +249,7 @@ export default class Core {
       'DragNDrop',
       'ModificationsObserver',
       'BlockSelection',
+      'OTManager',
     ];
 
     await modulesToPrepare.reduce(

@@ -12,9 +12,9 @@ export default class ListenersAPI extends Module {
    */
   get methods(): Listeners {
     return {
-      on: (element: HTMLElement, eventType, handler, useCapture) => this.on(element, eventType, handler, useCapture),
-      off: (element, eventType, handler) => this.off(element, eventType, handler),
-    };
+      add: (element: HTMLElement, eventType, handler, useCapture) => this.add(element, eventType, handler, useCapture),
+      remove: (element, eventType, handler) => this.remove(element, eventType, handler),
+    } as Listeners;
   }
 
   /**
@@ -25,8 +25,8 @@ export default class ListenersAPI extends Module {
    * @param {() => void} handler
    * @param {boolean} useCapture
    */
-  public on(element: HTMLElement, eventType: string, handler: () => void, useCapture?: boolean): void {
-    this.Editor.Listeners.on(element, eventType, handler, useCapture);
+  public add(element: HTMLElement, eventType: string, handler: () => void, useCapture?: boolean): void {
+    this.Editor.Listeners.add(element, eventType, handler, useCapture);
   }
 
   /**
@@ -36,7 +36,7 @@ export default class ListenersAPI extends Module {
    * @param eventType
    * @param handler
    */
-  public off(element, eventType, handler): void {
-    this.Editor.Listeners.off(element, eventType, handler);
+  public remove(element, eventType, handler): void {
+    this.Editor.Listeners.remove(element, eventType, handler);
   }
 }

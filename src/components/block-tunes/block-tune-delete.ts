@@ -63,7 +63,7 @@ export default class DeleteTune implements BlockTune {
   public render() {
     this.nodes.button = $.make('div', [this.CSS.button, this.CSS.buttonDelete], {});
     this.nodes.button.appendChild($.svg('cross', 12, 12));
-    this.api.listeners.on(this.nodes.button, 'click', (event: MouseEvent) => this.handleClick(event), false);
+    this.api.listeners.add(this.nodes.button, 'click', (event: MouseEvent) => this.handleClick(event), false);
     return this.nodes.button;
   }
 
@@ -85,14 +85,14 @@ export default class DeleteTune implements BlockTune {
        * When toolbar block settings is closed but block deletion is not confirmed,
        * then reset confirmation state
        */
-      this.api.events.on('block-settings-closed', this.resetConfirmation);
+      this.api.toolbar.on('block-settings/closed', this.resetConfirmation);
 
     } else {
 
       /**
        * Unsubscribe from block-settings closing event
        */
-      this.api.events.off('block-settings-closed', this.resetConfirmation);
+      this.api.toolbar.off('block-settings/closed', this.resetConfirmation);
 
       this.api.blocks.delete();
 

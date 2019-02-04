@@ -14,7 +14,7 @@ export default class SaverAPI extends Module {
   get methods(): Saver {
     return {
       save: () => this.save(),
-    };
+    } as Saver;
   }
 
   /**

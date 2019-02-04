@@ -1,6 +1,7 @@
 import {EditorModules} from '../types-internal/editor-modules';
 import {EditorConfig} from '../../types';
 import {ModuleConfig} from '../types-internal/module-config';
+import {EventEmitter} from './eventEmitter';
 
 /**
  * @abstract
@@ -11,7 +12,7 @@ import {ModuleConfig} from '../types-internal/module-config';
  * @property {Object} config - Editor user settings
  * @property {EditorModules} Editor - List of Editor modules
  */
-export default class Module {
+export default class Module extends EventEmitter {
 
   /**
    * Editor modules list
@@ -30,6 +31,8 @@ export default class Module {
    * @param {EditorConfig}
    */
   constructor({config}: ModuleConfig) {
+    super();
+
     if (new.target === Module) {
       throw new TypeError('Constructors for abstract class Module are not allowed.');
     }

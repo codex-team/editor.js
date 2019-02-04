@@ -27,6 +27,7 @@ import MoveUpTune from './block-tunes/block-tune-move-up';
 import DeleteTune from './block-tunes/block-tune-delete';
 import MoveDownTune from './block-tunes/block-tune-move-down';
 import SelectionUtils from './selection';
+import {EventEmitter} from './eventEmitter';
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -36,7 +37,7 @@ import SelectionUtils from './selection';
  * @property holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
  * @property pluginsContent - HTML content that returns by Tool's render function
  */
-export default class Block {
+export default class Block extends EventEmitter {
 
   /**
    * CSS classes for the Block
@@ -326,6 +327,8 @@ export default class Block {
     settings: ToolConfig,
     apiMethods: API,
   ) {
+    super();
+
     this.name = toolName;
     this.tool = toolInstance;
     this.class = toolClass;
@@ -334,6 +337,7 @@ export default class Block {
     this.holder = this.compose();
 
     this.mutationObserver = new MutationObserver(this.didMutated);
+    this.holder.addEventListener('beforeinput', this.onInput);
 
     /**
      * @type {BlockTune[]}
@@ -482,6 +486,83 @@ export default class Block {
    */
   private didMutated = () => {
     this.updateCurrentInput();
+  }
+
+  private onInput = (e) => {
+    let value = e.data;
+    const selection = SelectionUtils.get();
+    const range = SelectionUtils.range;
+    const tempWrapper = $.make('div');
+    const rangeContents = range.cloneContents();
+
+    tempWrapper.appendChild(rangeContents);
+
+    let html = tempWrapper.innerHTML;
+
+    const inputs = this.inputs;
+    const inputIndex = inputs.findIndex((i) => i.contains(selection.anchorNode));
+
+    if (inputIndex === -1) {
+      return;
+    }
+
+    const input = inputs[inputIndex];
+    const nodes = [];
+
+    const findNodes = (node: Node) => {
+      if (node === input) {
+        return;
+      }
+
+      nodes.push(Array.from(node.parentNode.childNodes).indexOf(node as ChildNode));
+
+      findNodes(node.parentNode as Node);
+    };
+
+    findNodes(selection.anchorNode);
+
+    nodes.reverse();
+
+    switch (e.inputType) {
+      case 'insertText':
+        this.emit('text/insert', {
+          position: {
+            input: inputIndex,
+            nodes,
+            startOffset: range.startOffset,
+            endOffset: range.startOffset + value.length,
+          },
+          data: {
+            text: value,
+            html,
+          },
+        });
+        break;
+
+      case 'deleteContentBackward':
+        value = tempWrapper.textContent;
+        const {endOffset} = range;
+        let {startOffset} = range;
+
+        if (!html.length) {
+           html = selection.anchorNode.textContent[range.startOffset - 1];
+           value = html;
+           startOffset -= 1;
+        }
+
+        this.emit('text/delete', {
+          position: {
+            input: inputIndex,
+            startOffset,
+            endOffset,
+            nodes,
+          },
+          data: {
+            text: value,
+            html,
+          },
+        });
+    }
   }
 
   /**

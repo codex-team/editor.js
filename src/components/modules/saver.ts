@@ -30,6 +30,7 @@ export default class Saver extends Module {
     const blocks = BlockManager.blocks,
       chainData = [];
 
+    this.emit('saving/started');
     /**
      * Disable modifications observe while saving
      */
@@ -44,7 +45,11 @@ export default class Saver extends Module {
 
     ModificationsObserver.enable();
 
-    return this.makeOutput(sanitizedData);
+    const output = this.makeOutput(sanitizedData);
+
+    this.emit('saving/finished', output);
+
+    return output;
   }
 
   /**

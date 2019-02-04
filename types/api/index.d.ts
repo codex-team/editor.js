@@ -1,5 +1,4 @@
 export * from './blocks';
-export * from './events';
 export * from './listeners';
 export * from './sanitizer';
 export * from './saver';

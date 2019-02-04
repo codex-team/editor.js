@@ -1,4 +1,4 @@
-import Module from '../__module';
+import Module from './__module';
 
 /**
  * @module eventDispatcher
@@ -10,10 +10,10 @@ import Module from '../__module';
  *
  * @version 1.0.0
  *
- * @typedef {Events} Events
+ * @typedef {EventEmitter} EventEmitter
  * @property {Object} subscribers - all subscribers grouped by event name
  */
-export default class Events extends Module {
+export class EventEmitter {
 
   /**
    * Object with events` names as key and array of callback functions as value
@@ -77,3 +77,5 @@ export default class Events extends Module {
     this.subscribers = null;
   }
 }
+
+export default new EventEmitter();
