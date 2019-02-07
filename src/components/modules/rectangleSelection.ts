@@ -11,7 +11,7 @@ export default class RectangleSelection extends Module {
    * Using the selection rectangle
    * @type {boolean}
    */
-  private rectSelection: boolean = false;
+  private isRectSelectionActivated: boolean = false;
 
   /**
    *  Speed of Scrolling
@@ -134,11 +134,11 @@ export default class RectangleSelection extends Module {
   }
 
   public isRectActivated() {
-    return this.rectSelection;
+    return this.isRectSelectionActivated;
   }
 
   public clearSelection() {
-    this.rectSelection = false;
+    this.isRectSelectionActivated = false;
   }
 
   private genHTML() {
@@ -200,17 +200,17 @@ export default class RectangleSelection extends Module {
     const rectISOnLeftSideOfRedactor = this.startX < leftPos && this.mouseX < leftPos;
     this.rectCrossesBlocks = !(rectIsOnRighSideOfredactor || rectISOnLeftSideOfRedactor);
 
-    if (!this.rectSelection) {
+    if (!this.isRectSelectionActivated) {
       this.rectCrossesBlocks = false;
     }
 
-    if (!this.rectSelection) {
-      this.rectSelection = true;
+    if (!this.isRectSelectionActivated) {
+      this.isRectSelectionActivated = true;
       this.shrinkRectangleToPoint();
       this.overlayRectangle.style.display = 'block';
     }
 
-    this.updateSizeOfRectangle();
+    this.updateRectangleSize();
 
     if (index === undefined) {
       return;
@@ -254,7 +254,7 @@ export default class RectangleSelection extends Module {
   /**
    * Updates size of rectangle
    */
-  private updateSizeOfRectangle() {
+  private updateRectangleSize() {
     // Depending on the position of the mouse relative to the starting point,
     // change this.e distance from the desired edge of the screen*/
     if (this.mouseY >= this.startY) {
