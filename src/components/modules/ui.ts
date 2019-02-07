@@ -38,7 +38,7 @@ export default class UI extends Module {
    * CodeX Editor UI CSS class names
    * @return {{editorWrapper: string, editorZone: string}}
    */
-  private get CSS(): { editorWrapper: string, editorZone: string } {
+  static get CSS(): { editorWrapper: string, editorZone: string } {
     return {
       editorWrapper: 'codex-editor',
       editorZone: 'codex-editor__redactor',
@@ -111,8 +111,8 @@ export default class UI extends Module {
     /**
      * Create and save main UI elements
      */
-    this.nodes.wrapper = $.make('div', this.CSS.editorWrapper);
-    this.nodes.redactor = $.make('div', this.CSS.editorZone);
+    this.nodes.wrapper = $.make('div', UI.CSS.editorWrapper);
+    this.nodes.redactor = $.make('div', UI.CSS.editorZone);
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.holder.appendChild(this.nodes.wrapper);
@@ -174,7 +174,7 @@ export default class UI extends Module {
    * @param {KeyboardEvent} event
    */
   private defaultBehaviour(event: KeyboardEvent): void {
-    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
+    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${UI.CSS.editorWrapper}`);
 
     /**
      * Ignore keydowns on document
@@ -245,7 +245,7 @@ export default class UI extends Module {
      */
     const target = event.target as HTMLElement;
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
-    const clickedInsideofEditor = target.closest(`.${this.CSS.editorWrapper}`);
+    const clickedInsideofEditor = target.closest(`.${UI.CSS.editorWrapper}`);
 
     /** Clear highlightings and pointer on BlockManager */
     if (!clickedInsideofEditor && !Selection.isAtEditor) {
@@ -307,9 +307,11 @@ export default class UI extends Module {
       this.Editor.BlockManager.highlightCurrentNode();
     } catch (e) {
       /**
-       * If clicked outside first-level Blocks, set Caret to the last empty Block
+       * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
        */
-      this.Editor.Caret.setToTheLastBlock();
+      if (!this.Editor.RectangleSelection.isRectActivated()) {
+        this.Editor.Caret.setToTheLastBlock();
+      }
     }
 
     event.stopImmediatePropagation();
@@ -333,6 +335,7 @@ export default class UI extends Module {
      * Show the Plus Button if:
      * - Block is an initial-block (Text)
      * - Block is empty
+     * - There is not RectSelection
      */
     const isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool);
 
