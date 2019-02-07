@@ -335,7 +335,6 @@ export default class UI extends Module {
      * Show the Plus Button if:
      * - Block is an initial-block (Text)
      * - Block is empty
-     * - There is not RectSelection
      */
     const isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool);
 
