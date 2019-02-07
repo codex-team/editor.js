@@ -64,7 +64,9 @@ export default class RectangleSelection extends Module {
     const {Listeners} = this.Editor;
     const {overlayTopScrollZone, overlayBottomScrollZone, container, overlay} = this.genHTML();
 
+    console.log(overlayBottomScrollZone);
     Listeners.on(overlayBottomScrollZone, 'mouseenter', (event) => {
+      console.log('lol');
       this.inScrollZone = this.BOTTOM_SCROLL_ZONE;
       this.scrollVertical(this.scrollSpeed);
     });

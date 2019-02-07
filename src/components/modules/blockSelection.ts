@@ -46,6 +46,36 @@ export default class BlockSelection extends Module {
   }
 
   /**
+   * Flag that identifies all Blocks selection
+   * @return {boolean}
+   */
+  public get allBlocksSelected(): boolean {
+    const {BlockManager} = this.Editor;
+
+    return BlockManager.blocks.every((block) => block.selected === true);
+  }
+
+  /**
+   * Set selected all blocks
+   * @param {boolean} state
+   */
+  public set allBlocksSelected(state: boolean) {
+    const {BlockManager} = this.Editor;
+
+    BlockManager.blocks.forEach((block) => block.selected = state);
+  }
+
+  /**
+   * Flag that identifies any Block selection
+   * @return {boolean}
+   */
+  public get anyBlockSelected(): boolean {
+    const {BlockManager} = this.Editor;
+
+    return BlockManager.blocks.some((block) => block.selected === true);
+  }
+
+  /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
    * @type {boolean}
@@ -66,42 +96,12 @@ export default class BlockSelection extends Module {
   private selection: SelectionUtils;
 
   /**
-   * Flag that identifies all Blocks selection
-   * @return {boolean}
-   */
-  public get allBlocksSelected(): boolean {
-    const { BlockManager } = this.Editor;
-
-    return BlockManager.blocks.every( (block) => block.selected === true);
-  }
-
-  /**
-   * Set selected all blocks
-   * @param {boolean} state
-   */
-  public set allBlocksSelected(state: boolean) {
-    const { BlockManager } = this.Editor;
-
-    BlockManager.blocks.forEach( (block) => block.selected = state);
-  }
-
-  /**
-   * Flag that identifies any Block selection
-   * @return {boolean}
-   */
-  public get anyBlockSelected(): boolean {
-    const { BlockManager } = this.Editor;
-
-    return BlockManager.blocks.some( (block) => block.selected === true);
-  }
-
-  /**
    * Module Preparation
    * Registers Shortcuts CMD+A and CMD+C
    * to select all and copy them
    */
   public prepare(): void {
-    const { Shortcuts } = this.Editor;
+    const {Shortcuts} = this.Editor;
 
     /** Selection shortcut */
     Shortcuts.add({
@@ -112,6 +112,24 @@ export default class BlockSelection extends Module {
     });
 
     this.selection = new SelectionUtils();
+  }
+
+  /**
+   * Remove selection of Block
+   * @param {number?} index - Block index according to the BlockManager's indexes
+   */
+  public unSelectBlockByIndex(index?) {
+    const {BlockManager} = this.Editor;
+
+    let block;
+
+    if (isNaN(index)) {
+      block = BlockManager.currentBlock;
+    } else {
+      block = BlockManager.getBlockByIndex(index);
+    }
+
+    block.selected = false;
   }
 
   /**
@@ -142,11 +160,11 @@ export default class BlockSelection extends Module {
    * Reduce each Block and copy its content
    */
   public copySelectedBlocks(): void {
-    const { BlockManager, Sanitizer } = this.Editor;
+    const {BlockManager, Sanitizer} = this.Editor;
     const fakeClipboard = $.make('div');
 
-    BlockManager.blocks.filter( (block) => block.selected )
-      .forEach( (block) => {
+    BlockManager.blocks.filter((block) => block.selected)
+      .forEach((block) => {
         /**
          * Make <p> tag that holds clean HTML
          */
@@ -158,6 +176,34 @@ export default class BlockSelection extends Module {
       });
 
     _.copyTextToClipboard(fakeClipboard.innerHTML);
+  }
+
+  /**
+   * select Block
+   * @param {number?} index - Block index according to the BlockManager's indexes
+   */
+  public selectBlockByIndex(index?) {
+    const {BlockManager} = this.Editor;
+
+    /**
+     * Remove previous focused Block's state
+     */
+    BlockManager.clearFocused();
+
+    let block;
+
+    if (isNaN(index)) {
+      block = BlockManager.currentBlock;
+    } else {
+      block = BlockManager.getBlockByIndex(index);
+    }
+
+    /** Save selection */
+    this.selection.save();
+    SelectionUtils.get()
+      .removeAllRanges();
+
+    block.selected = true;
   }
 
   /**
@@ -193,33 +239,5 @@ export default class BlockSelection extends Module {
    */
   private selectAllBlocks() {
     this.allBlocksSelected = true;
-  }
-
-  /**
-   * select Block
-   * @param {number?} index - Block index according to the BlockManager's indexes
-   */
-  private selectBlockByIndex(index?) {
-    const { BlockManager } = this.Editor;
-
-    /**
-     * Remove previous focused Block's state
-     */
-    BlockManager.clearFocused();
-
-    let block;
-
-    if (isNaN(index)) {
-      block = BlockManager.currentBlock;
-    } else {
-      block = BlockManager.getBlockByIndex(index);
-    }
-
-    /** Save selection */
-    this.selection.save();
-    SelectionUtils.get()
-      .removeAllRanges();
-
-    block.selected = true;
   }
 }
