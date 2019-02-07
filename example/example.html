@@ -6,6 +6,7 @@
   <link href="https://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet">
   <link href="assets/demo.css" rel="stylesheet">
   <script src="assets/json-preview.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
 <body>
   <div class="ce-example">
@@ -16,7 +17,7 @@
         <a href="https://github.com/codex-editor" target="_blank">Plugins</a>
       </div>
     </div>
-    <div class="ce-example__content">
+    <div class="ce-example__content _ce-example__content--small">
       <div id="codex-editor"></div>
 
       <div class="ce-example__button" id="saveButton">
@@ -45,6 +46,7 @@
   <script src="./tools/simple-image/dist/bundle.js"></script><!-- Image -->
   <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
   <script src="./tools/list/dist/bundle.js"></script><!-- List -->
+  <script src="./tools/checklist/dist/bundle.js"></script><!-- Checklist -->
   <script src="./tools/quote/dist/bundle.js"></script><!-- Quote -->
   <script src="./tools/code/dist/bundle.js"></script><!-- Code -->
   <script src="./tools/embed/dist/bundle.js"></script><!-- Embed -->
@@ -98,6 +100,11 @@
 
         list: {
           class: List,
+          inlineToolbar: true
+        },
+
+        checklist: {
+          class: Checklist,
           inlineToolbar: true
         },
 

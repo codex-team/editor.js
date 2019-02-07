@@ -56,7 +56,7 @@ export default class Blocks {
       return false;
     }
 
-    instance.insert(index, block);
+    instance.insert(+index, block);
 
     return true;
   }
@@ -73,7 +73,7 @@ export default class Blocks {
       return instance[index];
     }
 
-    return instance.get(index);
+    return instance.get(+index);
   }
 
   /**

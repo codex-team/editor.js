@@ -1,5 +1,6 @@
 # CodeX Editor API
 
+
 Blocks have access to the public methods provided by CodeX Editor API Module. Plugin and Tune Developers
 can use Editor API as they want.
 
@@ -8,7 +9,7 @@ can use Editor API as they want.
 Common API interface.
 
 ```js
-export interface IAPI {
+export interface API {
    blocks: IBlocksAPI;
    caret: ICaretAPI;
    sanitizer: ISanitizerAPI;
@@ -17,7 +18,7 @@ export interface IAPI {
  }
  ```
 
-#### IBlocksAPI
+#### BlocksAPI
 
 Methods that working with Blocks
 
@@ -35,7 +36,7 @@ Methods that working with Blocks
 
 `insertNewBlock()` - insert new Block after working place
 
-#### ISanitizerAPI
+#### SanitizerAPI
 
 `clean(taintString, config)` - method uses HTMLJanitor to clean taint string.
 
@@ -56,7 +57,7 @@ let customConfig = {
 this.api.sanitizer.clean(taintString, customConfig);
 ```
 
-### IToolbarAPI
+### ToolbarAPI
 
 Methods that working with Toolbar
 
@@ -64,7 +65,7 @@ Methods that working with Toolbar
 
 `close()` - closes toolbar, toolbox and blockSettings if they are opened
 
-### IEventsAPI
+### EventsAPI
 
 Methods that allows to subscribe on CodeX Editor events
 
@@ -74,13 +75,40 @@ Methods that allows to subscribe on CodeX Editor events
 
 `emit(eventName: string, data: object)` - fires all subscribed callbacks with passed data
 
-### IListenerAPI
+### ListenerAPI
 
 Methods that allows to work with DOM listener. Useful when you forgot to remove listener. Module collects all listeners and destroys automatically
 
 `on(element: HTMLElement, eventType: string, handler: Function, useCapture?: boolean)` - add event listener to HTML element
 
 `off(element: HTMLElement, eventType: string, handler: Function)` - remove event handler from HTML element
+
+
+### CaretAPI
+
+Methods to manage caret position.
+
+Each method accept `position` and `offset` parameters. `Offset` should be used to shift caret by passed amount of characters.
+
+`Position` can be one of the following values:
+
+| Value     | Description 
+| --------- | ----------- 
+| `start`   | Caret will be set at the Block's beginning
+| `end`     | Caret will be set at the Block end
+| `default` | More or less emulates browser behaviour, in most cases behaves as `start`  
+
+Each method returns `boolean` value: true if caret is set successfully or false otherwise (e.g. when there is no Block at index);
+
+`setToFirstBlock(position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the first Block
+
+`setToLastBlock(position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the last Block
+
+`setToNextBlock(position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the next Block
+
+`setToPreviousBlock(position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the previous Block
+
+`setToBlock(index: number, position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the Block by passed `index`
 
 ### NotifierAPI
 

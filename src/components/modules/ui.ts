@@ -38,12 +38,24 @@ export default class UI extends Module {
    * CodeX Editor UI CSS class names
    * @return {{editorWrapper: string, editorZone: string}}
    */
-  static get CSS(): { editorWrapper: string, editorZone: string } {
+  private get CSS(): {
+    editorWrapper: string, editorWrapperNarrow: string, editorZone: string, editorZoneHidden: string,
+    editorLoader: string,
+  } {
     return {
-      editorWrapper: 'codex-editor',
-      editorZone: 'codex-editor__redactor',
+      editorWrapper    : 'codex-editor',
+      editorWrapperNarrow : 'codex-editor--narrow',
+      editorZone       : 'codex-editor__redactor',
+      editorZoneHidden : 'codex-editor__redactor--hidden',
+      editorLoader     : 'codex-editor__loader',
     };
   }
+
+  /**
+   * Width of center column of Editor
+   * @type {number}
+   */
+  public contentWidth: number = 650;
 
   /**
    * HTML Elements used for UI
@@ -55,10 +67,29 @@ export default class UI extends Module {
   };
 
   /**
+   * Adds loader to editor while content is not ready
+   */
+  public addLoader(): void {
+    this.nodes.loader = $.make('div', this.CSS.editorLoader);
+    this.nodes.wrapper.prepend(this.nodes.loader);
+    this.nodes.redactor.classList.add(this.CSS.editorZoneHidden);
+  }
+
+  /**
+   * Removes loader when content has loaded
+   */
+  public removeLoader(): void {
+    this.nodes.loader.remove();
+    this.nodes.redactor.classList.remove(this.CSS.editorZoneHidden);
+  }
+
+  /**
    * Making main interface
    */
   public async prepare(): Promise<void> {
     await this.make();
+
+    this.addLoader();
 
     /**
      * Append SVG sprite
@@ -111,11 +142,19 @@ export default class UI extends Module {
     /**
      * Create and save main UI elements
      */
-    this.nodes.wrapper = $.make('div', UI.CSS.editorWrapper);
-    this.nodes.redactor = $.make('div', UI.CSS.editorZone);
+    this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
+    this.nodes.redactor = $.make('div', this.CSS.editorZone);
+
+    /**
+     * If Editor has injected into the narrow container, enable Narrow Mode
+     */
+    if (this.nodes.holder.offsetWidth < this.contentWidth) {
+      this.nodes.wrapper.classList.add(this.CSS.editorWrapperNarrow);
+    }
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.holder.appendChild(this.nodes.wrapper);
+
   }
 
   /**
@@ -174,23 +213,26 @@ export default class UI extends Module {
    * @param {KeyboardEvent} event
    */
   private defaultBehaviour(event: KeyboardEvent): void {
-    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${UI.CSS.editorWrapper}`);
+    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
+    const {currentBlock} = this.Editor.BlockManager;
+    const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
     /**
-     * Ignore keydowns on document
-     * clear pointer and close toolbar
+     * Ignore keydowns on editor and meta keys
      */
-    if (!keyDownOnEditor) {
-      /**
-       * Remove all highlights and remove caret
-       */
-      this.Editor.BlockManager.dropPointer();
-
-      /**
-       * Close Toolbar
-       */
-      this.Editor.Toolbar.close();
+    if (keyDownOnEditor || currentBlock && isMetaKey) {
+      return;
     }
+
+    /**
+     * Remove all highlights and remove caret
+     */
+    this.Editor.BlockManager.dropPointer();
+
+    /**
+     * Close Toolbar
+     */
+    this.Editor.Toolbar.close();
   }
 
   /**
@@ -290,7 +332,19 @@ export default class UI extends Module {
    *
    */
   private redactorClicked(event: MouseEvent): void {
-    const clickedNode = event.target as HTMLElement;
+
+    if (!Selection.isCollapsed) {
+      return;
+    }
+
+    let clickedNode = event.target as HTMLElement;
+
+    /**
+     * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
+     */
+    if (clickedNode === this.nodes.redactor) {
+      clickedNode = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement;
+    }
 
     /**
      * Select clicked Block as Current

@@ -1,10 +1,14 @@
-import CaretClass from './caret';
-import SelectionUtils from '../selection';
-
 import Module from '../__module';
 import $ from '../dom';
 import _ from '../utils';
-import {BlockTool, BlockToolConstructable, PasteConfig, PasteEvent, PasteEventDetail} from '../../../types';
+import {
+  BlockTool,
+  BlockToolConstructable,
+  PasteConfig,
+  PasteEvent,
+  PasteEventDetail,
+} from '../../../types';
+import Block from '../block';
 
 /**
  * Tag substitute object.
@@ -157,7 +161,7 @@ export default class Paste extends Module {
       return result;
     }, {});
 
-    const customConfig = Object.assign({}, toolsTags, Sanitizer.getAllInlineToolsConfig());
+    const customConfig = Object.assign({}, toolsTags, Sanitizer.getAllInlineToolsConfig(), {br: {}});
 
     const cleanData = Sanitizer.clean(htmlData, customConfig);
 
@@ -175,7 +179,7 @@ export default class Paste extends Module {
   private setCallback(): void {
     const {Listeners, UI} = this.Editor;
 
-    Listeners.on(UI.nodes.redactor, 'paste', this.handlePasteEvent);
+    Listeners.on(document,  'paste', this.handlePasteEvent);
   }
 
   /**
@@ -323,15 +327,7 @@ export default class Paste extends Module {
    * @returns {boolean}
    */
   private isNativeBehaviour(element: EventTarget): boolean {
-    const {Editor: {BlockManager}} = this;
-
-    if ( $.isNativeInput(element) ) {
-      return true;
-    }
-
-    const block = BlockManager.getBlock(element as HTMLElement);
-
-    return !block;
+    return $.isNativeInput(element);
   }
 
   /**
@@ -340,15 +336,20 @@ export default class Paste extends Module {
    * @param {ClipboardEvent} event
    */
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
+    const {BlockManager, Toolbar} = this.Editor;
+
     /** If target is native input or is not Block, use browser behaviour */
     if (
-      this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files')
+      !BlockManager.currentBlock || this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files')
     ) {
       return;
     }
 
     event.preventDefault();
     this.processDataTransfer(event.clipboardData);
+
+    BlockManager.clearFocused();
+    Toolbar.close();
   }
 
   /**
@@ -357,7 +358,7 @@ export default class Paste extends Module {
    * @param {FileList} items - pasted or dropped items
    */
   private async processFiles(items: FileList) {
-    const {BlockManager} = this.Editor;
+    const {BlockManager, Tools} = this.Editor;
 
     let dataToInsert: Array<{type: string, event: PasteEvent}>;
 
@@ -368,14 +369,12 @@ export default class Paste extends Module {
     );
     dataToInsert = dataToInsert.filter((data) => !!data);
 
+    const isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
+    const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+
     dataToInsert.forEach(
       (data, i) => {
-        if (i === 0 && BlockManager.currentBlock && BlockManager.currentBlock.isEmpty) {
-          BlockManager.paste(data.type, data.event, true);
-          return;
-        }
-
-        BlockManager.paste(data.type, data.event);
+        BlockManager.paste(data.type, data.event, i === 0 && needToReplaceCurrentBlock);
       },
     );
   }
@@ -432,8 +431,12 @@ export default class Paste extends Module {
       return;
     }
 
-    if (dataToInsert.length === 1 && !dataToInsert[0].isBlock) {
-      this.processSingleBlock(dataToInsert.pop());
+    if (dataToInsert.length === 1) {
+      if (!dataToInsert[0].isBlock) {
+        this.processInlinePaste(dataToInsert.pop());
+      } else {
+        this.processSingleBlock(dataToInsert.pop());
+      }
       return;
     }
 
@@ -444,7 +447,7 @@ export default class Paste extends Module {
       async (content, i) => await this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
     ));
 
-    Caret.setToBlock(BlockManager.currentBlock, CaretClass.positions.END);
+    Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
   }
 
   /**
@@ -537,6 +540,26 @@ export default class Paste extends Module {
   }
 
   /**
+   * Process paste of single Block tool content
+   *
+   * @param {PasteData} dataToInsert
+   */
+  private async processSingleBlock(dataToInsert: PasteData): Promise<void> {
+    const {Caret, BlockManager, Tools} = this.Editor;
+    const {currentBlock} = BlockManager;
+
+    /**
+     * If pasted tool isn`t equal current Block or if pasted content contains block elements, insert it as new Block
+     */
+    if (dataToInsert.tool !== currentBlock.name || !$.containsOnlyInlineElements(dataToInsert.content.innerHTML)) {
+      this.insertBlock(dataToInsert, Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty);
+      return;
+    }
+
+    Caret.insertContentAtCaretPosition(dataToInsert.content.innerHTML);
+  }
+
+  /**
    * Process paste to single Block:
    * 1. Find patterns` matches
    * 2. Insert new block if it is not the same type as current one
@@ -544,7 +567,7 @@ export default class Paste extends Module {
    *
    * @param {PasteData} dataToInsert
    */
-  private async processSingleBlock(dataToInsert: PasteData): Promise<void> {
+  private async processInlinePaste(dataToInsert: PasteData): Promise<void> {
     const initialTool = this.config.initialBlock,
       {BlockManager, Caret, Sanitizer, Tools} = this.Editor,
       {content, tool} = dataToInsert;
@@ -561,7 +584,7 @@ export default class Paste extends Module {
 
         insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
 
-        Caret.setToBlock(insertedBlock, CaretClass.positions.END);
+        Caret.setToBlock(insertedBlock, Caret.positions.END);
         return;
       }
     }
@@ -569,7 +592,11 @@ export default class Paste extends Module {
     const currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
 
     /** If there is no pattern substitute - insert string as it is */
-    document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig));
+    if (BlockManager.currentBlock.currentInput) {
+      document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig));
+    } else {
+      this.insertBlock(dataToInsert);
+    }
   }
 
   /**
@@ -613,15 +640,17 @@ export default class Paste extends Module {
   private async insertBlock(data: PasteData, canReplaceCurrentBlock: boolean = false): Promise<void> {
     const {BlockManager, Caret} = this.Editor;
     const {currentBlock} = BlockManager;
+    let block: Block;
 
     if (canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty) {
-      BlockManager.paste(data.tool, data.event, true);
+      block = BlockManager.paste(data.tool, data.event, true);
+      Caret.setToBlock(block, Caret.positions.END);
       return;
     }
 
-    const block = BlockManager.paste(data.tool, data.event);
+    block = BlockManager.paste(data.tool, data.event);
 
-    Caret.setToBlock(block);
+    Caret.setToBlock(block, Caret.positions.END);
   }
 
   /**
@@ -658,6 +687,10 @@ export default class Paste extends Module {
         case Node.ELEMENT_NODE:
           const element = node as HTMLElement;
 
+          if (element.tagName === 'BR') {
+            return [...nodes, destNode, new DocumentFragment()];
+          }
+
           const {tool = ''} = this.toolsTags[element.tagName] || {};
           const toolTags = this.tagsByTool[tool] || [];
 
@@ -674,7 +707,7 @@ export default class Paste extends Module {
           );
 
           /** Append inline elements to previous fragment */
-          if (!isBlockElement && !isSubstitutable) {
+          if (!isBlockElement && !isSubstitutable && !containsAnotherToolTags) {
             destNode.appendChild(element);
             return [...nodes, destNode];
           }

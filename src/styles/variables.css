@@ -26,8 +26,14 @@
 
   /**
    * Block content width
+   * Should be set in a constant at the modules/ui.js
    */
   --content-width: 650px;
+
+  /**
+   * In narrow mode, we increase right zone contained Block Actions button
+   */
+  --narrow-mode-right-padding: 50px;
 
   /**
    * Toolbar buttons height and width
@@ -37,12 +43,15 @@
   /**
    * Toolbar Plus Button and Toolbox buttons height and width
    */
-  --toolbox-buttons-size: 24px;
+  --toolbox-buttons-size: 34px;
 
   /**
    * Confirm deletion bg
    */
   --color-confirm: #E24A4A;
+
+  @custom-media --mobile (max-width: 650px);
+  @custom-media --not-mobile (min-width: 651px);
 
   --overlay-pane: {
     position: absolute;
@@ -76,10 +85,6 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-
-    &:not(:last-of-type){
-      margin-right: 10px;
-    }
 
     &:hover,
     &--active {

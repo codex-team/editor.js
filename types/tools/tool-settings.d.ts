@@ -1,5 +1,5 @@
 import {ToolConfig} from './tool-config';
-import {ToolConstructable} from './tool';
+import {ToolConstructable} from './index';
 
 /**
  * Tool's Toolbox settings

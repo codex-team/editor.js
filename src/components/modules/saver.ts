@@ -7,7 +7,9 @@
  */
 import Module from '../__module';
 import {OutputData} from '../../../types';
+import {ValidatedData} from '../../types-internal/block-data';
 import Block from '../block';
+import _ from '../utils';
 
 declare const VERSION: string;
 
@@ -34,7 +36,7 @@ export default class Saver extends Module {
     ModificationsObserver.disable();
 
     blocks.forEach((block: Block) => {
-      chainData.push(block.save());
+     chainData.push(this.getSavedData(block));
     });
 
     const extractedData = await Promise.all(chainData);
@@ -46,8 +48,20 @@ export default class Saver extends Module {
   }
 
   /**
+   * Saves and validates
+   * @param {Block} block - Editor's Tool
+   * @return {ValidatedData} - Tool's validated data
+   */
+  private async getSavedData(block: Block): Promise<ValidatedData> {
+      const blockData = await block.save();
+      const isValid = blockData && await block.validate(blockData.data);
+
+      return {...blockData, isValid};
+  }
+
+  /**
    * Creates output object with saved data, time and version of editor
-   * @param {Object} allExtractedData
+   * @param {ValidatedData} allExtractedData
    * @return {OutputData}
    */
   private makeOutput(allExtractedData): OutputData {
@@ -56,20 +70,33 @@ export default class Saver extends Module {
 
     console.groupCollapsed('[CodexEditor saving]:');
 
-    allExtractedData.forEach((extraction) => {
-      /** Group process info */
-      console.log(`«${extraction.tool}» saving info`, extraction);
-      totalTime += extraction.time;
+    allExtractedData.forEach(({tool, data, time, isValid}) => {
+      totalTime += time;
+
+      /**
+       * Capitalize Tool name
+       */
+      console.group(`${tool.charAt(0).toUpperCase() + tool.slice(1)}`);
+
+      if (isValid) {
+        /** Group process info */
+        console.log(data);
+        console.groupEnd();
+      } else {
+        console.log(`Block «${tool}» skipped because saved data is invalid`);
+        console.groupEnd();
+        return;
+      }
 
       /** If it was stub Block, get original data */
-      if (extraction.tool === this.Editor.Tools.stubTool) {
-        blocks.push(extraction.data);
+      if (tool === this.Editor.Tools.stubTool) {
+        blocks.push(data);
         return;
       }
 
       blocks.push({
-        type: extraction.tool,
-        data: extraction.data,
+        type: tool,
+        data,
       });
     });
 
