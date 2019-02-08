@@ -1,5 +1,11 @@
+/**
+ * @class RectangleSelection
+ * @classdesc Manages Block selection with mouse
+ *
+ * @module RectangleSelection
+ * @version 1.0.0
+ */
 import Module from '../__module';
-import _ from '../utils';
 import $ from '../dom';
 
 import SelectionUtils from '../selection';
@@ -60,13 +66,15 @@ export default class RectangleSelection extends Module {
   private left;
   private top;
 
+  /**
+   * Module Preparation
+   * Creating rect and hang handlers
+   */
   public prepare(): void {
     const {Listeners} = this.Editor;
     const {overlayTopScrollZone, overlayBottomScrollZone, container, overlay} = this.genHTML();
 
-    console.log(overlayBottomScrollZone);
     Listeners.on(overlayBottomScrollZone, 'mouseenter', (event) => {
-      console.log('lol');
       this.inScrollZone = this.BOTTOM_SCROLL_ZONE;
       this.scrollVertical(this.scrollSpeed);
     });
@@ -126,6 +134,9 @@ export default class RectangleSelection extends Module {
     const container = document.querySelector('.' + UI.CSS.editorWrapper);
   }
 
+  /**
+   * Clear all params to end selection
+   */
   public endSelection() {
     this.mousedown = false;
     this.startX = 0;
@@ -133,10 +144,16 @@ export default class RectangleSelection extends Module {
     this.overlayRectangle.style.display = 'none';
   }
 
+  /**
+   * is RectSelection Activated
+   */
   public isRectActivated() {
     return this.isRectSelectionActivated;
   }
 
+  /**
+   * Mark that selection is end
+   */
   public clearSelection() {
     this.isRectSelectionActivated = false;
   }
@@ -202,9 +219,6 @@ export default class RectangleSelection extends Module {
 
     if (!this.isRectSelectionActivated) {
       this.rectCrossesBlocks = false;
-    }
-
-    if (!this.isRectSelectionActivated) {
       this.isRectSelectionActivated = true;
       this.shrinkRectangleToPoint();
       this.overlayRectangle.style.display = 'block';
@@ -224,6 +238,9 @@ export default class RectangleSelection extends Module {
     event.preventDefault();
   }
 
+  /**
+   * Shrink rect to singular point
+   */
   private shrinkRectangleToPoint() {
     this.overlayRectangle.style.left = `${this.startX - window.pageXOffset}px`;
     this.overlayRectangle.style.top = `${this.startY - window.pageYOffset}px`;
@@ -300,6 +317,9 @@ export default class RectangleSelection extends Module {
     };
   }
 
+  /**
+   * Get mouse Y coord with accounting Scroll zone
+   */
   private getHorizontalMousePosition() {
     let value = this.mouseY - window.pageYOffset;
     // To look at the item below the zone

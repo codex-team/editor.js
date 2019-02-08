@@ -1,6 +1,6 @@
 /**
  * @class BlockSelection
- * @classdesc Manages Block selection with shortcut CMD+A and with mouse
+ * @classdesc Manages Block selection with shortcut CMD+A
  *
  * @module BlockSelection
  * @version 1.0.0
