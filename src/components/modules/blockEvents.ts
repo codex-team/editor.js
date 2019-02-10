@@ -323,6 +323,8 @@ export default class BlockEvents extends Module {
      * Check if Block should be removed by current Backspace keydown
      */
     if (currentBlock.selected || currentBlock.isEmpty && currentBlock.currentInput === currentBlock.firstInput) {
+      event.preventDefault();
+
       if (BlockSelection.allBlocksSelected) {
         BlockManager.removeAllBlocks();
       } else {
