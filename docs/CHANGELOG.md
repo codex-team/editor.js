@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.8.1
+
+- `Fix` *Caret* - Fix "History back" call on backspace in Firefox
+
 ### 2.8.0
 
 - `Imporvements` *API* - Added [API methods](api.md#caretapi) to manage caret position
