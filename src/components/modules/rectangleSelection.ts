@@ -120,7 +120,8 @@ export default class RectangleSelection extends Module {
    * @param {number} pageY - Y coord of mouse
    */
   public startSelection(pageX, pageY) {
-    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockSelection.allBlocksSelected = false;
+    this.clearSelection();
     this.stackOfSelected = [];
 
     const elemWhereSelectionStart = document.elementFromPoint(pageX - window.pageXOffset, pageY - window.pageYOffset);
