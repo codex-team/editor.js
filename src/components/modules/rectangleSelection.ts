@@ -14,6 +14,20 @@ import UI from './ui';
 
 export default class RectangleSelection extends Module {
   /**
+   * CSS classes for the Block
+   * @return {{wrapper: string, content: string}}
+   */
+  static get CSS() {
+    return {
+      overlay: 'codex-editor-overlay',
+      overlayContainer: 'codex-editor-overlay__container',
+      rect: 'codex-editor-overlay__rectangle',
+      topScrollZone: 'codex-editor-overlay__scroll-zone--top',
+      bottomScrollZone: 'codex-editor-overlay__scroll-zone--bottom'
+    };
+  }
+
+  /**
    * Using the selection rectangle
    * @type {boolean}
    */
@@ -22,8 +36,16 @@ export default class RectangleSelection extends Module {
   /**
    *  Speed of Scrolling
    */
-  private readonly scrollSpeed: number = 3;
-  private readonly heightOfScrollZone = 25;
+  private readonly SCROLL_SPEED: number = 3;
+
+  /**
+   *  Height of scroll zone on boundary of screen
+   */
+  private readonly HEIGHT_OF_SCROLL_ZONE = 25;
+
+  /**
+   *  Scroll zone type indicators
+   */
   private readonly BOTTOM_SCROLL_ZONE = 1;
   private readonly TOP_SCROLL_ZONE = 2;
 
@@ -76,12 +98,12 @@ export default class RectangleSelection extends Module {
 
     Listeners.on(overlayBottomScrollZone, 'mouseenter', (event) => {
       this.inScrollZone = this.BOTTOM_SCROLL_ZONE;
-      this.scrollVertical(this.scrollSpeed);
+      this.scrollVertical(this.SCROLL_SPEED);
     });
 
     Listeners.on(overlayTopScrollZone, 'mouseenter', (event) => {
       this.inScrollZone = this.TOP_SCROLL_ZONE;
-      this.scrollVertical(-this.scrollSpeed);
+      this.scrollVertical(-this.SCROLL_SPEED);
     });
 
     Listeners.on(overlayBottomScrollZone, 'mouseleave', (event) => {
@@ -125,7 +147,8 @@ export default class RectangleSelection extends Module {
     this.stackOfSelected = [];
 
     const elemWhereSelectionStart = document.elementFromPoint(pageX - window.pageXOffset, pageY - window.pageYOffset);
-    if (!(elemWhereSelectionStart.closest('.codex-editor') && !elemWhereSelectionStart.closest('.ce-block__content'))) {
+    if (!(elemWhereSelectionStart.closest('.' + UI.CSS.editorWrapper) &&
+      !elemWhereSelectionStart.closest('.' + Block.CSS.content))) {
       return;
     }
 
@@ -161,11 +184,11 @@ export default class RectangleSelection extends Module {
 
   private genHTML() {
     const container = document.querySelector('.' + UI.CSS.editorWrapper);
-    const overlay = $.make('div', 'codex-editor-overlay', {});
-    const overlayContainer = $.make('div', 'codex-editor-overlay__container', {});
-    const overlayRectangle = $.make('div', 'codex-editor-overlay__rectangle', {});
-    const overlayTopScrollZone = $.make('div', 'codex-editor-overlay__scroll-zone--top', {});
-    const overlayBottomScrollZone = $.make('div', 'codex-editor-overlay__scroll-zone--bottom', {});
+    const overlay = $.make('div', RectangleSelection.CSS.overlay, {});
+    const overlayContainer = $.make('div', RectangleSelection.CSS.overlayContainer, {});
+    const overlayRectangle = $.make('div', RectangleSelection.CSS.rect, {});
+    const overlayTopScrollZone = $.make('div', RectangleSelection.CSS.topScrollZone, {});
+    const overlayBottomScrollZone = $.make('div', RectangleSelection.CSS.bottomScrollZone, {});
 
     overlayContainer.appendChild(overlayRectangle);
     overlay.appendChild(overlayContainer);
@@ -325,23 +348,23 @@ export default class RectangleSelection extends Module {
     let value = this.mouseY - window.pageYOffset;
     // To look at the item below the zone
     if (this.inScrollZone === this.TOP_SCROLL_ZONE) {
-      value += this.heightOfScrollZone;
+      value += this.HEIGHT_OF_SCROLL_ZONE;
     }
     if (this.inScrollZone === this.BOTTOM_SCROLL_ZONE) {
-      value -= this.heightOfScrollZone;
+      value -= this.HEIGHT_OF_SCROLL_ZONE;
     }
     return value;
   }
 
   /**
-   * Select block with index i
-   * @param i - index of block in redactor
+   * Select block with index index
+   * @param index - index of block in redactor
    */
-  private addBlockInSelection(i) {
+  private addBlockInSelection(index) {
     if (this.rectCrossesBlocks) {
-      this.Editor.BlockSelection.selectBlockByIndex(i);
+      this.Editor.BlockSelection.selectBlockByIndex(index);
     }
-    this.stackOfSelected.push(i);
+    this.stackOfSelected.push(index);
   }
 
   /**
