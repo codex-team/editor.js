@@ -1,8 +1,12 @@
 # Changelog
 
+### 2.9.1
+
+- `Improvements` Migrate from postcss-cssnext to postcss-preset-env and disable postcss-custom-properties which conflicts with postcss-preset-env
+
 ### 2.9.0
 
-- `Imporvements` -  Selection with the mouse is available
+- `New` *RectangeSelection* - Ability to select Block or several Blocks with mouse
 
 ### 2.8.1
 

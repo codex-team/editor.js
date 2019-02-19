@@ -8,6 +8,11 @@ We are glad to introduce the next version of CodeX Editor. Totally new core, str
 
 Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_editor) where you always find a support.
 
+### 2.7-2.9 changelog
+
+- `New` Migrate from postcss-cssnext to postcss-preset-env and disable postcss-custom-properties which conflicts with postcss-preset-env
+- `New` *RectangeSelection* - Ability to select Block or several Blocks with mouse
+
 ### 2.2—2.7 changelog
 
 - `New` *Sanitize API* — [Sanitize Config](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.

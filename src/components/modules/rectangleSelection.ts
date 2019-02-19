@@ -23,7 +23,7 @@ export default class RectangleSelection extends Module {
       overlayContainer: 'codex-editor-overlay__container',
       rect: 'codex-editor-overlay__rectangle',
       topScrollZone: 'codex-editor-overlay__scroll-zone--top',
-      bottomScrollZone: 'codex-editor-overlay__scroll-zone--bottom'
+      bottomScrollZone: 'codex-editor-overlay__scroll-zone--bottom',
     };
   }
 
