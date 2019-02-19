@@ -1,6 +1,8 @@
 plugins:
     postcss-smart-import: {}
-    postcss-custom-properties: {}
+    postcss-custom-properties: {
+      preserve: false
+    }
     postcss-apply: {}
     postcss-custom-media: {}
     postcss-media-minmax: {}
@@ -12,6 +14,7 @@ plugins:
     postcss-color-hex-alpha: {}
     postcss-font-variant: {}
     postcss-font-family-system-ui: {}
-    postcss-cssnext: {
+    postcss-preset-env: {
+      stage: 0,
       browsers: ['last 2 versions', '> 1%']
     }
