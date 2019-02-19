@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.9.0
+
+- `Imporvements` -  Selection with the mouse is available
+
 ### 2.8.1
 
 - `Fix` *Caret* - Fix "History back" call on backspace in Firefox

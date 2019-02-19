@@ -249,6 +249,7 @@ export default class Core {
       'DragNDrop',
       'ModificationsObserver',
       'BlockSelection',
+      'RectangleSelection',
     ];
 
     await modulesToPrepare.reduce(

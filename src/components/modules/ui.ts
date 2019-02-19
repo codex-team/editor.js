@@ -38,7 +38,7 @@ export default class UI extends Module {
    * CodeX Editor UI CSS class names
    * @return {{editorWrapper: string, editorZone: string}}
    */
-  private get CSS(): {
+  public static get CSS(): {
     editorWrapper: string, editorWrapperNarrow: string, editorZone: string, editorZoneHidden: string,
     editorLoader: string,
   } {
@@ -60,7 +60,7 @@ export default class UI extends Module {
   /**
    * HTML Elements used for UI
    */
-  public nodes: {[key: string]: HTMLElement} = {
+  public nodes: { [key: string]: HTMLElement } = {
     holder: null,
     wrapper: null,
     redactor: null,
@@ -70,9 +70,9 @@ export default class UI extends Module {
    * Adds loader to editor while content is not ready
    */
   public addLoader(): void {
-    this.nodes.loader = $.make('div', this.CSS.editorLoader);
+    this.nodes.loader = $.make('div', UI.CSS.editorLoader);
     this.nodes.wrapper.prepend(this.nodes.loader);
-    this.nodes.redactor.classList.add(this.CSS.editorZoneHidden);
+    this.nodes.redactor.classList.add(UI.CSS.editorZoneHidden);
   }
 
   /**
@@ -80,7 +80,7 @@ export default class UI extends Module {
    */
   public removeLoader(): void {
     this.nodes.loader.remove();
-    this.nodes.redactor.classList.remove(this.CSS.editorZoneHidden);
+    this.nodes.redactor.classList.remove(UI.CSS.editorZoneHidden);
   }
 
   /**
@@ -142,14 +142,14 @@ export default class UI extends Module {
     /**
      * Create and save main UI elements
      */
-    this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
-    this.nodes.redactor = $.make('div', this.CSS.editorZone);
+    this.nodes.wrapper  = $.make('div', UI.CSS.editorWrapper);
+    this.nodes.redactor = $.make('div', UI.CSS.editorZone);
 
     /**
      * If Editor has injected into the narrow container, enable Narrow Mode
      */
     if (this.nodes.holder.offsetWidth < this.contentWidth) {
-      this.nodes.wrapper.classList.add(this.CSS.editorWrapperNarrow);
+      this.nodes.wrapper.classList.add(UI.CSS.editorWrapperNarrow);
     }
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
@@ -189,8 +189,8 @@ export default class UI extends Module {
       (event) => this.redactorClicked(event as MouseEvent),
       false,
     );
-    this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true );
-    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), false );
+    this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
+    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), false);
   }
 
   /**
@@ -213,7 +213,7 @@ export default class UI extends Module {
    * @param {KeyboardEvent} event
    */
   private defaultBehaviour(event: KeyboardEvent): void {
-    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
+    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${UI.CSS.editorWrapper}`);
     const {currentBlock} = this.Editor.BlockManager;
     const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
@@ -287,7 +287,7 @@ export default class UI extends Module {
      */
     const target = event.target as HTMLElement;
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
-    const clickedInsideofEditor = target.closest(`.${this.CSS.editorWrapper}`);
+    const clickedInsideofEditor = target.closest(`.${UI.CSS.editorWrapper}`);
 
     /** Clear highlightings and pointer on BlockManager */
     if (!clickedInsideofEditor && !Selection.isAtEditor) {
@@ -361,9 +361,11 @@ export default class UI extends Module {
       this.Editor.BlockManager.highlightCurrentNode();
     } catch (e) {
       /**
-       * If clicked outside first-level Blocks, set Caret to the last empty Block
+       * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
        */
-      this.Editor.Caret.setToTheLastBlock();
+      if (!this.Editor.RectangleSelection.isRectActivated()) {
+        this.Editor.Caret.setToTheLastBlock();
+      }
     }
 
     event.stopImmediatePropagation();
