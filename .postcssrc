@@ -12,5 +12,6 @@ plugins:
     postcss-color-hex-alpha: {}
     postcss-font-variant: {}
     postcss-font-family-system-ui: {}
-    autoprefixer:
-        browsers: ['last 2 versions', '> 1%']
+    postcss-cssnext: {
+      browsers: ['last 2 versions', '> 1%']
+    }
