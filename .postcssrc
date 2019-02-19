@@ -18,3 +18,4 @@ plugins:
       stage: 0,
       browsers: ['last 2 versions', '> 1%']
     }
+    cssnano: {}
