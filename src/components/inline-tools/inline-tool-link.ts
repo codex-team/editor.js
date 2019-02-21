@@ -91,7 +91,7 @@ export default class LinkInlineTool implements InlineTool {
   private notifier: Notifier;
 
   /**
-   * @param {{api: API}} - CodeX Editor API
+   * @param {{api: API}} - Editor.js API
    */
   constructor({api}) {
     this.inlineToolbar = api.toolbar;

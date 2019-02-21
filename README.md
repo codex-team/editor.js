@@ -1,10 +1,10 @@
 <p align="center"><img src="https://capella.pics/3c0b525b-50d9-4720-8aad-9148114cfa6e.jpg"></p>
 
-[![](https://flat.badgen.net/npm/v/codex.editor?icon=npm)](https://www.npmjs.com/package/codex.editor)
+[![](https://flat.badgen.net/npm/v/editorjs?icon=npm)](https://www.npmjs.com/package/editorjs)
 
 ## Version 2.0-beta is here!
 
-We are glad to introduce the next version of CodeX Editor. Totally new core, structure and plugins — that was an impressive adventure 🤓.
+We are glad to introduce the next version of Editor.js. Totally new core, structure and plugins — that was an impressive adventure 🤓.
 
 Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_editor) where you always find a support.
 
@@ -54,11 +54,11 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 ---
 
-# So how to use CodeX Editor
+# So how to use Editor.js
 
 ## Basics
 
-CodeX Editor is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
+Editor.js is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
 We have [many](http://github.com/codex-editor) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
 
@@ -116,7 +116,7 @@ var editor = CodexEditor({
 
 # Installation Guide
 
-There are few steps to run CodeX Editor on your site.
+There are few steps to run Editor.js on your site.
 
 1. [Load Editor's core](#load-editors-core)
 2. [Load Tools](#load-tools)
@@ -124,7 +124,7 @@ There are few steps to run CodeX Editor on your site.
 
 ## Load Editor's core
 
-Firstly you need to get CodeX Editor itself. It is a [minified script](build/codex-editor.js) with Editor's core and some default must-have tools.
+Firstly you need to get Editor.js itself. It is a [minified script](build/editor.js) with Editor's core and some default must-have tools.
 
 Choose the most usable method of getting Editor for you.
 
@@ -137,20 +137,20 @@ Choose the most usable method of getting Editor for you.
 Install the package via NPM or Yarn
 
 ```shell
-npm i codex.editor --save-dev
+npm i editorjs --save-dev
 ```
 
 Include module in your application
 
 ```javascript
-const CodexEditor = require('codex.editor');
+const EditorJS = require('editorjs');
 ```
 
 ### Use from CDN
 
-You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/codex.editor).
+You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/editorjs).
 
-`https://cdn.jsdelivr.net/npm/codex.editor@2.0.0`
+`https://cdn.jsdelivr.net/npm/editorjs@latest`
 
 Then require this script.
 
@@ -160,21 +160,21 @@ Then require this script.
 
 ### Save sources to project
 
-Copy [codex-editor.js](build/codex-editor.js) file to your project and load it.
+Copy [editor.js](build/editor.js) file to your project and load it.
 
 ```html
-<script src="codex-editor.js"></script>
+<script src="editor.js"></script>
 ```
 
 ## Load Tools
 
-Each Block at the CodeX Editor represented by [Tools](docs/tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
+Each Block at the Editor.js represented by [Tools](docs/tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
 
 For example check out our [Header](https://github.com/codex-editor/header) Tool that represents heading blocks.
 
 You can install Header Tool by the same way as the Editor (Node.js, CDN, local file).
 
-Check [CodeX Editor's community](https://github.com/codex-editor) to see more ready-to-use Tools.
+Check [Editor.js's community](https://github.com/codex-editor) to see more ready-to-use Tools.
 
 **Example:** use Header from CDN
 
@@ -184,30 +184,30 @@ Check [CodeX Editor's community](https://github.com/codex-editor) to see more re
 
 ## Create Editor instance
 
-Create an instance of CodeX Editor and pass [Configuration Object](types/configs/editor-config.d.ts) with `holderId` and tools list.
+Create an instance of Editor.js and pass [Configuration Object](types/configs/editor-config.d.ts) with `holderId` and tools list.
 
 ```html
-<div id="codex-editor"></div>
+<div id="editorjs"></div>
 ```
 
 You can create a simple Editor with only default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param. Or use the default `codex-editor` id for wrapper.
 
 ```javascript
-var editor = new CodexEditor(); /** Zero-configuration */
+var editor = new EditorJS(); /** Zero-configuration */
 
 // equals
 
-var editor = new CodexEditor('codex-editor');
+var editor = new EditorJS('editorjs');
 ````
 
 Or pass a whole settings object.
 
 ```javascript
-var editor = new CodexEditor({
+var editor = new EditorJS({
     /**
      * Create a holder for the Editor and pass its ID
      */
-    holderId : 'codex-editor',
+    holderId : 'editorjs',
 
     /**
      * Available Tools list.

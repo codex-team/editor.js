@@ -1,10 +1,10 @@
-# CodeX Editor Caret Module
+# Editor.js Caret Module
 
 The `Caret` module contains methods working with caret. Uses [Range](https://developer.mozilla.org/en-US/docs/Web/API/Range) methods to navigate caret
 between blocks. 
 
 Caret class implements basic Module class that holds User configuration
-and default CodeX Editor instances
+and default Editor.js instances
 
 ## Properties
 

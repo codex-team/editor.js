@@ -20,7 +20,7 @@ export interface ChainData {
 }
 
 /**
- * Codex Editor Util
+ * Editor.js utils
  */
 export default class Util {
   /**

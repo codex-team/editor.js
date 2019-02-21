@@ -1,8 +1,8 @@
-# So how to use CodeX Editor
+# So how to use Editor.js
 
 ## Basics
 
-CodeX Editor is a Block-Styled editor. Blocks is a structural units, of which the Entry is composed. 
+Editor.js is a Block-Styled editor. Blocks is a structural units, of which the Entry is composed. 
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by a Plugin. 
 We have [many](http://github.com/codex-editor) ready-to-use Plugins and the [simple API](tools.md) for creation new ones.
 
@@ -40,7 +40,7 @@ Action | Shortcut | Restrictions
 Also we support shortcuts on the all type of Tools. Specify a shortcut with the Tools configuration. For example:
 
 ```js
-var editor = CodexEditor({
+var editor = EditorJS({
   //...
   tools: {
     header: {
@@ -63,7 +63,7 @@ If you want to focus Editor after page has been loaded, you can enable autofocus
 
 
 ```js
-var editor = CodexEditor({
+var editor = EditorJS({
   //...
   autofocus: true
   //...

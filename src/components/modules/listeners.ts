@@ -1,5 +1,4 @@
 import Module from '../__module';
-import {EditorConfig} from '../../../types';
 
 /**
  * Event listener information
@@ -29,7 +28,7 @@ export interface ListenerData {
 }
 
 /**
- * Codex Editor Listeners module
+ * Editor.js Listeners module
  *
  * @module Listeners
  *

@@ -27,13 +27,13 @@ module.exports = (env, argv) => {
 
   return {
     entry: {
-      'codex-editor': ['@babel/polyfill/noConflict', './src/codex.ts']
+      'editor': ['@babel/polyfill/noConflict', './src/codex.ts']
     },
 
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: '[name].js',
-      library: [ 'CodexEditor' ],
+      library: [ 'EditorJS' ],
       libraryTarget: 'umd'
     },
 

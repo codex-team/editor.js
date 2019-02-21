@@ -10,7 +10,7 @@ import {API, BlockTune} from '../../../types';
 
 export default class MoveDownTune implements BlockTune {
   /**
-   * Property that contains CodeX Editor API methods
+   * Property that contains Editor.js API methods
    * @see {api.md}
    */
   private readonly api: API;

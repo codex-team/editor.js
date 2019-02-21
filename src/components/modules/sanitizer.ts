@@ -11,7 +11,7 @@
  *     1) When you have an instance
  *         - this.Editor.Sanitizer.clean(yourTaintString);
  *     2) As static method
- *         - CodexEditor.Sanitizer.clean(yourTaintString, yourCustomConfiguration);
+ *         - EditorJS.Sanitizer.clean(yourTaintString, yourCustomConfiguration);
  *
  * {@link SanitizerConfig}
  */

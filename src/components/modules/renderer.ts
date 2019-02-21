@@ -4,7 +4,7 @@ import {BlockToolData} from '../../../types';
 import {BlockToolConstructable} from '../../../types/tools';
 
 /**
- * Codex Editor Renderer Module
+ * Editor.js Renderer Module
  *
  * @module Renderer
  * @author CodeX Team

@@ -17,7 +17,7 @@ import Selection from '../selection';
 /**
  * @class
  *
- * @classdesc Makes CodeX Editor UI:
+ * @classdesc Makes Editor.js UI:
  *                <codex-editor>
  *                    <ce-redactor />
  *                    <ce-toolbar />
@@ -25,8 +25,8 @@ import Selection from '../selection';
  *                </codex-editor>
  *
  * @typedef {UI} UI
- * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
- * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
+ * @property {EditorConfig} config   - editor configuration {@link EditorJS#configuration}
+ * @property {Object} Editor         - available editor modules {@link EditorJS#moduleInstances}
  * @property {Object} nodes          -
  * @property {Element} nodes.holder  - element where we need to append redactor
  * @property {Element} nodes.wrapper  - <codex-editor>
@@ -35,7 +35,7 @@ import Selection from '../selection';
 export default class UI extends Module {
 
   /**
-   * CodeX Editor UI CSS class names
+   * Editor.js UI CSS class names
    * @return {{editorWrapper: string, editorZone: string}}
    */
   public static get CSS(): {
@@ -125,12 +125,12 @@ export default class UI extends Module {
   }
 
   /**
-   * Makes CodeX Editor interface
+   * Makes Editor.js interface
    * @return {Promise<void>}
    */
   private async make(): Promise<void> {
     /**
-     * Element where we need to append CodeX Editor
+     * Element where we need to append Editor.js
      * @type {Element}
      */
     this.nodes.holder = document.getElementById(this.config.holderId);
@@ -180,7 +180,7 @@ export default class UI extends Module {
   }
 
   /**
-   * Bind events on the CodeX Editor interface
+   * Bind events on the Editor.js interface
    */
   private bindEvents(): void {
     this.Editor.Listeners.on(

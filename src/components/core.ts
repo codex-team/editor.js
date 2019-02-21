@@ -28,7 +28,7 @@ contextRequire.keys().forEach((filename) => {
 /**
  * @class Core
  *
- * @classdesc CodeX Editor core class
+ * @classdesc Editor.js core class
  *
  * @property this.config - all settings
  * @property this.moduleInstances - constructed editor components
@@ -58,7 +58,7 @@ export default class Core {
    */
   constructor(config?: EditorConfig|string) {
     /**
-     * Ready promise. Resolved if CodeX Editor is ready to work, rejected otherwise
+     * Ready promise. Resolved if Editor.js is ready to work, rejected otherwise
      */
     let onReady, onFail;
 
@@ -96,7 +96,7 @@ export default class Core {
         }, 500);
       })
       .catch((error) => {
-        _.log(`CodeX Editor does not ready because of ${error}`, 'error');
+        _.log(`Editor.js is not ready because of ${error}`, 'error');
 
         /**
          * Reject this.isReady promise

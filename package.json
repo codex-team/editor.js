@@ -1,8 +1,8 @@
 {
-  "name": "codex.editor",
-  "version": "2.9.1",
-  "description": "CodeX Editor. Native JS, based on API and Open Source",
-  "main": "dist/codex-editor.js",
+  "name": "editorjs",
+  "version": "2.10.0",
+  "description": "Editor.js - Native JS, based on API and Open Source",
+  "main": "dist/editor.js",
   "types": "./types/index.d.ts",
   "scripts": {
     "build": "rimraf dist/* && yarn svg && yarn build:prod",
@@ -17,7 +17,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codex-team/codex.editor.git"
+    "url": "git+https://github.com/codex-team/editor.js.git"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",
