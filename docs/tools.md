@@ -66,7 +66,7 @@ to the `tools` property of Editor Config.
 
 ```javascript
 var editor = new EditorJS({
-  holderId : 'codex-editor',
+  holderId : 'editorjs',
   tools: {
     text: {
       class: Text,

@@ -8,7 +8,7 @@ There are few steps to run Editor.js on your site.
 
 ## Load Editor's core
 
-Firstly you need to get Editor.js itself. It is a [minified script](../build/codex-editor.js) with minimal available
+Firstly you need to get Editor.js itself. It is a [minified script](../dist/editor.js) with minimal available
 
 Choose the most usable method of getting Editor for you.
 
@@ -44,21 +44,21 @@ Then require this script.
 
 ### Save sources to project
 
-Copy [codex-editor.js](../build/codex-editor.js) file to your project and load it.
+Copy [editorjs.js](../dist/editor.js) file to your project and load it.
 
 ```html
-<script src="codex-editor.js"></script>
+<script src="editorjs.js"></script>
 ```
 
 ## Load Tools
 
 Each Block at the Editor.js represented by [Tools](tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
 
-For example check out our [Header](https://github.com/codex-editor/header) Tool that represents heading blocks.
+For example check out our [Header](https://github.com/editorjs/header) Tool that represents heading blocks.
 
 You can install Header Tool via the same ways as an Editor (Node.js, CDN, local file).
 
-Check [Editor.js's community](https://github.com/codex-editor) to see Tools examples.
+Check [Editor.js's community](https://github.com/editorjs) to see Tools examples.
 
 **Example:** use Header from CDN
 
@@ -72,17 +72,17 @@ Create an instance of Editor.js and pass [Configuration Object](../src/types-int
 Minimal params is a `holderId`, `tools` list and `initialBlock` marker.
 
 ```html
-<div id="codex-editor"></div>
+<div id="editorjs"></div>
 ```
 
-You can create a simple Editor only with a default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param or use default `codex-editor`.
+You can create a simple Editor only with a default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param or use default `editorjs`.
 
 ```javascript
 var editor = new EditorJS(); /** Zero-configuration */
 
 // equals
 
-var editor = new EditorJS('codex-editor');
+var editor = new EditorJS('editorjs');
 ````
 
 Or pass a whole settings object.
@@ -92,7 +92,7 @@ var editor = new EditorJS({
     /**
      * Create a holder for the Editor and pass its ID
      */
-    holderId : 'codex-editor',
+    holderId : 'editorjs',
 
     /**
      * Available Tools list.

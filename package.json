@@ -7,7 +7,7 @@
   "scripts": {
     "build": "rimraf dist/* && yarn svg && yarn build:prod",
     "build:win": "rimraf dist && yarn svg:win && yarn build:prod",
-    "build:dev": "webpack --mode development --progress  --display-error-details --display-entrypoints --watch",
+    "build:dev": "webpack --mode development --progress --display-error-details --display-entrypoints --watch",
     "build:prod": "webpack --mode production",
     "svg:win": "if not exist dist md dist && yarn svg",
     "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
