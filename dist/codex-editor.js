@@ -16267,13 +16267,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }).filter(function (index) {
           return index !== -1;
         });
-        var firstFoundIndex = selectedBlocksIndexes.shift();
 
-        for (var i = 0; i <= selectedBlocksIndexes.length; i++) {
-          this.removeBlock(firstFoundIndex);
+        if (selectedBlocksIndexes.length === 0) {
+          return;
+        }
+        /**
+         * From this Block index we start removing
+         */
+
+
+        var firstIndex = selectedBlocksIndexes[0];
+
+        while (selectedBlocksIndexes.length !== 0) {
+          this.removeBlock(selectedBlocksIndexes.pop());
         }
 
-        return firstFoundIndex;
+        return firstIndex;
       }
       /**
        * Attention!

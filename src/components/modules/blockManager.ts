@@ -363,12 +363,19 @@ export default class BlockManager extends Module {
       .map((block) => this.blocks.indexOf(block))
       .filter((index) => index !== -1);
 
-    const firstFoundIndex = selectedBlocksIndexes.shift();
-    for (let i = 0; i <= selectedBlocksIndexes.length; i++) {
-      this.removeBlock(firstFoundIndex);
+    if (selectedBlocksIndexes.length === 0) {
+      return;
     }
 
-    return firstFoundIndex;
+    /**
+     * From this Block index we start removing
+     */
+    const firstIndex = selectedBlocksIndexes[0];
+    while (selectedBlocksIndexes.length !== 0) {
+      this.removeBlock(selectedBlocksIndexes.pop());
+    }
+
+    return firstIndex;
   }
 
   /**

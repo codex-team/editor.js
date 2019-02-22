@@ -3,7 +3,6 @@
  */
 import Module from '../__module';
 import _ from '../utils';
-import Block from '../block';
 
 export default class BlockEvents extends Module {
   /**
