@@ -10,6 +10,7 @@ Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_edi
 
 ### 2.7-2.9 changelog
 
+- `New` Blocks selected with RectangleSelection can be also removed, copied or cut
 - `New` Migrate from postcss-cssnext to postcss-preset-env and disable postcss-custom-properties which conflicts with postcss-preset-env
 - `New` *RectangeSelection* - Ability to select Block or several Blocks with mouse
 

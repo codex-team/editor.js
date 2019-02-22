@@ -223,25 +223,9 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private enter(event: KeyboardEvent): void {
-    const {BlockSelection, BlockManager, Tools, Caret} = this.Editor;
+    const {BlockManager, Tools} = this.Editor;
     const currentBlock = BlockManager.currentBlock;
     const tool = Tools.available[currentBlock.name];
-
-    if (currentBlock.selected) {
-      if (BlockSelection.allBlocksSelected) {
-        BlockManager.removeAllBlocks();
-      } else {
-        /** Replace current Block */
-        const newBlock = BlockManager.replace();
-
-        /** Set caret to the current block */
-        Caret.setToBlock(newBlock);
-      }
-
-      /** Clear selection */
-      BlockSelection.clearSelection();
-      return;
-    }
 
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
@@ -318,24 +302,20 @@ export default class BlockEvents extends Module {
     if (currentBlock.selected || currentBlock.isEmpty && currentBlock.currentInput === currentBlock.firstInput) {
       event.preventDefault();
 
-      if (BlockSelection.allBlocksSelected) {
-        BlockManager.removeAllBlocks();
+      const index = BlockManager.currentBlockIndex;
+
+      if (BlockManager.previousBlock && BlockManager.previousBlock.inputs.length === 0) {
+        /** If previous block doesn't contain inputs, remove it */
+        BlockManager.removeBlock(index - 1);
       } else {
-        const index = BlockManager.currentBlockIndex;
-
-        if (BlockManager.previousBlock && BlockManager.previousBlock.inputs.length === 0) {
-          /** If previous block doesn't contain inputs, remove it */
-          BlockManager.removeBlock(index - 1);
-        } else {
-          /** If block is empty, just remove it */
-          BlockManager.removeBlock();
-        }
-
-        Caret.setToBlock(
-          BlockManager.currentBlock,
-          index ? Caret.positions.END : Caret.positions.START,
-        );
+        /** If block is empty, just remove it */
+        BlockManager.removeBlock();
       }
+
+      Caret.setToBlock(
+        BlockManager.currentBlock,
+        index ? Caret.positions.END : Caret.positions.START,
+      );
 
       /** Close Toolbar */
       this.Editor.Toolbar.close();

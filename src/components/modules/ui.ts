@@ -202,6 +202,9 @@ export default class UI extends Module {
       case _.keyCodes.ENTER:
         this.enterPressed(event);
         break;
+      case _.keyCodes.BACKSPACE:
+        this.backspacePressed(event);
+        break;
       default:
         this.defaultBehaviour(event);
         break;
@@ -236,13 +239,50 @@ export default class UI extends Module {
   }
 
   /**
+   * @param {KeyboardEvent} event
+   */
+  private backspacePressed(event: KeyboardEvent): void {
+    const {BlockManager, BlockSelection, Caret} = this.Editor;
+
+    if (BlockSelection.anyBlockSelected) {
+      const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+      Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
+
+      /** Clear selection */
+      BlockSelection.clearSelection();
+
+      /**
+       * Stop propagations
+       * Manipulation with BlockSelections is handled in global backspacePress because they may occur
+       * with CMD+A or RectangleSelection with can be handled on document event
+       */
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+    }
+  }
+
+  /**
    * Enter pressed on document
    * @param event
    */
   private enterPressed(event: KeyboardEvent): void {
-    const hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
+    const {BlockManager, BlockSelection, Caret} = this.Editor;
+    const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
-    if (this.Editor.BlockSelection.anyBlockSelected) {
+    if (BlockSelection.anyBlockSelected) {
+      const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+      Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
+
+      /** Clear selection */
+      BlockSelection.clearSelection();
+
+      /**
+       * Stop propagations
+       * Manipulation with BlockSelections is handled in global enterPress because they may occur
+       * with CMD+A or RectangleSelection
+       */
+      event.stopImmediatePropagation();
+      event.stopPropagation();
       return;
     }
 

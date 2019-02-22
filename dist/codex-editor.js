@@ -15612,34 +15612,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "enter",
       value: function enter(event) {
         var _this$Editor2 = this.Editor,
-            BlockSelection = _this$Editor2.BlockSelection,
             BlockManager = _this$Editor2.BlockManager,
-            Tools = _this$Editor2.Tools,
-            Caret = _this$Editor2.Caret;
+            Tools = _this$Editor2.Tools;
         var currentBlock = BlockManager.currentBlock;
         var tool = Tools.available[currentBlock.name];
-
-        if (currentBlock.selected) {
-          if (BlockSelection.allBlocksSelected) {
-            BlockManager.removeAllBlocks();
-          } else {
-            /** Replace current Block */
-            var newBlock = BlockManager.replace();
-            /** Set caret to the current block */
-
-            Caret.setToBlock(newBlock);
-          }
-          /** Clear selection */
-
-
-          BlockSelection.clearSelection();
-          return;
-        }
         /**
          * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
          * Uses for Tools like <code> where line breaks should be handled by default behaviour.
          */
-
 
         if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
           return;
@@ -15717,24 +15697,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (currentBlock.selected || currentBlock.isEmpty && currentBlock.currentInput === currentBlock.firstInput) {
           event.preventDefault();
+          var index = BlockManager.currentBlockIndex;
 
-          if (BlockSelection.allBlocksSelected) {
-            BlockManager.removeAllBlocks();
+          if (BlockManager.previousBlock && BlockManager.previousBlock.inputs.length === 0) {
+            /** If previous block doesn't contain inputs, remove it */
+            BlockManager.removeBlock(index - 1);
           } else {
-            var index = BlockManager.currentBlockIndex;
-
-            if (BlockManager.previousBlock && BlockManager.previousBlock.inputs.length === 0) {
-              /** If previous block doesn't contain inputs, remove it */
-              BlockManager.removeBlock(index - 1);
-            } else {
-              /** If block is empty, just remove it */
-              BlockManager.removeBlock();
-            }
-
-            Caret.setToBlock(BlockManager.currentBlock, index ? Caret.positions.END : Caret.positions.START);
+            /** If block is empty, just remove it */
+            BlockManager.removeBlock();
           }
-          /** Close Toolbar */
 
+          Caret.setToBlock(BlockManager.currentBlock, index ? Caret.positions.END : Caret.positions.START);
+          /** Close Toolbar */
 
           this.Editor.Toolbar.close();
           /** Clear selection */
@@ -23340,6 +23314,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             this.enterPressed(event);
             break;
 
+          case _utils.default.keyCodes.BACKSPACE:
+            this.backspacePressed(event);
+            break;
+
           default:
             this.defaultBehaviour(event);
             break;
@@ -23376,6 +23354,34 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.Toolbar.close();
       }
       /**
+       * @param {KeyboardEvent} event
+       */
+
+    }, {
+      key: "backspacePressed",
+      value: function backspacePressed(event) {
+        var _this$Editor = this.Editor,
+            BlockManager = _this$Editor.BlockManager,
+            BlockSelection = _this$Editor.BlockSelection,
+            Caret = _this$Editor.Caret;
+
+        if (BlockSelection.anyBlockSelected) {
+          var selectionPositionIndex = BlockManager.removeSelectedBlocks();
+          Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
+          /** Clear selection */
+
+          BlockSelection.clearSelection();
+          /**
+           * Stop propagations
+           * Manipulation with BlockSelections is handled in global backspacePress because they may occur
+           * with CMD+A or RectangleSelection with can be handled on document event
+           */
+
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+        }
+      }
+      /**
        * Enter pressed on document
        * @param event
        */
@@ -23383,9 +23389,26 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "enterPressed",
       value: function enterPressed(event) {
-        var hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
+        var _this$Editor2 = this.Editor,
+            BlockManager = _this$Editor2.BlockManager,
+            BlockSelection = _this$Editor2.BlockSelection,
+            Caret = _this$Editor2.Caret;
+        var hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
-        if (this.Editor.BlockSelection.anyBlockSelected) {
+        if (BlockSelection.anyBlockSelected) {
+          var selectionPositionIndex = BlockManager.removeSelectedBlocks();
+          Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
+          /** Clear selection */
+
+          BlockSelection.clearSelection();
+          /**
+           * Stop propagations
+           * Manipulation with BlockSelections is handled in global enterPress because they may occur
+           * with CMD+A or RectangleSelection
+           */
+
+          event.stopImmediatePropagation();
+          event.stopPropagation();
           return;
         }
         /**
