@@ -254,7 +254,7 @@ export default class UI extends Module {
       /**
        * Stop propagations
        * Manipulation with BlockSelections is handled in global backspacePress because they may occur
-       * with CMD+A or RectangleSelection with can be handled on document event
+       * with CMD+A or RectangleSelection and they can be handled on document event
        */
       event.stopPropagation();
       event.stopImmediatePropagation();
