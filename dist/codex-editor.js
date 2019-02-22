@@ -15583,33 +15583,25 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             BlockSelection = _this$Editor.BlockSelection,
             BlockManager = _this$Editor.BlockManager,
             Caret = _this$Editor.Caret;
-        var currentBlock = BlockManager.currentBlock;
 
-        if (!currentBlock) {
+        if (!BlockSelection.anyBlockSelected) {
           return;
         }
-        /** Copy Blocks before removing */
+        /**
+         * Copy Blocks before removing
+         *
+         * Prevent default copy
+         * Remove "decline sound" on macOS
+         */
 
 
-        if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
-          /**
-           * Prevent default copy
-           * Remove "decline sound" on macOS
-           */
-          event.preventDefault();
-          BlockSelection.copySelectedBlocks();
+        event.preventDefault();
+        BlockSelection.copySelectedBlocks();
+        var selectionPositionIndex = BlockManager.removeSelectedBlocks();
+        Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
+        /** Clear selection */
 
-          if (BlockSelection.allBlocksSelected) {
-            BlockManager.removeAllBlocks();
-          } else {
-            BlockManager.removeBlock();
-            Caret.setToBlock(BlockManager.insert(), Caret.positions.START);
-          }
-          /** Clear selection */
-
-
-          BlockSelection.clearSelection();
-        }
+        BlockSelection.clearSelection();
       }
       /**
        * ENTER pressed on block
@@ -16251,6 +16243,37 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         } else if (index === 0) {
           this.currentBlockIndex = 0;
         }
+      }
+      /**
+       * Remove only selected Blocks
+       * and returns first Block index where started removing...
+       * @return number
+       */
+
+    }, {
+      key: "removeSelectedBlocks",
+      value: function removeSelectedBlocks() {
+        var _this2 = this;
+
+        /**
+         * filter selected blocks
+         * Get indexes
+         * filter if index not found
+         */
+        var selectedBlocksIndexes = this.blocks.filter(function (block) {
+          return block.selected;
+        }).map(function (block) {
+          return _this2.blocks.indexOf(block);
+        }).filter(function (index) {
+          return index !== -1;
+        });
+        var firstFoundIndex = selectedBlocksIndexes.shift();
+
+        for (var i = 0; i <= selectedBlocksIndexes.length; i++) {
+          this.removeBlock(firstFoundIndex);
+        }
+
+        return firstFoundIndex;
       }
       /**
        * Attention!
@@ -20924,7 +20947,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var UI = this.Editor.UI;
         var newShortcut = new _shortcuts.default({
           name: shortcut.name,
-          on: UI.nodes.redactor,
+          on: document,
           callback: shortcut.handler
         });
         this.registeredShortcuts.push(newShortcut);

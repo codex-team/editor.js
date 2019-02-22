@@ -197,32 +197,26 @@ export default class BlockEvents extends Module {
    */
   public handleCommandX(event): void {
     const { BlockSelection, BlockManager, Caret } = this.Editor;
-    const currentBlock = BlockManager.currentBlock;
 
-    if (!currentBlock) {
+    if (!BlockSelection.anyBlockSelected) {
       return;
     }
 
-    /** Copy Blocks before removing */
-    if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
-      /**
-       * Prevent default copy
-       * Remove "decline sound" on macOS
-       */
-      event.preventDefault();
+    /**
+     * Copy Blocks before removing
+     *
+     * Prevent default copy
+     * Remove "decline sound" on macOS
+     */
+    event.preventDefault();
 
-      BlockSelection.copySelectedBlocks();
+    BlockSelection.copySelectedBlocks();
 
-      if (BlockSelection.allBlocksSelected) {
-        BlockManager.removeAllBlocks();
-      } else {
-        BlockManager.removeBlock();
-        Caret.setToBlock(BlockManager.insert(), Caret.positions.START);
-      }
+    const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+    Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
-      /** Clear selection */
-      BlockSelection.clearSelection();
-    }
+    /** Clear selection */
+    BlockSelection.clearSelection();
   }
 
   /**

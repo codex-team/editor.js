@@ -220,7 +220,7 @@ export default class UI extends Module {
     /**
      * Ignore keydowns on editor and meta keys
      */
-    if (keyDownOnEditor || currentBlock && isMetaKey) {
+    if (keyDownOnEditor || (currentBlock && isMetaKey)) {
       return;
     }
 
