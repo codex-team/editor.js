@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.9.3
+
+- `Fix` Handle paste only on initial Block
+
 ### 2.9.2
 
 - `New` Blocks selected with RectangleSelection can be also removed, copied or cut
