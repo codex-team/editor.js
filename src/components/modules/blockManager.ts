@@ -350,32 +350,24 @@ export default class BlockManager extends Module {
   /**
    * Remove only selected Blocks
    * and returns first Block index where started removing...
-   * @return number
+   * @return number|undefined
    */
-  public removeSelectedBlocks(): number {
-    /**
-     * filter selected blocks
-     * Get indexes
-     * filter if index not found
-     */
-    const selectedBlocksIndexes = this.blocks
-      .filter((block) => block.selected)
-      .map((block) => this.blocks.indexOf(block))
-      .filter((index) => index !== -1);
-
-    if (selectedBlocksIndexes.length === 0) {
-      return;
-    }
+  public removeSelectedBlocks(): number|undefined {
+    let firstSelectedBlockIndex;
 
     /**
-     * From this Block index we start removing
+     * Remove selected Blocks from the end
      */
-    const firstIndex = selectedBlocksIndexes[0];
-    while (selectedBlocksIndexes.length !== 0) {
-      this.removeBlock(selectedBlocksIndexes.pop());
+    for (let index = this.blocks.length - 1; index >= 0; index--) {
+      if (!this.blocks[index].selected) {
+        continue;
+      }
+
+      this.removeBlock(index);
+      firstSelectedBlockIndex = index;
     }
 
-    return firstIndex;
+    return firstSelectedBlockIndex;
   }
 
   /**
