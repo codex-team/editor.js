@@ -3,7 +3,6 @@
  */
 import Module from '../__module';
 import _ from '../utils';
-import Block from '../block';
 
 export default class BlockEvents extends Module {
   /**
@@ -197,32 +196,26 @@ export default class BlockEvents extends Module {
    */
   public handleCommandX(event): void {
     const { BlockSelection, BlockManager, Caret } = this.Editor;
-    const currentBlock = BlockManager.currentBlock;
 
-    if (!currentBlock) {
+    if (!BlockSelection.anyBlockSelected) {
       return;
     }
 
-    /** Copy Blocks before removing */
-    if (currentBlock.selected || BlockManager.currentBlock.isEmpty) {
-      /**
-       * Prevent default copy
-       * Remove "decline sound" on macOS
-       */
-      event.preventDefault();
+    /**
+     * Copy Blocks before removing
+     *
+     * Prevent default copy
+     * Remove "decline sound" on macOS
+     */
+    event.preventDefault();
 
-      BlockSelection.copySelectedBlocks();
+    BlockSelection.copySelectedBlocks();
 
-      if (BlockSelection.allBlocksSelected) {
-        BlockManager.removeAllBlocks();
-      } else {
-        BlockManager.removeBlock();
-        Caret.setToBlock(BlockManager.insert(), Caret.positions.START);
-      }
+    const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+    Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
-      /** Clear selection */
-      BlockSelection.clearSelection();
-    }
+    /** Clear selection */
+    BlockSelection.clearSelection();
   }
 
   /**
@@ -230,25 +223,9 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private enter(event: KeyboardEvent): void {
-    const {BlockSelection, BlockManager, Tools, Caret} = this.Editor;
+    const {BlockManager, Tools} = this.Editor;
     const currentBlock = BlockManager.currentBlock;
     const tool = Tools.available[currentBlock.name];
-
-    if (currentBlock.selected) {
-      if (BlockSelection.allBlocksSelected) {
-        BlockManager.removeAllBlocks();
-      } else {
-        /** Replace current Block */
-        const newBlock = BlockManager.replace();
-
-        /** Set caret to the current block */
-        Caret.setToBlock(newBlock);
-      }
-
-      /** Clear selection */
-      BlockSelection.clearSelection();
-      return;
-    }
 
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
@@ -325,24 +302,20 @@ export default class BlockEvents extends Module {
     if (currentBlock.selected || currentBlock.isEmpty && currentBlock.currentInput === currentBlock.firstInput) {
       event.preventDefault();
 
-      if (BlockSelection.allBlocksSelected) {
-        BlockManager.removeAllBlocks();
+      const index = BlockManager.currentBlockIndex;
+
+      if (BlockManager.previousBlock && BlockManager.previousBlock.inputs.length === 0) {
+        /** If previous block doesn't contain inputs, remove it */
+        BlockManager.removeBlock(index - 1);
       } else {
-        const index = BlockManager.currentBlockIndex;
-
-        if (BlockManager.previousBlock && BlockManager.previousBlock.inputs.length === 0) {
-          /** If previous block doesn't contain inputs, remove it */
-          BlockManager.removeBlock(index - 1);
-        } else {
-          /** If block is empty, just remove it */
-          BlockManager.removeBlock();
-        }
-
-        Caret.setToBlock(
-          BlockManager.currentBlock,
-          index ? Caret.positions.END : Caret.positions.START,
-        );
+        /** If block is empty, just remove it */
+        BlockManager.removeBlock();
       }
+
+      Caret.setToBlock(
+        BlockManager.currentBlock,
+        index ? Caret.positions.END : Caret.positions.START,
+      );
 
       /** Close Toolbar */
       this.Editor.Toolbar.close();
