@@ -1,6 +1,6 @@
 {
   "name": "codex.editor",
-  "version": "2.7.33",
+  "version": "2.9.4",
   "description": "CodeX Editor. Native JS, based on API and Open Source",
   "main": "dist/codex-editor.js",
   "types": "./types/index.d.ts",
@@ -55,6 +55,7 @@
     "postcss-nested-ancestors": "^2.0.0",
     "postcss-nesting": "^6.0.0",
     "postcss-smart-import": "^0.7.6",
+    "postcss-preset-env": "^6.5.0",
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.2",
     "stylelint": "^9.3.0",

@@ -1,5 +1,33 @@
 # Changelog
 
+### 2.9.3
+
+- `Fix` Handle paste only on initial Block
+
+### 2.9.2
+
+- `New` Blocks selected with RectangleSelection can be also removed, copied or cut
+
+### 2.9.1
+
+- `Improvements` Migrate from postcss-cssnext to postcss-preset-env and disable postcss-custom-properties which conflicts with postcss-preset-env
+
+### 2.9.0
+
+- `New` *RectangeSelection* - Ability to select Block or several Blocks with mouse
+
+### 2.8.1
+
+- `Fix` *Caret* - Fix "History back" call on backspace in Firefox
+
+### 2.8.0
+
+- `Imporvements` *API* - Added [API methods](api.md#caretapi) to manage caret position
+
+### 2.7.32
+
+- `Improvements` *Types* - TypeScript types sre updated
+
 ### 2.7.31
 
 - `Fix` Caret now goes through <input> elements without `type` attribute

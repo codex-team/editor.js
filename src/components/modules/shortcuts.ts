@@ -47,7 +47,7 @@ export default class Shortcuts extends Module {
 
     const newShortcut = new Shortcut({
       name: shortcut.name,
-      on: UI.nodes.redactor,
+      on: document, // UI.nodes.redactor
       callback: shortcut.handler,
     });
 

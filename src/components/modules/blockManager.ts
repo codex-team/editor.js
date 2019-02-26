@@ -45,6 +45,14 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * returns first Block
+   * @return {Block}
+   */
+  public get firstBlock(): Block {
+    return this._blocks[0];
+  }
+
+  /**
    * returns last Block
    * @return {Block}
    */
@@ -337,6 +345,29 @@ export default class BlockManager extends Module {
     } else if (index === 0) {
       this.currentBlockIndex = 0;
     }
+  }
+
+  /**
+   * Remove only selected Blocks
+   * and returns first Block index where started removing...
+   * @return number|undefined
+   */
+  public removeSelectedBlocks(): number|undefined {
+    let firstSelectedBlockIndex;
+
+    /**
+     * Remove selected Blocks from the end
+     */
+    for (let index = this.blocks.length - 1; index >= 0; index--) {
+      if (!this.blocks[index].selected) {
+        continue;
+      }
+
+      this.removeBlock(index);
+      firstSelectedBlockIndex = index;
+    }
+
+    return firstSelectedBlockIndex;
   }
 
   /**

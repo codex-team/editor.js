@@ -177,9 +177,9 @@ export default class Paste extends Module {
    * Set onPaste callback handler
    */
   private setCallback(): void {
-    const {Listeners, UI} = this.Editor;
+    const {Listeners} = this.Editor;
 
-    Listeners.on(document,  'paste', this.handlePasteEvent);
+    Listeners.on(document, 'paste', this.handlePasteEvent);
   }
 
   /**
@@ -336,11 +336,13 @@ export default class Paste extends Module {
    * @param {ClipboardEvent} event
    */
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
-    const {BlockManager, Toolbar} = this.Editor;
+    const {BlockManager, Tools, Toolbar} = this.Editor;
+
+    const isInitialTool = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
 
     /** If target is native input or is not Block, use browser behaviour */
     if (
-      !BlockManager.currentBlock || this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files')
+      !isInitialTool
     ) {
       return;
     }
