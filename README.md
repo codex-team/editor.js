@@ -15,16 +15,16 @@ Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_edi
 
 ### 2.2—2.7 changelog
 
-- `New` *Sanitize API* — [Sanitize Config](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.
+- `New` *Sanitize API* — [Sanitize Config](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.
 - `New` *Block Selection* — Ability to select Block by `CMD+A`, and the whole Editor by double `CMD+A`. After that, you can copy (`CMD+C`), remove (`Backspace`) or clear (`Enter`) selected Blocks.
-- `New` *[Styles API](https://github.com/codex-team/codex.editor/blob/master/types/api/styles.d.ts)* — Added `button` class for stylization of any buttons provided by Tools with one unified style.
-- `New` *[Notifier API](https://github.com/codex-team/codex.editor/blob/master/docs/api.md#notifierapi)* — methods for showing user notifications: on success, errors, warnings, etc. 
-- `New` *Block Tool* — [Table](http://github.com/codex-editor/table) constructor 💪 
+- `New` *[Styles API](https://github.com/codex-team/editor.js/blob/master/types/api/styles.d.ts)* — Added `button` class for stylization of any buttons provided by Tools with one unified style.
+- `New` *[Notifier API](https://github.com/codex-team/editor.js/blob/master/docs/api.md#notifierapi)* — methods for showing user notifications: on success, errors, warnings, etc. 
+- `New` *Block Tool* — [Table](http://github.com/editorjs/table) constructor 💪 
 - `New` If one of the Tools is unavailable on Editor initialization, its Blocks will be rendered with *Dummy Block*, describing that user can not edit content of this Block. Dummy Blocks can be moved, removed and saved as normal Blocks. So saved data won't be lost if one of the Tools is failed 
-- `New` [Public TS-types](https://github.com/codex-team/codex.editor/tree/master/types) are presented.
+- `New` [Public TS-types](https://github.com/codex-team/editor.js/tree/master/types) are presented.
 - `Changes` *Tools API*  — options `irreplaceable` and `contentless` was removed.
-- `Changes` *Tools API* — [Paste API](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#paste-handling): tags, patterns and mime-types now should be specified by Tool's `pasteConfig` static property. Custom Paste Event should be handled by `onPaste(event)` that should not be static from now.
-- `Changes` *Tools API* — options `displayInToolbox ` and `toolboxIcon` was removed. Use [`toolbox`](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#internal-tool-settings) instead, that should return object with `icon` and `title` field, or `false` if Tool should not be placed at the Toolbox. Also, there are a way to override `toolbox {icon, title}` settings provided by Tool with you own settings at the Initial Config.
+- `Changes` *Tools API* — [Paste API](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#paste-handling): tags, patterns and mime-types now should be specified by Tool's `pasteConfig` static property. Custom Paste Event should be handled by `onPaste(event)` that should not be static from now.
+- `Changes` *Tools API* — options `displayInToolbox ` and `toolboxIcon` was removed. Use [`toolbox`](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#internal-tool-settings) instead, that should return object with `icon` and `title` field, or `false` if Tool should not be placed at the Toolbox. Also, there are a way to override `toolbox {icon, title}` settings provided by Tool with you own settings at the Initial Config.
 - `Improvements` — All Projects code now on TypeScript
 - `Improvements` — NPM package size decreased from 1300kb to 422kb
 - `Improvements` — Bundle size decreased from 438kb to 252kb
@@ -60,7 +60,7 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 Editor.js is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
-We have [many](http://github.com/codex-editor) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
+We have [many](http://github.com/editorjs) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
 
 So how to use the Editor after [Installation](docs/installation.md).
 
@@ -69,7 +69,7 @@ So how to use the Editor after [Installation](docs/installation.md).
 - Press `TAB` again to leaf Toolbox and select a Block you need. Then press Enter.
 
 
- ![](https://github.com/codex-editor/list/raw/master/assets/example.gif)
+ ![](https://github.com/editorjs/list/raw/master/assets/example.gif)
 
 - Select text fragment and apply a style or insert a link from the Inline Toolbar
 
@@ -96,7 +96,7 @@ Shortcut | Action | Restrictions
 Also we support shortcuts on the all type of Tools. Specify a shortcut with the Tools configuration. For example:
 
 ```js
-var editor = CodexEditor({
+var editor = EditorJS({
   //...
   tools: {
     header: {
@@ -170,16 +170,16 @@ Copy [editor.js](build/editor.js) file to your project and load it.
 
 Each Block at the Editor.js represented by [Tools](docs/tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
 
-For example check out our [Header](https://github.com/codex-editor/header) Tool that represents heading blocks.
+For example check out our [Header](https://github.com/editorjs/header) Tool that represents heading blocks.
 
 You can install Header Tool by the same way as the Editor (Node.js, CDN, local file).
 
-Check [Editor.js's community](https://github.com/codex-editor) to see more ready-to-use Tools.
+Check [Editor.js's community](https://github.com/editorjs) to see more ready-to-use Tools.
 
 **Example:** use Header from CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/codex.editor.header@2.0.4/dist/bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.0.4/dist/bundle.js"></script>
 ```
 
 ## Create Editor instance
@@ -190,7 +190,7 @@ Create an instance of Editor.js and pass [Configuration Object](types/configs/ed
 <div id="editorjs"></div>
 ```
 
-You can create a simple Editor with only default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param. Or use the default `codex-editor` id for wrapper.
+You can create a simple Editor with only default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param. Or use the default `editorjs` id for wrapper.
 
 ```javascript
 var editor = new EditorJS(); /** Zero-configuration */

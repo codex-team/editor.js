@@ -57,7 +57,7 @@ module.exports = (env, argv) => {
       }),
 
       new webpack.BannerPlugin({
-        banner: `Codex Editor\n\n@version ${VERSION}\n\n@licence Apache-2.0\n@author CodeX-Team <https://ifmo.su>\n\n@uses html-janitor\n@licence Apache-2.0 (https://github.com/guardian/html-janitor/blob/master/LICENSE)`
+        banner: `Editor.js\n\n@version ${VERSION}\n\n@licence Apache-2.0\n@author CodeX-Team <https://ifmo.su>\n\n@uses html-janitor\n@licence Apache-2.0 (https://github.com/guardian/html-janitor/blob/master/LICENSE)`
       }),
 
       new LicenseWebpackPlugin()

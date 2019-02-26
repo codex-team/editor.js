@@ -21,20 +21,20 @@ Choose the most usable method of getting Editor for you.
 Install the package via NPM or Yarn
 
 ```shell
-npm i codex.editor --save-dev
+npm i @editorjs/editorjs --save-dev
 ```
 
 Include module at your application 
 
 ```javascript
-const EditorJS = require('codex.editor');
+const EditorJS = require('@editorjs/editorjs');
 ```
 
 ### Use from CDN
 
-You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/codex.editor).
+You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/editorjs).
 
-`https://cdn.jsdelivr.net/npm/codex.editor@2.0.0`
+`https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.10.0`
 
 Then require this script.
 
@@ -47,7 +47,7 @@ Then require this script.
 Copy [editorjs.js](../dist/editor.js) file to your project and load it.
 
 ```html
-<script src="editorjs.js"></script>
+<script src="editor.js"></script>
 ```
 
 ## Load Tools
@@ -63,7 +63,7 @@ Check [Editor.js's community](https://github.com/editorjs) to see Tools examples
 **Example:** use Header from CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/codex.editor.header@2.0.4/dist/bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.1.0/dist/bundle.js"></script>
 ```
 
 ## Create Editor instance

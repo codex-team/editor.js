@@ -130,7 +130,7 @@ export default class Core {
      * If holderId is empty then set a default value
      */
     if (!this.config.holderId || typeof this.config.holderId !== 'string') {
-      this.config.holderId = 'codex-editor';
+      this.config.holderId = 'editorjs';
     }
 
     /**

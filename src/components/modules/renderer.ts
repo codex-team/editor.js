@@ -92,7 +92,7 @@ export default class Renderer extends Module {
 
       stub.stretched = true;
 
-      _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial EditorJS config.`, 'warn');
+      _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial Editor.js config.`, 'warn');
     }
   }
 }
