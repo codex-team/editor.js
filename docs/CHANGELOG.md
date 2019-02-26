@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.9.4
+
+- `New` Toolbox now have beautiful helpers with Tool names and shortcuts
+
 ### 2.9.3
 
 - `Fix` Handle paste only on initial Block
