@@ -25,29 +25,33 @@
   &__tooltip {
     position: absolute;
     top: 43px;
-    padding: 5px 10px;
+    padding: 6px 10px;
     transform: translateX(-50%);
     border-radius: 5px;
     line-height: 21px;
     opacity: 0;
     background: var(--bg-light);
     box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);
-    color: var(--grayText);
-    font-size: 14px;
+    color: #5C6174;
+    font-size: 12px;
     text-align: center;
     user-select: none;
     pointer-events: none;
-    transition: opacity 0.5s ease-in, left 0.1s linear;
+    transition: opacity 150ms ease-in, left 0.1s linear;
     will-change: opacity, left;
+    letter-spacing: 0.02em;
 
     &-shortcut {
       margin: 0;
-      color: #9d9fac;
+      color: #64697A;
+      letter-spacing: 2px;
+      line-height: 1em;
+      margin-top: 2px;
     }
 
     &--shown {
       opacity: 1;
-      transition-delay: 0.5s, 0s;
+      transition-delay: 0.1s, 0s;
     }
 
     &::before {
