@@ -1,6 +1,9 @@
 <p align="center"><img src="https://capella.pics/3c0b525b-50d9-4720-8aad-9148114cfa6e.jpg"></p>
 
-[![](https://flat.badgen.net/npm/v/editorjs?icon=npm)](https://www.npmjs.com/package/editorjs)
+[![](https://flat.badgen.net/npm/v/@editorjs/editorjs?icon=npm)](https://www.npmjs.com/package/@editorjs/editorjs)
+[![](https://flat.badgen.net/bundlephobia/min/@editorjs/editorjs?color=cyan)](https://www.npmjs.com/package/@editorjs/editorjs)
+[![](https://flat.badgen.net/bundlephobia/minzip/@editorjs/editorjs?color=green)](https://www.npmjs.com/package/@editorjs/editorjs)
+[![](https://flat.badgen.net/npm/license/@editorjs/editorjs)](https://www.npmjs.com/package/@editorjs/editorjs)
 
 ## Version 2.0-beta is here!
 
@@ -10,6 +13,7 @@ Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_edi
 
 ### 2.7-2.9 changelog
 
+- `New` Blocks selected with RectangleSelection can be also removed, copied or cut
 - `New` Migrate from postcss-cssnext to postcss-preset-env and disable postcss-custom-properties which conflicts with postcss-preset-env
 - `New` *RectangeSelection* - Ability to select Block or several Blocks with mouse
 

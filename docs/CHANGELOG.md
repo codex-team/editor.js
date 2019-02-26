@@ -4,6 +4,14 @@
 
 - `New` Rename from CodeX Editor to Editor.js
 
+### 2.9.3
+
+- `Fix` Handle paste only on initial Block
+
+### 2.9.2
+
+- `New` Blocks selected with RectangleSelection can be also removed, copied or cut
+
 ### 2.9.1
 
 - `Improvements` Migrate from postcss-cssnext to postcss-preset-env and disable postcss-custom-properties which conflicts with postcss-preset-env
