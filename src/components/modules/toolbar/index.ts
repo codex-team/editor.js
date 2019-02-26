@@ -120,8 +120,8 @@ export default class Toolbar extends Module {
       const tooltip = this.Editor.Toolbox.nodes.tooltip;
       const fragment = document.createDocumentFragment();
 
-      fragment.appendChild(document.createTextNode('Shift'));
-      fragment.appendChild($.make('p', this.Editor.Toolbox.CSS.tooltipShortcut, {
+      fragment.appendChild(document.createTextNode('Add'));
+      fragment.appendChild($.make('div', this.Editor.Toolbox.CSS.tooltipShortcut, {
         textContent: '⇥ Tab',
       }));
 
@@ -132,7 +132,7 @@ export default class Toolbar extends Module {
       tooltip.classList.add(this.Editor.Toolbox.CSS.tooltipShown);
     });
 
-    this.Editor.Listeners.on(this.nodes.plusButton, 'mousueleave', () => {
+    this.Editor.Listeners.on(this.nodes.plusButton, 'mouseleave', () => {
       this.Editor.Toolbox.hideTooltip();
     });
 

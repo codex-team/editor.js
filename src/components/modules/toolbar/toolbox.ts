@@ -314,7 +314,7 @@ export default class Toolbox extends Module {
    */
   private addTooltip(): void {
     this.nodes.tooltip = $.make('div', this.CSS.tooltip, {
-      innerHTML: 'Press <b>Enter</b> or use <b>CMD+H</b>',
+      innerHTML: '',
     });
 
     $.append(this.Editor.Toolbar.nodes.content, this.nodes.tooltip);
@@ -351,7 +351,8 @@ export default class Toolbox extends Module {
         .replace(/right/gi, '←')
         .replace(/escape/gi, '⎋')
         .replace(/insert/gi, 'Ins')
-        .replace(/delete/gi, '␡');
+        .replace(/delete/gi, '␡')
+        .replace(/\+/gi, ' + ');
 
       if (OS.mac) {
         shortcut = shortcut.replace(/ctrl|cmd/gi, '⌘').replace(/alt/gi, '⌥');
@@ -359,7 +360,7 @@ export default class Toolbox extends Module {
         shortcut = shortcut.replace(/cmd/gi, 'Ctrl').replace(/windows/gi, 'WIN');
       }
 
-      fragment.appendChild($.make('p', this.CSS.tooltipShortcut, {
+      fragment.appendChild($.make('div', this.CSS.tooltipShortcut, {
         textContent: shortcut,
       }));
     }

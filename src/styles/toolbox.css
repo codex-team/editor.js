@@ -31,7 +31,7 @@
     line-height: 21px;
     opacity: 0;
     background: var(--bg-light);
-    box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);
+    box-shadow: 0 10px 12px -9px rgba(26, 39, 54, 0.32), 0 3px 2px -2px rgba(33, 48, 73, 0.05);
     color: #5C6174;
     font-size: 12px;
     text-align: center;
@@ -40,13 +40,12 @@
     transition: opacity 150ms ease-in, left 0.1s linear;
     will-change: opacity, left;
     letter-spacing: 0.02em;
+    line-height: 1em;
 
     &-shortcut {
-      margin: 0;
-      color: #64697A;
-      letter-spacing: 2px;
-      line-height: 1em;
-      margin-top: 2px;
+      color: rgba(100, 105, 122, 0.6);
+      word-spacing: -2px;
+      margin-top: 5px;
     }
 
     &--shown {
