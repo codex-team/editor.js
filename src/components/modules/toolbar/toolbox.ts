@@ -17,7 +17,8 @@ export default class Toolbox extends Module {
 
   /**
    * CSS styles
-   * @return {{toolbox: string, toolboxButton: string, toolboxOpened: string, tooltip: string}}
+   * @return {{toolbox: string, toolboxButton string, toolboxButtonActive: string,
+   * toolboxOpened: string, tooltip: string, tooltipShown: string, tooltipShortcut: string}}
    */
   get CSS() {
     return  {
@@ -33,7 +34,7 @@ export default class Toolbox extends Module {
 
   /**
    * get tool name when it is selected
-   * In case when nothing selection returns null
+   * In case when nothing selected returns null
    *
    * @return {String|null}
    */
