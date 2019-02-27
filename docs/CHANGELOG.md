@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.9.4
+
+- `Improvements` Prevent navigating back on Firefox when Block is removing by backspace
+
 ### 2.9.3
 
 - `Fix` Handle paste only on initial Block
