@@ -1,7 +1,7 @@
 {
   "name": "@editorjs/editorjs",
   "version": "2.10.0",
-  "description": "Editor.js - Native JS, based on API and Open Source",
+  "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
   "keywords": [
