@@ -67,7 +67,7 @@ export default class Saver extends Module {
     let totalTime = 0;
     const blocks = [];
 
-    console.groupCollapsed('[EditorJS saving]:');
+    console.groupCollapsed('[Editor.js saving]:');
 
     allExtractedData.forEach(({tool, data, time, isValid}) => {
       totalTime += time;

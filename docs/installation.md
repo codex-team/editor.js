@@ -58,12 +58,12 @@ For example check out our [Header](https://github.com/codex-editor/header) Tool 
 
 You can install Header Tool via the same ways as an Editor (Node.js, CDN, local file).
 
-Check [Editor.js's community](https://github.com/editorjs) to see Tools examples.
+Check [Editor.js's community](https://github.com/codex-editor/) to see Tools examples.
 
 **Example:** use Header from CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.1.0/dist/bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codex.editor.header@2.1.0/dist/bundle.js"></script>
 ```
 
 ## Create Editor instance

@@ -31,7 +31,7 @@ Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_edi
 - `New` *Block Selection* — Ability to select Block by `CMD+A`, and the whole Editor by double `CMD+A`. After that, you can copy (`CMD+C`), remove (`Backspace`) or clear (`Enter`) selected Blocks.
 - `New` *[Styles API](https://github.com/codex-team/editor.js/blob/master/types/api/styles.d.ts)* — Added `button` class for stylization of any buttons provided by Tools with one unified style.
 - `New` *[Notifier API](https://github.com/codex-team/editor.js/blob/master/docs/api.md#notifierapi)* — methods for showing user notifications: on success, errors, warnings, etc. 
-- `New` *Block Tool* — [Table](http://github.com/editorjs/table) constructor 💪 
+- `New` *Block Tool* — [Table](http://github.com/codex-editor//table) constructor 💪 
 - `New` If one of the Tools is unavailable on Editor initialization, its Blocks will be rendered with *Dummy Block*, describing that user can not edit content of this Block. Dummy Blocks can be moved, removed and saved as normal Blocks. So saved data won't be lost if one of the Tools is failed 
 - `New` [Public TS-types](https://github.com/codex-team/editor.js/tree/master/types) are presented.
 - `Changes` *Tools API*  — options `irreplaceable` and `contentless` was removed.
@@ -72,7 +72,7 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 Editor.js is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
-We have [many](http://github.com/editorjs) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
+We have [many](http://github.com/codex-editor/) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
 
 So how to use the Editor after [Installation](docs/installation.md).
 
@@ -186,12 +186,12 @@ For example check out our [Header](https://github.com/codex-editor/header) Tool 
 
 You can install Header Tool by the same way as the Editor (Node.js, CDN, local file).
 
-Check [Editor.js's community](https://github.com/editorjs) to see more ready-to-use Tools.
+Check [Editor.js's community](https://github.com/codex-editor/) to see more ready-to-use Tools.
 
 **Example:** use Header from CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.0.4/dist/bundle.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/codex.editor.header@2.0.4/dist/bundle.js"></script>
 ```
 
 ## Create Editor instance
