@@ -149,20 +149,20 @@ Choose the most usable method of getting Editor for you.
 Install the package via NPM or Yarn
 
 ```shell
-npm i editorjs --save-dev
+npm i @editorjs/editorjs --save-dev
 ```
 
 Include module in your application
 
 ```javascript
-const EditorJS = require('editorjs');
+const EditorJS = require('@editorjs/editorjs');
 ```
 
 ### Use from CDN
 
-You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/editorjs).
+You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/editorjs).
 
-`https://cdn.jsdelivr.net/npm/editorjs@latest`
+`https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest`
 
 Then require this script.
 

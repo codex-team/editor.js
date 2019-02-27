@@ -111,7 +111,7 @@ See a whole [Changelog](/docs/)
 - `New` Added `onChange`-callback, fired after any modifications at the Editor. See [documentation](https://github.com/codex-team/editor.js/blob/master/docs/installation.md#features).
 - `New` New Inline Tool example — [Marker](https://github.com/codex-editor/marker)
 - `New` New Inline Tool example — [Code](https://github.com/codex-editor/code)
-- `New` New [EditorJS PHP](http://github.com/codex-team/codex.editor.backend) — example of server-side implementation with HTML purifying and data validation.
+- `New` New [Editor.js PHP](http://github.com/codex-team/codex.editor.backend) — example of server-side implementation with HTML purifying and data validation.
 - `Improvements` - Improvements of Toolbar's position calculation.
 - `Improvements` — Improved zero-configuration initialization.
 - and many little improvements.
