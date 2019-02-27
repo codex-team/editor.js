@@ -13,7 +13,7 @@ So how to use the Editor after [Installation](installation.md).
 - Press `TAB` again to leaf Toolbox and select a Block you need. Then press Enter.
 
 
- ![](https://github.com/editorjs/list/raw/master/assets/example.gif)
+ ![](https://github.com/codex-editor/list/raw/master/assets/example.gif)
  
 - Select text fragment and apply a style or insert a link from the Inline Toolbar
 

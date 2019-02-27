@@ -54,7 +54,7 @@ Copy [editorjs.js](../dist/editor.js) file to your project and load it.
 
 Each Block at the Editor.js represented by [Tools](tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
 
-For example check out our [Header](https://github.com/editorjs/header) Tool that represents heading blocks.
+For example check out our [Header](https://github.com/codex-editor/header) Tool that represents heading blocks.
 
 You can install Header Tool via the same ways as an Editor (Node.js, CDN, local file).
 

@@ -106,11 +106,11 @@ See a whole [Changelog](/docs/)
 
 ### 2.1-beta changelog
 
-- `New` *Tools API* — support pasted content via drag-n-drop or from the Buffer. See [documentation](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#paste-handling) and [example](https://github.com/editorjs/simple-image/blob/master/src/index.js#L177) at the Simple Image Tool.
-- `New` *Tools API* — new `sanitize` getter for Tools for automatic HTML sanitizing of returned data. See [documentation](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#sanitize) and [example](https://github.com/editorjs/paragraph/blob/master/src/index.js#L121) at the Paragraph Tool
+- `New` *Tools API* — support pasted content via drag-n-drop or from the Buffer. See [documentation](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#paste-handling) and [example](https://github.com/codex-editor/simple-image/blob/master/src/index.js#L177) at the Simple Image Tool.
+- `New` *Tools API* — new `sanitize` getter for Tools for automatic HTML sanitizing of returned data. See [documentation](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#sanitize) and [example](https://github.com/codex-editor/paragraph/blob/master/src/index.js#L121) at the Paragraph Tool
 - `New` Added `onChange`-callback, fired after any modifications at the Editor. See [documentation](https://github.com/codex-team/editor.js/blob/master/docs/installation.md#features).
-- `New` New Inline Tool example — [Marker](https://github.com/editorjs/marker)
-- `New` New Inline Tool example — [Code](https://github.com/editorjs/code)
+- `New` New Inline Tool example — [Marker](https://github.com/codex-editor/marker)
+- `New` New Inline Tool example — [Code](https://github.com/codex-editor/code)
 - `New` New [EditorJS PHP](http://github.com/codex-team/codex.editor.backend) — example of server-side implementation with HTML purifying and data validation.
 - `Improvements` - Improvements of Toolbar's position calculation.
 - `Improvements` — Improved zero-configuration initialization.

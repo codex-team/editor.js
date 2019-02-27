@@ -81,7 +81,7 @@ So how to use the Editor after [Installation](docs/installation.md).
 - Press `TAB` again to leaf Toolbox and select a Block you need. Then press Enter.
 
 
- ![](https://github.com/editorjs/list/raw/master/assets/example.gif)
+ ![](https://github.com/codex-editor/list/raw/master/assets/example.gif)
 
 - Select text fragment and apply a style or insert a link from the Inline Toolbar
 
@@ -182,7 +182,7 @@ Copy [editor.js](build/editor.js) file to your project and load it.
 
 Each Block at the Editor.js represented by [Tools](docs/tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
 
-For example check out our [Header](https://github.com/editorjs/header) Tool that represents heading blocks.
+For example check out our [Header](https://github.com/codex-editor/header) Tool that represents heading blocks.
 
 You can install Header Tool by the same way as the Editor (Node.js, CDN, local file).
 
