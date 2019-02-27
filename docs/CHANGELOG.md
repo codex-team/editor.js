@@ -1,52 +1,56 @@
 # Changelog
 
+### 2.9.5
+
+- `New` — Toolbox now have beautiful helpers with Tool names and shortcuts
+
 ### 2.9.4
 
-- `Improvements` Prevent navigating back on Firefox when Block is removing by backspace
+- `Improvements` — Prevent navigating back on Firefox when Block is removing by backspace
 
 ### 2.9.3
 
-- `Fix` Handle paste only on initial Block
+- `Fix` — Handle paste only on initial Block
 
 ### 2.9.2
 
-- `New` Blocks selected with RectangleSelection can be also removed, copied or cut
+- `New` — Blocks selected with Rectangle Selection can be also removed, copied or cut
 
 ### 2.9.1
 
-- `Improvements` Migrate from postcss-cssnext to postcss-preset-env and disable postcss-custom-properties which conflicts with postcss-preset-env
+- `Improvements` — Migrate from `postcss-cssnext` to `postcss-preset-env` and disable `postcss-custom-properties` which conflicts with `postcss-preset-env`
 
 ### 2.9.0
 
-- `New` *RectangeSelection* - Ability to select Block or several Blocks with mouse
+- `New` *RectangeSelection* — Ability to select Block or several Blocks with mouse
 
 ### 2.8.1
 
-- `Fix` *Caret* - Fix "History back" call on backspace in Firefox
+- `Fix` *Caret* — Fix "History back" call on backspace in Firefox
 
 ### 2.8.0
 
-- `Imporvements` *API* - Added [API methods](api.md#caretapi) to manage caret position
+- `Imporvements` *API* — Added [API methods](api.md#caretapi) to manage caret position
 
 ### 2.7.32
 
-- `Improvements` *Types* - TypeScript types sre updated
+- `Improvements` *Types* — TypeScript types sre updated
 
 ### 2.7.31
 
-- `Fix` Caret now goes through <input> elements without `type` attribute
+- `Fix` — Caret now goes through <input> elements without `type` attribute
 
 ### 2.7.30
 
-- `Fix` Fixed selection behavior when text has modifiers form Inline Toolbar
+- `Fix` — Fixed selection behavior when text has modifiers form Inline Toolbar
 
 ### 2.7.29
 
-- `Fix` cmd+x works only for custom selection now
+- `Fix` — cmd+x works only for custom selection now
 
 ### 2.7.28 
 
-- `New` [Tools Validation](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#validate-optional) is added.
+- `New` — [Tools Validation](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#validate-optional) is added.
 
 ### 2.2.27
 

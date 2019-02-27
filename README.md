@@ -19,10 +19,11 @@ Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_edi
 
 ### 2.7-2.9 changelog
 
-- `Improvements` Prevent navigating back on Firefox when Block is removing by backspace 
-- `New` Blocks selected with RectangleSelection can be also removed, copied or cut
-- `New` Migrate from postcss-cssnext to postcss-preset-env and disable postcss-custom-properties which conflicts with postcss-preset-env
-- `New` *RectangeSelection* - Ability to select Block or several Blocks with mouse
+- `New` — Toolbox now have beautiful helpers with Tool names and shortcuts
+- `Improvements` — Prevent navigating back on Firefox when Block is removing by backspace 
+- `New` — Blocks selected with Rectangle Selection can be also removed, copied or cut
+- `New` — Migrate from `postcss-cssnext` to `postcss-preset-env` and disable `postcss-custom-properties` which conflicts with `postcss-preset-env`
+- `New` *RectangeSelection* — Ability to select Block or several Blocks with mouse
 
 ### 2.2—2.7 changelog
 
