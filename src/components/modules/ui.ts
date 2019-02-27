@@ -281,6 +281,7 @@ export default class UI extends Module {
        * Manipulation with BlockSelections is handled in global enterPress because they may occur
        * with CMD+A or RectangleSelection
        */
+      event.preventDefault();
       event.stopImmediatePropagation();
       event.stopPropagation();
       return;

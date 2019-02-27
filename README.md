@@ -11,11 +11,19 @@ We are glad to introduce the next version of Editor.js. Totally new core, struct
 
 Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_editor) where you always find a support.
 
+### Browsers support
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_48x48.png" alt="iOS Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>iOS Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Opera |
+| --------- | --------- | --------- | --------- | --------- | --------- |
+| Edge 12+ | Firefox 18+ | Chrome 49+ | Safari 10+ | Safari 10+ | Opera 36+
+
 ### 2.7-2.9 changelog
 
-- `New` Blocks selected with RectangleSelection can be also removed, copied or cut
-- `New` Migrate from postcss-cssnext to postcss-preset-env and disable postcss-custom-properties which conflicts with postcss-preset-env
-- `New` *RectangeSelection* - Ability to select Block or several Blocks with mouse
+- `New` — Toolbox now have beautiful helpers with Tool names and shortcuts
+- `Improvements` — Prevent navigating back on Firefox when Block is removing by backspace 
+- `New` — Blocks selected with Rectangle Selection can be also removed, copied or cut
+- `New` — Migrate from `postcss-cssnext` to `postcss-preset-env` and disable `postcss-custom-properties` which conflicts with `postcss-preset-env`
+- `New` *RectangeSelection* — Ability to select Block or several Blocks with mouse
 
 ### 2.2—2.7 changelog
 
