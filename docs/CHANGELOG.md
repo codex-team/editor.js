@@ -83,7 +83,7 @@
 - `New` *Block Selection* — Ability to select Block by `CMD+A`, and the whole Editor by double `CMD+A`. After that, you can copy (`CMD+C`), remove (`Backspace`) or clear (`Enter`) selected Blocks.
 - `New` *[Styles API](https://github.com/codex-team/editor.js/blob/master/types/api/styles.d.ts)* — Added `button` class for stylization of any buttons provided by Tools with one unified style.
 - `New` *[Notifier API](https://github.com/codex-team/editor.js/blob/master/docs/api.md#notifierapi)* — methods for showing user notifications: on success, errors, warnings, etc. 
-- `New` *Block Tool* — [Table](http://github.com/codex-editor//table) constructor 💪 
+- `New` *Block Tool* — [Table](http://github.com/codex-editor/table) constructor 💪 
 - `New` If one of the Tools is unavailable on Editor initialization, its Blocks will be rendered with *Dummy Block*, describing that user can not edit content of this Block. Dummy Blocks can be moved, removed and saved as normal Blocks. So saved data won't be lost if one of the Tools is failed 
 - `New` [Public TS-types](https://github.com/codex-team/editor.js/tree/master/types) are presented.
 - `Changes` *Tools API*  — options `irreplaceable` and `contentless` was removed.
