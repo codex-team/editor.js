@@ -21,7 +21,7 @@
       <div id="editorjs"></div>
 
       <div class="ce-example__button" id="saveButton">
-        editor.saver.save()
+        editor.save()
       </div>
     </div>
     <div class="ce-example__output">
@@ -263,7 +263,7 @@
      * Saving example
      */
     saveButton.addEventListener('click', function () {
-      editor.saver.save().then((savedData) => {
+      editor.save().then((savedData) => {
         cPreview.show(savedData, document.getElementById("output"));
       });
     });
