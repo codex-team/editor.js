@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.11.1",
+  "version": "2.11.2",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -61,8 +61,8 @@
     "postcss-nested": "^3.0.0",
     "postcss-nested-ancestors": "^2.0.0",
     "postcss-nesting": "^6.0.0",
-    "postcss-smart-import": "^0.7.6",
     "postcss-preset-env": "^6.5.0",
+    "postcss-smart-import": "^0.7.6",
     "raw-loader": "^0.5.1",
     "rimraf": "^2.6.2",
     "stylelint": "^9.3.0",
