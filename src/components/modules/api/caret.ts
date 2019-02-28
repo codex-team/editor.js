@@ -17,6 +17,7 @@ export default class CaretAPI extends Module {
       setToPreviousBlock: this.setToPreviousBlock,
       setToNextBlock: this.setToNextBlock,
       setToBlock: this.setToBlock,
+      focus: this.focus,
     };
   }
 
@@ -111,5 +112,20 @@ export default class CaretAPI extends Module {
 
     this.Editor.Caret.setToBlock(this.Editor.BlockManager.blocks[index], position, offset);
     return true;
+  }
+
+  /**
+   * Sets caret to the Editor
+   *
+   * @param {boolean} atEnd - if true, set Caret to the end of the Editor
+   *
+   * @return {boolean}
+   */
+  private focus = (atEnd: boolean = false) => {
+    if (atEnd) {
+      return this.setToLastBlock(this.Editor.Caret.positions.END);
+    }
+
+    return this.setToFirstBlock(this.Editor.Caret.positions.START);
   }
 }

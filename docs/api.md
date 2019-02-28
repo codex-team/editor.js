@@ -110,6 +110,8 @@ Each method returns `boolean` value: true if caret is set successfully or false 
 
 `setToBlock(index: number, position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the Block by passed `index`
 
+`focus(atEnd?: boolean): boolean;` — set caret to the Editor. If `atEnd` is true, set it at the end.
+
 ### NotifierAPI
 
 If you need to show any messages for success or failure events you can use notifications module.
@@ -153,3 +155,26 @@ It makes following steps:
 3. Delete all properties from instance object and set it\`s prototype to `null`
 
 After executing the `destroy` method, editor inctance becomes an empty object. This way you will free occupied JS Heap on your page.
+
+### Shorthands
+
+Editor`s API provides some shorthands for API methods. 
+
+| Alias    | Method          |
+| ------   | --------------- |
+| `clear`  | `blocks.clear`  |
+| `render` | `blocks.render` |
+| `focus`  | `caret.focus`   |
+| `on`     | `events.on`     |
+| `off`    | `events.off`    |
+| `emit`   | `events.emit`   |
+| `save`   | `saver.save`    |
+
+> Example
+
+```javascript
+const editor = EditorJS();
+
+editor.focus();
+editor.save();
+```

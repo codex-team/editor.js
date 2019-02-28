@@ -102,5 +102,31 @@ export default class EditorJS {
     Object.setPrototypeOf(this, editor.moduleInstances.API.methods);
 
     delete this.exportAPI;
+
+    const shorthands = {
+      blocks: {
+        clear: 'clear',
+        render: 'render',
+      },
+      caret: {
+        focus: 'focus',
+      },
+      events: {
+        on: 'on',
+        off: 'off',
+        emit: 'emit',
+      },
+      saver: {
+        save: 'save',
+      },
+    };
+
+    Object.entries(shorthands)
+      .forEach(([key, methods]) => {
+        Object.entries(methods)
+          .forEach(([name, alias]) => {
+            this[alias] = editor.moduleInstances.API.methods[key][name];
+          });
+      });
   }
 }
