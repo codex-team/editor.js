@@ -50,6 +50,11 @@ export default class RectangleSelection extends Module {
   private readonly TOP_SCROLL_ZONE = 2;
 
   /**
+   * Id of main button for event.button
+   */
+  private readonly MAIN_MOUSE_BUTTON = 0;
+
+  /**
    *  Mouse is clamped
    */
   private mousedown: boolean = false;
@@ -115,6 +120,7 @@ export default class RectangleSelection extends Module {
     });
 
     Listeners.on(container, 'mousedown', (event: MouseEvent) => {
+      if (event.button !== this.MAIN_MOUSE_BUTTON) { return; }
       this.startSelection(event.pageX, event.pageY);
     }, false);
 
