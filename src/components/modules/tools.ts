@@ -8,7 +8,7 @@ import LinkInlineTool from '../inline-tools/inline-tool-link';
 import Stub from '../tools/stub';
 
 /**
- * @module Codex Editor Tools Submodule
+ * @module Editor.js Tools Submodule
  *
  * Creates Instances from Plugins and binds external config to the instances
  */

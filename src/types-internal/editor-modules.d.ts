@@ -29,11 +29,13 @@ import NotifierAPI from '../components/modules/api/notifier';
 import SaverAPI from '../components/modules/api/saver';
 import Saver from '../components/modules/saver';
 import BlockSelection from '../components/modules/blockSelection';
+import RectangleSelection from '../components/modules/RectangleSelection';
 
 export interface EditorModules {
   UI: UI;
   BlockEvents: BlockEvents;
   BlockSelection: BlockSelection;
+  RectangleSelection: RectangleSelection;
   Listeners: Listeners;
   Toolbar: Toolbar;
   InlineToolbar: InlineToolbar;

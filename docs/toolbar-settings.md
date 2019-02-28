@@ -1,4 +1,4 @@
-# CodeX Editor Toolbar Block Settings Module
+# Editor.js Toolbar Block Settings Module
 
 Toolbar Module has space for Block settings. Settings divided into:
  - space for plugin's settings, that is described by «Plugin»'s Developer

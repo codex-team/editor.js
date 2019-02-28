@@ -12,7 +12,7 @@ import 'components/polyfills';
 import Core from './components/core';
 
 /**
- * Codex Editor
+ * Editor.js
  *
  * Short Description (눈_눈;)
  * @version 2.0
@@ -20,7 +20,7 @@ import Core from './components/core';
  * @licence Apache-2.0
  * @author CodeX-Team <https://ifmo.su>
  */
-export default class CodexEditor {
+export default class EditorJS {
   /**
    * Promise that resolves when core modules are ready and UI is rendered on the page
    */
@@ -56,7 +56,7 @@ export default class CodexEditor {
     }
 
     /**
-     * Create a CodeX Editor instance
+     * Create a Editor.js instance
      */
     const editor = new Core(configuration);
 
@@ -102,5 +102,31 @@ export default class CodexEditor {
     Object.setPrototypeOf(this, editor.moduleInstances.API.methods);
 
     delete this.exportAPI;
+
+    const shorthands = {
+      blocks: {
+        clear: 'clear',
+        render: 'render',
+      },
+      caret: {
+        focus: 'focus',
+      },
+      events: {
+        on: 'on',
+        off: 'off',
+        emit: 'emit',
+      },
+      saver: {
+        save: 'save',
+      },
+    };
+
+    Object.entries(shorthands)
+      .forEach(([key, methods]) => {
+        Object.entries(methods)
+          .forEach(([name, alias]) => {
+            this[alias] = editor.moduleInstances.API.methods[key][name];
+          });
+      });
   }
 }

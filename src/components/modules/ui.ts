@@ -17,7 +17,7 @@ import Selection from '../selection';
 /**
  * @class
  *
- * @classdesc Makes CodeX Editor UI:
+ * @classdesc Makes Editor.js UI:
  *                <codex-editor>
  *                    <ce-redactor />
  *                    <ce-toolbar />
@@ -25,8 +25,8 @@ import Selection from '../selection';
  *                </codex-editor>
  *
  * @typedef {UI} UI
- * @property {EditorConfig} config   - editor configuration {@link CodexEditor#configuration}
- * @property {Object} Editor         - available editor modules {@link CodexEditor#moduleInstances}
+ * @property {EditorConfig} config   - editor configuration {@link EditorJS#configuration}
+ * @property {Object} Editor         - available editor modules {@link EditorJS#moduleInstances}
  * @property {Object} nodes          -
  * @property {Element} nodes.holder  - element where we need to append redactor
  * @property {Element} nodes.wrapper  - <codex-editor>
@@ -35,30 +35,61 @@ import Selection from '../selection';
 export default class UI extends Module {
 
   /**
-   * CodeX Editor UI CSS class names
+   * Editor.js UI CSS class names
    * @return {{editorWrapper: string, editorZone: string}}
    */
-  private get CSS(): {editorWrapper: string, editorZone: string} {
+  public static get CSS(): {
+    editorWrapper: string, editorWrapperNarrow: string, editorZone: string, editorZoneHidden: string,
+    editorLoader: string,
+  } {
     return {
-      editorWrapper : 'codex-editor',
-      editorZone    : 'codex-editor__redactor',
+      editorWrapper    : 'codex-editor',
+      editorWrapperNarrow : 'codex-editor--narrow',
+      editorZone       : 'codex-editor__redactor',
+      editorZoneHidden : 'codex-editor__redactor--hidden',
+      editorLoader     : 'codex-editor__loader',
     };
   }
 
   /**
+   * Width of center column of Editor
+   * @type {number}
+   */
+  public contentWidth: number = 650;
+
+  /**
    * HTML Elements used for UI
    */
-  public nodes: {[key: string]: HTMLElement} = {
+  public nodes: { [key: string]: HTMLElement } = {
     holder: null,
     wrapper: null,
     redactor: null,
   };
 
   /**
+   * Adds loader to editor while content is not ready
+   */
+  public addLoader(): void {
+    this.nodes.loader = $.make('div', UI.CSS.editorLoader);
+    this.nodes.wrapper.prepend(this.nodes.loader);
+    this.nodes.redactor.classList.add(UI.CSS.editorZoneHidden);
+  }
+
+  /**
+   * Removes loader when content has loaded
+   */
+  public removeLoader(): void {
+    this.nodes.loader.remove();
+    this.nodes.redactor.classList.remove(UI.CSS.editorZoneHidden);
+  }
+
+  /**
    * Making main interface
    */
   public async prepare(): Promise<void> {
     await this.make();
+
+    this.addLoader();
 
     /**
      * Append SVG sprite
@@ -94,12 +125,12 @@ export default class UI extends Module {
   }
 
   /**
-   * Makes CodeX Editor interface
+   * Makes Editor.js interface
    * @return {Promise<void>}
    */
   private async make(): Promise<void> {
     /**
-     * Element where we need to append CodeX Editor
+     * Element where we need to append Editor.js
      * @type {Element}
      */
     this.nodes.holder = document.getElementById(this.config.holderId);
@@ -111,11 +142,19 @@ export default class UI extends Module {
     /**
      * Create and save main UI elements
      */
-    this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
-    this.nodes.redactor = $.make('div', this.CSS.editorZone);
+    this.nodes.wrapper  = $.make('div', UI.CSS.editorWrapper);
+    this.nodes.redactor = $.make('div', UI.CSS.editorZone);
+
+    /**
+     * If Editor has injected into the narrow container, enable Narrow Mode
+     */
+    if (this.nodes.holder.offsetWidth < this.contentWidth) {
+      this.nodes.wrapper.classList.add(UI.CSS.editorWrapperNarrow);
+    }
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.holder.appendChild(this.nodes.wrapper);
+
   }
 
   /**
@@ -141,7 +180,7 @@ export default class UI extends Module {
   }
 
   /**
-   * Bind events on the CodeX Editor interface
+   * Bind events on the Editor.js interface
    */
   private bindEvents(): void {
     this.Editor.Listeners.on(
@@ -150,8 +189,8 @@ export default class UI extends Module {
       (event) => this.redactorClicked(event as MouseEvent),
       false,
     );
-    this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true );
-    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), false );
+    this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
+    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), false);
   }
 
   /**
@@ -162,6 +201,9 @@ export default class UI extends Module {
     switch (event.keyCode) {
       case _.keyCodes.ENTER:
         this.enterPressed(event);
+        break;
+      case _.keyCodes.BACKSPACE:
+        this.backspacePressed(event);
         break;
       default:
         this.defaultBehaviour(event);
@@ -174,22 +216,48 @@ export default class UI extends Module {
    * @param {KeyboardEvent} event
    */
   private defaultBehaviour(event: KeyboardEvent): void {
-    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${this.CSS.editorWrapper}`);
+    const keyDownOnEditor = (event.target as HTMLElement).closest(`.${UI.CSS.editorWrapper}`);
+    const {currentBlock} = this.Editor.BlockManager;
+    const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
     /**
-     * Ignore keydowns on document
-     * clear pointer and close toolbar
+     * Ignore keydowns on editor and meta keys
      */
-    if (!keyDownOnEditor) {
-      /**
-       * Remove all highlights and remove caret
-       */
-      this.Editor.BlockManager.dropPointer();
+    if (keyDownOnEditor || (currentBlock && isMetaKey)) {
+      return;
+    }
+
+    /**
+     * Remove all highlights and remove caret
+     */
+    this.Editor.BlockManager.dropPointer();
+
+    /**
+     * Close Toolbar
+     */
+    this.Editor.Toolbar.close();
+  }
+
+  /**
+   * @param {KeyboardEvent} event
+   */
+  private backspacePressed(event: KeyboardEvent): void {
+    const {BlockManager, BlockSelection, Caret} = this.Editor;
+
+    if (BlockSelection.anyBlockSelected) {
+      const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+      Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
+
+      /** Clear selection */
+      BlockSelection.clearSelection();
 
       /**
-       * Close Toolbar
+       * Stop propagations
+       * Manipulation with BlockSelections is handled in global backspacePress because they may occur
+       * with CMD+A or RectangleSelection and they can be handled on document event
        */
-      this.Editor.Toolbar.close();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
     }
   }
 
@@ -198,9 +266,24 @@ export default class UI extends Module {
    * @param event
    */
   private enterPressed(event: KeyboardEvent): void {
-    const hasPointerToBlock = this.Editor.BlockManager.currentBlockIndex >= 0;
+    const {BlockManager, BlockSelection, Caret} = this.Editor;
+    const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
-    if (this.Editor.BlockSelection.anyBlockSelected) {
+    if (BlockSelection.anyBlockSelected) {
+      const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+      Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
+
+      /** Clear selection */
+      BlockSelection.clearSelection();
+
+      /**
+       * Stop propagations
+       * Manipulation with BlockSelections is handled in global enterPress because they may occur
+       * with CMD+A or RectangleSelection
+       */
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      event.stopPropagation();
       return;
     }
 
@@ -245,7 +328,7 @@ export default class UI extends Module {
      */
     const target = event.target as HTMLElement;
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
-    const clickedInsideofEditor = target.closest(`.${this.CSS.editorWrapper}`);
+    const clickedInsideofEditor = target.closest(`.${UI.CSS.editorWrapper}`);
 
     /** Clear highlightings and pointer on BlockManager */
     if (!clickedInsideofEditor && !Selection.isAtEditor) {
@@ -319,9 +402,11 @@ export default class UI extends Module {
       this.Editor.BlockManager.highlightCurrentNode();
     } catch (e) {
       /**
-       * If clicked outside first-level Blocks, set Caret to the last empty Block
+       * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
        */
-      this.Editor.Caret.setToTheLastBlock();
+      if (!this.Editor.RectangleSelection.isRectActivated()) {
+        this.Editor.Caret.setToTheLastBlock();
+      }
     }
 
     event.stopImmediatePropagation();

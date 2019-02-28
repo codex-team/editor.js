@@ -2,25 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>CodeX Editor 🤩🧦🤨 example</title>
+  <title>Editor.js 🤩🧦🤨 example</title>
   <link href="https://fonts.googleapis.com/css?family=PT+Mono" rel="stylesheet">
   <link href="assets/demo.css" rel="stylesheet">
   <script src="assets/json-preview.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 </head>
 <body>
   <div class="ce-example">
     <div class="ce-example__header">
-      <a class="ce-example__header-logo" href="https://ifmo.su/editor">CodeX Editor 🤩🧦🤨</a>
+      <a class="ce-example__header-logo" href="https://ifmo.su/editor">Editor.js 🤩🧦🤨</a>
 
       <div class="ce-example__header-menu">
-        <a href="https://github.com/codex-editor" target="_blank">Plugins</a>
+        <a href="https://github.com/codex-editor/" target="_blank">Plugins</a>
       </div>
     </div>
-    <div class="ce-example__content">
-      <div id="codex-editor"></div>
+    <div class="ce-example__content _ce-example__content--small">
+      <div id="editorjs"></div>
 
       <div class="ce-example__button" id="saveButton">
-        editor.saver.save()
+        editor.save()
       </div>
     </div>
     <div class="ce-example__output">
@@ -45,16 +46,18 @@
   <script src="./tools/simple-image/dist/bundle.js"></script><!-- Image -->
   <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
   <script src="./tools/list/dist/bundle.js"></script><!-- List -->
+  <script src="./tools/checklist/dist/bundle.js"></script><!-- Checklist -->
   <script src="./tools/quote/dist/bundle.js"></script><!-- Quote -->
   <script src="./tools/code/dist/bundle.js"></script><!-- Code -->
   <script src="./tools/embed/dist/bundle.js"></script><!-- Embed -->
   <script src="./tools/table/dist/bundle.js"></script><!-- Table -->
+  <script src="./tools/link/dist/bundle.js"></script><!-- Link -->
 
   <script src="./tools/marker/dist/bundle.js"></script><!-- Marker -->
   <script src="./tools/inline-code/dist/bundle.js"></script><!-- Inline Code -->
 
-  <!-- Load CodeX Editor's Core -->
-  <script src="../dist/codex-editor.js"></script>
+  <!-- Load Editor.js's Core -->
+  <script src="../dist/editor.js"></script>
 
   <!-- Initialization -->
   <script>
@@ -67,11 +70,11 @@
      * To initialize the Editor, create a new instance with configuration object
      * @see docs/installation.md for mode details
      */
-    var editor = new CodexEditor({
+    var editor = new EditorJS({
       /**
        * Wrapper of Editor
        */
-      holderId: 'codex-editor',
+      holderId: 'editorjs',
 
       /**
        * Tools list
@@ -85,7 +88,8 @@
           inlineToolbar: ['link'],
           config: {
             placeholder: 'Header'
-          }
+          },
+          shortcut: 'CMD+SHIFT+H'
         },
 
         /**
@@ -98,7 +102,13 @@
 
         list: {
           class: List,
-          inlineToolbar: true
+          inlineToolbar: true,
+          shortcut: 'CMD+SHIFT+L'
+        },
+
+        checklist: {
+          class: Checklist,
+          inlineToolbar: true,
         },
 
         quote: {
@@ -108,6 +118,7 @@
             quotePlaceholder: 'Enter a quote',
             captionPlaceholder: 'Quote\'s author',
           },
+          shortcut: 'CMD+SHIFT+O'
         },
 
         marker: {
@@ -117,7 +128,7 @@
 
         code: {
           class:  CodeTool,
-          shortcut: 'CMD+SHIFT+D'
+          shortcut: 'CMD+SHIFT+C'
         },
 
         delimiter: Delimiter,
@@ -127,11 +138,14 @@
           shortcut: 'CMD+SHIFT+C'
         },
 
+        link: LinkTool,
+
         embed: Embed,
 
         table: {
           class: Table,
-          inlineToolbar: true
+          inlineToolbar: true,
+          shortcut: 'CMD+ALT+T'
         },
 
       },
@@ -149,7 +163,7 @@
           {
             type: "header",
             data: {
-              text: "CodeX Editor",
+              text: "Editor.js",
               level: 2
             }
           },
@@ -187,7 +201,7 @@
           {
             type : 'paragraph',
             data : {
-              text : 'Блоки — это структурные элементы, из которых состоит статья. Например <code class="inline-code">Параграф</code>, <code class="inline-code">Заголовок</code>, <code class="inline-code">Изображение</code>, <code class="inline-code">Видео</code> — это все Блоки. В CodeX Editor каждый Блок определяется плагином. Есть много готовых Блоков и простой API для создания новых. Например, вы можете создать Блок для Твиттера, Инстаграма, Опроса, Игры или CTA-кнопки.'
+              text : 'Блоки — это структурные элементы, из которых состоит статья. Например <code class="inline-code">Параграф</code>, <code class="inline-code">Заголовок</code>, <code class="inline-code">Изображение</code>, <code class="inline-code">Видео</code> — это все Блоки. В Editor.js каждый Блок определяется плагином. Есть много готовых Блоков и простой API для создания новых. Например, вы можете создать Блок для Твиттера, Инстаграма, Опроса, Игры или CTA-кнопки.'
             }
           },
           {
@@ -200,7 +214,7 @@
           {
             type : 'paragraph',
             data : {
-              text : 'В отличие от WYSIWYG-редакторов, CodeX Editor возвращает не сгенерированный HTML-код, включающий и содержание и оформление статьи, а JSON с данными о каждом Блоке. Пример таких данных находится внизу этой страницы.'
+              text : 'В отличие от WYSIWYG-редакторов, Editor.js возвращает не сгенерированный HTML-код, включающий и содержание и оформление статьи, а JSON с данными о каждом Блоке. Пример таких данных находится внизу этой страницы.'
             }
           },
           {
@@ -249,7 +263,7 @@
      * Saving example
      */
     saveButton.addEventListener('click', function () {
-      editor.saver.save().then((savedData) => {
+      editor.save().then((savedData) => {
         cPreview.show(savedData, document.getElementById("output"));
       });
     });

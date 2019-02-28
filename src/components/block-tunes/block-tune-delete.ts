@@ -10,7 +10,7 @@ import $ from '../dom';
 export default class DeleteTune implements BlockTune {
 
   /**
-   * Property that contains CodeX Editor API methods
+   * Property that contains Editor.js API methods
    * @see {docs/api.md}
    */
   private readonly api: API;

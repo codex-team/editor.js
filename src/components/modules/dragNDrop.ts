@@ -1,8 +1,6 @@
 import SelectionUtils from '../selection';
 
 import Module from '../__module';
-import Caret from './caret';
-
 export default class DragNDrop extends Module {
 
   /**
@@ -50,6 +48,7 @@ export default class DragNDrop extends Module {
   private processDrop = async (dropEvent: DragEvent): Promise<void> => {
     const {
       BlockManager,
+      Caret,
       Paste,
     } = this.Editor;
 
@@ -68,9 +67,13 @@ export default class DragNDrop extends Module {
      * If drop target (error will be thrown) is not part of the Block, set last Block as current.
      */
     try {
-      BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node, Caret.positions.END);
+      const targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target as Node);
+
+      this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
     } catch (e) {
-      BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder, Caret.positions.END);
+      const targetBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
+
+      this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
     }
 
     Paste.processDataTransfer(dropEvent.dataTransfer, true);

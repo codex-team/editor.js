@@ -34,3 +34,9 @@
 [submodule "example/tools/table"]
 	path = example/tools/table
 	url = https://github.com/codex-editor/table
+[submodule "example/tools/checklist"]
+	path = example/tools/checklist
+	url = https://github.com/codex-editor/checklist
+[submodule "example/tools/link"]
+	path = example/tools/link
+	url = https://github.com/codex-editor/link

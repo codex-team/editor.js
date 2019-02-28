@@ -9,26 +9,54 @@
   will-change: opacity, transform;
   display: none;
 
+  @media (--mobile) {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    left: 0;
+    right: 0;
+    z-index: 9;
+    height: 50px;
+    background: #fff;
+    box-shadow:  0 -2px 12px rgba(60, 67, 81, 0.18);
+    transform: none !important;
+  }
+
   &--opened {
     display: block;
-    /*opacity: 1;*/
-    /*visibility: visible;*/
+
+    @media (--mobile){
+      display: flex;
+    }
   }
 
   &__content {
     max-width: var(--content-width);
     margin: 0 auto;
     position: relative;
+
+    @media (--mobile){
+      display: flex;
+      align-content: center;
+      margin: 0;
+      padding: 0 10px;
+      max-width: calc(100% - 70px);
+      overflow-x: auto;
+    }
   }
 
   &__plus {
     @apply --toolbox-button;
 
     position: absolute;
-    left: calc(calc(var(--toolbox-buttons-size) + 10px) * -1);
+    left: calc(var(--toolbox-buttons-size) * -1);
 
     &--hidden {
       display: none;
+    }
+
+    @media (--mobile){
+      display: none !important;
     }
   }
 
@@ -49,6 +77,13 @@
     padding-right: 16px;
     opacity: 0;
 
+    @media (--mobile){
+      position: static;
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+    }
+
     &--opened {
       opacity: 1;
     }
@@ -64,5 +99,14 @@
     height: 24px;
     color: var(--grayText);
     cursor: pointer;
+  }
+}
+
+/**
+ * Styles for Narrow mode
+ */
+.codex-editor--narrow .ce-toolbar__plus {
+  @media (--not-mobile) {
+    left: 5px;
   }
 }

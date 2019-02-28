@@ -20,7 +20,7 @@ export interface ChainData {
 }
 
 /**
- * Codex Editor Util
+ * Editor.js utils
  */
 export default class Util {
   /**
@@ -275,5 +275,37 @@ export default class Util {
 
     document.execCommand('copy');
     document.body.removeChild(el);
+  }
+
+  /**
+   * Returns object with os name as key and boolean as value. Shows current user OS
+   *
+   * @return {[key: string]: boolean}
+   */
+  public static getUserOS(): {[key: string]: boolean} {
+    const OS = {
+      win: false,
+      mac: false,
+      x11: false,
+      linux: false,
+    };
+
+    const userOS = Object.keys(OS).find((os: string) => navigator.appVersion.toLowerCase().indexOf(os) !== -1);
+
+    if (userOS) {
+      OS[userOS] = true;
+      return OS;
+    }
+
+    return OS;
+  }
+
+  /**
+   * Capitalizes first letter of the string
+   * @param {string} text
+   * @return {string}
+   */
+  public static capitalize(text: string): string {
+    return text[0].toUpperCase() + text.slice(1);
   }
 }

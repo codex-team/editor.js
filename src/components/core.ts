@@ -28,7 +28,7 @@ contextRequire.keys().forEach((filename) => {
 /**
  * @class Core
  *
- * @classdesc CodeX Editor core class
+ * @classdesc Editor.js core class
  *
  * @property this.config - all settings
  * @property this.moduleInstances - constructed editor components
@@ -58,7 +58,7 @@ export default class Core {
    */
   constructor(config?: EditorConfig|string) {
     /**
-     * Ready promise. Resolved if CodeX Editor is ready to work, rejected otherwise
+     * Ready promise. Resolved if Editor.js is ready to work, rejected otherwise
      */
     let onReady, onFail;
 
@@ -78,6 +78,17 @@ export default class Core {
         _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
 
         setTimeout(() => {
+          if ((this.configuration as EditorConfig).autofocus) {
+            const {BlockManager, Caret} = this.moduleInstances;
+
+            Caret.setToBlock(BlockManager.blocks[0], Caret.positions.START);
+          }
+
+          /**
+           * Remove loader, show content
+           */
+          this.moduleInstances.UI.removeLoader();
+
           /**
            * Resolve this.isReady promise
            */
@@ -85,7 +96,7 @@ export default class Core {
         }, 500);
       })
       .catch((error) => {
-        _.log(`CodeX Editor does not ready because of ${error}`, 'error');
+        _.log(`Editor.js is not ready because of ${error}`, 'error');
 
         /**
          * Reject this.isReady promise
@@ -119,7 +130,7 @@ export default class Core {
      * If holderId is empty then set a default value
      */
     if (!this.config.holderId || typeof this.config.holderId !== 'string') {
-      this.config.holderId = 'codex-editor';
+      this.config.holderId = 'editorjs';
     }
 
     /**
@@ -238,6 +249,7 @@ export default class Core {
       'DragNDrop',
       'ModificationsObserver',
       'BlockSelection',
+      'RectangleSelection',
     ];
 
     await modulesToPrepare.reduce(

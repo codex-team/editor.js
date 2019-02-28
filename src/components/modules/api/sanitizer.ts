@@ -3,7 +3,7 @@ import {Sanitizer} from '../../../../types/api';
 
 /**
  * @class SanitizerAPI
- * Provides CodeX Editor Sanitizer that allows developers to clean their HTML
+ * Provides Editor.js Sanitizer that allows developers to clean their HTML
  */
 export default class SanitizerAPI extends Module {
   /**

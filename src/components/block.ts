@@ -9,6 +9,7 @@ import {
   ToolConfig,
 } from '../../types';
 
+import {SavedData} from '../types-internal/block-data';
 import $ from './dom';
 import _ from './utils';
 
@@ -25,6 +26,7 @@ import _ from './utils';
 import MoveUpTune from './block-tunes/block-tune-move-up';
 import DeleteTune from './block-tunes/block-tune-delete';
 import MoveDownTune from './block-tunes/block-tune-move-down';
+import SelectionUtils from './selection';
 
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
@@ -60,10 +62,21 @@ export default class Block {
     const content = this.holder;
     const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
 
-    const selector = '[contenteditable], textarea, input, '
+    const selector = '[contenteditable], textarea, input:not([type]), '
       + allowedInputTypes.map((type) => `input[type="${type}"]`).join(', ');
 
-    const inputs = _.array(content.querySelectorAll(selector));
+    let inputs = _.array(content.querySelectorAll(selector));
+
+    /**
+     * If contenteditable element contains block elements, treat them as inputs.
+     */
+    inputs = inputs.reduce((result, input) => {
+      if ($.isNativeInput(input) || $.containsOnlyInlineElements(input)) {
+        return [...result, input];
+      }
+
+      return [...result, ...$.getDeepestBlockElements(input)];
+    }, []);
 
     /**
      * If inputs amount was changed we need to check if input index is bigger then inputs array length
@@ -80,7 +93,7 @@ export default class Block {
    *
    * @returns {HTMLElement}
    */
-  get currentInput(): HTMLElement {
+  get currentInput(): HTMLElement | Node {
     return this.inputs[this.inputIndex];
   }
 
@@ -89,7 +102,7 @@ export default class Block {
    *
    * @param {HTMLElement} element
    */
-  set currentInput(element: HTMLElement) {
+  set currentInput(element: HTMLElement | Node) {
     const index = this.inputs.findIndex((input) => input === element || input.contains(element));
 
     if (index !== -1) {
@@ -185,8 +198,8 @@ export default class Block {
    * @return {Boolean}
    */
   get isEmpty(): boolean {
-    const emptyText = $.isEmpty(this.pluginsContent),
-      emptyMedia = !this.hasMedia;
+    const emptyText = $.isEmpty(this.pluginsContent);
+    const emptyMedia = !this.hasMedia;
 
     return emptyText && emptyMedia;
   }
@@ -293,6 +306,12 @@ export default class Block {
   private inputIndex = 0;
 
   /**
+   * Mutation observer to handle DOM mutations
+   * @type {MutationObserver}
+   */
+  private mutationObserver: MutationObserver;
+
+  /**
    * @constructor
    * @param {String} toolName - Tool name that passed on initialization
    * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
@@ -313,6 +332,8 @@ export default class Block {
     this.settings = settings;
     this.api = apiMethods;
     this.holder = this.compose();
+
+    this.mutationObserver = new MutationObserver(this.didMutated);
 
     /**
      * @type {BlockTune[]}
@@ -349,7 +370,7 @@ export default class Block {
    * Groups Tool's save processing time
    * @return {Object}
    */
-  public async save(): Promise<void|{tool: string, data: BlockToolData, time: number}> {
+  public async save(): Promise<void|SavedData> {
     const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
 
     /**
@@ -378,23 +399,19 @@ export default class Block {
    * Uses Tool's validation method to check the correctness of output data
    * Tool's validation method is optional
    *
-   * @description Method also can return data if it passed the validation
+   * @description Method returns true|false whether data passed the validation or not
    *
-   * @param {Object} data
-   * @returns {Boolean|Object} valid
+   * @param {BlockToolData} data
+   * @returns {Promise<boolean>} valid
    */
-  public validateData(data: BlockToolData): BlockToolData|false {
+  public async validate(data: BlockToolData): Promise<boolean> {
     let isValid = true;
 
     if (this.tool.validate instanceof Function) {
-      isValid = this.tool.validate(data);
+      isValid = await this.tool.validate(data);
     }
 
-    if (!isValid) {
-      return false;
-    }
-
-    return data;
+    return isValid;
   }
 
   /**
@@ -434,6 +451,37 @@ export default class Block {
    */
   public set dropTarget(state) {
     this.holder.classList.toggle(Block.CSS.dropTarget, state);
+  }
+
+  /**
+   * Update current input index with selection anchor node
+   */
+  public updateCurrentInput(): void {
+    this.currentInput = SelectionUtils.anchorNode;
+  }
+
+  /**
+   * Is fired when Block will be selected as current
+   */
+  public willSelect(): void {
+    /**
+     * Observe DOM mutations to update Block inputs
+     */
+    this.mutationObserver.observe(this.holder, {childList: true, subtree: true});
+  }
+
+  /**
+   * Is fired when Block will be unselected
+   */
+  public willUnselect() {
+    this.mutationObserver.disconnect();
+  }
+
+  /**
+   * Is fired when DOM mutation has been happened
+   */
+  private didMutated = () => {
+    this.updateCurrentInput();
   }
 
   /**

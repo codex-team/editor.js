@@ -1,25 +1,42 @@
 <p align="center"><img src="https://capella.pics/3c0b525b-50d9-4720-8aad-9148114cfa6e.jpg"></p>
 
-[![](https://flat.badgen.net/npm/v/codex.editor?icon=npm)](https://www.npmjs.com/package/codex.editor)
+[![](https://flat.badgen.net/npm/v/@editorjs/editorjs?icon=npm)](https://www.npmjs.com/package/@editorjs/editorjs)
+[![](https://flat.badgen.net/bundlephobia/min/@editorjs/editorjs?color=cyan)](https://www.npmjs.com/package/@editorjs/editorjs)
+[![](https://flat.badgen.net/bundlephobia/minzip/@editorjs/editorjs?color=green)](https://www.npmjs.com/package/@editorjs/editorjs)
+[![](https://flat.badgen.net/npm/license/@editorjs/editorjs)](https://www.npmjs.com/package/@editorjs/editorjs)
 
 ## Version 2.0-beta is here!
 
-We are glad to introduce the next version of CodeX Editor. Totally new core, structure and plugins — that was an impressive adventure 🤓.
+We are glad to introduce the next version of Editor.js. Totally new core, structure and plugins — that was an impressive adventure 🤓.
 
 Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_editor) where you always find a support.
 
+### Browsers support
+
+| [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_48x48.png" alt="iOS Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>iOS Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Opera |
+| --------- | --------- | --------- | --------- | --------- | --------- |
+| Edge 12+ | Firefox 18+ | Chrome 49+ | Safari 10+ | Safari 10+ | Opera 36+
+
+### 2.7-2.9 changelog
+
+- `New` — Toolbox now have beautiful helpers with Tool names and shortcuts
+- `Improvements` — Prevent navigating back on Firefox when Block is removing by backspace 
+- `New` — Blocks selected with Rectangle Selection can be also removed, copied or cut
+- `New` — Migrate from `postcss-cssnext` to `postcss-preset-env` and disable `postcss-custom-properties` which conflicts with `postcss-preset-env`
+- `New` *RectangeSelection* — Ability to select Block or several Blocks with mouse
+
 ### 2.2—2.7 changelog
 
-- `New` *Sanitize API* — [Sanitize Config](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.
+- `New` *Sanitize API* — [Sanitize Config](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.
 - `New` *Block Selection* — Ability to select Block by `CMD+A`, and the whole Editor by double `CMD+A`. After that, you can copy (`CMD+C`), remove (`Backspace`) or clear (`Enter`) selected Blocks.
-- `New` *[Styles API](https://github.com/codex-team/codex.editor/blob/master/types/api/styles.d.ts)* — Added `button` class for stylization of any buttons provided by Tools with one unified style.
-- `New` *[Notifier API](https://github.com/codex-team/codex.editor/blob/master/docs/api.md#notifierapi)* — methods for showing user notifications: on success, errors, warnings, etc. 
+- `New` *[Styles API](https://github.com/codex-team/editor.js/blob/master/types/api/styles.d.ts)* — Added `button` class for stylization of any buttons provided by Tools with one unified style.
+- `New` *[Notifier API](https://github.com/codex-team/editor.js/blob/master/docs/api.md#notifierapi)* — methods for showing user notifications: on success, errors, warnings, etc. 
 - `New` *Block Tool* — [Table](http://github.com/codex-editor/table) constructor 💪 
 - `New` If one of the Tools is unavailable on Editor initialization, its Blocks will be rendered with *Dummy Block*, describing that user can not edit content of this Block. Dummy Blocks can be moved, removed and saved as normal Blocks. So saved data won't be lost if one of the Tools is failed 
-- `New` [Public TS-types](https://github.com/codex-team/codex.editor/tree/master/types) are presented.
+- `New` [Public TS-types](https://github.com/codex-team/editor.js/tree/master/types) are presented.
 - `Changes` *Tools API*  — options `irreplaceable` and `contentless` was removed.
-- `Changes` *Tools API* — [Paste API](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#paste-handling): tags, patterns and mime-types now should be specified by Tool's `pasteConfig` static property. Custom Paste Event should be handled by `onPaste(event)` that should not be static from now.
-- `Changes` *Tools API* — options `displayInToolbox ` and `toolboxIcon` was removed. Use [`toolbox`](https://github.com/codex-team/codex.editor/blob/master/docs/tools.md#internal-tool-settings) instead, that should return object with `icon` and `title` field, or `false` if Tool should not be placed at the Toolbox. Also, there are a way to override `toolbox {icon, title}` settings provided by Tool with you own settings at the Initial Config.
+- `Changes` *Tools API* — [Paste API](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#paste-handling): tags, patterns and mime-types now should be specified by Tool's `pasteConfig` static property. Custom Paste Event should be handled by `onPaste(event)` that should not be static from now.
+- `Changes` *Tools API* — options `displayInToolbox ` and `toolboxIcon` was removed. Use [`toolbox`](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#internal-tool-settings) instead, that should return object with `icon` and `title` field, or `false` if Tool should not be placed at the Toolbox. Also, there are a way to override `toolbox {icon, title}` settings provided by Tool with you own settings at the Initial Config.
 - `Improvements` — All Projects code now on TypeScript
 - `Improvements` — NPM package size decreased from 1300kb to 422kb
 - `Improvements` — Bundle size decreased from 438kb to 252kb
@@ -49,13 +66,13 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 ---
 
-# So how to use CodeX Editor
+# So how to use Editor.js
 
 ## Basics
 
-CodeX Editor is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
+Editor.js is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
-We have [many](http://github.com/codex-editor) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
+We have [many](http://github.com/codex-editor/) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
 
 So how to use the Editor after [Installation](docs/installation.md).
 
@@ -91,7 +108,7 @@ Shortcut | Action | Restrictions
 Also we support shortcuts on the all type of Tools. Specify a shortcut with the Tools configuration. For example:
 
 ```js
-var editor = CodexEditor({
+var editor = EditorJS({
   //...
   tools: {
     header: {
@@ -111,7 +128,7 @@ var editor = CodexEditor({
 
 # Installation Guide
 
-There are few steps to run CodeX Editor on your site.
+There are few steps to run Editor.js on your site.
 
 1. [Load Editor's core](#load-editors-core)
 2. [Load Tools](#load-tools)
@@ -119,7 +136,7 @@ There are few steps to run CodeX Editor on your site.
 
 ## Load Editor's core
 
-Firstly you need to get CodeX Editor itself. It is a [minified script](build/codex-editor.js) with Editor's core and some default must-have tools.
+Firstly you need to get Editor.js itself. It is a [minified script](build/editor.js) with Editor's core and some default must-have tools.
 
 Choose the most usable method of getting Editor for you.
 
@@ -132,20 +149,20 @@ Choose the most usable method of getting Editor for you.
 Install the package via NPM or Yarn
 
 ```shell
-npm i codex.editor --save-dev
+npm i @editorjs/editorjs --save-dev
 ```
 
 Include module in your application
 
 ```javascript
-const CodexEditor = require('codex.editor');
+const EditorJS = require('@editorjs/editorjs');
 ```
 
 ### Use from CDN
 
-You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/codex.editor).
+You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/editorjs).
 
-`https://cdn.jsdelivr.net/npm/codex.editor@2.0.0`
+`https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest`
 
 Then require this script.
 
@@ -155,21 +172,21 @@ Then require this script.
 
 ### Save sources to project
 
-Copy [codex-editor.js](build/codex-editor.js) file to your project and load it.
+Copy [editor.js](build/editor.js) file to your project and load it.
 
 ```html
-<script src="codex-editor.js"></script>
+<script src="editor.js"></script>
 ```
 
 ## Load Tools
 
-Each Block at the CodeX Editor represented by [Tools](docs/tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
+Each Block at the Editor.js represented by [Tools](docs/tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
 
 For example check out our [Header](https://github.com/codex-editor/header) Tool that represents heading blocks.
 
 You can install Header Tool by the same way as the Editor (Node.js, CDN, local file).
 
-Check [CodeX Editor's community](https://github.com/codex-editor) to see more ready-to-use Tools.
+Check [Editor.js's community](https://github.com/codex-editor/) to see more ready-to-use Tools.
 
 **Example:** use Header from CDN
 
@@ -179,30 +196,30 @@ Check [CodeX Editor's community](https://github.com/codex-editor) to see more re
 
 ## Create Editor instance
 
-Create an instance of CodeX Editor and pass [Configuration Object](types/configs/editor-config.d.ts) with `holderId` and tools list.
+Create an instance of Editor.js and pass [Configuration Object](types/configs/editor-config.d.ts) with `holderId` and tools list.
 
 ```html
-<div id="codex-editor"></div>
+<div id="editorjs"></div>
 ```
 
-You can create a simple Editor with only default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param. Or use the default `codex-editor` id for wrapper.
+You can create a simple Editor with only default Paragraph Tool by passing a string with element's Id (wrapper for Editor) as a configuration param. Or use the default `editorjs` id for wrapper.
 
 ```javascript
-var editor = new CodexEditor(); /** Zero-configuration */
+var editor = new EditorJS(); /** Zero-configuration */
 
 // equals
 
-var editor = new CodexEditor('codex-editor');
+var editor = new EditorJS('editorjs');
 ````
 
 Or pass a whole settings object.
 
 ```javascript
-var editor = new CodexEditor({
+var editor = new EditorJS({
     /**
      * Create a holder for the Editor and pass its ID
      */
-    holderId : 'codex-editor',
+    holderId : 'editorjs',
 
     /**
      * Available Tools list.

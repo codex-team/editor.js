@@ -4,7 +4,7 @@ import {BlockToolData} from '../../../types';
 import {BlockToolConstructable} from '../../../types/tools';
 
 /**
- * Codex Editor Renderer Module
+ * Editor.js Renderer Module
  *
  * @module Renderer
  * @author CodeX Team
@@ -92,7 +92,7 @@ export default class Renderer extends Module {
 
       stub.stretched = true;
 
-      _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial CodeX Editor config.`, 'warn');
+      _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial Editor.js config.`, 'warn');
     }
   }
 }

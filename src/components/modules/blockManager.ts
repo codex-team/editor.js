@@ -12,7 +12,6 @@ import $ from '../dom';
 import _ from '../utils';
 import Blocks from '../blocks';
 import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
-import Caret from './caret';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -20,6 +19,38 @@ import Caret from './caret';
  * @property {Proxy} _blocks - Proxy for Blocks instance {@link Blocks}
  */
 export default class BlockManager extends Module {
+
+  /**
+   * Returns current Block index
+   * @return {number}
+   */
+  public get currentBlockIndex(): number {
+    return this._currentBlockIndex;
+  }
+
+  /**
+   * Set current Block index and fire Block lifecycle callbacks
+   * @param newIndex
+   */
+  public set currentBlockIndex(newIndex: number) {
+    if (this._blocks[this._currentBlockIndex]) {
+      this._blocks[this._currentBlockIndex].willUnselect();
+    }
+
+    if (this._blocks[newIndex]) {
+      this._blocks[newIndex].willSelect();
+    }
+
+    this._currentBlockIndex = newIndex;
+  }
+
+  /**
+   * returns first Block
+   * @return {Block}
+   */
+  public get firstBlock(): Block {
+    return this._blocks[0];
+  }
 
   /**
    * returns last Block
@@ -102,7 +133,7 @@ export default class BlockManager extends Module {
    *
    * @type {number}
    */
-  public currentBlockIndex: number = -1;
+  private _currentBlockIndex: number = -1;
 
   /**
    * Proxy for Blocks instance {@link Blocks}
@@ -120,6 +151,7 @@ export default class BlockManager extends Module {
    */
   public async prepare() {
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
+    const { BlockEvents, Shortcuts } = this.Editor;
 
     /**
      * We need to use Proxy to overload set/get [] operator.
@@ -138,6 +170,22 @@ export default class BlockManager extends Module {
     this._blocks = new Proxy(blocks, {
       set: Blocks.set,
       get: Blocks.get,
+    });
+
+    /** Copy shortcut */
+    Shortcuts.add({
+      name: 'CMD+C',
+      handler: (event) => {
+        BlockEvents.handleCommandC(event);
+      },
+    });
+
+    /** Copy and cut */
+    Shortcuts.add({
+      name: 'CMD+X',
+      handler: (event) => {
+        BlockEvents.handleCommandX(event);
+      },
     });
   }
 
@@ -212,6 +260,28 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Insert new initial block at passed index
+   *
+   * @param {number} index - index where Block should be inserted
+   * @param {boolean} needToFocus - if true, updates current Block index
+   *
+   * @return {Block} inserted Block
+   */
+  public insertAtIndex(index: number, needToFocus: boolean = false) {
+    const block = this.composeBlock(this.config.initialBlock, {}, {});
+
+    this._blocks[index] = block;
+
+    if (needToFocus) {
+      this.currentBlockIndex = index;
+    } else if (index <= this.currentBlockIndex) {
+      this.currentBlockIndex++;
+    }
+
+    return block;
+  }
+
+  /**
    * Always inserts at the end
    * @return {Block}
    */
@@ -256,10 +326,14 @@ export default class BlockManager extends Module {
    * @param {Number|null} index
    */
   public removeBlock(index?: number): void {
-    if (!index) {
+    if (index === undefined) {
       index = this.currentBlockIndex;
     }
     this._blocks.remove(index);
+
+    if (this.currentBlockIndex >= index) {
+      this.currentBlockIndex--;
+    }
 
     /**
      * If first Block was removed, insert new Initial Block and set focus on it`s first input
@@ -267,8 +341,33 @@ export default class BlockManager extends Module {
     if (!this.blocks.length) {
       this.currentBlockIndex = -1;
       this.insert();
-      this.currentBlock.firstInput.focus();
+      return;
+    } else if (index === 0) {
+      this.currentBlockIndex = 0;
     }
+  }
+
+  /**
+   * Remove only selected Blocks
+   * and returns first Block index where started removing...
+   * @return number|undefined
+   */
+  public removeSelectedBlocks(): number|undefined {
+    let firstSelectedBlockIndex;
+
+    /**
+     * Remove selected Blocks from the end
+     */
+    for (let index = this.blocks.length - 1; index >= 0; index--) {
+      if (!this.blocks[index].selected) {
+        continue;
+      }
+
+      this.removeBlock(index);
+      firstSelectedBlockIndex = index;
+    }
+
+    return firstSelectedBlockIndex;
   }
 
   /**
@@ -297,7 +396,7 @@ export default class BlockManager extends Module {
     const extractedFragment = this.Editor.Caret.extractFragmentFromCaretPosition();
     const wrapper = $.make('div');
 
-    wrapper.append(extractedFragment as DocumentFragment);
+    wrapper.appendChild(extractedFragment as DocumentFragment);
 
     /**
      * @todo make object in accordance with Tool
@@ -391,7 +490,7 @@ export default class BlockManager extends Module {
    *  @param {string} caretPosition - position where to set caret
    *  @throws Error  - when passed Node is not included at the Block
    */
-  public setCurrentBlockByChildNode(childNode: Node, caretPosition: string = Caret.positions.DEFAULT): void {
+  public setCurrentBlockByChildNode(childNode: Node): Block {
     /**
      * If node is Text TextNode
      */
@@ -407,8 +506,7 @@ export default class BlockManager extends Module {
        * @type {number}
        */
       this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
-
-      this.Editor.Caret.setToInput(childNode as HTMLElement, caretPosition);
+      return this.currentBlock;
     } else {
       throw new Error('Can not find a Block from this child Node');
     }

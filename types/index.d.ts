@@ -11,13 +11,15 @@ import {Blocks, Caret, Events, Listeners, Notifier, Sanitizer, Saver, Selection,
  * Interfaces used for development
  */
 export {
-  Tool,
-  ToolConstructable,
+  BaseTool,
+  BaseToolConstructable,
   InlineTool,
   InlineToolConstructable,
   BlockToolConstructable,
   BlockTool,
   BlockToolData,
+  Tool,
+  ToolConstructable,
   ToolboxConfig,
   ToolSettings,
   ToolConfig,

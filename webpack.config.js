@@ -27,13 +27,13 @@ module.exports = (env, argv) => {
 
   return {
     entry: {
-      'codex-editor': ['@babel/polyfill/noConflict', './src/codex.ts']
+      'editor': ['@babel/polyfill/noConflict', './src/codex.ts']
     },
 
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: '[name].js',
-      library: [ 'CodexEditor' ],
+      library: [ 'EditorJS' ],
       libraryTarget: 'umd'
     },
 
@@ -57,7 +57,7 @@ module.exports = (env, argv) => {
       }),
 
       new webpack.BannerPlugin({
-        banner: `Codex Editor\n\n@version ${VERSION}\n\n@licence Apache-2.0\n@author CodeX-Team <https://ifmo.su>\n\n@uses html-janitor\n@licence Apache-2.0 (https://github.com/guardian/html-janitor/blob/master/LICENSE)`
+        banner: `Editor.js\n\n@version ${VERSION}\n\n@licence Apache-2.0\n@author CodeX <https://codex.so>\n\n@uses html-janitor\n@licence Apache-2.0 (https://github.com/guardian/html-janitor/blob/master/LICENSE)`
       }),
 
       new LicenseWebpackPlugin()

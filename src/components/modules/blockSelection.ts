@@ -1,6 +1,6 @@
 /**
  * @class BlockSelection
- * @classdesc Manages Block selection with shortcut CMD+A and with mouse
+ * @classdesc Manages Block selection with shortcut CMD+A
  *
  * @module BlockSelection
  * @version 1.0.0
@@ -10,6 +10,7 @@ import _ from '../utils';
 import $ from '../dom';
 
 import SelectionUtils from '../selection';
+import Block from '../block';
 
 export default class BlockSelection extends Module {
 
@@ -45,6 +46,36 @@ export default class BlockSelection extends Module {
   }
 
   /**
+   * Flag that identifies all Blocks selection
+   * @return {boolean}
+   */
+  public get allBlocksSelected(): boolean {
+    const {BlockManager} = this.Editor;
+
+    return BlockManager.blocks.every((block) => block.selected === true);
+  }
+
+  /**
+   * Set selected all blocks
+   * @param {boolean} state
+   */
+  public set allBlocksSelected(state: boolean) {
+    const {BlockManager} = this.Editor;
+
+    BlockManager.blocks.forEach((block) => block.selected = state);
+  }
+
+  /**
+   * Flag that identifies any Block selection
+   * @return {boolean}
+   */
+  public get anyBlockSelected(): boolean {
+    const {BlockManager} = this.Editor;
+
+    return BlockManager.blocks.some((block) => block.selected === true);
+  }
+
+  /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
    * @type {boolean}
@@ -65,42 +96,12 @@ export default class BlockSelection extends Module {
   private selection: SelectionUtils;
 
   /**
-   * Flag that identifies all Blocks selection
-   * @return {boolean}
-   */
-  public get allBlocksSelected(): boolean {
-    const { BlockManager } = this.Editor;
-
-    return BlockManager.blocks.every( (block) => block.selected === true);
-  }
-
-  /**
-   * Set selected all blocks
-   * @param {boolean} state
-   */
-  public set allBlocksSelected(state: boolean) {
-    const { BlockManager } = this.Editor;
-
-    BlockManager.blocks.forEach( (block) => block.selected = state);
-  }
-
-  /**
-   * Flag that identifies any Block selection
-   * @return {boolean}
-   */
-  public get anyBlockSelected(): boolean {
-    const { BlockManager } = this.Editor;
-
-    return BlockManager.blocks.some( (block) => block.selected === true);
-  }
-
-  /**
    * Module Preparation
    * Registers Shortcuts CMD+A and CMD+C
    * to select all and copy them
    */
   public prepare(): void {
-    const { Shortcuts } = this.Editor;
+    const {Shortcuts} = this.Editor;
 
     /** Selection shortcut */
     Shortcuts.add({
@@ -110,15 +111,25 @@ export default class BlockSelection extends Module {
       },
     });
 
-    /** Shortcut to copy selected blocks */
-    Shortcuts.add({
-      name: 'CMD+C',
-      handler: (event) => {
-        this.handleCommandC(event);
-      },
-    });
-
     this.selection = new SelectionUtils();
+  }
+
+  /**
+   * Remove selection of Block
+   * @param {number?} index - Block index according to the BlockManager's indexes
+   */
+  public unSelectBlockByIndex(index?) {
+    const {BlockManager} = this.Editor;
+
+    let block;
+
+    if (isNaN(index)) {
+      block = BlockManager.currentBlock;
+    } else {
+      block = BlockManager.getBlockByIndex(index);
+    }
+
+    block.selected = false;
   }
 
   /**
@@ -128,12 +139,13 @@ export default class BlockSelection extends Module {
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
 
-    if (!this.anyBlockSelected) {
+    if (!this.anyBlockSelected || this.Editor.RectangleSelection.isRectActivated()) {
+      this.Editor.RectangleSelection.clearSelection();
       return;
     }
 
     /**
-     * restore selection when Block is already selected
+     * Restore selection when Block is already selected
      * but someone tries to write something.
      */
     if (restoreSelection) {
@@ -145,53 +157,14 @@ export default class BlockSelection extends Module {
   }
 
   /**
-   * First CMD+A Selects current focused blocks,
-   * and consequent second CMD+A keypress selects all blocks
-   *
-   * @param {keydown} event
+   * Reduce each Block and copy its content
    */
-  private handleCommandA(event): void {
-    /** allow default selection on native inputs */
-    if ($.isNativeInput(event.target) && !this.nativeInputSelected) {
-      this.nativeInputSelected = true;
-      return;
-    }
-
-    /** Prevent default selection */
-    event.preventDefault();
-
-    if (this.needToSelectAll) {
-      this.selectAllBlocks();
-      this.needToSelectAll = false;
-    } else {
-      this.selectBlockByIndex();
-      this.needToSelectAll = true;
-    }
-  }
-
-  /**
-   * Copying selected blocks
-   * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
-   *
-   * @param event
-   */
-  private handleCommandC(event): void {
-    const { BlockManager, Sanitizer } = this.Editor;
-
-    if (!this.anyBlockSelected) {
-      return;
-    }
-
-    /**
-     * Prevent default copy
-     * Remove "decline sound" on macOS
-     */
-    event.preventDefault();
-
+  public copySelectedBlocks(): void {
+    const {BlockManager, Sanitizer} = this.Editor;
     const fakeClipboard = $.make('div');
 
-    BlockManager.blocks.filter( (block) => block.selected )
-      .forEach( (block) => {
+    BlockManager.blocks.filter((block) => block.selected)
+      .forEach((block) => {
         /**
          * Make <p> tag that holds clean HTML
          */
@@ -200,27 +173,17 @@ export default class BlockSelection extends Module {
 
         fragment.innerHTML = cleanHTML;
         fakeClipboard.appendChild(fragment);
-    });
+      });
 
     _.copyTextToClipboard(fakeClipboard.innerHTML);
-  }
-
-  /**
-   * Select All Blocks
-   * Each Block has selected setter that makes Block copyable
-   */
-  private selectAllBlocks() {
-    const { BlockManager } = this.Editor;
-
-    this.allBlocksSelected = true;
   }
 
   /**
    * select Block
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
-  private selectBlockByIndex(index?) {
-    const { BlockManager } = this.Editor;
+  public selectBlockByIndex(index?) {
+    const {BlockManager} = this.Editor;
 
     /**
      * Remove previous focused Block's state
@@ -241,5 +204,40 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     block.selected = true;
+  }
+
+  /**
+   * First CMD+A Selects current focused blocks,
+   * and consequent second CMD+A keypress selects all blocks
+   *
+   * @param {keydown} event
+   */
+  private handleCommandA(event): void {
+    this.Editor.RectangleSelection.clearSelection();
+
+    /** allow default selection on native inputs */
+    if ($.isNativeInput(event.target) && !this.nativeInputSelected) {
+      this.nativeInputSelected = true;
+      return;
+    }
+
+    /** Prevent default selection */
+    event.preventDefault();
+
+    if (this.needToSelectAll) {
+      this.selectAllBlocks();
+      this.needToSelectAll = false;
+    } else {
+      this.selectBlockByIndex();
+      this.needToSelectAll = true;
+    }
+  }
+
+  /**
+   * Select All Blocks
+   * Each Block has selected setter that makes Block copyable
+   */
+  private selectAllBlocks() {
+    this.allBlocksSelected = true;
   }
 }
