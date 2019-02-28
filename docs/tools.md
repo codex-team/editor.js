@@ -1,6 +1,6 @@
-# CodeX Editor Tools
+# Editor.js Tools
 
-CodeX Editor is a block-oriented editor. It means that entry composed with the list of `Blocks` of different types: `Texts`, `Headers`, `Images`, `Quotes` etc.
+Editor.js is a block-oriented editor. It means that entry composed with the list of `Blocks` of different types: `Texts`, `Headers`, `Images`, `Quotes` etc.
 
 `Tool` — is a class that provide custom `Block` type. All Tools represented by `Plugins`.
 
@@ -14,7 +14,7 @@ Each Tool's instance called with an params object.
 
 | Param  | Type                | Description                                     |
 | ------ | ------------------- | ----------------------------------------------- |
-| api    | [`IAPI`][iapi-link] | CodeX Editor's API methods                      |
+| api    | [`IAPI`][iapi-link] | Editor.js's API methods                      |
 | config | `object`            | Special configuration params passed in «config» |
 | data   | `object`            | Data to be rendered in this Tool                |
 
@@ -56,7 +56,7 @@ Options that Tool can specify. All settings should be passed as static propertie
 | Name | Type | Default Value | Description |
 | -- | -- | -- | -- |
 | `toolbox` | _Object_ | `undefined` | Pass here `icon` and `title` to display this `Tool` in the Editor's `Toolbox` <br /> `icon` - HTML string with icon for Toolbox <br /> `title` - optional title to display in Toolbox |
-| `enableLineBreaks` | _Boolean_ | `false` | With this option, CodeX Editor won't handle Enter keydowns. Can be helpful for Tools like `<code>` where line breaks should be handled by default behaviour. |
+| `enableLineBreaks` | _Boolean_ | `false` | With this option, Editor.js won't handle Enter keydowns. Can be helpful for Tools like `<code>` where line breaks should be handled by default behaviour. |
 | `isInline` | _Boolean_ | `false` | Describes Tool as a [Tool for the Inline Toolbar](tools-inline.md) |
 
 ## User configuration
@@ -65,8 +65,8 @@ All Tools can be configured by users. You can set up some of available settings 
 to the `tools` property of Editor Config.
 
 ```javascript
-var editor = new CodexEditor({
-  holderId : 'codex-editor',
+var editor = new EditorJS({
+  holderId : 'editorjs',
   tools: {
     text: {
       class: Text,
@@ -79,7 +79,7 @@ var editor = new CodexEditor({
 });
 ```
 
-There are few options available by CodeX Editor.
+There are few options available by Editor.js.
 
 | Name | Type | Default Value | Description |
 | -- | -- | -- | -- |
@@ -88,7 +88,7 @@ There are few options available by CodeX Editor.
 
 ## Paste handling
 
-CodeX Editor handles paste on Blocks and provides API for Tools to process the pasted data.
+Editor.js handles paste on Blocks and provides API for Tools to process the pasted data.
 
 When user pastes content into Editor, pasted content will be splitted into blocks.
 
@@ -226,7 +226,7 @@ onPaste (event) {
 
 ## Sanitize
 
-CodeX Editor provides [API](sanitizer.md) to clean taint strings.
+Editor.js provides [API](sanitizer.md) to clean taint strings.
 Use it manually at the `save()` method or or pass `sanitizer` config to do it automatically.
 
 ### Sanitizer Configuration
@@ -298,7 +298,7 @@ save() {
 
 ### Automatic sanitize
 
-If you pass the sanitizer config as static getter, CodeX Editor will automatically sanitize your saved data.
+If you pass the sanitizer config as static getter, Editor.js will automatically sanitize your saved data.
 
 Note that if your Tool is allowed to use the Inline Toolbar, we will get sanitizing rules for each Inline Tool
 and merge with your passed config.

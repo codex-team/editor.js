@@ -1,8 +1,8 @@
-# CodeX Editor API
+# Editor.js API
 
 
-Blocks have access to the public methods provided by CodeX Editor API Module. Plugin and Tune Developers
-can use Editor API as they want.
+Blocks have access to the public methods provided by Editor.js API Module. Plugin and Tune Developers
+can use Editor\`s API as they want.
 
 ## Api object description
 
@@ -40,7 +40,7 @@ Methods that working with Blocks
 
 `clean(taintString, config)` - method uses HTMLJanitor to clean taint string.
 
-CodeX Editor provides basic config without attributes, but you can inherit by passing your own config.
+Editor.js provides basic config without attributes, but you can inherit by passing your own config.
 
 If Tool enables inline-tools, we get it's sanitizing rules and merge with your passed custom rules.
 
@@ -67,7 +67,7 @@ Methods that working with Toolbar
 
 ### EventsAPI
 
-Methods that allows to subscribe on CodeX Editor events
+Methods that allows to subscribe on Editor.js events
 
 `on(eventName: string, callback: Function)` - subscribe callback on event
 
@@ -117,7 +117,7 @@ If you need to show any messages for success or failure events you can use notif
 Call on target Editor:
 
 ```javascript
-let editor = new CodexEditor({
+let editor = new EditorJS({
   onReady: () => {
     editor.notifier.show({
       message: 'Editor is ready!'
@@ -142,13 +142,13 @@ Check out [`codex-notifier` package page](https://github.com/codex-team/js-notif
 
 ### Destroy API
 
-If there are necessity to remove CodeX Editor instance from the page you can use `destroy()` method.
+If there are necessity to remove Editor.js instance from the page you can use `destroy()` method.
 
 It makes following steps:
 
 1. Clear the holder element by setting it\`s innerHTML to empty string
 
-2. Remove all event listeners related to CodeX Editor
+2. Remove all event listeners related to Editor.js
 
 3. Delete all properties from instance object and set it\`s prototype to `null`
 

@@ -1,13 +1,20 @@
 {
-  "name": "codex.editor",
-  "version": "2.9.5",
-  "description": "CodeX Editor. Native JS, based on API and Open Source",
-  "main": "dist/codex-editor.js",
+  "name": "@editorjs/editorjs",
+  "version": "2.10.0",
+  "description": "Editor.js — Native JS, based on API and Open Source",
+  "main": "dist/editor.js",
   "types": "./types/index.d.ts",
+  "keywords": [
+    "codex editor",
+    "text editor",
+    "editor",
+    "editor.js",
+    "editorjs"
+  ],
   "scripts": {
     "build": "rimraf dist/* && yarn svg && yarn build:prod",
     "build:win": "rimraf dist && yarn svg:win && yarn build:prod",
-    "build:dev": "webpack --mode development --progress  --display-error-details --display-entrypoints --watch",
+    "build:dev": "webpack --mode development --progress --display-error-details --display-entrypoints --watch",
     "build:prod": "webpack --mode production",
     "svg:win": "if not exist dist md dist && yarn svg",
     "svg": "svg-sprite-generate -d src/assets/ -o dist/sprite.svg",
@@ -17,7 +24,7 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codex-team/codex.editor.git"
+    "url": "git+https://github.com/codex-team/editor.js.git"
   },
   "devDependencies": {
     "@babel/core": "^7.1.2",

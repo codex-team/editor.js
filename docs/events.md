@@ -1,4 +1,4 @@
-# CodeX Editor Events Module
+# Editor.js Events Module
 
 Module allows Developers to subscribe on events or trigger own events
 
@@ -10,7 +10,7 @@ Module allows Developers to subscribe on events or trigger own events
 Events.on(eventName, callback)
 ``` 
 
-> Method subscribes callback on event. It will be called when CodeX Editor emits this event
+> Method subscribes callback on event. It will be called when Editor.js emits this event
 
 #### params
 

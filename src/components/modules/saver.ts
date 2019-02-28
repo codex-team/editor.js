@@ -1,5 +1,5 @@
 /**
- * Codex Editor Saver
+ * Editor.js Saver
  *
  * @module Saver
  * @author Codex Team
@@ -9,7 +9,6 @@ import Module from '../__module';
 import {OutputData} from '../../../types';
 import {ValidatedData} from '../../types-internal/block-data';
 import Block from '../block';
-import _ from '../utils';
 
 declare const VERSION: string;
 
@@ -68,7 +67,7 @@ export default class Saver extends Module {
     let totalTime = 0;
     const blocks = [];
 
-    console.groupCollapsed('[CodexEditor saving]:');
+    console.groupCollapsed('[Editor.js saving]:');
 
     allExtractedData.forEach(({tool, data, time, isValid}) => {
       totalTime += time;

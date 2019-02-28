@@ -1,4 +1,4 @@
-# CodeX Editor Sanitizer Module
+# Editor.js Sanitizer Module
 
 The `Sanitizer` module represents a set of methods that clears taint strings.
 Uses lightweight npm package with simple API [html-janitor](https://www.npmjs.com/package/html-janitor)

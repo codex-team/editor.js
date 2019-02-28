@@ -12,7 +12,7 @@ import 'components/polyfills';
 import Core from './components/core';
 
 /**
- * Codex Editor
+ * Editor.js
  *
  * Short Description (눈_눈;)
  * @version 2.0
@@ -20,7 +20,7 @@ import Core from './components/core';
  * @licence Apache-2.0
  * @author CodeX-Team <https://ifmo.su>
  */
-export default class CodexEditor {
+export default class EditorJS {
   /**
    * Promise that resolves when core modules are ready and UI is rendered on the page
    */
@@ -56,7 +56,7 @@ export default class CodexEditor {
     }
 
     /**
-     * Create a CodeX Editor instance
+     * Create a Editor.js instance
      */
     const editor = new Core(configuration);
 
