@@ -65,16 +65,6 @@ Methods that working with Toolbar
 
 `close()` - closes toolbar, toolbox and blockSettings if they are opened
 
-### EventsAPI
-
-Methods that allows to subscribe on Editor.js events
-
-`on(eventName: string, callback: Function)` - subscribe callback on event
-
-`off(eventName: string, callback: Function)` - unsubscribe callback from event
-
-`emit(eventName: string, data: object)` - fires all subscribed callbacks with passed data
-
 ### ListenerAPI
 
 Methods that allows to work with DOM listener. Useful when you forgot to remove listener. Module collects all listeners and destroys automatically
@@ -165,9 +155,6 @@ Editor`s API provides some shorthands for API methods.
 | `clear`  | `blocks.clear`  |
 | `render` | `blocks.render` |
 | `focus`  | `caret.focus`   |
-| `on`     | `events.on`     |
-| `off`    | `events.off`    |
-| `emit`   | `events.emit`   |
 | `save`   | `saver.save`    |
 
 > Example
