@@ -65,16 +65,6 @@ Methods that working with Toolbar
 
 `close()` - closes toolbar, toolbox and blockSettings if they are opened
 
-### EventsAPI
-
-Methods that allows to subscribe on Editor.js events
-
-`on(eventName: string, callback: Function)` - subscribe callback on event
-
-`off(eventName: string, callback: Function)` - unsubscribe callback from event
-
-`emit(eventName: string, data: object)` - fires all subscribed callbacks with passed data
-
 ### ListenerAPI
 
 Methods that allows to work with DOM listener. Useful when you forgot to remove listener. Module collects all listeners and destroys automatically
@@ -109,6 +99,8 @@ Each method returns `boolean` value: true if caret is set successfully or false 
 `setToPreviousBlock(position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the previous Block
 
 `setToBlock(index: number, position?: 'end'|'start'|'default', offset?: number): boolean;` — set caret to the Block by passed `index`
+
+`focus(atEnd?: boolean): boolean;` — set caret to the Editor. If `atEnd` is true, set it at the end.
 
 ### NotifierAPI
 
@@ -153,3 +145,23 @@ It makes following steps:
 3. Delete all properties from instance object and set it\`s prototype to `null`
 
 After executing the `destroy` method, editor inctance becomes an empty object. This way you will free occupied JS Heap on your page.
+
+### Shorthands
+
+Editor`s API provides some shorthands for API methods. 
+
+| Alias    | Method          |
+| ------   | --------------- |
+| `clear`  | `blocks.clear`  |
+| `render` | `blocks.render` |
+| `focus`  | `caret.focus`   |
+| `save`   | `saver.save`    |
+
+> Example
+
+```javascript
+const editor = EditorJS();
+
+editor.focus();
+editor.save();
+```

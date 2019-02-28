@@ -1,8 +1,12 @@
 # Changelog
 
+### 2.11.0
+
+- `New` — Add API methods shorthands
+
 ### 2.10.0
 
-- `New` Rename from CodeX Editor to Editor.js
+- `New` — Rename from CodeX Editor to Editor.js
 
 ### 2.9.5
 

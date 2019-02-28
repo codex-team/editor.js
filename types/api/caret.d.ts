@@ -53,4 +53,13 @@ export interface Caret {
    * @return {boolean}
    */
   setToBlock(index: number, position?: 'end'|'start'|'default', offset?: number): boolean;
+
+  /**
+   * Sets caret to the Editor
+   *
+   * @param {boolean} atEnd - if true, set Caret to the end of the Editor
+   *
+   * @return {boolean}
+   */
+  focus(atEnd?: boolean): boolean;
 }
