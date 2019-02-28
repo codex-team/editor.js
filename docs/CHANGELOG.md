@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.11.1
+
+- `Fix` *RectangeSelection* — Selection is available only for the main mouse button
+
 ### 2.11.0
 
 - `New` — Add API methods shorthands
