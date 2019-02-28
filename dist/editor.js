@@ -4,7 +4,7 @@
  * @version 2.10.0
  * 
  * @licence Apache-2.0
- * @author CodeX-Team <https://ifmo.su>
+ * @author CodeX <https://codex.so>
  * 
  * @uses html-janitor
  * @licence Apache-2.0 (https://github.com/guardian/html-janitor/blob/master/LICENSE)
