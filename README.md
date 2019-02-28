@@ -261,10 +261,10 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 
 # About team
 
-We are [CodeX](https://codex.so) and we build products for developers and makers. 
+We are CodeX and we build products for developers and makers. 
 
 Follow us on Twitter: [twitter.com/codex_team](https://twitter.com/codex_team)
 
-Feel free to contact: [team@codex.so](mailto:team@codex.so?subject=Editor.js feedback)
+Feel free to contact: <a href="mailto:team@codex.so?subject=Editor.js feedback">team@codex.so</a>
 
 [codex.so](https://codex.so)
