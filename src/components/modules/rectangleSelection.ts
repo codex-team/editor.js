@@ -42,7 +42,7 @@ export default class RectangleSelection extends Module {
   /**
    *  Height of scroll zone on boundary of screen
    */
-  private readonly HEIGHT_OF_SCROLL_ZONE = 25;
+  private readonly HEIGHT_OF_SCROLL_ZONE = 40;
 
   /**
    *  Scroll zone type indicators
