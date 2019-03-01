@@ -1,42 +1,42 @@
 [submodule "example/tools/inline-code"]
 	path = example/tools/inline-code
-	url = https://github.com/codex-editor/inline-code
+	url = https://github.com/editor-js/inline-code
 [submodule "example/tools/header"]
 	path = example/tools/header
-	url = https://github.com/codex-editor/header
+	url = https://github.com/editor-js/header
 [submodule "example/tools/delimiter"]
 	path = example/tools/delimiter
-	url = https://github.com/codex-editor/delimiter
+	url = https://github.com/editor-js/delimiter
 [submodule "example/tools/list"]
 	path = example/tools/list
-	url = https://github.com/codex-editor/list
+	url = https://github.com/editor-js/list
 [submodule "example/tools/quote"]
 	path = example/tools/quote
-	url = https://github.com/codex-editor/quote
+	url = https://github.com/editor-js/quote
 [submodule "example/tools/simple-image"]
 	path = example/tools/simple-image
-	url = https://github.com/codex-editor/simple-image
+	url = https://github.com/editor-js/simple-image
 [submodule "src/components/tools/paragraph"]
 	path = src/components/tools/paragraph
-	url = https://github.com/codex-editor/paragraph
+	url = https://github.com/editor-js/paragraph
 [submodule "example/tools/marker"]
 	path = example/tools/marker
-	url = https://github.com/codex-editor/marker
+	url = https://github.com/editor-js/marker
 [submodule "example/tools/code"]
 	path = example/tools/code
-	url = https://github.com/codex-editor/code
+	url = https://github.com/editor-js/code
 [submodule "example/tools/image"]
 	path = example/tools/image
-	url = https://github.com/codex-editor/image
+	url = https://github.com/editor-js/image
 [submodule "example/tools/embed"]
 	path = example/tools/embed
-	url = https://github.com/codex-editor/embed
+	url = https://github.com/editor-js/embed
 [submodule "example/tools/table"]
 	path = example/tools/table
-	url = https://github.com/codex-editor/table
+	url = https://github.com/editor-js/table
 [submodule "example/tools/checklist"]
 	path = example/tools/checklist
-	url = https://github.com/codex-editor/checklist
+	url = https://github.com/editor-js/checklist
 [submodule "example/tools/link"]
 	path = example/tools/link
-	url = https://github.com/codex-editor/link
+	url = https://github.com/editor-js/link
