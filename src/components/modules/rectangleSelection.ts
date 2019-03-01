@@ -36,7 +36,7 @@ export default class RectangleSelection extends Module {
   /**
    *  Speed of Scrolling
    */
-  private readonly SCROLL_SPEED: number = 3;
+  private readonly SCROLL_SPEED: number = 1;
 
   /**
    *  Height of scroll zone on boundary of screen
@@ -88,44 +88,21 @@ export default class RectangleSelection extends Module {
   private overlayRectangle: HTMLDivElement;
 
   /**
-   * Coords of redactor
-   */
-  private left;
-  private top;
-
-  /**
    * Module Preparation
    * Creating rect and hang handlers
    */
   public prepare(): void {
     const {Listeners} = this.Editor;
-    const {overlayTopScrollZone, overlayBottomScrollZone, container, overlay} = this.genHTML();
-
-    Listeners.on(overlayBottomScrollZone, 'mouseenter', (event) => {
-      this.inScrollZone = this.BOTTOM_SCROLL_ZONE;
-      this.scrollVertical(this.SCROLL_SPEED);
-    });
-
-    Listeners.on(overlayTopScrollZone, 'mouseenter', (event) => {
-      this.inScrollZone = this.TOP_SCROLL_ZONE;
-      this.scrollVertical(-this.SCROLL_SPEED);
-    });
-
-    Listeners.on(overlayBottomScrollZone, 'mouseleave', (event) => {
-      this.inScrollZone = null;
-    });
-
-    Listeners.on(overlayTopScrollZone, 'mouseleave', (event) => {
-      this.inScrollZone = null;
-    });
+    const {container, overlay} = this.genHTML();
 
     Listeners.on(container, 'mousedown', (event: MouseEvent) => {
       if (event.button !== this.MAIN_MOUSE_BUTTON) { return; }
       this.startSelection(event.pageX, event.pageY);
     }, false);
 
-    Listeners.on(document.body, 'mousemove', (event) => {
+    Listeners.on(document.body, 'mousemove', (event: MouseEvent) => {
       this.changingRectangle(event);
+      this.scrollByZones(event.clientY);
     }, false);
 
     Listeners.on(document.body, 'mouseleave', (event) => {
@@ -135,6 +112,7 @@ export default class RectangleSelection extends Module {
 
     Listeners.on(window, 'scroll', (event) => {
       this.changingRectangle(event);
+      this.scrollByZones(null);
     }, false);
 
     Listeners.on(document.body, 'mouseup', (event) => {
@@ -188,24 +166,40 @@ export default class RectangleSelection extends Module {
     this.isRectSelectionActivated = false;
   }
 
+  /**
+   * Scroll If mouse in scroll zone
+   * @param {number} clientY - Y coord of mouse
+   */
+  private scrollByZones(clientY) {
+    // Может быть 0
+    if (clientY !== null) {
+      this.inScrollZone = null;
+      if (clientY <= this.HEIGHT_OF_SCROLL_ZONE) {
+        this.inScrollZone = this.TOP_SCROLL_ZONE;
+      }
+      if (document.documentElement.clientHeight - clientY <= this.HEIGHT_OF_SCROLL_ZONE) {
+        this.inScrollZone = this.BOTTOM_SCROLL_ZONE;
+      }
+    }
+    if (!this.inScrollZone) {
+      return;
+    }
+
+    this.scrollVertical(this.inScrollZone === this.TOP_SCROLL_ZONE ? -this.SCROLL_SPEED : this.SCROLL_SPEED);
+  }
+
   private genHTML() {
     const container = document.querySelector('.' + UI.CSS.editorWrapper);
     const overlay = $.make('div', RectangleSelection.CSS.overlay, {});
     const overlayContainer = $.make('div', RectangleSelection.CSS.overlayContainer, {});
     const overlayRectangle = $.make('div', RectangleSelection.CSS.rect, {});
-    const overlayTopScrollZone = $.make('div', RectangleSelection.CSS.topScrollZone, {});
-    const overlayBottomScrollZone = $.make('div', RectangleSelection.CSS.bottomScrollZone, {});
 
     overlayContainer.appendChild(overlayRectangle);
     overlay.appendChild(overlayContainer);
-    document.body.appendChild(overlayTopScrollZone);
-    document.body.appendChild(overlayBottomScrollZone);
     container.appendChild(overlay);
 
     this.overlayRectangle = overlayRectangle as HTMLDivElement;
     return {
-      overlayBottomScrollZone,
-      overlayTopScrollZone,
       container,
       overlay,
     };

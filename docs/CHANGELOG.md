@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.11.2
+
+- `Fix` *RectangeSelection* — Redesign of the scrolling zones
+
 ### 2.11.1
 
 - `Fix` *RectangeSelection* — Selection is available only for the main mouse button
