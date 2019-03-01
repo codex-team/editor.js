@@ -1,5 +1,21 @@
 # Changelog
 
+### 2.11.4
+
+- `Fix` - Clear focus when click is outside the Editor instance
+
+### 2.11.3
+
+- `Fix` — Fix CMD+A Selection on multiple Editor instances
+
+### 2.11.2
+
+- `Improvements` — Docs updated and common enhancements
+
+### 2.11.1
+
+- `Fix` *RectangeSelection* — Selection is available only for the main mouse button
+
 ### 2.11.0
 
 - `New` — Add API methods shorthands

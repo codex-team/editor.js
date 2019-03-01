@@ -1,11 +1,11 @@
-<p align="center"><img src="https://capella.pics/3c0b525b-50d9-4720-8aad-9148114cfa6e.jpg"></p>
+<p align="center"><img src="https://capella.pics/79ce946a-d636-41cd-aa96-d3bc5ecfde03.jpg"></p>
 
 [![](https://flat.badgen.net/npm/v/@editorjs/editorjs?icon=npm)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![](https://flat.badgen.net/bundlephobia/min/@editorjs/editorjs?color=cyan)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![](https://flat.badgen.net/bundlephobia/minzip/@editorjs/editorjs?color=green)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![](https://flat.badgen.net/npm/license/@editorjs/editorjs)](https://www.npmjs.com/package/@editorjs/editorjs)
 
-## Version 2.0-beta is here!
+## Version 2.0 is here!
 
 We are glad to introduce the next version of Editor.js. Totally new core, structure and plugins — that was an impressive adventure 🤓.
 
@@ -19,6 +19,8 @@ Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_edi
 
 ### 2.7-2.9 changelog
 
+- `Fix` - Clear focus when click is outside the Editor instance    
+- `Fix` — Fix CMD+A Selection on multiple Editor instances
 - `New` — Toolbox now have beautiful helpers with Tool names and shortcuts
 - `Improvements` — Prevent navigating back on Firefox when Block is removing by backspace 
 - `New` — Blocks selected with Rectangle Selection can be also removed, copied or cut
@@ -259,4 +261,12 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 
 - We use [HTMLJanitor](https://github.com/guardian/html-janitor) module in our Sanitizer module. 
 
+# About team
 
+We are CodeX and we build products for developers and makers. 
+
+Follow us on Twitter: [twitter.com/codex_team](https://twitter.com/codex_team)
+
+Feel free to contact: <a href="mailto:team@codex.so?subject=Editor.js feedback">team@codex.so</a>
+
+[codex.so](https://codex.so)
