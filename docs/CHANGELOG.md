@@ -1,8 +1,19 @@
 # Changelog
+### 2.11.5
+
+- `Fix` *RectangeSelection* — Redesign of the scrolling zones
+
+### 2.11.4
+
+- `Fix` - Clear focus when click is outside the Editor instance
+
+### 2.11.3
+
+- `Fix` — Fix CMD+A Selection on multiple Editor instances
 
 ### 2.11.2
 
-- `Fix` *RectangeSelection* — Redesign of the scrolling zones
+- `Improvements` — Docs updated and common enhancements
 
 ### 2.11.1
 
