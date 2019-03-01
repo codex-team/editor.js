@@ -190,7 +190,7 @@ export default class UI extends Module {
       false,
     );
     this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
-    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), false);
+    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), true);
   }
 
   /**
@@ -329,6 +329,18 @@ export default class UI extends Module {
     const target = event.target as HTMLElement;
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
     const clickedInsideofEditor = target.closest(`.${UI.CSS.editorWrapper}`);
+    const clickedInsideOfEditorHolder = target.closest(`#${this.config.holderId}`);
+
+    /**
+     * Current page might contain several instances
+     * Click between instances MUST clear focus, pointers and close toolbars
+     */
+    if (!clickedInsideOfEditorHolder) {
+      this.Editor.BlockSelection.clearSelection();
+      this.Editor.BlockManager.dropPointer();
+      this.Editor.Toolbar.close();
+      return;
+    }
 
     /** Clear highlightings and pointer on BlockManager */
     if (!clickedInsideofEditor && !Selection.isAtEditor) {
