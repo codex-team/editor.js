@@ -19,6 +19,7 @@ Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_edi
 
 ### 2.7-2.9 changelog
 
+- `Fix` — Fix CMD+A Selection on multiple Editor instances
 - `New` — Toolbox now have beautiful helpers with Tool names and shortcuts
 - `Improvements` — Prevent navigating back on Firefox when Block is removing by backspace 
 - `New` — Blocks selected with Rectangle Selection can be also removed, copied or cut
