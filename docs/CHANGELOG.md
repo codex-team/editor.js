@@ -1,4 +1,7 @@
 # Changelog
+### 2.11.5
+
+- `Fix` *RectangeSelection* — Redesign of the scrolling zones
 
 ### 2.11.4
 
