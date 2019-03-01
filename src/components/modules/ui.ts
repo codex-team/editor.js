@@ -330,7 +330,7 @@ export default class UI extends Module {
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
     const clickedInsideofEditor = target.closest(`#${this.config.holderId}`);
 
-    if (!clickedInsideofEditor && !Selection.isAtEditor) {
+    if (!clickedInsideofEditor) {
       /**
        * Clear highlightings and pointer on BlockManager
        *
@@ -338,6 +338,7 @@ export default class UI extends Module {
        * Click between instances MUST clear focus, pointers and close toolbars
        */
       this.Editor.BlockManager.dropPointer();
+      this.Editor.InlineToolbar.close();
       this.Editor.Toolbar.close();
       this.Editor.BlockSelection.clearSelection();
 
