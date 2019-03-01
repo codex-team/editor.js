@@ -110,8 +110,8 @@ export default class BlockSelection extends Module {
         const {BlockManager} = this.Editor;
         /**
          * When one page consist of two or more EditorJS instances
-         * Shortcut module tries to handle all events. Thats why Editor's selection works inside the target Editor, but for
-         * others error occurs because nothing to select.
+         * Shortcut module tries to handle all events. Thats why Editor's selection works inside the target Editor, but
+         * for others error occurs because nothing to select.
          *
          * Prevent such actions if focus is not inside the Editor
          */
