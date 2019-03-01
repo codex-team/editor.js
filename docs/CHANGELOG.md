@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.11.4
+
+- `Fix` - Clear focus when click is outside the Editor instance
+
 ### 2.11.3
 
 - `Fix` — Fix CMD+A Selection on multiple Editor instances

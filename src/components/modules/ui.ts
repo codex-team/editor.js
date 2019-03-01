@@ -190,7 +190,7 @@ export default class UI extends Module {
       false,
     );
     this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
-    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), false);
+    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), true);
   }
 
   /**
@@ -328,24 +328,31 @@ export default class UI extends Module {
      */
     const target = event.target as HTMLElement;
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
-    const clickedInsideofEditor = target.closest(`.${UI.CSS.editorWrapper}`);
+    const clickedInsideofEditor = target.closest(`#${this.config.holderId}`);
 
-    /** Clear highlightings and pointer on BlockManager */
-    if (!clickedInsideofEditor && !Selection.isAtEditor) {
+    if (!clickedInsideofEditor) {
+      /**
+       * Clear highlightings and pointer on BlockManager
+       *
+       * Current page might contain several instances
+       * Click between instances MUST clear focus, pointers and close toolbars
+       */
       this.Editor.BlockManager.dropPointer();
+      this.Editor.InlineToolbar.close();
       this.Editor.Toolbar.close();
-    }
+      this.Editor.BlockSelection.clearSelection();
 
-    if (!clickedOnInlineToolbarButton) {
+    } else if (!clickedOnInlineToolbarButton) {
+      /**
+       * Move inline toolbar to the focused Block
+       */
       this.Editor.InlineToolbar.handleShowingEvent(event);
-    }
-
-    if (Selection.isAtEditor) {
+    } else if (Selection.isAtEditor) {
+      /**
+       * Focus clicked Block
+       */
       this.Editor.BlockManager.setCurrentBlockByChildNode(Selection.anchorNode);
     }
-
-    /** Clear selection */
-    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
