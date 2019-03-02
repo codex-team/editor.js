@@ -33,7 +33,7 @@ Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_edi
 - `New` *Block Selection* — Ability to select Block by `CMD+A`, and the whole Editor by double `CMD+A`. After that, you can copy (`CMD+C`), remove (`Backspace`) or clear (`Enter`) selected Blocks.
 - `New` *[Styles API](https://github.com/codex-team/editor.js/blob/master/types/api/styles.d.ts)* — Added `button` class for stylization of any buttons provided by Tools with one unified style.
 - `New` *[Notifier API](https://github.com/codex-team/editor.js/blob/master/docs/api.md#notifierapi)* — methods for showing user notifications: on success, errors, warnings, etc. 
-- `New` *Block Tool* — [Table](http://github.com/codex-editor/table) constructor 💪 
+- `New` *Block Tool* — [Table](http://github.com/editor-js/table) constructor 💪 
 - `New` If one of the Tools is unavailable on Editor initialization, its Blocks will be rendered with *Dummy Block*, describing that user can not edit content of this Block. Dummy Blocks can be moved, removed and saved as normal Blocks. So saved data won't be lost if one of the Tools is failed 
 - `New` [Public TS-types](https://github.com/codex-team/editor.js/tree/master/types) are presented.
 - `Changes` *Tools API*  — options `irreplaceable` and `contentless` was removed.
@@ -74,7 +74,7 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 Editor.js is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
-We have [many](http://github.com/codex-editor/) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
+We have [many](http://github.com/editor-js/) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
 
 So how to use the Editor after [Installation](docs/installation.md).
 
@@ -83,7 +83,7 @@ So how to use the Editor after [Installation](docs/installation.md).
 - Press `TAB` again to leaf Toolbox and select a Block you need. Then press Enter.
 
 
- ![](https://github.com/codex-editor/list/raw/master/assets/example.gif)
+ ![](https://github.com/editor-js/list/raw/master/assets/example.gif)
 
 - Select text fragment and apply a style or insert a link from the Inline Toolbar
 
@@ -184,11 +184,11 @@ Copy [editor.js](build/editor.js) file to your project and load it.
 
 Each Block at the Editor.js represented by [Tools](docs/tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
 
-For example check out our [Header](https://github.com/codex-editor/header) Tool that represents heading blocks.
+For example check out our [Header](https://github.com/editor-js/header) Tool that represents heading blocks.
 
 You can install Header Tool by the same way as the Editor (Node.js, CDN, local file).
 
-Check [Editor.js's community](https://github.com/codex-editor/) to see more ready-to-use Tools.
+Check [Editor.js's community](https://github.com/editor-js/) to see more ready-to-use Tools.
 
 **Example:** use Header from CDN
 
