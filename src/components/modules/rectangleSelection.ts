@@ -11,6 +11,7 @@ import $ from '../dom';
 import SelectionUtils from '../selection';
 import Block from '../block';
 import UI from './ui';
+import Timeout = NodeJS.Timeout;
 
 export default class RectangleSelection extends Module {
   /**
@@ -41,7 +42,7 @@ export default class RectangleSelection extends Module {
   /**
    *  Height of scroll zone on boundary of screen
    */
-  private readonly HEIGHT_OF_SCROLL_ZONE = 25;
+  private readonly HEIGHT_OF_SCROLL_ZONE = 40;
 
   /**
    *  Scroll zone type indicators
@@ -58,6 +59,11 @@ export default class RectangleSelection extends Module {
    *  Mouse is clamped
    */
   private mousedown: boolean = false;
+
+  /**
+   *  Is scrolling now
+   */
+  private isScrolling: boolean = false;
 
   /**
    *  Mouse is in scroll zone
@@ -88,47 +94,26 @@ export default class RectangleSelection extends Module {
   private overlayRectangle: HTMLDivElement;
 
   /**
-   * Coords of redactor
-   */
-  private left;
-  private top;
-
-  /**
    * Module Preparation
    * Creating rect and hang handlers
    */
   public prepare(): void {
     const {Listeners} = this.Editor;
-    const {overlayTopScrollZone, overlayBottomScrollZone, container, overlay} = this.genHTML();
-
-    Listeners.on(overlayBottomScrollZone, 'mouseenter', (event) => {
-      this.inScrollZone = this.BOTTOM_SCROLL_ZONE;
-      this.scrollVertical(this.SCROLL_SPEED);
-    });
-
-    Listeners.on(overlayTopScrollZone, 'mouseenter', (event) => {
-      this.inScrollZone = this.TOP_SCROLL_ZONE;
-      this.scrollVertical(-this.SCROLL_SPEED);
-    });
-
-    Listeners.on(overlayBottomScrollZone, 'mouseleave', (event) => {
-      this.inScrollZone = null;
-    });
-
-    Listeners.on(overlayTopScrollZone, 'mouseleave', (event) => {
-      this.inScrollZone = null;
-    });
+    const {container} = this.genHTML();
 
     Listeners.on(container, 'mousedown', (event: MouseEvent) => {
-      if (event.button !== this.MAIN_MOUSE_BUTTON) { return; }
+      if (event.button !== this.MAIN_MOUSE_BUTTON) {
+        return;
+      }
       this.startSelection(event.pageX, event.pageY);
     }, false);
 
-    Listeners.on(document.body, 'mousemove', (event) => {
+    Listeners.on(document.body, 'mousemove', (event: MouseEvent) => {
       this.changingRectangle(event);
+      this.scrollByZones(event.clientY);
     }, false);
 
-    Listeners.on(document.body, 'mouseleave', (event) => {
+    Listeners.on(document.body, 'mouseleave', () => {
       this.clearSelection();
       this.endSelection();
     });
@@ -137,7 +122,7 @@ export default class RectangleSelection extends Module {
       this.changingRectangle(event);
     }, false);
 
-    Listeners.on(document.body, 'mouseup', (event) => {
+    Listeners.on(document.body, 'mouseup', () => {
       this.endSelection();
     }, false);
   }
@@ -161,7 +146,6 @@ export default class RectangleSelection extends Module {
     this.mousedown = true;
     this.startX = pageX;
     this.startY = pageY;
-    const container = document.querySelector('.' + UI.CSS.editorWrapper);
   }
 
   /**
@@ -188,24 +172,42 @@ export default class RectangleSelection extends Module {
     this.isRectSelectionActivated = false;
   }
 
+  /**
+   * Scroll If mouse in scroll zone
+   * @param {number} clientY - Y coord of mouse
+   */
+  private scrollByZones(clientY) {
+    this.inScrollZone = null;
+    if (clientY <= this.HEIGHT_OF_SCROLL_ZONE) {
+      this.inScrollZone = this.TOP_SCROLL_ZONE;
+    }
+    if (document.documentElement.clientHeight - clientY <= this.HEIGHT_OF_SCROLL_ZONE) {
+      this.inScrollZone = this.BOTTOM_SCROLL_ZONE;
+    }
+
+    if (!this.inScrollZone) {
+      this.isScrolling = false;
+      return;
+    }
+
+    if (!this.isScrolling) {
+      this.scrollVertical(this.inScrollZone === this.TOP_SCROLL_ZONE ? -this.SCROLL_SPEED : this.SCROLL_SPEED);
+      this.isScrolling = true;
+    }
+  }
+
   private genHTML() {
-    const container = document.querySelector('.' + UI.CSS.editorWrapper);
+    const container = this.Editor.UI.nodes.holder.querySelector('.' + UI.CSS.editorWrapper);
     const overlay = $.make('div', RectangleSelection.CSS.overlay, {});
     const overlayContainer = $.make('div', RectangleSelection.CSS.overlayContainer, {});
     const overlayRectangle = $.make('div', RectangleSelection.CSS.rect, {});
-    const overlayTopScrollZone = $.make('div', RectangleSelection.CSS.topScrollZone, {});
-    const overlayBottomScrollZone = $.make('div', RectangleSelection.CSS.bottomScrollZone, {});
 
     overlayContainer.appendChild(overlayRectangle);
     overlay.appendChild(overlayContainer);
-    document.body.appendChild(overlayTopScrollZone);
-    document.body.appendChild(overlayBottomScrollZone);
     container.appendChild(overlay);
 
     this.overlayRectangle = overlayRectangle as HTMLDivElement;
     return {
-      overlayBottomScrollZone,
-      overlayTopScrollZone,
       container,
       overlay,
     };
@@ -219,8 +221,9 @@ export default class RectangleSelection extends Module {
     if (!(this.inScrollZone && this.mousedown)) {
       return;
     }
-    this.mouseY += speed;
+    const lastOffset = window.pageYOffset;
     window.scrollBy(0, speed);
+    this.mouseY += window.pageYOffset - lastOffset;
     setTimeout(() => {
       this.scrollVertical(speed);
     }, 0);
@@ -286,14 +289,14 @@ export default class RectangleSelection extends Module {
     const isSelecteMode = firstBlockInStack.selected;
 
     if (this.rectCrossesBlocks && !isSelecteMode) {
-      for (let i = 0; i < this.stackOfSelected.length; i++) {
-        this.Editor.BlockSelection.selectBlockByIndex(this.stackOfSelected[i]);
+      for (const it of this.stackOfSelected) {
+        this.Editor.BlockSelection.selectBlockByIndex(it);
       }
     }
 
     if (!this.rectCrossesBlocks && isSelecteMode) {
-      for (let i = 0; i < this.stackOfSelected.length; i++) {
-        this.Editor.BlockSelection.unSelectBlockByIndex(this.stackOfSelected[i]);
+      for (const it of this.stackOfSelected) {
+        this.Editor.BlockSelection.unSelectBlockByIndex(it);
       }
     }
   }
@@ -328,7 +331,7 @@ export default class RectangleSelection extends Module {
   private genInfoForMouseSelection() {
     const widthOfRedactor = document.body.offsetWidth;
     const centerOfRedactor = widthOfRedactor / 2;
-    const Y = this.getHorizontalMousePosition();
+    const Y = this.mouseY - window.pageYOffset;
     const elementUnderMouse = document.elementFromPoint(centerOfRedactor, Y);
     const blockInCurrentPos = this.Editor.BlockManager.getBlockByChildNode(elementUnderMouse);
     let index;
@@ -345,21 +348,6 @@ export default class RectangleSelection extends Module {
       leftPos,
       rightPos,
     };
-  }
-
-  /**
-   * Get mouse Y coord with accounting Scroll zone
-   */
-  private getHorizontalMousePosition() {
-    let value = this.mouseY - window.pageYOffset;
-    // To look at the item below the zone
-    if (this.inScrollZone === this.TOP_SCROLL_ZONE) {
-      value += this.HEIGHT_OF_SCROLL_ZONE;
-    }
-    if (this.inScrollZone === this.BOTTOM_SCROLL_ZONE) {
-      value -= this.HEIGHT_OF_SCROLL_ZONE;
-    }
-    return value;
   }
 
   /**
@@ -394,19 +382,20 @@ export default class RectangleSelection extends Module {
     const reduction = !generalSelection;
 
     // When the selection is too fast, some blocks do not have time to be noticed. Fix it.
-    if (!reduction && (index > this.stackOfSelected[sizeStack - 1] || this.stackOfSelected[sizeStack - 1] === undefined)) {
-      let i = this.stackOfSelected[sizeStack - 1] + 1 || index;
+    if (!reduction && (index > this.stackOfSelected[sizeStack - 1] ||
+      this.stackOfSelected[sizeStack - 1] === undefined)) {
+      let ind = this.stackOfSelected[sizeStack - 1] + 1 || index;
 
-      for (i; i <= index; i++) {
-        this.addBlockInSelection(i);
+      for (ind; ind <= index; ind++) {
+        this.addBlockInSelection(ind);
       }
       return;
     }
 
     // for both directions
     if (!reduction && (index < this.stackOfSelected[sizeStack - 1])) {
-      for (let i = this.stackOfSelected[sizeStack - 1] - 1; i >= index; i--) {
-        this.addBlockInSelection(i);
+      for (let ind = this.stackOfSelected[sizeStack - 1] - 1; ind >= index; ind--) {
+        this.addBlockInSelection(ind);
       }
       return;
     }
