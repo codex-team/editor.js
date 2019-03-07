@@ -139,7 +139,14 @@ export default class Paste extends Module {
   public async processDataTransfer(dataTransfer: DataTransfer, isDragNDrop = false): Promise<void> {
     const { Sanitizer } = this.Editor;
 
-    if (dataTransfer.types.includes('Files')) {
+    const types = dataTransfer.types;
+
+    /**
+     * In Microsoft Edge types is DOMStringList. So 'contains' is used to check if 'Files' type included
+     */
+    const includesFiles = types.includes ? types.includes('Files') : (types as any).contains('Files');
+
+    if (includesFiles) {
       await this.processFiles(dataTransfer.files);
       return;
     }
