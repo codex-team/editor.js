@@ -1,4 +1,9 @@
 # Changelog
+
+### 2.11.6
+
+- `Fix` *Paste* — fix pasting into non-initial Blocks
+
 ### 2.11.5
 
 - `Fix` *RectangeSelection* — Redesign of the scrolling zones
