@@ -345,11 +345,9 @@ export default class Paste extends Module {
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
     const {BlockManager, Tools, Toolbar} = this.Editor;
 
-    const isInitialTool = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
-
     /** If target is native input or is not Block, use browser behaviour */
     if (
-      !isInitialTool
+      !BlockManager.currentBlock || this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files')
     ) {
       return;
     }
@@ -577,11 +575,12 @@ export default class Paste extends Module {
    * @param {PasteData} dataToInsert
    */
   private async processInlinePaste(dataToInsert: PasteData): Promise<void> {
-    const initialTool = this.config.initialBlock,
-      {BlockManager, Caret, Sanitizer, Tools} = this.Editor,
-      {content, tool} = dataToInsert;
+    const {BlockManager, Caret, Sanitizer, Tools} = this.Editor;
+    const {content, tool} = dataToInsert;
 
-    if (tool === initialTool && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
+    const currentBlockIsInitial = Tools.isInitial(BlockManager.currentBlock.tool);
+
+    if (currentBlockIsInitial && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
       const blockData = await this.processPattern(content.textContent);
 
       if (blockData) {

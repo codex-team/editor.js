@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.11.7
+
+- `Fix` *Paste* — Fix pasting into non-initial Blocks
+
 ### 2.11.6
 
 - `Fix` *Paste* — Polyfill for Microsoft Edge
