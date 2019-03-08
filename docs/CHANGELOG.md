@@ -1,4 +1,9 @@
 # Changelog
+
+### 2.11.6
+
+- `Fix` *Paste* — Polyfill for Microsoft Edge
+
 ### 2.11.5
 
 - `Fix` *RectangeSelection* — Redesign of the scrolling zones
