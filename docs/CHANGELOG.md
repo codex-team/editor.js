@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.11.8
+
+- `Fix` — Block tunes margins now better works with more than 3 buttons
+
 ### 2.11.7
 
 - `Fix` *Paste* — Fix pasting into non-initial Blocks

@@ -115,8 +115,12 @@
     vertical-align: bottom;
     color: var(--grayText);
 
-    &:not(:last-of-type){
+    &:not(:nth-child(3n+3)) {
       margin-right: 5px;
+    }
+
+    &:nth-child(n+4) {
+      margin-top: 5px;
     }
 
     &:hover {
