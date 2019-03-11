@@ -115,7 +115,7 @@
     vertical-align: bottom;
     color: var(--grayText);
 
-    &:not(:nth-child(3n+3)):not(:last-of-type) {
+    &:not(:nth-child(3n+3)) {
       margin-right: 5px;
     }
 
