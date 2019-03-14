@@ -200,27 +200,6 @@ export default class Core {
     if (!$.get(this.config.holderId)) {
       throw Error(`element with ID «${this.config.holderId}» is missing. Pass correct holder's ID.`);
     }
-
-    /**
-     * Check Tools for a class containing
-     */
-    for (const toolName in this.config.tools) {
-      const internalTools = ['paragraph', 'link', 'bold', 'italic', 'stub'];
-
-      if (internalTools.includes(toolName)) {
-        return;
-      }
-
-      if (this.config.tools.hasOwnProperty(toolName)) {
-        const tool = this.config.tools[toolName];
-
-        if (!_.isFunction(tool) && !_.isFunction((tool as ToolSettings).class)) {
-          throw Error(
-            `Tool «${toolName}» must be a constructor function or an object with function in the «class» property`,
-          );
-        }
-      }
-    }
   }
 
   /**

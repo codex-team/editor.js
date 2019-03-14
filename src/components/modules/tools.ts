@@ -195,6 +195,8 @@ export default class Tools extends Module {
    * @return {Promise}
    */
   public prepare() {
+    this.validateTools();
+
     /**
      * Assign internal tools
      */
@@ -377,6 +379,30 @@ export default class Tools extends Module {
     }
 
     return toolPreparationList;
+  }
+
+  /**
+   * Validate Tools configuration objects and throw Error for user if it is invalid
+   */
+  private validateTools() {
+    /**
+     * Check Tools for a class containing
+     */
+    for (const toolName in this.config.tools) {
+      if (this.config.tools.hasOwnProperty(toolName)) {
+        if (toolName in this.internalTools) {
+          return;
+        }
+
+        const tool = this.config.tools[toolName];
+
+        if (!_.isFunction(tool) && !_.isFunction((tool as ToolSettings).class)) {
+          throw Error(
+            `Tool «${toolName}» must be a constructor function or an object with function in the «class» property`,
+          );
+        }
+      }
+    }
   }
 
   /**
