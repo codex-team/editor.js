@@ -41,6 +41,15 @@
 
   &__button {
     @apply --toolbar-button;
+
+    &:not(:nth-child(3n+3)) {
+      margin-right: 5px;
+    }
+
+    &:nth-child(n+4) {
+      margin-top: 5px;
+    }
+
     line-height: 32px;
 
     &--disabled {
