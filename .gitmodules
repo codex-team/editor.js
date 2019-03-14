@@ -40,3 +40,6 @@
 [submodule "example/tools/link"]
 	path = example/tools/link
 	url = https://github.com/editor-js/link
+[submodule "example/tools/raw"]
+	path = example/tools/raw
+	url = https://github.com/editor-js/raw
