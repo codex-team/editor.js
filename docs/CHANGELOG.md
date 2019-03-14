@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.11.10
+
+- `New` — Add ability to pass configuration for internal Tools
+
 ### 2.11.9
 
 - `Fix` - Fix inline toolbar buttons margin. Update dependencies list. Update tools for example page. 
