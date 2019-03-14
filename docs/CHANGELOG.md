@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.11.9
+
+- `Fix` - Fix inline toolbar buttons margin. Update dependencies list. Update tools for example page. 
+
 ### 2.11.8
 
 - `Fix` — Block tunes margins now better works with more than 3 buttons

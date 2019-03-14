@@ -24,6 +24,10 @@
   @apply --toolbar-button;
   line-height: normal;
 
+  &:not(:last-of-type) {
+    margin-right: 5px;
+  }
+
   &--last {
     margin-right: 0 !important;
   }

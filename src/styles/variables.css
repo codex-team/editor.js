@@ -115,14 +115,6 @@
     vertical-align: bottom;
     color: var(--grayText);
 
-    &:not(:nth-child(3n+3)) {
-      margin-right: 5px;
-    }
-
-    &:nth-child(n+4) {
-      margin-top: 5px;
-    }
-
     &:hover {
       background-color: var(--bg-light);
     }
