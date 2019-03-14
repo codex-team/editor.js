@@ -205,6 +205,12 @@ export default class Core {
      * Check Tools for a class containing
      */
     for (const toolName in this.config.tools) {
+      const internalTools = ['paragraph', 'link', 'bold', 'italic', 'stub'];
+
+      if (internalTools.includes(toolName)) {
+        return;
+      }
+
       if (this.config.tools.hasOwnProperty(toolName)) {
         const tool = this.config.tools[toolName];
 
