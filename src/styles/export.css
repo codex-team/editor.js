@@ -24,6 +24,14 @@
 .cdx-settings-button {
   @apply --toolbar-button;
 
+  &:not(:nth-child(3n+3)) {
+    margin-right: 5px;
+  }
+
+  &:nth-child(n+4) {
+    margin-top: 5px;
+  }
+
   &--active {
     color: var(--color-active-icon);
   }
