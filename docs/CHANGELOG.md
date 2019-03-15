@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.11.10
+
+- `Fix` - Fix editor view on mobile devices
+
 ### 2.11.9
 
 - `Fix` - Fix inline toolbar buttons margin. Update dependencies list. Update tools for example page. 
