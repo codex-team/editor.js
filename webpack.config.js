@@ -89,13 +89,6 @@ module.exports = (env, argv) => {
           test: /\.css$/,
           exclude: /node_modules/,
           use: [
-            {
-              loader: 'css-loader',
-              options: {
-              // minimize: 1,
-                importLoaders: 1
-              }
-            },
             'postcss-loader'
           ]
         },
