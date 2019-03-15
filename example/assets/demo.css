@@ -9,7 +9,7 @@ body {
 }
 
 .ce-example {
-  font-size: 15px;
+  font-size: 16.2px;
 }
 
 .ce-example__header {
@@ -19,6 +19,7 @@ body {
   display: flex;
   padding: 0 30px;
   margin-bottom: 30px;
+  flex-wrap: wrap;
 }
 
 .ce-example__header a {
@@ -34,13 +35,31 @@ body {
   margin-left: auto;
 }
 
+@media all and (max-width: 730px){
+  .ce-example__header-menu {
+    margin-left: 0;
+    margin-top: 10px;
+    flex-basis: 100%;
+    font-size: 14px;
+  }
+}
+
 .ce-example__header-menu a {
   margin-left: 20px;
+}
+
+@media all and (max-width: 730px){
+  .ce-example__header-menu a {
+    margin-left: 0;
+    margin-right: 15px;
+  }
 }
 
 .ce-example__content {
   max-width: 1100px;
   margin: 0 auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .ce-example__content--small {
@@ -122,4 +141,20 @@ body {
 }
 .sc_bool {
   color: rgb(247, 60, 173);
+}
+
+.ce-example .ce-block:first-of-type h2.ce-header{
+  font-size: 50px;
+}
+
+.ce-example h2.ce-header{
+  font-size: 30px;
+}
+
+.ce-example h3.ce-header {
+  font-size: 24px;
+}
+
+.ce-example h4.ce-header {
+  font-size: 18px;
 }
