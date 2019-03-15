@@ -1,0 +1,42 @@
+plugins:
+  # Consumes files by @import rule
+  # https://github.com/postcss/postcss-import
+  postcss-import: {}
+
+  # Apply custom property sets via @apply rule
+  # https://github.com/pascalduez/postcss-apply
+  postcss-apply: {}
+
+  # Convert modern CSS into something most browsers can understand
+  # https://github.com/csstools/postcss-preset-env
+  postcss-preset-env:
+    # Polyfill CSS features
+    # https://github.com/csstools/postcss-preset-env#stage
+    #
+    # List of features with levels: https://cssdb.org/
+    stage: 0
+
+    # Define polyfills based on browsers you are supporting
+    # https://github.com/csstools/postcss-preset-env#browsers
+    browsers:
+      - 'last 2 versions'
+      - '> 1%'
+
+    # Instruct all plugins to omit pre-polyfilled CSS
+    # https://github.com/csstools/postcss-preset-env#preserve
+    preserve: false
+
+  # Nested rules unwrapper
+  # https://github.com/postcss/postcss-nested
+  #
+  # As you know 'postcss-preset-env' plugin has an ability to process
+  # 'postcss-nesting' feature but it does not work with BEM
+  # Report: https://github.com/csstools/postcss-preset-env/issues/40
+  postcss-nested: {}
+
+  # Compression tool
+  # https://github.com/cssnano/cssnano
+  cssnano: {}
+
+
+
