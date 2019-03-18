@@ -4,6 +4,10 @@
 
 - `New` *API* - new `blocks` API method `renderFromHTML` 
 
+### 2.11.11
+
+- `New` — Add ability to pass configuration for internal Tools
+
 ### 2.11.10
 
 - `Fix` - Fix editor view on mobile devices

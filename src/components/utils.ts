@@ -308,4 +308,34 @@ export default class Util {
   public static capitalize(text: string): string {
     return text[0].toUpperCase() + text.slice(1);
   }
+
+  /**
+   * Merge to objects recursively
+   * @param {object} target
+   * @param {object[]} sources
+   * @return {object}
+   */
+  public static deepMerge(target, ...sources) {
+    const isObject = (item) => item && typeof item === 'object' && !Array.isArray(item);
+
+    if (!sources.length) { return target; }
+    const source = sources.shift();
+
+    if (isObject(target) && isObject(source)) {
+      for (const key in source) {
+        if (isObject(source[key])) {
+          if (!target[key]) {
+            Object.assign(target, { [key]: {} });
+          }
+
+          Util.deepMerge(target[key], source[key]);
+        } else {
+          Object.assign(target, { [key]: source[key] });
+        }
+      }
+    }
+
+    return Util.deepMerge(target, ...sources);
+  }
+
 }

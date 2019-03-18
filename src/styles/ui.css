@@ -115,6 +115,10 @@
   opacity: 0.3;
 }
 
+.codex-editor--toolbox-opened [contentEditable=true][data-placeholder]:focus::before {
+  opacity: 0;
+}
+
 @keyframes editor-loader-spin {
   0% {
     transform: rotate(0deg);
