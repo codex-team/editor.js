@@ -203,14 +203,16 @@ export default class Paste extends Module {
       return;
     }
 
-    const isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
+    const isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
     const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
 
     await Promise.all(dataToInsert.map(
       async (content, i) => await this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
     ));
 
-    Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
+    if (BlockManager.currentBlock) {
+      Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
+    }
   }
 
   /**
@@ -558,8 +560,8 @@ export default class Paste extends Module {
     /**
      * If pasted tool isn`t equal current Block or if pasted content contains block elements, insert it as new Block
      */
-    if (dataToInsert.tool !== currentBlock.name || !$.containsOnlyInlineElements(dataToInsert.content.innerHTML)) {
-      this.insertBlock(dataToInsert, Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty);
+    if (currentBlock && dataToInsert.tool !== currentBlock.name || !$.containsOnlyInlineElements(dataToInsert.content.innerHTML)) {
+      this.insertBlock(dataToInsert, currentBlock && Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty);
       return;
     }
 
@@ -578,7 +580,7 @@ export default class Paste extends Module {
     const {BlockManager, Caret, Sanitizer, Tools} = this.Editor;
     const {content, tool} = dataToInsert;
 
-    const currentBlockIsInitial = Tools.isInitial(BlockManager.currentBlock.tool);
+    const currentBlockIsInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
 
     if (currentBlockIsInitial && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
       const blockData = await this.processPattern(content.textContent);
@@ -600,7 +602,7 @@ export default class Paste extends Module {
     const currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
 
     /** If there is no pattern substitute - insert string as it is */
-    if (BlockManager.currentBlock.currentInput) {
+    if (BlockManager.currentBlock && BlockManager.currentBlock.currentInput) {
       document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig));
     } else {
       this.insertBlock(dataToInsert);
