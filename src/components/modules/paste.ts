@@ -560,7 +560,11 @@ export default class Paste extends Module {
     /**
      * If pasted tool isn`t equal current Block or if pasted content contains block elements, insert it as new Block
      */
-    if (currentBlock && dataToInsert.tool !== currentBlock.name || !$.containsOnlyInlineElements(dataToInsert.content.innerHTML)) {
+    if (
+      !currentBlock ||
+      dataToInsert.tool !== currentBlock.name ||
+      !$.containsOnlyInlineElements(dataToInsert.content.innerHTML)
+    ) {
       this.insertBlock(dataToInsert, currentBlock && Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty);
       return;
     }
@@ -599,10 +603,10 @@ export default class Paste extends Module {
       }
     }
 
-    const currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
-
     /** If there is no pattern substitute - insert string as it is */
     if (BlockManager.currentBlock && BlockManager.currentBlock.currentInput) {
+      const currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
+
       document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig));
     } else {
       this.insertBlock(dataToInsert);
