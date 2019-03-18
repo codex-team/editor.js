@@ -29,6 +29,7 @@ export default class Toolbox extends Module {
       tooltip: 'ce-toolbox__tooltip',
       tooltipShown: 'ce-toolbox__tooltip--shown',
       tooltipShortcut: 'ce-toolbox__tooltip-shortcut',
+      openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
     };
   }
 
@@ -124,7 +125,9 @@ export default class Toolbox extends Module {
       return;
     }
 
+    this.Editor.UI.nodes.wrapper.classList.add(this.CSS.openedToolbarHolderModifier);
     this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
+
     this.opened = true;
   }
 
@@ -135,6 +138,8 @@ export default class Toolbox extends Module {
     this.hideTooltip();
 
     this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
+    this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
+
     this.opened = false;
 
     /** remove active item pointer */

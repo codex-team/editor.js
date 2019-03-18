@@ -129,6 +129,15 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * Check if each Block is empty
+   *
+   * @returns {boolean}
+   */
+  public get isEditorEmpty(): boolean {
+    return this.blocks.every((block) => block.isEmpty);
+  }
+
+  /**
    * Index of current working block
    *
    * @type {number}
