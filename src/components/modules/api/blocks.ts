@@ -120,6 +120,7 @@ export default class BlocksAPI extends Module {
    * @return {Promise<void>}
    */
   public renderFromHTML(data: string): Promise<void> {
+    this.Editor.BlockManager.clear();
     return this.Editor.Paste.processText(data, true);
   }
 
