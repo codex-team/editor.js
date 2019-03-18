@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.12.0 
+
+- `New` *API* - new `blocks` API method `renderFromHTML` 
+
 ### 2.11.11
 
 - `New` — Add ability to pass configuration for internal Tools

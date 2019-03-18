@@ -17,6 +17,13 @@ export interface Blocks {
   render(data: OutputData): Promise<void>;
 
   /**
+   * Render passed HTML string
+   * @param {string} data
+   * @return {Promise<void>}
+   */
+  renderFromHTML(data: string): Promise<void>;
+
+  /**
    * Removes current Block
    */
   delete(): void;
