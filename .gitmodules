@@ -43,3 +43,6 @@
 [submodule "example/tools/raw"]
 	path = example/tools/raw
 	url = https://github.com/editor-js/raw
+[submodule "example/tools/warning"]
+	path = example/tools/warning
+	url = https://github.com/editor-js/warning
