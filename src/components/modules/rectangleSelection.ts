@@ -10,7 +10,6 @@ import $ from '../dom';
 
 import SelectionUtils from '../selection';
 import Block from '../block';
-import UI from './ui';
 import Timeout = NodeJS.Timeout;
 
 export default class RectangleSelection extends Module {
@@ -138,7 +137,7 @@ export default class RectangleSelection extends Module {
     this.stackOfSelected = [];
 
     const elemWhereSelectionStart = document.elementFromPoint(pageX - window.pageXOffset, pageY - window.pageYOffset);
-    if (!(elemWhereSelectionStart.closest('.' + UI.CSS.editorWrapper) &&
+    if (!(elemWhereSelectionStart.closest('.' + this.Editor.UI.CSS.editorWrapper) &&
       !elemWhereSelectionStart.closest('.' + Block.CSS.content))) {
       return;
     }
@@ -197,7 +196,9 @@ export default class RectangleSelection extends Module {
   }
 
   private genHTML() {
-    const container = this.Editor.UI.nodes.holder.querySelector('.' + UI.CSS.editorWrapper);
+    const {UI} = this.Editor;
+
+    const container = UI.nodes.holder.querySelector('.' + UI.CSS.editorWrapper);
     const overlay = $.make('div', RectangleSelection.CSS.overlay, {});
     const overlayContainer = $.make('div', RectangleSelection.CSS.overlayContainer, {});
     const overlayRectangle = $.make('div', RectangleSelection.CSS.rect, {});
