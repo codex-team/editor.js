@@ -181,6 +181,39 @@ export default class Paste extends Module {
   }
 
   /**
+   * Process pasted text and divide them into Blocks
+   *
+   * @param {string} data - text to process. Can be HTML or plain.
+   * @param {boolean} isHTML - if passed string is HTML, this parameter should be true
+   */
+  public async processText(data: string, isHTML: boolean = false) {
+    const {Caret, BlockManager, Tools} = this.Editor;
+    const dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
+
+    if (!dataToInsert.length) {
+      return;
+    }
+
+    if (dataToInsert.length === 1) {
+      if (!dataToInsert[0].isBlock) {
+        this.processInlinePaste(dataToInsert.pop());
+      } else {
+        this.processSingleBlock(dataToInsert.pop());
+      }
+      return;
+    }
+
+    const isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
+    const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+
+    await Promise.all(dataToInsert.map(
+      async (content, i) => await this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
+    ));
+
+    Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
+  }
+
+  /**
    * Set onPaste callback handler
    */
   private setCallback(): void {
@@ -422,39 +455,6 @@ export default class Paste extends Module {
       event: pasteEvent,
       type: tool,
     };
-  }
-
-  /**
-   * Process pasted text and divide them into Blocks
-   *
-   * @param {string} data - text to process. Can be HTML or plain.
-   * @param {boolean} isHTML - if passed string is HTML, this parameter should be true
-   */
-  private async processText(data: string, isHTML: boolean = false) {
-    const {Caret, BlockManager, Tools} = this.Editor;
-    const dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
-
-    if (!dataToInsert.length) {
-      return;
-    }
-
-    if (dataToInsert.length === 1) {
-      if (!dataToInsert[0].isBlock) {
-        this.processInlinePaste(dataToInsert.pop());
-      } else {
-        this.processSingleBlock(dataToInsert.pop());
-      }
-      return;
-    }
-
-    const isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
-    const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
-
-    await Promise.all(dataToInsert.map(
-      async (content, i) => await this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
-    ));
-
-    Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
   }
 
   /**

@@ -18,6 +18,7 @@ export default class BlocksAPI extends Module {
     return {
       clear: () => this.clear(),
       render: (data: OutputData) => this.render(data),
+      renderFromHTML: (data: string) => this.renderFromHTML(data),
       delete: () => this.delete(),
       swap: (fromIndex: number, toIndex: number) => this.swap(fromIndex, toIndex),
       getBlockByIndex: (index: number) => this.getBlockByIndex(index),
@@ -111,6 +112,15 @@ export default class BlocksAPI extends Module {
   public render(data: OutputData): Promise<void> {
     this.Editor.BlockManager.clear();
     return this.Editor.Renderer.render(data.blocks);
+  }
+
+  /**
+   * Render passed HTML string
+   * @param {string} data
+   * @return {Promise<void>}
+   */
+  public renderFromHTML(data: string): Promise<void> {
+    return this.Editor.Paste.processText(data, true);
   }
 
   /**

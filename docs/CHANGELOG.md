@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.12.0 
+
+- `New` *API* - new `blocks` API method `renderFromHTML` 
+
 ### 2.11.10
 
 - `Fix` - Fix editor view on mobile devices
