@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.12.1
+
+- `Fix` — Fix processing `color-mod` function in styles
+
 ### 2.12.0 
 
 - `New` *API* - new `blocks` API method `renderFromHTML` 

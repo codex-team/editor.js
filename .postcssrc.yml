@@ -26,6 +26,16 @@ plugins:
     # https://github.com/csstools/postcss-preset-env#preserve
     preserve: false
 
+    # Enable or disable specific polyfills
+    # https://github.com/csstools/postcss-preset-env#features
+    #
+    # List of available plugins
+    # https://github.com/csstools/postcss-preset-env/blob/master/src/lib/plugins-by-id.js
+    features:
+      # Modify colors using the color-mod() function in CSS
+      # https://github.com/jonathantneal/postcss-color-mod-function
+      color-mod-function: {}
+
   # Nested rules unwrapper
   # https://github.com/postcss/postcss-nested
   #
