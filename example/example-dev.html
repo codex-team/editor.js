@@ -28,7 +28,7 @@
     </div>
     <div class="ce-example__content _ce-example__content--small">
       <div id="editorjs"></div>
-
+      <span id="hint">No submodules found. Run <b>yarn pull_tools</b></span>
       <div class="ce-example__button" id="saveButton">
         editor.save()
       </div>
@@ -51,7 +51,7 @@
    Read more in Tool's README file. For example:
    https://github.com/editor-js/header#installation
    -->
-  <script src="./tools/header/dist/bundle.js"></script><!-- Header -->
+  <script src="./tools/header/dist/bundle.js" onload="hint.hidden = true"></script><!-- Header -->
   <script src="./tools/simple-image/dist/bundle.js"></script><!-- Image -->
   <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
   <script src="./tools/list/dist/bundle.js"></script><!-- List -->
@@ -81,13 +81,16 @@
      * To initialize the Editor, create a new instance with configuration object
      * @see docs/installation.md for mode details
      */
-    let editor = null;
+    var editor = new EditorJS({
+      /**
+       * Wrapper of Editor
+       */
+      holderId: 'editorjs',
 
-    /**
-     * If EditorTools exist in project as git-submodules, initialize editor with demo data
-     */
-    try {
-      const tools = {
+      /**
+       * Tools list
+       */
+      tools: {
         /**
          * Each Tool is a Plugin. Pass them via 'class' option with necessary settings {@link docs/tools.md}
          */
@@ -159,9 +162,18 @@
           inlineToolbar: true,
           shortcut: 'CMD+ALT+T'
         },
-      };
 
-      const data = {
+      },
+
+      /**
+       * This Tool will be used as default
+       */
+      // initialBlock: 'paragraph',
+
+      /**
+       * Initial Editor data
+       */
+      data: {
         blocks: [
           {
             type: "header",
@@ -259,56 +271,14 @@
             }
           },
         ]
-      };
-
-      editor = initEditor(tools, data);
-    } catch (e) {
-      editor = initEditor({}, {
-        blocks: [
-          {
-            type: "paragraph",
-            data: {
-              text: "No submodules found. Run <b>yarn pull_tools</b>"
-            }
-          }]
-      })
-    }
-
-    /**
-     * Initialize EditorJS instance with settings
-     * @param {Object} tools - EditorJS Plugins
-     * @param {Object} data - EditorJS blocks data
-     */
-    function initEditor(tools, data) {
-      return new EditorJS({
-        /**
-         * Wrapper of Editor
-         */
-        holderId: 'editorjs',
-
-        /**
-         * Tools list
-         */
-        tools: tools,
-
-        /**
-         * This Tool will be used as default
-         */
-        // initialBlock: 'paragraph',
-
-        /**
-         * Initial Editor data
-         */
-        data: data,
-
-        onReady: function(){
-          saveButton.click();
-        },
-        onChange: function() {
-          console.log('something changed');
-        }
-      });
-    }
+      },
+      onReady: function(){
+        saveButton.click();
+      },
+      onChange: function() {
+        console.log('something changed');
+      }
+    });
 
     /**
      * Saving example
