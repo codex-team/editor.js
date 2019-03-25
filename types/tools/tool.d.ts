@@ -1,4 +1,4 @@
-import {API} from '../index';
+import {API, ToolSettings} from '../index';
 import {ToolConfig} from './tool-config';
 import {SanitizerConfig} from '../configs';
 
@@ -29,7 +29,7 @@ export interface BaseToolConstructable {
   /**
    * Describe constructor parameters
    */
-  new (config: {api: API}): BaseTool;
+  new (config: {api: API, config?: ToolSettings}): BaseTool;
 
   /**
    * Tool`s prepare method. Can be async

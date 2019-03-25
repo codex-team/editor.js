@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.12.2
+
+- New *Inline Tools* — pass tool settings from configuration to Tool constructor 
+
 ### 2.12.1
 
 - `Fix` — Fix processing `color-mod` function in styles
