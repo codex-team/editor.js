@@ -1,8 +1,16 @@
 # Changelog
 
-### 2.11.12
+### 2.12.1
 
 - `Fix` — Make Toolbox tooltip position font-size independent  
+
+### 2.12.0 
+
+- `New` *API* - new `blocks` API method `renderFromHTML` 
+
+### 2.11.12
+
+- `Fix` — Fix processing `color-mod` function in styles
 
 ### 2.11.11
 

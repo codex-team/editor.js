@@ -22,6 +22,10 @@ export interface API {
 
 Methods that working with Blocks
 
+`render(data)` - render passed JSON data
+
+`renderFromHTML(data)` - parse and render passed HTML string (*not for production use*)
+
 `swap(fromIndex, toIndex)` - swaps two Blocks by their positions
 
 `delete(blockIndex?: Number)` - deletes Block with passed index
