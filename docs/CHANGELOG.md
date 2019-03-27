@@ -1,8 +1,12 @@
 # Changelog
 
-### 2.12.2
+### 2.12.3
 
 - `Fix` — Make Toolbox tooltip position font-size independent  
+
+### 2.12.2
+
+- New *Inline Tools* — pass tool settings from configuration to Tool constructor 
 
 ### 2.12.1
 
