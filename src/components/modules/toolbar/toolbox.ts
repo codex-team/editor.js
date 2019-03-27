@@ -371,13 +371,15 @@ export default class Toolbox extends Module {
       }));
     }
 
-    const offset = 16;
+    const leftOffset = 16;
     const coordinate = button.offsetLeft;
+    const topOffset = Math.floor(this.Editor.BlockManager.currentBlock.holder.offsetHeight / 2);
 
     this.nodes.tooltip.innerHTML = '';
     this.nodes.tooltip.appendChild(fragment);
 
-    this.nodes.tooltip.style.left = `${coordinate + offset}px`;
+    this.nodes.tooltip.style.left = `${coordinate + leftOffset}px`;
+    this.nodes.tooltip.style.transform = `translate3d(-50%, ${topOffset}px, 0)`;
     this.nodes.tooltip.classList.add(this.CSS.tooltipShown);
   }
 

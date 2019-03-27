@@ -24,9 +24,8 @@
 
   &__tooltip {
     position: absolute;
-    top: 43px;
+    top: 25px;
     padding: 6px 10px;
-    transform: translateX(-50%);
     border-radius: 5px;
     line-height: 21px;
     opacity: 0;
