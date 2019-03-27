@@ -18,34 +18,6 @@ import {InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings} fr
 export default class InlineToolbar extends Module {
 
   /**
-   * Returns internal inline tools
-   * Includes Bold, Italic, Link
-   */
-  private get internalTools(): { [name: string]: InlineTool } {
-    return {
-      bold: this.Editor.Tools.constructInline(BoldInlineTool),
-      italic: this.Editor.Tools.constructInline(ItalicInlineTool),
-      link: this.Editor.Tools.constructInline(LinkInlineTool),
-    };
-  }
-
-  /**
-   * Get external tools
-   * Tools that has isInline is true
-   */
-  private get externalTools(): { [name: string]: InlineTool } {
-    const result = {};
-
-    for (const tool in this.Editor.Tools.inline) {
-      if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
-        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool]);
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * CSS styles
    */
   public CSS = {
@@ -450,7 +422,9 @@ export default class InlineToolbar extends Module {
 
     for (const tool in this.Editor.Tools.inline) {
       if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
-        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool]);
+        const toolSettings = this.Editor.Tools.getToolSettings(tool);
+
+        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool], toolSettings);
       }
     }
 

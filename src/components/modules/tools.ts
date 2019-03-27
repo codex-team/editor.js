@@ -1,7 +1,14 @@
 import Paragraph from '../tools/paragraph/dist/bundle';
 import Module from '../__module';
 import _ from '../utils';
-import {BlockToolConstructable, ToolConfig, ToolConstructable, ToolSettings} from '../../../types';
+import {
+  BlockToolConstructable,
+  InlineTool,
+  InlineToolConstructable, Tool,
+  ToolConfig,
+  ToolConstructable,
+  ToolSettings,
+} from '../../../types';
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
@@ -313,17 +320,19 @@ export default class Tools extends Module {
    * Return Inline Tool's instance
    *
    * @param {InlineTool} tool
+   * @param {ToolSettings} toolSettings
    * @return {InlineTool} — instance
    */
-  public constructInline(tool) {
+  public constructInline(tool: InlineToolConstructable, toolSettings: ToolSettings = {} as ToolSettings): InlineTool {
     /**
      * @type {{api: API}}
      */
     const constructorOptions = {
       api: this.Editor.API.methods,
+      config: toolSettings[this.apiSettings.CONFIG] || {},
     };
 
-    return new tool(constructorOptions);
+    return new tool(constructorOptions) as InlineTool;
   }
 
   /**
@@ -411,14 +420,14 @@ export default class Tools extends Module {
    */
   get internalTools() {
     return {
-      bold: BoldInlineTool,
-      italic: ItalicInlineTool,
-      link: LinkInlineTool,
+      bold: {class: BoldInlineTool},
+      italic: {class: ItalicInlineTool},
+      link: {class: LinkInlineTool},
       paragraph: {
         class: Paragraph,
         inlineToolbar: true,
       },
-      stub: Stub,
+      stub: {class: Stub},
     };
   }
 }
