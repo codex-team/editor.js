@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.12.4
+
+- `Improvements` — Make internal inline tools\` names more unique
+
 ### 2.12.3
 
 - `Fix` — Make Toolbox tooltip position font-size independent  

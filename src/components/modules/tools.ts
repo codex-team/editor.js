@@ -420,14 +420,14 @@ export default class Tools extends Module {
    */
   get internalTools() {
     return {
-      bold: {class: BoldInlineTool},
-      italic: {class: ItalicInlineTool},
-      link: {class: LinkInlineTool},
-      paragraph: {
+      'inline-bold': {class: BoldInlineTool},
+      'inline-italic': {class: ItalicInlineTool},
+      'inline-link': {class: LinkInlineTool},
+      'paragraph': {
         class: Paragraph,
         inlineToolbar: true,
       },
-      stub: {class: Stub},
+      'stub': {class: Stub},
     };
   }
 }
