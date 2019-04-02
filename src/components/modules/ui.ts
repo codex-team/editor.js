@@ -221,8 +221,6 @@ export default class UI extends Module {
     const {currentBlock} = this.Editor.BlockManager;
     const isMetaKey = event.altKey || event.ctrlKey || event.metaKey || event.shiftKey;
 
-    console.log('Key down', keyDownOnEditor);
-
     /**
      * Ignore keydowns on editor and meta keys
      */
