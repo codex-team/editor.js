@@ -84,7 +84,6 @@ export default class InlineToolbar extends Module {
     // To prevent reset of a selection when click on the wrapper
     this.Editor.Listeners.on(this.nodes.wrapper, 'mousedown', (event) => {
       if (!(event.target as Element).closest(`.${this.CSS.actionsWrapper}`)) {
-        console.log('prevented');
         event.preventDefault();
       }
     });
