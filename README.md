@@ -9,7 +9,7 @@
 
 We are glad to introduce the next version of Editor.js. Totally new core, structure and plugins — that was an impressive adventure 🤓.
 
-Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_editor) where you always find a support.
+Join a [public Telegram-chat](//t.me/codex_editor) where you always find a support.
 
 ### Browsers support
 
