@@ -270,3 +270,8 @@ Follow us on Twitter: [twitter.com/codex_team](https://twitter.com/codex_team)
 Feel free to contact: <a href="mailto:team@codex.so?subject=Editor.js feedback">team@codex.so</a>
 
 [codex.so](https://codex.so)
+
+# Support project improvements
+
+Love Editor.js? Please consider supporting our collective:
+ 👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
