@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.12.4
+
+- `Fix` — Minor fixes of caret behaviour
+
 ### 2.12.3
 
 - `Fix` — Make Toolbox tooltip position font-size independent  
