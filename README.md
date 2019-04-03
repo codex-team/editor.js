@@ -46,7 +46,7 @@ Join [public Telegram-chat](//t.me/codex_editor) or [Gitter-channel](https://git
 - `Improvements` — `Inline Toolbar`: when you add a Link to the selected fragment, Editor will highlight this fragment even when Caret is placed into the URL-input.
 - `Improvements` — Block Settings won't be shown near empty Blocks of `initialType` by default. You should click on them instead.
 - `Improvements` — `onChange`-callback now will be fired even with children attributes changing.
-- `Improvements` — HTMLJantior package was updated due to found vulnerability
+- `Improvements` — HTMLJanitor package was updated due to found vulnerability
 - `Improvements` — Logging improved: now all Editor's logs will be preceded by beautiful label with current Editor version.
 - `Improvements` — Internal `isEmpty` checking was improved for Blocks with many children nodes (200 and more)
 - `Improvements` — Paste improvements: tags that can be substituted by Tool now will matched even on deep-level of pasted DOM three.
