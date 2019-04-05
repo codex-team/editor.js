@@ -73,7 +73,7 @@ export default class Toolbar extends Module {
    * CSS styles
    * @return {Object}
    */
-  private static get CSS() {
+  public get CSS() {
     return {
       toolbar: 'ce-toolbar',
       content: 'ce-toolbar__content',
@@ -96,13 +96,13 @@ export default class Toolbar extends Module {
    * Makes toolbar
    */
   public make(): void {
-    this.nodes.wrapper = $.make('div', Toolbar.CSS.toolbar);
+    this.nodes.wrapper = $.make('div', this.CSS.toolbar);
 
     /**
      * Make Content Zone and Actions Zone
      */
     ['content',  'actions'].forEach( (el) => {
-      this.nodes[el] = $.make('div', Toolbar.CSS[el]);
+      this.nodes[el] = $.make('div', this.CSS[el]);
       $.append(this.nodes.wrapper, this.nodes[el]);
     });
 
@@ -111,7 +111,7 @@ export default class Toolbar extends Module {
      *  - Plus Button
      *  - Toolbox
      */
-    this.nodes.plusButton = $.make('div', Toolbar.CSS.plusButton);
+    this.nodes.plusButton = $.make('div', this.CSS.plusButton);
 
     /**
      * Add events to show/hide tooltip for plus button
@@ -151,8 +151,8 @@ export default class Toolbar extends Module {
      *  - Remove Block Button
      *  - Settings Panel
      */
-    this.nodes.blockActionsButtons = $.make('div', Toolbar.CSS.blockActionsButtons);
-    this.nodes.settingsToggler  = $.make('span', Toolbar.CSS.settingsToggler);
+    this.nodes.blockActionsButtons = $.make('div', this.CSS.blockActionsButtons);
+    this.nodes.settingsToggler  = $.make('span', this.CSS.settingsToggler);
     const settingsIcon = $.svg('dots', 18, 4);
 
     $.append(this.nodes.settingsToggler, settingsIcon);
@@ -222,7 +222,7 @@ export default class Toolbar extends Module {
   public open(withBlockActions: boolean = true, needToCloseToolbox: boolean = true): void {
     setTimeout(() => {
       this.move(needToCloseToolbox);
-      this.nodes.wrapper.classList.add(Toolbar.CSS.toolbarOpened);
+      this.nodes.wrapper.classList.add(this.CSS.toolbarOpened);
 
       if (withBlockActions) {
         this.blockActions.show();
@@ -237,14 +237,14 @@ export default class Toolbar extends Module {
    * @return {Boolean}
    */
   public get opened(): boolean {
-    return this.nodes.wrapper.classList.contains(Toolbar.CSS.toolbarOpened);
+    return this.nodes.wrapper.classList.contains(this.CSS.toolbarOpened);
   }
 
   /**
    * Close the Toolbar
    */
   public close(): void {
-    this.nodes.wrapper.classList.remove(Toolbar.CSS.toolbarOpened);
+    this.nodes.wrapper.classList.remove(this.CSS.toolbarOpened);
 
     /** Close components */
     this.blockActions.hide();
@@ -258,12 +258,12 @@ export default class Toolbar extends Module {
    */
   public get plusButton(): {hide: () => void, show: () => void} {
     return {
-      hide: () => this.nodes.plusButton.classList.add(Toolbar.CSS.plusButtonHidden),
+      hide: () => this.nodes.plusButton.classList.add(this.CSS.plusButtonHidden),
       show: () => {
         if (this.Editor.Toolbox.isEmpty) {
           return;
         }
-        this.nodes.plusButton.classList.remove(Toolbar.CSS.plusButtonHidden);
+        this.nodes.plusButton.classList.remove(this.CSS.plusButtonHidden);
       },
     };
   }
@@ -275,10 +275,10 @@ export default class Toolbar extends Module {
   private get blockActions(): {hide: () => void, show: () => void} {
     return {
       hide: () => {
-        this.nodes.actions.classList.remove(Toolbar.CSS.actionsOpened);
+        this.nodes.actions.classList.remove(this.CSS.actionsOpened);
       },
       show : () => {
-        this.nodes.actions.classList.add(Toolbar.CSS.actionsOpened);
+        this.nodes.actions.classList.add(this.CSS.actionsOpened);
       },
     };
   }

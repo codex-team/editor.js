@@ -4,12 +4,13 @@
 [![](https://flat.badgen.net/bundlephobia/min/@editorjs/editorjs?color=cyan)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![](https://flat.badgen.net/bundlephobia/minzip/@editorjs/editorjs?color=green)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![](https://flat.badgen.net/npm/license/@editorjs/editorjs)](https://www.npmjs.com/package/@editorjs/editorjs)
+[![Join the chat at https://gitter.im/codex-team/editor.js](https://badges.gitter.im/codex-team/editor.js.svg)](https://gitter.im/codex-team/editor.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Version 2.0 is here!
 
 We are glad to introduce the next version of Editor.js. Totally new core, structure and plugins — that was an impressive adventure 🤓.
 
-Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_editor) where you always find a support.
+Join [public Telegram-chat](//t.me/codex_editor) or [Gitter-channel](https://gitter.im/codex-team/editor.js) where you can always find a support.
 
 ### Browsers support
 
@@ -45,7 +46,7 @@ Welcome to testing stage. Please, join a [public Telegram-chat](//t.me/codex_edi
 - `Improvements` — `Inline Toolbar`: when you add a Link to the selected fragment, Editor will highlight this fragment even when Caret is placed into the URL-input.
 - `Improvements` — Block Settings won't be shown near empty Blocks of `initialType` by default. You should click on them instead.
 - `Improvements` — `onChange`-callback now will be fired even with children attributes changing.
-- `Improvements` — HTMLJantior package was updated due to found vulnerability
+- `Improvements` — HTMLJanitor package was updated due to found vulnerability
 - `Improvements` — Logging improved: now all Editor's logs will be preceded by beautiful label with current Editor version.
 - `Improvements` — Internal `isEmpty` checking was improved for Blocks with many children nodes (200 and more)
 - `Improvements` — Paste improvements: tags that can be substituted by Tool now will matched even on deep-level of pasted DOM three.
@@ -270,3 +271,8 @@ Follow us on Twitter: [twitter.com/codex_team](https://twitter.com/codex_team)
 Feel free to contact: <a href="mailto:team@codex.so?subject=Editor.js feedback">team@codex.so</a>
 
 [codex.so](https://codex.so)
+
+# Support project improvements
+
+Love Editor.js? Please consider supporting our collective:
+ 👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)

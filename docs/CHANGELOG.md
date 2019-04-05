@@ -1,12 +1,14 @@
 # Changelog
 
-### 2.12.4
+### 2.12.4 
 
-- `Improvements` — Make internal inline tools\` names more unique
+- `Fix` — Do not start multi-block selection on Toolbox and Inline Toolbar [#646](https://github.com/codex-team/editor.js/issues/646)
+- `Fix` — Minor fixes of caret behaviour [#663](https://github.com/codex-team/editor.js/issues/663)
+- `Improvements` — Make internal inline tools\` names more unique [#637](https://github.com/codex-team/editor.js/issues/637)
 
 ### 2.12.3
 
-- `Fix` — Make Toolbox tooltip position font-size independent  
+- `Fix` — Make Toolbox tooltip position font-size independent
 
 ### 2.12.2
 
@@ -163,7 +165,7 @@
 - `Improvements` — `Inline Toolbar`: when you add a Link to the selected fragment, Editor will highlight this fragment even when Caret is placed into the URL-input.
 - `Improvements` — Block Settings won't be shown near empty Blocks of `initialType` by default. You should click on them instead.
 - `Improvements` — `onChange`-callback now will be fired even with children attributes changing.
-- `Improvements` — HTMLJantior package was updated due to found vulnerability
+- `Improvements` — HTMLJanitor package was updated due to found vulnerability
 - `Improvements` — Logging improved: now all Editor's logs will be preceded by beautiful label with current Editor version.
 - `Improvements` — Internal `isEmpty` checking was improved for Blocks with many children nodes (200 and more)
 - `Improvements` — Paste improvements: tags that can be substituted by Tool now will matched even on deep-level of pasted DOM three.

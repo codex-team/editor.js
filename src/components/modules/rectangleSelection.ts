@@ -137,8 +137,20 @@ export default class RectangleSelection extends Module {
     this.stackOfSelected = [];
 
     const elemWhereSelectionStart = document.elementFromPoint(pageX - window.pageXOffset, pageY - window.pageYOffset);
-    if (!(elemWhereSelectionStart.closest('.' + this.Editor.UI.CSS.editorWrapper) &&
-      !elemWhereSelectionStart.closest('.' + Block.CSS.content))) {
+
+    const selectorsToAvoid = [
+      `.${Block.CSS.content}`,
+      `.${this.Editor.Toolbar.CSS.toolbar}`,
+      `.${this.Editor.InlineToolbar.CSS.inlineToolbar}`,
+    ];
+
+    const startsInsideEditor = elemWhereSelectionStart.closest('.' + this.Editor.UI.CSS.editorWrapper);
+    const startsInSelectorToAvoid = selectorsToAvoid.some(((selector) => !!elemWhereSelectionStart.closest(selector)));
+
+    /**
+     * If selection starts outside of the editor or inside the blocks or on Editor UI elements, do not handle it
+     */
+    if (!startsInsideEditor || startsInSelectorToAvoid) {
       return;
     }
 

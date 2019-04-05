@@ -329,9 +329,9 @@ export default class UI extends Module {
      */
     const target = event.target as HTMLElement;
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
-    const clickedInsideofEditor = target.closest(`#${this.config.holderId}`);
+    const clickedInsideOfEditor = !!target.closest(`#${this.config.holderId}`) || Selection.isAtEditor;
 
-    if (!clickedInsideofEditor) {
+    if (!clickedInsideOfEditor) {
       /**
        * Clear highlightings and pointer on BlockManager
        *
@@ -348,7 +348,9 @@ export default class UI extends Module {
        * Move inline toolbar to the focused Block
        */
       this.Editor.InlineToolbar.handleShowingEvent(event);
-    } else if (Selection.isAtEditor) {
+    }
+
+    if (Selection.isAtEditor) {
       /**
        * Focus clicked Block
        */
