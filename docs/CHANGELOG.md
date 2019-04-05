@@ -2,7 +2,7 @@
 
 ### 2.12.3
 
-- `Fix` — Make Toolbox tooltip position font-size independent  
+- `Fix` — Make Toolbox tooltip position font-size independent [#646](https://github.com/codex-team/editor.js/issues/646)
 
 ### 2.12.2
 
