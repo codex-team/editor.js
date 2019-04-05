@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.12.4 
+
+- `Fix` — Do not start multi-block selection on Toolbox and Inline Toolbar
+
 ### 2.12.3
 
 - `Fix` — Make Toolbox tooltip position font-size independent [#646](https://github.com/codex-team/editor.js/issues/646)
