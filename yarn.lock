@@ -689,10 +689,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@codexteam/shortcuts@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@codexteam/shortcuts/-/shortcuts-1.0.0.tgz#9d66a7c00c93be05b7940d46d2a82af442e8b46d"
-  integrity sha512-G7047f4qHnPtft2Gj7RsjJdXat/XXswUPjIGPHyHZeoARyIZTfX4/yTkgA3oDXvjFoC4cWN2+mKDDMdOET9/GQ==
+"@codexteam/shortcuts@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@codexteam/shortcuts/-/shortcuts-1.1.0.tgz#19347fa76f63289b12e0edf7b26035a2f0145dba"
+  integrity sha512-SM2EOhctxWy7M2Vclmux/TebKLAC6sV6f//R9V0mbcT7JP5GvvrVCG/Fik66LO4B+SKYuRxl6ldrbXz0MAPQHA==
 
 "@csstools/convert-colors@^1.4.0":
   version "1.4.0"
