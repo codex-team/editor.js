@@ -33,8 +33,6 @@
   }
 
   &--link {
-    .icon {}
-
     .icon--unlink {
       display: none;
     }
