@@ -75,7 +75,7 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 Editor.js is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
-We have [many](http://github.com/editor-js/) ready-to-use Plugins and the [simple API](docs/tools.md) for creation new ones.
+We have [many](http://github.com/editor-js/) ready-to-use Plugins and a [simple API](docs/tools.md) for creating new ones.
 
 So how to use the Editor after [Installation](docs/installation.md).
 
