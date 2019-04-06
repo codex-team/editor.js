@@ -33,9 +33,7 @@
   }
 
   &--link {
-    .icon {
-      margin-top: -2px;
-    }
+    .icon {}
 
     .icon--unlink {
       display: none;
