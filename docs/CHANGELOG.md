@@ -1,8 +1,15 @@
 # Changelog
 
+### 2.12.4 
+
+- `Improvements` CodeX.Shortcuts version updated to the v1.1 [#684](https://github.com/codex-team/editor.js/issues/684)
+- `Fix` — Do not start multi-block selection on Toolbox and Inline Toolbar [#646](https://github.com/codex-team/editor.js/issues/646)
+- `Fix` — Minor fixes of caret behaviour [#663](https://github.com/codex-team/editor.js/issues/663)
+- `Fix` — Fix inline-link icon position in Firefox [#674](https://github.com/codex-team/editor.js/issues/674)
+
 ### 2.12.3
 
-- `Fix` — Make Toolbox tooltip position font-size independent  
+- `Fix` — Make Toolbox tooltip position font-size independent
 
 ### 2.12.2
 

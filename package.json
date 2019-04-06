@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.12.3",
+  "version": "2.12.4",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -34,7 +34,7 @@
     "@babel/preset-env": "^7.3.4",
     "@babel/register": "^7.0.0",
     "@babel/runtime": "^7.3.4",
-    "@codexteam/shortcuts": "^1.0.0",
+    "@codexteam/shortcuts": "^1.1.1",
     "@types/webpack": "^4.4.25",
     "@types/webpack-env": "^1.13.9",
     "babel-loader": "^8.0.5",
