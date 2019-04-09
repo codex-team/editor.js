@@ -519,14 +519,24 @@ export default class Dom {
     }, []);
   }
 
-  public static closest(element: HTMLElement, selector: string | HTMLElement): Element {
-    if (typeof selector === 'string') {
-      return element.closest(selector);
-    }
+  /**
+   * Helper for get holder from {string} or return HTMLElement
+   * @param element
+   */
+  public static getHolder(element: string | HTMLElement): HTMLElement {
+    if (typeof element === 'string') { return document.getElementById(element); }
+    return element;
+  }
 
+  /**
+   * Check exists target in holder
+   * @param element - target
+   * @param holder - holder
+   */
+  public static elementInHolder(element: HTMLElement, holder: HTMLElement): Element {
     let node = element;
     while (node) {
-      if (node === selector) { return selector; }
+      if (node === holder) { return holder; }
       node = node.parentElement;
     }
     return null;

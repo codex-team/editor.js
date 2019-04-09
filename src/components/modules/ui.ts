@@ -134,17 +134,7 @@ export default class UI extends Module {
      * Element where we need to append Editor.js
      * @type {Element}
      */
-    if (typeof this.config.holderId === 'string') {
-      this.nodes.holder = document.getElementById(this.config.holderId);
-    }
-
-    if ($.isElement(this.config.holderId)) {
-      this.nodes.holder = this.config.holderId;
-    }
-
-    if (!this.nodes.holder) {
-      throw Error('Holder wasn\'t found by ID: #' + this.config.holderId);
-    }
+    this.nodes.holder = $.getHolder(this.config.holderId);
 
     /**
      * Create and save main UI elements
@@ -336,9 +326,7 @@ export default class UI extends Module {
     const target = event.target as HTMLElement;
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
 
-    const selector = typeof this.config.holderId === 'string' ?
-      `#${this.config.holderId}` : this.config.holderId;
-    const clickedInsideOfEditor = Boolean($.closest(target, selector)) || Selection.isAtEditor;
+    const clickedInsideOfEditor = $.elementInHolder(target, this.nodes.holder) || Selection.isAtEditor;
 
     if (!clickedInsideOfEditor) {
       /**
