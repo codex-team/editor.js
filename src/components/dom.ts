@@ -518,4 +518,17 @@ export default class Dom {
       return [...result, ...Dom.getDeepestBlockElements(element as HTMLElement)];
     }, []);
   }
+
+  public static closest(element: HTMLElement, selector: string | HTMLElement): Element {
+    if (typeof selector === 'string') {
+      return element.closest(`#${selector}`);
+    }
+
+    let node = element;
+    while (node) {
+      if (node === selector) { return selector; }
+      node = node.parentElement;
+    }
+    return null;
+  }
 }

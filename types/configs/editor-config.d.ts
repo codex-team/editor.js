@@ -5,8 +5,9 @@ import {SanitizerConfig} from './sanitizer-config';
 export interface EditorConfig {
   /**
    * Element where Editor will be append
+   * TODO: rename holderId on holder, element or el in next major for better consistent
    */
-  holderId?: string;
+  holderId?: string | HTMLElement;
 
   /**
    * If true, set caret at the first Block after Editor is ready

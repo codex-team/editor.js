@@ -134,7 +134,13 @@ export default class UI extends Module {
      * Element where we need to append Editor.js
      * @type {Element}
      */
-    this.nodes.holder = document.getElementById(this.config.holderId);
+    if (typeof this.config.holderId === 'string') {
+      this.nodes.holder = document.getElementById(this.config.holderId);
+    }
+
+    if ($.isElement(this.config.holderId)) {
+      this.nodes.holder = this.config.holderId as HTMLElement;
+    }
 
     if (!this.nodes.holder) {
       throw Error('Holder wasn\'t found by ID: #' + this.config.holderId);
@@ -329,7 +335,7 @@ export default class UI extends Module {
      */
     const target = event.target as HTMLElement;
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
-    const clickedInsideOfEditor = !!target.closest(`#${this.config.holderId}`) || Selection.isAtEditor;
+    const clickedInsideOfEditor = !!$.closest(target, this.config.holderId) || Selection.isAtEditor;
 
     if (!clickedInsideOfEditor) {
       /**
