@@ -244,7 +244,7 @@ export default class Dom {
    * @param {Object} node
    * @returns {boolean}
    */
-  public static isElement(node: any): boolean {
+  public static isElement(node: any): node is Element {
     return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
   }
 
@@ -521,7 +521,7 @@ export default class Dom {
 
   public static closest(element: HTMLElement, selector: string | HTMLElement): Element {
     if (typeof selector === 'string') {
-      return element.closest(`#${selector}`);
+      return element.closest(selector);
     }
 
     let node = element;

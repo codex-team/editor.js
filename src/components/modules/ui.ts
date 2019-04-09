@@ -139,7 +139,7 @@ export default class UI extends Module {
     }
 
     if ($.isElement(this.config.holderId)) {
-      this.nodes.holder = this.config.holderId as HTMLElement;
+      this.nodes.holder = this.config.holderId;
     }
 
     if (!this.nodes.holder) {
@@ -335,7 +335,10 @@ export default class UI extends Module {
      */
     const target = event.target as HTMLElement;
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
-    const clickedInsideOfEditor = !!$.closest(target, this.config.holderId) || Selection.isAtEditor;
+
+    const selector = typeof this.config.holderId === 'string' ?
+      `#${this.config.holderId}` : this.config.holderId;
+    const clickedInsideOfEditor = Boolean($.closest(target, selector)) || Selection.isAtEditor;
 
     if (!clickedInsideOfEditor) {
       /**
