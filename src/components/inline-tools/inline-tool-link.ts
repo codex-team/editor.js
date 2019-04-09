@@ -94,7 +94,7 @@ export default class LinkInlineTool implements InlineTool {
    * @param {{api: API}} - Editor.js API
    */
   constructor({api}) {
-    this.inlineToolbar = api.inlineToolbar;
+    this.inlineToolbar = api.toolbar;
     this.notifier = api.notifier;
     this.selection = new SelectionUtils();
   }

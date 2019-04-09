@@ -2,8 +2,8 @@ import Module from '../../__module';
 import { InlineToolbar } from '../../../../types/api/inline';
 
 /**
- * @class ToolbarAPI
- * provides with methods working with Toolbar
+ * @class InlineToolbarAPI
+ * provides with methods working with InlineToolbar
  */
 export default class InlineToolbarAPI extends Module {
   /**
@@ -18,14 +18,14 @@ export default class InlineToolbarAPI extends Module {
   }
 
   /**
-   * Open toolbar
+   * Open inlineToolbar
    */
   public open(): void {
     this.Editor.InlineToolbar.open();
   }
 
   /**
-   * Close toolbar and all included elements
+   * Close inlineToolbar
    */
   public close(): void {
     this.Editor.InlineToolbar.close();

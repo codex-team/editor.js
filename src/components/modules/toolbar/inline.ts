@@ -18,44 +18,6 @@ import {InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings} fr
 export default class InlineToolbar extends Module {
 
   /**
-   * Inline Toolbar Tools
-   *
-   * @returns Map<string, InlineTool>
-   */
-  get tools(): Map<string, InlineTool> {
-    if (!this.toolsInstances || this.toolsInstances.size === 0) {
-      const allTools = this.inlineTools;
-
-      this.toolsInstances = new Map();
-      for (const tool in allTools) {
-        if (allTools.hasOwnProperty(tool)) {
-          this.toolsInstances.set(tool, allTools[tool]);
-        }
-      }
-    }
-
-    return this.toolsInstances;
-  }
-
-  /**
-   * Get inline tools tools
-   * Tools that has isInline is true
-   */
-  private get inlineTools(): { [name: string]: InlineTool } {
-    const result = {};
-
-    for (const tool in this.Editor.Tools.inline) {
-      if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
-        const toolSettings = this.Editor.Tools.getToolSettings(tool);
-
-        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool], toolSettings);
-      }
-    }
-
-    return result;
-  }
-
-  /**
    * CSS styles
    */
   public CSS = {
@@ -67,7 +29,6 @@ export default class InlineToolbar extends Module {
     inlineToolButtonLast: 'ce-inline-tool--last',
     inputField: 'cdx-input',
   };
-  public methods: InlineToolbar;
 
   /**
    * Inline Toolbar elements
@@ -91,6 +52,26 @@ export default class InlineToolbar extends Module {
    * Tools instances
    */
   private toolsInstances: Map<string, InlineTool>;
+
+  /**
+   * Inline Toolbar Tools
+   *
+   * @returns Map<string, InlineTool>
+   */
+  get tools(): Map<string, InlineTool> {
+    if (!this.toolsInstances || this.toolsInstances.size === 0) {
+      const allTools = this.inlineTools;
+
+      this.toolsInstances = new Map();
+      for (const tool in allTools) {
+        if (allTools.hasOwnProperty(tool)) {
+          this.toolsInstances.set(tool, allTools[tool]);
+        }
+      }
+    }
+
+    return this.toolsInstances;
+  }
 
   /**
    * Making DOM
@@ -435,5 +416,23 @@ export default class InlineToolbar extends Module {
     this.tools.forEach((toolInstance) => {
       toolInstance.checkState(SelectionUtils.get());
     });
+  }
+
+  /**
+   * Get inline tools tools
+   * Tools that has isInline is true
+   */
+  private get inlineTools(): { [name: string]: InlineTool } {
+    const result = {};
+
+    for (const tool in this.Editor.Tools.inline) {
+      if (this.Editor.Tools.inline.hasOwnProperty(tool)) {
+        const toolSettings = this.Editor.Tools.getToolSettings(tool);
+
+        result[tool] = this.Editor.Tools.constructInline(this.Editor.Tools.inline[tool], toolSettings);
+      }
+    }
+
+    return result;
   }
 }
