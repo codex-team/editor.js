@@ -190,7 +190,7 @@ export default class Core {
     /**
      * Check if holderId is not empty
      */
-    if (!this.config.holderId && this.config.holder) {
+    if (!this.config.holderId && !this.config.holder) {
       throw Error('«holderId» or «holder» param must being not empty');
     }
 
