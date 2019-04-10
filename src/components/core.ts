@@ -201,7 +201,7 @@ export default class Core {
     const { holderId, holder } = this.config
 
     if (holderId && holder) {
-      throw Error('«holderId» or «holder» param can\'n assign at the same time.')
+      throw Error('«holderId» and «holder» param can\'n assign at the same time.')
     }
 
     /**
