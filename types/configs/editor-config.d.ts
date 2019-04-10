@@ -5,7 +5,7 @@ import {SanitizerConfig} from './sanitizer-config';
 export interface EditorConfig {
   /**
    * Element where Editor will be append
-   * TODO: remove in next major
+   * @deprecated property will be removed in next major release, use holder instead
    */
   holderId?: string;
 

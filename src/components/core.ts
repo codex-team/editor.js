@@ -124,9 +124,9 @@ export default class Core {
      * If holderId is preset, assign him to holder property
      */
     if (config.holderId && !config.holder) {
-      config.holder = config.holderId
-      config.holderId = null
-      console.warn('holderId property will deprecated in next major release, use holder instead.')
+      config.holder = config.holderId;
+      config.holderId = null;
+      console.warn('holderId property will deprecated in next major release, use holder property instead.');
     }
 
     /**
@@ -138,9 +138,7 @@ export default class Core {
     /**
      * If holderId is empty then set a default value
      */
-    if (!this.config.holder ||
-      !$.isElement(this.config.holder) ||
-      typeof this.config.holder !== 'string') {
+    if (!this.config.holder == null) {
       this.config.holder = 'editorjs';
     }
 
@@ -198,17 +196,17 @@ export default class Core {
    * @returns {Promise<void>}
    */
   public async validate(): Promise<void> {
-    const { holderId, holder } = this.config
+    const { holderId, holder } = this.config;
 
     if (holderId && holder) {
-      throw Error('«holderId» and «holder» param can\'n assign at the same time.')
+      throw Error('«holderId» and «holder» param can\'t assign at the same time.');
     }
 
     /**
      * Check for a holder element's existence
      */
     if (typeof holder === 'string' && !$.get(holder)) {
-      throw Error(`element with ID «${holderId}» is missing. Pass correct holder's ID.`);
+      throw Error(`element with ID «${holder}» is missing. Pass correct holder's ID.`);
     }
 
     if (holder && typeof holder === 'object' && !$.isElement(holder)) {
