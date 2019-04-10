@@ -121,7 +121,7 @@ export default class Core {
     }
 
     /**
-     * If holderId is preset, assign him to holder property
+     * If holderId is preset, assign him to holder property and work next only with holder
      */
     if (config.holderId && !config.holder) {
       config.holder = config.holderId;
@@ -136,7 +136,7 @@ export default class Core {
     this.config = config;
 
     /**
-     * If holderId is empty then set a default value
+     * If holder is empty then set a default value
      */
     if (this.config.holder == null) {
       this.config.holder = 'editorjs';
