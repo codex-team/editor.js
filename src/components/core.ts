@@ -126,7 +126,7 @@ export default class Core {
     if (config.holderId && !config.holder) {
       config.holder = config.holderId;
       config.holderId = null;
-      console.warn('holderId property will deprecated in next major release, use holder property instead.');
+      _.log('holderId property will deprecated in next major release, use holder property instead.', 'warn');
     }
 
     /**
