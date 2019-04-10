@@ -326,7 +326,7 @@ export default class UI extends Module {
     const target = event.target as HTMLElement;
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
 
-    const clickedInsideOfEditor = $.elementInHolder(target, this.nodes.holder) || Selection.isAtEditor;
+    const clickedInsideOfEditor = this.nodes.holder.contains(target) || Selection.isAtEditor;
 
     if (!clickedInsideOfEditor) {
       /**

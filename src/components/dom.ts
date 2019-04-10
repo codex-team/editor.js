@@ -527,18 +527,4 @@ export default class Dom {
     if (typeof element === 'string') { return document.getElementById(element); }
     return element;
   }
-
-  /**
-   * Check exists target in holder
-   * @param element - target
-   * @param holder - holder
-   */
-  public static elementInHolder(element: HTMLElement, holder: HTMLElement): Element {
-    let node = element;
-    while (node) {
-      if (node === holder) { return holder; }
-      node = node.parentElement;
-    }
-    return null;
-  }
 }
