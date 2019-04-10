@@ -138,7 +138,7 @@ export default class Core {
     /**
      * If holderId is empty then set a default value
      */
-    if (!this.config.holder == null) {
+    if (this.config.holder == null) {
       this.config.holder = 'editorjs';
     }
 
