@@ -134,7 +134,7 @@ export default class UI extends Module {
      * Element where we need to append Editor.js
      * @type {Element}
      */
-    this.nodes.holder = $.getHolder(this.config.holderId);
+    this.nodes.holder = this.config.holder || document.getElementById(this.config.holderId);
 
     /**
      * Create and save main UI elements

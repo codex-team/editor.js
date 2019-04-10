@@ -129,9 +129,7 @@ export default class Core {
     /**
      * If holderId is empty then set a default value
      */
-    if (!this.config.holderId ||
-      !$.isElement(this.config.holderId) ||
-      typeof this.config.holderId !== 'string') {
+    if (!this.config.holderId || typeof this.config.holderId !== 'string') {
       this.config.holderId = 'editorjs';
     }
 
@@ -192,15 +190,22 @@ export default class Core {
     /**
      * Check if holderId is not empty
      */
-    if (!this.config.holderId) {
-      throw Error('«holderId» param must being not empty');
+    if (!this.config.holderId && this.config.holder) {
+      throw Error('«holderId» or «holder» param must being not empty');
     }
 
     /**
      * Check for a holder element's existence
      */
-    if (typeof this.config.holderId === 'string' && !$.get(this.config.holderId)) {
+    if (!this.config.holder &&
+        typeof this.config.holderId === 'string' &&
+        !$.get(this.config.holderId)
+      ) {
       throw Error(`element with ID «${this.config.holderId}» is missing. Pass correct holder's ID.`);
+    }
+
+    if (this.config.holder && !$.isElement(this.config.holder)) {
+      throw Error('holder element if provided must be inherit from Element class');
     }
   }
 
