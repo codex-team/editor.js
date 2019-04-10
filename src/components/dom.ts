@@ -518,4 +518,13 @@ export default class Dom {
       return [...result, ...Dom.getDeepestBlockElements(element as HTMLElement)];
     }, []);
   }
+
+  /**
+   * Helper for get holder from {string} or return HTMLElement
+   * @param element
+   */
+  public static getHolder(element: string | HTMLElement): HTMLElement {
+    if (typeof element === 'string') { return document.getElementById(element); }
+    return element;
+  }
 }

@@ -10,9 +10,9 @@ export interface EditorConfig {
   holderId?: string;
 
   /**
-   * Reference on Element where Editor will be append
+   * Id or reference on Element where Editor will be append
    */
-  holder?: HTMLElement;
+  holder?: string | HTMLElement;
 
   /**
    * If true, set caret at the first Block after Editor is ready

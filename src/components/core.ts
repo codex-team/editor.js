@@ -116,8 +116,17 @@ export default class Core {
      */
     if (typeof config !== 'object') {
       config = {
-        holderId: config,
+        holder: config,
       };
+    }
+
+    /**
+     * If holderId is preset, assign him to holder property
+     */
+    if (config.holderId && !config.holder) {
+      config.holder = config.holderId
+      config.holderId = null
+      console.warn('holderId property will deprecated in next major release, use holder instead.')
     }
 
     /**
@@ -129,8 +138,10 @@ export default class Core {
     /**
      * If holderId is empty then set a default value
      */
-    if (!this.config.holderId || typeof this.config.holderId !== 'string') {
-      this.config.holderId = 'editorjs';
+    if (!this.config.holder ||
+      !$.isElement(this.config.holder) ||
+      typeof this.config.holder !== 'string') {
+      this.config.holder = 'editorjs';
     }
 
     /**
@@ -187,25 +198,21 @@ export default class Core {
    * @returns {Promise<void>}
    */
   public async validate(): Promise<void> {
-    /**
-     * Check if holderId is not empty
-     */
-    if (!this.config.holderId && !this.config.holder) {
-      throw Error('«holderId» or «holder» param must being not empty');
+    const { holderId, holder } = this.config
+
+    if (holderId && holder) {
+      throw Error('«holderId» or «holder» param can\'n assign at the same time.')
     }
 
     /**
      * Check for a holder element's existence
      */
-    if (!this.config.holder &&
-        typeof this.config.holderId === 'string' &&
-        !$.get(this.config.holderId)
-      ) {
-      throw Error(`element with ID «${this.config.holderId}» is missing. Pass correct holder's ID.`);
+    if (typeof holder === 'string' && !$.get(holder)) {
+      throw Error(`element with ID «${holderId}» is missing. Pass correct holder's ID.`);
     }
 
-    if (this.config.holder && !$.isElement(this.config.holder)) {
-      throw Error('holder element if provided must be inherit from Element class');
+    if (holder && typeof holder === 'object' && !$.isElement(holder)) {
+      throw Error('holder as HTMLElement if provided must be inherit from Element class.');
     }
   }
 
