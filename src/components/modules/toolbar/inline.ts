@@ -172,6 +172,13 @@ export default class InlineToolbar extends Module {
    */
   public open(): void {
     /**
+     * Check if inline toolbar is allowed to show or not
+     */
+    if (!this.allowedToShow()) {
+      return;
+    }
+
+    /**
      * Filter inline-tools and show only allowed by Block's Tool
      */
     this.filterTools();
