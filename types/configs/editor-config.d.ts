@@ -7,10 +7,10 @@ export interface EditorConfig {
    * Element where Editor will be append
    * @deprecated property will be removed in next major release, use holder instead
    */
-  holderId?: string;
+  holderId?: string | HTMLElement;
 
   /**
-   * Id or reference on Element where Editor will be append
+   * Element where Editor will be append
    */
   holder?: string | HTMLElement;
 
