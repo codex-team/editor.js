@@ -3,7 +3,7 @@ import {Toolbar} from '../../../../types/api';
 
 /**
  * @class ToolbarAPI
- * provides with methods working with Toolbar
+ * Provides methods for working with the Toolbar
  */
 export default class ToolbarAPI extends Module {
   /**
