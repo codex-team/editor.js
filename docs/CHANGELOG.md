@@ -1,10 +1,16 @@
 # Changelog
 
+### 2.13
+
+- `New` *API* — Added [API methods](api.md) to open and close inline toolbar [#665](https://github.com/codex-team/editor.js/issues/665)
+- `Improvements` — Make internal inline tools\` names more unique [#637](https://github.com/codex-team/editor.js/issues/637)
+
 ### 2.12.4 
 
+- `Improvements` CodeX.Shortcuts version updated to the v1.1 [#684](https://github.com/codex-team/editor.js/issues/684)
 - `Fix` — Do not start multi-block selection on Toolbox and Inline Toolbar [#646](https://github.com/codex-team/editor.js/issues/646)
 - `Fix` — Minor fixes of caret behaviour [#663](https://github.com/codex-team/editor.js/issues/663)
-- `Improvements` — Make internal inline tools\` names more unique [#637](https://github.com/codex-team/editor.js/issues/637)
+- `Fix` — Fix inline-link icon position in Firefox [#674](https://github.com/codex-team/editor.js/issues/674)
 
 ### 2.12.3
 
