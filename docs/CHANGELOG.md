@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.13
+
+- `Improvements` *API* — Added [API methods](api.md) to open and close inline toolbar [#665](https://github.com/codex-team/editor.js/issues/665)
+
 ### 2.12.4 
 
 - `Improvements` CodeX.Shortcuts version updated to the v1.1 [#684](https://github.com/codex-team/editor.js/issues/684)
