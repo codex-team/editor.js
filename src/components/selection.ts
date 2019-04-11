@@ -268,6 +268,28 @@ export default class SelectionUtils {
   }
 
   /**
+   * Clear current window selection
+   */
+  public clearWindowSelection(): void {
+    const sel = window.getSelection();
+    const range = document.createRange();
+    /**
+     * Set node content to node where selection ends
+     */
+    range.selectNodeContents(sel.focusNode);
+    /**
+     * To set the caret at the end of the selection
+     */
+    range.collapse(false);
+    if (sel.removeAllRanges) {
+      sel.removeAllRanges();
+    } else if (sel.empty) {
+      sel.empty();
+    }
+    sel.addRange(range);
+  }
+
+  /**
    * Looks ahead to find passed tag from current selection
    *
    * @param  {String} tagName       - tag to found
