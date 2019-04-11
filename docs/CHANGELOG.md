@@ -2,7 +2,7 @@
 
 ### 2.13
 
-- `Improvements` *API* — Added [API methods](api.md) to open and close inline toolbar [#665](https://github.com/codex-team/editor.js/issues/665)
+- `New` *API* — Added [API methods](api.md) to open and close inline toolbar [#665](https://github.com/codex-team/editor.js/issues/665)
 
 ### 2.12.4 
 
