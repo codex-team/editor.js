@@ -65,6 +65,7 @@
   <script src="./tools/link/dist/bundle.js"></script><!-- Link -->
   <script src="./tools/raw/dist/bundle.js"></script><!-- Raw -->
   <script src="./tools/warning/dist/bundle.js"></script><!-- Warning -->
+  <script src="./tools/personality/dist/bundle.js"></script><!-- Personality -->
 
   <script src="./tools/marker/dist/bundle.js"></script><!-- Marker -->
   <script src="./tools/inline-code/dist/bundle.js"></script><!-- Inline Code -->
@@ -165,6 +166,12 @@
           shortcut: 'CMD+ALT+T'
         },
 
+        personality: {
+          class: Personality,
+          config: {
+            endpoint: 'http://localhost:8008/uploadFile'
+          }
+        }
       },
 
       /**
