@@ -294,7 +294,7 @@ export default class LinkInlineTool implements InlineTool {
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
-    this.selection.clearWindowSelection();
+    this.selection.collapseToEnd();
     this.inlineToolbar.close();
   }
 

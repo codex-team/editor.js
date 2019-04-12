@@ -268,15 +268,11 @@ export default class SelectionUtils {
   }
 
   /**
-   * Clear current window selection
+   * Collapse current selection
    */
-  public clearWindowSelection(collapseRange: boolean = true): void {
+  public collapseToEnd(): void {
     const sel = window.getSelection();
-    if (collapseRange && sel.rangeCount > 0) {
-      sel.getRangeAt(0).collapse(false);
-    } else {
-      sel.removeAllRanges();
-    }
+    sel.collapseToEnd();
   }
 
   /**
