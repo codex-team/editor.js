@@ -31,6 +31,12 @@ export default class InlineToolbar extends Module {
   };
 
   /**
+   * State of inline toolbar
+   * @type {boolean}
+   */
+  public opened: boolean = false;
+
+  /**
    * Inline Toolbar elements
    */
   private nodes: { wrapper: HTMLElement, buttons: HTMLElement, actions: HTMLElement } = {
@@ -52,6 +58,18 @@ export default class InlineToolbar extends Module {
    * Tools instances
    */
   private toolsInstances: Map<string, InlineTool>;
+
+  /**
+   * Buttons List
+   * @type {NodeList}
+   */
+  private buttonsList: NodeList = null;
+
+  /**
+   * Active button index
+   * @type {number}
+   */
+  private activeButtonIndex: number = -1;
 
   /**
    * Inline Toolbar Tools
@@ -156,6 +174,26 @@ export default class InlineToolbar extends Module {
   }
 
   /**
+   * Leaf Inline Tools
+   * @param {string} direction
+   */
+  public leaf(direction: string = 'right'): void {
+    this.activeButtonIndex = $.leafNodes(this.buttonsList, this.activeButtonIndex, direction);
+  }
+
+  /**
+   * @return {HTMLElement}
+   */
+  public get getActiveButton(): Node {
+    if (this.activeButtonIndex === -1) {
+      return null;
+    }
+
+    console.log(this.buttonsList.item(this.activeButtonIndex));
+    return this.buttonsList.item(this.activeButtonIndex);
+  }
+
+  /**
    * Hides Inline Toolbar
    */
   public close(): void {
@@ -165,6 +203,10 @@ export default class InlineToolbar extends Module {
         toolInstance.clear();
       }
     });
+
+    this.opened = false;
+    this.activeButtonIndex = -1;
+    this.buttonsList = null;
   }
 
   /**
@@ -189,6 +231,9 @@ export default class InlineToolbar extends Module {
         toolInstance.clear();
       }
     });
+
+    this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
+    this.opened = true;
   }
 
   /**

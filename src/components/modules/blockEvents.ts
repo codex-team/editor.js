@@ -6,6 +6,13 @@ import _ from '../utils';
 import SelectionUtils from '../selection';
 
 export default class BlockEvents extends Module {
+
+  /**
+   * SelectionUtils instance
+   * @type {SelectionUtils}
+   */
+  private selection: SelectionUtils = new SelectionUtils();
+
   /**
    * All keydowns on Block
    * @param {KeyboardEvent} event - keydown
@@ -63,7 +70,9 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    // this.Editor.Toolbar.close();
+    if (event.keyCode !== _.keyCodes.TAB) {
+      this.Editor.Toolbar.close();
+    }
 
     const cmdKey = event.ctrlKey || event.metaKey;
     const altKey = event.altKey;
@@ -143,8 +152,13 @@ export default class BlockEvents extends Module {
        * If InlineToolbar is not open, just open it and focus first button
        * Next Tab press will leaf InlineToolbar Tools
        */
-      // this.Editor.InlineToolbar;
+      if (this.Editor.InlineToolbar.opened) {
+        this.Editor.InlineToolbar.leaf(direction);
+      }
     } else {
+      this.Editor.Toolbar.open(true, false);
+      this.Editor.Toolbar.plusButton.hide();
+      this.selection.save();
       /**
        * Work with Block Tunes
        * ----------------------
@@ -162,16 +176,20 @@ export default class BlockEvents extends Module {
 
   /**
    * Escape pressed
-   * @param event
+   * If some of Toolbar components are opened, then close it otherwise close Toolbar
+   *
+   * @param {Event} event
    */
   public escapePressed(event): void {
-    // if (this.Editor.Toolbox.opened) {
-    //   this.Editor.Toolbox.close();
-    // } else if (this.Editor.BlockSettings.opened) {
-    //   this.Editor.BlockSettings.close();
-    // } else {
+    if (this.Editor.Toolbox.opened) {
+      this.Editor.Toolbox.close();
+    } else if (this.Editor.BlockSettings.opened) {
+      this.Editor.BlockSettings.close();
+    } else if (this.Editor.InlineToolbar.opened) {
+      this.Editor.InlineToolbar.close();
+    } else {
       this.Editor.Toolbar.close();
-    // }
+    }
   }
 
   /**
@@ -272,7 +290,6 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    console.log('this.Editor.BlockSettings.opened', this.Editor.BlockSettings.opened);
     if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.getActiveButton) {
       event.preventDefault();
       event.stopPropagation();
@@ -280,6 +297,18 @@ export default class BlockEvents extends Module {
 
       /** Click on settings button */
       this.Editor.BlockSettings.getActiveButton.click();
+
+      /** Restore selection */
+      // this.selection.restore();
+      return;
+    }
+
+    if (this.Editor.InlineToolbar.opened && this.Editor.InlineToolbar.getActiveButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      (this.Editor.InlineToolbar.getActiveButton as HTMLElement).click();
       return;
     }
 
@@ -481,8 +510,9 @@ export default class BlockEvents extends Module {
    */
   private needToolbarClosing(event) {
     const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened),
-      flippingToolboxItems = event.keyCode === _.keyCodes.TAB;
+      blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
+      flippingToolBarItems = event.keyCode === _.keyCodes.TAB;
 
-    return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
+    return !(event.shiftKey || flippingToolBarItems || toolboxItemSelected || blockSettingsItemSelected);
   }
 }

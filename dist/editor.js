@@ -14670,17 +14670,26 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     (0, _inherits2.default)(BlockEvents, _Module);
 
     function BlockEvents() {
+      var _this;
+
       (0, _classCallCheck2.default)(this, BlockEvents);
-      return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(BlockEvents).apply(this, arguments));
+      _this = (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(BlockEvents).apply(this, arguments));
+      /**
+       * SelectionUtils instance
+       * @type {SelectionUtils}
+       */
+
+      _this.selection = new _selection.default();
+      return _this;
     }
+    /**
+     * All keydowns on Block
+     * @param {KeyboardEvent} event - keydown
+     */
+
 
     (0, _createClass2.default)(BlockEvents, [{
       key: "keydown",
-
-      /**
-       * All keydowns on Block
-       * @param {KeyboardEvent} event - keydown
-       */
       value: function keydown(event) {
         /**
          * Run common method for all keydown events
@@ -14735,8 +14744,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
         if (!this.needToolbarClosing(event)) {
           return;
-        } // this.Editor.Toolbar.close();
+        }
 
+        if (event.keyCode !== _utils.default.keyCodes.TAB) {
+          this.Editor.Toolbar.close();
+        }
 
         var cmdKey = event.ctrlKey || event.metaKey;
         var altKey = event.altKey;
@@ -14822,8 +14834,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            * If InlineToolbar is not open, just open it and focus first button
            * Next Tab press will leaf InlineToolbar Tools
            */
-          // this.Editor.InlineToolbar;
+          if (this.Editor.InlineToolbar.opened) {
+            this.Editor.InlineToolbar.leaf(direction);
+          }
         } else {
+          this.Editor.Toolbar.open(true, false);
+          this.Editor.Toolbar.plusButton.hide();
+          this.selection.save();
           /**
            * Work with Block Tunes
            * ----------------------
@@ -14831,6 +14848,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            * If BlockSettings is not open, then open BlockSettings
            * Next Tab press will leaf Settings Buttons
            */
+
           if (!this.Editor.BlockSettings.opened) {
             this.Editor.BlockSettings.open();
           } else {
@@ -14840,18 +14858,23 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Escape pressed
-       * @param event
+       * If some of Toolbar components are opened, then close it otherwise close Toolbar
+       *
+       * @param {Event} event
        */
 
     }, {
       key: "escapePressed",
       value: function escapePressed(event) {
-        // if (this.Editor.Toolbox.opened) {
-        //   this.Editor.Toolbox.close();
-        // } else if (this.Editor.BlockSettings.opened) {
-        //   this.Editor.BlockSettings.close();
-        // } else {
-        this.Editor.Toolbar.close(); // }
+        if (this.Editor.Toolbox.opened) {
+          this.Editor.Toolbox.close();
+        } else if (this.Editor.BlockSettings.opened) {
+          this.Editor.BlockSettings.close();
+        } else if (this.Editor.InlineToolbar.opened) {
+          this.Editor.InlineToolbar.close();
+        } else {
+          this.Editor.Toolbar.close();
+        }
       }
       /**
        * Add drop target styles
@@ -14964,8 +14987,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        console.log('this.Editor.BlockSettings.opened', this.Editor.BlockSettings.opened);
-
         if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.getActiveButton) {
           event.preventDefault();
           event.stopPropagation();
@@ -14973,6 +14994,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           /** Click on settings button */
 
           this.Editor.BlockSettings.getActiveButton.click();
+          /** Restore selection */
+          // this.selection.restore();
+
+          return;
+        }
+
+        if (this.Editor.InlineToolbar.opened && this.Editor.InlineToolbar.getActiveButton) {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          this.Editor.InlineToolbar.getActiveButton.click();
           return;
         }
         /**
@@ -15138,7 +15170,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "arrowRightAndDown",
       value: function arrowRightAndDown(event) {
-        var _this = this;
+        var _this2 = this;
 
         if (this.Editor.Caret.navigateNext()) {
           /**
@@ -15150,7 +15182,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            * After caret is set, update Block input index
            */
           _utils.default.delay(function () {
-            _this.Editor.BlockManager.currentBlock.updateCurrentInput();
+            _this2.Editor.BlockManager.currentBlock.updateCurrentInput();
           }, 20)();
         }
       }
@@ -15161,7 +15193,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "arrowLeftAndUp",
       value: function arrowLeftAndUp(event) {
-        var _this2 = this;
+        var _this3 = this;
 
         if (this.Editor.Caret.navigatePrevious()) {
           /**
@@ -15173,7 +15205,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            * After caret is set, update Block input index
            */
           _utils.default.delay(function () {
-            _this2.Editor.BlockManager.currentBlock.updateCurrentInput();
+            _this3.Editor.BlockManager.currentBlock.updateCurrentInput();
           }, 20)();
         }
       }
@@ -15192,8 +15224,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "needToolbarClosing",
       value: function needToolbarClosing(event) {
         var toolboxItemSelected = event.keyCode === _utils.default.keyCodes.ENTER && this.Editor.Toolbox.opened,
-            flippingToolboxItems = event.keyCode === _utils.default.keyCodes.TAB;
-        return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
+            blockSettingsItemSelected = event.keyCode === _utils.default.keyCodes.ENTER && this.Editor.BlockSettings.opened,
+            flippingToolBarItems = event.keyCode === _utils.default.keyCodes.TAB;
+        return !(event.shiftKey || flippingToolBarItems || toolboxItemSelected || blockSettingsItemSelected);
       }
     }]);
     return BlockEvents;
@@ -20557,7 +20590,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return this.buttons;
       }
       /**
-       * Leaf Block tunes
+       * Leaf Block Tunes
+       * @param {string} direction
        */
 
     }, {
@@ -21123,6 +21157,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         inputField: 'cdx-input'
       };
       /**
+       * State of inline toolbar
+       * @type {boolean}
+       */
+
+      _this.opened = false;
+      /**
        * Inline Toolbar elements
        */
 
@@ -21141,6 +21181,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
       _this.toolbarVerticalMargin = 20;
+      /**
+       * Buttons List
+       * @type {NodeList}
+       */
+
+      _this.buttonsList = null;
+      /**
+       * Active button index
+       * @type {number}
+       */
+
+      _this.activeButtonIndex = -1;
       return _this;
     }
     /**
@@ -21237,11 +21289,26 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
       }
       /**
-       * Hides Inline Toolbar
+       * Leaf Inline Tools
+       * @param {string} direction
+       */
+
+    }, {
+      key: "leaf",
+      value: function leaf() {
+        var direction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'right';
+        this.activeButtonIndex = _dom.default.leafNodes(this.buttonsList, this.activeButtonIndex, direction);
+      }
+      /**
+       * @return {HTMLElement}
        */
 
     }, {
       key: "close",
+
+      /**
+       * Hides Inline Toolbar
+       */
       value: function close() {
         this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
         this.tools.forEach(function (toolInstance) {
@@ -21249,6 +21316,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             toolInstance.clear();
           }
         });
+        this.opened = false;
+        this.activeButtonIndex = -1;
+        this.buttonsList = null;
       }
       /**
        * Shows Inline Toolbar
@@ -21275,6 +21345,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             toolInstance.clear();
           }
         });
+        this.buttonsList = this.nodes.buttons.querySelectorAll(".".concat(this.CSS.inlineToolButton));
+        this.opened = true;
       }
       /**
        * Need to show Inline Toolbar or not
@@ -21554,6 +21626,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         return this.toolsInstances;
+      }
+    }, {
+      key: "getActiveButton",
+      get: function get() {
+        if (this.activeButtonIndex === -1) {
+          return null;
+        }
+
+        console.log(this.buttonsList.item(this.activeButtonIndex));
+        return this.buttonsList.item(this.activeButtonIndex);
       }
     }, {
       key: "inlineTools",

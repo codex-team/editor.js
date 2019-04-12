@@ -157,7 +157,8 @@ export default class BlockSettings extends Module {
   }
 
   /**
-   * Leaf Block tunes
+   * Leaf Block Tunes
+   * @param {string} direction
    */
   public leaf(direction: string = 'right'): void {
     const buttonsList = this.blockTunesButtons();
