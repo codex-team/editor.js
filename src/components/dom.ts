@@ -518,4 +518,68 @@ export default class Dom {
       return [...result, ...Dom.getDeepestBlockElements(element as HTMLElement)];
     }, []);
   }
+
+  /**
+   * Leafs nodes inside the target list from active element
+   *
+   * @param {HTMLElement[]} nodeList - target list of nodes
+   * @param {number} activeIndex — index of active node. By default it must be -1
+   * @param {string} direction - leaf direction. Can be 'left' or 'right'
+   */
+  public static leafNodes(nodeList, activeIndex, direction) {
+    /**
+     * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
+     */
+    if (activeIndex === -1) {
+      /**
+       * Normalize "previous" Tool index depending on direction.
+       * We need to do this to highlight "first" Tool correctly
+       *
+       * Order of Tools: [0] [1] ... [n - 1]
+       *   [0 = n] because of: n % n = 0 % n
+       *
+       * Direction 'right': for [0] the [n - 1] is a previous index
+       *   [n - 1] -> [0]
+       *
+       * Direction 'left': for [n - 1] the [0] is a previous index
+       *   [n - 1] <- [0]
+       *
+       * @type {number}
+       */
+      activeIndex = direction === 'right' ? -1 : 0;
+    } else {
+      /**
+       * If we have chosen Tool then remove highlighting
+       */
+      (nodeList[activeIndex] as HTMLElement).classList.remove('cdx-settings-button--active');
+    }
+
+    /**
+     * Count index for next Tool
+     */
+    if (direction === 'right') {
+      /**
+       * If we go right then choose next (+1) Tool
+       * @type {number}
+       */
+      activeIndex = (activeIndex + 1) % nodeList.length;
+    } else {
+      /**
+       * If we go left then choose previous (-1) Tool
+       * Before counting module we need to add length before because of "The JavaScript Modulo Bug"
+       * @type {number}
+       */
+      activeIndex = (nodeList.length + activeIndex - 1) % nodeList.length;
+    }
+
+    /**
+     * Highlight new chosen Tool
+     */
+    (nodeList[activeIndex] as HTMLElement).classList.add('cdx-settings-button--active');
+
+    /**
+     * Return Active index
+     */
+    return activeIndex;
+  }
 }

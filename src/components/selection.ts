@@ -114,6 +114,16 @@ export default class SelectionUtils {
   }
 
   /**
+   * Returns true if some text selected
+   * @return {boolean}
+   */
+  static get isTextSelected(): boolean {
+    const range = SelectionUtils.range;
+
+    return range.startOffset !== range.endOffset;
+  }
+
+  /**
    * Calculates position and size of selected text
    * @return {{x, y, width, height, top?, left?, bottom?, right?}}
    */

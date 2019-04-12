@@ -59,6 +59,16 @@ export default class BlockSettings extends Module {
   };
 
   /**
+   * List of buttons
+   */
+  private buttons: HTMLElement[] = [];
+
+  /**
+   * Index of active button
+   */
+  private activeButtonIndex: number = -1;
+
+  /**
    * Panel with block settings with 2 sections:
    *  - Tool's Settings
    *  - Default Settings [Move, Remove, etc]
@@ -106,8 +116,64 @@ export default class BlockSettings extends Module {
 
     /** Tell to subscribers that block settings is closed */
     this.Editor.Events.emit(this.events.closed);
+
+    /** Clear cached buttons */
+    this.buttons = [];
+
+    /** Clear focus on active button */
+    this.activeButtonIndex = -1;
+
   }
 
+  /**
+   * @todo optimize
+   * @return {HTMLElement[]}
+   */
+  public blockTunesButtons(): HTMLElement[] {
+    /**
+     * Return from cache
+     */
+    if (this.buttons.length !== 0) {
+      return this.buttons;
+    }
+
+    const toolSettings = this.nodes.toolSettings.querySelectorAll(`.${this.Editor.StylesAPI.classes.settingsButton}`);
+    const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${BlockSettings.CSS.button}`);
+
+    const allSettings = [];
+    toolSettings.forEach((item, index) => {
+      allSettings.push(item);
+      if (item.classList.contains('cdx-settings-button--active')) {
+        this.activeButtonIndex = index;
+      }
+    });
+
+    defaultSettings.forEach((item) => {
+      allSettings.push(item);
+    });
+
+    this.buttons = allSettings;
+    return this.buttons;
+  }
+
+  /**
+   * Leaf Block tunes
+   */
+  public leaf(direction: string = 'right'): void {
+    const buttonsList = this.blockTunesButtons();
+    this.activeButtonIndex = $.leafNodes(buttonsList, this.activeButtonIndex, direction);
+  }
+
+  /**
+   * @return {HTMLElement}
+   */
+  public get getActiveButton(): HTMLElement {
+    if (this.activeButtonIndex === -1) {
+      return null;
+    }
+
+    return this.buttons[this.activeButtonIndex];
+  }
   /**
    * Add Tool's settings
    */

@@ -3,6 +3,7 @@
  */
 import Module from '../__module';
 import _ from '../utils';
+import SelectionUtils from '../selection';
 
 export default class BlockEvents extends Module {
   /**
@@ -62,7 +63,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    this.Editor.Toolbar.close();
+    // this.Editor.Toolbar.close();
 
     const cmdKey = event.ctrlKey || event.metaKey;
     const altKey = event.altKey;
@@ -118,24 +119,44 @@ export default class BlockEvents extends Module {
     const shiftKey = event.shiftKey,
       direction = shiftKey ? 'left' : 'right';
 
-    /**
-     * Don't show Plus and Toolbox near not-inital Tools
-     */
-    if (!this.Editor.Tools.isInitial(currentBlock.tool)) {
-      return;
-    }
-
     if (currentBlock.isEmpty) {
+      /**
+       * Work with Toolbox
+       * ------------------
+       *
+       * If Toolbox is not open, then just open it and show plus button
+       * Next Tab press will leaf Toolbox Tools
+       */
       if (!this.Editor.Toolbar.opened) {
         this.Editor.Toolbar.open(false , false);
         this.Editor.Toolbar.plusButton.show();
+      } else {
+        this.Editor.Toolbox.leaf(direction);
       }
 
       this.Editor.Toolbox.open();
-    }
-
-    if (this.Editor.Toolbox.opened) {
-      this.Editor.Toolbox.leaf(direction);
+    } else if (!currentBlock.isEmpty && SelectionUtils.isTextSelected) {
+      /**
+       * Work with Inline Tools
+       * -----------------------
+       *
+       * If InlineToolbar is not open, just open it and focus first button
+       * Next Tab press will leaf InlineToolbar Tools
+       */
+      // this.Editor.InlineToolbar;
+    } else {
+      /**
+       * Work with Block Tunes
+       * ----------------------
+       *
+       * If BlockSettings is not open, then open BlockSettings
+       * Next Tab press will leaf Settings Buttons
+       */
+      if (!this.Editor.BlockSettings.opened) {
+        this.Editor.BlockSettings.open();
+      } else {
+        this.Editor.BlockSettings.leaf(direction);
+      }
     }
   }
 
@@ -143,7 +164,15 @@ export default class BlockEvents extends Module {
    * Escape pressed
    * @param event
    */
-  public escapePressed(event): void { }
+  public escapePressed(event): void {
+    // if (this.Editor.Toolbox.opened) {
+    //   this.Editor.Toolbox.close();
+    // } else if (this.Editor.BlockSettings.opened) {
+    //   this.Editor.BlockSettings.close();
+    // } else {
+      this.Editor.Toolbar.close();
+    // }
+  }
 
   /**
    * Add drop target styles
@@ -240,6 +269,17 @@ export default class BlockEvents extends Module {
       event.stopPropagation();
       event.stopImmediatePropagation();
       this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
+      return;
+    }
+
+    console.log('this.Editor.BlockSettings.opened', this.Editor.BlockSettings.opened);
+    if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.getActiveButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      /** Click on settings button */
+      this.Editor.BlockSettings.getActiveButton.click();
       return;
     }
 
