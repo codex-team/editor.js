@@ -272,7 +272,11 @@ export default class SelectionUtils {
    */
   public collapseToEnd(): void {
     const sel = window.getSelection();
-    sel.collapseToEnd();
+    const range = document.createRange();
+    range.selectNodeContents(sel.focusNode);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
   }
 
   /**
