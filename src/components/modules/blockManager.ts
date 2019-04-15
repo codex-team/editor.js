@@ -455,7 +455,7 @@ export default class BlockManager extends Module {
    * @returns {Block}
    */
   public getBlock(element: HTMLElement): Block {
-    if (!$.isElement(element)) {
+    if (!$.isElement(element) as boolean) {
       element = element.parentNode as HTMLElement;
     }
 
