@@ -273,7 +273,7 @@ export default class SelectionUtils {
   public collapseToEnd(): void {
     const sel = window.getSelection();
     const range = document.createRange();
-    
+
     range.selectNodeContents(sel.focusNode);
     range.collapse(false);
     sel.removeAllRanges();
