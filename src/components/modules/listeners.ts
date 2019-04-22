@@ -112,7 +112,7 @@ export default class Listeners extends Module {
    * @param {Function} handler
    * @return {EventTarget|null}
    */
-  public findOne(element: EventTarget, eventType: string, handler: (event: Event) => void): ListenerData {
+  public findOne(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData {
     const foundListeners = this.findAll(element, eventType, handler);
 
     return foundListeners.length > 0 ? foundListeners[0] : null;
@@ -124,7 +124,7 @@ export default class Listeners extends Module {
    * @param {Function} handler
    * @return {Array}
    */
-  public findAll(element: EventTarget, eventType: string, handler: (event: Event) => void): ListenerData[] {
+  public findAll(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData[] {
     let found;
     const foundByEventTargets = element ? this.findByEventTarget(element) : [];
 

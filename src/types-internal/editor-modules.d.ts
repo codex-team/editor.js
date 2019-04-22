@@ -31,6 +31,7 @@ import Saver from '../components/modules/saver';
 import BlockSelection from '../components/modules/blockSelection';
 import RectangleSelection from '../components/modules/RectangleSelection';
 import InlineToolbarAPI from '../components/modules/api/inlineToolbar';
+import MouseSelection from '../components/modules/mouseSelection';
 
 export interface EditorModules {
   UI: UI;
@@ -65,5 +66,6 @@ export interface EditorModules {
   StylesAPI: StylesAPI;
   ToolbarAPI: ToolbarAPI;
   InlineToolbarAPI: InlineToolbarAPI;
+  MouseSelection: MouseSelection;
   NotifierAPI: NotifierAPI;
 }

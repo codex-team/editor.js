@@ -85,7 +85,10 @@ export default class InlineToolbar extends Module {
     this.Editor.Listeners.on(this.nodes.wrapper, 'mousedown', (event) => {
       const isClickedOnActionsWrapper = (event.target as Element).closest(`.${this.CSS.actionsWrapper}`);
 
-      // If click is on actions wrapper, do not prevent default behaviour because actions might include interactive elements
+      /**
+       * If click is on actions wrapper,
+       * do not prevent default behaviour because actions might include interactive elements
+       */
       if (!isClickedOnActionsWrapper) {
         event.preventDefault();
       }

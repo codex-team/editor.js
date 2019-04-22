@@ -99,7 +99,19 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public mouseUp(event): void {
-    this.Editor.InlineToolbar.handleShowingEvent(event);
+    const {InlineToolbar, Listeners, UI} = this.Editor;
+
+    const mouseMoveListener = Listeners.findOne(UI.nodes.redactor, 'mousemove');
+
+    if (mouseMoveListener) {
+      Listeners.off(mouseMoveListener.element, mouseMoveListener.eventType, mouseMoveListener.handler);
+    }
+
+    InlineToolbar.handleShowingEvent(event);
+  }
+
+  public mouseDown(event: MouseEvent): void {
+    this.Editor.MouseSelection.watchSelection(event);
   }
 
   /**
