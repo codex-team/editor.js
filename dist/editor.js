@@ -12518,11 +12518,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {HTMLElement[]} nodeList - target list of nodes
        * @param {number} activeIndex — index of active node. By default it must be -1
        * @param {string} direction - leaf direction. Can be 'left' or 'right'
+       * @param {string} activeCSSClass - css class that will be added
        */
 
     }, {
       key: "leafNodes",
       value: function leafNodes(nodeList, activeIndex, direction) {
+        var activeCSSClass = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'cdx-settings-button--active';
+
         /**
          * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
          */
@@ -12547,7 +12550,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           /**
            * If we have chosen Tool then remove highlighting
            */
-          nodeList[activeIndex].classList.remove('cdx-settings-button--active');
+          nodeList[activeIndex].classList.remove(activeCSSClass);
         }
         /**
          * Count index for next Tool
@@ -12568,12 +12571,19 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            */
           activeIndex = (nodeList.length + activeIndex - 1) % nodeList.length;
         }
+
+        if (Dom.isNativeInput(nodeList[activeIndex])) {
+          /**
+           * Focus input
+           */
+          nodeList[activeIndex].focus();
+        }
         /**
          * Highlight new chosen Tool
          */
 
 
-        nodeList[activeIndex].classList.add('cdx-settings-button--active');
+        nodeList[activeIndex].classList.add(activeCSSClass);
         /**
          * Return Active index
          */
@@ -14975,7 +14985,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Uses for Tools like <code> where line breaks should be handled by default behaviour.
          */
 
-        if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+        if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS] && !this.Editor.BlockSettings.opened && !this.Editor.InlineToolbar.opened) {
           return;
         }
 
@@ -15005,6 +15015,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           event.stopPropagation();
           event.stopImmediatePropagation();
           this.Editor.InlineToolbar.getActiveButton.click();
+          this.Editor.InlineToolbar.dropActiveButtonIndex();
           return;
         }
         /**
@@ -21154,7 +21165,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         actionsWrapper: 'ce-inline-toolbar__actions',
         inlineToolButton: 'ce-inline-tool',
         inlineToolButtonLast: 'ce-inline-tool--last',
-        inputField: 'cdx-input'
+        inputField: 'cdx-input',
+        activeButton: 'cdx-settings-button--active'
       };
       /**
        * State of inline toolbar
@@ -21187,6 +21199,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
       _this.buttonsList = null;
+      /**
+       * Available Buttons List
+       * @type {Array}
+       */
+
+      _this.availableButtonsList = [];
       /**
        * Active button index
        * @type {number}
@@ -21296,8 +21314,26 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "leaf",
       value: function leaf() {
+        var _this3 = this;
+
         var direction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'right';
-        this.activeButtonIndex = _dom.default.leafNodes(this.buttonsList, this.activeButtonIndex, direction);
+        this.availableButtonsList = [];
+        this.buttonsList.forEach(function (tool) {
+          if (!tool.hidden) {
+            _this3.availableButtonsList.push(tool);
+          }
+        });
+        this.activeButtonIndex = _dom.default.leafNodes(this.availableButtonsList, this.activeButtonIndex, direction, this.CSS.activeButton);
+      }
+      /**
+       * Drops active button index
+       */
+
+    }, {
+      key: "dropActiveButtonIndex",
+      value: function dropActiveButtonIndex() {
+        this.availableButtonsList[this.activeButtonIndex].classList.remove(this.CSS.activeButton);
+        this.activeButtonIndex = -1;
       }
       /**
        * @return {HTMLElement}
@@ -21404,7 +21440,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "filterTools",
       value: function filterTools() {
-        var _this3 = this;
+        var _this4 = this;
 
         var currentSelection = _selection.default.get(),
             currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode);
@@ -21423,7 +21459,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         buttons.forEach(function (button) {
           button.hidden = false;
-          button.classList.remove(_this3.CSS.inlineToolButtonLast);
+          button.classList.remove(_this4.CSS.inlineToolButtonLast);
         });
         /**
          * Filter buttons if Block Tool pass config like inlineToolbar=['link']
@@ -21460,10 +21496,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "addTools",
       value: function addTools() {
-        var _this4 = this;
+        var _this5 = this;
 
         this.tools.forEach(function (toolInstance, toolName) {
-          _this4.addTool(toolName, toolInstance);
+          _this5.addTool(toolName, toolInstance);
         });
       }
       /**
@@ -21473,7 +21509,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "addTool",
       value: function addTool(toolName, tool) {
-        var _this5 = this;
+        var _this6 = this;
 
         var _this$Editor = this.Editor,
             Listeners = _this$Editor.Listeners,
@@ -21495,7 +21531,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         Listeners.on(button, 'click', function (event) {
-          _this5.toolClicked(tool);
+          _this6.toolClicked(tool);
 
           event.preventDefault();
         });
@@ -21550,12 +21586,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "enableShortcuts",
       value: function enableShortcuts(tool, shortcut) {
-        var _this6 = this;
+        var _this7 = this;
 
         this.Editor.Shortcuts.add({
           name: shortcut,
           handler: function handler(event) {
-            var currentBlock = _this6.Editor.BlockManager.currentBlock;
+            var currentBlock = _this7.Editor.BlockManager.currentBlock;
             /**
              * Editor is not focused
              */
@@ -21571,15 +21607,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             // if (SelectionUtils.isCollapsed) return;
 
 
-            var toolSettings = _this6.Editor.Tools.getToolSettings(currentBlock.name);
+            var toolSettings = _this7.Editor.Tools.getToolSettings(currentBlock.name);
 
-            if (!toolSettings || !toolSettings[_this6.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
+            if (!toolSettings || !toolSettings[_this7.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
               return;
             }
 
             event.preventDefault();
 
-            _this6.toolClicked(tool);
+            _this7.toolClicked(tool);
           }
         });
       }
@@ -21634,8 +21670,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return null;
         }
 
-        console.log(this.buttonsList.item(this.activeButtonIndex));
-        return this.buttonsList.item(this.activeButtonIndex);
+        return this.availableButtonsList[this.activeButtonIndex];
       }
     }, {
       key: "inlineTools",

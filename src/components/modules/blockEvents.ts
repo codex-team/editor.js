@@ -278,7 +278,10 @@ export default class BlockEvents extends Module {
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
-    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+    if (tool
+      && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]
+      && !this.Editor.BlockSettings.opened
+      && !this.Editor.InlineToolbar.opened) {
       return;
     }
 
@@ -309,6 +312,7 @@ export default class BlockEvents extends Module {
       event.stopImmediatePropagation();
 
       (this.Editor.InlineToolbar.getActiveButton as HTMLElement).click();
+      this.Editor.InlineToolbar.dropActiveButtonIndex();
       return;
     }
 

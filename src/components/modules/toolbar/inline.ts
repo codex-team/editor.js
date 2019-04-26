@@ -28,6 +28,8 @@ export default class InlineToolbar extends Module {
     inlineToolButton: 'ce-inline-tool',
     inlineToolButtonLast: 'ce-inline-tool--last',
     inputField: 'cdx-input',
+
+    activeButton: 'cdx-settings-button--active',
   };
 
   /**
@@ -64,6 +66,12 @@ export default class InlineToolbar extends Module {
    * @type {NodeList}
    */
   private buttonsList: NodeList = null;
+
+  /**
+   * Available Buttons List
+   * @type {Array}
+   */
+  private availableButtonsList: Node[] = [];
 
   /**
    * Active button index
@@ -178,7 +186,23 @@ export default class InlineToolbar extends Module {
    * @param {string} direction
    */
   public leaf(direction: string = 'right'): void {
-    this.activeButtonIndex = $.leafNodes(this.buttonsList, this.activeButtonIndex, direction);
+    this.availableButtonsList = [];
+
+    this.buttonsList.forEach( (tool) => {
+      if (!(tool as HTMLElement).hidden) {
+        this.availableButtonsList.push(tool);
+      }
+    });
+
+    this.activeButtonIndex = $.leafNodes(this.availableButtonsList, this.activeButtonIndex, direction, this.CSS.activeButton);
+  }
+
+  /**
+   * Drops active button index
+   */
+  public dropActiveButtonIndex(): void {
+    (this.availableButtonsList[this.activeButtonIndex] as HTMLElement).classList.remove(this.CSS.activeButton);
+    this.activeButtonIndex = -1;
   }
 
   /**
@@ -189,8 +213,7 @@ export default class InlineToolbar extends Module {
       return null;
     }
 
-    console.log(this.buttonsList.item(this.activeButtonIndex));
-    return this.buttonsList.item(this.activeButtonIndex);
+    return this.availableButtonsList[this.activeButtonIndex];
   }
 
   /**

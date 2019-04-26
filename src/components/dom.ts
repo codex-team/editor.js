@@ -525,8 +525,9 @@ export default class Dom {
    * @param {HTMLElement[]} nodeList - target list of nodes
    * @param {number} activeIndex — index of active node. By default it must be -1
    * @param {string} direction - leaf direction. Can be 'left' or 'right'
+   * @param {string} activeCSSClass - css class that will be added
    */
-  public static leafNodes(nodeList, activeIndex, direction) {
+  public static leafNodes(nodeList, activeIndex, direction, activeCSSClass = 'cdx-settings-button--active') {
     /**
      * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
      */
@@ -551,7 +552,7 @@ export default class Dom {
       /**
        * If we have chosen Tool then remove highlighting
        */
-      (nodeList[activeIndex] as HTMLElement).classList.remove('cdx-settings-button--active');
+      (nodeList[activeIndex] as HTMLElement).classList.remove(activeCSSClass);
     }
 
     /**
@@ -572,10 +573,17 @@ export default class Dom {
       activeIndex = (nodeList.length + activeIndex - 1) % nodeList.length;
     }
 
+    if (Dom.isNativeInput(nodeList[activeIndex])) {
+      /**
+       * Focus input
+       */
+      nodeList[activeIndex].focus();
+    }
+
     /**
      * Highlight new chosen Tool
      */
-    (nodeList[activeIndex] as HTMLElement).classList.add('cdx-settings-button--active');
+    (nodeList[activeIndex] as HTMLElement).classList.add(activeCSSClass);
 
     /**
      * Return Active index
