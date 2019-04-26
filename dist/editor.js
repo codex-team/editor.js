@@ -21872,7 +21872,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function leaf() {
         var direction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Toolbox.LEAF_DIRECTIONS.RIGHT;
         var childNodes = this.nodes.toolbox.childNodes;
-        this.activeButtonIndex = _dom.default.leafNodes(childNodes, this.activeButtonIndex, direction);
+        this.activeButtonIndex = _dom.default.leafNodes(childNodes, this.activeButtonIndex, direction, this.CSS.activeButton);
       }
       /**
        * Hide toolbox tooltip
@@ -22116,7 +22116,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           tooltip: 'ce-toolbox__tooltip',
           tooltipShown: 'ce-toolbox__tooltip--shown',
           tooltipShortcut: 'ce-toolbox__tooltip-shortcut',
-          openedToolbarHolderModifier: 'codex-editor--toolbox-opened'
+          openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
+          activeButton: 'cdx-settings-button--active'
         };
       }
       /**

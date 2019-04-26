@@ -289,6 +289,7 @@ export default class BlockEvents extends Module {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
+
       this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
       return;
     }
