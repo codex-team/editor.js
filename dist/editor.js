@@ -14811,7 +14811,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "tabPressed",
       value: function tabPressed(event) {
         var currentBlock = this.Editor.BlockManager.currentBlock;
+
+        if (!currentBlock) {
+          return;
+        }
         /** Prevent Default behaviour */
+
 
         event.preventDefault();
         event.stopPropagation();
@@ -14862,6 +14867,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           if (!this.Editor.BlockSettings.opened) {
             this.Editor.BlockSettings.open();
           } else {
+            console.log('here');
             this.Editor.BlockSettings.leaf(direction);
           }
         }
@@ -14980,6 +14986,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             Tools = _this$Editor2.Tools;
         var currentBlock = BlockManager.currentBlock;
         var tool = Tools.available[currentBlock.name];
+        console.log('event.target', event.target);
+        console.log('currentBlock', currentBlock);
+        console.log('this.Editor.BlockSettings.opened', this.Editor.BlockSettings.opened);
         /**
          * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
          * Uses for Tools like <code> where line breaks should be handled by default behaviour.
@@ -14994,19 +15003,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           event.stopPropagation();
           event.stopImmediatePropagation();
           this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
-          return;
-        }
-
-        if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.getActiveButton) {
-          event.preventDefault();
-          event.stopPropagation();
-          event.stopImmediatePropagation();
-          /** Click on settings button */
-
-          this.Editor.BlockSettings.getActiveButton.click();
-          /** Restore selection */
-          // this.selection.restore();
-
           return;
         }
 
@@ -20586,18 +20582,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var toolSettings = this.nodes.toolSettings.querySelectorAll(".".concat(this.Editor.StylesAPI.classes.settingsButton));
         var defaultSettings = this.nodes.defaultSettings.querySelectorAll(".".concat(BlockSettings.CSS.button));
-        var allSettings = [];
         toolSettings.forEach(function (item, index) {
-          allSettings.push(item);
+          _this2.buttons.push(item);
 
-          if (item.classList.contains('cdx-settings-button--active')) {
+          if (item.classList.contains(BlockSettings.CSS.activeButton)) {
             _this2.activeButtonIndex = index;
           }
         });
         defaultSettings.forEach(function (item) {
-          allSettings.push(item);
+          _this2.buttons.push(item);
         });
-        this.buttons = allSettings;
         return this.buttons;
       }
       /**
@@ -20677,7 +20671,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           wrapperOpened: 'ce-settings--opened',
           toolSettings: 'ce-settings__plugin-zone',
           defaultSettings: 'ce-settings__default-zone',
-          button: 'ce-settings__button'
+          button: 'ce-settings__button',
+          activeButton: 'cdx-settings-button--active'
         };
       }
     }]);
@@ -23070,6 +23065,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             Caret = _this$Editor2.Caret;
         var hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
+        if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.getActiveButton) {
+          event.preventDefault();
+          event.stopPropagation();
+          event.stopImmediatePropagation();
+          /** Click on settings button */
+
+          this.Editor.BlockSettings.getActiveButton.click();
+          return;
+        }
+
         if (BlockSelection.anyBlockSelected) {
           var selectionPositionIndex = BlockManager.removeSelectedBlocks();
           Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
@@ -23151,7 +23156,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           this.Editor.InlineToolbar.handleShowingEvent(event);
         }
 
-        if (_selection.default.isAtEditor) {
+        if (_selection.default.isAtEditor && _selection.default.anchorNode.nodeType === Node.TEXT_NODE) {
           /**
            * Focus clicked Block
            */

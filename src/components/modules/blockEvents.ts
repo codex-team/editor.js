@@ -120,6 +120,10 @@ export default class BlockEvents extends Module {
 
     const {currentBlock} = this.Editor.BlockManager;
 
+    if (!currentBlock) {
+      return;
+    }
+
     /** Prevent Default behaviour */
     event.preventDefault();
     event.stopPropagation();
@@ -169,6 +173,7 @@ export default class BlockEvents extends Module {
       if (!this.Editor.BlockSettings.opened) {
         this.Editor.BlockSettings.open();
       } else {
+        console.log('here');
         this.Editor.BlockSettings.leaf(direction);
       }
     }
@@ -274,6 +279,10 @@ export default class BlockEvents extends Module {
     const currentBlock = BlockManager.currentBlock;
     const tool = Tools.available[currentBlock.name];
 
+    console.log('event.target', event.target);
+    console.log('currentBlock', currentBlock);
+    console.log('this.Editor.BlockSettings.opened', this.Editor.BlockSettings.opened);
+
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
@@ -291,19 +300,6 @@ export default class BlockEvents extends Module {
       event.stopImmediatePropagation();
 
       this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
-      return;
-    }
-
-    if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.getActiveButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      /** Click on settings button */
-      this.Editor.BlockSettings.getActiveButton.click();
-
-      /** Restore selection */
-      // this.selection.restore();
       return;
     }
 

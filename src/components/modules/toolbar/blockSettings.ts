@@ -38,6 +38,8 @@ export default class BlockSettings extends Module {
       defaultSettings: 'ce-settings__default-zone',
 
       button: 'ce-settings__button',
+
+      activeButton : 'cdx-settings-button--active',
     };
   }
 
@@ -61,7 +63,7 @@ export default class BlockSettings extends Module {
   /**
    * List of buttons
    */
-  private buttons: HTMLElement[] = [];
+  private buttons: Node[] = [];
 
   /**
    * Index of active button
@@ -129,7 +131,7 @@ export default class BlockSettings extends Module {
    * @todo optimize
    * @return {HTMLElement[]}
    */
-  public blockTunesButtons(): HTMLElement[] {
+  public blockTunesButtons(): Node[] {
     /**
      * Return from cache
      */
@@ -140,19 +142,17 @@ export default class BlockSettings extends Module {
     const toolSettings = this.nodes.toolSettings.querySelectorAll(`.${this.Editor.StylesAPI.classes.settingsButton}`);
     const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${BlockSettings.CSS.button}`);
 
-    const allSettings = [];
     toolSettings.forEach((item, index) => {
-      allSettings.push(item);
-      if (item.classList.contains('cdx-settings-button--active')) {
+      this.buttons.push(item);
+      if (item.classList.contains(BlockSettings.CSS.activeButton)) {
         this.activeButtonIndex = index;
       }
     });
 
     defaultSettings.forEach((item) => {
-      allSettings.push(item);
+      this.buttons.push(item);
     });
 
-    this.buttons = allSettings;
     return this.buttons;
   }
 
@@ -173,7 +173,7 @@ export default class BlockSettings extends Module {
       return null;
     }
 
-    return this.buttons[this.activeButtonIndex];
+    return (this.buttons[this.activeButtonIndex] as HTMLElement);
   }
   /**
    * Add Tool's settings

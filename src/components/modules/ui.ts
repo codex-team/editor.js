@@ -270,6 +270,16 @@ export default class UI extends Module {
     const {BlockManager, BlockSelection, Caret} = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
+    if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.getActiveButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      /** Click on settings button */
+      this.Editor.BlockSettings.getActiveButton.click();
+      return;
+    }
+
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
       Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
@@ -350,7 +360,7 @@ export default class UI extends Module {
       this.Editor.InlineToolbar.handleShowingEvent(event);
     }
 
-    if (Selection.isAtEditor) {
+    if (Selection.isAtEditor && Selection.anchorNode.nodeType === Node.TEXT_NODE) {
       /**
        * Focus clicked Block
        */
