@@ -20,19 +20,28 @@ Join [public Telegram-chat](//t.me/codex_editor) or [Gitter-channel](https://git
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | Edge 12+ | Firefox 18+ | Chrome 49+ | Safari 10+ | Safari 10+ | Opera 36+
 
+## If you like a project
+
+⭐️ If you like Editor.js you can support project improvements and development a new features with a small donation on [Open Collective](https://opencollective.com/editorjs) or [Patreon](https://www.patreon.com/editorjs) 
+
 ## Documentation
 
-While we develop the new Documentation Site with all stuff, you can check some available docs at the [docs/](docs/) dir.
+Please, visit (https://editorjs.io)[https://editorjs.io/] to view all documentation articles.
 
-- [Installation](docs/installation.md)
-- [How to use](docs/usage.md)
-- [How to create a Block Tool Plugin](docs/tools.md)
-- [How to create an Inline Tool Plugin](docs/tools-inline.md)
-- [API for Tools](docs/api.md)
+- [Base concepts](https://editorjs.io/base-concepts)
+- [Getting started](https://editorjs.io/getting-started)
+- [Configuration](https://editorjs.io/configuration)
+- [How to create a Block Tool Plugin](https://editorjs.io/creating-a-block-tool)
+- [How to create an Inline Tool Plugin](https://editorjs.io/creating-an-inline-tool)
+- [API for Tools](https://editorjs.io/tools-api)
 
-Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor) and ask a question.
+You can join a [Gitter-channel](https://gitter.im/codex-team/editor.js) or [Telegram-chat](//t.me/codex_editor) and ask a question.
 
 ---
+
+## Changelog
+
+See a whole [Changelog](/docs/CHANGELOG.md)
 
 # So how to use Editor.js
 
@@ -40,9 +49,9 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 Editor.js is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
-We have [many](http://github.com/editor-js/) ready-to-use Plugins and a [simple API](docs/tools.md) for creating new ones.
+We have [many](http://github.com/editor-js/) ready-to-use Plugins and a [simple API](https://editorjs.io/tools-api) for creating new ones.
 
-So how to use the Editor after [Installation](docs/installation.md).
+So how to use the Editor after [Installation](https://editorjs.io/getting-started).
 
 - Create new Blocks by Enter or with the Plus Button
 - Press `TAB` or click on the Plus Button to view the Toolbox
@@ -223,28 +232,16 @@ editor.saver.save()
 
 Take a look at the [example.html](example/example.html) to view more detailed examples.
 
-## Changelog
-
-See a whole [Changelog](/docs/CHANGELOG.md)
-
 ## Credits and references
 
 - We use [HTMLJanitor](https://github.com/guardian/html-janitor) module in our Sanitizer module. 
 
-# About team
-
-We are CodeX and we build products for developers and makers. 
-
-Follow us on Twitter: [twitter.com/codex_team](https://twitter.com/codex_team)
-
-Feel free to contact: <a href="mailto:team@codex.so?subject=Editor.js feedback">team@codex.so</a>
-
-[codex.so](https://codex.so)
-
 # Support project improvements
 
 Love Editor.js? Please consider supporting our collective:
+
  👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
+ 👉  [Patreon](https://www.patreon.com/editorjs)
  
 ## Contributors
 
@@ -261,3 +258,13 @@ Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com
 Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/editorjs#sponsor)]
 
 <a href="https://opencollective.com/editorjs/sponsor/0/website" target="_blank"><img src="https://opencollective.com/editorjs/sponsor/0/avatar.svg"></a>
+
+# About team
+
+We are CodeX and we build products for developers and makers. 
+
+Follow us on Twitter: [twitter.com/codex_team](https://twitter.com/codex_team)
+
+Feel free to contact: <a href="mailto:team@codex.so?subject=Editor.js feedback">team@codex.so</a>
+
+[codex.so](https://codex.so)
