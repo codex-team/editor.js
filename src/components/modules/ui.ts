@@ -149,6 +149,11 @@ export default class UI extends Module {
       this.nodes.wrapper.classList.add(this.CSS.editorWrapperNarrow);
     }
 
+    /**
+     * Set customizable bottom zone height
+     */
+    this.nodes.redactor.style.paddingBottom = this.config.minHeight + 'px';
+
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.holder.appendChild(this.nodes.wrapper);
 
