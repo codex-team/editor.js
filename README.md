@@ -22,7 +22,7 @@ Join [public Telegram-chat](//t.me/codex_editor) or [Gitter-channel](https://git
 
 ## ⭐️ If you like a project
 
-If you like Editor.js you can support project improvements and development a new features with a small donation on [Open Collective](https://opencollective.com/editorjs) or [Patreon](https://www.patreon.com/editorjs) 
+If you like Editor.js you can support project improvements and development of new features with a small donation on [Open Collective](https://opencollective.com/editorjs) or [Patreon](https://www.patreon.com/editorjs) 
 
 ## Documentation
 
