@@ -219,10 +219,10 @@ var editor = new EditorJS({
 
 ## Saving Data
 
-Call `editor.saver.save()` and handle returned Promise with saved data.
+Call `editor.save()` and handle returned Promise with saved data.
 
 ```javascript
-editor.saver.save()
+editor.save()
   .then((savedData) => {
     console.log(savedData);
   });
