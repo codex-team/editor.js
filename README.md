@@ -20,9 +20,9 @@ Join [public Telegram-chat](//t.me/codex_editor) or [Gitter-channel](https://git
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | Edge 12+ | Firefox 18+ | Chrome 49+ | Safari 10+ | Safari 10+ | Opera 36+
 
-## If you like a project
+## ⭐️ If you like a project
 
-⭐️ If you like Editor.js you can support project improvements and development a new features with a small donation on [Open Collective](https://opencollective.com/editorjs) or [Patreon](https://www.patreon.com/editorjs) 
+If you like Editor.js you can support project improvements and development a new features with a small donation on [Open Collective](https://opencollective.com/editorjs) or [Patreon](https://www.patreon.com/editorjs) 
 
 ## Documentation
 
