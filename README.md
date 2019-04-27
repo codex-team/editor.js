@@ -26,7 +26,7 @@ If you like Editor.js you can support project improvements and development a new
 
 ## Documentation
 
-Please, visit (https://editorjs.io)[https://editorjs.io/] to view all documentation articles.
+Please, visit [https://editorjs.io/](https://editorjs.io) to view all documentation articles.
 
 - [Base concepts](https://editorjs.io/base-concepts)
 - [Getting started](https://editorjs.io/getting-started)
