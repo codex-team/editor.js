@@ -241,6 +241,7 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 Love Editor.js? Please consider supporting our collective:
 
  👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
+ 
  👉  [Patreon](https://www.patreon.com/editorjs)
  
 ## Contributors
