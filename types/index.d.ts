@@ -5,7 +5,7 @@
  */
 
 import {EditorConfig} from './configs';
-import {Blocks, Caret, Events, Listeners, Notifier, Sanitizer, Saver, Selection, Styles, Toolbar} from './api';
+import {Blocks, Caret, Events, Listeners, Notifier, Sanitizer, Saver, Selection, Styles, Toolbar, InlineToolbar} from './api';
 
 /**
  * Interfaces used for development
@@ -51,6 +51,7 @@ export interface API {
   selection: Selection;
   styles: Styles;
   toolbar: Toolbar;
+  inlineToolbar: InlineToolbar;
 }
 
 /**
@@ -70,7 +71,7 @@ declare class EditorJS {
   public selection: Selection;
   public styles: Styles;
   public toolbar: Toolbar;
-
+  public inlineToolbar: InlineToolbar;
   constructor(configuration?: EditorConfig|string);
 
   public destroy(): void;
