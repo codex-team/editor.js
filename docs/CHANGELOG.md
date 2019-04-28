@@ -2,6 +2,7 @@
 
 ### 2.13
 
+- `Improvements` *BlockSelection* — Block Selection allows to select single editable element via CMD+A
 - `New` *API* — Added [API methods](api.md) to open and close inline toolbar [#665](https://github.com/codex-team/editor.js/issues/665)
 - `New` *Config* - Added new property in EditorConfig `holder`, use this property for append Editor instead `holderId`. `holder` property now support reference on dom element. [#696](https://github.com/codex-team/editor.js/issues/696)
 - `Deprecated` *Config* - `holderId` property now is deprecated and will removed in next major release. Use `holder` instead.
