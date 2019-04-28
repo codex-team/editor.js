@@ -89,6 +89,8 @@ export default class BlockSelection extends Module {
   private nativeInputSelected: boolean = false;
 
   /**
+   * Flag identifies any input selection
+   * That means we can select whole Block
    * @type {boolean}
    */
   private readyToBlockSelection: boolean = false;
@@ -154,6 +156,7 @@ export default class BlockSelection extends Module {
   public clearSelection(restoreSelection = false) {
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
+    this.readyToBlockSelection = false;
 
     if (!this.anyBlockSelected || this.Editor.RectangleSelection.isRectActivated()) {
       this.Editor.RectangleSelection.clearSelection();
@@ -238,7 +241,12 @@ export default class BlockSelection extends Module {
     }
 
     const inputs = this.Editor.BlockManager.currentBlock.inputs;
-    if (inputs.length !== 0 && !this.readyToBlockSelection) {
+
+    /**
+     * If Block has more than one editable element allow native selection
+     * Second cmd+a will select whole Block
+     */
+    if (inputs.length !== 1 && !this.readyToBlockSelection) {
       this.readyToBlockSelection = true;
       return;
     }
@@ -249,11 +257,9 @@ export default class BlockSelection extends Module {
     if (this.needToSelectAll) {
       this.selectAllBlocks();
       this.needToSelectAll = false;
-      this.readyToBlockSelection = false;
     } else {
       this.selectBlockByIndex();
       this.needToSelectAll = true;
-      this.readyToBlockSelection = false;
     }
   }
 
