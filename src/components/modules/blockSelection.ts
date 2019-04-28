@@ -10,7 +10,6 @@ import _ from '../utils';
 import $ from '../dom';
 
 import SelectionUtils from '../selection';
-import Block from '../block';
 
 export default class BlockSelection extends Module {
 
@@ -88,6 +87,11 @@ export default class BlockSelection extends Module {
    * @type {boolean}
    */
   private nativeInputSelected: boolean = false;
+
+  /**
+   * @type {boolean}
+   */
+  private readyToBlockSelection: boolean = false;
 
   /**
    * SelectionUtils instance
@@ -233,15 +237,23 @@ export default class BlockSelection extends Module {
       return;
     }
 
+    const inputs = this.Editor.BlockManager.currentBlock.inputs;
+    if (inputs.length !== 0 && !this.readyToBlockSelection) {
+      this.readyToBlockSelection = true;
+      return;
+    }
+
     /** Prevent default selection */
     event.preventDefault();
 
     if (this.needToSelectAll) {
       this.selectAllBlocks();
       this.needToSelectAll = false;
+      this.readyToBlockSelection = false;
     } else {
       this.selectBlockByIndex();
       this.needToSelectAll = true;
+      this.readyToBlockSelection = false;
     }
   }
 
