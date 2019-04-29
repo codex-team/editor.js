@@ -21,7 +21,7 @@ Choose the most usable method of getting Editor for you.
 Install the package via NPM or Yarn
 
 ```shell
-npm i @editorjs/editorjs --save-dev
+npm i @editorjs/editorjs
 ```
 
 Include module at your application 

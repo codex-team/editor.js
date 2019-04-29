@@ -11,8 +11,6 @@
   }
 
   &__redactor {
-    padding-bottom: 300px;
-
     &--hidden {
       display: none;
     }
