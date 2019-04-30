@@ -233,10 +233,30 @@ export default class BlockManager extends Module {
   ): Block {
     // Increment index before construct,
     // because developers can use API/Blocks/getCurrentInputIndex on the render() method
-    const newIndex = ++this.currentBlockIndex;
+    const newIndex = this.currentBlockIndex + 1;
+    return this.insertAt(newIndex, toolName, data, settings);
+  }
+
+  /**
+   * Insert new block into _blocks at index
+   *
+   * @param {Number} index — index of new block
+   * @param {String} toolName — plugin name, by default method inserts initial block type
+   * @param {Object} data — plugin data
+   * @param {Object} settings - default settings
+   *
+   * @return {Block}
+   */
+  public insertAt(
+    index: number,
+    toolName: string = this.config.initialBlock,
+    data: BlockToolData = {},
+    settings: ToolConfig = {},
+  ): Block {
+    this.currentBlockIndex = index;
     const block = this.composeBlock(toolName, data, settings);
 
-    this._blocks[newIndex] = block;
+    this._blocks[index] = block;
     return block;
   }
 
