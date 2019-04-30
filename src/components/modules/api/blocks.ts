@@ -1,9 +1,9 @@
 import Module from '../../__module';
 
-import {Blocks} from '../../../../types/api';
-import {OutputData} from '../../../../types';
+import { Blocks } from '../../../../types/api';
+import { BlockToolData, OutputData, ToolConfig } from '../../../../types';
 import Block from '../../block';
-import {ModuleConfig} from '../../../types-internal/module-config';
+import { ModuleConfig } from '../../../types-internal/module-config';
 
 /**
  * @class BlocksAPI
@@ -26,6 +26,12 @@ export default class BlocksAPI extends Module {
       getBlocksCount: () => this.getBlocksCount(),
       stretchBlock: (index: number, status: boolean = true) => this.stretchBlock(index, status),
       insertNewBlock: () => this.insertNewBlock(),
+      insert: (
+        index: number,
+        toolName: string,
+        data: BlockToolData = {},
+        settings: ToolConfig = {},
+      ) => this.insert(index, toolName, data, settings),
     };
   }
 
@@ -145,6 +151,24 @@ export default class BlocksAPI extends Module {
    */
   public insertNewBlock() {
     const newBlock = this.Editor.BlockManager.insert();
+    this.Editor.Caret.setToBlock(newBlock);
+  }
+
+  /**
+   * Insert new block at index with data
+   *
+   * @param {number} index — index of new block
+   * @param {string} toolName — plugin name
+   * @param {BlockToolData} data — plugin data
+   * @param {ToolConfig} settings - default settings
+   */
+  public insert(
+    index: number,
+    toolName: string,
+    data: BlockToolData = {},
+    settings: ToolConfig = {},
+  ) {
+    const newBlock = this.Editor.BlockManager.insertAt(index, toolName, data, settings);
     this.Editor.Caret.setToBlock(newBlock);
   }
 }

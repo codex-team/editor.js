@@ -1,4 +1,6 @@
-import {OutputData} from '../data-formats/output-data';
+import { OutputData } from '../data-formats/output-data';
+import { BlockToolData } from '../tools/block-tool-data';
+import { ToolConfig } from '../tools/tool-config';
 
 /**
  * Describes methods to manipulate with Editor`s blocks
@@ -65,4 +67,18 @@ export interface Blocks {
    * Insert new Initial Block after current Block
    */
   insertNewBlock(): void;
+
+  /**
+   * Insert new block at index with data
+   * @param {number} index — index of new block
+   * @param {string} toolName — plugin name
+   * @param {BlockToolData} data — plugin data
+   * @param {ToolConfig} settings - default settings
+   */
+  insert(
+    index: number,
+    toolName: string,
+    data?: BlockToolData,
+    settings?: ToolConfig,
+  ): void;
 }
