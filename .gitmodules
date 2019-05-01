@@ -49,3 +49,6 @@
 [submodule "example/tools/personality"]
 	path = example/tools/personality
 	url = https://github.com/editor-js/personality
+[submodule "example/tools/attaches"]
+	path = example/tools/attaches
+	url = https://github.com/editor-js/attaches
