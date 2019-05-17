@@ -69,6 +69,14 @@ Methods that working with Toolbar
 
 `close()` - closes toolbar, toolbox and blockSettings if they are opened
 
+### InlineToolbarAPI
+
+Methods that works with inline toolbar
+
+`open()` - opens inline toolbar, (opens for the current selection)
+
+`close()` - closes inline toolbar
+
 ### ListenerAPI
 
 Methods that allows to work with DOM listener. Useful when you forgot to remove listener. Module collects all listeners and destroys automatically

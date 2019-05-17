@@ -10,7 +10,6 @@ import _ from '../utils';
 import $ from '../dom';
 
 import SelectionUtils from '../selection';
-import Block from '../block';
 
 export default class BlockSelection extends Module {
 
@@ -90,6 +89,13 @@ export default class BlockSelection extends Module {
   private nativeInputSelected: boolean = false;
 
   /**
+   * Flag identifies any input selection
+   * That means we can select whole Block
+   * @type {boolean}
+   */
+  private readyToBlockSelection: boolean = false;
+
+  /**
    * SelectionUtils instance
    * @type {SelectionUtils}
    */
@@ -150,6 +156,7 @@ export default class BlockSelection extends Module {
   public clearSelection(restoreSelection = false) {
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
+    this.readyToBlockSelection = false;
 
     if (!this.anyBlockSelected || this.Editor.RectangleSelection.isRectActivated()) {
       this.Editor.RectangleSelection.clearSelection();
@@ -230,6 +237,17 @@ export default class BlockSelection extends Module {
     /** allow default selection on native inputs */
     if ($.isNativeInput(event.target) && !this.nativeInputSelected) {
       this.nativeInputSelected = true;
+      return;
+    }
+
+    const inputs = this.Editor.BlockManager.currentBlock.inputs;
+
+    /**
+     * If Block has more than one editable element allow native selection
+     * Second cmd+a will select whole Block
+     */
+    if (inputs.length > 1 && !this.readyToBlockSelection) {
+      this.readyToBlockSelection = true;
       return;
     }
 

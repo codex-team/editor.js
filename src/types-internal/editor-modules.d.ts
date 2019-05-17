@@ -30,6 +30,7 @@ import SaverAPI from '../components/modules/api/saver';
 import Saver from '../components/modules/saver';
 import BlockSelection from '../components/modules/blockSelection';
 import RectangleSelection from '../components/modules/RectangleSelection';
+import InlineToolbarAPI from '../components/modules/api/inlineToolbar';
 
 export interface EditorModules {
   UI: UI;
@@ -63,5 +64,6 @@ export interface EditorModules {
   SelectionAPI: SelectionAPI;
   StylesAPI: StylesAPI;
   ToolbarAPI: ToolbarAPI;
+  InlineToolbarAPI: InlineToolbarAPI;
   NotifierAPI: NotifierAPI;
 }

@@ -81,7 +81,12 @@ export default class LinkInlineTool implements InlineTool {
   private inputOpened: boolean = false;
 
   /**
-   * Available Inline Toolbar methods (open/close)
+   * Available Toolbar methods (open/close)
+   */
+  private toolbar: Toolbar;
+
+  /**
+   * Available inline toolbar methods (open/close)
    */
   private inlineToolbar: Toolbar;
 
@@ -94,7 +99,8 @@ export default class LinkInlineTool implements InlineTool {
    * @param {{api: API}} - Editor.js API
    */
   constructor({api}) {
-    this.inlineToolbar = api.toolbar;
+    this.toolbar = api.toolbar;
+    this.inlineToolbar = api.inlineToolbar;
     this.notifier = api.notifier;
     this.selection = new SelectionUtils();
   }
@@ -156,7 +162,7 @@ export default class LinkInlineTool implements InlineTool {
         this.unlink();
         this.closeActions();
         this.checkState();
-        this.inlineToolbar.close();
+        this.toolbar.close();
         return;
       }
     }
@@ -288,10 +294,8 @@ export default class LinkInlineTool implements InlineTool {
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
-
-    this.closeActions();
+    this.selection.collapseToEnd();
     this.inlineToolbar.close();
-    this.checkState();
   }
 
   /**

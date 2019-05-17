@@ -1681,10 +1681,10 @@ code-point-at@^1.0.0:
   resolved "https://registry.yarnpkg.com/code-point-at/-/code-point-at-1.1.0.tgz#0d070b4d043a5bea33a2f1a40e2edb3d9a4ccf77"
   integrity sha1-DQcLTQQ6W+ozovGkDi7bPZpMz3c=
 
-codex-notifier@^1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/codex-notifier/-/codex-notifier-1.1.1.tgz#0fad9876781b793da316bed7f0cd11454a3f3393"
-  integrity sha512-IAcSO8O9i+limw4XknDXvBTOI3bXwGy3xNauBCYx4F1+hfNMhhkL3lzDnmAEcvwgiuY4P7W5hWB05sNi9W+31Q==
+codex-notifier@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/codex-notifier/-/codex-notifier-1.1.2.tgz#a733079185f4c927fa296f1d71eb8753fe080895"
+  integrity sha512-DCp6xe/LGueJ1N5sXEwcBc3r3PyVkEEDNWCVigfvywAkeXcZMk9K41a31tkEFBW0Ptlwji6/JlAb49E3Yrxbtg==
 
 collapse-white-space@^1.0.2:
   version "1.0.4"

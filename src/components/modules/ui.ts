@@ -134,11 +134,7 @@ export default class UI extends Module {
      * Element where we need to append Editor.js
      * @type {Element}
      */
-    this.nodes.holder = document.getElementById(this.config.holderId);
-
-    if (!this.nodes.holder) {
-      throw Error('Holder wasn\'t found by ID: #' + this.config.holderId);
-    }
+    this.nodes.holder = $.getHolder(this.config.holder);
 
     /**
      * Create and save main UI elements
@@ -152,6 +148,11 @@ export default class UI extends Module {
     if (this.nodes.holder.offsetWidth < this.contentWidth) {
       this.nodes.wrapper.classList.add(this.CSS.editorWrapperNarrow);
     }
+
+    /**
+     * Set customizable bottom zone height
+     */
+    this.nodes.redactor.style.paddingBottom = this.config.minHeight + 'px';
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.holder.appendChild(this.nodes.wrapper);
@@ -329,7 +330,8 @@ export default class UI extends Module {
      */
     const target = event.target as HTMLElement;
     const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
-    const clickedInsideOfEditor = !!target.closest(`#${this.config.holderId}`) || Selection.isAtEditor;
+
+    const clickedInsideOfEditor = this.nodes.holder.contains(target) || Selection.isAtEditor;
 
     if (!clickedInsideOfEditor) {
       /**
