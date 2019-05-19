@@ -278,6 +278,19 @@ export default class SelectionUtils {
   }
 
   /**
+   * Collapse current selection
+   */
+  public collapseToEnd(): void {
+    const sel = window.getSelection();
+    const range = document.createRange();
+
+    range.selectNodeContents(sel.focusNode);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  /**
    * Looks ahead to find passed tag from current selection
    *
    * @param  {String} tagName       - tag to found

@@ -244,7 +244,7 @@ export default class Dom {
    * @param {Object} node
    * @returns {boolean}
    */
-  public static isElement(node: any): boolean {
+  public static isElement(node: any): node is Element {
     return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
   }
 
@@ -589,5 +589,14 @@ export default class Dom {
      * Return Active index
      */
     return activeIndex;
+  }
+
+  /*
+   * Helper for get holder from {string} or return HTMLElement
+   * @param element
+   */
+  public static getHolder(element: string | HTMLElement): HTMLElement {
+    if (typeof element === 'string') { return document.getElementById(element); }
+    return element;
   }
 }

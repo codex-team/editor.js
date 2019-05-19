@@ -5,8 +5,14 @@ import {SanitizerConfig} from './sanitizer-config';
 export interface EditorConfig {
   /**
    * Element where Editor will be append
+   * @deprecated property will be removed in next major release, use holder instead
    */
-  holderId?: string;
+  holderId?: string | HTMLElement;
+
+  /**
+   * Element where Editor will be append
+   */
+  holder?: string | HTMLElement;
 
   /**
    * If true, set caret at the first Block after Editor is ready
@@ -45,6 +51,11 @@ export interface EditorConfig {
    * Data to render on Editor start
    */
   data?: OutputData;
+
+  /**
+   * Height of Editor's bottom area that allows to set focus on the last Block
+   */
+  minHeight?: number;
 
   /**
    * Fires when Editor is ready to work
