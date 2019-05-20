@@ -1,5 +1,10 @@
 # Changelog
 
+
+### 2.14
+
+- `Fix` *Config* — User config now has higher priority than internal settings
+
 ### 2.13
 
 - `Improvements` *BlockSelection* — Block Selection allows to select single editable element via CMD+A
