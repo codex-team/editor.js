@@ -174,7 +174,8 @@ export default class BlockEvents extends Module {
        * Open Toolbar and show BlockSettings
        */
       if (!this.Editor.Toolbar.opened) {
-        this.Editor.Toolbar.open(true, true);
+        this.Editor.BlockManager.currentBlock.focused = true;
+        this.Editor.Toolbar.open(true, false);
       }
 
       /**
