@@ -113,7 +113,7 @@ There are few steps to run Editor.js on your site.
 
 ## Load Editor's core
 
-Firstly you need to get Editor.js itself. It is a [minified script](build/editor.js) with Editor's core and some default must-have tools.
+Firstly you need to get Editor.js itself. It is a [minified script](dist/editor.js) with Editor's core and some default must-have tools.
 
 Choose the most usable method of getting Editor for you.
 
