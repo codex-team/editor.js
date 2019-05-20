@@ -40,6 +40,7 @@ export default class BlockSettings extends Module {
       button: 'ce-settings__button',
 
       activeButton : 'cdx-settings-button--active',
+      focusedButton : 'cdx-settings-button--focused',
     };
   }
 
@@ -144,7 +145,7 @@ export default class BlockSettings extends Module {
 
     toolSettings.forEach((item, index) => {
       this.buttons.push(item);
-      if (item.classList.contains(BlockSettings.CSS.activeButton)) {
+      if (item.classList.contains(BlockSettings.CSS.focusedButton)) {
         this.activeButtonIndex = index;
       }
     });

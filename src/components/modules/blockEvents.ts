@@ -171,6 +171,13 @@ export default class BlockEvents extends Module {
       }
     } else {
       /**
+       * Open Toolbar and show BlockSettings
+       */
+      if (!this.Editor.Toolbar.opened) {
+        this.Editor.Toolbar.open(true, true);
+      }
+
+      /**
        * Work with Block Tunes
        * ----------------------
        *
@@ -179,9 +186,9 @@ export default class BlockEvents extends Module {
        */
       if (!this.Editor.BlockSettings.opened) {
         this.Editor.BlockSettings.open();
-      } else {
-        this.Editor.BlockSettings.leaf(direction);
       }
+
+      this.Editor.BlockSettings.leaf(direction);
     }
   }
 
