@@ -70,6 +70,9 @@ export default class BlockEvents extends Module {
       return;
     }
 
+    /**
+     * Leaf Toolbar component's Nodes in case of Tab press
+     */
     if (event.keyCode !== _.keyCodes.TAB) {
       this.Editor.Toolbar.close();
     }
@@ -134,6 +137,13 @@ export default class BlockEvents extends Module {
 
     if (currentBlock.isEmpty) {
       /**
+       * For empty Blocks we show Plus button via Toobox only for initial Blocks
+       */
+      if (!this.Editor.Tools.isInitial(currentBlock.tool)) {
+        return;
+      }
+
+      /**
        * Work with Toolbox
        * ------------------
        *
@@ -160,9 +170,6 @@ export default class BlockEvents extends Module {
         this.Editor.InlineToolbar.leaf(direction);
       }
     } else {
-      this.Editor.Toolbar.open(true, false);
-      this.Editor.Toolbar.plusButton.hide();
-      this.selection.save();
       /**
        * Work with Block Tunes
        * ----------------------
@@ -173,7 +180,6 @@ export default class BlockEvents extends Module {
       if (!this.Editor.BlockSettings.opened) {
         this.Editor.BlockSettings.open();
       } else {
-        console.log('here');
         this.Editor.BlockSettings.leaf(direction);
       }
     }
@@ -278,10 +284,6 @@ export default class BlockEvents extends Module {
     const {BlockManager, Tools} = this.Editor;
     const currentBlock = BlockManager.currentBlock;
     const tool = Tools.available[currentBlock.name];
-
-    console.log('event.target', event.target);
-    console.log('currentBlock', currentBlock);
-    console.log('this.Editor.BlockSettings.opened', this.Editor.BlockSettings.opened);
 
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.

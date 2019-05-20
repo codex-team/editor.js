@@ -131,7 +131,7 @@ export default class BlockSettings extends Module {
    * @todo optimize
    * @return {HTMLElement[]}
    */
-  public blockTunesButtons(): Node[] {
+  public get blockTunesButtons(): Node[] {
     /**
      * Return from cache
      */
@@ -161,8 +161,7 @@ export default class BlockSettings extends Module {
    * @param {string} direction
    */
   public leaf(direction: string = 'right'): void {
-    const buttonsList = this.blockTunesButtons();
-    this.activeButtonIndex = $.leafNodes(buttonsList, this.activeButtonIndex, direction);
+    this.activeButtonIndex = $.leafNodesAndReturnIndex(this.blockTunesButtons, this.activeButtonIndex, direction);
   }
 
   /**

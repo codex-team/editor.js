@@ -271,6 +271,11 @@ export default class UI extends Module {
     const {BlockManager, BlockSelection, Caret} = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
+    /**
+     * If Block Settings is opened and have some active button
+     * Enter press is fired as out of the Block and that's why
+     * we handle it here
+     */
     if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.getActiveButton) {
       event.preventDefault();
       event.stopPropagation();

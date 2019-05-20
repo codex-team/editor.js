@@ -526,8 +526,10 @@ export default class Dom {
    * @param {number} activeIndex — index of active node. By default it must be -1
    * @param {string} direction - leaf direction. Can be 'left' or 'right'
    * @param {string} activeCSSClass - css class that will be added
+   *
+   * @return {Number} index of active node
    */
-  public static leafNodes(nodeList, activeIndex, direction, activeCSSClass = 'cdx-settings-button--active') {
+  public static leafNodesAndReturnIndex(nodeList, activeIndex, direction, activeCSSClass = 'cdx-settings-button--focused'): number {
     /**
      * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
      */

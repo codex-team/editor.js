@@ -68,10 +68,11 @@ export default class InlineToolbar extends Module {
   private buttonsList: NodeList = null;
 
   /**
-   * Available Buttons List
-   * @type {Array}
+   * Visible Buttons
+   * Some Blocks might disable inline tools
+   * @type {Node[]}
    */
-  private availableButtonsList: Node[] = [];
+  private visibleButtonsList: Node[] = [];
 
   /**
    * Active button index
@@ -186,26 +187,27 @@ export default class InlineToolbar extends Module {
    * @param {string} direction
    */
   public leaf(direction: string = 'right'): void {
-    this.availableButtonsList = [];
+    this.visibleButtonsList = [];
 
     this.buttonsList.forEach( (tool) => {
       if (!(tool as HTMLElement).hidden) {
-        this.availableButtonsList.push(tool);
+        this.visibleButtonsList.push(tool);
       }
     });
 
-    this.activeButtonIndex = $.leafNodes(this.availableButtonsList, this.activeButtonIndex, direction, this.CSS.activeButton);
+    this.activeButtonIndex = $.leafNodesAndReturnIndex(this.visibleButtonsList, this.activeButtonIndex, direction, this.CSS.activeButton);
   }
 
   /**
    * Drops active button index
    */
   public dropActiveButtonIndex(): void {
-    (this.availableButtonsList[this.activeButtonIndex] as HTMLElement).classList.remove(this.CSS.activeButton);
+    (this.visibleButtonsList[this.activeButtonIndex] as HTMLElement).classList.remove(this.CSS.activeButton);
     this.activeButtonIndex = -1;
   }
 
   /**
+   * Returns Active button Node
    * @return {HTMLElement}
    */
   public get getActiveButton(): Node {
@@ -213,7 +215,7 @@ export default class InlineToolbar extends Module {
       return null;
     }
 
-    return this.availableButtonsList[this.activeButtonIndex];
+    return this.visibleButtonsList[this.activeButtonIndex];
   }
 
   /**
@@ -228,8 +230,11 @@ export default class InlineToolbar extends Module {
     });
 
     this.opened = false;
-    this.activeButtonIndex = -1;
-    this.buttonsList = null;
+
+    if (this.activeButtonIndex !== -1) {
+      (this.visibleButtonsList[this.activeButtonIndex] as HTMLElement).classList.remove(this.CSS.activeButton);
+      this.activeButtonIndex = -1;
+    }
   }
 
   /**

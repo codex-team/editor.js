@@ -144,12 +144,14 @@ export default class Toolbox extends Module {
 
     this.opened = false;
 
-    /** remove active item pointer */
-    this.activeButtonIndex = -1;
-    const activeButton = this.nodes.toolbox.querySelector(`.${this.CSS.toolboxButtonActive}`);
+    /**
+     * Remove active item pointer
+     */
+    if (this.activeButtonIndex !== -1) {
+      (this.nodes.toolbox.childNodes[this.activeButtonIndex] as HTMLElement)
+        .classList.remove(this.CSS.activeButton);
 
-    if (activeButton) {
-      activeButton.classList.remove(this.CSS.toolboxButtonActive);
+      this.activeButtonIndex = -1;
     }
   }
 
@@ -171,7 +173,7 @@ export default class Toolbox extends Module {
    */
   public leaf(direction: string = Toolbox.LEAF_DIRECTIONS.RIGHT): void {
     const childNodes = this.nodes.toolbox.childNodes;
-    this.activeButtonIndex = $.leafNodes(childNodes, this.activeButtonIndex, direction, this.CSS.activeButton);
+    this.activeButtonIndex = $.leafNodesAndReturnIndex(childNodes, this.activeButtonIndex, direction, this.CSS.activeButton);
   }
 
   /**
