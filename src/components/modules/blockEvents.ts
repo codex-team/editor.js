@@ -176,6 +176,7 @@ export default class BlockEvents extends Module {
       if (!this.Editor.Toolbar.opened) {
         this.Editor.BlockManager.currentBlock.focused = true;
         this.Editor.Toolbar.open(true, false);
+        this.Editor.Toolbar.plusButton.hide();
       }
 
       /**
