@@ -135,14 +135,10 @@ export default class BlockEvents extends Module {
     const shiftKey = event.shiftKey,
       direction = shiftKey ? 'left' : 'right';
 
-    if (currentBlock.isEmpty) {
-      /**
-       * For empty Blocks we show Plus button via Toobox only for initial Blocks
-       */
-      if (!this.Editor.Tools.isInitial(currentBlock.tool)) {
-        return;
-      }
-
+    /**
+     * For empty Blocks we show Plus button via Toobox only for initial Blocks
+     */
+    if (this.Editor.Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty) {
       /**
        * Work with Toolbox
        * ------------------
