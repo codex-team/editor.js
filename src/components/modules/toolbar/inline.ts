@@ -187,7 +187,11 @@ export default class InlineToolbar extends Module {
    */
   public leaf(direction: string = 'right'): void {
     this.visibleButtonsList = (Array.from(this.buttonsList)
-      .filter( (tool) => (tool as HTMLElement).hidden) as HTMLElement[]);
+      .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[]);
+
+    if (this.visibleButtonsList.length === 0) {
+      return;
+    }
 
     this.focusedButtonIndex = $.leafNodesAndReturnIndex(
       this.visibleButtonsList, this.focusedButtonIndex, direction, this.CSS.focusedButton,
