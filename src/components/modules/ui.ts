@@ -287,13 +287,17 @@ export default class UI extends Module {
       /**
        * Restoring focus on current Block
        *
-       * After changing Block state (we settings clicked, for example)
+       * After changing Block state (when settings clicked, for example)
        * Block's content points to the Node that is not in DOM, that's why we can not
        * set caret and leaf next (via Tab)
        *
-       * This trick allows to focus again to the Blocks contents
+       * For that set cursor via Caret module to the current Block's content
+       * after some timeout
        */
-      (BlockManager.currentBlock.pluginsContent as HTMLElement).focus();
+      _.delay( () => {
+        Caret.setToBlock(BlockManager.currentBlock);
+      }, 10)();
+
       return;
     }
 
