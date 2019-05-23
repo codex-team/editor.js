@@ -28,7 +28,7 @@ export default class InlineToolbar extends Module {
     inlineToolButton: 'ce-inline-tool',
     inlineToolButtonLast: 'ce-inline-tool--last',
     inputField: 'cdx-input',
-    activeButton: 'cdx-settings-button--active',
+    focusedButton: 'ce-inline-tool--focused',
   };
 
   /**
@@ -194,14 +194,14 @@ export default class InlineToolbar extends Module {
       }
     });
 
-    this.focusedButtonIndex = $.leafNodesAndReturnIndex(this.visibleButtonsList, this.focusedButtonIndex, direction, this.CSS.activeButton);
+    this.focusedButtonIndex = $.leafNodesAndReturnIndex(this.visibleButtonsList, this.focusedButtonIndex, direction, this.CSS.focusedButton);
   }
 
   /**
    * Drops focused button index
    */
   public dropFocusedButtonIndex(): void {
-    (this.visibleButtonsList[this.focusedButtonIndex] as HTMLElement).classList.remove(this.CSS.activeButton);
+    (this.visibleButtonsList[this.focusedButtonIndex] as HTMLElement).classList.remove(this.CSS.focusedButton);
     this.focusedButtonIndex = -1;
   }
 
@@ -231,7 +231,7 @@ export default class InlineToolbar extends Module {
     this.opened = false;
 
     if (this.focusedButtonIndex !== -1) {
-      (this.visibleButtonsList[this.focusedButtonIndex] as HTMLElement).classList.remove(this.CSS.activeButton);
+      (this.visibleButtonsList[this.focusedButtonIndex] as HTMLElement).classList.remove(this.CSS.focusedButton);
       this.focusedButtonIndex = -1;
     }
   }

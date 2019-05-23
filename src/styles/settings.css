@@ -61,11 +61,6 @@
       color: var(--color-active-icon);
     }
 
-    &--focused {
-      box-shadow: inset 0 0 0px 1px rgba(7, 161, 227, 0.08);
-      background: rgba(34, 186, 255, 0.08) !important;
-    }
-
     &--delete {
       transition: background-color 300ms ease;
       will-change: background-color;

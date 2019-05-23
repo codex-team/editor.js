@@ -8,12 +8,6 @@ import SelectionUtils from '../selection';
 export default class BlockEvents extends Module {
 
   /**
-   * SelectionUtils instance
-   * @type {SelectionUtils}
-   */
-  private selection: SelectionUtils = new SelectionUtils();
-
-  /**
    * All keydowns on Block
    * @param {KeyboardEvent} event - keydown
    */
