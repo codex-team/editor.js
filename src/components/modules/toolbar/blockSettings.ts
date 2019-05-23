@@ -63,7 +63,7 @@ export default class BlockSettings extends Module {
   /**
    * List of buttons
    */
-  private buttons: Node[] = [];
+  private buttons: HTMLElement[] = [];
 
   /**
    * Index of active button
@@ -131,7 +131,7 @@ export default class BlockSettings extends Module {
    * Returns Tools Settings and Default Settings
    * @return {HTMLElement[]}
    */
-  public get blockTunesButtons(): Node[] {
+  public get blockTunesButtons(): HTMLElement[] {
     /**
      * Return from cache
      * if exists
@@ -144,14 +144,14 @@ export default class BlockSettings extends Module {
     const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${BlockSettings.CSS.button}`);
 
     toolSettings.forEach((item, index) => {
-      this.buttons.push(item);
+      this.buttons.push((item as HTMLElement));
       if (item.classList.contains(BlockSettings.CSS.focusedButton)) {
         this.focusedButtonIndex = index;
       }
     });
 
     defaultSettings.forEach((item) => {
-      this.buttons.push(item);
+      this.buttons.push((item as HTMLElement));
     });
 
     return this.buttons;
@@ -162,7 +162,9 @@ export default class BlockSettings extends Module {
    * @param {string} direction
    */
   public leaf(direction: string = 'right'): void {
-    this.focusedButtonIndex = $.leafNodesAndReturnIndex(this.blockTunesButtons, this.focusedButtonIndex, direction, BlockSettings.CSS.focusedButton);
+    this.focusedButtonIndex = $.leafNodesAndReturnIndex(
+      this.blockTunesButtons, this.focusedButtonIndex, direction, BlockSettings.CSS.focusedButton,
+    );
   }
 
   /**

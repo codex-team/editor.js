@@ -309,7 +309,7 @@ export default class BlockEvents extends Module {
       event.stopPropagation();
       event.stopImmediatePropagation();
 
-      (this.Editor.InlineToolbar.focusedButton as HTMLElement).click();
+      this.Editor.InlineToolbar.focusedButton.click();
       this.Editor.InlineToolbar.dropFocusedButtonIndex();
       return;
     }

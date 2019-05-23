@@ -69,9 +69,9 @@ export default class InlineToolbar extends Module {
   /**
    * Visible Buttons
    * Some Blocks might disable inline tools
-   * @type {Node[]}
+   * @type {HTMLElement[]}
    */
-  private visibleButtonsList: Node[] = [];
+  private visibleButtonsList: HTMLElement[] = [];
 
   /**
    * Focused button index
@@ -186,22 +186,19 @@ export default class InlineToolbar extends Module {
    * @param {string} direction
    */
   public leaf(direction: string = 'right'): void {
-    this.visibleButtonsList = [];
+    this.visibleButtonsList = (Array.from(this.buttonsList)
+      .filter( (tool) => (tool as HTMLElement).hidden) as HTMLElement[]);
 
-    this.buttonsList.forEach( (tool) => {
-      if (!(tool as HTMLElement).hidden) {
-        this.visibleButtonsList.push(tool);
-      }
-    });
-
-    this.focusedButtonIndex = $.leafNodesAndReturnIndex(this.visibleButtonsList, this.focusedButtonIndex, direction, this.CSS.focusedButton);
+    this.focusedButtonIndex = $.leafNodesAndReturnIndex(
+      this.visibleButtonsList, this.focusedButtonIndex, direction, this.CSS.focusedButton,
+    );
   }
 
   /**
    * Drops focused button index
    */
   public dropFocusedButtonIndex(): void {
-    (this.visibleButtonsList[this.focusedButtonIndex] as HTMLElement).classList.remove(this.CSS.focusedButton);
+    this.visibleButtonsList[this.focusedButtonIndex].classList.remove(this.CSS.focusedButton);
     this.focusedButtonIndex = -1;
   }
 
@@ -209,7 +206,7 @@ export default class InlineToolbar extends Module {
    * Returns Focused button Node
    * @return {HTMLElement}
    */
-  public get focusedButton(): Node {
+  public get focusedButton(): HTMLElement {
     if (this.focusedButtonIndex === -1) {
       return null;
     }
@@ -231,7 +228,7 @@ export default class InlineToolbar extends Module {
     this.opened = false;
 
     if (this.focusedButtonIndex !== -1) {
-      (this.visibleButtonsList[this.focusedButtonIndex] as HTMLElement).classList.remove(this.CSS.focusedButton);
+      this.visibleButtonsList[this.focusedButtonIndex].classList.remove(this.CSS.focusedButton);
       this.focusedButtonIndex = -1;
     }
   }

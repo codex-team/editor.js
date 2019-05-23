@@ -529,7 +529,7 @@ export default class Dom {
    *
    * @return {Number} index of active node
    */
-  public static leafNodesAndReturnIndex(nodeList, activeIndex, direction, activeCSSClass): number {
+  public static leafNodesAndReturnIndex(nodeList: HTMLElement[], activeIndex: number, direction: string, activeCSSClass: string): number {
     /**
      * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
      */
@@ -554,7 +554,7 @@ export default class Dom {
       /**
        * If we have chosen Tool then remove highlighting
        */
-      (nodeList[activeIndex] as HTMLElement).classList.remove(activeCSSClass);
+      nodeList[activeIndex].classList.remove(activeCSSClass);
     }
 
     /**
@@ -585,7 +585,7 @@ export default class Dom {
     /**
      * Highlight new chosen Tool
      */
-    (nodeList[activeIndex] as HTMLElement).classList.add(activeCSSClass);
+    nodeList[activeIndex].classList.add(activeCSSClass);
 
     /**
      * Return Active index

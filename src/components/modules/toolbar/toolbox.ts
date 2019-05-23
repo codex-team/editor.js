@@ -170,8 +170,10 @@ export default class Toolbox extends Module {
    * @param {String} direction - leaf direction, right is default
    */
   public leaf(direction: string = Toolbox.LEAF_DIRECTIONS.RIGHT): void {
-    const childNodes = this.nodes.toolbox.childNodes;
-    this.activeButtonIndex = $.leafNodesAndReturnIndex(childNodes, this.activeButtonIndex, direction, this.CSS.toolboxButtonActive);
+    const childNodes = (Array.from(this.nodes.toolbox.childNodes) as HTMLElement[]);
+    this.activeButtonIndex = $.leafNodesAndReturnIndex(
+      childNodes, this.activeButtonIndex, direction, this.CSS.toolboxButtonActive,
+    );
   }
 
   /**
