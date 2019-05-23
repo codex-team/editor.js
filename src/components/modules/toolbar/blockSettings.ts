@@ -39,8 +39,7 @@ export default class BlockSettings extends Module {
 
       button: 'ce-settings__button',
 
-      activeButton : 'cdx-settings-button--active',
-      focusedButton : 'cdx-settings-button--focused',
+      focusedButton : 'ce-settings__button--focused',
     };
   }
 
@@ -69,7 +68,7 @@ export default class BlockSettings extends Module {
   /**
    * Index of active button
    */
-  private activeButtonIndex: number = -1;
+  private focusedButtonIndex: number = -1;
 
   /**
    * Panel with block settings with 2 sections:
@@ -124,17 +123,18 @@ export default class BlockSettings extends Module {
     this.buttons = [];
 
     /** Clear focus on active button */
-    this.activeButtonIndex = -1;
+    this.focusedButtonIndex = -1;
 
   }
 
   /**
-   * @todo optimize
+   * Returns Tools Settings and Default Settings
    * @return {HTMLElement[]}
    */
   public get blockTunesButtons(): Node[] {
     /**
      * Return from cache
+     * if exists
      */
     if (this.buttons.length !== 0) {
       return this.buttons;
@@ -146,7 +146,7 @@ export default class BlockSettings extends Module {
     toolSettings.forEach((item, index) => {
       this.buttons.push(item);
       if (item.classList.contains(BlockSettings.CSS.focusedButton)) {
-        this.activeButtonIndex = index;
+        this.focusedButtonIndex = index;
       }
     });
 
@@ -162,18 +162,19 @@ export default class BlockSettings extends Module {
    * @param {string} direction
    */
   public leaf(direction: string = 'right'): void {
-    this.activeButtonIndex = $.leafNodesAndReturnIndex(this.blockTunesButtons, this.activeButtonIndex, direction);
+    this.focusedButtonIndex = $.leafNodesAndReturnIndex(this.blockTunesButtons, this.focusedButtonIndex, direction, BlockSettings.CSS.focusedButton);
   }
 
   /**
+   * Returns active button HTML element
    * @return {HTMLElement}
    */
-  public get getActiveButton(): HTMLElement {
-    if (this.activeButtonIndex === -1) {
+  public get getFocusedButton(): HTMLElement {
+    if (this.focusedButtonIndex === -1) {
       return null;
     }
 
-    return (this.buttons[this.activeButtonIndex] as HTMLElement);
+    return (this.buttons[this.focusedButtonIndex] as HTMLElement);
   }
   /**
    * Add Tool's settings

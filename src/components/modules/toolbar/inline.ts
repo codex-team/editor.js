@@ -28,7 +28,6 @@ export default class InlineToolbar extends Module {
     inlineToolButton: 'ce-inline-tool',
     inlineToolButtonLast: 'ce-inline-tool--last',
     inputField: 'cdx-input',
-
     activeButton: 'cdx-settings-button--active',
   };
 
@@ -75,10 +74,10 @@ export default class InlineToolbar extends Module {
   private visibleButtonsList: Node[] = [];
 
   /**
-   * Active button index
+   * Focused button index
    * @type {number}
    */
-  private activeButtonIndex: number = -1;
+  private focusedButtonIndex: number = -1;
 
   /**
    * Inline Toolbar Tools
@@ -195,27 +194,27 @@ export default class InlineToolbar extends Module {
       }
     });
 
-    this.activeButtonIndex = $.leafNodesAndReturnIndex(this.visibleButtonsList, this.activeButtonIndex, direction, this.CSS.activeButton);
+    this.focusedButtonIndex = $.leafNodesAndReturnIndex(this.visibleButtonsList, this.focusedButtonIndex, direction, this.CSS.activeButton);
   }
 
   /**
-   * Drops active button index
+   * Drops focused button index
    */
-  public dropActiveButtonIndex(): void {
-    (this.visibleButtonsList[this.activeButtonIndex] as HTMLElement).classList.remove(this.CSS.activeButton);
-    this.activeButtonIndex = -1;
+  public dropFocusedButtonIndex(): void {
+    (this.visibleButtonsList[this.focusedButtonIndex] as HTMLElement).classList.remove(this.CSS.activeButton);
+    this.focusedButtonIndex = -1;
   }
 
   /**
-   * Returns Active button Node
+   * Returns Focused button Node
    * @return {HTMLElement}
    */
-  public get getActiveButton(): Node {
-    if (this.activeButtonIndex === -1) {
+  public get getFocusedButton(): Node {
+    if (this.focusedButtonIndex === -1) {
       return null;
     }
 
-    return this.visibleButtonsList[this.activeButtonIndex];
+    return this.visibleButtonsList[this.focusedButtonIndex];
   }
 
   /**
@@ -231,9 +230,9 @@ export default class InlineToolbar extends Module {
 
     this.opened = false;
 
-    if (this.activeButtonIndex !== -1) {
-      (this.visibleButtonsList[this.activeButtonIndex] as HTMLElement).classList.remove(this.CSS.activeButton);
-      this.activeButtonIndex = -1;
+    if (this.focusedButtonIndex !== -1) {
+      (this.visibleButtonsList[this.focusedButtonIndex] as HTMLElement).classList.remove(this.CSS.activeButton);
+      this.focusedButtonIndex = -1;
     }
   }
 

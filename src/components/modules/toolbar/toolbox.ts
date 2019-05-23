@@ -30,7 +30,6 @@ export default class Toolbox extends Module {
       tooltipShown: 'ce-toolbox__tooltip--shown',
       tooltipShortcut: 'ce-toolbox__tooltip-shortcut',
       openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
-
       activeButton: 'cdx-settings-button--active',
     };
   }

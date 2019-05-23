@@ -276,13 +276,13 @@ export default class UI extends Module {
      * Enter press is fired as out of the Block and that's why
      * we handle it here
      */
-    if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.getActiveButton) {
+    if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.getFocusedButton) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
 
       /** Click on settings button */
-      this.Editor.BlockSettings.getActiveButton.click();
+      this.Editor.BlockSettings.getFocusedButton.click();
 
       /**
        * Restoring focus on current Block
@@ -378,6 +378,9 @@ export default class UI extends Module {
       this.Editor.InlineToolbar.handleShowingEvent(event);
     }
 
+    /**
+     * If Selection is at Editor's area and caret is focused in text node
+     */
     if (Selection.isAtEditor && Selection.anchorNode.nodeType === Node.TEXT_NODE) {
       /**
        * Focus clicked Block

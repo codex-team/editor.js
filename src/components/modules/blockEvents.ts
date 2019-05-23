@@ -71,7 +71,7 @@ export default class BlockEvents extends Module {
     }
 
     /**
-     * Leaf Toolbar component's Nodes in case of Tab press
+     * Close Toolbar on any keypress except TAB, because TAB leafs Tools
      */
     if (event.keyCode !== _.keyCodes.TAB) {
       this.Editor.Toolbar.close();
@@ -154,7 +154,7 @@ export default class BlockEvents extends Module {
       }
 
       this.Editor.Toolbox.open();
-    } else if (!currentBlock.isEmpty && SelectionUtils.isTextSelected) {
+    } else if (!currentBlock.isEmpty && SelectionUtils.isCollapsed) {
       /**
        * Work with Inline Tools
        * -----------------------
@@ -310,13 +310,13 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    if (this.Editor.InlineToolbar.opened && this.Editor.InlineToolbar.getActiveButton) {
+    if (this.Editor.InlineToolbar.opened && this.Editor.InlineToolbar.getFocusedButton) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
 
-      (this.Editor.InlineToolbar.getActiveButton as HTMLElement).click();
-      this.Editor.InlineToolbar.dropActiveButtonIndex();
+      (this.Editor.InlineToolbar.getFocusedButton as HTMLElement).click();
+      this.Editor.InlineToolbar.dropFocusedButtonIndex();
       return;
     }
 
@@ -519,8 +519,14 @@ export default class BlockEvents extends Module {
   private needToolbarClosing(event) {
     const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened),
       blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
-      flippingToolBarItems = event.keyCode === _.keyCodes.TAB;
+      flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
 
-    return !(event.shiftKey || flippingToolBarItems || toolboxItemSelected || blockSettingsItemSelected);
+    /**
+     * Do not close Toolbar in cases:
+     * 1. ShiftKey pressed (or combination with shiftKey)
+     * 2. When Toolbar is opened and Tab leafs its Tools
+     * 3. When Toolbar's component is opened and some its item selected
+     */
+    return !(event.shiftKey || flippingToolbarItems || toolboxItemSelected || blockSettingsItemSelected);
   }
 }

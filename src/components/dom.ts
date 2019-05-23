@@ -529,7 +529,7 @@ export default class Dom {
    *
    * @return {Number} index of active node
    */
-  public static leafNodesAndReturnIndex(nodeList, activeIndex, direction, activeCSSClass = 'cdx-settings-button--focused'): number {
+  public static leafNodesAndReturnIndex(nodeList, activeIndex, direction, activeCSSClass): number {
     /**
      * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
      */
