@@ -169,7 +169,7 @@ export default class BlockSettings extends Module {
    * Returns active button HTML element
    * @return {HTMLElement}
    */
-  public get getFocusedButton(): HTMLElement {
+  public get focusedButton(): HTMLElement {
     if (this.focusedButtonIndex === -1) {
       return null;
     }

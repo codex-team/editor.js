@@ -209,7 +209,7 @@ export default class InlineToolbar extends Module {
    * Returns Focused button Node
    * @return {HTMLElement}
    */
-  public get getFocusedButton(): Node {
+  public get focusedButton(): Node {
     if (this.focusedButtonIndex === -1) {
       return null;
     }

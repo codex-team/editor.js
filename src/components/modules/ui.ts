@@ -276,13 +276,13 @@ export default class UI extends Module {
      * Enter press is fired as out of the Block and that's why
      * we handle it here
      */
-    if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.getFocusedButton) {
+    if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.focusedButton) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
 
       /** Click on settings button */
-      this.Editor.BlockSettings.getFocusedButton.click();
+      this.Editor.BlockSettings.focusedButton.click();
 
       /**
        * Restoring focus on current Block

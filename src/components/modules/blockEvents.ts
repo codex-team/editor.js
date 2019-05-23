@@ -154,7 +154,7 @@ export default class BlockEvents extends Module {
       }
 
       this.Editor.Toolbox.open();
-    } else if (!currentBlock.isEmpty && SelectionUtils.isCollapsed) {
+    } else if (!currentBlock.isEmpty && !SelectionUtils.isCollapsed) {
       /**
        * Work with Inline Tools
        * -----------------------
@@ -310,12 +310,12 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    if (this.Editor.InlineToolbar.opened && this.Editor.InlineToolbar.getFocusedButton) {
+    if (this.Editor.InlineToolbar.opened && this.Editor.InlineToolbar.focusedButton) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
 
-      (this.Editor.InlineToolbar.getFocusedButton as HTMLElement).click();
+      (this.Editor.InlineToolbar.focusedButton as HTMLElement).click();
       this.Editor.InlineToolbar.dropFocusedButtonIndex();
       return;
     }
