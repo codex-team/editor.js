@@ -30,7 +30,6 @@ export default class Toolbox extends Module {
       tooltipShown: 'ce-toolbox__tooltip--shown',
       tooltipShortcut: 'ce-toolbox__tooltip-shortcut',
       openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
-      activeButton: 'cdx-settings-button--active',
     };
   }
 
@@ -148,7 +147,7 @@ export default class Toolbox extends Module {
      */
     if (this.activeButtonIndex !== -1) {
       (this.nodes.toolbox.childNodes[this.activeButtonIndex] as HTMLElement)
-        .classList.remove(this.CSS.activeButton);
+        .classList.remove(this.CSS.toolboxButtonActive);
 
       this.activeButtonIndex = -1;
     }
@@ -172,7 +171,7 @@ export default class Toolbox extends Module {
    */
   public leaf(direction: string = Toolbox.LEAF_DIRECTIONS.RIGHT): void {
     const childNodes = this.nodes.toolbox.childNodes;
-    this.activeButtonIndex = $.leafNodesAndReturnIndex(childNodes, this.activeButtonIndex, direction, this.CSS.activeButton);
+    this.activeButtonIndex = $.leafNodesAndReturnIndex(childNodes, this.activeButtonIndex, direction, this.CSS.toolboxButtonActive);
   }
 
   /**

@@ -382,10 +382,7 @@ export default class UI extends Module {
       this.Editor.InlineToolbar.handleShowingEvent(event);
     }
 
-    /**
-     * If Selection is at Editor's area and caret is focused in text node
-     */
-    if (Selection.isAtEditor && Selection.anchorNode.nodeType === Node.TEXT_NODE) {
+    if (Selection.isAtEditor) {
       /**
        * Focus clicked Block
        */
