@@ -268,7 +268,7 @@ export default class UI extends Module {
    * @param event
    */
   private enterPressed(event: KeyboardEvent): void {
-    const {BlockManager, BlockSelection, Caret} = this.Editor;
+    const {BlockManager, BlockSelection, Caret, BlockSettings} = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
     /**
@@ -276,25 +276,25 @@ export default class UI extends Module {
      * Enter press is fired as out of the Block and that's why
      * we handle it here
      */
-    if (this.Editor.BlockSettings.opened && this.Editor.BlockSettings.focusedButton) {
+    if (BlockSettings.opened && BlockSettings.focusedButton) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
 
       /** Click on settings button */
-      this.Editor.BlockSettings.focusedButton.click();
+      BlockSettings.focusedButton.click();
 
       /**
        * Add animation on click
        */
-      this.Editor.BlockSettings.focusedButton.classList.add(this.Editor.BlockSettings.CSS.focusedButtonAnimated);
+      BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
 
       /**
        * Remove animation class
        */
       _.delay( () => {
-        this.Editor.BlockSettings.focusedButton.classList.remove(this.Editor.BlockSettings.CSS.focusedButtonAnimated);
-      }, 100);
+        BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
+      }, 180)();
 
       /**
        * Restoring focus on current Block
