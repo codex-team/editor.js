@@ -29,7 +29,7 @@ export default class BlockSettings extends Module {
    * Block Settings CSS
    * @return {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
    */
-  private static get CSS() {
+  public get CSS() {
     return {
       // Settings Panel
       wrapper: 'ce-settings',
@@ -40,6 +40,7 @@ export default class BlockSettings extends Module {
       button: 'ce-settings__button',
 
       focusedButton : 'ce-settings__button--focused',
+      focusedButtonAnimated: 'ce-settings__button--focused-animated',
     };
   }
 
@@ -48,7 +49,7 @@ export default class BlockSettings extends Module {
    * @returns {boolean}
    */
   public get opened(): boolean {
-    return this.nodes.wrapper.classList.contains(BlockSettings.CSS.wrapperOpened);
+    return this.nodes.wrapper.classList.contains(this.CSS.wrapperOpened);
   }
 
   /**
@@ -78,10 +79,10 @@ export default class BlockSettings extends Module {
    * @return {Element}
    */
   public make(): void {
-    this.nodes.wrapper = $.make('div', BlockSettings.CSS.wrapper);
+    this.nodes.wrapper = $.make('div', this.CSS.wrapper);
 
-    this.nodes.toolSettings = $.make('div', BlockSettings.CSS.toolSettings);
-    this.nodes.defaultSettings = $.make('div', BlockSettings.CSS.defaultSettings);
+    this.nodes.toolSettings = $.make('div', this.CSS.toolSettings);
+    this.nodes.defaultSettings = $.make('div', this.CSS.defaultSettings);
 
     $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
   }
@@ -90,7 +91,7 @@ export default class BlockSettings extends Module {
    * Open Block Settings pane
    */
   public open(): void {
-    this.nodes.wrapper.classList.add(BlockSettings.CSS.wrapperOpened);
+    this.nodes.wrapper.classList.add(this.CSS.wrapperOpened);
 
     /**
      * Fill Tool's settings
@@ -110,7 +111,7 @@ export default class BlockSettings extends Module {
    * Close Block Settings pane
    */
   public close(): void {
-    this.nodes.wrapper.classList.remove(BlockSettings.CSS.wrapperOpened);
+    this.nodes.wrapper.classList.remove(this.CSS.wrapperOpened);
 
     /** Clear settings */
     this.nodes.toolSettings.innerHTML = '';
@@ -141,11 +142,11 @@ export default class BlockSettings extends Module {
     }
 
     const toolSettings = this.nodes.toolSettings.querySelectorAll(`.${this.Editor.StylesAPI.classes.settingsButton}`);
-    const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${BlockSettings.CSS.button}`);
+    const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${this.CSS.button}`);
 
     toolSettings.forEach((item, index) => {
       this.buttons.push((item as HTMLElement));
-      if (item.classList.contains(BlockSettings.CSS.focusedButton)) {
+      if (item.classList.contains(this.CSS.focusedButton)) {
         this.focusedButtonIndex = index;
       }
     });
@@ -163,7 +164,7 @@ export default class BlockSettings extends Module {
    */
   public leaf(direction: string = 'right'): void {
     this.focusedButtonIndex = $.leafNodesAndReturnIndex(
-      this.blockTunesButtons, this.focusedButtonIndex, direction, BlockSettings.CSS.focusedButton,
+      this.blockTunesButtons, this.focusedButtonIndex, direction, this.CSS.focusedButton,
     );
   }
 

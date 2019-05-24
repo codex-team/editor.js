@@ -285,6 +285,18 @@ export default class UI extends Module {
       this.Editor.BlockSettings.focusedButton.click();
 
       /**
+       * Add animation on click
+       */
+      this.Editor.BlockSettings.focusedButton.classList.add(this.Editor.BlockSettings.CSS.focusedButtonAnimated);
+
+      /**
+       * Remove animation class
+       */
+      _.delay( () => {
+        this.Editor.BlockSettings.focusedButton.classList.remove(this.Editor.BlockSettings.CSS.focusedButtonAnimated);
+      }, 100);
+
+      /**
        * Restoring focus on current Block
        *
        * After changing Block state (when settings clicked, for example)
