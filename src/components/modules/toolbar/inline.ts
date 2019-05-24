@@ -140,7 +140,10 @@ export default class InlineToolbar extends Module {
    * @param {KeyboardEvent|MouseEvent} event
    */
   public handleShowingEvent(event): void {
-    if (!this.allowedToShow()) {
+    /**
+     * If some button is focused do not close Inline Toolbar
+     */
+    if (!this.allowedToShow() && !this.focusedButton) {
       this.close();
       return;
     }
@@ -202,6 +205,10 @@ export default class InlineToolbar extends Module {
    * Drops focused button index
    */
   public dropFocusedButtonIndex(): void {
+    if (this.focusedButtonIndex === -1) {
+      return;
+    }
+
     this.visibleButtonsList[this.focusedButtonIndex].classList.remove(this.CSS.focusedButton);
     this.focusedButtonIndex = -1;
   }
