@@ -4,6 +4,7 @@
 ### 2.14
 
 - `Fix` *Config* — User config now has higher priority than internal settings
+- `New` — Ability to work with Block Actions and Inline Toolbar from the keyboard by Tab.
 
 ### 2.13
 
