@@ -297,7 +297,9 @@ export default class InlineToolbar extends Module {
       return false;
     }
 
-    const target = currentSelection.anchorNode.parentElement;
+    const target = !$.isElement(currentSelection.anchorNode )
+      ? currentSelection.anchorNode.parentElement
+      : currentSelection.anchorNode;
 
     if (currentSelection && tagsConflictsWithSelection.includes(target.tagName)) {
       return false;
