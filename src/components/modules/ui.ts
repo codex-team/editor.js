@@ -294,7 +294,7 @@ export default class UI extends Module {
        */
       _.delay( () => {
         BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
-      }, 180)();
+      }, 280)();
 
       /**
        * Restoring focus on current Block
