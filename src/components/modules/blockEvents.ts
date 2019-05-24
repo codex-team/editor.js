@@ -102,9 +102,9 @@ export default class BlockEvents extends Module {
      * If Inline Toolbar is opened and User press any key except Enter and Tab
      * drop focused button index so that to close inline Toolbar
      */
-    if (event.keyCode !== _.keyCodes.TAB && event.keyCode !== _.keyCodes.ENTER) {
-      this.Editor.InlineToolbar.dropFocusedButtonIndex();
-    }
+    // if (event.keyCode !== _.keyCodes.TAB && event.keyCode !== _.keyCodes.ENTER) {
+      // this.Editor.InlineToolbar.dropFocusedButtonIndex();
+    // }
     this.Editor.InlineToolbar.handleShowingEvent(event);
   }
 

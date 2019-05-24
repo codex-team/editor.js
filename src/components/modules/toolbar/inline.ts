@@ -140,10 +140,7 @@ export default class InlineToolbar extends Module {
    * @param {KeyboardEvent|MouseEvent} event
    */
   public handleShowingEvent(event): void {
-    /**
-     * If some button is focused do not close Inline Toolbar
-     */
-    if (!this.allowedToShow() && !this.focusedButton) {
+    if (!this.allowedToShow()) {
       this.close();
       return;
     }
