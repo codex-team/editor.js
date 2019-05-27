@@ -1,6 +1,6 @@
 import $ from './dom';
 import _ from './utils';
-import {EditorConfig, OutputData, SanitizerConfig, ToolSettings} from '../../types';
+import {EditorConfig, OutputData, SanitizerConfig} from '../../types';
 import {EditorModules} from '../types-internal/editor-modules';
 
 /**

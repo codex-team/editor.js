@@ -42,10 +42,14 @@ export default class Renderer extends Module {
    * Make plugin blocks from array of plugin`s data
    * @param {RendererBlocks[]} blocks
    */
-  public render(blocks: BlockToolData[]): Promise<void> {
+  public async render(blocks: BlockToolData[]): Promise<void> {
     const chainData = blocks.map((block) => ({function: () => this.insertBlock(block)}));
 
-    return _.sequence(chainData as ChainData[]);
+    const sequence = await _.sequence(chainData as ChainData[]);
+
+    this.Editor.ModificationsObserver.checkEmptiness();
+
+    return sequence;
   }
 
   /**
