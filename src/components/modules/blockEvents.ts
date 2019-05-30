@@ -225,13 +225,13 @@ export default class BlockEvents extends Module {
   private enter(event: KeyboardEvent): void {
     const {BlockManager, Tools} = this.Editor;
     const currentBlock = BlockManager.currentBlock;
-    const tool = Tools.available[currentBlock.name];
+    const toolSettings = Tools.getToolSettings(currentBlock.name);
 
     /**
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
-    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+    if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
       return;
     }
 
@@ -292,9 +292,9 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private backspace(event: KeyboardEvent): void {
-    const { BlockManager, BlockSelection, Caret } = this.Editor;
+    const { BlockManager, BlockSelection, Caret, Tools } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
-    const tool = this.Editor.Tools.available[currentBlock.name];
+    const toolSettings = Tools.getToolSettings(currentBlock.name);
 
     /**
      * Check if Block should be removed by current Backspace keydown
@@ -331,7 +331,7 @@ export default class BlockEvents extends Module {
      *
      * But if caret is at start of the block, we allow to remove it by backspaces
      */
-    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS] && !Caret.isAtStart) {
+    if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS] && !Caret.isAtStart) {
       return;
     }
 
