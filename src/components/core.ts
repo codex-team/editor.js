@@ -163,7 +163,7 @@ export default class Core {
       data : {},
     };
 
-    this.config.placeholder = this.config.placeholder || 'write your story...';
+    this.config.placeholder = this.config.placeholder || 'Tell your story...';
     this.config.sanitizer = this.config.sanitizer || {
       p: true,
       b: true,

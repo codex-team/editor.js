@@ -99,6 +99,7 @@ export default class BlockEvents extends Module {
    */
   public keyup(event): void {
     this.Editor.InlineToolbar.handleShowingEvent(event);
+    this.Editor.UI.checkEmptiness();
   }
 
   /**

@@ -83,3 +83,20 @@ var editor2 = new EditorJS({
   holder: 'codex-editor' // like document.getElementById('codex-editor')
 })
 ```
+
+
+## Placeholder
+
+By default Editor\`s placeholder is `Tell your story...`
+
+You can pass your own placeholder via `placeholder` field:
+
+
+```js
+var editor = new EditorJS({
+  //...
+  placeholder: 'My awesome placeholder'
+  //...
+ });
+
+```

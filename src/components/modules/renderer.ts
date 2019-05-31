@@ -47,7 +47,7 @@ export default class Renderer extends Module {
 
     const sequence = await _.sequence(chainData as ChainData[]);
 
-    this.Editor.ModificationsObserver.checkEmptiness();
+    this.Editor.UI.checkEmptiness();
 
     return sequence;
   }

@@ -32,7 +32,6 @@ export default class ModificationsObserver extends Module {
    * @type {Function}
    */
   private mutationDebouncer = _.debounce( () => {
-    this.checkEmptiness();
     this.config.onChange();
   }, ModificationsObserver.DebounceTimer);
 
@@ -72,15 +71,6 @@ export default class ModificationsObserver extends Module {
    */
   public enable() {
     this.disabled = false;
-  }
-
-  /**
-   * Check if Editor is empty and set CSS class to wrapper
-   */
-  public checkEmptiness(): void {
-    const {BlockManager, UI} = this.Editor;
-
-    UI.nodes.wrapper.classList.toggle(UI.CSS.editorEmpty, BlockManager.isEditorEmpty);
   }
 
   /**
