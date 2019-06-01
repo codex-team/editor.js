@@ -243,6 +243,11 @@ export default class UI extends Module {
      * Close Toolbar
      */
     this.Editor.Toolbar.close();
+
+    /**
+     * Close ConversionToolbar
+     */
+    this.Editor.ConversionToolbar.handleShowingEvent(event);
   }
 
   /**
@@ -391,6 +396,7 @@ export default class UI extends Module {
       this.Editor.InlineToolbar.close();
       this.Editor.Toolbar.close();
       this.Editor.BlockSelection.clearSelection();
+      this.Editor.ConversionToolbar.handleShowingEvent(event);
 
     } else if (!clickedOnInlineToolbarButton) {
       /**
@@ -505,6 +511,7 @@ export default class UI extends Module {
 
     /** Clear selection */
     this.Editor.BlockSelection.clearSelection();
+    this.Editor.ConversionToolbar.handleShowingEvent(event);
   }
 
   /**

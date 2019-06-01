@@ -1,8 +1,7 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import {BlockToolConstructable, ToolboxConfig} from '../../../../types';
+import {BlockToolConstructable} from '../../../../types';
 import _ from '../../utils';
-import SelectionUtils from '../../selection';
 
 export default class ConversionToolbar extends Module {
 
@@ -25,6 +24,16 @@ export default class ConversionToolbar extends Module {
     wrapper: null,
     tools: null,
   };
+
+  /**
+   * @type {boolean}
+   */
+  public opened: boolean = false;
+
+  /**
+   * @type {number}
+   */
+  private defaultOffsetTop: number = 65;
 
   /**
    * prepares Converter toolbar
@@ -52,42 +61,55 @@ export default class ConversionToolbar extends Module {
    * @param {KeyboardEvent|MouseEvent} event
    */
   public handleShowingEvent(event): void {
-    // if (!this.allowedToShow()) {
-      // this.close();
-      // return;
-    // }
+    const currentBlock = this.Editor.BlockManager.currentBlock;
 
-    console.log('hree');
+    if (!currentBlock || (currentBlock && !currentBlock.selected)) {
+      this.close();
+      return;
+    }
+
     this.move();
+    this.open();
+  }
 
-    this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
-    // this.open();
+  /**
+   * leaf tools
+   */
+  public leaf(direction: string = 'right'): void {
+    console.log('leafing...');
   }
 
   /**
    * Move Toolbar to the selected text
    */
-  public move(): void {
-    const selectionRect = SelectionUtils.rect as DOMRect;
-    const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
-    const newCoords = {
-      x: selectionRect.x - wrapperOffset.left,
-      y: selectionRect.y
-      + selectionRect.height
-      // + window.scrollY
-      - wrapperOffset.top
-      + 40,
-    };
+  private move(): void {
+    const targetBlock = this.Editor.BlockManager.currentBlock.pluginsContent as HTMLElement;
+    const targetBlockCoords = targetBlock.getBoundingClientRect();
+    const wrapperCoords = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
 
-    /**
-     * If we know selections width, place InlineToolbar to center
-     */
-    if (selectionRect.width) {
-      newCoords.x += Math.floor(selectionRect.width / 2);
-    }
+    const newCoords = {
+      x: targetBlockCoords.left - wrapperCoords.left,
+      y: window.scrollY + targetBlockCoords.bottom - this.defaultOffsetTop,
+    };
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
     this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
+  }
+
+  /**
+   * shows ConversionToolbar
+   */
+  private open(): void {
+    this.opened = true;
+    this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
+  }
+
+  /**
+   * closes ConversionToolbar
+   */
+  private close(): void {
+    this.opened = false;
+    this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
   }
 
   /**

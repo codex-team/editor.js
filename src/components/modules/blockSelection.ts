@@ -125,8 +125,6 @@ export default class BlockSelection extends Module {
           return;
         }
 
-        this.Editor.ConversionToolbar.handleShowingEvent(event);
-
         this.handleCommandA(event);
       },
     });
@@ -263,6 +261,11 @@ export default class BlockSelection extends Module {
       this.selectBlockByIndex();
       this.needToSelectAll = true;
     }
+
+    /**
+     * Show ConversionToolbar to be able to convert current Block
+     */
+    this.Editor.ConversionToolbar.handleShowingEvent(event);
   }
 
   /**

@@ -91,6 +91,10 @@ export default class BlockEvents extends Module {
        */
       this.Editor.BlockSelection.clearSelection(true);
     }
+
+    if (event.keyCode !== _.keyCodes.ENTER) {
+      this.Editor.ConversionToolbar.handleShowingEvent(event);
+    }
   }
 
   /**
@@ -159,6 +163,8 @@ export default class BlockEvents extends Module {
       if (this.Editor.InlineToolbar.opened) {
         this.Editor.InlineToolbar.leaf(direction);
       }
+    } else if (this.Editor.ConversionToolbar.opened) {
+      this.Editor.ConversionToolbar.leaf(direction);
     } else {
       /**
        * Open Toolbar and show BlockSettings
