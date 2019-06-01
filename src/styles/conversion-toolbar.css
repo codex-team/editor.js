@@ -1,0 +1,34 @@
+.ce-conversion-toolbar {
+  @apply --overlay-pane;
+  padding: 6px;
+  transform: translateX(-50%);
+  display: none;
+  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),
+    5px -12px 34px -13px rgba(97, 105, 134, 0.6),
+    0 26px 52px 3px rgba(147, 165, 186, 0.24);
+
+  &--showed {
+    display: block;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  &__buttons {
+    display: flex;
+  }
+}
+
+.ce-conversion-tool {
+  @apply --toolbar-button;
+  line-height: normal;
+
+  &:not(:last-of-type) {
+    margin-right: 5px;
+  }
+
+  &--last {
+    margin-right: 0 !important;
+  }
+}

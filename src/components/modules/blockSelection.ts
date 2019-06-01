@@ -125,6 +125,8 @@ export default class BlockSelection extends Module {
           return;
         }
 
+        this.Editor.ConversionToolbar.handleShowingEvent(event);
+
         this.handleCommandA(event);
       },
     });
