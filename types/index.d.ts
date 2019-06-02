@@ -6,6 +6,7 @@
 
 import {EditorConfig} from './configs';
 import {Blocks, Caret, Events, Listeners, Notifier, Sanitizer, Saver, Selection, Styles, Toolbar, InlineToolbar} from './api';
+import {OutputData} from './data-formats/output-data';
 
 /**
  * Interfaces used for development
@@ -75,6 +76,15 @@ declare class EditorJS {
   constructor(configuration?: EditorConfig|string);
 
   public destroy(): void;
+
+  /* Shorthands */
+
+  /**
+   * Saves Editors data and returns promise with it
+   *
+   * @returns {Promise<OutputData>}
+   */
+  save(): Promise<OutputData>;
 }
 
 export as namespace EditorJS;
