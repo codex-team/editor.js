@@ -14,6 +14,8 @@ export default class ConversionToolbar extends Module {
       conversionToolbarShowed: 'ce-conversion-toolbar--showed',
       conversionToolsWrapper: 'ce-conversion-toolbar__tools',
       conversionTool: 'ce-conversion-tool',
+
+      conversionToolActive : 'ce-conversion-tool--active',
     };
   }
 
@@ -29,6 +31,13 @@ export default class ConversionToolbar extends Module {
    * @type {boolean}
    */
   public opened: boolean = false;
+
+  /**
+   * Focused button index
+   * -1 equals no chosen Tool
+   * @type {number}
+   */
+  private focusedButtonIndex: number = -1;
 
   /**
    * @type {number}
@@ -61,9 +70,10 @@ export default class ConversionToolbar extends Module {
    * @param {KeyboardEvent|MouseEvent} event
    */
   public handleShowingEvent(event): void {
-    const currentBlock = this.Editor.BlockManager.currentBlock;
+    const { BlockManager, BlockSelection } = this.Editor;
+    const currentBlock = BlockManager.currentBlock;
 
-    if (!currentBlock || (currentBlock && !currentBlock.selected)) {
+    if (!currentBlock || BlockSelection.allBlocksSelected || (currentBlock && !currentBlock.selected)) {
       this.close();
       return;
     }
@@ -76,7 +86,41 @@ export default class ConversionToolbar extends Module {
    * leaf tools
    */
   public leaf(direction: string = 'right'): void {
-    console.log('leafing...');
+    const toolsElements = (Array.from(this.nodes.tools.childNodes) as HTMLElement[]);
+    this.focusedButtonIndex = $.leafNodesAndReturnIndex(
+      toolsElements, this.focusedButtonIndex, direction, ConversionToolbar.CSS.conversionToolActive,
+    );
+  }
+
+  /**
+   * @return {HTMLElement}
+   */
+  public get focusedButton(): HTMLElement {
+    if (this.focusedButtonIndex === -1) {
+      return null;
+    }
+    return (this.nodes.tools.childNodes[this.focusedButtonIndex] as HTMLElement);
+  }
+
+  /**
+   * Drops focused button
+   */
+  public dropFocusedButton() {
+    if (this.focusedButtonIndex === -1) {
+      return;
+    }
+
+    const tool = (this.nodes.tools.childNodes[this.focusedButtonIndex] as HTMLElement);
+    tool.classList.remove(ConversionToolbar.CSS.conversionToolActive);
+
+    this.focusedButtonIndex = -1;
+  }
+
+  /**
+   * console.log('here I need to switch');
+   */
+  public switchBlocks(): void {
+    console.log('here I need to switch');
   }
 
   /**
@@ -110,6 +154,8 @@ export default class ConversionToolbar extends Module {
   private close(): void {
     this.opened = false;
     this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
+
+    this.dropFocusedButton();
   }
 
   /**
@@ -162,20 +208,7 @@ export default class ConversionToolbar extends Module {
      * Add click listener
      */
     this.Editor.Listeners.on(tool, 'click', (event: KeyboardEvent|MouseEvent) => {
-      console.log('clicked');
-      // this.toolButtonActivate(event, toolName);
+      this.switchBlocks();
     });
-
-    // /**
-    //  * Enable shortcut
-    //  */
-    // const toolSettings = this.Editor.Tools.getToolSettings(toolName);
-    //
-    // if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
-    //   this.enableShortcut(tool, toolName, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
-    // }
-    //
-    // /** Increment Tools count */
-    // this.displayedToolsCount++;
   }
 }

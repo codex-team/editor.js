@@ -34,4 +34,14 @@
   &--last {
     margin-right: 0 !important;
   }
+
+  &:hover,
+  &--active {
+    color: var(--color-active-icon) !important;
+  }
+
+  &--active {
+    animation: bounceIn 0.75s 1;
+    animation-fill-mode: forwards;
+  }
 }

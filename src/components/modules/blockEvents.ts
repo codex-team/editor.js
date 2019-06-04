@@ -286,7 +286,7 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private enter(event: KeyboardEvent): void {
-    const {BlockManager, Tools} = this.Editor;
+    const { BlockManager, Toolbox, BlockSettings, InlineToolbar, ConversionToolbar, Tools } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
     const tool = Tools.available[currentBlock.name];
 
@@ -295,27 +295,28 @@ export default class BlockEvents extends Module {
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
     if (tool
-      && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]
-      && !this.Editor.BlockSettings.opened
-      && !this.Editor.InlineToolbar.opened) {
+      && tool[Tools.apiSettings.IS_ENABLED_LINE_BREAKS]
+      && !BlockSettings.opened
+      && !InlineToolbar.opened
+      && !ConversionToolbar.opened) {
       return;
     }
 
-    if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
+    if (Toolbox.opened && Toolbox.getActiveTool) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
 
-      this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
+      Toolbox.toolButtonActivate(event, Toolbox.getActiveTool);
       return;
     }
 
-    if (this.Editor.InlineToolbar.opened && this.Editor.InlineToolbar.focusedButton) {
+    if (InlineToolbar.opened && InlineToolbar.focusedButton) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
 
-      this.Editor.InlineToolbar.focusedButton.click();
+      InlineToolbar.focusedButton.click();
       return;
     }
 

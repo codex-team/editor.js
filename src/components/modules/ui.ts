@@ -278,7 +278,7 @@ export default class UI extends Module {
    * @param event
    */
   private enterPressed(event: KeyboardEvent): void {
-    const {BlockManager, BlockSelection, Caret, BlockSettings} = this.Editor;
+    const { BlockManager, BlockSelection, Caret, BlockSettings, ConversionToolbar } = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
     /**
@@ -320,6 +320,15 @@ export default class UI extends Module {
         Caret.setToBlock(BlockManager.currentBlock);
       }, 10)();
 
+      return;
+    }
+
+    if (ConversionToolbar.opened && ConversionToolbar.focusedButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      ConversionToolbar.focusedButton.click();
       return;
     }
 
