@@ -55,9 +55,17 @@ export default class Caret extends Module {
       return false;
     }
 
+    if (!this.Editor.BlockManager.currentBlock) {
+      return false;
+    }
+
     const selection = Selection.get();
     const firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
     let anchorNode = selection.anchorNode;
+
+    if (!anchorNode) {
+      return false;
+    }
 
     /** In case lastNode is native input */
     if ($.isNativeInput(firstNode)) {
@@ -130,8 +138,16 @@ export default class Caret extends Module {
       return false;
     }
 
+    if (!this.Editor.BlockManager.currentBlock) {
+      return false;
+    }
+
     const selection = Selection.get();
     let anchorNode = selection.anchorNode;
+
+    if (!anchorNode) {
+      return false;
+    }
 
     const lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
 

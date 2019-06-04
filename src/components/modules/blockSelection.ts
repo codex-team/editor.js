@@ -163,6 +163,12 @@ export default class BlockSelection extends Module {
       return;
     }
 
+    console.trace();
+    if (!this.Editor.CBS.shouldClearSelectionOnClick) {
+      this.Editor.CBS.shouldClearSelectionOnClick = true;
+      return;
+    }
+
     /**
      * Restore selection when Block is already selected
      * but someone tries to write something.

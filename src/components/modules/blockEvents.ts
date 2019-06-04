@@ -4,6 +4,7 @@
 import Module from '../__module';
 import _ from '../utils';
 import SelectionUtils from '../selection';
+import $ from '../dom';
 
 export default class BlockEvents extends Module {
 
@@ -107,6 +108,12 @@ export default class BlockEvents extends Module {
    */
   public mouseUp(event): void {
     this.Editor.InlineToolbar.handleShowingEvent(event);
+  }
+
+  public mouseDown(event): void {
+    if (event.target.closest('[contenteditable="true"]') || $.isNativeInput(event.target)) {
+      this.Editor.CBS.startSelection(event);
+    }
   }
 
   /**
@@ -467,6 +474,12 @@ export default class BlockEvents extends Module {
    * Handle right and down keyboard keys
    */
   private arrowRightAndDown(event: KeyboardEvent): void {
+
+    if (event.shiftKey && event.keyCode === _.keyCodes.DOWN) {
+      this.Editor.CBS.selectNextBlock();
+      return;
+    }
+
     if (this.Editor.Caret.navigateNext()) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
@@ -486,6 +499,12 @@ export default class BlockEvents extends Module {
    * Handle left and up keyboard keys
    */
   private arrowLeftAndUp(event: KeyboardEvent): void {
+
+    if (event.shiftKey && event.keyCode === _.keyCodes.UP) {
+      this.Editor.CBS.selectPrevioiusBlock();
+      return;
+    }
+
     if (this.Editor.Caret.navigatePrevious()) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
