@@ -13570,7 +13570,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       _this.finishSelection = function (e) {
         var BlockManager = _this.Editor.BlockManager;
-        console.log(e);
         _this.mousePressed = false;
         _this.shouldClearSelectionOnClick = false;
 
@@ -13603,8 +13602,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "selectNextBlock",
       value: function selectNextBlock() {
-        console.log(this.Editor.Caret.isAtEnd);
-
         if (!this.Editor.BlockSelection.anyBlockSelected && !this.Editor.Caret.isAtEnd && !this.lastTarget) {
           return;
         }
@@ -13621,25 +13618,34 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           selection.removeAllRanges();
         }
 
+        console.log(this.lastTarget);
         var lastTargetIndex = BlockManager.blocks.indexOf(this.lastTarget);
+        var firstTargetIndex = BlockManager.blocks.indexOf(this.firstTarget);
         var nextTarget = BlockManager.blocks[lastTargetIndex + 1];
+        var nextTargetIndex = lastTargetIndex + 1; // if (nextTarget === this.firstTarget) {
+        //   nextTarget = BlockManager.blocks[lastTargetIndex + 2];
+        //   nextTargetIndex = lastTargetIndex + 2;
+        // }
+
+        var isDownward = nextTargetIndex > firstTargetIndex;
 
         if (!nextTarget) {
+          // this.lastTarget.selected = true;
           return;
         }
 
-        if (this.isDownward) {
+        if (isDownward) {
           this.lastTarget.selected = true;
           this.lastTarget = nextTarget;
-          this.lastTarget.selected = !this.lastTarget.selected;
+          this.lastTarget.selected = this.lastTarget.selected;
         } else {
-          this.lastTarget.selected = !this.lastTarget.selected;
+          this.lastTarget.selected = nextTargetIndex === firstTargetIndex;
           this.lastTarget = nextTarget;
         }
       }
     }, {
-      key: "selectPrevioiusBlock",
-      value: function selectPrevioiusBlock() {
+      key: "selectPreviousBlock",
+      value: function selectPreviousBlock() {
         if (!this.Editor.BlockSelection.anyBlockSelected && !this.Editor.Caret.isAtStart && !this.lastTarget) {
           return;
         }
@@ -13657,18 +13663,25 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         var lastTargetIndex = BlockManager.blocks.indexOf(this.lastTarget);
+        var firstTargetIndex = BlockManager.blocks.indexOf(this.firstTarget);
         var nextTarget = BlockManager.blocks[lastTargetIndex - 1];
+        var nextTargetIndex = lastTargetIndex - 1;
+        var isDownward = nextTargetIndex > firstTargetIndex; // if (nextTarget === this.firstTarget) {
+        //   nextTarget = BlockManager.blocks[lastTargetIndex - 2];
+        //   nextTargetIndex = lastTargetIndex - 2;
+        // }
 
         if (!nextTarget) {
+          // this.lastTarget.selected = true;
           return;
         }
 
-        if (!this.isDownward) {
+        if (!isDownward) {
           this.lastTarget.selected = true;
           this.lastTarget = nextTarget;
           this.lastTarget.selected = !this.lastTarget.selected;
         } else {
-          this.lastTarget.selected = !this.lastTarget.selected;
+          this.lastTarget.selected = nextTargetIndex === firstTargetIndex;
           this.lastTarget = nextTarget;
         }
       }
@@ -15596,7 +15609,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _this2 = this;
 
         if (event.shiftKey && event.keyCode === _utils.default.keyCodes.UP) {
-          this.Editor.CBS.selectPrevioiusBlock();
+          this.Editor.CBS.selectPreviousBlock();
           return;
         }
 
@@ -17273,10 +17286,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /**
          * Don't handle ranges
          */
-        if (!_selection.default.isCollapsed) {
-          return false;
-        }
-
+        // if (!Selection.isCollapsed) {
+        //   return false;
+        // }
         if (!this.Editor.BlockManager.currentBlock) {
           return false;
         }
@@ -17285,7 +17297,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var firstNode = _dom.default.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
 
-        var anchorNode = selection.anchorNode;
+        var anchorNode = selection.focusNode;
 
         if (!anchorNode) {
           return false;
@@ -17320,7 +17332,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
 
-        var anchorOffset = selection.anchorOffset;
+        var anchorOffset = selection.focusOffset;
 
         if (anchorNode.nodeType !== Node.TEXT_NODE && anchorNode.childNodes.length) {
           if (anchorNode.childNodes[anchorOffset]) {
@@ -17369,17 +17381,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /**
          * Don't handle ranges
          */
-        if (!_selection.default.isCollapsed) {
-          return false;
-        }
-
+        // if (!Selection.isCollapsed) {
+        //   return false;
+        // }
         if (!this.Editor.BlockManager.currentBlock) {
           return false;
         }
 
         var selection = _selection.default.get();
 
-        var anchorNode = selection.anchorNode;
+        var anchorNode = selection.focusNode;
 
         if (!anchorNode) {
           return false;
@@ -17403,7 +17414,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
 
-        var anchorOffset = selection.anchorOffset;
+        var anchorOffset = selection.focusOffset;
 
         if (anchorNode.nodeType !== Node.TEXT_NODE && anchorNode.childNodes.length) {
           if (anchorNode.childNodes[anchorOffset - 1]) {

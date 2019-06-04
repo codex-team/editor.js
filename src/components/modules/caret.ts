@@ -51,9 +51,9 @@ export default class Caret extends Module {
     /**
      * Don't handle ranges
      */
-    if (!Selection.isCollapsed) {
-      return false;
-    }
+    // if (!Selection.isCollapsed) {
+    //   return false;
+    // }
 
     if (!this.Editor.BlockManager.currentBlock) {
       return false;
@@ -61,7 +61,7 @@ export default class Caret extends Module {
 
     const selection = Selection.get();
     const firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
-    let anchorNode = selection.anchorNode;
+    let anchorNode = selection.focusNode;
 
     if (!anchorNode) {
       return false;
@@ -92,7 +92,7 @@ export default class Caret extends Module {
      *
      * So we use child with anchorOffset index as new anchorNode.
      */
-    let anchorOffset = selection.anchorOffset;
+    let anchorOffset = selection.focusOffset;
     if (anchorNode.nodeType !== Node.TEXT_NODE && anchorNode.childNodes.length) {
       if (anchorNode.childNodes[anchorOffset]) {
         anchorNode = anchorNode.childNodes[anchorOffset];
@@ -134,16 +134,16 @@ export default class Caret extends Module {
     /**
      * Don't handle ranges
      */
-    if (!Selection.isCollapsed) {
-      return false;
-    }
+    // if (!Selection.isCollapsed) {
+    //   return false;
+    // }
 
     if (!this.Editor.BlockManager.currentBlock) {
       return false;
     }
 
     const selection = Selection.get();
-    let anchorNode = selection.anchorNode;
+    let anchorNode = selection.focusNode;
 
     if (!anchorNode) {
       return false;
@@ -165,7 +165,8 @@ export default class Caret extends Module {
      *
      * So we use child with anchorOffset - 1 as new anchorNode.
      */
-    let anchorOffset = selection.anchorOffset;
+    let anchorOffset = selection.focusOffset;
+
     if (anchorNode.nodeType !== Node.TEXT_NODE && anchorNode.childNodes.length) {
       if (anchorNode.childNodes[anchorOffset - 1]) {
         anchorNode = anchorNode.childNodes[anchorOffset - 1];
