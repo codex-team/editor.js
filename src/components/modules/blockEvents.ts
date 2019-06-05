@@ -99,6 +99,10 @@ export default class BlockEvents extends Module {
    */
   public keyup(event): void {
     this.Editor.InlineToolbar.handleShowingEvent(event);
+
+    /**
+     * Check if editor is empty on each keyup and add special css class to wrapper
+     */
     this.Editor.UI.checkEmptiness();
   }
 
