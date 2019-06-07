@@ -4,6 +4,7 @@ import {BaseTool, BaseToolConstructable} from './tool';
 import {ToolConfig} from './tool-config';
 import {API} from '../index';
 import {PasteEvent} from './paste-events';
+import {ConversionConfig} from '../configs/conversionConfig';
 /**
  * Describe Block Tool object
  * @see {@link docs/tools.md}
@@ -68,6 +69,11 @@ export interface BlockToolConstructable extends BaseToolConstructable {
    * Paste substitutions configuration
    */
   pasteConfig?: PasteConfig;
+
+  /**
+   * Conversion object requirements
+   */
+  conversionConfig?: ConversionConfig;
 
   new (config: {api: API, config: ToolConfig, data: BlockToolData}): BlockTool;
 }

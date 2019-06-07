@@ -1,7 +1,8 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import {BlockToolConstructable} from '../../../../types';
+import {BaseToolConstructable, BlockToolConstructable} from '../../../../types';
 import _ from '../../utils';
+import {SavedData} from '../../../types-internal/block-data';
 
 export default class ConversionToolbar extends Module {
 
@@ -207,8 +208,23 @@ export default class ConversionToolbar extends Module {
     /**
      * Add click listener
      */
-    this.Editor.Listeners.on(tool, 'click', (event: KeyboardEvent|MouseEvent) => {
-      this.switchBlocks();
+    this.Editor.Listeners.on(tool, 'click', async (event: MouseEvent) => {
+      const currentBlockToolClass = this.Editor.BlockManager.currentBlock.class;
+      const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
+      const blockData = savedBlock.data;
+
+      const replacingTool = this.Editor.Tools.toolsClasses[toolName] as BlockToolConstructable;
+      const newBlockData = {};
+
+      newBlockData[replacingTool.conversionConfig.export] = this.Editor.Sanitizer.clean(blockData[currentBlockToolClass.conversionConfig.import], replacingTool.sanitize);
+
+      this.Editor.BlockManager.replace(toolName, newBlockData);
+
+      this.close();
+
+      _.delay(() => {
+        this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+      }, 10)();
     });
   }
 }
