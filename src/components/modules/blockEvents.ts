@@ -3,8 +3,10 @@
  */
 import Module from '../__module';
 import _ from '../utils';
+import SelectionUtils from '../selection';
 
 export default class BlockEvents extends Module {
+
   /**
    * All keydowns on Block
    * @param {KeyboardEvent} event - keydown
@@ -62,7 +64,12 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    this.Editor.Toolbar.close();
+    /**
+     * Close Toolbar on any keypress except TAB, because TAB leafs Tools
+     */
+    if (event.keyCode !== _.keyCodes.TAB) {
+      this.Editor.Toolbar.close();
+    }
 
     const cmdKey = event.ctrlKey || event.metaKey;
     const altKey = event.altKey;
@@ -110,6 +117,10 @@ export default class BlockEvents extends Module {
 
     const {currentBlock} = this.Editor.BlockManager;
 
+    if (!currentBlock) {
+      return;
+    }
+
     /** Prevent Default behaviour */
     event.preventDefault();
     event.stopPropagation();
@@ -119,31 +130,77 @@ export default class BlockEvents extends Module {
       direction = shiftKey ? 'left' : 'right';
 
     /**
-     * Don't show Plus and Toolbox near not-inital Tools
+     * For empty Blocks we show Plus button via Toobox only for initial Blocks
      */
-    if (!this.Editor.Tools.isInitial(currentBlock.tool)) {
-      return;
-    }
-
-    if (currentBlock.isEmpty) {
+    if (this.Editor.Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty) {
+      /**
+       * Work with Toolbox
+       * ------------------
+       *
+       * If Toolbox is not open, then just open it and show plus button
+       * Next Tab press will leaf Toolbox Tools
+       */
       if (!this.Editor.Toolbar.opened) {
         this.Editor.Toolbar.open(false , false);
         this.Editor.Toolbar.plusButton.show();
+      } else {
+        this.Editor.Toolbox.leaf(direction);
       }
 
       this.Editor.Toolbox.open();
-    }
+    } else if (!currentBlock.isEmpty && !SelectionUtils.isCollapsed) {
+      /**
+       * Work with Inline Tools
+       * -----------------------
+       *
+       * If InlineToolbar is not open, just open it and focus first button
+       * Next Tab press will leaf InlineToolbar Tools
+       */
+      if (this.Editor.InlineToolbar.opened) {
+        this.Editor.InlineToolbar.leaf(direction);
+      }
+    } else {
+      /**
+       * Open Toolbar and show BlockSettings
+       */
+      if (!this.Editor.Toolbar.opened) {
+        this.Editor.BlockManager.currentBlock.focused = true;
+        this.Editor.Toolbar.open(true, false);
+        this.Editor.Toolbar.plusButton.hide();
+      }
 
-    if (this.Editor.Toolbox.opened) {
-      this.Editor.Toolbox.leaf(direction);
+      /**
+       * Work with Block Tunes
+       * ----------------------
+       *
+       * If BlockSettings is not open, then open BlockSettings
+       * Next Tab press will leaf Settings Buttons
+       */
+      if (!this.Editor.BlockSettings.opened) {
+        this.Editor.BlockSettings.open();
+      }
+
+      this.Editor.BlockSettings.leaf(direction);
     }
   }
 
   /**
    * Escape pressed
-   * @param event
+   * If some of Toolbar components are opened, then close it otherwise close Toolbar
+   *
+   * @param {Event} event
    */
-  public escapePressed(event): void { }
+  public escapePressed(event): void {
+    if (this.Editor.Toolbox.opened) {
+      this.Editor.Toolbox.close();
+    } else if (this.Editor.BlockSettings.opened) {
+      this.Editor.BlockSettings.close();
+    } else if (this.Editor.InlineToolbar.opened) {
+      this.Editor.InlineToolbar.close();
+    } else {
+      this.Editor.Toolbar.close();
+    }
+  }
 
   /**
    * Add drop target styles
@@ -231,7 +288,10 @@ export default class BlockEvents extends Module {
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
-    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+    if (tool
+      && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]
+      && !this.Editor.BlockSettings.opened
+      && !this.Editor.InlineToolbar.opened) {
       return;
     }
 
@@ -239,7 +299,17 @@ export default class BlockEvents extends Module {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
+
       this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
+      return;
+    }
+
+    if (this.Editor.InlineToolbar.opened && this.Editor.InlineToolbar.focusedButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      this.Editor.InlineToolbar.focusedButton.click();
       return;
     }
 
@@ -441,8 +511,15 @@ export default class BlockEvents extends Module {
    */
   private needToolbarClosing(event) {
     const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened),
-      flippingToolboxItems = event.keyCode === _.keyCodes.TAB;
+      blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
+      flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
 
-    return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
+    /**
+     * Do not close Toolbar in cases:
+     * 1. ShiftKey pressed (or combination with shiftKey)
+     * 2. When Toolbar is opened and Tab leafs its Tools
+     * 3. When Toolbar's component is opened and some its item selected
+     */
+    return !(event.shiftKey || flippingToolbarItems || toolboxItemSelected || blockSettingsItemSelected);
   }
 }

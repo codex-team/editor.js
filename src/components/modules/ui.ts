@@ -268,8 +268,50 @@ export default class UI extends Module {
    * @param event
    */
   private enterPressed(event: KeyboardEvent): void {
-    const {BlockManager, BlockSelection, Caret} = this.Editor;
+    const {BlockManager, BlockSelection, Caret, BlockSettings} = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
+
+    /**
+     * If Block Settings is opened and have some active button
+     * Enter press is fired as out of the Block and that's why
+     * we handle it here
+     */
+    if (BlockSettings.opened && BlockSettings.focusedButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      /** Click on settings button */
+      BlockSettings.focusedButton.click();
+
+      /**
+       * Add animation on click
+       */
+      BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
+
+      /**
+       * Remove animation class
+       */
+      _.delay( () => {
+        BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
+      }, 280)();
+
+      /**
+       * Restoring focus on current Block
+       *
+       * After changing Block state (when settings clicked, for example)
+       * Block's content points to the Node that is not in DOM, that's why we can not
+       * set caret and leaf next (via Tab)
+       *
+       * For that set cursor via Caret module to the current Block's content
+       * after some timeout
+       */
+      _.delay( () => {
+        Caret.setToBlock(BlockManager.currentBlock);
+      }, 10)();
+
+      return;
+    }
 
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
