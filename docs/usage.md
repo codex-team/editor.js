@@ -85,6 +85,7 @@ var editor2 = new EditorJS({
 ```
 
 
+
 ## Placeholder
 
 By default Editor\`s placeholder is `Tell your story...`
@@ -100,3 +101,5 @@ var editor = new EditorJS({
  });
 
 ```
+
+If you are using your custom `Initial Block`, `placeholder` property is passed in `config` to your Tool constructor.  
