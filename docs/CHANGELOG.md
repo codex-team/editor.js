@@ -1,5 +1,12 @@
 # Changelog
 
+
+### 2.14
+
+- `Fix` *Config* — User config now has higher priority than internal settings
+- `New` — Ability to work with Block Actions and Inline Toolbar from the keyboard by Tab.
+- `Fix` — Fix error thrown by click on the empty editor after `blocks.clear()` method calling
+
 ### 2.13
 
 - `Improvements` *BlockSelection* — Block Selection allows to select single editable element via CMD+A

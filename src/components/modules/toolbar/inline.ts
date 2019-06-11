@@ -28,7 +28,14 @@ export default class InlineToolbar extends Module {
     inlineToolButton: 'ce-inline-tool',
     inlineToolButtonLast: 'ce-inline-tool--last',
     inputField: 'cdx-input',
+    focusedButton: 'ce-inline-tool--focused',
   };
+
+  /**
+   * State of inline toolbar
+   * @type {boolean}
+   */
+  public opened: boolean = false;
 
   /**
    * Inline Toolbar elements
@@ -52,6 +59,25 @@ export default class InlineToolbar extends Module {
    * Tools instances
    */
   private toolsInstances: Map<string, InlineTool>;
+
+  /**
+   * Buttons List
+   * @type {NodeList}
+   */
+  private buttonsList: NodeList = null;
+
+  /**
+   * Visible Buttons
+   * Some Blocks might disable inline tools
+   * @type {HTMLElement[]}
+   */
+  private visibleButtonsList: HTMLElement[] = [];
+
+  /**
+   * Focused button index
+   * @type {number}
+   */
+  private focusedButtonIndex: number = -1;
 
   /**
    * Inline Toolbar Tools
@@ -156,6 +182,47 @@ export default class InlineToolbar extends Module {
   }
 
   /**
+   * Leaf Inline Tools
+   * @param {string} direction
+   */
+  public leaf(direction: string = 'right'): void {
+    this.visibleButtonsList = (Array.from(this.buttonsList)
+      .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[]);
+
+    if (this.visibleButtonsList.length === 0) {
+      return;
+    }
+
+    this.focusedButtonIndex = $.leafNodesAndReturnIndex(
+      this.visibleButtonsList, this.focusedButtonIndex, direction, this.CSS.focusedButton,
+    );
+  }
+
+  /**
+   * Drops focused button index
+   */
+  public dropFocusedButtonIndex(): void {
+    if (this.focusedButtonIndex === -1) {
+      return;
+    }
+
+    this.visibleButtonsList[this.focusedButtonIndex].classList.remove(this.CSS.focusedButton);
+    this.focusedButtonIndex = -1;
+  }
+
+  /**
+   * Returns Focused button Node
+   * @return {HTMLElement}
+   */
+  public get focusedButton(): HTMLElement {
+    if (this.focusedButtonIndex === -1) {
+      return null;
+    }
+
+    return this.visibleButtonsList[this.focusedButtonIndex];
+  }
+
+  /**
    * Hides Inline Toolbar
    */
   public close(): void {
@@ -165,6 +232,13 @@ export default class InlineToolbar extends Module {
         toolInstance.clear();
       }
     });
+
+    this.opened = false;
+
+    if (this.focusedButtonIndex !== -1) {
+      this.visibleButtonsList[this.focusedButtonIndex].classList.remove(this.CSS.focusedButton);
+      this.focusedButtonIndex = -1;
+    }
   }
 
   /**
@@ -196,6 +270,9 @@ export default class InlineToolbar extends Module {
         toolInstance.clear();
       }
     });
+
+    this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
+    this.opened = true;
   }
 
   /**
@@ -220,7 +297,9 @@ export default class InlineToolbar extends Module {
       return false;
     }
 
-    const target = currentSelection.anchorNode.parentElement;
+    const target = !$.isElement(currentSelection.anchorNode )
+      ? currentSelection.anchorNode.parentElement
+      : currentSelection.anchorNode;
 
     if (currentSelection && tagsConflictsWithSelection.includes(target.tagName)) {
       return false;
