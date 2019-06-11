@@ -354,9 +354,14 @@ export default class UI extends Module {
 
     if (Selection.isAtEditor) {
       /**
-       * Focus clicked Block
+       * Focus clicked Block.
+       * Workaround case when user clicks on the bottom of editor
        */
-      this.Editor.BlockManager.setCurrentBlockByChildNode(Selection.anchorNode);
+      if (Selection.anchorNode === this.nodes.redactor) {
+        this.Editor.Caret.setToTheLastBlock();
+      } else {
+        this.Editor.BlockManager.setCurrentBlockByChildNode(Selection.anchorNode);
+      }
     }
   }
 

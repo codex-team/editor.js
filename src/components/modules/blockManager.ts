@@ -517,20 +517,8 @@ export default class BlockManager extends Module {
       this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
       return this.currentBlock;
     } else {
-        if (!this.nodeIsEditorWrapper(childNode)) {
-            throw new Error('Can not find a Block from this child Node');
-        }
-
-        this.Editor.Caret.setToTheLastBlock();
+      throw new Error('Can not find a Block from this child Node');
     }
-  }
-
-  /**
-   * Checks if click target was block or editor wrapper
-   * @param {Node} childNode
-   */
-  public nodeIsEditorWrapper(childNode: Node): boolean {
-      return (childNode as HTMLElement).classList.contains(this.Editor.UI.CSS.editorZone);
   }
 
   /**
