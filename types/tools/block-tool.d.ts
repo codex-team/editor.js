@@ -75,5 +75,9 @@ export interface BlockToolConstructable extends BaseToolConstructable {
    */
   conversionConfig?: ConversionConfig;
 
+  /**
+   * @constructor
+   * @return {BlockTool}
+   */
   new (config: {api: API, config: ToolConfig, data: BlockToolData}): BlockTool;
 }

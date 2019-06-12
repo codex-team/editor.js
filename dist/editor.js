@@ -14936,14 +14936,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         this.Editor.BlockManager.clearFocused();
 
-        if (event.keyCode !== _utils.default.keyCodes.ENTER && event.keyCode !== _utils.default.keyCodes.BACKSPACE) {
-          /**
-           * Clear selection and restore caret before navigation
-           */
-          this.Editor.BlockSelection.clearSelection(true);
-        }
-
         if (event.keyCode !== _utils.default.keyCodes.ENTER) {
+          if (event.keyCode !== _utils.default.keyCodes.BACKSPACE) {
+            /**
+             * Clear selection and restore caret before navigation
+             */
+            this.Editor.BlockSelection.clearSelection(true);
+          }
+
           this.Editor.ConversionToolbar.handleShowingEvent(event);
         }
       }
@@ -20948,6 +20948,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         tools: null
       };
       /**
+       * editor open/close identifier
        * @type {boolean}
        */
 
@@ -20987,9 +20988,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
         this.addTools();
-        /**
-         * append to the UI
-         */
 
         _dom.default.append(this.nodes.wrapper, this.nodes.tools);
 
@@ -21094,7 +21092,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.dropFocusedButton();
       }
       /**
-       *
+       * Iterates existing Tools and inserts to the ConversionToolbar
+       * if tools have ability to import/export
        */
 
     }, {
@@ -21126,6 +21125,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             // check if tool has import/export
 
 
+            console.log();
             this.addTool(toolName, toolToolboxSettings.icon);
           }
         }

@@ -1,6 +1,6 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import {BaseToolConstructable, BlockToolConstructable} from '../../../../types';
+import {BlockToolConstructable} from '../../../../types';
 import _ from '../../utils';
 import {SavedData} from '../../../types-internal/block-data';
 
@@ -29,6 +29,7 @@ export default class ConversionToolbar extends Module {
   };
 
   /**
+   * editor open/close identifier
    * @type {boolean}
    */
   public opened: boolean = false;
@@ -59,9 +60,6 @@ export default class ConversionToolbar extends Module {
      */
     this.addTools();
 
-    /**
-     * append to the UI
-     */
     $.append(this.nodes.wrapper, this.nodes.tools);
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
   }
@@ -160,7 +158,8 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   *
+   * Iterates existing Tools and inserts to the ConversionToolbar
+   * if tools have ability to import/export
    */
   private addTools(): void {
     const tools = this.Editor.Tools.available;
@@ -189,6 +188,7 @@ export default class ConversionToolbar extends Module {
         // @todo
         // check if tool has import/export
 
+        console.log();
         this.addTool(toolName, toolToolboxSettings.icon);
       }
     }
