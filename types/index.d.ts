@@ -6,6 +6,7 @@
 
 import {EditorConfig} from './configs';
 import {Blocks, Caret, Events, Listeners, Notifier, Sanitizer, Saver, Selection, Styles, Toolbar, InlineToolbar} from './api';
+import {OutputData} from "./data-formats/output-data";
 
 /**
  * Interfaces used for development
@@ -74,6 +75,48 @@ declare class EditorJS {
   public inlineToolbar: InlineToolbar;
   constructor(configuration?: EditorConfig|string);
 
+  /**
+   * API shorthands
+   */
+
+  /**
+   * @see Saver.save
+   */
+  save(): Promise<OutputData>;
+
+  /**
+   * @see Blocks.clear
+   */
+  clear(): void;
+
+  /**
+   * @see Blocks.render
+   */
+  render(data: OutputData): Promise<void>;
+
+  /**
+   * @see Caret.focus
+   */
+  focus(atEnd?: boolean): boolean;
+
+  /**
+   * @see Events.on
+   */
+  on(eventName: string, callback: (data?: any) => void): void;
+
+  /**
+   * @see Events.off
+   */
+  off(eventName: string, callback: (data?: any) => void): void;
+
+  /**
+   * @see Events.emit
+   */
+  emit(eventName: string, data: any): void;
+
+  /**
+   * Destroy Editor instance and related DOM elements
+   */
   public destroy(): void;
 }
 
