@@ -88,7 +88,7 @@ var editor2 = new EditorJS({
 
 ## Placeholder
 
-By default Editor\`s placeholder is `Tell your story...`
+By default Editor\`s placeholder is empty.
 
 You can pass your own placeholder via `placeholder` field:
 
