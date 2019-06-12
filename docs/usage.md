@@ -83,3 +83,23 @@ var editor2 = new EditorJS({
   holder: 'codex-editor' // like document.getElementById('codex-editor')
 })
 ```
+
+
+
+## Placeholder
+
+By default Editor\`s placeholder is empty.
+
+You can pass your own placeholder via `placeholder` field:
+
+
+```js
+var editor = new EditorJS({
+  //...
+  placeholder: 'My awesome placeholder'
+  //...
+ });
+
+```
+
+If you are using your custom `Initial Block`, `placeholder` property is passed in `config` to your Tool constructor.  

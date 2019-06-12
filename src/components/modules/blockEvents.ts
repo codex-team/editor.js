@@ -103,6 +103,11 @@ export default class BlockEvents extends Module {
    */
   public keyup(event): void {
     this.Editor.InlineToolbar.handleShowingEvent(event);
+
+    /**
+     * Check if editor is empty on each keyup and add special css class to wrapper
+     */
+    this.Editor.UI.checkEmptiness();
   }
 
   /**
@@ -317,6 +322,15 @@ export default class BlockEvents extends Module {
       event.stopImmediatePropagation();
 
       InlineToolbar.focusedButton.click();
+      return;
+    }
+
+    if (this.Editor.InlineToolbar.opened && this.Editor.InlineToolbar.focusedButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      this.Editor.InlineToolbar.focusedButton.click();
       return;
     }
 

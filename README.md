@@ -85,7 +85,7 @@ Shortcut | Action | Restrictions
 Also we support shortcuts on the all type of Tools. Specify a shortcut with the Tools configuration. For example:
 
 ```js
-var editor = EditorJS({
+var editor = new EditorJS({
   //...
   tools: {
     header: {
@@ -196,7 +196,7 @@ var editor = new EditorJS({
     /**
      * Create a holder for the Editor and pass its ID
      */
-    holderId : 'editorjs',
+    holder : 'editorjs',
 
     /**
      * Available Tools list.

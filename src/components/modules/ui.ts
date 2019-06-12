@@ -124,6 +124,15 @@ export default class UI extends Module {
   }
 
   /**
+   * Check if Editor is empty and set CSS class to wrapper
+   */
+  public checkEmptiness(): void {
+    const {BlockManager} = this.Editor;
+
+    this.nodes.wrapper.classList.toggle(this.CSS.editorEmpty, BlockManager.isEditorEmpty);
+  }
+
+  /**
    * Clean editor`s UI
    */
   public destroy(): void {
@@ -416,9 +425,14 @@ export default class UI extends Module {
 
     if (Selection.isAtEditor) {
       /**
-       * Focus clicked Block
+       * Focus clicked Block.
+       * Workaround case when user clicks on the bottom of editor
        */
-      this.Editor.BlockManager.setCurrentBlockByChildNode(Selection.anchorNode);
+      if (Selection.anchorNode === this.nodes.redactor) {
+        this.Editor.Caret.setToTheLastBlock();
+      } else {
+        this.Editor.BlockManager.setCurrentBlockByChildNode(Selection.anchorNode);
+      }
     }
   }
 

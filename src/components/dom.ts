@@ -529,7 +529,12 @@ export default class Dom {
    *
    * @return {Number} index of active node
    */
-  public static leafNodesAndReturnIndex(nodeList: HTMLElement[], activeIndex: number, direction: string, activeCSSClass: string): number {
+  public static leafNodesAndReturnIndex(
+    nodeList: HTMLElement[],
+    activeIndex: number,
+    direction: string,
+    activeCSSClass: string,
+  ): number {
     /**
      * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
      */

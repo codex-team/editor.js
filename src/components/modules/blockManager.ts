@@ -575,6 +575,11 @@ export default class BlockManager extends Module {
     if (needAddInitialBlock) {
       this.insert(this.config.initialBlock);
     }
+
+    /**
+     * Add empty modifier
+     */
+    this.Editor.UI.checkEmptiness();
   }
 
   /**
