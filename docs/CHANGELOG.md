@@ -1,5 +1,14 @@
 # Changelog
 
+
+### 2.14
+
+- `Fix` *Config* — User config now has higher priority than internal settings [#771](https://github.com/codex-team/editor.js/issues/771)
+- `New` — Ability to work with Block Actions and Inline Toolbar from the keyboard by Tab. [#705](https://github.com/codex-team/editor.js/issues/705)
+- `Fix` — Fix error thrown by click on the empty editor after `blocks.clear()` method calling [#761](https://github.com/codex-team/editor.js/issues/761)
+- `Fix` — Fix placeholder property appearance. Now you can assign it via `placeholder` property of EditorConfig. [#714](https://github.com/codex-team/editor.js/issues/714)
+- `Fix` — Add API shorthands to TS types [#788](https://github.com/codex-team/editor.js/issues/788)
+
 ### 2.13
 
 - `Improvements` *BlockSelection* — Block Selection allows to select single editable element via CMD+A

@@ -103,6 +103,7 @@ export default class BlocksAPI extends Module {
    */
   public clear(): void {
     this.Editor.BlockManager.clear(true);
+    this.Editor.InlineToolbar.close();
   }
 
   /**

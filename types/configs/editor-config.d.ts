@@ -29,7 +29,7 @@ export interface EditorConfig {
   /**
    * First Block placeholder
    */
-  placeholder?: string;
+  placeholder?: string|false;
 
   /**
    * Define default sanitizer configuration
