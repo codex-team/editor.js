@@ -302,14 +302,19 @@ export default class Tools extends Module {
     /**
      * Configuration to be passed to the Tool's constructor
      */
-    const config = this.toolsSettings[tool][this.apiSettings.CONFIG];
+    const config = this.toolsSettings[tool][this.apiSettings.CONFIG] || {};
+
+    // Pass placeholder to initial Block config
+    if (tool === this.config.initialBlock && !config.placeholder) {
+      config.placeholder = this.config.placeholder;
+    }
 
     /**
      * @type {{api: API, config: ({}), data: BlockToolData}}
      */
     const constructorOptions = {
       api: this.Editor.API.methods,
-      config: config || {},
+      config,
       data,
     };
 

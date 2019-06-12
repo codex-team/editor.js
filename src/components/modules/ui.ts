@@ -119,6 +119,15 @@ export default class UI extends Module {
   }
 
   /**
+   * Check if Editor is empty and set CSS class to wrapper
+   */
+  public checkEmptiness(): void {
+    const {BlockManager} = this.Editor;
+
+    this.nodes.wrapper.classList.toggle(this.CSS.editorEmpty, BlockManager.isEditorEmpty);
+  }
+
+  /**
    * Clean editor`s UI
    */
   public destroy(): void {

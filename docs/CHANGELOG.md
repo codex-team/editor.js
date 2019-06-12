@@ -6,6 +6,7 @@
 - `Fix` *Config* — User config now has higher priority than internal settings
 - `New` — Ability to work with Block Actions and Inline Toolbar from the keyboard by Tab.
 - `Fix` — Fix error thrown by click on the empty editor after `blocks.clear()` method calling
+- `Fix` — Fix placeholder property appearance. Now you can assign it via `placeholder` property of EditorConfig. 
 
 ### 2.13
 
