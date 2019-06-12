@@ -7,5 +7,5 @@ export interface ConversionConfig {
   /**
    * export description
    */
-  export: string;
+  export: any;
 }

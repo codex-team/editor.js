@@ -42,6 +42,11 @@ export default class ConversionToolbar extends Module {
   private focusedButtonIndex: number = -1;
 
   /**
+   * available tools
+   */
+  private tools: { [key: string]: HTMLElement } = {};
+
+  /**
    * @type {number}
    */
   private defaultOffsetTop: number = 65;
@@ -77,6 +82,12 @@ export default class ConversionToolbar extends Module {
       return;
     }
 
+    const currentToolName = BlockManager.currentBlock.name;
+
+    if (this.tools[currentToolName]) {
+      this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
+    }
+
     this.move();
     this.open();
   }
@@ -109,17 +120,47 @@ export default class ConversionToolbar extends Module {
       return;
     }
 
-    const tool = (this.nodes.tools.childNodes[this.focusedButtonIndex] as HTMLElement);
-    tool.classList.remove(ConversionToolbar.CSS.conversionToolActive);
+    Object.values(this.nodes.tools.childNodes).forEach( (tool) => {
+      (tool as HTMLElement).classList.remove(ConversionToolbar.CSS.conversionToolActive);
+    });
 
     this.focusedButtonIndex = -1;
   }
 
   /**
-   * console.log('here I need to switch');
+   * Replaces one Block to Another
+   * For that Tools must provide import/export methods
+   *
+   * @param {string} replacingToolName
    */
-  public switchBlocks(): void {
-    console.log('here I need to switch');
+  public async replaceWithBlock(replacingToolName: string): Promise<void> {
+    const currentBlockClass = this.Editor.BlockManager.currentBlock.class;
+    const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
+    const blockData = savedBlock.data;
+
+    const replacingTool = this.Editor.Tools.toolsClasses[replacingToolName] as BlockToolConstructable;
+    const newBlockData = {};
+
+    const exportProp = (replacingTool.conversionConfig.export as (() => string));
+
+    let exportData = '';
+    if (typeof exportProp === 'function') {
+      exportData = exportProp();
+    }
+
+    const cleaned = this.Editor.Sanitizer.clean(
+      exportData,
+      replacingTool.sanitize,
+    );
+
+    // newBlockData[replacingTool.conversionConfig.import] =
+    // this.Editor.BlockManager.replace(replacingToolName, newBlockData);
+
+    this.close();
+
+    _.delay(() => {
+      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+    }, 10)();
   }
 
   /**
@@ -165,32 +206,41 @@ export default class ConversionToolbar extends Module {
     const tools = this.Editor.Tools.available;
 
     for (const toolName in tools) {
-      if (tools.hasOwnProperty(toolName)) {
-        const api = this.Editor.Tools.apiSettings;
-        const toolClass = tools[toolName] as BlockToolConstructable;
-        const toolToolboxSettings = toolClass[api.TOOLBOX];
-
-        if (toolClass.isInline) {
-          continue;
-        }
-
-        /**
-         * Skip tools that don't pass 'toolbox' property
-         */
-        if (_.isEmpty(toolToolboxSettings)) {
-          continue;
-        }
-
-        if (toolToolboxSettings && !toolToolboxSettings.icon) {
-          continue;
-        }
-
-        // @todo
-        // check if tool has import/export
-
-        console.log();
-        this.addTool(toolName, toolToolboxSettings.icon);
+      if (!tools.hasOwnProperty(toolName)) {
+        continue;
       }
+
+      const api = this.Editor.Tools.apiSettings;
+      const toolClass = tools[toolName] as BlockToolConstructable;
+      const toolToolboxSettings = toolClass[api.TOOLBOX];
+
+      if (toolClass.isInline) {
+        continue;
+      }
+
+      /**
+       * Skip tools that don't pass 'toolbox' property
+       */
+      if (_.isEmpty(toolToolboxSettings)) {
+        continue;
+      }
+
+      if (toolToolboxSettings && !toolToolboxSettings.icon) {
+        continue;
+      }
+
+      if (!toolClass.conversionConfig) {
+        continue;
+      }
+
+      const hasImport = toolClass.conversionConfig.import;
+      const hasExport = toolClass.conversionConfig.export;
+
+      if (!hasImport || !hasExport) {
+        continue;
+      }
+
+      this.addTool(toolName, toolToolboxSettings.icon);
     }
   }
 
@@ -204,27 +254,13 @@ export default class ConversionToolbar extends Module {
     tool.innerHTML = toolIcon;
 
     $.append(this.nodes.tools, tool);
+    this.tools[toolName] = tool;
 
     /**
      * Add click listener
      */
     this.Editor.Listeners.on(tool, 'click', async (event: MouseEvent) => {
-      const currentBlockToolClass = this.Editor.BlockManager.currentBlock.class;
-      const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
-      const blockData = savedBlock.data;
-
-      const replacingTool = this.Editor.Tools.toolsClasses[toolName] as BlockToolConstructable;
-      const newBlockData = {};
-
-      newBlockData[replacingTool.conversionConfig.export] = this.Editor.Sanitizer.clean(blockData[currentBlockToolClass.conversionConfig.import], replacingTool.sanitize);
-
-      this.Editor.BlockManager.replace(toolName, newBlockData);
-
-      this.close();
-
-      _.delay(() => {
-        this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
-      }, 10)();
+      await this.replaceWithBlock(toolName);
     });
   }
 }
