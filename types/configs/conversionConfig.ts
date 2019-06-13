@@ -2,7 +2,7 @@ export interface ConversionConfig {
   /**
    * import description
    */
-  import: string;
+  import: any;
 
   /**
    * export description

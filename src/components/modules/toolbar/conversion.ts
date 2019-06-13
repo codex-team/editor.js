@@ -134,27 +134,70 @@ export default class ConversionToolbar extends Module {
    * @param {string} replacingToolName
    */
   public async replaceWithBlock(replacingToolName: string): Promise<void> {
+    /**
+     * first we get current Block data
+     * @type {BlockToolConstructable}
+     */
     const currentBlockClass = this.Editor.BlockManager.currentBlock.class;
+    const currentBlockName = this.Editor.BlockManager.currentBlock.name;
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
     const blockData = savedBlock.data;
 
-    const replacingTool = this.Editor.Tools.toolsClasses[replacingToolName] as BlockToolConstructable;
-    const newBlockData = {};
-
-    const exportProp = (replacingTool.conversionConfig.export as (() => string));
-
-    let exportData = '';
-    if (typeof exportProp === 'function') {
-      exportData = exportProp();
+    if (currentBlockName === replacingToolName) {
+      replacingToolName = this.config.initialBlock;
     }
 
+    /**
+     * getting replacing Block class
+     * @type {BlockToolConstructable}
+     */
+    const replacingTool = this.Editor.Tools.toolsClasses[replacingToolName] as BlockToolConstructable;
+
+    /**
+     * Export property can be:
+     * 1) Function — Tool defines which data to return
+     * 2) String — the name of saved property
+     *
+     * In both cases returning value must be a string
+     */
+    let exportData = '';
+    const exportProp = currentBlockClass.conversionConfig.export;
+    if (typeof exportProp === 'function') {
+      exportData = exportProp(blockData);
+    } else if (typeof exportProp === 'string') {
+      exportData = blockData[exportProp];
+    } else {
+      console.log('export property must be the name of saved data or function that returns string');
+      return;
+    }
+
+    /**
+     * Clean exported data with replacing sanitizer config
+     */
     const cleaned = this.Editor.Sanitizer.clean(
       exportData,
       replacingTool.sanitize,
     );
 
-    // newBlockData[replacingTool.conversionConfig.import] =
-    // this.Editor.BlockManager.replace(replacingToolName, newBlockData);
+    /**
+     * Import property also can be Function or string
+     * When import is Function than Tool gets known object with data and returns a string
+     * When import is string than it means is the name of data field
+     */
+    let newBlockData = {};
+    const importProp = replacingTool.conversionConfig.import;
+    if (typeof importProp === 'function') {
+      newBlockData = importProp(cleaned);
+    } else if (typeof importProp === 'string') {
+      newBlockData[importProp] = cleaned;
+      console.log(newBlockData);
+    } else {
+      console.log('import property must be the name of property or function that return data object');
+      return;
+    }
+
+    this.Editor.BlockManager.replace(replacingToolName, newBlockData);
+    this.Editor.BlockSelection.clearSelection();
 
     this.close();
 
