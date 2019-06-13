@@ -3,6 +3,7 @@ import $ from '../../dom';
 import {BlockToolConstructable} from '../../../../types';
 import _ from '../../utils';
 import {SavedData} from '../../../types-internal/block-data';
+import SelectionUtils from '../../selection';
 
 export default class ConversionToolbar extends Module {
 
@@ -72,24 +73,57 @@ export default class ConversionToolbar extends Module {
   /**
    * Shows Inline Toolbar by keyup/mouseup
    * @param {KeyboardEvent|MouseEvent} event
+   * @param {boolean} force - selects Block and removes all ranges
    */
-  public handleShowingEvent(event): void {
+  public handleShowingEvent(event, force = false): void {
     const { BlockManager, BlockSelection } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
 
-    if (!currentBlock || BlockSelection.allBlocksSelected || (currentBlock && !currentBlock.selected)) {
+    if (!currentBlock || BlockSelection.allBlocksSelected || (!force && currentBlock && !currentBlock.selected)) {
       this.close();
       return;
+    }
+
+    /**
+     * Force Block selection
+     */
+    if (force) {
+      currentBlock.selected = true;
+      SelectionUtils.get().removeAllRanges();
     }
 
     const currentToolName = BlockManager.currentBlock.name;
 
     if (this.tools[currentToolName]) {
       this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
+
+      this.nodes.tools.childNodes.forEach((tool, index) => {
+        if ((tool as HTMLElement).classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
+          this.focusedButtonIndex = index;
+        }
+      });
     }
 
     this.move();
     this.open();
+  }
+
+  /**
+   * shows ConversionToolbar
+   */
+  public open(): void {
+    this.opened = true;
+    this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
+  }
+
+  /**
+   * closes ConversionToolbar
+   */
+  public close(): void {
+    this.opened = false;
+    this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
+
+    this.dropFocusedButton();
   }
 
   /**
@@ -133,7 +167,7 @@ export default class ConversionToolbar extends Module {
    *
    * @param {string} replacingToolName
    */
-  public async replaceWithBlock(replacingToolName: string): Promise<void> {
+  public async replaceWithBlock(replacingToolName: string): Promise <void> {
     /**
      * first we get current Block data
      * @type {BlockToolConstructable}
@@ -190,7 +224,6 @@ export default class ConversionToolbar extends Module {
       newBlockData = importProp(cleaned);
     } else if (typeof importProp === 'string') {
       newBlockData[importProp] = cleaned;
-      console.log(newBlockData);
     } else {
       console.log('import property must be the name of property or function that return data object');
       return;
@@ -221,24 +254,6 @@ export default class ConversionToolbar extends Module {
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
     this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
-  }
-
-  /**
-   * shows ConversionToolbar
-   */
-  private open(): void {
-    this.opened = true;
-    this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
-  }
-
-  /**
-   * closes ConversionToolbar
-   */
-  private close(): void {
-    this.opened = false;
-    this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
-
-    this.dropFocusedButton();
   }
 
   /**

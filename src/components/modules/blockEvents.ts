@@ -102,12 +102,17 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public keyup(event): void {
-    this.Editor.InlineToolbar.handleShowingEvent(event);
+    if (SelectionUtils.almostAllSelected(event.target.textContent)) {
+      this.Editor.InlineToolbar.close();
+      this.Editor.ConversionToolbar.handleShowingEvent(event, true);
+    } else {
+      this.Editor.InlineToolbar.handleShowingEvent(event);
 
-    /**
-     * Check if editor is empty on each keyup and add special css class to wrapper
-     */
-    this.Editor.UI.checkEmptiness();
+      /**
+       * Check if editor is empty on each keyup and add special css class to wrapper
+       */
+      this.Editor.UI.checkEmptiness();
+    }
   }
 
   /**
@@ -115,7 +120,11 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public mouseUp(event): void {
-    this.Editor.InlineToolbar.handleShowingEvent(event);
+    if (SelectionUtils.almostAllSelected(event.target.textContent)) {
+      this.Editor.ConversionToolbar.handleShowingEvent(event, true);
+    } else {
+      this.Editor.InlineToolbar.handleShowingEvent(event);
+    }
   }
 
   /**
