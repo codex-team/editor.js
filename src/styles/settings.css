@@ -23,8 +23,8 @@
 
   &--opened {
     display: block;
-    animation-duration: 0.5s;
-    animation-name: bounceIn;
+    animation-duration: 0.1s;
+    animation-name: panelShowing;
   }
 
   &__plugin-zone {
