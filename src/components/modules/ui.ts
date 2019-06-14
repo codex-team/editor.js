@@ -13,6 +13,7 @@ import $ from '../dom';
 import _ from '../utils';
 
 import Selection from '../selection';
+import Block from '../block';
 
 /**
  * @class
@@ -202,6 +203,12 @@ export default class UI extends Module {
     );
     this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
     this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), true);
+    /**
+     * Handle selection change on mobile devices for the Inline Toolbar support
+     */
+    this.Editor.Listeners.on(document, 'selectionchange', (event) => {
+      this.selectionChanged(event as Event);
+    }, true);
   }
 
   /**
@@ -514,6 +521,25 @@ export default class UI extends Module {
 
     /** Clear selection */
     this.Editor.BlockSelection.clearSelection();
+  }
+
+  /**
+   * Handle selection changed on mobile devices
+   * Uses for showing the Inline Toolbar
+   * @param {Event} event
+   */
+  private selectionChanged(event: Event): void {
+    const focusedElement = Selection.anchorElement as Element;
+
+    /**
+     * Event can be fired on clicks at the Editor elements, for example, at the Inline Toolbar
+     * We need to skip such firings
+     */
+    if (!focusedElement || !focusedElement.closest(`.${Block.CSS.content}`)) {
+      return;
+    }
+
+    this.Editor.InlineToolbar.handleShowingEvent(event);
   }
 
   /**

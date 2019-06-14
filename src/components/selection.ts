@@ -2,6 +2,7 @@
  * TextRange interface fot IE9-
  */
 import _ from './utils';
+import $ from './dom';
 
 interface TextRange {
   boundingTop: number;
@@ -53,6 +54,26 @@ export default class SelectionUtils {
     const selection = window.getSelection();
 
     return selection ? selection.anchorNode : null;
+  }
+
+  /**
+   * Returns selected anchor element
+   * @return {Element|null}
+   */
+  static get anchorElement(): Element | null {
+    const selection = window.getSelection();
+
+    if (!selection) {
+      return null;
+    }
+
+    const anchorNode = selection.anchorNode;
+
+    if (!$.isElement(anchorNode)) {
+      return anchorNode.parentElement;
+    } else {
+      return anchorNode;
+    }
   }
 
   /**
