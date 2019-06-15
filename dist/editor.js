@@ -23245,9 +23245,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Handle selection change on mobile devices for the Inline Toolbar support
          */
 
-        this.Editor.Listeners.on(document, 'selectionchange', function (event) {
-          _this2.selectionChanged(event);
-        }, true);
+        if (_utils.default.isTouchSupported()) {
+          this.Editor.Listeners.on(document, 'selectionchange', function (event) {
+            _this2.selectionChanged(event);
+          }, true);
+        }
       }
       /**
        * All keydowns on document
@@ -24778,6 +24780,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         return Util.deepMerge.apply(Util, [target].concat(sources));
+      }
+      /**
+       * Return true if current device supports touch events
+       *
+       * Note! This is a simple solution, it can give false-positive results.
+       * To detect touch devices more carefully, use 'touchstart' event listener
+       * @see http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
+       *
+       * @return {boolean}
+       */
+
+    }, {
+      key: "isTouchSupported",
+      value: function isTouchSupported() {
+        return 'ontouchstart' in document.documentElement;
       }
     }, {
       key: "keyCodes",

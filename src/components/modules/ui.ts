@@ -234,12 +234,15 @@ export default class UI extends Module {
     );
     this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
     this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), true);
+
     /**
      * Handle selection change on mobile devices for the Inline Toolbar support
      */
-    this.Editor.Listeners.on(document, 'selectionchange', (event) => {
-      this.selectionChanged(event as Event);
-    }, true);
+    if (_.isTouchSupported()) {
+      this.Editor.Listeners.on(document, 'selectionchange', (event) => {
+        this.selectionChanged(event as Event);
+      }, true);
+    }
   }
 
   /**
