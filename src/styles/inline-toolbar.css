@@ -16,6 +16,23 @@
     transform: translateX(-50%)
   }
 
+  &--left-oriented {
+    transform: translateX(-23px) translateY(8px) scale(0.9);
+  }
+
+  &--left-oriented&--showed {
+    transform: translateX(-23px);
+  }
+
+  &--right-oriented {
+    transform: translateX(-100%) translateY(8px) scale(0.9);
+    margin-left: 23px;
+  }
+
+  &--right-oriented&--showed {
+    transform: translateX(-100%);
+  }
+
   [hidden] {
     display: none !important;
   }

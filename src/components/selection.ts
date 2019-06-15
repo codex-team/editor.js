@@ -69,6 +69,10 @@ export default class SelectionUtils {
 
     const anchorNode = selection.anchorNode;
 
+    if (!anchorNode) {
+      return null;
+    }
+
     if (!$.isElement(anchorNode)) {
       return anchorNode.parentElement;
     } else {

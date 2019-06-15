@@ -54,10 +54,34 @@ export default class UI extends Module {
   }
 
   /**
-   * Width of center column of Editor
-   * @type {number}
+   * Return Width of center column of Editor
+   * @return {DOMRect}
    */
-  public contentWidth: number = 650;
+  public get contentRect(): DOMRect {
+    if (this.contentRectCache) {
+      console.log('content rect returned from cache:', this.contentRectCache);
+      return this.contentRectCache;
+    }
+
+    const someBlock = this.nodes.wrapper.querySelector(`.${Block.CSS.content}`);
+
+    /**
+     * When Editor is not ready, there is no Blocks, so return the default value
+     */
+    if (!someBlock) {
+      return {
+        width: 650,
+        left: 0,
+        right: 0,
+      } as DOMRect;
+    }
+
+    this.contentRectCache = someBlock.getBoundingClientRect() as DOMRect;
+
+    console.log('content rect recalculated', this.contentRectCache);
+
+    return this.contentRectCache;
+  }
 
   /**
    * HTML Elements used for UI
@@ -67,6 +91,13 @@ export default class UI extends Module {
     wrapper: null,
     redactor: null,
   };
+
+  /**
+   * Cache for center column rectangle info
+   * Invalidates on window resize
+   * @type {DOMRect}
+   */
+  private contentRectCache: DOMRect = undefined;
 
   /**
    * Adds loader to editor while content is not ready
@@ -155,7 +186,7 @@ export default class UI extends Module {
     /**
      * If Editor has injected into the narrow container, enable Narrow Mode
      */
-    if (this.nodes.holder.offsetWidth < this.contentWidth) {
+    if (this.nodes.holder.offsetWidth < this.contentRect.width) {
       this.nodes.wrapper.classList.add(this.CSS.editorWrapperNarrow);
     }
 
@@ -543,7 +574,7 @@ export default class UI extends Module {
   }
 
   /**
-   * Append prebuilded sprite with SVG icons
+   * Append prebuilt sprite with SVG icons
    */
   private appendSVGSprite(): void {
     const spriteHolder = $.make('div');
