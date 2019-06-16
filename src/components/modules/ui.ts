@@ -604,7 +604,7 @@ export default class UI extends Module {
   }
 
   /**
-   * Handle selection changed on mobile devices
+   * Handle selection changes on mobile devices
    * Uses for showing the Inline Toolbar
    * @param {Event} event
    */

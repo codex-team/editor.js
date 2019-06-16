@@ -192,7 +192,7 @@ export default class InlineToolbar extends Module {
     }
 
     /**
-     * Inline Toolbar has -50% transition, so we need to check real coords to prevent overflowing
+     * Inline Toolbar has -50% translateX, so we need to check real coords to prevent overflowing
      */
     const realLeftCoord = newCoords.x - this.width / 2;
     const realRightCoord = newCoords.x + this.width / 2;
