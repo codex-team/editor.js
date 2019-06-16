@@ -1,6 +1,6 @@
 .ce-inline-toolbar {
   @apply --overlay-pane;
-  padding: 6px;
+  padding: 3px;
   transform: translateX(-50%) translateY(8px) scale(0.9);
   box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),
               5px -12px 34px -13px rgba(97, 105, 134, 0.6),
@@ -74,7 +74,7 @@
     outline: none;
     border: 0;
     border-radius: 3px;
-    margin: 6px 0 0;
+    margin: 3px 0 0;
     font-size: 13px;
     padding: 8px;
     width: 100%;
