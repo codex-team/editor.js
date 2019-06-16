@@ -17581,19 +17581,19 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
      * @param {EventTarget} element - DOM element that needs to be listened
      * @param {String} eventType - event type
      * @param {Function} handler - method that will be fired on event
-     * @param {Boolean} useCapture - use event bubbling
+     * @param {Boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
      */
 
 
     (0, _createClass2.default)(Listeners, [{
       key: "on",
       value: function on(element, eventType, handler) {
-        var useCapture = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+        var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
         var assignedEventData = {
           element: element,
           eventType: eventType,
           handler: handler,
-          useCapture: useCapture
+          options: options
         };
         var alreadyExist = this.findOne(element, eventType, handler);
 
@@ -17602,7 +17602,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         this.allListeners.push(assignedEventData);
-        element.addEventListener(eventType, handler, useCapture);
+        element.addEventListener(eventType, handler, options);
       }
       /**
        * Removes event listener from element
@@ -17610,7 +17610,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {EventTarget} element - DOM element that we removing listener
        * @param {String} eventType - event type
        * @param {Function} handler - remove handler, if element listens several handlers on the same event type
-       * @param {Boolean} useCapture - use event bubbling
+       * @param {Boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
        */
 
     }, {
@@ -17618,7 +17618,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function off(element, eventType, handler) {
         var _this2 = this;
 
-        var useCapture = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+        var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
         var existingListeners = this.findAll(element, eventType, handler);
         existingListeners.forEach(function (listener, i) {
           var index = _this2.allListeners.indexOf(existingListeners[i]);
@@ -17627,7 +17627,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             _this2.allListeners.splice(index, 1);
           }
         });
-        element.removeEventListener(eventType, handler, useCapture);
+        element.removeEventListener(eventType, handler, options);
       }
       /**
        * @param {EventTarget} element
@@ -23041,6 +23041,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
       _this.contentRectCache = undefined;
+      /**
+       * Handle window resize only when it finished
+       * @type {() => void}
+       */
+
+      _this.resizeDebouncer = _utils.default.debounce(function () {
+        _this.windowResize();
+      }, 200);
       return _this;
     }
     /**
@@ -23250,6 +23258,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             _this2.selectionChanged(event);
           }, true);
         }
+
+        this.Editor.Listeners.on(window, 'resize', function () {
+          _this2.resizeDebouncer();
+        }, {
+          passive: true
+        });
+      }
+      /**
+       * Resize window handler
+       */
+
+    }, {
+      key: "windowResize",
+      value: function windowResize() {
+        /**
+         * Invalidate content zone size cached, because it may be changed
+         */
+        this.contentRectCache = null;
       }
       /**
        * All keydowns on document

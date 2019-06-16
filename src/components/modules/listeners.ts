@@ -22,9 +22,9 @@ export interface ListenerData {
   handler: (event: Event) => void;
 
   /**
-   * Should event bubbling be used or not
+   * @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
    */
-  useCapture: boolean;
+  options: boolean | AddEventListenerOptions;
 }
 
 /**
@@ -56,19 +56,19 @@ export default class Listeners extends Module {
    * @param {EventTarget} element - DOM element that needs to be listened
    * @param {String} eventType - event type
    * @param {Function} handler - method that will be fired on event
-   * @param {Boolean} useCapture - use event bubbling
+   * @param {Boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
    */
   public on(
     element: EventTarget,
     eventType: string,
     handler: (event: Event) => void,
-    useCapture: boolean = false,
+    options: boolean | AddEventListenerOptions = false,
   ): void {
     const assignedEventData = {
       element,
       eventType,
       handler,
-      useCapture,
+      options,
     };
 
     const alreadyExist = this.findOne(element, eventType, handler);
@@ -76,7 +76,7 @@ export default class Listeners extends Module {
     if (alreadyExist) { return; }
 
     this.allListeners.push(assignedEventData);
-    element.addEventListener(eventType, handler, useCapture);
+    element.addEventListener(eventType, handler, options);
   }
 
   /**
@@ -85,13 +85,13 @@ export default class Listeners extends Module {
    * @param {EventTarget} element - DOM element that we removing listener
    * @param {String} eventType - event type
    * @param {Function} handler - remove handler, if element listens several handlers on the same event type
-   * @param {Boolean} useCapture - use event bubbling
+   * @param {Boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
    */
   public off(
     element: EventTarget,
     eventType: string,
     handler: (event: Event) => void,
-    useCapture: boolean = false,
+    options: boolean | AddEventListenerOptions = false,
   ): void {
     const existingListeners = this.findAll(element, eventType, handler);
 
@@ -103,7 +103,7 @@ export default class Listeners extends Module {
       }
     });
 
-    element.removeEventListener(eventType, handler, useCapture);
+    element.removeEventListener(eventType, handler, options);
   }
 
   /**

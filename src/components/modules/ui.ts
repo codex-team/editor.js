@@ -100,6 +100,14 @@ export default class UI extends Module {
   private contentRectCache: DOMRect = undefined;
 
   /**
+   * Handle window resize only when it finished
+   * @type {() => void}
+   */
+  private resizeDebouncer: () => void = _.debounce(() => {
+    this.windowResize();
+  }, 200);
+
+  /**
    * Adds loader to editor while content is not ready
    */
   public addLoader(): void {
@@ -243,6 +251,22 @@ export default class UI extends Module {
         this.selectionChanged(event as Event);
       }, true);
     }
+
+    this.Editor.Listeners.on(window, 'resize', () => {
+      this.resizeDebouncer();
+    }, {
+      passive: true,
+    });
+  }
+
+  /**
+   * Resize window handler
+   */
+  private windowResize(): void {
+    /**
+     * Invalidate content zone size cached, because it may be changed
+     */
+    this.contentRectCache = null;
   }
 
   /**
