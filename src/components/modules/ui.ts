@@ -59,7 +59,6 @@ export default class UI extends Module {
    */
   public get contentRect(): DOMRect {
     if (this.contentRectCache) {
-      console.log('content rect returned from cache:', this.contentRectCache);
       return this.contentRectCache;
     }
 
@@ -78,10 +77,14 @@ export default class UI extends Module {
 
     this.contentRectCache = someBlock.getBoundingClientRect() as DOMRect;
 
-    console.log('content rect recalculated', this.contentRectCache);
-
     return this.contentRectCache;
   }
+
+  /**
+   * Flag that became true on mobile viewport
+   * @type {boolean}
+   */
+  public isMobile: boolean = false;
 
   /**
    * HTML Elements used for UI
@@ -128,8 +131,19 @@ export default class UI extends Module {
    * Making main interface
    */
   public async prepare(): Promise<void> {
+    /**
+     * Detect mobile version
+     */
+    this.checkIsMobile();
+
+    /**
+     * Make main UI elements
+     */
     await this.make();
 
+    /**
+     * Loader for rendering process
+     */
     this.addLoader();
 
     /**
@@ -172,6 +186,13 @@ export default class UI extends Module {
    */
   public destroy(): void {
     this.nodes.holder.innerHTML = '';
+  }
+
+  /**
+   * Check for mobile mode and cache a result
+   */
+  private checkIsMobile() {
+    this.isMobile = window.innerWidth < 650;
   }
 
   /**
@@ -263,10 +284,18 @@ export default class UI extends Module {
    * Resize window handler
    */
   private windowResize(): void {
+    this.Editor.Toolbar.close();
+    this.Editor.InlineToolbar.close();
+
     /**
      * Invalidate content zone size cached, because it may be changed
      */
     this.contentRectCache = null;
+
+    /**
+     * Detect mobile version
+     */
+    this.checkIsMobile();
   }
 
   /**
@@ -445,8 +474,6 @@ export default class UI extends Module {
      * Do not fire check on clicks at the Inline Toolbar buttons
      */
     const target = event.target as HTMLElement;
-    const clickedOnInlineToolbarButton = target.closest(`.${this.Editor.InlineToolbar.CSS.inlineToolbar}`);
-
     const clickedInsideOfEditor = this.nodes.holder.contains(target) || Selection.isAtEditor;
 
     if (!clickedInsideOfEditor) {
@@ -461,11 +488,6 @@ export default class UI extends Module {
       this.Editor.Toolbar.close();
       this.Editor.BlockSelection.clearSelection();
 
-    } else if (!clickedOnInlineToolbarButton) {
-      /**
-       * Move inline toolbar to the focused Block
-       */
-      this.Editor.InlineToolbar.handleShowingEvent(event);
     }
 
     if (Selection.isAtEditor) {

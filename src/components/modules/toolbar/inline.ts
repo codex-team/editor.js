@@ -137,6 +137,10 @@ export default class InlineToolbar extends Module {
      */
     this.addTools();
 
+    /**
+     * Recalculate initial width with all buttons
+     */
+    this.recalculateWidth();
   }
 
   /**
@@ -156,6 +160,7 @@ export default class InlineToolbar extends Module {
 
     this.move();
     this.open();
+    this.Editor.Toolbar.close();
 
     /** Check Tools state for selected fragment */
     this.checkToolsState();
@@ -388,10 +393,17 @@ export default class InlineToolbar extends Module {
       lastVisibleButton.classList.add(this.CSS.inlineToolButtonLast);
     }
 
-    this.width = this.nodes.wrapper.offsetWidth;
-    console.log('IT width recalculated', this.width);
+    /**
+     * Recalculate width because some buttons can be hidden
+     */
+    this.recalculateWidth();
+  }
 
-    console.log('filter tool passed for: ', currentBlock.name);
+  /**
+   * Recalculate inline toolbar width
+   */
+  private recalculateWidth(): void {
+    this.width = this.nodes.wrapper.offsetWidth;
   }
 
   /**

@@ -10,16 +10,9 @@
   display: none;
 
   @media (--mobile) {
-    position: fixed;
-    bottom: 0;
-    top: auto;
-    left: 0;
-    right: 0;
-    z-index: 9;
-    height: 50px;
-    background: #fff;
-    box-shadow:  0 -2px 12px rgba(60, 67, 81, 0.18);
-    transform: none !important;
+    @apply --overlay-pane;
+    padding: 3px;
+    margin-top: 5px;
   }
 
   &--opened {
@@ -39,9 +32,7 @@
       display: flex;
       align-content: center;
       margin: 0;
-      padding: 0 10px;
-      max-width: calc(100% - 70px);
-      overflow-x: auto;
+      max-width: calc(100% - 40px);
     }
   }
 
@@ -50,13 +41,16 @@
 
     position: absolute;
     left: calc(var(--toolbox-buttons-size) * -1);
+    flex-shrink: 0;
 
     &--hidden {
       display: none;
     }
 
     @media (--mobile){
-      display: none !important;
+      display: inline-flex !important;
+      position: static;
+      transform: none !important;
     }
   }
 
@@ -80,6 +74,7 @@
     @media (--mobile){
       position: static;
       margin-left: auto;
+      padding-right: 10px;
       display: flex;
       align-items: center;
     }
