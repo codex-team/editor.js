@@ -316,7 +316,7 @@ export default class Util {
    * @return {object}
    */
   public static deepMerge(target, ...sources) {
-    const isObject = (item) => item && typeof item === 'object' && !Array.isArray(item);
+    const isObject = (item) => item && typeof item === 'object' && !Array.isArray(item) && !(item instanceof RegExp);
 
     if (!sources.length) { return target; }
     const source = sources.shift();
