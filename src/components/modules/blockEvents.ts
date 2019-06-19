@@ -121,6 +121,7 @@ export default class BlockEvents extends Module {
    */
   public mouseUp(event): void {
     if (SelectionUtils.almostAllSelected(event.target.textContent)) {
+      this.Editor.InlineToolbar.close();
       this.Editor.ConversionToolbar.handleShowingEvent(event, true);
     } else {
       this.Editor.InlineToolbar.handleShowingEvent(event);
@@ -542,6 +543,8 @@ export default class BlockEvents extends Module {
   private needToolbarClosing(event) {
     const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened),
       blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
+      inlineToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.InlineToolbar.opened),
+      conversionToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.ConversionToolbar.opened),
       flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
 
     /**
@@ -550,6 +553,12 @@ export default class BlockEvents extends Module {
      * 2. When Toolbar is opened and Tab leafs its Tools
      * 3. When Toolbar's component is opened and some its item selected
      */
-    return !(event.shiftKey || flippingToolbarItems || toolboxItemSelected || blockSettingsItemSelected);
+    return !(event.shiftKey
+      || flippingToolbarItems
+      || toolboxItemSelected
+      || blockSettingsItemSelected
+      || inlineToolbarItemSelected
+      || conversionToolbarItemSelected
+    );
   }
 }

@@ -77,22 +77,23 @@ export default class ConversionToolbar extends Module {
    */
   public handleShowingEvent(event, force = false): void {
     const { BlockManager, BlockSelection } = this.Editor;
-    const currentBlock = BlockManager.currentBlock;
 
-    if (!currentBlock || BlockSelection.allBlocksSelected || (!force && currentBlock && !currentBlock.selected)) {
+    let currentBlock = BlockManager.currentBlock;
+    if (force && !currentBlock) {
+      currentBlock = this.Editor.BlockManager.getBlock(SelectionUtils.get().anchorNode as HTMLElement);
+
+      if (currentBlock) {
+        this.Editor.BlockManager.setCurrentBlockByChildNode(SelectionUtils.anchorNode);
+      }
+    }
+
+    console.log(currentBlock);
+    if (!force && (!currentBlock || BlockSelection.allBlocksSelected || (currentBlock && !currentBlock.selected))) {
       this.close();
       return;
     }
 
-    /**
-     * Force Block selection
-     */
-    if (force) {
-      currentBlock.selected = true;
-      SelectionUtils.get().removeAllRanges();
-    }
-
-    const currentToolName = BlockManager.currentBlock.name;
+    const currentToolName = currentBlock.name;
 
     if (this.tools[currentToolName]) {
       this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);

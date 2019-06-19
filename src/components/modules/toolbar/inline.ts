@@ -141,6 +141,7 @@ export default class InlineToolbar extends Module {
    * @param {KeyboardEvent|MouseEvent} event
    */
   public handleShowingEvent(event): void {
+    console.trace();
     if (!this.allowedToShow()) {
       this.close();
       return;

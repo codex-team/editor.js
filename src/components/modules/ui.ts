@@ -12,7 +12,7 @@ import Module from '../__module';
 import $ from '../dom';
 import _ from '../utils';
 
-import Selection from '../selection';
+import Selection, {default as SelectionUtils} from '../selection';
 
 /**
  * @class
@@ -391,9 +391,9 @@ export default class UI extends Module {
 
   /**
    * All clicks on document
-   * @param {MouseEvent} event - Click
+   * @param {Event} event - Click
    */
-  private documentClicked(event: MouseEvent): void {
+  private documentClicked(event): void {
     /**
      * Close Inline Toolbar when nothing selected
      * Do not fire check on clicks at the Inline Toolbar buttons
@@ -414,13 +414,15 @@ export default class UI extends Module {
       this.Editor.InlineToolbar.close();
       this.Editor.Toolbar.close();
       this.Editor.BlockSelection.clearSelection();
-      this.Editor.ConversionToolbar.handleShowingEvent(event);
+      this.Editor.ConversionToolbar.close();
 
     } else if (!clickedOnInlineToolbarButton) {
-      /**
-       * Move inline toolbar to the focused Block
-       */
-      this.Editor.InlineToolbar.handleShowingEvent(event);
+      if (!SelectionUtils.almostAllSelected(event.target.textContent)) {
+        /**
+         * Move inline toolbar to the focused Block
+         */
+        this.Editor.InlineToolbar.handleShowingEvent(event);
+      }
     }
 
     if (Selection.isAtEditor) {

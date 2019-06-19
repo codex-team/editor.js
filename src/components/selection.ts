@@ -87,10 +87,11 @@ export default class SelectionUtils {
       return false;
     }
 
+    const copiedFragment = range.cloneContents();
     const lengthOfWholeText = targetText.length;
-    const selectedTextLength = range.endOffset - range.startOffset;
+    const lengthOfCopiedText = copiedFragment.textContent.length;
 
-    return selectedTextLength / lengthOfWholeText > 0.95;
+    return lengthOfCopiedText / lengthOfWholeText > 0.95;
   }
 
   /**
