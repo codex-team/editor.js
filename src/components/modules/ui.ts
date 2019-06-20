@@ -284,9 +284,6 @@ export default class UI extends Module {
    * Resize window handler
    */
   private windowResize(): void {
-    this.Editor.Toolbar.close();
-    this.Editor.InlineToolbar.close();
-
     /**
      * Invalidate content zone size cached, because it may be changed
      */
