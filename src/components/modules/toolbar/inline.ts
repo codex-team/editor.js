@@ -23,6 +23,8 @@ export default class InlineToolbar extends Module {
   public CSS = {
     inlineToolbar: 'ce-inline-toolbar',
     inlineToolbarShowed: 'ce-inline-toolbar--showed',
+    inlineToolbarLeftOriented: 'ce-inline-toolbar--left-oriented',
+    inlineToolbarRightOriented: 'ce-inline-toolbar--right-oriented',
     buttonsWrapper: 'ce-inline-toolbar__buttons',
     actionsWrapper: 'ce-inline-toolbar__actions',
     inlineToolButton: 'ce-inline-tool',
@@ -80,6 +82,12 @@ export default class InlineToolbar extends Module {
   private focusedButtonIndex: number = -1;
 
   /**
+   * Cache for Inline Toolbar width
+   * @type {number}
+   */
+  private width: number = 0;
+
+  /**
    * Inline Toolbar Tools
    *
    * @returns Map<string, InlineTool>
@@ -129,6 +137,10 @@ export default class InlineToolbar extends Module {
      */
     this.addTools();
 
+    /**
+     * Recalculate initial width with all buttons
+     */
+    this.recalculateWidth();
   }
 
   /**
@@ -148,6 +160,7 @@ export default class InlineToolbar extends Module {
 
     this.move();
     this.open();
+    this.Editor.Toolbar.close();
 
     /** Check Tools state for selected fragment */
     this.checkToolsState();
@@ -177,6 +190,19 @@ export default class InlineToolbar extends Module {
     if (selectionRect.width) {
       newCoords.x += Math.floor(selectionRect.width / 2);
     }
+
+    /**
+     * Inline Toolbar has -50% translateX, so we need to check real coords to prevent overflowing
+     */
+    const realLeftCoord = newCoords.x - this.width / 2;
+    const realRightCoord = newCoords.x + this.width / 2;
+
+    /**
+     * By default, Inline Toolbar has top-corner at the center
+     * We are adding a modifiers for to move corner to the left or right
+     */
+    this.nodes.wrapper.classList.toggle(this.CSS.inlineToolbarLeftOriented, realLeftCoord < this.Editor.UI.contentRect.left);
+    this.nodes.wrapper.classList.toggle(this.CSS.inlineToolbarRightOriented, realRightCoord > this.Editor.UI.contentRect.right);
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
     this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
@@ -366,6 +392,18 @@ export default class InlineToolbar extends Module {
     if (lastVisibleButton) {
       lastVisibleButton.classList.add(this.CSS.inlineToolButtonLast);
     }
+
+    /**
+     * Recalculate width because some buttons can be hidden
+     */
+    this.recalculateWidth();
+  }
+
+  /**
+   * Recalculate inline toolbar width
+   */
+  private recalculateWidth(): void {
+    this.width = this.nodes.wrapper.offsetWidth;
   }
 
   /**

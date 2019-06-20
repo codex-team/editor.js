@@ -25,11 +25,11 @@
   @apply --toolbar-button;
 
   &:not(:nth-child(3n+3)) {
-    margin-right: 5px;
+    margin-right: 3px;
   }
 
   &:nth-child(n+4) {
-    margin-top: 5px;
+    margin-top: 3px;
   }
 
   &--active {
