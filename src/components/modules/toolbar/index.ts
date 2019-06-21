@@ -196,18 +196,27 @@ export default class Toolbar extends Module {
       return;
     }
 
-    /**
-     * Set Toolbar Min Height as Block's height
-     * Plus Button and Toolbox positioned at the center of the Toolbar
-     */
-    const contentOffset = Math.floor(currentBlock.offsetHeight / 2);
+    const { isMobile } = this.Editor.UI;
+    const blockHeight = currentBlock.offsetHeight;
+    let toolbarY = currentBlock.offsetTop;
 
-    this.nodes.plusButton.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
-    this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
+    /**
+     * 1) On desktop — Toolbar at the top of Block, Plus/Toolbox moved the center of Block
+     * 2) On mobile — Toolbar at the bottom of Block
+     */
+    if (!isMobile) {
+      const contentOffset = Math.floor(blockHeight / 2);
+
+      this.nodes.plusButton.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
+      this.Editor.Toolbox.nodes.toolbox.style.transform = `translate3d(0, calc(${contentOffset}px - 50%), 0)`;
+    } else {
+      toolbarY += blockHeight;
+    }
+
     /**
      * Move Toolbar to the Top coordinate of Block
      */
-    this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(currentBlock.offsetTop)}px, 0)`;
+    this.nodes.wrapper.style.transform = `translate3D(0, ${Math.floor(toolbarY)}px, 0)`;
   }
 
   /**

@@ -338,4 +338,17 @@ export default class Util {
     return Util.deepMerge(target, ...sources);
   }
 
+  /**
+   * Return true if current device supports touch events
+   *
+   * Note! This is a simple solution, it can give false-positive results.
+   * To detect touch devices more carefully, use 'touchstart' event listener
+   * @see http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
+   *
+   * @return {boolean}
+   */
+  public static isTouchSupported(): boolean {
+    return 'ontouchstart' in document.documentElement;
+  }
+
 }

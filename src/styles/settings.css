@@ -2,7 +2,7 @@
   @apply --overlay-pane;
   right: 5px;
   top: 35px;
-  min-width: 124px;
+  min-width: 114px;
 
   @media (--mobile){
     bottom: 50px;
@@ -23,19 +23,19 @@
 
   &--opened {
     display: block;
-    animation-duration: 0.5s;
-    animation-name: bounceIn;
+    animation-duration: 0.1s;
+    animation-name: panelShowing;
   }
 
   &__plugin-zone {
     &:not(:empty){
-      padding: 6px 6px 0;
+      padding: 3px 3px 0;
     }
   }
 
   &__default-zone {
     &:not(:empty){
-      padding: 6px;
+      padding: 3px;
     }
   }
 
@@ -43,11 +43,11 @@
     @apply --toolbar-button;
 
     &:not(:nth-child(3n+3)) {
-      margin-right: 5px;
+      margin-right: 3px;
     }
 
     &:nth-child(n+4) {
-      margin-top: 5px;
+      margin-top: 3px;
     }
 
     line-height: 32px;
