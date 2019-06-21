@@ -85,14 +85,11 @@ export default class BlockEvents extends Module {
      */
     this.Editor.BlockManager.clearFocused();
 
-    if (event.keyCode !== _.keyCodes.ENTER) {
-      if (event.keyCode !== _.keyCodes.BACKSPACE) {
-        /**
-         * Clear selection and restore caret before navigation
-         */
-        this.Editor.BlockSelection.clearSelection(true);
-      }
-
+    if (event.keyCode !== _.keyCodes.ENTER && event.keyCode !== _.keyCodes.BACKSPACE) {
+      /**
+       * Clear selection and restore caret before navigation
+       */
+      this.Editor.BlockSelection.clearSelection(true);
       this.Editor.ConversionToolbar.handleShowingEvent(event);
     }
   }

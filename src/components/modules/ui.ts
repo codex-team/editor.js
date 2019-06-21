@@ -482,9 +482,9 @@ export default class UI extends Module {
 
   /**
    * All clicks on document
-   * @param {Event} event - Click
+   * @param {MouseEvent} event - Click
    */
-  private documentClicked(event): void {
+  private documentClicked(event: MouseEvent): void {
     /**
      * Close Inline Toolbar when nothing selected
      * Do not fire check on clicks at the Inline Toolbar buttons
