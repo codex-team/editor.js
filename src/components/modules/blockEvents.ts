@@ -102,7 +102,17 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public keyup(event): void {
-    if (SelectionUtils.almostAllSelected(event.target.textContent)) {
+    const currentBlock = this.Editor.BlockManager.currentBlock;
+
+    if (!currentBlock) {
+      return;
+    }
+
+    /**
+     * According to the Conversion Toolbar convention range must of 95% of plugins content
+     * that why we must with the length of pluginsContent
+     */
+    if (SelectionUtils.almostAllSelected(currentBlock.pluginsContent.textContent)) {
       this.Editor.InlineToolbar.close();
       this.Editor.ConversionToolbar.handleShowingEvent(event, true);
     } else {
@@ -120,7 +130,17 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public mouseUp(event): void {
-    if (SelectionUtils.almostAllSelected(event.target.textContent)) {
+    const currentBlock = this.Editor.BlockManager.currentBlock;
+
+    if (!currentBlock) {
+      return;
+    }
+
+    /**
+     * MouseUp on inline tags returns those tags as event.target.
+     * According to the Conversion Toolbar convention range must of 95% of plugins content
+     */
+    if (SelectionUtils.almostAllSelected(currentBlock.pluginsContent.textContent)) {
       this.Editor.InlineToolbar.close();
       this.Editor.ConversionToolbar.handleShowingEvent(event, true);
     } else {
@@ -134,7 +154,8 @@ export default class BlockEvents extends Module {
    */
   public tabPressed(event): void {
 
-    const {currentBlock} = this.Editor.BlockManager;
+    const { BlockManager, Tools, ConversionToolbar, InlineToolbar } = this.Editor;
+    const currentBlock = BlockManager.currentBlock;
 
     if (!currentBlock) {
       return;
@@ -148,60 +169,21 @@ export default class BlockEvents extends Module {
     const shiftKey = event.shiftKey,
       direction = shiftKey ? 'left' : 'right';
 
+    const canLeafToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
+    const canLeafInlineToolbar = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
+    const canLeafConversionToolbar = !currentBlock.isEmpty && ConversionToolbar.opened;
+
     /**
      * For empty Blocks we show Plus button via Toobox only for initial Blocks
      */
-    if (this.Editor.Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty) {
-      /**
-       * Work with Toolbox
-       * ------------------
-       *
-       * If Toolbox is not open, then just open it and show plus button
-       * Next Tab press will leaf Toolbox Tools
-       */
-      if (!this.Editor.Toolbar.opened) {
-        this.Editor.Toolbar.open(false , false);
-        this.Editor.Toolbar.plusButton.show();
-      } else {
-        this.Editor.Toolbox.leaf(direction);
-      }
-
-      this.Editor.Toolbox.open();
-    } else if (!currentBlock.isEmpty && !SelectionUtils.isCollapsed) {
-      /**
-       * Work with Inline Tools
-       * -----------------------
-       *
-       * If InlineToolbar is not open, just open it and focus first button
-       * Next Tab press will leaf InlineToolbar Tools
-       */
-      if (this.Editor.InlineToolbar.opened) {
-        this.Editor.InlineToolbar.leaf(direction);
-      }
-    } else if (this.Editor.ConversionToolbar.opened) {
-      this.Editor.ConversionToolbar.leaf(direction);
+    if (canLeafToolbox) {
+      this.leafToolboxTools(direction);
+    } else if (canLeafInlineToolbar) {
+      this.leafInlineToolbarTools(direction);
+    } else if (canLeafConversionToolbar) {
+      this.leafConversionToolbarTools(direction);
     } else {
-      /**
-       * Open Toolbar and show BlockSettings
-       */
-      if (!this.Editor.Toolbar.opened) {
-        this.Editor.BlockManager.currentBlock.focused = true;
-        this.Editor.Toolbar.open(true, false);
-        this.Editor.Toolbar.plusButton.hide();
-      }
-
-      /**
-       * Work with Block Tunes
-       * ----------------------
-       *
-       * If BlockSettings is not open, then open BlockSettings
-       * Next Tab press will leaf Settings Buttons
-       */
-      if (!this.Editor.BlockSettings.opened) {
-        this.Editor.BlockSettings.open();
-      }
-
-      this.Editor.BlockSettings.leaf(direction);
+      this.leafBlockSettingsTools(direction);
     }
   }
 
@@ -560,5 +542,64 @@ export default class BlockEvents extends Module {
       || inlineToolbarItemSelected
       || conversionToolbarItemSelected
     );
+  }
+
+  /**
+   * If Toolbox is not open, then just open it and show plus button
+   * Next Tab press will leaf Toolbox Tools
+   *
+   * @param {string} direction
+   */
+  private leafToolboxTools(direction: string): void {
+    if (!this.Editor.Toolbar.opened) {
+      this.Editor.Toolbar.open(false , false);
+      this.Editor.Toolbar.plusButton.show();
+    } else {
+      this.Editor.Toolbox.leaf(direction);
+    }
+
+    this.Editor.Toolbox.open();
+  }
+
+  /**
+   * If InlineToolbar is not open, just open it and focus first button
+   * Next Tab press will leaf InlineToolbar Tools
+   *
+   * @param {string} direction
+   */
+  private leafInlineToolbarTools(direction: string): void {
+    if (this.Editor.InlineToolbar.opened) {
+      this.Editor.InlineToolbar.leaf(direction);
+    }
+  }
+
+  /**
+   * Leaf Conversion Toolbar Tools
+   * @param {string} direction
+   */
+  private leafConversionToolbarTools(direction: string): void {
+    this.Editor.ConversionToolbar.leaf(direction);
+  }
+
+  /**
+   * Open Toolbar and show BlockSettings before flipping Tools
+   * @param {string} direction
+   */
+  private leafBlockSettingsTools(direction: string): void {
+    if (!this.Editor.Toolbar.opened) {
+      this.Editor.BlockManager.currentBlock.focused = true;
+      this.Editor.Toolbar.open(true, false);
+      this.Editor.Toolbar.plusButton.hide();
+    }
+
+    /**
+     * If BlockSettings is not open, then open BlockSettings
+     * Next Tab press will leaf Settings Buttons
+     */
+    if (!this.Editor.BlockSettings.opened) {
+      this.Editor.BlockSettings.open();
+    }
+
+    this.Editor.BlockSettings.leaf(direction);
   }
 }

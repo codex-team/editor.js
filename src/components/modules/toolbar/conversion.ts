@@ -87,7 +87,6 @@ export default class ConversionToolbar extends Module {
       }
     }
 
-    console.log(currentBlock);
     if (!force && (!currentBlock || BlockSelection.allBlocksSelected || (currentBlock && !currentBlock.selected))) {
       this.close();
       return;
