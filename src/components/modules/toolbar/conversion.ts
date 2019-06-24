@@ -225,6 +225,7 @@ export default class ConversionToolbar extends Module {
      */
     let newBlockData = {};
     const importProp = replacingTool.conversionConfig.import;
+
     if (typeof importProp === 'function') {
       newBlockData = importProp(cleaned);
     } else if (typeof importProp === 'string') {
