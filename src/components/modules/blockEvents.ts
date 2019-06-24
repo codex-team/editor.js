@@ -90,7 +90,6 @@ export default class BlockEvents extends Module {
        * Clear selection and restore caret before navigation
        */
       this.Editor.BlockSelection.clearSelection(true);
-      this.Editor.ConversionToolbar.handleShowingEvent(event);
     }
   }
 
@@ -99,26 +98,59 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public keyup(event): void {
-    const currentBlock = this.Editor.BlockManager.currentBlock;
+    let currentBlock = this.Editor.BlockManager.currentBlock;
+
+    /**
+     * If current Block is not defined than try to get from event's target
+     */
+    if (!currentBlock) {
+      try {
+        currentBlock = this.Editor.BlockManager.setCurrentBlockByChildNode(event.target);
+      } catch (e) {
+        _.log(e);
+        return;
+      }
+    }
+
+    let isHandledOnKeyDown = false;
+    switch (event.keyCode) {
+      case _.keyCodes.BACKSPACE:
+      case _.keyCodes.ENTER:
+      case _.keyCodes.DOWN:
+      case _.keyCodes.RIGHT:
+      case _.keyCodes.UP:
+      case _.keyCodes.LEFT:
+      case _.keyCodes.TAB:
+      case _.keyCodes.ESC:
+        isHandledOnKeyDown = true;
+        break;
+    }
+
+    if (isHandledOnKeyDown) {
+      return;
+    }
 
     if (!currentBlock) {
       return;
     }
+
+    const { InlineToolbar, ConversionToolbar, UI } = this.Editor;
 
     /**
      * According to the Conversion Toolbar convention range must of 95% of plugins content
      * that why we must with the length of pluginsContent
      */
     if (SelectionUtils.almostAllSelected(currentBlock.pluginsContent.textContent)) {
-      this.Editor.InlineToolbar.close();
-      this.Editor.ConversionToolbar.handleShowingEvent(event, true);
+      InlineToolbar.close();
+      ConversionToolbar.handleShowingEvent(event);
     } else {
-      this.Editor.InlineToolbar.handleShowingEvent(event);
+      ConversionToolbar.close();
+      InlineToolbar.handleShowingEvent(event);
 
       /**
        * Check if editor is empty on each keyup and add special css class to wrapper
        */
-      this.Editor.UI.checkEmptiness();
+      UI.checkEmptiness();
     }
   }
 
@@ -127,21 +159,32 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public mouseUp(event): void {
-    const currentBlock = this.Editor.BlockManager.currentBlock;
+    let currentBlock = this.Editor.BlockManager.currentBlock;
 
+    /**
+     * If current Block is not defined than try to get from event's target
+     */
     if (!currentBlock) {
-      return;
+      try {
+        currentBlock = this.Editor.BlockManager.setCurrentBlockByChildNode(event.target);
+      } catch (e) {
+        _.log(e);
+        return;
+      }
     }
+
+    const { InlineToolbar, ConversionToolbar } = this.Editor;
 
     /**
      * MouseUp on inline tags returns those tags as event.target.
      * According to the Conversion Toolbar convention range must of 95% of plugins content
      */
     if (SelectionUtils.almostAllSelected(currentBlock.pluginsContent.textContent)) {
-      this.Editor.InlineToolbar.close();
-      this.Editor.ConversionToolbar.handleShowingEvent(event, true);
+      InlineToolbar.close();
+      ConversionToolbar.handleShowingEvent(event);
     } else {
-      this.Editor.InlineToolbar.handleShowingEvent(event);
+      ConversionToolbar.close();
+      InlineToolbar.handleShowingEvent(event);
     }
   }
 
@@ -311,15 +354,6 @@ export default class BlockEvents extends Module {
       event.stopImmediatePropagation();
 
       InlineToolbar.focusedButton.click();
-      return;
-    }
-
-    if (this.Editor.InlineToolbar.opened && this.Editor.InlineToolbar.focusedButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      this.Editor.InlineToolbar.focusedButton.click();
       return;
     }
 

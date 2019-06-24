@@ -251,21 +251,34 @@ export default class BlockSelection extends Module {
       return;
     }
 
-    /** Prevent default selection */
-    event.preventDefault();
-
     if (this.needToSelectAll) {
+      /** Prevent default selection */
+      event.preventDefault();
+
+      /** Save selection */
+      this.selection.save();
+
+      /**
+       * Remove Ranges from Selection
+       */
+      SelectionUtils.get()
+        .removeAllRanges();
+
       this.selectAllBlocks();
       this.needToSelectAll = false;
-    } else {
-      this.selectBlockByIndex();
-      this.needToSelectAll = true;
-    }
 
-    /**
-     * Show ConversionToolbar to be able to convert current Block
-     */
-    this.Editor.ConversionToolbar.handleShowingEvent(event);
+      /**
+       * Close ConversionToolbar when all Blocks selected
+       */
+      this.Editor.ConversionToolbar.close();
+    } else {
+      this.needToSelectAll = true;
+
+      /**
+       * Show ConversionToolbar to be able to convert current Block
+       */
+      this.Editor.ConversionToolbar.handleShowingEvent(event);
+    }
   }
 
   /**

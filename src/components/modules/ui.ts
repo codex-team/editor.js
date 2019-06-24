@@ -617,7 +617,7 @@ export default class UI extends Module {
 
     /** Clear selection */
     this.Editor.BlockSelection.clearSelection();
-    this.Editor.ConversionToolbar.handleShowingEvent(event);
+    this.Editor.ConversionToolbar.close();
   }
 
   /**

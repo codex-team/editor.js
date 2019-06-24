@@ -12,11 +12,12 @@ export default class ConversionToolbar extends Module {
    */
   public static get CSS(): { [key: string]: string } {
     return {
-      conversionToolbar: 'ce-conversion-toolbar',
+      conversionToolbarWrapper: 'ce-conversion-toolbar',
       conversionToolbarShowed: 'ce-conversion-toolbar--showed',
-      conversionToolsWrapper: 'ce-conversion-toolbar__tools',
+      conversionToolbarTools: 'ce-conversion-toolbar__tools',
       conversionTool: 'ce-conversion-tool',
 
+      conversionToolFocused : 'ce-conversion-tool--focused',
       conversionToolActive : 'ce-conversion-tool--active',
     };
   }
@@ -58,8 +59,8 @@ export default class ConversionToolbar extends Module {
    * @return {boolean}
    */
   public make() {
-    this.nodes.wrapper = $.make('div', ConversionToolbar.CSS.conversionToolbar);
-    this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolsWrapper);
+    this.nodes.wrapper = $.make('div', ConversionToolbar.CSS.conversionToolbarWrapper);
+    this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
     /**
      * add Tools that has import/export functions
@@ -73,31 +74,33 @@ export default class ConversionToolbar extends Module {
   /**
    * Shows Inline Toolbar by keyup/mouseup
    * @param {KeyboardEvent|MouseEvent} event
-   * @param {boolean} force - selects Block and removes all ranges
    */
-  public handleShowingEvent(event, force = false): void {
+  public handleShowingEvent(event): void {
     const { BlockManager, BlockSelection } = this.Editor;
 
-    let currentBlock = BlockManager.currentBlock;
-    if (force && !currentBlock) {
-      currentBlock = this.Editor.BlockManager.getBlock(SelectionUtils.get().anchorNode as HTMLElement);
+    const currentBlock = BlockManager.currentBlock;
 
-      if (currentBlock) {
-        this.Editor.BlockManager.setCurrentBlockByChildNode(SelectionUtils.anchorNode);
-      }
+    if (!currentBlock) {
+      _.log('Can\'t open conversion toolbar, current Block is not defined');
+      return;
     }
 
-    if (!force && (!currentBlock || BlockSelection.allBlocksSelected || (currentBlock && !currentBlock.selected))) {
+    const hasExportConfig = currentBlock.class.conversionConfig && currentBlock.class.conversionConfig.export;
+    const singleBlockSelected = !BlockSelection.allBlocksSelected;
+    if (!hasExportConfig || !singleBlockSelected) {
       this.close();
       return;
     }
 
     const currentToolName = currentBlock.name;
 
+    /**
+     * Focus current tool in conversion toolbar
+     */
     if (this.tools[currentToolName]) {
       this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
 
-      this.nodes.tools.childNodes.forEach((tool, index) => {
+      Array.from(this.nodes.tools.childNodes).forEach((tool, index) => {
         if ((tool as HTMLElement).classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
           this.focusedButtonIndex = index;
         }
@@ -132,7 +135,7 @@ export default class ConversionToolbar extends Module {
   public leaf(direction: string = 'right'): void {
     const toolsElements = (Array.from(this.nodes.tools.childNodes) as HTMLElement[]);
     this.focusedButtonIndex = $.leafNodesAndReturnIndex(
-      toolsElements, this.focusedButtonIndex, direction, ConversionToolbar.CSS.conversionToolActive,
+      toolsElements, this.focusedButtonIndex, direction, ConversionToolbar.CSS.conversionToolFocused,
     );
   }
 
@@ -155,7 +158,8 @@ export default class ConversionToolbar extends Module {
     }
 
     Object.values(this.nodes.tools.childNodes).forEach( (tool) => {
-      (tool as HTMLElement).classList.remove(ConversionToolbar.CSS.conversionToolActive);
+      (tool as HTMLElement).classList
+        .remove(ConversionToolbar.CSS.conversionToolActive, ConversionToolbar.CSS.conversionToolFocused);
     });
 
     this.focusedButtonIndex = -1;
