@@ -69,6 +69,7 @@ export default class BlockEvents extends Module {
      */
     if (event.keyCode !== _.keyCodes.TAB) {
       this.Editor.Toolbar.close();
+      this.Editor.ConversionToolbar.close();
     }
 
     const cmdKey = event.ctrlKey || event.metaKey;

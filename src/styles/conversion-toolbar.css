@@ -7,7 +7,7 @@
     0 26px 52px 3px rgba(147, 165, 186, 0.24);
 
   &::before {
-    left: 10%;
+    left: 25%;
   }
 
   &--showed {

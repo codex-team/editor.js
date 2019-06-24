@@ -3,7 +3,6 @@ import $ from '../../dom';
 import {BlockToolConstructable} from '../../../../types';
 import _ from '../../utils';
 import {SavedData} from '../../../types-internal/block-data';
-import SelectionUtils from '../../selection';
 
 export default class ConversionToolbar extends Module {
 
@@ -130,7 +129,8 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * Leaf tools
+   * @todo Will be used class with tool iterator
+   * leaf tools
    */
   public leaf(direction: string = 'right'): void {
     const toolsElements = (Array.from(this.nodes.tools.childNodes) as HTMLElement[]);
@@ -140,6 +140,7 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
+   * Returns focused tool as HTML element
    * @return {HTMLElement}
    */
   public get focusedButton(): HTMLElement {
@@ -181,6 +182,9 @@ export default class ConversionToolbar extends Module {
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
     const blockData = savedBlock.data;
 
+    /**
+     * When current Block name is equals to the replacing tool Name than convert this Block to the initial Block
+     */
     if (currentBlockName === replacingToolName) {
       replacingToolName = this.config.initialBlock;
     }
@@ -206,7 +210,8 @@ export default class ConversionToolbar extends Module {
     } else if (typeof exportProp === 'string') {
       exportData = blockData[exportProp];
     } else {
-      console.log('Conversion «export» property must be a string or function. String means key of saved data object to export. Function should export processed string to export.');
+      _.log('Conversion «export» property must be a string or function. ' +
+        'String means key of saved data object to export. Function should export processed string to export.');
       return;
     }
 
@@ -231,7 +236,7 @@ export default class ConversionToolbar extends Module {
     } else if (typeof importProp === 'string') {
       newBlockData[importProp] = cleaned;
     } else {
-      console.log('import property must be the name of property or function that return data object');
+      _.log('import property must be the name of property or function that return data object');
       return;
     }
 
@@ -298,9 +303,8 @@ export default class ConversionToolbar extends Module {
       }
 
       const hasImport = toolClass.conversionConfig.import;
-      const hasExport = toolClass.conversionConfig.export;
 
-      if (!hasImport || !hasExport) {
+      if (!hasImport) {
         continue;
       }
 
