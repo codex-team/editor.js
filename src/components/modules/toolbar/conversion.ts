@@ -200,6 +200,7 @@ export default class ConversionToolbar extends Module {
      */
     let exportData = '';
     const exportProp = currentBlockClass.conversionConfig.export;
+
     if (typeof exportProp === 'function') {
       exportData = exportProp(blockData);
     } else if (typeof exportProp === 'string') {
