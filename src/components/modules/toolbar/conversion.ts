@@ -206,7 +206,7 @@ export default class ConversionToolbar extends Module {
     } else if (typeof exportProp === 'string') {
       exportData = blockData[exportProp];
     } else {
-      console.log('export property must be the name of saved data or function that returns string');
+      console.log('Conversion «export» property must be a string or function. String means key of saved data object to export. Function should export processed string to export.');
       return;
     }
 
