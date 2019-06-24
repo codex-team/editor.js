@@ -67,7 +67,7 @@ export interface BlockToolConstructable extends BaseToolConstructable {
   /**
    * Paste substitutions configuration
    */
-  pasteConfig?: PasteConfig;
+  pasteConfig?: PasteConfig | false;
 
   new (config: {api: API, config: ToolConfig, data: BlockToolData}): BlockTool;
 }

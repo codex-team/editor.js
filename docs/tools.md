@@ -224,6 +224,17 @@ onPaste (event) {
 }
 ```
 
+### Disable paste handling
+
+If you need to disable paste handling on your Tool for some reason, you can provide `false` as `pasteConfig` value. 
+That way paste event won't be processed if fired on your Tool:
+
+```javascript
+static get pasteConfig {
+  return false;
+}
+```  
+
 ## Sanitize
 
 Editor.js provides [API](sanitizer.md) to clean taint strings.
