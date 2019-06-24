@@ -130,7 +130,7 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * leaf tools
+   * Leaf tools
    */
   public leaf(direction: string = 'right'): void {
     const toolsElements = (Array.from(this.nodes.tools.childNodes) as HTMLElement[]);
