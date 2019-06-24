@@ -120,7 +120,7 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * closes ConversionToolbar
+   * Closes ConversionToolbar
    */
   public close(): void {
     this.opened = false;
