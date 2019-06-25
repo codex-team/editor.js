@@ -255,7 +255,10 @@ export default class BlockSelection extends Module {
       /** Prevent default selection */
       event.preventDefault();
 
-      /** Save selection */
+      /**
+       * Save selection
+       * Will be restored when closeSelection fired
+       */
       this.selection.save();
 
       /**

@@ -347,7 +347,7 @@ export default class UI extends Module {
     /**
      * Close ConversionToolbar
      */
-    this.Editor.ConversionToolbar.handleShowingEvent(event);
+    this.Editor.ConversionToolbar.close();
   }
 
   /**
