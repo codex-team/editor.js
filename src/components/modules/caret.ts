@@ -104,7 +104,7 @@ export default class Caret extends Module {
      */
     if ($.isLineBreakTag(firstNode as HTMLElement) || $.isEmpty(firstNode)) {
       const leftSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'left');
-      const nothingAtLeft = leftSiblings.every((node, i) => $.isEmpty(node));
+      const nothingAtLeft = leftSiblings.every((node) => $.isEmpty(node) && !$.isLineBreakTag(node));
 
       if (nothingAtLeft && anchorOffset === firstLetterPosition) {
         return true;
@@ -169,8 +169,14 @@ export default class Caret extends Module {
      */
     if ($.isLineBreakTag(lastNode as HTMLElement) || $.isEmpty(lastNode)) {
       const rightSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'right');
+
       const nothingAtRight = rightSiblings.every((node, i) => {
-        return i === 0 && $.isLineBreakTag(node as HTMLElement) || $.isEmpty(node);
+        /**
+         * If last right sibling is BR isEmpty returns false, but there actually nothing at right
+         */
+        const isLastBR = i === rightSiblings.length - 1 && $.isLineBreakTag(node as HTMLElement);
+
+        return (isLastBR) || $.isEmpty(node) && !$.isLineBreakTag(node);
       });
 
       if (nothingAtRight && anchorOffset === anchorNode.textContent.length) {

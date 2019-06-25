@@ -4,6 +4,7 @@
 
 - `Improvements` — Inline Toolbar now works on mobile devices [#706](https://github.com/codex-team/editor.js/issues/706)
 - `Improvements` — Toolbar looks better on mobile devices [#706](https://github.com/codex-team/editor.js/issues/706)
+- `Fix` — Resolve bug with leading new lines [#726](https://github.com/codex-team/editor.js/issues/726)
 
 ### 2.14
 
