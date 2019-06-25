@@ -1,11 +1,13 @@
+import {BlockToolData} from '../tools';
+
 export interface ConversionConfig {
   /**
    * import description
    */
-  import: any;
+  import: ((data: string) => string) | string;
 
   /**
    * export description
    */
-  export: any;
+  export: ((data: BlockToolData) => string) | string;
 }
