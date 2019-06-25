@@ -316,7 +316,7 @@ export default class Util {
    * @return {object}
    */
   public static deepMerge(target, ...sources) {
-    const isObject = (item) => item && typeof item === 'object' && !Array.isArray(item);
+    const isObject = (item) => item && Util.typeof(item) === 'object';
 
     if (!sources.length) { return target; }
     const source = sources.shift();
@@ -351,4 +351,12 @@ export default class Util {
     return 'ontouchstart' in document.documentElement;
   }
 
+  /**
+   * Return string representation of the object type
+   *
+   * @param {any} object
+   */
+  public static typeof(object: any): string {
+    return Object.prototype.toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+  }
 }
