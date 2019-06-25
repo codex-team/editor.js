@@ -126,7 +126,7 @@ export default class BlockEvents extends Module {
     const { InlineToolbar, ConversionToolbar, UI } = this.Editor;
 
     /**
-     * According to the Conversion Toolbar convention range must of 95% of plugins content
+     * According to the Conversion Toolbar convention range must of 90% of plugins content
      * that why we must with the length of pluginsContent
      */
     if (SelectionUtils.almostAllSelected(currentBlock.pluginsContent.textContent)) {
