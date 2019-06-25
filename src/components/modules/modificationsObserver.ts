@@ -35,6 +35,8 @@ export default class ModificationsObserver extends Module {
     this.config.onChange();
   }, ModificationsObserver.DebounceTimer);
 
+  private nativeInputs: HTMLElement[] = [];
+
   /**
    * Clear timeout and set null to mutationDebouncer property
    */
@@ -42,6 +44,7 @@ export default class ModificationsObserver extends Module {
     this.mutationDebouncer = null;
     this.observer.disconnect();
     this.observer = null;
+    this.nativeInputs.forEach((input) => this.Editor.Listeners.off(input, 'input', this.mutationDebouncer));
   }
 
   /**
@@ -139,7 +142,18 @@ export default class ModificationsObserver extends Module {
 
     /** call once */
     if (contentMutated) {
+      this.updateNativeInputs();
+
       this.mutationDebouncer();
     }
+  }
+
+  /**
+   * Gets native inputs and set oninput event handler
+   */
+  private updateNativeInputs(): void {
+    this.nativeInputs = Array.from(this.Editor.UI.nodes.redactor.querySelectorAll('textarea, input, select'));
+
+    this.nativeInputs.forEach((input) => this.Editor.Listeners.on(input, 'input', this.mutationDebouncer));
   }
 }
