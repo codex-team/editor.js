@@ -274,7 +274,7 @@ export default class BlockEvents extends Module {
     BlockSelection.copySelectedBlocks();
 
     const selectionPositionIndex = BlockManager.removeSelectedBlocks();
-    Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
+    Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
     /** Clear selection */
     BlockSelection.clearSelection();
@@ -331,7 +331,7 @@ export default class BlockEvents extends Module {
      * If enter has been pressed at the start of the text, just insert paragraph Block above
      */
     if (this.Editor.Caret.isAtStart && !this.Editor.BlockManager.currentBlock.hasMedia) {
-      this.Editor.BlockManager.insertAtIndex(this.Editor.BlockManager.currentBlockIndex);
+      this.Editor.BlockManager.insertInitialBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
     } else {
       /**
        * Split the Current Block into two blocks

@@ -4,6 +4,7 @@
 
 - `Improvements` — Inline Toolbar now works on mobile devices [#706](https://github.com/codex-team/editor.js/issues/706)
 - `Improvements` — Toolbar looks better on mobile devices [#706](https://github.com/codex-team/editor.js/issues/706)
+- `New` — New [`insert`](api.md) API method [#715](https://github.com/codex-team/editor.js/issues/715) 
 
 ### 2.14
 
