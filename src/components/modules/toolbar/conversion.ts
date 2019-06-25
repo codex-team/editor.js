@@ -190,7 +190,7 @@ export default class ConversionToolbar extends Module {
     }
 
     /**
-     * getting replacing Block class
+     * Getting a class of replacing Tool
      * @type {BlockToolConstructable}
      */
     const replacingTool = this.Editor.Tools.toolsClasses[replacingToolName] as BlockToolConstructable;
