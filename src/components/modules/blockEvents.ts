@@ -99,18 +99,10 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public keyup(event): void {
-    let currentBlock = this.Editor.BlockManager.currentBlock;
+    const currentBlock = this.Editor.BlockManager.getBlock(event.target);
 
-    /**
-     * If current Block is not defined than try to get from event's target
-     */
     if (!currentBlock) {
-      try {
-        currentBlock = this.Editor.BlockManager.setCurrentBlockByChildNode(event.target);
-      } catch (e) {
-        _.log(e);
-        return;
-      }
+      return;
     }
 
     let isHandledOnKeyDown = false;
@@ -131,10 +123,6 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    if (!currentBlock) {
-      return;
-    }
-
     const { InlineToolbar, ConversionToolbar, UI } = this.Editor;
 
     /**
@@ -147,12 +135,12 @@ export default class BlockEvents extends Module {
     } else {
       ConversionToolbar.close();
       InlineToolbar.handleShowingEvent(event);
-
-      /**
-       * Check if editor is empty on each keyup and add special css class to wrapper
-       */
-      UI.checkEmptiness();
     }
+
+    /**
+     * Check if editor is empty on each keyup and add special css class to wrapper
+     */
+    UI.checkEmptiness();
   }
 
   /**
@@ -160,25 +148,17 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public mouseUp(event): void {
-    let currentBlock = this.Editor.BlockManager.currentBlock;
+    const currentBlock = this.Editor.BlockManager.getBlock(event.target);
 
-    /**
-     * If current Block is not defined than try to get from event's target
-     */
     if (!currentBlock) {
-      try {
-        currentBlock = this.Editor.BlockManager.setCurrentBlockByChildNode(event.target);
-      } catch (e) {
-        _.log(e);
-        return;
-      }
+      return;
     }
 
     const { InlineToolbar, ConversionToolbar } = this.Editor;
 
     /**
      * MouseUp on inline tags returns those tags as event.target.
-     * According to the Conversion Toolbar convention range must of 95% of plugins content
+     * According to the Conversion Toolbar convention range must of 90% of plugins content
      */
     if (SelectionUtils.almostAllSelected(currentBlock.pluginsContent.textContent)) {
       InlineToolbar.close();
