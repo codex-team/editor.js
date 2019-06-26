@@ -77,7 +77,6 @@ export default class ConversionToolbar extends Module {
    * @param {Block} block - block to convert
    */
   public tryToShow(block: Block): void {
-    console.trace();
     const hasExportConfig = block.class.conversionConfig && block.class.conversionConfig.export;
 
     if (!hasExportConfig) {
