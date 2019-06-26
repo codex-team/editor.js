@@ -47,7 +47,7 @@ export default class BlockEvents extends Module {
         this.escapePressed(event);
         break;
       default:
-        this.defaultHandler();
+        this.defaultHandler(event);
         break;
     }
   }
@@ -65,32 +65,23 @@ export default class BlockEvents extends Module {
     }
 
     /**
-     * Close Toolbar on any keypress except TAB, because TAB leafs Tools
+     * When user type something:
+     *  - close Toolbar
+     *  - clear block highlighting
      */
-    if (event.keyCode !== _.keyCodes.TAB) {
+    if (_.isPrintableKey(event.keyCode)) {
       this.Editor.Toolbar.close();
-      this.Editor.ConversionToolbar.close();
-    }
 
-    const cmdKey = event.ctrlKey || event.metaKey;
-    const altKey = event.altKey;
-    const shiftKey = event.shiftKey;
-
-    /** clear selecton when it is not CMD, SHIFT, ALT keys */
-    if (cmdKey || altKey || shiftKey) {
-      return;
-    }
-
-    /**
-     * Clear all highlightings
-     */
-    this.Editor.BlockManager.clearFocused();
-
-    if (event.keyCode !== _.keyCodes.ENTER && event.keyCode !== _.keyCodes.BACKSPACE) {
       /**
-       * Clear selection and restore caret before navigation
+       * Allow to use shortcuts with selected blocks
+       * @type {boolean}
        */
-      this.Editor.BlockSelection.clearSelection(true);
+      const isShortcut = event.ctrlKey || event.metaKey || event.altKey || event.shiftKey;
+
+      if (!isShortcut) {
+        this.Editor.BlockManager.clearFocused();
+        this.Editor.BlockSelection.clearSelection();
+      }
     }
   }
 
@@ -100,28 +91,6 @@ export default class BlockEvents extends Module {
    */
   public keyup(event): void {
     const currentBlock = this.Editor.BlockManager.getBlock(event.target);
-
-    if (!currentBlock) {
-      return;
-    }
-
-    let isHandledOnKeyDown = false;
-    switch (event.keyCode) {
-      case _.keyCodes.BACKSPACE:
-      case _.keyCodes.ENTER:
-      case _.keyCodes.DOWN:
-      case _.keyCodes.RIGHT:
-      case _.keyCodes.UP:
-      case _.keyCodes.LEFT:
-      case _.keyCodes.TAB:
-      case _.keyCodes.ESC:
-        isHandledOnKeyDown = true;
-        break;
-    }
-
-    if (isHandledOnKeyDown) {
-      return;
-    }
 
     const { InlineToolbar, ConversionToolbar, UI } = this.Editor;
 
@@ -174,6 +143,10 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event
    */
   public tabPressed(event): void {
+    /**
+     * Clear blocks selection by tab
+     */
+    this.Editor.BlockSelection.clearSelection();
 
     const { BlockManager, Tools, ConversionToolbar, InlineToolbar } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
@@ -215,6 +188,11 @@ export default class BlockEvents extends Module {
    * @param {Event} event
    */
   public escapePressed(event): void {
+    /**
+     * Clear blocks selection by ESC
+     */
+    this.Editor.BlockSelection.clearSelection();
+
     if (this.Editor.Toolbox.opened) {
       this.Editor.Toolbox.close();
     } else if (this.Editor.BlockSettings.opened) {
@@ -502,9 +480,17 @@ export default class BlockEvents extends Module {
        * After caret is set, update Block input index
        */
       _.delay(() => {
-        this.Editor.BlockManager.currentBlock.updateCurrentInput();
+        /** Check currentBlock for case when user moves selection out of Editor */
+        if (this.Editor.BlockManager.currentBlock) {
+          this.Editor.BlockManager.currentBlock.updateCurrentInput();
+        }
       }, 20)();
     }
+
+    /**
+     * Clear blocks selection by arrows
+     */
+    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
@@ -521,15 +507,34 @@ export default class BlockEvents extends Module {
        * After caret is set, update Block input index
        */
       _.delay(() => {
-        this.Editor.BlockManager.currentBlock.updateCurrentInput();
+        /** Check currentBlock for case when user ends selection out of Editor and then press arrow-key */
+        if (this.Editor.BlockManager.currentBlock) {
+          this.Editor.BlockManager.currentBlock.updateCurrentInput();
+        }
       }, 20)();
     }
+
+    /**
+     * Clear blocks selection by arrows
+     */
+    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
-   * Default keydown handler
+   * Default keydown handler.
    */
-  private defaultHandler(): void {}
+  private defaultHandler(event: KeyboardEvent): void {
+    /**
+     * When user type something:
+     *  - close Toolbar
+     *  - clear block highlighting
+     *  - clear CBS
+     */
+    if (_.isPrintableKey(event.keyCode)) {
+      // console.log('now clear after');
+
+    }
+  }
 
   /**
    * Cases when we need to close Toolbar
