@@ -102,7 +102,7 @@ export default class SelectionUtils {
   }
 
   /**
-   * Returns true if 90% of text content is selected
+   * Returns true if 85% of text content is selected
    * @return {boolean}
    */
   public static almostAllSelected(targetText: string): boolean {
@@ -116,7 +116,7 @@ export default class SelectionUtils {
     const lengthOfWholeText = targetText.length;
     const lengthOfCopiedText = copiedFragment.textContent.length;
 
-    return lengthOfCopiedText / lengthOfWholeText > 0.9;
+    return lengthOfCopiedText / lengthOfWholeText > 0.85;
   }
 
   /**

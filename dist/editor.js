@@ -11112,7 +11112,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * Returns Plugins content
-       * @return {Node}
+       * @return {HTMLElement}
        */
 
     }, {
@@ -14165,7 +14165,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Open Inline Toolbar
        */
       value: function open() {
-        this.Editor.InlineToolbar.open();
+        this.Editor.InlineToolbar.tryToShow();
       }
       /**
        * Close Inline Toolbar
@@ -14945,7 +14945,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "keyup",
       value: function keyup(event) {
-        var currentBlock = this.Editor.BlockManager.getBlock(event.target);
+        var block = this.Editor.BlockManager.getBlock(event.target);
         var _this$Editor = this.Editor,
             InlineToolbar = _this$Editor.InlineToolbar,
             ConversionToolbar = _this$Editor.ConversionToolbar,
@@ -14955,12 +14955,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * that why we must with the length of pluginsContent
          */
 
-        if (_selection.default.almostAllSelected(currentBlock.pluginsContent.textContent)) {
+        if (_selection.default.almostAllSelected(block.pluginsContent.textContent)) {
           InlineToolbar.close();
-          ConversionToolbar.tryToShow(event);
+          ConversionToolbar.tryToShow(block);
         } else {
           ConversionToolbar.close();
-          InlineToolbar.tryToShow(event);
+          InlineToolbar.tryToShow();
         }
         /**
          * Check if editor is empty on each keyup and add special css class to wrapper
@@ -14977,27 +14977,40 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "mouseUp",
       value: function mouseUp(event) {
-        var currentBlock = this.Editor.BlockManager.getBlock(event.target);
+        var _this = this;
 
-        if (!currentBlock) {
-          return;
-        }
-
+        var block = this.Editor.BlockManager.getBlock(event.target);
         var _this$Editor2 = this.Editor,
             InlineToolbar = _this$Editor2.InlineToolbar,
             ConversionToolbar = _this$Editor2.ConversionToolbar;
         /**
-         * MouseUp on inline tags returns those tags as event.target.
-         * According to the Conversion Toolbar convention range must of 90% of plugins content
+         * Timeout uses to wait if selection will cleared after mouse up (regular click on block)
          */
 
-        if (_selection.default.almostAllSelected(currentBlock.pluginsContent.textContent)) {
-          InlineToolbar.close();
-          ConversionToolbar.tryToShow(event);
-        } else {
-          ConversionToolbar.close();
-          InlineToolbar.tryToShow(event);
-        }
+        setTimeout(function () {
+          /**
+           * 1) selected 85% of block - open Conversion Toolbar
+           * 2) select something inside block - open Inline Toolbar
+           * 3) nothing selected - close Toolbars
+           */
+          if (_selection.default.almostAllSelected(block.pluginsContent.textContent)) {
+            InlineToolbar.close();
+            ConversionToolbar.tryToShow(block);
+          } else if (!_selection.default.isCollapsed) {
+            InlineToolbar.tryToShow();
+            ConversionToolbar.close();
+          } else {
+            InlineToolbar.close();
+            /**
+             * Don't close Conversion toolbar when Rectangle Selection ended with one block selected
+             * @see RectangleSelection#endSelection
+             */
+
+            if (_this.Editor.BlockSelection.selectedBlocks.length !== 1) {
+              ConversionToolbar.close();
+            }
+          }
+        }, 30);
       }
       /**
        * Open Toolbox to leaf Tools
@@ -15357,7 +15370,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "arrowRightAndDown",
       value: function arrowRightAndDown(event) {
-        var _this = this;
+        var _this2 = this;
 
         if (this.Editor.Caret.navigateNext()) {
           /**
@@ -15370,8 +15383,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            */
           _utils.default.delay(function () {
             /** Check currentBlock for case when user moves selection out of Editor */
-            if (_this.Editor.BlockManager.currentBlock) {
-              _this.Editor.BlockManager.currentBlock.updateCurrentInput();
+            if (_this2.Editor.BlockManager.currentBlock) {
+              _this2.Editor.BlockManager.currentBlock.updateCurrentInput();
             }
           }, 20)();
         }
@@ -15389,7 +15402,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "arrowLeftAndUp",
       value: function arrowLeftAndUp(event) {
-        var _this2 = this;
+        var _this3 = this;
 
         if (this.Editor.Caret.navigatePrevious()) {
           /**
@@ -15402,8 +15415,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            */
           _utils.default.delay(function () {
             /** Check currentBlock for case when user ends selection out of Editor and then press arrow-key */
-            if (_this2.Editor.BlockManager.currentBlock) {
-              _this2.Editor.BlockManager.currentBlock.updateCurrentInput();
+            if (_this3.Editor.BlockManager.currentBlock) {
+              _this3.Editor.BlockManager.currentBlock.updateCurrentInput();
             }
           }, 20)();
         }
@@ -16482,19 +16495,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function copySelectedBlocks() {
         var _this3 = this;
 
-        var _this$Editor = this.Editor,
-            BlockManager = _this$Editor.BlockManager,
-            Sanitizer = _this$Editor.Sanitizer;
-
         var fakeClipboard = _dom.default.make('div');
 
-        BlockManager.blocks.filter(function (block) {
-          return block.selected;
-        }).forEach(function (block) {
+        this.selectedBlocks.forEach(function (block) {
           /**
            * Make <p> tag that holds clean HTML
            */
-          var cleanHTML = Sanitizer.clean(block.holder.innerHTML, _this3.sanitizerConfig);
+          var cleanHTML = _this3.Editor.Sanitizer.clean(block.holder.innerHTML, _this3.sanitizerConfig);
 
           var fragment = _dom.default.make('p');
 
@@ -16535,10 +16542,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         block.selected = true;
       }
       /**
-       * First CMD+A Selects current focused blocks,
-       * and consequent second CMD+A keypress selects all blocks
+       * First CMD+A selects all input content by native behaviour,
+       * next CMD+A keypress selects all blocks
        *
-       * @param {keydown} event
+       * @param {KeyboardEvent} event
        */
 
     }, {
@@ -16552,7 +16559,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        var inputs = this.Editor.BlockManager.currentBlock.inputs;
+        var workingBlock = this.Editor.BlockManager.getBlock(event.target);
+        var inputs = workingBlock.inputs;
         /**
          * If Block has more than one editable element allow native selection
          * Second cmd+a will select whole Block
@@ -16588,10 +16596,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         } else {
           this.needToSelectAll = true;
           /**
-           * Show ConversionToolbar to be able to convert current Block
+           * Show Conversion Toolbar when user select one Block
            */
 
-          this.Editor.ConversionToolbar.tryToShow(event);
+          if (this.selectedBlocks.length === 1) {
+            this.Editor.ConversionToolbar.tryToShow(workingBlock);
+          }
         }
       }
       /**
@@ -16667,6 +16677,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var BlockManager = this.Editor.BlockManager;
         return BlockManager.blocks.some(function (block) {
           return block.selected === true;
+        });
+      }
+      /**
+       * Return selected Blocks array
+       * @return {Block[]}
+       */
+
+    }, {
+      key: "selectedBlocks",
+      get: function get() {
+        return this.Editor.BlockManager.blocks.filter(function (block) {
+          return block.selected;
         });
       }
     }]);
@@ -19457,6 +19479,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.startX = 0;
         this.startY = 0;
         this.overlayRectangle.style.display = 'none';
+        /**
+         * Show Conversion Toolbar when user select one Block
+         */
+
+        var selectedBlocks = this.Editor.BlockSelection.selectedBlocks;
+
+        if (selectedBlocks.length === 1) {
+          this.Editor.ConversionToolbar.tryToShow(selectedBlocks[0]);
+        }
       }
       /**
        * is RectSelection Activated
@@ -21040,12 +21071,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../selection */ "./src/components/selection.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(this, function (_exports, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _utils, _selection) {
+})(this, function (_exports, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _utils) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -21064,7 +21095,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _module = _interopRequireDefault(_module);
   _dom = _interopRequireDefault(_dom);
   _utils = _interopRequireDefault(_utils);
-  _selection = _interopRequireDefault(_selection);
 
   var ConversionToolbar =
   /*#__PURE__*/
@@ -21136,35 +21166,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         _dom.default.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
       }
       /**
-       * Shows Inline Toolbar by keyup/mouseup
-       * @param {KeyboardEvent|MouseEvent} event
+       * Try to show Conversion Toolbar near passed Block
+       * @param {Block} block - block to convert
        */
 
     }, {
       key: "tryToShow",
-      value: function tryToShow(event) {
+      value: function tryToShow(block) {
         var _this2 = this;
 
-        var _this$Editor = this.Editor,
-            BlockManager = _this$Editor.BlockManager,
-            BlockSelection = _this$Editor.BlockSelection;
-        var currentBlock = BlockManager.getBlock(event.target);
-        /**
-         * CMD+A pressed on document body, Editor not focused, event.target is <body>
-         */
+        var hasExportConfig = block.class.conversionConfig && block.class.conversionConfig.export;
 
-        if (!currentBlock) {
+        if (!hasExportConfig) {
           return;
         }
 
-        var hasExportConfig = currentBlock.class.conversionConfig && currentBlock.class.conversionConfig.export;
-        var singleBlockSelected = !BlockSelection.allBlocksSelected;
-
-        if (!hasExportConfig || !singleBlockSelected) {
-          return;
-        }
-
-        var currentToolName = currentBlock.name;
+        var currentToolName = block.name;
         /**
          * Focus current tool in conversion toolbar
          */
@@ -21185,7 +21202,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           });
         }
 
-        this.move();
+        this.move(block);
 
         if (!this.opened) {
           this.open();
@@ -21386,17 +21403,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
       }()
       /**
-       * Move Toolbar to the selected text
+       * Move Conversion Toolbar to the working Block
        */
 
     }, {
       key: "move",
-      value: function move() {
-        var selectionRect = _selection.default.rect;
-        var wrapperCoords = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
+      value: function move(block) {
+        var blockRect = block.pluginsContent.getBoundingClientRect();
+        var wrapperRect = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
         var newCoords = {
-          x: selectionRect.left - wrapperCoords.left,
-          y: window.scrollY + selectionRect.bottom - this.defaultOffsetTop
+          x: blockRect.left - wrapperRect.left,
+          y: blockRect.top
         };
         this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
         this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
@@ -22120,13 +22137,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
       /**
-       * Shows Inline Toolbar by keyup/mouseup
-       * @param {KeyboardEvent|MouseEvent} event
+       * Shows Inline Toolbar if something is selected
        */
 
     }, {
       key: "tryToShow",
-      value: function tryToShow(event) {
+      value: function tryToShow() {
         if (!this.allowedToShow()) {
           return;
         }
@@ -22245,16 +22261,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "open",
       value: function open() {
         /**
-         * Check if inline toolbar is allowed to show or not
-         */
-        if (!this.allowedToShow()) {
-          return;
-        }
-        /**
          * Filter inline-tools and show only allowed by Block's Tool
          */
-
-
         this.filterTools();
         /**
          * Show Inline Toolbar
@@ -24017,8 +24025,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /**
          * Close ConversionToolbar
          */
-
-        this.Editor.ConversionToolbar.close();
+        // this.Editor.ConversionToolbar.close();
       }
       /**
        * @param {KeyboardEvent} event
@@ -24307,7 +24314,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
         this.Editor.BlockSelection.clearSelection();
-        this.Editor.ConversionToolbar.close();
       }
       /**
        * Handle selection changes on mobile devices
@@ -24328,7 +24334,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        this.Editor.InlineToolbar.tryToShow(event);
+        this.Editor.InlineToolbar.tryToShow();
       }
       /**
        * Append prebuilt sprite with SVG icons
@@ -24727,7 +24733,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "almostAllSelected",
 
       /**
-       * Returns true if 90% of text content is selected
+       * Returns true if 85% of text content is selected
        * @return {boolean}
        */
       value: function almostAllSelected(targetText) {
@@ -24740,7 +24746,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var copiedFragment = range.cloneContents();
         var lengthOfWholeText = targetText.length;
         var lengthOfCopiedText = copiedFragment.textContent.length;
-        return lengthOfCopiedText / lengthOfWholeText > 0.9;
+        return lengthOfCopiedText / lengthOfWholeText > 0.85;
       }
       /**
        * Check current selection if it is at Editor's zone

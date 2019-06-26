@@ -162,13 +162,13 @@ export default class Block {
 
   /**
    * Returns Plugins content
-   * @return {Node}
+   * @return {HTMLElement}
    */
-  get pluginsContent(): Node {
+  get pluginsContent(): HTMLElement {
     const pluginsContent = this.holder.querySelector(`.${Block.CSS.content}`);
 
     if (pluginsContent && pluginsContent.childNodes.length) {
-      return pluginsContent.childNodes[0];
+      return pluginsContent.childNodes[0] as HTMLElement;
     }
 
     return null;

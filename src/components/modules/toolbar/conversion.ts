@@ -4,6 +4,7 @@ import {BlockToolConstructable} from '../../../../types';
 import _ from '../../utils';
 import {SavedData} from '../../../types-internal/block-data';
 import SelectionUtils from '../../selection';
+import Block from '../../block';
 
 export default class ConversionToolbar extends Module {
 
@@ -72,29 +73,17 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * Shows Inline Toolbar by keyup/mouseup
-   * @param {KeyboardEvent|MouseEvent} event
+   * Try to show Conversion Toolbar near passed Block
+   * @param {Block} block - block to convert
    */
-  public tryToShow(event): void {
-    const { BlockManager, BlockSelection } = this.Editor;
+  public tryToShow(block: Block): void {
+    const hasExportConfig = block.class.conversionConfig && block.class.conversionConfig.export;
 
-    const currentBlock = BlockManager.getBlock(event.target);
-
-    /**
-     * CMD+A pressed on document body, Editor not focused, event.target is <body>
-     */
-    if (!currentBlock) {
+    if (!hasExportConfig) {
       return;
     }
 
-    const hasExportConfig = currentBlock.class.conversionConfig && currentBlock.class.conversionConfig.export;
-    const singleBlockSelected = !BlockSelection.allBlocksSelected;
-
-    if (!hasExportConfig || !singleBlockSelected) {
-      return;
-    }
-
-    const currentToolName = currentBlock.name;
+    const currentToolName = block.name;
 
     /**
      * Focus current tool in conversion toolbar
@@ -116,7 +105,7 @@ export default class ConversionToolbar extends Module {
       });
     }
 
-    this.move();
+    this.move(block);
 
     if (!this.opened) {
       this.open();
@@ -264,15 +253,15 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * Move Toolbar to the selected text
+   * Move Conversion Toolbar to the working Block
    */
-  private move(): void {
-    const selectionRect = SelectionUtils.rect as DOMRect;
-    const wrapperCoords = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
+  private move(block: Block): void {
+    const blockRect = block.pluginsContent.getBoundingClientRect();
+    const wrapperRect = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
 
     const newCoords = {
-      x: selectionRect.left - wrapperCoords.left,
-      y: window.scrollY + selectionRect.bottom - this.defaultOffsetTop,
+      x: blockRect.left - wrapperRect.left,
+      y: blockRect.top,
     };
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';

@@ -347,7 +347,7 @@ export default class UI extends Module {
     /**
      * Close ConversionToolbar
      */
-    this.Editor.ConversionToolbar.close();
+    // this.Editor.ConversionToolbar.close();
   }
 
   /**
@@ -544,7 +544,6 @@ export default class UI extends Module {
    *
    */
   private redactorClicked(event: MouseEvent): void {
-
     if (!Selection.isCollapsed) {
       return;
     }
@@ -617,7 +616,6 @@ export default class UI extends Module {
 
     /** Clear selection */
     this.Editor.BlockSelection.clearSelection();
-    this.Editor.ConversionToolbar.close();
   }
 
   /**
@@ -636,7 +634,7 @@ export default class UI extends Module {
       return;
     }
 
-    this.Editor.InlineToolbar.tryToShow(event);
+    this.Editor.InlineToolbar.tryToShow();
   }
 
   /**

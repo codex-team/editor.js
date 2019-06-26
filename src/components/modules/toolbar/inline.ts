@@ -149,10 +149,9 @@ export default class InlineToolbar extends Module {
    */
 
   /**
-   * Shows Inline Toolbar by keyup/mouseup
-   * @param {KeyboardEvent|MouseEvent} event
+   * Shows Inline Toolbar if something is selected
    */
-  public tryToShow(event): void {
+  public tryToShow(): void {
     if (!this.allowedToShow()) {
       return;
     }
@@ -271,12 +270,6 @@ export default class InlineToolbar extends Module {
    * Shows Inline Toolbar
    */
   public open(): void {
-    /**
-     * Check if inline toolbar is allowed to show or not
-     */
-    if (!this.allowedToShow()) {
-      return;
-    }
 
     /**
      * Filter inline-tools and show only allowed by Block's Tool
@@ -333,6 +326,7 @@ export default class InlineToolbar extends Module {
 
     // The selection of the element only in contenteditable
     const contenteditable = target.closest('[contenteditable="true"]');
+
     if (contenteditable === null) {
       return false;
     }

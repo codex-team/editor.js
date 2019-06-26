@@ -4,6 +4,7 @@
 import Module from '../__module';
 import _ from '../utils';
 import SelectionUtils from '../selection';
+import RectangleSelection from './rectangleSelection';
 
 export default class BlockEvents extends Module {
 
@@ -92,7 +93,7 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public keyup(event): void {
-    const currentBlock = this.Editor.BlockManager.getBlock(event.target);
+    const block = this.Editor.BlockManager.getBlock(event.target);
 
     const { InlineToolbar, ConversionToolbar, UI } = this.Editor;
 
@@ -100,12 +101,12 @@ export default class BlockEvents extends Module {
      * According to the Conversion Toolbar convention range must of 90% of plugins content
      * that why we must with the length of pluginsContent
      */
-    if (SelectionUtils.almostAllSelected(currentBlock.pluginsContent.textContent)) {
+    if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
       InlineToolbar.close();
-      ConversionToolbar.tryToShow(event);
+      ConversionToolbar.tryToShow(block);
     } else {
       ConversionToolbar.close();
-      InlineToolbar.tryToShow(event);
+      InlineToolbar.tryToShow();
     }
 
     /**
@@ -119,25 +120,37 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public mouseUp(event): void {
-    const currentBlock = this.Editor.BlockManager.getBlock(event.target);
-
-    if (!currentBlock) {
-      return;
-    }
+    const block = this.Editor.BlockManager.getBlock(event.target);
 
     const { InlineToolbar, ConversionToolbar } = this.Editor;
 
     /**
-     * MouseUp on inline tags returns those tags as event.target.
-     * According to the Conversion Toolbar convention range must of 90% of plugins content
+     * Timeout uses to wait if selection will cleared after mouse up (regular click on block)
      */
-    if (SelectionUtils.almostAllSelected(currentBlock.pluginsContent.textContent)) {
-      InlineToolbar.close();
-      ConversionToolbar.tryToShow(event);
-    } else {
-      ConversionToolbar.close();
-      InlineToolbar.tryToShow(event);
-    }
+    setTimeout(() => {
+      /**
+       * 1) selected 85% of block - open Conversion Toolbar
+       * 2) select something inside block - open Inline Toolbar
+       * 3) nothing selected - close Toolbars
+       */
+      if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
+        InlineToolbar.close();
+        ConversionToolbar.tryToShow(block);
+      } else if (!SelectionUtils.isCollapsed) {
+        InlineToolbar.tryToShow();
+        ConversionToolbar.close();
+      } else {
+        InlineToolbar.close();
+
+        /**
+         * Don't close Conversion toolbar when Rectangle Selection ended with one block selected
+         * @see RectangleSelection#endSelection
+         */
+        if (this.Editor.BlockSelection.selectedBlocks.length !== 1) {
+          ConversionToolbar.close();
+        }
+      }
+    }, 30);
   }
 
   /**
