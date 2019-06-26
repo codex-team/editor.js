@@ -284,13 +284,6 @@ export default class BlockSelection extends Module {
       this.Editor.ConversionToolbar.close();
     } else {
       this.needToSelectAll = true;
-
-      /**
-       * Show Conversion Toolbar when user select one Block
-       */
-      if (this.selectedBlocks.length === 1) {
-        this.Editor.ConversionToolbar.tryToShow(workingBlock);
-      }
     }
   }
 

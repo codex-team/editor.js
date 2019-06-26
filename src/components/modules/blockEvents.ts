@@ -4,7 +4,6 @@
 import Module from '../__module';
 import _ from '../utils';
 import SelectionUtils from '../selection';
-import RectangleSelection from './rectangleSelection';
 
 export default class BlockEvents extends Module {
 
