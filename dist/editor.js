@@ -14895,7 +14895,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             break;
 
           default:
-            this.defaultHandler(event);
+            this.defaultHandler();
             break;
         }
       }
@@ -14916,12 +14916,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /**
          * When user type something:
          *  - close Toolbar
+         *  - close Conversion Toolbar
          *  - clear block highlighting
          */
 
 
         if (_utils.default.isPrintableKey(event.keyCode)) {
           this.Editor.Toolbar.close();
+          this.Editor.ConversionToolbar.close();
           /**
            * Allow to use shortcuts with selected blocks
            * @type {boolean}
@@ -14955,10 +14957,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (_selection.default.almostAllSelected(currentBlock.pluginsContent.textContent)) {
           InlineToolbar.close();
-          ConversionToolbar.handleShowingEvent(event);
+          ConversionToolbar.tryToShow(event);
         } else {
           ConversionToolbar.close();
-          InlineToolbar.handleShowingEvent(event);
+          InlineToolbar.tryToShow(event);
         }
         /**
          * Check if editor is empty on each keyup and add special css class to wrapper
@@ -14991,10 +14993,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (_selection.default.almostAllSelected(currentBlock.pluginsContent.textContent)) {
           InlineToolbar.close();
-          ConversionToolbar.handleShowingEvent(event);
+          ConversionToolbar.tryToShow(event);
         } else {
           ConversionToolbar.close();
-          InlineToolbar.handleShowingEvent(event);
+          InlineToolbar.tryToShow(event);
         }
       }
       /**
@@ -15413,21 +15415,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.BlockSelection.clearSelection();
       }
       /**
-       * Default keydown handler.
+       * Default keydown handler
        */
 
     }, {
       key: "defaultHandler",
-      value: function defaultHandler(event) {
-        /**
-         * When user type something:
-         *  - close Toolbar
-         *  - clear block highlighting
-         *  - clear CBS
-         */
-        if (_utils.default.isPrintableKey(event.keyCode)) {// console.log('now clear after');
-        }
-      }
+      value: function defaultHandler() {}
       /**
        * Cases when we need to close Toolbar
        */
@@ -16598,7 +16591,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            * Show ConversionToolbar to be able to convert current Block
            */
 
-          this.Editor.ConversionToolbar.handleShowingEvent(event);
+          this.Editor.ConversionToolbar.tryToShow(event);
         }
       }
       /**
@@ -21148,18 +21141,19 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "handleShowingEvent",
-      value: function handleShowingEvent(event) {
+      key: "tryToShow",
+      value: function tryToShow(event) {
         var _this2 = this;
 
         var _this$Editor = this.Editor,
             BlockManager = _this$Editor.BlockManager,
             BlockSelection = _this$Editor.BlockSelection;
         var currentBlock = BlockManager.getBlock(event.target);
+        /**
+         * CMD+A pressed on document body, Editor not focused, event.target is <body>
+         */
 
         if (!currentBlock) {
-          _utils.default.log('Can\'t open conversion toolbar, current Block is not defined');
-
           return;
         }
 
@@ -21167,7 +21161,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var singleBlockSelected = !BlockSelection.allBlocksSelected;
 
         if (!hasExportConfig || !singleBlockSelected) {
-          this.close();
           return;
         }
 
@@ -22132,10 +22125,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "handleShowingEvent",
-      value: function handleShowingEvent(event) {
+      key: "tryToShow",
+      value: function tryToShow(event) {
         if (!this.allowedToShow()) {
-          this.close();
           return;
         }
 
@@ -24336,7 +24328,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        this.Editor.InlineToolbar.handleShowingEvent(event);
+        this.Editor.InlineToolbar.tryToShow(event);
       }
       /**
        * Append prebuilt sprite with SVG icons

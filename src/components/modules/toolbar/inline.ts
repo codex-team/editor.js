@@ -152,9 +152,8 @@ export default class InlineToolbar extends Module {
    * Shows Inline Toolbar by keyup/mouseup
    * @param {KeyboardEvent|MouseEvent} event
    */
-  public handleShowingEvent(event): void {
+  public tryToShow(event): void {
     if (!this.allowedToShow()) {
-      this.close();
       return;
     }
 

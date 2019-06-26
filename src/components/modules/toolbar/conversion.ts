@@ -75,20 +75,22 @@ export default class ConversionToolbar extends Module {
    * Shows Inline Toolbar by keyup/mouseup
    * @param {KeyboardEvent|MouseEvent} event
    */
-  public handleShowingEvent(event): void {
+  public tryToShow(event): void {
     const { BlockManager, BlockSelection } = this.Editor;
 
     const currentBlock = BlockManager.getBlock(event.target);
 
+    /**
+     * CMD+A pressed on document body, Editor not focused, event.target is <body>
+     */
     if (!currentBlock) {
-      _.log('Can\'t open conversion toolbar, current Block is not defined');
       return;
     }
 
     const hasExportConfig = currentBlock.class.conversionConfig && currentBlock.class.conversionConfig.export;
     const singleBlockSelected = !BlockSelection.allBlocksSelected;
+
     if (!hasExportConfig || !singleBlockSelected) {
-      this.close();
       return;
     }
 

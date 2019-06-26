@@ -280,7 +280,7 @@ export default class BlockSelection extends Module {
       /**
        * Show ConversionToolbar to be able to convert current Block
        */
-      this.Editor.ConversionToolbar.handleShowingEvent(event);
+      this.Editor.ConversionToolbar.tryToShow(event);
     }
   }
 

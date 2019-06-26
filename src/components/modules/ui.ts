@@ -636,7 +636,7 @@ export default class UI extends Module {
       return;
     }
 
-    this.Editor.InlineToolbar.handleShowingEvent(event);
+    this.Editor.InlineToolbar.tryToShow(event);
   }
 
   /**

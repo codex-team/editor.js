@@ -56,7 +56,7 @@ export default class BlockEvents extends Module {
    * Fires on keydown before event processing
    * @param {KeyboardEvent} event - keydown
    */
-  public beforeKeydownProcessing(event): void {
+  public beforeKeydownProcessing(event: KeyboardEvent): void {
     /**
      * Do not close Toolbox on Tabs or on Enter with opened Toolbox
      */
@@ -67,10 +67,12 @@ export default class BlockEvents extends Module {
     /**
      * When user type something:
      *  - close Toolbar
+     *  - close Conversion Toolbar
      *  - clear block highlighting
      */
     if (_.isPrintableKey(event.keyCode)) {
       this.Editor.Toolbar.close();
+      this.Editor.ConversionToolbar.close();
 
       /**
        * Allow to use shortcuts with selected blocks
@@ -100,10 +102,10 @@ export default class BlockEvents extends Module {
      */
     if (SelectionUtils.almostAllSelected(currentBlock.pluginsContent.textContent)) {
       InlineToolbar.close();
-      ConversionToolbar.handleShowingEvent(event);
+      ConversionToolbar.tryToShow(event);
     } else {
       ConversionToolbar.close();
-      InlineToolbar.handleShowingEvent(event);
+      InlineToolbar.tryToShow(event);
     }
 
     /**
@@ -131,10 +133,10 @@ export default class BlockEvents extends Module {
      */
     if (SelectionUtils.almostAllSelected(currentBlock.pluginsContent.textContent)) {
       InlineToolbar.close();
-      ConversionToolbar.handleShowingEvent(event);
+      ConversionToolbar.tryToShow(event);
     } else {
       ConversionToolbar.close();
-      InlineToolbar.handleShowingEvent(event);
+      InlineToolbar.tryToShow(event);
     }
   }
 
@@ -521,7 +523,7 @@ export default class BlockEvents extends Module {
   }
 
   /**
-   * Default keydown handler.
+   * Default keydown handler
    */
   private defaultHandler(): void {}
 
