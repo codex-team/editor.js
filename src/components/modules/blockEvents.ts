@@ -47,7 +47,7 @@ export default class BlockEvents extends Module {
         this.escapePressed(event);
         break;
       default:
-        this.defaultHandler(event);
+        this.defaultHandler();
         break;
     }
   }
@@ -523,18 +523,7 @@ export default class BlockEvents extends Module {
   /**
    * Default keydown handler.
    */
-  private defaultHandler(event: KeyboardEvent): void {
-    /**
-     * When user type something:
-     *  - close Toolbar
-     *  - clear block highlighting
-     *  - clear CBS
-     */
-    if (_.isPrintableKey(event.keyCode)) {
-      // console.log('now clear after');
-
-    }
-  }
+  private defaultHandler(): void {}
 
   /**
    * Cases when we need to close Toolbar
