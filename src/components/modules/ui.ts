@@ -343,11 +343,6 @@ export default class UI extends Module {
      * Close Toolbar
      */
     this.Editor.Toolbar.close();
-
-    /**
-     * Close ConversionToolbar
-     */
-    // this.Editor.ConversionToolbar.close();
   }
 
   /**
