@@ -3,11 +3,12 @@ import $ from '../../dom';
 import {BlockToolConstructable} from '../../../../types';
 import _ from '../../utils';
 import {SavedData} from '../../../types-internal/block-data';
-import SelectionUtils from '../../selection';
 import Block from '../../block';
 
+/**
+ * Block Converter
+ */
 export default class ConversionToolbar extends Module {
-
   /**
    * CSS getter
    */
@@ -32,7 +33,7 @@ export default class ConversionToolbar extends Module {
   };
 
   /**
-   * editor open/close identifier
+   * Conversion Toolbar open/close state
    * @type {boolean}
    */
   public opened: boolean = false;
@@ -45,26 +46,19 @@ export default class ConversionToolbar extends Module {
   private focusedButtonIndex: number = -1;
 
   /**
-   * available tools
+   * Available tools
    */
   private tools: { [key: string]: HTMLElement } = {};
 
   /**
-   * @type {number}
+   * Create UI of Conversion Toolbar
    */
-  private defaultOffsetTop: number = 60;
-
-  /**
-   * prepares Converter toolbar
-   *
-   * @return {boolean}
-   */
-  public make() {
+  public make(): void {
     this.nodes.wrapper = $.make('div', ConversionToolbar.CSS.conversionToolbarWrapper);
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
 
     /**
-     * add Tools that has import/export functions
+     * Add Tools that has 'import' method
      */
     this.addTools();
 
@@ -113,7 +107,7 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * Shows ConversionToolbar
+   * Shows Conversion Toolbar
    */
   public open(): void {
     this.opened = true;
@@ -121,7 +115,7 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * Closes ConversionToolbar
+   * Closes Conversion Toolbar
    */
   public close(): void {
     this.opened = false;
@@ -131,8 +125,8 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * @todo Will be used class with tool iterator
-   * leaf tools
+   * Leaf tools by Tab
+   * @todo use class with tool iterator
    */
   public leaf(direction: string = 'right'): void {
     const toolsElements = (Array.from(this.nodes.tools.childNodes) as HTMLElement[]);
@@ -169,14 +163,14 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * Replaces one Block to Another
+   * Replaces one Block with another
    * For that Tools must provide import/export methods
    *
    * @param {string} replacingToolName
    */
   public async replaceWithBlock(replacingToolName: string): Promise <void> {
     /**
-     * first we get current Block data
+     * At first, we get current Block data
      * @type {BlockToolConstructable}
      */
     const currentBlockClass = this.Editor.BlockManager.currentBlock.class;
@@ -185,7 +179,8 @@ export default class ConversionToolbar extends Module {
     const blockData = savedBlock.data;
 
     /**
-     * When current Block name is equals to the replacing tool Name than convert this Block to the initial Block
+     * When current Block name is equals to the replacing tool Name,
+     * than convert this Block back to the initial Block
      */
     if (currentBlockName === replacingToolName) {
       replacingToolName = this.config.initialBlock;
@@ -204,7 +199,7 @@ export default class ConversionToolbar extends Module {
      *
      * In both cases returning value must be a string
      */
-    let exportData = '';
+    let exportData: string = '';
     const exportProp = currentBlockClass.conversionConfig.export;
 
     if (typeof exportProp === 'function') {
@@ -220,15 +215,15 @@ export default class ConversionToolbar extends Module {
     /**
      * Clean exported data with replacing sanitizer config
      */
-    const cleaned = this.Editor.Sanitizer.clean(
+    const cleaned: string = this.Editor.Sanitizer.clean(
       exportData,
       replacingTool.sanitize,
     );
 
     /**
-     * Import property also can be Function or string
-     * When import is Function than Tool gets known object with data and returns a string
-     * When import is string than it means is the name of data field
+     * «import» property can be Function or String
+     * function — accept imported string and compose tool data object
+     * string — the name of data field to import
      */
     let newBlockData = {};
     const importProp = replacingTool.conversionConfig.import;
@@ -238,7 +233,8 @@ export default class ConversionToolbar extends Module {
     } else if (typeof importProp === 'string') {
       newBlockData[importProp] = cleaned;
     } else {
-      _.log('import property must be the name of property or function that return data object');
+      _.log('Conversion «import» property must be a string or function. ' +
+        'String means key of tool data to import. Function accepts a imported string and return composed tool data.');
       return;
     }
 
@@ -270,10 +266,10 @@ export default class ConversionToolbar extends Module {
 
   /**
    * Iterates existing Tools and inserts to the ConversionToolbar
-   * if tools have ability to import/export
+   * if tools have ability to import
    */
   private addTools(): void {
-    const tools = this.Editor.Tools.available;
+    const tools = this.Editor.Tools.blockTools;
 
     for (const toolName in tools) {
       if (!tools.hasOwnProperty(toolName)) {
@@ -283,29 +279,19 @@ export default class ConversionToolbar extends Module {
       const api = this.Editor.Tools.apiSettings;
       const toolClass = tools[toolName] as BlockToolConstructable;
       const toolToolboxSettings = toolClass[api.TOOLBOX];
-
-      if (toolClass.isInline) {
-        continue;
-      }
+      const conversionConfig = toolClass[api.CONVERSION_CONFIG];
 
       /**
        * Skip tools that don't pass 'toolbox' property
        */
-      if (_.isEmpty(toolToolboxSettings)) {
+      if (_.isEmpty(toolToolboxSettings) || !toolToolboxSettings.icon) {
         continue;
       }
 
-      if (toolToolboxSettings && !toolToolboxSettings.icon) {
-        continue;
-      }
-
-      if (!toolClass.conversionConfig) {
-        continue;
-      }
-
-      const hasImport = toolClass.conversionConfig.import;
-
-      if (!hasImport) {
+      /**
+       * Skip tools without «import» rule specified
+       */
+      if (!conversionConfig || !conversionConfig.import) {
         continue;
       }
 
@@ -314,7 +300,7 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * add tool to the conversion toolbar
+   * Add tool to the Conversion Toolbar
    */
   private addTool(toolName: string, toolIcon: string): void {
     const tool = $.make('div', [ ConversionToolbar.CSS.conversionTool ]);
@@ -325,10 +311,7 @@ export default class ConversionToolbar extends Module {
     $.append(this.nodes.tools, tool);
     this.tools[toolName] = tool;
 
-    /**
-     * Add click listener
-     */
-    this.Editor.Listeners.on(tool, 'click', async (event: MouseEvent) => {
+    this.Editor.Listeners.on(tool, 'click', async () => {
       await this.replaceWithBlock(toolName);
     });
   }

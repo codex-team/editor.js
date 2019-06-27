@@ -90,14 +90,14 @@ export default class BlockEvents extends Module {
   /**
    * Key up on Block:
    * - shows Inline Toolbar if something selected
+   * - shows conversion toolbar with 85% of block selection
    */
   public keyup(event): void {
-    const block = this.Editor.BlockManager.getBlock(event.target);
-
-    const { InlineToolbar, ConversionToolbar, UI } = this.Editor;
+    const { InlineToolbar, ConversionToolbar, UI, BlockManager } = this.Editor;
+    const block = BlockManager.getBlock(event.target);
 
     /**
-     * According to the Conversion Toolbar convention range must of 90% of plugins content
+     * Conversion Toolbar will be opened when user selects 85% of plugins content
      * that why we must with the length of pluginsContent
      */
     if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
@@ -119,9 +119,8 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public mouseUp(event): void {
-    const block = this.Editor.BlockManager.getBlock(event.target);
-
-    const { InlineToolbar, ConversionToolbar } = this.Editor;
+    const { InlineToolbar, ConversionToolbar, BlockManager, BlockSelection } = this.Editor;
+    const block = BlockManager.getBlock(event.target);
 
     /**
      * Timeout uses to wait if selection will cleared after mouse up (regular click on block)
@@ -145,7 +144,7 @@ export default class BlockEvents extends Module {
          * Don't close Conversion toolbar when Rectangle Selection ended with one block selected
          * @see RectangleSelection#endSelection
          */
-        if (this.Editor.BlockSelection.selectedBlocks.length !== 1) {
+        if (BlockSelection.selectedBlocks.length !== 1) {
           ConversionToolbar.close();
         }
       }
