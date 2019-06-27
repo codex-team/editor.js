@@ -51,6 +51,11 @@ export default class ConversionToolbar extends Module {
   private tools: { [key: string]: HTMLElement } = {};
 
   /**
+   * Margin above/below the Toolbar
+   */
+  private readonly toolbarVerticalMargin: number = 60;
+
+  /**
    * Create UI of Conversion Toolbar
    */
   public make(): void {
@@ -255,9 +260,15 @@ export default class ConversionToolbar extends Module {
     const blockRect = block.pluginsContent.getBoundingClientRect();
     const wrapperRect = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
 
+    console.log(block);
+    console.log('blockRect', blockRect);
+
     const newCoords = {
       x: blockRect.left - wrapperRect.left,
-      y: blockRect.top,
+      y: blockRect.top
+        + blockRect.height
+        + window.scrollY
+        - this.toolbarVerticalMargin,
     };
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
