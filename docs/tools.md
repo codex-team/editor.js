@@ -58,8 +58,8 @@ Options that Tool can specify. All settings should be passed as static propertie
 | `toolbox` | _Object_ | `undefined` | Pass here `icon` and `title` to display this `Tool` in the Editor's `Toolbox` <br /> `icon` - HTML string with icon for Toolbox <br /> `title` - optional title to display in Toolbox |
 | `enableLineBreaks` | _Boolean_ | `false` | With this option, Editor.js won't handle Enter keydowns. Can be helpful for Tools like `<code>` where line breaks should be handled by default behaviour. |
 | `isInline` | _Boolean_ | `false` | Describes Tool as a [Tool for the Inline Toolbar](tools-inline.md) |
-| `sanitize` | _Object_ | `undefined` | Config for automatic sanitizing of saved data. See [Sanitize][] section. |
-| `conversionConfig` | _Object_ | `undefined` | Config allows Tool to specify how it can be converted into/from another Tool. See [Conversion config][] section. |
+| `sanitize` | _Object_ | `undefined` | Config for automatic sanitizing of saved data. See [Sanitize](#sanitize) section. |
+| `conversionConfig` | _Object_ | `undefined` | Config allows Tool to specify how it can be converted into/from another Tool. See [Conversion config](#conversion-config) section. |
 
 ## User configuration
 
@@ -226,7 +226,7 @@ onPaste (event) {
 }
 ```
 
-## Sanitize
+## Sanitize <a name="sanitize"></a>
 
 Editor.js provides [API](sanitizer.md) to clean taint strings.
 Use it manually at the `save()` method or or pass `sanitizer` config to do it automatically.
@@ -343,14 +343,14 @@ static get sanitize() {
 }
 ```
 
-## Conversion config
+## Conversion config <a name="conversion-config"></a>
 
 Editor.js has a Conversion Toolbar that allows user to convert one Block to another.
 
 ![](https://capella.pics/6c1f708b-a30c-4ffd-a427-5b59a1a472e0.jpg)
 
-1. You can add ability to your Tool to be converted. Specify «export» property of `conversationConfig`.
-2. You can add ability to convert other Tools to your Tool. Specify «import» property of `conversationConfig`.
+1. You can add ability to your Tool to be converted. Specify «export» property of `conversionConfig`.
+2. You can add ability to convert other Tools to your Tool. Specify «import» property of `conversionConfig`.
 
 Conversion Toolbar will be shown only near Blocks that specified an «export» rule, when user selected almost all block's content.
 This Toolbar will contain only Tools that specified an «import» rule. 
@@ -372,7 +372,7 @@ class Header {
   static get conversionConfig() {
     return {
       export: 'text', // this property of tool data will be used as string to pass to other tool
-      import: 'text' // in this property imported string will be passed
+      import: 'text' // to this property imported string will be passed
     };
   }
 }
@@ -380,12 +380,13 @@ class Header {
 
 ### Your Tool -> other Tool
 
-The «export» field specifies how to represent your Tool'data as a string to pass it to other tool. 
+The «export» field specifies how to represent your Tool's data as a string to pass it to other tool. 
+
 It can be a `String` or a `Function`.
 
-String means a key of your Tool data object that should be used as string to export. 
+`String` means a key of your Tool data object that should be used as string to export. 
 
-Function is a method that accepts your Tool data and compose a string to export from it. See example below:
+`Function` is a method that accepts your Tool data and compose a string to export from it. See example below:
 
 ```js
 class ListTool {
@@ -417,10 +418,10 @@ The «import» rule specifies how to create your Tool's data object from the str
 
 It can be a `String` or a `Function`. 
 
-String means the key in tool data that will be filled by an exported string. 
+`String` means the key in tool data that will be filled by an exported string. 
 For example, `import: 'text'` means that `constructor` of your block will accept a `data` object with `text` property filled with string composed by original block.
 
-Function allows you to specify own logic, how a string should be converted to your tool data. For example:
+`Function` allows you to specify own logic, how a string should be converted to your tool data. For example:
 
 ```js
 class ListTool {
@@ -436,8 +437,8 @@ class ListTool {
       // ... export rule 
       
       /**
-      * In this example, List Tool creates items by splitting original text by a dot symbol. 
-      */
+       * In this example, List Tool creates items by splitting original text by a dot symbol. 
+       */
       import: (string) => {
         const items = string.split('.');
 
