@@ -51,11 +51,6 @@ export default class ConversionToolbar extends Module {
   private tools: { [key: string]: HTMLElement } = {};
 
   /**
-   * Margin above/below the Toolbar
-   */
-  private readonly toolbarVerticalMargin: number = 60;
-
-  /**
    * Create UI of Conversion Toolbar
    */
   public make(): void {
@@ -92,16 +87,17 @@ export default class ConversionToolbar extends Module {
        * Drop previous active button before moving
        */
       if (this.focusedButton && this.focusedButton.classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
-        this.dropFocusedButton();
+        // this.dropFocusedButton();
+        this.focusedButton.classList.remove(ConversionToolbar.CSS.conversionToolActive);
       }
 
       this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
 
-      Array.from(this.nodes.tools.childNodes).forEach((tool, index) => {
-        if ((tool as HTMLElement).classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
-          this.focusedButtonIndex = index;
-        }
-      });
+      // Array.from(this.nodes.tools.childNodes).forEach((tool, index) => {
+      //   if ((tool as HTMLElement).classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
+      //     this.focusedButtonIndex = index;
+      //   }
+      // });
     }
 
     this.move(block);
@@ -155,11 +151,7 @@ export default class ConversionToolbar extends Module {
    * Drops focused button
    */
   public dropFocusedButton() {
-    if (this.focusedButtonIndex === -1) {
-      return;
-    }
-
-    Object.values(this.nodes.tools.childNodes).forEach( (tool) => {
+    Object.values(this.tools).forEach( (tool) => {
       (tool as HTMLElement).classList
         .remove(ConversionToolbar.CSS.conversionToolActive, ConversionToolbar.CSS.conversionToolFocused);
     });
@@ -260,15 +252,21 @@ export default class ConversionToolbar extends Module {
     const blockRect = block.pluginsContent.getBoundingClientRect();
     const wrapperRect = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
 
-    console.log(block);
-    console.log('blockRect', blockRect);
+    let posY = 0;
+    for (const targetBlock of this.Editor.BlockManager.blocks) {
+        const targetBlockRect = targetBlock.pluginsContent.getBoundingClientRect();
+        const targetBlockComputedStyles = getComputedStyle(targetBlock.pluginsContent);
+
+        posY += targetBlockRect.height - parseInt(targetBlockComputedStyles.paddingBottom, 10) / 2;
+
+        if (targetBlock === block) {
+          break;
+        }
+    }
 
     const newCoords = {
       x: blockRect.left - wrapperRect.left,
-      y: blockRect.top
-        + blockRect.height
-        + window.scrollY
-        - this.toolbarVerticalMargin,
+      y: posY,
     };
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';

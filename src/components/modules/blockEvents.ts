@@ -125,7 +125,7 @@ export default class BlockEvents extends Module {
     /**
      * Timeout uses to wait if selection will cleared after mouse up (regular click on block)
      */
-    setTimeout(() => {
+    _.delay(() => {
       /**
        * 1) selected 85% of block - open Conversion Toolbar
        * 2) select something inside block - open Inline Toolbar
@@ -148,7 +148,7 @@ export default class BlockEvents extends Module {
           ConversionToolbar.close();
         }
       }
-    }, 30);
+    }, 30)();
   }
 
   /**
