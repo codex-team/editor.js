@@ -252,21 +252,9 @@ export default class ConversionToolbar extends Module {
     const blockRect = block.pluginsContent.getBoundingClientRect();
     const wrapperRect = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
 
-    let posY = 0;
-    for (const targetBlock of this.Editor.BlockManager.blocks) {
-        const targetBlockRect = targetBlock.pluginsContent.getBoundingClientRect();
-        const targetBlockComputedStyles = getComputedStyle(targetBlock.pluginsContent);
-
-        posY += targetBlockRect.height - parseInt(targetBlockComputedStyles.paddingBottom, 10) / 2;
-
-        if (targetBlock === block) {
-          break;
-        }
-    }
-
     const newCoords = {
       x: blockRect.left - wrapperRect.left,
-      y: posY,
+      y: blockRect.top + blockRect.height - wrapperRect.top,
     };
 
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
