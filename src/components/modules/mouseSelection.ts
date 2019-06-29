@@ -4,11 +4,16 @@ import SelectionUtils from '../selection';
 
 export default class MouseSelection extends Module {
     /**
-     *
+     * Block where selection is started
      */
     private firstSelectedBlock: Block;
 
-    public watchSelection(event: MouseEvent) {
+    /**
+     * Sets up listeners
+     *
+     * @param {MouseEvent} event - mouse down event
+     */
+    public watchSelection(event: MouseEvent): void {
         const {BlockManager, UI, Listeners} = this.Editor;
         this.firstSelectedBlock = BlockManager.getBlock(event.target as HTMLElement);
 
@@ -16,16 +21,31 @@ export default class MouseSelection extends Module {
         Listeners.on(document, 'mouseup', this.onMouseUp);
     }
 
-    private onMouseUp  = () => {
+    /**
+     * Mouse up event handler.
+     * Removes the listeners
+     */
+    private onMouseUp  = (): void => {
         const {Listeners, BlockSelection} = this.Editor;
 
+        /**
+         * Click event is fired right after mouseup.
+         * We need to set flag because in the other case
+         * selection is cleared just after blocks are selected
+         */
         BlockSelection.shouldClearOnClick = false;
 
         Listeners.off(document, 'mouseover', this.onMouseOver);
         Listeners.off(document, 'mouseup', this.onMouseUp);
     }
 
-    private onMouseOver = (event: MouseEvent) => {
+    /**
+     * Mouse over evenr handler
+     * Gets target and related blocks and change selected state for blocks in between
+     *
+     * @param {MouseEvent} event
+     */
+    private onMouseOver = (event: MouseEvent): void => {
         const {BlockManager} = this.Editor;
 
         const relatedBlock = BlockManager.getBlockByChildNode(event.relatedTarget as Node);
@@ -56,6 +76,12 @@ export default class MouseSelection extends Module {
         this.changeBlocksState(relatedBlock, targetBlock);
     }
 
+    /**
+     * Change blocks selection state between passed two blocks.
+     *
+     * @param {Block} firstBlock
+     * @param {Block} lastBlock
+     */
     private changeBlocksState(firstBlock: Block, lastBlock: Block): void {
         const {BlockManager} = this.Editor;
         const fIndex = BlockManager.blocks.indexOf(firstBlock);

@@ -119,7 +119,7 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public mouseUp(event): void {
-    const { InlineToolbar, ConversionToolbar, BlockManager, BlockSelection, Listeners, UI } = this.Editor;
+    const { InlineToolbar, ConversionToolbar, BlockManager, BlockSelection } = this.Editor;
     const block = BlockManager.getBlock(event.target);
 
     /**
@@ -149,12 +149,6 @@ export default class BlockEvents extends Module {
         }
       }
     }, 30)();
-
-    const mouseMoveListener = Listeners.findOne(UI.nodes.redactor, 'mousemove');
-
-    if (mouseMoveListener) {
-      Listeners.off(mouseMoveListener.element, mouseMoveListener.eventType, mouseMoveListener.handler);
-    }
   }
 
   /**
