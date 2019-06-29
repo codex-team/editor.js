@@ -59,6 +59,13 @@ export default class Block {
    * @returns {HTMLElement[]}
    */
   get inputs(): HTMLElement[] {
+    /**
+     * Return from cache if existed
+     */
+    if (this.cachedInputs.length !== 0) {
+      return this.cachedInputs;
+    }
+
     const content = this.holder;
     const allowedInputTypes = ['text', 'password', 'email', 'number', 'search', 'tel', 'url'];
 
@@ -84,6 +91,11 @@ export default class Block {
     if (this.inputIndex > inputs.length - 1) {
       this.inputIndex = inputs.length - 1;
     }
+
+    /**
+     * Cache inputs
+     */
+    this.cachedInputs = inputs;
 
     return inputs;
   }
@@ -150,13 +162,13 @@ export default class Block {
 
   /**
    * Returns Plugins content
-   * @return {Node}
+   * @return {HTMLElement}
    */
-  get pluginsContent(): Node {
+  get pluginsContent(): HTMLElement {
     const pluginsContent = this.holder.querySelector(`.${Block.CSS.content}`);
 
     if (pluginsContent && pluginsContent.childNodes.length) {
-      return pluginsContent.childNodes[0];
+      return pluginsContent.childNodes[0] as HTMLElement;
     }
 
     return null;
@@ -265,6 +277,14 @@ export default class Block {
   }
 
   /**
+   * Toggle drop target state
+   * @param {boolean} state
+   */
+  public set dropTarget(state) {
+    this.holder.classList.toggle(Block.CSS.dropTarget, state);
+  }
+
+  /**
    * Block Tool`s name
    */
   public name: string;
@@ -293,6 +313,12 @@ export default class Block {
    * Tunes used by Tool
    */
   public tunes: BlockTune[];
+
+  /**
+   * Cached inputs
+   * @type {HTMLElement[]}
+   */
+  private cachedInputs: HTMLElement[] = [];
 
   /**
    * Editor`s API
@@ -446,14 +472,6 @@ export default class Block {
   }
 
   /**
-   * Toggle drop target state
-   * @param {boolean} state
-   */
-  public set dropTarget(state) {
-    this.holder.classList.toggle(Block.CSS.dropTarget, state);
-  }
-
-  /**
    * Update current input index with selection anchor node
    */
   public updateCurrentInput(): void {
@@ -480,7 +498,15 @@ export default class Block {
   /**
    * Is fired when DOM mutation has been happened
    */
-  private didMutated = () => {
+  private didMutated = (): void => {
+    /**
+     * Drop cache
+     */
+    this.cachedInputs = [];
+
+    /**
+     * Update current input
+     */
     this.updateCurrentInput();
   }
 

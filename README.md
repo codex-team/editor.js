@@ -1,8 +1,10 @@
-<p align="center"><img src="https://capella.pics/79ce946a-d636-41cd-aa96-d3bc5ecfde03.jpg"></p>
+<a href="https://editorjs.io/"><p align="center"><img src="https://capella.pics/79ce946a-d636-41cd-aa96-d3bc5ecfde03.jpg"></p></a>
 
 [![](https://flat.badgen.net/npm/v/@editorjs/editorjs?icon=npm)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![](https://flat.badgen.net/bundlephobia/min/@editorjs/editorjs?color=cyan)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![](https://flat.badgen.net/bundlephobia/minzip/@editorjs/editorjs?color=green)](https://www.npmjs.com/package/@editorjs/editorjs)
+[![Backers on Open Collective](https://opencollective.com/editorjs/backers/badge.svg)](#backers)
+[![Sponsors on Open Collective](https://opencollective.com/editorjs/sponsors/badge.svg)](#sponsors) 
 [![](https://flat.badgen.net/npm/license/@editorjs/editorjs)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![Join the chat at https://gitter.im/codex-team/editor.js](https://badges.gitter.im/codex-team/editor.js.svg)](https://gitter.im/codex-team/editor.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -18,19 +20,28 @@ Join [public Telegram-chat](//t.me/codex_editor) or [Gitter-channel](https://git
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | Edge 12+ | Firefox 18+ | Chrome 49+ | Safari 10+ | Safari 10+ | Opera 36+
 
+## ⭐️ If you like a project
+
+If you like Editor.js you can support project improvements and development of new features with a small donation on [Open Collective](https://opencollective.com/editorjs) or [Patreon](https://www.patreon.com/editorjs) 
+
 ## Documentation
 
-While we develop the new Documentation Site with all stuff, you can check some available docs at the [docs/](docs/) dir.
+Please, visit [https://editorjs.io/](https://editorjs.io) to view all documentation articles.
 
-- [Installation](docs/installation.md)
-- [How to use](docs/usage.md)
-- [How to create a Block Tool Plugin](docs/tools.md)
-- [How to create an Inline Tool Plugin](docs/tools-inline.md)
-- [API for Tools](docs/api.md)
+- [Base concepts](https://editorjs.io/base-concepts)
+- [Getting started](https://editorjs.io/getting-started)
+- [Configuration](https://editorjs.io/configuration)
+- [How to create a Block Tool Plugin](https://editorjs.io/creating-a-block-tool)
+- [How to create an Inline Tool Plugin](https://editorjs.io/creating-an-inline-tool)
+- [API for Tools](https://editorjs.io/tools-api)
 
-Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor) and ask a question.
+You can join a [Gitter-channel](https://gitter.im/codex-team/editor.js) or [Telegram-chat](//t.me/codex_editor) and ask a question.
 
 ---
+
+## Changelog
+
+See a whole [Changelog](/docs/CHANGELOG.md)
 
 # So how to use Editor.js
 
@@ -38,9 +49,9 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 Editor.js is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
-We have [many](http://github.com/editor-js/) ready-to-use Plugins and a [simple API](docs/tools.md) for creating new ones.
+We have [many](http://github.com/editor-js/) ready-to-use Plugins and a [simple API](https://editorjs.io/tools-api) for creating new ones.
 
-So how to use the Editor after [Installation](docs/installation.md).
+So how to use the Editor after [Installation](https://editorjs.io/getting-started).
 
 - Create new Blocks by Enter or with the Plus Button
 - Press `TAB` or click on the Plus Button to view the Toolbox
@@ -74,7 +85,7 @@ Shortcut | Action | Restrictions
 Also we support shortcuts on the all type of Tools. Specify a shortcut with the Tools configuration. For example:
 
 ```js
-var editor = EditorJS({
+var editor = new EditorJS({
   //...
   tools: {
     header: {
@@ -102,7 +113,7 @@ There are few steps to run Editor.js on your site.
 
 ## Load Editor's core
 
-Firstly you need to get Editor.js itself. It is a [minified script](build/editor.js) with Editor's core and some default must-have tools.
+Firstly you need to get Editor.js itself. It is a [minified script](dist/editor.js) with Editor's core and some default must-have tools.
 
 Choose the most usable method of getting Editor for you.
 
@@ -115,7 +126,7 @@ Choose the most usable method of getting Editor for you.
 Install the package via NPM or Yarn
 
 ```shell
-npm i @editorjs/editorjs --save-dev
+npm i @editorjs/editorjs
 ```
 
 Include module in your application
@@ -185,7 +196,7 @@ var editor = new EditorJS({
     /**
      * Create a holder for the Editor and pass its ID
      */
-    holderId : 'editorjs',
+    holder : 'editorjs',
 
     /**
      * Available Tools list.
@@ -208,10 +219,10 @@ var editor = new EditorJS({
 
 ## Saving Data
 
-Call `editor.saver.save()` and handle returned Promise with saved data.
+Call `editor.save()` and handle returned Promise with saved data.
 
 ```javascript
-editor.saver.save()
+editor.save()
   .then((savedData) => {
     console.log(savedData);
   });
@@ -229,6 +240,30 @@ See a whole [Changelog](/docs/CHANGELOG.md)
 
 - We use [HTMLJanitor](https://github.com/guardian/html-janitor) module in our Sanitizer module. 
 
+# Support project improvements
+
+Love Editor.js? Please consider supporting our collective:
+
+ 👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
+ 
+ 👉  [Patreon](https://www.patreon.com/editorjs)
+ 
+## Contributors
+
+This project exists thanks to all the people who contribute. <img src="https://opencollective.com/editorjs/contributors.svg?width=890&button=false" />
+
+## Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/editorjs#backer)]
+
+<a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890"></a>
+
+## Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/editorjs#sponsor)]
+
+<a href="https://opencollective.com/editorjs/sponsor/0/website" target="_blank"><img src="https://opencollective.com/editorjs/sponsor/0/avatar.svg"></a>
+
 # About team
 
 We are CodeX and we build products for developers and makers. 
@@ -238,8 +273,3 @@ Follow us on Twitter: [twitter.com/codex_team](https://twitter.com/codex_team)
 Feel free to contact: <a href="mailto:team@codex.so?subject=Editor.js feedback">team@codex.so</a>
 
 [codex.so](https://codex.so)
-
-# Support project improvements
-
-Love Editor.js? Please consider supporting our collective:
- 👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)

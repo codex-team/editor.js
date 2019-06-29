@@ -1,6 +1,6 @@
 import $ from './dom';
 import _ from './utils';
-import {EditorConfig, OutputData, SanitizerConfig, ToolSettings} from '../../types';
+import {EditorConfig, OutputData, SanitizerConfig} from '../../types';
 import {EditorModules} from '../types-internal/editor-modules';
 
 /**
@@ -148,6 +148,12 @@ export default class Core {
     this.config.initialBlock = this.config.initialBlock || 'paragraph';
 
     /**
+     * Height of Editor's bottom area that allows to set focus on the last Block
+     * @type {number}
+     */
+    this.config.minHeight = this.config.minHeight || 300;
+
+    /**
      * Initial block type
      * Uses in case when there is no blocks passed
      * @type {{type: (*), data: {text: null}}}
@@ -157,7 +163,7 @@ export default class Core {
       data : {},
     };
 
-    this.config.placeholder = this.config.placeholder || 'write your story...';
+    this.config.placeholder = this.config.placeholder || false;
     this.config.sanitizer = this.config.sanitizer || {
       p: true,
       b: true,

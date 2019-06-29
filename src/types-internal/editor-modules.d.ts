@@ -32,6 +32,7 @@ import BlockSelection from '../components/modules/blockSelection';
 import RectangleSelection from '../components/modules/RectangleSelection';
 import InlineToolbarAPI from '../components/modules/api/inlineToolbar';
 import MouseSelection from '../components/modules/mouseSelection';
+import ConversionToolbar from '../components/modules/toolbar/conversion';
 
 export interface EditorModules {
   UI: UI;
@@ -43,6 +44,7 @@ export interface EditorModules {
   InlineToolbar: InlineToolbar;
   Toolbox: Toolbox;
   BlockSettings: BlockSettings;
+  ConversionToolbar: ConversionToolbar;
   Events: Events;
   Shortcuts: Shortcuts;
   Paste: Paste;

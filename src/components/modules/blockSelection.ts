@@ -6,11 +6,11 @@
  * @version 1.0.0
  */
 import Module from '../__module';
+import Block from '../block';
 import _ from '../utils';
 import $ from '../dom';
 
 import SelectionUtils from '../selection';
-import Block from '../block';
 
 export default class BlockSelection extends Module {
 
@@ -78,6 +78,14 @@ export default class BlockSelection extends Module {
 public shouldClearOnMouseUp = true;
 
   /**
+   * Return selected Blocks array
+   * @return {Block[]}
+   */
+  public get selectedBlocks(): Block[] {
+    return this.Editor.BlockManager.blocks.filter((block) => block.selected);
+  }
+
+  /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
    * @type {boolean}
@@ -90,6 +98,13 @@ public shouldClearOnMouseUp = true;
    * @type {boolean}
    */
   private nativeInputSelected: boolean = false;
+
+  /**
+   * Flag identifies any input selection
+   * That means we can select whole Block
+   * @type {boolean}
+   */
+  private readyToBlockSelection: boolean = false;
 
   /**
    * SelectionUtils instance
@@ -155,6 +170,7 @@ public shouldClearOnMouseUp = true;
 
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
+    this.readyToBlockSelection = false;
 
     if (MouseSelection.isMouseSelectionActivated) {
       return;
@@ -181,15 +197,13 @@ public shouldClearOnMouseUp = true;
    * Reduce each Block and copy its content
    */
   public copySelectedBlocks(): void {
-    const {BlockManager, Sanitizer} = this.Editor;
     const fakeClipboard = $.make('div');
 
-    BlockManager.blocks.filter((block) => block.selected)
-      .forEach((block) => {
+    this.selectedBlocks.forEach((block) => {
         /**
          * Make <p> tag that holds clean HTML
          */
-        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+        const cleanHTML = this.Editor.Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
         const fragment = $.make('p');
 
         fragment.innerHTML = cleanHTML;
@@ -228,12 +242,12 @@ public shouldClearOnMouseUp = true;
   }
 
   /**
-   * First CMD+A Selects current focused blocks,
-   * and consequent second CMD+A keypress selects all blocks
+   * First CMD+A selects all input content by native behaviour,
+   * next CMD+A keypress selects all blocks
    *
-   * @param {keydown} event
+   * @param {KeyboardEvent} event
    */
-  private handleCommandA(event): void {
+  private handleCommandA(event: KeyboardEvent): void {
     this.Editor.RectangleSelection.clearSelection();
 
     /** allow default selection on native inputs */
@@ -242,14 +256,42 @@ public shouldClearOnMouseUp = true;
       return;
     }
 
-    /** Prevent default selection */
-    event.preventDefault();
+    const workingBlock = this.Editor.BlockManager.getBlock(event.target as HTMLElement);
+    const inputs = workingBlock.inputs;
+
+    /**
+     * If Block has more than one editable element allow native selection
+     * Second cmd+a will select whole Block
+     */
+    if (inputs.length > 1 && !this.readyToBlockSelection) {
+      this.readyToBlockSelection = true;
+      return;
+    }
 
     if (this.needToSelectAll) {
+      /** Prevent default selection */
+      event.preventDefault();
+
+      /**
+       * Save selection
+       * Will be restored when closeSelection fired
+       */
+      this.selection.save();
+
+      /**
+       * Remove Ranges from Selection
+       */
+      SelectionUtils.get()
+        .removeAllRanges();
+
       this.selectAllBlocks();
       this.needToSelectAll = false;
+
+      /**
+       * Close ConversionToolbar when all Blocks selected
+       */
+      this.Editor.ConversionToolbar.close();
     } else {
-      this.selectBlockByIndex();
       this.needToSelectAll = true;
     }
   }

@@ -29,7 +29,7 @@ export interface EditorConfig {
   /**
    * First Block placeholder
    */
-  placeholder?: string;
+  placeholder?: string|false;
 
   /**
    * Define default sanitizer configuration
@@ -51,6 +51,11 @@ export interface EditorConfig {
    * Data to render on Editor start
    */
   data?: OutputData;
+
+  /**
+   * Height of Editor's bottom area that allows to set focus on the last Block
+   */
+  minHeight?: number;
 
   /**
    * Fires when Editor is ready to work

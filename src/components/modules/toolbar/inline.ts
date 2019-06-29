@@ -23,12 +23,21 @@ export default class InlineToolbar extends Module {
   public CSS = {
     inlineToolbar: 'ce-inline-toolbar',
     inlineToolbarShowed: 'ce-inline-toolbar--showed',
+    inlineToolbarLeftOriented: 'ce-inline-toolbar--left-oriented',
+    inlineToolbarRightOriented: 'ce-inline-toolbar--right-oriented',
     buttonsWrapper: 'ce-inline-toolbar__buttons',
     actionsWrapper: 'ce-inline-toolbar__actions',
     inlineToolButton: 'ce-inline-tool',
     inlineToolButtonLast: 'ce-inline-tool--last',
     inputField: 'cdx-input',
+    focusedButton: 'ce-inline-tool--focused',
   };
+
+  /**
+   * State of inline toolbar
+   * @type {boolean}
+   */
+  public opened: boolean = false;
 
   /**
    * Inline Toolbar elements
@@ -52,6 +61,31 @@ export default class InlineToolbar extends Module {
    * Tools instances
    */
   private toolsInstances: Map<string, InlineTool>;
+
+  /**
+   * Buttons List
+   * @type {NodeList}
+   */
+  private buttonsList: NodeList = null;
+
+  /**
+   * Visible Buttons
+   * Some Blocks might disable inline tools
+   * @type {HTMLElement[]}
+   */
+  private visibleButtonsList: HTMLElement[] = [];
+
+  /**
+   * Focused button index
+   * @type {number}
+   */
+  private focusedButtonIndex: number = -1;
+
+  /**
+   * Cache for Inline Toolbar width
+   * @type {number}
+   */
+  private width: number = 0;
 
   /**
    * Inline Toolbar Tools
@@ -85,10 +119,8 @@ export default class InlineToolbar extends Module {
     this.Editor.Listeners.on(this.nodes.wrapper, 'mousedown', (event) => {
       const isClickedOnActionsWrapper = (event.target as Element).closest(`.${this.CSS.actionsWrapper}`);
 
-      /**
-       * If click is on actions wrapper,
-       * do not prevent default behaviour because actions might include interactive elements
-       */
+      // If click is on actions wrapper,
+      // do not prevent default behaviour because actions might include interactive elements
       if (!isClickedOnActionsWrapper) {
         event.preventDefault();
       }
@@ -105,6 +137,10 @@ export default class InlineToolbar extends Module {
      */
     this.addTools();
 
+    /**
+     * Recalculate initial width with all buttons
+     */
+    this.recalculateWidth();
   }
 
   /**
@@ -113,17 +149,16 @@ export default class InlineToolbar extends Module {
    */
 
   /**
-   * Shows Inline Toolbar by keyup/mouseup
-   * @param {KeyboardEvent|MouseEvent} event
+   * Shows Inline Toolbar if something is selected
    */
-  public handleShowingEvent(event): void {
+  public tryToShow(): void {
     if (!this.allowedToShow()) {
-      this.close();
       return;
     }
 
     this.move();
     this.open();
+    this.Editor.Toolbar.close();
 
     /** Check Tools state for selected fragment */
     this.checkToolsState();
@@ -154,8 +189,62 @@ export default class InlineToolbar extends Module {
       newCoords.x += Math.floor(selectionRect.width / 2);
     }
 
+    /**
+     * Inline Toolbar has -50% translateX, so we need to check real coords to prevent overflowing
+     */
+    const realLeftCoord = newCoords.x - this.width / 2;
+    const realRightCoord = newCoords.x + this.width / 2;
+
+    /**
+     * By default, Inline Toolbar has top-corner at the center
+     * We are adding a modifiers for to move corner to the left or right
+     */
+    this.nodes.wrapper.classList.toggle(this.CSS.inlineToolbarLeftOriented, realLeftCoord < this.Editor.UI.contentRect.left);
+    this.nodes.wrapper.classList.toggle(this.CSS.inlineToolbarRightOriented, realRightCoord > this.Editor.UI.contentRect.right);
+
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
     this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
+  }
+
+  /**
+   * Leaf Inline Tools
+   * @param {string} direction
+   */
+  public leaf(direction: string = 'right'): void {
+    this.visibleButtonsList = (Array.from(this.buttonsList)
+      .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[]);
+
+    if (this.visibleButtonsList.length === 0) {
+      return;
+    }
+
+    this.focusedButtonIndex = $.leafNodesAndReturnIndex(
+      this.visibleButtonsList, this.focusedButtonIndex, direction, this.CSS.focusedButton,
+    );
+  }
+
+  /**
+   * Drops focused button index
+   */
+  public dropFocusedButtonIndex(): void {
+    if (this.focusedButtonIndex === -1) {
+      return;
+    }
+
+    this.visibleButtonsList[this.focusedButtonIndex].classList.remove(this.CSS.focusedButton);
+    this.focusedButtonIndex = -1;
+  }
+
+  /**
+   * Returns Focused button Node
+   * @return {HTMLElement}
+   */
+  public get focusedButton(): HTMLElement {
+    if (this.focusedButtonIndex === -1) {
+      return null;
+    }
+
+    return this.visibleButtonsList[this.focusedButtonIndex];
   }
 
   /**
@@ -168,18 +257,19 @@ export default class InlineToolbar extends Module {
         toolInstance.clear();
       }
     });
+
+    this.opened = false;
+
+    if (this.focusedButtonIndex !== -1) {
+      this.visibleButtonsList[this.focusedButtonIndex].classList.remove(this.CSS.focusedButton);
+      this.focusedButtonIndex = -1;
+    }
   }
 
   /**
    * Shows Inline Toolbar
    */
   public open(): void {
-    /**
-     * Check if inline toolbar is allowed to show or not
-     */
-    if (!this.allowedToShow()) {
-      return;
-    }
 
     /**
      * Filter inline-tools and show only allowed by Block's Tool
@@ -199,6 +289,9 @@ export default class InlineToolbar extends Module {
         toolInstance.clear();
       }
     });
+
+    this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
+    this.opened = true;
   }
 
   /**
@@ -223,7 +316,9 @@ export default class InlineToolbar extends Module {
       return false;
     }
 
-    const target = currentSelection.anchorNode.parentElement;
+    const target = !$.isElement(currentSelection.anchorNode )
+      ? currentSelection.anchorNode.parentElement
+      : currentSelection.anchorNode;
 
     if (currentSelection && tagsConflictsWithSelection.includes(target.tagName)) {
       return false;
@@ -231,6 +326,7 @@ export default class InlineToolbar extends Module {
 
     // The selection of the element only in contenteditable
     const contenteditable = target.closest('[contenteditable="true"]');
+
     if (contenteditable === null) {
       return false;
     }
@@ -289,6 +385,18 @@ export default class InlineToolbar extends Module {
     if (lastVisibleButton) {
       lastVisibleButton.classList.add(this.CSS.inlineToolButtonLast);
     }
+
+    /**
+     * Recalculate width because some buttons can be hidden
+     */
+    this.recalculateWidth();
+  }
+
+  /**
+   * Recalculate inline toolbar width
+   */
+  private recalculateWidth(): void {
+    this.width = this.nodes.wrapper.offsetWidth;
   }
 
   /**
