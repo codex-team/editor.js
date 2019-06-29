@@ -7,71 +7,83 @@ export default class MouseSelection extends Module {
 
     private firstSelectedBlock: Block;
     private firstSelectedBlockIndex: number;
+    private lastSelectedBlock: Block;
     private lastSelectedBlockIndex: number;
-    private isDownDirection: boolean = undefined;
+    private selection = new SelectionUtils();
 
     public watchSelection(event: MouseEvent) {
         const {BlockManager, UI, Listeners} = this.Editor;
 
-        this.firstSelectedBlock = BlockManager.currentBlock || BlockManager.getBlockByChildNode(event.target as Node);
-        this.firstSelectedBlockIndex = BlockManager.blocks.indexOf(this.firstSelectedBlock);
-        this.lastSelectedBlockIndex = this.firstSelectedBlockIndex;
+        this.firstSelectedBlock = this.lastSelectedBlock = BlockManager.getBlockByChildNode(event.target as Node);
+        this.firstSelectedBlockIndex = this.lastSelectedBlockIndex = BlockManager.blocks.indexOf(this.firstSelectedBlock);
 
-        Listeners.on(document, 'mousemove', this.onMouseMove);
+        Listeners.on(document, 'mouseover', this.onMouseOver);
         Listeners.on(document, 'mouseup', this.onMouseUp);
     }
 
     private onMouseUp  = () => {
-        const {Listeners} = this.Editor;
+        const {Listeners, BlockSelection} = this.Editor;
 
-        Listeners.off(document, 'mousemove', this.onMouseMove);
+        BlockSelection.shouldClearOnMouseUp = false;
+
+        Listeners.off(document, 'mouseover', this.onMouseOver);
         Listeners.off(document, 'mouseup', this.onMouseUp);
     }
 
-    private onMouseMove = (event: MouseEvent) => {
+    private onMouseOver = (event: MouseEvent) => {
         const {BlockManager} = this.Editor;
 
+        const relatedBlock = BlockManager.getBlockByChildNode(event.relatedTarget as Node);
         const targetBlock = BlockManager.getBlockByChildNode(event.target as Node);
-        const targetBlockIndex = BlockManager.blocks.indexOf(targetBlock);
 
-        if (this.lastSelectedBlockIndex === targetBlockIndex) {
+        if (!relatedBlock || !targetBlock) {
             return;
         }
 
-        if (targetBlockIndex === this.firstSelectedBlockIndex) {
-            this.isDownDirection = undefined;
-            this.firstSelectedBlock.selected = false;
-            BlockManager.getBlockByIndex(this.lastSelectedBlockIndex).selected = false;
-            this.lastSelectedBlockIndex = this.firstSelectedBlockIndex;
-            this.isMouseSelectionActivated = false;
+        if (targetBlock === relatedBlock) {
             return;
         }
 
-        if (this.isDownDirection === undefined) {
-            this.isDownDirection = targetBlockIndex > this.firstSelectedBlockIndex;
-            this.firstSelectedBlock.selected = true;
+        this.lastSelectedBlock = targetBlock;
+        this.lastSelectedBlockIndex = BlockManager.blocks.indexOf(targetBlock);
 
-            const nativeSelection = SelectionUtils.get();
+        if (relatedBlock === this.firstSelectedBlock) {
+            this.selection.save();
 
-            nativeSelection.empty();
+            SelectionUtils.get().removeAllRanges();
 
-            this.isMouseSelectionActivated = true;
+            relatedBlock.selected = true;
+            targetBlock.selected = true;
+            return;
         }
 
-        if (this.isDownDirection) {
-            if (targetBlockIndex > this.lastSelectedBlockIndex) {
-                targetBlock.selected = true;
-            } else if (targetBlockIndex < this.lastSelectedBlockIndex) {
-                BlockManager.getBlockByIndex(this.lastSelectedBlockIndex).selected = false;
-            }
-        } else {
-            if (targetBlockIndex < this.lastSelectedBlockIndex) {
-                targetBlock.selected = true;
-            } else if (targetBlockIndex > this.lastSelectedBlockIndex) {
-                BlockManager.getBlockByIndex(this.lastSelectedBlockIndex).selected = false;
-            }
+        if (targetBlock === this.firstSelectedBlock) {
+            relatedBlock.selected = false;
+            targetBlock.selected = false;
+
+            this.selection.restore();
+            return;
         }
 
-        this.lastSelectedBlockIndex = targetBlockIndex;
+        this.changeBlocksState(relatedBlock, targetBlock);
+    }
+
+    private changeBlocksState(firstBlock: Block, lastBlock: Block): void {
+        const {BlockManager} = this.Editor;
+        const fIndex = BlockManager.blocks.indexOf(firstBlock);
+        const lIndex = BlockManager.blocks.indexOf(lastBlock);
+
+        const shouldntSelectFirstBlock = firstBlock.selected !== lastBlock.selected;
+
+        for (let i = Math.min(fIndex, lIndex); i <= Math.max(fIndex, lIndex); i++) {
+            const block = BlockManager.blocks[i];
+
+            if (
+                block !== this.firstSelectedBlock &&
+                block !== (shouldntSelectFirstBlock ? firstBlock : lastBlock)
+            ) {
+                BlockManager.blocks[i].selected = !BlockManager.blocks[i].selected;
+            }
+        }
     }
 }

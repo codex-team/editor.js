@@ -75,6 +75,8 @@ export default class BlockSelection extends Module {
     return BlockManager.blocks.some((block) => block.selected === true);
   }
 
+public shouldClearOnMouseUp = true;
+
   /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
@@ -148,6 +150,7 @@ export default class BlockSelection extends Module {
    * Clear selection from Blocks
    */
   public clearSelection(restoreSelection = false) {
+    console.trace('clear selection');
     const {MouseSelection, RectangleSelection} = this.Editor;
 
     this.needToSelectAll = false;
