@@ -6,6 +6,7 @@
  * @version 1.0.0
  */
 import Module from '../__module';
+import Block from '../block';
 import _ from '../utils';
 import $ from '../dom';
 
@@ -72,6 +73,14 @@ export default class BlockSelection extends Module {
     const {BlockManager} = this.Editor;
 
     return BlockManager.blocks.some((block) => block.selected === true);
+  }
+
+  /**
+   * Return selected Blocks array
+   * @return {Block[]}
+   */
+  public get selectedBlocks(): Block[] {
+    return this.Editor.BlockManager.blocks.filter((block) => block.selected);
   }
 
   /**
@@ -179,15 +188,13 @@ export default class BlockSelection extends Module {
    * Reduce each Block and copy its content
    */
   public copySelectedBlocks(): void {
-    const {BlockManager, Sanitizer} = this.Editor;
     const fakeClipboard = $.make('div');
 
-    BlockManager.blocks.filter((block) => block.selected)
-      .forEach((block) => {
+    this.selectedBlocks.forEach((block) => {
         /**
          * Make <p> tag that holds clean HTML
          */
-        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+        const cleanHTML = this.Editor.Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
         const fragment = $.make('p');
 
         fragment.innerHTML = cleanHTML;
@@ -226,12 +233,12 @@ export default class BlockSelection extends Module {
   }
 
   /**
-   * First CMD+A Selects current focused blocks,
-   * and consequent second CMD+A keypress selects all blocks
+   * First CMD+A selects all input content by native behaviour,
+   * next CMD+A keypress selects all blocks
    *
-   * @param {keydown} event
+   * @param {KeyboardEvent} event
    */
-  private handleCommandA(event): void {
+  private handleCommandA(event: KeyboardEvent): void {
     this.Editor.RectangleSelection.clearSelection();
 
     /** allow default selection on native inputs */
@@ -240,7 +247,8 @@ export default class BlockSelection extends Module {
       return;
     }
 
-    const inputs = this.Editor.BlockManager.currentBlock.inputs;
+    const workingBlock = this.Editor.BlockManager.getBlock(event.target as HTMLElement);
+    const inputs = workingBlock.inputs;
 
     /**
      * If Block has more than one editable element allow native selection
@@ -251,14 +259,30 @@ export default class BlockSelection extends Module {
       return;
     }
 
-    /** Prevent default selection */
-    event.preventDefault();
-
     if (this.needToSelectAll) {
+      /** Prevent default selection */
+      event.preventDefault();
+
+      /**
+       * Save selection
+       * Will be restored when closeSelection fired
+       */
+      this.selection.save();
+
+      /**
+       * Remove Ranges from Selection
+       */
+      SelectionUtils.get()
+        .removeAllRanges();
+
       this.selectAllBlocks();
       this.needToSelectAll = false;
+
+      /**
+       * Close ConversionToolbar when all Blocks selected
+       */
+      this.Editor.ConversionToolbar.close();
     } else {
-      this.selectBlockByIndex();
       this.needToSelectAll = true;
     }
   }

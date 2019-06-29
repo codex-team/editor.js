@@ -123,6 +123,7 @@ export default class Tools extends Module {
 
   /**
    * Constant for available Tools Settings
+   * @todo separate internal and external options
    * @return {object}
    */
   public get apiSettings() {
@@ -135,6 +136,7 @@ export default class Tools extends Module {
       SHORTCUT: 'shortcut',
       TOOLBOX: 'toolbox',
       SANITIZE_CONFIG: 'sanitize',
+      CONVERSION_CONFIG: 'conversionConfig',
     };
   }
 
@@ -151,7 +153,7 @@ export default class Tools extends Module {
   private readonly toolsAvailable: {[name: string]: ToolConstructable} = {};
 
   /**
-   * Tools` classes not availbale to use beacause of preparation failure
+   * Tools` classes not available to use because of preparation failure
    */
   private readonly toolsUnavailable: {[name: string]: ToolConstructable} = {};
 
