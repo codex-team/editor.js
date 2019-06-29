@@ -64,11 +64,17 @@ export default class Caret extends Module {
       return (firstNode as HTMLInputElement).selectionEnd === 0;
     }
 
+    /** Case when selection have been cleared programmatically, for example after CBS */
+    if (!selection.anchorNode) {
+      return false;
+    }
+
     /**
      * Workaround case when caret in the text like " |Hello!"
      * selection.anchorOffset is 1, but real caret visible position is 0
      * @type {number}
      */
+
     let firstLetterPosition = anchorNode.textContent.search(/\S/);
 
     if (firstLetterPosition === -1) { // empty text
@@ -152,6 +158,11 @@ export default class Caret extends Module {
     /** In case lastNode is native input */
     if ($.isNativeInput(lastNode)) {
       return (lastNode as HTMLInputElement).selectionEnd === (lastNode as HTMLInputElement).value.length;
+    }
+
+    /** Case when selection have been cleared programmatically, for example after CBS */
+    if (!selection.anchorNode) {
+      return false;
     }
 
     /**
