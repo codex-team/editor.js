@@ -75,7 +75,7 @@ export default class BlockSelection extends Module {
     return BlockManager.blocks.some((block) => block.selected === true);
   }
 
-public shouldClearOnMouseUp = true;
+public shouldClearOnClick = true;
 
   /**
    * Return selected Blocks array
@@ -165,16 +165,11 @@ public shouldClearOnMouseUp = true;
    * Clear selection from Blocks
    */
   public clearSelection(restoreSelection = false) {
-    console.trace('clear selection');
-    const {MouseSelection, RectangleSelection} = this.Editor;
+    const {RectangleSelection} = this.Editor;
 
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
     this.readyToBlockSelection = false;
-
-    if (MouseSelection.isMouseSelectionActivated) {
-      return;
-    }
 
     if (!this.anyBlockSelected || RectangleSelection.isRectActivated()) {
       this.Editor.RectangleSelection.clearSelection();

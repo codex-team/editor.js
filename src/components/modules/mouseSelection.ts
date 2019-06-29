@@ -3,19 +3,14 @@ import Block from '../block';
 import SelectionUtils from '../selection';
 
 export default class MouseSelection extends Module {
-    public isMouseSelectionActivated = false;
-
+    /**
+     *
+     */
     private firstSelectedBlock: Block;
-    private firstSelectedBlockIndex: number;
-    private lastSelectedBlock: Block;
-    private lastSelectedBlockIndex: number;
-    private selection = new SelectionUtils();
 
     public watchSelection(event: MouseEvent) {
         const {BlockManager, UI, Listeners} = this.Editor;
-
-        this.firstSelectedBlock = this.lastSelectedBlock = BlockManager.getBlockByChildNode(event.target as Node);
-        this.firstSelectedBlockIndex = this.lastSelectedBlockIndex = BlockManager.blocks.indexOf(this.firstSelectedBlock);
+        this.firstSelectedBlock = BlockManager.getBlock(event.target as HTMLElement);
 
         Listeners.on(document, 'mouseover', this.onMouseOver);
         Listeners.on(document, 'mouseup', this.onMouseUp);
@@ -24,7 +19,7 @@ export default class MouseSelection extends Module {
     private onMouseUp  = () => {
         const {Listeners, BlockSelection} = this.Editor;
 
-        BlockSelection.shouldClearOnMouseUp = false;
+        BlockSelection.shouldClearOnClick = false;
 
         Listeners.off(document, 'mouseover', this.onMouseOver);
         Listeners.off(document, 'mouseup', this.onMouseUp);
@@ -44,12 +39,7 @@ export default class MouseSelection extends Module {
             return;
         }
 
-        this.lastSelectedBlock = targetBlock;
-        this.lastSelectedBlockIndex = BlockManager.blocks.indexOf(targetBlock);
-
         if (relatedBlock === this.firstSelectedBlock) {
-            this.selection.save();
-
             SelectionUtils.get().removeAllRanges();
 
             relatedBlock.selected = true;
@@ -60,8 +50,6 @@ export default class MouseSelection extends Module {
         if (targetBlock === this.firstSelectedBlock) {
             relatedBlock.selected = false;
             targetBlock.selected = false;
-
-            this.selection.restore();
             return;
         }
 

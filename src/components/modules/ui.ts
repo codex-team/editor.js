@@ -610,7 +610,11 @@ export default class UI extends Module {
     }
 
     /** Clear selection */
-    this.Editor.BlockSelection.clearSelection();
+    if (this.Editor.BlockSelection.shouldClearOnClick) {
+      this.Editor.BlockSelection.clearSelection();
+    } else {
+      this.Editor.BlockSelection.shouldClearOnClick = true;
+    }
   }
 
   /**
