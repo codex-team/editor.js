@@ -87,17 +87,10 @@ export default class ConversionToolbar extends Module {
        * Drop previous active button before moving
        */
       if (this.focusedButton && this.focusedButton.classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
-        // this.dropFocusedButton();
         this.focusedButton.classList.remove(ConversionToolbar.CSS.conversionToolActive);
       }
 
       this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
-
-      // Array.from(this.nodes.tools.childNodes).forEach((tool, index) => {
-      //   if ((tool as HTMLElement).classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
-      //     this.focusedButtonIndex = index;
-      //   }
-      // });
     }
 
     this.move(block);
