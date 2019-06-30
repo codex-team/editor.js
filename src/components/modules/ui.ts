@@ -390,16 +390,23 @@ export default class UI extends Module {
       BlockSettings.focusedButton.click();
 
       /**
-       * Add animation on click
+       * Focused button can be deleted by click, for example with 'Remove Block' api
        */
-      BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
+      if (BlockSettings.focusedButton) {
+        /**
+         * Add animation on click
+         */
+        BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
 
-      /**
-       * Remove animation class
-       */
-      _.delay( () => {
-        BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
-      }, 280)();
+        /**
+         * Remove animation class
+         */
+        _.delay( () => {
+          if (BlockSettings.focusedButton) {
+            BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
+          }
+        }, 280)();
+      }
 
       /**
        * Restoring focus on current Block
@@ -607,13 +614,6 @@ export default class UI extends Module {
       if (isEmptyBlock) {
         this.Editor.Toolbar.plusButton.show();
       }
-    }
-
-    /** Clear selection */
-    if (this.Editor.BlockSelection.shouldClearOnClick) {
-      this.Editor.BlockSelection.clearSelection();
-    } else {
-      this.Editor.BlockSelection.shouldClearOnClick = true;
     }
   }
 

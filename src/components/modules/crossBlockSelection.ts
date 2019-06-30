@@ -91,8 +91,11 @@ export default class CrossBlockSelection extends Module {
     this.lastSelectedBlock = prevBlock;
   }
 
+  /**
+   * Clear saved state
+   */
   public clear() {
-      this.firstSelectedBlock = this.lastSelectedBlock = null;
+    this.firstSelectedBlock = this.lastSelectedBlock = null;
   }
 
   /**
@@ -100,14 +103,7 @@ export default class CrossBlockSelection extends Module {
    * Removes the listeners
    */
   private onMouseUp  = (): void => {
-    const {Listeners, BlockSelection} = this.Editor;
-
-    /**
-     * Click event is fired right after mouseup.
-     * We need to set flag because in the other case
-     * selection is cleared just after blocks are selected
-     */
-    BlockSelection.shouldClearOnClick = false;
+    const {Listeners} = this.Editor;
 
     Listeners.off(document, 'mouseover', this.onMouseOver);
     Listeners.off(document, 'mouseup', this.onMouseUp);

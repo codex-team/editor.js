@@ -76,11 +76,6 @@ export default class BlockSelection extends Module {
   }
 
   /**
-   * Shows if selection should be cleared on click
-   */
-  public shouldClearOnClick = true;
-
-  /**
    * Return selected Blocks array
    * @return {Block[]}
    */
