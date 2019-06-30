@@ -4,7 +4,7 @@
 
 - `Improvements` — Inline Toolbar now works on mobile devices [#706](https://github.com/codex-team/editor.js/issues/706)
 - `Improvements` — Toolbar looks better on mobile devices [#706](https://github.com/codex-team/editor.js/issues/706)
-- `Fix` — onChange callback now fires when native inputs\` content has been changed [#794](https://github.com/codex-team/editor.js/issues/794)
+- `Fix` — EditorConfig's `onChange` callback now fires when native inputs\` content has been changed [#794](https://github.com/codex-team/editor.js/issues/794)
 - `Fix` — Added `typeof` util method to check exact object type [#805](https://github.com/codex-team/editor.js/issues/805)
 - `New` *Conversion Toolbar* — Ability to convert one block to another [#704](https://github.com/codex-team/editor.js/issues/704)
 - `New` *Cross-block selection* — Ability to select multiple blocks by mouse [#703](https://github.com/codex-team/editor.js/issues/703)

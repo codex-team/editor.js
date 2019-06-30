@@ -32,6 +32,7 @@ export default class ModificationsObserver extends Module {
    * @type {Function}
    */
   private mutationDebouncer = _.debounce( () => {
+    this.updateNativeInputs();
     this.config.onChange();
   }, ModificationsObserver.DebounceTimer);
 
@@ -142,8 +143,6 @@ export default class ModificationsObserver extends Module {
 
     /** call once */
     if (contentMutated) {
-      this.updateNativeInputs();
-
       this.mutationDebouncer();
     }
   }
