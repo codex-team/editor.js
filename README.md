@@ -157,7 +157,7 @@ Copy [editor.js](build/editor.js) file to your project and load it.
 
 ## Load Tools
 
-Each Block at the Editor.js represented by [Tools](docs/tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
+Each Block at the Editor.js is represented by [Tools](docs/tools.md). There are simple external scripts with their own logic. Probably you want to use several Block Tools that should be connected.
 
 For example check out our [Header](https://github.com/editor-js/header) Tool that represents heading blocks.
 
