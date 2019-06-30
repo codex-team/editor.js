@@ -69,11 +69,11 @@ export default class CrossBlockSelection extends Module {
    * @param {Event} reason - event caused clear of selection
    */
   public clear(reason?: Event) {
-    const {BlockManager, Caret} = this.Editor;
+    const {BlockManager, BlockSelection, Caret} = this.Editor;
     const fIndex = BlockManager.blocks.indexOf(this.firstSelectedBlock);
     const lIndex = BlockManager.blocks.indexOf(this.lastSelectedBlock);
 
-    if (fIndex > -1 && lIndex > -1) {
+    if (BlockSelection.anyBlockSelected && fIndex > -1 && lIndex > -1) {
       if (reason && reason instanceof KeyboardEvent) {
         /**
          * Set caret depending on pressed key if pressed key is an arrow.
