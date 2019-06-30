@@ -29,7 +29,7 @@ export default class MouseSelection extends Module {
 
   /**
    * Mouse up event handler.
-   * Removes the listeners
+   * Removes the listeners because selection is finished
    */
   private onMouseUp(): void  {
     const {Listeners, UI} = this.Editor;
@@ -71,7 +71,7 @@ export default class MouseSelection extends Module {
       return;
     }
 
-    this.changeBlocksState(relatedBlock, targetBlock);
+    this.toggleBlocksSelection(relatedBlock, targetBlock);
   }
 
   /**
@@ -80,10 +80,16 @@ export default class MouseSelection extends Module {
    * @param {Block} firstBlock
    * @param {Block} lastBlock
    */
-  private changeBlocksState(firstBlock: Block, lastBlock: Block): void {
+  private toggleBlocksSelection(firstBlock: Block, lastBlock: Block): void {
     const {BlockManager} = this.Editor;
     const fIndex = BlockManager.blocks.indexOf(firstBlock);
     const lIndex = BlockManager.blocks.indexOf(lastBlock);
+
+    /**
+     * If first and last block have the different selection state
+     * it means we should't toggle selection of the first selected block.
+     * In the other case we shouldn't toggle the last selected block.
+     */
     const shouldntSelectFirstBlock = firstBlock.selected !== lastBlock.selected;
 
     for (let i = Math.min(fIndex, lIndex); i <= Math.max(fIndex, lIndex); i++) {
