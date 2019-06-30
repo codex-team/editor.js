@@ -2,6 +2,7 @@ import Module from '../../__module';
 
 import {Blocks} from '../../../../types/api';
 import {BlockToolData, OutputData, ToolConfig} from '../../../../types';
+import _ from './../../utils';
 
 /**
  * @class BlocksAPI
@@ -168,11 +169,13 @@ export default class BlocksAPI extends Module {
    * Insert new Block
    * After set caret to this Block
    *
-   * TODO: remove in next major release
+   * @todo: remove in 3.0.0
    *
-   * @deprecated
+   * @deprecated with insert() method
    */
   public insertNewBlock(): void {
+    _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in next major release. ' +
+      'Use blocks.insert() instead.', 'warn');
     this.insert();
   }
 }
