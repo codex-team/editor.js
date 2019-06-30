@@ -152,6 +152,12 @@ export default class ModificationsObserver extends Module {
    * Gets native inputs and set oninput event handler
    */
   private updateNativeInputs(): void {
+    if (this.nativeInputs) {
+      this.nativeInputs.forEach((input) => {
+        this.Editor.Listeners.off(input, 'input');
+      });
+    }
+
     this.nativeInputs = Array.from(this.Editor.UI.nodes.redactor.querySelectorAll('textarea, input, select'));
 
     this.nativeInputs.forEach((input) => this.Editor.Listeners.on(input, 'input', this.mutationDebouncer));
