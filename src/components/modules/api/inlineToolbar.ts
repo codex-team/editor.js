@@ -21,7 +21,7 @@ export default class InlineToolbarAPI extends Module {
    * Open Inline Toolbar
    */
   public open(): void {
-    this.Editor.InlineToolbar.open();
+    this.Editor.InlineToolbar.tryToShow();
   }
 
   /**
