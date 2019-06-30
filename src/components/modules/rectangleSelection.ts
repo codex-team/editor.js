@@ -10,7 +10,6 @@ import $ from '../dom';
 
 import SelectionUtils from '../selection';
 import Block from '../block';
-import Timeout = NodeJS.Timeout;
 
 export default class RectangleSelection extends Module {
   /**
@@ -167,6 +166,15 @@ export default class RectangleSelection extends Module {
     this.startX = 0;
     this.startY = 0;
     this.overlayRectangle.style.display = 'none';
+
+    /**
+     * Show Conversion Toolbar when user select one Block
+     */
+    const { selectedBlocks } = this.Editor.BlockSelection;
+
+    if (selectedBlocks.length === 1) {
+      this.Editor.ConversionToolbar.tryToShow(selectedBlocks[0]);
+    }
   }
 
   /**

@@ -162,6 +162,11 @@ export default class UI extends Module {
     await this.Editor.InlineToolbar.make();
 
     /**
+     * Make the Converter tool holder
+     */
+    await this.Editor.ConversionToolbar.make();
+
+    /**
      * Load and append CSS
      */
     await this.loadStyles();
@@ -368,7 +373,7 @@ export default class UI extends Module {
    * @param event
    */
   private enterPressed(event: KeyboardEvent): void {
-    const {BlockManager, BlockSelection, Caret, BlockSettings} = this.Editor;
+    const { BlockManager, BlockSelection, Caret, BlockSettings, ConversionToolbar } = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
     /**
@@ -385,16 +390,23 @@ export default class UI extends Module {
       BlockSettings.focusedButton.click();
 
       /**
-       * Add animation on click
+       * Focused button can be deleted by click, for example with 'Remove Block' api
        */
-      BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
+      if (BlockSettings.focusedButton) {
+        /**
+         * Add animation on click
+         */
+        BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
 
-      /**
-       * Remove animation class
-       */
-      _.delay( () => {
-        BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
-      }, 280)();
+        /**
+         * Remove animation class
+         */
+        _.delay( () => {
+          if (BlockSettings.focusedButton) {
+            BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
+          }
+        }, 280)();
+      }
 
       /**
        * Restoring focus on current Block
@@ -410,6 +422,15 @@ export default class UI extends Module {
         Caret.setToBlock(BlockManager.currentBlock);
       }, 10)();
 
+      return;
+    }
+
+    if (ConversionToolbar.opened && ConversionToolbar.focusedButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      ConversionToolbar.focusedButton.click();
       return;
     }
 
@@ -484,7 +505,7 @@ export default class UI extends Module {
       this.Editor.InlineToolbar.close();
       this.Editor.Toolbar.close();
       this.Editor.BlockSelection.clearSelection();
-
+      this.Editor.ConversionToolbar.close();
     }
 
     if (Selection.isAtEditor) {
@@ -525,7 +546,6 @@ export default class UI extends Module {
    *
    */
   private redactorClicked(event: MouseEvent): void {
-
     if (!Selection.isCollapsed) {
       return;
     }
@@ -595,9 +615,6 @@ export default class UI extends Module {
         this.Editor.Toolbar.plusButton.show();
       }
     }
-
-    /** Clear selection */
-    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
@@ -616,7 +633,7 @@ export default class UI extends Module {
       return;
     }
 
-    this.Editor.InlineToolbar.handleShowingEvent(event);
+    this.Editor.InlineToolbar.tryToShow();
   }
 
   /**

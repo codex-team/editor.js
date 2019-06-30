@@ -84,6 +84,20 @@ export default class Util {
   }
 
   /**
+   * Returns true if passed key code is printable (a-Z, 0-9, etc) character.
+   * @param {number} keyCode
+   * @return {boolean}
+   */
+  public static isPrintableKey( keyCode: number ): boolean {
+    return (keyCode > 47 && keyCode < 58)   || // number keys
+      keyCode === 32 || keyCode === 13   || // Spacebar & return key(s)
+      (keyCode > 64 && keyCode < 91)   || // letter keys
+      (keyCode > 95 && keyCode < 112)  || // Numpad keys
+      (keyCode > 185 && keyCode < 193) || // ;=,-./` (in order)
+      (keyCode > 218 && keyCode < 223);   // [\]' (in order)
+  }
+
+  /**
    * Fires a promise sequence asyncronically
    *
    * @param {ChainData[]} chains - list or ChainData's
