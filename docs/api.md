@@ -38,7 +38,7 @@ Methods that working with Blocks
 
 `stretchBlock(index: number, status: boolean)` - make Block stretched
 
-`insertNewBlock()` - *deprecated* insert new Block after working place 
+`insertNewBlock()` - __Deprecated__ insert new Block after working place 
 
 `insert(type?: string, data?: BlockToolData, config?: ToolConfig, index?: number, needToFocus?: boolean)` - insert new Block with passed parameters
 
