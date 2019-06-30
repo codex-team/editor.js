@@ -75,8 +75,6 @@ export default class BlockSelection extends Module {
     return BlockManager.blocks.some((block) => block.selected === true);
   }
 
-public shouldClearOnClick = true;
-
   /**
    * Return selected Blocks array
    * @return {Block[]}

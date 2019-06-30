@@ -90,8 +90,8 @@ export default class Listeners extends Module {
   public off(
     element: EventTarget,
     eventType: string,
-    handler: (event: Event) => void,
-    options: boolean | AddEventListenerOptions = false,
+    handler?: (event: Event) => void,
+    options?: boolean | AddEventListenerOptions,
   ): void {
     const existingListeners = this.findAll(element, eventType, handler);
 
@@ -100,10 +100,11 @@ export default class Listeners extends Module {
 
       if (index > 0) {
         this.allListeners.splice(index, 1);
+
+        listener.element.removeEventListener(listener.eventType, listener.handler, listener.options);
       }
     });
 
-    element.removeEventListener(eventType, handler, options);
   }
 
   /**

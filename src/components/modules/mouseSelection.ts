@@ -17,26 +17,23 @@ export default class MouseSelection extends Module {
         const {BlockManager, UI, Listeners} = this.Editor;
         this.firstSelectedBlock = BlockManager.getBlock(event.target as HTMLElement);
 
-        Listeners.on(document, 'mouseover', this.onMouseOver);
-        Listeners.on(document, 'mouseup', this.onMouseUp);
+        Listeners.on(UI.nodes.redactor, 'mouseover', (mouseOverEvent) => {
+          this.onMouseOver(mouseOverEvent as MouseEvent);
+        });
+        Listeners.on(UI.nodes.redactor, 'mouseup', () => {
+          this.onMouseUp();
+        });
     }
 
     /**
      * Mouse up event handler.
      * Removes the listeners
      */
-    private onMouseUp  = (): void => {
-        const {Listeners, BlockSelection} = this.Editor;
+    private onMouseUp(): void  {
+      const {Listeners, UI} = this.Editor;
 
-        /**
-         * Click event is fired right after mouseup.
-         * We need to set flag because in the other case
-         * selection is cleared just after blocks are selected
-         */
-        BlockSelection.shouldClearOnClick = false;
-
-        Listeners.off(document, 'mouseover', this.onMouseOver);
-        Listeners.off(document, 'mouseup', this.onMouseUp);
+      Listeners.off(UI.nodes.redactor, 'mouseover');
+      Listeners.off(UI.nodes.redactor, 'mouseup');
     }
 
     /**
@@ -45,35 +42,35 @@ export default class MouseSelection extends Module {
      *
      * @param {MouseEvent} event
      */
-    private onMouseOver = (event: MouseEvent): void => {
-        const {BlockManager} = this.Editor;
+    private onMouseOver(event: MouseEvent): void {
+      const {BlockManager} = this.Editor;
 
-        const relatedBlock = BlockManager.getBlockByChildNode(event.relatedTarget as Node);
-        const targetBlock = BlockManager.getBlockByChildNode(event.target as Node);
+      const relatedBlock = BlockManager.getBlockByChildNode(event.relatedTarget as Node);
+      const targetBlock = BlockManager.getBlockByChildNode(event.target as Node);
 
-        if (!relatedBlock || !targetBlock) {
-            return;
-        }
+      if (!relatedBlock || !targetBlock) {
+        return;
+      }
 
-        if (targetBlock === relatedBlock) {
-            return;
-        }
+      if (targetBlock === relatedBlock) {
+        return;
+      }
 
-        if (relatedBlock === this.firstSelectedBlock) {
-            SelectionUtils.get().removeAllRanges();
+      if (relatedBlock === this.firstSelectedBlock) {
+        SelectionUtils.get().removeAllRanges();
 
-            relatedBlock.selected = true;
-            targetBlock.selected = true;
-            return;
-        }
+        relatedBlock.selected = true;
+        targetBlock.selected = true;
+        return;
+      }
 
-        if (targetBlock === this.firstSelectedBlock) {
-            relatedBlock.selected = false;
-            targetBlock.selected = false;
-            return;
-        }
+      if (targetBlock === this.firstSelectedBlock) {
+        relatedBlock.selected = false;
+        targetBlock.selected = false;
+        return;
+      }
 
-        this.changeBlocksState(relatedBlock, targetBlock);
+      this.changeBlocksState(relatedBlock, targetBlock);
     }
 
     /**
