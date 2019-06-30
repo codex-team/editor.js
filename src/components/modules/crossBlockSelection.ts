@@ -158,6 +158,11 @@ export default class CrossBlockSelection extends Module {
     const fIndex = BlockManager.blocks.indexOf(firstBlock);
     const lIndex = BlockManager.blocks.indexOf(lastBlock);
 
+    /**
+     * If first and last block have the different selection state
+     * it means we should't toggle selection of the first selected block.
+     * In the other case we shouldn't toggle the last selected block.
+     */
     const shouldntSelectFirstBlock = firstBlock.selected !== lastBlock.selected;
 
     for (let i = Math.min(fIndex, lIndex); i <= Math.max(fIndex, lIndex); i++) {

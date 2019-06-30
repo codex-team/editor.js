@@ -111,7 +111,7 @@ export default class Listeners extends Module {
    * @param {EventTarget} element
    * @param {String} eventType
    * @param {Function} handler
-   * @return {EventTarget|null}
+   * @return {ListenerData|null}
    */
   public findOne(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData {
     const foundListeners = this.findAll(element, eventType, handler);
@@ -123,7 +123,7 @@ export default class Listeners extends Module {
    * @param {EventTarget} element
    * @param {String} eventType
    * @param {Function} handler
-   * @return {Array}
+   * @return {ListenerData[]}
    */
   public findAll(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData[] {
     let found;
