@@ -93,6 +93,10 @@ export default class BlockEvents extends Module {
    * - shows conversion toolbar with 85% of block selection
    */
   public keyup(event): void {
+    if (event.shiftKey) {
+      return;
+    }
+
     const { InlineToolbar, ConversionToolbar, UI, BlockManager } = this.Editor;
     const block = BlockManager.getBlock(event.target);
 
@@ -157,7 +161,7 @@ export default class BlockEvents extends Module {
    * @param {MouseEvent} event
    */
   public mouseDown(event: MouseEvent): void {
-    this.Editor.MouseSelection.watchSelection(event);
+    this.Editor.CrossBlockSelection.watchSelection(event);
   }
 
   /**
@@ -492,6 +496,13 @@ export default class BlockEvents extends Module {
    * Handle right and down keyboard keys
    */
   private arrowRightAndDown(event: KeyboardEvent): void {
+    const shouldEnableCBS = this.Editor.Caret.isAtEnd || this.Editor.BlockSelection.anyBlockSelected;
+
+    if (event.shiftKey && event.keyCode === _.keyCodes.DOWN && shouldEnableCBS) {
+      this.Editor.CrossBlockSelection.changeNextBlockState();
+      return;
+    }
+
     if (this.Editor.Caret.navigateNext()) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
@@ -519,6 +530,13 @@ export default class BlockEvents extends Module {
    * Handle left and up keyboard keys
    */
   private arrowLeftAndUp(event: KeyboardEvent): void {
+    const shouldEnableCBS = this.Editor.Caret.isAtStart || this.Editor.BlockSelection.anyBlockSelected;
+
+    if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
+      this.Editor.CrossBlockSelection.changePreviousBlockState();
+      return;
+    }
+
     if (this.Editor.Caret.navigatePrevious()) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it

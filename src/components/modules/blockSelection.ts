@@ -75,7 +75,10 @@ export default class BlockSelection extends Module {
     return BlockManager.blocks.some((block) => block.selected === true);
   }
 
-public shouldClearOnClick = true;
+  /**
+   * Shows if selection should be cleared on click
+   */
+  public shouldClearOnClick = true;
 
   /**
    * Return selected Blocks array
@@ -170,6 +173,8 @@ public shouldClearOnClick = true;
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
     this.readyToBlockSelection = false;
+
+    this.Editor.CrossBlockSelection.clear();
 
     if (!this.anyBlockSelected || RectangleSelection.isRectActivated()) {
       this.Editor.RectangleSelection.clearSelection();

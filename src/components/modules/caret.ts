@@ -48,16 +48,9 @@ export default class Caret extends Module {
    * @return {boolean}
    */
   public get isAtStart(): boolean {
-    /**
-     * Don't handle ranges
-     */
-    if (!Selection.isCollapsed) {
-      return false;
-    }
-
     const selection = Selection.get();
     const firstNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput);
-    let anchorNode = selection.anchorNode;
+    let focusNode = selection.focusNode;
 
     /** In case lastNode is native input */
     if ($.isNativeInput(firstNode)) {
@@ -75,7 +68,7 @@ export default class Caret extends Module {
      * @type {number}
      */
 
-    let firstLetterPosition = anchorNode.textContent.search(/\S/);
+    let firstLetterPosition = focusNode.textContent.search(/\S/);
 
     if (firstLetterPosition === -1) { // empty text
       firstLetterPosition = 0;
@@ -88,16 +81,16 @@ export default class Caret extends Module {
      * In this case, anchor node has ELEMENT_NODE node type.
      * Anchor offset shows amount of children between start of the element and caret position.
      *
-     * So we use child with anchorOffset index as new anchorNode.
+     * So we use child with focusOffset index as new anchorNode.
      */
-    let anchorOffset = selection.anchorOffset;
-    if (anchorNode.nodeType !== Node.TEXT_NODE && anchorNode.childNodes.length) {
-      if (anchorNode.childNodes[anchorOffset]) {
-        anchorNode = anchorNode.childNodes[anchorOffset];
-        anchorOffset = 0;
+    let focusOffset = selection.focusOffset;
+    if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length) {
+      if (focusNode.childNodes[focusOffset]) {
+        focusNode = focusNode.childNodes[focusOffset];
+        focusOffset = 0;
       } else {
-        anchorNode = anchorNode.childNodes[anchorOffset - 1];
-        anchorOffset = anchorNode.textContent.length;
+        focusNode = focusNode.childNodes[focusOffset - 1];
+        focusOffset = focusNode.textContent.length;
       }
     }
 
@@ -105,14 +98,14 @@ export default class Caret extends Module {
      * In case of
      * <div contenteditable>
      *     <p><b></b></p>   <-- first (and deepest) node is <b></b>
-     *     |adaddad         <-- anchor node
+     *     |adaddad         <-- focus node
      * </div>
      */
     if ($.isLineBreakTag(firstNode as HTMLElement) || $.isEmpty(firstNode)) {
-      const leftSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'left');
+      const leftSiblings = this.getHigherLevelSiblings(focusNode as HTMLElement, 'left');
       const nothingAtLeft = leftSiblings.every((node, i) => $.isEmpty(node));
 
-      if (nothingAtLeft && anchorOffset === firstLetterPosition) {
+      if (nothingAtLeft && focusOffset === firstLetterPosition) {
         return true;
       }
     }
@@ -121,7 +114,7 @@ export default class Caret extends Module {
      * We use <= comparison for case:
      * "| Hello"  <--- selection.anchorOffset is 0, but firstLetterPosition is 1
      */
-    return firstNode === null || anchorNode === firstNode && anchorOffset <= firstLetterPosition;
+    return firstNode === null || focusNode === firstNode && focusOffset <= firstLetterPosition;
   }
 
   /**
@@ -129,15 +122,8 @@ export default class Caret extends Module {
    * @return {boolean}
    */
   public get isAtEnd(): boolean {
-    /**
-     * Don't handle ranges
-     */
-    if (!Selection.isCollapsed) {
-      return false;
-    }
-
     const selection = Selection.get();
-    let anchorNode = selection.anchorNode;
+    let focusNode = selection.focusNode;
 
     const lastNode = $.getDeepestNode(this.Editor.BlockManager.currentBlock.currentInput, true);
 
@@ -147,7 +133,7 @@ export default class Caret extends Module {
     }
 
     /** Case when selection have been cleared programmatically, for example after CBS */
-    if (!selection.anchorNode) {
+    if (!selection.focusNode) {
       return false;
     }
 
@@ -158,16 +144,16 @@ export default class Caret extends Module {
      * In this case, anchor node has ELEMENT_NODE node type.
      * Anchor offset shows amount of children between start of the element and caret position.
      *
-     * So we use child with anchorOffset - 1 as new anchorNode.
+     * So we use child with anchofocusOffset - 1 as new focusNode.
      */
-    let anchorOffset = selection.anchorOffset;
-    if (anchorNode.nodeType !== Node.TEXT_NODE && anchorNode.childNodes.length) {
-      if (anchorNode.childNodes[anchorOffset - 1]) {
-        anchorNode = anchorNode.childNodes[anchorOffset - 1];
-        anchorOffset = anchorNode.textContent.length;
+    let focusOffset = selection.focusOffset;
+    if (focusNode.nodeType !== Node.TEXT_NODE && focusNode.childNodes.length) {
+      if (focusNode.childNodes[focusOffset - 1]) {
+        focusNode = focusNode.childNodes[focusOffset - 1];
+        focusOffset = focusNode.textContent.length;
       } else {
-        anchorNode = anchorNode.childNodes[0];
-        anchorOffset = 0;
+        focusNode = focusNode.childNodes[0];
+        focusOffset = 0;
       }
     }
 
@@ -179,12 +165,12 @@ export default class Caret extends Module {
      * </div>
      */
     if ($.isLineBreakTag(lastNode as HTMLElement) || $.isEmpty(lastNode)) {
-      const rightSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'right');
+      const rightSiblings = this.getHigherLevelSiblings(focusNode as HTMLElement, 'right');
       const nothingAtRight = rightSiblings.every((node, i) => {
         return i === 0 && $.isLineBreakTag(node as HTMLElement) || $.isEmpty(node);
       });
 
-      if (nothingAtRight && anchorOffset === anchorNode.textContent.length) {
+      if (nothingAtRight && focusOffset === focusNode.textContent.length) {
         return true;
       }
     }
@@ -201,7 +187,7 @@ export default class Caret extends Module {
      * We use >= comparison for case:
      * "Hello |"  <--- selection.anchorOffset is 7, but rightTrimmedText is 6
      */
-    return anchorNode === lastNode && anchorOffset >= rightTrimmedText.length;
+    return focusNode === lastNode && focusOffset >= rightTrimmedText.length;
   }
 
   /**
