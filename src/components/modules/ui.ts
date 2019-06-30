@@ -356,7 +356,7 @@ export default class UI extends Module {
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
       /** Clear selection */
-      BlockSelection.clearSelection();
+      BlockSelection.clearSelection(event);
 
       /**
        * Stop propagations
@@ -439,7 +439,7 @@ export default class UI extends Module {
       Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
       /** Clear selection */
-      BlockSelection.clearSelection();
+      BlockSelection.clearSelection(event);
 
       /**
        * Stop propagations
@@ -479,7 +479,7 @@ export default class UI extends Module {
       this.Editor.Toolbar.plusButton.show();
     }
 
-    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockSelection.clearSelection(event);
   }
 
   /**
@@ -504,7 +504,7 @@ export default class UI extends Module {
       this.Editor.BlockManager.dropPointer();
       this.Editor.InlineToolbar.close();
       this.Editor.Toolbar.close();
-      this.Editor.BlockSelection.clearSelection();
+      this.Editor.BlockSelection.clearSelection(event);
       this.Editor.ConversionToolbar.close();
     }
 

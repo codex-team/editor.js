@@ -80,7 +80,7 @@ export default class BlockSelection extends Module {
    * @return {Block[]}
    */
   public get selectedBlocks(): Block[] {
-    return this.Editor.BlockManager.blocks.filter((block) => block.selected);
+    return this.Editor.BlockManager.blocks.filter((block: Block) => block.selected);
   }
 
   /**
@@ -161,13 +161,32 @@ export default class BlockSelection extends Module {
 
   /**
    * Clear selection from Blocks
+   *
+   * @param {Event} reason - event caused clear of selection
+   * @param {boolean} restoreSelection - if true, restore saved selection
    */
-  public clearSelection(restoreSelection = false) {
-    const {RectangleSelection} = this.Editor;
+  public clearSelection(reason?: Event, restoreSelection = false) {
+    const {BlockManager, Caret, RectangleSelection} = this.Editor;
 
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
     this.readyToBlockSelection = false;
+
+    /**
+     * If reason caused clear of the selection was printable key and any block is selected,
+     * remove selected blocks and insert pressed key
+     */
+    if (this.anyBlockSelected && reason && reason instanceof KeyboardEvent && _.isPrintableKey(reason.keyCode)) {
+      const indexToInsert = BlockManager.removeSelectedBlocks();
+
+      BlockManager.insertInitialBlockAtIndex(indexToInsert, true);
+      Caret.setToBlock(BlockManager.currentBlock);
+      _.delay(() => {
+        Caret.insertContentAtCaretPosition(reason.key);
+      }, 20)();
+    }
+
+    this.Editor.CrossBlockSelection.clear(reason);
 
     if (!this.anyBlockSelected || RectangleSelection.isRectActivated()) {
       this.Editor.RectangleSelection.clearSelection();

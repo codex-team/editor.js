@@ -82,7 +82,7 @@ export default class BlockEvents extends Module {
 
       if (!isShortcut) {
         this.Editor.BlockManager.clearFocused();
-        this.Editor.BlockSelection.clearSelection();
+        this.Editor.BlockSelection.clearSelection(event);
       }
     }
   }
@@ -93,6 +93,14 @@ export default class BlockEvents extends Module {
    * - shows conversion toolbar with 85% of block selection
    */
   public keyup(event): void {
+
+    /**
+     * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
+     */
+    if (event.shiftKey) {
+      return;
+    }
+
     const { InlineToolbar, ConversionToolbar, UI, BlockManager } = this.Editor;
     const block = BlockManager.getBlock(event.target);
 
@@ -157,7 +165,7 @@ export default class BlockEvents extends Module {
    * @param {MouseEvent} event
    */
   public mouseDown(event: MouseEvent): void {
-    this.Editor.MouseSelection.watchSelection(event);
+    this.Editor.CrossBlockSelection.watchSelection(event);
   }
 
   /**
@@ -168,7 +176,7 @@ export default class BlockEvents extends Module {
     /**
      * Clear blocks selection by tab
      */
-    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockSelection.clearSelection(event);
 
     const { BlockManager, Tools, ConversionToolbar, InlineToolbar } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
@@ -213,7 +221,7 @@ export default class BlockEvents extends Module {
     /**
      * Clear blocks selection by ESC
      */
-    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockSelection.clearSelection(event);
 
     if (this.Editor.Toolbox.opened) {
       this.Editor.Toolbox.close();
@@ -296,7 +304,7 @@ export default class BlockEvents extends Module {
     Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
     /** Clear selection */
-    BlockSelection.clearSelection();
+    BlockSelection.clearSelection(event);
   }
 
   /**
@@ -416,7 +424,7 @@ export default class BlockEvents extends Module {
       this.Editor.Toolbar.close();
 
       /** Clear selection */
-      BlockSelection.clearSelection();
+      BlockSelection.clearSelection(event);
       return;
     }
 
@@ -492,6 +500,13 @@ export default class BlockEvents extends Module {
    * Handle right and down keyboard keys
    */
   private arrowRightAndDown(event: KeyboardEvent): void {
+    const shouldEnableCBS = this.Editor.Caret.isAtEnd || this.Editor.BlockSelection.anyBlockSelected;
+
+    if (event.shiftKey && event.keyCode === _.keyCodes.DOWN && shouldEnableCBS) {
+      this.Editor.CrossBlockSelection.toggleBlockSelectedState();
+      return;
+    }
+
     if (this.Editor.Caret.navigateNext()) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
@@ -512,13 +527,20 @@ export default class BlockEvents extends Module {
     /**
      * Clear blocks selection by arrows
      */
-    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockSelection.clearSelection(event);
   }
 
   /**
    * Handle left and up keyboard keys
    */
   private arrowLeftAndUp(event: KeyboardEvent): void {
+    const shouldEnableCBS = this.Editor.Caret.isAtStart || this.Editor.BlockSelection.anyBlockSelected;
+
+    if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
+      this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);
+      return;
+    }
+
     if (this.Editor.Caret.navigatePrevious()) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
@@ -539,7 +561,7 @@ export default class BlockEvents extends Module {
     /**
      * Clear blocks selection by arrows
      */
-    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockSelection.clearSelection(event);
   }
 
   /**
