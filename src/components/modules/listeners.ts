@@ -90,8 +90,8 @@ export default class Listeners extends Module {
   public off(
     element: EventTarget,
     eventType: string,
-    handler: (event: Event) => void,
-    options: boolean | AddEventListenerOptions = false,
+    handler?: (event: Event) => void,
+    options?: boolean | AddEventListenerOptions,
   ): void {
     const existingListeners = this.findAll(element, eventType, handler);
 
@@ -100,19 +100,20 @@ export default class Listeners extends Module {
 
       if (index > 0) {
         this.allListeners.splice(index, 1);
+
+        listener.element.removeEventListener(listener.eventType, listener.handler, listener.options);
       }
     });
 
-    element.removeEventListener(eventType, handler, options);
   }
 
   /**
    * @param {EventTarget} element
    * @param {String} eventType
    * @param {Function} handler
-   * @return {EventTarget|null}
+   * @return {ListenerData|null}
    */
-  public findOne(element: EventTarget, eventType: string, handler: (event: Event) => void): ListenerData {
+  public findOne(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData {
     const foundListeners = this.findAll(element, eventType, handler);
 
     return foundListeners.length > 0 ? foundListeners[0] : null;
@@ -122,9 +123,9 @@ export default class Listeners extends Module {
    * @param {EventTarget} element
    * @param {String} eventType
    * @param {Function} handler
-   * @return {Array}
+   * @return {ListenerData[]}
    */
-  public findAll(element: EventTarget, eventType: string, handler: (event: Event) => void): ListenerData[] {
+  public findAll(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData[] {
     let found;
     const foundByEventTargets = element ? this.findByEventTarget(element) : [];
 

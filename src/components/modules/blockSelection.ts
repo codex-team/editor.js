@@ -163,11 +163,13 @@ export default class BlockSelection extends Module {
    * Clear selection from Blocks
    */
   public clearSelection(restoreSelection = false) {
+    const {RectangleSelection} = this.Editor;
+
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
     this.readyToBlockSelection = false;
 
-    if (!this.anyBlockSelected || this.Editor.RectangleSelection.isRectActivated()) {
+    if (!this.anyBlockSelected || RectangleSelection.isRectActivated()) {
       this.Editor.RectangleSelection.clearSelection();
       return;
     }
