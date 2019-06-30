@@ -64,11 +64,17 @@ export default class Caret extends Module {
       return (firstNode as HTMLInputElement).selectionEnd === 0;
     }
 
+    /** Case when selection have been cleared programmatically, for example after CBS */
+    if (!selection.anchorNode) {
+      return false;
+    }
+
     /**
      * Workaround case when caret in the text like " |Hello!"
      * selection.anchorOffset is 1, but real caret visible position is 0
      * @type {number}
      */
+
     let firstLetterPosition = anchorNode.textContent.search(/\S/);
 
     if (firstLetterPosition === -1) { // empty text
@@ -104,7 +110,21 @@ export default class Caret extends Module {
      */
     if ($.isLineBreakTag(firstNode as HTMLElement) || $.isEmpty(firstNode)) {
       const leftSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'left');
-      const nothingAtLeft = leftSiblings.every((node, i) => $.isEmpty(node));
+      const nothingAtLeft = leftSiblings.every((node) => {
+        /**
+         * Workaround case when block starts with several <br>'s (created by SHIFT+ENTER)
+         * @see https://github.com/codex-team/editor.js/issues/726
+         * We need to allow to delete such linebreaks, so in this case caret IS NOT AT START
+         */
+        const regularLineBreak = $.isLineBreakTag(node);
+        /**
+         * Workaround SHIFT+ENTER in Safari, that creates <div><br></div> instead of <br>
+         */
+        const lineBreakInSafari = node.children.length === 1 && $.isLineBreakTag(node.children[0] as HTMLElement);
+        const isLineBreak = regularLineBreak || lineBreakInSafari;
+
+        return $.isEmpty(node) && !isLineBreak;
+      });
 
       if (nothingAtLeft && anchorOffset === firstLetterPosition) {
         return true;
@@ -140,6 +160,11 @@ export default class Caret extends Module {
       return (lastNode as HTMLInputElement).selectionEnd === (lastNode as HTMLInputElement).value.length;
     }
 
+    /** Case when selection have been cleared programmatically, for example after CBS */
+    if (!selection.anchorNode) {
+      return false;
+    }
+
     /**
      * If caret was set by external code, it might be set to text node wrapper.
      * <div>hello|</div> <---- Selection references to <div> instead of text node
@@ -169,8 +194,14 @@ export default class Caret extends Module {
      */
     if ($.isLineBreakTag(lastNode as HTMLElement) || $.isEmpty(lastNode)) {
       const rightSiblings = this.getHigherLevelSiblings(anchorNode as HTMLElement, 'right');
+
       const nothingAtRight = rightSiblings.every((node, i) => {
-        return i === 0 && $.isLineBreakTag(node as HTMLElement) || $.isEmpty(node);
+        /**
+         * If last right sibling is BR isEmpty returns false, but there actually nothing at right
+         */
+        const isLastBR = i === rightSiblings.length - 1 && $.isLineBreakTag(node as HTMLElement);
+
+        return (isLastBR) || $.isEmpty(node) && !$.isLineBreakTag(node);
       });
 
       if (nothingAtRight && anchorOffset === anchorNode.textContent.length) {
