@@ -80,7 +80,7 @@ export default class BlockSelection extends Module {
    * @return {Block[]}
    */
   public get selectedBlocks(): Block[] {
-    return this.Editor.BlockManager.blocks.filter((block) => block.selected);
+    return this.Editor.BlockManager.blocks.filter((block: Block) => block.selected);
   }
 
   /**
