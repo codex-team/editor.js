@@ -152,6 +152,15 @@ export default class BlockEvents extends Module {
   }
 
   /**
+   * Set up mouse selection handlers
+   *
+   * @param {MouseEvent} event
+   */
+  public mouseDown(event: MouseEvent): void {
+    this.Editor.MouseSelection.watchSelection(event);
+  }
+
+  /**
    * Open Toolbox to leaf Tools
    * @param {KeyboardEvent} event
    */
