@@ -40,7 +40,7 @@ export default class MouseSelection extends Module {
     }
 
     /**
-     * Mouse over evenr handler
+     * Mouse over event handler
      * Gets target and related blocks and change selected state for blocks in between
      *
      * @param {MouseEvent} event

@@ -232,10 +232,6 @@ editor.save()
 
 Take a look at the [example.html](example/example.html) to view more detailed examples.
 
-## Changelog
-
-See a whole [Changelog](/docs/CHANGELOG.md)
-
 ## Credits and references
 
 - We use [HTMLJanitor](https://github.com/guardian/html-janitor) module in our Sanitizer module. 
