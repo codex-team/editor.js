@@ -330,7 +330,7 @@ export default class LinkInlineTool implements InlineTool {
     /**
      * If protocol already exists, do nothing
      */
-    if (/^(\w+):\/\//.test(link)) {
+    if (/^(\w+):(\/\/)?/.test(link)) {
       return link;
     }
 

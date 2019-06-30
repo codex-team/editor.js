@@ -223,6 +223,8 @@ export default class BlockManager extends Module {
    * @param {String} toolName — plugin name, by default method inserts initial block type
    * @param {Object} data — plugin data
    * @param {Object} settings - default settings
+   * @param {number} index - index where to insert new Block
+   * @param {boolean} needToFocus - flag shows if needed to update current Block index
    *
    * @return {Block}
    */
@@ -230,13 +232,17 @@ export default class BlockManager extends Module {
     toolName: string = this.config.initialBlock,
     data: BlockToolData = {},
     settings: ToolConfig = {},
+    index: number = this.currentBlockIndex + 1,
+    needToFocus: boolean = true,
   ): Block {
-    // Increment index before construct,
-    // because developers can use API/Blocks/getCurrentInputIndex on the render() method
-    const newIndex = ++this.currentBlockIndex;
     const block = this.composeBlock(toolName, data, settings);
 
-    this._blocks[newIndex] = block;
+    this._blocks[index] = block;
+
+    if (needToFocus) {
+      this.currentBlockIndex = index;
+    }
+
     return block;
   }
 
@@ -274,9 +280,11 @@ export default class BlockManager extends Module {
    * @param {number} index - index where Block should be inserted
    * @param {boolean} needToFocus - if true, updates current Block index
    *
+   * TODO: Remove method and use insert() with index instead (?)
+   *
    * @return {Block} inserted Block
    */
-  public insertAtIndex(index: number, needToFocus: boolean = false) {
+  public insertInitialBlockAtIndex(index: number, needToFocus: boolean = false) {
     const block = this.composeBlock(this.config.initialBlock, {}, {});
 
     this._blocks[index] = block;

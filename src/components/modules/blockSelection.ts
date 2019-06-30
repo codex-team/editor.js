@@ -179,7 +179,7 @@ export default class BlockSelection extends Module {
     if (this.anyBlockSelected && reason && reason instanceof KeyboardEvent && _.isPrintableKey(reason.keyCode)) {
       const indexToInsert = BlockManager.removeSelectedBlocks();
 
-      BlockManager.insertAtIndex(indexToInsert, true);
+      BlockManager.insertInitialBlockAtIndex(indexToInsert, true);
       Caret.setToBlock(BlockManager.currentBlock);
       _.delay(() => {
         Caret.insertContentAtCaretPosition(reason.key);
