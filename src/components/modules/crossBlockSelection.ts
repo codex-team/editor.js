@@ -1,6 +1,7 @@
 import Module from '../__module';
 import Block from '../block';
 import SelectionUtils from '../selection';
+import _ from '../utils';
 
 export default class CrossBlockSelection extends Module {
   /**
@@ -20,6 +21,7 @@ export default class CrossBlockSelection extends Module {
    */
   public watchSelection(event: MouseEvent): void {
     const {BlockManager, UI, Listeners} = this.Editor;
+
     this.firstSelectedBlock = BlockManager.getBlock(event.target as HTMLElement);
     this.lastSelectedBlock = this.firstSelectedBlock;
 
@@ -30,8 +32,10 @@ export default class CrossBlockSelection extends Module {
   /**
    * Change selection state of the next Block
    * Used for CBS via Shift + arrow keys
+   *
+   * @param {boolean} next - if true, toggle next block. Previous otherwise
    */
-  public changeNextBlockState() {
+  public toggleBlockSelectedState(next: boolean = true): void {
     const {BlockManager} = this.Editor;
 
     if (!this.lastSelectedBlock) {
@@ -43,7 +47,7 @@ export default class CrossBlockSelection extends Module {
       SelectionUtils.get().removeAllRanges();
     }
 
-    const nextBlockIndex = BlockManager.blocks.indexOf(this.lastSelectedBlock) + 1;
+    const nextBlockIndex = BlockManager.blocks.indexOf(this.lastSelectedBlock) + (next ? 1 : -1);
     const nextBlock = BlockManager.blocks[nextBlockIndex];
 
     if (!nextBlock) {
@@ -60,41 +64,41 @@ export default class CrossBlockSelection extends Module {
   }
 
   /**
-   * Change selection state of the previous Block
-   * Used for CBS via Shift + arrow keys
-   */
-  public changePreviousBlockState() {
-    const {BlockManager} = this.Editor;
-
-    if (!this.lastSelectedBlock) {
-      this.lastSelectedBlock = this.firstSelectedBlock = BlockManager.currentBlock;
-    }
-
-    if (this.firstSelectedBlock === this.lastSelectedBlock) {
-      this.firstSelectedBlock.selected = true;
-      SelectionUtils.get().removeAllRanges();
-    }
-
-    const prevBlockIndex = BlockManager.blocks.indexOf(this.lastSelectedBlock) - 1;
-    const prevBlock = BlockManager.blocks[prevBlockIndex];
-
-    if (!prevBlock) {
-      return;
-    }
-
-    if (this.lastSelectedBlock.selected !== prevBlock.selected) {
-      prevBlock.selected = true;
-    } else {
-      this.lastSelectedBlock.selected = false;
-    }
-
-    this.lastSelectedBlock = prevBlock;
-  }
-
-  /**
    * Clear saved state
+   *
+   * @param {Event} reason - event caused clear of selection
    */
-  public clear() {
+  public clear(reason?: Event) {
+    const {BlockManager, Caret} = this.Editor;
+    const fIndex = BlockManager.blocks.indexOf(this.firstSelectedBlock);
+    const lIndex = BlockManager.blocks.indexOf(this.lastSelectedBlock);
+
+    if (fIndex > -1 && lIndex > -1) {
+      if (reason && reason instanceof KeyboardEvent) {
+        /**
+         * Set caret depending on pressed key if pressed key is an arrow.
+         */
+        switch (reason.keyCode) {
+          case _.keyCodes.DOWN:
+          case _.keyCodes.RIGHT:
+            Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], Caret.positions.END);
+            break;
+
+          case _.keyCodes.UP:
+          case _.keyCodes.LEFT:
+            Caret.setToBlock(BlockManager.blocks[Math.min(fIndex, lIndex)], Caret.positions.START);
+            break;
+          default:
+            Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], Caret.positions.END);
+        }
+      } else {
+        /**
+         * By default set caret at the end of the last selected block
+         */
+        Caret.setToBlock(BlockManager.blocks[Math.max(fIndex, lIndex)], Caret.positions.END);
+      }
+    }
+
     this.firstSelectedBlock = this.lastSelectedBlock = null;
   }
 
@@ -143,7 +147,7 @@ export default class CrossBlockSelection extends Module {
       return;
     }
 
-    this.changeBlocksState(relatedBlock, targetBlock);
+    this.toggleBlocksSelectedState(relatedBlock, targetBlock);
     this.lastSelectedBlock = targetBlock;
   }
 
@@ -153,7 +157,7 @@ export default class CrossBlockSelection extends Module {
    * @param {Block} firstBlock
    * @param {Block} lastBlock
    */
-  private changeBlocksState(firstBlock: Block, lastBlock: Block): void {
+  private toggleBlocksSelectedState(firstBlock: Block, lastBlock: Block): void {
     const {BlockManager} = this.Editor;
     const fIndex = BlockManager.blocks.indexOf(firstBlock);
     const lIndex = BlockManager.blocks.indexOf(lastBlock);

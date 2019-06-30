@@ -82,7 +82,7 @@ export default class BlockEvents extends Module {
 
       if (!isShortcut) {
         this.Editor.BlockManager.clearFocused();
-        this.Editor.BlockSelection.clearSelection();
+        this.Editor.BlockSelection.clearSelection(event);
       }
     }
   }
@@ -93,6 +93,10 @@ export default class BlockEvents extends Module {
    * - shows conversion toolbar with 85% of block selection
    */
   public keyup(event): void {
+
+    /**
+     * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
+     */
     if (event.shiftKey) {
       return;
     }
@@ -172,7 +176,7 @@ export default class BlockEvents extends Module {
     /**
      * Clear blocks selection by tab
      */
-    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockSelection.clearSelection(event);
 
     const { BlockManager, Tools, ConversionToolbar, InlineToolbar } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
@@ -217,7 +221,7 @@ export default class BlockEvents extends Module {
     /**
      * Clear blocks selection by ESC
      */
-    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockSelection.clearSelection(event);
 
     if (this.Editor.Toolbox.opened) {
       this.Editor.Toolbox.close();
@@ -300,7 +304,7 @@ export default class BlockEvents extends Module {
     Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
     /** Clear selection */
-    BlockSelection.clearSelection();
+    BlockSelection.clearSelection(event);
   }
 
   /**
@@ -420,7 +424,7 @@ export default class BlockEvents extends Module {
       this.Editor.Toolbar.close();
 
       /** Clear selection */
-      BlockSelection.clearSelection();
+      BlockSelection.clearSelection(event);
       return;
     }
 
@@ -499,7 +503,7 @@ export default class BlockEvents extends Module {
     const shouldEnableCBS = this.Editor.Caret.isAtEnd || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.DOWN && shouldEnableCBS) {
-      this.Editor.CrossBlockSelection.changeNextBlockState();
+      this.Editor.CrossBlockSelection.toggleBlockSelectedState();
       return;
     }
 
@@ -523,7 +527,7 @@ export default class BlockEvents extends Module {
     /**
      * Clear blocks selection by arrows
      */
-    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockSelection.clearSelection(event);
   }
 
   /**
@@ -533,7 +537,7 @@ export default class BlockEvents extends Module {
     const shouldEnableCBS = this.Editor.Caret.isAtStart || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
-      this.Editor.CrossBlockSelection.changePreviousBlockState();
+      this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);
       return;
     }
 
@@ -557,7 +561,7 @@ export default class BlockEvents extends Module {
     /**
      * Clear blocks selection by arrows
      */
-    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockSelection.clearSelection(event);
   }
 
   /**
