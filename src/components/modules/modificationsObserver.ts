@@ -36,6 +36,10 @@ export default class ModificationsObserver extends Module {
     this.config.onChange();
   }, ModificationsObserver.DebounceTimer);
 
+  /**
+   * Array of native inputs in Blocks.
+   * Changes in native inputs are not handled by modification observer, so we need to set change event listeners on them
+   */
   private nativeInputs: HTMLElement[] = [];
 
   /**
