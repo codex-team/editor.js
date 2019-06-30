@@ -162,6 +162,11 @@ export default class UI extends Module {
     await this.Editor.InlineToolbar.make();
 
     /**
+     * Make the Converter tool holder
+     */
+    await this.Editor.ConversionToolbar.make();
+
+    /**
      * Load and append CSS
      */
     await this.loadStyles();
@@ -348,10 +353,10 @@ export default class UI extends Module {
 
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
-      Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
+      Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
       /** Clear selection */
-      BlockSelection.clearSelection();
+      BlockSelection.clearSelection(event);
 
       /**
        * Stop propagations
@@ -368,7 +373,7 @@ export default class UI extends Module {
    * @param event
    */
   private enterPressed(event: KeyboardEvent): void {
-    const {BlockManager, BlockSelection, Caret, BlockSettings} = this.Editor;
+    const { BlockManager, BlockSelection, Caret, BlockSettings, ConversionToolbar } = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
 
     /**
@@ -385,16 +390,23 @@ export default class UI extends Module {
       BlockSettings.focusedButton.click();
 
       /**
-       * Add animation on click
+       * Focused button can be deleted by click, for example with 'Remove Block' api
        */
-      BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
+      if (BlockSettings.focusedButton) {
+        /**
+         * Add animation on click
+         */
+        BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
 
-      /**
-       * Remove animation class
-       */
-      _.delay( () => {
-        BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
-      }, 280)();
+        /**
+         * Remove animation class
+         */
+        _.delay( () => {
+          if (BlockSettings.focusedButton) {
+            BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
+          }
+        }, 280)();
+      }
 
       /**
        * Restoring focus on current Block
@@ -413,12 +425,21 @@ export default class UI extends Module {
       return;
     }
 
+    if (ConversionToolbar.opened && ConversionToolbar.focusedButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      ConversionToolbar.focusedButton.click();
+      return;
+    }
+
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
-      Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
+      Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
       /** Clear selection */
-      BlockSelection.clearSelection();
+      BlockSelection.clearSelection(event);
 
       /**
        * Stop propagations
@@ -458,7 +479,7 @@ export default class UI extends Module {
       this.Editor.Toolbar.plusButton.show();
     }
 
-    this.Editor.BlockSelection.clearSelection();
+    this.Editor.BlockSelection.clearSelection(event);
   }
 
   /**
@@ -483,8 +504,8 @@ export default class UI extends Module {
       this.Editor.BlockManager.dropPointer();
       this.Editor.InlineToolbar.close();
       this.Editor.Toolbar.close();
-      this.Editor.BlockSelection.clearSelection();
-
+      this.Editor.BlockSelection.clearSelection(event);
+      this.Editor.ConversionToolbar.close();
     }
 
     if (Selection.isAtEditor) {
@@ -525,7 +546,6 @@ export default class UI extends Module {
    *
    */
   private redactorClicked(event: MouseEvent): void {
-
     if (!Selection.isCollapsed) {
       return;
     }
@@ -595,9 +615,6 @@ export default class UI extends Module {
         this.Editor.Toolbar.plusButton.show();
       }
     }
-
-    /** Clear selection */
-    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
@@ -616,7 +633,7 @@ export default class UI extends Module {
       return;
     }
 
-    this.Editor.InlineToolbar.handleShowingEvent(event);
+    this.Editor.InlineToolbar.tryToShow();
   }
 
   /**

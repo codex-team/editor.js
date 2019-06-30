@@ -1,4 +1,4 @@
-import {PasteConfig, SanitizerConfig} from '../configs';
+import {ConversionConfig, PasteConfig, SanitizerConfig} from '../configs';
 import {BlockToolData} from './block-tool-data';
 import {BaseTool, BaseToolConstructable} from './tool';
 import {ToolConfig} from './tool-config';
@@ -69,5 +69,14 @@ export interface BlockToolConstructable extends BaseToolConstructable {
    */
   pasteConfig?: PasteConfig | false;
 
+  /**
+   * Rules that specified how this Tool can be converted into/from another Tool
+   */
+  conversionConfig?: ConversionConfig;
+
+  /**
+   * @constructor
+   * @return {BlockTool}
+   */
   new (config: {api: API, config: ToolConfig, data: BlockToolData}): BlockTool;
 }
