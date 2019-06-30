@@ -1,9 +1,8 @@
 import Module from '../../__module';
 
 import {Blocks} from '../../../../types/api';
-import {OutputData} from '../../../../types';
-import Block from '../../block';
-import {ModuleConfig} from '../../../types-internal/module-config';
+import {BlockToolData, OutputData, ToolConfig} from '../../../../types';
+import _ from './../../utils';
 
 /**
  * @class BlocksAPI
@@ -26,6 +25,7 @@ export default class BlocksAPI extends Module {
       getBlocksCount: () => this.getBlocksCount(),
       stretchBlock: (index: number, status: boolean = true) => this.stretchBlock(index, status),
       insertNewBlock: () => this.insertNewBlock(),
+      insert: this.insert,
     };
   }
 
@@ -142,10 +142,40 @@ export default class BlocksAPI extends Module {
 
   /**
    * Insert new Block
-   * After set caret to this Block
+   *
+   * @param {string} type — Tool name
+   * @param {BlockToolData} data — Tool data to insert
+   * @param {ToolConfig} config — Tool config
+   * @param {number?} index — index where to insert new Block
+   * @param {boolean?} needToFocus - flag to focus inserted Block
    */
-  public insertNewBlock() {
-    const newBlock = this.Editor.BlockManager.insert();
-    this.Editor.Caret.setToBlock(newBlock);
+  public insert = (
+    type: string = this.config.initialBlock,
+    data: BlockToolData = {},
+    config: ToolConfig = {},
+    index?: number,
+    needToFocus?: boolean,
+  ): void => {
+    this.Editor.BlockManager.insert(
+      type,
+      data,
+      config,
+      index,
+      needToFocus,
+    );
+  }
+
+  /**
+   * Insert new Block
+   * After set caret to this Block
+   *
+   * @todo: remove in 3.0.0
+   *
+   * @deprecated with insert() method
+   */
+  public insertNewBlock(): void {
+    _.log('Method blocks.insertNewBlock() is deprecated and it will be removed in next major release. ' +
+      'Use blocks.insert() instead.', 'warn');
+    this.insert();
   }
 }

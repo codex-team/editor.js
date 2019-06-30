@@ -1,4 +1,5 @@
 import {OutputData} from '../data-formats/output-data';
+import {BlockToolData, ToolConfig} from "../tools";
 
 /**
  * Describes methods to manipulate with Editor`s blocks
@@ -63,6 +64,26 @@ export interface Blocks {
 
   /**
    * Insert new Initial Block after current Block
+   *
+   * @deprecated
    */
   insertNewBlock(): void;
+
+  /**
+   * Insert new Block
+   *
+   * @param {string} type — Tool name
+   * @param {BlockToolData} data — Tool data to insert
+   * @param {ToolConfig} config — Tool config
+   * @param {number?} index — index where to insert new Block
+   * @param {boolean?} needToFocus - flag to focus inserted Block
+   */
+  insert(
+    type?: string,
+    data?: BlockToolData,
+    config?: ToolConfig,
+    index?: number,
+    needToFocus?: boolean,
+  ): void;
+
 }
