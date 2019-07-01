@@ -84,6 +84,19 @@ export default class Util {
   }
 
   /**
+   * Return mouse buttons codes
+   */
+  static get mouseButtons() {
+    return {
+      LEFT: 0,
+      WHEEL: 1,
+      RIGHT: 2,
+      BACKWARD: 3,
+      FORWARD: 4,
+    };
+  }
+
+  /**
    * Returns true if passed key code is printable (a-Z, 0-9, etc) character.
    * @param {number} keyCode
    * @return {boolean}

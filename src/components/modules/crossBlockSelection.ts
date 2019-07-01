@@ -20,6 +20,10 @@ export default class CrossBlockSelection extends Module {
    * @param {MouseEvent} event - mouse down event
    */
   public watchSelection(event: MouseEvent): void {
+    if (event.button !== _.mouseButtons.LEFT) {
+      return;
+    }
+
     const {BlockManager, UI, Listeners} = this.Editor;
 
     this.firstSelectedBlock = BlockManager.getBlock(event.target as HTMLElement);
