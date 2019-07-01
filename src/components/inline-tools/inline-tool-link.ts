@@ -112,7 +112,7 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-    this.nodes.button.appendChild($.svg('link', 15, 14));
+    this.nodes.button.appendChild($.svg('link', 34, 34));
     this.nodes.button.appendChild($.svg('unlink', 16, 18));
     return this.nodes.button;
   }
@@ -330,7 +330,7 @@ export default class LinkInlineTool implements InlineTool {
     /**
      * If protocol already exists, do nothing
      */
-    if (/^(\w+):\/\//.test(link)) {
+    if (/^(\w+):(\/\/)?/.test(link)) {
       return link;
     }
 

@@ -31,6 +31,8 @@ import Saver from '../components/modules/saver';
 import BlockSelection from '../components/modules/blockSelection';
 import RectangleSelection from '../components/modules/RectangleSelection';
 import InlineToolbarAPI from '../components/modules/api/inlineToolbar';
+import CrossBlockSelection from '../components/modules/crossBlockSelection';
+import ConversionToolbar from '../components/modules/toolbar/conversion';
 
 export interface EditorModules {
   UI: UI;
@@ -42,6 +44,7 @@ export interface EditorModules {
   InlineToolbar: InlineToolbar;
   Toolbox: Toolbox;
   BlockSettings: BlockSettings;
+  ConversionToolbar: ConversionToolbar;
   Events: Events;
   Shortcuts: Shortcuts;
   Paste: Paste;
@@ -65,5 +68,6 @@ export interface EditorModules {
   StylesAPI: StylesAPI;
   ToolbarAPI: ToolbarAPI;
   InlineToolbarAPI: InlineToolbarAPI;
+  CrossBlockSelection: CrossBlockSelection;
   NotifierAPI: NotifierAPI;
 }

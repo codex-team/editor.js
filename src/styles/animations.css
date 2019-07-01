@@ -100,3 +100,20 @@
     transform: scale3d(1, 1, 1);
   }
 }
+
+@keyframes panelShowing {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.9);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translateY(2px);
+  }
+
+  to {
+
+    transform: translateY(0);
+  }
+}

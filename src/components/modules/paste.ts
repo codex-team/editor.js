@@ -121,6 +121,11 @@ export default class Paste extends Module {
   } = {};
 
   /**
+   * List of tools which do not need a paste handling
+   */
+  private exceptionList: string[] = [];
+
+  /**
    * Set onPaste callback and collect tools` paste configurations
    *
    * @public
@@ -247,7 +252,12 @@ export default class Paste extends Module {
         data: {},
       }) as BlockTool;
 
-      if (!toolInstance.onPaste || typeof toolInstance.onPaste !== 'function') {
+      if (tool.pasteConfig === false) {
+        this.exceptionList.push(name);
+        return;
+      }
+
+      if (typeof toolInstance.onPaste !== 'function') {
         return;
       }
 
@@ -378,12 +388,20 @@ export default class Paste extends Module {
    * @param {ClipboardEvent} event
    */
   private handlePasteEvent = async (event: ClipboardEvent): Promise<void> => {
-    const {BlockManager, Tools, Toolbar} = this.Editor;
+    const {BlockManager, Toolbar} = this.Editor;
 
     /** If target is native input or is not Block, use browser behaviour */
     if (
-      !BlockManager.currentBlock || this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files')
+      !BlockManager.currentBlock ||
+      this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files')
     ) {
+      return;
+    }
+
+    /**
+     * If Tools is in list of exceptions, skip processing of paste event
+     */
+    if (BlockManager.currentBlock && this.exceptionList.includes(BlockManager.currentBlock.name)) {
       return;
     }
 
@@ -496,7 +514,7 @@ export default class Paste extends Module {
             break;
         }
 
-        const {tags} = Tools.blockTools[tool].pasteConfig;
+        const {tags} = Tools.blockTools[tool].pasteConfig as PasteConfig;
 
         const toolTags = tags.reduce((result, tag) => {
           result[tag.toLowerCase()] = {};
