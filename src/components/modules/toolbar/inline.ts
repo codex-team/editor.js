@@ -150,9 +150,14 @@ export default class InlineToolbar extends Module {
 
   /**
    * Shows Inline Toolbar if something is selected
+   * @param {boolean} [needToClose] - pass true to close toolbar if it is not allowed.
+   *                                  Avoid to use it just for closing IT, better call .close() clearly.
    */
-  public tryToShow(): void {
+  public tryToShow(needToClose: boolean = false): void {
     if (!this.allowedToShow()) {
+      if (needToClose) {
+        this.close();
+      }
       return;
     }
 

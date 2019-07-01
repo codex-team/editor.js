@@ -113,7 +113,7 @@ export default class BlockEvents extends Module {
       ConversionToolbar.tryToShow(block);
     } else {
       ConversionToolbar.close();
-      InlineToolbar.tryToShow();
+      InlineToolbar.tryToShow(true);
     }
 
     /**
