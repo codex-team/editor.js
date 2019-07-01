@@ -67,7 +67,7 @@ export interface BlockToolConstructable extends BaseToolConstructable {
   /**
    * Paste substitutions configuration
    */
-  pasteConfig?: PasteConfig;
+  pasteConfig?: PasteConfig | false;
 
   /**
    * Rules that specified how this Tool can be converted into/from another Tool
