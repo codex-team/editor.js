@@ -1,5 +1,6 @@
 import Module from '../../__module';
 import $ from '../../dom';
+import Flipper from '../../flipper';
 
 /**
  * Block Settings
@@ -44,6 +45,11 @@ export default class BlockSettings extends Module {
     };
   }
 
+  private static LEAF_DIRECTIONS = {
+    RIGHT: 'right',
+    LEFT: 'left',
+  };
+
   /**
    * Is Block Settings opened or not
    * @returns {boolean}
@@ -67,9 +73,9 @@ export default class BlockSettings extends Module {
   private buttons: HTMLElement[] = [];
 
   /**
-   * Index of active button
+   * @type {Flipper|null}
    */
-  private focusedButtonIndex: number = -1;
+  private flipper: Flipper = null;
 
   /**
    * Panel with block settings with 2 sections:
@@ -103,6 +109,11 @@ export default class BlockSettings extends Module {
      */
     this.addDefaultSettings();
 
+    /**
+     * Enable flipper
+     */
+    this.enableFlipper();
+
     /** Tell to subscribers that block settings is opened */
     this.Editor.Events.emit(this.events.opened);
   }
@@ -124,8 +135,9 @@ export default class BlockSettings extends Module {
     this.buttons = [];
 
     /** Clear focus on active button */
-    this.focusedButtonIndex = -1;
-
+    if (this.flipper) {
+      this.flipper.dropCursor();
+    }
   }
 
   /**
@@ -144,11 +156,8 @@ export default class BlockSettings extends Module {
     const toolSettings = this.nodes.toolSettings.querySelectorAll(`.${this.Editor.StylesAPI.classes.settingsButton}`);
     const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${this.CSS.button}`);
 
-    toolSettings.forEach((item, index) => {
+    toolSettings.forEach((item) => {
       this.buttons.push((item as HTMLElement));
-      if (item.classList.contains(this.CSS.focusedButton)) {
-        this.focusedButtonIndex = index;
-      }
     });
 
     defaultSettings.forEach((item) => {
@@ -163,9 +172,14 @@ export default class BlockSettings extends Module {
    * @param {string} direction
    */
   public leaf(direction: string = 'right'): void {
-    this.focusedButtonIndex = $.leafNodesAndReturnIndex(
-      this.blockTunesButtons, this.focusedButtonIndex, direction, this.CSS.focusedButton,
-    );
+    switch (direction) {
+      case BlockSettings.LEAF_DIRECTIONS.RIGHT:
+        this.flipper.next();
+        break;
+      case BlockSettings.LEAF_DIRECTIONS.LEFT:
+        this.flipper.previous();
+        break;
+    }
   }
 
   /**
@@ -173,11 +187,7 @@ export default class BlockSettings extends Module {
    * @return {HTMLElement}
    */
   public get focusedButton(): HTMLElement {
-    if (this.focusedButtonIndex === -1) {
-      return null;
-    }
-
-    return (this.buttons[this.focusedButtonIndex] as HTMLElement);
+    return this.flipper.currentItem;
   }
   /**
    * Add Tool's settings
@@ -193,5 +203,12 @@ export default class BlockSettings extends Module {
    */
   private addDefaultSettings(): void {
     $.append(this.nodes.defaultSettings, this.Editor.BlockManager.currentBlock.renderTunes());
+  }
+
+  /**
+   * Enable Flipper
+   */
+  private enableFlipper(): void {
+    this.flipper = new Flipper(this.blockTunesButtons, this.CSS.focusedButton);
   }
 }

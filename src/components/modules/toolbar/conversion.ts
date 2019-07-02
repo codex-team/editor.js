@@ -4,6 +4,7 @@ import {BlockToolConstructable} from '../../../../types';
 import _ from '../../utils';
 import {SavedData} from '../../../types-internal/block-data';
 import Block from '../../block';
+import Flipper from '../../flipper';
 
 /**
  * Block Converter
@@ -25,6 +26,19 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
+   * Returns focused tool as HTML element
+   * @return {HTMLElement}
+   */
+  public get focusedButton(): HTMLElement {
+    return this.flipper.currentItem;
+  }
+
+  private static LEAF_DIRECTIONS = {
+    RIGHT: 'right',
+    LEFT: 'left',
+  };
+
+  /**
    * HTML Elements used for UI
    */
   public nodes: { [key: string]: HTMLElement } = {
@@ -39,16 +53,14 @@ export default class ConversionToolbar extends Module {
   public opened: boolean = false;
 
   /**
-   * Focused button index
-   * -1 equals no chosen Tool
-   * @type {number}
-   */
-  private focusedButtonIndex: number = -1;
-
-  /**
    * Available tools
    */
   private tools: { [key: string]: HTMLElement } = {};
+
+  /**
+   * @type {Flipper|null}
+   */
+  private flipper: Flipper = null;
 
   /**
    * Create UI of Conversion Toolbar
@@ -61,6 +73,7 @@ export default class ConversionToolbar extends Module {
      * Add Tools that has 'import' method
      */
     this.addTools();
+    this.enableFlipper();
 
     $.append(this.nodes.wrapper, this.nodes.tools);
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
@@ -115,41 +128,33 @@ export default class ConversionToolbar extends Module {
     this.opened = false;
     this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
 
-    this.dropFocusedButton();
+    this.dropButtonsHighligtings();
   }
 
   /**
    * Leaf tools by Tab
-   * @todo use class with tool iterator
    */
   public leaf(direction: string = 'right'): void {
-    const toolsElements = (Array.from(this.nodes.tools.childNodes) as HTMLElement[]);
-    this.focusedButtonIndex = $.leafNodesAndReturnIndex(
-      toolsElements, this.focusedButtonIndex, direction, ConversionToolbar.CSS.conversionToolFocused,
-    );
-  }
-
-  /**
-   * Returns focused tool as HTML element
-   * @return {HTMLElement}
-   */
-  public get focusedButton(): HTMLElement {
-    if (this.focusedButtonIndex === -1) {
-      return null;
+    switch (direction) {
+      case ConversionToolbar.LEAF_DIRECTIONS.RIGHT:
+        this.flipper.next();
+        break;
+      case ConversionToolbar.LEAF_DIRECTIONS.LEFT:
+        this.flipper.previous();
+        break;
     }
-    return (this.nodes.tools.childNodes[this.focusedButtonIndex] as HTMLElement);
   }
 
   /**
    * Drops focused button
    */
-  public dropFocusedButton() {
+  public dropButtonsHighligtings() {
     Object.values(this.tools).forEach( (tool) => {
       (tool as HTMLElement).classList
         .remove(ConversionToolbar.CSS.conversionToolActive, ConversionToolbar.CSS.conversionToolFocused);
     });
 
-    this.focusedButtonIndex = -1;
+    this.flipper.dropCursor();
   }
 
   /**
@@ -304,5 +309,13 @@ export default class ConversionToolbar extends Module {
     this.Editor.Listeners.on(tool, 'click', async () => {
       await this.replaceWithBlock(toolName);
     });
+  }
+
+  /**
+   * Enable Flipper to be able to leaf conversion toolbar tools
+   */
+  private enableFlipper(): void {
+    const tools = (Array.from(this.nodes.tools.childNodes) as HTMLElement[]);
+    this.flipper = new Flipper(tools, ConversionToolbar.CSS.conversionToolFocused);
   }
 }
