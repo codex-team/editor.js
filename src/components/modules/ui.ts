@@ -615,6 +615,8 @@ export default class UI extends Module {
         this.Editor.Toolbar.plusButton.show();
       }
     }
+
+    this.Editor.BlockSelection.clearSelection(event, true);
   }
 
   /**

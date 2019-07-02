@@ -82,7 +82,7 @@ export default class BlockEvents extends Module {
 
       if (!isShortcut) {
         this.Editor.BlockManager.clearFocused();
-        this.Editor.BlockSelection.clearSelection(event);
+        this.Editor.BlockSelection.clearSelection(event, true);
       }
     }
   }
