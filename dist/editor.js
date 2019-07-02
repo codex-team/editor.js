@@ -12606,12 +12606,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(this, function (_exports, _classCallCheck2, _createClass2, _dom) {
+})(this, function (_exports, _classCallCheck2, _createClass2, _dom, _utils) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -12623,6 +12623,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _dom = _interopRequireDefault(_dom);
+  _utils = _interopRequireDefault(_utils);
 
   /**
    * Flipper
@@ -12634,7 +12635,127 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
      * @constructor
      */
     function Flipper(nodeList, focusedCssClass) {
+      var _this = this;
+
       (0, _classCallCheck2.default)(this, Flipper);
+
+      /**
+       * @type {FlipperIterator|null}
+       */
+      this.flipperIterator = null;
+      /**
+       * @type {boolean}
+       * @private
+       */
+
+      this.activated = false;
+      this.flipperIterator = new FlipperIterator(nodeList, focusedCssClass);
+      document.addEventListener('keydown', function (event) {
+        switch (event.keyCode) {
+          case _utils.default.keyCodes.TAB:
+            _this.handleTabPress(event);
+
+            break;
+
+          case _utils.default.keyCodes.ENTER:
+            _this.handleEnterPress(event);
+
+        }
+      }, false);
+    }
+    /**
+     * @param value
+     */
+
+
+    (0, _createClass2.default)(Flipper, [{
+      key: "handleTabPress",
+      value: function handleTabPress(event) {
+        if (!this.activated) {
+          return;
+        }
+
+        event.preventDefault();
+        /** this property defines leaf direction */
+
+        var shiftKey = event.shiftKey,
+            direction = shiftKey ? Flipper.LEAF_DIRECTIONS.LEFT : Flipper.LEAF_DIRECTIONS.RIGHT;
+
+        switch (direction) {
+          case Flipper.LEAF_DIRECTIONS.RIGHT:
+            this.flipperIterator.next();
+            break;
+
+          case Flipper.LEAF_DIRECTIONS.LEFT:
+            this.flipperIterator.previous();
+            break;
+        }
+      }
+      /**
+       * @param event
+       */
+
+    }, {
+      key: "handleEnterPress",
+      value: function handleEnterPress(event) {
+        if (!this.activated) {
+          return;
+        }
+
+        if (this.flipperIterator.currentItem) {
+          this.flipperIterator.currentItem.click();
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+      }
+      /**
+       * drops flipper iterators cursor
+       */
+
+    }, {
+      key: "dropCursor",
+      value: function dropCursor() {
+        this.flipperIterator.dropCursor();
+      }
+    }, {
+      key: "activate",
+      set: function set(value) {
+        this.activated = value;
+      }
+      /**
+       * @return {HTMLElement}
+       */
+
+    }, {
+      key: "currentItem",
+      get: function get() {
+        return this.flipperIterator.currentItem;
+      }
+    }]);
+    return Flipper;
+  }();
+  /**
+   * @type {{RIGHT: string; LEFT: string}}
+   */
+
+
+  _exports.default = Flipper;
+  Flipper.displayName = "Flipper";
+  Flipper.LEAF_DIRECTIONS = {
+    RIGHT: 'right',
+    LEFT: 'left'
+  };
+
+  var FlipperIterator =
+  /*#__PURE__*/
+  function () {
+    /**
+     * @param {HTMLElement[]} nodeList
+     * @param {string} focusedCssClass
+     */
+    function FlipperIterator(nodeList, focusedCssClass) {
+      (0, _classCallCheck2.default)(this, FlipperIterator);
 
       /**
        * Focused button index.
@@ -12656,7 +12777,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
      */
 
 
-    (0, _createClass2.default)(Flipper, [{
+    (0, _createClass2.default)(FlipperIterator, [{
       key: "next",
 
       /**
@@ -12784,11 +12905,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return this.items[this.cursor];
       }
     }]);
-    return Flipper;
+    return FlipperIterator;
   }();
 
-  _exports.default = Flipper;
-  Flipper.displayName = "Flipper";
+  FlipperIterator.displayName = "FlipperIterator";
   module.exports = exports.default;
 });
 
@@ -15197,38 +15317,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.BlockSelection.clearSelection(event);
         var _this$Editor3 = this.Editor,
             BlockManager = _this$Editor3.BlockManager,
-            Tools = _this$Editor3.Tools,
-            ConversionToolbar = _this$Editor3.ConversionToolbar,
-            InlineToolbar = _this$Editor3.InlineToolbar;
+            Tools = _this$Editor3.Tools;
         var currentBlock = BlockManager.currentBlock;
 
         if (!currentBlock) {
           return;
         }
-        /** Prevent Default behaviour */
 
+        var canOpenToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty; // const canLeafInlineToolbar = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
+        // const canLeafConversionToolbar = !currentBlock.isEmpty && ConversionToolbar.opened;
 
-        event.preventDefault();
-        event.stopPropagation();
-        /** this property defines leaf direction */
-
-        var shiftKey = event.shiftKey,
-            direction = shiftKey ? 'left' : 'right';
-        var canLeafToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
-        var canLeafInlineToolbar = !currentBlock.isEmpty && !_selection.default.isCollapsed && InlineToolbar.opened;
-        var canLeafConversionToolbar = !currentBlock.isEmpty && ConversionToolbar.opened;
         /**
          * For empty Blocks we show Plus button via Toobox only for initial Blocks
          */
 
-        if (canLeafToolbox) {
-          this.leafToolboxTools(direction);
-        } else if (canLeafInlineToolbar) {
-          this.leafInlineToolbarTools(direction);
-        } else if (canLeafConversionToolbar) {
-          this.leafConversionToolbarTools(direction);
+        if (canOpenToolbox) {
+          this.activateToolbox();
         } else {
-          this.leafBlockSettingsTools(direction);
+          this.activateBlockSettings();
         }
       }
       /**
@@ -15361,23 +15467,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (tool && tool[Tools.apiSettings.IS_ENABLED_LINE_BREAKS] && !BlockSettings.opened && !InlineToolbar.opened && !ConversionToolbar.opened) {
           return;
-        }
+        } // if (Toolbox.opened && Toolbox.getActiveTool) {
+        //   event.preventDefault();
+        //   event.stopPropagation();
+        //   event.stopImmediatePropagation();
+        //
+        //   Toolbox.toolButtonActivate(event, Toolbox.getActiveTool);
+        //   return;
+        // }
+        //
+        // if (InlineToolbar.opened && InlineToolbar.focusedButton) {
+        //   event.preventDefault();
+        //   event.stopPropagation();
+        //   event.stopImmediatePropagation();
+        //
+        //   InlineToolbar.focusedButton.click();
+        //   return;
+        // }
 
-        if (Toolbox.opened && Toolbox.getActiveTool) {
-          event.preventDefault();
-          event.stopPropagation();
-          event.stopImmediatePropagation();
-          Toolbox.toolButtonActivate(event, Toolbox.getActiveTool);
-          return;
-        }
-
-        if (InlineToolbar.opened && InlineToolbar.focusedButton) {
-          event.preventDefault();
-          event.stopPropagation();
-          event.stopImmediatePropagation();
-          InlineToolbar.focusedButton.click();
-          return;
-        }
         /**
          * Allow to create linebreaks by Shift+Enter
          */
@@ -15420,8 +15527,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
       }
       /**
        * Handle backspace keydown on Block
@@ -15642,55 +15747,25 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       }
       /**
        * If Toolbox is not open, then just open it and show plus button
-       * Next Tab press will leaf Toolbox Tools
-       *
-       * @param {string} direction
        */
 
     }, {
-      key: "leafToolboxTools",
-      value: function leafToolboxTools(direction) {
+      key: "activateToolbox",
+      value: function activateToolbox() {
         if (!this.Editor.Toolbar.opened) {
           this.Editor.Toolbar.open(false, false);
           this.Editor.Toolbar.plusButton.show();
-        } else {
-          this.Editor.Toolbox.leaf(direction);
         }
 
         this.Editor.Toolbox.open();
       }
       /**
-       * If InlineToolbar is not open, just open it and focus first button
-       * Next Tab press will leaf InlineToolbar Tools
-       *
-       * @param {string} direction
-       */
-
-    }, {
-      key: "leafInlineToolbarTools",
-      value: function leafInlineToolbarTools(direction) {
-        if (this.Editor.InlineToolbar.opened) {
-          this.Editor.InlineToolbar.leaf(direction);
-        }
-      }
-      /**
-       * Leaf Conversion Toolbar Tools
-       * @param {string} direction
-       */
-
-    }, {
-      key: "leafConversionToolbarTools",
-      value: function leafConversionToolbarTools(direction) {
-        this.Editor.ConversionToolbar.leaf(direction);
-      }
-      /**
        * Open Toolbar and show BlockSettings before flipping Tools
-       * @param {string} direction
        */
 
     }, {
-      key: "leafBlockSettingsTools",
-      value: function leafBlockSettingsTools(direction) {
+      key: "activateBlockSettings",
+      value: function activateBlockSettings() {
         if (!this.Editor.Toolbar.opened) {
           this.Editor.BlockManager.currentBlock.focused = true;
           this.Editor.Toolbar.open(true, false);
@@ -15705,8 +15780,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (!this.Editor.BlockSettings.opened) {
           this.Editor.BlockSettings.open();
         }
-
-        this.Editor.BlockSettings.leaf(direction);
       }
     }]);
     return BlockEvents;
@@ -21453,37 +21526,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /** Clear focus on active button */
 
         if (this.flipper) {
+          this.flipper.activate = false;
           this.flipper.dropCursor();
         }
       }
       /**
        * Returns Tools Settings and Default Settings
        * @return {HTMLElement[]}
-       */
-
-    }, {
-      key: "leaf",
-
-      /**
-       * Leaf Block Tunes
-       * @param {string} direction
-       */
-      value: function leaf() {
-        var direction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'right';
-
-        switch (direction) {
-          case BlockSettings.LEAF_DIRECTIONS.RIGHT:
-            this.flipper.next();
-            break;
-
-          case BlockSettings.LEAF_DIRECTIONS.LEFT:
-            this.flipper.previous();
-            break;
-        }
-      }
-      /**
-       * Returns active button HTML element
-       * @return {HTMLElement}
        */
 
     }, {
@@ -21514,6 +21563,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "enableFlipper",
       value: function enableFlipper() {
         this.flipper = new _flipper.default(this.blockTunesButtons, this.CSS.focusedButton);
+        this.flipper.activate = true;
       }
     }, {
       key: "events",
@@ -21575,6 +21625,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         });
         return this.buttons;
       }
+      /**
+       * Returns active button HTML element
+       * @return {HTMLElement}
+       */
+
     }, {
       key: "focusedButton",
       get: function get() {
@@ -21717,11 +21772,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           /**
            * Drop previous active button before moving
            */
-          if (this.focusedButton && this.focusedButton.classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
-            this.focusedButton.classList.remove(ConversionToolbar.CSS.conversionToolActive);
-          }
-
-          this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
+          //   if (this.focusedButton && this.focusedButton.classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
+          //     this.focusedButton.classList.remove(ConversionToolbar.CSS.conversionToolActive);
+          //   }
+          //
+          //   this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
         }
 
         this.move(block);
@@ -21738,6 +21793,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "open",
       value: function open() {
         this.opened = true;
+        this.flipper.activate = true;
         this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
       }
       /**
@@ -21748,27 +21804,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "close",
       value: function close() {
         this.opened = false;
+        this.flipper.activate = false;
         this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
         this.dropButtonsHighligtings();
-      }
-      /**
-       * Leaf tools by Tab
-       */
-
-    }, {
-      key: "leaf",
-      value: function leaf() {
-        var direction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'right';
-
-        switch (direction) {
-          case ConversionToolbar.LEAF_DIRECTIONS.RIGHT:
-            this.flipper.next();
-            break;
-
-          case ConversionToolbar.LEAF_DIRECTIONS.LEFT:
-            this.flipper.previous();
-            break;
-        }
       }
       /**
        * Drops focused button
@@ -22024,16 +22062,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var tools = Array.from(this.nodes.tools.childNodes);
         this.flipper = new _flipper.default(tools, ConversionToolbar.CSS.conversionToolFocused);
       }
-    }, {
-      key: "focusedButton",
-
-      /**
-       * Returns focused tool as HTML element
-       * @return {HTMLElement}
-       */
-      get: function get() {
-        return this.flipper.currentItem;
-      }
     }], [{
       key: "CSS",
       get: function get() {
@@ -22052,10 +22080,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   _exports.default = ConversionToolbar;
   ConversionToolbar.displayName = "ConversionToolbar";
-  ConversionToolbar.LEAF_DIRECTIONS = {
-    RIGHT: 'right',
-    LEFT: 'left'
-  };
   module.exports = exports.default;
 });
 
@@ -22070,12 +22094,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom) {
+})(this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _utils) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -22091,6 +22115,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _inherits2 = _interopRequireDefault(_inherits2);
   _module = _interopRequireDefault(_module);
   _dom = _interopRequireDefault(_dom);
+  _utils = _interopRequireDefault(_utils);
 
   /**
    *
@@ -22335,7 +22360,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var withBlockActions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
         var needToCloseToolbox = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-        setTimeout(function () {
+
+        _utils.default.delay(function () {
           _this3.move(needToCloseToolbox);
 
           _this3.nodes.wrapper.classList.add(_this3.CSS.toolbarOpened);
@@ -22345,7 +22371,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           } else {
             _this3.blockActions.hide();
           }
-        }, 50);
+        }, 50)();
       }
       /**
        * returns toolbar opened state
@@ -22713,27 +22739,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
       }
       /**
-       * Leaf Inline Tools
-       * @param {string} direction
-       */
-
-    }, {
-      key: "leaf",
-      value: function leaf() {
-        var direction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'right';
-        this.flipper.next();
-      }
-      /**
-       * Returns Focused button Node
-       * @return {HTMLElement}
+       * Hides Inline Toolbar
        */
 
     }, {
       key: "close",
-
-      /**
-       * Hides Inline Toolbar
-       */
       value: function close() {
         this.nodes.wrapper.classList.remove(this.CSS.inlineToolbarShowed);
         this.tools.forEach(function (toolInstance) {
@@ -22741,7 +22751,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             toolInstance.clear();
           }
         });
-        this.opened = false; // this.flipper.destroy();
+        this.opened = false;
+
+        if (this.flipper) {
+          this.flipper.activate = false;
+        }
       }
       /**
        * Shows Inline Toolbar
@@ -22783,6 +22797,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
         this.flipper = new _flipper.default(visibleTools, this.CSS.focusedButton);
+        this.flipper.activate = true;
       }
       /**
        * Need to show Inline Toolbar or not
@@ -23079,11 +23094,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return this.toolsInstances;
       }
     }, {
-      key: "focusedButton",
-      get: function get() {
-        return this.flipper.currentItem;
-      }
-    }, {
       key: "inlineTools",
       get: function get() {
         var result = {};
@@ -23239,6 +23249,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.UI.nodes.wrapper.classList.add(this.CSS.openedToolbarHolderModifier);
         this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
         this.opened = true;
+        this.flipper.activate = true;
       }
       /**
        * Close Toolbox
@@ -23251,6 +23262,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
         this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
         this.opened = false;
+        this.flipper.activate = false;
         this.flipper.dropCursor();
       }
       /**
@@ -23264,26 +23276,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           this.open();
         } else {
           this.close();
-        }
-      }
-      /**
-       * Leaf
-       * flip through the toolbox items
-       * @param {String} direction - leaf direction, right is default
-       */
-
-    }, {
-      key: "leaf",
-      value: function leaf() {
-        var direction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Toolbox.LEAF_DIRECTIONS.RIGHT;
-
-        switch (direction) {
-          case Toolbox.LEAF_DIRECTIONS.RIGHT:
-            this.flipper.next();
-            break;
-
-          case Toolbox.LEAF_DIRECTIONS.LEFT:
-            this.flipper.previous();
         }
       }
       /**
@@ -23569,10 +23561,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   _exports.default = Toolbox;
   Toolbox.displayName = "Toolbox";
-  Toolbox.LEAF_DIRECTIONS = {
-    RIGHT: 'right',
-    LEFT: 'left'
-  };
   module.exports = exports.default;
 });
 
@@ -24577,77 +24565,77 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Enter press is fired as out of the Block and that's why
          * we handle it here
          */
+        // if (BlockSettings.opened && BlockSettings.focusedButton) {
+        //   event.preventDefault();
+        //   event.stopPropagation();
+        //   event.stopImmediatePropagation();
+        //
 
-        if (BlockSettings.opened && BlockSettings.focusedButton) {
-          event.preventDefault();
-          event.stopPropagation();
-          event.stopImmediatePropagation();
-          /** Click on settings button */
+        /** Click on settings button */
+        // BlockSettings.focusedButton.click();
 
-          BlockSettings.focusedButton.click();
-          /**
-           * Focused button can be deleted by click, for example with 'Remove Block' api
-           */
+        /**
+         * Focused button can be deleted by click, for example with 'Remove Block' api
+        //  */
+        // if (BlockSettings.focusedButton) {
+        //   /**
+        //    * Add animation on click
+        //    */
+        //   BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
+        //
+        //   /**
+        //    * Remove animation class
+        //    */
+        //   _.delay( () => {
+        //     if (BlockSettings.focusedButton) {
+        //       BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
+        //     }
+        //   }, 280)();
+        // }
 
-          if (BlockSettings.focusedButton) {
-            /**
-             * Add animation on click
-             */
-            BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
-            /**
-             * Remove animation class
-             */
+        /**
+         * Restoring focus on current Block
+         *
+         * After changing Block state (when settings clicked, for example)
+         * Block's content points to the Node that is not in DOM, that's why we can not
+         * set caret and leaf next (via Tab)
+         *
+         * For that set cursor via Caret module to the current Block's content
+         * after some timeout
+         */
+        // _.delay( () => {
+        //   Caret.setToBlock(BlockManager.currentBlock);
+        // }, 10)();
+        //
+        // return;
+        // }
+        // if (ConversionToolbar.opened && ConversionToolbar.focusedButton) {
+        //   event.preventDefault();
+        //   event.stopPropagation();
+        //   event.stopImmediatePropagation();
+        //
+        //   ConversionToolbar.focusedButton.click();
+        //   return;
+        // }
+        //
+        // if (BlockSelection.anyBlockSelected) {
+        //   const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+        //   Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+        //
+        //   /** Clear selection */
+        //   BlockSelection.clearSelection(event);
+        //
+        //   /**
+        //    * Stop propagations
+        //    * Manipulation with BlockSelections is handled in global enterPress because they may occur
+        //    * with CMD+A or RectangleSelection
+        //    */
+        //   event.preventDefault();
+        //   event.stopImmediatePropagation();
+        //   event.stopPropagation();
+        //   return;
+        // }
 
-            _utils.default.delay(function () {
-              if (BlockSettings.focusedButton) {
-                BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
-              }
-            }, 280)();
-          }
-          /**
-           * Restoring focus on current Block
-           *
-           * After changing Block state (when settings clicked, for example)
-           * Block's content points to the Node that is not in DOM, that's why we can not
-           * set caret and leaf next (via Tab)
-           *
-           * For that set cursor via Caret module to the current Block's content
-           * after some timeout
-           */
-
-
-          _utils.default.delay(function () {
-            Caret.setToBlock(BlockManager.currentBlock);
-          }, 10)();
-
-          return;
-        }
-
-        if (ConversionToolbar.opened && ConversionToolbar.focusedButton) {
-          event.preventDefault();
-          event.stopPropagation();
-          event.stopImmediatePropagation();
-          ConversionToolbar.focusedButton.click();
-          return;
-        }
-
-        if (BlockSelection.anyBlockSelected) {
-          var selectionPositionIndex = BlockManager.removeSelectedBlocks();
-          Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
-          /** Clear selection */
-
-          BlockSelection.clearSelection(event);
-          /**
-           * Stop propagations
-           * Manipulation with BlockSelections is handled in global enterPress because they may occur
-           * with CMD+A or RectangleSelection
-           */
-
-          event.preventDefault();
-          event.stopImmediatePropagation();
-          event.stopPropagation();
-          return;
-        }
         /**
          * If Caret is not set anywhere, event target on Enter is always Element that we handle
          * In our case it is document.body
@@ -24655,7 +24643,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * So, BlockManager points some Block and Enter press is on Body
          * We can create a new block
          */
-
 
         if (hasPointerToBlock && event.target.tagName === 'BODY') {
           /**

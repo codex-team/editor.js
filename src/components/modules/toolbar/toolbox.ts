@@ -52,11 +52,6 @@ export default class Toolbox extends Module {
     return this.displayedToolsCount === 0;
   }
 
-  private static LEAF_DIRECTIONS = {
-    RIGHT: 'right',
-    LEFT: 'left',
-  };
-
   /**
    * Opening state
    * @type {boolean}
@@ -124,6 +119,7 @@ export default class Toolbox extends Module {
     this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
 
     this.opened = true;
+    this.flipper.activate = true;
   }
 
   /**
@@ -136,6 +132,7 @@ export default class Toolbox extends Module {
     this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
 
     this.opened = false;
+    this.flipper.activate = false;
     this.flipper.dropCursor();
   }
 
@@ -147,21 +144,6 @@ export default class Toolbox extends Module {
       this.open();
     } else {
       this.close();
-    }
-  }
-
-  /**
-   * Leaf
-   * flip through the toolbox items
-   * @param {String} direction - leaf direction, right is default
-   */
-  public leaf(direction: string = Toolbox.LEAF_DIRECTIONS.RIGHT): void {
-    switch (direction) {
-      case Toolbox.LEAF_DIRECTIONS.RIGHT:
-        this.flipper.next();
-        break;
-      case Toolbox.LEAF_DIRECTIONS.LEFT:
-        this.flipper.previous();
     }
   }
 

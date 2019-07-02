@@ -209,22 +209,6 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   * Leaf Inline Tools
-   * @param {string} direction
-   */
-  public leaf(direction: string = 'right'): void {
-    this.flipper.next();
-  }
-
-  /**
-   * Returns Focused button Node
-   * @return {HTMLElement}
-   */
-  public get focusedButton(): HTMLElement {
-    return this.flipper.currentItem;
-  }
-
-  /**
    * Hides Inline Toolbar
    */
   public close(): void {
@@ -236,7 +220,10 @@ export default class InlineToolbar extends Module {
     });
 
     this.opened = false;
-    // this.flipper.destroy();
+
+    if (this.flipper) {
+      this.flipper.activate = false;
+    }
   }
 
   /**
@@ -276,6 +263,7 @@ export default class InlineToolbar extends Module {
      * @type {Flipper}
      */
     this.flipper = new Flipper(visibleTools, this.CSS.focusedButton);
+    this.flipper.activate = true;
   }
 
   /**

@@ -1,9 +1,114 @@
 import Dom from './dom';
+import _ from './utils';
 
 /**
  * Flipper
  */
 export default class Flipper {
+  /**
+   * @type {{RIGHT: string; LEFT: string}}
+   */
+  private static LEAF_DIRECTIONS = {
+    RIGHT: 'right',
+    LEFT: 'left',
+  };
+
+  /**
+   * @type {FlipperIterator|null}
+   */
+  private flipperIterator: FlipperIterator = null;
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  private activated: boolean = false;
+
+  /**
+   * @constructor
+   */
+  constructor(
+    nodeList: HTMLElement[],
+    focusedCssClass: string,
+  ) {
+    this.flipperIterator = new FlipperIterator(nodeList, focusedCssClass);
+
+    document.addEventListener('keydown', (event) => {
+      switch (event.keyCode) {
+        case _.keyCodes.TAB:
+          this.handleTabPress(event);
+          break;
+        case _.keyCodes.ENTER:
+          this.handleEnterPress(event);
+      }
+    }, false);
+  }
+
+  /**
+   * @param value
+   */
+  public set activate(value) {
+    this.activated = value;
+  }
+
+  /**
+   * @return {HTMLElement}
+   */
+  public get currentItem(): HTMLElement {
+    return this.flipperIterator.currentItem;
+  }
+
+  public handleTabPress(event) {
+    if (!this.activated) {
+      return;
+    }
+
+    event.preventDefault();
+
+    /** this property defines leaf direction */
+    const shiftKey = event.shiftKey,
+      direction = shiftKey ? Flipper.LEAF_DIRECTIONS.LEFT : Flipper.LEAF_DIRECTIONS.RIGHT;
+
+    switch (direction) {
+      case Flipper.LEAF_DIRECTIONS.RIGHT:
+        this.flipperIterator.next();
+        break;
+      case Flipper.LEAF_DIRECTIONS.LEFT:
+        this.flipperIterator.previous();
+        break;
+    }
+  }
+
+  /**
+   * @param event
+   */
+  public handleEnterPress(event) {
+    if (!this.activated) {
+      return;
+    }
+
+    if (this.flipperIterator.currentItem) {
+      this.flipperIterator.currentItem.click();
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+  }
+
+  /**
+   * drops flipper iterators cursor
+   */
+  public dropCursor(): void {
+    this.flipperIterator.dropCursor();
+  }
+}
+
+class FlipperIterator {
+  /**
+   * CSS class
+   */
+  private focusedCssClass: string;
+
   /**
    * Focused button index.
    * Default is -1 which means nothing is active
@@ -17,12 +122,8 @@ export default class Flipper {
   private items: HTMLElement[] = [];
 
   /**
-   * CSS class
-   */
-  private focusedCssClass: string;
-
-  /**
-   * @constructor
+   * @param {HTMLElement[]} nodeList
+   * @param {string} focusedCssClass
    */
   constructor(
     nodeList: HTMLElement[],

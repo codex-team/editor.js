@@ -178,36 +178,24 @@ export default class BlockEvents extends Module {
      */
     this.Editor.BlockSelection.clearSelection(event);
 
-    const { BlockManager, Tools, ConversionToolbar, InlineToolbar } = this.Editor;
+    const { BlockManager, Tools } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
 
     if (!currentBlock) {
       return;
     }
 
-    /** Prevent Default behaviour */
-    event.preventDefault();
-    event.stopPropagation();
-
-    /** this property defines leaf direction */
-    const shiftKey = event.shiftKey,
-      direction = shiftKey ? 'left' : 'right';
-
-    const canLeafToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
-    const canLeafInlineToolbar = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
-    const canLeafConversionToolbar = !currentBlock.isEmpty && ConversionToolbar.opened;
+    const canOpenToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
+    // const canLeafInlineToolbar = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
+    // const canLeafConversionToolbar = !currentBlock.isEmpty && ConversionToolbar.opened;
 
     /**
      * For empty Blocks we show Plus button via Toobox only for initial Blocks
      */
-    if (canLeafToolbox) {
-      this.leafToolboxTools(direction);
-    } else if (canLeafInlineToolbar) {
-      this.leafInlineToolbarTools(direction);
-    } else if (canLeafConversionToolbar) {
-      this.leafConversionToolbarTools(direction);
+    if (canOpenToolbox) {
+      this.activateToolbox();
     } else {
-      this.leafBlockSettingsTools(direction);
+      this.activateBlockSettings();
     }
   }
 
@@ -328,23 +316,23 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    if (Toolbox.opened && Toolbox.getActiveTool) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      Toolbox.toolButtonActivate(event, Toolbox.getActiveTool);
-      return;
-    }
-
-    if (InlineToolbar.opened && InlineToolbar.focusedButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      InlineToolbar.focusedButton.click();
-      return;
-    }
+    // if (Toolbox.opened && Toolbox.getActiveTool) {
+    //   event.preventDefault();
+    //   event.stopPropagation();
+    //   event.stopImmediatePropagation();
+    //
+    //   Toolbox.toolButtonActivate(event, Toolbox.getActiveTool);
+    //   return;
+    // }
+    //
+    // if (InlineToolbar.opened && InlineToolbar.focusedButton) {
+    //   event.preventDefault();
+    //   event.stopPropagation();
+    //   event.stopImmediatePropagation();
+    //
+    //   InlineToolbar.focusedButton.click();
+    //   return;
+    // }
 
     /**
      * Allow to create linebreaks by Shift+Enter
@@ -386,8 +374,6 @@ export default class BlockEvents extends Module {
     }
 
     event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
   }
 
   /**
@@ -596,46 +582,20 @@ export default class BlockEvents extends Module {
 
   /**
    * If Toolbox is not open, then just open it and show plus button
-   * Next Tab press will leaf Toolbox Tools
-   *
-   * @param {string} direction
    */
-  private leafToolboxTools(direction: string): void {
+  private activateToolbox(): void {
     if (!this.Editor.Toolbar.opened) {
       this.Editor.Toolbar.open(false , false);
       this.Editor.Toolbar.plusButton.show();
-    } else {
-      this.Editor.Toolbox.leaf(direction);
     }
 
     this.Editor.Toolbox.open();
   }
 
   /**
-   * If InlineToolbar is not open, just open it and focus first button
-   * Next Tab press will leaf InlineToolbar Tools
-   *
-   * @param {string} direction
-   */
-  private leafInlineToolbarTools(direction: string): void {
-    if (this.Editor.InlineToolbar.opened) {
-      this.Editor.InlineToolbar.leaf(direction);
-    }
-  }
-
-  /**
-   * Leaf Conversion Toolbar Tools
-   * @param {string} direction
-   */
-  private leafConversionToolbarTools(direction: string): void {
-    this.Editor.ConversionToolbar.leaf(direction);
-  }
-
-  /**
    * Open Toolbar and show BlockSettings before flipping Tools
-   * @param {string} direction
    */
-  private leafBlockSettingsTools(direction: string): void {
+  private activateBlockSettings(): void {
     if (!this.Editor.Toolbar.opened) {
       this.Editor.BlockManager.currentBlock.focused = true;
       this.Editor.Toolbar.open(true, false);
@@ -649,7 +609,5 @@ export default class BlockEvents extends Module {
     if (!this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.open();
     }
-
-    this.Editor.BlockSettings.leaf(direction);
   }
 }

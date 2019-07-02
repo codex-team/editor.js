@@ -136,6 +136,7 @@ export default class BlockSettings extends Module {
 
     /** Clear focus on active button */
     if (this.flipper) {
+      this.flipper.activate = false;
       this.flipper.dropCursor();
     }
   }
@@ -168,21 +169,6 @@ export default class BlockSettings extends Module {
   }
 
   /**
-   * Leaf Block Tunes
-   * @param {string} direction
-   */
-  public leaf(direction: string = 'right'): void {
-    switch (direction) {
-      case BlockSettings.LEAF_DIRECTIONS.RIGHT:
-        this.flipper.next();
-        break;
-      case BlockSettings.LEAF_DIRECTIONS.LEFT:
-        this.flipper.previous();
-        break;
-    }
-  }
-
-  /**
    * Returns active button HTML element
    * @return {HTMLElement}
    */
@@ -210,5 +196,6 @@ export default class BlockSettings extends Module {
    */
   private enableFlipper(): void {
     this.flipper = new Flipper(this.blockTunesButtons, this.CSS.focusedButton);
+    this.flipper.activate = true;
   }
 }

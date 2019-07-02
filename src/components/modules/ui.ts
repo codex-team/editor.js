@@ -381,32 +381,32 @@ export default class UI extends Module {
      * Enter press is fired as out of the Block and that's why
      * we handle it here
      */
-    if (BlockSettings.opened && BlockSettings.focusedButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
+    // if (BlockSettings.opened && BlockSettings.focusedButton) {
+    //   event.preventDefault();
+    //   event.stopPropagation();
+    //   event.stopImmediatePropagation();
+    //
       /** Click on settings button */
-      BlockSettings.focusedButton.click();
+      // BlockSettings.focusedButton.click();
 
       /**
        * Focused button can be deleted by click, for example with 'Remove Block' api
-       */
-      if (BlockSettings.focusedButton) {
-        /**
-         * Add animation on click
-         */
-        BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
-
-        /**
-         * Remove animation class
-         */
-        _.delay( () => {
-          if (BlockSettings.focusedButton) {
-            BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
-          }
-        }, 280)();
-      }
+      //  */
+      // if (BlockSettings.focusedButton) {
+      //   /**
+      //    * Add animation on click
+      //    */
+      //   BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
+      //
+      //   /**
+      //    * Remove animation class
+      //    */
+      //   _.delay( () => {
+      //     if (BlockSettings.focusedButton) {
+      //       BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
+      //     }
+      //   }, 280)();
+      // }
 
       /**
        * Restoring focus on current Block
@@ -418,39 +418,39 @@ export default class UI extends Module {
        * For that set cursor via Caret module to the current Block's content
        * after some timeout
        */
-      _.delay( () => {
-        Caret.setToBlock(BlockManager.currentBlock);
-      }, 10)();
+      // _.delay( () => {
+      //   Caret.setToBlock(BlockManager.currentBlock);
+      // }, 10)();
+      //
+      // return;
+    // }
 
-      return;
-    }
-
-    if (ConversionToolbar.opened && ConversionToolbar.focusedButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      ConversionToolbar.focusedButton.click();
-      return;
-    }
-
-    if (BlockSelection.anyBlockSelected) {
-      const selectionPositionIndex = BlockManager.removeSelectedBlocks();
-      Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
-
-      /** Clear selection */
-      BlockSelection.clearSelection(event);
-
-      /**
-       * Stop propagations
-       * Manipulation with BlockSelections is handled in global enterPress because they may occur
-       * with CMD+A or RectangleSelection
-       */
-      event.preventDefault();
-      event.stopImmediatePropagation();
-      event.stopPropagation();
-      return;
-    }
+    // if (ConversionToolbar.opened && ConversionToolbar.focusedButton) {
+    //   event.preventDefault();
+    //   event.stopPropagation();
+    //   event.stopImmediatePropagation();
+    //
+    //   ConversionToolbar.focusedButton.click();
+    //   return;
+    // }
+    //
+    // if (BlockSelection.anyBlockSelected) {
+    //   const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+    //   Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+    //
+    //   /** Clear selection */
+    //   BlockSelection.clearSelection(event);
+    //
+    //   /**
+    //    * Stop propagations
+    //    * Manipulation with BlockSelections is handled in global enterPress because they may occur
+    //    * with CMD+A or RectangleSelection
+    //    */
+    //   event.preventDefault();
+    //   event.stopImmediatePropagation();
+    //   event.stopPropagation();
+    //   return;
+    // }
 
     /**
      * If Caret is not set anywhere, event target on Enter is always Element that we handle
