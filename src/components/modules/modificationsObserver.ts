@@ -32,9 +32,15 @@ export default class ModificationsObserver extends Module {
    * @type {Function}
    */
   private mutationDebouncer = _.debounce( () => {
-    this.checkEmptiness();
+    this.updateNativeInputs();
     this.config.onChange();
   }, ModificationsObserver.DebounceTimer);
+
+  /**
+   * Array of native inputs in Blocks.
+   * Changes in native inputs are not handled by modification observer, so we need to set change event listeners on them
+   */
+  private nativeInputs: HTMLElement[] = [];
 
   /**
    * Clear timeout and set null to mutationDebouncer property
@@ -43,6 +49,7 @@ export default class ModificationsObserver extends Module {
     this.mutationDebouncer = null;
     this.observer.disconnect();
     this.observer = null;
+    this.nativeInputs.forEach((input) => this.Editor.Listeners.off(input, 'input', this.mutationDebouncer));
   }
 
   /**
@@ -145,11 +152,17 @@ export default class ModificationsObserver extends Module {
   }
 
   /**
-   * Check if Editor is empty and set CSS class to wrapper
+   * Gets native inputs and set oninput event handler
    */
-  private checkEmptiness(): void {
-    const {BlockManager, UI} = this.Editor;
+  private updateNativeInputs(): void {
+    if (this.nativeInputs) {
+      this.nativeInputs.forEach((input) => {
+        this.Editor.Listeners.off(input, 'input');
+      });
+    }
 
-    UI.nodes.wrapper.classList.toggle(UI.CSS.editorEmpty, BlockManager.isEditorEmpty);
+    this.nativeInputs = Array.from(this.Editor.UI.nodes.redactor.querySelectorAll('textarea, input, select'));
+
+    this.nativeInputs.forEach((input) => this.Editor.Listeners.on(input, 'input', this.mutationDebouncer));
   }
 }

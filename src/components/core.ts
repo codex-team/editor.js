@@ -1,6 +1,6 @@
 import $ from './dom';
 import _ from './utils';
-import {EditorConfig, OutputData, SanitizerConfig, ToolSettings} from '../../types';
+import {EditorConfig, OutputData, SanitizerConfig} from '../../types';
 import {EditorModules} from '../types-internal/editor-modules';
 
 /**
@@ -116,8 +116,17 @@ export default class Core {
      */
     if (typeof config !== 'object') {
       config = {
-        holderId: config,
+        holder: config,
       };
+    }
+
+    /**
+     * If holderId is preset, assign him to holder property and work next only with holder
+     */
+    if (config.holderId && !config.holder) {
+      config.holder = config.holderId;
+      config.holderId = null;
+      _.log('holderId property will deprecated in next major release, use holder property instead.', 'warn');
     }
 
     /**
@@ -127,16 +136,22 @@ export default class Core {
     this.config = config;
 
     /**
-     * If holderId is empty then set a default value
+     * If holder is empty then set a default value
      */
-    if (!this.config.holderId || typeof this.config.holderId !== 'string') {
-      this.config.holderId = 'editorjs';
+    if (this.config.holder == null) {
+      this.config.holder = 'editorjs';
     }
 
     /**
      * If initial Block's Tool was not passed, use the Paragraph Tool
      */
     this.config.initialBlock = this.config.initialBlock || 'paragraph';
+
+    /**
+     * Height of Editor's bottom area that allows to set focus on the last Block
+     * @type {number}
+     */
+    this.config.minHeight = this.config.minHeight || 300;
 
     /**
      * Initial block type
@@ -148,7 +163,7 @@ export default class Core {
       data : {},
     };
 
-    this.config.placeholder = this.config.placeholder || 'write your story...';
+    this.config.placeholder = this.config.placeholder || false;
     this.config.sanitizer = this.config.sanitizer || {
       p: true,
       b: true,
@@ -187,18 +202,21 @@ export default class Core {
    * @returns {Promise<void>}
    */
   public async validate(): Promise<void> {
-    /**
-     * Check if holderId is not empty
-     */
-    if (!this.config.holderId) {
-      throw Error('«holderId» param must being not empty');
+    const { holderId, holder } = this.config;
+
+    if (holderId && holder) {
+      throw Error('«holderId» and «holder» param can\'t assign at the same time.');
     }
 
     /**
      * Check for a holder element's existence
      */
-    if (!$.get(this.config.holderId)) {
-      throw Error(`element with ID «${this.config.holderId}» is missing. Pass correct holder's ID.`);
+    if (typeof holder === 'string' && !$.get(holder)) {
+      throw Error(`element with ID «${holder}» is missing. Pass correct holder's ID.`);
+    }
+
+    if (holder && typeof holder === 'object' && !$.isElement(holder)) {
+      throw Error('holder as HTMLElement if provided must be inherit from Element class.');
     }
   }
 

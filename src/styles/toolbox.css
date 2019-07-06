@@ -10,7 +10,7 @@
     position: static;
     transform: none !important;
     align-items: center;
-    visibility: visible !important;
+    overflow-x: auto;
   }
 
   &--opened {
@@ -20,6 +20,7 @@
 
   &__button {
     @apply --toolbox-button;
+    flex-shrink: 0;
   }
 
   &__tooltip {
@@ -27,7 +28,6 @@
     top: 25px;
     padding: 6px 10px;
     border-radius: 5px;
-    line-height: 21px;
     opacity: 0;
     background: var(--bg-light);
     box-shadow: 0 10px 12px -9px rgba(26, 39, 54, 0.32), 0 3px 2px -2px rgba(33, 48, 73, 0.05);
@@ -40,6 +40,10 @@
     will-change: opacity, left;
     letter-spacing: 0.02em;
     line-height: 1em;
+
+    @media (--mobile) {
+      display: none;
+    }
 
     &-shortcut {
       color: rgba(100, 105, 122, 0.6);

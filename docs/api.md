@@ -38,7 +38,9 @@ Methods that working with Blocks
 
 `stretchBlock(index: number, status: boolean)` - make Block stretched
 
-`insertNewBlock()` - insert new Block after working place
+`insertNewBlock()` - __Deprecated__ insert new Block after working place 
+
+`insert(type?: string, data?: BlockToolData, config?: ToolConfig, index?: number, needToFocus?: boolean)` - insert new Block with passed parameters
 
 #### SanitizerAPI
 
@@ -68,6 +70,14 @@ Methods that working with Toolbar
 `open()` - opens toolbar
 
 `close()` - closes toolbar, toolbox and blockSettings if they are opened
+
+### InlineToolbarAPI
+
+Methods that works with inline toolbar
+
+`open()` - opens inline toolbar, (opens for the current selection)
+
+`close()` - closes inline toolbar
 
 ### ListenerAPI
 

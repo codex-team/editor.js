@@ -6,11 +6,11 @@
  * @version 1.0.0
  */
 import Module from '../__module';
+import Block from '../block';
 import _ from '../utils';
 import $ from '../dom';
 
 import SelectionUtils from '../selection';
-import Block from '../block';
 
 export default class BlockSelection extends Module {
 
@@ -76,6 +76,14 @@ export default class BlockSelection extends Module {
   }
 
   /**
+   * Return selected Blocks array
+   * @return {Block[]}
+   */
+  public get selectedBlocks(): Block[] {
+    return this.Editor.BlockManager.blocks.filter((block: Block) => block.selected);
+  }
+
+  /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
    * @type {boolean}
@@ -88,6 +96,13 @@ export default class BlockSelection extends Module {
    * @type {boolean}
    */
   private nativeInputSelected: boolean = false;
+
+  /**
+   * Flag identifies any input selection
+   * That means we can select whole Block
+   * @type {boolean}
+   */
+  private readyToBlockSelection: boolean = false;
 
   /**
    * SelectionUtils instance
@@ -146,12 +161,34 @@ export default class BlockSelection extends Module {
 
   /**
    * Clear selection from Blocks
+   *
+   * @param {Event} reason - event caused clear of selection
+   * @param {boolean} restoreSelection - if true, restore saved selection
    */
-  public clearSelection(restoreSelection = false) {
+  public clearSelection(reason?: Event, restoreSelection = false) {
+    const {BlockManager, Caret, RectangleSelection} = this.Editor;
+
     this.needToSelectAll = false;
     this.nativeInputSelected = false;
+    this.readyToBlockSelection = false;
 
-    if (!this.anyBlockSelected || this.Editor.RectangleSelection.isRectActivated()) {
+    /**
+     * If reason caused clear of the selection was printable key and any block is selected,
+     * remove selected blocks and insert pressed key
+     */
+    if (this.anyBlockSelected && reason && reason instanceof KeyboardEvent && _.isPrintableKey(reason.keyCode)) {
+      const indexToInsert = BlockManager.removeSelectedBlocks();
+
+      BlockManager.insertInitialBlockAtIndex(indexToInsert, true);
+      Caret.setToBlock(BlockManager.currentBlock);
+      _.delay(() => {
+        Caret.insertContentAtCaretPosition(reason.key);
+      }, 20)();
+    }
+
+    this.Editor.CrossBlockSelection.clear(reason);
+
+    if (!this.anyBlockSelected || RectangleSelection.isRectActivated()) {
       this.Editor.RectangleSelection.clearSelection();
       return;
     }
@@ -172,15 +209,13 @@ export default class BlockSelection extends Module {
    * Reduce each Block and copy its content
    */
   public copySelectedBlocks(): void {
-    const {BlockManager, Sanitizer} = this.Editor;
     const fakeClipboard = $.make('div');
 
-    BlockManager.blocks.filter((block) => block.selected)
-      .forEach((block) => {
+    this.selectedBlocks.forEach((block) => {
         /**
          * Make <p> tag that holds clean HTML
          */
-        const cleanHTML = Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
+        const cleanHTML = this.Editor.Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
         const fragment = $.make('p');
 
         fragment.innerHTML = cleanHTML;
@@ -219,12 +254,12 @@ export default class BlockSelection extends Module {
   }
 
   /**
-   * First CMD+A Selects current focused blocks,
-   * and consequent second CMD+A keypress selects all blocks
+   * First CMD+A selects all input content by native behaviour,
+   * next CMD+A keypress selects all blocks
    *
-   * @param {keydown} event
+   * @param {KeyboardEvent} event
    */
-  private handleCommandA(event): void {
+  private handleCommandA(event: KeyboardEvent): void {
     this.Editor.RectangleSelection.clearSelection();
 
     /** allow default selection on native inputs */
@@ -233,14 +268,42 @@ export default class BlockSelection extends Module {
       return;
     }
 
-    /** Prevent default selection */
-    event.preventDefault();
+    const workingBlock = this.Editor.BlockManager.getBlock(event.target as HTMLElement);
+    const inputs = workingBlock.inputs;
+
+    /**
+     * If Block has more than one editable element allow native selection
+     * Second cmd+a will select whole Block
+     */
+    if (inputs.length > 1 && !this.readyToBlockSelection) {
+      this.readyToBlockSelection = true;
+      return;
+    }
 
     if (this.needToSelectAll) {
+      /** Prevent default selection */
+      event.preventDefault();
+
+      /**
+       * Save selection
+       * Will be restored when closeSelection fired
+       */
+      this.selection.save();
+
+      /**
+       * Remove Ranges from Selection
+       */
+      SelectionUtils.get()
+        .removeAllRanges();
+
       this.selectAllBlocks();
       this.needToSelectAll = false;
+
+      /**
+       * Close ConversionToolbar when all Blocks selected
+       */
+      this.Editor.ConversionToolbar.close();
     } else {
-      this.selectBlockByIndex();
       this.needToSelectAll = true;
     }
   }
