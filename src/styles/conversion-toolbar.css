@@ -1,0 +1,54 @@
+.ce-conversion-toolbar {
+  @apply --overlay-pane;
+
+  padding: 3px;
+  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),
+    5px -12px 34px -13px rgba(97, 105, 134, 0.6),
+    0 26px 52px 3px rgba(147, 165, 186, 0.24);
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+  transition: transform 150ms ease, opacity 250ms ease;
+  transform: translateY(8px) scale(0.9);
+
+  &::before {
+    left: 20px;
+  }
+
+  &--showed {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+  }
+
+  [hidden] {
+    display: none !important;
+  }
+
+  &__buttons {
+    display: flex;
+  }
+}
+
+.ce-conversion-tool {
+  @apply --toolbar-button;
+  line-height: normal;
+
+  &:not(:last-of-type) {
+    margin-right: 2px;
+  }
+
+  &--last {
+    margin-right: 0 !important;
+  }
+
+  &:hover,
+  &--active {
+    color: var(--color-active-icon) !important;
+  }
+
+  &--active {
+    animation: bounceIn 0.75s 1;
+    animation-fill-mode: forwards;
+  }
+}

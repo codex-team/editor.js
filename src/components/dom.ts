@@ -244,7 +244,7 @@ export default class Dom {
    * @param {Object} node
    * @returns {boolean}
    */
-  public static isElement(node: any): boolean {
+  public static isElement(node: any): node is Element {
     return node && typeof node === 'object' && node.nodeType && node.nodeType === Node.ELEMENT_NODE;
   }
 
@@ -517,5 +517,93 @@ export default class Dom {
     return Array.from(parent.children).reduce((result, element) => {
       return [...result, ...Dom.getDeepestBlockElements(element as HTMLElement)];
     }, []);
+  }
+
+  /**
+   * Leafs nodes inside the target list from active element
+   *
+   * @param {HTMLElement[]} nodeList - target list of nodes
+   * @param {number} activeIndex — index of active node. By default it must be -1
+   * @param {string} direction - leaf direction. Can be 'left' or 'right'
+   * @param {string} activeCSSClass - css class that will be added
+   *
+   * @return {Number} index of active node
+   */
+  public static leafNodesAndReturnIndex(
+    nodeList: HTMLElement[],
+    activeIndex: number,
+    direction: string,
+    activeCSSClass: string,
+  ): number {
+    /**
+     * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
+     */
+    if (activeIndex === -1) {
+      /**
+       * Normalize "previous" Tool index depending on direction.
+       * We need to do this to highlight "first" Tool correctly
+       *
+       * Order of Tools: [0] [1] ... [n - 1]
+       *   [0 = n] because of: n % n = 0 % n
+       *
+       * Direction 'right': for [0] the [n - 1] is a previous index
+       *   [n - 1] -> [0]
+       *
+       * Direction 'left': for [n - 1] the [0] is a previous index
+       *   [n - 1] <- [0]
+       *
+       * @type {number}
+       */
+      activeIndex = direction === 'right' ? -1 : 0;
+    } else {
+      /**
+       * If we have chosen Tool then remove highlighting
+       */
+      nodeList[activeIndex].classList.remove(activeCSSClass);
+    }
+
+    /**
+     * Count index for next Tool
+     */
+    if (direction === 'right') {
+      /**
+       * If we go right then choose next (+1) Tool
+       * @type {number}
+       */
+      activeIndex = (activeIndex + 1) % nodeList.length;
+    } else {
+      /**
+       * If we go left then choose previous (-1) Tool
+       * Before counting module we need to add length before because of "The JavaScript Modulo Bug"
+       * @type {number}
+       */
+      activeIndex = (nodeList.length + activeIndex - 1) % nodeList.length;
+    }
+
+    if (Dom.isNativeInput(nodeList[activeIndex])) {
+      /**
+       * Focus input
+       */
+      nodeList[activeIndex].focus();
+    }
+
+    /**
+     * Highlight new chosen Tool
+     */
+    nodeList[activeIndex].classList.add(activeCSSClass);
+
+    /**
+     * Return Active index
+     */
+    return activeIndex;
+  }
+
+  /*
+   * Helper for get holder from {string} or return HTMLElement
+   * @param element
+   */
+  public static getHolder(element: string | HTMLElement): HTMLElement {
+    if (typeof element === 'string') { return document.getElementById(element); }
+    return element;
   }
 }

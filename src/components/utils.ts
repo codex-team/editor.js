@@ -84,6 +84,33 @@ export default class Util {
   }
 
   /**
+   * Return mouse buttons codes
+   */
+  static get mouseButtons() {
+    return {
+      LEFT: 0,
+      WHEEL: 1,
+      RIGHT: 2,
+      BACKWARD: 3,
+      FORWARD: 4,
+    };
+  }
+
+  /**
+   * Returns true if passed key code is printable (a-Z, 0-9, etc) character.
+   * @param {number} keyCode
+   * @return {boolean}
+   */
+  public static isPrintableKey( keyCode: number ): boolean {
+    return (keyCode > 47 && keyCode < 58)   || // number keys
+      keyCode === 32 || keyCode === 13   || // Spacebar & return key(s)
+      (keyCode > 64 && keyCode < 91)   || // letter keys
+      (keyCode > 95 && keyCode < 112)  || // Numpad keys
+      (keyCode > 185 && keyCode < 193) || // ;=,-./` (in order)
+      (keyCode > 218 && keyCode < 223);   // [\]' (in order)
+  }
+
+  /**
    * Fires a promise sequence asyncronically
    *
    * @param {ChainData[]} chains - list or ChainData's
@@ -316,7 +343,7 @@ export default class Util {
    * @return {object}
    */
   public static deepMerge(target, ...sources) {
-    const isObject = (item) => item && typeof item === 'object' && !Array.isArray(item);
+    const isObject = (item) => item && Util.typeof(item) === 'object';
 
     if (!sources.length) { return target; }
     const source = sources.shift();
@@ -338,4 +365,25 @@ export default class Util {
     return Util.deepMerge(target, ...sources);
   }
 
+  /**
+   * Return true if current device supports touch events
+   *
+   * Note! This is a simple solution, it can give false-positive results.
+   * To detect touch devices more carefully, use 'touchstart' event listener
+   * @see http://www.stucox.com/blog/you-cant-detect-a-touchscreen/
+   *
+   * @return {boolean}
+   */
+  public static isTouchSupported(): boolean {
+    return 'ontouchstart' in document.documentElement;
+  }
+
+  /**
+   * Return string representation of the object type
+   *
+   * @param {any} object
+   */
+  public static typeof(object: any): string {
+    return Object.prototype.toString.call(object).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+  }
 }

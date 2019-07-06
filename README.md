@@ -1,8 +1,10 @@
-<p align="center"><img src="https://capella.pics/79ce946a-d636-41cd-aa96-d3bc5ecfde03.jpg"></p>
+<a href="https://editorjs.io/"><p align="center"><img src="https://capella.pics/79ce946a-d636-41cd-aa96-d3bc5ecfde03.jpg"></p></a>
 
 [![](https://flat.badgen.net/npm/v/@editorjs/editorjs?icon=npm)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![](https://flat.badgen.net/bundlephobia/min/@editorjs/editorjs?color=cyan)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![](https://flat.badgen.net/bundlephobia/minzip/@editorjs/editorjs?color=green)](https://www.npmjs.com/package/@editorjs/editorjs)
+[![Backers on Open Collective](https://opencollective.com/editorjs/backers/badge.svg)](#backers)
+[![Sponsors on Open Collective](https://opencollective.com/editorjs/sponsors/badge.svg)](#sponsors) 
 [![](https://flat.badgen.net/npm/license/@editorjs/editorjs)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![Join the chat at https://gitter.im/codex-team/editor.js](https://badges.gitter.im/codex-team/editor.js.svg)](https://gitter.im/codex-team/editor.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
@@ -18,56 +20,28 @@ Join [public Telegram-chat](//t.me/codex_editor) or [Gitter-channel](https://git
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | Edge 12+ | Firefox 18+ | Chrome 49+ | Safari 10+ | Safari 10+ | Opera 36+
 
-### 2.7-2.9 changelog
+## ⭐️ If you like a project
 
-- `Fix` - Clear focus when click is outside the Editor instance    
-- `Fix` — Fix CMD+A Selection on multiple Editor instances
-- `New` — Toolbox now have beautiful helpers with Tool names and shortcuts
-- `Improvements` — Prevent navigating back on Firefox when Block is removing by backspace 
-- `New` — Blocks selected with Rectangle Selection can be also removed, copied or cut
-- `New` — Migrate from `postcss-cssnext` to `postcss-preset-env` and disable `postcss-custom-properties` which conflicts with `postcss-preset-env`
-- `New` *RectangeSelection* — Ability to select Block or several Blocks with mouse
-
-### 2.2—2.7 changelog
-
-- `New` *Sanitize API* — [Sanitize Config](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#automatic-sanitize) of `Block Tools` now automatically extends by tags of `Inline Tools` that is enabled by current Tool by `inlineToolbar` option. You don't need more to specify `a, b, mark, code` manually. This feature will be added to fields that supports inline markup.
-- `New` *Block Selection* — Ability to select Block by `CMD+A`, and the whole Editor by double `CMD+A`. After that, you can copy (`CMD+C`), remove (`Backspace`) or clear (`Enter`) selected Blocks.
-- `New` *[Styles API](https://github.com/codex-team/editor.js/blob/master/types/api/styles.d.ts)* — Added `button` class for stylization of any buttons provided by Tools with one unified style.
-- `New` *[Notifier API](https://github.com/codex-team/editor.js/blob/master/docs/api.md#notifierapi)* — methods for showing user notifications: on success, errors, warnings, etc. 
-- `New` *Block Tool* — [Table](http://github.com/editor-js/table) constructor 💪 
-- `New` If one of the Tools is unavailable on Editor initialization, its Blocks will be rendered with *Dummy Block*, describing that user can not edit content of this Block. Dummy Blocks can be moved, removed and saved as normal Blocks. So saved data won't be lost if one of the Tools is failed 
-- `New` [Public TS-types](https://github.com/codex-team/editor.js/tree/master/types) are presented.
-- `Changes` *Tools API*  — options `irreplaceable` and `contentless` was removed.
-- `Changes` *Tools API* — [Paste API](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#paste-handling): tags, patterns and mime-types now should be specified by Tool's `pasteConfig` static property. Custom Paste Event should be handled by `onPaste(event)` that should not be static from now.
-- `Changes` *Tools API* — options `displayInToolbox ` and `toolboxIcon` was removed. Use [`toolbox`](https://github.com/codex-team/editor.js/blob/master/docs/tools.md#internal-tool-settings) instead, that should return object with `icon` and `title` field, or `false` if Tool should not be placed at the Toolbox. Also, there are a way to override `toolbox {icon, title}` settings provided by Tool with you own settings at the Initial Config.
-- `Improvements` — All Projects code now on TypeScript
-- `Improvements` — NPM package size decreased from 1300kb to 422kb
-- `Improvements` — Bundle size decreased from 438kb to 252kb
-- `Improvements` — `Inline Toolbar`: when you add a Link to the selected fragment, Editor will highlight this fragment even when Caret is placed into the URL-input.
-- `Improvements` — Block Settings won't be shown near empty Blocks of `initialType` by default. You should click on them instead.
-- `Improvements` — `onChange`-callback now will be fired even with children attributes changing.
-- `Improvements` — HTMLJanitor package was updated due to found vulnerability
-- `Improvements` — Logging improved: now all Editor's logs will be preceded by beautiful label with current Editor version.
-- `Improvements` — Internal `isEmpty` checking was improved for Blocks with many children nodes (200 and more)
-- `Improvements` — Paste improvements: tags that can be substituted by Tool now will matched even on deep-level of pasted DOM three.
-- `Improvements` — There is no more «unavailable» sound on copying Block by `CMD+C` on macOS
-- `Improvements` — Dozens of bugfixes and small improvements
-
-See a whole [Changelog](/docs/CHANGELOG.md)
+If you like Editor.js you can support project improvements and development of new features with a small donation on [Open Collective](https://opencollective.com/editorjs) or [Patreon](https://www.patreon.com/editorjs) 
 
 ## Documentation
 
-While we develop the new Documentation Site with all stuff, you can check some available docs at the [docs/](docs/) dir.
+Please, visit [https://editorjs.io/](https://editorjs.io) to view all documentation articles.
 
-- [Installation](docs/installation.md)
-- [How to use](docs/usage.md)
-- [How to create a Block Tool Plugin](docs/tools.md)
-- [How to create an Inline Tool Plugin](docs/tools-inline.md)
-- [API for Tools](docs/api.md)
+- [Base concepts](https://editorjs.io/base-concepts)
+- [Getting started](https://editorjs.io/getting-started)
+- [Configuration](https://editorjs.io/configuration)
+- [How to create a Block Tool Plugin](https://editorjs.io/creating-a-block-tool)
+- [How to create an Inline Tool Plugin](https://editorjs.io/creating-an-inline-tool)
+- [API for Tools](https://editorjs.io/tools-api)
 
-Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor) and ask a question.
+You can join a [Gitter-channel](https://gitter.im/codex-team/editor.js) or [Telegram-chat](//t.me/codex_editor) and ask a question.
 
 ---
+
+## Changelog
+
+See a whole [Changelog](/docs/CHANGELOG.md)
 
 # So how to use Editor.js
 
@@ -75,9 +49,9 @@ Sorry if we missed something. You can join a [Telegram-chat](//t.me/codex_editor
 
 Editor.js is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
-We have [many](http://github.com/editor-js/) ready-to-use Plugins and a [simple API](docs/tools.md) for creating new ones.
+We have [many](http://github.com/editor-js/) ready-to-use Plugins and a [simple API](https://editorjs.io/tools-api) for creating new ones.
 
-So how to use the Editor after [Installation](docs/installation.md).
+So how to use the Editor after [Installation](https://editorjs.io/getting-started).
 
 - Create new Blocks by Enter or with the Plus Button
 - Press `TAB` or click on the Plus Button to view the Toolbox
@@ -111,7 +85,7 @@ Shortcut | Action | Restrictions
 Also we support shortcuts on the all type of Tools. Specify a shortcut with the Tools configuration. For example:
 
 ```js
-var editor = EditorJS({
+var editor = new EditorJS({
   //...
   tools: {
     header: {
@@ -139,7 +113,7 @@ There are few steps to run Editor.js on your site.
 
 ## Load Editor's core
 
-Firstly you need to get Editor.js itself. It is a [minified script](build/editor.js) with Editor's core and some default must-have tools.
+Firstly you need to get Editor.js itself. It is a [minified script](dist/editor.js) with Editor's core and some default must-have tools.
 
 Choose the most usable method of getting Editor for you.
 
@@ -152,7 +126,7 @@ Choose the most usable method of getting Editor for you.
 Install the package via NPM or Yarn
 
 ```shell
-npm i @editorjs/editorjs --save-dev
+npm i @editorjs/editorjs
 ```
 
 Include module in your application
@@ -183,7 +157,7 @@ Copy [editor.js](build/editor.js) file to your project and load it.
 
 ## Load Tools
 
-Each Block at the Editor.js represented by [Tools](docs/tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
+Each Block at the Editor.js is represented by [Tools](docs/tools.md). There are simple external scripts with their own logic. Probably you want to use several Block Tools that should be connected.
 
 For example check out our [Header](https://github.com/editor-js/header) Tool that represents heading blocks.
 
@@ -222,7 +196,7 @@ var editor = new EditorJS({
     /**
      * Create a holder for the Editor and pass its ID
      */
-    holderId : 'editorjs',
+    holder : 'editorjs',
 
     /**
      * Available Tools list.
@@ -245,10 +219,10 @@ var editor = new EditorJS({
 
 ## Saving Data
 
-Call `editor.saver.save()` and handle returned Promise with saved data.
+Call `editor.save()` and handle returned Promise with saved data.
 
 ```javascript
-editor.saver.save()
+editor.save()
   .then((savedData) => {
     console.log(savedData);
   });
@@ -262,6 +236,30 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 
 - We use [HTMLJanitor](https://github.com/guardian/html-janitor) module in our Sanitizer module. 
 
+# Support project improvements
+
+Love Editor.js? Please consider supporting our collective:
+
+ 👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
+ 
+ 👉  [Patreon](https://www.patreon.com/editorjs)
+ 
+## Contributors
+
+This project exists thanks to all the people who contribute. <img src="https://opencollective.com/editorjs/contributors.svg?width=890&button=false" />
+
+## Backers
+
+Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/editorjs#backer)]
+
+<a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890"></a>
+
+## Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/editorjs#sponsor)]
+
+<a href="https://opencollective.com/editorjs/sponsor/0/website" target="_blank"><img src="https://opencollective.com/editorjs/sponsor/0/avatar.svg"></a>
+
 # About team
 
 We are CodeX and we build products for developers and makers. 
@@ -271,8 +269,3 @@ Follow us on Twitter: [twitter.com/codex_team](https://twitter.com/codex_team)
 Feel free to contact: <a href="mailto:team@codex.so?subject=Editor.js feedback">team@codex.so</a>
 
 [codex.so](https://codex.so)
-
-# Support project improvements
-
-Love Editor.js? Please consider supporting our collective:
- 👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)

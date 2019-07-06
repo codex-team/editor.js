@@ -2,6 +2,7 @@
  * TextRange interface fot IE9-
  */
 import _ from './utils';
+import $ from './dom';
 
 interface TextRange {
   boundingTop: number;
@@ -56,6 +57,30 @@ export default class SelectionUtils {
   }
 
   /**
+   * Returns selected anchor element
+   * @return {Element|null}
+   */
+  static get anchorElement(): Element | null {
+    const selection = window.getSelection();
+
+    if (!selection) {
+      return null;
+    }
+
+    const anchorNode = selection.anchorNode;
+
+    if (!anchorNode) {
+      return null;
+    }
+
+    if (!$.isElement(anchorNode)) {
+      return anchorNode.parentElement;
+    } else {
+      return anchorNode;
+    }
+  }
+
+  /**
    * Returns selection offset according to the anchor node
    * {@link https://developer.mozilla.org/ru/docs/Web/API/Selection/anchorOffset}
    * @return {Number|null}
@@ -74,6 +99,24 @@ export default class SelectionUtils {
     const selection = window.getSelection();
 
     return selection ? selection.isCollapsed : null;
+  }
+
+  /**
+   * Returns true if 85% of text content is selected
+   * @return {boolean}
+   */
+  public static almostAllSelected(targetText: string): boolean {
+    const range = SelectionUtils.range;
+
+    if (!range) {
+      return false;
+    }
+
+    const copiedFragment = range.cloneContents();
+    const lengthOfWholeText = targetText.length;
+    const lengthOfCopiedText = copiedFragment.textContent.length;
+
+    return lengthOfCopiedText / lengthOfWholeText > 0.85;
   }
 
   /**
@@ -265,6 +308,19 @@ export default class SelectionUtils {
    */
   public clearSaved(): void {
     this.savedSelectionRange = null;
+  }
+
+  /**
+   * Collapse current selection
+   */
+  public collapseToEnd(): void {
+    const sel = window.getSelection();
+    const range = document.createRange();
+
+    range.selectNodeContents(sel.focusNode);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
   }
 
   /**

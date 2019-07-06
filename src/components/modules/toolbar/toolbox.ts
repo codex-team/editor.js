@@ -142,12 +142,14 @@ export default class Toolbox extends Module {
 
     this.opened = false;
 
-    /** remove active item pointer */
-    this.activeButtonIndex = -1;
-    const activeButton = this.nodes.toolbox.querySelector(`.${this.CSS.toolboxButtonActive}`);
+    /**
+     * Remove active item pointer
+     */
+    if (this.activeButtonIndex !== -1) {
+      (this.nodes.toolbox.childNodes[this.activeButtonIndex] as HTMLElement)
+        .classList.remove(this.CSS.toolboxButtonActive);
 
-    if (activeButton) {
-      activeButton.classList.remove(this.CSS.toolboxButtonActive);
+      this.activeButtonIndex = -1;
     }
   }
 
@@ -168,57 +170,10 @@ export default class Toolbox extends Module {
    * @param {String} direction - leaf direction, right is default
    */
   public leaf(direction: string = Toolbox.LEAF_DIRECTIONS.RIGHT): void {
-    const childNodes = this.nodes.toolbox.childNodes;
-
-    /**
-     * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
-     */
-    if (this.activeButtonIndex === -1) {
-      /**
-       * Normalize "previous" Tool index depending on direction.
-       * We need to do this to highlight "first" Tool correctly
-       *
-       * Order of Tools: [0] [1] ... [n - 1]
-       *   [0 = n] because of: n % n = 0 % n
-       *
-       * Direction 'right': for [0] the [n - 1] is a previous index
-       *   [n - 1] -> [0]
-       *
-       * Direction 'left': for [n - 1] the [0] is a previous index
-       *   [n - 1] <- [0]
-       *
-       * @type {number}
-       */
-      this.activeButtonIndex = direction === Toolbox.LEAF_DIRECTIONS.RIGHT ? -1 : 0;
-    } else {
-      /**
-       * If we have chosen Tool then remove highlighting
-       */
-      (childNodes[this.activeButtonIndex] as HTMLElement).classList.remove(this.CSS.toolboxButtonActive);
-    }
-
-    /**
-     * Count index for next Tool
-     */
-    if (direction === Toolbox.LEAF_DIRECTIONS.RIGHT) {
-      /**
-       * If we go right then choose next (+1) Tool
-       * @type {number}
-       */
-      this.activeButtonIndex = (this.activeButtonIndex + 1) % childNodes.length;
-    } else {
-      /**
-       * If we go left then choose previous (-1) Tool
-       * Before counting module we need to add length before because of "The JavaScript Modulo Bug"
-       * @type {number}
-       */
-      this.activeButtonIndex = (childNodes.length + this.activeButtonIndex - 1) % childNodes.length;
-    }
-
-    /**
-     * Highlight new chosen Tool
-     */
-    (childNodes[this.activeButtonIndex] as HTMLElement).classList.add(this.CSS.toolboxButtonActive);
+    const childNodes = (Array.from(this.nodes.toolbox.childNodes) as HTMLElement[]);
+    this.activeButtonIndex = $.leafNodesAndReturnIndex(
+      childNodes, this.activeButtonIndex, direction, this.CSS.toolboxButtonActive,
+    );
   }
 
   /**

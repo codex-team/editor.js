@@ -3,8 +3,10 @@
  */
 import Module from '../__module';
 import _ from '../utils';
+import SelectionUtils from '../selection';
 
 export default class BlockEvents extends Module {
+
   /**
    * All keydowns on Block
    * @param {KeyboardEvent} event - keydown
@@ -54,7 +56,7 @@ export default class BlockEvents extends Module {
    * Fires on keydown before event processing
    * @param {KeyboardEvent} event - keydown
    */
-  public beforeKeydownProcessing(event): void {
+  public beforeKeydownProcessing(event: KeyboardEvent): void {
     /**
      * Do not close Toolbox on Tabs or on Enter with opened Toolbox
      */
@@ -62,36 +64,62 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    this.Editor.Toolbar.close();
-
-    const cmdKey = event.ctrlKey || event.metaKey;
-    const altKey = event.altKey;
-    const shiftKey = event.shiftKey;
-
-    /** clear selecton when it is not CMD, SHIFT, ALT keys */
-    if (cmdKey || altKey || shiftKey) {
-      return;
-    }
-
     /**
-     * Clear all highlightings
+     * When user type something:
+     *  - close Toolbar
+     *  - close Conversion Toolbar
+     *  - clear block highlighting
      */
-    this.Editor.BlockManager.clearFocused();
+    if (_.isPrintableKey(event.keyCode)) {
+      this.Editor.Toolbar.close();
+      this.Editor.ConversionToolbar.close();
 
-    if (event.keyCode !== _.keyCodes.ENTER && event.keyCode !== _.keyCodes.BACKSPACE) {
       /**
-       * Clear selection and restore caret before navigation
+       * Allow to use shortcuts with selected blocks
+       * @type {boolean}
        */
-      this.Editor.BlockSelection.clearSelection(true);
+      const isShortcut = event.ctrlKey || event.metaKey || event.altKey || event.shiftKey;
+
+      if (!isShortcut) {
+        this.Editor.BlockManager.clearFocused();
+        this.Editor.BlockSelection.clearSelection(event);
+      }
     }
   }
 
   /**
    * Key up on Block:
    * - shows Inline Toolbar if something selected
+   * - shows conversion toolbar with 85% of block selection
    */
   public keyup(event): void {
-    this.Editor.InlineToolbar.handleShowingEvent(event);
+
+    /**
+     * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
+     */
+    if (event.shiftKey) {
+      return;
+    }
+
+    const { InlineToolbar, ConversionToolbar, UI, BlockManager } = this.Editor;
+    const block = BlockManager.getBlock(event.target);
+
+    /**
+     * Conversion Toolbar will be opened when user selects 85% of plugins content
+     * that why we must with the length of pluginsContent
+     */
+    if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
+      InlineToolbar.close();
+      ConversionToolbar.tryToShow(block);
+    } else {
+      ConversionToolbar.close();
+      InlineToolbar.tryToShow(true);
+    }
+
+    /**
+     * Check if editor is empty on each keyup and add special css class to wrapper
+     */
+    UI.checkEmptiness();
   }
 
   /**
@@ -99,7 +127,45 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    */
   public mouseUp(event): void {
-    this.Editor.InlineToolbar.handleShowingEvent(event);
+    const { InlineToolbar, ConversionToolbar, BlockManager, BlockSelection } = this.Editor;
+    const block = BlockManager.getBlock(event.target);
+
+    /**
+     * Timeout uses to wait if selection will cleared after mouse up (regular click on block)
+     */
+    _.delay(() => {
+      /**
+       * 1) selected 85% of block - open Conversion Toolbar
+       * 2) select something inside block - open Inline Toolbar
+       * 3) nothing selected - close Toolbars
+       */
+      if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
+        InlineToolbar.close();
+        ConversionToolbar.tryToShow(block);
+      } else if (!SelectionUtils.isCollapsed) {
+        InlineToolbar.tryToShow();
+        ConversionToolbar.close();
+      } else {
+        InlineToolbar.close();
+
+        /**
+         * Don't close Conversion toolbar when Rectangle Selection ended with one block selected
+         * @see RectangleSelection#endSelection
+         */
+        if (BlockSelection.selectedBlocks.length !== 1) {
+          ConversionToolbar.close();
+        }
+      }
+    }, 30)();
+  }
+
+  /**
+   * Set up mouse selection handlers
+   *
+   * @param {MouseEvent} event
+   */
+  public mouseDown(event: MouseEvent): void {
+    this.Editor.CrossBlockSelection.watchSelection(event);
   }
 
   /**
@@ -107,8 +173,17 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event
    */
   public tabPressed(event): void {
+    /**
+     * Clear blocks selection by tab
+     */
+    this.Editor.BlockSelection.clearSelection(event);
 
-    const {currentBlock} = this.Editor.BlockManager;
+    const { BlockManager, Tools, ConversionToolbar, InlineToolbar } = this.Editor;
+    const currentBlock = BlockManager.currentBlock;
+
+    if (!currentBlock) {
+      return;
+    }
 
     /** Prevent Default behaviour */
     event.preventDefault();
@@ -118,32 +193,46 @@ export default class BlockEvents extends Module {
     const shiftKey = event.shiftKey,
       direction = shiftKey ? 'left' : 'right';
 
+    const canLeafToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
+    const canLeafInlineToolbar = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
+    const canLeafConversionToolbar = !currentBlock.isEmpty && ConversionToolbar.opened;
+
     /**
-     * Don't show Plus and Toolbox near not-inital Tools
+     * For empty Blocks we show Plus button via Toobox only for initial Blocks
      */
-    if (!this.Editor.Tools.isInitial(currentBlock.tool)) {
-      return;
-    }
-
-    if (currentBlock.isEmpty) {
-      if (!this.Editor.Toolbar.opened) {
-        this.Editor.Toolbar.open(false , false);
-        this.Editor.Toolbar.plusButton.show();
-      }
-
-      this.Editor.Toolbox.open();
-    }
-
-    if (this.Editor.Toolbox.opened) {
-      this.Editor.Toolbox.leaf(direction);
+    if (canLeafToolbox) {
+      this.leafToolboxTools(direction);
+    } else if (canLeafInlineToolbar) {
+      this.leafInlineToolbarTools(direction);
+    } else if (canLeafConversionToolbar) {
+      this.leafConversionToolbarTools(direction);
+    } else {
+      this.leafBlockSettingsTools(direction);
     }
   }
 
   /**
    * Escape pressed
-   * @param event
+   * If some of Toolbar components are opened, then close it otherwise close Toolbar
+   *
+   * @param {Event} event
    */
-  public escapePressed(event): void { }
+  public escapePressed(event): void {
+    /**
+     * Clear blocks selection by ESC
+     */
+    this.Editor.BlockSelection.clearSelection(event);
+
+    if (this.Editor.Toolbox.opened) {
+      this.Editor.Toolbox.close();
+    } else if (this.Editor.BlockSettings.opened) {
+      this.Editor.BlockSettings.close();
+    } else if (this.Editor.InlineToolbar.opened) {
+      this.Editor.InlineToolbar.close();
+    } else {
+      this.Editor.Toolbar.close();
+    }
+  }
 
   /**
    * Add drop target styles
@@ -212,10 +301,10 @@ export default class BlockEvents extends Module {
     BlockSelection.copySelectedBlocks();
 
     const selectionPositionIndex = BlockManager.removeSelectedBlocks();
-    Caret.setToBlock(BlockManager.insertAtIndex(selectionPositionIndex, true), Caret.positions.START);
+    Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
     /** Clear selection */
-    BlockSelection.clearSelection();
+    BlockSelection.clearSelection(event);
   }
 
   /**
@@ -223,7 +312,7 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private enter(event: KeyboardEvent): void {
-    const {BlockManager, Tools} = this.Editor;
+    const { BlockManager, Toolbox, BlockSettings, InlineToolbar, ConversionToolbar, Tools } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
     const tool = Tools.available[currentBlock.name];
 
@@ -231,15 +320,29 @@ export default class BlockEvents extends Module {
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
-    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
+    if (tool
+      && tool[Tools.apiSettings.IS_ENABLED_LINE_BREAKS]
+      && !BlockSettings.opened
+      && !InlineToolbar.opened
+      && !ConversionToolbar.opened) {
       return;
     }
 
-    if (this.Editor.Toolbox.opened && this.Editor.Toolbox.getActiveTool) {
+    if (Toolbox.opened && Toolbox.getActiveTool) {
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
-      this.Editor.Toolbox.toolButtonActivate(event, this.Editor.Toolbox.getActiveTool);
+
+      Toolbox.toolButtonActivate(event, Toolbox.getActiveTool);
+      return;
+    }
+
+    if (InlineToolbar.opened && InlineToolbar.focusedButton) {
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+
+      InlineToolbar.focusedButton.click();
       return;
     }
 
@@ -256,7 +359,7 @@ export default class BlockEvents extends Module {
      * If enter has been pressed at the start of the text, just insert paragraph Block above
      */
     if (this.Editor.Caret.isAtStart && !this.Editor.BlockManager.currentBlock.hasMedia) {
-      this.Editor.BlockManager.insertAtIndex(this.Editor.BlockManager.currentBlockIndex);
+      this.Editor.BlockManager.insertInitialBlockAtIndex(this.Editor.BlockManager.currentBlockIndex);
     } else {
       /**
        * Split the Current Block into two blocks
@@ -321,7 +424,7 @@ export default class BlockEvents extends Module {
       this.Editor.Toolbar.close();
 
       /** Clear selection */
-      BlockSelection.clearSelection();
+      BlockSelection.clearSelection(event);
       return;
     }
 
@@ -397,6 +500,13 @@ export default class BlockEvents extends Module {
    * Handle right and down keyboard keys
    */
   private arrowRightAndDown(event: KeyboardEvent): void {
+    const shouldEnableCBS = this.Editor.Caret.isAtEnd || this.Editor.BlockSelection.anyBlockSelected;
+
+    if (event.shiftKey && event.keyCode === _.keyCodes.DOWN && shouldEnableCBS) {
+      this.Editor.CrossBlockSelection.toggleBlockSelectedState();
+      return;
+    }
+
     if (this.Editor.Caret.navigateNext()) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
@@ -407,15 +517,30 @@ export default class BlockEvents extends Module {
        * After caret is set, update Block input index
        */
       _.delay(() => {
-        this.Editor.BlockManager.currentBlock.updateCurrentInput();
+        /** Check currentBlock for case when user moves selection out of Editor */
+        if (this.Editor.BlockManager.currentBlock) {
+          this.Editor.BlockManager.currentBlock.updateCurrentInput();
+        }
       }, 20)();
     }
+
+    /**
+     * Clear blocks selection by arrows
+     */
+    this.Editor.BlockSelection.clearSelection(event);
   }
 
   /**
    * Handle left and up keyboard keys
    */
   private arrowLeftAndUp(event: KeyboardEvent): void {
+    const shouldEnableCBS = this.Editor.Caret.isAtStart || this.Editor.BlockSelection.anyBlockSelected;
+
+    if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
+      this.Editor.CrossBlockSelection.toggleBlockSelectedState(false);
+      return;
+    }
+
     if (this.Editor.Caret.navigatePrevious()) {
       /**
        * Default behaviour moves cursor by 1 character, we need to prevent it
@@ -426,9 +551,17 @@ export default class BlockEvents extends Module {
        * After caret is set, update Block input index
        */
       _.delay(() => {
-        this.Editor.BlockManager.currentBlock.updateCurrentInput();
+        /** Check currentBlock for case when user ends selection out of Editor and then press arrow-key */
+        if (this.Editor.BlockManager.currentBlock) {
+          this.Editor.BlockManager.currentBlock.updateCurrentInput();
+        }
       }, 20)();
     }
+
+    /**
+     * Clear blocks selection by arrows
+     */
+    this.Editor.BlockSelection.clearSelection(event);
   }
 
   /**
@@ -441,8 +574,82 @@ export default class BlockEvents extends Module {
    */
   private needToolbarClosing(event) {
     const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened),
-      flippingToolboxItems = event.keyCode === _.keyCodes.TAB;
+      blockSettingsItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.BlockSettings.opened),
+      inlineToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.InlineToolbar.opened),
+      conversionToolbarItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.ConversionToolbar.opened),
+      flippingToolbarItems = event.keyCode === _.keyCodes.TAB;
 
-    return !(event.shiftKey || flippingToolboxItems || toolboxItemSelected);
+    /**
+     * Do not close Toolbar in cases:
+     * 1. ShiftKey pressed (or combination with shiftKey)
+     * 2. When Toolbar is opened and Tab leafs its Tools
+     * 3. When Toolbar's component is opened and some its item selected
+     */
+    return !(event.shiftKey
+      || flippingToolbarItems
+      || toolboxItemSelected
+      || blockSettingsItemSelected
+      || inlineToolbarItemSelected
+      || conversionToolbarItemSelected
+    );
+  }
+
+  /**
+   * If Toolbox is not open, then just open it and show plus button
+   * Next Tab press will leaf Toolbox Tools
+   *
+   * @param {string} direction
+   */
+  private leafToolboxTools(direction: string): void {
+    if (!this.Editor.Toolbar.opened) {
+      this.Editor.Toolbar.open(false , false);
+      this.Editor.Toolbar.plusButton.show();
+    } else {
+      this.Editor.Toolbox.leaf(direction);
+    }
+
+    this.Editor.Toolbox.open();
+  }
+
+  /**
+   * If InlineToolbar is not open, just open it and focus first button
+   * Next Tab press will leaf InlineToolbar Tools
+   *
+   * @param {string} direction
+   */
+  private leafInlineToolbarTools(direction: string): void {
+    if (this.Editor.InlineToolbar.opened) {
+      this.Editor.InlineToolbar.leaf(direction);
+    }
+  }
+
+  /**
+   * Leaf Conversion Toolbar Tools
+   * @param {string} direction
+   */
+  private leafConversionToolbarTools(direction: string): void {
+    this.Editor.ConversionToolbar.leaf(direction);
+  }
+
+  /**
+   * Open Toolbar and show BlockSettings before flipping Tools
+   * @param {string} direction
+   */
+  private leafBlockSettingsTools(direction: string): void {
+    if (!this.Editor.Toolbar.opened) {
+      this.Editor.BlockManager.currentBlock.focused = true;
+      this.Editor.Toolbar.open(true, false);
+      this.Editor.Toolbar.plusButton.hide();
+    }
+
+    /**
+     * If BlockSettings is not open, then open BlockSettings
+     * Next Tab press will leaf Settings Buttons
+     */
+    if (!this.Editor.BlockSettings.opened) {
+      this.Editor.BlockSettings.open();
+    }
+
+    this.Editor.BlockSettings.leaf(direction);
   }
 }

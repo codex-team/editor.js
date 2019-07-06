@@ -1,6 +1,6 @@
 {
   "name": "@editorjs/editorjs",
-  "version": "2.12.4",
+  "version": "2.15.0",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editor.js",
   "types": "./types/index.d.ts",
@@ -40,7 +40,6 @@
     "babel-loader": "^8.0.5",
     "babel-plugin-add-module-exports": "^1.0.0",
     "babel-plugin-class-display-name": "^2.1.0",
-    "codex-notifier": "^1.1.1",
     "css-loader": "^2.1.1",
     "cssnano": "^4.1.10",
     "eslint": "^5.15.1",
@@ -69,5 +68,8 @@
   "collective": {
     "type": "opencollective",
     "url": "https://opencollective.com/editorjs"
+  },
+  "dependencies": {
+    "codex-notifier": "^1.1.2"
   }
 }

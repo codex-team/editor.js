@@ -32,11 +32,6 @@ export interface ToolSettings {
   config?: ToolConfig;
 
   /**
-   * Is user available to add line brakes in Tool (for example by Shift+Enter)
-   */
-  enableLineBreaks?: boolean;
-
-  /**
    * Is need to show Inline Toolbar.
    * Can accept array of Tools for InlineToolbar or boolean.
    */

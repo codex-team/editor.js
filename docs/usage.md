@@ -40,7 +40,7 @@ Action | Shortcut | Restrictions
 Also we support shortcuts on the all type of Tools. Specify a shortcut with the Tools configuration. For example:
 
 ```js
-var editor = EditorJS({
+var editor = new EditorJS({
   //...
   tools: {
     header: {
@@ -63,10 +63,43 @@ If you want to focus Editor after page has been loaded, you can enable autofocus
 
 
 ```js
-var editor = EditorJS({
+var editor = new EditorJS({
   //...
   autofocus: true
   //...
  });
 
 ```
+
+## Holder
+The `holder` property supports an id or a reference to dom element.
+
+```js
+var editor = new EditorJS({
+  holder: document.querySelector('.editor'),
+})
+
+var editor2 = new EditorJS({
+  holder: 'codex-editor' // like document.getElementById('codex-editor')
+})
+```
+
+
+
+## Placeholder
+
+By default Editor\`s placeholder is empty.
+
+You can pass your own placeholder via `placeholder` field:
+
+
+```js
+var editor = new EditorJS({
+  //...
+  placeholder: 'My awesome placeholder'
+  //...
+ });
+
+```
+
+If you are using your custom `Initial Block`, `placeholder` property is passed in `config` to your Tool constructor.  
