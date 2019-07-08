@@ -1,5 +1,6 @@
 import Module from '../../__module';
 import $ from '../../dom';
+import _ from '../../utils';
 import Flipper from '../../flipper';
 
 /**
@@ -44,11 +45,6 @@ export default class BlockSettings extends Module {
       focusedButtonAnimated: 'ce-settings__button--focused-animated',
     };
   }
-
-  private static LEAF_DIRECTIONS = {
-    RIGHT: 'right',
-    LEFT: 'left',
-  };
 
   /**
    * Is Block Settings opened or not
@@ -169,13 +165,6 @@ export default class BlockSettings extends Module {
   }
 
   /**
-   * Returns active button HTML element
-   * @return {HTMLElement}
-   */
-  public get focusedButton(): HTMLElement {
-    return this.flipper.currentItem;
-  }
-  /**
    * Add Tool's settings
    */
   private addToolSettings(): void {
@@ -195,7 +184,15 @@ export default class BlockSettings extends Module {
    * Enable Flipper
    */
   private enableFlipper(): void {
-    this.flipper = new Flipper(this.blockTunesButtons, this.CSS.focusedButton);
+    this.flipper = new Flipper(this.blockTunesButtons, this.CSS.focusedButton, {
+      onEnterPress: (event) => {
+        const currentBlock = this.Editor.BlockManager.currentBlock;
+
+        _.delay(() => {
+          this.Editor.Caret.setToBlock(currentBlock, 'end');
+        }, 50)();
+      },
+    });
     this.flipper.activate = true;
   }
 }

@@ -178,7 +178,7 @@ export default class BlockEvents extends Module {
      */
     this.Editor.BlockSelection.clearSelection(event);
 
-    const { BlockManager, Tools } = this.Editor;
+    const { BlockManager, Tools, InlineToolbar, ConversionToolbar } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
 
     if (!currentBlock) {
@@ -186,7 +186,7 @@ export default class BlockEvents extends Module {
     }
 
     const canOpenToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
-    // const canLeafInlineToolbar = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
+    // const canOpen = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
     // const canLeafConversionToolbar = !currentBlock.isEmpty && ConversionToolbar.opened;
 
     /**
@@ -308,31 +308,16 @@ export default class BlockEvents extends Module {
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
-    if (tool
-      && tool[Tools.apiSettings.IS_ENABLED_LINE_BREAKS]
-      && !BlockSettings.opened
-      && !InlineToolbar.opened
-      && !ConversionToolbar.opened) {
+    if (tool && tool[Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
       return;
     }
 
-    // if (Toolbox.opened && Toolbox.getActiveTool) {
-    //   event.preventDefault();
-    //   event.stopPropagation();
-    //   event.stopImmediatePropagation();
-    //
-    //   Toolbox.toolButtonActivate(event, Toolbox.getActiveTool);
-    //   return;
-    // }
-    //
-    // if (InlineToolbar.opened && InlineToolbar.focusedButton) {
-    //   event.preventDefault();
-    //   event.stopPropagation();
-    //   event.stopImmediatePropagation();
-    //
-    //   InlineToolbar.focusedButton.click();
-    //   return;
-    // }
+    /**
+     * This modules uses flipper
+     */
+    if (BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbox.opened) {
+      return;
+    }
 
     /**
      * Allow to create linebreaks by Shift+Enter

@@ -12637,6 +12637,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     function Flipper(nodeList, focusedCssClass) {
       var _this = this;
 
+      var callbacks = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       (0, _classCallCheck2.default)(this, Flipper);
 
       /**
@@ -12649,6 +12650,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
       this.activated = false;
+      this.callbacks = callbacks;
       this.flipperIterator = new FlipperIterator(nodeList, focusedCssClass);
       document.addEventListener('keydown', function (event) {
         switch (event.keyCode) {
@@ -12660,6 +12662,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           case _utils.default.keyCodes.ENTER:
             _this.handleEnterPress(event);
 
+            break;
         }
       }, false);
     }
@@ -12670,6 +12673,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     (0, _createClass2.default)(Flipper, [{
       key: "handleTabPress",
+
+      /**
+       * @param event
+       */
       value: function handleTabPress(event) {
         if (!this.activated) {
           return;
@@ -12708,6 +12715,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         event.preventDefault();
         event.stopPropagation();
+
+        if (this.callbacks && _utils.default.typeof(this.callbacks) === 'Function') {
+          this.callbacks.onEnterPress(event);
+        }
       }
       /**
        * drops flipper iterators cursor
@@ -15317,14 +15328,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.BlockSelection.clearSelection(event);
         var _this$Editor3 = this.Editor,
             BlockManager = _this$Editor3.BlockManager,
-            Tools = _this$Editor3.Tools;
+            Tools = _this$Editor3.Tools,
+            InlineToolbar = _this$Editor3.InlineToolbar,
+            ConversionToolbar = _this$Editor3.ConversionToolbar;
         var currentBlock = BlockManager.currentBlock;
 
         if (!currentBlock) {
           return;
         }
 
-        var canOpenToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty; // const canLeafInlineToolbar = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
+        var canOpenToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty; // const canOpen = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
         // const canLeafConversionToolbar = !currentBlock.isEmpty && ConversionToolbar.opened;
 
         /**
@@ -15465,26 +15478,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Uses for Tools like <code> where line breaks should be handled by default behaviour.
          */
 
-        if (tool && tool[Tools.apiSettings.IS_ENABLED_LINE_BREAKS] && !BlockSettings.opened && !InlineToolbar.opened && !ConversionToolbar.opened) {
+        if (tool && tool[Tools.apiSettings.IS_ENABLED_LINE_BREAKS]) {
           return;
-        } // if (Toolbox.opened && Toolbox.getActiveTool) {
-        //   event.preventDefault();
-        //   event.stopPropagation();
-        //   event.stopImmediatePropagation();
-        //
-        //   Toolbox.toolButtonActivate(event, Toolbox.getActiveTool);
-        //   return;
-        // }
-        //
-        // if (InlineToolbar.opened && InlineToolbar.focusedButton) {
-        //   event.preventDefault();
-        //   event.stopPropagation();
-        //   event.stopImmediatePropagation();
-        //
-        //   InlineToolbar.focusedButton.click();
-        //   return;
-        // }
+        }
+        /**
+         * This modules uses flipper
+         */
 
+
+        if (BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbox.opened) {
+          return;
+        }
         /**
          * Allow to create linebreaks by Shift+Enter
          */
@@ -21390,12 +21394,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _flipper) {
+})(this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _utils, _flipper) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -21411,6 +21415,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _inherits2 = _interopRequireDefault(_inherits2);
   _module = _interopRequireDefault(_module);
   _dom = _interopRequireDefault(_dom);
+  _utils = _interopRequireDefault(_utils);
   _flipper = _interopRequireDefault(_flipper);
 
   /**
@@ -21562,7 +21567,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "enableFlipper",
       value: function enableFlipper() {
-        this.flipper = new _flipper.default(this.blockTunesButtons, this.CSS.focusedButton);
+        var _this2 = this;
+
+        this.flipper = new _flipper.default(this.blockTunesButtons, this.CSS.focusedButton, {
+          onEnterPress: function onEnterPress(event) {
+            var currentBlock = _this2.Editor.BlockManager.currentBlock;
+
+            _utils.default.delay(function () {
+              _this2.Editor.Caret.setToBlock(currentBlock, 'end');
+            }, 50)();
+          }
+        });
         this.flipper.activate = true;
       }
     }, {
@@ -21605,7 +21620,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "blockTunesButtons",
       get: function get() {
-        var _this2 = this;
+        var _this3 = this;
 
         /**
          * Return from cache
@@ -21618,22 +21633,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var toolSettings = this.nodes.toolSettings.querySelectorAll(".".concat(this.Editor.StylesAPI.classes.settingsButton));
         var defaultSettings = this.nodes.defaultSettings.querySelectorAll(".".concat(this.CSS.button));
         toolSettings.forEach(function (item) {
-          _this2.buttons.push(item);
+          _this3.buttons.push(item);
         });
         defaultSettings.forEach(function (item) {
-          _this2.buttons.push(item);
+          _this3.buttons.push(item);
         });
         return this.buttons;
-      }
-      /**
-       * Returns active button HTML element
-       * @return {HTMLElement}
-       */
-
-    }, {
-      key: "focusedButton",
-      get: function get() {
-        return this.flipper.currentItem;
       }
     }]);
     return BlockSettings;
@@ -21641,10 +21646,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   _exports.default = BlockSettings;
   BlockSettings.displayName = "BlockSettings";
-  BlockSettings.LEAF_DIRECTIONS = {
-    RIGHT: 'right',
-    LEFT: 'left'
-  };
   module.exports = exports.default;
 });
 
@@ -24556,86 +24557,26 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _this$Editor2 = this.Editor,
             BlockManager = _this$Editor2.BlockManager,
             BlockSelection = _this$Editor2.BlockSelection,
-            Caret = _this$Editor2.Caret,
-            BlockSettings = _this$Editor2.BlockSettings,
-            ConversionToolbar = _this$Editor2.ConversionToolbar;
+            Caret = _this$Editor2.Caret;
         var hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
-        /**
-         * If Block Settings is opened and have some active button
-         * Enter press is fired as out of the Block and that's why
-         * we handle it here
-         */
-        // if (BlockSettings.opened && BlockSettings.focusedButton) {
-        //   event.preventDefault();
-        //   event.stopPropagation();
-        //   event.stopImmediatePropagation();
-        //
 
-        /** Click on settings button */
-        // BlockSettings.focusedButton.click();
+        if (BlockSelection.anyBlockSelected) {
+          var selectionPositionIndex = BlockManager.removeSelectedBlocks();
+          Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
+          /** Clear selection */
 
-        /**
-         * Focused button can be deleted by click, for example with 'Remove Block' api
-        //  */
-        // if (BlockSettings.focusedButton) {
-        //   /**
-        //    * Add animation on click
-        //    */
-        //   BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
-        //
-        //   /**
-        //    * Remove animation class
-        //    */
-        //   _.delay( () => {
-        //     if (BlockSettings.focusedButton) {
-        //       BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
-        //     }
-        //   }, 280)();
-        // }
+          BlockSelection.clearSelection(event);
+          /**
+           * Stop propagations
+           * Manipulation with BlockSelections is handled in global enterPress because they may occur
+           * with CMD+A or RectangleSelection
+           */
 
-        /**
-         * Restoring focus on current Block
-         *
-         * After changing Block state (when settings clicked, for example)
-         * Block's content points to the Node that is not in DOM, that's why we can not
-         * set caret and leaf next (via Tab)
-         *
-         * For that set cursor via Caret module to the current Block's content
-         * after some timeout
-         */
-        // _.delay( () => {
-        //   Caret.setToBlock(BlockManager.currentBlock);
-        // }, 10)();
-        //
-        // return;
-        // }
-        // if (ConversionToolbar.opened && ConversionToolbar.focusedButton) {
-        //   event.preventDefault();
-        //   event.stopPropagation();
-        //   event.stopImmediatePropagation();
-        //
-        //   ConversionToolbar.focusedButton.click();
-        //   return;
-        // }
-        //
-        // if (BlockSelection.anyBlockSelected) {
-        //   const selectionPositionIndex = BlockManager.removeSelectedBlocks();
-        //   Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
-        //
-        //   /** Clear selection */
-        //   BlockSelection.clearSelection(event);
-        //
-        //   /**
-        //    * Stop propagations
-        //    * Manipulation with BlockSelections is handled in global enterPress because they may occur
-        //    * with CMD+A or RectangleSelection
-        //    */
-        //   event.preventDefault();
-        //   event.stopImmediatePropagation();
-        //   event.stopPropagation();
-        //   return;
-        // }
-
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          event.stopPropagation();
+          return;
+        }
         /**
          * If Caret is not set anywhere, event target on Enter is always Element that we handle
          * In our case it is document.body
@@ -24643,6 +24584,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * So, BlockManager points some Block and Enter press is on Body
          * We can create a new block
          */
+
 
         if (hasPointerToBlock && event.target.tagName === 'BODY') {
           /**

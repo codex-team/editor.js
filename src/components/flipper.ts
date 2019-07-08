@@ -25,12 +25,19 @@ export default class Flipper {
   private activated: boolean = false;
 
   /**
+   * Anys
+   */
+  private callbacks: any;
+
+  /**
    * @constructor
    */
   constructor(
     nodeList: HTMLElement[],
     focusedCssClass: string,
+    callbacks: object = {},
   ) {
+    this.callbacks = callbacks;
     this.flipperIterator = new FlipperIterator(nodeList, focusedCssClass);
 
     document.addEventListener('keydown', (event) => {
@@ -40,6 +47,7 @@ export default class Flipper {
           break;
         case _.keyCodes.ENTER:
           this.handleEnterPress(event);
+          break;
       }
     }, false);
   }
@@ -58,6 +66,9 @@ export default class Flipper {
     return this.flipperIterator.currentItem;
   }
 
+  /**
+   * @param event
+   */
   public handleTabPress(event) {
     if (!this.activated) {
       return;
@@ -93,6 +104,10 @@ export default class Flipper {
 
     event.preventDefault();
     event.stopPropagation();
+
+    if (this.callbacks && _.typeof(this.callbacks) === 'Function') {
+      this.callbacks.onEnterPress(event);
+    }
   }
 
   /**
