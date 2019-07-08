@@ -22,6 +22,11 @@ export interface ToolboxConfig {
 export interface ToolSettings {
 
   /**
+   * Common signature for Tool settings object
+   */
+  [key: string]: any;
+
+  /**
    * Tool's class
    */
   class: ToolConstructable;

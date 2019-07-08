@@ -321,7 +321,7 @@ export default class BlockEvents extends Module {
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
     if (tool
-      && tool[Tools.apiSettings.IS_ENABLED_LINE_BREAKS]
+      && tool[Tools.INTERNAL_SETTINGS.IS_ENABLED_LINE_BREAKS]
       && !BlockSettings.opened
       && !InlineToolbar.opened
       && !ConversionToolbar.opened) {
@@ -434,7 +434,7 @@ export default class BlockEvents extends Module {
      *
      * But if caret is at start of the block, we allow to remove it by backspaces
      */
-    if (tool && tool[this.Editor.Tools.apiSettings.IS_ENABLED_LINE_BREAKS] && !Caret.isAtStart) {
+    if (tool && tool[this.Editor.Tools.INTERNAL_SETTINGS.IS_ENABLED_LINE_BREAKS] && !Caret.isAtStart) {
       return;
     }
 

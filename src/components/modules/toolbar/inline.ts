@@ -352,7 +352,7 @@ export default class InlineToolbar extends Module {
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
 
-    return toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
+    return toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.IS_ENABLED_INLINE_TOOLBAR];
   }
 
   /**
@@ -363,7 +363,7 @@ export default class InlineToolbar extends Module {
       currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name),
-      inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR];
+      inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.IS_ENABLED_INLINE_TOOLBAR];
 
     /**
      * All Inline Toolbar buttons
@@ -469,10 +469,10 @@ export default class InlineToolbar extends Module {
       .entries(Tools.internalTools)
       .filter(([name, toolClass]: [string, ToolConstructable | ToolSettings]) => {
         if (_.isFunction(toolClass)) {
-          return toolClass[Tools.apiSettings.IS_INLINE];
+          return toolClass[Tools.INTERNAL_SETTINGS.IS_INLINE];
         }
 
-        return (toolClass as ToolSettings).class[Tools.apiSettings.IS_INLINE];
+        return (toolClass as ToolSettings).class[Tools.INTERNAL_SETTINGS.IS_INLINE];
       })
       .map(([name]: [string, InlineToolConstructable | ToolSettings]) => name);
 
@@ -481,9 +481,9 @@ export default class InlineToolbar extends Module {
      * 2) For external tools, check tool's settings
      */
     if (internalTools.includes(toolName)) {
-      shortcut = this.inlineTools[toolName].shortcut;
-    } else if (toolSettings && toolSettings[Tools.apiSettings.SHORTCUT]) {
-      shortcut = toolSettings[Tools.apiSettings.SHORTCUT];
+      shortcut = this.inlineTools[toolName][Tools.INTERNAL_SETTINGS.SHORTCUT];
+    } else if (toolSettings && toolSettings[Tools.USER_SETTINGS.SHORTCUT]) {
+      shortcut = toolSettings[Tools.USER_SETTINGS.SHORTCUT];
     }
 
     if (shortcut) {
@@ -518,7 +518,7 @@ export default class InlineToolbar extends Module {
 
         const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
 
-        if (!toolSettings || !toolSettings[this.Editor.Tools.apiSettings.IS_ENABLED_INLINE_TOOLBAR]) {
+        if (!toolSettings || !toolSettings[this.Editor.Tools.USER_SETTINGS.IS_ENABLED_INLINE_TOOLBAR]) {
           return;
         }
 
