@@ -1,9 +1,157 @@
 import Dom from './dom';
+import _ from './utils';
 
 /**
- * Flipper
+ * @class Flipper
+ * @classdesc Flipper is a component that iterates passed items array by TAB and clicks it by ENTER
+ *
+ * @property {Object} LEAF_DIRECTIONS - is a static property that defines flipping direction
+ * @property {FlipperIterator|null} flipperIterator — instance of flipper iterator
+ * @property {Boolean} _activated — flag that defines activation status
+ * @property {Object} callbacks — user-provided callbacks
  */
 export default class Flipper {
+  /**
+   * @type {{RIGHT: string; LEFT: string}}
+   */
+  private static LEAF_DIRECTIONS = {
+    RIGHT: 'right',
+    LEFT: 'left',
+  };
+
+  /**
+   * @type {FlipperIterator|null}
+   */
+  private flipperIterator: FlipperIterator = null;
+
+  /**
+   * @type {boolean}
+   * @private
+   */
+  private _activated: boolean = false;
+
+  /**
+   * Custom callbacks from Flippers clients
+   * On each event flipper can call user-provided callback
+   */
+  private callbacks: {[key: string]: () => void};
+
+  /**
+   * @constructor
+   *
+   * @param {HTMLElement[]} nodeList
+   * @param {string} focusedCssClass
+   * @param {object} callbacks
+   */
+  constructor(
+    nodeList: HTMLElement[],
+    focusedCssClass: string,
+    callbacks: {[key: string]: () => void} = {},
+  ) {
+    this.callbacks = callbacks;
+    this.flipperIterator = new FlipperIterator(nodeList, focusedCssClass);
+
+    /**
+     * Listening all keydowns on document and react on TAB/Enter press
+     * TAB will leaf iterator items
+     * ENTER will click the focused item
+     */
+    document.addEventListener('keydown', (event) => {
+      switch (event.keyCode) {
+        case _.keyCodes.TAB:
+          this.handleTabPress(event);
+          break;
+        case _.keyCodes.ENTER:
+          this.handleEnterPress(event);
+          break;
+      }
+    }, false);
+  }
+
+  /**
+   * @param {Boolean} value
+   */
+  public set activated(value) {
+    this._activated = value;
+  }
+
+  /**
+   * @return {HTMLElement}
+   */
+  public get currentItem(): HTMLElement {
+    return this.flipperIterator.currentItem;
+  }
+
+  /**
+   * When flipper is activated tab press will leaf the items
+   * @param {KeyboardEvent} event
+   */
+  public handleTabPress(event): void {
+    if (!this._activated) {
+      return;
+    }
+
+    event.preventDefault();
+
+    /** this property defines leaf direction */
+    const shiftKey = event.shiftKey,
+      direction = shiftKey ? Flipper.LEAF_DIRECTIONS.LEFT : Flipper.LEAF_DIRECTIONS.RIGHT;
+
+    switch (direction) {
+      case Flipper.LEAF_DIRECTIONS.RIGHT:
+        this.flipperIterator.next();
+        break;
+      case Flipper.LEAF_DIRECTIONS.LEFT:
+        this.flipperIterator.previous();
+        break;
+    }
+  }
+
+  /**
+   * Enter press will click current item if flipper is activated
+   * @param {KeyboardEvent} event
+   */
+  public handleEnterPress(event): void {
+    if (!this._activated) {
+      return;
+    }
+
+    if (this.flipperIterator.currentItem) {
+      this.flipperIterator.currentItem.click();
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (this.callbacks && _.typeof(this.callbacks.onEnterPress) === 'function') {
+      this.callbacks.onEnterPress();
+    }
+  }
+
+  /**
+   * drops flipper's iterator cursor
+   * @see FlipperIterator#dropCursor
+   */
+  public dropCursor(): void {
+    this.flipperIterator.dropCursor();
+  }
+}
+
+/**
+ * @class FlipperIterator
+ * @classdesc standalone iterator above passed similar items. Each next or previous action adds provides CSS-class
+ * and sets cursor to this item
+ *
+ * @property {String} focusedCssClass — user-provided CSS-class name
+ * @property {cursor} number — index of focused item
+ * @property {HTMLElement[]} items — the list of iterable HTML-items
+ */
+class FlipperIterator {
+  /**
+   * CSS class
+   */
+  private focusedCssClass: string;
+
   /**
    * Focused button index.
    * Default is -1 which means nothing is active
@@ -17,12 +165,8 @@ export default class Flipper {
   private items: HTMLElement[] = [];
 
   /**
-   * CSS class
-   */
-  private focusedCssClass: string;
-
-  /**
-   * @constructor
+   * @param {HTMLElement[]} nodeList
+   * @param {string} focusedCssClass
    */
   constructor(
     nodeList: HTMLElement[],
@@ -59,7 +203,7 @@ export default class Flipper {
   }
 
   /**
-   * Drops cursor
+   * Sets cursor to the default position and removes CSS-class from previously focused item
    */
   public dropCursor(): void {
     if (this.cursor === -1) {

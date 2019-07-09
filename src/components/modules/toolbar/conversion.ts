@@ -26,19 +26,6 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * Returns focused tool as HTML element
-   * @return {HTMLElement}
-   */
-  public get focusedButton(): HTMLElement {
-    return this.flipper.currentItem;
-  }
-
-  private static LEAF_DIRECTIONS = {
-    RIGHT: 'right',
-    LEFT: 'left',
-  };
-
-  /**
    * HTML Elements used for UI
    */
   public nodes: { [key: string]: HTMLElement } = {
@@ -99,11 +86,11 @@ export default class ConversionToolbar extends Module {
       /**
        * Drop previous active button before moving
        */
-      if (this.focusedButton && this.focusedButton.classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
-        this.focusedButton.classList.remove(ConversionToolbar.CSS.conversionToolActive);
-      }
-
-      this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
+    //   if (this.focusedButton && this.focusedButton.classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
+    //     this.focusedButton.classList.remove(ConversionToolbar.CSS.conversionToolActive);
+    //   }
+    //
+    //   this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
     }
 
     this.move(block);
@@ -118,6 +105,7 @@ export default class ConversionToolbar extends Module {
    */
   public open(): void {
     this.opened = true;
+    this.flipper.activated = true;
     this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
   }
 
@@ -126,23 +114,10 @@ export default class ConversionToolbar extends Module {
    */
   public close(): void {
     this.opened = false;
+    this.flipper.activated = false;
     this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
 
     this.dropButtonsHighligtings();
-  }
-
-  /**
-   * Leaf tools by Tab
-   */
-  public leaf(direction: string = 'right'): void {
-    switch (direction) {
-      case ConversionToolbar.LEAF_DIRECTIONS.RIGHT:
-        this.flipper.next();
-        break;
-      case ConversionToolbar.LEAF_DIRECTIONS.LEFT:
-        this.flipper.previous();
-        break;
-    }
   }
 
   /**
