@@ -129,7 +129,8 @@ export default class Flipper {
   }
 
   /**
-   * drops flipper iterators cursor
+   * drops flipper's iterator cursor
+   * @see FlipperIterator#dropCursor
    */
   public dropCursor(): void {
     this.flipperIterator.dropCursor();
