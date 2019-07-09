@@ -132,7 +132,7 @@ export default class BlockSettings extends Module {
 
     /** Clear focus on active button */
     if (this.flipper) {
-      this.flipper.activate = false;
+      this.flipper.activated = false;
       this.flipper.dropCursor();
     }
   }
@@ -185,7 +185,7 @@ export default class BlockSettings extends Module {
    */
   private enableFlipper(): void {
     this.flipper = new Flipper(this.blockTunesButtons, this.CSS.focusedButton, {
-      onEnterPress: (event) => {
+      onEnterPress: () => {
         const currentBlock = this.Editor.BlockManager.currentBlock;
 
         _.delay(() => {
@@ -193,6 +193,6 @@ export default class BlockSettings extends Module {
         }, 50)();
       },
     });
-    this.flipper.activate = true;
+    this.flipper.activated = true;
   }
 }

@@ -105,7 +105,7 @@ export default class ConversionToolbar extends Module {
    */
   public open(): void {
     this.opened = true;
-    this.flipper.activate = true;
+    this.flipper.activated = true;
     this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
   }
 
@@ -114,7 +114,7 @@ export default class ConversionToolbar extends Module {
    */
   public close(): void {
     this.opened = false;
-    this.flipper.activate = false;
+    this.flipper.activated = false;
     this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
 
     this.dropButtonsHighligtings();

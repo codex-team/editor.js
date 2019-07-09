@@ -222,7 +222,7 @@ export default class InlineToolbar extends Module {
     this.opened = false;
 
     if (this.flipper) {
-      this.flipper.activate = false;
+      this.flipper.activated = false;
     }
   }
 
@@ -263,7 +263,7 @@ export default class InlineToolbar extends Module {
      * @type {Flipper}
      */
     this.flipper = new Flipper(visibleTools, this.CSS.focusedButton);
-    this.flipper.activate = true;
+    this.flipper.activated = true;
   }
 
   /**

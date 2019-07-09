@@ -2,7 +2,7 @@ import Dom from './dom';
 import _ from './utils';
 
 /**
- * Flipper
+ * Flipper is a component that iterates passed items array by TAB and clicks it by ENTER
  */
 export default class Flipper {
   /**
@@ -22,24 +22,34 @@ export default class Flipper {
    * @type {boolean}
    * @private
    */
-  private activated: boolean = false;
+  private _activated: boolean = false;
 
   /**
-   * Anys
+   * Custom callbacks from Flippers clients
+   * On each event flipper can call user-provided callback
    */
-  private callbacks: any;
+  private callbacks: {[key: string]: () => void};
 
   /**
    * @constructor
+   *
+   * @param {HTMLElement[]} nodeList
+   * @param {string} focusedCssClass
+   * @param {object} callbacks
    */
   constructor(
     nodeList: HTMLElement[],
     focusedCssClass: string,
-    callbacks: object = {},
+    callbacks: {[key: string]: () => void} = {},
   ) {
     this.callbacks = callbacks;
     this.flipperIterator = new FlipperIterator(nodeList, focusedCssClass);
 
+    /**
+     * Listening all keydowns on document and react on TAB/Enter press
+     * TAB will leaf iterator items
+     * ENTER will click the focused item
+     */
     document.addEventListener('keydown', (event) => {
       switch (event.keyCode) {
         case _.keyCodes.TAB:
@@ -55,8 +65,8 @@ export default class Flipper {
   /**
    * @param value
    */
-  public set activate(value) {
-    this.activated = value;
+  public set activated(value) {
+    this._activated = value;
   }
 
   /**
@@ -67,10 +77,11 @@ export default class Flipper {
   }
 
   /**
+   * When flipper is activated tab press will leaf the items
    * @param event
    */
   public handleTabPress(event) {
-    if (!this.activated) {
+    if (!this._activated) {
       return;
     }
 
@@ -91,10 +102,11 @@ export default class Flipper {
   }
 
   /**
+   * Enter press will click current item if flipper is activated
    * @param event
    */
   public handleEnterPress(event) {
-    if (!this.activated) {
+    if (!this._activated) {
       return;
     }
 
@@ -105,8 +117,8 @@ export default class Flipper {
     event.preventDefault();
     event.stopPropagation();
 
-    if (this.callbacks && _.typeof(this.callbacks) === 'Function') {
-      this.callbacks.onEnterPress(event);
+    if (this.callbacks && _.typeof(this.callbacks.onEnterPress) === 'function') {
+      this.callbacks.onEnterPress();
     }
   }
 

@@ -119,7 +119,7 @@ export default class Toolbox extends Module {
     this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
 
     this.opened = true;
-    this.flipper.activate = true;
+    this.flipper.activated = true;
   }
 
   /**
@@ -132,7 +132,7 @@ export default class Toolbox extends Module {
     this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
 
     this.opened = false;
-    this.flipper.activate = false;
+    this.flipper.activated = false;
     this.flipper.dropCursor();
   }
 
