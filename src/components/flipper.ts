@@ -14,7 +14,7 @@ export default class Flipper {
   /**
    * @type {{RIGHT: string; LEFT: string}}
    */
-  private static LEAF_DIRECTIONS = {
+  public static LEAF_DIRECTIONS = {
     RIGHT: 'right',
     LEFT: 'left',
   };
@@ -192,14 +192,14 @@ class FlipperIterator {
    * Sets cursor next to the current
    */
   public next(): void {
-    this.cursor = this.leafNodesAndReturnIndex(this.cursor, 'right');
+    this.cursor = this.leafNodesAndReturnIndex(this.cursor, Flipper.LEAF_DIRECTIONS.RIGHT);
   }
 
   /**
    * Sets cursor before current
    */
   public previous(): void {
-    this.cursor = this.leafNodesAndReturnIndex(this.cursor, 'left');
+    this.cursor = this.leafNodesAndReturnIndex(this.cursor, Flipper.LEAF_DIRECTIONS.LEFT);
   }
 
   /**
