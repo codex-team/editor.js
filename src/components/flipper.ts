@@ -86,7 +86,7 @@ export default class Flipper {
    * When flipper is activated tab press will leaf the items
    * @param {KeyboardEvent} event
    */
-  public handleTabPress(event): void {
+  public handleTabPress(event: KeyboardEvent): void {
     if (!this._activated) {
       return;
     }
@@ -111,7 +111,7 @@ export default class Flipper {
    * Enter press will click current item if flipper is activated
    * @param {KeyboardEvent} event
    */
-  public handleEnterPress(event): void {
+  public handleEnterPress(event: KeyboardEvent): void {
     if (!this._activated) {
       return;
     }
@@ -123,9 +123,9 @@ export default class Flipper {
     event.preventDefault();
     event.stopPropagation();
 
-    if (this.callbacks && _.typeof(this.callbacks.onEnterPress) === 'function') {
-      this.callbacks.onEnterPress();
-    }
+    // if (this.callbacks && _.typeof(this.callbacks.onEnterPress) === 'function') {
+      // this.callbacks.onEnterPress();
+    // }
   }
 
   /**

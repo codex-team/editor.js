@@ -303,7 +303,7 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private enter(event: KeyboardEvent): void {
-    const { BlockManager, Toolbox, BlockSettings, InlineToolbar, ConversionToolbar, Tools } = this.Editor;
+    const { BlockManager, Toolbox, BlockSettings, InlineToolbar, ConversionToolbar, Tools, UI } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
     const tool = Tools.available[currentBlock.name];
 
@@ -316,9 +316,9 @@ export default class BlockEvents extends Module {
     }
 
     /**
-     * This modules uses flipper
+     * This modules uses Flipper with own Enter handling
      */
-    if (BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbox.opened) {
+    if (UI.someToolbarOpened) {
       return;
     }
 

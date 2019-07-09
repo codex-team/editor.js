@@ -187,6 +187,17 @@ export default class UI extends Module {
   }
 
   /**
+   * Check if one of Toolbar is opened
+   * Used to prevent global keydowns (for example, Enter) conflicts with Enter-on-toolbar
+   * @return {boolean}
+   */
+  public get someToolbarOpened() {
+    const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+
+    return BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbox.opened;
+  }
+
+  /**
    * Clean editor`s UI
    */
   public destroy(): void {
@@ -401,7 +412,7 @@ export default class UI extends Module {
      * So, BlockManager points some Block and Enter press is on Body
      * We can create a new block
      */
-    if (hasPointerToBlock && (event.target as HTMLElement).tagName === 'BODY') {
+    if (!this.someToolbarOpened && hasPointerToBlock && (event.target as HTMLElement).tagName === 'BODY') {
       /**
        * Insert initial typed Block
        */
@@ -429,6 +440,14 @@ export default class UI extends Module {
    * @param {MouseEvent} event - Click
    */
   private documentClicked(event: MouseEvent): void {
+    /**
+     * Sometimes we emulate click on some UI elements, for example by Enter on Block Settings button
+     * We don't need to handle such events, because they handled in other place.
+     */
+    if (!event.isTrusted) {
+      console.log('NOT TRUSTED');
+      return;
+    }
     /**
      * Close Inline Toolbar when nothing selected
      * Do not fire check on clicks at the Inline Toolbar buttons
