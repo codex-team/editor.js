@@ -2,7 +2,13 @@ import Dom from './dom';
 import _ from './utils';
 
 /**
- * Flipper is a component that iterates passed items array by TAB and clicks it by ENTER
+ * @class Flipper
+ * @classdesc Flipper is a component that iterates passed items array by TAB and clicks it by ENTER
+ *
+ * @property {Object} LEAF_DIRECTIONS - is a static property that defines flipping direction
+ * @property {FlipperIterator|null} flipperIterator — instance of flipper iterator
+ * @property {Boolean} _activated — flag that defines activation status
+ * @property {Object} callbacks — user-provided callbacks
  */
 export default class Flipper {
   /**
@@ -63,7 +69,7 @@ export default class Flipper {
   }
 
   /**
-   * @param value
+   * @param {Boolean} value
    */
   public set activated(value) {
     this._activated = value;
@@ -78,9 +84,9 @@ export default class Flipper {
 
   /**
    * When flipper is activated tab press will leaf the items
-   * @param event
+   * @param {KeyboardEvent} event
    */
-  public handleTabPress(event) {
+  public handleTabPress(event): void {
     if (!this._activated) {
       return;
     }
@@ -103,9 +109,9 @@ export default class Flipper {
 
   /**
    * Enter press will click current item if flipper is activated
-   * @param event
+   * @param {KeyboardEvent} event
    */
-  public handleEnterPress(event) {
+  public handleEnterPress(event): void {
     if (!this._activated) {
       return;
     }
@@ -130,6 +136,15 @@ export default class Flipper {
   }
 }
 
+/**
+ * @class FlipperIterator
+ * @classdesc standalone iterator above passed similar items. Each next or previous action adds provides CSS-class
+ * and sets cursor to this item
+ *
+ * @property {String} focusedCssClass — user-provided CSS-class name
+ * @property {cursor} number — index of focused item
+ * @property {HTMLElement[]} items — the list of iterable HTML-items
+ */
 class FlipperIterator {
   /**
    * CSS class
@@ -187,7 +202,7 @@ class FlipperIterator {
   }
 
   /**
-   * Drops cursor
+   * Sets cursor to the default position and removes CSS-class from previously focused item
    */
   public dropCursor(): void {
     if (this.cursor === -1) {
