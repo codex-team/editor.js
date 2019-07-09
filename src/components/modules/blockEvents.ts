@@ -101,7 +101,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const { InlineToolbar, ConversionToolbar, UI, BlockManager } = this.Editor;
+    const { InlineToolbar, ConversionToolbar, UI, BlockManager, BlockSettings } = this.Editor;
     const block = BlockManager.getBlock(event.target);
 
     /**
@@ -110,6 +110,7 @@ export default class BlockEvents extends Module {
      */
     if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
       InlineToolbar.close();
+      BlockSettings.close();
       ConversionToolbar.tryToShow(block);
     } else {
       ConversionToolbar.close();
@@ -186,15 +187,15 @@ export default class BlockEvents extends Module {
     }
 
     const canOpenToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
-    // const canOpen = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
-    // const canLeafConversionToolbar = !currentBlock.isEmpty && ConversionToolbar.opened;
+    const conversionToolbarOpened = !currentBlock.isEmpty && ConversionToolbar.opened;
+    const inlineToolbarOpened = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
 
     /**
-     * For empty Blocks we show Plus button via Toobox only for initial Blocks
+     * For empty Blocks we show Plus button via Toolbox only for initial Blocks
      */
     if (canOpenToolbox) {
       this.activateToolbox();
-    } else {
+    } else if (!conversionToolbarOpened && !inlineToolbarOpened) {
       this.activateBlockSettings();
     }
   }

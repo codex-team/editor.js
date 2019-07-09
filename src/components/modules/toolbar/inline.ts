@@ -223,6 +223,7 @@ export default class InlineToolbar extends Module {
 
     if (this.flipper) {
       this.flipper.activated = false;
+      this.flipper.dropCursor();
     }
   }
 
@@ -230,6 +231,10 @@ export default class InlineToolbar extends Module {
    * Shows Inline Toolbar
    */
   public open(): void {
+    if (this.opened === true) {
+      return;
+    }
+
     /**
      * Filter inline-tools and show only allowed by Block's Tool
      */
