@@ -30,26 +30,15 @@ export default class Flipper {
   private _activated: boolean = false;
 
   /**
-   * user-provided callbacks
-   *
-   * Custom callbacks from Flippers clients
-   * On each event flipper can call user-provided callback
-   */
-  private callbacks: {[key: string]: () => void};
-
-  /**
    * @constructor
    *
    * @param {HTMLElement[]} nodeList
    * @param {string} focusedCssClass
-   * @param {object} callbacks
    */
   constructor(
     nodeList: HTMLElement[],
     focusedCssClass: string,
-    callbacks: {[key: string]: () => void} = {},
   ) {
-    this.callbacks = callbacks;
     this.flipperIterator = new FlipperIterator(nodeList, focusedCssClass);
 
     /**
@@ -123,6 +112,12 @@ export default class Flipper {
 
     event.preventDefault();
     event.stopPropagation();
+  }
+
+  public destroy(): void {
+    this.activated = false;
+    this.dropCursor();
+    this.flipperIterator.destroy();
   }
 
   /**

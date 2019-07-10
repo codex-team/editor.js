@@ -12637,12 +12637,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
      *
      * @param {HTMLElement[]} nodeList
      * @param {string} focusedCssClass
-     * @param {object} callbacks
      */
     function Flipper(nodeList, focusedCssClass) {
       var _this = this;
 
-      var callbacks = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
       (0, _classCallCheck2.default)(this, Flipper);
 
       /**
@@ -12658,7 +12656,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
       this._activated = false;
-      this.callbacks = callbacks;
       this.flipperIterator = new FlipperIterator(nodeList, focusedCssClass);
       /**
        * Listening all keydowns on document and react on TAB/Enter press
@@ -12731,6 +12728,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         event.preventDefault();
         event.stopPropagation();
+      }
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        this.activated = false;
+        this.dropCursor();
+        this.flipperIterator.destroy();
       }
       /**
        * drops flipper's iterator cursor
@@ -15506,7 +15510,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
         /**
-         * This modules uses Flipper with own Enter handling
+         * Opened Toolbars uses Flipper with own Enter handling
          */
 
 
@@ -21553,8 +21557,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /** Clear focus on active button */
 
         if (this.flipper) {
-          this.flipper.activated = false;
-          this.flipper.dropCursor();
+          this.flipper.destroy();
           this.flipper = null;
         }
       }
@@ -22739,8 +22742,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.opened = false;
 
         if (this.flipper) {
-          this.flipper.activated = false;
-          this.flipper.dropCursor();
+          this.flipper.destroy();
           this.flipper = null;
         }
       }
@@ -23255,7 +23257,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
         this.opened = false;
         this.flipper.activated = false;
-        this.flipper.dropCursor();
       }
       /**
        * Close Toolbox

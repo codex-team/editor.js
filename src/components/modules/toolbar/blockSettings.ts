@@ -132,8 +132,7 @@ export default class BlockSettings extends Module {
 
     /** Clear focus on active button */
     if (this.flipper) {
-      this.flipper.activated = false;
-      this.flipper.dropCursor();
+      this.flipper.destroy();
       this.flipper = null;
     }
   }

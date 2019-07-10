@@ -316,7 +316,7 @@ export default class BlockEvents extends Module {
     }
 
     /**
-     * This modules uses Flipper with own Enter handling
+     * Opened Toolbars uses Flipper with own Enter handling
      */
     if (UI.someToolbarOpened) {
       return;

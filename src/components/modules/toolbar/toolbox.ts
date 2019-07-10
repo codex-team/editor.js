@@ -123,7 +123,6 @@ export default class Toolbox extends Module {
 
     this.opened = false;
     this.flipper.activated = false;
-    this.flipper.dropCursor();
   }
 
   /**

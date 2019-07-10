@@ -222,8 +222,7 @@ export default class InlineToolbar extends Module {
     this.opened = false;
 
     if (this.flipper) {
-      this.flipper.activated = false;
-      this.flipper.dropCursor();
+      this.flipper.destroy();
       this.flipper = null;
     }
   }
