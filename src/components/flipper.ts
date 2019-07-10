@@ -4,15 +4,11 @@ import _ from './utils';
 /**
  * @class Flipper
  * @classdesc Flipper is a component that iterates passed items array by TAB and clicks it by ENTER
- *
- * @property {Object} LEAF_DIRECTIONS - is a static property that defines flipping direction
- * @property {FlipperIterator|null} flipperIterator — instance of flipper iterator
- * @property {Boolean} _activated — flag that defines activation status
- * @property {Object} callbacks — user-provided callbacks
  */
 export default class Flipper {
   /**
    * @type {{RIGHT: string; LEFT: string}}
+   * This is a static property that defines flipping direction
    */
   public static LEAF_DIRECTIONS = {
     RIGHT: 'right',
@@ -21,16 +17,21 @@ export default class Flipper {
 
   /**
    * @type {FlipperIterator|null}
+   * Instance of flipper iterator
    */
   private flipperIterator: FlipperIterator = null;
 
   /**
-   * @type {boolean}
    * @private
+   *
+   * @type {boolean}
+   * flag that defines activation status
    */
   private _activated: boolean = false;
 
   /**
+   * user-provided callbacks
+   *
    * Custom callbacks from Flippers clients
    * On each event flipper can call user-provided callback
    */
@@ -76,9 +77,9 @@ export default class Flipper {
   }
 
   /**
-   * @return {HTMLElement}
+   * @return {HTMLElement|null}
    */
-  public get currentItem(): HTMLElement {
+  public get currentItem(): HTMLElement|null {
     return this.flipperIterator.currentItem;
   }
 
@@ -122,10 +123,6 @@ export default class Flipper {
 
     event.preventDefault();
     event.stopPropagation();
-
-    // if (this.callbacks && _.typeof(this.callbacks.onEnterPress) === 'function') {
-      // this.callbacks.onEnterPress();
-    // }
   }
 
   /**

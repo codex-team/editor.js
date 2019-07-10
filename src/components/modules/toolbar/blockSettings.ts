@@ -185,15 +185,7 @@ export default class BlockSettings extends Module {
    * Enable Flipper
    */
   private enableFlipper(): void {
-    this.flipper = new Flipper(this.blockTunesButtons, this.CSS.focusedButton, {
-      onEnterPress: () => {
-        const currentBlock = this.Editor.BlockManager.currentBlock;
-
-        _.delay(() => {
-          this.Editor.Caret.setToBlock(currentBlock, 'end');
-        }, 50)();
-      },
-    });
+    this.flipper = new Flipper(this.blockTunesButtons, this.CSS.focusedButton);
     this.flipper.activated = true;
   }
 }

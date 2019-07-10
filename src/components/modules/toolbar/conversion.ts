@@ -77,22 +77,6 @@ export default class ConversionToolbar extends Module {
       return;
     }
 
-    const currentToolName = block.name;
-
-    /**
-     * Focus current tool in conversion toolbar
-     */
-    if (this.tools[currentToolName]) {
-      /**
-       * Drop previous active button before moving
-       */
-    //   if (this.focusedButton && this.focusedButton.classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
-    //     this.focusedButton.classList.remove(ConversionToolbar.CSS.conversionToolActive);
-    //   }
-    //
-    //   this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
-    }
-
     this.move(block);
 
     if (!this.opened) {
@@ -116,20 +100,6 @@ export default class ConversionToolbar extends Module {
     this.opened = false;
     this.flipper.activated = false;
     this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
-
-    this.dropButtonsHighligtings();
-  }
-
-  /**
-   * Drops focused button
-   */
-  public dropButtonsHighligtings() {
-    Object.values(this.tools).forEach( (tool) => {
-      (tool as HTMLElement).classList
-        .remove(ConversionToolbar.CSS.conversionToolActive, ConversionToolbar.CSS.conversionToolFocused);
-    });
-
-    this.flipper.dropCursor();
   }
 
   /**

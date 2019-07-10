@@ -445,7 +445,6 @@ export default class UI extends Module {
      * We don't need to handle such events, because they handled in other place.
      */
     if (!event.isTrusted) {
-      console.log('NOT TRUSTED');
       return;
     }
     /**

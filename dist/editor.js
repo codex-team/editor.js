@@ -12628,11 +12628,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   /**
    * @class Flipper
    * @classdesc Flipper is a component that iterates passed items array by TAB and clicks it by ENTER
-   *
-   * @property {Object} LEAF_DIRECTIONS - is a static property that defines flipping direction
-   * @property {FlipperIterator|null} flipperIterator — instance of flipper iterator
-   * @property {Boolean} _activated — flag that defines activation status
-   * @property {Object} callbacks — user-provided callbacks
    */
   var Flipper =
   /*#__PURE__*/
@@ -12652,11 +12647,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       /**
        * @type {FlipperIterator|null}
+       * Instance of flipper iterator
        */
       this.flipperIterator = null;
       /**
-       * @type {boolean}
        * @private
+       *
+       * @type {boolean}
+       * flag that defines activation status
        */
 
       this._activated = false;
@@ -12732,9 +12730,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         event.preventDefault();
-        event.stopPropagation(); // if (this.callbacks && _.typeof(this.callbacks.onEnterPress) === 'function') {
-        // this.callbacks.onEnterPress();
-        // }
+        event.stopPropagation();
       }
       /**
        * drops flipper's iterator cursor
@@ -12752,7 +12748,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this._activated = value;
       }
       /**
-       * @return {HTMLElement}
+       * @return {HTMLElement|null}
        */
 
     }, {
@@ -12765,6 +12761,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   }();
   /**
    * @type {{RIGHT: string; LEFT: string}}
+   * This is a static property that defines flipping direction
    */
 
 
@@ -21420,12 +21417,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _utils, _flipper) {
+})(this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _flipper) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -21441,7 +21438,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _inherits2 = _interopRequireDefault(_inherits2);
   _module = _interopRequireDefault(_module);
   _dom = _interopRequireDefault(_dom);
-  _utils = _interopRequireDefault(_utils);
   _flipper = _interopRequireDefault(_flipper);
 
   /**
@@ -21594,17 +21590,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "enableFlipper",
       value: function enableFlipper() {
-        var _this2 = this;
-
-        this.flipper = new _flipper.default(this.blockTunesButtons, this.CSS.focusedButton, {
-          onEnterPress: function onEnterPress() {
-            var currentBlock = _this2.Editor.BlockManager.currentBlock;
-
-            _utils.default.delay(function () {
-              _this2.Editor.Caret.setToBlock(currentBlock, 'end');
-            }, 50)();
-          }
-        });
+        this.flipper = new _flipper.default(this.blockTunesButtons, this.CSS.focusedButton);
         this.flipper.activated = true;
       }
     }, {
@@ -21647,7 +21633,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "blockTunesButtons",
       get: function get() {
-        var _this3 = this;
+        var _this2 = this;
 
         /**
          * Return from cache
@@ -21660,10 +21646,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var toolSettings = this.nodes.toolSettings.querySelectorAll(".".concat(this.Editor.StylesAPI.classes.settingsButton));
         var defaultSettings = this.nodes.defaultSettings.querySelectorAll(".".concat(this.CSS.button));
         toolSettings.forEach(function (item) {
-          _this3.buttons.push(item);
+          _this2.buttons.push(item);
         });
         defaultSettings.forEach(function (item) {
-          _this3.buttons.push(item);
+          _this2.buttons.push(item);
         });
         return this.buttons;
       }
@@ -21791,22 +21777,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        var currentToolName = block.name;
-        /**
-         * Focus current tool in conversion toolbar
-         */
-
-        if (this.tools[currentToolName]) {
-          /**
-           * Drop previous active button before moving
-           */
-          //   if (this.focusedButton && this.focusedButton.classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
-          //     this.focusedButton.classList.remove(ConversionToolbar.CSS.conversionToolActive);
-          //   }
-          //
-          //   this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
-        }
-
         this.move(block);
 
         if (!this.opened) {
@@ -21834,19 +21804,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.opened = false;
         this.flipper.activated = false;
         this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
-        this.dropButtonsHighligtings();
-      }
-      /**
-       * Drops focused button
-       */
-
-    }, {
-      key: "dropButtonsHighligtings",
-      value: function dropButtonsHighligtings() {
-        Object.values(this.tools).forEach(function (tool) {
-          tool.classList.remove(ConversionToolbar.CSS.conversionToolActive, ConversionToolbar.CSS.conversionToolFocused);
-        });
-        this.flipper.dropCursor();
       }
       /**
        * Replaces one Block with another
@@ -24660,7 +24617,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * We don't need to handle such events, because they handled in other place.
          */
         if (!event.isTrusted) {
-          console.log('NOT TRUSTED');
           return;
         }
         /**
