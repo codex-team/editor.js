@@ -1,7 +1,7 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import _ from '../../utils';
-import {BlockToolConstructable, ToolboxConfig} from '../../../../types';
+import {BlockToolConstructable} from '../../../../types';
 
 /**
  * @class Toolbox
@@ -228,7 +228,7 @@ export default class Toolbox extends Module {
     //   return;
     // }
 
-    const {[userSettings.TOOLBOX]: userToolboxSettings = {} as ToolboxConfig} = this.Editor.Tools.getToolSettings(toolName);
+    const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX] || {};
 
     const button = $.make('li', [ this.CSS.toolboxButton ]);
 

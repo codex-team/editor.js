@@ -352,7 +352,7 @@ export default class InlineToolbar extends Module {
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
 
-    return toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.IS_ENABLED_INLINE_TOOLBAR];
+    return toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
   }
 
   /**
@@ -363,7 +363,7 @@ export default class InlineToolbar extends Module {
       currentBlock = this.Editor.BlockManager.getBlock(currentSelection.anchorNode as HTMLElement);
 
     const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name),
-      inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.IS_ENABLED_INLINE_TOOLBAR];
+      inlineToolbarSettings = toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS];
 
     /**
      * All Inline Toolbar buttons
@@ -518,7 +518,7 @@ export default class InlineToolbar extends Module {
 
         const toolSettings = this.Editor.Tools.getToolSettings(currentBlock.name);
 
-        if (!toolSettings || !toolSettings[this.Editor.Tools.USER_SETTINGS.IS_ENABLED_INLINE_TOOLBAR]) {
+        if (!toolSettings || !toolSettings[this.Editor.Tools.USER_SETTINGS.ENABLED_INLINE_TOOLS]) {
           return;
         }
 

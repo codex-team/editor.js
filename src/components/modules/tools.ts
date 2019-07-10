@@ -146,7 +146,7 @@ export default class Tools extends Module {
     return {
       SHORTCUT: 'shortcut',
       TOOLBOX: 'toolbox',
-      IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
+      ENABLED_INLINE_TOOLS: 'inlineToolbar',
       CONFIG: 'config',
     };
   }
@@ -347,7 +347,7 @@ export default class Tools extends Module {
      */
     const constructorOptions = {
       api: this.Editor.API.methods,
-      config: toolSettings[this.USER_SETTINGS.CONFIG] || {},
+      config: (toolSettings[this.USER_SETTINGS.CONFIG] || {}) as ToolSettings,
     };
 
     return new tool(constructorOptions) as InlineTool;
