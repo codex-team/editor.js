@@ -1,7 +1,7 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import _ from '../../utils';
-import {BlockToolConstructable, ToolboxConfig} from '../../../../types';
+import {BlockToolConstructable} from '../../../../types';
 import Flipper from '../../flipper';
 
 /**
@@ -32,16 +32,6 @@ export default class Toolbox extends Module {
       tooltipShortcut: 'ce-toolbox__tooltip-shortcut',
       openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
     };
-  }
-
-  /**
-   * get tool name when it is selected
-   * In case when nothing selected returns null
-   *
-   * @return {String|null}
-   */
-  public get getActiveTool(): string {
-    return this.flipper.currentItem.dataset.tool;
   }
 
   /**
@@ -174,9 +164,10 @@ export default class Toolbox extends Module {
    * @param {BlockToolConstructable} tool - tool class
    */
   private addTool(toolName: string, tool: BlockToolConstructable): void {
-    const api = this.Editor.Tools.apiSettings;
+    const internalSettings = this.Editor.Tools.INTERNAL_SETTINGS;
+    const userSettings = this.Editor.Tools.USER_SETTINGS;
 
-    const toolToolboxSettings = tool[api.TOOLBOX];
+    const toolToolboxSettings = tool[internalSettings.TOOLBOX];
 
     /**
      * Skip tools that don't pass 'toolbox' property
@@ -198,7 +189,7 @@ export default class Toolbox extends Module {
     //   return;
     // }
 
-    const {toolbox: userToolboxSettings = {} as ToolboxConfig} = this.Editor.Tools.getToolSettings(toolName);
+    const userToolboxSettings = this.Editor.Tools.getToolSettings(toolName)[userSettings.TOOLBOX] || {};
 
     const button = $.make('li', [ this.CSS.toolboxButton ]);
 
@@ -233,8 +224,8 @@ export default class Toolbox extends Module {
      */
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
 
-    if (toolSettings && toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]) {
-      this.enableShortcut(tool, toolName, toolSettings[this.Editor.Tools.apiSettings.SHORTCUT]);
+    if (toolSettings && toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT]) {
+      this.enableShortcut(tool, toolName, toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT]);
     }
 
     /** Increment Tools count */
@@ -259,11 +250,11 @@ export default class Toolbox extends Module {
    */
   private showTooltip(button: HTMLElement, toolName: string): void {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
-    const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.apiSettings.TOOLBOX] || {};
+    const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};
     const name = userToolboxSettings.title || toolboxSettings.title || toolName;
 
-    let shortcut = toolSettings[this.Editor.Tools.apiSettings.SHORTCUT];
+    let shortcut = toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT];
 
     const fragment = document.createDocumentFragment();
     const hint = document.createTextNode(_.capitalize(name));

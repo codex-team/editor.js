@@ -246,10 +246,10 @@ export default class ConversionToolbar extends Module {
         continue;
       }
 
-      const api = this.Editor.Tools.apiSettings;
+      const internalSettings = this.Editor.Tools.INTERNAL_SETTINGS;
       const toolClass = tools[toolName] as BlockToolConstructable;
-      const toolToolboxSettings = toolClass[api.TOOLBOX];
-      const conversionConfig = toolClass[api.CONVERSION_CONFIG];
+      const toolToolboxSettings = toolClass[internalSettings.TOOLBOX];
+      const conversionConfig = toolClass[internalSettings.CONVERSION_CONFIG];
 
       /**
        * Skip tools that don't pass 'toolbox' property
