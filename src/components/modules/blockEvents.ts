@@ -165,6 +165,8 @@ export default class BlockEvents extends Module {
    * @param {MouseEvent} event
    */
   public mouseDown(event: MouseEvent): void {
+    this.Editor.BlockSelection.clearSelection(event);
+
     this.Editor.CrossBlockSelection.watchSelection(event);
   }
 

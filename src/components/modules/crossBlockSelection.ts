@@ -24,7 +24,11 @@ export default class CrossBlockSelection extends Module {
       return;
     }
 
-    const {BlockManager, UI, Listeners} = this.Editor;
+    if (!(event.target as HTMLElement).closest(`.${Block.CSS.content}`)) {
+      return;
+    }
+
+    const {BlockManager, Listeners} = this.Editor;
 
     this.firstSelectedBlock = BlockManager.getBlock(event.target as HTMLElement);
     this.lastSelectedBlock = this.firstSelectedBlock;

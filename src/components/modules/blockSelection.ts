@@ -188,10 +188,10 @@ export default class BlockSelection extends Module {
 
     this.Editor.CrossBlockSelection.clear(reason);
 
-    if (!this.anyBlockSelected || RectangleSelection.isRectActivated()) {
-      this.Editor.RectangleSelection.clearSelection();
-      return;
-    }
+    // if (!this.anyBlockSelected || RectangleSelection.isRectActivated()) {
+    //   this.Editor.RectangleSelection.clearSelection();
+    //   return;
+    // }
 
     /**
      * Restore selection when Block is already selected
@@ -260,7 +260,7 @@ export default class BlockSelection extends Module {
    * @param {KeyboardEvent} event
    */
   private handleCommandA(event: KeyboardEvent): void {
-    this.Editor.RectangleSelection.clearSelection();
+    // this.Editor.RectangleSelection.clearSelection();
 
     /** allow default selection on native inputs */
     if ($.isNativeInput(event.target) && !this.nativeInputSelected) {
