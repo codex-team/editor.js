@@ -98,16 +98,22 @@ export default class Flipper {
   }
 
   /**
+   * Updates flipper iterators iterable list
+   * Some modules (like, InlineToolbar, BlockSettings) might refresh tools dynamically
    * @param {HTMLElement[]} nodeList
    */
   public updateItems(nodeList: HTMLElement[]): void {
     this.flipperIterator.setItems(nodeList);
   }
 
+  /**
+   * destroys whole module
+   */
   public destroy(): void {
     this.activated = false;
     this.dropCursor();
     this.flipperIterator.destroy();
+    this.flipperIterator = null;
   }
 
   /**
