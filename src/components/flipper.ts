@@ -30,15 +30,26 @@ export default class Flipper {
   private _activated: boolean = false;
 
   /**
+   * @private
+   *
+   * @type {boolean}
+   * flag that allows arrows usage to flip items
+   */
+  private allowArrows: boolean = true;
+
+  /**
    * @constructor
    *
    * @param {HTMLElement[]} nodeList
    * @param {string} focusedCssClass
+   * @param {boolean} allowArrows
    */
   constructor(
     nodeList: HTMLElement[],
     focusedCssClass: string,
+    allowArrows: boolean = true,
   ) {
+    this.allowArrows = allowArrows;
     this.flipperIterator = new FlipperIterator(nodeList, focusedCssClass);
 
     /**
@@ -47,9 +58,23 @@ export default class Flipper {
      * ENTER will click the focused item
      */
     document.addEventListener('keydown', (event) => {
+      const isReady = this.isEventReadyForHandling(event);
+
+      if (!isReady) {
+        return;
+      }
+
+      event.preventDefault();
+
       switch (event.keyCode) {
         case _.keyCodes.TAB:
           this.handleTabPress(event);
+          break;
+        case _.keyCodes.LEFT:
+          this.flipLeft();
+          break;
+        case _.keyCodes.RIGHT:
+          this.flipRight();
           break;
         case _.keyCodes.ENTER:
           this.handleEnterPress(event);
@@ -72,17 +97,50 @@ export default class Flipper {
     return this.flipperIterator.currentItem;
   }
 
+  public destroy(): void {
+    this.activated = false;
+    this.dropCursor();
+    this.flipperIterator.destroy();
+  }
+
+  /**
+   * drops flipper's iterator cursor
+   * @see FlipperIterator#dropCursor
+   */
+  public dropCursor(): void {
+    this.flipperIterator.dropCursor();
+  }
+
+  /**
+   *
+   * @param {KeyboardEvent} event
+   * @return {boolean}
+   */
+  private isEventReadyForHandling(event: KeyboardEvent): boolean {
+    const handlingKeyCodeList = [
+      _.keyCodes.TAB,
+      _.keyCodes.ENTER,
+    ];
+
+    if (this.allowArrows) {
+      handlingKeyCodeList.push(
+        _.keyCodes.LEFT,
+        _.keyCodes.RIGHT,
+      );
+    }
+
+    if (!this._activated || handlingKeyCodeList.indexOf(event.keyCode) === -1) {
+      return false;
+    }
+
+    return true;
+  }
+
   /**
    * When flipper is activated tab press will leaf the items
    * @param {KeyboardEvent} event
    */
-  public handleTabPress(event: KeyboardEvent): void {
-    if (!this._activated) {
-      return;
-    }
-
-    event.preventDefault();
-
+  private handleTabPress(event: KeyboardEvent): void {
     /** this property defines leaf direction */
     const shiftKey = event.shiftKey,
       direction = shiftKey ? Flipper.LEAF_DIRECTIONS.LEFT : Flipper.LEAF_DIRECTIONS.RIGHT;
@@ -98,10 +156,24 @@ export default class Flipper {
   }
 
   /**
+   * focuses previous flipper iterator item
+   */
+  private flipLeft(): void {
+    this.flipperIterator.previous();
+  }
+
+  /**
+   * focuses next flipper iterator item
+   */
+  private flipRight(): void {
+    this.flipperIterator.next();
+  }
+
+  /**
    * Enter press will click current item if flipper is activated
    * @param {KeyboardEvent} event
    */
-  public handleEnterPress(event: KeyboardEvent): void {
+  private handleEnterPress(event: KeyboardEvent): void {
     if (!this._activated) {
       return;
     }
@@ -112,20 +184,6 @@ export default class Flipper {
 
     event.preventDefault();
     event.stopPropagation();
-  }
-
-  public destroy(): void {
-    this.activated = false;
-    this.dropCursor();
-    this.flipperIterator.destroy();
-  }
-
-  /**
-   * drops flipper's iterator cursor
-   * @see FlipperIterator#dropCursor
-   */
-  public dropCursor(): void {
-    this.flipperIterator.dropCursor();
   }
 }
 

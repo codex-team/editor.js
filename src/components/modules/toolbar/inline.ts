@@ -231,10 +231,6 @@ export default class InlineToolbar extends Module {
    * Shows Inline Toolbar
    */
   public open(): void {
-    if (this.opened === true) {
-      return;
-    }
-
     /**
      * Filter inline-tools and show only allowed by Block's Tool
      */
@@ -267,7 +263,7 @@ export default class InlineToolbar extends Module {
      * Create flipper for inline tools
      * @type {Flipper}
      */
-    this.flipper = new Flipper(visibleTools, this.CSS.focusedButton);
+    this.flipper = new Flipper(visibleTools, this.CSS.focusedButton, false);
     this.flipper.activated = true;
   }
 

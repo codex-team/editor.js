@@ -474,6 +474,13 @@ export default class BlockEvents extends Module {
    * Handle right and down keyboard keys
    */
   private arrowRightAndDown(event: KeyboardEvent): void {
+    /**
+     * Arrows might be handled on toolbars by flipper
+     */
+    if (this.Editor.UI.someToolbarOpened) {
+      return;
+    }
+
     const shouldEnableCBS = this.Editor.Caret.isAtEnd || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.DOWN && shouldEnableCBS) {
@@ -508,6 +515,13 @@ export default class BlockEvents extends Module {
    * Handle left and up keyboard keys
    */
   private arrowLeftAndUp(event: KeyboardEvent): void {
+    /**
+     * Arrows might be handled on toolbars by flipper
+     */
+    if (this.Editor.UI.someToolbarOpened) {
+      return;
+    }
+
     const shouldEnableCBS = this.Editor.Caret.isAtStart || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
