@@ -99,6 +99,7 @@ export default class ConversionToolbar extends Module {
   public close(): void {
     this.opened = false;
     this.flipper.activated = false;
+    this.flipper.dropCursor();
     this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
   }
 
@@ -260,7 +261,6 @@ export default class ConversionToolbar extends Module {
    * Enable Flipper to be able to leaf conversion toolbar tools
    */
   private enableFlipper(): void {
-    const tools = (Array.from(this.nodes.tools.childNodes) as HTMLElement[]);
-    this.flipper = new Flipper(tools, ConversionToolbar.CSS.conversionToolFocused);
+    this.flipper = new Flipper(Object.values(this.tools), ConversionToolbar.CSS.conversionToolFocused);
   }
 }

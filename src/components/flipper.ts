@@ -3,7 +3,7 @@ import _ from './utils';
 
 /**
  * @class Flipper
- * @classdesc Flipper is a component that iterates passed items array by TAB and clicks it by ENTER
+ * @classdesc Flipper is a component that iterates passed items array by TAB or Arrows and clicks it by ENTER
  */
 export default class Flipper {
   /**
@@ -97,6 +97,13 @@ export default class Flipper {
     return this.flipperIterator.currentItem;
   }
 
+  /**
+   * @param {HTMLElement[]} nodeList
+   */
+  public updateItems(nodeList: HTMLElement[]): void {
+    this.flipperIterator.setItems(nodeList);
+  }
+
   public destroy(): void {
     this.activated = false;
     this.dropCursor();
@@ -112,7 +119,8 @@ export default class Flipper {
   }
 
   /**
-   *
+   * This function is fired before handling flipper keycodes
+   * The result of this function defines if it is need to be handled or not
    * @param {KeyboardEvent} event
    * @return {boolean}
    */
@@ -236,6 +244,14 @@ class FlipperIterator {
     }
 
     return this.items[this.cursor];
+  }
+
+  /**
+   * sets items
+   * @param {HTMLElement[]} nodeList
+   */
+  public setItems(nodeList: HTMLElement[]): void {
+    this.items = nodeList;
   }
 
   /**

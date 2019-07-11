@@ -131,6 +131,11 @@ export default class InlineToolbar extends Module {
      * Recalculate initial width with all buttons
      */
     this.recalculateWidth();
+
+    /**
+     * Enable flipper to leaf inline Toolbar tools
+     */
+    this.enableFlipper();
   }
 
   /**
@@ -221,10 +226,8 @@ export default class InlineToolbar extends Module {
 
     this.opened = false;
 
-    if (this.flipper) {
-      this.flipper.destroy();
-      this.flipper = null;
-    }
+    this.flipper.activated = false;
+    this.flipper.dropCursor();
   }
 
   /**
@@ -259,11 +262,7 @@ export default class InlineToolbar extends Module {
     const visibleTools = (Array.from(this.buttonsList)
       .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[]);
 
-    /**
-     * Create flipper for inline tools
-     * @type {Flipper}
-     */
-    this.flipper = new Flipper(visibleTools, this.CSS.focusedButton, false);
+    this.flipper.updateItems(visibleTools);
     this.flipper.activated = true;
   }
 
@@ -525,5 +524,16 @@ export default class InlineToolbar extends Module {
     }
 
     return result;
+  }
+
+  /**
+   * Create flipper instance
+   */
+  private enableFlipper(): void {
+    /**
+     * Create flipper for inline tools
+     * @type {Flipper}
+     */
+    this.flipper = new Flipper([], this.CSS.focusedButton, false);
   }
 }

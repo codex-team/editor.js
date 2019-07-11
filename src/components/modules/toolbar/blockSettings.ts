@@ -87,6 +87,9 @@ export default class BlockSettings extends Module {
     this.nodes.defaultSettings = $.make('div', this.CSS.defaultSettings);
 
     $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
+
+    /** Enable flipper */
+    this.enableFlipper();
   }
 
   /**
@@ -105,13 +108,11 @@ export default class BlockSettings extends Module {
      */
     this.addDefaultSettings();
 
-    /**
-     * Enable flipper
-     */
-    this.enableFlipper();
-
     /** Tell to subscribers that block settings is opened */
     this.Editor.Events.emit(this.events.opened);
+
+    this.flipper.updateItems(this.blockTunesButtons);
+    this.flipper.activated = true;
   }
 
   /**
@@ -131,10 +132,8 @@ export default class BlockSettings extends Module {
     this.buttons = [];
 
     /** Clear focus on active button */
-    if (this.flipper) {
-      this.flipper.destroy();
-      this.flipper = null;
-    }
+    this.flipper.activated = false;
+    this.flipper.dropCursor();
   }
 
   /**
@@ -184,7 +183,6 @@ export default class BlockSettings extends Module {
    * Enable Flipper
    */
   private enableFlipper(): void {
-    this.flipper = new Flipper(this.blockTunesButtons, this.CSS.focusedButton);
-    this.flipper.activated = true;
+    this.flipper = new Flipper([], this.CSS.focusedButton);
   }
 }
