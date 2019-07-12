@@ -7,8 +7,8 @@ import _ from './utils';
  */
 export default class Flipper {
   /**
-   * @type {{RIGHT: string; LEFT: string}}
    * This is a static property that defines flipping direction
+   * @type {{RIGHT: string; LEFT: string}}
    */
   public static LEAF_DIRECTIONS = {
     RIGHT: 'right',
@@ -16,33 +16,34 @@ export default class Flipper {
   };
 
   /**
-   * @type {FlipperIterator|null}
    * Instance of flipper iterator
+   * @type {FlipperIterator|null}
    */
   private flipperIterator: FlipperIterator = null;
 
   /**
    * @private
    *
+   * Flag that defines activation status
    * @type {boolean}
-   * flag that defines activation status
    */
   private _activated: boolean = false;
 
   /**
    * @private
    *
+   * Flag that allows arrows usage to flip items
    * @type {boolean}
-   * flag that allows arrows usage to flip items
    */
   private allowArrows: boolean = true;
 
   /**
    * @constructor
    *
-   * @param {HTMLElement[]} nodeList
-   * @param {string} focusedCssClass
-   * @param {boolean} allowArrows
+   * @param {HTMLElement[]} nodeList - the list of iterable HTML-items
+   * @param {string} focusedCssClass - CSS class name that will be set when item is focused
+   * @param {boolean} allowArrows - defines arrows usage. By default Flipper leafs items also via RIGHT/LEFT.
+   * Set false if you dont need this behaviour
    */
   constructor(
     nodeList: HTMLElement[],
@@ -84,6 +85,8 @@ export default class Flipper {
   }
 
   /**
+   * Blocks flipping handlers.
+   * When you do not need keyCodes to be handles set activated state `false`
    * @param {Boolean} value
    */
   public set activated(value) {
@@ -107,7 +110,7 @@ export default class Flipper {
   }
 
   /**
-   * destroys whole module
+   * Destroys whole module
    */
   public destroy(): void {
     this.activated = false;
@@ -117,7 +120,7 @@ export default class Flipper {
   }
 
   /**
-   * drops flipper's iterator cursor
+   * Drops flipper's iterator cursor
    * @see FlipperIterator#dropCursor
    */
   public dropCursor(): void {
@@ -170,14 +173,14 @@ export default class Flipper {
   }
 
   /**
-   * focuses previous flipper iterator item
+   * Focuses previous flipper iterator item
    */
   private flipLeft(): void {
     this.flipperIterator.previous();
   }
 
   /**
-   * focuses next flipper iterator item
+   * Focuses next flipper iterator item
    */
   private flipRight(): void {
     this.flipperIterator.next();
@@ -203,16 +206,13 @@ export default class Flipper {
 
 /**
  * @class FlipperIterator
- * @classdesc standalone iterator above passed similar items. Each next or previous action adds provides CSS-class
+ * @classdesc Standalone iterator above passed similar items. Each next or previous action adds provides CSS-class
  * and sets cursor to this item
- *
- * @property {String} focusedCssClass — user-provided CSS-class name
- * @property {cursor} number — index of focused item
- * @property {HTMLElement[]} items — the list of iterable HTML-items
  */
 class FlipperIterator {
   /**
    * CSS class
+   * user-provided CSS-class name
    */
   private focusedCssClass: string;
 
@@ -229,8 +229,8 @@ class FlipperIterator {
   private items: HTMLElement[] = [];
 
   /**
-   * @param {HTMLElement[]} nodeList
-   * @param {string} focusedCssClass
+   * @param {HTMLElement[]} nodeList — the list of iterable HTML-items
+   * @param {string} focusedCssClass - user-provided CSS-class that will be set in flipping process
    */
   constructor(
     nodeList: HTMLElement[],
@@ -253,7 +253,7 @@ class FlipperIterator {
   }
 
   /**
-   * sets items
+   * Sets items. Can be used when iterable items changed dynamically
    * @param {HTMLElement[]} nodeList
    */
   public setItems(nodeList: HTMLElement[]): void {
