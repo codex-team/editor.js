@@ -1,12 +1,10 @@
 import Module from '../../__module';
 import $ from '../../dom';
 
-import BoldInlineTool from '../../inline-tools/inline-tool-bold';
-import ItalicInlineTool from '../../inline-tools/inline-tool-italic';
-import LinkInlineTool from '../../inline-tools/inline-tool-link';
 import SelectionUtils from '../../selection';
 import _ from '../../utils';
 import {InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings} from '../../../../types';
+import Flipper from '../../flipper';
 
 /**
  * Inline toolbar with actions that modifies selected text fragment
@@ -69,23 +67,15 @@ export default class InlineToolbar extends Module {
   private buttonsList: NodeList = null;
 
   /**
-   * Visible Buttons
-   * Some Blocks might disable inline tools
-   * @type {HTMLElement[]}
-   */
-  private visibleButtonsList: HTMLElement[] = [];
-
-  /**
-   * Focused button index
-   * @type {number}
-   */
-  private focusedButtonIndex: number = -1;
-
-  /**
    * Cache for Inline Toolbar width
    * @type {number}
    */
   private width: number = 0;
+
+  /**
+   * Instance of class that responses for leafing buttons by arrows/tab
+   */
+  private flipper: Flipper = null;
 
   /**
    * Inline Toolbar Tools
@@ -141,6 +131,12 @@ export default class InlineToolbar extends Module {
      * Recalculate initial width with all buttons
      */
     this.recalculateWidth();
+
+    /**
+     * Allow to leaf buttons by arrows / tab
+     * Buttons will be filled on opening
+     */
+    this.enableFlipper();
   }
 
   /**
@@ -219,47 +215,6 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   * Leaf Inline Tools
-   * @param {string} direction
-   */
-  public leaf(direction: string = 'right'): void {
-    this.visibleButtonsList = (Array.from(this.buttonsList)
-      .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[]);
-
-    if (this.visibleButtonsList.length === 0) {
-      return;
-    }
-
-    this.focusedButtonIndex = $.leafNodesAndReturnIndex(
-      this.visibleButtonsList, this.focusedButtonIndex, direction, this.CSS.focusedButton,
-    );
-  }
-
-  /**
-   * Drops focused button index
-   */
-  public dropFocusedButtonIndex(): void {
-    if (this.focusedButtonIndex === -1) {
-      return;
-    }
-
-    this.visibleButtonsList[this.focusedButtonIndex].classList.remove(this.CSS.focusedButton);
-    this.focusedButtonIndex = -1;
-  }
-
-  /**
-   * Returns Focused button Node
-   * @return {HTMLElement}
-   */
-  public get focusedButton(): HTMLElement {
-    if (this.focusedButtonIndex === -1) {
-      return null;
-    }
-
-    return this.visibleButtonsList[this.focusedButtonIndex];
-  }
-
-  /**
    * Hides Inline Toolbar
    */
   public close(): void {
@@ -272,17 +227,13 @@ export default class InlineToolbar extends Module {
 
     this.opened = false;
 
-    if (this.focusedButtonIndex !== -1) {
-      this.visibleButtonsList[this.focusedButtonIndex].classList.remove(this.CSS.focusedButton);
-      this.focusedButtonIndex = -1;
-    }
+    this.flipper.deactivate();
   }
 
   /**
    * Shows Inline Toolbar
    */
   public open(): void {
-
     /**
      * Filter inline-tools and show only allowed by Block's Tool
      */
@@ -304,6 +255,14 @@ export default class InlineToolbar extends Module {
 
     this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
     this.opened = true;
+
+    /**
+     * Get currently visible buttons to pass it to the Flipper
+     */
+    const visibleTools = Array.from(this.buttonsList)
+      .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[];
+
+    this.flipper.activate(visibleTools);
   }
 
   /**
@@ -564,5 +523,13 @@ export default class InlineToolbar extends Module {
     }
 
     return result;
+  }
+
+  /**
+   * Allow to leaf buttons by arrows / tab
+   * Buttons will be filled on opening
+   */
+  private enableFlipper(): void {
+    this.flipper = new Flipper([], this.CSS.focusedButton, false);
   }
 }
