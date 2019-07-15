@@ -1,4 +1,4 @@
-import Dom from './dom';
+import DomIterator from './domIterator';
 import _ from './utils';
 
 /**
@@ -6,25 +6,16 @@ import _ from './utils';
  */
 export default class Flipper {
   /**
-   * This is a static property that defines flipping direction
-   * @type {{RIGHT: string, LEFT: string}}
-   */
-  public static LEAF_DIRECTIONS = {
-    RIGHT: 'right',
-    LEFT: 'left',
-  };
-
-  /**
    * Instance of flipper iterator
-   * @type {FlipperIterator|null}
+   * @type {DomIterator|null}
    */
-  private flipperIterator: FlipperIterator = null;
+  private iterator: DomIterator = null;
 
   /**
    * Flag that defines activation status
    * @type {boolean}
    */
-  private _activated: boolean = false;
+  private activated: boolean = false;
 
   /**
    * Flag that allows arrows usage to flip items
@@ -48,7 +39,7 @@ export default class Flipper {
     allowArrows: boolean = true,
   ) {
     this.allowArrows = allowArrows;
-    this.flipperIterator = new FlipperIterator(nodeList, focusedCssClass);
+    this.iterator = new DomIterator(nodeList, focusedCssClass);
 
     /**
      * Listening all keydowns on document and react on TAB/Enter press
@@ -86,10 +77,10 @@ export default class Flipper {
    * @param {HTMLElement[]} items - Some modules (like, InlineToolbar, BlockSettings) might refresh buttons dynamically
    */
   public activate(items?: HTMLElement[]): void {
-    this._activated = true;
+    this.activated = true;
 
     if (items) {
-      this.flipperIterator.setItems(items);
+      this.iterator.setItems(items);
     }
   }
 
@@ -97,7 +88,7 @@ export default class Flipper {
    * Disable tab/arrows handling by flipper
    */
   public deactivate(): void {
-    this._activated = false;
+    this.activated = false;
     this.dropCursor();
   }
 
@@ -106,7 +97,7 @@ export default class Flipper {
    * @return {HTMLElement|null}
    */
   public get currentItem(): HTMLElement|null {
-    return this.flipperIterator.currentItem;
+    return this.iterator.currentItem;
   }
 
   /**
@@ -119,10 +110,10 @@ export default class Flipper {
 
   /**
    * Drops flipper's iterator cursor
-   * @see FlipperIterator#dropCursor
+   * @see DomIterator#dropCursor
    */
   private dropCursor(): void {
-    this.flipperIterator.dropCursor();
+    this.iterator.dropCursor();
   }
 
   /**
@@ -144,7 +135,7 @@ export default class Flipper {
       );
     }
 
-    if (!this._activated || handlingKeyCodeList.indexOf(event.keyCode) === -1) {
+    if (!this.activated || handlingKeyCodeList.indexOf(event.keyCode) === -1) {
       return false;
     }
 
@@ -158,13 +149,13 @@ export default class Flipper {
   private handleTabPress(event: KeyboardEvent): void {
     /** this property defines leaf direction */
     const shiftKey = event.shiftKey,
-      direction = shiftKey ? Flipper.LEAF_DIRECTIONS.LEFT : Flipper.LEAF_DIRECTIONS.RIGHT;
+      direction = shiftKey ? DomIterator.directions.LEFT : DomIterator.directions.RIGHT;
 
     switch (direction) {
-      case Flipper.LEAF_DIRECTIONS.RIGHT:
+      case DomIterator.directions.RIGHT:
         this.flipRight();
         break;
-      case Flipper.LEAF_DIRECTIONS.LEFT:
+      case DomIterator.directions.LEFT:
         this.flipLeft();
         break;
     }
@@ -174,14 +165,14 @@ export default class Flipper {
    * Focuses previous flipper iterator item
    */
   private flipLeft(): void {
-    this.flipperIterator.previous();
+    this.iterator.previous();
   }
 
   /**
    * Focuses next flipper iterator item
    */
   private flipRight(): void {
-    this.flipperIterator.next();
+    this.iterator.next();
   }
 
   /**
@@ -189,168 +180,15 @@ export default class Flipper {
    * @param {KeyboardEvent} event
    */
   private handleEnterPress(event: KeyboardEvent): void {
-    if (!this._activated) {
+    if (!this.activated) {
       return;
     }
 
-    if (this.flipperIterator.currentItem) {
-      this.flipperIterator.currentItem.click();
+    if (this.iterator.currentItem) {
+      this.iterator.currentItem.click();
     }
 
     event.preventDefault();
     event.stopPropagation();
-  }
-}
-
-/**
- * Standalone iterator above passed similar items.
- * Each next or previous action adds provides CSS-class and sets cursor to this item
- */
-class FlipperIterator { // tslint:disable-line max-classes-per-file
-  /**
-   * User-provided CSS-class name for focused button
-   */
-  private focusedCssClass: string;
-
-  /**
-   * Focused button index.
-   * Default is -1 which means nothing is active
-   * @type {number}
-   */
-  private cursor: number = -1;
-
-  /**
-   * Items to flip
-   */
-  private items: HTMLElement[] = [];
-
-  /**
-   * @param {HTMLElement[]} nodeList — the list of iterable HTML-items
-   * @param {string} focusedCssClass - user-provided CSS-class that will be set in flipping process
-   */
-  constructor(
-    nodeList: HTMLElement[],
-    focusedCssClass: string,
-  ) {
-    this.items = nodeList;
-    this.focusedCssClass = focusedCssClass;
-  }
-
-  /**
-   * Returns Focused button Node
-   * @return {HTMLElement}
-   */
-  public get currentItem(): HTMLElement {
-    if (this.cursor === -1) {
-      return null;
-    }
-
-    return this.items[this.cursor];
-  }
-
-  /**
-   * Sets items. Can be used when iterable items changed dynamically
-   * @param {HTMLElement[]} nodeList
-   */
-  public setItems(nodeList: HTMLElement[]): void {
-    this.items = nodeList;
-  }
-
-  /**
-   * Sets cursor next to the current
-   */
-  public next(): void {
-    this.cursor = this.leafNodesAndReturnIndex(Flipper.LEAF_DIRECTIONS.RIGHT);
-  }
-
-  /**
-   * Sets cursor before current
-   */
-  public previous(): void {
-    this.cursor = this.leafNodesAndReturnIndex(Flipper.LEAF_DIRECTIONS.LEFT);
-  }
-
-  /**
-   * Sets cursor to the default position and removes CSS-class from previously focused item
-   */
-  public dropCursor(): void {
-    if (this.cursor === -1) {
-      return;
-    }
-
-    this.items[this.cursor].classList.remove(this.focusedCssClass);
-    this.cursor = -1;
-  }
-
-  /**
-   * Leafs nodes inside the target list from active element
-   *
-   * @param {string} direction - leaf direction. Can be 'left' or 'right'
-   * @return {Number} index of focused node
-   */
-  private leafNodesAndReturnIndex(direction: string): number {
-    let focusedButtonIndex = this.cursor;
-
-    /**
-     * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
-     */
-    if (focusedButtonIndex === -1) {
-      /**
-       * Normalize "previous" Tool index depending on direction.
-       * We need to do this to highlight "first" Tool correctly
-       *
-       * Order of Tools: [0] [1] ... [n - 1]
-       *   [0 = n] because of: n % n = 0 % n
-       *
-       * Direction 'right': for [0] the [n - 1] is a previous index
-       *   [n - 1] -> [0]
-       *
-       * Direction 'left': for [n - 1] the [0] is a previous index
-       *   [n - 1] <- [0]
-       *
-       * @type {number}
-       */
-      focusedButtonIndex = direction === 'right' ? -1 : 0;
-    } else {
-      /**
-       * If we have chosen Tool then remove highlighting
-       */
-      this.items[focusedButtonIndex].classList.remove(this.focusedCssClass);
-    }
-
-    /**
-     * Count index for next Tool
-     */
-    if (direction === 'right') {
-      /**
-       * If we go right then choose next (+1) Tool
-       * @type {number}
-       */
-      focusedButtonIndex = (focusedButtonIndex + 1) % this.items.length;
-    } else {
-      /**
-       * If we go left then choose previous (-1) Tool
-       * Before counting module we need to add length before because of "The JavaScript Modulo Bug"
-       * @type {number}
-       */
-      focusedButtonIndex = (this.items.length + focusedButtonIndex - 1) % this.items.length;
-    }
-
-    if (Dom.isNativeInput(this.items[focusedButtonIndex])) {
-      /**
-       * Focus input
-       */
-      this.items[focusedButtonIndex].focus();
-    }
-
-    /**
-     * Highlight new chosen Tool
-     */
-    this.items[focusedButtonIndex].classList.add(this.focusedCssClass);
-
-    /**
-     * Return focused button's index
-     */
-    return focusedButtonIndex;
   }
 }
