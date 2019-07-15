@@ -117,7 +117,7 @@ export default class DomIterator {
        *
        * @type {number}
        */
-      focusedButtonIndex = direction === 'right' ? -1 : 0;
+      focusedButtonIndex = direction === DomIterator.directions.RIGHT ? -1 : 0;
     } else {
       /**
        * If we have chosen Tool then remove highlighting
@@ -128,7 +128,7 @@ export default class DomIterator {
     /**
      * Count index for next Tool
      */
-    if (direction === 'right') {
+    if (direction === DomIterator.directions.RIGHT) {
       /**
        * If we go right then choose next (+1) Tool
        * @type {number}
