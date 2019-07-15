@@ -82,12 +82,23 @@ export default class Flipper {
   }
 
   /**
-   * Blocks flipping handlers.
-   * When you do not need keyCodes to be handles set activated state `false`
-   * @param {Boolean} value
+   * Active tab/arrows handling by flipper
+   * @param {HTMLElement[]} items - Some modules (like, InlineToolbar, BlockSettings) might refresh buttons dynamically
    */
-  public set activated(value) {
-    this._activated = value;
+  public activate(items?: HTMLElement[]): void {
+    this._activated = true;
+
+    if (items) {
+      this.flipperIterator.setItems(items);
+    }
+  }
+
+  /**
+   * Disable tab/arrows handling by flipper
+   */
+  public deactivate(): void {
+    this._activated = false;
+    this.dropCursor();
   }
 
   /**
@@ -99,19 +110,18 @@ export default class Flipper {
   }
 
   /**
-   * Updates flipper iterators iterable list
-   * Some modules (like, InlineToolbar, BlockSettings) might refresh tools dynamically
-   * @param {HTMLElement[]} nodeList
+   * Focus first item
    */
-  public updateItems(nodeList: HTMLElement[]): void {
-    this.flipperIterator.setItems(nodeList);
+  public focusFirst(): void {
+    this.dropCursor();
+    this.flipRight();
   }
 
   /**
    * Drops flipper's iterator cursor
    * @see FlipperIterator#dropCursor
    */
-  public dropCursor(): void {
+  private dropCursor(): void {
     this.flipperIterator.dropCursor();
   }
 
@@ -152,10 +162,10 @@ export default class Flipper {
 
     switch (direction) {
       case Flipper.LEAF_DIRECTIONS.RIGHT:
-        this.flipperIterator.next();
+        this.flipRight();
         break;
       case Flipper.LEAF_DIRECTIONS.LEFT:
-        this.flipperIterator.previous();
+        this.flipLeft();
         break;
     }
   }

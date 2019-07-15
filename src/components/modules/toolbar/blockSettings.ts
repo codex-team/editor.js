@@ -114,8 +114,7 @@ export default class BlockSettings extends Module {
     /** Tell to subscribers that block settings is opened */
     this.Editor.Events.emit(this.events.opened);
 
-    this.flipper.updateItems(this.blockTunesButtons);
-    this.flipper.activated = true;
+    this.flipper.activate(this.blockTunesButtons);
   }
 
   /**
@@ -135,8 +134,7 @@ export default class BlockSettings extends Module {
     this.buttons = [];
 
     /** Clear focus on active button */
-    this.flipper.activated = false;
-    this.flipper.dropCursor();
+    this.flipper.deactivate();
   }
 
   /**

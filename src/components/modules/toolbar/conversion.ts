@@ -82,6 +82,11 @@ export default class ConversionToolbar extends Module {
       return;
     }
 
+    /**
+     * Mark current block's button with color
+     */
+    this.highlightActiveTool(block.name);
+
     this.move(block);
 
     if (!this.opened) {
@@ -94,7 +99,8 @@ export default class ConversionToolbar extends Module {
    */
   public open(): void {
     this.opened = true;
-    this.flipper.activated = true;
+    this.flipper.activate();
+    this.flipper.focusFirst();
     this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
   }
 
@@ -103,8 +109,7 @@ export default class ConversionToolbar extends Module {
    */
   public close(): void {
     this.opened = false;
-    this.flipper.activated = false;
-    this.flipper.dropCursor();
+    this.flipper.deactivate();
     this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
   }
 
@@ -260,6 +265,24 @@ export default class ConversionToolbar extends Module {
     this.Editor.Listeners.on(tool, 'click', async () => {
       await this.replaceWithBlock(toolName);
     });
+  }
+
+  /**
+   * Marks current Blocks button with highlighting color
+   */
+  private highlightActiveTool(toolName: string): void {
+    if (!this.tools[toolName]) {
+      return;
+    }
+
+    /**
+     * Drop previous active button
+     */
+    Object.values(this.tools).forEach((el) => {
+      el.classList.remove(ConversionToolbar.CSS.conversionToolActive);
+    });
+
+    this.tools[toolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
   }
 
   /**

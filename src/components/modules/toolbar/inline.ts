@@ -227,8 +227,7 @@ export default class InlineToolbar extends Module {
 
     this.opened = false;
 
-    this.flipper.activated = false;
-    this.flipper.dropCursor();
+    this.flipper.deactivate();
   }
 
   /**
@@ -263,8 +262,7 @@ export default class InlineToolbar extends Module {
     const visibleTools = Array.from(this.buttonsList)
       .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[];
 
-    this.flipper.updateItems(visibleTools);
-    this.flipper.activated = true;
+    this.flipper.activate(visibleTools);
   }
 
   /**
