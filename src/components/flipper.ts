@@ -2,13 +2,12 @@ import Dom from './dom';
 import _ from './utils';
 
 /**
- * @class Flipper
- * @classdesc Flipper is a component that iterates passed items array by TAB or Arrows and clicks it by ENTER
+ * Flipper is a component that iterates passed items array by TAB or Arrows and clicks it by ENTER
  */
 export default class Flipper {
   /**
    * This is a static property that defines flipping direction
-   * @type {{RIGHT: string; LEFT: string}}
+   * @type {{RIGHT: string, LEFT: string}}
    */
   public static LEAF_DIRECTIONS = {
     RIGHT: 'right',
@@ -22,16 +21,12 @@ export default class Flipper {
   private flipperIterator: FlipperIterator = null;
 
   /**
-   * @private
-   *
    * Flag that defines activation status
    * @type {boolean}
    */
   private _activated: boolean = false;
 
   /**
-   * @private
-   *
    * Flag that allows arrows usage to flip items
    * @type {boolean}
    */
@@ -40,10 +35,12 @@ export default class Flipper {
   /**
    * @constructor
    *
-   * @param {HTMLElement[]} nodeList - the list of iterable HTML-items
+   * @param {HTMLElement[]} nodeList - The list of iterable HTML-items
    * @param {string} focusedCssClass - CSS class name that will be set when item is focused
-   * @param {boolean} allowArrows - defines arrows usage. By default Flipper leafs items also via RIGHT/LEFT.
-   * Set false if you dont need this behaviour
+   * @param {boolean} allowArrows - Defines arrows usage. By default Flipper leafs items also via RIGHT/LEFT.
+   *                                Pass 'false' if you don't need this behaviour
+   *                                (for example, Inline Toolbar should be closed by arrows,
+   *                                because it means caret moving with selection clearing)
    */
   constructor(
     nodeList: HTMLElement[],
@@ -94,6 +91,7 @@ export default class Flipper {
   }
 
   /**
+   * Return current focused button
    * @return {HTMLElement|null}
    */
   public get currentItem(): HTMLElement|null {
@@ -107,16 +105,6 @@ export default class Flipper {
    */
   public updateItems(nodeList: HTMLElement[]): void {
     this.flipperIterator.setItems(nodeList);
-  }
-
-  /**
-   * Destroys whole module
-   */
-  public destroy(): void {
-    this.activated = false;
-    this.dropCursor();
-    this.flipperIterator.destroy();
-    this.flipperIterator = null;
   }
 
   /**
@@ -205,14 +193,12 @@ export default class Flipper {
 }
 
 /**
- * @class FlipperIterator
- * @classdesc Standalone iterator above passed similar items. Each next or previous action adds provides CSS-class
- * and sets cursor to this item
+ * Standalone iterator above passed similar items.
+ * Each next or previous action adds provides CSS-class and sets cursor to this item
  */
-class FlipperIterator {
+class FlipperIterator { // tslint:disable-line max-classes-per-file
   /**
-   * CSS class
-   * user-provided CSS-class name
+   * User-provided CSS-class name for focused button
    */
   private focusedCssClass: string;
 
@@ -264,14 +250,14 @@ class FlipperIterator {
    * Sets cursor next to the current
    */
   public next(): void {
-    this.cursor = this.leafNodesAndReturnIndex(this.cursor, Flipper.LEAF_DIRECTIONS.RIGHT);
+    this.cursor = this.leafNodesAndReturnIndex(Flipper.LEAF_DIRECTIONS.RIGHT);
   }
 
   /**
    * Sets cursor before current
    */
   public previous(): void {
-    this.cursor = this.leafNodesAndReturnIndex(this.cursor, Flipper.LEAF_DIRECTIONS.LEFT);
+    this.cursor = this.leafNodesAndReturnIndex(Flipper.LEAF_DIRECTIONS.LEFT);
   }
 
   /**
@@ -287,29 +273,18 @@ class FlipperIterator {
   }
 
   /**
-   * Destroys instance properties
-   */
-  public destroy(): void {
-    this.items = [];
-    this.dropCursor();
-  }
-
-  /**
    * Leafs nodes inside the target list from active element
    *
-   * @param {number} activeIndex — index of active node. By default it must be -1
    * @param {string} direction - leaf direction. Can be 'left' or 'right'
-   *
-   * @return {Number} index of active node
+   * @return {Number} index of focused node
    */
-  private leafNodesAndReturnIndex(
-    activeIndex: number,
-    direction: string,
-  ): number {
+  private leafNodesAndReturnIndex(direction: string): number {
+    let focusedButtonIndex = this.cursor;
+
     /**
      * If activeButtonIndex === -1 then we have no chosen Tool in Toolbox
      */
-    if (activeIndex === -1) {
+    if (focusedButtonIndex === -1) {
       /**
        * Normalize "previous" Tool index depending on direction.
        * We need to do this to highlight "first" Tool correctly
@@ -325,12 +300,12 @@ class FlipperIterator {
        *
        * @type {number}
        */
-      activeIndex = direction === 'right' ? -1 : 0;
+      focusedButtonIndex = direction === 'right' ? -1 : 0;
     } else {
       /**
        * If we have chosen Tool then remove highlighting
        */
-      this.items[activeIndex].classList.remove(this.focusedCssClass);
+      this.items[focusedButtonIndex].classList.remove(this.focusedCssClass);
     }
 
     /**
@@ -341,31 +316,31 @@ class FlipperIterator {
        * If we go right then choose next (+1) Tool
        * @type {number}
        */
-      activeIndex = (activeIndex + 1) % this.items.length;
+      focusedButtonIndex = (focusedButtonIndex + 1) % this.items.length;
     } else {
       /**
        * If we go left then choose previous (-1) Tool
        * Before counting module we need to add length before because of "The JavaScript Modulo Bug"
        * @type {number}
        */
-      activeIndex = (this.items.length + activeIndex - 1) % this.items.length;
+      focusedButtonIndex = (this.items.length + focusedButtonIndex - 1) % this.items.length;
     }
 
-    if (Dom.isNativeInput(this.items[activeIndex])) {
+    if (Dom.isNativeInput(this.items[focusedButtonIndex])) {
       /**
        * Focus input
        */
-      this.items[activeIndex].focus();
+      this.items[focusedButtonIndex].focus();
     }
 
     /**
      * Highlight new chosen Tool
      */
-    this.items[activeIndex].classList.add(this.focusedCssClass);
+    this.items[focusedButtonIndex].classList.add(this.focusedCssClass);
 
     /**
-     * Return Active index
+     * Return focused button's index
      */
-    return activeIndex;
+    return focusedButtonIndex;
   }
 }

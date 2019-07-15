@@ -68,7 +68,7 @@ export default class Toolbox extends Module {
   private displayedToolsCount: number = 0;
 
   /**
-   * Flipper instance
+   * Instance of class that responses for leafing buttons by arrows/tab
    * @type {Flipper|null}
    */
   private flipper: Flipper = null;
@@ -122,6 +122,7 @@ export default class Toolbox extends Module {
     this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
 
     this.opened = false;
+    this.flipper.dropCursor();
     this.flipper.activated = false;
   }
 
@@ -319,7 +320,7 @@ export default class Toolbox extends Module {
    * Creates Flipper instance to be able to leaf tools
    */
   private enableFlipper(): void {
-    const tools = (Array.from(this.nodes.toolbox.childNodes) as HTMLElement[]);
+    const tools = Array.from(this.nodes.toolbox.childNodes) as HTMLElement[];
     this.flipper = new Flipper(tools, this.CSS.toolboxButtonActive);
   }
 

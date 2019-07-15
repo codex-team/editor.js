@@ -45,6 +45,7 @@ export default class ConversionToolbar extends Module {
   private tools: { [key: string]: HTMLElement } = {};
 
   /**
+   * Instance of class that responses for leafing buttons by arrows/tab
    * @type {Flipper|null}
    */
   private flipper: Flipper = null;
@@ -60,6 +61,10 @@ export default class ConversionToolbar extends Module {
      * Add Tools that has 'import' method
      */
     this.addTools();
+
+    /**
+     * Prepare Flipper to be able to leaf tools by arrows/tab
+     */
     this.enableFlipper();
 
     $.append(this.nodes.wrapper, this.nodes.tools);
@@ -258,7 +263,7 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * Enable Flipper to be able to leaf conversion toolbar tools
+   * Prepare Flipper to be able to leaf tools by arrows/tab
    */
   private enableFlipper(): void {
     this.flipper = new Flipper(Object.values(this.tools), ConversionToolbar.CSS.conversionToolFocused);

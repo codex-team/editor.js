@@ -73,7 +73,7 @@ export default class InlineToolbar extends Module {
   private width: number = 0;
 
   /**
-   * Flipper instance
+   * Instance of class that responses for leafing buttons by arrows/tab
    */
   private flipper: Flipper = null;
 
@@ -133,7 +133,8 @@ export default class InlineToolbar extends Module {
     this.recalculateWidth();
 
     /**
-     * Enable flipper to leaf inline Toolbar tools
+     * Allow to leaf buttons by arrows / tab
+     * Buttons will be filled on opening
      */
     this.enableFlipper();
   }
@@ -257,10 +258,10 @@ export default class InlineToolbar extends Module {
     this.opened = true;
 
     /**
-     * @type {HTMLElement[]}
+     * Get currently visible buttons to pass it to the Flipper
      */
-    const visibleTools = (Array.from(this.buttonsList)
-      .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[]);
+    const visibleTools = Array.from(this.buttonsList)
+      .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[];
 
     this.flipper.updateItems(visibleTools);
     this.flipper.activated = true;
@@ -527,13 +528,10 @@ export default class InlineToolbar extends Module {
   }
 
   /**
-   * Create flipper instance
+   * Allow to leaf buttons by arrows / tab
+   * Buttons will be filled on opening
    */
   private enableFlipper(): void {
-    /**
-     * Create flipper for inline tools
-     * @type {Flipper}
-     */
     this.flipper = new Flipper([], this.CSS.focusedButton, false);
   }
 }

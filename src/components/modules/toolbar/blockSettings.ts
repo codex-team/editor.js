@@ -1,6 +1,5 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import _ from '../../utils';
 import Flipper from '../../flipper';
 
 /**
@@ -69,6 +68,7 @@ export default class BlockSettings extends Module {
   private buttons: HTMLElement[] = [];
 
   /**
+   * Instance of class that responses for leafing buttons by arrows/tab
    * @type {Flipper|null}
    */
   private flipper: Flipper = null;
@@ -88,7 +88,10 @@ export default class BlockSettings extends Module {
 
     $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
 
-    /** Enable flipper */
+    /**
+     * Active leafing by arrows/tab
+     * Buttons will be filled on opening
+     */
     this.enableFlipper();
   }
 
@@ -180,7 +183,8 @@ export default class BlockSettings extends Module {
   }
 
   /**
-   * Enable Flipper
+   * Active leafing by arrows/tab
+   * Buttons will be filled on opening
    */
   private enableFlipper(): void {
     this.flipper = new Flipper([], this.CSS.focusedButton);
