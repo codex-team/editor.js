@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.16
+
+- `Refactoring` — Constants of tools settings separated by internal and external to correspond API
+- `Refactoring` — Created universal Flipper class that responses for navigation by keyboard inside of any Toolbars
+
 ### 2.15
 
 - `New` — New [`blocks.insert()`](api.md) API method [#715](https://github.com/codex-team/editor.js/issues/715).  

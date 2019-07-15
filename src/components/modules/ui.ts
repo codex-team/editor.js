@@ -187,6 +187,17 @@ export default class UI extends Module {
   }
 
   /**
+   * Check if one of Toolbar is opened
+   * Used to prevent global keydowns (for example, Enter) conflicts with Enter-on-toolbar
+   * @return {boolean}
+   */
+  public get someToolbarOpened() {
+    const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+
+    return BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbox.opened;
+  }
+
+  /**
    * Clean editor`s UI
    */
   public destroy(): void {
@@ -373,66 +384,8 @@ export default class UI extends Module {
    * @param event
    */
   private enterPressed(event: KeyboardEvent): void {
-    const { BlockManager, BlockSelection, Caret, BlockSettings, ConversionToolbar } = this.Editor;
+    const { BlockManager, BlockSelection, Caret } = this.Editor;
     const hasPointerToBlock = BlockManager.currentBlockIndex >= 0;
-
-    /**
-     * If Block Settings is opened and have some active button
-     * Enter press is fired as out of the Block and that's why
-     * we handle it here
-     */
-    if (BlockSettings.opened && BlockSettings.focusedButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      /** Click on settings button */
-      BlockSettings.focusedButton.click();
-
-      /**
-       * Focused button can be deleted by click, for example with 'Remove Block' api
-       */
-      if (BlockSettings.focusedButton) {
-        /**
-         * Add animation on click
-         */
-        BlockSettings.focusedButton.classList.add(BlockSettings.CSS.focusedButtonAnimated);
-
-        /**
-         * Remove animation class
-         */
-        _.delay( () => {
-          if (BlockSettings.focusedButton) {
-            BlockSettings.focusedButton.classList.remove(BlockSettings.CSS.focusedButtonAnimated);
-          }
-        }, 280)();
-      }
-
-      /**
-       * Restoring focus on current Block
-       *
-       * After changing Block state (when settings clicked, for example)
-       * Block's content points to the Node that is not in DOM, that's why we can not
-       * set caret and leaf next (via Tab)
-       *
-       * For that set cursor via Caret module to the current Block's content
-       * after some timeout
-       */
-      _.delay( () => {
-        Caret.setToBlock(BlockManager.currentBlock);
-      }, 10)();
-
-      return;
-    }
-
-    if (ConversionToolbar.opened && ConversionToolbar.focusedButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      ConversionToolbar.focusedButton.click();
-      return;
-    }
 
     if (BlockSelection.anyBlockSelected) {
       const selectionPositionIndex = BlockManager.removeSelectedBlocks();
@@ -459,7 +412,7 @@ export default class UI extends Module {
      * So, BlockManager points some Block and Enter press is on Body
      * We can create a new block
      */
-    if (hasPointerToBlock && (event.target as HTMLElement).tagName === 'BODY') {
+    if (!this.someToolbarOpened && hasPointerToBlock && (event.target as HTMLElement).tagName === 'BODY') {
       /**
        * Insert initial typed Block
        */
@@ -487,6 +440,13 @@ export default class UI extends Module {
    * @param {MouseEvent} event - Click
    */
   private documentClicked(event: MouseEvent): void {
+    /**
+     * Sometimes we emulate click on some UI elements, for example by Enter on Block Settings button
+     * We don't need to handle such events, because they handled in other place.
+     */
+    if (!event.isTrusted) {
+      return;
+    }
     /**
      * Close Inline Toolbar when nothing selected
      * Do not fire check on clicks at the Inline Toolbar buttons
