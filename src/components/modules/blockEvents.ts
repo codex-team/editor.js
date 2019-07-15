@@ -101,7 +101,7 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const { InlineToolbar, ConversionToolbar, UI, BlockManager } = this.Editor;
+    const { InlineToolbar, ConversionToolbar, UI, BlockManager, BlockSettings } = this.Editor;
     const block = BlockManager.getBlock(event.target);
 
     /**
@@ -110,6 +110,7 @@ export default class BlockEvents extends Module {
      */
     if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
       InlineToolbar.close();
+      BlockSettings.close();
       ConversionToolbar.tryToShow(block);
     } else {
       ConversionToolbar.close();
@@ -180,36 +181,24 @@ export default class BlockEvents extends Module {
      */
     this.Editor.BlockSelection.clearSelection(event);
 
-    const { BlockManager, Tools, ConversionToolbar, InlineToolbar } = this.Editor;
+    const { BlockManager, Tools, InlineToolbar, ConversionToolbar } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
 
     if (!currentBlock) {
       return;
     }
 
-    /** Prevent Default behaviour */
-    event.preventDefault();
-    event.stopPropagation();
-
-    /** this property defines leaf direction */
-    const shiftKey = event.shiftKey,
-      direction = shiftKey ? 'left' : 'right';
-
-    const canLeafToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
-    const canLeafInlineToolbar = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
-    const canLeafConversionToolbar = !currentBlock.isEmpty && ConversionToolbar.opened;
+    const canOpenToolbox = Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty;
+    const conversionToolbarOpened = !currentBlock.isEmpty && ConversionToolbar.opened;
+    const inlineToolbarOpened = !currentBlock.isEmpty && !SelectionUtils.isCollapsed && InlineToolbar.opened;
 
     /**
-     * For empty Blocks we show Plus button via Toobox only for initial Blocks
+     * For empty Blocks we show Plus button via Toolbox only for initial Blocks
      */
-    if (canLeafToolbox) {
-      this.leafToolboxTools(direction);
-    } else if (canLeafInlineToolbar) {
-      this.leafInlineToolbarTools(direction);
-    } else if (canLeafConversionToolbar) {
-      this.leafConversionToolbarTools(direction);
-    } else {
-      this.leafBlockSettingsTools(direction);
+    if (canOpenToolbox) {
+      this.activateToolbox();
+    } else if (!conversionToolbarOpened && !inlineToolbarOpened) {
+      this.activateBlockSettings();
     }
   }
 
@@ -231,6 +220,8 @@ export default class BlockEvents extends Module {
       this.Editor.BlockSettings.close();
     } else if (this.Editor.InlineToolbar.opened) {
       this.Editor.InlineToolbar.close();
+    } else if (this.Editor.ConversionToolbar.opened) {
+      this.Editor.ConversionToolbar.close();
     } else {
       this.Editor.Toolbar.close();
     }
@@ -314,7 +305,7 @@ export default class BlockEvents extends Module {
    * @param {KeyboardEvent} event - keydown
    */
   private enter(event: KeyboardEvent): void {
-    const { BlockManager, Toolbox, BlockSettings, InlineToolbar, ConversionToolbar, Tools } = this.Editor;
+    const { BlockManager, Tools, UI } = this.Editor;
     const currentBlock = BlockManager.currentBlock;
     const tool = Tools.available[currentBlock.name];
 
@@ -322,29 +313,14 @@ export default class BlockEvents extends Module {
      * Don't handle Enter keydowns when Tool sets enableLineBreaks to true.
      * Uses for Tools like <code> where line breaks should be handled by default behaviour.
      */
-    if (tool
-      && tool[Tools.INTERNAL_SETTINGS.IS_ENABLED_LINE_BREAKS]
-      && !BlockSettings.opened
-      && !InlineToolbar.opened
-      && !ConversionToolbar.opened) {
+    if (tool && tool[Tools.INTERNAL_SETTINGS.IS_ENABLED_LINE_BREAKS]) {
       return;
     }
 
-    if (Toolbox.opened && Toolbox.getActiveTool) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      Toolbox.toolButtonActivate(event, Toolbox.getActiveTool);
-      return;
-    }
-
-    if (InlineToolbar.opened && InlineToolbar.focusedButton) {
-      event.preventDefault();
-      event.stopPropagation();
-      event.stopImmediatePropagation();
-
-      InlineToolbar.focusedButton.click();
+    /**
+     * Opened Toolbars uses Flipper with own Enter handling
+     */
+    if (UI.someToolbarOpened) {
       return;
     }
 
@@ -388,8 +364,6 @@ export default class BlockEvents extends Module {
     }
 
     event.preventDefault();
-    event.stopPropagation();
-    event.stopImmediatePropagation();
   }
 
   /**
@@ -502,6 +476,13 @@ export default class BlockEvents extends Module {
    * Handle right and down keyboard keys
    */
   private arrowRightAndDown(event: KeyboardEvent): void {
+    /**
+     * Arrows might be handled on toolbars by flipper
+     */
+    if (this.Editor.UI.someToolbarOpened) {
+      return;
+    }
+
     const shouldEnableCBS = this.Editor.Caret.isAtEnd || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.DOWN && shouldEnableCBS) {
@@ -536,6 +517,13 @@ export default class BlockEvents extends Module {
    * Handle left and up keyboard keys
    */
   private arrowLeftAndUp(event: KeyboardEvent): void {
+    /**
+     * Arrows might be handled on toolbars by flipper
+     */
+    if (this.Editor.UI.someToolbarOpened) {
+      return;
+    }
+
     const shouldEnableCBS = this.Editor.Caret.isAtStart || this.Editor.BlockSelection.anyBlockSelected;
 
     if (event.shiftKey && event.keyCode === _.keyCodes.UP && shouldEnableCBS) {
@@ -598,46 +586,20 @@ export default class BlockEvents extends Module {
 
   /**
    * If Toolbox is not open, then just open it and show plus button
-   * Next Tab press will leaf Toolbox Tools
-   *
-   * @param {string} direction
    */
-  private leafToolboxTools(direction: string): void {
+  private activateToolbox(): void {
     if (!this.Editor.Toolbar.opened) {
       this.Editor.Toolbar.open(false , false);
       this.Editor.Toolbar.plusButton.show();
-    } else {
-      this.Editor.Toolbox.leaf(direction);
     }
 
     this.Editor.Toolbox.open();
   }
 
   /**
-   * If InlineToolbar is not open, just open it and focus first button
-   * Next Tab press will leaf InlineToolbar Tools
-   *
-   * @param {string} direction
-   */
-  private leafInlineToolbarTools(direction: string): void {
-    if (this.Editor.InlineToolbar.opened) {
-      this.Editor.InlineToolbar.leaf(direction);
-    }
-  }
-
-  /**
-   * Leaf Conversion Toolbar Tools
-   * @param {string} direction
-   */
-  private leafConversionToolbarTools(direction: string): void {
-    this.Editor.ConversionToolbar.leaf(direction);
-  }
-
-  /**
    * Open Toolbar and show BlockSettings before flipping Tools
-   * @param {string} direction
    */
-  private leafBlockSettingsTools(direction: string): void {
+  private activateBlockSettings(): void {
     if (!this.Editor.Toolbar.opened) {
       this.Editor.BlockManager.currentBlock.focused = true;
       this.Editor.Toolbar.open(true, false);
@@ -651,7 +613,5 @@ export default class BlockEvents extends Module {
     if (!this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.open();
     }
-
-    this.Editor.BlockSettings.leaf(direction);
   }
 }

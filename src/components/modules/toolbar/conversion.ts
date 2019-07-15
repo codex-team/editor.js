@@ -4,6 +4,7 @@ import {BlockToolConstructable} from '../../../../types';
 import _ from '../../utils';
 import {SavedData} from '../../../types-internal/block-data';
 import Block from '../../block';
+import Flipper from '../../flipper';
 
 /**
  * Block Converter
@@ -39,16 +40,15 @@ export default class ConversionToolbar extends Module {
   public opened: boolean = false;
 
   /**
-   * Focused button index
-   * -1 equals no chosen Tool
-   * @type {number}
-   */
-  private focusedButtonIndex: number = -1;
-
-  /**
    * Available tools
    */
   private tools: { [key: string]: HTMLElement } = {};
+
+  /**
+   * Instance of class that responses for leafing buttons by arrows/tab
+   * @type {Flipper|null}
+   */
+  private flipper: Flipper = null;
 
   /**
    * Create UI of Conversion Toolbar
@@ -61,6 +61,11 @@ export default class ConversionToolbar extends Module {
      * Add Tools that has 'import' method
      */
     this.addTools();
+
+    /**
+     * Prepare Flipper to be able to leaf tools by arrows/tab
+     */
+    this.enableFlipper();
 
     $.append(this.nodes.wrapper, this.nodes.tools);
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
@@ -77,21 +82,10 @@ export default class ConversionToolbar extends Module {
       return;
     }
 
-    const currentToolName = block.name;
-
     /**
-     * Focus current tool in conversion toolbar
+     * Mark current block's button with color
      */
-    if (this.tools[currentToolName]) {
-      /**
-       * Drop previous active button before moving
-       */
-      if (this.focusedButton && this.focusedButton.classList.contains(ConversionToolbar.CSS.conversionToolActive)) {
-        this.focusedButton.classList.remove(ConversionToolbar.CSS.conversionToolActive);
-      }
-
-      this.tools[currentToolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
-    }
+    this.highlightActiveTool(block.name);
 
     this.move(block);
 
@@ -105,6 +99,8 @@ export default class ConversionToolbar extends Module {
    */
   public open(): void {
     this.opened = true;
+    this.flipper.activate();
+    this.flipper.focusFirst();
     this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
   }
 
@@ -113,43 +109,8 @@ export default class ConversionToolbar extends Module {
    */
   public close(): void {
     this.opened = false;
+    this.flipper.deactivate();
     this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
-
-    this.dropFocusedButton();
-  }
-
-  /**
-   * Leaf tools by Tab
-   * @todo use class with tool iterator
-   */
-  public leaf(direction: string = 'right'): void {
-    const toolsElements = (Array.from(this.nodes.tools.childNodes) as HTMLElement[]);
-    this.focusedButtonIndex = $.leafNodesAndReturnIndex(
-      toolsElements, this.focusedButtonIndex, direction, ConversionToolbar.CSS.conversionToolFocused,
-    );
-  }
-
-  /**
-   * Returns focused tool as HTML element
-   * @return {HTMLElement}
-   */
-  public get focusedButton(): HTMLElement {
-    if (this.focusedButtonIndex === -1) {
-      return null;
-    }
-    return (this.nodes.tools.childNodes[this.focusedButtonIndex] as HTMLElement);
-  }
-
-  /**
-   * Drops focused button
-   */
-  public dropFocusedButton() {
-    Object.values(this.tools).forEach( (tool) => {
-      (tool as HTMLElement).classList
-        .remove(ConversionToolbar.CSS.conversionToolActive, ConversionToolbar.CSS.conversionToolFocused);
-    });
-
-    this.focusedButtonIndex = -1;
   }
 
   /**
@@ -304,5 +265,30 @@ export default class ConversionToolbar extends Module {
     this.Editor.Listeners.on(tool, 'click', async () => {
       await this.replaceWithBlock(toolName);
     });
+  }
+
+  /**
+   * Marks current Blocks button with highlighting color
+   */
+  private highlightActiveTool(toolName: string): void {
+    if (!this.tools[toolName]) {
+      return;
+    }
+
+    /**
+     * Drop previous active button
+     */
+    Object.values(this.tools).forEach((el) => {
+      el.classList.remove(ConversionToolbar.CSS.conversionToolActive);
+    });
+
+    this.tools[toolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
+  }
+
+  /**
+   * Prepare Flipper to be able to leaf tools by arrows/tab
+   */
+  private enableFlipper(): void {
+    this.flipper = new Flipper(Object.values(this.tools), ConversionToolbar.CSS.conversionToolFocused);
   }
 }

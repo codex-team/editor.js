@@ -2,6 +2,7 @@ import Module from '../../__module';
 import $ from '../../dom';
 import _ from '../../utils';
 import {BlockToolConstructable} from '../../../../types';
+import Flipper from '../../flipper';
 
 /**
  * @class Toolbox
@@ -34,33 +35,12 @@ export default class Toolbox extends Module {
   }
 
   /**
-   * get tool name when it is selected
-   * In case when nothing selected returns null
-   *
-   * @return {String|null}
-   */
-  public get getActiveTool(): string {
-    const childNodes = this.nodes.toolbox.childNodes;
-
-    if (this.activeButtonIndex === -1) {
-      return null;
-    }
-
-    return (childNodes[this.activeButtonIndex] as HTMLElement).dataset.tool;
-  }
-
-  /**
    * Returns True if Toolbox is Empty and nothing to show
    * @return {boolean}
    */
   public get isEmpty(): boolean {
     return this.displayedToolsCount === 0;
   }
-
-  private static LEAF_DIRECTIONS = {
-    RIGHT: 'right',
-    LEFT: 'left',
-  };
 
   /**
    * Opening state
@@ -82,17 +62,16 @@ export default class Toolbox extends Module {
   };
 
   /**
-   * Active button index
-   * -1 equals no chosen Tool
-   * @type {number}
-   */
-  private activeButtonIndex: number = -1;
-
-  /**
    * How many tools displayed in Toolbox
    * @type {number}
    */
   private displayedToolsCount: number = 0;
+
+  /**
+   * Instance of class that responses for leafing buttons by arrows/tab
+   * @type {Flipper|null}
+   */
+  private flipper: Flipper = null;
 
   /**
    * Makes the Toolbox
@@ -103,6 +82,7 @@ export default class Toolbox extends Module {
 
     this.addTools();
     this.addTooltip();
+    this.enableFlipper();
   }
 
   /**
@@ -129,6 +109,7 @@ export default class Toolbox extends Module {
     this.nodes.toolbox.classList.add(this.CSS.toolboxOpened);
 
     this.opened = true;
+    this.flipper.activate();
   }
 
   /**
@@ -141,16 +122,7 @@ export default class Toolbox extends Module {
     this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
 
     this.opened = false;
-
-    /**
-     * Remove active item pointer
-     */
-    if (this.activeButtonIndex !== -1) {
-      (this.nodes.toolbox.childNodes[this.activeButtonIndex] as HTMLElement)
-        .classList.remove(this.CSS.toolboxButtonActive);
-
-      this.activeButtonIndex = -1;
-    }
+    this.flipper.deactivate();
   }
 
   /**
@@ -162,18 +134,6 @@ export default class Toolbox extends Module {
     } else {
       this.close();
     }
-  }
-
-  /**
-   * Leaf
-   * flip through the toolbox items
-   * @param {String} direction - leaf direction, right is default
-   */
-  public leaf(direction: string = Toolbox.LEAF_DIRECTIONS.RIGHT): void {
-    const childNodes = (Array.from(this.nodes.toolbox.childNodes) as HTMLElement[]);
-    this.activeButtonIndex = $.leafNodesAndReturnIndex(
-      childNodes, this.activeButtonIndex, direction, this.CSS.toolboxButtonActive,
-    );
   }
 
   /**
@@ -353,6 +313,14 @@ export default class Toolbox extends Module {
         this.insertNewBlock(tool, toolName);
       },
     });
+  }
+
+  /**
+   * Creates Flipper instance to be able to leaf tools
+   */
+  private enableFlipper(): void {
+    const tools = Array.from(this.nodes.toolbox.childNodes) as HTMLElement[];
+    this.flipper = new Flipper(tools, this.CSS.toolboxButtonActive);
   }
 
   /**

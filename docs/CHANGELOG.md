@@ -3,6 +3,7 @@
 ### 2.16
 
 - `Refactoring` — Constants of tools settings separated by internal and external to correspond API
+- `Refactoring` — Created universal Flipper class that responses for navigation by keyboard inside of any Toolbars
 
 ### 2.15
 
