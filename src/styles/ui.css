@@ -96,7 +96,7 @@
  * Set color for native selection
  */
 ::selection{
-  background-color: var(--selectionColor);
+  background-color: var(--inlineSelectionColor);
 }
 
 .codex-editor--toolbox-opened [contentEditable=true][data-placeholder]:focus::before {
