@@ -82,7 +82,7 @@ export default class BlockEvents extends Module {
 
       if (!isShortcut) {
         this.Editor.BlockManager.clearFocused();
-        this.Editor.BlockSelection.clearSelection(event, true);
+        this.Editor.BlockSelection.clearSelection(event);
       }
     }
   }
@@ -170,7 +170,7 @@ export default class BlockEvents extends Module {
      * Each mouse down on Block must disable selectAll state
      */
     if (!SelectionUtils.isCollapsed) {
-      this.Editor.BlockSelection.setNeedToSelectAllState(false);
+      this.Editor.BlockSelection.clearSelection(event);
     }
     this.Editor.CrossBlockSelection.watchSelection(event);
   }
