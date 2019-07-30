@@ -149,7 +149,7 @@ Then require this script.
 
 ### Save sources to project
 
-Copy [editor.js](build/editor.js) file to your project and load it.
+Copy [editor.js](dist/editor.js) file to your project and load it.
 
 ```html
 <script src="editor.js"></script>
