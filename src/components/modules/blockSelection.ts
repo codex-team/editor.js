@@ -254,6 +254,13 @@ export default class BlockSelection extends Module {
   }
 
   /**
+   * @param {boolean} state
+   */
+  public setNeedToSelectAllState(state: boolean): void {
+    this.needToSelectAll = state;
+  }
+
+  /**
    * First CMD+A selects all input content by native behaviour,
    * next CMD+A keypress selects all blocks
    *

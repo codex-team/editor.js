@@ -166,6 +166,12 @@ export default class BlockEvents extends Module {
    * @param {MouseEvent} event
    */
   public mouseDown(event: MouseEvent): void {
+    /**
+     * Each mouse down on Block must disable selectAll state
+     */
+    if (!SelectionUtils.isCollapsed) {
+      this.Editor.BlockSelection.setNeedToSelectAllState(false);
+    }
     this.Editor.CrossBlockSelection.watchSelection(event);
   }
 
