@@ -96,12 +96,17 @@ export default class InlineToolbar extends Module {
     if (!this.toolsInstances || this.toolsInstances.size === 0) {
       const allTools = this.inlineTools;
 
-      this.toolsInstances = new Map();
-      for (const tool in allTools) {
-        if (allTools.hasOwnProperty(tool)) {
-          this.toolsInstances.set(tool, allTools[tool]);
-        }
-      }
+      const orderedTools = new Map();
+
+      // get the user order specifications
+      const order = this.config.tools.header.inlineToolbar;
+
+      // iterate through the list of user specified tools
+      order.map((tool: string) => {
+        orderedTools.set(tool, allTools[tool]);
+      });
+
+      this.toolsInstances = new Map([...orderedTools, ...Object.entries(allTools)]);
     }
 
     return this.toolsInstances;
