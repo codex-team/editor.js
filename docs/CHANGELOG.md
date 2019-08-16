@@ -6,6 +6,7 @@
 - `Refactoring` — Created universal Flipper class that responses for navigation by keyboard inside of any Toolbars
 - `Fix` — First CMD+A on block with now uses default behaviour. Fixed problem with second CMD+A after selection clearing [#827](https://github.com/codex-team/editor.js/issues/827)
 - `Improvements` — Style of inline selection and selected blocks improved
+- `Fix` - Fixed problem when property 'observer' in modificationObserver is not defined
 
 ### 2.15
 

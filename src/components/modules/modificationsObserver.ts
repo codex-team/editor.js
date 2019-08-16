@@ -47,7 +47,9 @@ export default class ModificationsObserver extends Module {
    */
   public destroy() {
     this.mutationDebouncer = null;
-    this.observer.disconnect();
+    if (this.observer) {
+      this.observer.disconnect();
+    }
     this.observer = null;
     this.nativeInputs.forEach((input) => this.Editor.Listeners.off(input, 'input', this.mutationDebouncer));
   }
