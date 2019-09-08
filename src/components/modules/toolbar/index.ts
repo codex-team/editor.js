@@ -1,5 +1,6 @@
 import Module from '../../__module';
 import $ from '../../dom';
+import _ from '../../utils';
 
 /**
  *
@@ -229,7 +230,7 @@ export default class Toolbar extends Module {
    *                                      This flag allows to open Toolbar with Toolbox
    */
   public open(withBlockActions: boolean = true, needToCloseToolbox: boolean = true): void {
-    setTimeout(() => {
+    _.delay(() => {
       this.move(needToCloseToolbox);
       this.nodes.wrapper.classList.add(this.CSS.toolbarOpened);
 
@@ -238,7 +239,7 @@ export default class Toolbar extends Module {
       } else {
         this.blockActions.hide();
       }
-    }, 50);
+    }, 50)();
   }
 
   /**

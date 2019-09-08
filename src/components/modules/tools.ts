@@ -65,7 +65,7 @@ export default class Tools extends Module {
     }
 
     const tools = Object.entries(this.available).filter( ([name, tool]) => {
-      if (!tool[this.apiSettings.IS_INLINE]) {
+      if (!tool[this.INTERNAL_SETTINGS.IS_INLINE]) {
         return false;
       }
 
@@ -108,7 +108,7 @@ export default class Tools extends Module {
   public get blockTools(): {[name: string]: BlockToolConstructable} {
     // eslint-disable-next-line no-unused-vars
     const tools = Object.entries(this.available).filter( ([name, tool]) => {
-      return !tool[this.apiSettings.IS_INLINE];
+      return !tool[this.INTERNAL_SETTINGS.IS_INLINE];
     });
 
     /**
@@ -122,21 +122,32 @@ export default class Tools extends Module {
   }
 
   /**
-   * Constant for available Tools Settings
-   * @todo separate internal and external options
+   * Constant for available Tools internal settings provided by Tool developer
+   *
    * @return {object}
    */
-  public get apiSettings() {
+  public get INTERNAL_SETTINGS() {
     return {
-      CONFIG: 'config',
-      IS_ENABLED_INLINE_TOOLBAR: 'inlineToolbar',
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_INLINE: 'isInline',
-      IS_PASTE_DISALLOWED: 'disallowPaste',
       SHORTCUT: 'shortcut',
       TOOLBOX: 'toolbox',
       SANITIZE_CONFIG: 'sanitize',
       CONVERSION_CONFIG: 'conversionConfig',
+    };
+  }
+
+  /**
+   * Constant for available Tools settings provided by user
+   *
+   * return {object}
+   */
+  public get USER_SETTINGS() {
+    return {
+      SHORTCUT: 'shortcut',
+      TOOLBOX: 'toolbox',
+      ENABLED_INLINE_TOOLS: 'inlineToolbar',
+      CONFIG: 'config',
     };
   }
 
@@ -304,7 +315,7 @@ export default class Tools extends Module {
     /**
      * Configuration to be passed to the Tool's constructor
      */
-    const config = this.toolsSettings[tool][this.apiSettings.CONFIG] || {};
+    const config = this.toolsSettings[tool][this.USER_SETTINGS.CONFIG] || {};
 
     // Pass placeholder to initial Block config
     if (tool === this.config.initialBlock && !config.placeholder) {
@@ -336,7 +347,7 @@ export default class Tools extends Module {
      */
     const constructorOptions = {
       api: this.Editor.API.methods,
-      config: toolSettings[this.apiSettings.CONFIG] || {},
+      config: (toolSettings[this.USER_SETTINGS.CONFIG] || {}) as ToolSettings,
     };
 
     return new tool(constructorOptions) as InlineTool;
@@ -382,7 +393,7 @@ export default class Tools extends Module {
             function: toolClass.prepare,
             data: {
               toolName,
-              config: this.toolsSettings[toolName][this.apiSettings.CONFIG],
+              config: this.toolsSettings[toolName][this.USER_SETTINGS.CONFIG],
             },
           });
         } else {
