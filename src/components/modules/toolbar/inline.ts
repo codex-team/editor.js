@@ -530,6 +530,9 @@ export default class InlineToolbar extends Module {
    * Buttons will be filled on opening
    */
   private enableFlipper(): void {
-    this.flipper = new Flipper([], this.CSS.focusedButton, false);
+    this.flipper = new Flipper({
+      focusedItemClass: this.CSS.focusedButton,
+      allowArrows: false,
+    });
   }
 }

@@ -2,6 +2,37 @@ import DomIterator from './domIterator';
 import _ from './utils';
 
 /**
+ * Flipper construction options
+ */
+export interface FlipperOptions {
+  /**
+   * CSS-modifier for focused item
+   */
+  focusedItemClass?: string;
+
+  /**
+   * If flipping items are the same for all Block (for ex. Toolbox), ypu can pass it on constructing
+   */
+  items?: HTMLElement[];
+
+  /**
+   * Defines arrows usage. By default Flipper leafs items also via RIGHT/LEFT.
+   *
+   * true by default
+   *
+   * Pass 'false' if you don't need this behaviour
+   * (for example, Inline Toolbar should be closed by arrows,
+   * because it means caret moving with selection clearing)
+   */
+  allowArrows?: boolean;
+
+  /**
+   * Optional callback for button click
+   */
+  activateCallback?: () => void;
+}
+
+/**
  * Flipper is a component that iterates passed items array by TAB or Arrows and clicks it by ENTER
  */
 export default class Flipper {
@@ -9,7 +40,7 @@ export default class Flipper {
    * Instance of flipper iterator
    * @type {DomIterator|null}
    */
-  private iterator: DomIterator = null;
+  private readonly iterator: DomIterator = null;
 
   /**
    * Flag that defines activation status
@@ -21,25 +52,23 @@ export default class Flipper {
    * Flag that allows arrows usage to flip items
    * @type {boolean}
    */
-  private allowArrows: boolean = true;
+  private readonly allowArrows: boolean = true;
+
+  /**
+   * Call back for button click/enter
+   */
+  private readonly activateCallback: () => void;
 
   /**
    * @constructor
    *
-   * @param {HTMLElement[]} nodeList - The list of iterable HTML-items
-   * @param {string} focusedCssClass - CSS class name that will be set when item is focused
-   * @param {boolean} allowArrows - Defines arrows usage. By default Flipper leafs items also via RIGHT/LEFT.
-   *                                Pass 'false' if you don't need this behaviour
-   *                                (for example, Inline Toolbar should be closed by arrows,
-   *                                because it means caret moving with selection clearing)
+   * @param {FlipperOptions} options - different constructing settings
+   * @
    */
-  constructor(
-    nodeList: HTMLElement[],
-    focusedCssClass: string,
-    allowArrows: boolean = true,
-  ) {
-    this.allowArrows = allowArrows;
-    this.iterator = new DomIterator(nodeList, focusedCssClass);
+  constructor(options: FlipperOptions) {
+    this.allowArrows =  typeof options.allowArrows === 'boolean' ? options.allowArrows : true;
+    this.iterator = new DomIterator(options.items, options.focusedItemClass);
+    this.activateCallback = options.activateCallback;
 
     /**
      * Listening all keydowns on document and react on TAB/Enter press
@@ -186,6 +215,10 @@ export default class Flipper {
 
     if (this.iterator.currentItem) {
       this.iterator.currentItem.click();
+    }
+
+    if (typeof this.activateCallback === 'function') {
+      this.activateCallback();
     }
 
     event.preventDefault();
