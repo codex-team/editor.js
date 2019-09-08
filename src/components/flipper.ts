@@ -36,6 +36,7 @@ export interface FlipperOptions {
  * Flipper is a component that iterates passed items array by TAB or Arrows and clicks it by ENTER
  */
 export default class Flipper {
+
   /**
    * Instance of flipper iterator
    * @type {DomIterator|null}
@@ -82,7 +83,13 @@ export default class Flipper {
         return;
       }
 
-      event.preventDefault();
+      /**
+       * Prevent only used keys default behaviour
+       * (allows to navigate by ARROW DOWN, for example)
+       */
+      if (Flipper.usedKeys.includes(event.keyCode)) {
+        event.preventDefault();
+      }
 
       switch (event.keyCode) {
         case _.keyCodes.TAB:
@@ -99,6 +106,21 @@ export default class Flipper {
           break;
       }
     }, false);
+  }
+
+  /**
+   * Array of keys (codes) that is handled by Flipper
+   * Used to:
+   *  - preventDefault only for this keys, not all keywdowns (@see constructor)
+   *  - to skip external behaviours only for these keys, when filler is activated (@see BlockEvents@arrowRightAndDown)
+   */
+  public static get usedKeys(): number[] {
+    return [
+      _.keyCodes.TAB,
+      _.keyCodes.LEFT,
+      _.keyCodes.RIGHT,
+      _.keyCodes.ENTER,
+    ];
   }
 
   /**
