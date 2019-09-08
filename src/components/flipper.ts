@@ -67,7 +67,7 @@ export default class Flipper {
    * @
    */
   constructor(options: FlipperOptions) {
-    this.allowArrows =  typeof options.allowArrows === 'boolean' ? options.allowArrows : true;
+    this.allowArrows = typeof options.allowArrows === 'boolean' ? options.allowArrows : true;
     this.iterator = new DomIterator(options.items, options.focusedItemClass);
     this.activateCallback = options.activateCallback;
 
