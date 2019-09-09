@@ -1,5 +1,7 @@
 import Module from '../../__module';
 import $ from '../../dom';
+import Flipper, {FlipperOptions} from '../../flipper';
+import _ from '../../utils';
 
 /**
  * Block Settings
@@ -67,9 +69,10 @@ export default class BlockSettings extends Module {
   private buttons: HTMLElement[] = [];
 
   /**
-   * Index of active button
+   * Instance of class that responses for leafing buttons by arrows/tab
+   * @type {Flipper|null}
    */
-  private focusedButtonIndex: number = -1;
+  private flipper: Flipper = null;
 
   /**
    * Panel with block settings with 2 sections:
@@ -85,6 +88,12 @@ export default class BlockSettings extends Module {
     this.nodes.defaultSettings = $.make('div', this.CSS.defaultSettings);
 
     $.append(this.nodes.wrapper, [this.nodes.toolSettings, this.nodes.defaultSettings]);
+
+    /**
+     * Active leafing by arrows/tab
+     * Buttons will be filled on opening
+     */
+    this.enableFlipper();
   }
 
   /**
@@ -105,6 +114,8 @@ export default class BlockSettings extends Module {
 
     /** Tell to subscribers that block settings is opened */
     this.Editor.Events.emit(this.events.opened);
+
+    this.flipper.activate(this.blockTunesButtons);
   }
 
   /**
@@ -124,8 +135,7 @@ export default class BlockSettings extends Module {
     this.buttons = [];
 
     /** Clear focus on active button */
-    this.focusedButtonIndex = -1;
-
+    this.flipper.deactivate();
   }
 
   /**
@@ -144,11 +154,8 @@ export default class BlockSettings extends Module {
     const toolSettings = this.nodes.toolSettings.querySelectorAll(`.${this.Editor.StylesAPI.classes.settingsButton}`);
     const defaultSettings = this.nodes.defaultSettings.querySelectorAll(`.${this.CSS.button}`);
 
-    toolSettings.forEach((item, index) => {
+    toolSettings.forEach((item) => {
       this.buttons.push((item as HTMLElement));
-      if (item.classList.contains(this.CSS.focusedButton)) {
-        this.focusedButtonIndex = index;
-      }
     });
 
     defaultSettings.forEach((item) => {
@@ -158,27 +165,6 @@ export default class BlockSettings extends Module {
     return this.buttons;
   }
 
-  /**
-   * Leaf Block Tunes
-   * @param {string} direction
-   */
-  public leaf(direction: string = 'right'): void {
-    this.focusedButtonIndex = $.leafNodesAndReturnIndex(
-      this.blockTunesButtons, this.focusedButtonIndex, direction, this.CSS.focusedButton,
-    );
-  }
-
-  /**
-   * Returns active button HTML element
-   * @return {HTMLElement}
-   */
-  public get focusedButton(): HTMLElement {
-    if (this.focusedButtonIndex === -1) {
-      return null;
-    }
-
-    return (this.buttons[this.focusedButtonIndex] as HTMLElement);
-  }
   /**
    * Add Tool's settings
    */
@@ -193,5 +179,24 @@ export default class BlockSettings extends Module {
    */
   private addDefaultSettings(): void {
     $.append(this.nodes.defaultSettings, this.Editor.BlockManager.currentBlock.renderTunes());
+  }
+
+  /**
+   * Active leafing by arrows/tab
+   * Buttons will be filled on opening
+   */
+  private enableFlipper(): void {
+    this.flipper = new Flipper({
+      focusedItemClass: this.CSS.focusedButton,
+      activateCallback: () => {
+        /**
+         * Restoring focus on current Block after settings clicked.
+         * For example, when H3 changed to H2 — DOM Elements replaced, so we need to focus a new one
+         */
+        _.delay( () => {
+          this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+        }, 10)();
+      },
+    } as FlipperOptions);
   }
 }

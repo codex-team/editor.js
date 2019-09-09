@@ -17,9 +17,6 @@
 
   &--selected &__content {
     background: var(--selectionColor);
-    box-shadow: 0 31px 23px -22px rgba(175, 220, 255, 1);
-    animation: selectionBounce 0.2s 1;
-    animation-fill-mode: forwards;
 
     /**
      * Workaround Safari case when user can select inline-fragment with cross-block-selection
@@ -43,6 +40,7 @@
     position: relative;
     max-width: var(--content-width);
     margin: 0 auto;
+    transition: background-color 150ms ease;
   }
 
   &--drop-target &__content {
