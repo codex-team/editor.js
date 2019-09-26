@@ -4,7 +4,7 @@
 import Module from '../__module';
 import _ from '../utils';
 import SelectionUtils from '../selection';
-import Flipper from "../flipper";
+import Flipper from '../flipper';
 
 export default class BlockEvents extends Module {
 
