@@ -545,8 +545,6 @@ export default class Paste extends Module {
       return [];
     }
 
-    const tool = initialBlock;
-
     return plain
       .split(/\r?\n/)
       .filter((text) => text.trim())
@@ -555,9 +553,18 @@ export default class Paste extends Module {
 
         content.innerHTML = text;
 
-        const event = this.composePasteEvent('tag', {
+        let event = this.composePasteEvent('tag', {
           data: content,
         });
+        let tool = initialBlock;
+
+        if (text.length < this.config.pattern_processing_max_length) {
+          const blockData = this.processPattern(content.textContent);
+          if (blockData) {
+            event = blockData.event;
+            tool = blockData.tool;
+          }
+        }
 
         return {content, tool, isBlock: false, event};
       });
