@@ -208,9 +208,9 @@ export default class Paste extends Module {
     const isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
     const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
 
-    await Promise.all(dataToInsert.map(
-      async (content, i) => await this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
-    ));
+    for (const [i, content] of dataToInsert.entries()) {
+      await this.insertBlock(content, i === 0 && needToReplaceCurrentBlock);
+    }
 
     if (BlockManager.currentBlock) {
       Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
