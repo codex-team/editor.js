@@ -99,9 +99,6 @@ interface PasteData {
  */
 export default class Paste extends Module {
 
-  /** If string`s length is greater than this number we don't check paste patterns */
-  public static readonly PATTERN_PROCESSING_MAX_LENGTH = 450;
-
   /**
    * Tags` substitutions parameters
    */
@@ -604,8 +601,8 @@ export default class Paste extends Module {
 
     const currentBlockIsInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
 
-    if (currentBlockIsInitial && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH) {
-      const blockData = await this.processPattern(content.textContent);
+    if (currentBlockIsInitial && content.textContent.length < this.config.pattern_processing_max_length) {
+      const blockData = this.processPattern(content.textContent);
 
       if (blockData) {
         let insertedBlock;
