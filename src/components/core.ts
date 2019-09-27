@@ -159,8 +159,8 @@ export default class Core {
      * @type {{type: (*), data: {text: null}}}
      */
     const initialBlockData = {
-      type : this.config.initialBlock,
-      data : {},
+      type: this.config.initialBlock,
+      data: {},
     };
 
     this.config.placeholder = this.config.placeholder || false;
@@ -181,11 +181,18 @@ export default class Core {
      */
     if (_.isEmpty(this.config.data)) {
       this.config.data = {} as OutputData;
-      this.config.data.blocks = [ initialBlockData ];
+      this.config.data.blocks = [initialBlockData];
     } else {
       if (!this.config.data.blocks || this.config.data.blocks.length === 0) {
-        this.config.data.blocks = [ initialBlockData ];
+        this.config.data.blocks = [initialBlockData];
       }
+    }
+
+    /**
+     * If pattern_processing_max_length is empty then set a default value
+     */
+    if (this.config.pattern_processing_max_length == null) {
+      this.config.pattern_processing_max_length = 450;
     }
   }
 
@@ -202,7 +209,7 @@ export default class Core {
    * @returns {Promise<void>}
    */
   public async validate(): Promise<void> {
-    const { holderId, holder } = this.config;
+    const {holderId, holder} = this.config;
 
     if (holderId && holder) {
       throw Error('«holderId» and «holder» param can\'t assign at the same time.');
@@ -276,7 +283,7 @@ export default class Core {
    * Make modules instances and save it to the @property this.moduleInstances
    */
   private constructModules(): void {
-    modules.forEach( (Module) => {
+    modules.forEach((Module) => {
       try {
         /**
          * We use class name provided by displayName property
@@ -286,10 +293,10 @@ export default class Core {
          * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
          */
         this.moduleInstances[Module.displayName] = new Module({
-          config : this.configuration,
+          config: this.configuration,
         });
-      } catch ( e ) {
-        _.log(`Module ${Module.displayName} skipped because`, 'warn',  e);
+      } catch (e) {
+        _.log(`Module ${Module.displayName} skipped because`, 'warn', e);
       }
     });
   }

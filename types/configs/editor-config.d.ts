@@ -29,7 +29,7 @@ export interface EditorConfig {
   /**
    * First Block placeholder
    */
-  placeholder?: string|false;
+  placeholder?: string | false;
 
   /**
    * Define default sanitizer configuration
@@ -45,7 +45,7 @@ export interface EditorConfig {
   /**
    * Map of Tools to use
    */
-  tools?: {[toolName: string]: ToolConstructable|ToolSettings};
+  tools?: {[toolName: string]: ToolConstructable | ToolSettings};
 
   /**
    * Data to render on Editor start
@@ -66,4 +66,9 @@ export interface EditorConfig {
    * Fires when something changed in DOM
    */
   onChange?(): void;
+
+  /** 
+   * If string`s length is greater than this number we don't check paste patterns in Paste module
+   * */
+  pattern_processing_max_length?: number;
 }
