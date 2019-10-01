@@ -446,7 +446,7 @@ export default class Block {
    * @return {BlockTune[]}
    */
   public makeTunes(): BlockTune[] {
-    const tunesList = [MoveUpTune, DeleteTune, MoveDownTune];
+    const tunesList = [];
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
     return tunesList.map( (tune: BlockTuneConstructable) => {
