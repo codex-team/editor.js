@@ -641,8 +641,8 @@ export default class Paste extends Module {
    * @param {string} text
    * @returns Promise<{data: BlockToolData, tool: string}>
    */
-    const pattern =  this.toolsPatterns.find((substitute) => {
   private processPattern(text: string): { event: PasteEvent; tool: string } {
+    const pattern = this.toolsPatterns.find(substitute => {
       const execResult = substitute.pattern.exec(text);
 
       if (!execResult) {
