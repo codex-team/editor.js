@@ -96,7 +96,6 @@ export default class DeleteTune implements BlockTune {
 
       this.api.events.emit('delete-block', {
         index: this.api.blocks.getCurrentBlockIndex(),
-        // block: this.api.blocks.getBlockByIndex(this.api.blocks.getCurrentBlockIndex()),
       });
 
       this.api.blocks.delete();
