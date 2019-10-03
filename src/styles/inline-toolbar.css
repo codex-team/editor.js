@@ -40,6 +40,26 @@
   &__buttons {
     display: flex;
   }
+
+  &__dropdown {
+    display: inline-flex;
+    height: var(--toolbar-buttons-size);
+    padding: 0 10px;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--bg-light);
+    }
+
+    &-content{
+      display: flex;
+    }
+
+    .icon--toggler-down {
+      margin-left: 3px;
+    }
+  }
 }
 
 .ce-inline-tool {

@@ -29,6 +29,8 @@ export default class InlineToolbar extends Module {
     inlineToolButtonLast: 'ce-inline-tool--last',
     inputField: 'cdx-input',
     focusedButton: 'ce-inline-tool--focused',
+    conversionToggler: 'ce-inline-toolbar__dropdown',
+    conversionTogglerContent: 'ce-inline-toolbar__dropdown-content',
   };
 
   /**
@@ -40,9 +42,17 @@ export default class InlineToolbar extends Module {
   /**
    * Inline Toolbar elements
    */
-  private nodes: { wrapper: HTMLElement, buttons: HTMLElement, actions: HTMLElement } = {
+  private nodes: {
+    wrapper: HTMLElement,
+    buttons: HTMLElement,
+    conversionToggler: HTMLElement,
+    conversionTogglerContent: HTMLElement,
+    actions: HTMLElement,
+  } = {
     wrapper: null,
     buttons: null,
+    conversionToggler: null,
+    conversionTogglerContent: null,
     /**
      * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
      * For example, input for the 'link' tool or textarea for the 'comment' tool
@@ -123,9 +133,16 @@ export default class InlineToolbar extends Module {
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
 
     /**
+     * Add button that will allow switching block type
+     */
+    this.addConversionToggler();
+
+    /**
      * Append Inline Toolbar Tools
      */
     this.addTools();
+
+    this.prepareConversionToolbar();
 
     /**
      * Recalculate initial width with all buttons
@@ -263,6 +280,8 @@ export default class InlineToolbar extends Module {
       .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[];
 
     this.flipper.activate(visibleTools);
+
+    this.setConverstionTooglerContent();
   }
 
   /**
@@ -368,6 +387,43 @@ export default class InlineToolbar extends Module {
    */
   private recalculateWidth(): void {
     this.width = this.nodes.wrapper.offsetWidth;
+  }
+
+  private addConversionToggler(): void {
+    this.nodes.conversionToggler = $.make('div', this.CSS.conversionToggler);
+    this.nodes.conversionTogglerContent = $.make('div', this.CSS.conversionTogglerContent);
+
+    const icon = $.svg('toggler-down', 13, 13);
+
+    this.nodes.conversionToggler.appendChild(this.nodes.conversionTogglerContent);
+    this.nodes.conversionToggler.appendChild(icon);
+
+    this.nodes.buttons.appendChild(this.nodes.conversionToggler);
+
+    this.Editor.Listeners.on(this.nodes.conversionToggler, 'click', () => {
+      console.log('Clicked');
+    });
+  }
+
+  private setConverstionTooglerContent() {
+    const toolName = this.Editor.BlockManager.currentBlock.name;
+    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+    const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
+    const userToolboxSettings = toolSettings.toolbox || {};
+    const icon = userToolboxSettings.icon || toolboxSettings.icon || toolName;
+
+    this.nodes.conversionTogglerContent.innerHTML = icon;
+  }
+
+  private prepareConversionToolbar(): void {
+    console.log('fire');
+    setTimeout(() => {
+      const ct = this.Editor.ConversionToolbar.make();
+
+      console.log('ct', ct);
+
+      $.append(this.nodes.wrapper, ct);
+    }, 1000);
   }
 
   /**

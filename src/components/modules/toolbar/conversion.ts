@@ -18,7 +18,9 @@ export default class ConversionToolbar extends Module {
       conversionToolbarWrapper: 'ce-conversion-toolbar',
       conversionToolbarShowed: 'ce-conversion-toolbar--showed',
       conversionToolbarTools: 'ce-conversion-toolbar__tools',
+      conversionToolbarLabel: 'ce-conversion-toolbar__label',
       conversionTool: 'ce-conversion-tool',
+      conversionToolIcon: 'ce-conversion-tool__icon',
 
       conversionToolFocused : 'ce-conversion-tool--focused',
       conversionToolActive : 'ce-conversion-tool--active',
@@ -53,9 +55,13 @@ export default class ConversionToolbar extends Module {
   /**
    * Create UI of Conversion Toolbar
    */
-  public make(): void {
+  public make(): HTMLElement {
     this.nodes.wrapper = $.make('div', ConversionToolbar.CSS.conversionToolbarWrapper);
     this.nodes.tools = $.make('div', ConversionToolbar.CSS.conversionToolbarTools);
+
+    const label = $.make('div', ConversionToolbar.CSS.conversionToolbarLabel, {
+      textContent: 'Convert to',
+    });
 
     /**
      * Add Tools that has 'import' method
@@ -67,8 +73,12 @@ export default class ConversionToolbar extends Module {
      */
     this.enableFlipper();
 
+    $.append(this.nodes.wrapper, label);
     $.append(this.nodes.wrapper, this.nodes.tools);
-    $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+
+    return this.nodes.wrapper;
+
+    // $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
   }
 
   /**
@@ -224,6 +234,7 @@ export default class ConversionToolbar extends Module {
 
     for (const toolName in tools) {
       if (!tools.hasOwnProperty(toolName)) {
+        console.log('skep 0');
         continue;
       }
 
@@ -236,6 +247,7 @@ export default class ConversionToolbar extends Module {
        * Skip tools that don't pass 'toolbox' property
        */
       if (_.isEmpty(toolToolboxSettings) || !toolToolboxSettings.icon) {
+        console.log('skep 1');
         continue;
       }
 
@@ -243,8 +255,11 @@ export default class ConversionToolbar extends Module {
        * Skip tools without «import» rule specified
        */
       if (!conversionConfig || !conversionConfig.import) {
+        console.log('skep 2');
         continue;
       }
+
+      console.info('Add', toolName);
 
       this.addTool(toolName, toolToolboxSettings.icon);
     }
@@ -255,9 +270,16 @@ export default class ConversionToolbar extends Module {
    */
   private addTool(toolName: string, toolIcon: string): void {
     const tool = $.make('div', [ ConversionToolbar.CSS.conversionTool ]);
+    const icon = $.make('div', [ ConversionToolbar.CSS.conversionToolIcon ]);
+    // const title = $.make('div', [ ConversionToolbar.CSS.conversionToolTitle ]);
 
     tool.dataset.tool = toolName;
-    tool.innerHTML = toolIcon;
+    icon.innerHTML = toolIcon;
+
+    console.log('tool', tool);
+
+    $.append(tool, icon);
+    $.append(tool, $.text(toolName));
 
     $.append(this.nodes.tools, tool);
     this.tools[toolName] = tool;
