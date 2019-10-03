@@ -82,16 +82,16 @@ export default class ConversionToolbar extends Module {
       return;
     }
 
-    /**
-     * Mark current block's button with color
-     */
-    this.highlightActiveTool(block.name);
-
     this.move(block);
 
     if (!this.opened) {
       this.open();
     }
+
+    /**
+     * Mark current block's button with color
+     */
+    this.highlightActiveTool(block.name);
   }
 
   /**
@@ -99,7 +99,7 @@ export default class ConversionToolbar extends Module {
    */
   public open(): void {
     this.opened = true;
-    this.flipper.activate();
+    this.flipper.activate(Object.values(this.tools));
     this.flipper.focusFirst();
     this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
   }
@@ -289,6 +289,8 @@ export default class ConversionToolbar extends Module {
    * Prepare Flipper to be able to leaf tools by arrows/tab
    */
   private enableFlipper(): void {
-    this.flipper = new Flipper(Object.values(this.tools), ConversionToolbar.CSS.conversionToolFocused);
+    this.flipper = new Flipper({
+      focusedItemClass: ConversionToolbar.CSS.conversionToolFocused,
+    });
   }
 }

@@ -2,6 +2,8 @@
 
 ### 2.16
 
+### 2.15.1
+
 - `Refactoring` — Constants of tools settings separated by internal and external to correspond API
 - `Refactoring` — Created universal Flipper class that responses for navigation by keyboard inside of any Toolbars
 - `Fix` — First CMD+A on block with now uses default behaviour. Fixed problem with second CMD+A after selection clearing [#827](https://github.com/codex-team/editor.js/issues/827)
