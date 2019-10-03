@@ -27,9 +27,6 @@ export default class Toolbox extends Module {
       toolboxButton: 'ce-toolbox__button',
       toolboxButtonActive : 'ce-toolbox__button--active',
       toolboxOpened: 'ce-toolbox--opened',
-      tooltip: 'ce-toolbox__tooltip',
-      tooltipShown: 'ce-toolbox__tooltip--shown',
-      tooltipShortcut: 'ce-toolbox__tooltip-shortcut',
       openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
     };
   }
@@ -53,11 +50,9 @@ export default class Toolbox extends Module {
    */
   public nodes: {
     toolbox: HTMLElement,
-    tooltip: HTMLElement,
     buttons: HTMLElement[],
   } = {
     toolbox: null,
-    tooltip: null,
     buttons: [],
   };
 
@@ -81,7 +76,6 @@ export default class Toolbox extends Module {
     $.append(this.Editor.Toolbar.nodes.content, this.nodes.toolbox);
 
     this.addTools();
-    this.addTooltip();
     this.enableFlipper();
   }
 
@@ -116,8 +110,6 @@ export default class Toolbox extends Module {
    * Close Toolbox
    */
   public close(): void {
-    this.hideTooltip();
-
     this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
     this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
 
@@ -134,13 +126,6 @@ export default class Toolbox extends Module {
     } else {
       this.close();
     }
-  }
-
-  /**
-   * Hide toolbox tooltip
-   */
-  public hideTooltip(): void {
-    this.nodes.tooltip.classList.remove(this.CSS.tooltipShown);
   }
 
   /**
@@ -210,13 +195,7 @@ export default class Toolbox extends Module {
     /**
      * Add listeners to show/hide toolbox tooltip
      */
-    this.Editor.Listeners.on(button, 'mouseenter', () => {
-      this.showTooltip(button, toolName);
-    });
-
-    this.Editor.Listeners.on(button, 'mouseleave', () => {
-      this.hideTooltip();
-    });
+    this.enableTooltip(button, toolName);
 
     /**
      * Enable shortcut
@@ -232,22 +211,12 @@ export default class Toolbox extends Module {
   }
 
   /**
-   * Add toolbox tooltip to page
+   * Add tooltip for toolbox tools
+   *
+   * @param {HTMLElement} button - toolbox tool HTML element
+   * @param {String} toolName - toolbox tool name
    */
-  private addTooltip(): void {
-    this.nodes.tooltip = $.make('div', this.CSS.tooltip, {
-      innerHTML: '',
-    });
-
-    $.append(this.Editor.Toolbar.nodes.content, this.nodes.tooltip);
-  }
-
-  /**
-   * Show tooltip for toolbox button
-   * @param {HTMLElement} button
-   * @param {string} toolName
-   */
-  private showTooltip(button: HTMLElement, toolName: string): void {
+  private enableTooltip(button: HTMLElement, toolName: string): void {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
     const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};
@@ -282,21 +251,18 @@ export default class Toolbox extends Module {
         shortcut = shortcut.replace(/cmd/gi, 'Ctrl').replace(/windows/gi, 'WIN');
       }
 
-      fragment.appendChild($.make('div', this.CSS.tooltipShortcut, {
+      fragment.appendChild($.make('div', this.Editor.Tooltip.CSS.tooltipShortcut, {
         textContent: shortcut,
       }));
     }
 
-    const leftOffset = 16;
-    const coordinate = button.offsetLeft;
-    const topOffset = Math.floor(this.Editor.BlockManager.currentBlock.holder.offsetHeight / 2);
-
-    this.nodes.tooltip.innerHTML = '';
-    this.nodes.tooltip.appendChild(fragment);
-
-    this.nodes.tooltip.style.left = `${coordinate + leftOffset}px`;
-    this.nodes.tooltip.style.transform = `translate3d(-50%, ${topOffset}px, 0)`;
-    this.nodes.tooltip.classList.add(this.CSS.tooltipShown);
+    /**
+     * add tooltip to the tool button
+     */
+    this.Editor.Tooltip.add({
+      element: button,
+      content: fragment,
+    });
   }
 
   /**
