@@ -29,6 +29,18 @@ import MoveDownTune from './block-tunes/block-tune-move-down';
 import SelectionUtils from './selection';
 
 /**
+ * Available Block Tool API methods
+ */
+export enum BlockToolAPI {
+  /** TODO: deprecate method */
+  APPEND_CALLBACK = 'appendCallback',
+  RENDERED = 'rendered',
+  UPDATED = 'updated',
+  REMOVED = 'removed',
+  ON_PASTE = 'onPaste',
+}
+
+/**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  *
  * @property tool - Tool instance
@@ -338,6 +350,29 @@ export default class Block {
   private mutationObserver: MutationObserver;
 
   /**
+   * Debounce Timer
+   * @type {number}
+   */
+  private readonly modificationDebounceTimer = 450;
+
+  /**
+   * Is fired when DOM mutation has been happened
+   */
+  private didMutated = _.debounce((): void => {
+    /**
+     * Drop cache
+     */
+    this.cachedInputs = [];
+
+    /**
+     * Update current input
+     */
+    this.updateCurrentInput();
+
+    this.call(BlockToolAPI.UPDATED);
+  }, this.modificationDebounceTimer);
+
+  /**
    * @constructor
    * @param {String} toolName - Tool name that passed on initialization
    * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
@@ -375,7 +410,7 @@ export default class Block {
    * @param {String} methodName
    * @param {Object} params
    */
-  public call(methodName: string, params: object) {
+  public call(methodName: string, params?: object) {
     /**
      * call Tool's method with the instance context
      */
@@ -485,7 +520,7 @@ export default class Block {
     /**
      * Observe DOM mutations to update Block inputs
      */
-    this.mutationObserver.observe(this.holder, {childList: true, subtree: true});
+    this.mutationObserver.observe(this.holder, {childList: true, subtree: true, characterData: true});
   }
 
   /**
@@ -493,21 +528,6 @@ export default class Block {
    */
   public willUnselect() {
     this.mutationObserver.disconnect();
-  }
-
-  /**
-   * Is fired when DOM mutation has been happened
-   */
-  private didMutated = (): void => {
-    /**
-     * Drop cache
-     */
-    this.cachedInputs = [];
-
-    /**
-     * Update current input
-     */
-    this.updateCurrentInput();
   }
 
   /**

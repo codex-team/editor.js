@@ -6,7 +6,7 @@
  *
  * @version 2.0.0
  */
-import Block from '../block';
+import Block, {BlockToolAPI} from '../block';
 import Module from '../__module';
 import $ from '../dom';
 import _ from '../utils';
@@ -267,7 +267,7 @@ export default class BlockManager extends Module {
     }
 
     try {
-      block.call('onPaste', pasteEvent);
+      block.call(BlockToolAPI.ON_PASTE, pasteEvent);
     } catch (e) {
       _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
     }

@@ -1,6 +1,6 @@
 import _ from './utils';
 import $ from './dom';
-import Block from './block';
+import Block, {BlockToolAPI} from './block';
 
 /**
  * @class Blocks
@@ -12,7 +12,6 @@ import Block from './block';
  *
  */
 export default class Blocks {
-
   /**
    * Get length of Block instances array
    *
@@ -104,6 +103,8 @@ export default class Blocks {
   public push(block: Block): void {
     this.blocks.push(block);
     this.workingArea.appendChild(block.holder);
+
+    block.call(BlockToolAPI.RENDERED);
   }
 
   /**
@@ -145,6 +146,7 @@ export default class Blocks {
 
     if (replace) {
       this.blocks[index].holder.remove();
+      this.blocks[index].call(BlockToolAPI.REMOVED);
     }
 
     const deleteCount = replace ? 1 : 0;
@@ -164,6 +166,8 @@ export default class Blocks {
         this.workingArea.appendChild(block.holder);
       }
     }
+
+    block.call(BlockToolAPI.RENDERED);
   }
 
   /**
@@ -176,6 +180,9 @@ export default class Blocks {
     }
 
     this.blocks[index].holder.remove();
+
+    this.blocks[index].call(BlockToolAPI.REMOVED);
+
     this.blocks.splice(index, 1);
   }
 
@@ -184,6 +191,9 @@ export default class Blocks {
    */
   public removeAll(): void {
     this.workingArea.innerHTML = '';
+
+    this.blocks.forEach((block) => block.call(BlockToolAPI.REMOVED));
+
     this.blocks.length = 0;
   }
 
