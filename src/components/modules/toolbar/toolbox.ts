@@ -321,7 +321,10 @@ export default class Toolbox extends Module {
    */
   private enableFlipper(): void {
     const tools = Array.from(this.nodes.toolbox.childNodes) as HTMLElement[];
-    this.flipper = new Flipper(tools, this.CSS.toolboxButtonActive);
+    this.flipper = new Flipper({
+      items: tools,
+      focusedItemClass: this.CSS.toolboxButtonActive,
+    });
   }
 
   /**

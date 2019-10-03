@@ -8,21 +8,35 @@
 [![](https://flat.badgen.net/npm/license/@editorjs/editorjs)](https://www.npmjs.com/package/@editorjs/editorjs)
 [![Join the chat at https://gitter.im/codex-team/editor.js](https://badges.gitter.im/codex-team/editor.js.svg)](https://gitter.im/codex-team/editor.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-## Version 2.0 is here!
-
-We are glad to introduce the next version of Editor.js. Totally new core, structure and plugins — that was an impressive adventure 🤓.
-
-Join [public Telegram-chat](//t.me/codex_editor) or [Gitter-channel](https://gitter.im/codex-team/editor.js) where you can always find a support.
-
-### Browsers support
-
 | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/edge/edge_48x48.png" alt="IE / Edge" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>IE / Edge | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/firefox/firefox_48x48.png" alt="Firefox" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Firefox | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_48x48.png" alt="Chrome" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Chrome | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari/safari_48x48.png" alt="Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/safari-ios/safari-ios_48x48.png" alt="iOS Safari" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>iOS Safari | [<img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/opera/opera_48x48.png" alt="Opera" width="24px" height="24px" />](http://godban.github.io/browsers-support-badges/)</br>Opera |
 | --------- | --------- | --------- | --------- | --------- | --------- |
 | Edge 12+ | Firefox 18+ | Chrome 49+ | Safari 10+ | Safari 10+ | Opera 36+
 
-## ⭐️ If you like a project
+## If you like a project 💗💗💗
 
-If you like Editor.js you can support project improvements and development of new features with a small donation on [Open Collective](https://opencollective.com/editorjs) or [Patreon](https://www.patreon.com/editorjs) 
+If you like Editor.js you can support project improvements and development of new features with a donation to our collective.
+
+ 👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
+ 
+ 👉  Bitcoin: `3DCCemgtE6GrzehVpU6Sa2RJHFUUh8iT9q`
+ 
+### Sponsors
+
+Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/editorjs#sponsor)]
+
+<a href="https://opencollective.com/editorjs/sponsor/0/website" target="_blank"><img src="https://opencollective.com/editorjs/sponsor/0/avatar.svg"></a>
+ 
+ ### Backers
+ 
+ Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/editorjs#backer)]
+ 
+ <a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890"></a>
+ 
+### Contributors
+
+This project exists thanks to all the people who contribute. <img src="https://opencollective.com/editorjs/contributors.svg?width=890&button=false" />
+
+We are really welcome new contributors. If you want to make some code with us, please take a look at the [Good First Tasks](https://github.com/codex-team/editor.js/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+task%22). You can write to us on `team@codex.so` or via special [Telegram chat](https://t.me/editorjsdev), or any other way. 
 
 ## Documentation
 
@@ -37,15 +51,13 @@ Please, visit [https://editorjs.io/](https://editorjs.io) to view all documentat
 
 You can join a [Gitter-channel](https://gitter.im/codex-team/editor.js) or [Telegram-chat](//t.me/codex_editor) and ask a question.
 
----
-
 ## Changelog
 
 See a whole [Changelog](/docs/CHANGELOG.md)
 
-# So how to use Editor.js
+## So how to use Editor.js
 
-## Basics
+### Basics
 
 Editor.js is a Block-Styled editor. Blocks are structural units, of which the Entry is composed.
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
@@ -69,7 +81,7 @@ or apply Tool's settings, if it provided. For example, set a Heading level or Li
 
 ![](https://capella.pics/01a55381-46cd-47c7-b92e-34765434f2ca.jpg)
 
-## Shortcuts
+### Shortcuts
 
 We really appreciate shortcuts. So there are few presets.
 
@@ -103,7 +115,7 @@ var editor = new EditorJS({
 ```
 
 
-# Installation Guide
+## Installation Guide
 
 There are few steps to run Editor.js on your site.
 
@@ -111,7 +123,7 @@ There are few steps to run Editor.js on your site.
 2. [Load Tools](#load-tools)
 3. [Initialize Editor's instance](#create-editor-instance)
 
-## Load Editor's core
+### Load Editor's core
 
 Firstly you need to get Editor.js itself. It is a [minified script](dist/editor.js) with Editor's core and some default must-have tools.
 
@@ -121,7 +133,7 @@ Choose the most usable method of getting Editor for you.
 - Source from CDN
 - Local file from project
 
-### Node.js
+#### Node.js
 
 Install the package via NPM or Yarn
 
@@ -135,7 +147,7 @@ Include module in your application
 const EditorJS = require('@editorjs/editorjs');
 ```
 
-### Use from CDN
+#### Use from CDN
 
 You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/editorjs).
 
@@ -147,15 +159,15 @@ Then require this script.
 <script src="..."></script>
 ```
 
-### Save sources to project
+#### Save sources to project
 
-Copy [editor.js](build/editor.js) file to your project and load it.
+Copy [editor.js](dist/editor.js) file to your project and load it.
 
 ```html
 <script src="editor.js"></script>
 ```
 
-## Load Tools
+### Load Tools
 
 Each Block at the Editor.js is represented by [Tools](docs/tools.md). There are simple external scripts with their own logic. Probably you want to use several Block Tools that should be connected.
 
@@ -171,7 +183,7 @@ Check [Editor.js's community](https://github.com/editor-js/) to see more ready-t
 <script src="https://cdn.jsdelivr.net/npm/codex.editor.header@2.0.4/dist/bundle.js"></script>
 ```
 
-## Create Editor instance
+### Create Editor instance
 
 Create an instance of Editor.js and pass [Configuration Object](types/configs/editor-config.d.ts) with `holderId` and tools list.
 
@@ -217,7 +229,7 @@ var editor = new EditorJS({
 });
 ```
 
-## Saving Data
+### Saving Data
 
 Call `editor.save()` and handle returned Promise with saved data.
 
@@ -228,7 +240,7 @@ editor.save()
   });
 ```
 
-## Example
+### Example
 
 Take a look at the [example.html](example/example.html) to view more detailed examples.
 
@@ -236,31 +248,7 @@ Take a look at the [example.html](example/example.html) to view more detailed ex
 
 - We use [HTMLJanitor](https://github.com/guardian/html-janitor) module in our Sanitizer module. 
 
-# Support project improvements
-
-Love Editor.js? Please consider supporting our collective:
-
- 👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
- 
- 👉  [Patreon](https://www.patreon.com/editorjs)
- 
-## Contributors
-
-This project exists thanks to all the people who contribute. <img src="https://opencollective.com/editorjs/contributors.svg?width=890&button=false" />
-
-## Backers
-
-Thank you to all our backers! 🙏 [[Become a backer](https://opencollective.com/editorjs#backer)]
-
-<a href="https://opencollective.com/editorjs#backers" target="_blank"><img src="https://opencollective.com/editorjs/backers.svg?width=890"></a>
-
-## Sponsors
-
-Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/editorjs#sponsor)]
-
-<a href="https://opencollective.com/editorjs/sponsor/0/website" target="_blank"><img src="https://opencollective.com/editorjs/sponsor/0/avatar.svg"></a>
-
-# About team
+## About team
 
 We are CodeX and we build products for developers and makers. 
 

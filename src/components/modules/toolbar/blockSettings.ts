@@ -1,6 +1,7 @@
 import Module from '../../__module';
 import $ from '../../dom';
-import Flipper from '../../flipper';
+import Flipper, {FlipperOptions} from '../../flipper';
+import _ from '../../utils';
 
 /**
  * Block Settings
@@ -185,6 +186,17 @@ export default class BlockSettings extends Module {
    * Buttons will be filled on opening
    */
   private enableFlipper(): void {
-    this.flipper = new Flipper([], this.CSS.focusedButton);
+    this.flipper = new Flipper({
+      focusedItemClass: this.CSS.focusedButton,
+      activateCallback: () => {
+        /**
+         * Restoring focus on current Block after settings clicked.
+         * For example, when H3 changed to H2 — DOM Elements replaced, so we need to focus a new one
+         */
+        _.delay( () => {
+          this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
+        }, 10)();
+      },
+    } as FlipperOptions);
   }
 }

@@ -5,7 +5,8 @@
   /**
    * Selection color
    */
-  --selectionColor: #a8d6ff;
+  --selectionColor: #e1f2ff;
+  --inlineSelectionColor: #d4ecff;
 
   /**
    * Toolbar buttons
