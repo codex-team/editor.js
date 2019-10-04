@@ -4,7 +4,7 @@
 import Module from '../__module';
 import _ from '../utils';
 import SelectionUtils from '../selection';
-import Flipper from "../flipper";
+import Flipper from '../flipper';
 
 export default class BlockEvents extends Module {
 
@@ -31,13 +31,27 @@ export default class BlockEvents extends Module {
         break;
 
       case _.keyCodes.DOWN:
-      case _.keyCodes.RIGHT:
         this.arrowRightAndDown(event);
         break;
 
       case _.keyCodes.UP:
-      case _.keyCodes.LEFT:
         this.arrowLeftAndUp(event);
+        break;
+
+      case _.keyCodes.RIGHT:
+        if (this.config.direction === 'ltr') {
+          this.arrowRightAndDown(event);
+        } else {
+          this.arrowLeftAndUp(event);
+        }
+        break;
+
+      case _.keyCodes.LEFT:
+        if (this.config.direction === 'ltr') {
+          this.arrowLeftAndUp(event);
+        } else {
+          this.arrowRightAndDown(event);
+        }
         break;
 
       case _.keyCodes.TAB:

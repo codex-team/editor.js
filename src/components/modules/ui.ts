@@ -40,11 +40,12 @@ export default class UI extends Module {
    * @return {{editorWrapper: string, editorZone: string}}
    */
   public get CSS(): {
-    editorWrapper: string, editorWrapperNarrow: string, editorZone: string, editorZoneHidden: string,
-    editorLoader: string, editorEmpty: string,
+    editorWrapper: string, editorRtlWrapper: string, editorWrapperNarrow: string, editorZone: string,
+    editorZoneHidden: string, editorLoader: string, editorEmpty: string,
   } {
     return {
       editorWrapper    : 'codex-editor',
+      editorRtlWrapper    : 'rtl-editor',
       editorWrapperNarrow : 'codex-editor--narrow',
       editorZone       : 'codex-editor__redactor',
       editorZoneHidden : 'codex-editor__redactor--hidden',
@@ -225,7 +226,9 @@ export default class UI extends Module {
     /**
      * Create and save main UI elements
      */
-    this.nodes.wrapper  = $.make('div', this.CSS.editorWrapper);
+    this.nodes.wrapper  = $.make('div',
+      this.config.direction === 'ltr' ? this.CSS.editorWrapper : [this.CSS.editorWrapper, this.CSS.editorRtlWrapper],
+    );
     this.nodes.redactor = $.make('div', this.CSS.editorZone);
 
     /**

@@ -126,7 +126,11 @@ export default class Toolbar extends Module {
         textContent: '⇥ Tab',
       }));
 
-      tooltip.style.left = '-17px';
+      if (this.config.direction === 'ltr') {
+        tooltip.style.left = '-17px';
+      } else {
+        tooltip.style.right = '-17px';
+      }
 
       tooltip.innerHTML = '';
       tooltip.appendChild(fragment);

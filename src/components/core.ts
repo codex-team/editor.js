@@ -109,16 +109,12 @@ export default class Core {
    * Setting for configuration
    * @param {EditorConfig|string|undefined} config
    */
-  set configuration(config: EditorConfig|string) {
+  set configuration(configStr: EditorConfig|string) {
     /**
      * Process zero-configuration or with only holderId
      * Make config object
      */
-    if (typeof config !== 'object') {
-      config = {
-        holder: config,
-      };
-    }
+    const config: EditorConfig = typeof configStr === 'object' ? configStr : {holder: configStr};
 
     /**
      * If holderId is preset, assign him to holder property and work next only with holder
@@ -152,6 +148,11 @@ export default class Core {
      * @type {number}
      */
     this.config.minHeight = this.config.minHeight || 300;
+
+    /**
+     * Text direction. If not set, uses ltr
+     */
+    this.config.direction = this.config.direction || 'ltr';
 
     /**
      * Initial block type

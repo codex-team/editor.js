@@ -58,6 +58,11 @@ export interface EditorConfig {
   minHeight?: number;
 
   /**
+   * Text direction. If not set, uses ltr
+   */
+  direction?: 'ltr' | 'rtl';
+
+  /**
    * Fires when Editor is ready to work
    */
   onReady?(): void;

@@ -122,6 +122,8 @@ export default class LinkInlineTool implements InlineTool {
    */
   public renderActions(): HTMLElement {
     this.nodes.input = document.createElement('input') as HTMLInputElement;
+    this.nodes.input.style.direction = 'ltr';
+    this.nodes.input.type = 'url';
     this.nodes.input.placeholder = 'Add a link';
     this.nodes.input.classList.add(this.CSS.input);
     this.nodes.input.addEventListener('keydown', (event: KeyboardEvent) => {
