@@ -413,6 +413,12 @@ export default class InlineToolbar extends Module {
       event.preventDefault();
     });
 
+    this.Editor.Tooltip.add({
+      name: toolName,
+      element: button,
+      content: toolName,
+    });
+
     /**
      * Enable shortcuts
      * Ignore tool that doesn't have shortcut or empty string

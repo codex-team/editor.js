@@ -7,6 +7,11 @@ import $ from '../../dom';
  */
 export interface TooltipData {
   /**
+   * Tooltip name
+   */
+  name: string;
+
+  /**
    * Element on which tooltip will be showed
    */
   element: HTMLElement;
@@ -42,6 +47,13 @@ export default class Tooltip extends Module {
   }
 
   /**
+   * Keeps cached contents by tooltip name
+   */
+  private cachedContents: {
+    [name: string]: string | HTMLElement | DocumentFragment,
+  } = {};
+
+  /**
    * Module Preparation method
    */
   public make() {
@@ -53,17 +65,24 @@ export default class Tooltip extends Module {
   }
 
   /**
+   * Method enabled tooltip
+   *
    * @param {TooltipData} tooltipData
    */
   public add(tooltipData: TooltipData) {
-    const el = tooltipData.element;
-    const content = tooltipData.content;
+    /**
+     * cache tooltip contents with key of tooltip name
+     */
+    this.cachedContents[tooltipData.name] = tooltipData.content;
 
-    this.Editor.Listeners.on(el, 'mouseenter', (event: MouseEvent) => {
-      this.showTooltip(event, el, content);
+    /**
+     * set necessary listeners
+     */
+    this.Editor.Listeners.on(tooltipData.element, 'mouseenter', (event: MouseEvent) => {
+      this.showTooltip(event, tooltipData.name);
     });
 
-    this.Editor.Listeners.on(el, 'mouseleave', () => {
+    this.Editor.Listeners.on(tooltipData.element, 'mouseleave', () => {
       this.hideTooltip();
     });
   }
@@ -72,16 +91,28 @@ export default class Tooltip extends Module {
    * Show tooltip for toolbox button
    *
    * @param {MouseEvent} event
-   * @param {HTMLElement} button
-   * @param {string|HTMLElement|DocumentFragment} content
+   * @param {String} name
    */
-  private showTooltip(event: MouseEvent, button: HTMLElement, content: string|HTMLElement|DocumentFragment): void {
+  private showTooltip(event: MouseEvent, name: string): void {
     this.nodes.wrapper.innerHTML = '';
-    if (_.typeof(content) === 'string') {
-      this.nodes.wrapper.appendChild(document.createTextNode(content as string));
-    } else {
-      this.nodes.wrapper.appendChild(content as DocumentFragment | HTMLElement);
+
+    const content = this.cachedContents[name];
+
+    let childToAppend;
+    switch (_.typeof(content)) {
+      case 'string':
+        childToAppend = document.createTextNode(content as string);
+        break;
+      case 'documentfragment':
+        childToAppend = (content as DocumentFragment).cloneNode(true);
+        break;
+      default:
+        _.log('Something went wrong...');
+        return;
     }
+
+    this.nodes.wrapper.appendChild(childToAppend);
+
     this.nodes.wrapper.style.left = `${event.pageX}px`;
     this.nodes.wrapper.style.transform = `translate3d(-50%, ${event.pageY}px, 0)`;
     this.nodes.wrapper.classList.add(this.CSS.tooltipShown);

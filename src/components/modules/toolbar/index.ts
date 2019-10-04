@@ -125,6 +125,7 @@ export default class Toolbar extends Module {
     }));
 
     this.Editor.Tooltip.add({
+      name: 'plusButton',
       element: this.nodes.plusButton,
       content: fragment,
     });

@@ -22456,6 +22456,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           textContent: '⇥ Tab'
         }));
         this.Editor.Tooltip.add({
+          name: 'plusButton',
           element: this.nodes.plusButton,
           content: fragment
         });
@@ -23176,6 +23177,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
           event.preventDefault();
         });
+        this.Editor.Tooltip.add({
+          name: toolName,
+          element: button,
+          content: toolName
+        });
         /**
          * Enable shortcuts
          * Ignore tool that doesn't have shortcut or empty string
@@ -23627,6 +23633,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
         this.Editor.Tooltip.add({
+          name: toolName,
           element: button,
           content: fragment
         });
@@ -23799,6 +23806,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.nodes = {
         wrapper: null
       };
+      /**
+       * Keeps cached contents by tooltip name
+       */
+
+      _this.cachedContents = {};
       return _this;
     }
     /**
@@ -23820,6 +23832,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         _dom.default.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
       }
       /**
+       * Method enabled tooltip
+       *
        * @param {TooltipData} tooltipData
        */
 
@@ -23828,12 +23842,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function add(tooltipData) {
         var _this2 = this;
 
-        var el = tooltipData.element;
-        var content = tooltipData.content;
-        this.Editor.Listeners.on(el, 'mouseenter', function (event) {
-          _this2.showTooltip(event, el, content);
+        /**
+         * cache tooltip contents with key of tooltip name
+         */
+        this.cachedContents[tooltipData.name] = tooltipData.content;
+        /**
+         * set necessary listeners
+         */
+
+        this.Editor.Listeners.on(tooltipData.element, 'mouseenter', function (event) {
+          _this2.showTooltip(event, tooltipData.name);
         });
-        this.Editor.Listeners.on(el, 'mouseleave', function () {
+        this.Editor.Listeners.on(tooltipData.element, 'mouseleave', function () {
           _this2.hideTooltip();
         });
       }
@@ -23841,21 +23861,32 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Show tooltip for toolbox button
        *
        * @param {MouseEvent} event
-       * @param {HTMLElement} button
-       * @param {string|HTMLElement|DocumentFragment} content
+       * @param {String} name
        */
 
     }, {
       key: "showTooltip",
-      value: function showTooltip(event, button, content) {
+      value: function showTooltip(event, name) {
         this.nodes.wrapper.innerHTML = '';
+        var content = this.cachedContents[name];
+        var childToAppend;
 
-        if (_utils.default.typeof(content) === 'string') {
-          this.nodes.wrapper.appendChild(document.createTextNode(content));
-        } else {
-          this.nodes.wrapper.appendChild(content);
+        switch (_utils.default.typeof(content)) {
+          case 'string':
+            childToAppend = document.createTextNode(content);
+            break;
+
+          case 'documentfragment':
+            childToAppend = content.cloneNode(true);
+            break;
+
+          default:
+            _utils.default.log('Something went wrong...');
+
+            return;
         }
 
+        this.nodes.wrapper.appendChild(childToAppend);
         this.nodes.wrapper.style.left = "".concat(event.pageX, "px");
         this.nodes.wrapper.style.transform = "translate3d(-50%, ".concat(event.pageY, "px, 0)");
         this.nodes.wrapper.classList.add(this.CSS.tooltipShown);

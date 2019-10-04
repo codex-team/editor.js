@@ -260,6 +260,7 @@ export default class Toolbox extends Module {
      * add tooltip to the tool button
      */
     this.Editor.Tooltip.add({
+      name: toolName,
       element: button,
       content: fragment,
     });
