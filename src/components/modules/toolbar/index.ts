@@ -113,26 +113,28 @@ export default class Toolbar extends Module {
      *  - Toolbox
      */
     this.nodes.plusButton = $.make('div', this.CSS.plusButton);
+    $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
+    $.append(this.nodes.content, this.nodes.plusButton);
+
+    this.Editor.Listeners.on(this.nodes.plusButton, 'click', () => this.plusButtonClicked(), false);
 
     /**
      * Add events to show/hide tooltip for plus button
      */
-    const fragment = document.createDocumentFragment();
+    this.Editor.Listeners.on(this.nodes.plusButton, 'mouseenter', () => {
+      const fragment = document.createDocumentFragment();
 
-    fragment.appendChild(document.createTextNode('Add'));
-    fragment.appendChild($.make('div', this.Editor.Tooltip.CSS.tooltipShortcut, {
-      textContent: '⇥ Tab',
-    }));
+      fragment.appendChild(document.createTextNode('Add'));
+      fragment.appendChild($.make('div', this.Editor.Tooltip.CSS.tooltipShortcut, {
+        textContent: '⇥ Tab',
+      }));
 
-    this.Editor.Tooltip.add({
-      name: 'plusButton',
-      element: this.nodes.plusButton,
-      content: fragment,
+      this.Editor.Tooltip.show(this.nodes.plusButton, fragment);
     });
 
-    $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
-    $.append(this.nodes.content, this.nodes.plusButton);
-    this.Editor.Listeners.on(this.nodes.plusButton, 'click', () => this.plusButtonClicked(), false);
+    this.Editor.Listeners.on(this.nodes.plusButton, 'mouseleave', () => {
+      this.Editor.Tooltip.hide();
+    });
 
     /**
      * Make a Toolbox

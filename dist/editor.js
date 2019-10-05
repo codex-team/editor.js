@@ -22446,20 +22446,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
         this.nodes.plusButton = _dom.default.make('div', this.CSS.plusButton);
-        /**
-         * Add events to show/hide tooltip for plus button
-         */
-
-        var fragment = document.createDocumentFragment();
-        fragment.appendChild(document.createTextNode('Add'));
-        fragment.appendChild(_dom.default.make('div', this.Editor.Tooltip.CSS.tooltipShortcut, {
-          textContent: '⇥ Tab'
-        }));
-        this.Editor.Tooltip.add({
-          name: 'plusButton',
-          element: this.nodes.plusButton,
-          content: fragment
-        });
 
         _dom.default.append(this.nodes.plusButton, _dom.default.svg('plus', 14, 14));
 
@@ -22468,6 +22454,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.Listeners.on(this.nodes.plusButton, 'click', function () {
           return _this2.plusButtonClicked();
         }, false);
+        /**
+         * Add events to show/hide tooltip for plus button
+         */
+
+        this.Editor.Listeners.on(this.nodes.plusButton, 'mouseenter', function () {
+          var fragment = document.createDocumentFragment();
+          fragment.appendChild(document.createTextNode('Add'));
+          fragment.appendChild(_dom.default.make('div', _this2.Editor.Tooltip.CSS.tooltipShortcut, {
+            textContent: '⇥ Tab'
+          }));
+
+          _this2.Editor.Tooltip.show(_this2.nodes.plusButton, fragment);
+        });
+        this.Editor.Listeners.on(this.nodes.plusButton, 'mouseleave', function () {
+          _this2.Editor.Tooltip.hide();
+        });
         /**
          * Make a Toolbox
          */
@@ -23177,10 +23179,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
           event.preventDefault();
         });
-        this.Editor.Tooltip.add({
-          name: toolName,
-          element: button,
-          content: toolName
+        /**
+         * set necessary listeners to show tooltip
+         */
+
+        this.Editor.Listeners.on(button, 'mouseenter', function (event) {
+          var content = document.createTextNode(toolName);
+
+          _this5.Editor.Tooltip.show(button, content);
+        });
+        this.Editor.Listeners.on(button, 'mouseleave', function () {
+          _this5.Editor.Tooltip.hide();
         });
         /**
          * Enable shortcuts
@@ -23578,7 +23587,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Add listeners to show/hide toolbox tooltip
          */
 
-        this.enableTooltip(button, toolName);
+        this.Editor.Listeners.on(button, 'mouseenter', function () {
+          var tooltipContent = _this2.drawTooltip(toolName);
+
+          _this2.Editor.Tooltip.show(button, tooltipContent);
+        });
+        this.Editor.Listeners.on(button, 'mouseleave', function () {
+          _this2.Editor.Tooltip.hide();
+        });
         /**
          * Enable shortcut
          */
@@ -23596,13 +23612,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       /**
        * Add tooltip for toolbox tools
        *
-       * @param {HTMLElement} button - toolbox tool HTML element
        * @param {String} toolName - toolbox tool name
        */
 
     }, {
-      key: "enableTooltip",
-      value: function enableTooltip(button, toolName) {
+      key: "drawTooltip",
+      value: function drawTooltip(toolName) {
         var toolSettings = this.Editor.Tools.getToolSettings(toolName);
         var toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
         var userToolboxSettings = toolSettings.toolbox || {};
@@ -23627,16 +23642,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             textContent: shortcut
           }));
         }
-        /**
-         * add tooltip to the tool button
-         */
 
-
-        this.Editor.Tooltip.add({
-          name: toolName,
-          element: button,
-          content: fragment
-        });
+        return fragment;
       }
       /**
        * Enable shortcut Block Tool implemented shortcut
@@ -23763,12 +23770,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _utils, _dom) {
+})(this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -23783,7 +23790,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf2);
   _inherits2 = _interopRequireDefault(_inherits2);
   _module = _interopRequireDefault(_module);
-  _utils = _interopRequireDefault(_utils);
   _dom = _interopRequireDefault(_dom);
 
   /**
@@ -23806,11 +23812,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.nodes = {
         wrapper: null
       };
-      /**
-       * Keeps cached contents by tooltip name
-       */
-
-      _this.cachedContents = {};
       return _this;
     }
     /**
@@ -23829,66 +23830,23 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           innerHTML: ''
         });
 
-        _dom.default.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
-      }
-      /**
-       * Method enabled tooltip
-       *
-       * @param {TooltipData} tooltipData
-       */
-
-    }, {
-      key: "add",
-      value: function add(tooltipData) {
-        var _this2 = this;
-
-        /**
-         * cache tooltip contents with key of tooltip name
-         */
-        this.cachedContents[tooltipData.name] = tooltipData.content;
-        /**
-         * set necessary listeners
-         */
-
-        this.Editor.Listeners.on(tooltipData.element, 'mouseenter', function (event) {
-          _this2.showTooltip(event, tooltipData.name);
-        });
-        this.Editor.Listeners.on(tooltipData.element, 'mouseleave', function () {
-          _this2.hideTooltip();
-        });
+        _dom.default.append(document.body, this.nodes.wrapper);
       }
       /**
        * Show tooltip for toolbox button
        *
-       * @param {MouseEvent} event
-       * @param {String} name
+       * @param {HTMLElement} element
+       * @param {HTMLElement} content
        */
 
     }, {
-      key: "showTooltip",
-      value: function showTooltip(event, name) {
+      key: "show",
+      value: function show(element, content) {
+        var elementCoords = element.getBoundingClientRect();
         this.nodes.wrapper.innerHTML = '';
-        var content = this.cachedContents[name];
-        var childToAppend;
-
-        switch (_utils.default.typeof(content)) {
-          case 'string':
-            childToAppend = document.createTextNode(content);
-            break;
-
-          case 'documentfragment':
-            childToAppend = content.cloneNode(true);
-            break;
-
-          default:
-            _utils.default.log('Something went wrong...');
-
-            return;
-        }
-
-        this.nodes.wrapper.appendChild(childToAppend);
-        this.nodes.wrapper.style.left = "".concat(event.pageX, "px");
-        this.nodes.wrapper.style.transform = "translate3d(-50%, ".concat(event.pageY, "px, 0)");
+        this.nodes.wrapper.appendChild(content);
+        this.nodes.wrapper.style.left = "".concat(elementCoords.left + element.clientWidth / 2, "px");
+        this.nodes.wrapper.style.transform = "translate3d(-50%, ".concat(elementCoords.bottom + window.pageYOffset, "px, 0)");
         this.nodes.wrapper.classList.add(this.CSS.tooltipShown);
       }
       /**
@@ -23896,8 +23854,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "hideTooltip",
-      value: function hideTooltip() {
+      key: "hide",
+      value: function hide() {
         this.nodes.wrapper.classList.remove(this.CSS.tooltipShown);
       }
     }, {

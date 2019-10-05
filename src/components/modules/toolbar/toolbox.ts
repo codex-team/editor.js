@@ -195,7 +195,15 @@ export default class Toolbox extends Module {
     /**
      * Add listeners to show/hide toolbox tooltip
      */
-    this.enableTooltip(button, toolName);
+    this.Editor.Listeners.on(button, 'mouseenter', () => {
+      const tooltipContent = this.drawTooltip(toolName);
+
+      this.Editor.Tooltip.show(button, tooltipContent);
+    });
+
+    this.Editor.Listeners.on(button, 'mouseleave', () => {
+      this.Editor.Tooltip.hide();
+    });
 
     /**
      * Enable shortcut
@@ -213,10 +221,9 @@ export default class Toolbox extends Module {
   /**
    * Add tooltip for toolbox tools
    *
-   * @param {HTMLElement} button - toolbox tool HTML element
    * @param {String} toolName - toolbox tool name
    */
-  private enableTooltip(button: HTMLElement, toolName: string): void {
+  private drawTooltip(toolName: string): DocumentFragment {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
     const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};
@@ -256,14 +263,7 @@ export default class Toolbox extends Module {
       }));
     }
 
-    /**
-     * add tooltip to the tool button
-     */
-    this.Editor.Tooltip.add({
-      name: toolName,
-      element: button,
-      content: fragment,
-    });
+    return fragment;
   }
 
   /**

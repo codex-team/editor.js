@@ -413,10 +413,17 @@ export default class InlineToolbar extends Module {
       event.preventDefault();
     });
 
-    this.Editor.Tooltip.add({
-      name: toolName,
-      element: button,
-      content: toolName,
+    /**
+     * set necessary listeners to show tooltip
+     */
+    this.Editor.Listeners.on(button, 'mouseenter', (event: MouseEvent) => {
+      const content = document.createTextNode(toolName);
+
+      this.Editor.Tooltip.show(button, content);
+    });
+
+    this.Editor.Listeners.on(button, 'mouseleave', () => {
+      this.Editor.Tooltip.hide();
     });
 
     /**
