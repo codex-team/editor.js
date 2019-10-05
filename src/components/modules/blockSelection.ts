@@ -263,8 +263,8 @@ export default class BlockSelection extends Module {
     // this.Editor.RectangleSelection.clearSelection();
 
     /** allow default selection on native inputs */
-    if ($.isNativeInput(event.target) && !this.nativeInputSelected) {
-      this.nativeInputSelected = true;
+    if ($.isNativeInput(event.target) && !this.readyToBlockSelection) {
+      this.readyToBlockSelection = true;
       return;
     }
 
@@ -280,30 +280,35 @@ export default class BlockSelection extends Module {
       return;
     }
 
+    if (inputs.length === 1 && !this.needToSelectAll) {
+      this.needToSelectAll = true;
+      return;
+    }
+
     if (this.needToSelectAll) {
-      /** Prevent default selection */
+      /**
+       * Prevent default selection
+       */
       event.preventDefault();
 
-      /**
-       * Save selection
-       * Will be restored when closeSelection fired
-       */
-      this.selection.save();
-
-      /**
-       * Remove Ranges from Selection
-       */
-      SelectionUtils.get()
-        .removeAllRanges();
-
       this.selectAllBlocks();
+
+      /**
+       * Disable any selection after all Blocks selected
+       */
       this.needToSelectAll = false;
+      this.readyToBlockSelection = false;
 
       /**
        * Close ConversionToolbar when all Blocks selected
        */
       this.Editor.ConversionToolbar.close();
-    } else {
+    } else if (this.readyToBlockSelection) {
+      this.selectBlockByIndex();
+
+      /**
+       * Enable all Blocks selection if current Block is selected
+       */
       this.needToSelectAll = true;
     }
   }
@@ -313,6 +318,18 @@ export default class BlockSelection extends Module {
    * Each Block has selected setter that makes Block copyable
    */
   private selectAllBlocks() {
+    /**
+     * Save selection
+     * Will be restored when closeSelection fired
+     */
+    this.selection.save();
+
+    /**
+     * Remove Ranges from Selection
+     */
+    SelectionUtils.get()
+      .removeAllRanges();
+
     this.allBlocksSelected = true;
   }
 }

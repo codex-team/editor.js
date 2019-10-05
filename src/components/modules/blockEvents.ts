@@ -4,6 +4,7 @@
 import Module from '../__module';
 import _ from '../utils';
 import SelectionUtils from '../selection';
+import Flipper from '../flipper';
 
 export default class BlockEvents extends Module {
 
@@ -166,7 +167,12 @@ export default class BlockEvents extends Module {
    * @param {MouseEvent} event
    */
   public mouseDown(event: MouseEvent): void {
-    this.Editor.BlockSelection.clearSelection(event);
+    /**
+     * Each mouse down on Block must disable selectAll state
+     */
+    if (!SelectionUtils.isCollapsed) {
+      this.Editor.BlockSelection.clearSelection(event);
+    }
 
     this.Editor.CrossBlockSelection.watchSelection(event);
   }
@@ -478,10 +484,17 @@ export default class BlockEvents extends Module {
   private arrowRightAndDown(event: KeyboardEvent): void {
     /**
      * Arrows might be handled on toolbars by flipper
+     * Check for Flipper.usedKeys to allow navigate by DOWN and disallow by RIGHT
      */
-    if (this.Editor.UI.someToolbarOpened) {
+    if (this.Editor.UI.someToolbarOpened && Flipper.usedKeys.includes(event.keyCode)) {
       return;
     }
+
+    /**
+     * Close Toolbar and highlighting when user moves cursor
+     */
+    this.Editor.BlockManager.clearFocused();
+    this.Editor.Toolbar.close();
 
     const shouldEnableCBS = this.Editor.Caret.isAtEnd || this.Editor.BlockSelection.anyBlockSelected;
 
@@ -519,10 +532,17 @@ export default class BlockEvents extends Module {
   private arrowLeftAndUp(event: KeyboardEvent): void {
     /**
      * Arrows might be handled on toolbars by flipper
+     * Check for Flipper.usedKeys to allow navigate by UP and disallow by LEFT
      */
-    if (this.Editor.UI.someToolbarOpened) {
+    if (this.Editor.UI.someToolbarOpened && Flipper.usedKeys.includes(event.keyCode)) {
       return;
     }
+
+    /**
+     * Close Toolbar and highlighting when user moves cursor
+     */
+    this.Editor.BlockManager.clearFocused();
+    this.Editor.Toolbar.close();
 
     const shouldEnableCBS = this.Editor.Caret.isAtStart || this.Editor.BlockSelection.anyBlockSelected;
 
