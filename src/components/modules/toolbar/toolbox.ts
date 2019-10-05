@@ -111,6 +111,8 @@ export default class Toolbox extends Module {
    */
   public close(): void {
     this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
+
+    this.Editor.Tooltip.hide();
     this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
 
     this.opened = false;
@@ -219,9 +221,10 @@ export default class Toolbox extends Module {
   }
 
   /**
-   * Add tooltip for toolbox tools
+   * Draw tooltip for toolbox tools
    *
    * @param {String} toolName - toolbox tool name
+   * @return { DocumentFragment }
    */
   private drawTooltip(toolName: string): DocumentFragment {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);

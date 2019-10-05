@@ -391,6 +391,7 @@ export default class InlineToolbar extends Module {
     const {
       Listeners,
       Tools,
+      Tooltip,
     } = this.Editor;
 
     const button = tool.render();
@@ -414,16 +415,16 @@ export default class InlineToolbar extends Module {
     });
 
     /**
-     * set necessary listeners to show tooltip
+     * Enable tooltip module on button
      */
-    this.Editor.Listeners.on(button, 'mouseenter', (event: MouseEvent) => {
-      const content = document.createTextNode(toolName);
+    Listeners.on(button, 'mouseenter', (event: MouseEvent) => {
+      const tooltipContent = document.createTextNode(toolName);
 
-      this.Editor.Tooltip.show(button, content);
+      Tooltip.show(button, tooltipContent);
     });
 
-    this.Editor.Listeners.on(button, 'mouseleave', () => {
-      this.Editor.Tooltip.hide();
+    Listeners.on(button, 'mouseleave', () => {
+      Tooltip.hide();
     });
 
     /**

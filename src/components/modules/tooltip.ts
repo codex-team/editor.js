@@ -9,18 +9,22 @@ import Module from '../__module';
 import tooltip from '../../../devModules/tooltip/dist/tooltip';
 
 /**
- * Module description
+ * @class Tooltip
+ * @classdesc decorates any tooltip module like adapter
  */
 export default class Tooltip extends Module {
   /**
+   * Shows tooltip on element with passed HTML content
+   *
    * @param {HTMLElement} element - any HTML element in DOM
    * @param {HTMLElement| DocumentFragment | Node} content - tooltip's content
    */
   public show(element: HTMLElement, content: HTMLElement | DocumentFragment | Node): void {
     tooltip.show(element, content);
   }
+
   /**
-   * Hide toolbox tooltip
+   * Hides tooltip
    */
   public hide(): void {
     tooltip.hide();
