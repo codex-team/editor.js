@@ -24547,6 +24547,8 @@ var map = {
 	"./api/styles.ts": "./src/components/modules/api/styles.ts",
 	"./api/toolbar": "./src/components/modules/api/toolbar.ts",
 	"./api/toolbar.ts": "./src/components/modules/api/toolbar.ts",
+	"./api/tooltip": "./src/components/modules/api/tooltip.ts",
+	"./api/tooltip.ts": "./src/components/modules/api/tooltip.ts",
 	"./blockEvents": "./src/components/modules/blockEvents.ts",
 	"./blockEvents.ts": "./src/components/modules/blockEvents.ts",
 	"./blockManager": "./src/components/modules/blockManager.ts",
@@ -25972,6 +25974,85 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   _exports.default = ToolbarAPI;
   ToolbarAPI.displayName = "ToolbarAPI";
+  module.exports = exports.default;
+});
+
+/***/ }),
+
+/***/ "./src/components/modules/api/tooltip.ts":
+/*!***********************************************!*\
+  !*** ./src/components/modules/api/tooltip.ts ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else { var mod; }
+})(this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
+  "use strict";
+
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+
+  Object.defineProperty(_exports, "__esModule", {
+    value: true
+  });
+  _exports.default = void 0;
+  _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
+  _createClass2 = _interopRequireDefault(_createClass2);
+  _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
+  _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf2);
+  _inherits2 = _interopRequireDefault(_inherits2);
+  _module = _interopRequireDefault(_module);
+
+  var TooltipAPI =
+  /*#__PURE__*/
+  function (_Module) {
+    (0, _inherits2.default)(TooltipAPI, _Module);
+
+    function TooltipAPI() {
+      (0, _classCallCheck2.default)(this, TooltipAPI);
+      return (0, _possibleConstructorReturn2.default)(this, (0, _getPrototypeOf2.default)(TooltipAPI).apply(this, arguments));
+    }
+
+    (0, _createClass2.default)(TooltipAPI, [{
+      key: "show",
+      value: function show(element, content) {
+        this.Editor.Tooltip.show(element, content);
+      }
+    }, {
+      key: "hide",
+      value: function hide() {
+        this.Editor.Tooltip.hide();
+      }
+    }, {
+      key: "methods",
+
+      /**
+       * Available methods
+       */
+      get: function get() {
+        var _this = this;
+
+        return {
+          show: function show(element, content) {
+            return _this.show(element, content);
+          },
+          hide: function hide() {
+            return _this.show();
+          }
+        };
+      }
+    }]);
+    return TooltipAPI;
+  }(_module.default);
+
+  _exports.default = TooltipAPI;
+  TooltipAPI.displayName = "TooltipAPI";
   module.exports = exports.default;
 });
 
