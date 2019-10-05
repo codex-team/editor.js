@@ -167,11 +167,6 @@ export default class UI extends Module {
     await this.Editor.ConversionToolbar.make();
 
     /**
-     * Make the Tooltip
-     */
-    await this.Editor.Tooltip.make();
-
-    /**
      * Load and append CSS
      */
     await this.loadStyles();

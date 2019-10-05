@@ -258,7 +258,7 @@ export default class Toolbox extends Module {
         shortcut = shortcut.replace(/cmd/gi, 'Ctrl').replace(/windows/gi, 'WIN');
       }
 
-      fragment.appendChild($.make('div', this.Editor.Tooltip.CSS.tooltipShortcut, {
+      fragment.appendChild($.make('div', 'this.Editor.Tooltip.CSS.tooltipShortcut', {
         textContent: shortcut,
       }));
     }

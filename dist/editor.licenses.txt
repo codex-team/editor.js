@@ -379,3 +379,6 @@ Apache License
 
 regenerator-runtime
 MIT
+
+tooltip
+ISC

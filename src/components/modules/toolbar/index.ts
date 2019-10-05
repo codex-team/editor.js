@@ -125,7 +125,7 @@ export default class Toolbar extends Module {
       const fragment = document.createDocumentFragment();
 
       fragment.appendChild(document.createTextNode('Add'));
-      fragment.appendChild($.make('div', this.Editor.Tooltip.CSS.tooltipShortcut, {
+      fragment.appendChild($.make('div', 'this.Editor.Tooltip.CSS.tooltipShortcut', {
         textContent: '⇥ Tab',
       }));
 
