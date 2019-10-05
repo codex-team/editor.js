@@ -120,6 +120,7 @@ export default class Toolbar extends Module {
     this.Editor.Listeners.on(this.nodes.plusButton, 'mouseenter', () => {
       const tooltip = this.Editor.Toolbox.nodes.tooltip;
       const fragment = document.createDocumentFragment();
+      const topOffset = Math.floor(this.Editor.BlockManager.currentBlock.holder.offsetHeight / 2);
 
       fragment.appendChild(document.createTextNode('Add'));
       fragment.appendChild($.make('div', this.Editor.Toolbox.CSS.tooltipShortcut, {
@@ -129,6 +130,7 @@ export default class Toolbar extends Module {
       tooltip.style.left = '-17px';
 
       tooltip.innerHTML = '';
+      tooltip.style.transform = `translate3d(-50%, ${topOffset}px, 0)`;
       tooltip.appendChild(fragment);
       tooltip.classList.add(this.Editor.Toolbox.CSS.tooltipShown);
     });
