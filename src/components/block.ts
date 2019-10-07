@@ -32,7 +32,10 @@ import SelectionUtils from './selection';
  * Available Block Tool API methods
  */
 export enum BlockToolAPI {
-  /** TODO: deprecate method */
+  /** 
+  * @todo remove method in 3.0.0 
+  * @deprecated — use 'rendered' hook instead
+  */
   APPEND_CALLBACK = 'appendCallback',
   RENDERED = 'rendered',
   UPDATED = 'updated',
