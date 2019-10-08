@@ -14,6 +14,7 @@ import _ from '../utils';
 
 import Selection from '../selection';
 import Block from '../block';
+import SelectionUtils from '../selection';
 
 /**
  * @class
@@ -283,11 +284,9 @@ export default class UI extends Module {
     /**
      * Handle selection change on mobile devices for the Inline Toolbar support
      */
-    if (_.isTouchSupported()) {
-      this.Editor.Listeners.on(document, 'selectionchange', (event) => {
+    this.Editor.Listeners.on(document, 'selectionchange', (event) => {
         this.selectionChanged(event as Event);
       }, true);
-    }
 
     this.Editor.Listeners.on(window, 'resize', () => {
       this.resizeDebouncer();
@@ -593,7 +592,16 @@ export default class UI extends Module {
       return;
     }
 
-    this.Editor.InlineToolbar.tryToShow();
+    const { InlineToolbar, ConversionToolbar, BlockManager } = this.Editor;
+    const block = BlockManager.getBlock(focusedElement as HTMLElement);
+
+    if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
+      InlineToolbar.close();
+      ConversionToolbar.tryToShow(block);
+    } else {
+      ConversionToolbar.close();
+      InlineToolbar.tryToShow(true);
+    }
   }
 
   /**
