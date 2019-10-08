@@ -4,7 +4,7 @@
 import Module from '../__module';
 import _ from '../utils';
 import SelectionUtils from '../selection';
-import Flipper from "../flipper";
+import Flipper from '../flipper';
 
 export default class BlockEvents extends Module {
 
@@ -112,10 +112,8 @@ export default class BlockEvents extends Module {
     if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
       InlineToolbar.close();
       BlockSettings.close();
-      ConversionToolbar.tryToShow(block);
     } else {
       ConversionToolbar.close();
-      InlineToolbar.tryToShow(true);
     }
 
     /**
