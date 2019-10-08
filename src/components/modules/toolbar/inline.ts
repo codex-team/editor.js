@@ -410,17 +410,14 @@ export default class InlineToolbar extends Module {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
     const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};
-    const icon = userToolboxSettings.icon || toolboxSettings.icon || toolName;
+    const label = userToolboxSettings.icon || toolboxSettings.icon ||  userToolboxSettings.title || toolboxSettings.title || _.capitalize(toolName);
 
-    this.nodes.conversionTogglerContent.innerHTML = icon;
+    this.nodes.conversionTogglerContent.innerHTML = label;
   }
 
   private prepareConversionToolbar(): void {
-    console.log('fire');
     setTimeout(() => {
       const ct = this.Editor.ConversionToolbar.make();
-
-      console.log('ct', ct);
 
       $.append(this.nodes.wrapper, ct);
     }, 1000);

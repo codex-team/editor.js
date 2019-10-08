@@ -1,10 +1,6 @@
 .ce-inline-toolbar {
   @apply --overlay-pane;
-  padding: 3px;
   transform: translateX(-50%) translateY(8px) scale(0.9);
-  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),
-              5px -12px 34px -13px rgba(97, 105, 134, 0.6),
-              0 26px 52px 3px rgba(147, 165, 186, 0.24);
   opacity: 0;
   visibility: hidden;
   transition: transform 150ms ease, opacity 250ms ease;
@@ -41,12 +37,17 @@
     display: flex;
   }
 
+  &__actions {
+    //border-top: 1px solid var(--color-gray-border);
+  }
+
   &__dropdown {
     display: inline-flex;
     height: var(--toolbar-buttons-size);
     padding: 0 10px;
     align-items: center;
     cursor: pointer;
+    border-right: 1px solid var(--color-gray-border);
 
     &:hover {
       background: var(--bg-light);
@@ -54,6 +55,8 @@
 
     &-content{
       display: flex;
+      font-weight: 500;
+      font-size: 14px;
     }
 
     .icon--toggler-down {
@@ -64,6 +67,7 @@
 
 .ce-inline-tool {
   @apply --toolbar-button;
+  border-radius: 0;
   line-height: normal;
 
   &:not(:last-of-type) {
@@ -90,16 +94,16 @@
   }
 
   &-input {
-    background-color: var(--bg-light);
     outline: none;
     border: 0;
-    border-radius: 3px;
-    margin: 3px 0 0;
+    border-radius: 0 0 4px 4px;
+    margin: 0;
     font-size: 13px;
-    padding: 8px;
+    padding: 10px;
     width: 100%;
     box-sizing: border-box;
     display: none;
+    font-weight: 500;
 
     &::placeholder {
       color: var(--grayText);

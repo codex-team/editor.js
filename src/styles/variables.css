@@ -57,7 +57,8 @@
   --overlay-pane: {
     position: absolute;
     background-color: #FFFFFF;
-    box-shadow: 0 8px 23px -6px rgba(21,40,54,0.31), 22px -14px 34px -18px rgba(33,48,73,0.26);
+    border: 1px solid #EAEAEA;
+    box-shadow: 0 3px 15px -3px rgba(13,20,33,0.13);
     border-radius: 4px;
     z-index: 2;
 
@@ -66,7 +67,7 @@
     }
 
     &::before {
-      content: '';
+      //content: '';
       width: 15px;
       height: 15px;
       position: absolute;
@@ -134,7 +135,7 @@
     outline: none;
     background-color: transparent;
     vertical-align: bottom;
-    color: var(--grayText);
+    color: #000;
 
     &:hover {
       background-color: var(--bg-light);

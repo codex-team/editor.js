@@ -261,14 +261,14 @@ export default class ConversionToolbar extends Module {
 
       console.info('Add', toolName);
 
-      this.addTool(toolName, toolToolboxSettings.icon);
+      this.addTool(toolName, toolToolboxSettings.icon, toolToolboxSettings.title);
     }
   }
 
   /**
    * Add tool to the Conversion Toolbar
    */
-  private addTool(toolName: string, toolIcon: string): void {
+  private addTool(toolName: string, toolIcon: string, title: string): void {
     const tool = $.make('div', [ ConversionToolbar.CSS.conversionTool ]);
     const icon = $.make('div', [ ConversionToolbar.CSS.conversionToolIcon ]);
     // const title = $.make('div', [ ConversionToolbar.CSS.conversionToolTitle ]);
@@ -279,7 +279,7 @@ export default class ConversionToolbar extends Module {
     console.log('tool', tool);
 
     $.append(tool, icon);
-    $.append(tool, $.text(toolName));
+    $.append(tool, $.text(title || _.capitalize(toolName)));
 
     $.append(this.nodes.tools, tool);
     this.tools[toolName] = tool;

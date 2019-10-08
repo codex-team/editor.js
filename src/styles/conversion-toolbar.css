@@ -1,20 +1,13 @@
 .ce-conversion-toolbar {
   @apply --overlay-pane;
 
-  padding: 3px;
-  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),
-    5px -12px 34px -13px rgba(97, 105, 134, 0.6),
-    0 26px 52px 3px rgba(147, 165, 186, 0.24);
   //opacity: 0;
   //visibility: hidden;
   will-change: transform, opacity;
   transition: transform 150ms ease, opacity 250ms ease;
-  transform: translateY(8px) scale(0.9);
+  //transform: translateY(8px) scale(0.9);
   width: 150px;
-
-  &::before {
-    left: 20px;
-  }
+  margin-top: 5px;
 
   &--showed {
     opacity: 1;
@@ -29,20 +22,27 @@
   &__buttons {
     display: flex;
   }
+
+  &__label {
+    color: var(--grayText);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.33px;
+    padding: 10px 10px 5px;
+    text-transform: uppercase;
+  }
 }
 
 .ce-conversion-tool {
   display: flex;
   padding: 5px 10px;
+  font-size: 14px;
   line-height: 20px;
+  font-weight: 500;
   cursor: pointer;
 
   &:hover {
     background: var(--bg-light);
-  }
-
-  &:not(:last-of-type) {
-    margin-right: 2px;
   }
 
   &__icon {
@@ -50,7 +50,7 @@
     width: 20px;
     height: 20px;
     border: 1px solid var(--color-gray-border);
-    border-radius: 2px;
+    border-radius: 3px;
     align-items: center;
     justify-content: center;
     margin-right: 10px;
