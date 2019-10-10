@@ -6,7 +6,7 @@ import Module from '../__module';
  *
  * @see https://github.com/codex-team/ts-tooltips
  */
-import tooltip from '../../../devModules/tooltip/dist/tooltip';
+import tooltip from '../external/codex.tooltips/dist/tooltip';
 
 /**
  * @class Tooltip
