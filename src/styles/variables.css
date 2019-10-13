@@ -136,6 +136,7 @@
     background-color: transparent;
     vertical-align: bottom;
     color: #000;
+    margin: 0;
 
     &:hover {
       background-color: var(--bg-light);

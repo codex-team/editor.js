@@ -35,6 +35,7 @@
 
   &__buttons {
     display: flex;
+    padding-right: 6px;
   }
 
   &__actions {
@@ -45,6 +46,7 @@
     display: inline-flex;
     height: var(--toolbar-buttons-size);
     padding: 0 10px;
+    margin-right: 6px;
     align-items: center;
     cursor: pointer;
     border-right: 1px solid var(--color-gray-border);
@@ -69,9 +71,16 @@
   @apply --toolbar-button;
   border-radius: 0;
   line-height: normal;
+  width: auto;
+  padding: 0 5px !important;
+  min-width: 24px;
 
   &:not(:last-of-type) {
     margin-right: 2px;
+  }
+
+  .icon {
+    height: 12px;
   }
 
   &--last {
@@ -90,6 +99,7 @@
     }
     .icon--unlink {
       display: inline-block;
+      margin-bottom: -1px;
     }
   }
 
