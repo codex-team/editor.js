@@ -59,10 +59,14 @@
       display: flex;
       font-weight: 500;
       font-size: 14px;
+
+      svg {
+        height: 12px;
+      }
     }
 
     .icon--toggler-down {
-      margin-left: 3px;
+      margin-left: 4px;
     }
   }
 }

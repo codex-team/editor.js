@@ -5,6 +5,7 @@ import _ from '../../utils';
 import {SavedData} from '../../../types-internal/block-data';
 import Block from '../../block';
 import Flipper from '../../flipper';
+import SelectionUtils from '../../selection';
 
 /**
  * Block Converter
@@ -20,6 +21,7 @@ export default class ConversionToolbar extends Module {
       conversionToolbarTools: 'ce-conversion-toolbar__tools',
       conversionToolbarLabel: 'ce-conversion-toolbar__label',
       conversionTool: 'ce-conversion-tool',
+      conversionToolHidden: 'ce-conversion-tool--hidden',
       conversionToolIcon: 'ce-conversion-tool__icon',
 
       conversionToolFocused : 'ce-conversion-tool--focused',
@@ -81,9 +83,18 @@ export default class ConversionToolbar extends Module {
     // $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
   }
 
+  public toggle() {
+    if (!this.opened) {
+      this.open();
+    } else {
+      this.close();
+    }
+  }
+
   /**
    * Try to show Conversion Toolbar near passed Block
    * @param {Block} block - block to convert
+   * @deprecated
    */
   public tryToShow(block: Block): void {
     const hasExportConfig = block.class.conversionConfig && block.class.conversionConfig.export;
@@ -108,10 +119,27 @@ export default class ConversionToolbar extends Module {
    * Shows Conversion Toolbar
    */
   public open(): void {
+    this.filterTools();
+
     this.opened = true;
     this.flipper.activate(Object.values(this.tools));
     this.flipper.focusFirst();
     this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
+  }
+
+  /**
+   * Hide current Tool and show others
+   */
+  public filterTools() {
+    const { currentBlock } = this.Editor.BlockManager;
+
+    /**
+     * Show previously hided
+     */
+    Object.entries(this.tools).forEach(([name, button]) => {
+      button.hidden = false;
+      button.classList.toggle(ConversionToolbar.CSS.conversionToolHidden, name === currentBlock.name);
+    });
   }
 
   /**
@@ -275,8 +303,6 @@ export default class ConversionToolbar extends Module {
 
     tool.dataset.tool = toolName;
     icon.innerHTML = toolIcon;
-
-    console.log('tool', tool);
 
     $.append(tool, icon);
     $.append(tool, $.text(title || _.capitalize(toolName)));

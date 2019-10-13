@@ -1,13 +1,15 @@
 .ce-conversion-toolbar {
   @apply --overlay-pane;
 
-  //opacity: 0;
-  //visibility: hidden;
+  opacity: 0;
+  visibility: hidden;
   will-change: transform, opacity;
-  transition: transform 150ms ease, opacity 250ms ease;
-  //transform: translateY(8px) scale(0.9);
+  transition: transform 100ms ease, opacity 100ms ease;
+  transform: translateY(-8px);
+  left: -1px;
   width: 150px;
   margin-top: 5px;
+  box-sizing: content-box;
 
   &--showed {
     opacity: 1;
@@ -41,6 +43,10 @@
   font-weight: 500;
   cursor: pointer;
 
+  &--hidden {
+    display: none;
+  }
+
   &:hover {
     background: var(--bg-light);
   }
@@ -57,8 +63,8 @@
     background: #fff;
 
     svg {
-      width: 16px;
-      height: 16px;
+      width: 11px;
+      height: 11px;
     }
   }
 

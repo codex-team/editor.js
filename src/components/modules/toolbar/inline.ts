@@ -63,7 +63,7 @@ export default class InlineToolbar extends Module {
   /**
    * Margin above/below the Toolbar
    */
-  private readonly toolbarVerticalMargin: number = 20;
+  private readonly toolbarVerticalMargin: number = 5;
 
   /**
    * Tools instances
@@ -401,7 +401,7 @@ export default class InlineToolbar extends Module {
     this.nodes.buttons.appendChild(this.nodes.conversionToggler);
 
     this.Editor.Listeners.on(this.nodes.conversionToggler, 'click', () => {
-      console.log('Clicked');
+      this.Editor.ConversionToolbar.toggle();
     });
   }
 

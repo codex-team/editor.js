@@ -68,15 +68,17 @@
 
     &::before {
       //content: '';
-      width: 15px;
-      height: 15px;
+      width: 10px;
+      height: 10px;
       position: absolute;
-      top: -7px;
+      top: -6px;
       left: 50%;
-      margin-left: -7px;
+      margin-left: -6px;
       transform: rotate(-45deg);
       background-color: #fff;
       z-index: -1;
+      border: 1px solid #EAEAEA;
+      border-width: 1px 1px 0 0;
     }
 
     &--left-oriented {
