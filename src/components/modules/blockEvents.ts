@@ -94,7 +94,6 @@ export default class BlockEvents extends Module {
    * - shows conversion toolbar with 85% of block selection
    */
   public keyup(event): void {
-
     /**
      * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
      */
@@ -102,24 +101,10 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const { InlineToolbar, ConversionToolbar, UI, BlockManager, BlockSettings } = this.Editor;
-    const block = BlockManager.getBlock(event.target);
-
-    /**
-     * Conversion Toolbar will be opened when user selects 85% of plugins content
-     * that why we must with the length of pluginsContent
-     */
-    if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-      InlineToolbar.close();
-      BlockSettings.close();
-    } else {
-      ConversionToolbar.close();
-    }
-
     /**
      * Check if editor is empty on each keyup and add special css class to wrapper
      */
-    UI.checkEmptiness();
+    this.Editor.UI.checkEmptiness();
   }
 
   /**
