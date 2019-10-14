@@ -103,8 +103,6 @@ export default class ConversionToolbar extends Module {
       return;
     }
 
-    this.move(block);
-
     if (!this.opened) {
       this.open();
     }
@@ -231,26 +229,11 @@ export default class ConversionToolbar extends Module {
     this.Editor.BlockSelection.clearSelection();
 
     this.close();
+    this.Editor.InlineToolbar.close();
 
     _.delay(() => {
       this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
     }, 10)();
-  }
-
-  /**
-   * Move Conversion Toolbar to the working Block
-   */
-  private move(block: Block): void {
-    const blockRect = block.pluginsContent.getBoundingClientRect();
-    const wrapperRect = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
-
-    const newCoords = {
-      x: blockRect.left - wrapperRect.left,
-      y: blockRect.top + blockRect.height - wrapperRect.top,
-    };
-
-    this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
-    this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
   }
 
   /**
@@ -262,7 +245,6 @@ export default class ConversionToolbar extends Module {
 
     for (const toolName in tools) {
       if (!tools.hasOwnProperty(toolName)) {
-        console.log('skep 0');
         continue;
       }
 
@@ -275,7 +257,6 @@ export default class ConversionToolbar extends Module {
        * Skip tools that don't pass 'toolbox' property
        */
       if (_.isEmpty(toolToolboxSettings) || !toolToolboxSettings.icon) {
-        console.log('skep 1');
         continue;
       }
 
@@ -283,11 +264,8 @@ export default class ConversionToolbar extends Module {
        * Skip tools without «import» rule specified
        */
       if (!conversionConfig || !conversionConfig.import) {
-        console.log('skep 2');
         continue;
       }
-
-      console.info('Add', toolName);
 
       this.addTool(toolName, toolToolboxSettings.icon, toolToolboxSettings.title);
     }

@@ -15400,19 +15400,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Conversion Toolbar will be opened when user selects 85% of plugins content
          * that why we must with the length of pluginsContent
          */
+        // if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
+        //   InlineToolbar.close();
+        //   BlockSettings.close();
+        //   ConversionToolbar.tryToShow(block);
+        // } else {
+        //   ConversionToolbar.close();
 
-        if (_selection.default.almostAllSelected(block.pluginsContent.textContent)) {
-          InlineToolbar.close();
-          BlockSettings.close();
-          ConversionToolbar.tryToShow(block);
-        } else {
-          ConversionToolbar.close();
-          InlineToolbar.tryToShow(true);
-        }
+        InlineToolbar.tryToShow(true); // }
+
         /**
          * Check if editor is empty on each keyup and add special css class to wrapper
          */
-
 
         UI.checkEmptiness();
       }
@@ -22000,8 +21999,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        this.move(block);
-
         if (!this.opened) {
           this.open();
         }
@@ -22181,12 +22178,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                   this.Editor.BlockManager.replace(replacingToolName, newBlockData);
                   this.Editor.BlockSelection.clearSelection();
                   this.close();
+                  this.Editor.InlineToolbar.close();
 
                   _utils.default.delay(function () {
                     _this2.Editor.Caret.setToBlock(_this2.Editor.BlockManager.currentBlock);
                   }, 10)();
 
-                case 37:
+                case 38:
                 case "end":
                   return _context.stop();
               }
@@ -22199,22 +22197,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         };
       }()
       /**
-       * Move Conversion Toolbar to the working Block
-       */
-
-    }, {
-      key: "move",
-      value: function move(block) {
-        var blockRect = block.pluginsContent.getBoundingClientRect();
-        var wrapperRect = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
-        var newCoords = {
-          x: blockRect.left - wrapperRect.left,
-          y: blockRect.top + blockRect.height - wrapperRect.top
-        };
-        this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
-        this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
-      }
-      /**
        * Iterates existing Tools and inserts to the ConversionToolbar
        * if tools have ability to import
        */
@@ -22226,7 +22208,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         for (var toolName in tools) {
           if (!tools.hasOwnProperty(toolName)) {
-            console.log('skep 0');
             continue;
           }
 
@@ -22239,7 +22220,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            */
 
           if (_utils.default.isEmpty(toolToolboxSettings) || !toolToolboxSettings.icon) {
-            console.log('skep 1');
             continue;
           }
           /**
@@ -22248,11 +22228,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 
           if (!conversionConfig || !conversionConfig.import) {
-            console.log('skep 2');
             continue;
           }
 
-          console.info('Add', toolName);
           this.addTool(toolName, toolToolboxSettings.icon, toolToolboxSettings.title);
         }
       }

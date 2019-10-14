@@ -109,14 +109,14 @@ export default class BlockEvents extends Module {
      * Conversion Toolbar will be opened when user selects 85% of plugins content
      * that why we must with the length of pluginsContent
      */
-    if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-      InlineToolbar.close();
-      BlockSettings.close();
-      ConversionToolbar.tryToShow(block);
-    } else {
-      ConversionToolbar.close();
-      InlineToolbar.tryToShow(true);
-    }
+    // if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
+    //   InlineToolbar.close();
+    //   BlockSettings.close();
+    //   ConversionToolbar.tryToShow(block);
+    // } else {
+    //   ConversionToolbar.close();
+    InlineToolbar.tryToShow(true);
+    // }
 
     /**
      * Check if editor is empty on each keyup and add special css class to wrapper
