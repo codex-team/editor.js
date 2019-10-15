@@ -43,6 +43,12 @@
     left: calc(var(--toolbox-buttons-size) * -1);
     flex-shrink: 0;
 
+    &-shortcut {
+       color: rgba(100, 105, 122, 0.6);
+       word-spacing: -2px;
+       margin-top: 5px;
+    }
+
     &--hidden {
       display: none;
     }

@@ -85,6 +85,7 @@ export default class Toolbar extends Module {
 
       // Content Zone
       plusButton: 'ce-toolbar__plus',
+      plusButtonShortcut: 'ce-toolbar__plus-shortcut',
       plusButtonHidden: 'ce-toolbar__plus--hidden',
 
       // Actions Zone
@@ -125,7 +126,7 @@ export default class Toolbar extends Module {
       const fragment = document.createDocumentFragment();
 
       fragment.appendChild(document.createTextNode('Add'));
-      fragment.appendChild($.make('div', 'this.Editor.Tooltip.CSS.tooltipShortcut', {
+      fragment.appendChild($.make('div', this.CSS.plusButtonShortcut, {
         textContent: '⇥ Tab',
       }));
 

@@ -2,11 +2,8 @@ import Module from '../__module';
 
 /**
  * Use external module CodeX Tooltip
- * Link to the github....
- *
- * @see https://github.com/codex-team/ts-tooltips
  */
-import tooltip from '../external/codex.tooltips/dist/tooltip';
+import tooltip, { TooltipContent, TooltipOptions } from '../external/codex.tooltips';
 
 /**
  * @class Tooltip
@@ -17,16 +14,19 @@ export default class Tooltip extends Module {
    * Shows tooltip on element with passed HTML content
    *
    * @param {HTMLElement} element - any HTML element in DOM
-   * @param {HTMLElement| DocumentFragment | Node} content - tooltip's content
+   * @param {TooltipContent} content - tooltip's content
+   * @param {TooltipOptions} options
    */
-  public show(element: HTMLElement, content: HTMLElement | DocumentFragment | Node): void {
-    tooltip.show(element, content);
+  public show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
+    tooltip.show(element, content, {
+      position: 'bottom',
+    });
   }
 
   /**
    * Hides tooltip
    */
   public hide(): void {
-    tooltip.hide();
+    // tooltip.hide();
   }
 }

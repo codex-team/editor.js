@@ -28,6 +28,9 @@ export default class Toolbox extends Module {
       toolboxButtonActive : 'ce-toolbox__button--active',
       toolboxOpened: 'ce-toolbox--opened',
       openedToolbarHolderModifier: 'codex-editor--toolbox-opened',
+
+      buttonTooltip: 'ce-toolbox-button-tooltip',
+      buttonShortcut: 'ce-toolbox-button-tooltip__shortcut',
     };
   }
 
@@ -224,9 +227,9 @@ export default class Toolbox extends Module {
    * Draw tooltip for toolbox tools
    *
    * @param {String} toolName - toolbox tool name
-   * @return { DocumentFragment }
+   * @return { HTMLElement }
    */
-  private drawTooltip(toolName: string): DocumentFragment {
+  private drawTooltip(toolName: string): HTMLElement {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
     const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};
@@ -234,10 +237,10 @@ export default class Toolbox extends Module {
 
     let shortcut = toolSettings[this.Editor.Tools.USER_SETTINGS.SHORTCUT];
 
-    const fragment = document.createDocumentFragment();
+    const tooltip = $.make('div', this.CSS.buttonTooltip);
     const hint = document.createTextNode(_.capitalize(name));
 
-    fragment.appendChild(hint);
+    tooltip.appendChild(hint);
 
     if (shortcut) {
       const OS = _.getUserOS();
@@ -261,12 +264,12 @@ export default class Toolbox extends Module {
         shortcut = shortcut.replace(/cmd/gi, 'Ctrl').replace(/windows/gi, 'WIN');
       }
 
-      fragment.appendChild($.make('div', 'this.Editor.Tooltip.CSS.tooltipShortcut', {
+      tooltip.appendChild($.make('div', this.CSS.buttonShortcut, {
         textContent: shortcut,
       }));
     }
 
-    return fragment;
+    return tooltip;
   }
 
   /**
