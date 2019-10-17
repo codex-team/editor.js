@@ -9,4 +9,4 @@ export * from './caret';
 export * from './toolbar';
 export * from './notifier';
 export * from './tooltip';
-export * from './inline-toolbar'
+export * from './inline-toolbar';

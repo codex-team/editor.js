@@ -420,7 +420,9 @@ export default class InlineToolbar extends Module {
     Listeners.on(button, 'mouseenter', (event: MouseEvent) => {
       const tooltipContent = document.createTextNode(toolName);
 
-      Tooltip.show(button, tooltipContent);
+      Tooltip.show(button, tooltipContent, {
+        marginTop: 5,
+      });
     });
 
     Listeners.on(button, 'mouseleave', () => {

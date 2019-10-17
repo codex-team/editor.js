@@ -1,5 +1,6 @@
 import Module from '../../__module';
 import { Tooltip } from '../../../../types/api';
+import {TooltipContent, TooltipOptions} from '../../external/codex.tooltips';
 
 /**
  * @class TooltipAPI
@@ -11,7 +12,10 @@ export default class TooltipAPI extends Module {
    */
   get methods(): Tooltip {
     return {
-      show: (element: HTMLElement, content: HTMLElement) => this.show(element, content),
+      show: (element: HTMLElement,
+             content: TooltipContent,
+             options?: TooltipOptions,
+      ) => this.show(element, content, options),
       hide: () => this.hide(),
     };
   }
@@ -20,10 +24,11 @@ export default class TooltipAPI extends Module {
    * Method show tooltip on element with passed HTML content
    *
    * @param {HTMLElement} element
-   * @param {HTMLElement} content
+   * @param {TooltipContent} content
+   * @param {TooltipOptions} options
    */
-  public show(element: HTMLElement, content: HTMLElement) {
-    this.Editor.Tooltip.show(element, content);
+  public show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions) {
+    this.Editor.Tooltip.show(element, content, options);
   }
 
   /**

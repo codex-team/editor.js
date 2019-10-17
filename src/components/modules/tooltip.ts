@@ -18,15 +18,13 @@ export default class Tooltip extends Module {
    * @param {TooltipOptions} options
    */
   public show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    tooltip.show(element, content, {
-      position: 'bottom',
-    });
+    tooltip.show(element, content, options);
   }
 
   /**
    * Hides tooltip
    */
   public hide(): void {
-    // tooltip.hide();
+    tooltip.hide();
   }
 }
