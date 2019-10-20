@@ -12,6 +12,7 @@ import {
 import BoldInlineTool from '../inline-tools/inline-tool-bold';
 import ItalicInlineTool from '../inline-tools/inline-tool-italic';
 import LinkInlineTool from '../inline-tools/inline-tool-link';
+import UnderlineInlineTool from '../inline-tools/inline-tool-underline';
 import Stub from '../tools/stub';
 
 /**
@@ -440,6 +441,7 @@ export default class Tools extends Module {
     return {
       bold: {class: BoldInlineTool},
       italic: {class: ItalicInlineTool},
+      underline: {class: UnderlineInlineTool},
       link: {class: LinkInlineTool},
       paragraph: {
         class: Paragraph,
