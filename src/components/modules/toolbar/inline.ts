@@ -30,6 +30,7 @@ export default class InlineToolbar extends Module {
     inputField: 'cdx-input',
     focusedButton: 'ce-inline-tool--focused',
     conversionToggler: 'ce-inline-toolbar__dropdown',
+    conversionTogglerHidden: 'ce-inline-toolbar__dropdown--hidden',
     conversionTogglerContent: 'ce-inline-toolbar__dropdown-content',
   };
 
@@ -407,6 +408,18 @@ export default class InlineToolbar extends Module {
 
   private setConverstionTooglerContent() {
     const toolName = this.Editor.BlockManager.currentBlock.name;
+
+    /**
+     * If tool does not provide 'export' rule, don't show conversion toggler
+     */
+    const conversionConfig = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.CONVERSION_CONFIG] || {};
+    const exportRuleDefined = conversionConfig && conversionConfig.export;
+
+    this.nodes.conversionToggler.classList.toggle(this.CSS.conversionTogglerHidden, !exportRuleDefined);
+
+    /**
+     * Get icon or title for dropdown
+     */
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
     const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};

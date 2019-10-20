@@ -55,6 +55,10 @@
       background: var(--bg-light);
     }
 
+    &--hidden {
+      display: none;
+    }
+
     &-content{
       display: flex;
       font-weight: 500;

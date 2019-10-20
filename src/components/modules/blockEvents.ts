@@ -136,28 +136,30 @@ export default class BlockEvents extends Module {
      * Timeout uses to wait if selection will cleared after mouse up (regular click on block)
      */
     _.delay(() => {
+      InlineToolbar.tryToShow(true);
+
       /**
        * 1) selected 85% of block - open Conversion Toolbar
        * 2) select something inside block - open Inline Toolbar
        * 3) nothing selected - close Toolbars
        */
-      if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-        InlineToolbar.close();
-        ConversionToolbar.tryToShow(block);
-      } else if (!SelectionUtils.isCollapsed) {
-        InlineToolbar.tryToShow();
-        ConversionToolbar.close();
-      } else {
-        InlineToolbar.close();
-
-        /**
-         * Don't close Conversion toolbar when Rectangle Selection ended with one block selected
-         * @see RectangleSelection#endSelection
-         */
-        if (BlockSelection.selectedBlocks.length !== 1) {
-          ConversionToolbar.close();
-        }
-      }
+      // if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
+      //   InlineToolbar.close();
+      //   ConversionToolbar.tryToShow(block);
+      // } else if (!SelectionUtils.isCollapsed) {
+      //   InlineToolbar.tryToShow();
+      //   ConversionToolbar.close();
+      // } else {
+      //   InlineToolbar.close();
+      //
+      //   /**
+      //    * Don't close Conversion toolbar when Rectangle Selection ended with one block selected
+      //    * @see RectangleSelection#endSelection
+      //    */
+      //   if (BlockSelection.selectedBlocks.length !== 1) {
+      //     ConversionToolbar.close();
+      //   }
+      // }
     }, 30)();
   }
 

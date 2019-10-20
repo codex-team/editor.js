@@ -163,6 +163,7 @@ export default class ConversionToolbar extends Module {
     const currentBlockClass = this.Editor.BlockManager.currentBlock.class;
     const currentBlockName = this.Editor.BlockManager.currentBlock.name;
     const savedBlock = await this.Editor.BlockManager.currentBlock.save() as SavedData;
+    const { INTERNAL_SETTINGS } = this.Editor.Tools;
     const blockData = savedBlock.data;
 
     /**
@@ -187,7 +188,7 @@ export default class ConversionToolbar extends Module {
      * In both cases returning value must be a string
      */
     let exportData: string = '';
-    const exportProp = currentBlockClass.conversionConfig.export;
+    const exportProp = currentBlockClass[INTERNAL_SETTINGS.CONVERSION_CONFIG].export;
 
     if (typeof exportProp === 'function') {
       exportData = exportProp(blockData);
@@ -213,7 +214,7 @@ export default class ConversionToolbar extends Module {
      * string — the name of data field to import
      */
     let newBlockData = {};
-    const importProp = replacingTool.conversionConfig.import;
+    const importProp = replacingTool[INTERNAL_SETTINGS.CONVERSION_CONFIG].import;
 
     if (typeof importProp === 'function') {
       newBlockData = importProp(cleaned);
