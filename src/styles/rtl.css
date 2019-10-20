@@ -54,6 +54,13 @@
       }
     }
   }
+
+  .ce-conversion-toolbar {
+    &::before{
+      left: auto;
+      right: 20px;
+    }
+  }
 }
 
 

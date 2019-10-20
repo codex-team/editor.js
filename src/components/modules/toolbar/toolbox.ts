@@ -330,7 +330,7 @@ export default class Toolbox extends Module {
     this.flipper = new Flipper({
       items: tools,
       focusedItemClass: this.CSS.toolboxButtonActive,
-    });
+    }, this.config);
   }
 
   /**

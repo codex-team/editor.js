@@ -197,6 +197,6 @@ export default class BlockSettings extends Module {
           this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
         }, 10)();
       },
-    } as FlipperOptions);
+    } as FlipperOptions, this.config);
   }
 }

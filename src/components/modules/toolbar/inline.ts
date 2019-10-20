@@ -533,6 +533,6 @@ export default class InlineToolbar extends Module {
     this.flipper = new Flipper({
       focusedItemClass: this.CSS.focusedButton,
       allowArrows: false,
-    });
+    }, this.config);
   }
 }

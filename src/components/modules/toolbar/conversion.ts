@@ -211,7 +211,12 @@ export default class ConversionToolbar extends Module {
       y: blockRect.top + blockRect.height - wrapperRect.top,
     };
 
-    this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
+    if (this.config.direction === 'ltr') {
+      this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
+    } else {
+      this.nodes.wrapper.style.right = Math.floor(newCoords.x) + 'px';
+    }
+
     this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
   }
 
@@ -291,6 +296,6 @@ export default class ConversionToolbar extends Module {
   private enableFlipper(): void {
     this.flipper = new Flipper({
       focusedItemClass: ConversionToolbar.CSS.conversionToolFocused,
-    });
+    }, this.config);
   }
 }

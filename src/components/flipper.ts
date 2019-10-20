@@ -1,5 +1,6 @@
 import DomIterator from './domIterator';
 import _ from './utils';
+import { EditorConfig } from '../../types';
 
 /**
  * Flipper construction options
@@ -50,6 +51,12 @@ export default class Flipper {
   private activated: boolean = false;
 
   /**
+   * Editor Config
+   * @type {EditorConfig}
+   */
+  private config: EditorConfig;
+
+  /**
    * Flag that allows arrows usage to flip items
    * @type {boolean}
    */
@@ -66,7 +73,9 @@ export default class Flipper {
    * @param {FlipperOptions} options - different constructing settings
    * @
    */
-  constructor(options: FlipperOptions) {
+  constructor(options: FlipperOptions, config: EditorConfig) {
+    this.config = config;
+
     this.allowArrows = typeof options.allowArrows === 'boolean' ? options.allowArrows : true;
     this.iterator = new DomIterator(options.items, options.focusedItemClass);
     this.activateCallback = options.activateCallback;
@@ -96,10 +105,18 @@ export default class Flipper {
           this.handleTabPress(event);
           break;
         case _.keyCodes.LEFT:
-          this.flipLeft();
+          if (this.config.direction === 'ltr') {
+            this.flipLeft();
+          } else {
+            this.flipRight();
+          }
           break;
         case _.keyCodes.RIGHT:
-          this.flipRight();
+          if (this.config.direction === 'ltr') {
+            this.flipRight();
+          } else {
+            this.flipLeft();
+          }
           break;
         case _.keyCodes.ENTER:
           this.handleEnterPress(event);
