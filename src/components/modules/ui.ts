@@ -276,13 +276,11 @@ export default class UI extends Module {
     this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), true);
 
     /**
-     * Handle selection change on mobile devices for the Inline Toolbar support
+     * Handle selection change to manipulate Inline Toolbar appearance
      */
-    if (_.isTouchSupported()) {
-      this.Editor.Listeners.on(document, 'selectionchange', (event) => {
-        this.selectionChanged(event as Event);
-      }, true);
-    }
+    this.Editor.Listeners.on(document, 'selectionchange', (event) => {
+      this.selectionChanged(event as Event);
+    }, true);
 
     this.Editor.Listeners.on(window, 'resize', () => {
       this.resizeDebouncer();
@@ -578,6 +576,7 @@ export default class UI extends Module {
    * @param {Event} event
    */
   private selectionChanged(event: Event): void {
+    console.log('selectionChanged', event);
     const focusedElement = Selection.anchorElement as Element;
 
     /**
@@ -588,7 +587,7 @@ export default class UI extends Module {
       return;
     }
 
-    this.Editor.InlineToolbar.tryToShow();
+    this.Editor.InlineToolbar.tryToShow(true);
   }
 
   /**

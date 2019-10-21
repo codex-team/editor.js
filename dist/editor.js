@@ -15388,77 +15388,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         if (event.shiftKey) {
           return;
         }
-
-        var _this$Editor = this.Editor,
-            InlineToolbar = _this$Editor.InlineToolbar,
-            ConversionToolbar = _this$Editor.ConversionToolbar,
-            UI = _this$Editor.UI,
-            BlockManager = _this$Editor.BlockManager,
-            BlockSettings = _this$Editor.BlockSettings;
-        var block = BlockManager.getBlock(event.target);
-        /**
-         * Conversion Toolbar will be opened when user selects 85% of plugins content
-         * that why we must with the length of pluginsContent
-         */
-        // if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-        //   InlineToolbar.close();
-        //   BlockSettings.close();
-        //   ConversionToolbar.tryToShow(block);
-        // } else {
-        //   ConversionToolbar.close();
-
-        InlineToolbar.tryToShow(true); // }
-
         /**
          * Check if editor is empty on each keyup and add special css class to wrapper
          */
 
-        UI.checkEmptiness();
+
+        this.Editor.UI.checkEmptiness();
       }
       /**
        * Mouse up on Block:
-       * - shows Inline Toolbar if something selected
        */
 
     }, {
       key: "mouseUp",
-      value: function mouseUp(event) {
-        var _this$Editor2 = this.Editor,
-            InlineToolbar = _this$Editor2.InlineToolbar,
-            ConversionToolbar = _this$Editor2.ConversionToolbar,
-            BlockManager = _this$Editor2.BlockManager,
-            BlockSelection = _this$Editor2.BlockSelection;
-        var block = BlockManager.getBlock(event.target);
-        /**
-         * Timeout uses to wait if selection will cleared after mouse up (regular click on block)
-         */
-
-        _utils.default.delay(function () {
-          InlineToolbar.tryToShow(true);
-          /**
-           * 1) selected 85% of block - open Conversion Toolbar
-           * 2) select something inside block - open Inline Toolbar
-           * 3) nothing selected - close Toolbars
-           */
-          // if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-          //   InlineToolbar.close();
-          //   ConversionToolbar.tryToShow(block);
-          // } else if (!SelectionUtils.isCollapsed) {
-          //   InlineToolbar.tryToShow();
-          //   ConversionToolbar.close();
-          // } else {
-          //   InlineToolbar.close();
-          //
-          //   /**
-          //    * Don't close Conversion toolbar when Rectangle Selection ended with one block selected
-          //    * @see RectangleSelection#endSelection
-          //    */
-          //   if (BlockSelection.selectedBlocks.length !== 1) {
-          //     ConversionToolbar.close();
-          //   }
-          // }
-        }, 30)();
-      }
+      value: function mouseUp() {}
       /**
        * Set up mouse selection handlers
        *
@@ -15489,11 +15432,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Clear blocks selection by tab
          */
         this.Editor.BlockSelection.clearSelection(event);
-        var _this$Editor3 = this.Editor,
-            BlockManager = _this$Editor3.BlockManager,
-            Tools = _this$Editor3.Tools,
-            InlineToolbar = _this$Editor3.InlineToolbar,
-            ConversionToolbar = _this$Editor3.ConversionToolbar;
+        var _this$Editor = this.Editor,
+            BlockManager = _this$Editor.BlockManager,
+            Tools = _this$Editor.Tools,
+            InlineToolbar = _this$Editor.InlineToolbar,
+            ConversionToolbar = _this$Editor.ConversionToolbar;
         var currentBlock = BlockManager.currentBlock;
 
         if (!currentBlock) {
@@ -15597,10 +15540,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "handleCommandX",
       value: function handleCommandX(event) {
-        var _this$Editor4 = this.Editor,
-            BlockSelection = _this$Editor4.BlockSelection,
-            BlockManager = _this$Editor4.BlockManager,
-            Caret = _this$Editor4.Caret;
+        var _this$Editor2 = this.Editor,
+            BlockSelection = _this$Editor2.BlockSelection,
+            BlockManager = _this$Editor2.BlockManager,
+            Caret = _this$Editor2.Caret;
 
         if (!BlockSelection.anyBlockSelected) {
           return;
@@ -15629,10 +15572,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "enter",
       value: function enter(event) {
-        var _this$Editor5 = this.Editor,
-            BlockManager = _this$Editor5.BlockManager,
-            Tools = _this$Editor5.Tools,
-            UI = _this$Editor5.UI;
+        var _this$Editor3 = this.Editor,
+            BlockManager = _this$Editor3.BlockManager,
+            Tools = _this$Editor3.Tools,
+            UI = _this$Editor3.UI;
         var currentBlock = BlockManager.currentBlock;
         var tool = Tools.available[currentBlock.name];
         /**
@@ -15702,10 +15645,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "backspace",
       value: function backspace(event) {
-        var _this$Editor6 = this.Editor,
-            BlockManager = _this$Editor6.BlockManager,
-            BlockSelection = _this$Editor6.BlockSelection,
-            Caret = _this$Editor6.Caret;
+        var _this$Editor4 = this.Editor,
+            BlockManager = _this$Editor4.BlockManager,
+            BlockSelection = _this$Editor4.BlockSelection,
+            Caret = _this$Editor4.Caret;
         var currentBlock = BlockManager.currentBlock;
         var tool = this.Editor.Tools.available[currentBlock.name];
         /**
@@ -15767,10 +15710,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "mergeBlocks",
       value: function mergeBlocks() {
-        var _this$Editor7 = this.Editor,
-            BlockManager = _this$Editor7.BlockManager,
-            Caret = _this$Editor7.Caret,
-            Toolbar = _this$Editor7.Toolbar;
+        var _this$Editor5 = this.Editor,
+            BlockManager = _this$Editor5.BlockManager,
+            Caret = _this$Editor5.Caret,
+            Toolbar = _this$Editor5.Toolbar;
         var targetBlock = BlockManager.previousBlock;
         var blockToMerge = BlockManager.currentBlock;
         /**
@@ -16624,7 +16567,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return BlockEvents.keydown(event);
         }, true);
         Listeners.on(block.holder, 'mouseup', function (event) {
-          return BlockEvents.mouseUp(event);
+          return BlockEvents.mouseUp();
         });
         Listeners.on(block.holder, 'mousedown', function (event) {
           return BlockEvents.mouseDown(event);
@@ -17957,6 +17900,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           targetBlock.selected = false;
           return;
         }
+
+        _this.Editor.InlineToolbar.close();
 
         _this.toggleBlocksSelectedState(relatedBlock, targetBlock);
 
@@ -24762,15 +24707,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return _this2.documentClicked(event);
         }, true);
         /**
-         * Handle selection change on mobile devices for the Inline Toolbar support
+         * Handle selection change to manipulate Inline Toolbar appearance
          */
 
-        if (_utils.default.isTouchSupported()) {
-          this.Editor.Listeners.on(document, 'selectionchange', function (event) {
-            _this2.selectionChanged(event);
-          }, true);
-        }
-
+        this.Editor.Listeners.on(document, 'selectionchange', function (event) {
+          _this2.selectionChanged(event);
+        }, true);
         this.Editor.Listeners.on(window, 'resize', function () {
           _this2.resizeDebouncer();
         }, {
@@ -25095,6 +25037,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "selectionChanged",
       value: function selectionChanged(event) {
+        console.log('selectionChanged', event);
         var focusedElement = _selection.default.anchorElement;
         /**
          * Event can be fired on clicks at the Editor elements, for example, at the Inline Toolbar
@@ -25105,7 +25048,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        this.Editor.InlineToolbar.tryToShow();
+        this.Editor.InlineToolbar.tryToShow(true);
       }
       /**
        * Append prebuilt sprite with SVG icons

@@ -102,65 +102,16 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const { InlineToolbar, ConversionToolbar, UI, BlockManager, BlockSettings } = this.Editor;
-    const block = BlockManager.getBlock(event.target);
-
-    /**
-     * Conversion Toolbar will be opened when user selects 85% of plugins content
-     * that why we must with the length of pluginsContent
-     */
-    // if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-    //   InlineToolbar.close();
-    //   BlockSettings.close();
-    //   ConversionToolbar.tryToShow(block);
-    // } else {
-    //   ConversionToolbar.close();
-    InlineToolbar.tryToShow(true);
-    // }
-
     /**
      * Check if editor is empty on each keyup and add special css class to wrapper
      */
-    UI.checkEmptiness();
+    this.Editor.UI.checkEmptiness();
   }
 
   /**
    * Mouse up on Block:
-   * - shows Inline Toolbar if something selected
    */
-  public mouseUp(event): void {
-    const { InlineToolbar, ConversionToolbar, BlockManager, BlockSelection } = this.Editor;
-    const block = BlockManager.getBlock(event.target);
-
-    /**
-     * Timeout uses to wait if selection will cleared after mouse up (regular click on block)
-     */
-    _.delay(() => {
-      InlineToolbar.tryToShow(true);
-
-      /**
-       * 1) selected 85% of block - open Conversion Toolbar
-       * 2) select something inside block - open Inline Toolbar
-       * 3) nothing selected - close Toolbars
-       */
-      // if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-      //   InlineToolbar.close();
-      //   ConversionToolbar.tryToShow(block);
-      // } else if (!SelectionUtils.isCollapsed) {
-      //   InlineToolbar.tryToShow();
-      //   ConversionToolbar.close();
-      // } else {
-      //   InlineToolbar.close();
-      //
-      //   /**
-      //    * Don't close Conversion toolbar when Rectangle Selection ended with one block selected
-      //    * @see RectangleSelection#endSelection
-      //    */
-      //   if (BlockSelection.selectedBlocks.length !== 1) {
-      //     ConversionToolbar.close();
-      //   }
-      // }
-    }, 30)();
+  public mouseUp(): void {
   }
 
   /**
