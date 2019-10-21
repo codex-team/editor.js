@@ -16,6 +16,7 @@ export interface OutputData {
    */
   blocks: Array<{
     type: string;
+    id?: string;
     data: BlockToolData
   }>;
 }

@@ -70,6 +70,7 @@
     "url": "https://opencollective.com/editorjs"
   },
   "dependencies": {
-    "codex-notifier": "^1.1.2"
+    "codex-notifier": "^1.1.2",
+    "uuid": "^3.3.3"
   }
 }

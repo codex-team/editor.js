@@ -13,6 +13,8 @@ import {SavedData} from '../types-internal/block-data';
 import $ from './dom';
 import _ from './utils';
 
+import mixin from '../mixin';
+
 /**
  * @class Block
  * @classdesc This class describes editor`s block, including block`s HTMLElement, data and tool
@@ -315,6 +317,11 @@ export default class Block {
   public tunes: BlockTune[];
 
   /**
+   * Unique block id
+   */
+  public id: string;
+
+  /**
    * Cached inputs
    * @type {HTMLElement[]}
    */
@@ -344,6 +351,7 @@ export default class Block {
    * @param {Object} toolClass — Tool's class
    * @param {Object} settings - default settings
    * @param {Object} apiMethods - Editor API
+   * @param {String} id - sort id
    */
   constructor(
     toolName: string,
@@ -351,12 +359,15 @@ export default class Block {
     toolClass: BlockToolConstructable,
     settings: ToolConfig,
     apiMethods: API,
+    id: string,
+
   ) {
     this.name = toolName;
     this.tool = toolInstance;
     this.class = toolClass;
     this.settings = settings;
     this.api = apiMethods;
+    this.id = id;
     this.holder = this.compose();
 
     this.mutationObserver = new MutationObserver(this.didMutated);
@@ -414,6 +425,7 @@ export default class Block {
           tool: this.name,
           data: finishedExtraction,
           time : measuringEnd - measuringStart,
+          id : this.id,
         };
       })
       .catch((error) => {
@@ -519,8 +531,13 @@ export default class Block {
       contentNode = $.make('div', Block.CSS.content),
       pluginsContent  = this.tool.render();
 
+    this.id = this.id || mixin.createId();
+
     contentNode.appendChild(pluginsContent);
+
     wrapper.appendChild(contentNode);
+    wrapper.setAttribute('id', this.id);
+
     return wrapper;
   }
 }
