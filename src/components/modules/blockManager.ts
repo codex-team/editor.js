@@ -12,6 +12,7 @@ import $ from '../dom';
 import _ from '../utils';
 import Blocks from '../blocks';
 import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
+import {EditorModules} from '../../types-internal/editor-modules';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -151,6 +152,17 @@ export default class BlockManager extends Module {
    * @private
    */
   private _blocks: Blocks = null;
+
+  /**
+   * Subscribe to 'editor-ready' event after Events module is set
+   *
+   * @param {EditorModules} state
+   */
+  set state(state: EditorModules) {
+    super.state = state;
+
+    this.Editor.Events.once('editor-ready', this.onEditorReady);
+  }
 
   /**
    * Should be called after Editor.UI preparation
@@ -603,5 +615,12 @@ export default class BlockManager extends Module {
     Listeners.on(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
     Listeners.on(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));
     Listeners.on(block.holder, 'dragleave', (event) => BlockEvents.dragLeave(event as DragEvent));
+  }
+
+  /**
+   * Fires on editor-ready event
+   */
+  private onEditorReady = () => {
+    this._blocks.onEditorReady();
   }
 }

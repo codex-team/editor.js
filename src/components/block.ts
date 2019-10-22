@@ -289,6 +289,8 @@ export default class Block {
    */
   set stretched(state: boolean) {
     this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
+
+    this.call(BlockToolAPI.UPDATED);
   }
 
   /**
@@ -418,7 +420,11 @@ export default class Block {
      * call Tool's method with the instance context
      */
     if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
-      this.tool[methodName].call(this.tool, params);
+      try {
+        this.tool[methodName].call(this.tool, params);
+      } catch (e) {
+        _.log(`Error during '${methodName}' call: ${e.message}`, 'error');
+      }
     }
   }
 
@@ -523,7 +529,15 @@ export default class Block {
     /**
      * Observe DOM mutations to update Block inputs
      */
-    this.mutationObserver.observe(this.holder, {childList: true, subtree: true, characterData: true});
+    this.mutationObserver.observe(
+      this.holder,
+      {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+      },
+    );
   }
 
   /**

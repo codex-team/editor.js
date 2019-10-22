@@ -46,16 +46,17 @@ export default class Blocks {
    * blocks[0] = new Block(...)
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {Number|String} index — block index
-   * @param {Block} block — Block to set
+   * @param {Number|String} key — block index or any Blcoks class property
+   * @param {Block} value — value to set
    * @returns {Boolean}
    */
-  public static set(instance: Blocks, index: number, block: Block) {
-    if (isNaN(Number(index))) {
-      return false;
+  public static set(instance: Blocks, key: number | string, value: Block | any) {
+    if (isNaN(Number(key))) {
+      Reflect.set(instance, key, value);
+      return true;
     }
 
-    instance.insert(+index, block);
+    instance.insert(+key, value);
 
     return true;
   }
@@ -67,9 +68,9 @@ export default class Blocks {
    * @param {Number|String} index — Block index
    * @returns {Block|*}
    */
-  public static get(instance: Blocks, index: number) {
+  public static get(instance: Blocks, index: any | number) {
     if (isNaN(Number(index))) {
-      return instance[index];
+      return Reflect.get(instance, index);
     }
 
     return instance.get(+index);
@@ -84,6 +85,10 @@ export default class Blocks {
    * Editor`s area where to add Block`s HTML
    */
   public workingArea: HTMLElement;
+
+  private editorIsReady: boolean = false;
+
+  private pendingBlocks: Block[] = [];
 
   /**
    * @constructor
@@ -102,9 +107,7 @@ export default class Blocks {
    */
   public push(block: Block): void {
     this.blocks.push(block);
-    this.workingArea.appendChild(block.holder);
-
-    block.call(BlockToolAPI.RENDERED);
+    this.insertToDOM(block);
   }
 
   /**
@@ -156,18 +159,16 @@ export default class Blocks {
     if (index > 0) {
       const previousBlock = this.blocks[index - 1];
 
-      previousBlock.holder.insertAdjacentElement('afterend', block.holder);
+      this.insertToDOM(block, 'afterend', previousBlock);
     } else {
       const nextBlock = this.blocks[index + 1];
 
       if (nextBlock) {
-        nextBlock.holder.insertAdjacentElement('beforebegin', block.holder);
+        this.insertToDOM(block, 'beforebegin', nextBlock);
       } else {
-        this.workingArea.appendChild(block.holder);
+        this.insertToDOM(block);
       }
     }
-
-    block.call(BlockToolAPI.RENDERED);
   }
 
   /**
@@ -229,5 +230,37 @@ export default class Blocks {
    */
   public indexOf(block: Block): number {
     return this.blocks.indexOf(block);
+  }
+
+  /**
+   * Fires when Editor is loaded.
+   *
+   * All pending tasks should be processed here.
+   */
+  public onEditorReady(): void {
+    this.editorIsReady = true;
+
+    this.pendingBlocks.forEach((block) => block.call(BlockToolAPI.RENDERED));
+  }
+
+  /**
+   * Insert new Block into DOM
+   *
+   * @param {Block} block - Block to insert
+   * @param {InsertPosition} position — insert position (if set, will use insertAdjacentElement)
+   * @param {Block} target — Block related to position
+   */
+  private insertToDOM(block: Block, position?: InsertPosition, target?: Block): void {
+    if (position) {
+      target.holder.insertAdjacentElement(position, block.holder);
+    } else {
+      this.workingArea.appendChild(block.holder);
+    }
+
+    if (this.editorIsReady) {
+      block.call(BlockToolAPI.RENDERED);
+    } else {
+      this.pendingBlocks.push(block);
+    }
   }
 }

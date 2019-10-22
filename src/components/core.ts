@@ -93,6 +93,8 @@ export default class Core {
            * Resolve this.isReady promise
            */
           onReady();
+
+          this.moduleInstances.Events.emit('editor-ready');
         }, 500);
       })
       .catch((error) => {
