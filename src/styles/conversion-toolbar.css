@@ -42,6 +42,7 @@
   line-height: 20px;
   font-weight: 500;
   cursor: pointer;
+  align-items: center;
 
   &--hidden {
     display: none;

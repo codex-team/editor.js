@@ -105,11 +105,6 @@ export default class ConversionToolbar extends Module {
     if (!this.opened) {
       this.open();
     }
-
-    /**
-     * Mark current block's button with color
-     */
-    this.highlightActiveTool(block.name);
   }
 
   /**
@@ -277,7 +272,6 @@ export default class ConversionToolbar extends Module {
   private addTool(toolName: string, toolIcon: string, title: string): void {
     const tool = $.make('div', [ ConversionToolbar.CSS.conversionTool ]);
     const icon = $.make('div', [ ConversionToolbar.CSS.conversionToolIcon ]);
-    // const title = $.make('div', [ ConversionToolbar.CSS.conversionToolTitle ]);
 
     tool.dataset.tool = toolName;
     icon.innerHTML = toolIcon;
@@ -291,24 +285,6 @@ export default class ConversionToolbar extends Module {
     this.Editor.Listeners.on(tool, 'click', async () => {
       await this.replaceWithBlock(toolName);
     });
-  }
-
-  /**
-   * Marks current Blocks button with highlighting color
-   */
-  private highlightActiveTool(toolName: string): void {
-    if (!this.tools[toolName]) {
-      return;
-    }
-
-    /**
-     * Drop previous active button
-     */
-    Object.values(this.tools).forEach((el) => {
-      el.classList.remove(ConversionToolbar.CSS.conversionToolActive);
-    });
-
-    this.tools[toolName].classList.add(ConversionToolbar.CSS.conversionToolActive);
   }
 
   /**
