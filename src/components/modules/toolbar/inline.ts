@@ -246,6 +246,7 @@ export default class InlineToolbar extends Module {
     this.opened = false;
 
     this.flipper.deactivate();
+    this.Editor.ConversionToolbar.close();
   }
 
   /**
@@ -282,7 +283,10 @@ export default class InlineToolbar extends Module {
 
     this.flipper.activate(visibleTools);
 
-    this.setConverstionTooglerContent();
+    /**
+     * Change Conversion Dropdown content for current tool
+     */
+    this.setConversionTogglerContent();
   }
 
   /**
@@ -406,11 +410,14 @@ export default class InlineToolbar extends Module {
     });
   }
 
-  private setConverstionTooglerContent() {
+  /**
+   * Changes Conversion Dropdown content for current block's Tool
+   */
+  private setConversionTogglerContent(): void {
     const toolName = this.Editor.BlockManager.currentBlock.name;
 
     /**
-     * If tool does not provide 'export' rule, don't show conversion toggler
+     * If tool does not provide 'export' rule, hide conversion dropdown
      */
     const conversionConfig = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.CONVERSION_CONFIG] || {};
     const exportRuleDefined = conversionConfig && conversionConfig.export;
@@ -423,11 +430,18 @@ export default class InlineToolbar extends Module {
     const toolSettings = this.Editor.Tools.getToolSettings(toolName);
     const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};
-    const label = userToolboxSettings.icon || toolboxSettings.icon ||  userToolboxSettings.title || toolboxSettings.title || _.capitalize(toolName);
 
-    this.nodes.conversionTogglerContent.innerHTML = label;
+    this.nodes.conversionTogglerContent.innerHTML =
+      userToolboxSettings.icon
+      || toolboxSettings.icon
+      || userToolboxSettings.title
+      || toolboxSettings.title
+      || _.capitalize(toolName);
   }
 
+  /**
+   * Makes the Conversion Dropdown
+   */
   private prepareConversionToolbar(): void {
     setTimeout(() => {
       const ct = this.Editor.ConversionToolbar.make();

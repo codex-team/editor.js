@@ -277,8 +277,9 @@ export default class BlockEvents extends Module {
 
     /**
      * Opened Toolbars uses Flipper with own Enter handling
+     * Allow split block when no one button in Flipper is focused
      */
-    if (UI.someToolbarOpened) {
+    if (UI.someToolbarOpened && UI.someFlipperButtonFocused) {
       return;
     }
 

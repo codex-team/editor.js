@@ -186,10 +186,21 @@ export default class UI extends Module {
    * Used to prevent global keydowns (for example, Enter) conflicts with Enter-on-toolbar
    * @return {boolean}
    */
-  public get someToolbarOpened() {
+  public get someToolbarOpened(): boolean {
     const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
 
     return BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbox.opened;
+  }
+
+  /**
+   * Check for some Flipper-buttons is under focus
+   */
+  public get someFlipperButtonFocused(): boolean {
+    return Object.entries(this.Editor).filter(([moduleName, moduleClass]) => {
+      return moduleClass.flipper !== undefined;
+    }).some(([moduleName, moduleClass]) => {
+      return moduleClass.flipper.currentItem;
+    });
   }
 
   /**
@@ -272,6 +283,17 @@ export default class UI extends Module {
       (event) => this.redactorClicked(event as MouseEvent),
       false,
     );
+    this.Editor.Listeners.on(this.nodes.redactor,
+      'mousedown',
+      (event) => this.documentTouched(event as MouseEvent),
+      true,
+    );
+    this.Editor.Listeners.on(this.nodes.redactor,
+      'touchstart',
+      (event) => this.documentTouched(event as MouseEvent),
+      true,
+    );
+
     this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
     this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), true);
 
@@ -475,41 +497,22 @@ export default class UI extends Module {
   }
 
   /**
-   * All clicks on the redactor zone
+   * First touch on editor
+   * Fired before click
    *
-   * @param {MouseEvent} event
-   *
-   * @description
-   * 1. Save clicked Block as a current {@link BlockManager#currentNode}
-   *      it uses for the following:
-   *      - add CSS modifier for the selected Block
-   *      - on Enter press, we make a new Block under that
-   *
-   * 2. Move and show the Toolbar
-   *
-   * 3. Set a Caret
-   *
-   * 4. By clicks on the Editor's bottom zone:
-   *      - if last Block is empty, set a Caret to this
-   *      - otherwise, add a new empty Block and set a Caret to that
-   *
-   * 5. Hide the Inline Toolbar
-   *
-   * @see selectClickedBlock
-   *
+   * Used to change current block — we need to do it before 'selectionChange' event.
    */
-  private redactorClicked(event: MouseEvent): void {
-    if (!Selection.isCollapsed) {
-      return;
-    }
-
+  private documentTouched(event: MouseEvent | TouchEvent): void {
     let clickedNode = event.target as HTMLElement;
 
     /**
      * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
      */
     if (clickedNode === this.nodes.redactor) {
-      clickedNode = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement;
+      const clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
+      const clientY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
+
+      clickedNode = document.elementFromPoint(clientX, clientY) as HTMLElement;
     }
 
     /**
@@ -532,6 +535,25 @@ export default class UI extends Module {
       if (!this.Editor.RectangleSelection.isRectActivated()) {
         this.Editor.Caret.setToTheLastBlock();
       }
+    }
+  }
+
+  /**
+   * All clicks on the redactor zone
+   *
+   * @param {MouseEvent} event
+   *
+   * @description
+   * - Move and show the Toolbar
+   * - Set a Caret
+   * - By clicks on the Editor's bottom zone:
+   *      - if last Block is empty, set a Caret to this
+   *      - otherwise, add a new empty Block and set a Caret to that
+   * - Hide the Inline Toolbar
+   */
+  private redactorClicked(event: MouseEvent): void {
+    if (!Selection.isCollapsed) {
+      return;
     }
 
     event.stopImmediatePropagation();
@@ -576,7 +598,6 @@ export default class UI extends Module {
    * @param {Event} event
    */
   private selectionChanged(event: Event): void {
-    console.log('selectionChanged', event);
     const focusedElement = Selection.anchorElement as Element;
 
     /**

@@ -15588,10 +15588,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
         /**
          * Opened Toolbars uses Flipper with own Enter handling
+         * Allow split block when no one button in Flipper is focused
          */
 
 
-        if (UI.someToolbarOpened) {
+        if (UI.someToolbarOpened && UI.someFlipperButtonFocused) {
           return;
         }
         /**
@@ -22967,6 +22968,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         });
         this.opened = false;
         this.flipper.deactivate();
+        this.Editor.ConversionToolbar.close();
       }
       /**
        * Shows Inline Toolbar
@@ -23003,7 +23005,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return !tool.hidden;
         });
         this.flipper.activate(visibleTools);
-        this.setConverstionTooglerContent();
+        /**
+         * Change Conversion Dropdown content for current tool
+         */
+
+        this.setConversionTogglerContent();
       }
       /**
        * Need to show Inline Toolbar or not
@@ -23137,12 +23143,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           _this4.Editor.ConversionToolbar.toggle();
         });
       }
+      /**
+       * Changes Conversion Dropdown content for current block's Tool
+       */
+
     }, {
-      key: "setConverstionTooglerContent",
-      value: function setConverstionTooglerContent() {
+      key: "setConversionTogglerContent",
+      value: function setConversionTogglerContent() {
         var toolName = this.Editor.BlockManager.currentBlock.name;
         /**
-         * If tool does not provide 'export' rule, don't show conversion toggler
+         * If tool does not provide 'export' rule, hide conversion dropdown
          */
 
         var conversionConfig = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.CONVERSION_CONFIG] || {};
@@ -23155,11 +23165,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var toolSettings = this.Editor.Tools.getToolSettings(toolName);
         var toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
         var userToolboxSettings = toolSettings.toolbox || {};
-
-        var label = userToolboxSettings.icon || toolboxSettings.icon || userToolboxSettings.title || toolboxSettings.title || _utils.default.capitalize(toolName);
-
-        this.nodes.conversionTogglerContent.innerHTML = label;
+        this.nodes.conversionTogglerContent.innerHTML = userToolboxSettings.icon || toolboxSettings.icon || userToolboxSettings.title || toolboxSettings.title || _utils.default.capitalize(toolName);
       }
+      /**
+       * Makes the Conversion Dropdown
+       */
+
     }, {
       key: "prepareConversionToolbar",
       value: function prepareConversionToolbar() {
@@ -24384,12 +24395,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../../dist/sprite.svg */ "./dist/sprite.svg"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../block */ "./src/components/block.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../../dist/sprite.svg */ "./dist/sprite.svg"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../block */ "./src/components/block.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(this, function (_exports, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _sprite, _module, _dom, _utils, _selection, _block) {
+})(this, function (_exports, _slicedToArray2, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _sprite, _module, _dom, _utils, _selection, _block) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -24398,6 +24409,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     value: true
   });
   _exports.default = void 0;
+  _slicedToArray2 = _interopRequireDefault(_slicedToArray2);
   _regenerator = _interopRequireDefault(_regenerator);
   _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
@@ -24700,6 +24712,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.Listeners.on(this.nodes.redactor, 'click', function (event) {
           return _this2.redactorClicked(event);
         }, false);
+        this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', function (event) {
+          return _this2.documentTouched(event);
+        }, true);
+        this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', function (event) {
+          return _this2.documentTouched(event);
+        }, true);
         this.Editor.Listeners.on(document, 'keydown', function (event) {
           return _this2.documentKeydown(event);
         }, true);
@@ -24929,44 +24947,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
       }
       /**
-       * All clicks on the redactor zone
+       * First touch on editor
+       * Fired before click
        *
-       * @param {MouseEvent} event
-       *
-       * @description
-       * 1. Save clicked Block as a current {@link BlockManager#currentNode}
-       *      it uses for the following:
-       *      - add CSS modifier for the selected Block
-       *      - on Enter press, we make a new Block under that
-       *
-       * 2. Move and show the Toolbar
-       *
-       * 3. Set a Caret
-       *
-       * 4. By clicks on the Editor's bottom zone:
-       *      - if last Block is empty, set a Caret to this
-       *      - otherwise, add a new empty Block and set a Caret to that
-       *
-       * 5. Hide the Inline Toolbar
-       *
-       * @see selectClickedBlock
-       *
+       * Used to change current block — we need to do it before 'selectionChange' event.
        */
 
     }, {
-      key: "redactorClicked",
-      value: function redactorClicked(event) {
-        if (!_selection.default.isCollapsed) {
-          return;
-        }
-
+      key: "documentTouched",
+      value: function documentTouched(event) {
         var clickedNode = event.target;
         /**
          * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
          */
 
         if (clickedNode === this.nodes.redactor) {
-          clickedNode = document.elementFromPoint(event.clientX, event.clientY);
+          var clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
+          var clientY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
+          clickedNode = document.elementFromPoint(clientX, clientY);
         }
         /**
          * Select clicked Block as Current
@@ -24990,6 +24988,27 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           if (!this.Editor.RectangleSelection.isRectActivated()) {
             this.Editor.Caret.setToTheLastBlock();
           }
+        }
+      }
+      /**
+       * All clicks on the redactor zone
+       *
+       * @param {MouseEvent} event
+       *
+       * @description
+       * - Move and show the Toolbar
+       * - Set a Caret
+       * - By clicks on the Editor's bottom zone:
+       *      - if last Block is empty, set a Caret to this
+       *      - otherwise, add a new empty Block and set a Caret to that
+       * - Hide the Inline Toolbar
+       */
+
+    }, {
+      key: "redactorClicked",
+      value: function redactorClicked(event) {
+        if (!_selection.default.isCollapsed) {
+          return;
         }
 
         event.stopImmediatePropagation();
@@ -25037,7 +25056,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "selectionChanged",
       value: function selectionChanged(event) {
-        console.log('selectionChanged', event);
         var focusedElement = _selection.default.anchorElement;
         /**
          * Event can be fired on clicks at the Editor elements, for example, at the Inline Toolbar
@@ -25114,6 +25132,27 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             InlineToolbar = _this$Editor3.InlineToolbar,
             ConversionToolbar = _this$Editor3.ConversionToolbar;
         return BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbox.opened;
+      }
+      /**
+       * Check for some Flipper-buttons is under focus
+       */
+
+    }, {
+      key: "someFlipperButtonFocused",
+      get: function get() {
+        return Object.entries(this.Editor).filter(function (_ref) {
+          var _ref2 = (0, _slicedToArray2.default)(_ref, 2),
+              moduleName = _ref2[0],
+              moduleClass = _ref2[1];
+
+          return moduleClass.flipper !== undefined;
+        }).some(function (_ref3) {
+          var _ref4 = (0, _slicedToArray2.default)(_ref3, 2),
+              moduleName = _ref4[0],
+              moduleClass = _ref4[1];
+
+          return moduleClass.flipper.currentItem;
+        });
       }
     }]);
     return UI;

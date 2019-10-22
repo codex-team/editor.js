@@ -5,7 +5,6 @@ import _ from '../../utils';
 import {SavedData} from '../../../types-internal/block-data';
 import Block from '../../block';
 import Flipper from '../../flipper';
-import SelectionUtils from '../../selection';
 
 /**
  * Block Converter
