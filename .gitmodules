@@ -13,9 +13,6 @@
 [submodule "example/tools/quote"]
 	path = example/tools/quote
 	url = https://github.com/editor-js/quote
-[submodule "example/tools/simple-image"]
-	path = example/tools/simple-image
-	url = https://github.com/editor-js/simple-image
 [submodule "src/components/tools/paragraph"]
 	path = src/components/tools/paragraph
 	url = https://github.com/editor-js/paragraph
