@@ -54,7 +54,7 @@
    https://github.com/editor-js/header#installation
    -->
   <script src="./tools/header/dist/bundle.js" onload="document.getElementById('hint').hidden = true"></script><!-- Header -->
-  <script src="./tools/simple-image/dist/bundle.js"></script><!-- Image -->
+  <script src="./tools/image/dist/bundle.js"></script><!-- Image -->
   <script src="./tools/delimiter/dist/bundle.js"></script><!-- Delimiter -->
   <script src="./tools/list/dist/bundle.js"></script><!-- List -->
   <script src="./tools/checklist/dist/bundle.js"></script><!-- Checklist -->
@@ -109,8 +109,15 @@
          * Or pass class directly without any configuration
          */
         image: {
-          class: SimpleImage,
+          class: ImageTool,
           inlineToolbar: ['link'],
+          config: {
+            endpoints: {
+              //To run image server locally look at: example/tools/image/dev/server.js
+              //byFile: 'http://localhost:8008/uploadFile',
+              //byUrl: 'http://localhost:8008/fetchUrl',
+            }
+          },
         },
 
         list: {
