@@ -5,6 +5,7 @@ import _ from '../../utils';
 import {SavedData} from '../../../types-internal/block-data';
 import Block from '../../block';
 import Flipper from '../../flipper';
+import SelectionUtils from '../../selection';
 
 /**
  * Block Converter
@@ -19,6 +20,8 @@ export default class ConversionToolbar extends Module {
       conversionToolbarShowed: 'ce-conversion-toolbar--showed',
       conversionToolbarTools: 'ce-conversion-toolbar__tools',
       conversionTool: 'ce-conversion-tool',
+      conversionToolLeftOriented: 'ce-conversion-toolbar--left-oriented',
+      conversionToolRightOriented: 'ce-conversion-toolbar--right-oriented',
 
       conversionToolFocused : 'ce-conversion-tool--focused',
       conversionToolActive : 'ce-conversion-tool--active',
@@ -100,7 +103,7 @@ export default class ConversionToolbar extends Module {
   public open(): void {
     this.opened = true;
     this.flipper.activate(Object.values(this.tools));
-    this.flipper.focusFirst();
+    // this.flipper.focusFirst(); // focus选中第一个元素
     this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
   }
 
@@ -203,14 +206,37 @@ export default class ConversionToolbar extends Module {
    * Move Conversion Toolbar to the working Block
    */
   private move(block: Block): void {
+    const selectionRect = SelectionUtils.rect as DOMRect;
     const blockRect = block.pluginsContent.getBoundingClientRect();
-    const wrapperRect = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
+    const wrapperOffset = this.Editor.UI.nodes.wrapper.getBoundingClientRect();
+    const conversionRect = this.nodes.wrapper.getBoundingClientRect();
 
     const newCoords = {
-      x: blockRect.left - wrapperRect.left,
-      y: blockRect.top + blockRect.height - wrapperRect.top,
+      x: selectionRect.x - wrapperOffset.left,
+      y: selectionRect.y + selectionRect.height - wrapperOffset.top + 20,
     };
 
+    // if(selectionRect.width) {
+    //   newCoords.x += Math.floor(selectionRect.width / 2);
+    // }
+
+    // 检测是否溢出屏幕
+    if (newCoords.x + conversionRect.width > blockRect.width) {
+      newCoords.x = blockRect.width - conversionRect.width;
+    }
+    // const realLeftCoord = newCoords.x - wrapperOffset.width / 2;
+    // const realRightCoord = newCoords.x + wrapperOffset.width / 2;
+
+    // this.nodes.wrapper.classList.toggle(
+    //   ConversionToolbar.CSS.conversionToolLeftOriented,
+    //   realLeftCoord < newCoords.x,
+    // );
+    //
+    // this.nodes.wrapper.classList.toggle(
+    //   ConversionToolbar.CSS.conversionToolRightOriented,
+    //   realRightCoord > newCoords.x,
+    // );
+    //
     this.nodes.wrapper.style.left = Math.floor(newCoords.x) + 'px';
     this.nodes.wrapper.style.top = Math.floor(newCoords.y) + 'px';
   }

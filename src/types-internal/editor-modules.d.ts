@@ -2,6 +2,7 @@ import UI from '../components/modules/ui';
 import BlockEvents from '../components/modules/blockEvents';
 import Listeners from '../components/modules/listeners';
 import Toolbar from '../components/modules/toolbar/index';
+import ConversionToolbar from '../components/modules/toolbar/conversion';
 import InlineToolbar from '../components/modules/toolbar/inline';
 import Toolbox from '../components/modules/toolbar/toolbox';
 import BlockSettings from '../components/modules/toolbar/blockSettings';
@@ -32,7 +33,6 @@ import BlockSelection from '../components/modules/blockSelection';
 import RectangleSelection from '../components/modules/RectangleSelection';
 import InlineToolbarAPI from '../components/modules/api/inlineToolbar';
 import CrossBlockSelection from '../components/modules/crossBlockSelection';
-import ConversionToolbar from '../components/modules/toolbar/conversion';
 
 export interface EditorModules {
   UI: UI;
@@ -41,10 +41,10 @@ export interface EditorModules {
   RectangleSelection: RectangleSelection;
   Listeners: Listeners;
   Toolbar: Toolbar;
+  ConversionToolbar: ConversionToolbar;
   InlineToolbar: InlineToolbar;
   Toolbox: Toolbox;
   BlockSettings: BlockSettings;
-  ConversionToolbar: ConversionToolbar;
   Events: Events;
   Shortcuts: Shortcuts;
   Paste: Paste;

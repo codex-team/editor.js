@@ -157,14 +157,14 @@ export default class UI extends Module {
     await this.Editor.Toolbar.make();
 
     /**
-     * Make the Inline toolbar
-     */
-    await this.Editor.InlineToolbar.make();
-
-    /**
      * Make the Converter tool holder
      */
     await this.Editor.ConversionToolbar.make();
+
+    /**
+     * Make the Inline toolbar
+     */
+    await this.Editor.InlineToolbar.make();
 
     /**
      * Load and append CSS

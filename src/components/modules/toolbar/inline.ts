@@ -120,7 +120,13 @@ export default class InlineToolbar extends Module {
      * Append Inline Toolbar to the Editor
      */
     $.append(this.nodes.wrapper, [this.nodes.buttons, this.nodes.actions]);
-    $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+    // $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
+
+    const { ConversionToolbar } = this.Editor;
+    setTimeout(() => {
+      $.append(ConversionToolbar.nodes.wrapper, this.nodes.wrapper);
+    }, 100);
+    // console.log('ConversionToolbar', ConversionToolbar);
 
     /**
      * Append Inline Toolbar Tools

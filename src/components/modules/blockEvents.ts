@@ -4,7 +4,7 @@
 import Module from '../__module';
 import _ from '../utils';
 import SelectionUtils from '../selection';
-import Flipper from "../flipper";
+import Flipper from '../flipper';
 
 export default class BlockEvents extends Module {
 
@@ -110,12 +110,12 @@ export default class BlockEvents extends Module {
      * that why we must with the length of pluginsContent
      */
     if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-      InlineToolbar.close();
-      BlockSettings.close();
       ConversionToolbar.tryToShow(block);
-    } else {
-      ConversionToolbar.close();
       InlineToolbar.tryToShow(true);
+    } else {
+      BlockSettings.close();
+      ConversionToolbar.close();
+      InlineToolbar.close();
     }
 
     /**
@@ -141,11 +141,31 @@ export default class BlockEvents extends Module {
        * 2) select something inside block - open Inline Toolbar
        * 3) nothing selected - close Toolbars
        */
+      // if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
+      //   InlineToolbar.close();
+      //   ConversionToolbar.tryToShow(block);
+      // } else if (!SelectionUtils.isCollapsed) {
+      //   InlineToolbar.tryToShow();
+      //   ConversionToolbar.close();
+      // } else {
+      //   InlineToolbar.close();
+      //
+      //   /**
+      //    * Don't close Conversion toolbar when Rectangle Selection ended with one block selected
+      //    * @see RectangleSelection#endSelection
+      //    */
+      //   if (BlockSelection.selectedBlocks.length !== 1) {
+      //     ConversionToolbar.close();
+      //   }
+      // }
+
+      // debugger;
       if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-        InlineToolbar.close();
+        // InlineToolbar.close();
+        InlineToolbar.tryToShow();
         ConversionToolbar.tryToShow(block);
       } else if (!SelectionUtils.isCollapsed) {
-        InlineToolbar.tryToShow();
+        InlineToolbar.close();
         ConversionToolbar.close();
       } else {
         InlineToolbar.close();
