@@ -1,0 +1,28 @@
+{
+  "extends": "tslint:recommended",
+  "linterOptions": {
+    "exclude": [
+      "node_modules"
+    ]
+  },
+  "rules": {
+    "indent": [true, "spaces", 2],
+    "interface-name": false,
+    "quotemark": [true, "single"],
+    "no-console": false,
+    "no-empty-interface": false,
+    "one-variable-per-declaration": false,
+    "object-literal-sort-keys": false,
+    "ordered-imports": [true, {
+      "import-sources-order": "any",
+      "named-imports-order": "case-insensitive"
+    }],
+    "no-string-literal": false,
+    "no-empty": false,
+    "no-namespace": false,
+    "variable-name": [true, "allow-leading-underscore", "allow-pascal-case"]
+  },
+  "globals": {
+    "require": true
+  }
+}

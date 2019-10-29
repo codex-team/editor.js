@@ -1,0 +1,11 @@
+# --- proj files ---
+.DS_Store
+Thumbs.db
+/.idea/
+/*.sublime-project
+/*.sublime-workspace
+
+node_modules/*
+
+npm-debug.log
+yarn-error.log

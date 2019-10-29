@@ -1,0 +1,9 @@
+{
+  "compilerOptions" : {
+    "sourceMap": true,
+    "target": "es2017",
+    "declaration": false,
+    "moduleResolution": "node", // This resolution strategy attempts to mimic the Node.js module resolution mechanism at runtime
+    "lib": ["dom", "es2017", "es2018"]
+  }
+}
