@@ -396,6 +396,10 @@ export default class InlineToolbar extends Module {
     this.width = this.nodes.wrapper.offsetWidth;
   }
 
+  /**
+   * Create a toggler for Conversion Dropdown
+   * and prepend it to the buttons list
+   */
   private addConversionToggler(): void {
     this.nodes.conversionToggler = $.make('div', this.CSS.conversionToggler);
     this.nodes.conversionTogglerContent = $.make('div', this.CSS.conversionTogglerContent);
