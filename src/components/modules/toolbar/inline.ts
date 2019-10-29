@@ -422,11 +422,12 @@ export default class InlineToolbar extends Module {
 
       Tooltip.show(button, tooltipContent, {
         marginTop: 5,
+        placement: 'right',
       });
     });
 
     Listeners.on(button, 'mouseleave', () => {
-      Tooltip.hide();
+      // Tooltip.hide();
     });
 
     /**
