@@ -2,6 +2,9 @@
 
 ### 2.16
 
+- `Improvements` — Inline Toolbar design improved
+- `Improvements` — Conversion Toolbar now included in the Inline Toolbar [#853](https://github.com/codex-team/editor.js/issues/853)
+
 ### 2.15.1
 
 - `Refactoring` — Constants of tools settings separated by internal and external to correspond API
