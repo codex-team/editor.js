@@ -176,10 +176,10 @@ export default class BlockEvents extends Module {
       this.Editor.Toolbox.close();
     } else if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
-    } else if (this.Editor.InlineToolbar.opened) {
-      this.Editor.InlineToolbar.close();
     } else if (this.Editor.ConversionToolbar.opened) {
       this.Editor.ConversionToolbar.close();
+    } else if (this.Editor.InlineToolbar.opened) {
+      this.Editor.InlineToolbar.close();
     } else {
       this.Editor.Toolbar.close();
     }

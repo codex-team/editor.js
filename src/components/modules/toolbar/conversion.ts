@@ -78,15 +78,21 @@ export default class ConversionToolbar extends Module {
     $.append(this.nodes.wrapper, this.nodes.tools);
 
     return this.nodes.wrapper;
-
-    // $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
   }
 
-  public toggle() {
+  /**
+   * Toggle conversion dropdown visibility
+   * @param {function} [togglingCallback] — callback that will accept opening state
+   */
+  public toggle(togglingCallback = null): void {
     if (!this.opened) {
       this.open();
     } else {
       this.close();
+    }
+
+    if (typeof togglingCallback === 'function') {
+      togglingCallback(this.opened);
     }
   }
 
@@ -114,24 +120,18 @@ export default class ConversionToolbar extends Module {
     this.filterTools();
 
     this.opened = true;
-    this.flipper.activate(Object.values(this.tools));
-    this.flipper.focusFirst();
     this.nodes.wrapper.classList.add(ConversionToolbar.CSS.conversionToolbarShowed);
-  }
-
-  /**
-   * Hide current Tool and show others
-   */
-  public filterTools() {
-    const { currentBlock } = this.Editor.BlockManager;
 
     /**
-     * Show previously hided
+     * We use timeout to prevent bubbling Enter keydown on first dropdown item
+     * Conversion flipper will be activated after dropdown will open
      */
-    Object.entries(this.tools).forEach(([name, button]) => {
-      button.hidden = false;
-      button.classList.toggle(ConversionToolbar.CSS.conversionToolHidden, name === currentBlock.name);
-    });
+    setTimeout(() => {
+      this.flipper.activate(Object.values(this.tools).filter((button) => {
+        return !button.classList.contains(ConversionToolbar.CSS.conversionToolHidden);
+      }));
+      this.flipper.focusFirst();
+    }, 50);
   }
 
   /**
@@ -284,6 +284,21 @@ export default class ConversionToolbar extends Module {
 
     this.Editor.Listeners.on(tool, 'click', async () => {
       await this.replaceWithBlock(toolName);
+    });
+  }
+
+  /**
+   * Hide current Tool and show others
+   */
+  private filterTools(): void {
+    const { currentBlock } = this.Editor.BlockManager;
+
+    /**
+     * Show previously hided
+     */
+    Object.entries(this.tools).forEach(([name, button]) => {
+      button.hidden = false;
+      button.classList.toggle(ConversionToolbar.CSS.conversionToolHidden, name === currentBlock.name);
     });
   }
 

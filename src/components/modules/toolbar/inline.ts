@@ -276,17 +276,19 @@ export default class InlineToolbar extends Module {
     this.opened = true;
 
     /**
-     * Get currently visible buttons to pass it to the Flipper
-     */
-    const visibleTools = Array.from(this.buttonsList)
-      .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[];
-
-    this.flipper.activate(visibleTools);
-
-    /**
      * Change Conversion Dropdown content for current tool
      */
     this.setConversionTogglerContent();
+
+    /**
+     * Get currently visible buttons to pass it to the Flipper
+     */
+    let visibleTools = Array.from(this.buttonsList);
+
+    visibleTools.unshift(this.nodes.conversionToggler);
+    visibleTools = visibleTools.filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[];
+
+    this.flipper.activate(visibleTools as HTMLElement[]);
   }
 
   /**
@@ -406,7 +408,13 @@ export default class InlineToolbar extends Module {
     this.nodes.buttons.appendChild(this.nodes.conversionToggler);
 
     this.Editor.Listeners.on(this.nodes.conversionToggler, 'click', () => {
-      this.Editor.ConversionToolbar.toggle();
+      this.Editor.ConversionToolbar.toggle((conversionToolbarOpened) => {
+        if (conversionToolbarOpened) {
+          this.flipper.deactivate();
+        } else {
+          this.flipper.activate();
+        }
+      });
     });
   }
 
@@ -422,6 +430,7 @@ export default class InlineToolbar extends Module {
     const conversionConfig = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.CONVERSION_CONFIG] || {};
     const exportRuleDefined = conversionConfig && conversionConfig.export;
 
+    this.nodes.conversionToggler.hidden = !exportRuleDefined;
     this.nodes.conversionToggler.classList.toggle(this.CSS.conversionTogglerHidden, !exportRuleDefined);
 
     /**
