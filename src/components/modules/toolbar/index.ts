@@ -121,9 +121,11 @@ export default class Toolbar extends Module {
       const tooltip = this.Editor.Toolbox.nodes.tooltip;
       const fragment = document.createDocumentFragment();
 
-      fragment.appendChild(document.createTextNode('Add'));
+      const addCaption = this.config.addCaption || 'Add';
+      const tabCaption = this.config.tabCaption || 'Tab';
+      fragment.appendChild(document.createTextNode(addCaption));
       fragment.appendChild($.make('div', this.Editor.Toolbox.CSS.tooltipShortcut, {
-        textContent: '⇥ Tab',
+        textContent: `⇥ ${tabCaption}`,
       }));
 
       tooltip.style.left = '-17px';

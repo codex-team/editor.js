@@ -66,4 +66,14 @@ export interface EditorConfig {
    * Fires when something changed in DOM
    */
   onChange?(): void;
+
+  /**
+   * "Add" caption on the PlusButton's toolchip (for i18n)
+   */
+  addCaption?: string;
+
+  /**
+   * "Tab" caption on the PlusButton's toolchip (for i18n)
+   */
+  tabCaption?: string;
 }
