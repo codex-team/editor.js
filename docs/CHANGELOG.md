@@ -1,5 +1,7 @@
 # Changelog
 
+### 2.16
+
 ### 2.15.1
 
 - `Refactoring` — Constants of tools settings separated by internal and external to correspond API
