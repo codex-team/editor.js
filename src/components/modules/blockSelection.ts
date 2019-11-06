@@ -269,7 +269,7 @@ export default class BlockSelection extends Module {
     }
 
     const workingBlock = this.Editor.BlockManager.getBlock(event.target as HTMLElement);
-    const inputs = workingBlock.inputs;
+    const inputs = workingBlock && workingBlock.inputs || [];
 
     /**
      * If Block has more than one editable element allow native selection
