@@ -196,6 +196,8 @@ export default class SelectionUtils {
       return rect;
     }
 
+    if (sel.rangeCount === 0) { return rect };
+
     range = sel.getRangeAt(0).cloneRange() as Range;
 
     if (range.getBoundingClientRect) {
