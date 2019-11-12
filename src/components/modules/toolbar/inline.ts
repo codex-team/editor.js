@@ -286,7 +286,7 @@ export default class InlineToolbar extends Module {
     let visibleTools = Array.from(this.buttonsList);
 
     visibleTools.unshift(this.nodes.conversionToggler);
-    visibleTools = visibleTools.filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[];
+    visibleTools = visibleTools.filter((tool) => !(tool as HTMLElement).hidden);
 
     this.flipper.activate(visibleTools as HTMLElement[]);
   }
@@ -456,11 +456,9 @@ export default class InlineToolbar extends Module {
    * Makes the Conversion Dropdown
    */
   private prepareConversionToolbar(): void {
-    setTimeout(() => {
-      const ct = this.Editor.ConversionToolbar.make();
+    const ct = this.Editor.ConversionToolbar.make();
 
-      $.append(this.nodes.wrapper, ct);
-    }, 1000);
+    $.append(this.nodes.wrapper, ct);
   }
 
   /**

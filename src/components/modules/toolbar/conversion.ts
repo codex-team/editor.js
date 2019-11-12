@@ -84,7 +84,7 @@ export default class ConversionToolbar extends Module {
    * Toggle conversion dropdown visibility
    * @param {function} [togglingCallback] — callback that will accept opening state
    */
-  public toggle(togglingCallback = null): void {
+  public toggle(togglingCallback?: (openedState: boolean) => void): void {
     if (!this.opened) {
       this.open();
     } else {

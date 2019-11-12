@@ -14,6 +14,7 @@ import _ from '../utils';
 
 import Selection from '../selection';
 import Block from '../block';
+import Flipper from '../flipper';
 
 /**
  * @class
@@ -197,7 +198,7 @@ export default class UI extends Module {
    */
   public get someFlipperButtonFocused(): boolean {
     return Object.entries(this.Editor).filter(([moduleName, moduleClass]) => {
-      return moduleClass.flipper !== undefined;
+      return moduleClass.flipper instanceof Flipper;
     }).some(([moduleName, moduleClass]) => {
       return moduleClass.flipper.currentItem;
     });
@@ -300,8 +301,8 @@ export default class UI extends Module {
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    this.Editor.Listeners.on(document, 'selectionchange', (event) => {
-      this.selectionChanged(event as Event);
+    this.Editor.Listeners.on(document, 'selectionchange', (event: Event) => {
+      this.selectionChanged(event);
     }, true);
 
     this.Editor.Listeners.on(window, 'resize', () => {
