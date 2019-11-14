@@ -107,7 +107,8 @@ export default class Util {
       (keyCode > 64 && keyCode < 91)   || // letter keys
       (keyCode > 95 && keyCode < 112)  || // Numpad keys
       (keyCode > 185 && keyCode < 193) || // ;=,-./` (in order)
-      (keyCode > 218 && keyCode < 223);   // [\]' (in order)
+      (keyCode > 218 && keyCode < 223) ||   // [\]' (in order)
+      (keyCode === 229); // If an Input Method Editor is processing key input and the event is keydown, return 229.
   }
 
   /**
