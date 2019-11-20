@@ -63,7 +63,8 @@
     z-index: 2;
 
     @media (--mobile){
-      box-shadow: 0 5px 9px -5px rgba(21, 40, 54, 0.49),6px 15px 34px -6px rgba(33, 48, 73, 0.54);
+      box-shadow: 0 13px 7px -5px rgba(26, 38, 49, 0.09),6px 15px 34px -6px rgba(33, 48, 73, 0.29);
+      border-bottom-color: #d5d7db;
     }
 
     &::before {
