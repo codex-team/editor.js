@@ -54,11 +54,6 @@ export enum BlockToolAPI {
 export default class Block {
 
   /**
-   * Flag indicates that Block was rendered and showed on page
-   */
-  public rendered: boolean = false;
-
-  /**
    * CSS classes for the Block
    * @return {{wrapper: string, content: string}}
    */
@@ -419,20 +414,6 @@ export default class Block {
    * @param {Object} params
    */
   public call(methodName: string, params?: object) {
-
-    switch (methodName) {
-      case BlockToolAPI.RENDERED:
-        this.rendered = true;
-        break;
-
-      case BlockToolAPI.UPDATED:
-      case BlockToolAPI.REMOVED:
-        if (!this.rendered) {
-          return;
-        }
-        break;
-    }
-
     /**
      * call Tool's method with the instance context
      */

@@ -78,7 +78,9 @@ export default class Core {
 
         _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
 
-        setTimeout(() => {
+        setTimeout(async () => {
+          await this.render();
+
           if ((this.configuration as EditorConfig).autofocus) {
             const {BlockManager, Caret} = this.moduleInstances;
 
@@ -271,7 +273,12 @@ export default class Core {
       }),
       Promise.resolve(),
     );
+  }
 
+  /**
+   * Render initial data
+   */
+  private render(): Promise<void> {
     return this.moduleInstances.Renderer.render(this.config.data.blocks);
   }
 

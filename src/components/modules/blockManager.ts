@@ -155,17 +155,6 @@ export default class BlockManager extends Module {
   private _blocks: Blocks = null;
 
   /**
-   * Subscribe to 'editor-ready' event after Events module is set
-   *
-   * @param {EditorModules} state
-   */
-  set state(state: EditorModules) {
-    super.state = state;
-
-    this.Editor.Events.once(EDITOR_EVENTS.READY, this.onEditorReady);
-  }
-
-  /**
    * Should be called after Editor.UI preparation
    * Define this._blocks property
    *
@@ -616,12 +605,5 @@ export default class BlockManager extends Module {
     Listeners.on(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
     Listeners.on(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));
     Listeners.on(block.holder, 'dragleave', (event) => BlockEvents.dragLeave(event as DragEvent));
-  }
-
-  /**
-   * Fires on editor-ready event
-   */
-  private onEditorReady = () => {
-    this._blocks.onEditorReady();
   }
 }

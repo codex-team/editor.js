@@ -54,9 +54,6 @@ export default class Blocks {
 
     /**
      * If property name is not a number (method or other property, access it via reflect
-     *
-     * @example
-     * blocks.editorIsReady = true
      */
     if (isNaN(Number(property))) {
       Reflect.set(instance, property, value);
@@ -105,16 +102,6 @@ export default class Blocks {
    * Editor`s area where to add Block`s HTML
    */
   public workingArea: HTMLElement;
-
-  /**
-   * Flag indicates if Editor modules are loaded and prepared for work
-   */
-  private editorIsReady: boolean = false;
-
-  /**
-   * Blocks inserted before Editor is ready
-   */
-  private pendingBlocks: Block[] = [];
 
   /**
    * @constructor
@@ -259,21 +246,6 @@ export default class Blocks {
   }
 
   /**
-   * Fires when Editor is loaded.
-   *
-   * All pending tasks should be processed here.
-   *
-   * Method called through Proxy object, so this will be equal to Proxy<Blocks>
-   *
-   * @this Proxy<Blocks>
-   */
-  public onEditorReady(): void {
-    this.editorIsReady = true;
-
-    this.pendingBlocks.forEach((block) => block.call(BlockToolAPI.RENDERED));
-  }
-
-  /**
    * Insert new Block into DOM
    *
    * @param {Block} block - Block to insert
@@ -287,10 +259,6 @@ export default class Blocks {
       this.workingArea.appendChild(block.holder);
     }
 
-    if (this.editorIsReady) {
-      block.call(BlockToolAPI.RENDERED);
-    } else {
-      this.pendingBlocks.push(block);
-    }
+    block.call(BlockToolAPI.RENDERED);
   }
 }
