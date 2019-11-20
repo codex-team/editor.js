@@ -29,6 +29,9 @@ export default class InlineToolbar extends Module {
     inlineToolButtonLast: 'ce-inline-tool--last',
     inputField: 'cdx-input',
     focusedButton: 'ce-inline-tool--focused',
+    conversionToggler: 'ce-inline-toolbar__dropdown',
+    conversionTogglerHidden: 'ce-inline-toolbar__dropdown--hidden',
+    conversionTogglerContent: 'ce-inline-toolbar__dropdown-content',
   };
 
   /**
@@ -40,9 +43,17 @@ export default class InlineToolbar extends Module {
   /**
    * Inline Toolbar elements
    */
-  private nodes: { wrapper: HTMLElement, buttons: HTMLElement, actions: HTMLElement } = {
+  private nodes: {
+    wrapper: HTMLElement,
+    buttons: HTMLElement,
+    conversionToggler: HTMLElement,
+    conversionTogglerContent: HTMLElement,
+    actions: HTMLElement,
+  } = {
     wrapper: null,
     buttons: null,
+    conversionToggler: null,
+    conversionTogglerContent: null,
     /**
      * Zone below the buttons where Tools can create additional actions by 'renderActions()' method
      * For example, input for the 'link' tool or textarea for the 'comment' tool
@@ -53,7 +64,7 @@ export default class InlineToolbar extends Module {
   /**
    * Margin above/below the Toolbar
    */
-  private readonly toolbarVerticalMargin: number = 20;
+  private readonly toolbarVerticalMargin: number = 5;
 
   /**
    * Tools instances
@@ -123,9 +134,16 @@ export default class InlineToolbar extends Module {
     $.append(this.Editor.UI.nodes.wrapper, this.nodes.wrapper);
 
     /**
+     * Add button that will allow switching block type
+     */
+    this.addConversionToggler();
+
+    /**
      * Append Inline Toolbar Tools
      */
     this.addTools();
+
+    this.prepareConversionToolbar();
 
     /**
      * Recalculate initial width with all buttons
@@ -228,6 +246,7 @@ export default class InlineToolbar extends Module {
     this.opened = false;
 
     this.flipper.deactivate();
+    this.Editor.ConversionToolbar.close();
   }
 
   /**
@@ -257,12 +276,19 @@ export default class InlineToolbar extends Module {
     this.opened = true;
 
     /**
+     * Change Conversion Dropdown content for current tool
+     */
+    this.setConversionTogglerContent();
+
+    /**
      * Get currently visible buttons to pass it to the Flipper
      */
-    const visibleTools = Array.from(this.buttonsList)
-      .filter((tool) => !(tool as HTMLElement).hidden) as HTMLElement[];
+    let visibleTools = Array.from(this.buttonsList);
 
-    this.flipper.activate(visibleTools);
+    visibleTools.unshift(this.nodes.conversionToggler);
+    visibleTools = visibleTools.filter((tool) => !(tool as HTMLElement).hidden);
+
+    this.flipper.activate(visibleTools as HTMLElement[]);
   }
 
   /**
@@ -368,6 +394,71 @@ export default class InlineToolbar extends Module {
    */
   private recalculateWidth(): void {
     this.width = this.nodes.wrapper.offsetWidth;
+  }
+
+  /**
+   * Create a toggler for Conversion Dropdown
+   * and prepend it to the buttons list
+   */
+  private addConversionToggler(): void {
+    this.nodes.conversionToggler = $.make('div', this.CSS.conversionToggler);
+    this.nodes.conversionTogglerContent = $.make('div', this.CSS.conversionTogglerContent);
+
+    const icon = $.svg('toggler-down', 13, 13);
+
+    this.nodes.conversionToggler.appendChild(this.nodes.conversionTogglerContent);
+    this.nodes.conversionToggler.appendChild(icon);
+
+    this.nodes.buttons.appendChild(this.nodes.conversionToggler);
+
+    this.Editor.Listeners.on(this.nodes.conversionToggler, 'click', () => {
+      this.Editor.ConversionToolbar.toggle((conversionToolbarOpened) => {
+        if (conversionToolbarOpened) {
+          this.flipper.deactivate();
+        } else {
+          this.flipper.activate();
+        }
+      });
+    });
+  }
+
+  /**
+   * Changes Conversion Dropdown content for current block's Tool
+   */
+  private setConversionTogglerContent(): void {
+    const toolName = this.Editor.BlockManager.currentBlock.name;
+
+    /**
+     * If tool does not provide 'export' rule, hide conversion dropdown
+     */
+    const conversionConfig = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.CONVERSION_CONFIG] || {};
+    const exportRuleDefined = conversionConfig && conversionConfig.export;
+
+    this.nodes.conversionToggler.hidden = !exportRuleDefined;
+    this.nodes.conversionToggler.classList.toggle(this.CSS.conversionTogglerHidden, !exportRuleDefined);
+
+    /**
+     * Get icon or title for dropdown
+     */
+    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
+    const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
+    const userToolboxSettings = toolSettings.toolbox || {};
+
+    this.nodes.conversionTogglerContent.innerHTML =
+      userToolboxSettings.icon
+      || toolboxSettings.icon
+      || userToolboxSettings.title
+      || toolboxSettings.title
+      || _.capitalize(toolName);
+  }
+
+  /**
+   * Makes the Conversion Dropdown
+   */
+  private prepareConversionToolbar(): void {
+    const ct = this.Editor.ConversionToolbar.make();
+
+    $.append(this.nodes.wrapper, ct);
   }
 
   /**

@@ -112,8 +112,8 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-    this.nodes.button.appendChild($.svg('link', 34, 34));
-    this.nodes.button.appendChild($.svg('unlink', 16, 18));
+    this.nodes.button.appendChild($.svg('link', 14, 10));
+    this.nodes.button.appendChild($.svg('unlink', 15, 11));
     return this.nodes.button;
   }
 
