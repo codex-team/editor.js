@@ -46,7 +46,7 @@ export default class Blocks {
    * blocks[0] = new Block(...)
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {Number|String} key — block index or any Blcoks class property
+   * @param {Number|String} key — block index or any Blocks class property to set
    * @param {Block} value — value to set
    * @returns {Boolean}
    */
