@@ -97,23 +97,6 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
-   * Try to show Conversion Toolbar near passed Block
-   * @param {Block} block - block to convert
-   * @deprecated
-   */
-  public tryToShow(block: Block): void {
-    const hasExportConfig = block.class.conversionConfig && block.class.conversionConfig.export;
-
-    if (!hasExportConfig) {
-      return;
-    }
-
-    if (!this.opened) {
-      this.open();
-    }
-  }
-
-  /**
    * Shows Conversion Toolbar
    */
   public open(): void {
