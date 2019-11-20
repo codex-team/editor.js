@@ -39,7 +39,6 @@
   }
 
   &__actions {
-    //border-top: 1px solid var(--color-gray-border);
   }
 
   &__dropdown {
@@ -122,6 +121,7 @@
     box-sizing: border-box;
     display: none;
     font-weight: 500;
+    border-top: 1px solid rgba(201,201,204,.48);
 
     &::placeholder {
       color: var(--grayText);
