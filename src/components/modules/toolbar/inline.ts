@@ -426,12 +426,13 @@ export default class InlineToolbar extends Module {
    * Changes Conversion Dropdown content for current block's Tool
    */
   private setConversionTogglerContent(): void {
-    const toolName = this.Editor.BlockManager.currentBlock.name;
+    const {BlockManager, Tools} = this.Editor;
+    const toolName = BlockManager.currentBlock.name;
 
     /**
      * If tool does not provide 'export' rule, hide conversion dropdown
      */
-    const conversionConfig = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.CONVERSION_CONFIG] || {};
+    const conversionConfig = Tools.available[toolName][Tools.INTERNAL_SETTINGS.CONVERSION_CONFIG] || {};
     const exportRuleDefined = conversionConfig && conversionConfig.export;
 
     this.nodes.conversionToggler.hidden = !exportRuleDefined;
@@ -440,8 +441,8 @@ export default class InlineToolbar extends Module {
     /**
      * Get icon or title for dropdown
      */
-    const toolSettings = this.Editor.Tools.getToolSettings(toolName);
-    const toolboxSettings = this.Editor.Tools.available[toolName][this.Editor.Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
+    const toolSettings = Tools.getToolSettings(toolName);
+    const toolboxSettings = Tools.available[toolName][Tools.INTERNAL_SETTINGS.TOOLBOX] || {};
     const userToolboxSettings = toolSettings.toolbox || {};
 
     this.nodes.conversionTogglerContent.innerHTML =
