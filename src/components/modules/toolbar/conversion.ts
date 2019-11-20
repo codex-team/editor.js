@@ -54,6 +54,11 @@ export default class ConversionToolbar extends Module {
   private flipper: Flipper = null;
 
   /**
+   * Callback that fill be fired on open/close and accepts an opening state
+   */
+  private togglingCallback = null;
+
+  /**
    * Create UI of Conversion Toolbar
    */
   public make(): HTMLElement {
@@ -92,7 +97,9 @@ export default class ConversionToolbar extends Module {
     }
 
     if (typeof togglingCallback === 'function') {
-      togglingCallback(this.opened);
+      this.togglingCallback = togglingCallback;
+
+      this.togglingCallback(this.opened);
     }
   }
 
@@ -114,6 +121,10 @@ export default class ConversionToolbar extends Module {
         return !button.classList.contains(ConversionToolbar.CSS.conversionToolHidden);
       }));
       this.flipper.focusFirst();
+
+      if (typeof this.togglingCallback === 'function') {
+        this.togglingCallback(true);
+      }
     }, 50);
   }
 
@@ -124,6 +135,10 @@ export default class ConversionToolbar extends Module {
     this.opened = false;
     this.flipper.deactivate();
     this.nodes.wrapper.classList.remove(ConversionToolbar.CSS.conversionToolbarShowed);
+
+    if (typeof this.togglingCallback === 'function') {
+      this.togglingCallback(false);
+    }
   }
 
   /**
