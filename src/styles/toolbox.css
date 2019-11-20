@@ -26,9 +26,9 @@
 
 .ce-toolbox-button-tooltip {
   &__shortcut {
-    color: rgba(100, 105, 122, 0.6);
-    word-spacing: -2px;
-    margin-top: 5px;
+    opacity: 0.6;
+    word-spacing: -3px;
+    margin-top: 3px;
   }
 }
 
