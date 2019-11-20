@@ -46,17 +46,30 @@ export default class Blocks {
    * blocks[0] = new Block(...)
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {Number|String} key — block index or any Blocks class property to set
+   * @param {Number|String} property — block index or any Blocks class property to set
    * @param {Block} value — value to set
    * @returns {Boolean}
    */
-  public static set(instance: Blocks, key: number | string, value: Block | any) {
-    if (isNaN(Number(key))) {
-      Reflect.set(instance, key, value);
+  public static set(instance: Blocks, property: number | string, value: Block | any) {
+
+    /**
+     * If property name is not a number (method or other property, access it via reflect
+     *
+     * @example
+     * blocks.editorIsReady = true
+     */
+    if (isNaN(Number(property))) {
+      Reflect.set(instance, property, value);
       return true;
     }
 
-    instance.insert(+key, value);
+    /**
+     * If property is number, call insert method to emulate array behaviour
+     *
+     * @example
+     * blocks[0] = new Block();
+     */
+    instance.insert(+property, value);
 
     return true;
   }
@@ -65,15 +78,22 @@ export default class Blocks {
    * Proxy trap to implement array-like getter
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {Number|String} index — Block index
+   * @param {Number|String} property — Blocks class property
    * @returns {Block|*}
    */
-  public static get(instance: Blocks, index: any | number) {
-    if (isNaN(Number(index))) {
-      return Reflect.get(instance, index);
+  public static get(instance: Blocks, property: any | number) {
+
+    /**
+     * If property is not a number, get it via Reflect object
+     */
+    if (isNaN(Number(property))) {
+      return Reflect.get(instance, property);
     }
 
-    return instance.get(+index);
+    /**
+     * If property is a number (Block index) return Block by passed index
+     */
+    return instance.get(+property);
   }
 
   /**
@@ -86,8 +106,14 @@ export default class Blocks {
    */
   public workingArea: HTMLElement;
 
+  /**
+   * Flag indicates if Editor modules are loaded and prepared for work
+   */
   private editorIsReady: boolean = false;
 
+  /**
+   * Blocks inserted before Editor is ready
+   */
   private pendingBlocks: Block[] = [];
 
   /**
@@ -236,6 +262,10 @@ export default class Blocks {
    * Fires when Editor is loaded.
    *
    * All pending tasks should be processed here.
+   *
+   * Method called through Proxy object, so this will be equal to Proxy<Blocks>
+   *
+   * @this Proxy<Blocks>
    */
   public onEditorReady(): void {
     this.editorIsReady = true;

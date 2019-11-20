@@ -13,6 +13,7 @@ import _ from '../utils';
 import Blocks from '../blocks';
 import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
 import {EditorModules} from '../../types-internal/editor-modules';
+import {EDITOR_EVENTS} from './events';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -161,7 +162,7 @@ export default class BlockManager extends Module {
   set state(state: EditorModules) {
     super.state = state;
 
-    this.Editor.Events.once('editor-ready', this.onEditorReady);
+    this.Editor.Events.once(EDITOR_EVENTS.READY, this.onEditorReady);
   }
 
   /**

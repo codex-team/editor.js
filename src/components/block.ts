@@ -32,10 +32,10 @@ import SelectionUtils from './selection';
  * Available Block Tool API methods
  */
 export enum BlockToolAPI {
-  /** 
-  * @todo remove method in 3.0.0 
-  * @deprecated — use 'rendered' hook instead
-  */
+  /**
+   * @todo remove method in 3.0.0
+   * @deprecated — use 'rendered' hook instead
+   */
   APPEND_CALLBACK = 'appendCallback',
   RENDERED = 'rendered',
   UPDATED = 'updated',
@@ -530,7 +530,7 @@ export default class Block {
      * Observe DOM mutations to update Block inputs
      */
     this.mutationObserver.observe(
-      this.holder,
+      this.holder.firstElementChild,
       {
         childList: true,
         subtree: true,

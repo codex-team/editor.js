@@ -2,6 +2,7 @@ import $ from './dom';
 import _ from './utils';
 import {EditorConfig, OutputData, SanitizerConfig} from '../../types';
 import {EditorModules} from '../types-internal/editor-modules';
+import {EDITOR_EVENTS} from './modules/events';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -94,7 +95,7 @@ export default class Core {
            */
           onReady();
 
-          this.moduleInstances.Events.emit('editor-ready');
+          this.moduleInstances.Events.emit(EDITOR_EVENTS.READY);
         }, 500);
       })
       .catch((error) => {
@@ -278,8 +279,11 @@ export default class Core {
    * Make modules instances and save it to the @property this.moduleInstances
    */
   private constructModules(): void {
-    modules.forEach( (Module) => {
+    modules.forEach( (module) => {
+      const Module = typeof module === 'function' ? module : module.default;
+
       try {
+
         /**
          * We use class name provided by displayName property
          *

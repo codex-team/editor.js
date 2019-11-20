@@ -1,6 +1,16 @@
 import Module from '../__module';
 
 /**
+ * Editor events dict
+ */
+export enum EDITOR_EVENTS {
+  /**
+   * Dispatched when Editor modules are loaded and ready to work
+   */
+  READY = 'editor-ready',
+}
+
+/**
  * @module eventDispatcher
  *
  * Has two important methods:
