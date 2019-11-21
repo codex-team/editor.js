@@ -2,7 +2,6 @@ import $ from './dom';
 import _ from './utils';
 import {EditorConfig, OutputData, SanitizerConfig} from '../../types';
 import {EditorModules} from '../types-internal/editor-modules';
-import {EDITOR_EVENTS} from './modules/events';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -96,8 +95,6 @@ export default class Core {
            * Resolve this.isReady promise
            */
           onReady();
-
-          this.moduleInstances.Events.emit(EDITOR_EVENTS.READY);
         }, 500);
       })
       .catch((error) => {
@@ -287,6 +284,9 @@ export default class Core {
    */
   private constructModules(): void {
     modules.forEach( (module) => {
+      /**
+       * If module has non-default exports, passed object contains them all and default export as 'default' property
+       */
       const Module = typeof module === 'function' ? module : module.default;
 
       try {

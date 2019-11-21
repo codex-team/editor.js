@@ -12,8 +12,6 @@ import $ from '../dom';
 import _ from '../utils';
 import Blocks from '../blocks';
 import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
-import {EditorModules} from '../../types-internal/editor-modules';
-import {EDITOR_EVENTS} from './events';
 
 /**
  * @typedef {BlockManager} BlockManager
