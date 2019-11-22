@@ -46,6 +46,25 @@ export interface BlockTool extends BaseTool {
    * @param {PasteEvent} event
    */
   onPaste?(event: PasteEvent): void;
+
+  /**
+   * Lifecycle hooks
+   */
+
+  /**
+   * Called after block content added to the page
+   */
+  rendered?(): void;
+
+  /**
+   * Called each time block content is updated
+   */
+  updated?(): void;
+
+  /**
+   * Called after block removed from the page but before instance is deleted
+   */
+  removed?(): void;
 }
 
 export interface BlockToolConstructable extends BaseToolConstructable {
