@@ -3,28 +3,56 @@ import Module from '../__module';
 /**
  * Use external module CodeX Tooltip
  */
-import tooltip, { TooltipContent, TooltipOptions } from '../external/codex.tooltips';
+import CodeXTooltips, { TooltipContent, TooltipOptions } from '../external/codex.tooltips';
+import {ModuleConfig} from '../../types-internal/module-config';
 
 /**
- * @class Tooltip
- * @classdesc decorates any tooltip module like adapter
+ * Tooltip
+ *
+ * Decorates any tooltip module like adapter
  */
 export default class Tooltip extends Module {
+
+  /**
+   * Tooltips lib: CodeX Tooltips
+   * @see https://github.com/codex-team/codex.tooltips
+   */
+  private lib: CodeXTooltips = new CodeXTooltips();
+
+  /**
+   * @constructor
+   * @param {EditorConfig}
+   */
+  constructor({config}: ModuleConfig) {
+    super({config});
+  }
+
   /**
    * Shows tooltip on element with passed HTML content
    *
    * @param {HTMLElement} element - any HTML element in DOM
    * @param {TooltipContent} content - tooltip's content
-   * @param {TooltipOptions} options
+   * @param {TooltipOptions} options - showing settings
    */
   public show(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
-    tooltip.show(element, content, options);
+    this.lib.show(element, content, options);
   }
 
   /**
    * Hides tooltip
    */
   public hide(): void {
-    tooltip.hide();
+    this.lib.hide();
+  }
+
+  /**
+   * Binds 'mouseenter' and 'mouseleave' events that shows/hides the Tooltip
+   *
+   * @param {HTMLElement} element - any HTML element in DOM
+   * @param {TooltipContent} content - tooltip's content
+   * @param {TooltipOptions} options - showing settings
+   */
+  public onHover(element: HTMLElement, content: TooltipContent, options?: TooltipOptions): void {
+    this.lib.onHover(element, content, options);
   }
 }
