@@ -530,4 +530,16 @@ export default class Dom {
     if (typeof element === 'string') { return document.getElementById(element); }
     return element;
   }
+
+  /**
+   * Method checks passed Node if it is some extension Node
+   * @param {Node} node - any node
+   */
+  public static isExtensionNode(node: Node): boolean {
+    const extensions = [
+      'GRAMMARLY-EXTENSION',
+    ];
+
+    return node && extensions.includes(node.nodeName);
+  }
 }

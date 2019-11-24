@@ -4,6 +4,7 @@
 
 - `Improvements` — Inline Toolbar design improved
 - `Improvements` — Conversion Toolbar now included in the Inline Toolbar [#853](https://github.com/codex-team/editor.js/issues/853)
+— `Improvements` — Fixed Grammarly conflicts [#779](https://github.com/codex-team/editor.js/issues/779) 
 
 ### 2.15.1
 
