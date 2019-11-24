@@ -416,13 +416,6 @@ export default class Block {
   }
 
   /**
-   * @param childNodes
-   */
-  public getNodeFilterredFromExtensions(childNodes): void {
-    console.log(childNodes);
-  }
-
-  /**
    * Calls Tool's method
    *
    * Method checks tool property {MethodName}. Fires method with passes params If it is instance of Function
