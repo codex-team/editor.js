@@ -98,9 +98,12 @@ export default class Dom {
    * Append one or several elements to the parent
    *
    * @param  {Element|DocumentFragment} parent    - where to append
-   * @param  {Element|Element[]} elements - element or elements list
+   * @param  {Element|Element[]|Text|Text[]} elements - element or elements list
    */
-  public static append(parent: Element|DocumentFragment, elements: Element|Element[]|DocumentFragment): void {
+  public static append(
+    parent: Element|DocumentFragment,
+    elements: Element|Element[]|DocumentFragment|Text|Text[],
+  ): void {
     if ( Array.isArray(elements) ) {
       elements.forEach( (el) => parent.appendChild(el) );
     } else {

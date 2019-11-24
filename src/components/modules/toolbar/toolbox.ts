@@ -3,6 +3,7 @@ import $ from '../../dom';
 import _ from '../../utils';
 import {BlockToolConstructable} from '../../../../types';
 import Flipper from '../../flipper';
+import {BlockToolAPI} from '../../block';
 
 /**
  * @class Toolbox
@@ -351,7 +352,7 @@ export default class Toolbox extends Module {
     /**
      * Apply callback before inserting html
      */
-    newBlock.call('appendCallback', {});
+    newBlock.call(BlockToolAPI.APPEND_CALLBACK);
 
     this.Editor.Caret.setToBlock(newBlock);
 

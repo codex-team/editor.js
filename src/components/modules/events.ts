@@ -37,6 +37,33 @@ export default class Events extends Module {
   }
 
   /**
+   * Subscribe any event on callback. Callback will be called once and be removed from subscribers array after call.
+   *
+   * @param {String} eventName - event name
+   * @param {Function} callback - subscriber
+   */
+  public once(eventName: string, callback: (data: any) => any) {
+    if (!(eventName in this.subscribers)) {
+      this.subscribers[eventName] = [];
+    }
+
+    const wrappedCallback = (data: any) => {
+      const result = callback(data);
+
+      const indexOfHandler = this.subscribers[eventName].indexOf(wrappedCallback);
+
+      if (indexOfHandler !== -1) {
+        this.subscribers[eventName].splice(indexOfHandler, 1);
+      }
+
+      return result;
+    };
+
+    // group by events
+    this.subscribers[eventName].push(wrappedCallback);
+  }
+
+  /**
    * Emit callbacks with passed data
    *
    * @param {String} eventName - event name
