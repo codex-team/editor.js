@@ -72,6 +72,12 @@
       margin-left: 4px;
     }
   }
+
+  &__shortcut {
+    opacity: 0.6;
+    word-spacing: -3px;
+    margin-top: 3px;
+  }
 }
 
 .ce-inline-tool {

@@ -201,14 +201,10 @@ export default class Toolbox extends Module {
     /**
      * Add listeners to show/hide toolbox tooltip
      */
-    this.Editor.Listeners.on(button, 'mouseenter', () => {
-      const tooltipContent = this.drawTooltip(toolName);
-
-      this.Editor.Tooltip.show(button, tooltipContent);
-    });
-
-    this.Editor.Listeners.on(button, 'mouseleave', () => {
-      this.Editor.Tooltip.hide();
+    const tooltipContent = this.drawTooltip(toolName);
+    this.Editor.Tooltip.onHover(button, tooltipContent, {
+      placement: 'bottom',
+      hidingDelay: 200,
     });
 
     /**
@@ -244,26 +240,7 @@ export default class Toolbox extends Module {
     tooltip.appendChild(hint);
 
     if (shortcut) {
-      const OS = _.getUserOS();
-
-      shortcut = shortcut
-        .replace(/shift/gi, '⇧')
-        .replace(/backspace/gi, '⌫')
-        .replace(/enter/gi, '⏎')
-        .replace(/up/gi, '↑')
-        .replace(/left/gi, '→')
-        .replace(/down/gi, '↓')
-        .replace(/right/gi, '←')
-        .replace(/escape/gi, '⎋')
-        .replace(/insert/gi, 'Ins')
-        .replace(/delete/gi, '␡')
-        .replace(/\+/gi, ' + ');
-
-      if (OS.mac) {
-        shortcut = shortcut.replace(/ctrl|cmd/gi, '⌘').replace(/alt/gi, '⌥');
-      } else {
-        shortcut = shortcut.replace(/cmd/gi, 'Ctrl').replace(/windows/gi, 'WIN');
-      }
+      shortcut = _.beautifyShortcut(shortcut);
 
       tooltip.appendChild($.make('div', this.CSS.buttonShortcut, {
         textContent: shortcut,

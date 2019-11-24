@@ -123,3 +123,7 @@ static get sanitize() {
 ``` 
 
 Read more about Sanitizer configuration at the [Tools#sanitize](tools.md#sanitize)
+
+### Specifying a title
+
+You can pass your Tool's title via `title`
