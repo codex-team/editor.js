@@ -51,17 +51,8 @@ export default class MoveUpTune implements BlockTune {
     /**
      * Enable tooltip module on button
      */
-    this.api.listeners.on(moveUpButton, 'mouseenter', (event: MouseEvent) => {
-      const tooltipContent = document.createTextNode('Move up');
+    this.api.tooltip.onHover(moveUpButton, 'Move up');
 
-      this.api.tooltip.show(moveUpButton, tooltipContent, {
-        marginTop: 5,
-      });
-    });
-
-    this.api.listeners.on(moveUpButton, 'mouseleave', () => {
-      this.api.tooltip.hide();
-    });
     return moveUpButton;
   }
 

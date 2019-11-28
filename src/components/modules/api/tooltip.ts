@@ -17,6 +17,10 @@ export default class TooltipAPI extends Module {
              options?: TooltipOptions,
       ) => this.show(element, content, options),
       hide: () => this.hide(),
+      onHover: (element: HTMLElement,
+                content: TooltipContent,
+                options?: TooltipOptions,
+      ) => this.onHover(element, content, options),
     };
   }
 
@@ -36,5 +40,16 @@ export default class TooltipAPI extends Module {
    */
   public hide() {
     this.Editor.Tooltip.hide();
+  }
+
+  /**
+   * Decorator for showing Tooltip by mouseenter/mouseleave
+   *
+   * @param {HTMLElement} element
+   * @param {TooltipContent} content
+   * @param {TooltipOptions} options
+   */
+  public onHover(element: HTMLElement, content: TooltipContent, options?: TooltipOptions) {
+    this.Editor.Tooltip.onHover(element, content, options);
   }
 }

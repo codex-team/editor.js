@@ -66,19 +66,9 @@ export default class DeleteTune implements BlockTune {
     this.api.listeners.on(this.nodes.button, 'click', (event: MouseEvent) => this.handleClick(event), false);
 
     /**
-     * Enable tooltip module on button
+     * Enable tooltip module
      */
-    this.api.listeners.on(this.nodes.button, 'mouseenter', (event: MouseEvent) => {
-      const tooltipContent = document.createTextNode('Delete');
-
-      this.api.tooltip.show(this.nodes.button, tooltipContent, {
-        marginTop: 5,
-      });
-    });
-
-    this.api.listeners.on(this.nodes.button, 'mouseleave', () => {
-      this.api.tooltip.hide();
-    });
+    this.api.tooltip.onHover(this.nodes.button, 'Delete');
 
     return this.nodes.button;
   }
