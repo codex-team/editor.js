@@ -100,5 +100,8 @@ export default class MoveUpTune implements BlockTune {
 
     /** Change blocks positions */
     this.api.blocks.swap(currentBlockIndex, currentBlockIndex - 1);
+
+    /** Hide the Tooltip */
+    this.api.tooltip.hide();
   }
 }

@@ -115,8 +115,6 @@ export default class Toolbox extends Module {
    */
   public close(): void {
     this.nodes.toolbox.classList.remove(this.CSS.toolboxOpened);
-
-    this.Editor.Tooltip.hide();
     this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.openedToolbarHolderModifier);
 
     this.opened = false;
@@ -202,6 +200,7 @@ export default class Toolbox extends Module {
      * Add listeners to show/hide toolbox tooltip
      */
     const tooltipContent = this.drawTooltip(toolName);
+
     this.Editor.Tooltip.onHover(button, tooltipContent, {
       placement: 'bottom',
       hidingDelay: 200,

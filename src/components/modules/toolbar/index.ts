@@ -122,20 +122,14 @@ export default class Toolbar extends Module {
     /**
      * Add events to show/hide tooltip for plus button
      */
-    this.Editor.Listeners.on(this.nodes.plusButton, 'mouseenter', () => {
-      const fragment = document.createDocumentFragment();
+    const tooltipContent = $.make('div');
 
-      fragment.appendChild(document.createTextNode('Add'));
-      fragment.appendChild($.make('div', this.CSS.plusButtonShortcut, {
-        textContent: '⇥ Tab',
-      }));
+    tooltipContent.appendChild(document.createTextNode('Add'));
+    tooltipContent.appendChild($.make('div', this.CSS.plusButtonShortcut, {
+      textContent: '⇥ Tab',
+    }));
 
-      this.Editor.Tooltip.show(this.nodes.plusButton, fragment);
-    });
-
-    this.Editor.Listeners.on(this.nodes.plusButton, 'mouseleave', () => {
-      this.Editor.Tooltip.hide();
-    });
+    this.Editor.Tooltip.onHover(this.nodes.plusButton, tooltipContent);
 
     /**
      * Make a Toolbox
@@ -155,6 +149,10 @@ export default class Toolbar extends Module {
     $.append(this.nodes.settingsToggler, settingsIcon);
     $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
     $.append(this.nodes.actions, this.nodes.blockActionsButtons);
+
+    this.Editor.Tooltip.onHover(this.nodes.settingsToggler, 'Click to tune', {
+      placement: 'top',
+    });
 
     /**
      * Make and append Settings Panel
