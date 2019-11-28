@@ -130,8 +130,6 @@ You can pass your Tool's title via `title` static getter. It can be used, for ex
 icon description that appears by hover. 
 
 ```ts
-
- */
 export default class BoldInlineTool implements InlineTool {
   /**
    * Specifies Tool as Inline Toolbar Tool
@@ -147,5 +145,4 @@ export default class BoldInlineTool implements InlineTool {
 
   // ... other methods
 }
-
 ```
