@@ -4,6 +4,8 @@
 
 - `Improvements` — Inline Toolbar design improved
 - `Improvements` — Conversion Toolbar now included in the Inline Toolbar [#853](https://github.com/codex-team/editor.js/issues/853)
+- `Improvements` — All buttons now have beautiful Tooltips provided by [CodeX Tooltips](https://github.com/codex-team/codex.tooltips)
+- `New` — new Tooltips API for displaying tooltips near your custom elements  
 
 ### 2.15.1
 
