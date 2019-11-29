@@ -211,6 +211,9 @@ export default class UI extends Module {
     this.nodes.holder.innerHTML = '';
   }
 
+  /**
+   * Close all Editor's toolbars
+   */
   public closeAllToolbars(): void {
     const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
 
