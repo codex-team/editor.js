@@ -211,6 +211,15 @@ export default class UI extends Module {
     this.nodes.holder.innerHTML = '';
   }
 
+  public closeAllToolbars(): void {
+    const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+
+    BlockSettings.close();
+    InlineToolbar.close();
+    ConversionToolbar.close();
+    Toolbox.close();
+  }
+
   /**
    * Check for mobile mode and cache a result
    */
