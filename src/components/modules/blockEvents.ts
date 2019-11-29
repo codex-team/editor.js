@@ -374,7 +374,10 @@ export default class BlockEvents extends Module {
     }
 
     const isFirstBlock = BlockManager.currentBlockIndex === 0;
-    const canMergeBlocks = Caret.isAtStart && currentBlock.currentInput === currentBlock.firstInput && !isFirstBlock;
+    const canMergeBlocks = Caret.isAtStart &&
+      SelectionUtils.isCollapsed &&
+      currentBlock.currentInput === currentBlock.firstInput &&
+      !isFirstBlock;
 
     if (canMergeBlocks) {
       /**
