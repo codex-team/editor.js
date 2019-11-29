@@ -4,6 +4,7 @@
 
 - `Improvements` — Inline Toolbar design improved
 - `Improvements` — Conversion Toolbar now included in the Inline Toolbar [#853](https://github.com/codex-team/editor.js/issues/853)
+- `Fix` — Normalize node before walking through children at `isEmpty` method [943](https://github.com/codex-team/editor.js/issues/943)
 
 ### 2.15.1
 

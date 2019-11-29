@@ -370,6 +370,11 @@ export default class Dom {
       return this.isNodeEmpty(node);
     }
 
+    /**
+     * Normalize node to merge several text nodes to one to reduce tree walker iterations
+     */
+    node.normalize();
+
     treeWalker.push(node.firstChild);
 
     while ( treeWalker.length > 0 ) {
