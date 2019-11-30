@@ -1,7 +1,8 @@
 import $ from './dom';
-import _ from './utils';
+import * as _ from './utils';
 import {EditorConfig, OutputData, SanitizerConfig} from '../../types';
 import {EditorModules} from '../types-internal/editor-modules';
+import {LogLevels} from './utils';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -75,7 +76,7 @@ export default class Core {
         await this.init();
         await this.start();
 
-        _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
+        _.logLabeled('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
 
         setTimeout(async () => {
           await this.render();
@@ -143,6 +144,12 @@ export default class Core {
     if (this.config.holder == null) {
       this.config.holder = 'editorjs';
     }
+
+    if (!this.config.logLevel) {
+      this.config.logLevel = LogLevels.VERBOSE;
+    }
+
+    _.setLogLevel(this.config.logLevel);
 
     /**
      * If initial Block's Tool was not passed, use the Paragraph Tool

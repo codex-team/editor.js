@@ -15,6 +15,7 @@
 — `Improvements` — Styles API: `.cdx-block` default vertical margins decreased from 0.7 to 0.4 ems. 
 — `Fix` — Fixed History Back on block deletion by Backspace in Firefox [#967](https://github.com/codex-team/editor.js/pull/967)
 - `Fix` — Fixed `getRangeCount` call if range count is 0 [#938](https://github.com/codex-team/editor.js/issues/938)
+- `New` — Log levels now available to suppress Editor.js console messages [#962](https://github.com/codex-team/editor.js/issues/962) 
 
 ### 2.15.1
 

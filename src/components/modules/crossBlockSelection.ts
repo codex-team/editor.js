@@ -1,7 +1,7 @@
 import Module from '../__module';
 import Block from '../block';
 import SelectionUtils from '../selection';
-import _ from '../utils';
+import * as _ from '../utils';
 
 export default class CrossBlockSelection extends Module {
   /**

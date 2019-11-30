@@ -1,4 +1,4 @@
-import _ from './utils';
+import * as _ from './utils';
 import $ from './dom';
 import Block, {BlockToolAPI} from './block';
 
