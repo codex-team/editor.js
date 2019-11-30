@@ -304,6 +304,14 @@ export default class BlockSelection extends Module {
        */
       this.Editor.ConversionToolbar.close();
     } else if (this.readyToBlockSelection) {
+      /**
+       * prevent default selection when we use custom selection
+       */
+      event.preventDefault();
+
+      /**
+       * select working Block
+       */
       this.selectBlockByIndex();
 
       /**
