@@ -22,6 +22,11 @@ export default class LinkInlineTool implements InlineTool {
   public static isInline = true;
 
   /**
+   * Title for hover-tooltip
+   */
+  public static title: string = 'Link';
+
+  /**
    * Sanitizer Rule
    * Leave <a> tags
    * @return {object}
