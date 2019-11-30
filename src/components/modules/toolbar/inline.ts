@@ -426,7 +426,6 @@ export default class InlineToolbar extends Module {
       placement: 'top',
       hidingDelay: 100,
     });
-
   }
 
   /**
