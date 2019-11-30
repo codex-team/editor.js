@@ -160,7 +160,55 @@ It makes following steps:
 
 After executing the `destroy` method, editor inctance becomes an empty object. This way you will free occupied JS Heap on your page.
 
-### Shorthands
+### Tooltip API
+
+Methods for showing Tooltip helper near your elements. Parameters are the same as in [CodeX Tooltips](http://github.com/codex-team/codex.tooltips) lib.
+
+![](https://capella.pics/00e7094a-fdb9-429b-8015-9c56f19b4ef5.jpg)
+
+#### Show
+
+Method shows tooltip with custom content on passed element
+ 
+```js
+this.api.tooltip.show(element, content, options);
+``` 
+
+| parameter | type | description |
+| -- | -- | -- |
+| `element` | _HTMLElement_ | Tooltip will be showed near this element |
+| `content` | _String_ or _Node_ | Content that will be appended to the Tooltip |
+| `options` | _Object_ | Some displaying options, see below |
+
+Available showing options 
+
+| name | type | action |
+| -- | -- | -- |
+| placement | `top`, `bottom`, `left`, `right` | Where to place the tooltip. Default value is `bottom' | 
+| marginTop | _Number_ | Offset above the tooltip with `top` placement | 
+| marginBottom | _Number_ | Offset below the tooltip with `bottom` placement | 
+| marginLeft | _Number_ | Offset at left from the tooltip with `left` placement | 
+| marginRight | _Number_ | Offset at right from the tooltip with `right` placement | 
+| delay | _Number_ | Delay before showing, in ms. Default is `70` | 
+| hidingDelay | _Number_ | Delay before hiding, in ms. Default is `0` | 
+
+#### Hide
+
+Method hides the Tooltip.
+
+```js
+this.api.tooltip.hide();
+```
+
+#### onHover
+
+Decorator for showing tooltip near some element by "mouseenter" and hide by "mouseleave". 
+
+```js
+this.api.tooltip.onHover(element, content, options);
+```
+
+### API Shorthands
 
 Editor`s API provides some shorthands for API methods. 
 
@@ -179,3 +227,4 @@ const editor = EditorJS();
 editor.focus();
 editor.save();
 ```
+
