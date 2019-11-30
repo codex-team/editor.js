@@ -25,6 +25,7 @@ export default class API extends Module {
       styles: this.Editor.StylesAPI.classes,
       toolbar: this.Editor.ToolbarAPI.methods,
       inlineToolbar: this.Editor.InlineToolbarAPI.methods,
+      tooltip: this.Editor.TooltipAPI.methods,
     } as APIInterfaces;
   }
 }

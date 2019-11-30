@@ -23,6 +23,7 @@ export default class InlineToolbar extends Module {
     inlineToolbarShowed: 'ce-inline-toolbar--showed',
     inlineToolbarLeftOriented: 'ce-inline-toolbar--left-oriented',
     inlineToolbarRightOriented: 'ce-inline-toolbar--right-oriented',
+    inlineToolbarShortcut: 'ce-inline-toolbar__shortcut',
     buttonsWrapper: 'ce-inline-toolbar__buttons',
     actionsWrapper: 'ce-inline-toolbar__actions',
     inlineToolButton: 'ce-inline-tool',
@@ -420,6 +421,11 @@ export default class InlineToolbar extends Module {
         }
       });
     });
+
+    this.Editor.Tooltip.onHover(this.nodes.conversionToggler, 'Convert to', {
+      placement: 'top',
+      hidingDelay: 100,
+    });
   }
 
   /**
@@ -483,6 +489,7 @@ export default class InlineToolbar extends Module {
     const {
       Listeners,
       Tools,
+      Tooltip,
     } = this.Editor;
 
     const button = tool.render();
@@ -540,6 +547,26 @@ export default class InlineToolbar extends Module {
     if (shortcut) {
       this.enableShortcuts(tool, shortcut);
     }
+
+    /**
+     * Enable tooltip module on button
+     */
+    const tooltipContent = $.make('div');
+    const toolTitle = Tools.toolsClasses[toolName][Tools.INTERNAL_SETTINGS.TITLE] || _.capitalize(toolName);
+
+    tooltipContent.appendChild($.text(toolTitle));
+
+    if (shortcut) {
+      tooltipContent.appendChild($.make('div', this.CSS.inlineToolbarShortcut, {
+        textContent: _.beautifyShortcut(shortcut),
+      }));
+    }
+
+    Tooltip.onHover(button, tooltipContent, {
+      placement: 'top',
+      hidingDelay: 100,
+    });
+
   }
 
   /**

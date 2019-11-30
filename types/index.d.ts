@@ -5,8 +5,21 @@
  */
 
 import {EditorConfig} from './configs';
-import {Blocks, Caret, Events, Listeners, Notifier, Sanitizer, Saver, Selection, Styles, Toolbar, InlineToolbar} from './api';
-import {OutputData} from "./data-formats/output-data";
+import {
+  Blocks,
+  Caret,
+  Events,
+  InlineToolbar,
+  Listeners,
+  Notifier,
+  Sanitizer,
+  Saver,
+  Selection,
+  Styles,
+  Toolbar,
+  Tooltip,
+} from './api';
+import {OutputData} from './data-formats/output-data';
 
 /**
  * Interfaces used for development
@@ -53,6 +66,7 @@ export interface API {
   styles: Styles;
   toolbar: Toolbar;
   inlineToolbar: InlineToolbar;
+  tooltip: Tooltip;
 }
 
 /**
@@ -82,37 +96,37 @@ declare class EditorJS {
   /**
    * @see Saver.save
    */
-  save(): Promise<OutputData>;
+  public save(): Promise<OutputData>;
 
   /**
    * @see Blocks.clear
    */
-  clear(): void;
+  public clear(): void;
 
   /**
    * @see Blocks.render
    */
-  render(data: OutputData): Promise<void>;
+  public render(data: OutputData): Promise<void>;
 
   /**
    * @see Caret.focus
    */
-  focus(atEnd?: boolean): boolean;
+  public focus(atEnd?: boolean): boolean;
 
   /**
    * @see Events.on
    */
-  on(eventName: string, callback: (data?: any) => void): void;
+  public on(eventName: string, callback: (data?: any) => void): void;
 
   /**
    * @see Events.off
    */
-  off(eventName: string, callback: (data?: any) => void): void;
+  public off(eventName: string, callback: (data?: any) => void): void;
 
   /**
    * @see Events.emit
    */
-  emit(eventName: string, data: any): void;
+  public emit(eventName: string, data: any): void;
 
   /**
    * Destroy Editor instance and related DOM elements
