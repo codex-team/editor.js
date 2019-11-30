@@ -18,6 +18,11 @@ export default class BoldInlineTool implements InlineTool {
   public static isInline = true;
 
   /**
+   * Title for hover-tooltip
+   */
+  public static title: string = 'Bold';
+
+  /**
    * Sanitizer Rule
    * Leave <b> tags
    * @return {object}
