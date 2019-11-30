@@ -123,3 +123,28 @@ static get sanitize() {
 ``` 
 
 Read more about Sanitizer configuration at the [Tools#sanitize](tools.md#sanitize)
+
+### Specifying a title
+
+You can pass your Tool's title via `title` static getter. It can be used, for example, in the Tooltip with 
+icon description that appears by hover. 
+
+![](https://capella.pics/00e7094a-fdb9-429b-8015-9c56f19b4ef5.jpg)
+
+```ts
+export default class BoldInlineTool implements InlineTool {
+  /**
+   * Specifies Tool as Inline Toolbar Tool
+   *
+   * @return {boolean}
+   */
+  public static isInline = true;
+
+  /**
+   * Title for hover-tooltip
+   */
+  public static title: string = 'Bold';
+
+  // ... other methods
+}
+```

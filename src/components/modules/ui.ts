@@ -212,6 +212,18 @@ export default class UI extends Module {
   }
 
   /**
+   * Close all Editor's toolbars
+   */
+  public closeAllToolbars(): void {
+    const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+
+    BlockSettings.close();
+    InlineToolbar.close();
+    ConversionToolbar.close();
+    Toolbox.close();
+  }
+
+  /**
    * Check for mobile mode and cache a result
    */
   private checkIsMobile() {
@@ -390,6 +402,7 @@ export default class UI extends Module {
        * Manipulation with BlockSelections is handled in global backspacePress because they may occur
        * with CMD+A or RectangleSelection and they can be handled on document event
        */
+      event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
     }

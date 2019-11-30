@@ -22,55 +22,15 @@
     @apply --toolbox-button;
     flex-shrink: 0;
   }
-
-  &__tooltip {
-    position: absolute;
-    top: 25px;
-    padding: 6px 10px;
-    border-radius: 5px;
-    opacity: 0;
-    background: var(--bg-light);
-    box-shadow: 0 10px 12px -9px rgba(26, 39, 54, 0.32), 0 3px 2px -2px rgba(33, 48, 73, 0.05);
-    color: #5C6174;
-    font-size: 12px;
-    text-align: center;
-    user-select: none;
-    pointer-events: none;
-    transition: opacity 150ms ease-in, left 0.1s linear;
-    will-change: opacity, left;
-    letter-spacing: 0.02em;
-    line-height: 1em;
-
-    @media (--mobile) {
-      display: none;
-    }
-
-    &-shortcut {
-      color: rgba(100, 105, 122, 0.6);
-      word-spacing: -2px;
-      margin-top: 5px;
-    }
-
-    &--shown {
-      opacity: 1;
-      transition-delay: 0.1s, 0s;
-    }
-
-    &::before {
-       content: '';
-       width: 10px;
-       height: 10px;
-       position: absolute;
-       top: -5px;
-       left: 50%;
-       margin-left: -5px;
-       transform: rotate(-45deg);
-       background-color: var(--bg-light);
-       z-index: -1;
-     }
-  }
 }
 
+.ce-toolbox-button-tooltip {
+  &__shortcut {
+    opacity: 0.6;
+    word-spacing: -3px;
+    margin-top: 3px;
+  }
+}
 
 /**
  * Styles for Narrow mode
