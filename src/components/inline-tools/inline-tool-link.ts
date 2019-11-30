@@ -1,7 +1,7 @@
 import SelectionUtils from '../selection';
 
 import $ from '../dom';
-import _ from '../utils';
+import * as _ from '../utils';
 import {API, InlineTool, SanitizerConfig} from '../../../types';
 import {Notifier, Toolbar} from '../../../types/api';
 
@@ -20,6 +20,11 @@ export default class LinkInlineTool implements InlineTool {
    * @return {boolean}
    */
   public static isInline = true;
+
+  /**
+   * Title for hover-tooltip
+   */
+  public static title: string = 'Link';
 
   /**
    * Sanitizer Rule
@@ -112,8 +117,8 @@ export default class LinkInlineTool implements InlineTool {
     this.nodes.button = document.createElement('button') as HTMLButtonElement;
     this.nodes.button.type = 'button';
     this.nodes.button.classList.add(this.CSS.button, this.CSS.buttonModifier);
-    this.nodes.button.appendChild($.svg('link', 34, 34));
-    this.nodes.button.appendChild($.svg('unlink', 16, 18));
+    this.nodes.button.appendChild($.svg('link', 14, 10));
+    this.nodes.button.appendChild($.svg('unlink', 15, 11));
     return this.nodes.button;
   }
 

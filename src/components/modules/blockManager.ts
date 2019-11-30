@@ -6,10 +6,10 @@
  *
  * @version 2.0.0
  */
-import Block from '../block';
+import Block, {BlockToolAPI} from '../block';
 import Module from '../__module';
 import $ from '../dom';
-import _ from '../utils';
+import * as _ from '../utils';
 import Blocks from '../blocks';
 import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
 
@@ -267,7 +267,7 @@ export default class BlockManager extends Module {
     }
 
     try {
-      block.call('onPaste', pasteEvent);
+      block.call(BlockToolAPI.ON_PASTE, pasteEvent);
     } catch (e) {
       _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
     }
@@ -598,7 +598,7 @@ export default class BlockManager extends Module {
     const {BlockEvents, Listeners} = this.Editor;
 
     Listeners.on(block.holder, 'keydown', (event) => BlockEvents.keydown(event as KeyboardEvent), true);
-    Listeners.on(block.holder, 'mouseup', (event) => BlockEvents.mouseUp(event));
+    Listeners.on(block.holder, 'mouseup', (event) => BlockEvents.mouseUp());
     Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => BlockEvents.mouseDown(event));
     Listeners.on(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
     Listeners.on(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));

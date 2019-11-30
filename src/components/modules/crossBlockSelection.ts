@@ -1,7 +1,7 @@
 import Module from '../__module';
 import Block from '../block';
 import SelectionUtils from '../selection';
-import _ from '../utils';
+import * as _ from '../utils';
 
 export default class CrossBlockSelection extends Module {
   /**
@@ -31,6 +31,14 @@ export default class CrossBlockSelection extends Module {
 
     Listeners.on(document, 'mouseover', this.onMouseOver);
     Listeners.on(document, 'mouseup', this.onMouseUp);
+  }
+
+  /**
+   * return boolean is cross block selection started
+   */
+  public get isCrossBlockSelectionStarted(): boolean {
+    return !!this.firstSelectedBlock
+      && !!this.lastSelectedBlock;
   }
 
   /**
@@ -65,6 +73,9 @@ export default class CrossBlockSelection extends Module {
     }
 
     this.lastSelectedBlock = nextBlock;
+
+    /** close InlineToolbar when Blocks selected */
+    this.Editor.InlineToolbar.close();
   }
 
   /**
@@ -150,6 +161,8 @@ export default class CrossBlockSelection extends Module {
       targetBlock.selected = false;
       return;
     }
+
+    this.Editor.InlineToolbar.close();
 
     this.toggleBlocksSelectedState(relatedBlock, targetBlock);
     this.lastSelectedBlock = targetBlock;

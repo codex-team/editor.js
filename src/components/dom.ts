@@ -98,9 +98,12 @@ export default class Dom {
    * Append one or several elements to the parent
    *
    * @param  {Element|DocumentFragment} parent    - where to append
-   * @param  {Element|Element[]} elements - element or elements list
+   * @param  {Element|Element[]|Text|Text[]} elements - element or elements list
    */
-  public static append(parent: Element|DocumentFragment, elements: Element|Element[]|DocumentFragment): void {
+  public static append(
+    parent: Element|DocumentFragment,
+    elements: Element|Element[]|DocumentFragment|Text|Text[],
+  ): void {
     if ( Array.isArray(elements) ) {
       elements.forEach( (el) => parent.appendChild(el) );
     } else {
@@ -367,6 +370,11 @@ export default class Dom {
       return this.isNodeEmpty(node);
     }
 
+    /**
+     * Normalize node to merge several text nodes to one to reduce tree walker iterations
+     */
+    node.normalize();
+
     treeWalker.push(node.firstChild);
 
     while ( treeWalker.length > 0 ) {
@@ -526,5 +534,17 @@ export default class Dom {
   public static getHolder(element: string | HTMLElement): HTMLElement {
     if (typeof element === 'string') { return document.getElementById(element); }
     return element;
+  }
+
+  /**
+   * Method checks passed Node if it is some extension Node
+   * @param {Node} node - any node
+   */
+  public static isExtensionNode(node: Node): boolean {
+    const extensions = [
+      'GRAMMARLY-EXTENSION',
+    ];
+
+    return node && extensions.includes(node.nodeName);
   }
 }

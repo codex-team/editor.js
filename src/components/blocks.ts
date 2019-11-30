@@ -1,6 +1,6 @@
-import _ from './utils';
+import * as _ from './utils';
 import $ from './dom';
-import Block from './block';
+import Block, {BlockToolAPI} from './block';
 
 /**
  * @class Blocks
@@ -12,7 +12,6 @@ import Block from './block';
  *
  */
 export default class Blocks {
-
   /**
    * Get length of Block instances array
    *
@@ -47,16 +46,27 @@ export default class Blocks {
    * blocks[0] = new Block(...)
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {Number|String} index — block index
-   * @param {Block} block — Block to set
+   * @param {Number|String} property — block index or any Blocks class property to set
+   * @param {Block} value — value to set
    * @returns {Boolean}
    */
-  public static set(instance: Blocks, index: number, block: Block) {
-    if (isNaN(Number(index))) {
-      return false;
+  public static set(instance: Blocks, property: number | string, value: Block | any) {
+
+    /**
+     * If property name is not a number (method or other property, access it via reflect
+     */
+    if (isNaN(Number(property))) {
+      Reflect.set(instance, property, value);
+      return true;
     }
 
-    instance.insert(+index, block);
+    /**
+     * If property is number, call insert method to emulate array behaviour
+     *
+     * @example
+     * blocks[0] = new Block();
+     */
+    instance.insert(+property, value);
 
     return true;
   }
@@ -65,15 +75,22 @@ export default class Blocks {
    * Proxy trap to implement array-like getter
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {Number|String} index — Block index
+   * @param {Number|String} property — Blocks class property
    * @returns {Block|*}
    */
-  public static get(instance: Blocks, index: number) {
-    if (isNaN(Number(index))) {
-      return instance[index];
+  public static get(instance: Blocks, property: any | number) {
+
+    /**
+     * If property is not a number, get it via Reflect object
+     */
+    if (isNaN(Number(property))) {
+      return Reflect.get(instance, property);
     }
 
-    return instance.get(+index);
+    /**
+     * If property is a number (Block index) return Block by passed index
+     */
+    return instance.get(+property);
   }
 
   /**
@@ -103,7 +120,7 @@ export default class Blocks {
    */
   public push(block: Block): void {
     this.blocks.push(block);
-    this.workingArea.appendChild(block.holder);
+    this.insertToDOM(block);
   }
 
   /**
@@ -145,6 +162,7 @@ export default class Blocks {
 
     if (replace) {
       this.blocks[index].holder.remove();
+      this.blocks[index].call(BlockToolAPI.REMOVED);
     }
 
     const deleteCount = replace ? 1 : 0;
@@ -154,14 +172,14 @@ export default class Blocks {
     if (index > 0) {
       const previousBlock = this.blocks[index - 1];
 
-      previousBlock.holder.insertAdjacentElement('afterend', block.holder);
+      this.insertToDOM(block, 'afterend', previousBlock);
     } else {
       const nextBlock = this.blocks[index + 1];
 
       if (nextBlock) {
-        nextBlock.holder.insertAdjacentElement('beforebegin', block.holder);
+        this.insertToDOM(block, 'beforebegin', nextBlock);
       } else {
-        this.workingArea.appendChild(block.holder);
+        this.insertToDOM(block);
       }
     }
   }
@@ -176,6 +194,9 @@ export default class Blocks {
     }
 
     this.blocks[index].holder.remove();
+
+    this.blocks[index].call(BlockToolAPI.REMOVED);
+
     this.blocks.splice(index, 1);
   }
 
@@ -184,6 +205,9 @@ export default class Blocks {
    */
   public removeAll(): void {
     this.workingArea.innerHTML = '';
+
+    this.blocks.forEach((block) => block.call(BlockToolAPI.REMOVED));
+
     this.blocks.length = 0;
   }
 
@@ -219,5 +243,22 @@ export default class Blocks {
    */
   public indexOf(block: Block): number {
     return this.blocks.indexOf(block);
+  }
+
+  /**
+   * Insert new Block into DOM
+   *
+   * @param {Block} block - Block to insert
+   * @param {InsertPosition} position — insert position (if set, will use insertAdjacentElement)
+   * @param {Block} target — Block related to position
+   */
+  private insertToDOM(block: Block, position?: InsertPosition, target?: Block): void {
+    if (position) {
+      target.holder.insertAdjacentElement(position, block.holder);
+    } else {
+      this.workingArea.appendChild(block.holder);
+    }
+
+    block.call(BlockToolAPI.RENDERED);
   }
 }

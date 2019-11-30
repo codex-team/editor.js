@@ -1,7 +1,8 @@
 import $ from './dom';
-import _ from './utils';
+import * as _ from './utils';
 import {EditorConfig, OutputData, SanitizerConfig} from '../../types';
 import {EditorModules} from '../types-internal/editor-modules';
+import {LogLevels} from './utils';
 
 /**
  * @typedef {Core} Core - editor core class
@@ -75,9 +76,11 @@ export default class Core {
         await this.init();
         await this.start();
 
-        _.log('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
+        _.logLabeled('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
 
-        setTimeout(() => {
+        setTimeout(async () => {
+          await this.render();
+
           if ((this.configuration as EditorConfig).autofocus) {
             const {BlockManager, Caret} = this.moduleInstances;
 
@@ -141,6 +144,12 @@ export default class Core {
     if (this.config.holder == null) {
       this.config.holder = 'editorjs';
     }
+
+    if (!this.config.logLevel) {
+      this.config.logLevel = LogLevels.VERBOSE;
+    }
+
+    _.setLogLevel(this.config.logLevel);
 
     /**
      * If initial Block's Tool was not passed, use the Paragraph Tool
@@ -268,7 +277,12 @@ export default class Core {
       }),
       Promise.resolve(),
     );
+  }
 
+  /**
+   * Render initial data
+   */
+  private render(): Promise<void> {
     return this.moduleInstances.Renderer.render(this.config.data.blocks);
   }
 
@@ -276,8 +290,14 @@ export default class Core {
    * Make modules instances and save it to the @property this.moduleInstances
    */
   private constructModules(): void {
-    modules.forEach( (Module) => {
+    modules.forEach( (module) => {
+      /**
+       * If module has non-default exports, passed object contains them all and default export as 'default' property
+       */
+      const Module = typeof module === 'function' ? module : module.default;
+
       try {
+
         /**
          * We use class name provided by displayName property
          *

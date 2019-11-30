@@ -7,7 +7,7 @@
  */
 import Module from '../__module';
 import Block from '../block';
-import _ from '../utils';
+import * as _ from '../utils';
 import $ from '../dom';
 
 import SelectionUtils from '../selection';
@@ -251,6 +251,9 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     block.selected = true;
+
+    /** close InlineToolbar when we selected any Block */
+    this.Editor.InlineToolbar.close();
   }
 
   /**
@@ -304,6 +307,14 @@ export default class BlockSelection extends Module {
        */
       this.Editor.ConversionToolbar.close();
     } else if (this.readyToBlockSelection) {
+      /**
+       * prevent default selection when we use custom selection
+       */
+      event.preventDefault();
+
+      /**
+       * select working Block
+       */
       this.selectBlockByIndex();
 
       /**
@@ -331,5 +342,8 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     this.allBlocksSelected = true;
+
+    /** close InlineToolbar if we selected all Blocks */
+    this.Editor.InlineToolbar.close();
   }
 }

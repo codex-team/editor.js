@@ -1,10 +1,6 @@
 .ce-inline-toolbar {
   @apply --overlay-pane;
-  padding: 3px;
   transform: translateX(-50%) translateY(8px) scale(0.9);
-  box-shadow: 0 6px 12px -6px rgba(131, 147, 173, 0.46),
-              5px -12px 34px -13px rgba(97, 105, 134, 0.6),
-              0 26px 52px 3px rgba(147, 165, 186, 0.24);
   opacity: 0;
   visibility: hidden;
   transition: transform 150ms ease, opacity 250ms ease;
@@ -39,15 +35,65 @@
 
   &__buttons {
     display: flex;
+    padding: 0 6px;
+  }
+
+  &__actions {
+  }
+
+  &__dropdown {
+    display: inline-flex;
+    height: var(--toolbar-buttons-size);
+    padding: 0 9px 0 10px;
+    margin: 0 6px 0 -6px;
+    align-items: center;
+    cursor: pointer;
+    border-right: 1px solid var(--color-gray-border);
+
+    &:hover {
+      background: var(--bg-light);
+    }
+
+    &--hidden {
+      display: none;
+    }
+
+    &-content{
+      display: flex;
+      font-weight: 500;
+      font-size: 14px;
+
+      svg {
+        height: 12px;
+      }
+    }
+
+    .icon--toggler-down {
+      margin-left: 4px;
+    }
+  }
+
+  &__shortcut {
+    opacity: 0.6;
+    word-spacing: -3px;
+    margin-top: 3px;
   }
 }
 
 .ce-inline-tool {
   @apply --toolbar-button;
+  border-radius: 0;
   line-height: normal;
+  width: auto;
+  padding: 0 5px !important;
+  min-width: 24px;
 
   &:not(:last-of-type) {
     margin-right: 2px;
+  }
+
+  .icon {
+    height: 12px;
   }
 
   &--last {
@@ -66,20 +112,22 @@
     }
     .icon--unlink {
       display: inline-block;
+      margin-bottom: -1px;
     }
   }
 
   &-input {
-    background-color: var(--bg-light);
     outline: none;
     border: 0;
-    border-radius: 3px;
-    margin: 3px 0 0;
+    border-radius: 0 0 4px 4px;
+    margin: 0;
     font-size: 13px;
-    padding: 8px;
+    padding: 10px;
     width: 100%;
     box-sizing: border-box;
     display: none;
+    font-weight: 500;
+    border-top: 1px solid rgba(201,201,204,.48);
 
     &::placeholder {
       color: var(--grayText);

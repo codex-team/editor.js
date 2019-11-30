@@ -1,5 +1,5 @@
 import DomIterator from './domIterator';
-import _ from './utils';
+import * as _ from './utils';
 
 /**
  * Flipper construction options
@@ -96,9 +96,11 @@ export default class Flipper {
           this.handleTabPress(event);
           break;
         case _.keyCodes.LEFT:
+        case _.keyCodes.UP:
           this.flipLeft();
           break;
         case _.keyCodes.RIGHT:
+        case _.keyCodes.DOWN:
           this.flipRight();
           break;
         case _.keyCodes.ENTER:
@@ -120,6 +122,8 @@ export default class Flipper {
       _.keyCodes.LEFT,
       _.keyCodes.RIGHT,
       _.keyCodes.ENTER,
+      _.keyCodes.UP,
+      _.keyCodes.DOWN,
     ];
   }
 
@@ -183,6 +187,8 @@ export default class Flipper {
       handlingKeyCodeList.push(
         _.keyCodes.LEFT,
         _.keyCodes.RIGHT,
+        _.keyCodes.UP,
+        _.keyCodes.DOWN,
       );
     }
 

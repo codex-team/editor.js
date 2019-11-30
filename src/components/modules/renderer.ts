@@ -1,5 +1,6 @@
 import Module from '../__module';
-import _, {ChainData} from '../utils';
+import * as _ from '../utils';
+import {ChainData} from '../utils';
 import {BlockToolData} from '../../../types';
 import {BlockToolConstructable} from '../../../types/tools';
 

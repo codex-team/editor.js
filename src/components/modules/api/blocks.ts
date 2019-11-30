@@ -2,7 +2,7 @@ import Module from '../../__module';
 
 import {Blocks} from '../../../../types/api';
 import {BlockToolData, OutputData, ToolConfig} from '../../../../types';
-import _ from './../../utils';
+import * as _ from './../../utils';
 
 /**
  * @class BlocksAPI
@@ -87,13 +87,9 @@ export default class BlocksAPI extends Module {
     }
 
     /**
-     * In case of deletion first block we need to set caret to the current Block
+     * After Block deletion currentBlock is updated
      */
-    if (this.Editor.BlockManager.currentBlockIndex === 0) {
-      this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock);
-    } else {
-      this.Editor.Caret.navigatePrevious(true);
-    }
+    this.Editor.Caret.setToBlock(this.Editor.BlockManager.currentBlock, this.Editor.Caret.positions.END);
 
     this.Editor.Toolbar.close();
   }

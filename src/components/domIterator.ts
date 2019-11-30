@@ -96,6 +96,13 @@ export default class DomIterator {
    * @return {Number} index of focused node
    */
   private leafNodesAndReturnIndex(direction: string): number {
+    /**
+     * if items are empty then there is nothing to leaf
+     */
+    if (this.items.length === 0) {
+      return this.cursor;
+    }
+
     let focusedButtonIndex = this.cursor;
 
     /**

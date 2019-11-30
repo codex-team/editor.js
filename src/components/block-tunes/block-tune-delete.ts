@@ -17,10 +17,8 @@ export default class DeleteTune implements BlockTune {
 
   /**
    * Styles
-   * @type {{wrapper: string}}
    */
   private CSS = {
-    wrapper: 'ass',
     button: 'ce-settings__button',
     buttonDelete: 'ce-settings__button--delete',
     buttonConfirm: 'ce-settings__button--confirm',
@@ -64,6 +62,12 @@ export default class DeleteTune implements BlockTune {
     this.nodes.button = $.make('div', [this.CSS.button, this.CSS.buttonDelete], {});
     this.nodes.button.appendChild($.svg('cross', 12, 12));
     this.api.listeners.on(this.nodes.button, 'click', (event: MouseEvent) => this.handleClick(event), false);
+
+    /**
+     * Enable tooltip module
+     */
+    this.api.tooltip.onHover(this.nodes.button, 'Delete');
+
     return this.nodes.button;
   }
 
@@ -95,8 +99,8 @@ export default class DeleteTune implements BlockTune {
       this.api.events.off('block-settings-closed', this.resetConfirmation);
 
       this.api.blocks.delete();
-
       this.api.toolbar.close();
+      this.api.tooltip.hide();
 
       /**
        * Prevent firing ui~documentClicked that can drop currentBlock pointer

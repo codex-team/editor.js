@@ -2,9 +2,9 @@
  * Contains keyboard and mouse events binded on each Block by Block Manager
  */
 import Module from '../__module';
-import _ from '../utils';
+import * as _ from '../utils';
 import SelectionUtils from '../selection';
-import Flipper from "../flipper";
+import Flipper from '../flipper';
 
 export default class BlockEvents extends Module {
 
@@ -102,63 +102,16 @@ export default class BlockEvents extends Module {
       return;
     }
 
-    const { InlineToolbar, ConversionToolbar, UI, BlockManager, BlockSettings } = this.Editor;
-    const block = BlockManager.getBlock(event.target);
-
-    /**
-     * Conversion Toolbar will be opened when user selects 85% of plugins content
-     * that why we must with the length of pluginsContent
-     */
-    if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-      InlineToolbar.close();
-      BlockSettings.close();
-      ConversionToolbar.tryToShow(block);
-    } else {
-      ConversionToolbar.close();
-      InlineToolbar.tryToShow(true);
-    }
-
     /**
      * Check if editor is empty on each keyup and add special css class to wrapper
      */
-    UI.checkEmptiness();
+    this.Editor.UI.checkEmptiness();
   }
 
   /**
    * Mouse up on Block:
-   * - shows Inline Toolbar if something selected
    */
-  public mouseUp(event): void {
-    const { InlineToolbar, ConversionToolbar, BlockManager, BlockSelection } = this.Editor;
-    const block = BlockManager.getBlock(event.target);
-
-    /**
-     * Timeout uses to wait if selection will cleared after mouse up (regular click on block)
-     */
-    _.delay(() => {
-      /**
-       * 1) selected 85% of block - open Conversion Toolbar
-       * 2) select something inside block - open Inline Toolbar
-       * 3) nothing selected - close Toolbars
-       */
-      if (SelectionUtils.almostAllSelected(block.pluginsContent.textContent)) {
-        InlineToolbar.close();
-        ConversionToolbar.tryToShow(block);
-      } else if (!SelectionUtils.isCollapsed) {
-        InlineToolbar.tryToShow();
-        ConversionToolbar.close();
-      } else {
-        InlineToolbar.close();
-
-        /**
-         * Don't close Conversion toolbar when Rectangle Selection ended with one block selected
-         * @see RectangleSelection#endSelection
-         */
-        if (BlockSelection.selectedBlocks.length !== 1) {
-          ConversionToolbar.close();
-        }
-      }
-    }, 30)();
+  public mouseUp(): void {
   }
 
   /**
@@ -223,10 +176,10 @@ export default class BlockEvents extends Module {
       this.Editor.Toolbox.close();
     } else if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
-    } else if (this.Editor.InlineToolbar.opened) {
-      this.Editor.InlineToolbar.close();
     } else if (this.Editor.ConversionToolbar.opened) {
       this.Editor.ConversionToolbar.close();
+    } else if (this.Editor.InlineToolbar.opened) {
+      this.Editor.InlineToolbar.close();
     } else {
       this.Editor.Toolbar.close();
     }
@@ -324,8 +277,9 @@ export default class BlockEvents extends Module {
 
     /**
      * Opened Toolbars uses Flipper with own Enter handling
+     * Allow split block when no one button in Flipper is focused
      */
-    if (UI.someToolbarOpened) {
+    if (UI.someToolbarOpened && UI.someFlipperButtonFocused) {
       return;
     }
 
@@ -420,7 +374,10 @@ export default class BlockEvents extends Module {
     }
 
     const isFirstBlock = BlockManager.currentBlockIndex === 0;
-    const canMergeBlocks = Caret.isAtStart && currentBlock.currentInput === currentBlock.firstInput && !isFirstBlock;
+    const canMergeBlocks = Caret.isAtStart &&
+      SelectionUtils.isCollapsed &&
+      currentBlock.currentInput === currentBlock.firstInput &&
+      !isFirstBlock;
 
     if (canMergeBlocks) {
       /**
@@ -481,11 +438,14 @@ export default class BlockEvents extends Module {
    * Handle right and down keyboard keys
    */
   private arrowRightAndDown(event: KeyboardEvent): void {
+    const isFlipperCombination = Flipper.usedKeys.includes(event.keyCode) &&
+      (!event.shiftKey || event.keyCode === _.keyCodes.TAB);
+
     /**
      * Arrows might be handled on toolbars by flipper
      * Check for Flipper.usedKeys to allow navigate by DOWN and disallow by RIGHT
      */
-    if (this.Editor.UI.someToolbarOpened && Flipper.usedKeys.includes(event.keyCode)) {
+    if (this.Editor.UI.someToolbarOpened && isFlipperCombination) {
       return;
     }
 
@@ -533,8 +493,12 @@ export default class BlockEvents extends Module {
      * Arrows might be handled on toolbars by flipper
      * Check for Flipper.usedKeys to allow navigate by UP and disallow by LEFT
      */
-    if (this.Editor.UI.someToolbarOpened && Flipper.usedKeys.includes(event.keyCode)) {
-      return;
+    if (this.Editor.UI.someToolbarOpened) {
+      if (Flipper.usedKeys.includes(event.keyCode) && (!event.shiftKey || event.keyCode === _.keyCodes.TAB)) {
+        return;
+      }
+
+      this.Editor.UI.closeAllToolbars();
     }
 
     /**

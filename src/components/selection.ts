@@ -1,7 +1,7 @@
 /**
  * TextRange interface fot IE9-
  */
-import _ from './utils';
+import * as _ from './utils';
 import $ from './dom';
 
 interface TextRange {
@@ -102,24 +102,6 @@ export default class SelectionUtils {
   }
 
   /**
-   * Returns true if 85% of text content is selected
-   * @return {boolean}
-   */
-  public static almostAllSelected(targetText: string): boolean {
-    const range = SelectionUtils.range;
-
-    if (!range) {
-      return false;
-    }
-
-    const copiedFragment = range.cloneContents();
-    const lengthOfWholeText = targetText.length;
-    const lengthOfCopiedText = copiedFragment.textContent.length;
-
-    return lengthOfCopiedText / lengthOfWholeText > 0.85;
-  }
-
-  /**
    * Check current selection if it is at Editor's zone
    * @return {boolean}
    */
@@ -191,6 +173,10 @@ export default class SelectionUtils {
 
     if (sel.rangeCount === null || isNaN(sel.rangeCount)) {
       _.log('Method SelectionUtils.rangeCount is not supported', 'warn');
+      return rect;
+    }
+
+    if (sel.rangeCount === 0) {
       return rect;
     }
 

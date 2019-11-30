@@ -47,6 +47,12 @@ export default class MoveUpTune implements BlockTune {
       (event) => this.handleClick(event as MouseEvent, moveUpButton),
       false,
       );
+
+    /**
+     * Enable tooltip module on button
+     */
+    this.api.tooltip.onHover(moveUpButton, 'Move up');
+
     return moveUpButton;
   }
 
@@ -94,5 +100,8 @@ export default class MoveUpTune implements BlockTune {
 
     /** Change blocks positions */
     this.api.blocks.swap(currentBlockIndex, currentBlockIndex - 1);
+
+    /** Hide the Tooltip */
+    this.api.tooltip.hide();
   }
 }

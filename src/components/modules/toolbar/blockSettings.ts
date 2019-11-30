@@ -1,7 +1,7 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import Flipper, {FlipperOptions} from '../../flipper';
-import _ from '../../utils';
+import * as _ from '../../utils';
 
 /**
  * Block Settings

@@ -10,10 +10,11 @@ import sprite from '../../../dist/sprite.svg';
  */
 import Module from '../__module';
 import $ from '../dom';
-import _ from '../utils';
+import * as _ from '../utils';
 
 import Selection from '../selection';
 import Block from '../block';
+import Flipper from '../flipper';
 
 /**
  * @class
@@ -162,11 +163,6 @@ export default class UI extends Module {
     await this.Editor.InlineToolbar.make();
 
     /**
-     * Make the Converter tool holder
-     */
-    await this.Editor.ConversionToolbar.make();
-
-    /**
      * Load and append CSS
      */
     await this.loadStyles();
@@ -191,10 +187,21 @@ export default class UI extends Module {
    * Used to prevent global keydowns (for example, Enter) conflicts with Enter-on-toolbar
    * @return {boolean}
    */
-  public get someToolbarOpened() {
+  public get someToolbarOpened(): boolean {
     const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
 
     return BlockSettings.opened || InlineToolbar.opened || ConversionToolbar.opened || Toolbox.opened;
+  }
+
+  /**
+   * Check for some Flipper-buttons is under focus
+   */
+  public get someFlipperButtonFocused(): boolean {
+    return Object.entries(this.Editor).filter(([moduleName, moduleClass]) => {
+      return moduleClass.flipper instanceof Flipper;
+    }).some(([moduleName, moduleClass]) => {
+      return moduleClass.flipper.currentItem;
+    });
   }
 
   /**
@@ -202,6 +209,18 @@ export default class UI extends Module {
    */
   public destroy(): void {
     this.nodes.holder.innerHTML = '';
+  }
+
+  /**
+   * Close all Editor's toolbars
+   */
+  public closeAllToolbars(): void {
+    const { Toolbox, BlockSettings, InlineToolbar, ConversionToolbar } = this.Editor;
+
+    BlockSettings.close();
+    InlineToolbar.close();
+    ConversionToolbar.close();
+    Toolbox.close();
   }
 
   /**
@@ -277,17 +296,26 @@ export default class UI extends Module {
       (event) => this.redactorClicked(event as MouseEvent),
       false,
     );
+    this.Editor.Listeners.on(this.nodes.redactor,
+      'mousedown',
+      (event) => this.documentTouched(event as MouseEvent),
+      true,
+    );
+    this.Editor.Listeners.on(this.nodes.redactor,
+      'touchstart',
+      (event) => this.documentTouched(event as MouseEvent),
+      true,
+    );
+
     this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
     this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), true);
 
     /**
-     * Handle selection change on mobile devices for the Inline Toolbar support
+     * Handle selection change to manipulate Inline Toolbar appearance
      */
-    if (_.isTouchSupported()) {
-      this.Editor.Listeners.on(document, 'selectionchange', (event) => {
-        this.selectionChanged(event as Event);
-      }, true);
-    }
+    this.Editor.Listeners.on(document, 'selectionchange', (event: Event) => {
+      this.selectionChanged(event);
+    }, true);
 
     this.Editor.Listeners.on(window, 'resize', () => {
       this.resizeDebouncer();
@@ -374,6 +402,7 @@ export default class UI extends Module {
        * Manipulation with BlockSelections is handled in global backspacePress because they may occur
        * with CMD+A or RectangleSelection and they can be handled on document event
        */
+      event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
     }
@@ -464,7 +493,6 @@ export default class UI extends Module {
       this.Editor.BlockManager.dropPointer();
       this.Editor.InlineToolbar.close();
       this.Editor.Toolbar.close();
-      this.Editor.BlockSelection.clearSelection(event);
       this.Editor.ConversionToolbar.close();
     }
 
@@ -479,44 +507,35 @@ export default class UI extends Module {
         this.Editor.BlockManager.setCurrentBlockByChildNode(Selection.anchorNode);
       }
     }
+
+    /**
+     * Clear Selection if user clicked somewhere
+     */
+    if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
+      this.Editor.BlockSelection.clearSelection(event);
+    }
   }
 
   /**
-   * All clicks on the redactor zone
+   * First touch on editor
+   * Fired before click
    *
-   * @param {MouseEvent} event
-   *
-   * @description
-   * 1. Save clicked Block as a current {@link BlockManager#currentNode}
-   *      it uses for the following:
-   *      - add CSS modifier for the selected Block
-   *      - on Enter press, we make a new Block under that
-   *
-   * 2. Move and show the Toolbar
-   *
-   * 3. Set a Caret
-   *
-   * 4. By clicks on the Editor's bottom zone:
-   *      - if last Block is empty, set a Caret to this
-   *      - otherwise, add a new empty Block and set a Caret to that
-   *
-   * 5. Hide the Inline Toolbar
-   *
-   * @see selectClickedBlock
-   *
+   * Used to change current block — we need to do it before 'selectionChange' event.
+   * Also:
+   * - Move and show the Toolbar
+   * - Set a Caret
    */
-  private redactorClicked(event: MouseEvent): void {
-    if (!Selection.isCollapsed) {
-      return;
-    }
-
+  private documentTouched(event: MouseEvent | TouchEvent): void {
     let clickedNode = event.target as HTMLElement;
 
     /**
      * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
      */
     if (clickedNode === this.nodes.redactor) {
-      clickedNode = document.elementFromPoint(event.clientX, event.clientY) as HTMLElement;
+      const clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
+      const clientY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
+
+      clickedNode = document.elementFromPoint(clientX, clientY) as HTMLElement;
     }
 
     /**
@@ -541,9 +560,6 @@ export default class UI extends Module {
       }
     }
 
-    event.stopImmediatePropagation();
-    event.stopPropagation();
-
     /**
      * Move and open toolbar
      */
@@ -553,6 +569,25 @@ export default class UI extends Module {
      * Hide the Plus Button
      */
     this.Editor.Toolbar.plusButton.hide();
+  }
+
+  /**
+   * All clicks on the redactor zone
+   *
+   * @param {MouseEvent} event
+   *
+   * @description
+   * - By clicks on the Editor's bottom zone:
+   *      - if last Block is empty, set a Caret to this
+   *      - otherwise, add a new empty Block and set a Caret to that
+   */
+  private redactorClicked(event: MouseEvent): void {
+    if (!Selection.isCollapsed) {
+      return;
+    }
+
+    event.stopImmediatePropagation();
+    event.stopPropagation();
 
     if (!this.Editor.BlockManager.currentBlock) {
       this.Editor.BlockManager.insert();
@@ -593,7 +628,7 @@ export default class UI extends Module {
       return;
     }
 
-    this.Editor.InlineToolbar.tryToShow();
+    this.Editor.InlineToolbar.tryToShow(true);
   }
 
   /**

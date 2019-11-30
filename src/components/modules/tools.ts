@@ -1,6 +1,6 @@
 import Paragraph from '../tools/paragraph/dist/bundle';
 import Module from '../__module';
-import _ from '../utils';
+import * as _ from '../utils';
 import {
   BlockToolConstructable,
   InlineTool,
@@ -130,6 +130,7 @@ export default class Tools extends Module {
     return {
       IS_ENABLED_LINE_BREAKS: 'enableLineBreaks',
       IS_INLINE: 'isInline',
+      TITLE: 'title', // for Inline Tools. Block Tools can pass title along with icon through the 'toolbox' static prop.
       SHORTCUT: 'shortcut',
       TOOLBOX: 'toolbox',
       SANITIZE_CONFIG: 'sanitize',
