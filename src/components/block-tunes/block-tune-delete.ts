@@ -17,10 +17,8 @@ export default class DeleteTune implements BlockTune {
 
   /**
    * Styles
-   * @type {{wrapper: string}}
    */
   private CSS = {
-    wrapper: 'ass',
     button: 'ce-settings__button',
     buttonDelete: 'ce-settings__button--delete',
     buttonConfirm: 'ce-settings__button--confirm',

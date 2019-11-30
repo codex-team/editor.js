@@ -67,21 +67,6 @@
       border-bottom-color: #d5d7db;
     }
 
-    &::before {
-      //content: '';
-      width: 10px;
-      height: 10px;
-      position: absolute;
-      top: -6px;
-      left: 50%;
-      margin-left: -6px;
-      transform: rotate(-45deg);
-      background-color: #fff;
-      z-index: -1;
-      border: 1px solid #EAEAEA;
-      border-width: 1px 1px 0 0;
-    }
-
     &--left-oriented {
       &::before {
         left: 15px;
