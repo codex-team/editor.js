@@ -47,7 +47,7 @@ export {
   FilePasteEventDetail,
 } from './tools';
 export {BlockTune, BlockTuneConstructable} from './block-tunes';
-export {EditorConfig, SanitizerConfig, PasteConfig} from './configs';
+export {EditorConfig, SanitizerConfig, PasteConfig, LogLevels, ConversionConfig} from './configs';
 export {OutputData} from './data-formats/output-data';
 
 /**

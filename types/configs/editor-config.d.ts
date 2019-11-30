@@ -1,5 +1,5 @@
 import {ToolConstructable, ToolSettings} from '../tools';
-import {OutputData} from '../index';
+import {LogLevels, OutputData} from '../index';
 import {SanitizerConfig} from './sanitizer-config';
 
 export interface EditorConfig {
@@ -56,6 +56,8 @@ export interface EditorConfig {
    * Height of Editor's bottom area that allows to set focus on the last Block
    */
   minHeight?: number;
+
+  logLevel?: LogLevels
 
   /**
    * Fires when Editor is ready to work

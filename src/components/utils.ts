@@ -5,6 +5,16 @@
 import Dom from './dom';
 
 /**
+ * Possible log levels
+ */
+export enum LogLevels {
+  VERBOSE = 'VERBOSE',
+  INFO = 'INFO',
+  WARN = 'WARN',
+  ERROR = 'ERROR',
+}
+
+/**
  * Allow to use global VERSION, that will be overwritten by Webpack
  */
 declare const VERSION: string;
@@ -23,42 +33,6 @@ export interface ChainData {
  * Editor.js utils
  */
 export default class Util {
-  /**
-   * Custom logger
-   *
-   * @param {string} msg  - message
-   * @param {string} type - logging type 'log'|'warn'|'error'|'info'
-   * @param {*} [args]      - argument to log with a message
-   * @param {string} style  - additional styling to message
-   */
-  public static log(msg: string, type: string = 'log', args?: any, style: string = 'color: inherit'): void {
-
-    if ( !('console' in window) || !window.console[ type ] ) {
-      return;
-    }
-
-    const editorLabelText = `Editor.js ${VERSION}`;
-    const editorLabelStyle = `line-height: 1em;
-            color: #006FEA;
-            display: inline-block;
-            font-size: 11px;
-            line-height: 1em;
-            background-color: #fff;
-            padding: 4px 9px;
-            border-radius: 30px;
-            border: 1px solid rgba(56, 138, 229, 0.16);
-            margin: 4px 5px 4px 0;`;
-
-    try {
-      if (['time', 'timeEnd'].includes(type)) {
-        console[type](`( ${editorLabelText} ) ${msg}`);
-      } else if (args) {
-        console[type](`%c${editorLabelText}%c ${msg} %o`, editorLabelStyle, style, args);
-      } else {
-        console[type](`%c${editorLabelText}%c ${msg}`, editorLabelStyle, style);
-      }
-    } catch (ignored) {}
-  }
 
   /**
    * Returns basic keycodes as constants
@@ -94,6 +68,25 @@ export default class Util {
       BACKWARD: 3,
       FORWARD: 4,
     };
+  }
+
+  /**
+   * _log method proxy without Editor.js label
+   */
+  public static log = Util._log.bind(Util, false);
+
+  /**
+   * _log method proxy with Editor.js label
+   */
+  public static logLabeled = Util._log.bind(Util, true);
+
+  /**
+   * Set current log level
+   *
+   * @param {LogLevels} logLevel - log level to set
+   */
+  public static setLogLevel(logLevel: LogLevels) {
+    this.logLevel = logLevel;
   }
 
   /**
@@ -414,5 +407,91 @@ export default class Util {
     }
 
     return shortcut;
+  }
+
+  /**
+   * Current log level
+   */
+  private static logLevel: LogLevels;
+
+  /**
+   * Custom logger
+   *
+   * @param {boolean} labeled — if true, Editor.js label is shown
+   * @param {string} msg  - message
+   * @param {string} type - logging type 'log'|'warn'|'error'|'info'
+   * @param {*} [args]      - argument to log with a message
+   * @param {string} style  - additional styling to message
+   * @param labeled
+   */
+  private static _log(
+    labeled: boolean,
+    msg: string,
+    type: string = 'log',
+    args?: any,
+    style: string = 'color: inherit',
+  ): void {
+
+    if ( !('console' in window) || !window.console[ type ] ) {
+      return;
+    }
+
+    const isSimpleType = ['info', 'log', 'warn', 'error'].includes(type);
+    const argsToPass = [];
+
+    switch (this.logLevel) {
+      case LogLevels.ERROR:
+        if (type !== 'error') {
+          return;
+        }
+        break;
+
+      case LogLevels.WARN:
+        if (!['error', 'warn'].includes(type)) {
+          return;
+        }
+        break;
+
+      case LogLevels.INFO:
+        if (!isSimpleType || labeled) {
+          return;
+        }
+        break;
+    }
+
+    if (args) {
+      argsToPass.push(args);
+    }
+
+    const editorLabelText = `Editor.js ${VERSION}`;
+    const editorLabelStyle = `line-height: 1em;
+            color: #006FEA;
+            display: inline-block;
+            font-size: 11px;
+            line-height: 1em;
+            background-color: #fff;
+            padding: 4px 9px;
+            border-radius: 30px;
+            border: 1px solid rgba(56, 138, 229, 0.16);
+            margin: 4px 5px 4px 0;`;
+
+    if (labeled) {
+      if (isSimpleType) {
+        argsToPass.unshift(editorLabelStyle, style);
+        msg = `%c${editorLabelText}%c ${msg}`;
+      } else {
+        msg = `( ${editorLabelText} )${msg}`;
+      }
+    }
+
+    try {
+      if (!isSimpleType) {
+        console[type](msg);
+      } else if (args) {
+        console[type](`${msg} %o`, ...argsToPass);
+      } else {
+        console[type](msg, ...argsToPass);
+      }
+    } catch (ignored) {}
   }
 }
