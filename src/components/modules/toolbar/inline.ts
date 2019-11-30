@@ -182,9 +182,6 @@ export default class InlineToolbar extends Module {
 
     /** Check Tools state for selected fragment */
     this.checkToolsState();
-
-    /** Clear selection */
-    this.Editor.BlockSelection.clearSelection();
   }
 
   /**
