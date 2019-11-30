@@ -180,10 +180,20 @@ export default class Block {
    * @return {HTMLElement}
    */
   get pluginsContent(): HTMLElement {
-    const pluginsContent = this.holder.querySelector(`.${Block.CSS.content}`);
+    const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
 
-    if (pluginsContent && pluginsContent.childNodes.length) {
-      return pluginsContent.childNodes[0] as HTMLElement;
+    if (blockContentNodes && blockContentNodes.childNodes.length) {
+      /**
+       * Editors Block content can contain different Nodes from extensions
+       * We use DOM isExtensionNode to ignore such Nodes and return first Block that does not match filtering list
+       */
+      for (let child = blockContentNodes.childNodes.length - 1; child >= 0; child--) {
+        const contentNode = blockContentNodes.childNodes[child];
+
+        if (!$.isExtensionNode(contentNode)) {
+          return contentNode as HTMLElement;
+        }
+      }
     }
 
     return null;
