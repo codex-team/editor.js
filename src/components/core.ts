@@ -149,7 +149,7 @@ export default class Core {
       this.config.logLevel = LogLevels.VERBOSE;
     }
 
-    _.log.setLogLevel(this.config.logLevel);
+    _.setLogLevel(this.config.logLevel);
 
     /**
      * If initial Block's Tool was not passed, use the Paragraph Tool

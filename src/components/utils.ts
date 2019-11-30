@@ -156,9 +156,9 @@ _log.logLevel = LogLevels.VERBOSE;
  *
  * @param {LogLevels} logLevel - log level to set
  */
-_log.setLogLevel = (logLevel: LogLevels) => {
+export function setLogLevel(logLevel: LogLevels) {
   _log.logLevel = logLevel;
-};
+}
 
 /**
  * _log method proxy without Editor.js label
