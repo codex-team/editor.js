@@ -34,6 +34,14 @@ export default class CrossBlockSelection extends Module {
   }
 
   /**
+   * return boolean is cross block selection started
+   */
+  public get isCrossBlockSelectionStarted(): boolean {
+    return !!this.firstSelectedBlock
+      && !!this.lastSelectedBlock;
+  }
+
+  /**
    * Change selection state of the next Block
    * Used for CBS via Shift + arrow keys
    *
@@ -65,6 +73,9 @@ export default class CrossBlockSelection extends Module {
     }
 
     this.lastSelectedBlock = nextBlock;
+
+    /** close InlineToolbar when Blocks selected */
+    this.Editor.InlineToolbar.close();
   }
 
   /**
@@ -115,6 +126,9 @@ export default class CrossBlockSelection extends Module {
 
     Listeners.off(document, 'mouseover', this.onMouseOver);
     Listeners.off(document, 'mouseup', this.onMouseUp);
+
+    /** close InlineToolbar when Blocks selected */
+    this.Editor.InlineToolbar.close();
   }
 
   /**
