@@ -105,6 +105,7 @@ export default class Flipper {
           this.handleTabPress(event);
           break;
         case _.keyCodes.LEFT:
+        case _.keyCodes.UP:
           if (this.config.direction === 'ltr') {
             this.flipLeft();
           } else {
@@ -112,6 +113,7 @@ export default class Flipper {
           }
           break;
         case _.keyCodes.RIGHT:
+        case _.keyCodes.DOWN:
           if (this.config.direction === 'ltr') {
             this.flipRight();
           } else {
@@ -137,6 +139,8 @@ export default class Flipper {
       _.keyCodes.LEFT,
       _.keyCodes.RIGHT,
       _.keyCodes.ENTER,
+      _.keyCodes.UP,
+      _.keyCodes.DOWN,
     ];
   }
 
@@ -200,6 +204,8 @@ export default class Flipper {
       handlingKeyCodeList.push(
         _.keyCodes.LEFT,
         _.keyCodes.RIGHT,
+        _.keyCodes.UP,
+        _.keyCodes.DOWN,
       );
     }
 

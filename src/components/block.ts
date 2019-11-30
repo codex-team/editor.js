@@ -29,6 +29,21 @@ import MoveDownTune from './block-tunes/block-tune-move-down';
 import SelectionUtils from './selection';
 
 /**
+ * Available Block Tool API methods
+ */
+export enum BlockToolAPI {
+  /**
+   * @todo remove method in 3.0.0
+   * @deprecated — use 'rendered' hook instead
+   */
+  APPEND_CALLBACK = 'appendCallback',
+  RENDERED = 'rendered',
+  UPDATED = 'updated',
+  REMOVED = 'removed',
+  ON_PASTE = 'onPaste',
+}
+
+/**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  *
  * @property tool - Tool instance
@@ -165,10 +180,20 @@ export default class Block {
    * @return {HTMLElement}
    */
   get pluginsContent(): HTMLElement {
-    const pluginsContent = this.holder.querySelector(`.${Block.CSS.content}`);
+    const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
 
-    if (pluginsContent && pluginsContent.childNodes.length) {
-      return pluginsContent.childNodes[0] as HTMLElement;
+    if (blockContentNodes && blockContentNodes.childNodes.length) {
+      /**
+       * Editors Block content can contain different Nodes from extensions
+       * We use DOM isExtensionNode to ignore such Nodes and return first Block that does not match filtering list
+       */
+      for (let child = blockContentNodes.childNodes.length - 1; child >= 0; child--) {
+        const contentNode = blockContentNodes.childNodes[child];
+
+        if (!$.isExtensionNode(contentNode)) {
+          return contentNode as HTMLElement;
+        }
+      }
     }
 
     return null;
@@ -338,6 +363,29 @@ export default class Block {
   private mutationObserver: MutationObserver;
 
   /**
+   * Debounce Timer
+   * @type {number}
+   */
+  private readonly modificationDebounceTimer = 450;
+
+  /**
+   * Is fired when DOM mutation has been happened
+   */
+  private didMutated = _.debounce((): void => {
+    /**
+     * Drop cache
+     */
+    this.cachedInputs = [];
+
+    /**
+     * Update current input
+     */
+    this.updateCurrentInput();
+
+    this.call(BlockToolAPI.UPDATED);
+  }, this.modificationDebounceTimer);
+
+  /**
    * @constructor
    * @param {String} toolName - Tool name that passed on initialization
    * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
@@ -375,12 +423,16 @@ export default class Block {
    * @param {String} methodName
    * @param {Object} params
    */
-  public call(methodName: string, params: object) {
+  public call(methodName: string, params?: object) {
     /**
      * call Tool's method with the instance context
      */
     if (this.tool[methodName] && this.tool[methodName] instanceof Function) {
-      this.tool[methodName].call(this.tool, params);
+      try {
+        this.tool[methodName].call(this.tool, params);
+      } catch (e) {
+        _.log(`Error during '${methodName}' call: ${e.message}`, 'error');
+      }
     }
   }
 
@@ -485,7 +537,15 @@ export default class Block {
     /**
      * Observe DOM mutations to update Block inputs
      */
-    this.mutationObserver.observe(this.holder, {childList: true, subtree: true});
+    this.mutationObserver.observe(
+      this.holder.firstElementChild,
+      {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+      },
+    );
   }
 
   /**
@@ -493,21 +553,6 @@ export default class Block {
    */
   public willUnselect() {
     this.mutationObserver.disconnect();
-  }
-
-  /**
-   * Is fired when DOM mutation has been happened
-   */
-  private didMutated = (): void => {
-    /**
-     * Drop cache
-     */
-    this.cachedInputs = [];
-
-    /**
-     * Update current input
-     */
-    this.updateCurrentInput();
   }
 
   /**

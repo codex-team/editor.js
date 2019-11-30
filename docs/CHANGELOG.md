@@ -1,5 +1,18 @@
 # Changelog
 
+### 2.16
+
+- `Improvements` — Inline Toolbar design improved
+- `Improvements` — Conversion Toolbar now included in the Inline Toolbar [#853](https://github.com/codex-team/editor.js/issues/853)
+- `Improvements` — All buttons now have beautiful Tooltips provided by [CodeX Tooltips](https://github.com/codex-team/codex.tooltips)
+- `New` — new Tooltips API for displaying tooltips near your custom elements  
+— `New` *API* — Block [lifecycle hooks](tools.md#block-lifecycle-hooks)
+- `Fix` — On selection from end to start backspace is working as expected now [#869](https://github.com/codex-team/editor.js/issues/869)
+— `Fix` — Fix flipper with empty dom iterator [#926](https://github.com/codex-team/editor.js/issues/926)
+- `Fix` — Normalize node before walking through children at `isEmpty` method [943](https://github.com/codex-team/editor.js/issues/943)
+— `Fix` — Fixed Grammarly conflict [#779](https://github.com/codex-team/editor.js/issues/779)
+— `Fix` — Fixed History Back on block deletion by Backspace in Firefox [#967](https://github.com/codex-team/editor.js/pull/967)
+
 ### 2.15.1
 
 - `Refactoring` — Constants of tools settings separated by internal and external to correspond API

@@ -85,6 +85,7 @@ export default class Toolbar extends Module {
 
       // Content Zone
       plusButton: 'ce-toolbar__plus',
+      plusButtonShortcut: 'ce-toolbar__plus-shortcut',
       plusButtonHidden: 'ce-toolbar__plus--hidden',
 
       // Actions Zone
@@ -113,37 +114,22 @@ export default class Toolbar extends Module {
      *  - Toolbox
      */
     this.nodes.plusButton = $.make('div', this.CSS.plusButton);
+    $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
+    $.append(this.nodes.content, this.nodes.plusButton);
+
+    this.Editor.Listeners.on(this.nodes.plusButton, 'click', () => this.plusButtonClicked(), false);
 
     /**
      * Add events to show/hide tooltip for plus button
      */
-    this.Editor.Listeners.on(this.nodes.plusButton, 'mouseenter', () => {
-      const tooltip = this.Editor.Toolbox.nodes.tooltip;
-      const fragment = document.createDocumentFragment();
+    const tooltipContent = $.make('div');
 
-      fragment.appendChild(document.createTextNode('Add'));
-      fragment.appendChild($.make('div', this.Editor.Toolbox.CSS.tooltipShortcut, {
-        textContent: '⇥ Tab',
-      }));
+    tooltipContent.appendChild(document.createTextNode('Add'));
+    tooltipContent.appendChild($.make('div', this.CSS.plusButtonShortcut, {
+      textContent: '⇥ Tab',
+    }));
 
-      if (this.config.direction === 'ltr') {
-        tooltip.style.left = '-17px';
-      } else {
-        tooltip.style.right = '-17px';
-      }
-
-      tooltip.innerHTML = '';
-      tooltip.appendChild(fragment);
-      tooltip.classList.add(this.Editor.Toolbox.CSS.tooltipShown);
-    });
-
-    this.Editor.Listeners.on(this.nodes.plusButton, 'mouseleave', () => {
-      this.Editor.Toolbox.hideTooltip();
-    });
-
-    $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
-    $.append(this.nodes.content, this.nodes.plusButton);
-    this.Editor.Listeners.on(this.nodes.plusButton, 'click', () => this.plusButtonClicked(), false);
+    this.Editor.Tooltip.onHover(this.nodes.plusButton, tooltipContent);
 
     /**
      * Make a Toolbox
@@ -163,6 +149,10 @@ export default class Toolbar extends Module {
     $.append(this.nodes.settingsToggler, settingsIcon);
     $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);
     $.append(this.nodes.actions, this.nodes.blockActionsButtons);
+
+    this.Editor.Tooltip.onHover(this.nodes.settingsToggler, 'Click to tune', {
+      placement: 'top',
+    });
 
     /**
      * Make and append Settings Panel

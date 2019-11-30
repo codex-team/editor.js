@@ -462,3 +462,17 @@ class ListTool {
   }
 }
 ```
+
+## Block Lifecycle hooks
+
+### `rendered()`
+
+Called after Block contents is added to the page
+
+### `updated()`
+
+Called each time Block contents is updated
+
+### `removed()`
+
+Called after Block contents is removed from the page but before Block instance deleted

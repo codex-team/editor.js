@@ -15,7 +15,6 @@ export interface BaseTool {
 }
 
 export interface BaseToolConstructable {
-
   /**
    * Define Tool type as Inline
    */
@@ -25,6 +24,11 @@ export interface BaseToolConstructable {
    * Tool`s sanitizer configuration
    */
   sanitize?: SanitizerConfig;
+
+  /**
+   * Title of Inline Tool
+   */
+  title?: string;
 
   /**
    * Describe constructor parameters

@@ -102,24 +102,6 @@ export default class SelectionUtils {
   }
 
   /**
-   * Returns true if 85% of text content is selected
-   * @return {boolean}
-   */
-  public static almostAllSelected(targetText: string): boolean {
-    const range = SelectionUtils.range;
-
-    if (!range) {
-      return false;
-    }
-
-    const copiedFragment = range.cloneContents();
-    const lengthOfWholeText = targetText.length;
-    const lengthOfCopiedText = copiedFragment.textContent.length;
-
-    return lengthOfCopiedText / lengthOfWholeText > 0.85;
-  }
-
-  /**
    * Check current selection if it is at Editor's zone
    * @return {boolean}
    */
