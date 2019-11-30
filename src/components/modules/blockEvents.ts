@@ -435,11 +435,14 @@ export default class BlockEvents extends Module {
    * Handle right and down keyboard keys
    */
   private arrowRightAndDown(event: KeyboardEvent): void {
+    const isFlipperCombination = Flipper.usedKeys.includes(event.keyCode) &&
+      (!event.shiftKey || event.keyCode === _.keyCodes.TAB);
+
     /**
      * Arrows might be handled on toolbars by flipper
      * Check for Flipper.usedKeys to allow navigate by DOWN and disallow by RIGHT
      */
-    if (this.Editor.UI.someToolbarOpened && Flipper.usedKeys.includes(event.keyCode)) {
+    if (this.Editor.UI.someToolbarOpened && isFlipperCombination) {
       return;
     }
 
@@ -487,8 +490,12 @@ export default class BlockEvents extends Module {
      * Arrows might be handled on toolbars by flipper
      * Check for Flipper.usedKeys to allow navigate by UP and disallow by LEFT
      */
-    if (this.Editor.UI.someToolbarOpened && Flipper.usedKeys.includes(event.keyCode)) {
-      return;
+    if (this.Editor.UI.someToolbarOpened) {
+      if (Flipper.usedKeys.includes(event.keyCode) && (!event.shiftKey || event.keyCode === _.keyCodes.TAB)) {
+        return;
+      }
+
+      this.Editor.UI.closeAllToolbars();
     }
 
     /**
