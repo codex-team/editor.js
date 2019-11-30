@@ -7,6 +7,7 @@
 — `New` *API* — Block [lifecycle hooks](tools.md#block-lifecycle-hooks)
 - `Fix` — On selection from end to start backspace is working as expected now [#869](https://github.com/codex-team/editor.js/issues/869)
 — `Fix` — Fix flipper with empty dom iterator [#926](https://github.com/codex-team/editor.js/issues/926)
+- `Fix` — Normalize node before walking through children at `isEmpty` method [943](https://github.com/codex-team/editor.js/issues/943)
 
 ### 2.15.1
 
