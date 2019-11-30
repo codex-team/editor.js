@@ -106,7 +106,7 @@ If you are using your custom `Initial Block`, `placeholder` property is passed i
 
 ## Log level
 
-You can specify log level for Editor.js console messages via `logLevel' property of configuration:
+You can specify log level for Editor.js console messages via `logLevel` property of configuration:
 
 ```js
 var editor = new EditorJS({
