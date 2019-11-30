@@ -145,7 +145,7 @@ export default class Listeners extends Module {
    */
   public removeAll(): void {
     this.allListeners.map( (current) => {
-      current.element.removeEventListener(current.eventType, current.handler);
+      current.element.removeEventListener(current.eventType, current.handler, current.options);
     });
 
     this.allListeners = [];
