@@ -515,6 +515,9 @@ export default class UI extends Module {
    * Fired before click
    *
    * Used to change current block — we need to do it before 'selectionChange' event.
+   * Also:
+   * - Move and show the Toolbar
+   * - Set a Caret
    */
   private documentTouched(event: MouseEvent | TouchEvent): void {
     let clickedNode = event.target as HTMLElement;
@@ -550,28 +553,6 @@ export default class UI extends Module {
         this.Editor.Caret.setToTheLastBlock();
       }
     }
-  }
-
-  /**
-   * All clicks on the redactor zone
-   *
-   * @param {MouseEvent} event
-   *
-   * @description
-   * - Move and show the Toolbar
-   * - Set a Caret
-   * - By clicks on the Editor's bottom zone:
-   *      - if last Block is empty, set a Caret to this
-   *      - otherwise, add a new empty Block and set a Caret to that
-   * - Hide the Inline Toolbar
-   */
-  private redactorClicked(event: MouseEvent): void {
-    if (!Selection.isCollapsed) {
-      return;
-    }
-
-    event.stopImmediatePropagation();
-    event.stopPropagation();
 
     /**
      * Move and open toolbar
@@ -582,6 +563,25 @@ export default class UI extends Module {
      * Hide the Plus Button
      */
     this.Editor.Toolbar.plusButton.hide();
+  }
+
+  /**
+   * All clicks on the redactor zone
+   *
+   * @param {MouseEvent} event
+   *
+   * @description
+   * - By clicks on the Editor's bottom zone:
+   *      - if last Block is empty, set a Caret to this
+   *      - otherwise, add a new empty Block and set a Caret to that
+   */
+  private redactorClicked(event: MouseEvent): void {
+    if (!Selection.isCollapsed) {
+      return;
+    }
+
+    event.stopImmediatePropagation();
+    event.stopPropagation();
 
     if (!this.Editor.BlockManager.currentBlock) {
       this.Editor.BlockManager.insert();
