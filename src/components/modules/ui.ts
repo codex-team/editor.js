@@ -511,7 +511,9 @@ export default class UI extends Module {
     /**
      * Clear Selection if user clicked somewhere
      */
-    this.Editor.BlockSelection.clearSelection(event);
+    if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
+      this.Editor.BlockSelection.clearSelection(event);
+    }
   }
 
   /**

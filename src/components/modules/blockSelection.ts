@@ -251,6 +251,9 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     block.selected = true;
+
+    /** close InlineToolbar when we selected any Block */
+    this.Editor.InlineToolbar.close();
   }
 
   /**
@@ -339,5 +342,8 @@ export default class BlockSelection extends Module {
       .removeAllRanges();
 
     this.allBlocksSelected = true;
+
+    /** close InlineToolbar if we selected all Blocks */
+    this.Editor.InlineToolbar.close();
   }
 }

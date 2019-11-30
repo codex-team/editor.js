@@ -34,6 +34,14 @@ export default class CrossBlockSelection extends Module {
   }
 
   /**
+   * return boolean is cross block selection started
+   */
+  public get isCrossBlockSelectionStarted(): boolean {
+    return !!this.firstSelectedBlock
+      && !!this.lastSelectedBlock;
+  }
+
+  /**
    * Change selection state of the next Block
    * Used for CBS via Shift + arrow keys
    *
