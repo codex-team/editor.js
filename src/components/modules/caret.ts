@@ -221,7 +221,6 @@ export default class Caret extends Module {
    * @param {Number} offset - caret offset regarding to the text node
    */
   public setToBlock(block: Block, position: string = this.positions.DEFAULT, offset: number = 0): void {
-    console.trace();
     const {BlockManager} = this.Editor;
     let element;
 
