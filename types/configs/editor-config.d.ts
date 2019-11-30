@@ -56,10 +56,11 @@ export interface EditorConfig {
    * Height of Editor's bottom area that allows to set focus on the last Block
    */
   minHeight?: number;
-/**
- * Editors log level (how many logs you want to see)
- */
-  logLevel?: LogLevels
+
+  /**
+   * Editors log level (how many logs you want to see)
+   */
+  logLevel?: LogLevels;
 
   /**
    * Fires when Editor is ready to work

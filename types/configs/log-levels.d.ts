@@ -1,3 +1,6 @@
+/**
+ * Available log levels
+ */
 export enum LogLevels {
   VERBOSE = 'VERBOSE',
   INFO = 'INFO',
