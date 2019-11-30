@@ -97,7 +97,7 @@ export default class DomIterator {
    */
   private leafNodesAndReturnIndex(direction: string): number {
     /**
-     * if items is empty then there is nothing to leaf
+     * if items are empty then there is nothing to leaf
      */
     if (this.items.length === 0) {
       return this.cursor;
