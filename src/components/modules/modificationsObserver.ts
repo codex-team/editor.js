@@ -6,7 +6,7 @@
  */
 
 import Module from '../__module';
-import _ from '../utils';
+import * as _ from '../utils';
 import Block from '../block';
 
 export default class ModificationsObserver extends Module {

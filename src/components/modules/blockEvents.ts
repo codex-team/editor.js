@@ -2,7 +2,7 @@
  * Contains keyboard and mouse events binded on each Block by Block Manager
  */
 import Module from '../__module';
-import _ from '../utils';
+import * as _ from '../utils';
 import SelectionUtils from '../selection';
 import Flipper from '../flipper';
 

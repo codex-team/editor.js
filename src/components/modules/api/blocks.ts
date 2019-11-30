@@ -2,7 +2,7 @@ import Module from '../../__module';
 
 import {Blocks} from '../../../../types/api';
 import {BlockToolData, OutputData, ToolConfig} from '../../../../types';
-import _ from './../../utils';
+import * as _ from './../../utils';
 
 /**
  * @class BlocksAPI

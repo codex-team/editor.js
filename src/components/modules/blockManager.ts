@@ -9,7 +9,7 @@
 import Block, {BlockToolAPI} from '../block';
 import Module from '../__module';
 import $ from '../dom';
-import _ from '../utils';
+import * as _ from '../utils';
 import Blocks from '../blocks';
 import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
 

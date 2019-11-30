@@ -102,4 +102,26 @@ var editor = new EditorJS({
 
 ```
 
-If you are using your custom `Initial Block`, `placeholder` property is passed in `config` to your Tool constructor.  
+If you are using your custom `Initial Block`, `placeholder` property is passed in `config` to your Tool constructor.
+
+## Log level
+
+You can specify log level for Editor.js console messages via `logLevel' property of configuration:
+
+```js
+var editor = new EditorJS({
+  //...
+  logLevel: 'WARN'
+  //..
+})
+```
+
+Possible values:
+
+| Value     | Description                  |
+| -----     | ---------------------------- |
+| `VERBOSE` | Show all messages            |
+| `INFO`    | Show info and debug messages |
+| `WARN`    | Show errors and warns only   |
+| `ERROR`   | Show errors only             |
+  

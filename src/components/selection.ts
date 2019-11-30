@@ -1,7 +1,7 @@
 /**
  * TextRange interface fot IE9-
  */
-import _ from './utils';
+import * as _ from './utils';
 import $ from './dom';
 
 interface TextRange {

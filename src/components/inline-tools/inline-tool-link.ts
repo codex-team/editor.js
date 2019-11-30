@@ -1,7 +1,7 @@
 import SelectionUtils from '../selection';
 
 import $ from '../dom';
-import _ from '../utils';
+import * as _ from '../utils';
 import {API, InlineTool, SanitizerConfig} from '../../../types';
 import {Notifier, Toolbar} from '../../../types/api';
 
