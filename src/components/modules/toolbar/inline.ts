@@ -2,7 +2,7 @@ import Module from '../../__module';
 import $ from '../../dom';
 
 import SelectionUtils from '../../selection';
-import _ from '../../utils';
+import * as _ from '../../utils';
 import {InlineTool, InlineToolConstructable, ToolConstructable, ToolSettings} from '../../../../types';
 import Flipper from '../../flipper';
 

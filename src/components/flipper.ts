@@ -1,5 +1,5 @@
 import DomIterator from './domIterator';
-import _ from './utils';
+import * as _ from './utils';
 
 /**
  * Flipper construction options

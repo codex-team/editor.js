@@ -1,5 +1,5 @@
 import $ from './dom';
-import _ from './utils';
+import * as _ from './utils';
 import {EditorConfig, OutputData, SanitizerConfig} from '../../types';
 import {EditorModules} from '../types-internal/editor-modules';
 import {LogLevels} from './utils';
@@ -149,7 +149,7 @@ export default class Core {
       this.config.logLevel = LogLevels.VERBOSE;
     }
 
-    _.setLogLevel(this.config.logLevel);
+    _.log.setLogLevel(this.config.logLevel);
 
     /**
      * If initial Block's Tool was not passed, use the Paragraph Tool

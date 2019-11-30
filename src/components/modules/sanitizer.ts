@@ -17,7 +17,7 @@
  */
 
 import Module from '../__module';
-import _ from '../utils';
+import * as _ from '../utils';
 
 /**
  * @typedef {Object} SanitizerConfig

@@ -7,7 +7,7 @@
  */
 import Module from '../__module';
 import Block from '../block';
-import _ from '../utils';
+import * as _ from '../utils';
 import $ from '../dom';
 
 import SelectionUtils from '../selection';

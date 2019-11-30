@@ -1,7 +1,7 @@
 import Module from '../../__module';
 import $ from '../../dom';
 import {BlockToolConstructable} from '../../../../types';
-import _ from '../../utils';
+import * as _ from '../../utils';
 import {SavedData} from '../../../types-internal/block-data';
 import Block from '../../block';
 import Flipper from '../../flipper';

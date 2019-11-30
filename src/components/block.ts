@@ -11,7 +11,7 @@ import {
 
 import {SavedData} from '../types-internal/block-data';
 import $ from './dom';
-import _ from './utils';
+import * as _ from './utils';
 
 /**
  * @class Block

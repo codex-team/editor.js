@@ -9,7 +9,7 @@ import Module from '../__module';
 import {OutputData} from '../../../types';
 import {ValidatedData} from '../../types-internal/block-data';
 import Block from '../block';
-import _ from '../utils';
+import * as _ from '../utils';
 
 declare const VERSION: string;
 
