@@ -73,6 +73,9 @@ export default class CrossBlockSelection extends Module {
     }
 
     this.lastSelectedBlock = nextBlock;
+
+    /** close InlineToolbar when Blocks selected */
+    this.Editor.InlineToolbar.close();
   }
 
   /**
@@ -123,6 +126,9 @@ export default class CrossBlockSelection extends Module {
 
     Listeners.off(document, 'mouseover', this.onMouseOver);
     Listeners.off(document, 'mouseup', this.onMouseUp);
+
+    /** close InlineToolbar when Blocks selected */
+    this.Editor.InlineToolbar.close();
   }
 
   /**
