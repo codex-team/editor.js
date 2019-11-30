@@ -12,6 +12,7 @@
 - `Fix` — Normalize node before walking through children at `isEmpty` method [943](https://github.com/codex-team/editor.js/issues/943)
 — `Fix` — Fixed Grammarly conflict [#779](https://github.com/codex-team/editor.js/issues/779)
 — `Improvements` — Module Listeners now correctly removes events with options [#904](https://github.com/codex-team/editor.js/pull/904)
+— `Improvements` — Styles API: `.cdx-block` default vertical margins decreased from 0.7 to 0.4 ems. 
 — `Fix` — Fixed History Back on block deletion by Backspace in Firefox [#967](https://github.com/codex-team/editor.js/pull/967)
 - `Fix` — Fixed `getRangeCount` call if range count is 0 [#938](https://github.com/codex-team/editor.js/issues/938)
 - `New` — Log levels now available to suppress Editor.js console messages [#962](https://github.com/codex-team/editor.js/issues/962) 
