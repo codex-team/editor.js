@@ -19,7 +19,7 @@
      * Workaround firefox bug: empty content editable elements has collapsed height
      * https://bugzilla.mozilla.org/show_bug.cgi?id=1098151#c18
      */
-    [contenteditable]::after {
+    [contenteditable]:empty::after {
       content: "\feff ";
     }
   }
