@@ -1,5 +1,9 @@
 # Changelog
 
+### 2.16.1
+
+- `Fix` — Fix Firefox bug with incorrect height and cursor position of empty content editable elements [#947](https://github.com/codex-team/editor.js/issues/947) [#876](https://github.com/codex-team/editor.js/issues/876) [#608](https://github.com/codex-team/editor.js/issues/608) [#876](https://github.com/codex-team/editor.js/issues/876)
+
 ### 2.16
 
 - `Improvements` — Inline Toolbar design improved
@@ -10,7 +14,7 @@
 — `New` *Inline Tools API* — Ability to specify Tool's title via `title` static getter. 
 - `Fix` — On selection from end to start backspace is working as expected now [#869](https://github.com/codex-team/editor.js/issues/869)
 — `Fix` — Fix flipper with empty dom iterator [#926](https://github.com/codex-team/editor.js/issues/926)
-- `Fix` — Normalize node before walking through children at `isEmpty` method [943](https://github.com/codex-team/editor.js/issues/943)
+- `Fix` — Normalize node before walking through children at `isEmpty` method [#943](https://github.com/codex-team/editor.js/issues/943)
 — `Fix` — Fixed Grammarly conflict [#779](https://github.com/codex-team/editor.js/issues/779)
 — `Improvements` — Module Listeners now correctly removes events with options [#904](https://github.com/codex-team/editor.js/pull/904)
 — `Improvements` — Styles API: `.cdx-block` default vertical margins decreased from 0.7 to 0.4 ems. 
