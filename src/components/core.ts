@@ -160,7 +160,7 @@ export default class Core {
      * Height of Editor's bottom area that allows to set focus on the last Block
      * @type {number}
      */
-    this.config.minHeight = this.config.minHeight || 300;
+    this.config.minHeight = this.config.minHeight !== undefined ? this.config.minHeight : 300 ;
 
     /**
      * Initial block type
