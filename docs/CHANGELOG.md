@@ -3,7 +3,8 @@
 ### 2.16.1
 
 - `Fix` — Fix Firefox bug with incorrect height and cursor position of empty content editable elements [#947](https://github.com/codex-team/editor.js/issues/947) [#876](https://github.com/codex-team/editor.js/issues/876) [#608](https://github.com/codex-team/editor.js/issues/608) [#876](https://github.com/codex-team/editor.js/issues/876)
-- `Fix` - Set initial hidden Inline Toolbar position [#979](https://github.com/codex-team/editor.js/issues/979) 
+- `Fix` - Set initial hidden Inline Toolbar position [#979](https://github.com/codex-team/editor.js/issues/979)
+- `Fix` - Fix `minHeight` option with zero-value issue [#724](https://github.com/codex-team/editor.js/issues/724)
 
 ### 2.16
 
