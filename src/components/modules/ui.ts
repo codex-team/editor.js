@@ -496,18 +496,6 @@ export default class UI extends Module {
       this.Editor.ConversionToolbar.close();
     }
 
-    if (Selection.isAtEditor) {
-      /**
-       * Focus clicked Block.
-       * Workaround case when user clicks on the bottom of editor
-       */
-      if (Selection.anchorNode === this.nodes.redactor) {
-        this.Editor.Caret.setToTheLastBlock();
-      } else {
-        this.Editor.BlockManager.setCurrentBlockByChildNode(Selection.anchorNode);
-      }
-    }
-
     /**
      * Clear Selection if user clicked somewhere
      */
@@ -625,6 +613,14 @@ export default class UI extends Module {
      * We need to skip such firings
      */
     if (!focusedElement || !focusedElement.closest(`.${Block.CSS.content}`)) {
+
+      /**
+       * If new selection is not on Inline Toolbar, we need to close it
+       */
+      if (!this.Editor.InlineToolbar.containsNode(focusedElement)) {
+        this.Editor.InlineToolbar.close();
+      }
+
       return;
     }
 

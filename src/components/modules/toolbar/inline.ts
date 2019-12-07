@@ -290,6 +290,15 @@ export default class InlineToolbar extends Module {
   }
 
   /**
+   * Check if node is contained by Inline Toolbar
+   *
+   * @param {Node} node — node to chcek
+   */
+  public containsNode(node: Node): boolean {
+    return this.nodes.wrapper.contains(node);
+  }
+
+  /**
    * Need to show Inline Toolbar or not
    */
   private allowedToShow(): boolean {
