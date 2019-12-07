@@ -1,0 +1,65 @@
+/*!
+ * Editor.js
+ * 
+ * @version 2.16.1
+ * 
+ * @licence Apache-2.0
+ * @author CodeX <https://codex.so>
+ * 
+ * @uses html-janitor
+ * @licence Apache-2.0 (https://github.com/guardian/html-janitor/blob/master/LICENSE)
+ */
+
+/**
+       * If developer uses editor's API, then he can customize sanitize restrictions.
+       * Or, sanitizing config can be defined globally in editors initialization. That config will be used everywhere
+       * At least, if there is no config overrides, that API uses Default configuration
+       *
+       * @uses https://www.npmjs.com/package/html-janitor
+       * @license https://github.com/guardian/html-janitor/blob/master/LICENSE
+       *
+       * @param {SanitizerConfig} config - sanitizer extension
+       */
+
+/**
+   * Editor.js
+   *
+   * Short Description (눈_눈;)
+   * @version 2.0
+   *
+   * @licence Apache-2.0
+   * @author CodeX-Team <https://ifmo.su>
+   */
+
+/*!
+ * Codex JavaScript Notification module
+ * https://github.com/codex-team/js-notifier
+ */
+
+/*!
+ * Library for handling keyboard shortcuts
+ * @copyright CodeX (https://codex.so)
+ * @license MIT
+ * @author CodeX (https://codex.so)
+ * @version 1.1.1
+ */
+
+/**
+ * Base Paragraph Block for the Editor.js.
+ * Represents simple paragraph
+ *
+ * @author CodeX (team@codex.so)
+ * @copyright CodeX 2018
+ * @license The MIT License (MIT)
+ */
+
+/*!
+ * CodeX.Tooltips
+ * 
+ * @version 1.0.0
+ * 
+ * @licence MIT
+ * @author CodeX <https://codex.so>
+ * 
+ * 
+ */

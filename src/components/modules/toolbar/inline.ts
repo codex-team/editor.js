@@ -146,7 +146,7 @@ export default class InlineToolbar extends Module {
 
     /**
      * Prepare conversion toolbar.
-     * If it has any conversion tool then it will be added to the inline toolbar
+     * If it has any conversion tool then it will be enabled in the Inline Toolbar
      */
     this.prepareConversionToolbar();
 
