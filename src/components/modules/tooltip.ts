@@ -3,7 +3,7 @@ import Module from '../__module';
 /**
  * Use external module CodeX Tooltip
  */
-import CodeXTooltips, { TooltipContent, TooltipOptions } from '../external/codex.tooltips';
+import CodeXTooltips, { TooltipContent, TooltipOptions } from 'codex-tooltip';
 import {ModuleConfig} from '../../types-internal/module-config';
 
 /**
