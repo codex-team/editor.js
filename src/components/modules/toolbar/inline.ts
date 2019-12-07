@@ -44,7 +44,7 @@ export default class InlineToolbar extends Module {
   /**
    * Inline Toolbar elements
    */
-  private nodes: {
+  public nodes: {
     wrapper: HTMLElement,
     buttons: HTMLElement,
     conversionToggler: HTMLElement,
