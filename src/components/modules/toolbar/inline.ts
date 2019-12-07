@@ -144,6 +144,10 @@ export default class InlineToolbar extends Module {
      */
     this.addTools();
 
+    /**
+     * Prepare conversion toolbar.
+     * If it has any conversion tool then it will be added to the inline toolbar
+     */
     this.prepareConversionToolbar();
 
     /**
@@ -272,6 +276,10 @@ export default class InlineToolbar extends Module {
 
     this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
     this.opened = true;
+
+    if (!this.Editor.ConversionToolbar.hasConversionTools()) {
+      this.nodes.conversionToggler.hidden = true;
+    }
 
     /**
      * Change Conversion Dropdown content for current tool
@@ -438,8 +446,12 @@ export default class InlineToolbar extends Module {
     const conversionConfig = Tools.available[toolName][Tools.INTERNAL_SETTINGS.CONVERSION_CONFIG] || {};
     const exportRuleDefined = conversionConfig && conversionConfig.export;
 
-    this.nodes.conversionToggler.hidden = !exportRuleDefined;
-    this.nodes.conversionToggler.classList.toggle(this.CSS.conversionTogglerHidden, !exportRuleDefined);
+    if (this.Editor.ConversionToolbar.hasConversionTools()) {
+      this.nodes.conversionToggler.hidden = !exportRuleDefined;
+      this.nodes.conversionToggler.classList.toggle(this.CSS.conversionTogglerHidden, !exportRuleDefined);
+    } else {
+      this.nodes.conversionToggler.hidden = true;
+    }
 
     /**
      * Get icon or title for dropdown
