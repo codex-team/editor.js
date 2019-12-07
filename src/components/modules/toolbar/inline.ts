@@ -277,7 +277,7 @@ export default class InlineToolbar extends Module {
     this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
     this.opened = true;
 
-    if (!this.Editor.ConversionToolbar.hasConversionTools()) {
+    if (!this.Editor.ConversionToolbar.hasTools()) {
       this.nodes.conversionToggler.hidden = true;
     }
 
@@ -455,7 +455,7 @@ export default class InlineToolbar extends Module {
     const conversionConfig = Tools.available[toolName][Tools.INTERNAL_SETTINGS.CONVERSION_CONFIG] || {};
     const exportRuleDefined = conversionConfig && conversionConfig.export;
 
-    if (this.Editor.ConversionToolbar.hasConversionTools()) {
+    if (this.Editor.ConversionToolbar.hasTools()) {
       this.nodes.conversionToggler.hidden = !exportRuleDefined;
       this.nodes.conversionToggler.classList.toggle(this.CSS.conversionTogglerHidden, !exportRuleDefined);
     } else {
