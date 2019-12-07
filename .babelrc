@@ -2,7 +2,8 @@
  "presets": [
     ["@babel/preset-env", {
       "modules": "umd",
-      "useBuiltIns": "entry"
+      "useBuiltIns": "entry",
+      "corejs": 3
     }]
   ],
   "plugins": [
