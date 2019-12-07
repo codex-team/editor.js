@@ -7,7 +7,7 @@
 - `Fix` — Fix issue with CodeX.Toolips TypeScript definitions [#978](https://github.com/codex-team/editor.js/issues/978) 
 - `Fix` — Fix some issues with Inline and Tunes toolbars.
 - `Fix` - Fix `minHeight` option with zero-value issue [#724](https://github.com/codex-team/editor.js/issues/724)
-- `Improvements` — Disable Conversion Toolbar if there are no Conversion Tools [#984](https://github.com/codex-team/editor.js/issues/984)  
+- `Improvements` — Disable Conversion Toolbar if there are no Tools to convert [#984](https://github.com/codex-team/editor.js/issues/984)  
 
 ### 2.16
 
