@@ -277,14 +277,17 @@ export default class InlineToolbar extends Module {
     this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
     this.opened = true;
 
-    if (!this.Editor.ConversionToolbar.hasTools()) {
+    if (this.Editor.ConversionToolbar.hasTools()) {
+      /**
+       * Change Conversion Dropdown content for current tool
+       */
+      this.setConversionTogglerContent();
+    } else {
+      /**
+       * hide Conversion Dropdown with there are no tools
+       */
       this.nodes.conversionToggler.hidden = true;
     }
-
-    /**
-     * Change Conversion Dropdown content for current tool
-     */
-    this.setConversionTogglerContent();
 
     /**
      * Get currently visible buttons to pass it to the Flipper
@@ -455,12 +458,8 @@ export default class InlineToolbar extends Module {
     const conversionConfig = Tools.available[toolName][Tools.INTERNAL_SETTINGS.CONVERSION_CONFIG] || {};
     const exportRuleDefined = conversionConfig && conversionConfig.export;
 
-    if (this.Editor.ConversionToolbar.hasTools()) {
-      this.nodes.conversionToggler.hidden = !exportRuleDefined;
-      this.nodes.conversionToggler.classList.toggle(this.CSS.conversionTogglerHidden, !exportRuleDefined);
-    } else {
-      this.nodes.conversionToggler.hidden = true;
-    }
+    this.nodes.conversionToggler.hidden = !exportRuleDefined;
+    this.nodes.conversionToggler.classList.toggle(this.CSS.conversionTogglerHidden, !exportRuleDefined);
 
     /**
      * Get icon or title for dropdown
