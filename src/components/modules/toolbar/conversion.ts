@@ -142,6 +142,15 @@ export default class ConversionToolbar extends Module {
   }
 
   /**
+   * Returns true if it has more than one tool available for convert in
+   */
+  public hasTools(): boolean {
+    const tools = Object.keys(this.tools); // available tools in array representation
+
+    return !(tools.length === 1 && tools.shift() === this.config.initialBlock);
+  }
+
+  /**
    * Replaces one Block with another
    * For that Tools must provide import/export methods
    *

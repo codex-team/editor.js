@@ -5,6 +5,8 @@
   visibility: hidden;
   transition: transform 150ms ease, opacity 250ms ease;
   will-change: transform, opacity;
+  top: 0;
+  left: 0;
 
   &--showed {
     opacity: 1;

@@ -1,7 +1,7 @@
 /**
  * Tooltip API
  */
-import {TooltipContent, TooltipOptions} from '../../src/components/external/codex.tooltips';
+import {TooltipContent, TooltipOptions} from 'codex-tooltip';
 
 export interface Tooltip {
   /**
