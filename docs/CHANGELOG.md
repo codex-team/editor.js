@@ -6,6 +6,7 @@
 - `Fix` — Set initial hidden Inline Toolbar position [#979](https://github.com/codex-team/editor.js/issues/979) 
 - `Fix` — Fix issue with CodeX.Toolips TypeScript definitions [#978](https://github.com/codex-team/editor.js/issues/978) 
 - `Fix` — Fix some issues with Inline and Tunes toolbars.
+- `Fix` - Fix `minHeight` option with zero-value issue [#724](https://github.com/codex-team/editor.js/issues/724) 
 
 ### 2.16
 

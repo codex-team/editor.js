@@ -617,7 +617,7 @@ export default class UI extends Module {
       /**
        * If new selection is not on Inline Toolbar, we need to close it
        */
-      if (!this.Editor.InlineToolbar.nodes.wrapper.contains(focusedElement)) {
+      if (!this.Editor.InlineToolbar.containsNode(focusedElement)) {
         this.Editor.InlineToolbar.close();
       }
 

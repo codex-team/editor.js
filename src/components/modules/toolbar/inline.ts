@@ -44,7 +44,7 @@ export default class InlineToolbar extends Module {
   /**
    * Inline Toolbar elements
    */
-  public nodes: {
+  private nodes: {
     wrapper: HTMLElement,
     buttons: HTMLElement,
     conversionToggler: HTMLElement,
@@ -287,6 +287,15 @@ export default class InlineToolbar extends Module {
     visibleTools = visibleTools.filter((tool) => !(tool as HTMLElement).hidden);
 
     this.flipper.activate(visibleTools as HTMLElement[]);
+  }
+
+  /**
+   * Check if node is contained by Inline Toolbar
+   *
+   * @param {Node} node — node to chcek
+   */
+  public containsNode(node: Node): boolean {
+    return this.nodes.wrapper.contains(node);
   }
 
   /**
