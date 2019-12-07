@@ -144,6 +144,10 @@ export default class InlineToolbar extends Module {
      */
     this.addTools();
 
+    /**
+     * Prepare conversion toolbar.
+     * If it has any conversion tool then it will be enabled in the Inline Toolbar
+     */
     this.prepareConversionToolbar();
 
     /**
@@ -273,10 +277,17 @@ export default class InlineToolbar extends Module {
     this.buttonsList = this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`);
     this.opened = true;
 
-    /**
-     * Change Conversion Dropdown content for current tool
-     */
-    this.setConversionTogglerContent();
+    if (this.Editor.ConversionToolbar.hasTools()) {
+      /**
+       * Change Conversion Dropdown content for current tool
+       */
+      this.setConversionTogglerContent();
+    } else {
+      /**
+       * hide Conversion Dropdown with there are no tools
+       */
+      this.nodes.conversionToggler.hidden = true;
+    }
 
     /**
      * Get currently visible buttons to pass it to the Flipper
