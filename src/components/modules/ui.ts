@@ -502,6 +502,13 @@ export default class UI extends Module {
     if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
       this.Editor.BlockSelection.clearSelection(event);
     }
+
+    /**
+     * Clear Selection if user clicked somewhere
+     */
+    if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
+      this.Editor.BlockSelection.clearSelection(event);
+    }
   }
 
   /**
