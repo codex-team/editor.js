@@ -432,9 +432,9 @@ export default class InlineToolbar extends Module {
     this.Editor.Listeners.on(this.nodes.conversionToggler, 'click', () => {
       this.Editor.ConversionToolbar.toggle((conversionToolbarOpened) => {
         if (conversionToolbarOpened) {
-          this.flipper.deactivate();
-        } else {
           this.flipper.activate();
+        } else {
+          this.flipper.deactivate();
         }
       });
     });
