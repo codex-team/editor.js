@@ -141,6 +141,12 @@ export default class Blocks {
      */
     this.blocks[second] = this.blocks[first];
     this.blocks[first] = secondBlock;
+
+    /**
+     * trigger lifecycle hooks
+     */
+    this.blocks[first].call(BlockToolAPI.SWAPPED);
+    this.blocks[second].call(BlockToolAPI.SWAPPED);
   }
 
   /**

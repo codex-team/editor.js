@@ -476,3 +476,7 @@ Called each time Block contents is updated
 ### `removed()`
 
 Called after Block contents is removed from the page but before Block instance deleted
+
+### `swapped()`
+
+Called after Block was swapped

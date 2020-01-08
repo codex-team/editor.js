@@ -65,6 +65,11 @@ export interface BlockTool extends BaseTool {
    * Called after block removed from the page but before instance is deleted
    */
   removed?(): void;
+
+  /**
+   * Called after block was swapped
+   */
+  swapped?(): void;
 }
 
 export interface BlockToolConstructable extends BaseToolConstructable {
