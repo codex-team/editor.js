@@ -4,6 +4,7 @@ import {BaseTool, BaseToolConstructable} from './tool';
 import {ToolConfig} from './tool-config';
 import {API} from '../index';
 import {PasteEvent} from './paste-events';
+import { MoveEvent } from './hook-events';
 /**
  * Describe Block Tool object
  * @see {@link docs/tools.md}
@@ -69,7 +70,7 @@ export interface BlockTool extends BaseTool {
   /**
    * Called after block was moved
    */
-  moved?(): void;
+  moved?(event: MoveEvent): void;
 }
 
 export interface BlockToolConstructable extends BaseToolConstructable {

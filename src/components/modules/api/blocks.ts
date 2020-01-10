@@ -20,7 +20,7 @@ export default class BlocksAPI extends Module {
       renderFromHTML: (data: string) => this.renderFromHTML(data),
       delete: () => this.delete(),
       swap: (fromIndex: number, toIndex: number) => this.swap(fromIndex, toIndex),
-      move: (fromIndex: number, toIndex: number) => this.move(fromIndex, toIndex),
+      move: (toIndex: number, fromIndex?: number) => this.move(toIndex, fromIndex),
       getBlockByIndex: (index: number) => this.getBlockByIndex(index),
       getCurrentBlockIndex: () => this.getCurrentBlockIndex(),
       getBlocksCount: () => this.getBlocksCount(),
@@ -75,11 +75,11 @@ export default class BlocksAPI extends Module {
 
   /**
    * Move block from one index to another
+   * @param {Number} toIndex
    * @param {number} fromIndex
-   * @param {Number} index
    */
-  public move(fromIndex: number, toIndex: number): void {
-    this.Editor.BlockManager.move(fromIndex, toIndex);
+  public move(toIndex: number, fromIndex?: number): void {
+    this.Editor.BlockManager.move(toIndex, fromIndex);
 
     /**
      * Move toolbar

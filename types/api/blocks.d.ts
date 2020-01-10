@@ -39,10 +39,10 @@ export interface Blocks {
 
   /**
    * Moves a block to a new index
-   * @param {number} fromIndex - block to move
    * @param {number} toIndex - index where the block is moved to
+   * @param {number} fromIndex - block to move
    */
-  move(fromIndex: number, toIndex: number): void;
+  move(toIndex: number, fromIndex?: number): void;
 
   /**
    * Returns Block holder by Block index

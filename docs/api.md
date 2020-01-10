@@ -29,7 +29,8 @@ Methods that working with Blocks
 `swap(fromIndex, toIndex)` - swaps two Blocks by their positions (deprecated:
 use 'move' instead)
 
-`move(fromIndex, toIndex)` - moves block from one index to another position
+`move(toIndex, fromIndex)` - moves block from one index to another position.
+`fromIndex` will be the current block's index by default.
 
 `delete(blockIndex?: Number)` - deletes Block with passed index
 

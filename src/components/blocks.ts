@@ -1,6 +1,7 @@
 import * as _ from './utils';
 import $ from './dom';
 import Block, {BlockToolAPI} from './block';
+import { MoveEvent } from '../../types/tools/hook-events';
 
 /**
  * @class Blocks
@@ -146,16 +147,22 @@ export default class Blocks {
 
   /**
    * Move a block from one to another index
-   * @param {Number} fromIndex - block to move
    * @param {Number} toIndex - new index of the block
+   * @param {Number} fromIndex - block to move
    */
-  public move(fromIndex: number, toIndex: number): void {
+  public move(toIndex: number, fromIndex: number): void {
+    /**
+     * cut out the block, move the DOM element and insert at the desired index
+     * again (the shifting within the blocks array will happen automatically).
+     * @see https://stackoverflow.com/a/44932690/1238150
+     */
     const block = this.blocks.splice(fromIndex, 1)[0];
 
     // manipulate DOM
     const prevIndex = toIndex - 1;
     const previousBlockIndex = prevIndex < 0 ? 0 : prevIndex;
     const previousBlock = this.blocks[previousBlockIndex];
+
     if (toIndex > 0) {
       this.insertToDOM(block, 'afterend', previousBlock);
     } else {
@@ -166,7 +173,8 @@ export default class Blocks {
     this.blocks.splice(toIndex, 0, block);
 
     // invoke hook
-    block.call(BlockToolAPI.MOVED);
+    const event: MoveEvent = { fromIndex, toIndex };
+    block.call(BlockToolAPI.MOVED, event);
   }
 
   /**

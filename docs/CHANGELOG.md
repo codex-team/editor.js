@@ -1,5 +1,11 @@
 # Changelog
 
+### Unreleased
+
+- `New` Block [lifecycle hook](tools.md#block-lifecycle-hooks) `moved`
+- `Deprecated` — [`blocks.swap(fromIndex, toIndex)`](api.md) method is
+  deprecated. Use `blocks.move(toIndex, fromIndex)` instead.  
+
 ### 2.16.1
 
 - `Fix` — Fix Firefox bug with incorrect height and cursor position of empty content editable elements [#947](https://github.com/codex-team/editor.js/issues/947) [#876](https://github.com/codex-team/editor.js/issues/876) [#608](https://github.com/codex-team/editor.js/issues/608) [#876](https://github.com/codex-team/editor.js/issues/876)

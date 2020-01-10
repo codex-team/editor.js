@@ -92,7 +92,7 @@ export default class MoveDownTune implements BlockTune {
     window.scrollTo(0, scrollOffset);
 
     /** Change blocks positions */
-    this.api.blocks.move(currentBlockIndex, currentBlockIndex + 1);
+    this.api.blocks.move(currentBlockIndex + 1);
 
     /** Hide the Tooltip */
     this.api.tooltip.hide();

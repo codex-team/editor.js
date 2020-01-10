@@ -477,6 +477,7 @@ Called each time Block contents is updated
 
 Called after Block contents is removed from the page but before Block instance deleted
 
-### `swapped()`
+### `moved(MoveEvent)`
 
-Called after Block was swapped
+Called after Block was moved. `MoveEvent` contains `fromIndex` and `toIndex`
+respectively.

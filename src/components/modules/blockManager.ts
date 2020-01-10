@@ -564,15 +564,26 @@ export default class BlockManager extends Module {
 
   /**
    * Move a block to a new index
-   * @param {Number} fromIndex
    * @param {Number} toIndex
+   * @param {Number} fromIndex
    */
-  public move(fromIndex, toIndex): void {
-    /** Now actual block moved so that current block index changed */
-    this.currentBlockIndex = toIndex;
+  public move(toIndex, fromIndex = this.currentBlockIndex): void {
+    // make sure indexes are valid and within a valid range
+    if (isNaN(toIndex) || isNaN(fromIndex)) {
+      _.log(`Warning during 'move' call: incorrect indices provided.`, 'warn');
+      return;
+    }
+
+    if (!this.validateIndex(toIndex) || !this.validateIndex(fromIndex)) {
+      _.log(`Warning during 'move' call: indices cannot be lower than 0 or greater than the amount of blocks.`, 'warn');
+      return;
+    }
 
     /** Move up current Block */
-    this._blocks.move(fromIndex, toIndex);
+    this._blocks.move(toIndex, fromIndex);
+
+    /** Now actual block moved so that current block index changed */
+    this.currentBlockIndex = toIndex;
   }
 
   /**
@@ -617,5 +628,18 @@ export default class BlockManager extends Module {
     Listeners.on(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
     Listeners.on(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));
     Listeners.on(block.holder, 'dragleave', (event) => BlockEvents.dragLeave(event as DragEvent));
+  }
+
+  /**
+  * Validates that the given index is not lower than 0 or higher than the amount of
+  * blocks
+  * @param {number} index
+  */
+  private validateIndex(index: number): boolean {
+    if (index < 0 || index >= this._blocks.length) {
+      return false;
+    }
+
+    return true;
   }
 }
