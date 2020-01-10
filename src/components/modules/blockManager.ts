@@ -552,6 +552,7 @@ export default class BlockManager extends Module {
    * Swap Blocks Position
    * @param {Number} fromIndex
    * @param {Number} toIndex
+   * @deprecated — use 'move' instead
    */
   public swap(fromIndex, toIndex): void {
     /** Move up current Block */
@@ -559,6 +560,19 @@ export default class BlockManager extends Module {
 
     /** Now actual block moved up so that current block index decreased */
     this.currentBlockIndex = toIndex;
+  }
+
+  /**
+   * Move a block to a new index
+   * @param {Number} fromIndex
+   * @param {Number} toIndex
+   */
+  public move(fromIndex, toIndex): void {
+    /** Now actual block moved so that current block index changed */
+    this.currentBlockIndex = toIndex;
+
+    /** Move up current Block */
+    this._blocks.move(fromIndex, toIndex);
   }
 
   /**

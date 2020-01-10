@@ -38,9 +38,9 @@ export enum BlockToolAPI {
    */
   APPEND_CALLBACK = 'appendCallback',
   RENDERED = 'rendered',
+  MOVED = 'moved',
   UPDATED = 'updated',
   REMOVED = 'removed',
-  SWAPPED = 'swapped',
   ON_PASTE = 'onPaste',
 }
 

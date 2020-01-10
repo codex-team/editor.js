@@ -67,9 +67,9 @@ export interface BlockTool extends BaseTool {
   removed?(): void;
 
   /**
-   * Called after block was swapped
+   * Called after block was moved
    */
-  swapped?(): void;
+  moved?(): void;
 }
 
 export interface BlockToolConstructable extends BaseToolConstructable {

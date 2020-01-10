@@ -127,6 +127,7 @@ export default class Blocks {
    * Swaps blocks with indexes first and second
    * @param {Number} first - first block index
    * @param {Number} second - second block index
+   * @deprecated — use 'move' instead
    */
   public swap(first: number, second: number): void {
     const secondBlock = this.blocks[second];
@@ -141,12 +142,31 @@ export default class Blocks {
      */
     this.blocks[second] = this.blocks[first];
     this.blocks[first] = secondBlock;
+  }
 
-    /**
-     * trigger lifecycle hooks
-     */
-    this.blocks[first].call(BlockToolAPI.SWAPPED);
-    this.blocks[second].call(BlockToolAPI.SWAPPED);
+  /**
+   * Move a block from one to another index
+   * @param {Number} fromIndex - block to move
+   * @param {Number} toIndex - new index of the block
+   */
+  public move(fromIndex: number, toIndex: number): void {
+    const block = this.blocks.splice(fromIndex, 1)[0];
+
+    // manipulate DOM
+    const prevIndex = toIndex - 1;
+    const previousBlockIndex = prevIndex < 0 ? 0 : prevIndex;
+    const previousBlock = this.blocks[previousBlockIndex];
+    if (toIndex > 0) {
+      this.insertToDOM(block, 'afterend', previousBlock);
+    } else {
+      this.insertToDOM(block, 'beforebegin', previousBlock);
+    }
+
+    // move in array
+    this.blocks.splice(toIndex, 0, block);
+
+    // invoke hook
+    block.call(BlockToolAPI.MOVED);
   }
 
   /**
