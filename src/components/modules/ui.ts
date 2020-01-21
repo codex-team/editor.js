@@ -293,7 +293,7 @@ export default class UI extends Module {
     this.Editor.Listeners.on(
       this.nodes.redactor,
       'click',
-      (event) => this.redactorClicked(event as MouseEvent),
+      () => this.redactorClicked(),
       false,
     );
     this.Editor.Listeners.on(this.nodes.redactor,
@@ -576,13 +576,10 @@ export default class UI extends Module {
    *      - if last Block is empty, set a Caret to this
    *      - otherwise, add a new empty Block and set a Caret to that
    */
-  private redactorClicked(event: MouseEvent): void {
+  private redactorClicked(): void {
     if (!Selection.isCollapsed) {
       return;
     }
-
-    event.stopImmediatePropagation();
-    event.stopPropagation();
 
     if (!this.Editor.BlockManager.currentBlock) {
       this.Editor.BlockManager.insert();
