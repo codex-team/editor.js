@@ -1,6 +1,6 @@
 import * as _ from './utils';
 import $ from './dom';
-import Block, {BlockToolAPI} from './block';
+import Block, { BlockToolAPI } from './block';
 import { MoveEvent } from '../../types/tools/hook-events';
 
 /**
@@ -160,7 +160,7 @@ export default class Blocks {
 
     // manipulate DOM
     const prevIndex = toIndex - 1;
-    const previousBlockIndex = prevIndex < 0 ? 0 : prevIndex;
+    const previousBlockIndex = Math.max(0, prevIndex);
     const previousBlock = this.blocks[previousBlockIndex];
 
     if (toIndex > 0) {
@@ -173,7 +173,8 @@ export default class Blocks {
     this.blocks.splice(toIndex, 0, block);
 
     // invoke hook
-    const event: MoveEvent = { fromIndex, toIndex };
+    const event: MoveEvent = { detail: { fromIndex, toIndex } };
+
     block.call(BlockToolAPI.MOVED, event);
   }
 
