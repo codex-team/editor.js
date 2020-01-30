@@ -623,9 +623,17 @@ export default class Paste extends Module {
 
     /** If there is no pattern substitute - insert string as it is */
     if (BlockManager.currentBlock && BlockManager.currentBlock.currentInput) {
-      const currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
+      const {tags} = Tools.blockTools[tool].pasteConfig as PasteConfig;
 
-      document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig));
+      const toolTags = tags.reduce((result, tag) => {
+        result[tag.toLowerCase()] = {};
+
+        return result;
+      }, {});
+
+      const customConfig = Object.assign({}, toolTags, Sanitizer.getInlineToolsConfig(tool));
+
+      document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, customConfig));
     } else {
       this.insertBlock(dataToInsert);
     }
@@ -720,7 +728,8 @@ export default class Paste extends Module {
           const element = node as HTMLElement;
 
           if (element.tagName === 'BR') {
-            return [...nodes, destNode, new DocumentFragment()];
+            destNode.appendChild($.make('BR'));
+            return [...nodes, destNode];
           }
 
           const {tool = ''} = this.toolsTags[element.tagName] || {};
