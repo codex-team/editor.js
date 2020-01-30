@@ -24670,12 +24670,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray.js */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/helpers/defineProperty.js */ "./node_modules/@babel/runtime/helpers/defineProperty.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../tools/paragraph/dist/bundle */ "./src/components/tools/paragraph/dist/bundle.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-bold */ "./src/components/inline-tools/inline-tool-bold.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-italic */ "./src/components/inline-tools/inline-tool-italic.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-link */ "./src/components/inline-tools/inline-tool-link.ts"), __webpack_require__(/*! ../tools/stub */ "./src/components/tools/stub/index.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray.js */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../tools/paragraph/dist/bundle */ "./src/components/tools/paragraph/dist/bundle.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-bold */ "./src/components/inline-tools/inline-tool-bold.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-italic */ "./src/components/inline-tools/inline-tool-italic.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-link */ "./src/components/inline-tools/inline-tool-link.ts"), __webpack_require__(/*! ../tools/stub */ "./src/components/tools/stub/index.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _slicedToArray2, _typeof2, _defineProperty2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _bundle, _module, _, _inlineToolBold, _inlineToolItalic, _inlineToolLink, _stub) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _slicedToArray2, _typeof2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _bundle, _module, _, _inlineToolBold, _inlineToolItalic, _inlineToolLink, _stub) {
   "use strict";
 
   var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
@@ -24688,7 +24688,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _exports["default"] = void 0;
   _slicedToArray2 = _interopRequireDefault(_slicedToArray2);
   _typeof2 = _interopRequireDefault(_typeof2);
-  _defineProperty2 = _interopRequireDefault(_defineProperty2);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
@@ -24813,9 +24812,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Assign internal tools
          */
 
-        this.config.tools = Object.keys(this.internalTools).reduce(function (tools, key) {
-          return Object.assign(Object.assign({}, tools), (0, _defineProperty2["default"])({}, key, Object.assign(Object.assign({}, _this2.internalTools[key]), _this2.config.tools[key])));
-        }, Object.assign(Object.assign({}, this.internalTools), this.config.tools));
+        this.config.tools = _.deepMerge({}, this.internalTools, this.config.tools);
 
         if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
           throw Error('Can\'t start without tools');
@@ -26802,12 +26799,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/defineProperty.js */ "./node_modules/@babel/runtime/helpers/defineProperty.js"), __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _index, _dom) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _defineProperty2, _index, _dom) {
   "use strict";
 
   var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
@@ -26830,9 +26827,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _exports.copyTextToClipboard = copyTextToClipboard;
   _exports.getUserOS = getUserOS;
   _exports.capitalize = capitalize;
+  _exports.deepMerge = deepMerge;
   _exports.typeOf = typeOf;
   _exports.beautifyShortcut = beautifyShortcut;
   _exports.isTouchSupported = _exports.logLabeled = _exports.log = _exports.mouseButtons = _exports.keyCodes = _exports.LogLevels = void 0;
+  _defineProperty2 = _interopRequireDefault(_defineProperty2);
   _index = _interopRequireDefault(_index);
   _dom = _interopRequireDefault(_dom);
 
@@ -27285,6 +27284,45 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
   function capitalize(text) {
     return text[0].toUpperCase() + text.slice(1);
+  }
+  /**
+   * Merge to objects recursively
+   * @param {object} target
+   * @param {object[]} sources
+   * @return {object}
+   */
+
+
+  function deepMerge(target) {
+    var isObject = function isObject(item) {
+      return item && typeOf(item) === 'object';
+    };
+
+    for (var _len = arguments.length, sources = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      sources[_key - 1] = arguments[_key];
+    }
+
+    if (!sources.length) {
+      return target;
+    }
+
+    var source = sources.shift();
+
+    if (isObject(target) && isObject(source)) {
+      for (var key in source) {
+        if (isObject(source[key])) {
+          if (!target[key]) {
+            Object.assign(target, (0, _defineProperty2["default"])({}, key, {}));
+          }
+
+          deepMerge(target[key], source[key]);
+        } else {
+          Object.assign(target, (0, _defineProperty2["default"])({}, key, source[key]));
+        }
+      }
+    }
+
+    return deepMerge.apply(void 0, [target].concat(sources));
   }
   /**
    * Return true if current device supports touch events
