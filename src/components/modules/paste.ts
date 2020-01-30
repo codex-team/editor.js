@@ -556,7 +556,7 @@ export default class Paste extends Module {
       .map((text) => {
         const content = $.make('div');
 
-        content.innerHTML = text;
+        content.textContent = text;
 
         const event = this.composePasteEvent('tag', {
           data: content,
