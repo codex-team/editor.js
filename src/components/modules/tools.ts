@@ -221,16 +221,30 @@ export default class Tools extends Module {
     /**
      * Assign internal tools
      */
-    this.config.tools = Object.keys(this.internalTools).reduce((tools, key) => ({
-      ...tools,
-      [key]: {
-        ...this.internalTools[key],
-        ...this.config.tools[key],
-      },
-    }), {
+    this.config.tools = {
       ...this.internalTools,
       ...this.config.tools,
-    });
+      bold: {
+        ...this.internalTools.bold,
+        ...this.config.tools.bold,
+      },
+      italic: {
+        ...this.internalTools.italic,
+        ...this.config.tools.italic,
+      },
+      link: {
+        ...this.internalTools.link,
+        ...this.config.tools.link,
+      },
+      paragraph: {
+        ...this.internalTools.paragraph,
+        ...this.config.tools.paragraph,
+      },
+      stub: {
+        ...this.internalTools.stub,
+        ...this.config.tools.stub,
+      },
+    };
 
     if (!this.config.hasOwnProperty('tools') || Object.keys(this.config.tools).length === 0) {
       throw Error('Can\'t start without tools');
