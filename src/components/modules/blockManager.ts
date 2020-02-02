@@ -631,10 +631,9 @@ export default class BlockManager extends Module {
   }
 
   /**
-  * Validates that the given index is not lower than 0 or higher than the amount of
-  * blocks
-  * @param {number} index
-  */
+   * Validates that the given index is not lower than 0 or higher than the amount of blocks
+   * @param {number} index - index of blocks array to validate
+   */
   private validateIndex(index: number): boolean {
     if (index < 0 || index >= this._blocks.length) {
       return false;
