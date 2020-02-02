@@ -1,20 +1,20 @@
 /**
- * Event detail for block relocations
+ * Event detail for block relocation
  */
 export interface MoveEventDetail {
   /**
    * index the block was moved from
    */
-  fromIndex: number
+  fromIndex: number;
   /**
    * index the block was moved to
    */
-  toIndex: number
+  toIndex: number;
 }
 
 /**
- * Move event for block relocations
+ * Move event for block relocation
  */
 export interface MoveEvent {
-  readonly detail: MoveEventDetail
+  readonly detail: MoveEventDetail;
 }
