@@ -64,7 +64,7 @@ export default class ModificationsObserver extends Module {
      */
     window.setTimeout( () => {
       this.setObserver();
-    }, 1000);
+    }, 3000);
   }
 
   /**

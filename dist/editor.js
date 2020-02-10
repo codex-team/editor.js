@@ -19617,7 +19617,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                  */
                 window.setTimeout(function () {
                   _this3.setObserver();
-                }, 1000);
+                }, 3000);
 
               case 1:
               case "end":
