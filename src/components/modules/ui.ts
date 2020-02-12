@@ -1,4 +1,3 @@
-/* eslint-disable jsdoc/no-undefined-types */
 /**
  * Prebuilded sprite of SVG icons
  */
@@ -137,45 +136,58 @@ export default class UI extends Module {
    * Making main interface
    */
   public async prepare(): Promise<void> {
-    /**
-     * Detect mobile version
-     */
-    this.checkIsMobile();
 
-    /**
-     * Make main UI elements
-     */
-    await this.make();
+    // prepare with read-only state from config
+    this.toggleReadOnly(this.config.readOnly);
+  }
 
-    /**
-     * Loader for rendering process
-     */
-    this.addLoader();
+  /**
+   * Set or toggle read-only state
+   */
+  public toggleReadOnly(readOnlyEnabled: boolean) {
+    if (readOnlyEnabled) {
+      // Do nothing
+    } else {
+      /**
+       * Detect mobile version
+       */
+      this.checkIsMobile();
 
-    /**
-     * Append SVG sprite
-     */
-    await this.appendSVGSprite();
+      /**
+       * Make main UI elements
+       */
+      this.make();
 
-    /**
-     * Make toolbar
-     */
-    await this.Editor.Toolbar.make();
+      /**
+       * Loader for rendering process
+       */
+      this.addLoader();
 
-    /**
-     * Make the Inline toolbar
-     */
-    await this.Editor.InlineToolbar.make();
+      /**
+       * Append SVG sprite
+       */
+      this.appendSVGSprite();
 
-    /**
-     * Load and append CSS
-     */
-    await this.loadStyles();
+      /**
+       * Make toolbar
+       */
+      this.Editor.Toolbar.make();
 
-    /**
-     * Bind events for the UI elements
-     */
-    await this.bindEvents();
+      /**
+       * Make the Inline toolbar
+       */
+      this.Editor.InlineToolbar.make();
+
+      /**
+       * Load and append CSS
+       */
+      this.loadStyles();
+
+      /**
+       * Bind events for the UI elements
+       */
+      this.bindEvents();
+    }
   }
 
   /**
@@ -242,7 +254,7 @@ export default class UI extends Module {
    *
    * @returns {Promise<void>}
    */
-  private async make(): Promise<void> {
+  private make() {
     /**
      * Element where we need to append Editor.js
      *
