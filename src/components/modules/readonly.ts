@@ -22,6 +22,13 @@ export default class ReadOnly extends Module {
   private readOnlyEnabled: boolean = false;
 
   /**
+   * Set initial state
+   */
+  public async prepare(): Promise<void> {
+    this.readOnlyEnabled = this.config.readOnly;
+  }
+
+  /**
    * Set read-only mode or toggle current state
    *
    * @param {Boolean} state - (optional) read-only state or toggle
@@ -36,5 +43,7 @@ export default class ReadOnly extends Module {
         this.Editor[name].toggleReadOnly(state);
       }
     }
+
+    return this.readOnlyEnabled;
   }
 }
