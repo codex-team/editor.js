@@ -132,45 +132,58 @@ export default class UI extends Module {
    * Making main interface
    */
   public async prepare(): Promise<void> {
-    /**
-     * Detect mobile version
-     */
-    this.checkIsMobile();
 
-    /**
-     * Make main UI elements
-     */
-    await this.make();
+    // prepare with read-only state from config
+    this.toggleReadOnly(this.config.readOnly);
+  }
 
-    /**
-     * Loader for rendering process
-     */
-    this.addLoader();
-
-    /**
-     * Append SVG sprite
-     */
-    await this.appendSVGSprite();
-
-    /**
-     * Make toolbar
-     */
-    await this.Editor.Toolbar.make();
-
-    /**
-     * Make the Inline toolbar
-     */
-    await this.Editor.InlineToolbar.make();
-
-    /**
-     * Load and append CSS
-     */
-    await this.loadStyles();
-
-    /**
-     * Bind events for the UI elements
-     */
-    await this.bindEvents();
+  /**
+   * Set or toggle read-only state
+   */
+  public toggleReadOnly(readOnlyEnabled: boolean) {
+    if (readOnlyEnabled) {
+      // Do nothing
+    } else {
+      /**
+       * Detect mobile version
+       */
+      this.checkIsMobile();
+  
+      /**
+       * Make main UI elements
+       */
+      this.make();
+  
+      /**
+       * Loader for rendering process
+       */
+      this.addLoader();
+  
+      /**
+       * Append SVG sprite
+       */
+      this.appendSVGSprite();
+  
+      /**
+       * Make toolbar
+       */
+      this.Editor.Toolbar.make();
+  
+      /**
+       * Make the Inline toolbar
+       */
+      this.Editor.InlineToolbar.make();
+  
+      /**
+       * Load and append CSS
+       */
+      this.loadStyles();
+  
+      /**
+       * Bind events for the UI elements
+       */
+      this.bindEvents();
+    }
   }
 
   /**
@@ -232,9 +245,8 @@ export default class UI extends Module {
 
   /**
    * Makes Editor.js interface
-   * @return {Promise<void>}
    */
-  private async make(): Promise<void> {
+  private make() {
     /**
      * Element where we need to append Editor.js
      * @type {Element}
@@ -261,7 +273,6 @@ export default class UI extends Module {
 
     this.nodes.wrapper.appendChild(this.nodes.redactor);
     this.nodes.holder.appendChild(this.nodes.wrapper);
-
   }
 
   /**

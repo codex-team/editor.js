@@ -63,6 +63,11 @@ export interface EditorConfig {
   logLevel?: LogLevels;
 
   /**
+   * Enable read-only mode
+   */
+  readOnly?: boolean;
+
+  /**
    * Fires when Editor is ready to work
    */
   onReady?(): void;
