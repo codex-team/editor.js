@@ -184,9 +184,11 @@ export default class UI extends Module {
      * Prepare components based on read-only state
      */
     if (readOnlyEnabled) {
-      // TODO: account for toggle after initial config
+      /**
+       * Unbind all events
+       */
+      this.unbindEvents();
     } else {
-
       /**
        * Bind events for the UI elements
        */
@@ -341,6 +343,13 @@ export default class UI extends Module {
     }, {
       passive: true,
     });
+  }
+
+  /**
+   * Unbind events on the Editor.js interface
+   */
+  private unbindEvents(): void {
+    this.Editor.Listeners.removeAll();
   }
 
   /**

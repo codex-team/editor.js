@@ -26084,7 +26084,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         /**
          * Prepare components based on read-only state
          */
-        if (readOnlyEnabled) {// TODO: account for toggle after initial config
+        if (readOnlyEnabled) {
+          /**
+           * Unbind all events
+           */
+          this.unbindEvents();
         } else {
           /**
            * Bind events for the UI elements
@@ -26239,6 +26243,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }, {
           passive: true
         });
+      }
+      /**
+       * Unbind events on the Editor.js interface
+       */
+
+    }, {
+      key: "unbindEvents",
+      value: function unbindEvents() {
+        this.Editor.Listeners.removeAll();
       }
       /**
        * Resize window handler
