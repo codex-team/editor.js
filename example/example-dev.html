@@ -31,8 +31,13 @@
       <div id="hint" style="text-align: center;">
         No submodules found. Run <code class="inline-code">yarn pull_tools</code>
       </div>
-      <div class="ce-example__button" id="saveButton">
-        editor.save()
+      <div class="ce-example__buttons">
+        <div class="ce-example__button" id="saveButton">
+          editor.save()
+        </div>
+        <div class="ce-example__button" id="toggleReadOnlyButton">
+          editor.toggleReadOnly()
+        </div>
       </div>
     </div>
     <div class="ce-example__output">
@@ -78,12 +83,18 @@
      * Saving button
      */
     const saveButton = document.getElementById('saveButton');
+    
+    /**
+     * Toggle read-only button
+     */
+    const toggleReadOnlyButton = document.getElementById('toggleReadOnlyButton');
 
     /**
      * To initialize the Editor, create a new instance with configuration object
      * @see docs/installation.md for mode details
      */
     var editor = new EditorJS({
+      readOnly: true,
       /**
        * Wrapper of Editor
        */
@@ -289,6 +300,14 @@
       editor.save().then((savedData) => {
         cPreview.show(savedData, document.getElementById("output"));
       });
+    });
+    
+    /**
+     * Toggle read-only example
+     */
+    toggleReadOnlyButton.addEventListener('click', function () {
+      const readOnlyState = editor.toggleReadOnly();
+      console.log('Read only', readOnlyState ? 'enabled' : 'disabled');
     });
   </script>
 </body>

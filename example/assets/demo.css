@@ -87,12 +87,16 @@ body {
   display: none;
 }
 
+.ce-example__buttons {
+  display: flex;
+  flex-direction: column;
+}
+
 .ce-example__button {
-  display: block;
-  margin: 50px auto;
-  max-width: 180px;
+  display: inline-flex;
+  margin: 20px auto;
   background: #4A9DF8;
-  padding: 17px 30px;
+  padding: 15px 20px;
   box-shadow: 0 6px 4px -4px rgba(137, 207, 255, 0.77);
   cursor: pointer;
   border-radius: 31px;
