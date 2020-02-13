@@ -131,8 +131,21 @@ export default class Paste extends Module {
    * @public
    */
   public async prepare(): Promise<void> {
-    this.setCallback();
-    this.processTools();
+    this.setReadOnly(this.config.readOnly);
+  }
+
+  /**
+   * Set read-only state
+   *
+   * @param {boolean} readOnlyEnabled
+   */
+  public setReadOnly(readOnlyEnabled: boolean) {
+    if (readOnlyEnabled) {
+      this.Editor.Listeners.removeAll();
+    } else {
+      this.processTools();
+      this.setCallback();
+    }
   }
 
   /**

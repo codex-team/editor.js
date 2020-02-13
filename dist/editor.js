@@ -20272,10 +20272,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             while (1) {
               switch (_context2.prev = _context2.next) {
                 case 0:
-                  this.setCallback();
-                  this.processTools();
+                  this.setReadOnly(this.config.readOnly);
 
-                case 2:
+                case 1:
                 case "end":
                   return _context2.stop();
               }
@@ -20289,6 +20288,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         return prepare;
       }()
+      /**
+       * Set read-only state
+       *
+       * @param {boolean} readOnlyEnabled
+       */
+
+    }, {
+      key: "setReadOnly",
+      value: function setReadOnly(readOnlyEnabled) {
+        if (readOnlyEnabled) {
+          this.Editor.Listeners.removeAll();
+        } else {
+          this.processTools();
+          this.setCallback();
+        }
+      }
       /**
        * Handle pasted or dropped data transfer object
        *
@@ -21327,15 +21342,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.readOnlyEnabled = state;
 
         for (var name in this.Editor) {
-          // Skip APIs and this module
-          if (name.includes('API') || name.includes('ReadOnly')) {
-            continue;
-          } // Verify module has method
-
-
-          if (this.Editor[name].toggleReadOnly) {
+          // Verify module has method
+          if (this.Editor[name].setReadOnly) {
             // set or toggle read-only state
-            this.Editor[name].toggleReadOnly(state);
+            this.Editor[name].setReadOnly(state);
           }
         }
 
@@ -26058,7 +26068,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                    * Prepare with read-only state from config
                    */
 
-                  this.toggleReadOnly(this.config.readOnly);
+                  this.setReadOnly(this.config.readOnly);
 
                 case 9:
                 case "end":
@@ -26075,12 +26085,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         return prepare;
       }()
       /**
-       * Set or toggle read-only state
+       * Set read-only state
+       *
+       * @param {boolean} readOnlyEnabled
        */
 
     }, {
-      key: "toggleReadOnly",
-      value: function toggleReadOnly(readOnlyEnabled) {
+      key: "setReadOnly",
+      value: function setReadOnly(readOnlyEnabled) {
         /**
          * Prepare components based on read-only state
          */

@@ -38,16 +38,11 @@ export default class ReadOnly extends Module {
 
     for (const name in this.Editor) {
 
-      // Skip APIs and this module
-      if (name.includes('API') || name.includes('ReadOnly')) {
-        continue;
-      }
-
       // Verify module has method
-      if (this.Editor[name].toggleReadOnly) {
+      if (this.Editor[name].setReadOnly) {
 
         // set or toggle read-only state
-        this.Editor[name].toggleReadOnly(state);
+        this.Editor[name].setReadOnly(state);
       }
     }
 

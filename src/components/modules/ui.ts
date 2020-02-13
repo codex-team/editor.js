@@ -172,13 +172,15 @@ export default class UI extends Module {
     /**
      * Prepare with read-only state from config
      */
-    this.toggleReadOnly(this.config.readOnly);
+    this.setReadOnly(this.config.readOnly);
   }
 
   /**
-   * Set or toggle read-only state
+   * Set read-only state
+   *
+   * @param {boolean} readOnlyEnabled
    */
-  public toggleReadOnly(readOnlyEnabled: boolean) {
+  public setReadOnly(readOnlyEnabled: boolean) {
 
     /**
      * Prepare components based on read-only state
