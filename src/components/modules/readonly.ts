@@ -15,7 +15,7 @@ export default class ReadOnly extends Module {
 
   /**
    * Value to track read-only state
-   * 
+   *
    * @type Boolean
    * @private
    */
@@ -37,8 +37,15 @@ export default class ReadOnly extends Module {
     this.readOnlyEnabled = state;
 
     for (const name in this.Editor) {
-      if (this.Editor[name].hasOwnProperty('toggleReadOnly')) {
-        
+
+      // Skip APIs and this module
+      if (name.includes('API') || name.includes('ReadOnly')) {
+        continue;
+      }
+
+      // Verify module has method
+      if (this.Editor[name].toggleReadOnly) {
+
         // set or toggle read-only state
         this.Editor[name].toggleReadOnly(state);
       }

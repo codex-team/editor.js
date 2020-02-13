@@ -36,6 +36,7 @@ import CrossBlockSelection from '../components/modules/crossBlockSelection';
 import ConversionToolbar from '../components/modules/toolbar/conversion';
 import TooltipAPI from '../components/modules/api/tooltip';
 import ReadOnly from '../components/modules/readonly';
+import ReadOnlyAPI from '../components/modules/api/readonly';
 
 export interface EditorModules {
   UI: UI;
@@ -76,4 +77,5 @@ export interface EditorModules {
   NotifierAPI: NotifierAPI;
   TooltipAPI: TooltipAPI;
   ReadOnly: ReadOnly;
+  ReadOnlyAPI: ReadOnlyAPI;
 }

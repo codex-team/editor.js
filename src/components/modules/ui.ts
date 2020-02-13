@@ -132,8 +132,46 @@ export default class UI extends Module {
    * Making main interface
    */
   public async prepare(): Promise<void> {
+    console.log('prepare ui');
 
-    // prepare with read-only state from config
+    /**
+     * Detect mobile version
+     */
+    this.checkIsMobile();
+
+    /**
+     * Make main UI elements
+     */
+    this.make();
+
+    /**
+     * Loader for rendering process
+     */
+    this.addLoader();
+
+    /**
+     * Append SVG sprite
+     */
+    this.appendSVGSprite();
+
+    /**
+     * Make toolbar
+     */
+    this.Editor.Toolbar.make();
+
+    /**
+     * Make the Inline toolbar
+     */
+    this.Editor.InlineToolbar.make();
+
+    /**
+     * Load and append CSS
+     */
+    this.loadStyles();
+
+    /**
+     * Prepare with read-only state from config
+     */
     this.toggleReadOnly(this.config.readOnly);
   }
 
@@ -141,44 +179,14 @@ export default class UI extends Module {
    * Set or toggle read-only state
    */
   public toggleReadOnly(readOnlyEnabled: boolean) {
+
+    /**
+     * Prepare components based on read-only state
+     */
     if (readOnlyEnabled) {
-      // Do nothing
+      // TODO: account for toggle after initial config
     } else {
-      /**
-       * Detect mobile version
-       */
-      this.checkIsMobile();
-  
-      /**
-       * Make main UI elements
-       */
-      this.make();
-  
-      /**
-       * Loader for rendering process
-       */
-      this.addLoader();
-  
-      /**
-       * Append SVG sprite
-       */
-      this.appendSVGSprite();
-  
-      /**
-       * Make toolbar
-       */
-      this.Editor.Toolbar.make();
-  
-      /**
-       * Make the Inline toolbar
-       */
-      this.Editor.InlineToolbar.make();
-  
-      /**
-       * Load and append CSS
-       */
-      this.loadStyles();
-  
+
       /**
        * Bind events for the UI elements
        */
