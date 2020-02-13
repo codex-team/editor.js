@@ -155,7 +155,13 @@ export default class Paste extends Module {
    */
   public setReadOnly(readOnlyEnabled: boolean) {
     if (readOnlyEnabled) {
-      this.Editor.Listeners.removeAll();
+      this.toolsTags = {};
+      this.tagsByTool = {};
+      this.toolsPatterns = [];
+      this.toolsFiles = {};
+      this.exceptionList = [];
+
+      // ui module removes all listeners
     } else {
       this.processTools();
       this.setCallback();

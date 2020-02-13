@@ -21107,7 +21107,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "setReadOnly",
       value: function setReadOnly(readOnlyEnabled) {
         if (readOnlyEnabled) {
-          this.Editor.Listeners.removeAll();
+          this.toolsTags = {};
+          this.tagsByTool = {};
+          this.toolsPatterns = [];
+          this.toolsFiles = {};
+          this.exceptionList = []; // ui module removes all listeners
         } else {
           this.processTools();
           this.setCallback();
