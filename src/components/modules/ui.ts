@@ -143,8 +143,10 @@ export default class UI extends Module {
 
   /**
    * Set or toggle read-only state
+   *
+   * @param {boolean} readOnlyEnabled - read only enabled flag
    */
-  public toggleReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
     if (readOnlyEnabled) {
       // Do nothing
     } else {

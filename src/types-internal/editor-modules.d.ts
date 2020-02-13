@@ -37,6 +37,7 @@ import ConversionToolbar from '../components/modules/toolbar/conversion';
 import TooltipAPI from '../components/modules/api/tooltip';
 import I18nAPI from '../components/modules/api/i18n';
 import ReadOnly from '../components/modules/readonly';
+import ReadOnlyAPI from '../components/modules/api/readonly';
 
 export interface EditorModules {
   UI: UI;
@@ -78,4 +79,5 @@ export interface EditorModules {
   TooltipAPI: TooltipAPI;
   I18nAPI: I18nAPI;
   ReadOnly: ReadOnly;
+  ReadOnlyAPI: ReadOnlyAPI;
 }
