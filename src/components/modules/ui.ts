@@ -357,6 +357,13 @@ export default class UI extends Module {
   }
 
   /**
+   * Unbind events on the Editor.js interface
+   */
+  private unbindEvents(): void {
+    this.Editor.Listeners.removeAll();
+  }
+
+  /**
    * Resize window handler
    */
   private windowResize(): void {
