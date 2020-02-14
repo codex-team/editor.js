@@ -20725,8 +20725,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function destroy() {
         var _this2 = this;
 
-        this.mutationDebouncer = null;
-
         if (this.observer) {
           this.observer.disconnect();
         }
@@ -20735,6 +20733,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.nativeInputs.forEach(function (input) {
           return _this2.Editor.Listeners.off(input, 'input', _this2.mutationDebouncer);
         });
+        this.mutationDebouncer = null;
       }
       /**
        * Preparation method

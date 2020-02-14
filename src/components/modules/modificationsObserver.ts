@@ -50,12 +50,12 @@ export default class ModificationsObserver extends Module {
    * Clear timeout and set null to mutationDebouncer property
    */
   public destroy(): void {
-    this.mutationDebouncer = null;
     if (this.observer) {
       this.observer.disconnect();
     }
     this.observer = null;
     this.nativeInputs.forEach((input) => this.Editor.Listeners.off(input, 'input', this.mutationDebouncer));
+    this.mutationDebouncer = null;
   }
 
   /**
