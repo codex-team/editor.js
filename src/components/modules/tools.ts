@@ -290,6 +290,19 @@ export default class Tools extends Module {
   }
 
   /**
+   * Set read-only state
+   *
+   * @param {boolean} readOnlyEnabled
+   */
+  public setReadOnly(readOnlyEnabled: boolean) {
+    if (readOnlyEnabled) {
+      // read-only state should set in each tool
+    } else {
+      // tools should still be configured
+    }
+  }
+
+  /**
    * @param {ChainData.data} data - append tool to available list
    */
   public success(data) {

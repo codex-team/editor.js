@@ -62,4 +62,11 @@ export default class Shortcuts extends Module {
     this.registeredShortcuts[index].remove();
     this.registeredShortcuts.splice(index, 1);
   }
+
+  /**
+   * Remove all shortcuts
+   */
+  public removeAll() {
+    this.registeredShortcuts = [];
+  }
 }

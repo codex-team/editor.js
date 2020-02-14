@@ -160,7 +160,6 @@ export default class BlockManager extends Module {
    */
   public async prepare() {
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
-    const { BlockEvents, Shortcuts } = this.Editor;
 
     /**
      * We need to use Proxy to overload set/get [] operator.
@@ -181,21 +180,36 @@ export default class BlockManager extends Module {
       get: Blocks.get,
     });
 
-    /** Copy shortcut */
-    Shortcuts.add({
-      name: 'CMD+C',
-      handler: (event) => {
-        BlockEvents.handleCommandC(event);
-      },
-    });
+    this.setReadOnly(this.config.readOnly);
+  }
 
-    /** Copy and cut */
-    Shortcuts.add({
-      name: 'CMD+X',
-      handler: (event) => {
-        BlockEvents.handleCommandX(event);
-      },
-    });
+  /**
+   * Set read-only state
+   *
+   * @param {boolean} readOnlyEnabled
+   */
+  public setReadOnly(readOnlyEnabled: boolean) {
+    const { BlockEvents, Shortcuts } = this.Editor;
+
+    if (readOnlyEnabled) {
+      Shortcuts.removeAll();
+    } else {
+      /** Copy shortcut */
+      Shortcuts.add({
+        name: 'CMD+C',
+        handler: (event) => {
+          BlockEvents.handleCommandC(event);
+        },
+      });
+
+      /** Copy and cut */
+      Shortcuts.add({
+        name: 'CMD+X',
+        handler: (event) => {
+          BlockEvents.handleCommandX(event);
+        },
+      });
+    }
   }
 
   /**
