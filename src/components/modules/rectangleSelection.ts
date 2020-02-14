@@ -101,33 +101,47 @@ export default class RectangleSelection extends Module {
    * Creating rect and hang handlers
    */
   public prepare(): void {
-    const { Listeners } = this.Editor;
-    const { container } = this.genHTML();
+    this.setReadOnly(this.config.readOnly);
+  }
 
-    Listeners.on(container, 'mousedown', (event: MouseEvent) => {
-      if (event.button !== this.MAIN_MOUSE_BUTTON) {
-        return;
-      }
-      this.startSelection(event.pageX, event.pageY);
-    }, false);
+  /**
+   * Set read-only state
+   *
+   * @param {boolean} readOnlyEnabled
+   */
+  public setReadOnly(readOnlyEnabled: boolean) {
+    const {Listeners} = this.Editor;
 
-    Listeners.on(document.body, 'mousemove', (event: MouseEvent) => {
-      this.changingRectangle(event);
-      this.scrollByZones(event.clientY);
-    }, false);
+    if (readOnlyEnabled) {
+      Listeners.removeAll();
+    } else {
+      const {container} = this.genHTML();
 
-    Listeners.on(document.body, 'mouseleave', () => {
-      this.clearSelection();
-      this.endSelection();
-    });
+      Listeners.on(container, 'mousedown', (event: MouseEvent) => {
+        if (event.button !== this.MAIN_MOUSE_BUTTON) {
+          return;
+        }
+        this.startSelection(event.pageX, event.pageY);
+      }, false);
 
-    Listeners.on(window, 'scroll', (event) => {
-      this.changingRectangle(event);
-    }, false);
+      Listeners.on(document.body, 'mousemove', (event: MouseEvent) => {
+        this.changingRectangle(event);
+        this.scrollByZones(event.clientY);
+      }, false);
 
-    Listeners.on(document.body, 'mouseup', () => {
-      this.endSelection();
-    }, false);
+      Listeners.on(document.body, 'mouseleave', () => {
+        this.clearSelection();
+        this.endSelection();
+      });
+
+      Listeners.on(window, 'scroll', (event) => {
+        this.changingRectangle(event);
+      }, false);
+
+      Listeners.on(document.body, 'mouseup', () => {
+        this.endSelection();
+      }, false);
+    }
   }
 
   /**

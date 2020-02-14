@@ -192,13 +192,36 @@ export default class BlockManager extends Module {
       'copy',
       (e: ClipboardEvent) => BlockEvents.handleCommandC(e)
     );
+    this.setReadOnly(this.config.readOnly);
+  }
 
-    /** Copy and cut */
-    Listeners.on(
-      document,
-      'cut',
-      (e: ClipboardEvent) => BlockEvents.handleCommandX(e)
-    );
+  /**
+   * Set read-only state
+   *
+   * @param {boolean} readOnlyEnabled
+   */
+  public setReadOnly(readOnlyEnabled: boolean) {
+    const { BlockEvents, Shortcuts } = this.Editor;
+
+    if (readOnlyEnabled) {
+      Shortcuts.removeAll();
+    } else {
+      /** Copy shortcut */
+      Shortcuts.add({
+        name: 'CMD+C',
+        handler: (event) => {
+          BlockEvents.handleCommandC(event);
+        },
+      });
+
+      /** Copy and cut */
+      Shortcuts.add({
+        name: 'CMD+X',
+        handler: (event) => {
+          BlockEvents.handleCommandX(event);
+        },
+      });
+    }
   }
 
   /**

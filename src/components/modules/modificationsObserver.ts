@@ -64,12 +64,25 @@ export default class ModificationsObserver extends Module {
    * @returns {Promise<void>}
    */
   public async prepare(): Promise<void> {
-    /**
-     * wait till Browser render Editor's Blocks
-     */
-    window.setTimeout(() => {
-      this.setObserver();
-    }, 1000);
+    this.setReadOnly(this.config.readOnly);
+  }
+
+  /**
+   * Set read-only state
+   *
+   * @param {boolean} readOnlyEnabled
+   */
+  public setReadOnly(readOnlyEnabled: boolean) {
+    if (readOnlyEnabled) {
+      this.destroy();
+    } else {
+      /**
+       * wait till Browser render Editor's Blocks
+       */
+      window.setTimeout( () => {
+        this.setObserver();
+      }, 1000);
+    }
   }
 
   /**

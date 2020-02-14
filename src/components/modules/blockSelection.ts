@@ -130,30 +130,43 @@ export default class BlockSelection extends Module {
    * to select all and copy them
    */
   public prepare(): void {
+    this.setReadOnly(this.config.readOnly);
+  }
+
+  /**
+   * Set read-only state
+   *
+   * @param {boolean} readOnlyEnabled
+   */
+  public setReadOnly(readOnlyEnabled: boolean) {
     const { Shortcuts } = this.Editor;
 
-    /** Selection shortcut */
-    Shortcuts.add({
-      name: 'CMD+A',
-      handler: (event) => {
-        const { BlockManager } = this.Editor;
+    if (readOnlyEnabled) {
+      Shortcuts.removeAll();
+      this.selection = null;
+    } else {
+      /** Selection shortcut */
+      Shortcuts.add({
+        name: 'CMD+A',
+        handler: (event) => {
+          const {BlockManager} = this.Editor;
+          /**
+           * When one page consist of two or more EditorJS instances
+           * Shortcut module tries to handle all events. Thats why Editor's selection works inside the target Editor, but
+           * for others error occurs because nothing to select.
+           *
+           * Prevent such actions if focus is not inside the Editor
+           */
+          if (!BlockManager.currentBlock) {
+            return;
+          }
 
-        /**
-         * When one page consist of two or more EditorJS instances
-         * Shortcut module tries to handle all events. Thats why Editor's selection works inside the target Editor, but
-         * for others error occurs because nothing to select.
-         *
-         * Prevent such actions if focus is not inside the Editor
-         */
-        if (!BlockManager.currentBlock) {
-          return;
-        }
+          this.handleCommandA(event);
+        },
+      });
 
-        this.handleCommandA(event);
-      },
-    });
-
-    this.selection = new SelectionUtils();
+      this.selection = new SelectionUtils();
+    }
   }
 
   /**

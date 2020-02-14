@@ -17834,11 +17834,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 Listeners.on(document, 'copy', function (e) {
                   return BlockEvents.handleCommandC(e);
                 });
-                /** Copy and cut */
-
-                Listeners.on(document, 'cut', function (e) {
-                  return BlockEvents.handleCommandX(e);
-                });
+                this.setReadOnly(this.config.readOnly);
 
               case 5:
               case "end":
@@ -17846,6 +17842,39 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             }
           }
         }, null, this);
+      }
+      /**
+       * Set read-only state
+       *
+       * @param {boolean} readOnlyEnabled
+       */
+
+    }, {
+      key: "setReadOnly",
+      value: function setReadOnly(readOnlyEnabled) {
+        var _this$Editor2 = this.Editor,
+            BlockEvents = _this$Editor2.BlockEvents,
+            Shortcuts = _this$Editor2.Shortcuts;
+
+        if (readOnlyEnabled) {
+          Shortcuts.removeAll();
+        } else {
+          /** Copy shortcut */
+          Shortcuts.add({
+            name: 'CMD+C',
+            handler: function handler(event) {
+              BlockEvents.handleCommandC(event);
+            }
+          });
+          /** Copy and cut */
+
+          Shortcuts.add({
+            name: 'CMD+X',
+            handler: function handler(event) {
+              BlockEvents.handleCommandX(event);
+            }
+          });
+        }
       }
       /**
        * Creates Block instance by tool name
@@ -18404,9 +18433,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "bindEvents",
       value: function bindEvents(block) {
-        var _this$Editor2 = this.Editor,
-            BlockEvents = _this$Editor2.BlockEvents,
-            Listeners = _this$Editor2.Listeners;
+        var _this$Editor3 = this.Editor,
+            BlockEvents = _this$Editor3.BlockEvents,
+            Listeners = _this$Editor3.Listeners;
         Listeners.on(block.holder, 'keydown', function (event) {
           return BlockEvents.keydown(event);
         }, false);
@@ -18687,31 +18716,47 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * to select all and copy them
        */
       value: function prepare() {
+        this.setReadOnly(this.config.readOnly);
+      }
+      /**
+       * Set read-only state
+       *
+       * @param {boolean} readOnlyEnabled
+       */
+
+    }, {
+      key: "setReadOnly",
+      value: function setReadOnly(readOnlyEnabled) {
         var _this2 = this;
 
         var Shortcuts = this.Editor.Shortcuts;
-        /** Selection shortcut */
 
-        Shortcuts.add({
-          name: 'CMD+A',
-          handler: function handler(event) {
-            var BlockManager = _this2.Editor.BlockManager;
-            /**
-             * When one page consist of two or more EditorJS instances
-             * Shortcut module tries to handle all events. Thats why Editor's selection works inside the target Editor, but
-             * for others error occurs because nothing to select.
-             *
-             * Prevent such actions if focus is not inside the Editor
-             */
+        if (readOnlyEnabled) {
+          Shortcuts.removeAll();
+          this.selection = null;
+        } else {
+          /** Selection shortcut */
+          Shortcuts.add({
+            name: 'CMD+A',
+            handler: function handler(event) {
+              var BlockManager = _this2.Editor.BlockManager;
+              /**
+               * When one page consist of two or more EditorJS instances
+               * Shortcut module tries to handle all events. Thats why Editor's selection works inside the target Editor, but
+               * for others error occurs because nothing to select.
+               *
+               * Prevent such actions if focus is not inside the Editor
+               */
 
-            if (!BlockManager.currentBlock) {
-              return;
+              if (!BlockManager.currentBlock) {
+                return;
+              }
+
+              _this2.handleCommandA(event);
             }
-
-            _this2.handleCommandA(event);
-          }
-        });
-        this.selection = new _selection["default"]();
+          });
+          this.selection = new _selection["default"]();
+        }
       }
       /**
        * Remove selection of Block
@@ -20128,7 +20173,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     (0, _createClass2["default"])(DragNDrop, [{
       key: "prepare",
       value: function prepare() {
-        this.bindEvents();
+        this.setReadOnly(this.config.readOnly);
+      }
+      /**
+       * Set read-only state
+       *
+       * @param {boolean} readOnlyEnabled
+       */
+
+    }, {
+      key: "setReadOnly",
+      value: function setReadOnly(readOnlyEnabled) {
+        if (readOnlyEnabled) {
+          this.Editor.Listeners.removeAll();
+        } else {
+          this.bindEvents();
+        }
       }
       /**
        * Add drag events listeners to editor zone
@@ -20685,25 +20745,40 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "prepare",
       value: function prepare() {
-        var _this3 = this;
-
         return _index["default"].async(function prepare$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-                /**
-                 * wait till Browser render Editor's Blocks
-                 */
-                window.setTimeout(function () {
-                  _this3.setObserver();
-                }, 1000);
+                this.setReadOnly(this.config.readOnly);
 
               case 1:
               case "end":
                 return _context.stop();
             }
           }
-        });
+        }, null, this);
+      }
+      /**
+       * Set read-only state
+       *
+       * @param {boolean} readOnlyEnabled
+       */
+
+    }, {
+      key: "setReadOnly",
+      value: function setReadOnly(readOnlyEnabled) {
+        var _this3 = this;
+
+        if (readOnlyEnabled) {
+          this.destroy();
+        } else {
+          /**
+           * wait till Browser render Editor's Blocks
+           */
+          window.setTimeout(function () {
+            _this3.setObserver();
+          }, 1000);
+        }
       }
       /**
        * Allows to disable observer,
@@ -21107,11 +21182,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "setReadOnly",
       value: function setReadOnly(readOnlyEnabled) {
         if (readOnlyEnabled) {
+          this.Editor.Listeners.removeAll();
           this.toolsTags = {};
           this.tagsByTool = {};
           this.toolsPatterns = [];
           this.toolsFiles = {};
-          this.exceptionList = []; // ui module removes all listeners
+          this.exceptionList = [];
         } else {
           this.processTools();
           this.setCallback();
@@ -22248,36 +22324,51 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Creating rect and hang handlers
        */
       value: function prepare() {
+        this.setReadOnly(this.config.readOnly);
+      }
+      /**
+       * Set read-only state
+       *
+       * @param {boolean} readOnlyEnabled
+       */
+
+    }, {
+      key: "setReadOnly",
+      value: function setReadOnly(readOnlyEnabled) {
         var _this2 = this;
 
         var Listeners = this.Editor.Listeners;
 
-        var _this$genHTML = this.genHTML(),
-            container = _this$genHTML.container;
+        if (readOnlyEnabled) {
+          Listeners.removeAll();
+        } else {
+          var _this$genHTML = this.genHTML(),
+              container = _this$genHTML.container;
 
-        Listeners.on(container, 'mousedown', function (event) {
-          if (event.button !== _this2.MAIN_MOUSE_BUTTON) {
-            return;
-          }
+          Listeners.on(container, 'mousedown', function (event) {
+            if (event.button !== _this2.MAIN_MOUSE_BUTTON) {
+              return;
+            }
 
-          _this2.startSelection(event.pageX, event.pageY);
-        }, false);
-        Listeners.on(document.body, 'mousemove', function (event) {
-          _this2.changingRectangle(event);
+            _this2.startSelection(event.pageX, event.pageY);
+          }, false);
+          Listeners.on(document.body, 'mousemove', function (event) {
+            _this2.changingRectangle(event);
 
-          _this2.scrollByZones(event.clientY);
-        }, false);
-        Listeners.on(document.body, 'mouseleave', function () {
-          _this2.clearSelection();
+            _this2.scrollByZones(event.clientY);
+          }, false);
+          Listeners.on(document.body, 'mouseleave', function () {
+            _this2.clearSelection();
 
-          _this2.endSelection();
-        });
-        Listeners.on(window, 'scroll', function (event) {
-          _this2.changingRectangle(event);
-        }, false);
-        Listeners.on(document.body, 'mouseup', function () {
-          _this2.endSelection();
-        }, false);
+            _this2.endSelection();
+          });
+          Listeners.on(window, 'scroll', function (event) {
+            _this2.changingRectangle(event);
+          }, false);
+          Listeners.on(document.body, 'mouseup', function () {
+            _this2.endSelection();
+          }, false);
+        }
       }
       /**
        * Init rect params
@@ -23654,6 +23745,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         });
         this.registeredShortcuts[index].remove();
         this.registeredShortcuts.splice(index, 1);
+      }
+      /**
+       * Remove all shortcuts
+       */
+
+    }, {
+      key: "removeAll",
+      value: function removeAll() {
+        this.registeredShortcuts = [];
       }
     }]);
     return Shortcuts;
@@ -26307,6 +26407,19 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }, function (data) {
           _this2.fallback(data);
         });
+      }
+      /**
+       * Set read-only state
+       *
+       * @param {boolean} readOnlyEnabled
+       */
+
+    }, {
+      key: "setReadOnly",
+      value: function setReadOnly(readOnlyEnabled) {
+        if (readOnlyEnabled) {// read-only state should set in each tool
+        } else {// tools should still be configured
+          }
       }
       /**
        * Success callback

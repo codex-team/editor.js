@@ -17,7 +17,20 @@ export default class DragNDrop extends Module {
    * Bind events
    */
   public prepare(): void {
-    this.bindEvents();
+    this.setReadOnly(this.config.readOnly);
+  }
+
+  /**
+   * Set read-only state
+   *
+   * @param {boolean} readOnlyEnabled
+   */
+  public setReadOnly(readOnlyEnabled: boolean) {
+    if (readOnlyEnabled) {
+      this.Editor.Listeners.removeAll();
+    } else {
+      this.bindEvents();
+    }
   }
 
   /**
