@@ -304,7 +304,7 @@
      * Toggle read-only example
      */
     toggleReadOnlyButton.addEventListener('click', function () {
-      const readOnlyState = editor.toggleReadOnly();
+      const readOnlyState = editor.readonly.toggle();
       console.log('Read only', readOnlyState ? 'enabled' : 'disabled');
     });
   </script>

@@ -126,9 +126,6 @@ export default class EditorJS {
       saver: {
         save: 'save',
       },
-      readonly: {
-        toggleReadOnly: 'toggleReadOnly',
-      },
     };
 
     Object.entries(shorthands)

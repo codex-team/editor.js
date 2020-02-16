@@ -101,7 +101,7 @@ export default class RectangleSelection extends Module {
    * Creating rect and hang handlers
    */
   public prepare(): void {
-    this.setReadOnly(this.config.readOnly);
+    this.toggleReadOnly(this.config.readOnly);
   }
 
   /**
@@ -109,7 +109,7 @@ export default class RectangleSelection extends Module {
    *
    * @param {boolean} readOnlyEnabled
    */
-  public setReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean) {
     const {Listeners} = this.Editor;
 
     if (readOnlyEnabled) {
