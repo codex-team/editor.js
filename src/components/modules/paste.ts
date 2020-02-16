@@ -131,7 +131,7 @@ export default class Paste extends Module {
    * @public
    */
   public async prepare(): Promise<void> {
-    this.setReadOnly(this.config.readOnly);
+    this.toggleReadOnly(this.config.readOnly);
   }
 
   /**
@@ -139,7 +139,7 @@ export default class Paste extends Module {
    *
    * @param {boolean} readOnlyEnabled
    */
-  public setReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean) {
     if (readOnlyEnabled) {
       this.Editor.Listeners.removeAll();
 

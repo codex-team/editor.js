@@ -180,7 +180,7 @@ export default class BlockManager extends Module {
       get: Blocks.get,
     });
 
-    this.setReadOnly(this.config.readOnly);
+    this.toggleReadOnly(this.config.readOnly);
   }
 
   /**
@@ -188,7 +188,7 @@ export default class BlockManager extends Module {
    *
    * @param {boolean} readOnlyEnabled
    */
-  public setReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean) {
     const { BlockEvents, Shortcuts } = this.Editor;
 
     if (readOnlyEnabled) {

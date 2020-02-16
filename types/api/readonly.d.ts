@@ -8,5 +8,5 @@ export interface ReadOnly {
    * @param {Boolean|undefined} state - set or toggle state
    * @returns {Boolean} current value
    */
-  toggleReadOnly: (state?: boolean) => boolean;
+  toggle: (state?: boolean) => boolean;
 }

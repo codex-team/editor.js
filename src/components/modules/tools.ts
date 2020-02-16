@@ -294,7 +294,7 @@ export default class Tools extends Module {
    *
    * @param {boolean} readOnlyEnabled
    */
-  public setReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean) {
     if (readOnlyEnabled) {
       // read-only state should set in each tool
     } else {

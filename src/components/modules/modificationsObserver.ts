@@ -59,7 +59,7 @@ export default class ModificationsObserver extends Module {
    * @return {Promise<void>}
    */
   public async prepare(): Promise<void> {
-    this.setReadOnly(this.config.readOnly);
+    this.toggleReadOnly(this.config.readOnly);
   }
 
   /**
@@ -67,7 +67,7 @@ export default class ModificationsObserver extends Module {
    *
    * @param {boolean} readOnlyEnabled
    */
-  public setReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean) {
     if (readOnlyEnabled) {
       this.destroy();
     } else {

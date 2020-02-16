@@ -17,7 +17,7 @@ export default class DragNDrop extends Module {
    * @private
    */
   public prepare(): void {
-    this.setReadOnly(this.config.readOnly);
+    this.toggleReadOnly(this.config.readOnly);
   }
 
   /**
@@ -25,7 +25,7 @@ export default class DragNDrop extends Module {
    *
    * @param {boolean} readOnlyEnabled
    */
-  public setReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean) {
     if (readOnlyEnabled) {
       this.Editor.Listeners.removeAll();
     } else {

@@ -116,7 +116,7 @@ export default class BlockSelection extends Module {
    * to select all and copy them
    */
   public prepare(): void {
-    this.setReadOnly(this.config.readOnly);
+    this.toggleReadOnly(this.config.readOnly);
   }
 
   /**
@@ -124,7 +124,7 @@ export default class BlockSelection extends Module {
    *
    * @param {boolean} readOnlyEnabled
    */
-  public setReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean) {
     const {Shortcuts} = this.Editor;
 
     if (readOnlyEnabled) {

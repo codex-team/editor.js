@@ -10828,9 +10828,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           },
           saver: {
             save: 'save'
-          },
-          readonly: {
-            toggleReadOnly: 'toggleReadOnly'
           }
         };
         Object.entries(shorthands).forEach(function (_ref) {
@@ -15753,7 +15750,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }
 
     (0, _createClass2["default"])(ReadOnlyAPI, [{
-      key: "toggleReadOnly",
+      key: "toggle",
 
       /**
        * Set or toggle read-only state
@@ -15761,8 +15758,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {Boolean|undefined} state - set or toggle state
        * @returns {Boolean} current value
        */
-      value: function toggleReadOnly(state) {
-        return this.Editor.ReadOnly.toggleReadOnly(state);
+      value: function toggle(state) {
+        return this.Editor.ReadOnly.toggle(state);
       }
     }, {
       key: "methods",
@@ -15774,8 +15771,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _this = this;
 
         return {
-          toggleReadOnly: function toggleReadOnly(state) {
-            return _this.toggleReadOnly(state);
+          toggle: function toggle(state) {
+            return _this.toggle(state);
           }
         };
       }
@@ -17150,7 +17147,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                     set: _blocks["default"].set,
                     get: _blocks["default"].get
                   });
-                  this.setReadOnly(this.config.readOnly);
+                  this.toggleReadOnly(this.config.readOnly);
 
                 case 3:
                 case "end":
@@ -17173,8 +17170,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "setReadOnly",
-      value: function setReadOnly(readOnlyEnabled) {
+      key: "toggleReadOnly",
+      value: function toggleReadOnly(readOnlyEnabled) {
         var _this$Editor = this.Editor,
             BlockEvents = _this$Editor.BlockEvents,
             Shortcuts = _this$Editor.Shortcuts;
@@ -17939,7 +17936,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * to select all and copy them
        */
       value: function prepare() {
-        this.setReadOnly(this.config.readOnly);
+        this.toggleReadOnly(this.config.readOnly);
       }
       /**
        * Set read-only state
@@ -17948,8 +17945,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "setReadOnly",
-      value: function setReadOnly(readOnlyEnabled) {
+      key: "toggleReadOnly",
+      value: function toggleReadOnly(readOnlyEnabled) {
         var _this2 = this;
 
         var Shortcuts = this.Editor.Shortcuts;
@@ -19346,7 +19343,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     (0, _createClass2["default"])(DragNDrop, [{
       key: "prepare",
       value: function prepare() {
-        this.setReadOnly(this.config.readOnly);
+        this.toggleReadOnly(this.config.readOnly);
       }
       /**
        * Set read-only state
@@ -19355,8 +19352,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "setReadOnly",
-      value: function setReadOnly(readOnlyEnabled) {
+      key: "toggleReadOnly",
+      value: function toggleReadOnly(readOnlyEnabled) {
         if (readOnlyEnabled) {
           this.Editor.Listeners.removeAll();
         } else {
@@ -19895,7 +19892,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             while (1) {
               switch (_context.prev = _context.next) {
                 case 0:
-                  this.setReadOnly(this.config.readOnly);
+                  this.toggleReadOnly(this.config.readOnly);
 
                 case 1:
                 case "end":
@@ -19918,8 +19915,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "setReadOnly",
-      value: function setReadOnly(readOnlyEnabled) {
+      key: "toggleReadOnly",
+      value: function toggleReadOnly(readOnlyEnabled) {
         var _this3 = this;
 
         if (readOnlyEnabled) {
@@ -20333,7 +20330,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             while (1) {
               switch (_context2.prev = _context2.next) {
                 case 0:
-                  this.setReadOnly(this.config.readOnly);
+                  this.toggleReadOnly(this.config.readOnly);
 
                 case 1:
                 case "end":
@@ -20356,8 +20353,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "setReadOnly",
-      value: function setReadOnly(readOnlyEnabled) {
+      key: "toggleReadOnly",
+      value: function toggleReadOnly(readOnlyEnabled) {
         if (readOnlyEnabled) {
           this.Editor.Listeners.removeAll();
           this.toolsTags = {};
@@ -21402,16 +21399,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "toggleReadOnly",
-      value: function toggleReadOnly() {
+      key: "toggle",
+      value: function toggle() {
         var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : !this.readOnlyEnabled;
         this.readOnlyEnabled = state;
 
         for (var name in this.Editor) {
           // Verify module has method
-          if (this.Editor[name].setReadOnly) {
+          if (this.Editor[name].toggleReadOnly) {
             // set or toggle read-only state
-            this.Editor[name].setReadOnly(state);
+            this.Editor[name].toggleReadOnly(state);
           }
         }
 
@@ -21549,7 +21546,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Creating rect and hang handlers
        */
       value: function prepare() {
-        this.setReadOnly(this.config.readOnly);
+        this.toggleReadOnly(this.config.readOnly);
       }
       /**
        * Set read-only state
@@ -21558,8 +21555,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "setReadOnly",
-      value: function setReadOnly(readOnlyEnabled) {
+      key: "toggleReadOnly",
+      value: function toggleReadOnly(readOnlyEnabled) {
         var _this2 = this;
 
         var Listeners = this.Editor.Listeners;
@@ -25531,8 +25528,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "setReadOnly",
-      value: function setReadOnly(readOnlyEnabled) {
+      key: "toggleReadOnly",
+      value: function toggleReadOnly(readOnlyEnabled) {
         if (readOnlyEnabled) {// read-only state should set in each tool
         } else {// tools should still be configured
           }
@@ -26171,7 +26168,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                    * Prepare with read-only state from config
                    */
 
-                  this.setReadOnly(this.config.readOnly);
+                  this.toggleReadOnly(this.config.readOnly);
 
                 case 9:
                 case "end":
@@ -26194,8 +26191,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "setReadOnly",
-      value: function setReadOnly(readOnlyEnabled) {
+      key: "toggleReadOnly",
+      value: function toggleReadOnly(readOnlyEnabled) {
         /**
          * Prepare components based on read-only state
          */
