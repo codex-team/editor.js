@@ -52,11 +52,11 @@ Copy [editor.js](../dist/editor.js) file to your project and load it.
 
 ## Load Tools
 
-Each Block at the Editor.js represented by [Tools](tools.md). There are simple external scripts with own logic. Probably you want to use several Block Tools that should be connected.
+Each Block at the Editor.js represented by [Tools](tools.md). There are simple external scripts with own logic. you'll probably want to use several Block Tools that should be connected.
 
 For example check out our [Header](https://github.com/editor-js/header) Tool that represents heading blocks.
 
-You can install Header Tool via the same ways as an Editor (Node.js, CDN, local file).
+You can install the Header Tool via the same ways as an Editor (Node.js, CDN, local file).
 
 Check [Editor.js's community](https://github.com/editor-js/) to see Tools examples.
 
@@ -115,9 +115,9 @@ var editor = new EditorJS({
 
 ## Ready callback
 
-Editor.js needs a bit time to initialize. It is an asynchronous action so it won't block execution of your main script.
+Editor.js needs a bit of time to initialize. It is an asynchronous action so it won't block execution of your main script.
 
-If you need to know when editor instance is ready you can use one of following ways:
+If you need to know when the editor instance is ready. You can use one of the following ways:
 
 ##### Pass `onReady` property to the configuration object. 
 
@@ -136,7 +136,7 @@ var editor = new EditorJS({
 
 #### Use `isReady` promise.
 
-After you create new `EditorJS` object it contains `isReady` property.
+After you create a new `EditorJS` object it contains `isReady` property.
 It is a Promise object resolved when editor is ready to work and rejected otherwise.
 If there is an error during initialization `isReady` promise will be rejected with error message.
 
