@@ -18,8 +18,6 @@ If you like Editor.js you can support project improvements and development of ne
 
  👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
  
- 👉  Bitcoin: `3DCCemgtE6GrzehVpU6Sa2RJHFUUh8iT9q`
- 
 ### Sponsors
 
 Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/editorjs#sponsor)]
