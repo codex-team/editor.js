@@ -18,8 +18,6 @@ If you like Editor.js you can support project improvements and development of ne
 
  👉  [https://opencollective.com/editorjs](https://opencollective.com/editorjs)
  
- 👉  Bitcoin: `3DCCemgtE6GrzehVpU6Sa2RJHFUUh8iT9q`
- 
 ### Sponsors
 
 Support this project by becoming a sponsor. Your logo will show up here with a link to your website. [[Become a sponsor](https://opencollective.com/editorjs#sponsor)]
@@ -36,11 +34,11 @@ Support this project by becoming a sponsor. Your logo will show up here with a l
 
 This project exists thanks to all the people who contribute. <img src="https://opencollective.com/editorjs/contributors.svg?width=890&button=false" />
 
-We are really welcome new contributors. If you want to make some code with us, please take a look at the [Good First Tasks](https://github.com/codex-team/editor.js/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+task%22). You can write to us on `team@codex.so` or via special [Telegram chat](https://t.me/editorjsdev), or any other way. 
+We really welcome new contributors. If you want to make some code with us, please take a look at the [Good First Tasks](https://github.com/codex-team/editor.js/issues?q=is%3Aopen+is%3Aissue+label%3A%22good+first+task%22). You can write to us on `team@codex.so` or via special [Telegram chat](https://t.me/editorjsdev), or any other way. 
 
 ## Documentation
 
-Please, visit [https://editorjs.io/](https://editorjs.io) to view all documentation articles.
+Please visit [https://editorjs.io/](https://editorjs.io) to view all documentation articles.
 
 - [Base concepts](https://editorjs.io/base-concepts)
 - [Getting started](https://editorjs.io/getting-started)
@@ -53,9 +51,9 @@ You can join a [Gitter-channel](https://gitter.im/codex-team/editor.js) or [Tele
 
 ## Changelog
 
-See a whole [Changelog](/docs/CHANGELOG.md)
+See the whole [Changelog](/docs/CHANGELOG.md)
 
-## So how to use Editor.js
+## How to use Editor.js
 
 ### Basics
 
@@ -63,27 +61,27 @@ Editor.js is a Block-Styled editor. Blocks are structural units, of which the En
 For example, `Paragraph`, `Heading`, `Image`, `Video`, `List` are Blocks. Each Block is represented by Plugin.
 We have [many](http://github.com/editor-js/) ready-to-use Plugins and a [simple API](https://editorjs.io/tools-api) for creating new ones.
 
-So how to use the Editor after [Installation](https://editorjs.io/getting-started).
+How to use the Editor after [Installation](https://editorjs.io/getting-started).
 
-- Create new Blocks by Enter or with the Plus Button
+- Create new Blocks by pressing Enter or clicking the Plus Button
 - Press `TAB` or click on the Plus Button to view the Toolbox
 - Press `TAB` again to leaf Toolbox and select a Block you need. Then press Enter.
 
 
  ![](https://github.com/editor-js/list/raw/master/assets/example.gif)
 
-- Select text fragment and apply a style or insert a link from the Inline Toolbar
+- Select a text fragment and apply a style or insert a link from the Inline Toolbar
 
 ![](https://capella.pics/7ccbcfcd-1c49-4674-bea7-71021468a1bd.jpg)
 
-- Use «three-dots» button on the right to open Block Settings. From here, you can move and delete a Block
-or apply Tool's settings, if it provided. For example, set a Heading level or List style.
+- Use the «three-dots» button on the right to open Block Settings. From here, you can move and delete a Block
+or apply a Tool's settings, if it provided. For example, you can set a Heading level or List style.
 
 ![](https://capella.pics/01a55381-46cd-47c7-b92e-34765434f2ca.jpg)
 
 ### Shortcuts
 
-We really appreciate shortcuts. So there are few presets.
+A few shortcuts are preset as available.
 
 Shortcut | Action | Restrictions
 -- | -- | --
@@ -94,7 +92,7 @@ Shortcut | Action | Restrictions
 `CMD+I` | Italic style | On selection
 `CMD+K` | Insert a link | On selection
 
-Also we support shortcuts on the all type of Tools. Specify a shortcut with the Tools configuration. For example:
+Each Tool can also have its own shortcuts. These are specified in the configuration of the Tool, for example:
 
 ```js
 var editor = new EditorJS({
@@ -123,9 +121,9 @@ There are few steps to run Editor.js on your site.
 2. [Load Tools](#load-tools)
 3. [Initialize Editor's instance](#create-editor-instance)
 
-### Load Editor's core
+### Step 1. Load Editor's core
 
-Firstly you need to get Editor.js itself. It is a [minified script](dist/editor.js) with Editor's core and some default must-have tools.
+Get Editor.js itself. It is a [minified script](dist/editor.js) with Editor's core and some default must-have tools.
 
 Choose the most usable method of getting Editor for you.
 
@@ -133,7 +131,7 @@ Choose the most usable method of getting Editor for you.
 - Source from CDN
 - Local file from project
 
-#### Node.js
+##### Option A. NPM install
 
 Install the package via NPM or Yarn
 
@@ -147,35 +145,29 @@ Include module in your application
 const EditorJS = require('@editorjs/editorjs');
 ```
 
-#### Use from CDN
+##### Option B. Use a CDN
 
-You can load specific version of package from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/editorjs).
+You can load EditorJS directly from from [jsDelivr CDN](https://www.jsdelivr.com/package/npm/@editorjs/editorjs).
 
 `https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest`
 
-Then require this script.
+For example, place this in your HTML:
 
 ```html
-<script src="..."></script>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
 ```
 
-#### Save sources to project
+##### Option C. Save source within your project
 
-Copy [editor.js](dist/editor.js) file to your project and load it.
+Copy the [editor.js](dist/editor.js) file to your project and load it.
 
 ```html
 <script src="editor.js"></script>
 ```
 
-### Load Tools
+### Step 2. Load the Tools that you want to make available
 
-Each Block at the Editor.js is represented by [Tools](docs/tools.md). There are simple external scripts with their own logic. Probably you want to use several Block Tools that should be connected.
-
-For example check out our [Header](https://github.com/editor-js/header) Tool that represents heading blocks.
-
-You can install Header Tool by the same way as the Editor (Node.js, CDN, local file).
-
-Check [Editor.js's community](https://github.com/editor-js/) to see more ready-to-use Tools.
+Each Block is represented by a [Tool](docs/tools.md). Tools are simple external scripts with their own logic. For example, there is a [Header](https://github.com/editor-js/header) Tool into which you type your heading text. If you want to be able to use this, install the Header Tool the same way as the Editor (Node.js, CDN, local file).
 
 **Example:** use Header from CDN
 
@@ -183,7 +175,9 @@ Check [Editor.js's community](https://github.com/editor-js/) to see more ready-t
 <script src="https://cdn.jsdelivr.net/npm/codex.editor.header@2.0.4/dist/bundle.js"></script>
 ```
 
-### Create Editor instance
+Check [Editor.js's community](https://github.com/editor-js/) to see more ready-to-use Tools.
+
+### Step 3. Create Editor instance
 
 Create an instance of Editor.js and pass [Configuration Object](types/configs/editor-config.d.ts) with `holderId` and tools list.
 
