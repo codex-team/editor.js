@@ -3,6 +3,7 @@
 ### 2.17
 
 - `Improvements` - Editor's [onchange callback](https://editorjs.io/configuration#editor-modifications-callback) now accepts an API as a parameter 
+- `Fix` - Some mistakes are fixed in [installation.md](installation.md) 
 
 ### 2.16.1
 
