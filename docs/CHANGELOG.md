@@ -1,5 +1,10 @@
 # Changelog
 
+### 2.17
+
+- `Improvements` - Editor's [onchange callback](https://editorjs.io/configuration#editor-modifications-callback) now accepts an API as a parameter 
+- `Fix` - Some mistakes are fixed in [installation.md](installation.md) 
+
 ### 2.16.1
 
 - `Fix` — Fix Firefox bug with incorrect height and cursor position of empty content editable elements [#947](https://github.com/codex-team/editor.js/issues/947) [#876](https://github.com/codex-team/editor.js/issues/876) [#608](https://github.com/codex-team/editor.js/issues/608) [#876](https://github.com/codex-team/editor.js/issues/876)
@@ -15,15 +20,15 @@
 - `Improvements` — Conversion Toolbar now included in the Inline Toolbar [#853](https://github.com/codex-team/editor.js/issues/853)
 - `Improvements` — All buttons now have beautiful Tooltips provided by [CodeX Tooltips](https://github.com/codex-team/codex.tooltips)
 - `New` — new Tooltips API for displaying tooltips near your custom elements  
-- `New` *API* — Block [lifecycle hooks](tools.md#block-lifecycle-hooks)
-- `New` *Inline Tools API* — Ability to specify Tool's title via `title` static getter. 
+— `New` *API* — Block [lifecycle hooks](tools.md#block-lifecycle-hooks)
+— `New` *Inline Tools API* — Ability to specify Tool's title via `title` static getter. 
 - `Fix` — On selection from end to start backspace is working as expected now [#869](https://github.com/codex-team/editor.js/issues/869)
-- `Fix` — Fix flipper with empty dom iterator [#926](https://github.com/codex-team/editor.js/issues/926)
+— `Fix` — Fix flipper with empty dom iterator [#926](https://github.com/codex-team/editor.js/issues/926)
 - `Fix` — Normalize node before walking through children at `isEmpty` method [#943](https://github.com/codex-team/editor.js/issues/943)
-- `Fix` — Fixed Grammarly conflict [#779](https://github.com/codex-team/editor.js/issues/779)
-- `Improvements` — Module Listeners now correctly removes events with options [#904](https://github.com/codex-team/editor.js/pull/904)
-- `Improvements` — Styles API: `.cdx-block` default vertical margins decreased from 0.7 to 0.4 ems. 
-- `Fix` — Fixed History Back on block deletion by Backspace in Firefox [#967](https://github.com/codex-team/editor.js/pull/967)
+— `Fix` — Fixed Grammarly conflict [#779](https://github.com/codex-team/editor.js/issues/779)
+— `Improvements` — Module Listeners now correctly removes events with options [#904](https://github.com/codex-team/editor.js/pull/904)
+— `Improvements` — Styles API: `.cdx-block` default vertical margins decreased from 0.7 to 0.4 ems. 
+— `Fix` — Fixed History Back on block deletion by Backspace in Firefox [#967](https://github.com/codex-team/editor.js/pull/967)
 - `Fix` — Fixed `getRangeCount` call if range count is 0 [#938](https://github.com/codex-team/editor.js/issues/938)
 - `New` — Log levels now available to suppress Editor.js console messages [#962](https://github.com/codex-team/editor.js/issues/962) 
 - `Fix` — Fixed wrong navigation on block deletion
