@@ -10,11 +10,11 @@ There are few steps to run Editor.js on your site.
 
 Firstly you need to get Editor.js itself. It is a [minified script](../dist/editor.js) with minimal available
 
-Choose the most usable method of getting Editor for you.
+Choose the most usable method of getting an Editor for you.
 
 - Node package
 - Source from CDN
-- Local file from project
+- Local file from a project
 
 ### Node.js
 
@@ -52,9 +52,9 @@ Copy [editor.js](../dist/editor.js) file to your project and load it.
 
 ## Load Tools
 
-Each Block at the Editor.js represented by [Tools](tools.md). There are simple external scripts with own logic. you'll probably want to use several Block Tools that should be connected.
+Each Block at the Editor.js represented by [Tools](tools.md). There are simple external scripts with their own logic. You'll probably want to use several Block Tools that should be connected.
 
-For example check out our [Header](https://github.com/editor-js/header) Tool that represents heading blocks.
+For example, check out our [Header](https://github.com/editor-js/header) Tool that represents heading blocks.
 
 You can install the Header Tool via the same ways as an Editor (Node.js, CDN, local file).
 
@@ -69,7 +69,7 @@ Check [Editor.js's community](https://github.com/editor-js/) to see Tools exampl
 ## Create Editor instance
 
 Create an instance of Editor.js and pass [Configuration Object](../src/types-internal/editor-config.ts). 
-Minimal params is a `holderId`, `tools` list and `initialBlock` marker.
+At least the `holderId` option is required.
 
 ```html
 <div id="editorjs"></div>
@@ -117,7 +117,7 @@ var editor = new EditorJS({
 
 Editor.js needs a bit of time to initialize. It is an asynchronous action so it won't block execution of your main script.
 
-If you need to know when the editor instance is ready. You can use one of the following ways:
+If you need to know when the editor instance is ready you can use one of the following ways:
 
 ##### Pass `onReady` property to the configuration object. 
 
@@ -136,9 +136,9 @@ var editor = new EditorJS({
 
 #### Use `isReady` promise.
 
-After you create a new `EditorJS` object it contains `isReady` property.
-It is a Promise object resolved when editor is ready to work and rejected otherwise.
-If there is an error during initialization `isReady` promise will be rejected with error message.
+After you create a new `EditorJS` object it will contain `isReady` property.
+It is a Promise object that resolves when the editor will be ready to work and rejected otherwise.
+If there is an error during initialization `isReady` promise will be rejected with an error message.
 
 ```javascript
 var editor = new EditorJS();
@@ -179,7 +179,7 @@ editor.saver.save()
 
 ## Features
 
-Also Editor.js provides useful methods to work with Editor's state.
+Also, Editor.js provides useful methods to work with Editor's state.
 
 ```javascript
 var editor = new EditorJS({
