@@ -14,6 +14,15 @@ export default class BlockEvents extends Module {
    */
   public keydown(event: KeyboardEvent): void {
     /**
+     * Check the event was dispatched in first-level node
+     */
+    if (!(event.target as Element)
+      .closest(`.${this.Editor.UI.CSS.editorWrapper}`)
+      .isEqualNode(this.Editor.UI.nodes.wrapper)) {
+      return;
+    }
+
+    /**
      * Run common method for all keydown events
      */
     this.beforeKeydownProcessing(event);
@@ -426,7 +435,7 @@ export default class BlockEvents extends Module {
 
     Caret.createShadow(targetBlock.pluginsContent);
     BlockManager.mergeBlocks(targetBlock, blockToMerge)
-      .then( () => {
+      .then(() => {
         /** Restore caret position after merge */
         Caret.restoreCaret(targetBlock.pluginsContent as HTMLElement);
         targetBlock.pluginsContent.normalize();
@@ -540,7 +549,7 @@ export default class BlockEvents extends Module {
   /**
    * Default keydown handler
    */
-  private defaultHandler(): void {}
+  private defaultHandler(): void { }
 
   /**
    * Cases when we need to close Toolbar
@@ -572,7 +581,7 @@ export default class BlockEvents extends Module {
    */
   private activateToolbox(): void {
     if (!this.Editor.Toolbar.opened) {
-      this.Editor.Toolbar.open(false , false);
+      this.Editor.Toolbar.open(false, false);
       this.Editor.Toolbar.plusButton.show();
     }
 
