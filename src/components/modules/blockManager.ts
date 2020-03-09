@@ -515,14 +515,24 @@ export default class BlockManager extends Module {
       childNode = childNode.parentNode;
     }
 
-    const parentFirstLevelBlock = (childNode as HTMLElement).closest(`.${Block.CSS.wrapper}`);
+    /**
+     * Search parent Block
+     */
+    let parentBlock: HTMLElement | null = childNode as HTMLElement;
+    let currentBlockIndex: number;
 
-    if (parentFirstLevelBlock) {
+    do {
+      parentBlock = parentBlock.closest(`.${Block.CSS.wrapper}`);
+      currentBlockIndex = this._blocks.nodes.indexOf(parentBlock);
+      parentBlock = parentBlock.parentElement;
+    }while (parentBlock !== null && currentBlockIndex === -1);
+
+    if (currentBlockIndex !== -1) {
       /**
        * Update current Block's index
        * @type {number}
        */
-      this.currentBlockIndex = this._blocks.nodes.indexOf(parentFirstLevelBlock as HTMLElement);
+      this.currentBlockIndex = currentBlockIndex;
       return this.currentBlock;
     } else {
       throw new Error('Can not find a Block from this child Node');
