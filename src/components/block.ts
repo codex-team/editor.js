@@ -235,6 +235,10 @@ export default class Block {
    * @return {Boolean}
    */
   get isEmpty(): boolean {
+    const toolIsEmpty = this.tool.isEmpty;
+    if (toolIsEmpty !== undefined) {
+      return toolIsEmpty;
+    }
     const emptyText = $.isEmpty(this.pluginsContent);
     const emptyMedia = !this.hasMedia;
 
