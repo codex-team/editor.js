@@ -160,7 +160,7 @@ export default class BlockManager extends Module {
    */
   public async prepare() {
     const blocks = new Blocks(this.Editor.UI.nodes.redactor);
-    const { BlockEvents, Shortcuts } = this.Editor;
+    const { BlockEvents, Listeners } = this.Editor;
 
     /**
      * We need to use Proxy to overload set/get [] operator.
@@ -181,21 +181,19 @@ export default class BlockManager extends Module {
       get: Blocks.get,
     });
 
-    /** Copy shortcut */
-    Shortcuts.add({
-      name: 'CMD+C',
-      handler: (event) => {
-        BlockEvents.handleCommandC(event);
-      },
-    });
+    /** Copy event */
+    Listeners.on(
+      document,
+      'copy',
+      (e: ClipboardEvent) => BlockEvents.handleCommandC(e),
+    );
 
     /** Copy and cut */
-    Shortcuts.add({
-      name: 'CMD+X',
-      handler: (event) => {
-        BlockEvents.handleCommandX(event);
-      },
-    });
+    Listeners.on(
+      document,
+      'cut',
+      (e: ClipboardEvent) => BlockEvents.handleCommandX(e),
+    );
   }
 
   /**
@@ -433,15 +431,17 @@ export default class BlockManager extends Module {
    * Replace current working block
    *
    * @param {String} toolName — plugin name
-   * @param {Object} data — plugin data
+   * @param {BlockToolData} data — plugin data
+   * @param {ToolConfig} settings — plugin config
    *
    * @return {Block}
    */
   public replace(
     toolName: string = this.config.initialBlock,
     data: BlockToolData = {},
+    settings: ToolConfig = {},
   ): Block {
-    const block = this.composeBlock(toolName, data);
+    const block = this.composeBlock(toolName, data, settings);
 
     this._blocks.insert(this.currentBlockIndex, block, true);
 
