@@ -211,7 +211,7 @@ export default class BlockEvents extends Module {
    * Copying selected blocks
    * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
    *
-   * @param event
+   * @param {ClipboardEvent} event
    */
   public handleCommandC(event: ClipboardEvent): void {
     const { BlockSelection } = this.Editor;
