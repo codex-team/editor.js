@@ -231,7 +231,7 @@ export default class BlockEvents extends Module {
   public handleCommandX(event: ClipboardEvent): void {
     const { BlockSelection, BlockManager, Caret } = this.Editor;
 
-    if (!BlockSelection.anyBlockSelected) {
+    if (!SelectionUtils.isAtEditor && !BlockSelection.anyBlockSelected) {
       return;
     }
 
