@@ -8,9 +8,9 @@
 - `Fix` - Fixed inline toolbar flipper activation on closing conversion toolbar [#995](https://github.com/codex-team/editor.js/issues/995) 
 - `Improvements` - New window tab is opened by clicking on anchor with ctrl [#1057](https://github.com/codex-team/editor.js/issues/1057)
 - `Fix` - Fix block-tune buttons alignment in some CSS-resetors that forces `box-sizing: border-box` rule [#1003](https://github.com/codex-team/editor.js/issues/1003)
+- `Improvements` - New style of a Block Settings button. Focused block background removed.
 - `New` Block [lifecycle hook](tools.md#block-lifecycle-hooks) `moved`
-- `Deprecated` — [`blocks.swap(fromIndex, toIndex)`](api.md) method is
-  deprecated. Use `blocks.move(toIndex, fromIndex)` instead.
+- `Deprecated` — [`blocks.swap(fromIndex, toIndex)`](api.md) method is deprecated. Use `blocks.move(toIndex, fromIndex)` instead.
 
 ### 2.16.1
 
