@@ -226,7 +226,7 @@ export default class BlockEvents extends Module {
 
   /**
    * Copy and Delete selected Blocks
-   * @param event
+   * @param {ClipboardEvent} event
    */
   public handleCommandX(event: ClipboardEvent): void {
     const { BlockSelection, BlockManager, Caret } = this.Editor;
