@@ -1,6 +1,7 @@
 import * as _ from './utils';
 import $ from './dom';
-import Block, {BlockToolAPI} from './block';
+import Block, { BlockToolAPI } from './block';
+import {MoveEvent, MoveEventDetail} from '../../types/tools';
 
 /**
  * @class Blocks
@@ -127,6 +128,7 @@ export default class Blocks {
    * Swaps blocks with indexes first and second
    * @param {Number} first - first block index
    * @param {Number} second - second block index
+   * @deprecated — use 'move' instead
    */
   public swap(first: number, second: number): void {
     const secondBlock = this.blocks[second];
@@ -141,6 +143,42 @@ export default class Blocks {
      */
     this.blocks[second] = this.blocks[first];
     this.blocks[first] = secondBlock;
+  }
+
+  /**
+   * Move a block from one to another index
+   * @param {Number} toIndex - new index of the block
+   * @param {Number} fromIndex - block to move
+   */
+  public move(toIndex: number, fromIndex: number): void {
+    /**
+     * cut out the block, move the DOM element and insert at the desired index
+     * again (the shifting within the blocks array will happen automatically).
+     * @see https://stackoverflow.com/a/44932690/1238150
+     */
+    const block = this.blocks.splice(fromIndex, 1)[0];
+
+    // manipulate DOM
+    const prevIndex = toIndex - 1;
+    const previousBlockIndex = Math.max(0, prevIndex);
+    const previousBlock = this.blocks[previousBlockIndex];
+
+    if (toIndex > 0) {
+      this.insertToDOM(block, 'afterend', previousBlock);
+    } else {
+      this.insertToDOM(block, 'beforebegin', previousBlock);
+    }
+
+    // move in array
+    this.blocks.splice(toIndex, 0, block);
+
+    // invoke hook
+    const event: MoveEvent = this.composeBlockEvent('move', {
+      fromIndex,
+      toIndex,
+    });
+
+    block.call(BlockToolAPI.MOVED, event);
   }
 
   /**
@@ -260,5 +298,18 @@ export default class Blocks {
     }
 
     block.call(BlockToolAPI.RENDERED);
+  }
+
+  /**
+   * Composes Block event with passed type and details
+   *
+   * @param {String} type
+   * @param {MoveEventDetail} detail
+   */
+  private composeBlockEvent(type: string, detail: MoveEventDetail): MoveEvent {
+    return new CustomEvent(type, {
+        detail,
+      },
+    ) as MoveEvent;
   }
 }
