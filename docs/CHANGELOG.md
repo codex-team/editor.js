@@ -6,6 +6,7 @@
 - `Fix` - Some mistakes are fixed in [installation.md](installation.md) 
 - `Fix` - Fixed multiple paste callback triggering in a case when several editors are instantiated [#1011](https://github.com/codex-team/editor.js/issues/1011)
 - `Fix` - Fixed inline toolbar flipper activation on closing conversion toolbar [#995](https://github.com/codex-team/editor.js/issues/995) 
+- `Improvements` - New window tab is opened by clicking on anchor with ctrl
 
 ### 2.16.1
 

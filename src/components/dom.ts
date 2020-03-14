@@ -558,11 +558,11 @@ export default class Dom {
   }
 
   /**
-   * Redirects user to the passed URL
+   * Opens new Tab with passed URL
    *
    * @param {String} url - URL address to redirect
    */
-  public static redirect(url: string): void {
+  public static openTab(url: string): void {
     window.open(url, '_blank');
   }
 }
