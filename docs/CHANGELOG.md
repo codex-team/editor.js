@@ -6,9 +6,11 @@
 - `Fix` - Some mistakes are fixed in [installation.md](installation.md) 
 - `Fix` - Fixed multiple paste callback triggering in a case when several editors are instantiated [#1011](https://github.com/codex-team/editor.js/issues/1011)
 - `Fix` - Fixed inline toolbar flipper activation on closing conversion toolbar [#995](https://github.com/codex-team/editor.js/issues/995) 
+- `Improvements` - New window tab is opened by clicking on anchor with ctrl [#1057](https://github.com/codex-team/editor.js/issues/1057)
+- `Fix` - Fix block-tune buttons alignment in some CSS-resetors that forces `box-sizing: border-box` rule [#1003](https://github.com/codex-team/editor.js/issues/1003)
 - `New` Block [lifecycle hook](tools.md#block-lifecycle-hooks) `moved`
 - `Deprecated` — [`blocks.swap(fromIndex, toIndex)`](api.md) method is
-  deprecated. Use `blocks.move(toIndex, fromIndex)` instead.  
+  deprecated. Use `blocks.move(toIndex, fromIndex)` instead.
 
 ### 2.16.1
 

@@ -548,4 +548,13 @@ export default class Dom {
 
     return node && extensions.includes(node.nodeName);
   }
+
+  /**
+   * Returns true if element is anchor (is A tag)
+   *
+   * @param element
+   */
+  public static isAnchor(element: Element): boolean {
+    return element.tagName.toLowerCase() === 'a';
+  }
 }
