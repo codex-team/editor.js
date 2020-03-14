@@ -727,11 +727,6 @@ export default class Paste extends Module {
         case Node.ELEMENT_NODE:
           const element = node as HTMLElement;
 
-          if (element.tagName === 'BR') {
-            destNode.appendChild($.make('BR'));
-            return [...nodes, destNode];
-          }
-
           const {tool = ''} = this.toolsTags[element.tagName] || {};
           const toolTags = this.tagsByTool[tool] || [];
 
