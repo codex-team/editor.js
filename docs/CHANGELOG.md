@@ -10,6 +10,7 @@
 - `Fix` - Fix block-tune buttons alignment in some CSS-resetors that forces `box-sizing: border-box` rule [#1003](https://github.com/codex-team/editor.js/issues/1003)
 - `Improvements` - New style of a Block Settings button. Focused block background removed.
 - `New` — Add in-house copy-paste support through `application/x-editor-js` mime-type
+- `Fix` — Fix multiline paste [#1015](https://github.com/codex-team/editor.js/issues/1015)
 
 ### 2.16.1
 
