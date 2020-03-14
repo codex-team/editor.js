@@ -3,6 +3,7 @@
   right: 5px;
   top: 35px;
   min-width: 114px;
+  box-sizing: content-box;
 
   @media (--mobile){
     bottom: 50px;
