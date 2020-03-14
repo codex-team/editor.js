@@ -219,6 +219,7 @@ export default class BlockSelection extends Module {
     e.preventDefault();
 
     const fakeClipboard = $.make('div');
+    let plainText = '';
 
     this.selectedBlocks.forEach((block) => {
         /**
@@ -229,11 +230,13 @@ export default class BlockSelection extends Module {
 
         fragment.innerHTML = cleanHTML;
         fakeClipboard.appendChild(fragment);
+
+        plainText += `\n${cleanHTML}`;
     });
 
     const savedData = await Promise.all(this.selectedBlocks.map((block) => block.save()));
 
-    e.clipboardData.setData('text/plain', fakeClipboard.textContent);
+    e.clipboardData.setData('text/plain', plainText);
     e.clipboardData.setData('text/html', fakeClipboard.innerHTML);
     e.clipboardData.setData(this.Editor.Paste.MIME_TYPE, JSON.stringify(savedData));
   }
