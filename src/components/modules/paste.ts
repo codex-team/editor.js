@@ -4,6 +4,7 @@ import * as _ from '../utils';
 import {
   BlockTool,
   BlockToolConstructable,
+  BlockToolData,
   PasteConfig,
   PasteEvent,
   PasteEventDetail,
@@ -102,6 +103,9 @@ export default class Paste extends Module {
   /** If string`s length is greater than this number we don't check paste patterns */
   public static readonly PATTERN_PROCESSING_MAX_LENGTH = 450;
 
+  /** Custom EditorJS mime-type to handle in-editor copy/paste actions */
+  public readonly MIME_TYPE = 'application/x-editor-js';
+
   /**
    * Tags` substitutions parameters
    */
@@ -156,8 +160,20 @@ export default class Paste extends Module {
       return;
     }
 
+    const editorJSData = dataTransfer.getData(this.MIME_TYPE);
     const plainData = dataTransfer.getData('text/plain');
     let htmlData  = dataTransfer.getData('text/html');
+
+    /**
+     * If EditorJS json is passed, insert it
+     */
+    if (editorJSData) {
+      try {
+        this.insertEditorJSData(JSON.parse(editorJSData));
+
+        return;
+      } catch (e) {} // Do nothing and continue execution as usual if error appears
+    }
 
     /**
      *  If text was drag'n'dropped, wrap content with P tag to insert it as the new Block
@@ -211,9 +227,9 @@ export default class Paste extends Module {
     const isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
     const needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
 
-    await Promise.all(dataToInsert.map(
-      async (content, i) => await this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
-    ));
+    dataToInsert.map(
+      async (content, i) => this.insertBlock(content, i === 0 && needToReplaceCurrentBlock),
+    );
 
     if (BlockManager.currentBlock) {
       Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
@@ -664,12 +680,13 @@ export default class Paste extends Module {
   }
 
   /**
+   * Insert pasted Block content to Editor
    *
    * @param {PasteData} data
    * @param {Boolean} canReplaceCurrentBlock - if true and is current Block is empty, will replace current Block
-   * @returns {Promise<void>}
+   * @returns {void}
    */
-  private async insertBlock(data: PasteData, canReplaceCurrentBlock: boolean = false): Promise<void> {
+  private insertBlock(data: PasteData, canReplaceCurrentBlock: boolean = false): void {
     const {BlockManager, Caret} = this.Editor;
     const {currentBlock} = BlockManager;
     let block: Block;
@@ -683,6 +700,35 @@ export default class Paste extends Module {
     block = BlockManager.paste(data.tool, data.event);
 
     Caret.setToBlock(block, Caret.positions.END);
+  }
+
+  /**
+   * Insert data passed as application/x-editor-js JSON
+   *
+   * @param {object} blocks — Blocks' data to insert
+   *
+   * @return {void}
+   */
+  private insertEditorJSData(blocks: Array<{tool: string, data: BlockToolData}>): void {
+    const { BlockManager, Tools } = this.Editor;
+
+    blocks.forEach(({ tool, data }, i) => {
+      const settings = this.Editor.Tools.getToolSettings(tool);
+
+      let needToReplaceCurrentBlock = false;
+
+      if (i === 0) {
+        const isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
+
+        needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+      }
+
+      if (needToReplaceCurrentBlock) {
+        BlockManager.replace(tool, data, settings);
+      } else {
+        BlockManager.insert(tool, data, settings);
+      }
+    });
   }
 
   /**
