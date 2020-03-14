@@ -130,6 +130,7 @@ export default class Dom {
    * Swap two elements in parent
    * @param {HTMLElement} el1 - from
    * @param {HTMLElement} el2 - to
+   * @deprecated
    */
   public static swap(el1: HTMLElement, el2: HTMLElement): void {
     // create marker element and insert it where el1 is
