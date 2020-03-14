@@ -5,7 +5,9 @@
 - `Improvements` - Editor's [onchange callback](https://editorjs.io/configuration#editor-modifications-callback) now accepts an API as a parameter 
 - `Fix` - Some mistakes are fixed in [installation.md](installation.md) 
 - `Fix` - Fixed multiple paste callback triggering in a case when several editors are instantiated [#1011](https://github.com/codex-team/editor.js/issues/1011) 
-- `Fix` - Fix block-tune buttons alignment in some CSS-resetors that forces `box-sizing: border-box` rule [#1003](https://github.com/codex-team/editor.js/issues/1003) 
+- `Fix` - Fixed multiple paste callback triggering in a case when several editors are instantiated [#1011](https://github.com/codex-team/editor.js/issues/1011)
+- `Fix` - Fixed inline toolbar flipper activation on closing conversion toolbar [#995](https://github.com/codex-team/editor.js/issues/995) 
+- `Fix` - Fix block-tune buttons alignment in some CSS-resetors that forces `box-sizing: border-box` rule [#1003](https://github.com/codex-team/editor.js/issues/1003)
 
 ### 2.16.1
 
