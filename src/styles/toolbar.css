@@ -32,7 +32,7 @@
       display: flex;
       align-content: center;
       margin: 0;
-      max-width: calc(100% - 40px);
+      max-width: calc(100% - 35px);
     }
   }
 
@@ -77,9 +77,10 @@
     opacity: 0;
 
     @media (--mobile){
-      position: static;
-      margin-left: auto;
-      padding-right: 10px;
+      position: absolute;
+      right: -28px;
+      top: 50%;
+      transform: translateY(-50%);
       display: flex;
       align-items: center;
     }
@@ -102,6 +103,14 @@
     color: var(--grayText);
     cursor: pointer;
     background: var(--bg-light);
+
+    &:hover {
+      color: var(--color-dark);
+    }
+
+    @media (--mobile){
+      background: transparent;
+    }
   }
 }
 

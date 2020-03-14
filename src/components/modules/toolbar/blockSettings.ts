@@ -43,6 +43,11 @@ export default class BlockSettings extends Module {
 
       focusedButton : 'ce-settings__button--focused',
       focusedButtonAnimated: 'ce-settings__button--focused-animated',
+
+      /**
+       * Will be added to the editor wrapper when toolbar is opened
+       */
+      editorWrapperToolbarOpenedModifier: 'toolbar-opened',
     };
   }
 
@@ -101,6 +106,7 @@ export default class BlockSettings extends Module {
    */
   public open(): void {
     this.nodes.wrapper.classList.add(this.CSS.wrapperOpened);
+    this.Editor.UI.nodes.wrapper.classList.add(this.CSS.editorWrapperToolbarOpenedModifier);
 
     /**
      * Fill Tool's settings
@@ -123,6 +129,7 @@ export default class BlockSettings extends Module {
    */
   public close(): void {
     this.nodes.wrapper.classList.remove(this.CSS.wrapperOpened);
+    this.Editor.UI.nodes.wrapper.classList.remove(this.CSS.editorWrapperToolbarOpenedModifier);
 
     /** Clear settings */
     this.nodes.toolSettings.innerHTML = '';
