@@ -98,8 +98,6 @@ export default class ConversionToolbar extends Module {
 
     if (typeof togglingCallback === 'function') {
       this.togglingCallback = togglingCallback;
-
-      this.togglingCallback(this.opened);
     }
   }
 

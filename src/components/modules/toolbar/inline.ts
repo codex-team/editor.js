@@ -431,10 +431,19 @@ export default class InlineToolbar extends Module {
 
     this.Editor.Listeners.on(this.nodes.conversionToggler, 'click', () => {
       this.Editor.ConversionToolbar.toggle((conversionToolbarOpened) => {
-        if (conversionToolbarOpened) {
-          this.flipper.deactivate();
-        } else {
+        /**
+         * When ConversionToolbar is opening on activated InlineToolbar flipper
+         * Then we need to temporarily deactivate InlineToolbar flipper so that we could flip ConversionToolbar items
+         *
+         * Other case when ConversionToolbar is closing (for example, by escape) but we need to continue flipping
+         * InlineToolbar items, we activate InlineToolbar flipper
+         */
+        const canActivateInlineToolbarFlipper = !conversionToolbarOpened && this.opened;
+
+        if (canActivateInlineToolbarFlipper) {
           this.flipper.activate();
+        } else if (this.opened) {
+          this.flipper.deactivate();
         }
       });
     });
