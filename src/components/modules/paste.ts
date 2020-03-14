@@ -623,17 +623,13 @@ export default class Paste extends Module {
 
     /** If there is no pattern substitute - insert string as it is */
     if (BlockManager.currentBlock && BlockManager.currentBlock.currentInput) {
-      const {tags} = Tools.blockTools[tool].pasteConfig as PasteConfig;
+      const currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
 
-      const toolTags = tags.reduce((result, tag) => {
-        result[tag.toLowerCase()] = {};
-
-        return result;
-      }, {});
-
-      const customConfig = Object.assign({}, toolTags, Sanitizer.getInlineToolsConfig(tool));
-
-      document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, customConfig));
+      document.execCommand(
+        'insertHTML',
+        false,
+        Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig),
+      );
     } else {
       this.insertBlock(dataToInsert);
     }
