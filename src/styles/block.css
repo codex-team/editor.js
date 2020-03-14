@@ -77,19 +77,6 @@
   }
 }
 
-.codex-editor.toolbar-opened .ce-block--focused .ce-block__content {
-  background: var(--bg-light);
-  border-radius: 3px;
-
-  @media (--mobile){
-    background-image: none;
-    background-color: rgba(200, 199, 219, 0.17);
-    margin: 0 -10px;
-    padding: 0 10px;
-  }
-}
-
-
 .codex-editor--narrow .ce-block--focused {
   @media (--not-mobile) {
     margin-right: calc(var(--narrow-mode-right-padding) * -1);
