@@ -13,6 +13,7 @@
 - `New` Block [lifecycle hook](tools.md#block-lifecycle-hooks) `moved`
 - `Deprecated` — [`blocks.swap(fromIndex, toIndex)`](api.md) method is deprecated. Use `blocks.move(toIndex, fromIndex)` instead.
 - `Fix` — Improve plain text paste [#1012](https://github.com/codex-team/editor.js/issues/1012)
+- `Fix` — Fix multiline paste [#1015](https://github.com/codex-team/editor.js/issues/1015)
 
 ### 2.16.1
 

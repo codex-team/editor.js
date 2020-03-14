@@ -641,7 +641,11 @@ export default class Paste extends Module {
     if (BlockManager.currentBlock && BlockManager.currentBlock.currentInput) {
       const currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
 
-      document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig));
+      document.execCommand(
+        'insertHTML',
+        false,
+        Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig),
+      );
     } else {
       this.insertBlock(dataToInsert);
     }
@@ -764,10 +768,6 @@ export default class Paste extends Module {
          */
         case Node.ELEMENT_NODE:
           const element = node as HTMLElement;
-
-          if (element.tagName === 'BR') {
-            return [...nodes, destNode, new DocumentFragment()];
-          }
 
           const {tool = ''} = this.toolsTags[element.tagName] || {};
           const toolTags = this.tagsByTool[tool] || [];
