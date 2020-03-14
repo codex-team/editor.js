@@ -207,6 +207,10 @@ export default class BlockSelection extends Module {
 
   /**
    * Reduce each Block and copy its content
+   *
+   * @param {ClipboardEvent} e - copy/cut event
+   *
+   * @return Promise<void>
    */
   public async copySelectedBlocks(e: ClipboardEvent): Promise<void> {
     /**
