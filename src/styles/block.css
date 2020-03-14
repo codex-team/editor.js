@@ -3,18 +3,6 @@
     margin-top: 0;
   }
 
-  &--focused &__content {
-    background-image: linear-gradient(17deg, rgba(243, 248, 255, 0.03) 63.45%, rgba(207, 214, 229, 0.27) 98%);
-    border-radius: 3px;
-
-    @media (--mobile){
-      background-image: none;
-      background-color: rgba(200, 199, 219, 0.17);
-      margin: 0 -10px;
-      padding: 0 10px;
-    }
-  }
-
   &--selected &__content {
     background: var(--selectionColor);
 
@@ -41,7 +29,6 @@
     max-width: var(--content-width);
     margin: 0 auto;
     transition: background-color 150ms ease;
-    box-shadow: inset 0 0 0 1px cadetblue;
   }
 
   &--drop-target &__content {
@@ -87,6 +74,18 @@
 
   i {
     font-style: italic;
+  }
+}
+
+.codex-editor.toolbar-opened .ce-block--focused .ce-block__content {
+  background: var(--bg-light);
+  border-radius: 3px;
+
+  @media (--mobile){
+    background-image: none;
+    background-color: rgba(200, 199, 219, 0.17);
+    margin: 0 -10px;
+    padding: 0 10px;
   }
 }
 

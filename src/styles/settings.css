@@ -1,11 +1,12 @@
 .ce-settings {
   @apply --overlay-pane;
-  right: 5px;
-  top: 35px;
+  right: -1px;
+  top: 30px;
   min-width: 114px;
 
   @media (--mobile){
-    bottom: 50px;
+    bottom: 40px;
+    right: -11px;
     top: auto;
   }
 
