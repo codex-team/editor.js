@@ -8,12 +8,13 @@ import * as _ from '../../utils';
  *
  *  ______________________________________ Toolbar ____________________________________________
  * |                                                                                           |
- * |  ..................... Content ....................   ......... Block Actions ..........  |
- * |  .                                                .   .                                .  |
- * |  .                                                .   .        [Open Settings]         .  |
- * |  .  [Plus Button]  [Toolbox: {Tool1}, {Tool2}]    .   .                                .  |
- * |  .                                                .   .        [Settings Panel]        .  |
- * |  ..................................................   ..................................  |
+ * |  ..................... Content .........................................................  |
+ * |  .                                                   ........ Block Actions ...........   |
+ * |  .                                                   .        [Open Settings]         .   |
+ * |  .  [Plus Button]  [Toolbox: {Tool1}, {Tool2}]       .                                .   |
+ * |  .                                                   .        [Settings Panel]        .   |
+ * |  .                                                   ..................................   |
+ * |  .......................................................................................  |
  * |                                                                                           |
  * |___________________________________________________________________________________________|
  *
@@ -105,8 +106,13 @@ export default class Toolbar extends Module {
      */
     ['content',  'actions'].forEach( (el) => {
       this.nodes[el] = $.make('div', this.CSS[el]);
-      $.append(this.nodes.wrapper, this.nodes[el]);
     });
+
+    /**
+     * Actions will be included to the toolbar content so we can align in to the right of the content
+     */
+    $.append(this.nodes.wrapper, this.nodes.content);
+    $.append(this.nodes.content, this.nodes.actions);
 
     /**
      * Fill Content Zone:
@@ -144,7 +150,7 @@ export default class Toolbar extends Module {
      */
     this.nodes.blockActionsButtons = $.make('div', this.CSS.blockActionsButtons);
     this.nodes.settingsToggler  = $.make('span', this.CSS.settingsToggler);
-    const settingsIcon = $.svg('dots', 18, 4);
+    const settingsIcon = $.svg('dots', 8, 8);
 
     $.append(this.nodes.settingsToggler, settingsIcon);
     $.append(this.nodes.blockActionsButtons, this.nodes.settingsToggler);

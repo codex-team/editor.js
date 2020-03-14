@@ -204,6 +204,12 @@ export default class Sanitizer extends Module {
       });
     }
 
+    /**
+     * Allow linebreaks
+     */
+    config['br'] = true;
+    config['wbr'] = true;
+
     return config;
   }
 

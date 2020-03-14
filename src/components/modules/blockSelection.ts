@@ -207,8 +207,17 @@ export default class BlockSelection extends Module {
 
   /**
    * Reduce each Block and copy its content
+   *
+   * @param {ClipboardEvent} e - copy/cut event
+   *
+   * @return Promise<void>
    */
-  public copySelectedBlocks(): void {
+  public async copySelectedBlocks(e: ClipboardEvent): Promise<void> {
+    /**
+     * Prevent default copy
+     */
+    e.preventDefault();
+
     const fakeClipboard = $.make('div');
 
     this.selectedBlocks.forEach((block) => {
@@ -220,9 +229,16 @@ export default class BlockSelection extends Module {
 
         fragment.innerHTML = cleanHTML;
         fakeClipboard.appendChild(fragment);
-      });
+    });
 
-    _.copyTextToClipboard(fakeClipboard.innerHTML);
+    const savedData = await Promise.all(this.selectedBlocks.map((block) => block.save()));
+
+    const textPlain = Array.from(fakeClipboard.childNodes).map((node) => node.textContent).join('\n\n');
+    const textHTML = fakeClipboard.innerHTML;
+
+    e.clipboardData.setData('text/plain', textPlain);
+    e.clipboardData.setData('text/html', textHTML);
+    e.clipboardData.setData(this.Editor.Paste.MIME_TYPE, JSON.stringify(savedData));
   }
 
   /**
