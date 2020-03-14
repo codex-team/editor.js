@@ -72,9 +72,8 @@
    */
   &__actions {
     position: absolute;
-    right: 0;
-    top: 10px;
-    padding-right: 16px;
+    right: -30px;
+    top: 5px;
     opacity: 0;
 
     @media (--mobile){
@@ -95,11 +94,14 @@
   }
 
   &__settings-btn {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
     color: var(--grayText);
     cursor: pointer;
+    background: var(--bg-light);
   }
 }
 
