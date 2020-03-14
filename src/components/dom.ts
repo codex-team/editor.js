@@ -556,13 +556,4 @@ export default class Dom {
   public static isAnchor(element: Element): boolean {
     return element.tagName.toLowerCase() === 'a';
   }
-
-  /**
-   * Opens new Tab with passed URL
-   *
-   * @param {String} url - URL address to redirect
-   */
-  public static openTab(url: string): void {
-    window.open(url, '_blank');
-  }
 }

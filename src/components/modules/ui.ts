@@ -592,7 +592,10 @@ export default class UI extends Module {
     const ctrlKey = event.metaKey || event.ctrlKey;
 
     if ($.isAnchor(element) && ctrlKey) {
-      $.openTab(element.getAttribute('href'));
+      const href = element.getAttribute('href');
+      const validUrl = _.getValidUrl(href);
+
+      _.openTab(validUrl);
       return;
     }
 
