@@ -208,7 +208,7 @@ export default class BlockSelection extends Module {
   /**
    * Reduce each Block and copy its content
    */
-  public copySelectedBlocks(): void {
+  public async copySelectedBlocks(e: ClipboardEvent): Promise<void> {
     const fakeClipboard = $.make('div');
 
     this.selectedBlocks.forEach((block) => {
@@ -216,13 +216,23 @@ export default class BlockSelection extends Module {
          * Make <p> tag that holds clean HTML
          */
         const cleanHTML = this.Editor.Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
-        const fragment = $.make('p');
+        const fragment = $.make('div');
 
         fragment.innerHTML = cleanHTML;
         fakeClipboard.appendChild(fragment);
-      });
+    });
 
-    _.copyTextToClipboard(fakeClipboard.innerHTML);
+    const savedData = await Promise.all(this.selectedBlocks.map((block) => block.save()));
+
+    e.clipboardData.setData('text/plain', fakeClipboard.textContent);
+    e.clipboardData.setData('text/html', fakeClipboard.innerHTML);
+    e.clipboardData.setData(this.Editor.Paste.MIME_TYPE, JSON.stringify(savedData));
+
+    /**
+     * Prevent default copy
+     * Remove "decline sound" on macOS
+     */
+    e.preventDefault();
   }
 
   /**
