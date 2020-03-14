@@ -221,7 +221,7 @@ export default class BlockSelection extends Module {
          * Make <p> tag that holds clean HTML
          */
         const cleanHTML = this.Editor.Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
-        const fragment = $.make('div');
+        const fragment = $.make('p');
 
         fragment.innerHTML = cleanHTML;
         fakeClipboard.appendChild(fragment);
