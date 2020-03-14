@@ -15,6 +15,9 @@ export interface MoveEventDetail {
 /**
  * Move event for block relocation
  */
-export interface MoveEvent {
+export interface MoveEvent extends CustomEvent {
+  /**
+   * Override detail property of CustomEvent by MoveEvent hook
+   */
   readonly detail: MoveEventDetail;
 }
