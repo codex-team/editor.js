@@ -1,7 +1,6 @@
-<svg width="18" height="4" viewBox="0 0 18 4" xmlns="http://www.w3.org/2000/svg">
-  <g fill-rule="evenodd">
-    <circle cx="9" cy="2" r="2"/>
-    <circle cx="2" cy="2" r="2"/>
-    <circle cx="16" cy="2" r="2"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8">
+  <circle cx="6.5" cy="1.5" r="1.5"/>
+  <circle cx="6.5" cy="6.5" r="1.5"/>
+  <circle cx="1.5" cy="1.5" r="1.5"/>
+  <circle cx="1.5" cy="6.5" r="1.5"/>
 </svg>
