@@ -26,7 +26,11 @@ Methods that working with Blocks
 
 `renderFromHTML(data)` - parse and render passed HTML string (*not for production use*)
 
-`swap(fromIndex, toIndex)` - swaps two Blocks by their positions
+`swap(fromIndex, toIndex)` - swaps two Blocks by their positions (deprecated:
+use 'move' instead)
+
+`move(toIndex, fromIndex)` - moves block from one index to another position.
+`fromIndex` will be the current block's index by default.
 
 `delete(blockIndex?: Number)` - deletes Block with passed index
 

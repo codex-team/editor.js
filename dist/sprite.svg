@@ -14,12 +14,11 @@
   <path transform="rotate(45 280.675 51.325)" d="M191 191V73c0-5.523 4.477-10 10-10h25c5.523 0 10 4.477 10 10v118h118c5.523 0 10 4.477 10 10v25c0 5.523-4.477 10-10 10H236v118c0 5.523-4.477 10-10 10h-25c-5.523 0-10-4.477-10-10V236H73c-5.523 0-10-4.477-10-10v-25c0-5.523 4.477-10 10-10h118z"/>
 
 </symbol>
-<symbol id="dots" viewBox="0 0 18 4">
-  <g fill-rule="evenodd">
-    <circle cx="9" cy="2" r="2"/>
-    <circle cx="2" cy="2" r="2"/>
-    <circle cx="16" cy="2" r="2"/>
-  </g>
+<symbol id="dots" viewBox="0 0 8 8">
+  <circle cx="6.5" cy="1.5" r="1.5"/>
+  <circle cx="6.5" cy="6.5" r="1.5"/>
+  <circle cx="1.5" cy="1.5" r="1.5"/>
+  <circle cx="1.5" cy="6.5" r="1.5"/>
 
 </symbol>
 <symbol id="italic" viewBox="0 0 4 11">

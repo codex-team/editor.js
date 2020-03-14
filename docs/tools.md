@@ -476,3 +476,8 @@ Called each time Block contents is updated
 ### `removed()`
 
 Called after Block contents is removed from the page but before Block instance deleted
+
+### `moved(MoveEvent)`
+
+Called after Block was moved. `MoveEvent` contains `fromIndex` and `toIndex`
+respectively.
