@@ -19,6 +19,11 @@
   --grayText: #707684;
 
   /**
+   * Gray icons hover
+   */
+  --color-dark: #1D202B;
+
+  /**
    * Blue icons
    */
   --color-active-icon: #388AE5;

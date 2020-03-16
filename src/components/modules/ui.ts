@@ -293,7 +293,7 @@ export default class UI extends Module {
     this.Editor.Listeners.on(
       this.nodes.redactor,
       'click',
-      () => this.redactorClicked(),
+      (event) => this.redactorClicked(event as MouseEvent),
       false,
     );
     this.Editor.Listeners.on(this.nodes.redactor,
@@ -576,8 +576,23 @@ export default class UI extends Module {
    *      - if last Block is empty, set a Caret to this
    *      - otherwise, add a new empty Block and set a Caret to that
    */
-  private redactorClicked(): void {
+  private redactorClicked(event: MouseEvent): void {
     if (!Selection.isCollapsed) {
+      return;
+    }
+
+    /**
+     * case when user clicks on anchor element
+     * if it is clicked via ctrl key, then we open new window with url
+     */
+    const element = event.target as Element;
+    const ctrlKey = event.metaKey || event.ctrlKey;
+
+    if ($.isAnchor(element) && ctrlKey) {
+      const href = element.getAttribute('href');
+      const validUrl = _.getValidUrl(href);
+
+      _.openTab(validUrl);
       return;
     }
 

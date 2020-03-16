@@ -220,47 +220,34 @@ export default class BlockEvents extends Module {
    * Copying selected blocks
    * Before putting to the clipboard we sanitize all blocks and then copy to the clipboard
    *
-   * @param event
+   * @param {ClipboardEvent} event
    */
-  public handleCommandC(event): void {
+  public handleCommandC(event: ClipboardEvent): void {
     const { BlockSelection } = this.Editor;
 
     if (!BlockSelection.anyBlockSelected) {
       return;
     }
 
-    /**
-     * Prevent default copy
-     * Remove "decline sound" on macOS
-     */
-    event.preventDefault();
-
     // Copy Selected Blocks
-    BlockSelection.copySelectedBlocks();
+    BlockSelection.copySelectedBlocks(event);
   }
 
   /**
    * Copy and Delete selected Blocks
-   * @param event
+   * @param {ClipboardEvent} event
    */
-  public handleCommandX(event): void {
+  public handleCommandX(event: ClipboardEvent): void {
     const { BlockSelection, BlockManager, Caret } = this.Editor;
 
     if (!BlockSelection.anyBlockSelected) {
       return;
     }
 
-    /**
-     * Copy Blocks before removing
-     *
-     * Prevent default copy
-     * Remove "decline sound" on macOS
-     */
-    event.preventDefault();
-
-    BlockSelection.copySelectedBlocks();
+    BlockSelection.copySelectedBlocks(event);
 
     const selectionPositionIndex = BlockManager.removeSelectedBlocks();
+
     Caret.setToBlock(BlockManager.insertInitialBlockAtIndex(selectionPositionIndex, true), Caret.positions.START);
 
     /** Clear selection */

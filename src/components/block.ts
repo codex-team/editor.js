@@ -38,6 +38,7 @@ export enum BlockToolAPI {
    */
   APPEND_CALLBACK = 'appendCallback',
   RENDERED = 'rendered',
+  MOVED = 'moved',
   UPDATED = 'updated',
   REMOVED = 'removed',
   ON_PASTE = 'onPaste',
@@ -441,7 +442,7 @@ export default class Block {
    * @param {Object} data
    */
   public async mergeWith(data: BlockToolData): Promise<void> {
-      await this.tool.merge(data);
+    await this.tool.merge(data);
   }
   /**
    * Extracts data from Block
@@ -465,7 +466,7 @@ export default class Block {
         return {
           tool: this.name,
           data: finishedExtraction,
-          time : measuringEnd - measuringStart,
+          time: measuringEnd - measuringStart,
         };
       })
       .catch((error) => {
@@ -562,7 +563,7 @@ export default class Block {
   private compose(): HTMLDivElement {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
       contentNode = $.make('div', Block.CSS.content),
-      pluginsContent  = this.tool.render();
+      pluginsContent = this.tool.render();
 
     contentNode.appendChild(pluginsContent);
     wrapper.appendChild(contentNode);
