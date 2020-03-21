@@ -7,11 +7,11 @@ import {
   BlockTuneConstructable,
   SanitizerConfig,
   ToolConfig,
-} from '../../types';
+} from '../../../types';
 
-import {SavedData} from '../types-internal/block-data';
-import $ from './dom';
-import * as _ from './utils';
+import {SavedData} from '../../types-internal/block-data';
+import $ from '../dom';
+import * as _ from '../utils';
 
 /**
  * @class Block
@@ -23,10 +23,10 @@ import * as _ from './utils';
  */
 
 /** Import default tunes */
-import MoveUpTune from './block-tunes/block-tune-move-up';
-import DeleteTune from './block-tunes/block-tune-delete';
-import MoveDownTune from './block-tunes/block-tune-move-down';
-import SelectionUtils from './selection';
+import MoveUpTune from '../block-tunes/block-tune-move-up';
+import DeleteTune from '../block-tunes/block-tune-delete';
+import MoveDownTune from '../block-tunes/block-tune-move-down';
+import SelectionUtils from '../selection';
 
 /**
  * Available Block Tool API methods
@@ -177,34 +177,10 @@ export default class Block {
   }
 
   /**
-   * Returns Plugins content
-   * @return {HTMLElement}
-   */
-  get pluginsContent(): HTMLElement {
-    const blockContentNodes = this.holder.querySelector(`.${Block.CSS.content}`);
-
-    if (blockContentNodes && blockContentNodes.childNodes.length) {
-      /**
-       * Editors Block content can contain different Nodes from extensions
-       * We use DOM isExtensionNode to ignore such Nodes and return first Block that does not match filtering list
-       */
-      for (let child = blockContentNodes.childNodes.length - 1; child >= 0; child--) {
-        const contentNode = blockContentNodes.childNodes[child];
-
-        if (!$.isExtensionNode(contentNode)) {
-          return contentNode as HTMLElement;
-        }
-      }
-    }
-
-    return null;
-  }
-
-  /**
    * Get Block's JSON data
    * @return {Object}
    */
-  get data(): BlockToolData {
+  get data(): Promise<BlockToolData> {
     return this.save().then((savedObject) => {
       if (savedObject && !_.isEmpty(savedObject.data)) {
         return savedObject.data;
@@ -274,6 +250,13 @@ export default class Block {
   }
 
   /**
+   * Get Block's focused state
+   */
+  get focused() {
+    return this.holder.classList.contains(Block.CSS.focused);
+  }
+
+  /**
    * Set selected state
    * We don't need to mark Block as Selected when it is empty
    * @param {Boolean} state - 'true' to select, 'false' to remove selection
@@ -300,6 +283,15 @@ export default class Block {
    */
   set stretched(state: boolean) {
     this.holder.classList.toggle(Block.CSS.wrapperStretched, state);
+  }
+
+  /**
+   * Return Block's stretched state
+   *
+   * @return {boolean}
+   */
+  get stretched(): boolean {
+    return this.holder.classList.contains(Block.CSS.wrapperStretched);
   }
 
   /**
@@ -334,6 +326,12 @@ export default class Block {
    * Wrapper for Block`s content
    */
   public holder: HTMLDivElement;
+
+  /**
+   * Returns Plugins content
+   * @return {HTMLElement}
+   */
+  public pluginsContent: HTMLElement = null;
 
   /**
    * Tunes used by Tool
@@ -564,6 +562,8 @@ export default class Block {
     const wrapper = $.make('div', Block.CSS.wrapper) as HTMLDivElement,
       contentNode = $.make('div', Block.CSS.content),
       pluginsContent = this.tool.render();
+
+    this.pluginsContent = pluginsContent;
 
     contentNode.appendChild(pluginsContent);
     wrapper.appendChild(contentNode);

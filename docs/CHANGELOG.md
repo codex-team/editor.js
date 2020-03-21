@@ -1,5 +1,11 @@
 # Changelog
 
+### 2.18
+
+- `New` — Block API that allows you to access certain Block properties and methods
+
+>  *Breaking changes* `blocks.getBlockByIndex` method now returns BlockAPI object. To access old value, use BlockAPI.holder property
+
 ### 2.17
 
 - `Improvements` - Editor's [onchange callback](https://editorjs.io/configuration#editor-modifications-callback) now accepts an API as a parameter

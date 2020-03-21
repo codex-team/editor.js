@@ -49,6 +49,7 @@ export {
 export {BlockTune, BlockTuneConstructable} from './block-tunes';
 export {EditorConfig, SanitizerConfig, PasteConfig, LogLevels, ConversionConfig} from './configs';
 export {OutputData} from './data-formats/output-data';
+export { BlockAPI } from './api';
 
 /**
  * We have a namespace API {@link ./api/index.d.ts} (APIMethods) but we can not use it as interface

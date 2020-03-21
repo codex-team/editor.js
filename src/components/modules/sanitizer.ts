@@ -37,6 +37,7 @@ import * as _ from '../utils';
 
 import HTMLJanitor from 'html-janitor';
 import {BlockToolData, InlineToolConstructable, SanitizerConfig} from '../../../types';
+import {SavedData} from '../../types-internal/block-data';
 
 export default class Sanitizer extends Module {
   /**
@@ -54,11 +55,11 @@ export default class Sanitizer extends Module {
    *
    * Enumerate blocks and clean data
    *
-   * @param {{tool, data: BlockToolData}[]} blocksData[]
+   * @param {Array<Omit<SavedData, 'time'>>} blocksData[]
    */
   public sanitizeBlocks(
-    blocksData: Array<{tool: string, data: BlockToolData}>,
-  ): Array<{tool: string, data: BlockToolData}> {
+    blocksData: Array<Omit<SavedData, 'time'>>,
+  ): Array<Omit<SavedData, 'time'>> {
 
     return blocksData.map((block) => {
       const toolConfig = this.composeToolConfig(block.tool);

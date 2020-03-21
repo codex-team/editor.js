@@ -10,6 +10,7 @@ import {
   PasteEventDetail,
 } from '../../../types';
 import Block from '../block';
+import {SavedData} from '../../types-internal/block-data';
 
 /**
  * Tag substitute object.
@@ -709,11 +710,11 @@ export default class Paste extends Module {
   /**
    * Insert data passed as application/x-editor-js JSON
    *
-   * @param {object} blocks — Blocks' data to insert
+   * @param {Array<Omit<SavedData, 'time'>>} blocks — Blocks' data to insert
    *
    * @return {void}
    */
-  private insertEditorJSData(blocks: Array<{tool: string, data: BlockToolData}>): void {
+  private insertEditorJSData(blocks: Array<Omit<SavedData, 'time'>>): void {
     const { BlockManager, Tools } = this.Editor;
 
     blocks.forEach(({ tool, data }, i) => {

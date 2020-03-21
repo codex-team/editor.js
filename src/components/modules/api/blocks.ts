@@ -1,8 +1,9 @@
 import Module from '../../__module';
 
-import {Blocks} from '../../../../types/api';
+import {BlockAPI as BlockAPIInterface, Blocks} from '../../../../types/api';
 import {BlockToolData, OutputData, ToolConfig} from '../../../../types';
 import * as _ from './../../utils';
+import BlockAPI from '../../block/api';
 
 /**
  * @class BlocksAPI
@@ -52,9 +53,10 @@ export default class BlocksAPI extends Module {
    *
    * @return {HTMLElement}
    */
-  public getBlockByIndex(index: number): HTMLElement {
+  public getBlockByIndex(index: number): BlockAPIInterface {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
-    return block.holder;
+
+    return new BlockAPI(block);
   }
 
   /**
@@ -142,6 +144,8 @@ export default class BlocksAPI extends Module {
    * Stretch Block's content
    * @param {number} index
    * @param {boolean} status - true to enable, false to disable
+   *
+   * @deprecated Use BlockAPI interface to stretch Blocks
    */
   public stretchBlock(index: number, status: boolean = true): void {
     const block = this.Editor.BlockManager.getBlockByIndex(index);
