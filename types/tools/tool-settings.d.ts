@@ -1,5 +1,6 @@
 import {ToolConfig} from './tool-config';
 import {ToolConstructable} from './index';
+import {BlockTune, BlockTuneConstructable} from "../block-tunes";
 
 /**
  * Tool's Toolbox settings
@@ -46,4 +47,9 @@ export interface ToolSettings {
    * Tool's Toolbox settings
    */
   toolbox?: ToolboxConfig;
+
+  /**
+   * Tool's Tunes constructors
+   */
+  tunes?: BlockTuneConstructable[];
 }

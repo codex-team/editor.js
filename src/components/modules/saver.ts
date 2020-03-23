@@ -7,7 +7,7 @@
  */
 import Module from '../__module';
 import {OutputData} from '../../../types';
-import {ValidatedData} from '../../types-internal/block-data';
+import {SavedData, ValidatedData} from '../../types-internal/block-data';
 import Block from '../block';
 import * as _ from '../utils';
 
@@ -70,7 +70,7 @@ export default class Saver extends Module {
 
     _.log('[Editor.js saving]:', 'groupCollapsed');
 
-    allExtractedData.forEach(({tool, data, time, isValid}) => {
+    allExtractedData.forEach(({tool, data, time, isValid, tunes}) => {
       totalTime += time;
 
       /**
@@ -94,10 +94,18 @@ export default class Saver extends Module {
         return;
       }
 
-      blocks.push({
+      const savedData: any = {
         type: tool,
         data,
-      });
+      };
+
+      console.log(Object.keys(tunes).length);
+
+      if (Object.keys(tunes).length) {
+        savedData.tunes = tunes;
+      }
+
+      blocks.push(savedData);
     });
 
     _.log('Total', 'log', totalTime);

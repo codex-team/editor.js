@@ -304,38 +304,6 @@ export default class Tools extends Module {
   }
 
   /**
-   * Return Tool`s instance
-   *
-   * @param {String} tool — tool name
-   * @param {BlockToolData} data — initial data
-   * @return {BlockTool}
-   */
-  public construct(tool, data) {
-    const plugin = this.toolsClasses[tool];
-
-    /**
-     * Configuration to be passed to the Tool's constructor
-     */
-    const config = this.toolsSettings[tool][this.USER_SETTINGS.CONFIG] || {};
-
-    // Pass placeholder to initial Block config
-    if (tool === this.config.initialBlock && !config.placeholder) {
-      config.placeholder = this.config.placeholder;
-    }
-
-    /**
-     * @type {{api: API, config: ({}), data: BlockToolData}}
-     */
-    const constructorOptions = {
-      api: this.Editor.API.methods,
-      config,
-      data,
-    };
-
-    return new plugin(constructorOptions);
-  }
-
-  /**
    * Return Inline Tool's instance
    *
    * @param {InlineTool} tool

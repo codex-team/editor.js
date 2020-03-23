@@ -519,3 +519,14 @@ export function getValidUrl(url: string): string {
 export function openTab(url: string): void {
   window.open(url, '_blank');
 }
+
+/**
+ * Convert CamelCase string to kebab-case
+ *
+ * @param {string} value — string to convert
+ *
+ * @return {string}
+ */
+export function camelCaseToKebab(value: string): string {
+  return value.replace(/(?!^)([A-Z])/g, '-$1').toLowerCase();
+}

@@ -6,7 +6,7 @@ import {
   BlockTune,
   BlockTuneConstructable,
   SanitizerConfig,
-  ToolConfig,
+  ToolSettings,
 } from '../../../types';
 
 import {SavedData} from '../../types-internal/block-data';
@@ -27,6 +27,8 @@ import MoveUpTune from '../block-tunes/block-tune-move-up';
 import DeleteTune from '../block-tunes/block-tune-delete';
 import MoveDownTune from '../block-tunes/block-tune-move-down';
 import SelectionUtils from '../selection';
+import BlockAPI from './api';
+import {BlockAPI as BlockAPIInterface, BlockTuneData} from '../../../types';
 
 /**
  * Available Block Tool API methods
@@ -44,6 +46,38 @@ export enum BlockToolAPI {
   ON_PASTE = 'onPaste',
 }
 
+export interface BlockOptions {
+  /**
+   * @property {String} toolName - Tool name that passed on initialization
+   */
+  toolName: string;
+
+  /**
+   * @property {BlockToolConstructable} Tool — Tool class
+   */
+  Tool: BlockToolConstructable;
+
+  /**
+   * @property {ToolSettings} settings - Tool settings passed to initial config
+   */
+  settings: ToolSettings;
+
+  /**
+   * @property {BlockToolData} data — Block's data
+   */
+  data: BlockToolData;
+
+  /**
+   * @property {object} tunesData - tunes data related to Block
+   */
+  tunesData: {[name: string]: BlockTuneData};
+
+  /**
+   * @property {API} api — Editor's API methods
+   */
+  api: API;
+}
+
 /**
  * @classdesc Abstract Block class that contains Block information, Tool name and Tool class instance
  *
@@ -51,6 +85,8 @@ export enum BlockToolAPI {
  * @property html - Returns HTML content of plugin
  * @property holder - Div element that wraps block content with Tool's content. Has `ce-block` CSS class
  * @property pluginsContent - HTML content that returns by Tool's render function
+ *
+ * @todo Split class to several interfaces (as it is too big)
  */
 export default class Block {
 
@@ -320,7 +356,7 @@ export default class Block {
   /**
    * User Tool configuration
    */
-  public settings: ToolConfig;
+  public settings: ToolSettings;
 
   /**
    * Wrapper for Block`s content
@@ -348,6 +384,11 @@ export default class Block {
    * Editor`s API
    */
   private readonly api: API;
+
+  /**
+   * Current Block`s API
+   */
+  private readonly blockAPI: BlockAPIInterface;
 
   /**
    * Focused input index
@@ -387,31 +428,41 @@ export default class Block {
   /**
    * @constructor
    * @param {String} toolName - Tool name that passed on initialization
-   * @param {Object} toolInstance — passed Tool`s instance that rendered the Block
-   * @param {Object} toolClass — Tool's class
-   * @param {Object} settings - default settings
-   * @param {Object} apiMethods - Editor API
+   * @param {BlockToolConstructable} Tool — Tool class
+   * @param {API} api — Editor's API methods
+   * @param {ToolSettings} settings - Tool settings passed to initial config
+   * @param {object} tunesData - tunes data related to Block
+   * @param {BlockToolData} data — Block's data
    */
-  constructor(
-    toolName: string,
-    toolInstance: BlockTool,
-    toolClass: BlockToolConstructable,
-    settings: ToolConfig,
-    apiMethods: API,
-  ) {
+  constructor({
+    toolName,
+    Tool,
+    settings,
+    api,
+    tunesData,
+    data,
+  }: BlockOptions) {
     this.name = toolName;
-    this.tool = toolInstance;
-    this.class = toolClass;
+    this.class = Tool;
     this.settings = settings;
-    this.api = apiMethods;
-    this.holder = this.compose();
+    this.api = api;
+    this.blockAPI = new BlockAPI(this);
 
-    this.mutationObserver = new MutationObserver(this.didMutated);
+    this.tool = new Tool({
+      api,
+      block: this.blockAPI,
+      config: settings.config || {},
+      data,
+    });
 
     /**
      * @type {BlockTune[]}
      */
-    this.tunes = this.makeTunes();
+    this.tunes = this.makeTunes(tunesData);
+    this.holder = this.compose();
+
+    this.mutationObserver = new MutationObserver(this.didMutated);
+
   }
 
   /**
@@ -450,6 +501,14 @@ export default class Block {
   public async save(): Promise<void|SavedData> {
     const extractedBlock = await this.tool.save(this.pluginsContent as HTMLElement);
 
+    const tunesData = this.tunes.reduce((res, tune) => {
+      if (typeof tune.save === 'function') {
+        res[_.camelCaseToKebab(tune.constructor.name)] = tune.save();
+      }
+
+      return res;
+    }, {} as any);
+
     /**
      * Measuring execution time
      */
@@ -465,6 +524,7 @@ export default class Block {
           tool: this.name,
           data: finishedExtraction,
           time: measuringEnd - measuringStart,
+          tunes: tunesData,
         };
       })
       .catch((error) => {
@@ -496,14 +556,22 @@ export default class Block {
    * Each block has default tune instance that have states
    * @return {BlockTune[]}
    */
-  public makeTunes(): BlockTune[] {
-    const tunesList = [MoveUpTune, DeleteTune, MoveDownTune];
+  public makeTunes(tunesData: {[name: string]: BlockTuneData}): BlockTune[] {
+
+    /**
+     * @todo Render Block related tunes and common tunes to separate rows
+     */
+    const tunesList = (this.settings.tunes || []).concat([MoveUpTune, DeleteTune, MoveDownTune]);
 
     // Pluck tunes list and return tune instances with passed Editor API and settings
     return tunesList.map( (tune: BlockTuneConstructable) => {
+      const tuneName = tune.name;
+
       return new tune({
         api: this.api,
         settings: this.settings,
+        data: tunesData[_.camelCaseToKebab(tuneName)],
+        block: new BlockAPI(this),
       });
     });
   }
@@ -565,7 +633,15 @@ export default class Block {
 
     this.pluginsContent = pluginsContent;
 
-    contentNode.appendChild(pluginsContent);
+    const wrapped = this.tunes.reduce((res, tune) => {
+      if (typeof tune.wrap === 'function') {
+        return tune.wrap(res);
+      }
+
+      return res;
+    }, pluginsContent);
+
+    contentNode.appendChild(wrapped);
     wrapper.appendChild(contentNode);
     return wrapper;
   }

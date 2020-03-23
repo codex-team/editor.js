@@ -1,7 +1,7 @@
 import Module from '../__module';
 import * as _ from '../utils';
 import {ChainData} from '../utils';
-import {BlockToolData} from '../../../types';
+import {BlockToolData, BlockTuneData} from '../../../types';
 import {BlockToolConstructable} from '../../../types/tools';
 
 /**
@@ -66,38 +66,51 @@ export default class Renderer extends Module {
     const { Tools, BlockManager } = this.Editor;
     const tool = item.type;
     const data = item.data;
-    const settings = item.settings;
+    const tunes = item.tunes || {};
 
     if (tool in Tools.available) {
       try {
-        BlockManager.insert(tool, data, settings);
+        BlockManager.insert({tool, data, tunes});
       } catch (error) {
         _.log(`Block «${tool}» skipped because of plugins error`, 'warn', data);
         throw Error(error);
       }
     } else {
-
       /** If Tool is unavailable, create stub Block for it */
-      const stubData = {
-        savedData: {
-          type: tool,
-          data,
-        },
-        title: tool,
-      };
-
-      if (tool in Tools.unavailable) {
-        const toolToolboxSettings = (Tools.unavailable[tool] as BlockToolConstructable).toolbox;
-        const userToolboxSettings = Tools.getToolSettings(tool).toolbox;
-
-        stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
-      }
-
-      const stub = BlockManager.insert(Tools.stubTool, stubData, settings);
-
-      stub.stretched = true;
-
-      _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial Editor.js config.`, 'warn');
+      this.insertStubBlock(tool, data, tunes);
     }
+  }
+
+  /**
+   * Inserts stub block for passed tool
+   *
+   * @param {string} tool — Tool to stub
+   * @param {BlockToolData} data — Tool's data
+   * @param {object} tunes — Tunes' data
+   */
+  private insertStubBlock(tool: string, data: BlockToolData, tunes: {[name: string]: BlockTuneData}) {
+    const { BlockManager, Tools } = this.Editor;
+
+    const stubData = {
+      savedData: {
+        type: tool,
+        data,
+        tunes,
+      },
+      title: tool,
+    };
+
+    if (tool in Tools.unavailable) {
+      const toolToolboxSettings = (Tools.unavailable[tool] as BlockToolConstructable).toolbox;
+      const userToolboxSettings = Tools.getToolSettings(tool).toolbox;
+
+      stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
+    }
+
+    const stub = BlockManager.insert({tool: Tools.stubTool, data: stubData});
+
+    stub.stretched = true;
+
+    _.log(`Tool «${tool}» is not found. Check 'tools' property at your initial Editor.js config.`, 'warn');
   }
 }

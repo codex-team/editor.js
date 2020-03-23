@@ -59,6 +59,7 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/marker@latest"></script><!-- Marker -->
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/inline-code@latest"></script><!-- Inline Code -->
+  <script src="./tunes/favorite/index.js"></script><!-- Inline Code -->
 
   <!-- Load Editor.js's Core -->
   <script src="../dist/editor.js"></script>
@@ -93,7 +94,8 @@
           config: {
             placeholder: 'Header'
           },
-          shortcut: 'CMD+SHIFT+H'
+          shortcut: 'CMD+SHIFT+H',
+          tunes: [FavoriteTune],
         },
 
         /**
@@ -168,6 +170,9 @@
             data: {
               text: "Editor.js",
               level: 2
+            },
+            tunes : {
+              'favorite-tune': true,
             }
           },
           {

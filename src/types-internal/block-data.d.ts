@@ -1,4 +1,5 @@
 import {BlockToolData} from '../../types/tools';
+import {BlockTuneData} from '../../types/block-tunes';
 
 /**
  * Tool's saved data
@@ -7,6 +8,7 @@ export interface SavedData {
     tool: string;
     data: BlockToolData;
     time: number;
+    tunes?: {[name: string]: BlockTuneData};
 }
 
 /**

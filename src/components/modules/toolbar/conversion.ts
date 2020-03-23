@@ -225,7 +225,7 @@ export default class ConversionToolbar extends Module {
       return;
     }
 
-    this.Editor.BlockManager.replace(replacingToolName, newBlockData);
+    this.Editor.BlockManager.replace({tool: replacingToolName, data: newBlockData});
     this.Editor.BlockSelection.clearSelection();
 
     this.close();

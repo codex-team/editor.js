@@ -11,7 +11,7 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import Blocks from '../blocks';
-import {BlockTool, BlockToolConstructable, BlockToolData, PasteEvent, ToolConfig} from '../../../types';
+import {BlockToolConstructable, BlockToolData, BlockTuneData, PasteEvent, ToolConfig} from '../../../types';
 
 /**
  * @typedef {BlockManager} BlockManager
@@ -200,15 +200,35 @@ export default class BlockManager extends Module {
    * Creates Block instance by tool name
    *
    * @param {String} toolName - tools passed in editor config {@link EditorConfig#tools}
-   * @param {Object} data - constructor params
-   * @param {Object} settings - block settings
+   * @param {Object} data - block data
+   * @param {Object} tunes - block tunes data
    *
    * @return {Block}
    */
-  public composeBlock(toolName: string, data: BlockToolData = {}, settings: ToolConfig = {}): Block {
-    const toolInstance = this.Editor.Tools.construct(toolName, data) as BlockTool;
-    const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
-    const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
+  public composeBlock({
+    tool,
+    data = {},
+    tunes = {},
+  }: {
+    tool: string,
+    data?: BlockToolData,
+    tunes?: {[name: string]: BlockTuneData},
+  }): Block {
+    const { Tools, API } = this.Editor;
+
+    const Tool = Tools.available[tool] as BlockToolConstructable;
+    const settings = Tools.getToolSettings(tool);
+
+    const constructorOptions = {
+      toolName: tool,
+      Tool,
+      settings,
+      data,
+      tunesData: tunes,
+      api: API.methods,
+    };
+
+    const block = new Block(constructorOptions);
 
     this.bindEvents(block);
 
@@ -220,54 +240,79 @@ export default class BlockManager extends Module {
    *
    * @param {String} toolName — plugin name, by default method inserts initial block type
    * @param {Object} data — plugin data
-   * @param {Object} settings - default settings
    * @param {number} index - index where to insert new Block
    * @param {boolean} needToFocus - flag shows if needed to update current Block index
+   * @param {boolean} replace - flag shows if needed to replace Block by index
    *
    * @return {Block}
    */
-  public insert(
-    toolName: string = this.config.initialBlock,
-    data: BlockToolData = {},
-    settings: ToolConfig = {},
-    index: number = this.currentBlockIndex + 1,
-    needToFocus: boolean = true,
-  ): Block {
-    const block = this.composeBlock(toolName, data, settings);
+  public insert({
+    tool = this.config.initialBlock,
+    data = {},
+    tunes    = {},
+    index = this.currentBlockIndex + 1,
+    needToFocus = true,
+    replace = false,
+  }: {
+    tool?: string,
+    data?: BlockToolData,
+    tunes?: {[name: string]: BlockTuneData},
+    index?: number,
+    needToFocus?: boolean,
+    replace?: boolean,
+  } = {}): Block {
+    const block = this.composeBlock({tool, data, tunes});
 
-    this._blocks[index] = block;
+    this._blocks.insert(index, block, replace);
 
     if (needToFocus) {
       this.currentBlockIndex = index;
+    } else if (index <= this.currentBlockIndex) {
+      this.currentBlockIndex++;
     }
 
     return block;
   }
 
   /**
+   * Replace current working block
+   *
+   * @param {String} toolName — plugin name
+   * @param {BlockToolData} data — plugin data
+   * @param {ToolConfig} settings — plugin config
+   *
+   * @return {Block}
+   */
+  public replace({
+   tool = this.config.initialBlock,
+   data = {},
+  }): Block {
+    return this.insert({
+      tool,
+      data,
+      index: this.currentBlockIndex,
+      replace: true,
+    });
+  }
+
+  /**
    * Insert pasted content. Call onPaste callback after insert.
    *
-   * @param {string} toolName
+   * @param {string} tool - tool name
    * @param {PasteEvent} pasteEvent - pasted data
    * @param {boolean} replace - should replace current block
    */
   public paste(
-    toolName: string,
+    tool: string,
     pasteEvent: PasteEvent,
     replace: boolean = false,
   ): Block {
-    let block;
-
-    if (replace) {
-      block = this.replace(toolName);
-    } else {
-      block = this.insert(toolName);
-    }
+    const block = this.insert({tool, replace});
 
     try {
       block.call(BlockToolAPI.ON_PASTE, pasteEvent);
     } catch (e) {
-      _.log(`${toolName}: onPaste callback call is failed`, 'error', e);
+      _.log(`${tool}: onPaste callback call is failed`, 'error', e);
     }
     return block;
   }
@@ -283,17 +328,7 @@ export default class BlockManager extends Module {
    * @return {Block} inserted Block
    */
   public insertInitialBlockAtIndex(index: number, needToFocus: boolean = false) {
-    const block = this.composeBlock(this.config.initialBlock, {}, {});
-
-    this._blocks[index] = block;
-
-    if (needToFocus) {
-      this.currentBlockIndex = index;
-    } else if (index <= this.currentBlockIndex) {
-      this.currentBlockIndex++;
-    }
-
-    return block;
+    return this.insert({index, needToFocus});
   }
 
   /**
@@ -424,28 +459,7 @@ export default class BlockManager extends Module {
      * Renew current Block
      * @type {Block}
      */
-    return this.insert(this.config.initialBlock, data);
-  }
-
-  /**
-   * Replace current working block
-   *
-   * @param {String} toolName — plugin name
-   * @param {BlockToolData} data — plugin data
-   * @param {ToolConfig} settings — plugin config
-   *
-   * @return {Block}
-   */
-  public replace(
-    toolName: string = this.config.initialBlock,
-    data: BlockToolData = {},
-    settings: ToolConfig = {},
-  ): Block {
-    const block = this.composeBlock(toolName, data, settings);
-
-    this._blocks.insert(this.currentBlockIndex, block, true);
-
-    return block;
+    return this.insert({ data });
   }
 
   /**
@@ -504,7 +518,6 @@ export default class BlockManager extends Module {
    * 2) Mark it as current
    *
    *  @param {Node} childNode - look ahead from this node.
-   *  @param {string} caretPosition - position where to set caret
    *  @throws Error  - when passed Node is not included at the Block
    */
   public setCurrentBlockByChildNode(childNode: Node): Block {
@@ -606,7 +619,7 @@ export default class BlockManager extends Module {
     this.dropPointer();
 
     if (needAddInitialBlock) {
-      this.insert(this.config.initialBlock);
+      this.insert();
     }
 
     /**

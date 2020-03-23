@@ -2,6 +2,7 @@ import Module from '../__module';
 import $ from '../dom';
 import * as _ from '../utils';
 import {
+  BlockAPI,
   BlockTool,
   BlockToolConstructable,
   BlockToolData,
@@ -267,6 +268,7 @@ export default class Paste extends Module {
         api: this.Editor.API.methods,
         config: {},
         data: {},
+        block: {} as BlockAPI,
       }) as BlockTool;
 
       if (tool.pasteConfig === false) {
@@ -728,11 +730,7 @@ export default class Paste extends Module {
         needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
       }
 
-      if (needToReplaceCurrentBlock) {
-        BlockManager.replace(tool, data, settings);
-      } else {
-        BlockManager.insert(tool, data, settings);
-      }
+      BlockManager.insert({tool, data, replace: needToReplaceCurrentBlock});
     });
   }
 
