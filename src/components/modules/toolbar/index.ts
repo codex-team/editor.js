@@ -117,7 +117,7 @@ export default class Toolbar extends Module {
     $.append(this.nodes.plusButton, $.svg('plus', 14, 14));
     $.append(this.nodes.content, this.nodes.plusButton);
 
-    this.Editor.Listeners.on(this.nodes.plusButton, 'click', () => this.plusButtonClicked(), false);
+    this.Editor.Listeners.on(this.nodes.plusButton, 'click', this.plusButtonClicked, false);
 
     /**
      * Add events to show/hide tooltip for plus button
@@ -291,7 +291,7 @@ export default class Toolbar extends Module {
    * Handler for Plus Button
    * @param {MouseEvent} event
    */
-  private plusButtonClicked(): void {
+  private plusButtonClicked = (): void => {
     this.Editor.Toolbox.toggle();
   }
 
@@ -303,13 +303,13 @@ export default class Toolbar extends Module {
     /**
      * Settings toggler
      */
-    this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', () => this.settingsTogglerClicked());
+    this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', this.settingsTogglerClicked);
   }
 
   /**
    * Clicks on the Block Settings toggler
    */
-  private settingsTogglerClicked(): void {
+  private settingsTogglerClicked = (): void => {
     if (this.Editor.BlockSettings.opened) {
       this.Editor.BlockSettings.close();
     } else {

@@ -12,7 +12,7 @@ export default class BlockEvents extends Module {
    * All keydowns on Block
    * @param {KeyboardEvent} event - keydown
    */
-  public keydown(event: KeyboardEvent): void {
+  public keydown = (event: KeyboardEvent): void => {
     /**
      * Run common method for all keydown events
      */
@@ -93,7 +93,7 @@ export default class BlockEvents extends Module {
    * - shows Inline Toolbar if something selected
    * - shows conversion toolbar with 85% of block selection
    */
-  public keyup(event): void {
+  public keyup = (event): void => {
 
     /**
      * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
@@ -111,7 +111,7 @@ export default class BlockEvents extends Module {
   /**
    * Mouse up on Block:
    */
-  public mouseUp(): void {
+  public mouseUp = (): void => {
   }
 
   /**
@@ -119,7 +119,7 @@ export default class BlockEvents extends Module {
    *
    * @param {MouseEvent} event
    */
-  public mouseDown(event: MouseEvent): void {
+  public mouseDown = (event: MouseEvent): void => {
     /**
      * Each mouse down on Block must disable selectAll state
      */
@@ -190,7 +190,7 @@ export default class BlockEvents extends Module {
    *
    * @param {DragEvent} e
    */
-  public dragOver(e: DragEvent) {
+  public dragOver = (e: DragEvent): void => {
     const block = this.Editor.BlockManager.getBlockByChildNode(e.target as Node);
 
     block.dropTarget = true;
@@ -201,7 +201,7 @@ export default class BlockEvents extends Module {
    *
    * @param {DragEvent} e
    */
-  public dragLeave(e: DragEvent) {
+  public dragLeave = (e: DragEvent): void => {
     const block = this.Editor.BlockManager.getBlockByChildNode(e.target as Node);
 
     block.dropTarget = false;

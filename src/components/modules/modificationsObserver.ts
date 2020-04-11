@@ -69,13 +69,14 @@ export default class ModificationsObserver extends Module {
    */
   public toggleReadOnly(readOnlyEnabled: boolean) {
     if (readOnlyEnabled) {
-      this.destroy();
+      this.disable();
     } else {
       /**
        * wait till Browser render Editor's Blocks
        */
       window.setTimeout( () => {
         this.setObserver();
+        this.enable();
       }, 1000);
     }
   }

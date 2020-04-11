@@ -313,36 +313,17 @@ export default class UI extends Module {
    * Bind events on the Editor.js interface
    */
   private bindEvents(): void {
-    this.Editor.Listeners.on(
-      this.nodes.redactor,
-      'click',
-      (event) => this.redactorClicked(event as MouseEvent),
-      false,
-    );
-    this.Editor.Listeners.on(this.nodes.redactor,
-      'mousedown',
-      (event) => this.documentTouched(event as MouseEvent),
-      true,
-    );
-    this.Editor.Listeners.on(this.nodes.redactor,
-      'touchstart',
-      (event) => this.documentTouched(event as MouseEvent),
-      true,
-    );
-
-    this.Editor.Listeners.on(document, 'keydown', (event) => this.documentKeydown(event as KeyboardEvent), true);
-    this.Editor.Listeners.on(document, 'click', (event) => this.documentClicked(event as MouseEvent), true);
+    this.Editor.Listeners.on(this.nodes.redactor, 'click', this.redactorClicked, false);
+    this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', this.documentTouched, true);
+    this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', this.documentTouched, true);
+    this.Editor.Listeners.on(document, 'keydown', this.documentKeydown, true);
+    this.Editor.Listeners.on(document, 'click', this.documentClicked, true);
 
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    this.Editor.Listeners.on(document, 'selectionchange', (event: Event) => {
-      this.selectionChanged(event);
-    }, true);
-
-    this.Editor.Listeners.on(window, 'resize', () => {
-      this.resizeDebouncer();
-    }, {
+    this.Editor.Listeners.on(document, 'selectionchange', this.selectionChanged, true);
+    this.Editor.Listeners.on(window, 'resize', this.windowResizeListener, {
       passive: true,
     });
   }
@@ -351,7 +332,20 @@ export default class UI extends Module {
    * Unbind events on the Editor.js interface
    */
   private unbindEvents(): void {
-    this.Editor.Listeners.removeAll();
+    this.Editor.Listeners.off(this.nodes.redactor, 'click', this.redactorClicked, false);
+    this.Editor.Listeners.off(this.nodes.redactor, 'mousedown', this.documentTouched, true);
+    this.Editor.Listeners.off(this.nodes.redactor, 'touchstart', this.documentTouched, true);
+
+    this.Editor.Listeners.off(document, 'keydown', this.documentKeydown, true);
+    this.Editor.Listeners.off(document, 'click', this.documentClicked, true);
+
+    /**
+     * Handle selection change to manipulate Inline Toolbar appearance
+     */
+    this.Editor.Listeners.off(document, 'selectionchange', this.selectionChanged, true);
+    this.Editor.Listeners.off(window, 'resize', this.windowResizeListener, {
+      passive: true,
+    });
   }
 
   /**
@@ -373,7 +367,7 @@ export default class UI extends Module {
    * All keydowns on document
    * @param {Event} event
    */
-  private documentKeydown(event: KeyboardEvent): void {
+  private documentKeydown = (event: KeyboardEvent): void => {
     switch (event.keyCode) {
       case _.keyCodes.ENTER:
         this.enterPressed(event);
@@ -498,7 +492,7 @@ export default class UI extends Module {
    * All clicks on document
    * @param {MouseEvent} event - Click
    */
-  private documentClicked(event: MouseEvent): void {
+  private documentClicked = (event: MouseEvent): void => {
     /**
      * Sometimes we emulate click on some UI elements, for example by Enter on Block Settings button
      * We don't need to handle such events, because they handled in other place.
@@ -550,7 +544,7 @@ export default class UI extends Module {
    * - Move and show the Toolbar
    * - Set a Caret
    */
-  private documentTouched(event: MouseEvent | TouchEvent): void {
+  private documentTouched = (event: MouseEvent | TouchEvent): void => {
     let clickedNode = event.target as HTMLElement;
 
     /**
@@ -606,7 +600,7 @@ export default class UI extends Module {
    *      - if last Block is empty, set a Caret to this
    *      - otherwise, add a new empty Block and set a Caret to that
    */
-  private redactorClicked(event: MouseEvent): void {
+  private redactorClicked = (event: MouseEvent) => {
     if (!Selection.isCollapsed) {
       return;
     }
@@ -642,7 +636,7 @@ export default class UI extends Module {
    * Uses for showing the Inline Toolbar
    * @param {Event} event
    */
-  private selectionChanged(event: Event): void {
+  private selectionChanged = (event: Event): void => {
     const focusedElement = Selection.anchorElement as Element;
 
     /**
@@ -676,4 +670,9 @@ export default class UI extends Module {
 
     $.append(this.nodes.wrapper, spriteHolder);
   }
+
+  /**
+   * Window resize listener
+   */
+  private windowResizeListener = () => this.resizeDebouncer();
 }

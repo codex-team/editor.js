@@ -105,37 +105,10 @@ export default class RectangleSelection extends Module {
    * @param {boolean} readOnlyEnabled
    */
   public toggleReadOnly(readOnlyEnabled: boolean) {
-    const {Listeners} = this.Editor;
-
-    if (readOnlyEnabled) {
-      Listeners.removeAll();
+    if (!readOnlyEnabled) {
+      this.bindEvents();
     } else {
-      const {container} = this.genHTML();
-
-      Listeners.on(container, 'mousedown', (event: MouseEvent) => {
-        if (event.button !== this.MAIN_MOUSE_BUTTON) {
-          return;
-        }
-        this.startSelection(event.pageX, event.pageY);
-      }, false);
-
-      Listeners.on(document.body, 'mousemove', (event: MouseEvent) => {
-        this.changingRectangle(event);
-        this.scrollByZones(event.clientY);
-      }, false);
-
-      Listeners.on(document.body, 'mouseleave', () => {
-        this.clearSelection();
-        this.endSelection();
-      });
-
-      Listeners.on(window, 'scroll', (event) => {
-        this.changingRectangle(event);
-      }, false);
-
-      Listeners.on(document.body, 'mouseup', () => {
-        this.endSelection();
-      }, false);
+      this.unbindEvents();
     }
   }
 
@@ -194,6 +167,70 @@ export default class RectangleSelection extends Module {
    */
   public clearSelection() {
     this.isRectSelectionActivated = false;
+  }
+
+  private bindEvents(): void {
+    const {Listeners} = this.Editor;
+    const {container} = this.genHTML();
+
+    Listeners.on(container, 'mousedown', this.processMouseDown, false);
+    Listeners.on(document.body, 'mousemove', this.processMouseMove, false);
+    Listeners.on(document.body, 'mouseleave', this.processMouseLeave);
+    Listeners.on(window, 'scroll', this.processScroll, false);
+    Listeners.on(document.body, 'mouseup', this.processMouseUp, false);
+  }
+
+  private unbindEvents(): void {
+    const {Listeners} = this.Editor;
+    const {container} = this.genHTML();
+
+    Listeners.off(container, 'mousedown', this.processMouseDown, false);
+    Listeners.off(document.body, 'mousemove', this.processMouseMove, false);
+    Listeners.off(document.body, 'mouseleave', this.processMouseLeave);
+    Listeners.off(window, 'scroll', this.processScroll, false);
+    Listeners.off(document.body, 'mouseup', this.processMouseUp, false);
+  }
+
+  /**
+   * Handle mouse down events
+   * @param {MouseEvent} mouseEvent
+   */
+  private processMouseDown = (mouseEvent: MouseEvent): void => {
+    if (mouseEvent.button !== this.MAIN_MOUSE_BUTTON) {
+      return;
+    }
+    this.startSelection(mouseEvent.pageX, mouseEvent.pageY);
+  }
+
+  /**
+   * Handle mouse move events
+   * @param {MouseEvent} mouseEvent
+   */
+  private processMouseMove = (mouseEvent: MouseEvent): void => {
+    this.changingRectangle(mouseEvent);
+    this.scrollByZones(mouseEvent.clientY);
+  }
+
+  /**
+   * Handle mouse leave
+   */
+  private processMouseLeave = (): void => {
+    this.clearSelection();
+    this.endSelection();
+  }
+
+  /**
+   * @param {MouseEvent} mouseEvent
+   */
+  private processScroll = (mouseEvent: MouseEvent): void => {
+    this.changingRectangle(mouseEvent);
+  }
+
+  /**
+   * Handle mouse up
+   */
+  private processMouseUp = (): void => {
+    this.endSelection();
   }
 
   /**
@@ -259,7 +296,7 @@ export default class RectangleSelection extends Module {
    * Handles the change in the rectangle and its effect
    * @param {MouseEvent} event
    */
-  private changingRectangle(event) {
+  private changingRectangle(event: MouseEvent) {
     if (!this.mousedown) {
       return;
     }

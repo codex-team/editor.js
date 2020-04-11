@@ -83,7 +83,7 @@
      * Saving button
      */
     const saveButton = document.getElementById('saveButton');
-    
+
     /**
      * Toggle read-only button
      */
@@ -94,7 +94,11 @@
      * @see docs/installation.md for mode details
      */
     var editor = new EditorJS({
-      readOnly: true,
+      /**
+       * Enable read only
+       */
+
+      readOnly: false,
       /**
        * Wrapper of Editor
        */
@@ -301,7 +305,7 @@
         cPreview.show(savedData, document.getElementById("output"));
       });
     });
-    
+
     /**
      * Toggle read-only example
      */

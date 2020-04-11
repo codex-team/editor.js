@@ -27,7 +27,7 @@ export default class DragNDrop extends Module {
    */
   public toggleReadOnly(readOnlyEnabled: boolean) {
     if (readOnlyEnabled) {
-      this.Editor.Listeners.removeAll();
+      this.unbindEvents();
     } else {
       this.bindEvents();
     }
@@ -39,18 +39,19 @@ export default class DragNDrop extends Module {
    */
   private bindEvents(): void {
     this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
-
-    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', (dragEvent: DragEvent) => {
-
-      if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed) {
-        this.isStartedAtEditor = true;
-      }
-
-      this.Editor.InlineToolbar.close();
-    });
+    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', this.processDragStart);
 
     /* Prevent default browser behavior to allow drop on non-contenteditable elements */
-    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', (e) => e.preventDefault(), true);
+    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', this.processDragOver, true);
+  }
+
+  /**
+   * Unbind drag events
+   */
+  private unbindEvents(): void {
+    this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
+    this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'dragstart', this.processDragStart);
+    this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'dragover', this.processDragOver, true);
   }
 
   /**
@@ -90,5 +91,23 @@ export default class DragNDrop extends Module {
     }
 
     Paste.processDataTransfer(dropEvent.dataTransfer, true);
+  }
+
+  /**
+   * Handle drag start event
+   */
+  private processDragStart = (): void => {
+    if (SelectionUtils.isAtEditor && !SelectionUtils.isCollapsed) {
+      this.isStartedAtEditor = true;
+    }
+
+    this.Editor.InlineToolbar.close();
+  }
+
+  /**
+   * @param {DragEvent} dragEvent
+   */
+  private processDragOver = (dragEvent: DragEvent): void => {
+    dragEvent.preventDefault();
   }
 }

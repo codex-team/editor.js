@@ -140,17 +140,17 @@ export default class Paste extends Module {
    * @param {boolean} readOnlyEnabled
    */
   public toggleReadOnly(readOnlyEnabled: boolean) {
-    if (readOnlyEnabled) {
-      this.Editor.Listeners.removeAll();
+    if (!readOnlyEnabled) {
+      this.processTools();
+      this.setCallback();
+    } else {
+      this.unsetCallback();
 
       this.toolsTags = {};
       this.tagsByTool = {};
       this.toolsPatterns = [];
       this.toolsFiles = {};
       this.exceptionList = [];
-    } else {
-      this.processTools();
-      this.setCallback();
     }
   }
 
@@ -246,6 +246,15 @@ export default class Paste extends Module {
     const {Listeners} = this.Editor;
 
     Listeners.on(document, 'paste', this.handlePasteEvent);
+  }
+
+  /**
+   * Unset onPaste callback handler
+   */
+  private unsetCallback(): void {
+    const {Listeners} = this.Editor;
+
+    Listeners.off(document, 'paste', this.handlePasteEvent);
   }
 
   /**

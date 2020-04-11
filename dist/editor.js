@@ -1250,7 +1250,7 @@ module.exports = function (NAME, wrapper, methods, common, IS_MAP, IS_WEAK) {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-var core = module.exports = { version: '2.6.11' };
+var core = module.exports = { version: '2.6.10' };
 if (typeof __e == 'number') __e = core; // eslint-disable-line no-undef
 
 
@@ -9254,53 +9254,6 @@ module.exports = _assertThisInitialized;
 
 /***/ }),
 
-/***/ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js":
-/*!*****************************************************************!*\
-  !*** ./node_modules/@babel/runtime/helpers/asyncToGenerator.js ***!
-  \*****************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports) {
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) {
-  try {
-    var info = gen[key](arg);
-    var value = info.value;
-  } catch (error) {
-    reject(error);
-    return;
-  }
-
-  if (info.done) {
-    resolve(value);
-  } else {
-    Promise.resolve(value).then(_next, _throw);
-  }
-}
-
-function _asyncToGenerator(fn) {
-  return function () {
-    var self = this,
-        args = arguments;
-    return new Promise(function (resolve, reject) {
-      var gen = fn.apply(self, args);
-
-      function _next(value) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value);
-      }
-
-      function _throw(err) {
-        asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err);
-      }
-
-      _next(undefined);
-    });
-  };
-}
-
-module.exports = _asyncToGenerator;
-
-/***/ }),
-
 /***/ "./node_modules/@babel/runtime/helpers/classCallCheck.js":
 /*!***************************************************************!*\
   !*** ./node_modules/@babel/runtime/helpers/classCallCheck.js ***!
@@ -9441,7 +9394,7 @@ module.exports = _interopRequireDefault;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _typeof = __webpack_require__(/*! ../helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
+var _typeof = __webpack_require__(/*! ../helpers/typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js");
 
 function _getRequireWildcardCache() {
   if (typeof WeakMap !== "function") return null;
@@ -9592,7 +9545,7 @@ module.exports = _nonIterableSpread;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-var _typeof = __webpack_require__(/*! ../helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js");
+var _typeof = __webpack_require__(/*! ../helpers/typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js");
 
 var assertThisInitialized = __webpack_require__(/*! ./assertThisInitialized */ "./node_modules/@babel/runtime/helpers/assertThisInitialized.js");
 
@@ -9678,8 +9631,6 @@ module.exports = _toConsumableArray;
 /***/ (function(module, exports) {
 
 function _typeof(obj) {
-  "@babel/helpers - typeof";
-
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     module.exports = _typeof = function _typeof(obj) {
       return typeof obj;
@@ -10701,7 +10652,7 @@ try {
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/register */ "./node_modules/@babel/register/lib/index.js"), __webpack_require__(/*! components/polyfills */ "./src/components/polyfills.ts"), __webpack_require__(/*! ./components/core */ "./src/components/core.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray.js */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/register */ "./node_modules/@babel/register/lib/index.js"), __webpack_require__(/*! components/polyfills */ "./src/components/polyfills.ts"), __webpack_require__(/*! ./components/core */ "./src/components/core.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -10712,7 +10663,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * Apply polyfills
    */
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -10869,7 +10820,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -10877,7 +10828,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -10943,7 +10894,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -10951,7 +10902,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -11085,7 +11036,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -11093,7 +11044,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -11216,7 +11167,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -11224,7 +11175,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -11357,25 +11308,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js"), __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts"), __webpack_require__(/*! ./block-tunes/block-tune-move-up */ "./src/components/block-tunes/block-tune-move-up.ts"), __webpack_require__(/*! ./block-tunes/block-tune-delete */ "./src/components/block-tunes/block-tune-delete.ts"), __webpack_require__(/*! ./block-tunes/block-tune-move-down */ "./src/components/block-tunes/block-tune-move-down.ts"), __webpack_require__(/*! ./selection */ "./src/components/selection.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray.js */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js"), __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts"), __webpack_require__(/*! ./block-tunes/block-tune-move-up */ "./src/components/block-tunes/block-tune-move-up.ts"), __webpack_require__(/*! ./block-tunes/block-tune-delete */ "./src/components/block-tunes/block-tune-delete.ts"), __webpack_require__(/*! ./block-tunes/block-tune-move-down */ "./src/components/block-tunes/block-tune-move-down.ts"), __webpack_require__(/*! ./selection */ "./src/components/selection.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _toConsumableArray2, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _dom, _, _blockTuneMoveUp, _blockTuneDelete, _blockTuneMoveDown, _selection) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _toConsumableArray2, _index, _classCallCheck2, _createClass2, _dom, _, _blockTuneMoveUp, _blockTuneDelete, _blockTuneMoveDown, _selection) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports["default"] = _exports.BlockToolAPI = void 0;
   _toConsumableArray2 = _interopRequireDefault(_toConsumableArray2);
-  _regenerator = _interopRequireDefault(_regenerator);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _dom = _interopRequireDefault(_dom);
@@ -11522,31 +11472,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "mergeWith",
-      value: function () {
-        var _mergeWith = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee(data) {
-          return _regenerator["default"].wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  _context.next = 2;
-                  return this.tool.merge(data);
+      value: function mergeWith(data) {
+        return _index["default"].async(function mergeWith$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return _index["default"].awrap(this.tool.merge(data));
 
-                case 2:
-                case "end":
-                  return _context.stop();
-              }
+              case 2:
+              case "end":
+                return _context.stop();
             }
-          }, _callee, this);
-        }));
-
-        function mergeWith(_x) {
-          return _mergeWith.apply(this, arguments);
-        }
-
-        return mergeWith;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Extracts data from Block
        * Groups Tool's save processing time
@@ -11555,53 +11495,43 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "save",
-      value: function () {
-        var _save = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee2() {
-          var _this2 = this;
+      value: function save() {
+        var _this2 = this;
 
-          var extractedBlock, measuringStart, measuringEnd;
-          return _regenerator["default"].wrap(function _callee2$(_context2) {
-            while (1) {
-              switch (_context2.prev = _context2.next) {
-                case 0:
-                  _context2.next = 2;
-                  return this.tool.save(this.pluginsContent);
+        var extractedBlock, measuringStart, measuringEnd;
+        return _index["default"].async(function save$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return _index["default"].awrap(this.tool.save(this.pluginsContent));
 
-                case 2:
-                  extractedBlock = _context2.sent;
+              case 2:
+                extractedBlock = _context2.sent;
 
-                  /**
-                   * Measuring execution time
-                   */
-                  measuringStart = window.performance.now();
-                  return _context2.abrupt("return", Promise.resolve(extractedBlock).then(function (finishedExtraction) {
-                    /** measure promise execution */
-                    measuringEnd = window.performance.now();
-                    return {
-                      tool: _this2.name,
-                      data: finishedExtraction,
-                      time: measuringEnd - measuringStart
-                    };
-                  })["catch"](function (error) {
-                    _.log("Saving proccess for ".concat(_this2.name, " tool failed due to the ").concat(error), 'log', 'red');
-                  }));
+                /**
+                 * Measuring execution time
+                 */
+                measuringStart = window.performance.now();
+                return _context2.abrupt("return", Promise.resolve(extractedBlock).then(function (finishedExtraction) {
+                  /** measure promise execution */
+                  measuringEnd = window.performance.now();
+                  return {
+                    tool: _this2.name,
+                    data: finishedExtraction,
+                    time: measuringEnd - measuringStart
+                  };
+                })["catch"](function (error) {
+                  _.log("Saving proccess for ".concat(_this2.name, " tool failed due to the ").concat(error), 'log', 'red');
+                }));
 
-                case 5:
-                case "end":
-                  return _context2.stop();
-              }
+              case 5:
+              case "end":
+                return _context2.stop();
             }
-          }, _callee2, this);
-        }));
-
-        function save() {
-          return _save.apply(this, arguments);
-        }
-
-        return save;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Uses Tool's validation method to check the correctness of output data
        * Tool's validation method is optional
@@ -11614,45 +11544,35 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "validate",
-      value: function () {
-        var _validate = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee3(data) {
-          var isValid;
-          return _regenerator["default"].wrap(function _callee3$(_context3) {
-            while (1) {
-              switch (_context3.prev = _context3.next) {
-                case 0:
-                  isValid = true;
+      value: function validate(data) {
+        var isValid;
+        return _index["default"].async(function validate$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                isValid = true;
 
-                  if (!(this.tool.validate instanceof Function)) {
-                    _context3.next = 5;
-                    break;
-                  }
+                if (!(this.tool.validate instanceof Function)) {
+                  _context3.next = 5;
+                  break;
+                }
 
-                  _context3.next = 4;
-                  return this.tool.validate(data);
+                _context3.next = 4;
+                return _index["default"].awrap(this.tool.validate(data));
 
-                case 4:
-                  isValid = _context3.sent;
+              case 4:
+                isValid = _context3.sent;
 
-                case 5:
-                  return _context3.abrupt("return", isValid);
+              case 5:
+                return _context3.abrupt("return", isValid);
 
-                case 6:
-                case "end":
-                  return _context3.stop();
-              }
+              case 6:
+              case "end":
+                return _context3.stop();
             }
-          }, _callee3, this);
-        }));
-
-        function validate(_x2) {
-          return _validate.apply(this, arguments);
-        }
-
-        return validate;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Make an array with default settings
        * Each block has default tune instance that have states
@@ -12034,7 +11954,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./block */ "./src/components/block.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./block */ "./src/components/block.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -12042,9 +11962,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _, _dom, _block) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -12353,25 +12273,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _typeof2, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _dom, _) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _typeof2, _index, _classCallCheck2, _createClass2, _dom, _) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports["default"] = void 0;
   _typeof2 = _interopRequireDefault(_typeof2);
-  _regenerator = _interopRequireDefault(_regenerator);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _dom = _interopRequireDefault(_dom);
@@ -12433,43 +12352,35 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         onReady = resolve;
         onFail = reject;
       });
-      Promise.resolve().then(
-      /*#__PURE__*/
-      (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee2() {
-        return _regenerator["default"].wrap(function _callee2$(_context2) {
+      Promise.resolve().then(function _callee2() {
+        return _index["default"].async(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 _this.configuration = config;
                 _context2.next = 3;
-                return _this.validate();
+                return _index["default"].awrap(_this.validate());
 
               case 3:
                 _context2.next = 5;
-                return _this.init();
+                return _index["default"].awrap(_this.init());
 
               case 5:
                 _context2.next = 7;
-                return _this.start();
+                return _index["default"].awrap(_this.start());
 
               case 7:
                 _.logLabeled('I\'m ready! (ﾉ◕ヮ◕)ﾉ*:･ﾟ✧', 'log', '', 'color: #E24A75');
 
-                setTimeout(
-                /*#__PURE__*/
-                (0, _asyncToGenerator2["default"])(
-                /*#__PURE__*/
-                _regenerator["default"].mark(function _callee() {
+                setTimeout(function _callee() {
                   var _this$moduleInstances, BlockManager, Caret;
 
-                  return _regenerator["default"].wrap(function _callee$(_context) {
+                  return _index["default"].async(function _callee$(_context) {
                     while (1) {
                       switch (_context.prev = _context.next) {
                         case 0:
                           _context.next = 2;
-                          return _this.render();
+                          return _index["default"].awrap(_this.render());
 
                         case 2:
                           if (_this.configuration.autofocus) {
@@ -12494,16 +12405,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                           return _context.stop();
                       }
                     }
-                  }, _callee);
-                })), 500);
+                  });
+                }, 500);
 
               case 9:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2);
-      })))["catch"](function (error) {
+        });
+      })["catch"](function (error) {
         _.log("Editor.js is not ready because of ".concat(error), 'error');
         /**
          * Reject this.isReady promise
@@ -12526,55 +12437,45 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Checks for required fields in Editor's config
        * @returns {Promise<void>}
        */
-      value: function () {
-        var _validate = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee3() {
-          var _this$config, holderId, holder;
+      value: function validate() {
+        var _this$config, holderId, holder;
 
-          return _regenerator["default"].wrap(function _callee3$(_context3) {
-            while (1) {
-              switch (_context3.prev = _context3.next) {
-                case 0:
-                  _this$config = this.config, holderId = _this$config.holderId, holder = _this$config.holder;
+        return _index["default"].async(function validate$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _this$config = this.config, holderId = _this$config.holderId, holder = _this$config.holder;
 
-                  if (!(holderId && holder)) {
-                    _context3.next = 3;
-                    break;
-                  }
+                if (!(holderId && holder)) {
+                  _context3.next = 3;
+                  break;
+                }
 
-                  throw Error('«holderId» and «holder» param can\'t assign at the same time.');
+                throw Error('«holderId» and «holder» param can\'t assign at the same time.');
 
-                case 3:
-                  if (!(typeof holder === 'string' && !_dom["default"].get(holder))) {
-                    _context3.next = 5;
-                    break;
-                  }
+              case 3:
+                if (!(typeof holder === 'string' && !_dom["default"].get(holder))) {
+                  _context3.next = 5;
+                  break;
+                }
 
-                  throw Error("element with ID \xAB".concat(holder, "\xBB is missing. Pass correct holder's ID."));
+                throw Error("element with ID \xAB".concat(holder, "\xBB is missing. Pass correct holder's ID."));
 
-                case 5:
-                  if (!(holder && (0, _typeof2["default"])(holder) === 'object' && !_dom["default"].isElement(holder))) {
-                    _context3.next = 7;
-                    break;
-                  }
+              case 5:
+                if (!(holder && (0, _typeof2["default"])(holder) === 'object' && !_dom["default"].isElement(holder))) {
+                  _context3.next = 7;
+                  break;
+                }
 
-                  throw Error('holder as HTMLElement if provided must be inherit from Element class.');
+                throw Error('holder as HTMLElement if provided must be inherit from Element class.');
 
-                case 7:
-                case "end":
-                  return _context3.stop();
-              }
+              case 7:
+              case "end":
+                return _context3.stop();
             }
-          }, _callee3, this);
-        }));
-
-        function validate() {
-          return _validate.apply(this, arguments);
-        }
-
-        return validate;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Initializes modules:
        *  - make and save instances
@@ -12603,66 +12504,52 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "start",
-      value: function () {
-        var _start = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee5() {
-          var _this2 = this;
+      value: function start() {
+        var _this2 = this;
 
-          var modulesToPrepare;
-          return _regenerator["default"].wrap(function _callee5$(_context5) {
-            while (1) {
-              switch (_context5.prev = _context5.next) {
-                case 0:
-                  modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste', 'DragNDrop', 'ModificationsObserver', 'BlockSelection', 'RectangleSelection', 'ReadOnly'];
-                  _context5.next = 3;
-                  return modulesToPrepare.reduce(function (promise, module) {
-                    return promise.then(
-                    /*#__PURE__*/
-                    (0, _asyncToGenerator2["default"])(
-                    /*#__PURE__*/
-                    _regenerator["default"].mark(function _callee4() {
-                      return _regenerator["default"].wrap(function _callee4$(_context4) {
-                        while (1) {
-                          switch (_context4.prev = _context4.next) {
-                            case 0:
-                              _context4.prev = 0;
-                              _context4.next = 3;
-                              return _this2.moduleInstances[module].prepare();
+        var modulesToPrepare;
+        return _index["default"].async(function start$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                modulesToPrepare = ['Tools', 'UI', 'BlockManager', 'Paste', 'DragNDrop', 'ModificationsObserver', 'BlockSelection', 'RectangleSelection', 'ReadOnly'];
+                _context5.next = 3;
+                return _index["default"].awrap(modulesToPrepare.reduce(function (promise, module) {
+                  return promise.then(function _callee3() {
+                    return _index["default"].async(function _callee3$(_context4) {
+                      while (1) {
+                        switch (_context4.prev = _context4.next) {
+                          case 0:
+                            _context4.prev = 0;
+                            _context4.next = 3;
+                            return _index["default"].awrap(_this2.moduleInstances[module].prepare());
 
-                            case 3:
-                              _context4.next = 8;
-                              break;
+                          case 3:
+                            _context4.next = 8;
+                            break;
 
-                            case 5:
-                              _context4.prev = 5;
-                              _context4.t0 = _context4["catch"](0);
+                          case 5:
+                            _context4.prev = 5;
+                            _context4.t0 = _context4["catch"](0);
 
-                              _.log("Module ".concat(module, " was skipped because of %o"), 'warn', _context4.t0);
+                            _.log("Module ".concat(module, " was skipped because of %o"), 'warn', _context4.t0);
 
-                            case 8:
-                            case "end":
-                              return _context4.stop();
-                          }
+                          case 8:
+                          case "end":
+                            return _context4.stop();
                         }
-                      }, _callee4, null, [[0, 5]]);
-                    })));
-                  }, Promise.resolve());
+                      }
+                    }, null, null, [[0, 5]]);
+                  });
+                }, Promise.resolve()));
 
-                case 3:
-                case "end":
-                  return _context5.stop();
-              }
+              case 3:
+              case "end":
+                return _context5.stop();
             }
-          }, _callee5);
-        }));
-
-        function start() {
-          return _start.apply(this, arguments);
-        }
-
-        return start;
-      }()
+          }
+        });
+      }
       /**
        * Render initial data
        */
@@ -12864,7 +12751,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray.js */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -12872,7 +12759,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _typeof2, _toConsumableArray2, _classCallCheck2, _createClass2) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -13463,7 +13350,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -13471,7 +13358,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -13678,7 +13565,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./domIterator */ "./src/components/domIterator.ts"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./domIterator */ "./src/components/domIterator.ts"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -13686,9 +13573,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _domIterator, _) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -13955,7 +13842,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -13963,7 +13850,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -14097,7 +13984,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -14105,7 +13992,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -14239,7 +14126,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -14247,9 +14134,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _selection, _dom, _) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -14787,7 +14674,7 @@ webpackContext.id = "./src/components/modules sync recursive ^\\.\\/.*$";
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ./../../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ./../../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -14795,9 +14682,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -15055,7 +14942,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15063,7 +14950,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -15259,7 +15146,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15267,7 +15154,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -15369,7 +15256,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15377,7 +15264,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -15450,7 +15337,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15458,7 +15345,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -15542,7 +15429,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15550,7 +15437,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -15643,7 +15530,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15651,7 +15538,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -15714,7 +15601,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15722,7 +15609,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -15796,7 +15683,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15804,7 +15691,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -15872,7 +15759,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15880,7 +15767,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -15952,7 +15839,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../selection */ "./src/components/selection.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../selection */ "./src/components/selection.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -15960,7 +15847,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _selection) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -16049,7 +15936,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16057,7 +15944,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -16132,7 +16019,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16140,7 +16027,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -16224,7 +16111,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16232,7 +16119,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -16335,7 +16222,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -16343,9 +16230,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _, _selection, _flipper) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -16370,64 +16257,142 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     (0, _inherits2["default"])(BlockEvents, _Module);
 
     function BlockEvents() {
+      var _this;
+
       (0, _classCallCheck2["default"])(this, BlockEvents);
-      return (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(BlockEvents).apply(this, arguments));
-    }
-
-    (0, _createClass2["default"])(BlockEvents, [{
-      key: "keydown",
-
+      _this = (0, _possibleConstructorReturn2["default"])(this, (0, _getPrototypeOf2["default"])(BlockEvents).apply(this, arguments));
       /**
        * All keydowns on Block
        * @param {KeyboardEvent} event - keydown
        */
-      value: function keydown(event) {
+
+      _this.keydown = function (event) {
         /**
          * Run common method for all keydown events
          */
-        this.beforeKeydownProcessing(event);
+        _this.beforeKeydownProcessing(event);
         /**
          * Fire keydown processor by event.keyCode
          */
 
+
         switch (event.keyCode) {
           case _.keyCodes.BACKSPACE:
-            this.backspace(event);
+            _this.backspace(event);
+
             break;
 
           case _.keyCodes.ENTER:
-            this.enter(event);
+            _this.enter(event);
+
             break;
 
           case _.keyCodes.DOWN:
           case _.keyCodes.RIGHT:
-            this.arrowRightAndDown(event);
+            _this.arrowRightAndDown(event);
+
             break;
 
           case _.keyCodes.UP:
           case _.keyCodes.LEFT:
-            this.arrowLeftAndUp(event);
+            _this.arrowLeftAndUp(event);
+
             break;
 
           case _.keyCodes.TAB:
-            this.tabPressed(event);
+            _this.tabPressed(event);
+
             break;
 
           case _.keyCodes.ESC:
-            this.escapePressed(event);
+            _this.escapePressed(event);
+
             break;
 
           default:
-            this.defaultHandler();
+            _this.defaultHandler();
+
             break;
         }
-      }
+      };
       /**
-       * Fires on keydown before event processing
-       * @param {KeyboardEvent} event - keydown
+       * Key up on Block:
+       * - shows Inline Toolbar if something selected
+       * - shows conversion toolbar with 85% of block selection
        */
 
-    }, {
+
+      _this.keyup = function (event) {
+        /**
+         * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
+         */
+        if (event.shiftKey) {
+          return;
+        }
+        /**
+         * Check if editor is empty on each keyup and add special css class to wrapper
+         */
+
+
+        _this.Editor.UI.checkEmptiness();
+      };
+      /**
+       * Mouse up on Block:
+       */
+
+
+      _this.mouseUp = function () {};
+      /**
+       * Set up mouse selection handlers
+       *
+       * @param {MouseEvent} event
+       */
+
+
+      _this.mouseDown = function (event) {
+        /**
+         * Each mouse down on Block must disable selectAll state
+         */
+        if (!_selection["default"].isCollapsed) {
+          _this.Editor.BlockSelection.clearSelection(event);
+        }
+
+        _this.Editor.CrossBlockSelection.watchSelection(event);
+      };
+      /**
+       * Add drop target styles
+       *
+       * @param {DragEvent} e
+       */
+
+
+      _this.dragOver = function (e) {
+        var block = _this.Editor.BlockManager.getBlockByChildNode(e.target);
+
+        block.dropTarget = true;
+      };
+      /**
+       * Remove drop target style
+       *
+       * @param {DragEvent} e
+       */
+
+
+      _this.dragLeave = function (e) {
+        var block = _this.Editor.BlockManager.getBlockByChildNode(e.target);
+
+        block.dropTarget = false;
+      };
+
+      return _this;
+    }
+    /**
+     * Fires on keydown before event processing
+     * @param {KeyboardEvent} event - keydown
+     */
+
+
+    (0, _createClass2["default"])(BlockEvents, [{
       key: "beforeKeydownProcessing",
       value: function beforeKeydownProcessing(event) {
         /**
@@ -16459,53 +16424,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             this.Editor.BlockSelection.clearSelection(event);
           }
         }
-      }
-      /**
-       * Key up on Block:
-       * - shows Inline Toolbar if something selected
-       * - shows conversion toolbar with 85% of block selection
-       */
-
-    }, {
-      key: "keyup",
-      value: function keyup(event) {
-        /**
-         * If shift key was pressed some special shortcut is used (eg. cross block selection via shift + arrows)
-         */
-        if (event.shiftKey) {
-          return;
-        }
-        /**
-         * Check if editor is empty on each keyup and add special css class to wrapper
-         */
-
-
-        this.Editor.UI.checkEmptiness();
-      }
-      /**
-       * Mouse up on Block:
-       */
-
-    }, {
-      key: "mouseUp",
-      value: function mouseUp() {}
-      /**
-       * Set up mouse selection handlers
-       *
-       * @param {MouseEvent} event
-       */
-
-    }, {
-      key: "mouseDown",
-      value: function mouseDown(event) {
-        /**
-         * Each mouse down on Block must disable selectAll state
-         */
-        if (!_selection["default"].isCollapsed) {
-          this.Editor.BlockSelection.clearSelection(event);
-        }
-
-        this.Editor.CrossBlockSelection.watchSelection(event);
       }
       /**
        * Open Toolbox to leaf Tools
@@ -16569,30 +16487,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         } else {
           this.Editor.Toolbar.close();
         }
-      }
-      /**
-       * Add drop target styles
-       *
-       * @param {DragEvent} e
-       */
-
-    }, {
-      key: "dragOver",
-      value: function dragOver(e) {
-        var block = this.Editor.BlockManager.getBlockByChildNode(e.target);
-        block.dropTarget = true;
-      }
-      /**
-       * Remove drop target style
-       *
-       * @param {DragEvent} e
-       */
-
-    }, {
-      key: "dragLeave",
-      value: function dragLeave(e) {
-        var block = this.Editor.BlockManager.getBlockByChildNode(e.target);
-        block.dropTarget = false;
       }
       /**
        * Copying selected blocks
@@ -16843,7 +16737,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "arrowRightAndDown",
       value: function arrowRightAndDown(event) {
-        var _this = this;
+        var _this2 = this;
 
         var isFlipperCombination = _flipper["default"].usedKeys.includes(event.keyCode) && (!event.shiftKey || event.keyCode === _.keyCodes.TAB);
         /**
@@ -16880,8 +16774,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            */
           _.delay(function () {
             /** Check currentBlock for case when user moves selection out of Editor */
-            if (_this.Editor.BlockManager.currentBlock) {
-              _this.Editor.BlockManager.currentBlock.updateCurrentInput();
+            if (_this2.Editor.BlockManager.currentBlock) {
+              _this2.Editor.BlockManager.currentBlock.updateCurrentInput();
             }
           }, 20)();
         }
@@ -16899,7 +16793,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "arrowLeftAndUp",
       value: function arrowLeftAndUp(event) {
-        var _this2 = this;
+        var _this3 = this;
 
         /**
          * Arrows might be handled on toolbars by flipper
@@ -16937,8 +16831,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
            */
           _.delay(function () {
             /** Check currentBlock for case when user ends selection out of Editor and then press arrow-key */
-            if (_this2.Editor.BlockManager.currentBlock) {
-              _this2.Editor.BlockManager.currentBlock.updateCurrentInput();
+            if (_this3.Editor.BlockManager.currentBlock) {
+              _this3.Editor.BlockManager.currentBlock.updateCurrentInput();
             }
           }, 20)();
         }
@@ -17033,24 +16927,23 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../block */ "./src/components/block.ts"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../blocks */ "./src/components/blocks.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../block */ "./src/components/block.ts"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../blocks */ "./src/components/blocks.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _block, _module, _dom, _, _blocks) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _index, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _block, _module, _dom, _, _blocks) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports["default"] = void 0;
-  _regenerator = _interopRequireDefault(_regenerator);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
@@ -17101,6 +16994,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
       _this._blocks = null;
+      /**
+       * Read only flag
+       */
+
+      _this.readOnlyEnabled = false;
       return _this;
     }
     /**
@@ -17118,51 +17016,41 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        *
        * @returns {Promise}
        */
-      value: function () {
-        var _prepare = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee() {
-          var blocks;
-          return _regenerator["default"].wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  blocks = new _blocks["default"](this.Editor.UI.nodes.redactor);
-                  /**
-                   * We need to use Proxy to overload set/get [] operator.
-                   * So we can use array-like syntax to access blocks
-                   *
-                   * @example
-                   * this._blocks[0] = new Block(...);
-                   *
-                   * block = this._blocks[0];
-                   *
-                   * @todo proxy the enumerate method
-                   *
-                   * @type {Proxy}
-                   * @private
-                   */
+      value: function prepare() {
+        var blocks;
+        return _index["default"].async(function prepare$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                blocks = new _blocks["default"](this.Editor.UI.nodes.redactor);
+                /**
+                 * We need to use Proxy to overload set/get [] operator.
+                 * So we can use array-like syntax to access blocks
+                 *
+                 * @example
+                 * this._blocks[0] = new Block(...);
+                 *
+                 * block = this._blocks[0];
+                 *
+                 * @todo proxy the enumerate method
+                 *
+                 * @type {Proxy}
+                 * @private
+                 */
 
-                  this._blocks = new Proxy(blocks, {
-                    set: _blocks["default"].set,
-                    get: _blocks["default"].get
-                  });
-                  this.toggleReadOnly(this.config.readOnly);
+                this._blocks = new Proxy(blocks, {
+                  set: _blocks["default"].set,
+                  get: _blocks["default"].get
+                });
+                this.readOnlyEnabled = this.config.readOnly;
 
-                case 3:
-                case "end":
-                  return _context.stop();
-              }
+              case 3:
+              case "end":
+                return _context.stop();
             }
-          }, _callee, this);
-        }));
-
-        function prepare() {
-          return _prepare.apply(this, arguments);
-        }
-
-        return prepare;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Set read-only state
        *
@@ -17177,7 +17065,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             Shortcuts = _this$Editor.Shortcuts;
 
         if (readOnlyEnabled) {
-          Shortcuts.removeAll();
+          Shortcuts.remove('CMD+C');
+          Shortcuts.remove('CMD+X');
         } else {
           /** Copy shortcut */
           Shortcuts.add({
@@ -17195,6 +17084,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             }
           });
         }
+
+        this.toggleBlockEventBindings(readOnlyEnabled);
       }
       /**
        * Creates Block instance by tool name
@@ -17214,7 +17105,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var toolInstance = this.Editor.Tools.construct(toolName, data);
         var toolClass = this.Editor.Tools.available[toolName];
         var block = new _block["default"](toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
-        this.bindEvents(block);
+
+        if (!this.readOnlyEnabled) {
+          this.bindEvents(block);
+        }
+
         return block;
       }
       /**
@@ -17328,57 +17223,47 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "mergeBlocks",
-      value: function () {
-        var _mergeBlocks = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee2(targetBlock, blockToMerge) {
-          var blockToMergeIndex, blockToMergeData;
-          return _regenerator["default"].wrap(function _callee2$(_context2) {
-            while (1) {
-              switch (_context2.prev = _context2.next) {
-                case 0:
-                  blockToMergeIndex = this._blocks.indexOf(blockToMerge);
+      value: function mergeBlocks(targetBlock, blockToMerge) {
+        var blockToMergeIndex, blockToMergeData;
+        return _index["default"].async(function mergeBlocks$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                blockToMergeIndex = this._blocks.indexOf(blockToMerge);
 
-                  if (!blockToMerge.isEmpty) {
-                    _context2.next = 3;
-                    break;
-                  }
+                if (!blockToMerge.isEmpty) {
+                  _context2.next = 3;
+                  break;
+                }
 
-                  return _context2.abrupt("return");
+                return _context2.abrupt("return");
 
-                case 3:
-                  _context2.next = 5;
-                  return blockToMerge.data;
+              case 3:
+                _context2.next = 5;
+                return _index["default"].awrap(blockToMerge.data);
 
-                case 5:
-                  blockToMergeData = _context2.sent;
+              case 5:
+                blockToMergeData = _context2.sent;
 
-                  if (_.isEmpty(blockToMergeData)) {
-                    _context2.next = 9;
-                    break;
-                  }
-
+                if (_.isEmpty(blockToMergeData)) {
                   _context2.next = 9;
-                  return targetBlock.mergeWith(blockToMergeData);
+                  break;
+                }
 
-                case 9:
-                  this.removeBlock(blockToMergeIndex);
-                  this.currentBlockIndex = this._blocks.indexOf(targetBlock);
+                _context2.next = 9;
+                return _index["default"].awrap(targetBlock.mergeWith(blockToMergeData));
 
-                case 11:
-                case "end":
-                  return _context2.stop();
-              }
+              case 9:
+                this.removeBlock(blockToMergeIndex);
+                this.currentBlockIndex = this._blocks.indexOf(targetBlock);
+
+              case 11:
+              case "end":
+                return _context2.stop();
             }
-          }, _callee2, this);
-        }));
-
-        function mergeBlocks(_x, _x2) {
-          return _mergeBlocks.apply(this, arguments);
-        }
-
-        return mergeBlocks;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Remove block with passed index or remove last
        * @param {Number|null} index
@@ -17567,7 +17452,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * 2) Mark it as current
        *
        *  @param {Node} childNode - look ahead from this node.
-       *  @param {string} caretPosition - position where to set caret
        *  @throws Error  - when passed Node is not included at the Block
        */
 
@@ -17670,34 +17554,53 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         this.Editor.UI.checkEmptiness();
       }
       /**
+       * @param readonly
+       */
+
+    }, {
+      key: "toggleBlockEventBindings",
+      value: function toggleBlockEventBindings(readonly) {
+        var _this2 = this;
+
+        this.blocks.forEach(function (block) {
+          if (readonly) {
+            _this2.unbindEvents(block);
+          } else {
+            _this2.bindEvents(block);
+          }
+        });
+      }
+      /**
        * Bind Events
-       * @param {Object} block
+       * @param {Block} block
        */
 
     }, {
       key: "bindEvents",
       value: function bindEvents(block) {
-        var _this$Editor2 = this.Editor,
-            BlockEvents = _this$Editor2.BlockEvents,
-            Listeners = _this$Editor2.Listeners;
-        Listeners.on(block.holder, 'keydown', function (event) {
-          return BlockEvents.keydown(event);
-        }, true);
-        Listeners.on(block.holder, 'mouseup', function (event) {
-          return BlockEvents.mouseUp();
-        });
-        Listeners.on(block.holder, 'mousedown', function (event) {
-          return BlockEvents.mouseDown(event);
-        });
-        Listeners.on(block.holder, 'keyup', function (event) {
-          return BlockEvents.keyup(event);
-        });
-        Listeners.on(block.holder, 'dragover', function (event) {
-          return BlockEvents.dragOver(event);
-        });
-        Listeners.on(block.holder, 'dragleave', function (event) {
-          return BlockEvents.dragLeave(event);
-        });
+        var Listeners = this.Editor.Listeners;
+        Listeners.on(block.holder, 'keydown', this.Editor.BlockEvents.keydown, true);
+        Listeners.on(block.holder, 'mouseup', this.Editor.BlockEvents.mouseUp);
+        Listeners.on(block.holder, 'mousedown', this.Editor.BlockEvents.mouseDown);
+        Listeners.on(block.holder, 'keyup', this.Editor.BlockEvents.keyup);
+        Listeners.on(block.holder, 'dragover', this.Editor.BlockEvents.dragOver);
+        Listeners.on(block.holder, 'dragleave', this.Editor.BlockEvents.dragLeave);
+      }
+      /**
+       * Unbind Events
+       * @param {Block} block
+       */
+
+    }, {
+      key: "unbindEvents",
+      value: function unbindEvents(block) {
+        var Listeners = this.Editor.Listeners;
+        Listeners.off(block.holder, 'keydown', this.Editor.BlockEvents.keydown, true);
+        Listeners.off(block.holder, 'mouseup', this.Editor.BlockEvents.mouseUp);
+        Listeners.off(block.holder, 'mousedown', this.Editor.BlockEvents.mouseDown);
+        Listeners.off(block.holder, 'keyup', this.Editor.BlockEvents.keyup);
+        Listeners.off(block.holder, 'dragover', this.Editor.BlockEvents.dragOver);
+        Listeners.off(block.holder, 'dragleave', this.Editor.BlockEvents.dragLeave);
       }
     }, {
       key: "currentBlockIndex",
@@ -17855,7 +17758,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -17863,9 +17766,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _, _dom, _selection) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -17951,10 +17854,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         var Shortcuts = this.Editor.Shortcuts;
 
-        if (readOnlyEnabled) {
-          Shortcuts.removeAll();
-          this.selection = null;
-        } else {
+        if (!readOnlyEnabled) {
           /** Selection shortcut */
           Shortcuts.add({
             name: 'CMD+A',
@@ -17962,8 +17862,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
               var BlockManager = _this2.Editor.BlockManager;
               /**
                * When one page consist of two or more EditorJS instances
-               * Shortcut module tries to handle all events. Thats why Editor's selection works inside the target Editor, but
-               * for others error occurs because nothing to select.
+               * Shortcut module tries to handle all events.
+               * That's why Editor's selection works inside the target Editor, but
+               * for others error occurs because nothing to select.s
                *
                * Prevent such actions if focus is not inside the Editor
                */
@@ -17976,6 +17877,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             }
           });
           this.selection = new _selection["default"]();
+        } else {
+          Shortcuts.remove('CMD+A');
+          this.selection = null;
         }
       }
       /**
@@ -18298,7 +18202,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -18306,9 +18210,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _selection, _module, _dom, _) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -18972,7 +18876,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -18980,9 +18884,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _selection, _) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -19230,22 +19134,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _selection, _module) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _index, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _selection, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports["default"] = void 0;
-  _regenerator = _interopRequireDefault(_regenerator);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
@@ -19278,58 +19181,68 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * @param {DragEvent} dropEvent
        */
 
-      _this.processDrop =
-      /*#__PURE__*/
-      function () {
-        var _ref = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee(dropEvent) {
-          var _this$Editor, BlockManager, Caret, Paste, targetBlock, _targetBlock;
+      _this.processDrop = function _callee(dropEvent) {
+        var _this$Editor, BlockManager, Caret, Paste, targetBlock, _targetBlock;
 
-          return _regenerator["default"].wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  _this$Editor = _this.Editor, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret, Paste = _this$Editor.Paste;
-                  dropEvent.preventDefault();
-                  BlockManager.blocks.forEach(function (block) {
-                    return block.dropTarget = false;
-                  });
+        return _index["default"].async(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _this$Editor = _this.Editor, BlockManager = _this$Editor.BlockManager, Caret = _this$Editor.Caret, Paste = _this$Editor.Paste;
+                dropEvent.preventDefault();
+                BlockManager.blocks.forEach(function (block) {
+                  return block.dropTarget = false;
+                });
 
-                  if (_selection["default"].isAtEditor && !_selection["default"].isCollapsed && _this.isStartedAtEditor) {
-                    document.execCommand('delete');
-                  }
+                if (_selection["default"].isAtEditor && !_selection["default"].isCollapsed && _this.isStartedAtEditor) {
+                  document.execCommand('delete');
+                }
 
-                  _this.isStartedAtEditor = false;
-                  /**
-                   * Try to set current block by drop target.
-                   * If drop target (error will be thrown) is not part of the Block, set last Block as current.
-                   */
+                _this.isStartedAtEditor = false;
+                /**
+                 * Try to set current block by drop target.
+                 * If drop target (error will be thrown) is not part of the Block, set last Block as current.
+                 */
 
-                  try {
-                    targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target);
+                try {
+                  targetBlock = BlockManager.setCurrentBlockByChildNode(dropEvent.target);
 
-                    _this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
-                  } catch (e) {
-                    _targetBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
+                  _this.Editor.Caret.setToBlock(targetBlock, Caret.positions.END);
+                } catch (e) {
+                  _targetBlock = BlockManager.setCurrentBlockByChildNode(BlockManager.lastBlock.holder);
 
-                    _this.Editor.Caret.setToBlock(_targetBlock, Caret.positions.END);
-                  }
+                  _this.Editor.Caret.setToBlock(_targetBlock, Caret.positions.END);
+                }
 
-                  Paste.processDataTransfer(dropEvent.dataTransfer, true);
+                Paste.processDataTransfer(dropEvent.dataTransfer, true);
 
-                case 7:
-                case "end":
-                  return _context.stop();
-              }
+              case 7:
+              case "end":
+                return _context.stop();
             }
-          }, _callee);
-        }));
+          }
+        });
+      };
+      /**
+       * Handle drag start event
+       */
 
-        return function (_x) {
-          return _ref.apply(this, arguments);
-        };
-      }();
+
+      _this.processDragStart = function () {
+        if (_selection["default"].isAtEditor && !_selection["default"].isCollapsed) {
+          _this.isStartedAtEditor = true;
+        }
+
+        _this.Editor.InlineToolbar.close();
+      };
+      /**
+       * @param {DragEvent} dragEvent
+       */
+
+
+      _this.processDragOver = function (dragEvent) {
+        dragEvent.preventDefault();
+      };
 
       return _this;
     }
@@ -19355,7 +19268,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "toggleReadOnly",
       value: function toggleReadOnly(readOnlyEnabled) {
         if (readOnlyEnabled) {
-          this.Editor.Listeners.removeAll();
+          this.unbindEvents();
         } else {
           this.bindEvents();
         }
@@ -19368,21 +19281,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "bindEvents",
       value: function bindEvents() {
-        var _this2 = this;
-
         this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
-        this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', function (dragEvent) {
-          if (_selection["default"].isAtEditor && !_selection["default"].isCollapsed) {
-            _this2.isStartedAtEditor = true;
-          }
-
-          _this2.Editor.InlineToolbar.close();
-        });
+        this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', this.processDragStart);
         /* Prevent default browser behavior to allow drop on non-contenteditable elements */
 
-        this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', function (e) {
-          return e.preventDefault();
-        }, true);
+        this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', this.processDragOver, true);
+      }
+      /**
+       * Unbind drag events
+       */
+
+    }, {
+      key: "unbindEvents",
+      value: function unbindEvents() {
+        this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
+        this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'dragstart', this.processDragStart);
+        this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'dragover', this.processDragOver, true);
       }
     }]);
     return DragNDrop;
@@ -19404,7 +19318,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -19412,7 +19326,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -19571,7 +19485,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -19579,7 +19493,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -19796,24 +19710,23 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../block */ "./src/components/block.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../block */ "./src/components/block.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _, _block) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _index, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _, _block) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports["default"] = void 0;
-  _regenerator = _interopRequireDefault(_regenerator);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
@@ -19884,30 +19797,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "prepare",
-      value: function () {
-        var _prepare = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee() {
-          return _regenerator["default"].wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  this.toggleReadOnly(this.config.readOnly);
+      value: function prepare() {
+        return _index["default"].async(function prepare$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                this.toggleReadOnly(this.config.readOnly);
 
-                case 1:
-                case "end":
-                  return _context.stop();
-              }
+              case 1:
+              case "end":
+                return _context.stop();
             }
-          }, _callee, this);
-        }));
-
-        function prepare() {
-          return _prepare.apply(this, arguments);
-        }
-
-        return prepare;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Set read-only state
        *
@@ -19920,13 +19823,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _this3 = this;
 
         if (readOnlyEnabled) {
-          this.destroy();
+          this.disable();
         } else {
           /**
            * wait till Browser render Editor's Blocks
            */
           window.setTimeout(function () {
             _this3.setObserver();
+
+            _this3.enable();
           }, 1000);
         }
       }
@@ -20073,7 +19978,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! codex-notifier */ "./node_modules/codex-notifier/dist/bundle.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! codex-notifier */ "./node_modules/codex-notifier/dist/bundle.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -20081,7 +19986,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _codexNotifier) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -20145,25 +20050,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js"), __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray.js */ "./node_modules/@babel/runtime/helpers/toConsumableArray.js"), __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/slicedToArray.js */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _toConsumableArray2, _regenerator, _asyncToGenerator2, _slicedToArray2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _toConsumableArray2, _index, _slicedToArray2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports["default"] = void 0;
   _toConsumableArray2 = _interopRequireDefault(_toConsumableArray2);
-  _regenerator = _interopRequireDefault(_regenerator);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _slicedToArray2 = _interopRequireDefault(_slicedToArray2);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
@@ -20260,56 +20164,46 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
 
-      _this.handlePasteEvent =
-      /*#__PURE__*/
-      function () {
-        var _ref3 = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee(event) {
-          var _this$Editor, BlockManager, Toolbar;
+      _this.handlePasteEvent = function _callee(event) {
+        var _this$Editor, BlockManager, Toolbar;
 
-          return _regenerator["default"].wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  _this$Editor = _this.Editor, BlockManager = _this$Editor.BlockManager, Toolbar = _this$Editor.Toolbar;
-                  /** If target is native input or is not Block, use browser behaviour */
+        return _index["default"].async(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _this$Editor = _this.Editor, BlockManager = _this$Editor.BlockManager, Toolbar = _this$Editor.Toolbar;
+                /** If target is native input or is not Block, use browser behaviour */
 
-                  if (!(!BlockManager.currentBlock || _this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files'))) {
-                    _context.next = 3;
-                    break;
-                  }
+                if (!(!BlockManager.currentBlock || _this.isNativeBehaviour(event.target) && !event.clipboardData.types.includes('Files'))) {
+                  _context.next = 3;
+                  break;
+                }
 
-                  return _context.abrupt("return");
+                return _context.abrupt("return");
 
-                case 3:
-                  if (!(BlockManager.currentBlock && _this.exceptionList.includes(BlockManager.currentBlock.name))) {
-                    _context.next = 5;
-                    break;
-                  }
+              case 3:
+                if (!(BlockManager.currentBlock && _this.exceptionList.includes(BlockManager.currentBlock.name))) {
+                  _context.next = 5;
+                  break;
+                }
 
-                  return _context.abrupt("return");
+                return _context.abrupt("return");
 
-                case 5:
-                  event.preventDefault();
+              case 5:
+                event.preventDefault();
 
-                  _this.processDataTransfer(event.clipboardData);
+                _this.processDataTransfer(event.clipboardData);
 
-                  BlockManager.clearFocused();
-                  Toolbar.close();
+                BlockManager.clearFocused();
+                Toolbar.close();
 
-                case 9:
-                case "end":
-                  return _context.stop();
-              }
+              case 9:
+              case "end":
+                return _context.stop();
             }
-          }, _callee);
-        }));
-
-        return function (_x) {
-          return _ref3.apply(this, arguments);
-        };
-      }();
+          }
+        });
+      };
 
       return _this;
     }
@@ -20322,30 +20216,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     (0, _createClass2["default"])(Paste, [{
       key: "prepare",
-      value: function () {
-        var _prepare = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee2() {
-          return _regenerator["default"].wrap(function _callee2$(_context2) {
-            while (1) {
-              switch (_context2.prev = _context2.next) {
-                case 0:
-                  this.toggleReadOnly(this.config.readOnly);
+      value: function prepare() {
+        return _index["default"].async(function prepare$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                this.toggleReadOnly(this.config.readOnly);
 
-                case 1:
-                case "end":
-                  return _context2.stop();
-              }
+              case 1:
+              case "end":
+                return _context2.stop();
             }
-          }, _callee2, this);
-        }));
-
-        function prepare() {
-          return _prepare.apply(this, arguments);
-        }
-
-        return prepare;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Set read-only state
        *
@@ -20355,16 +20239,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "toggleReadOnly",
       value: function toggleReadOnly(readOnlyEnabled) {
-        if (readOnlyEnabled) {
-          this.Editor.Listeners.removeAll();
+        if (!readOnlyEnabled) {
+          this.processTools();
+          this.setCallback();
+        } else {
+          this.unsetCallback();
           this.toolsTags = {};
           this.tagsByTool = {};
           this.toolsPatterns = [];
           this.toolsFiles = {};
           this.exceptionList = [];
-        } else {
-          this.processTools();
-          this.setCallback();
         }
       }
       /**
@@ -20376,97 +20260,87 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "processDataTransfer",
-      value: function () {
-        var _processDataTransfer = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee3(dataTransfer) {
-          var isDragNDrop,
-              Sanitizer,
-              types,
-              includesFiles,
-              plainData,
-              htmlData,
-              toolsTags,
-              customConfig,
-              cleanData,
-              _args3 = arguments;
-          return _regenerator["default"].wrap(function _callee3$(_context3) {
-            while (1) {
-              switch (_context3.prev = _context3.next) {
-                case 0:
-                  isDragNDrop = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : false;
-                  Sanitizer = this.Editor.Sanitizer;
-                  types = dataTransfer.types;
-                  /**
-                   * In Microsoft Edge types is DOMStringList. So 'contains' is used to check if 'Files' type included
-                   */
+      value: function processDataTransfer(dataTransfer) {
+        var isDragNDrop,
+            Sanitizer,
+            types,
+            includesFiles,
+            plainData,
+            htmlData,
+            toolsTags,
+            customConfig,
+            cleanData,
+            _args3 = arguments;
+        return _index["default"].async(function processDataTransfer$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                isDragNDrop = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : false;
+                Sanitizer = this.Editor.Sanitizer;
+                types = dataTransfer.types;
+                /**
+                 * In Microsoft Edge types is DOMStringList. So 'contains' is used to check if 'Files' type included
+                 */
 
-                  includesFiles = types.includes ? types.includes('Files') : types.contains('Files');
+                includesFiles = types.includes ? types.includes('Files') : types.contains('Files');
 
-                  if (!includesFiles) {
-                    _context3.next = 8;
-                    break;
-                  }
-
-                  _context3.next = 7;
-                  return this.processFiles(dataTransfer.files);
-
-                case 7:
-                  return _context3.abrupt("return");
-
-                case 8:
-                  plainData = dataTransfer.getData('text/plain');
-                  htmlData = dataTransfer.getData('text/html');
-                  /**
-                   *  If text was drag'n'dropped, wrap content with P tag to insert it as the new Block
-                   */
-
-                  if (isDragNDrop && plainData.trim() && htmlData.trim()) {
-                    htmlData = '<p>' + (htmlData.trim() ? htmlData : plainData) + '</p>';
-                  }
-                  /** Add all tags that can be substituted to sanitizer configuration */
-
-
-                  toolsTags = Object.keys(this.toolsTags).reduce(function (result, tag) {
-                    result[tag.toLowerCase()] = true;
-                    return result;
-                  }, {});
-                  customConfig = Object.assign({}, toolsTags, Sanitizer.getAllInlineToolsConfig(), {
-                    br: {}
-                  });
-                  cleanData = Sanitizer.clean(htmlData, customConfig);
-                  /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
-
-                  if (!(!cleanData.trim() || cleanData.trim() === plainData || !_dom["default"].isHTMLString(cleanData))) {
-                    _context3.next = 19;
-                    break;
-                  }
-
-                  _context3.next = 17;
-                  return this.processText(plainData);
-
-                case 17:
-                  _context3.next = 21;
+                if (!includesFiles) {
+                  _context3.next = 8;
                   break;
+                }
 
-                case 19:
-                  _context3.next = 21;
-                  return this.processText(cleanData, true);
+                _context3.next = 7;
+                return _index["default"].awrap(this.processFiles(dataTransfer.files));
 
-                case 21:
-                case "end":
-                  return _context3.stop();
-              }
+              case 7:
+                return _context3.abrupt("return");
+
+              case 8:
+                plainData = dataTransfer.getData('text/plain');
+                htmlData = dataTransfer.getData('text/html');
+                /**
+                 *  If text was drag'n'dropped, wrap content with P tag to insert it as the new Block
+                 */
+
+                if (isDragNDrop && plainData.trim() && htmlData.trim()) {
+                  htmlData = '<p>' + (htmlData.trim() ? htmlData : plainData) + '</p>';
+                }
+                /** Add all tags that can be substituted to sanitizer configuration */
+
+
+                toolsTags = Object.keys(this.toolsTags).reduce(function (result, tag) {
+                  result[tag.toLowerCase()] = true;
+                  return result;
+                }, {});
+                customConfig = Object.assign({}, toolsTags, Sanitizer.getAllInlineToolsConfig(), {
+                  br: {}
+                });
+                cleanData = Sanitizer.clean(htmlData, customConfig);
+                /** If there is no HTML or HTML string is equal to plain one, process it as plain text */
+
+                if (!(!cleanData.trim() || cleanData.trim() === plainData || !_dom["default"].isHTMLString(cleanData))) {
+                  _context3.next = 19;
+                  break;
+                }
+
+                _context3.next = 17;
+                return _index["default"].awrap(this.processText(plainData));
+
+              case 17:
+                _context3.next = 21;
+                break;
+
+              case 19:
+                _context3.next = 21;
+                return _index["default"].awrap(this.processText(cleanData, true));
+
+              case 21:
+              case "end":
+                return _context3.stop();
             }
-          }, _callee3, this);
-        }));
-
-        function processDataTransfer(_x2) {
-          return _processDataTransfer.apply(this, arguments);
-        }
-
-        return processDataTransfer;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Process pasted text and divide them into Blocks
        *
@@ -20476,103 +20350,83 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "processText",
-      value: function () {
-        var _processText = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee5(data) {
-          var _this2 = this;
+      value: function processText(data) {
+        var _this2 = this;
 
-          var isHTML,
-              _this$Editor2,
-              Caret,
-              BlockManager,
-              Tools,
-              dataToInsert,
-              isCurrentBlockInitial,
-              needToReplaceCurrentBlock,
-              _args5 = arguments;
+        var isHTML,
+            _this$Editor2,
+            Caret,
+            BlockManager,
+            Tools,
+            dataToInsert,
+            isCurrentBlockInitial,
+            needToReplaceCurrentBlock,
+            _args5 = arguments;
 
-          return _regenerator["default"].wrap(function _callee5$(_context5) {
-            while (1) {
-              switch (_context5.prev = _context5.next) {
-                case 0:
-                  isHTML = _args5.length > 1 && _args5[1] !== undefined ? _args5[1] : false;
-                  _this$Editor2 = this.Editor, Caret = _this$Editor2.Caret, BlockManager = _this$Editor2.BlockManager, Tools = _this$Editor2.Tools;
-                  dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
+        return _index["default"].async(function processText$(_context5) {
+          while (1) {
+            switch (_context5.prev = _context5.next) {
+              case 0:
+                isHTML = _args5.length > 1 && _args5[1] !== undefined ? _args5[1] : false;
+                _this$Editor2 = this.Editor, Caret = _this$Editor2.Caret, BlockManager = _this$Editor2.BlockManager, Tools = _this$Editor2.Tools;
+                dataToInsert = isHTML ? this.processHTML(data) : this.processPlain(data);
 
-                  if (dataToInsert.length) {
-                    _context5.next = 5;
-                    break;
-                  }
+                if (dataToInsert.length) {
+                  _context5.next = 5;
+                  break;
+                }
 
-                  return _context5.abrupt("return");
+                return _context5.abrupt("return");
 
-                case 5:
-                  if (!(dataToInsert.length === 1)) {
-                    _context5.next = 8;
-                    break;
-                  }
+              case 5:
+                if (!(dataToInsert.length === 1)) {
+                  _context5.next = 8;
+                  break;
+                }
 
-                  if (!dataToInsert[0].isBlock) {
-                    this.processInlinePaste(dataToInsert.pop());
-                  } else {
-                    this.processSingleBlock(dataToInsert.pop());
-                  }
+                if (!dataToInsert[0].isBlock) {
+                  this.processInlinePaste(dataToInsert.pop());
+                } else {
+                  this.processSingleBlock(dataToInsert.pop());
+                }
 
-                  return _context5.abrupt("return");
+                return _context5.abrupt("return");
 
-                case 8:
-                  isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
-                  needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
-                  _context5.next = 12;
-                  return Promise.all(dataToInsert.map(
-                  /*#__PURE__*/
-                  function () {
-                    var _ref4 = (0, _asyncToGenerator2["default"])(
-                    /*#__PURE__*/
-                    _regenerator["default"].mark(function _callee4(content, i) {
-                      return _regenerator["default"].wrap(function _callee4$(_context4) {
-                        while (1) {
-                          switch (_context4.prev = _context4.next) {
-                            case 0:
-                              _context4.next = 2;
-                              return _this2.insertBlock(content, i === 0 && needToReplaceCurrentBlock);
+              case 8:
+                isCurrentBlockInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
+                needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+                _context5.next = 12;
+                return _index["default"].awrap(Promise.all(dataToInsert.map(function _callee2(content, i) {
+                  return _index["default"].async(function _callee2$(_context4) {
+                    while (1) {
+                      switch (_context4.prev = _context4.next) {
+                        case 0:
+                          _context4.next = 2;
+                          return _index["default"].awrap(_this2.insertBlock(content, i === 0 && needToReplaceCurrentBlock));
 
-                            case 2:
-                              return _context4.abrupt("return", _context4.sent);
+                        case 2:
+                          return _context4.abrupt("return", _context4.sent);
 
-                            case 3:
-                            case "end":
-                              return _context4.stop();
-                          }
-                        }
-                      }, _callee4);
-                    }));
+                        case 3:
+                        case "end":
+                          return _context4.stop();
+                      }
+                    }
+                  });
+                })));
 
-                    return function (_x4, _x5) {
-                      return _ref4.apply(this, arguments);
-                    };
-                  }()));
+              case 12:
+                if (BlockManager.currentBlock) {
+                  Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
+                }
 
-                case 12:
-                  if (BlockManager.currentBlock) {
-                    Caret.setToBlock(BlockManager.currentBlock, Caret.positions.END);
-                  }
-
-                case 13:
-                case "end":
-                  return _context5.stop();
-              }
+              case 13:
+              case "end":
+                return _context5.stop();
             }
-          }, _callee5, this);
-        }));
-
-        function processText(_x3) {
-          return _processText.apply(this, arguments);
-        }
-
-        return processText;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Set onPaste callback handler
        */
@@ -20582,6 +20436,16 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function setCallback() {
         var Listeners = this.Editor.Listeners;
         Listeners.on(document, 'paste', this.handlePasteEvent);
+      }
+      /**
+       * Unset onPaste callback handler
+       */
+
+    }, {
+      key: "unsetCallback",
+      value: function unsetCallback() {
+        var Listeners = this.Editor.Listeners;
+        Listeners.off(document, 'paste', this.handlePasteEvent);
       }
       /**
        * Get and process tool`s paste configs
@@ -20685,10 +20549,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
           return;
         }
 
-        Object.entries(toolPasteConfig.patterns).forEach(function (_ref5) {
-          var _ref6 = (0, _slicedToArray2["default"])(_ref5, 2),
-              key = _ref6[0],
-              pattern = _ref6[1];
+        Object.entries(toolPasteConfig.patterns).forEach(function (_ref3) {
+          var _ref4 = (0, _slicedToArray2["default"])(_ref3, 2),
+              key = _ref4[0],
+              pattern = _ref4[1];
 
           /** Still need to validate pattern as it provided by user */
           if (!(pattern instanceof RegExp)) {
@@ -20722,49 +20586,39 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "processFiles",
-      value: function () {
-        var _processFiles = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee6(items) {
-          var _this5 = this;
+      value: function processFiles(items) {
+        var _this5 = this;
 
-          var _this$Editor3, BlockManager, Tools, dataToInsert, isCurrentBlockInitial, needToReplaceCurrentBlock;
+        var _this$Editor3, BlockManager, Tools, dataToInsert, isCurrentBlockInitial, needToReplaceCurrentBlock;
 
-          return _regenerator["default"].wrap(function _callee6$(_context6) {
-            while (1) {
-              switch (_context6.prev = _context6.next) {
-                case 0:
-                  _this$Editor3 = this.Editor, BlockManager = _this$Editor3.BlockManager, Tools = _this$Editor3.Tools;
-                  _context6.next = 3;
-                  return Promise.all(Array.from(items).map(function (item) {
-                    return _this5.processFile(item);
-                  }));
+        return _index["default"].async(function processFiles$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _this$Editor3 = this.Editor, BlockManager = _this$Editor3.BlockManager, Tools = _this$Editor3.Tools;
+                _context6.next = 3;
+                return _index["default"].awrap(Promise.all(Array.from(items).map(function (item) {
+                  return _this5.processFile(item);
+                })));
 
-                case 3:
-                  dataToInsert = _context6.sent;
-                  dataToInsert = dataToInsert.filter(function (data) {
-                    return !!data;
-                  });
-                  isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
-                  needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
-                  dataToInsert.forEach(function (data, i) {
-                    BlockManager.paste(data.type, data.event, i === 0 && needToReplaceCurrentBlock);
-                  });
+              case 3:
+                dataToInsert = _context6.sent;
+                dataToInsert = dataToInsert.filter(function (data) {
+                  return !!data;
+                });
+                isCurrentBlockInitial = Tools.isInitial(BlockManager.currentBlock.tool);
+                needToReplaceCurrentBlock = isCurrentBlockInitial && BlockManager.currentBlock.isEmpty;
+                dataToInsert.forEach(function (data, i) {
+                  BlockManager.paste(data.type, data.event, i === 0 && needToReplaceCurrentBlock);
+                });
 
-                case 8:
-                case "end":
-                  return _context6.stop();
-              }
+              case 8:
+              case "end":
+                return _context6.stop();
             }
-          }, _callee6, this);
-        }));
-
-        function processFiles(_x6) {
-          return _processFiles.apply(this, arguments);
-        }
-
-        return processFiles;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Get information about file and find Tool to handle it
        *
@@ -20773,74 +20627,64 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "processFile",
-      value: function () {
-        var _processFile = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee7(file) {
-          var extension, foundConfig, _foundConfig, tool, pasteEvent;
+      value: function processFile(file) {
+        var extension, foundConfig, _foundConfig, tool, pasteEvent;
 
-          return _regenerator["default"].wrap(function _callee7$(_context7) {
-            while (1) {
-              switch (_context7.prev = _context7.next) {
-                case 0:
-                  extension = _.getFileExtension(file);
-                  foundConfig = Object.entries(this.toolsFiles).find(function (_ref7) {
-                    var _ref8 = (0, _slicedToArray2["default"])(_ref7, 2),
-                        toolName = _ref8[0],
-                        _ref8$ = _ref8[1],
-                        mimeTypes = _ref8$.mimeTypes,
-                        extensions = _ref8$.extensions;
+        return _index["default"].async(function processFile$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                extension = _.getFileExtension(file);
+                foundConfig = Object.entries(this.toolsFiles).find(function (_ref5) {
+                  var _ref6 = (0, _slicedToArray2["default"])(_ref5, 2),
+                      toolName = _ref6[0],
+                      _ref6$ = _ref6[1],
+                      mimeTypes = _ref6$.mimeTypes,
+                      extensions = _ref6$.extensions;
 
-                    var _file$type$split = file.type.split('/'),
-                        _file$type$split2 = (0, _slicedToArray2["default"])(_file$type$split, 2),
-                        fileType = _file$type$split2[0],
-                        fileSubtype = _file$type$split2[1];
+                  var _file$type$split = file.type.split('/'),
+                      _file$type$split2 = (0, _slicedToArray2["default"])(_file$type$split, 2),
+                      fileType = _file$type$split2[0],
+                      fileSubtype = _file$type$split2[1];
 
-                    var foundExt = extensions.find(function (ext) {
-                      return ext.toLowerCase() === extension.toLowerCase();
-                    });
-                    var foundMimeType = mimeTypes.find(function (mime) {
-                      var _mime$split = mime.split('/'),
-                          _mime$split2 = (0, _slicedToArray2["default"])(_mime$split, 2),
-                          type = _mime$split2[0],
-                          subtype = _mime$split2[1];
-
-                      return type === fileType && (subtype === fileSubtype || subtype === '*');
-                    });
-                    return !!foundExt || !!foundMimeType;
+                  var foundExt = extensions.find(function (ext) {
+                    return ext.toLowerCase() === extension.toLowerCase();
                   });
+                  var foundMimeType = mimeTypes.find(function (mime) {
+                    var _mime$split = mime.split('/'),
+                        _mime$split2 = (0, _slicedToArray2["default"])(_mime$split, 2),
+                        type = _mime$split2[0],
+                        subtype = _mime$split2[1];
 
-                  if (foundConfig) {
-                    _context7.next = 4;
-                    break;
-                  }
-
-                  return _context7.abrupt("return");
-
-                case 4:
-                  _foundConfig = (0, _slicedToArray2["default"])(foundConfig, 1), tool = _foundConfig[0];
-                  pasteEvent = this.composePasteEvent('file', {
-                    file: file
+                    return type === fileType && (subtype === fileSubtype || subtype === '*');
                   });
-                  return _context7.abrupt("return", {
-                    event: pasteEvent,
-                    type: tool
-                  });
+                  return !!foundExt || !!foundMimeType;
+                });
 
-                case 7:
-                case "end":
-                  return _context7.stop();
-              }
+                if (foundConfig) {
+                  _context7.next = 4;
+                  break;
+                }
+
+                return _context7.abrupt("return");
+
+              case 4:
+                _foundConfig = (0, _slicedToArray2["default"])(foundConfig, 1), tool = _foundConfig[0];
+                pasteEvent = this.composePasteEvent('file', {
+                  file: file
+                });
+                return _context7.abrupt("return", {
+                  event: pasteEvent,
+                  type: tool
+                });
+
+              case 7:
+              case "end":
+                return _context7.stop();
             }
-          }, _callee7, this);
-        }));
-
-        function processFile(_x7) {
-          return _processFile.apply(this, arguments);
-        }
-
-        return processFile;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Split HTML string to blocks and return it as array of Block data
        *
@@ -20956,47 +20800,37 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "processSingleBlock",
-      value: function () {
-        var _processSingleBlock = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee8(dataToInsert) {
-          var _this$Editor5, Caret, BlockManager, Tools, currentBlock;
+      value: function processSingleBlock(dataToInsert) {
+        var _this$Editor5, Caret, BlockManager, Tools, currentBlock;
 
-          return _regenerator["default"].wrap(function _callee8$(_context8) {
-            while (1) {
-              switch (_context8.prev = _context8.next) {
-                case 0:
-                  _this$Editor5 = this.Editor, Caret = _this$Editor5.Caret, BlockManager = _this$Editor5.BlockManager, Tools = _this$Editor5.Tools;
-                  currentBlock = BlockManager.currentBlock;
-                  /**
-                   * If pasted tool isn`t equal current Block or if pasted content contains block elements, insert it as new Block
-                   */
+        return _index["default"].async(function processSingleBlock$(_context8) {
+          while (1) {
+            switch (_context8.prev = _context8.next) {
+              case 0:
+                _this$Editor5 = this.Editor, Caret = _this$Editor5.Caret, BlockManager = _this$Editor5.BlockManager, Tools = _this$Editor5.Tools;
+                currentBlock = BlockManager.currentBlock;
+                /**
+                 * If pasted tool isn`t equal current Block or if pasted content contains block elements, insert it as new Block
+                 */
 
-                  if (!(!currentBlock || dataToInsert.tool !== currentBlock.name || !_dom["default"].containsOnlyInlineElements(dataToInsert.content.innerHTML))) {
-                    _context8.next = 5;
-                    break;
-                  }
+                if (!(!currentBlock || dataToInsert.tool !== currentBlock.name || !_dom["default"].containsOnlyInlineElements(dataToInsert.content.innerHTML))) {
+                  _context8.next = 5;
+                  break;
+                }
 
-                  this.insertBlock(dataToInsert, currentBlock && Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty);
-                  return _context8.abrupt("return");
+                this.insertBlock(dataToInsert, currentBlock && Tools.isInitial(currentBlock.tool) && currentBlock.isEmpty);
+                return _context8.abrupt("return");
 
-                case 5:
-                  Caret.insertContentAtCaretPosition(dataToInsert.content.innerHTML);
+              case 5:
+                Caret.insertContentAtCaretPosition(dataToInsert.content.innerHTML);
 
-                case 6:
-                case "end":
-                  return _context8.stop();
-              }
+              case 6:
+              case "end":
+                return _context8.stop();
             }
-          }, _callee8, this);
-        }));
-
-        function processSingleBlock(_x8) {
-          return _processSingleBlock.apply(this, arguments);
-        }
-
-        return processSingleBlock;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Process paste to single Block:
        * 1. Find patterns` matches
@@ -21008,64 +20842,54 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "processInlinePaste",
-      value: function () {
-        var _processInlinePaste = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee9(dataToInsert) {
-          var _this$Editor6, BlockManager, Caret, Sanitizer, Tools, content, tool, currentBlockIsInitial, blockData, insertedBlock, needToReplaceCurrentBlock, currentToolSanitizeConfig;
+      value: function processInlinePaste(dataToInsert) {
+        var _this$Editor6, BlockManager, Caret, Sanitizer, Tools, content, tool, currentBlockIsInitial, blockData, insertedBlock, needToReplaceCurrentBlock, currentToolSanitizeConfig;
 
-          return _regenerator["default"].wrap(function _callee9$(_context9) {
-            while (1) {
-              switch (_context9.prev = _context9.next) {
-                case 0:
-                  _this$Editor6 = this.Editor, BlockManager = _this$Editor6.BlockManager, Caret = _this$Editor6.Caret, Sanitizer = _this$Editor6.Sanitizer, Tools = _this$Editor6.Tools;
-                  content = dataToInsert.content, tool = dataToInsert.tool;
-                  currentBlockIsInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
+        return _index["default"].async(function processInlinePaste$(_context9) {
+          while (1) {
+            switch (_context9.prev = _context9.next) {
+              case 0:
+                _this$Editor6 = this.Editor, BlockManager = _this$Editor6.BlockManager, Caret = _this$Editor6.Caret, Sanitizer = _this$Editor6.Sanitizer, Tools = _this$Editor6.Tools;
+                content = dataToInsert.content, tool = dataToInsert.tool;
+                currentBlockIsInitial = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool);
 
-                  if (!(currentBlockIsInitial && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
-                    _context9.next = 12;
-                    break;
-                  }
+                if (!(currentBlockIsInitial && content.textContent.length < Paste.PATTERN_PROCESSING_MAX_LENGTH)) {
+                  _context9.next = 12;
+                  break;
+                }
 
-                  _context9.next = 6;
-                  return this.processPattern(content.textContent);
+                _context9.next = 6;
+                return _index["default"].awrap(this.processPattern(content.textContent));
 
-                case 6:
-                  blockData = _context9.sent;
+              case 6:
+                blockData = _context9.sent;
 
-                  if (!blockData) {
-                    _context9.next = 12;
-                    break;
-                  }
+                if (!blockData) {
+                  _context9.next = 12;
+                  break;
+                }
 
-                  needToReplaceCurrentBlock = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool) && BlockManager.currentBlock.isEmpty;
-                  insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
-                  Caret.setToBlock(insertedBlock, Caret.positions.END);
-                  return _context9.abrupt("return");
+                needToReplaceCurrentBlock = BlockManager.currentBlock && Tools.isInitial(BlockManager.currentBlock.tool) && BlockManager.currentBlock.isEmpty;
+                insertedBlock = BlockManager.paste(blockData.tool, blockData.event, needToReplaceCurrentBlock);
+                Caret.setToBlock(insertedBlock, Caret.positions.END);
+                return _context9.abrupt("return");
 
-                case 12:
-                  /** If there is no pattern substitute - insert string as it is */
-                  if (BlockManager.currentBlock && BlockManager.currentBlock.currentInput) {
-                    currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
-                    document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig));
-                  } else {
-                    this.insertBlock(dataToInsert);
-                  }
+              case 12:
+                /** If there is no pattern substitute - insert string as it is */
+                if (BlockManager.currentBlock && BlockManager.currentBlock.currentInput) {
+                  currentToolSanitizeConfig = Sanitizer.getInlineToolsConfig(BlockManager.currentBlock.name);
+                  document.execCommand('insertHTML', false, Sanitizer.clean(content.innerHTML, currentToolSanitizeConfig));
+                } else {
+                  this.insertBlock(dataToInsert);
+                }
 
-                case 13:
-                case "end":
-                  return _context9.stop();
-              }
+              case 13:
+              case "end":
+                return _context9.stop();
             }
-          }, _callee9, this);
-        }));
-
-        function processInlinePaste(_x9) {
-          return _processInlinePaste.apply(this, arguments);
-        }
-
-        return processInlinePaste;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Get patterns` matches
        *
@@ -21075,56 +20899,46 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "processPattern",
-      value: function () {
-        var _processPattern = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee10(text) {
-          var pattern, event;
-          return _regenerator["default"].wrap(function _callee10$(_context10) {
-            while (1) {
-              switch (_context10.prev = _context10.next) {
-                case 0:
-                  pattern = this.toolsPatterns.find(function (substitute) {
-                    var execResult = substitute.pattern.exec(text);
+      value: function processPattern(text) {
+        var pattern, event;
+        return _index["default"].async(function processPattern$(_context10) {
+          while (1) {
+            switch (_context10.prev = _context10.next) {
+              case 0:
+                pattern = this.toolsPatterns.find(function (substitute) {
+                  var execResult = substitute.pattern.exec(text);
 
-                    if (!execResult) {
-                      return false;
-                    }
-
-                    return text === execResult.shift();
-                  });
-
-                  if (pattern) {
-                    _context10.next = 3;
-                    break;
+                  if (!execResult) {
+                    return false;
                   }
 
-                  return _context10.abrupt("return");
+                  return text === execResult.shift();
+                });
 
-                case 3:
-                  event = this.composePasteEvent('pattern', {
-                    key: pattern.key,
-                    data: text
-                  });
-                  return _context10.abrupt("return", {
-                    event: event,
-                    tool: pattern.tool
-                  });
+                if (pattern) {
+                  _context10.next = 3;
+                  break;
+                }
 
-                case 5:
-                case "end":
-                  return _context10.stop();
-              }
+                return _context10.abrupt("return");
+
+              case 3:
+                event = this.composePasteEvent('pattern', {
+                  key: pattern.key,
+                  data: text
+                });
+                return _context10.abrupt("return", {
+                  event: event,
+                  tool: pattern.tool
+                });
+
+              case 5:
+              case "end":
+                return _context10.stop();
             }
-          }, _callee10, this);
-        }));
-
-        function processPattern(_x10) {
-          return _processPattern.apply(this, arguments);
-        }
-
-        return processPattern;
-      }()
+          }
+        }, null, this);
+      }
       /**
        *
        * @param {PasteData} data
@@ -21134,53 +20948,43 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "insertBlock",
-      value: function () {
-        var _insertBlock = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee11(data) {
-          var canReplaceCurrentBlock,
-              _this$Editor7,
-              BlockManager,
-              Caret,
-              currentBlock,
-              block,
-              _args11 = arguments;
+      value: function insertBlock(data) {
+        var canReplaceCurrentBlock,
+            _this$Editor7,
+            BlockManager,
+            Caret,
+            currentBlock,
+            block,
+            _args11 = arguments;
 
-          return _regenerator["default"].wrap(function _callee11$(_context11) {
-            while (1) {
-              switch (_context11.prev = _context11.next) {
-                case 0:
-                  canReplaceCurrentBlock = _args11.length > 1 && _args11[1] !== undefined ? _args11[1] : false;
-                  _this$Editor7 = this.Editor, BlockManager = _this$Editor7.BlockManager, Caret = _this$Editor7.Caret;
-                  currentBlock = BlockManager.currentBlock;
+        return _index["default"].async(function insertBlock$(_context11) {
+          while (1) {
+            switch (_context11.prev = _context11.next) {
+              case 0:
+                canReplaceCurrentBlock = _args11.length > 1 && _args11[1] !== undefined ? _args11[1] : false;
+                _this$Editor7 = this.Editor, BlockManager = _this$Editor7.BlockManager, Caret = _this$Editor7.Caret;
+                currentBlock = BlockManager.currentBlock;
 
-                  if (!(canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty)) {
-                    _context11.next = 7;
-                    break;
-                  }
+                if (!(canReplaceCurrentBlock && currentBlock && currentBlock.isEmpty)) {
+                  _context11.next = 7;
+                  break;
+                }
 
-                  block = BlockManager.paste(data.tool, data.event, true);
-                  Caret.setToBlock(block, Caret.positions.END);
-                  return _context11.abrupt("return");
+                block = BlockManager.paste(data.tool, data.event, true);
+                Caret.setToBlock(block, Caret.positions.END);
+                return _context11.abrupt("return");
 
-                case 7:
-                  block = BlockManager.paste(data.tool, data.event);
-                  Caret.setToBlock(block, Caret.positions.END);
+              case 7:
+                block = BlockManager.paste(data.tool, data.event);
+                Caret.setToBlock(block, Caret.positions.END);
 
-                case 9:
-                case "end":
-                  return _context11.stop();
-              }
+              case 9:
+              case "end":
+                return _context11.stop();
             }
-          }, _callee11, this);
-        }));
-
-        function insertBlock(_x11) {
-          return _insertBlock.apply(this, arguments);
-        }
-
-        return insertBlock;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Recursively divide HTML string to two types of nodes:
        * 1. Block element
@@ -21223,21 +21027,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
                 return [].concat((0, _toConsumableArray2["default"])(nodes), [destNode, new DocumentFragment()]);
               }
 
-              var _ref9 = _this8.toolsTags[element.tagName] || {},
-                  _ref9$tool = _ref9.tool,
-                  tool = _ref9$tool === void 0 ? '' : _ref9$tool;
+              var _ref7 = _this8.toolsTags[element.tagName] || {},
+                  _ref7$tool = _ref7.tool,
+                  tool = _ref7$tool === void 0 ? '' : _ref7$tool;
 
               var toolTags = _this8.tagsByTool[tool] || [];
               var isSubstitutable = tags.includes(element.tagName);
 
               var isBlockElement = _dom["default"].blockElements.includes(element.tagName.toLowerCase());
 
-              var containsAnotherToolTags = Array.from(element.children).some(function (_ref10) {
-                var tagName = _ref10.tagName;
+              var containsAnotherToolTags = Array.from(element.children).some(function (_ref8) {
+                var tagName = _ref8.tagName;
                 return tags.includes(tagName) && !toolTags.includes(tagName);
               });
-              var containsBlockElements = Array.from(element.children).some(function (_ref11) {
-                var tagName = _ref11.tagName;
+              var containsBlockElements = Array.from(element.children).some(function (_ref9) {
+                var tagName = _ref9.tagName;
                 return _dom["default"].blockElements.includes(tagName.toLowerCase());
               });
               /** Append inline elements to previous fragment */
@@ -21307,22 +21111,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _index, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports["default"] = void 0;
-  _regenerator = _interopRequireDefault(_regenerator);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
@@ -21355,7 +21158,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Value to track read-only state
        *
        * @type Boolean
-       * @private
        */
 
       _this.readOnlyEnabled = false;
@@ -21368,30 +21170,20 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     (0, _createClass2["default"])(ReadOnly, [{
       key: "prepare",
-      value: function () {
-        var _prepare = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee() {
-          return _regenerator["default"].wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  this.readOnlyEnabled = this.config.readOnly;
+      value: function prepare() {
+        return _index["default"].async(function prepare$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                this.readOnlyEnabled = this.config.readOnly;
 
-                case 1:
-                case "end":
-                  return _context.stop();
-              }
+              case 1:
+              case "end":
+                return _context.stop();
             }
-          }, _callee, this);
-        }));
-
-        function prepare() {
-          return _prepare.apply(this, arguments);
-        }
-
-        return prepare;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Set read-only mode or toggle current state
        *
@@ -21406,10 +21198,12 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         for (var name in this.Editor) {
           // Verify module has method
-          if (this.Editor[name].toggleReadOnly) {
-            // set or toggle read-only state
-            this.Editor[name].toggleReadOnly(state);
-          }
+          if (!this.Editor[name].toggleReadOnly) {
+            continue;
+          } // set or toggle read-only state
+
+
+          this.Editor[name].toggleReadOnly(state);
         }
 
         return this.readOnlyEnabled;
@@ -21434,7 +21228,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../block */ "./src/components/block.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../block */ "./src/components/block.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -21442,7 +21236,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _selection, _block) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -21530,6 +21324,56 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
       _this.stackOfSelected = [];
+      /**
+       * Handle mouse down events
+       * @param {MouseEvent} mouseEvent
+       */
+
+      _this.processMouseDown = function (mouseEvent) {
+        if (mouseEvent.button !== _this.MAIN_MOUSE_BUTTON) {
+          return;
+        }
+
+        _this.startSelection(mouseEvent.pageX, mouseEvent.pageY);
+      };
+      /**
+       * Handle mouse move events
+       * @param {MouseEvent} mouseEvent
+       */
+
+
+      _this.processMouseMove = function (mouseEvent) {
+        _this.changingRectangle(mouseEvent);
+
+        _this.scrollByZones(mouseEvent.clientY);
+      };
+      /**
+       * Handle mouse leave
+       */
+
+
+      _this.processMouseLeave = function () {
+        _this.clearSelection();
+
+        _this.endSelection();
+      };
+      /**
+       * @param {MouseEvent} mouseEvent
+       */
+
+
+      _this.processScroll = function (mouseEvent) {
+        _this.changingRectangle(mouseEvent);
+      };
+      /**
+       * Handle mouse up
+       */
+
+
+      _this.processMouseUp = function () {
+        _this.endSelection();
+      };
+
       return _this;
     }
     /**
@@ -21557,39 +21401,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "toggleReadOnly",
       value: function toggleReadOnly(readOnlyEnabled) {
-        var _this2 = this;
-
-        var Listeners = this.Editor.Listeners;
-
-        if (readOnlyEnabled) {
-          Listeners.removeAll();
+        if (!readOnlyEnabled) {
+          this.bindEvents();
         } else {
-          var _this$genHTML = this.genHTML(),
-              container = _this$genHTML.container;
-
-          Listeners.on(container, 'mousedown', function (event) {
-            if (event.button !== _this2.MAIN_MOUSE_BUTTON) {
-              return;
-            }
-
-            _this2.startSelection(event.pageX, event.pageY);
-          }, false);
-          Listeners.on(document.body, 'mousemove', function (event) {
-            _this2.changingRectangle(event);
-
-            _this2.scrollByZones(event.clientY);
-          }, false);
-          Listeners.on(document.body, 'mouseleave', function () {
-            _this2.clearSelection();
-
-            _this2.endSelection();
-          });
-          Listeners.on(window, 'scroll', function (event) {
-            _this2.changingRectangle(event);
-          }, false);
-          Listeners.on(document.body, 'mouseup', function () {
-            _this2.endSelection();
-          }, false);
+          this.unbindEvents();
         }
       }
       /**
@@ -21652,6 +21467,34 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       value: function clearSelection() {
         this.isRectSelectionActivated = false;
       }
+    }, {
+      key: "bindEvents",
+      value: function bindEvents() {
+        var Listeners = this.Editor.Listeners;
+
+        var _this$genHTML = this.genHTML(),
+            container = _this$genHTML.container;
+
+        Listeners.on(container, 'mousedown', this.processMouseDown, false);
+        Listeners.on(document.body, 'mousemove', this.processMouseMove, false);
+        Listeners.on(document.body, 'mouseleave', this.processMouseLeave);
+        Listeners.on(window, 'scroll', this.processScroll, false);
+        Listeners.on(document.body, 'mouseup', this.processMouseUp, false);
+      }
+    }, {
+      key: "unbindEvents",
+      value: function unbindEvents() {
+        var Listeners = this.Editor.Listeners;
+
+        var _this$genHTML2 = this.genHTML(),
+            container = _this$genHTML2.container;
+
+        Listeners.off(container, 'mousedown', this.processMouseDown, false);
+        Listeners.off(document.body, 'mousemove', this.processMouseMove, false);
+        Listeners.off(document.body, 'mouseleave', this.processMouseLeave);
+        Listeners.off(window, 'scroll', this.processScroll, false);
+        Listeners.off(document.body, 'mouseup', this.processMouseUp, false);
+      }
       /**
        * Scroll If mouse in scroll zone
        * @param {number} clientY - Y coord of mouse
@@ -21709,7 +21552,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "scrollVertical",
       value: function scrollVertical(speed) {
-        var _this3 = this;
+        var _this2 = this;
 
         if (!(this.inScrollZone && this.mousedown)) {
           return;
@@ -21719,7 +21562,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         window.scrollBy(0, speed);
         this.mouseY += window.pageYOffset - lastOffset;
         setTimeout(function () {
-          _this3.scrollVertical(speed);
+          _this2.scrollVertical(speed);
         }, 0);
       }
       /**
@@ -21922,7 +21765,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "trySelectNextBlock",
       value: function trySelectNextBlock(index) {
-        var _this4 = this;
+        var _this3 = this;
 
         var sameBlock = this.stackOfSelected[this.stackOfSelected.length - 1] === index;
         var sizeStack = this.stackOfSelected.length;
@@ -21969,11 +21812,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         if (index > this.stackOfSelected[sizeStack - 1]) {
           cmp = function cmp() {
-            return index > _this4.stackOfSelected[i];
+            return index > _this3.stackOfSelected[i];
           };
         } else {
           cmp = function cmp() {
-            return index < _this4.stackOfSelected[i];
+            return index < _this3.stackOfSelected[i];
           };
         } // Remove blocks missed due to speed.
         // cmp checks if we have removed all the necessary blocks
@@ -22021,24 +21864,23 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _index, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports["default"] = void 0;
-  _regenerator = _interopRequireDefault(_regenerator);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
@@ -22098,46 +21940,36 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Make plugin blocks from array of plugin`s data
        * @param {RendererBlocks[]} blocks
        */
-      value: function () {
-        var _render = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee(blocks) {
-          var _this = this;
+      value: function render(blocks) {
+        var _this = this;
 
-          var chainData, sequence;
-          return _regenerator["default"].wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  chainData = blocks.map(function (block) {
-                    return {
-                      "function": function _function() {
-                        return _this.insertBlock(block);
-                      }
-                    };
-                  });
-                  _context.next = 3;
-                  return _.sequence(chainData);
+        var chainData, sequence;
+        return _index["default"].async(function render$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                chainData = blocks.map(function (block) {
+                  return {
+                    "function": function _function() {
+                      return _this.insertBlock(block);
+                    }
+                  };
+                });
+                _context.next = 3;
+                return _index["default"].awrap(_.sequence(chainData));
 
-                case 3:
-                  sequence = _context.sent;
-                  this.Editor.UI.checkEmptiness();
-                  return _context.abrupt("return", sequence);
+              case 3:
+                sequence = _context.sent;
+                this.Editor.UI.checkEmptiness();
+                return _context.abrupt("return", sequence);
 
-                case 6:
-                case "end":
-                  return _context.stop();
-              }
+              case 6:
+              case "end":
+                return _context.stop();
             }
-          }, _callee, this);
-        }));
-
-        function render(_x) {
-          return _render.apply(this, arguments);
-        }
-
-        return render;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Get plugin instance
        * Add plugin instance to BlockManager
@@ -22150,78 +21982,68 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "insertBlock",
-      value: function () {
-        var _insertBlock = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee2(item) {
-          var _this$Editor, Tools, BlockManager, tool, data, settings, stubData, toolToolboxSettings, userToolboxSettings, stub;
+      value: function insertBlock(item) {
+        var _this$Editor, Tools, BlockManager, tool, data, settings, stubData, toolToolboxSettings, userToolboxSettings, stub;
 
-          return _regenerator["default"].wrap(function _callee2$(_context2) {
-            while (1) {
-              switch (_context2.prev = _context2.next) {
-                case 0:
-                  _this$Editor = this.Editor, Tools = _this$Editor.Tools, BlockManager = _this$Editor.BlockManager;
-                  tool = item.type;
-                  data = item.data;
-                  settings = item.settings;
+        return _index["default"].async(function insertBlock$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _this$Editor = this.Editor, Tools = _this$Editor.Tools, BlockManager = _this$Editor.BlockManager;
+                tool = item.type;
+                data = item.data;
+                settings = item.settings;
 
-                  if (!(tool in Tools.available)) {
-                    _context2.next = 15;
-                    break;
-                  }
-
-                  _context2.prev = 5;
-                  BlockManager.insert(tool, data, settings);
-                  _context2.next = 13;
+                if (!(tool in Tools.available)) {
+                  _context2.next = 15;
                   break;
+                }
 
-                case 9:
-                  _context2.prev = 9;
-                  _context2.t0 = _context2["catch"](5);
+                _context2.prev = 5;
+                BlockManager.insert(tool, data, settings);
+                _context2.next = 13;
+                break;
 
-                  _.log("Block \xAB".concat(tool, "\xBB skipped because of plugins error"), 'warn', data);
+              case 9:
+                _context2.prev = 9;
+                _context2.t0 = _context2["catch"](5);
 
-                  throw Error(_context2.t0);
+                _.log("Block \xAB".concat(tool, "\xBB skipped because of plugins error"), 'warn', data);
 
-                case 13:
-                  _context2.next = 20;
-                  break;
+                throw Error(_context2.t0);
 
-                case 15:
-                  /** If Tool is unavailable, create stub Block for it */
-                  stubData = {
-                    savedData: {
-                      type: tool,
-                      data: data
-                    },
-                    title: tool
-                  };
+              case 13:
+                _context2.next = 20;
+                break;
 
-                  if (tool in Tools.unavailable) {
-                    toolToolboxSettings = Tools.unavailable[tool].toolbox;
-                    userToolboxSettings = Tools.getToolSettings(tool).toolbox;
-                    stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
-                  }
+              case 15:
+                /** If Tool is unavailable, create stub Block for it */
+                stubData = {
+                  savedData: {
+                    type: tool,
+                    data: data
+                  },
+                  title: tool
+                };
 
-                  stub = BlockManager.insert(Tools.stubTool, stubData, settings);
-                  stub.stretched = true;
+                if (tool in Tools.unavailable) {
+                  toolToolboxSettings = Tools.unavailable[tool].toolbox;
+                  userToolboxSettings = Tools.getToolSettings(tool).toolbox;
+                  stubData.title = toolToolboxSettings.title || userToolboxSettings.title || stubData.title;
+                }
 
-                  _.log("Tool \xAB".concat(tool, "\xBB is not found. Check 'tools' property at your initial Editor.js config."), 'warn');
+                stub = BlockManager.insert(Tools.stubTool, stubData, settings);
+                stub.stretched = true;
 
-                case 20:
-                case "end":
-                  return _context2.stop();
-              }
+                _.log("Tool \xAB".concat(tool, "\xBB is not found. Check 'tools' property at your initial Editor.js config."), 'warn');
+
+              case 20:
+              case "end":
+                return _context2.stop();
             }
-          }, _callee2, this, [[5, 9]]);
-        }));
-
-        function insertBlock(_x2) {
-          return _insertBlock.apply(this, arguments);
-        }
-
-        return insertBlock;
-      }()
+          }
+        }, null, this, [[5, 9]]);
+      }
     }]);
     return Renderer;
   }(_module["default"]);
@@ -22242,7 +22064,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! html-janitor */ "./node_modules/html-janitor/src/html-janitor.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray.js */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! html-janitor */ "./node_modules/html-janitor/src/html-janitor.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -22250,9 +22072,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _slicedToArray2, _typeof2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _, _htmlJanitor) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -22627,24 +22449,23 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _index, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports["default"] = void 0;
-  _regenerator = _interopRequireDefault(_regenerator);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
@@ -22685,55 +22506,45 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        * Composes new chain of Promises to fire them alternatelly
        * @return {OutputData}
        */
-      value: function () {
-        var _save = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee() {
-          var _this = this;
+      value: function save() {
+        var _this = this;
 
-          var _this$Editor, BlockManager, Sanitizer, ModificationsObserver, blocks, chainData, extractedData, sanitizedData;
+        var _this$Editor, BlockManager, Sanitizer, ModificationsObserver, blocks, chainData, extractedData, sanitizedData;
 
-          return _regenerator["default"].wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  _this$Editor = this.Editor, BlockManager = _this$Editor.BlockManager, Sanitizer = _this$Editor.Sanitizer, ModificationsObserver = _this$Editor.ModificationsObserver;
-                  blocks = BlockManager.blocks, chainData = [];
-                  /**
-                   * Disable modifications observe while saving
-                   */
+        return _index["default"].async(function save$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _this$Editor = this.Editor, BlockManager = _this$Editor.BlockManager, Sanitizer = _this$Editor.Sanitizer, ModificationsObserver = _this$Editor.ModificationsObserver;
+                blocks = BlockManager.blocks, chainData = [];
+                /**
+                 * Disable modifications observe while saving
+                 */
 
-                  ModificationsObserver.disable();
-                  blocks.forEach(function (block) {
-                    chainData.push(_this.getSavedData(block));
-                  });
-                  _context.next = 6;
-                  return Promise.all(chainData);
+                ModificationsObserver.disable();
+                blocks.forEach(function (block) {
+                  chainData.push(_this.getSavedData(block));
+                });
+                _context.next = 6;
+                return _index["default"].awrap(Promise.all(chainData));
 
-                case 6:
-                  extractedData = _context.sent;
-                  _context.next = 9;
-                  return Sanitizer.sanitizeBlocks(extractedData);
+              case 6:
+                extractedData = _context.sent;
+                _context.next = 9;
+                return _index["default"].awrap(Sanitizer.sanitizeBlocks(extractedData));
 
-                case 9:
-                  sanitizedData = _context.sent;
-                  ModificationsObserver.enable();
-                  return _context.abrupt("return", this.makeOutput(sanitizedData));
+              case 9:
+                sanitizedData = _context.sent;
+                ModificationsObserver.enable();
+                return _context.abrupt("return", this.makeOutput(sanitizedData));
 
-                case 12:
-                case "end":
-                  return _context.stop();
-              }
+              case 12:
+              case "end":
+                return _context.stop();
             }
-          }, _callee, this);
-        }));
-
-        function save() {
-          return _save.apply(this, arguments);
-        }
-
-        return save;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Saves and validates
        * @param {Block} block - Editor's Tool
@@ -22742,53 +22553,43 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "getSavedData",
-      value: function () {
-        var _getSavedData = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee2(block) {
-          var blockData, isValid;
-          return _regenerator["default"].wrap(function _callee2$(_context2) {
-            while (1) {
-              switch (_context2.prev = _context2.next) {
-                case 0:
-                  _context2.next = 2;
-                  return block.save();
+      value: function getSavedData(block) {
+        var blockData, isValid;
+        return _index["default"].async(function getSavedData$(_context2) {
+          while (1) {
+            switch (_context2.prev = _context2.next) {
+              case 0:
+                _context2.next = 2;
+                return _index["default"].awrap(block.save());
 
-                case 2:
-                  blockData = _context2.sent;
-                  _context2.t0 = blockData;
+              case 2:
+                blockData = _context2.sent;
+                _context2.t0 = blockData;
 
-                  if (!_context2.t0) {
-                    _context2.next = 8;
-                    break;
-                  }
+                if (!_context2.t0) {
+                  _context2.next = 8;
+                  break;
+                }
 
-                  _context2.next = 7;
-                  return block.validate(blockData.data);
+                _context2.next = 7;
+                return _index["default"].awrap(block.validate(blockData.data));
 
-                case 7:
-                  _context2.t0 = _context2.sent;
+              case 7:
+                _context2.t0 = _context2.sent;
 
-                case 8:
-                  isValid = _context2.t0;
-                  return _context2.abrupt("return", Object.assign(Object.assign({}, blockData), {
-                    isValid: isValid
-                  }));
+              case 8:
+                isValid = _context2.t0;
+                return _context2.abrupt("return", Object.assign(Object.assign({}, blockData), {
+                  isValid: isValid
+                }));
 
-                case 10:
-                case "end":
-                  return _context2.stop();
-              }
+              case 10:
+              case "end":
+                return _context2.stop();
             }
-          }, _callee2);
-        }));
-
-        function getSavedData(_x) {
-          return _getSavedData.apply(this, arguments);
-        }
-
-        return getSavedData;
-      }()
+          }
+        });
+      }
       /**
        * Creates output object with saved data, time and version of editor
        * @param {ValidatedData} allExtractedData
@@ -22873,7 +22674,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! @codexteam/shortcuts */ "./node_modules/@codexteam/shortcuts/dist/shortcuts.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! @codexteam/shortcuts */ "./node_modules/@codexteam/shortcuts/dist/shortcuts.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -22881,7 +22682,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _shortcuts, _module) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -22950,17 +22751,13 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var index = this.registeredShortcuts.findIndex(function (shc) {
           return shc.name === shortcut;
         });
+
+        if (!this.registeredShortcuts[index]) {
+          return;
+        }
+
         this.registeredShortcuts[index].remove();
         this.registeredShortcuts.splice(index, 1);
-      }
-      /**
-       * Remove all shortcuts
-       */
-
-    }, {
-      key: "removeAll",
-      value: function removeAll() {
-        this.registeredShortcuts = [];
       }
     }]);
     return Shortcuts;
@@ -22982,7 +22779,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -22990,9 +22787,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _flipper, _) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -23254,25 +23051,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray.js */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _slicedToArray2, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _, _flipper) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _slicedToArray2, _index, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _, _flipper) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports["default"] = void 0;
   _slicedToArray2 = _interopRequireDefault(_slicedToArray2);
-  _regenerator = _interopRequireDefault(_regenerator);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
@@ -23447,142 +23243,132 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "replaceWithBlock",
-      value: function () {
-        var _replaceWithBlock = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee(replacingToolName) {
-          var _this3 = this;
+      value: function replaceWithBlock(replacingToolName) {
+        var _this3 = this;
 
-          var currentBlockClass, currentBlockName, savedBlock, INTERNAL_SETTINGS, blockData, replacingTool, exportData, exportProp, cleaned, newBlockData, importProp;
-          return _regenerator["default"].wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  /**
-                   * At first, we get current Block data
-                   * @type {BlockToolConstructable}
-                   */
-                  currentBlockClass = this.Editor.BlockManager.currentBlock["class"];
-                  currentBlockName = this.Editor.BlockManager.currentBlock.name;
-                  _context.next = 4;
-                  return this.Editor.BlockManager.currentBlock.save();
+        var currentBlockClass, currentBlockName, savedBlock, INTERNAL_SETTINGS, blockData, replacingTool, exportData, exportProp, cleaned, newBlockData, importProp;
+        return _index["default"].async(function replaceWithBlock$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                /**
+                 * At first, we get current Block data
+                 * @type {BlockToolConstructable}
+                 */
+                currentBlockClass = this.Editor.BlockManager.currentBlock["class"];
+                currentBlockName = this.Editor.BlockManager.currentBlock.name;
+                _context.next = 4;
+                return _index["default"].awrap(this.Editor.BlockManager.currentBlock.save());
 
-                case 4:
-                  savedBlock = _context.sent;
-                  INTERNAL_SETTINGS = this.Editor.Tools.INTERNAL_SETTINGS;
-                  blockData = savedBlock.data;
-                  /**
-                   * When current Block name is equals to the replacing tool Name,
-                   * than convert this Block back to the initial Block
-                   */
+              case 4:
+                savedBlock = _context.sent;
+                INTERNAL_SETTINGS = this.Editor.Tools.INTERNAL_SETTINGS;
+                blockData = savedBlock.data;
+                /**
+                 * When current Block name is equals to the replacing tool Name,
+                 * than convert this Block back to the initial Block
+                 */
 
-                  if (currentBlockName === replacingToolName) {
-                    replacingToolName = this.config.initialBlock;
-                  }
-                  /**
-                   * Getting a class of replacing Tool
-                   * @type {BlockToolConstructable}
-                   */
+                if (currentBlockName === replacingToolName) {
+                  replacingToolName = this.config.initialBlock;
+                }
+                /**
+                 * Getting a class of replacing Tool
+                 * @type {BlockToolConstructable}
+                 */
 
 
-                  replacingTool = this.Editor.Tools.toolsClasses[replacingToolName];
-                  /**
-                   * Export property can be:
-                   * 1) Function — Tool defines which data to return
-                   * 2) String — the name of saved property
-                   *
-                   * In both cases returning value must be a string
-                   */
+                replacingTool = this.Editor.Tools.toolsClasses[replacingToolName];
+                /**
+                 * Export property can be:
+                 * 1) Function — Tool defines which data to return
+                 * 2) String — the name of saved property
+                 *
+                 * In both cases returning value must be a string
+                 */
 
-                  exportData = '';
-                  exportProp = currentBlockClass[INTERNAL_SETTINGS.CONVERSION_CONFIG]["export"];
+                exportData = '';
+                exportProp = currentBlockClass[INTERNAL_SETTINGS.CONVERSION_CONFIG]["export"];
 
-                  if (!(typeof exportProp === 'function')) {
-                    _context.next = 15;
-                    break;
-                  }
-
-                  exportData = exportProp(blockData);
-                  _context.next = 21;
+                if (!(typeof exportProp === 'function')) {
+                  _context.next = 15;
                   break;
+                }
 
-                case 15:
-                  if (!(typeof exportProp === 'string')) {
-                    _context.next = 19;
-                    break;
-                  }
+                exportData = exportProp(blockData);
+                _context.next = 21;
+                break;
 
-                  exportData = blockData[exportProp];
-                  _context.next = 21;
+              case 15:
+                if (!(typeof exportProp === 'string')) {
+                  _context.next = 19;
                   break;
+                }
 
-                case 19:
-                  _.log('Conversion «export» property must be a string or function. ' + 'String means key of saved data object to export. Function should export processed string to export.');
+                exportData = blockData[exportProp];
+                _context.next = 21;
+                break;
 
-                  return _context.abrupt("return");
+              case 19:
+                _.log('Conversion «export» property must be a string or function. ' + 'String means key of saved data object to export. Function should export processed string to export.');
 
-                case 21:
-                  /**
-                   * Clean exported data with replacing sanitizer config
-                   */
-                  cleaned = this.Editor.Sanitizer.clean(exportData, replacingTool.sanitize);
-                  /**
-                   * «import» property can be Function or String
-                   * function — accept imported string and compose tool data object
-                   * string — the name of data field to import
-                   */
+                return _context.abrupt("return");
 
-                  newBlockData = {};
-                  importProp = replacingTool[INTERNAL_SETTINGS.CONVERSION_CONFIG]["import"];
+              case 21:
+                /**
+                 * Clean exported data with replacing sanitizer config
+                 */
+                cleaned = this.Editor.Sanitizer.clean(exportData, replacingTool.sanitize);
+                /**
+                 * «import» property can be Function or String
+                 * function — accept imported string and compose tool data object
+                 * string — the name of data field to import
+                 */
 
-                  if (!(typeof importProp === 'function')) {
-                    _context.next = 28;
-                    break;
-                  }
+                newBlockData = {};
+                importProp = replacingTool[INTERNAL_SETTINGS.CONVERSION_CONFIG]["import"];
 
-                  newBlockData = importProp(cleaned);
-                  _context.next = 34;
+                if (!(typeof importProp === 'function')) {
+                  _context.next = 28;
                   break;
+                }
 
-                case 28:
-                  if (!(typeof importProp === 'string')) {
-                    _context.next = 32;
-                    break;
-                  }
+                newBlockData = importProp(cleaned);
+                _context.next = 34;
+                break;
 
-                  newBlockData[importProp] = cleaned;
-                  _context.next = 34;
+              case 28:
+                if (!(typeof importProp === 'string')) {
+                  _context.next = 32;
                   break;
+                }
 
-                case 32:
-                  _.log('Conversion «import» property must be a string or function. ' + 'String means key of tool data to import. Function accepts a imported string and return composed tool data.');
+                newBlockData[importProp] = cleaned;
+                _context.next = 34;
+                break;
 
-                  return _context.abrupt("return");
+              case 32:
+                _.log('Conversion «import» property must be a string or function. ' + 'String means key of tool data to import. Function accepts a imported string and return composed tool data.');
 
-                case 34:
-                  this.Editor.BlockManager.replace(replacingToolName, newBlockData);
-                  this.Editor.BlockSelection.clearSelection();
-                  this.close();
-                  this.Editor.InlineToolbar.close();
+                return _context.abrupt("return");
 
-                  _.delay(function () {
-                    _this3.Editor.Caret.setToBlock(_this3.Editor.BlockManager.currentBlock);
-                  }, 10)();
+              case 34:
+                this.Editor.BlockManager.replace(replacingToolName, newBlockData);
+                this.Editor.BlockSelection.clearSelection();
+                this.close();
+                this.Editor.InlineToolbar.close();
 
-                case 39:
-                case "end":
-                  return _context.stop();
-              }
+                _.delay(function () {
+                  _this3.Editor.Caret.setToBlock(_this3.Editor.BlockManager.currentBlock);
+                }, 10)();
+
+              case 39:
+              case "end":
+                return _context.stop();
             }
-          }, _callee, this);
-        }));
-
-        function replaceWithBlock(_x) {
-          return _replaceWithBlock.apply(this, arguments);
-        }
-
-        return replaceWithBlock;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Iterates existing Tools and inserts to the ConversionToolbar
        * if tools have ability to import
@@ -23644,25 +23430,21 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         _dom["default"].append(this.nodes.tools, tool);
 
         this.tools[toolName] = tool;
-        this.Editor.Listeners.on(tool, 'click',
-        /*#__PURE__*/
-        (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee2() {
-          return _regenerator["default"].wrap(function _callee2$(_context2) {
+        this.Editor.Listeners.on(tool, 'click', function _callee() {
+          return _index["default"].async(function _callee$(_context2) {
             while (1) {
               switch (_context2.prev = _context2.next) {
                 case 0:
                   _context2.next = 2;
-                  return _this4.replaceWithBlock(toolName);
+                  return _index["default"].awrap(_this4.replaceWithBlock(toolName));
 
                 case 2:
                 case "end":
                   return _context2.stop();
               }
             }
-          }, _callee2);
-        })));
+          });
+        });
       }
       /**
        * Hide current Tool and show others
@@ -23676,10 +23458,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          * Show previously hided
          */
 
-        Object.entries(this.tools).forEach(function (_ref2) {
-          var _ref3 = (0, _slicedToArray2["default"])(_ref2, 2),
-              name = _ref3[0],
-              button = _ref3[1];
+        Object.entries(this.tools).forEach(function (_ref) {
+          var _ref2 = (0, _slicedToArray2["default"])(_ref, 2),
+              name = _ref2[0],
+              button = _ref2[1];
 
           button.hidden = false;
           button.classList.toggle(ConversionToolbar.CSS.conversionToolHidden, name === currentBlock.name);
@@ -23731,7 +23513,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -23739,9 +23521,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -23831,6 +23613,27 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         blockActionsButtons: null,
         settingsToggler: null
       };
+      /**
+       * Handler for Plus Button
+       * @param {MouseEvent} event
+       */
+
+      _this.plusButtonClicked = function () {
+        _this.Editor.Toolbox.toggle();
+      };
+      /**
+       * Clicks on the Block Settings toggler
+       */
+
+
+      _this.settingsTogglerClicked = function () {
+        if (_this.Editor.BlockSettings.opened) {
+          _this.Editor.BlockSettings.close();
+        } else {
+          _this.Editor.BlockSettings.open();
+        }
+      };
+
       return _this;
     }
     /**
@@ -23870,9 +23673,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         _dom["default"].append(this.nodes.content, this.nodes.plusButton);
 
-        this.Editor.Listeners.on(this.nodes.plusButton, 'click', function () {
-          return _this2.plusButtonClicked();
-        }, false);
+        this.Editor.Listeners.on(this.nodes.plusButton, 'click', this.plusButtonClicked, false);
         /**
          * Add events to show/hide tooltip for plus button
          */
@@ -24032,44 +23833,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
     }, {
-      key: "plusButtonClicked",
+      key: "bindEvents",
 
-      /**
-       * Handler for Plus Button
-       * @param {MouseEvent} event
-       */
-      value: function plusButtonClicked() {
-        this.Editor.Toolbox.toggle();
-      }
       /**
        * Bind events on the Toolbar Elements:
        * - Block Settings
        */
-
-    }, {
-      key: "bindEvents",
       value: function bindEvents() {
-        var _this4 = this;
-
         /**
          * Settings toggler
          */
-        this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', function () {
-          return _this4.settingsTogglerClicked();
-        });
-      }
-      /**
-       * Clicks on the Block Settings toggler
-       */
-
-    }, {
-      key: "settingsTogglerClicked",
-      value: function settingsTogglerClicked() {
-        if (this.Editor.BlockSettings.opened) {
-          this.Editor.BlockSettings.close();
-        } else {
-          this.Editor.BlockSettings.open();
-        }
+        this.Editor.Listeners.on(this.nodes.settingsToggler, 'click', this.settingsTogglerClicked);
       }
     }, {
       key: "CSS",
@@ -24097,18 +23871,18 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "plusButton",
       get: function get() {
-        var _this5 = this;
+        var _this4 = this;
 
         return {
           hide: function hide() {
-            return _this5.nodes.plusButton.classList.add(_this5.CSS.plusButtonHidden);
+            return _this4.nodes.plusButton.classList.add(_this4.CSS.plusButtonHidden);
           },
           show: function show() {
-            if (_this5.Editor.Toolbox.isEmpty) {
+            if (_this4.Editor.Toolbox.isEmpty) {
               return;
             }
 
-            _this5.nodes.plusButton.classList.remove(_this5.CSS.plusButtonHidden);
+            _this4.nodes.plusButton.classList.remove(_this4.CSS.plusButtonHidden);
           }
         };
       }
@@ -24120,14 +23894,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "blockActions",
       get: function get() {
-        var _this6 = this;
+        var _this5 = this;
 
         return {
           hide: function hide() {
-            _this6.nodes.actions.classList.remove(_this6.CSS.actionsOpened);
+            _this5.nodes.actions.classList.remove(_this5.CSS.actionsOpened);
           },
           show: function show() {
-            _this6.nodes.actions.classList.add(_this6.CSS.actionsOpened);
+            _this5.nodes.actions.classList.add(_this5.CSS.actionsOpened);
           }
         };
       }
@@ -24151,7 +23925,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray.js */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -24159,9 +23933,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _slicedToArray2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _selection, _, _flipper) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -24908,7 +24682,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts"), __webpack_require__(/*! ../../block */ "./src/components/block.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../../flipper */ "./src/components/flipper.ts"), __webpack_require__(/*! ../../block */ "./src/components/block.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -24916,9 +24690,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _dom, _, _flipper, _block) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -25307,7 +25081,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/typeof */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../tools/paragraph/dist/bundle */ "./src/components/tools/paragraph/dist/bundle.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-bold */ "./src/components/inline-tools/inline-tool-bold.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-italic */ "./src/components/inline-tools/inline-tool-italic.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-link */ "./src/components/inline-tools/inline-tool-link.ts"), __webpack_require__(/*! ../tools/stub */ "./src/components/tools/stub/index.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray.js */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/helpers/typeof.js */ "./node_modules/@babel/runtime/helpers/typeof.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../tools/paragraph/dist/bundle */ "./src/components/tools/paragraph/dist/bundle.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-bold */ "./src/components/inline-tools/inline-tool-bold.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-italic */ "./src/components/inline-tools/inline-tool-italic.ts"), __webpack_require__(/*! ../inline-tools/inline-tool-link */ "./src/components/inline-tools/inline-tool-link.ts"), __webpack_require__(/*! ../tools/stub */ "./src/components/tools/stub/index.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -25315,9 +25089,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _slicedToArray2, _typeof2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _bundle, _module, _, _inlineToolBold, _inlineToolItalic, _inlineToolLink, _stub) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -25873,7 +25647,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! codex-tooltip */ "./node_modules/codex-tooltip/dist/tooltip.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! codex-tooltip */ "./node_modules/codex-tooltip/dist/tooltip.js")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -25881,7 +25655,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _module, _codexTooltip) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -25985,25 +25759,24 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../../dist/sprite.svg */ "./dist/sprite.svg"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../block */ "./src/components/block.ts"), __webpack_require__(/*! ../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/slicedToArray.js */ "./node_modules/@babel/runtime/helpers/slicedToArray.js"), __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn.js */ "./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js"), __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf.js */ "./node_modules/@babel/runtime/helpers/getPrototypeOf.js"), __webpack_require__(/*! @babel/runtime/helpers/inherits.js */ "./node_modules/@babel/runtime/helpers/inherits.js"), __webpack_require__(/*! ../../../dist/sprite.svg */ "./dist/sprite.svg"), __webpack_require__(/*! ../__module */ "./src/components/__module.ts"), __webpack_require__(/*! ../dom */ "./src/components/dom.ts"), __webpack_require__(/*! ../utils */ "./src/components/utils.ts"), __webpack_require__(/*! ../selection */ "./src/components/selection.ts"), __webpack_require__(/*! ../block */ "./src/components/block.ts"), __webpack_require__(/*! ../flipper */ "./src/components/flipper.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _slicedToArray2, _regenerator, _asyncToGenerator2, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _sprite, _module, _dom, _, _selection, _block, _flipper) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _slicedToArray2, _index, _classCallCheck2, _createClass2, _possibleConstructorReturn2, _getPrototypeOf2, _inherits2, _sprite, _module, _dom, _, _selection, _block, _flipper) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
   });
   _exports["default"] = void 0;
   _slicedToArray2 = _interopRequireDefault(_slicedToArray2);
-  _regenerator = _interopRequireDefault(_regenerator);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _classCallCheck2 = _interopRequireDefault(_classCallCheck2);
   _createClass2 = _interopRequireDefault(_createClass2);
   _possibleConstructorReturn2 = _interopRequireDefault(_possibleConstructorReturn2);
@@ -26085,6 +25858,223 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       _this.resizeDebouncer = _.debounce(function () {
         _this.windowResize();
       }, 200);
+      /**
+       * All keydowns on document
+       * @param {Event} event
+       */
+
+      _this.documentKeydown = function (event) {
+        switch (event.keyCode) {
+          case _.keyCodes.ENTER:
+            _this.enterPressed(event);
+
+            break;
+
+          case _.keyCodes.BACKSPACE:
+            _this.backspacePressed(event);
+
+            break;
+
+          default:
+            _this.defaultBehaviour(event);
+
+            break;
+        }
+      };
+      /**
+       * All clicks on document
+       * @param {MouseEvent} event - Click
+       */
+
+
+      _this.documentClicked = function (event) {
+        /**
+         * Sometimes we emulate click on some UI elements, for example by Enter on Block Settings button
+         * We don't need to handle such events, because they handled in other place.
+         */
+        if (!event.isTrusted) {
+          return;
+        }
+        /**
+         * Close Inline Toolbar when nothing selected
+         * Do not fire check on clicks at the Inline Toolbar buttons
+         */
+
+
+        var target = event.target;
+
+        var clickedInsideOfEditor = _this.nodes.holder.contains(target) || _selection["default"].isAtEditor;
+
+        if (!clickedInsideOfEditor) {
+          /**
+           * Clear highlightings and pointer on BlockManager
+           *
+           * Current page might contain several instances
+           * Click between instances MUST clear focus, pointers and close toolbars
+           */
+          _this.Editor.BlockManager.dropPointer();
+
+          _this.Editor.InlineToolbar.close();
+
+          _this.Editor.Toolbar.close();
+
+          _this.Editor.ConversionToolbar.close();
+        }
+        /**
+         * Clear Selection if user clicked somewhere
+         */
+
+
+        if (!_this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
+          _this.Editor.BlockSelection.clearSelection(event);
+        }
+        /**
+         * Clear Selection if user clicked somewhere
+         */
+
+
+        if (!_this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
+          _this.Editor.BlockSelection.clearSelection(event);
+        }
+      };
+      /**
+       * First touch on editor
+       * Fired before click
+       *
+       * Used to change current block — we need to do it before 'selectionChange' event.
+       * Also:
+       * - Move and show the Toolbar
+       * - Set a Caret
+       */
+
+
+      _this.documentTouched = function (event) {
+        var clickedNode = event.target;
+        /**
+         * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
+         */
+
+        if (clickedNode === _this.nodes.redactor) {
+          var clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
+          var clientY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
+          clickedNode = document.elementFromPoint(clientX, clientY);
+        }
+        /**
+         * Select clicked Block as Current
+         */
+
+
+        try {
+          /**
+           * Renew Current Block
+           */
+          _this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
+          /**
+           * Highlight Current Node
+           */
+
+
+          _this.Editor.BlockManager.highlightCurrentNode();
+        } catch (e) {
+          /**
+           * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
+           */
+          if (!_this.Editor.RectangleSelection.isRectActivated()) {
+            _this.Editor.Caret.setToTheLastBlock();
+          }
+        }
+        /**
+         * Move and open toolbar
+         */
+
+
+        _this.Editor.Toolbar.open();
+        /**
+         * Hide the Plus Button
+         */
+
+
+        _this.Editor.Toolbar.plusButton.hide();
+      };
+      /**
+       * All clicks on the redactor zone
+       *
+       * @param {MouseEvent} event
+       *
+       * @description
+       * - By clicks on the Editor's bottom zone:
+       *      - if last Block is empty, set a Caret to this
+       *      - otherwise, add a new empty Block and set a Caret to that
+       */
+
+
+      _this.redactorClicked = function (event) {
+        if (!_selection["default"].isCollapsed) {
+          return;
+        }
+
+        event.stopImmediatePropagation();
+        event.stopPropagation();
+
+        if (!_this.Editor.BlockManager.currentBlock) {
+          _this.Editor.BlockManager.insert();
+        }
+        /**
+         * Show the Plus Button if:
+         * - Block is an initial-block (Text)
+         * - Block is empty
+         */
+
+
+        var isInitialBlock = _this.Editor.Tools.isInitial(_this.Editor.BlockManager.currentBlock.tool);
+
+        if (isInitialBlock) {
+          /**
+           * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
+           */
+          var isEmptyBlock = _this.Editor.BlockManager.currentBlock.isEmpty;
+
+          if (isEmptyBlock) {
+            _this.Editor.Toolbar.plusButton.show();
+          }
+        }
+      };
+      /**
+       * Handle selection changes on mobile devices
+       * Uses for showing the Inline Toolbar
+       * @param {Event} event
+       */
+
+
+      _this.selectionChanged = function (event) {
+        var focusedElement = _selection["default"].anchorElement;
+        /**
+         * Event can be fired on clicks at the Editor elements, for example, at the Inline Toolbar
+         * We need to skip such firings
+         */
+
+        if (!focusedElement || !focusedElement.closest(".".concat(_block["default"].CSS.content))) {
+          /**
+           * If new selection is not on Inline Toolbar, we need to close it
+           */
+          if (!_this.Editor.InlineToolbar.containsNode(focusedElement)) {
+            _this.Editor.InlineToolbar.close();
+          }
+
+          return;
+        }
+
+        _this.Editor.InlineToolbar.tryToShow(true);
+      };
+      /**
+       * Window resize listener
+       */
+
+
+      _this.windowResizeListener = function () {
+        return _this.resizeDebouncer();
+      };
+
       return _this;
     }
     /**
@@ -26120,70 +26110,60 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
     }, {
       key: "prepare",
-      value: function () {
-        var _prepare = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee() {
-          return _regenerator["default"].wrap(function _callee$(_context) {
-            while (1) {
-              switch (_context.prev = _context.next) {
-                case 0:
-                  console.log('prepare ui');
-                  /**
-                   * Detect mobile version
-                   */
+      value: function prepare() {
+        return _index["default"].async(function prepare$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                console.log('prepare ui');
+                /**
+                 * Detect mobile version
+                 */
 
-                  this.checkIsMobile();
-                  /**
-                   * Make main UI elements
-                   */
+                this.checkIsMobile();
+                /**
+                 * Make main UI elements
+                 */
 
-                  this.make();
-                  /**
-                   * Loader for rendering process
-                   */
+                this.make();
+                /**
+                 * Loader for rendering process
+                 */
 
-                  this.addLoader();
-                  /**
-                   * Append SVG sprite
-                   */
+                this.addLoader();
+                /**
+                 * Append SVG sprite
+                 */
 
-                  this.appendSVGSprite();
-                  /**
-                   * Make toolbar
-                   */
+                this.appendSVGSprite();
+                /**
+                 * Make toolbar
+                 */
 
-                  this.Editor.Toolbar.make();
-                  /**
-                   * Make the Inline toolbar
-                   */
+                this.Editor.Toolbar.make();
+                /**
+                 * Make the Inline toolbar
+                 */
 
-                  this.Editor.InlineToolbar.make();
-                  /**
-                   * Load and append CSS
-                   */
+                this.Editor.InlineToolbar.make();
+                /**
+                 * Load and append CSS
+                 */
 
-                  this.loadStyles();
-                  /**
-                   * Prepare with read-only state from config
-                   */
+                this.loadStyles();
+                /**
+                 * Prepare with read-only state from config
+                 */
 
-                  this.toggleReadOnly(this.config.readOnly);
+                this.toggleReadOnly(this.config.readOnly);
 
-                case 9:
-                case "end":
-                  return _context.stop();
-              }
+              case 9:
+              case "end":
+                return _context.stop();
             }
-          }, _callee, this);
-        }));
-
-        function prepare() {
-          return _prepare.apply(this, arguments);
-        }
-
-        return prepare;
-      }()
+          }
+        }, null, this);
+      }
       /**
        * Set read-only state
        *
@@ -26326,33 +26306,17 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "bindEvents",
       value: function bindEvents() {
-        var _this2 = this;
-
-        this.Editor.Listeners.on(this.nodes.redactor, 'click', function (event) {
-          return _this2.redactorClicked(event);
-        }, false);
-        this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', function (event) {
-          return _this2.documentTouched(event);
-        }, true);
-        this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', function (event) {
-          return _this2.documentTouched(event);
-        }, true);
-        this.Editor.Listeners.on(document, 'keydown', function (event) {
-          return _this2.documentKeydown(event);
-        }, true);
-        this.Editor.Listeners.on(document, 'click', function (event) {
-          return _this2.documentClicked(event);
-        }, true);
+        this.Editor.Listeners.on(this.nodes.redactor, 'click', this.redactorClicked, false);
+        this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', this.documentTouched, true);
+        this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', this.documentTouched, true);
+        this.Editor.Listeners.on(document, 'keydown', this.documentKeydown, true);
+        this.Editor.Listeners.on(document, 'click', this.documentClicked, true);
         /**
          * Handle selection change to manipulate Inline Toolbar appearance
          */
 
-        this.Editor.Listeners.on(document, 'selectionchange', function (event) {
-          _this2.selectionChanged(event);
-        }, true);
-        this.Editor.Listeners.on(window, 'resize', function () {
-          _this2.resizeDebouncer();
-        }, {
+        this.Editor.Listeners.on(document, 'selectionchange', this.selectionChanged, true);
+        this.Editor.Listeners.on(window, 'resize', this.windowResizeListener, {
           passive: true
         });
       }
@@ -26363,7 +26327,19 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "unbindEvents",
       value: function unbindEvents() {
-        this.Editor.Listeners.removeAll();
+        this.Editor.Listeners.off(this.nodes.redactor, 'click', this.redactorClicked, false);
+        this.Editor.Listeners.off(this.nodes.redactor, 'mousedown', this.documentTouched, true);
+        this.Editor.Listeners.off(this.nodes.redactor, 'touchstart', this.documentTouched, true);
+        this.Editor.Listeners.off(document, 'keydown', this.documentKeydown, true);
+        this.Editor.Listeners.off(document, 'click', this.documentClicked, true);
+        /**
+         * Handle selection change to manipulate Inline Toolbar appearance
+         */
+
+        this.Editor.Listeners.off(document, 'selectionchange', this.selectionChanged, true);
+        this.Editor.Listeners.off(window, 'resize', this.windowResizeListener, {
+          passive: true
+        });
       }
       /**
        * Resize window handler
@@ -26381,28 +26357,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
          */
 
         this.checkIsMobile();
-      }
-      /**
-       * All keydowns on document
-       * @param {Event} event
-       */
-
-    }, {
-      key: "documentKeydown",
-      value: function documentKeydown(event) {
-        switch (event.keyCode) {
-          case _.keyCodes.ENTER:
-            this.enterPressed(event);
-            break;
-
-          case _.keyCodes.BACKSPACE:
-            this.backspacePressed(event);
-            break;
-
-          default:
-            this.defaultBehaviour(event);
-            break;
-        }
       }
       /**
        * Ignore all other document's keydown events
@@ -26523,190 +26477,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         }
 
         this.Editor.BlockSelection.clearSelection(event);
-      }
-      /**
-       * All clicks on document
-       * @param {MouseEvent} event - Click
-       */
-
-    }, {
-      key: "documentClicked",
-      value: function documentClicked(event) {
-        /**
-         * Sometimes we emulate click on some UI elements, for example by Enter on Block Settings button
-         * We don't need to handle such events, because they handled in other place.
-         */
-        if (!event.isTrusted) {
-          return;
-        }
-        /**
-         * Close Inline Toolbar when nothing selected
-         * Do not fire check on clicks at the Inline Toolbar buttons
-         */
-
-
-        var target = event.target;
-
-        var clickedInsideOfEditor = this.nodes.holder.contains(target) || _selection["default"].isAtEditor;
-
-        if (!clickedInsideOfEditor) {
-          /**
-           * Clear highlightings and pointer on BlockManager
-           *
-           * Current page might contain several instances
-           * Click between instances MUST clear focus, pointers and close toolbars
-           */
-          this.Editor.BlockManager.dropPointer();
-          this.Editor.InlineToolbar.close();
-          this.Editor.Toolbar.close();
-          this.Editor.ConversionToolbar.close();
-        }
-        /**
-         * Clear Selection if user clicked somewhere
-         */
-
-
-        if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
-          this.Editor.BlockSelection.clearSelection(event);
-        }
-        /**
-         * Clear Selection if user clicked somewhere
-         */
-
-
-        if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted) {
-          this.Editor.BlockSelection.clearSelection(event);
-        }
-      }
-      /**
-       * First touch on editor
-       * Fired before click
-       *
-       * Used to change current block — we need to do it before 'selectionChange' event.
-       * Also:
-       * - Move and show the Toolbar
-       * - Set a Caret
-       */
-
-    }, {
-      key: "documentTouched",
-      value: function documentTouched(event) {
-        var clickedNode = event.target;
-        /**
-         * If click was fired is on Editor`s wrapper, try to get clicked node by elementFromPoint method
-         */
-
-        if (clickedNode === this.nodes.redactor) {
-          var clientX = event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
-          var clientY = event instanceof MouseEvent ? event.clientY : event.touches[0].clientY;
-          clickedNode = document.elementFromPoint(clientX, clientY);
-        }
-        /**
-         * Select clicked Block as Current
-         */
-
-
-        try {
-          /**
-           * Renew Current Block
-           */
-          this.Editor.BlockManager.setCurrentBlockByChildNode(clickedNode);
-          /**
-           * Highlight Current Node
-           */
-
-          this.Editor.BlockManager.highlightCurrentNode();
-        } catch (e) {
-          /**
-           * If clicked outside first-level Blocks and it is not RectSelection, set Caret to the last empty Block
-           */
-          if (!this.Editor.RectangleSelection.isRectActivated()) {
-            this.Editor.Caret.setToTheLastBlock();
-          }
-        }
-        /**
-         * Move and open toolbar
-         */
-
-
-        this.Editor.Toolbar.open();
-        /**
-         * Hide the Plus Button
-         */
-
-        this.Editor.Toolbar.plusButton.hide();
-      }
-      /**
-       * All clicks on the redactor zone
-       *
-       * @param {MouseEvent} event
-       *
-       * @description
-       * - By clicks on the Editor's bottom zone:
-       *      - if last Block is empty, set a Caret to this
-       *      - otherwise, add a new empty Block and set a Caret to that
-       */
-
-    }, {
-      key: "redactorClicked",
-      value: function redactorClicked(event) {
-        if (!_selection["default"].isCollapsed) {
-          return;
-        }
-
-        event.stopImmediatePropagation();
-        event.stopPropagation();
-
-        if (!this.Editor.BlockManager.currentBlock) {
-          this.Editor.BlockManager.insert();
-        }
-        /**
-         * Show the Plus Button if:
-         * - Block is an initial-block (Text)
-         * - Block is empty
-         */
-
-
-        var isInitialBlock = this.Editor.Tools.isInitial(this.Editor.BlockManager.currentBlock.tool);
-
-        if (isInitialBlock) {
-          /**
-           * Check isEmpty only for paragraphs to prevent unnecessary tree-walking on Tools with many nodes (for ex. Table)
-           */
-          var isEmptyBlock = this.Editor.BlockManager.currentBlock.isEmpty;
-
-          if (isEmptyBlock) {
-            this.Editor.Toolbar.plusButton.show();
-          }
-        }
-      }
-      /**
-       * Handle selection changes on mobile devices
-       * Uses for showing the Inline Toolbar
-       * @param {Event} event
-       */
-
-    }, {
-      key: "selectionChanged",
-      value: function selectionChanged(event) {
-        var focusedElement = _selection["default"].anchorElement;
-        /**
-         * Event can be fired on clicks at the Editor elements, for example, at the Inline Toolbar
-         * We need to skip such firings
-         */
-
-        if (!focusedElement || !focusedElement.closest(".".concat(_block["default"].CSS.content))) {
-          /**
-           * If new selection is not on Inline Toolbar, we need to close it
-           */
-          if (!this.Editor.InlineToolbar.containsNode(focusedElement)) {
-            this.Editor.InlineToolbar.close();
-          }
-
-          return;
-        }
-
-        this.Editor.InlineToolbar.tryToShow(true);
       }
       /**
        * Append prebuilt sprite with SVG icons
@@ -26905,7 +26675,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ./utils */ "./src/components/utils.ts"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -26913,9 +26683,9 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _, _dom) {
   "use strict";
 
-  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
+  var _interopRequireWildcard = __webpack_require__(/*! @babel/runtime/helpers/interopRequireWildcard.js */ "./node_modules/@babel/runtime/helpers/interopRequireWildcard.js");
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -27376,7 +27146,7 @@ var i=function(){function e(t){var n=t.data,r=t.config,o=t.api;!function(e,t){if
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/classCallCheck.js */ "./node_modules/@babel/runtime/helpers/classCallCheck.js"), __webpack_require__(/*! @babel/runtime/helpers/createClass.js */ "./node_modules/@babel/runtime/helpers/createClass.js"), __webpack_require__(/*! ../../dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
@@ -27384,7 +27154,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _classCallCheck2, _createClass2, _dom) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -27487,15 +27257,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
 var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (global, factory) {
   if (true) {
-    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js"), __webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ "./node_modules/@babel/runtime/helpers/asyncToGenerator.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
+    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [exports, __webpack_require__(/*! @babel/runtime/helpers/defineProperty.js */ "./node_modules/@babel/runtime/helpers/defineProperty.js"), __webpack_require__(/*! @babel/runtime/regenerator/index.js */ "./node_modules/@babel/runtime/regenerator/index.js"), __webpack_require__(/*! ./dom */ "./src/components/dom.ts")], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory),
 				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
 				(__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__),
 				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
   } else { var mod; }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _regenerator, _defineProperty2, _asyncToGenerator2, _dom) {
+})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports, _defineProperty2, _index, _dom) {
   "use strict";
 
-  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
+  var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault.js */ "./node_modules/@babel/runtime/helpers/interopRequireDefault.js");
 
   Object.defineProperty(_exports, "__esModule", {
     value: true
@@ -27519,9 +27289,8 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
   _exports.typeOf = typeOf;
   _exports.beautifyShortcut = beautifyShortcut;
   _exports.isTouchSupported = _exports.logLabeled = _exports.log = _exports.mouseButtons = _exports.keyCodes = _exports.LogLevels = void 0;
-  _regenerator = _interopRequireDefault(_regenerator);
   _defineProperty2 = _interopRequireDefault(_defineProperty2);
-  _asyncToGenerator2 = _interopRequireDefault(_asyncToGenerator2);
+  _index = _interopRequireDefault(_index);
   _dom = _interopRequireDefault(_dom);
 
   /**
@@ -27713,8 +27482,76 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    */
 
 
-  function sequence(_x) {
-    return _sequence.apply(this, arguments);
+  function sequence(chains) {
+    var success,
+        fallback,
+        waitNextBlock,
+        _args3 = arguments;
+    return _index["default"].async(function sequence$(_context3) {
+      while (1) {
+        switch (_context3.prev = _context3.next) {
+          case 0:
+            waitNextBlock = function _ref(chainData, successCallback, fallbackCallback) {
+              return _index["default"].async(function waitNextBlock$(_context) {
+                while (1) {
+                  switch (_context.prev = _context.next) {
+                    case 0:
+                      _context.prev = 0;
+                      _context.next = 3;
+                      return _index["default"].awrap(chainData["function"](chainData.data));
+
+                    case 3:
+                      _context.next = 5;
+                      return _index["default"].awrap(successCallback(typeof chainData.data !== 'undefined' ? chainData.data : {}));
+
+                    case 5:
+                      _context.next = 10;
+                      break;
+
+                    case 7:
+                      _context.prev = 7;
+                      _context.t0 = _context["catch"](0);
+                      fallbackCallback(typeof chainData.data !== 'undefined' ? chainData.data : {});
+
+                    case 10:
+                    case "end":
+                      return _context.stop();
+                  }
+                }
+              }, null, null, [[0, 7]]);
+            };
+
+            success = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : function () {};
+            fallback = _args3.length > 2 && _args3[2] !== undefined ? _args3[2] : function () {};
+            _context3.next = 5;
+            return _index["default"].awrap(chains.reduce(function _callee(previousValue, currentValue) {
+              return _index["default"].async(function _callee$(_context2) {
+                while (1) {
+                  switch (_context2.prev = _context2.next) {
+                    case 0:
+                      _context2.next = 2;
+                      return _index["default"].awrap(previousValue);
+
+                    case 2:
+                      return _context2.abrupt("return", waitNextBlock(currentValue, success, fallback));
+
+                    case 3:
+                    case "end":
+                      return _context2.stop();
+                  }
+                }
+              });
+            }, Promise.resolve()));
+
+          case 5:
+            return _context3.abrupt("return", _context3.sent);
+
+          case 6:
+          case "end":
+            return _context3.stop();
+        }
+      }
+    });
   }
   /**
    * Make array from array-like collection
@@ -27724,104 +27561,6 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
    * @return {Array}
    */
 
-
-  function _sequence() {
-    _sequence = (0, _asyncToGenerator2["default"])(
-    /*#__PURE__*/
-    _regenerator["default"].mark(function _callee3(chains) {
-      var success,
-          fallback,
-          waitNextBlock,
-          _waitNextBlock,
-          _args3 = arguments;
-
-      return _regenerator["default"].wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              _waitNextBlock = function _ref3() {
-                _waitNextBlock = (0, _asyncToGenerator2["default"])(
-                /*#__PURE__*/
-                _regenerator["default"].mark(function _callee2(chainData, successCallback, fallbackCallback) {
-                  return _regenerator["default"].wrap(function _callee2$(_context2) {
-                    while (1) {
-                      switch (_context2.prev = _context2.next) {
-                        case 0:
-                          _context2.prev = 0;
-                          _context2.next = 3;
-                          return chainData["function"](chainData.data);
-
-                        case 3:
-                          _context2.next = 5;
-                          return successCallback(typeof chainData.data !== 'undefined' ? chainData.data : {});
-
-                        case 5:
-                          _context2.next = 10;
-                          break;
-
-                        case 7:
-                          _context2.prev = 7;
-                          _context2.t0 = _context2["catch"](0);
-                          fallbackCallback(typeof chainData.data !== 'undefined' ? chainData.data : {});
-
-                        case 10:
-                        case "end":
-                          return _context2.stop();
-                      }
-                    }
-                  }, _callee2, null, [[0, 7]]);
-                }));
-                return _waitNextBlock.apply(this, arguments);
-              };
-
-              waitNextBlock = function _ref2(_x2, _x3, _x4) {
-                return _waitNextBlock.apply(this, arguments);
-              };
-
-              success = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : function () {};
-              fallback = _args3.length > 2 && _args3[2] !== undefined ? _args3[2] : function () {};
-              _context3.next = 6;
-              return chains.reduce(
-              /*#__PURE__*/
-              function () {
-                var _ref = (0, _asyncToGenerator2["default"])(
-                /*#__PURE__*/
-                _regenerator["default"].mark(function _callee(previousValue, currentValue) {
-                  return _regenerator["default"].wrap(function _callee$(_context) {
-                    while (1) {
-                      switch (_context.prev = _context.next) {
-                        case 0:
-                          _context.next = 2;
-                          return previousValue;
-
-                        case 2:
-                          return _context.abrupt("return", waitNextBlock(currentValue, success, fallback));
-
-                        case 3:
-                        case "end":
-                          return _context.stop();
-                      }
-                    }
-                  }, _callee);
-                }));
-
-                return function (_x5, _x6) {
-                  return _ref.apply(this, arguments);
-                };
-              }(), Promise.resolve());
-
-            case 6:
-              return _context3.abrupt("return", _context3.sent);
-
-            case 7:
-            case "end":
-              return _context3.stop();
-          }
-        }
-      }, _callee3);
-    }));
-    return _sequence.apply(this, arguments);
-  }
 
   function array(collection) {
     return Array.prototype.slice.call(collection);

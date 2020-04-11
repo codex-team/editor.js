@@ -153,6 +153,11 @@ export default class BlockManager extends Module {
   private _blocks: Blocks = null;
 
   /**
+   * Read only flag
+   */
+  private readOnlyEnabled: boolean = false;
+
+  /**
    * Should be called after Editor.UI preparation
    * Define this._blocks property
    *
@@ -180,7 +185,7 @@ export default class BlockManager extends Module {
       get: Blocks.get,
     });
 
-    this.toggleReadOnly(this.config.readOnly);
+    this.readOnlyEnabled = this.config.readOnly;
   }
 
   /**
@@ -188,11 +193,12 @@ export default class BlockManager extends Module {
    *
    * @param {boolean} readOnlyEnabled
    */
-  public toggleReadOnly(readOnlyEnabled: boolean) {
+  public toggleReadOnly(readOnlyEnabled: boolean): void {
     const { BlockEvents, Shortcuts } = this.Editor;
 
     if (readOnlyEnabled) {
-      Shortcuts.removeAll();
+      Shortcuts.remove('CMD+C');
+      Shortcuts.remove('CMD+X');
     } else {
       /** Copy shortcut */
       Shortcuts.add({
@@ -210,6 +216,8 @@ export default class BlockManager extends Module {
         },
       });
     }
+
+    this.toggleBlockEventBindings(readOnlyEnabled);
   }
 
   /**
@@ -226,7 +234,9 @@ export default class BlockManager extends Module {
     const toolClass = this.Editor.Tools.available[toolName] as BlockToolConstructable;
     const block = new Block(toolName, toolInstance, toolClass, settings, this.Editor.API.methods);
 
-    this.bindEvents(block);
+    if (!this.readOnlyEnabled) {
+      this.bindEvents(block);
+    }
 
     return block;
   }
@@ -518,7 +528,6 @@ export default class BlockManager extends Module {
    * 2) Mark it as current
    *
    *  @param {Node} childNode - look ahead from this node.
-   *  @param {string} caretPosition - position where to set caret
    *  @throws Error  - when passed Node is not included at the Block
    */
   public setCurrentBlockByChildNode(childNode: Node): Block {
@@ -605,17 +614,45 @@ export default class BlockManager extends Module {
   }
 
   /**
+   * @param readonly
+   */
+  private toggleBlockEventBindings(readonly: boolean): void {
+    this.blocks.forEach( (block: Block) => {
+      if (readonly) {
+        this.unbindEvents(block);
+      } else {
+        this.bindEvents(block);
+      }
+    });
+  }
+
+  /**
    * Bind Events
-   * @param {Object} block
+   * @param {Block} block
    */
   private bindEvents(block: Block): void {
-    const {BlockEvents, Listeners} = this.Editor;
+    const {Listeners} = this.Editor;
 
-    Listeners.on(block.holder, 'keydown', (event) => BlockEvents.keydown(event as KeyboardEvent), true);
-    Listeners.on(block.holder, 'mouseup', (event) => BlockEvents.mouseUp());
-    Listeners.on(block.holder, 'mousedown', (event: MouseEvent) => BlockEvents.mouseDown(event));
-    Listeners.on(block.holder, 'keyup', (event) => BlockEvents.keyup(event));
-    Listeners.on(block.holder, 'dragover', (event) => BlockEvents.dragOver(event as DragEvent));
-    Listeners.on(block.holder, 'dragleave', (event) => BlockEvents.dragLeave(event as DragEvent));
+    Listeners.on(block.holder, 'keydown', this.Editor.BlockEvents.keydown, true);
+    Listeners.on(block.holder, 'mouseup', this.Editor.BlockEvents.mouseUp);
+    Listeners.on(block.holder, 'mousedown', this.Editor.BlockEvents.mouseDown);
+    Listeners.on(block.holder, 'keyup', this.Editor.BlockEvents.keyup);
+    Listeners.on(block.holder, 'dragover', this.Editor.BlockEvents.dragOver);
+    Listeners.on(block.holder, 'dragleave', this.Editor.BlockEvents.dragLeave);
+  }
+
+  /**
+   * Unbind Events
+   * @param {Block} block
+   */
+  private unbindEvents(block: Block): void {
+    const {Listeners} = this.Editor;
+
+    Listeners.off(block.holder, 'keydown', this.Editor.BlockEvents.keydown, true);
+    Listeners.off(block.holder, 'mouseup', this.Editor.BlockEvents.mouseUp);
+    Listeners.off(block.holder, 'mousedown', this.Editor.BlockEvents.mouseDown);
+    Listeners.off(block.holder, 'keyup', this.Editor.BlockEvents.keyup);
+    Listeners.off(block.holder, 'dragover', this.Editor.BlockEvents.dragOver);
+    Listeners.off(block.holder, 'dragleave', this.Editor.BlockEvents.dragLeave);
   }
 }
