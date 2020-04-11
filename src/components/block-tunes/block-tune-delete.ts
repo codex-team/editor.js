@@ -7,9 +7,13 @@
 import { API, BlockTune } from '../../../types';
 import $ from '../dom';
 
+/**
+ *
+ */
 export default class DeleteTune implements BlockTune {
   /**
    * Property that contains Editor.js API methods
+   *
    * @see {docs/api.md}
    */
   private readonly api: API;
@@ -55,6 +59,7 @@ export default class DeleteTune implements BlockTune {
 
   /**
    * Create "Delete" button and add click event listener
+   *
    * @returns [Element}
    */
   public render() {
@@ -72,6 +77,7 @@ export default class DeleteTune implements BlockTune {
 
   /**
    * Delete block conditions passed
+   *
    * @param {MouseEvent} event
    */
   public handleClick(event: MouseEvent): void {
@@ -107,6 +113,8 @@ export default class DeleteTune implements BlockTune {
 
   /**
    * change tune state
+   *
+   * @param state
    */
   private setConfirmation(state): void {
     this.needConfirmation = state;

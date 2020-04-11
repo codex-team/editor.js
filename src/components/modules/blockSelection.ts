@@ -12,10 +12,14 @@ import $ from '../dom';
 
 import SelectionUtils from '../selection';
 
+/**
+ *
+ */
 export default class BlockSelection extends Module {
   /**
    * Sanitizer Config
-   * @return {SanitizerConfig}
+   *
+   * @returns {SanitizerConfig}
    */
   private get sanitizerConfig() {
     return {
@@ -46,7 +50,8 @@ export default class BlockSelection extends Module {
 
   /**
    * Flag that identifies all Blocks selection
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public get allBlocksSelected(): boolean {
     const { BlockManager } = this.Editor;
@@ -56,6 +61,7 @@ export default class BlockSelection extends Module {
 
   /**
    * Set selected all blocks
+   *
    * @param {boolean} state
    */
   public set allBlocksSelected(state: boolean) {
@@ -66,7 +72,8 @@ export default class BlockSelection extends Module {
 
   /**
    * Flag that identifies any Block selection
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public get anyBlockSelected(): boolean {
     const { BlockManager } = this.Editor;
@@ -76,7 +83,8 @@ export default class BlockSelection extends Module {
 
   /**
    * Return selected Blocks array
-   * @return {Block[]}
+   *
+   * @returns {Block[]}
    */
   public get selectedBlocks(): Block[] {
     return this.Editor.BlockManager.blocks.filter((block: Block) => block.selected);
@@ -85,6 +93,7 @@ export default class BlockSelection extends Module {
   /**
    * Flag used to define block selection
    * First CMD+A defines it as true and then second CMD+A selects all Blocks
+   *
    * @type {boolean}
    */
   private needToSelectAll = false;
@@ -92,6 +101,7 @@ export default class BlockSelection extends Module {
   /**
    * Flag used to define native input selection
    * In this case we allow double CMD+A to select Block
+   *
    * @type {boolean}
    */
   private nativeInputSelected = false;
@@ -99,12 +109,14 @@ export default class BlockSelection extends Module {
   /**
    * Flag identifies any input selection
    * That means we can select whole Block
+   *
    * @type {boolean}
    */
   private readyToBlockSelection = false;
 
   /**
    * SelectionUtils instance
+   *
    * @type {SelectionUtils}
    */
   private selection: SelectionUtils;
@@ -143,6 +155,7 @@ export default class BlockSelection extends Module {
 
   /**
    * Remove selection of Block
+   *
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
   public unSelectBlockByIndex(index?) {
@@ -211,7 +224,7 @@ export default class BlockSelection extends Module {
    *
    * @param {ClipboardEvent} e - copy/cut event
    *
-   * @return Promise<void>
+   * @returns Promise<void>
    */
   public async copySelectedBlocks(e: ClipboardEvent): Promise<void> {
     /**
@@ -223,8 +236,8 @@ export default class BlockSelection extends Module {
 
     this.selectedBlocks.forEach((block) => {
       /**
-         * Make <p> tag that holds clean HTML
-         */
+       * Make <p> tag that holds clean HTML
+       */
       const cleanHTML = this.Editor.Sanitizer.clean(block.holder.innerHTML, this.sanitizerConfig);
       const fragment = $.make('p');
 
@@ -245,6 +258,7 @@ export default class BlockSelection extends Module {
 
   /**
    * select Block
+   *
    * @param {number?} index - Block index according to the BlockManager's indexes
    */
   public selectBlockByIndex(index?) {

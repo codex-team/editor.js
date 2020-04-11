@@ -12,7 +12,7 @@ export default class BoldInlineTool implements InlineTool {
   /**
    * Specifies Tool as Inline Toolbar Tool
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   public static isInline = true;
 
@@ -24,7 +24,8 @@ export default class BoldInlineTool implements InlineTool {
   /**
    * Sanitizer Rule
    * Leave <b> tags
-   * @return {object}
+   *
+   * @returns {object}
    */
   static get sanitize(): SanitizerConfig {
     return {
@@ -67,6 +68,7 @@ export default class BoldInlineTool implements InlineTool {
 
   /**
    * Wrap range with <b> tag
+   *
    * @param {Range} range
    */
   public surround(range: Range): void {
@@ -75,6 +77,7 @@ export default class BoldInlineTool implements InlineTool {
 
   /**
    * Check selection and set activated state to button if there are <b> tag
+   *
    * @param {Selection} selection
    */
   public checkState(selection: Selection): boolean {

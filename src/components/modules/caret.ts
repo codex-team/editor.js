@@ -44,7 +44,8 @@ export default class Caret extends Module {
 
   /**
    * Get's deepest first node and checks if offset is zero
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public get isAtStart(): boolean {
     const selection = Selection.get();
@@ -64,6 +65,7 @@ export default class Caret extends Module {
     /**
      * Workaround case when caret in the text like " |Hello!"
      * selection.anchorOffset is 1, but real caret visible position is 0
+     *
      * @type {number}
      */
 
@@ -106,6 +108,7 @@ export default class Caret extends Module {
       const nothingAtLeft = leftSiblings.every((node) => {
         /**
          * Workaround case when block starts with several <br>'s (created by SHIFT+ENTER)
+         *
          * @see https://github.com/codex-team/editor.js/issues/726
          * We need to allow to delete such linebreaks, so in this case caret IS NOT AT START
          */
@@ -133,7 +136,8 @@ export default class Caret extends Module {
 
   /**
    * Get's deepest last node and checks if offset is last node text length
-   * @return {boolean}
+   *
+   * @returns {boolean}
    */
   public get isAtEnd(): boolean {
     const selection = Selection.get();
@@ -217,9 +221,9 @@ export default class Caret extends Module {
    *   - last found text node: sets at the end of the node. Also, you can customize the behaviour
    *
    * @param {Block} block - Block class
-   * @param {String} position - position where to set caret.
+   * @param {string} position - position where to set caret.
    *                            If default - leave default behaviour and apply offset if it's passed
-   * @param {Number} offset - caret offset regarding to the text node
+   * @param {number} offset - caret offset regarding to the text node
    */
   public setToBlock(block: Block, position: string = this.positions.DEFAULT, offset = 0): void {
     const { BlockManager } = this.Editor;
@@ -268,7 +272,7 @@ export default class Caret extends Module {
    * Set caret to the current input of current Block.
    *
    * @param {HTMLElement} input - input where caret should be set
-   * @param {String} position - position of the caret.
+   * @param {string} position - position of the caret.
    *                            If default - leave default behaviour and apply offset if it's passed
    * @param {number} offset - caret offset regarding to the text node
    */
@@ -298,8 +302,9 @@ export default class Caret extends Module {
 
   /**
    * Creates Document Range and sets caret to the element with offset
+   *
    * @param {HTMLElement} element - target node.
-   * @param {Number} offset - offset
+   * @param {number} offset - offset
    */
   public set(element: HTMLElement, offset = 0): void {
     const range = document.createRange(),
@@ -389,9 +394,9 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is at the end of Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {Boolean} force - force navigation even if caret is not at the end
+   * @param {boolean} force - force navigation even if caret is not at the end
    *
-   * @return {Boolean}
+   * @returns {boolean}
    */
   public navigateNext(force = false): boolean {
     const { currentBlock, nextContentfulBlock } = this.Editor.BlockManager;
@@ -420,9 +425,9 @@ export default class Caret extends Module {
    * Before moving caret, we should check if caret position is start of the Plugins node
    * Using {@link Dom#getDeepestNode} to get a last node and match with current selection
    *
-   * @param {Boolean} force - force navigation even if caret is not at the start
+   * @param {boolean} force - force navigation even if caret is not at the start
    *
-   * @return {Boolean}
+   * @returns {boolean}
    */
   public navigatePrevious(force = false): boolean {
     const { currentBlock, previousContentfulBlock } = this.Editor.BlockManager;
@@ -453,6 +458,7 @@ export default class Caret extends Module {
 
   /**
    * Inserts shadow element after passed element where caret can be placed
+   *
    * @param {Node} element
    */
   public createShadow(element): void {
@@ -464,6 +470,7 @@ export default class Caret extends Module {
 
   /**
    * Restores caret position
+   *
    * @param {HTMLElement} element
    */
   public restoreCaret(element: HTMLElement): void {
@@ -522,24 +529,39 @@ export default class Caret extends Module {
     selection.addRange(newRange);
   }
 
-  /**
-   * Get all first-level (first child of [contenteditabel]) siblings from passed node
-   * Then you can check it for emptiness
-   *
-   * @example
-   * <div contenteditable>
-   *     <p></p>                            |
-   *     <p></p>                            | left first-level siblings
-   *     <p></p>                            |
-   *     <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
-   *     <p></p>                            |
-   *     <p></p>                            | right first-level siblings
-   *     <p></p>                            |
-   * </div>
-   *
-   * @return {Element[]}
-   */
-  private getHigherLevelSiblings(from: HTMLElement, direction?: string): HTMLElement[] {
+  //
+  // Get all first-level (first child of [contenteditabel]) siblings from passed node
+  // Then you can check it for emptiness
+  //
+  // @example
+  // <div contenteditable>
+  // <p></p>                            |
+  // <p></p>                            | left first-level siblings
+  // <p></p>                            |
+  // <blockquote><a><b>adaddad</b><a><blockquote>       <-- passed node for example <b>
+  // <p></p>                            |
+  // <p></p>                            | right first-level siblings
+  // <p></p>                            |
+  // </div>
+  // @return {Element[]}
+  // @param from
+  // @param direction
+  //
+  private getHigherLevelSiblings/**
+                                 *
+                                 *//**
+                                    *
+                                    *//**
+                                       *
+                                       *//**
+                                          *
+                                          *//**
+                                             *
+                                             *//**
+                                                *
+                                                *//**
+ *
+ */(from: HTMLElement, direction?: string): HTMLElement[] {
     let current = from;
     const siblings = [];
 

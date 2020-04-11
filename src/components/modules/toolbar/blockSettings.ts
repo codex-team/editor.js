@@ -17,7 +17,8 @@ import * as _ from '../../utils';
 export default class BlockSettings extends Module {
   /**
    * Module Events
-   * @return {{opened: string, closed: string}}
+   *
+   * @returns {{opened: string, closed: string}}
    */
   public get events(): {opened: string; closed: string} {
     return {
@@ -28,7 +29,8 @@ export default class BlockSettings extends Module {
 
   /**
    * Block Settings CSS
-   * @return {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
+   *
+   * @returns {{wrapper, wrapperOpened, toolSettings, defaultSettings, button}}
    */
   public get CSS() {
     return {
@@ -47,6 +49,7 @@ export default class BlockSettings extends Module {
 
   /**
    * Is Block Settings opened or not
+   *
    * @returns {boolean}
    */
   public get opened(): boolean {
@@ -69,6 +72,7 @@ export default class BlockSettings extends Module {
 
   /**
    * Instance of class that responses for leafing buttons by arrows/tab
+   *
    * @type {Flipper|null}
    */
   private flipper: Flipper = null;
@@ -78,7 +82,7 @@ export default class BlockSettings extends Module {
    *  - Tool's Settings
    *  - Default Settings [Move, Remove, etc]
    *
-   * @return {Element}
+   * @returns {Element}
    */
   public make(): void {
     this.nodes.wrapper = $.make('div', this.CSS.wrapper);
@@ -144,7 +148,8 @@ export default class BlockSettings extends Module {
 
   /**
    * Returns Tools Settings and Default Settings
-   * @return {HTMLElement[]}
+   *
+   * @returns {HTMLElement[]}
    */
   public get blockTunesButtons(): HTMLElement[] {
     /**

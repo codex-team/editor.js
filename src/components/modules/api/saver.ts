@@ -9,7 +9,8 @@ import { OutputData } from '../../../../types';
 export default class SaverAPI extends Module {
   /**
    * Available methods
-   * @return {Saver}
+   *
+   * @returns {Saver}
    */
   get methods(): Saver {
     return {

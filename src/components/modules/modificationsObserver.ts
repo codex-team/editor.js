@@ -9,9 +9,13 @@ import Module from '../__module';
 import * as _ from '../utils';
 import Block from '../block';
 
+/**
+ *
+ */
 export default class ModificationsObserver extends Module {
   /**
    * Debounce Timer
+   *
    * @type {number}
    */
   public static readonly DebounceTimer = 450;
@@ -28,6 +32,7 @@ export default class ModificationsObserver extends Module {
 
   /**
    * Used to prevent several mutation callback execution
+   *
    * @type {Function}
    */
   private mutationDebouncer = _.debounce(() => {
@@ -55,7 +60,8 @@ export default class ModificationsObserver extends Module {
 
   /**
    * Preparation method
-   * @return {Promise<void>}
+   *
+   * @returns {Promise<void>}
    */
   public async prepare(): Promise<void> {
     /**
@@ -106,6 +112,7 @@ export default class ModificationsObserver extends Module {
 
   /**
    * MutationObserver events handler
+   *
    * @param mutationList
    * @param observer
    */

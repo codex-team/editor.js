@@ -7,15 +7,20 @@
 import $ from '../dom';
 import { API, BlockTune } from '../../../types';
 
+/**
+ *
+ */
 export default class MoveUpTune implements BlockTune {
   /**
    * Property that contains Editor.js API methods
+   *
    * @see {api.md}
    */
   private readonly api: API;
 
   /**
    * Styles
+   *
    * @type {{wrapper: string}}
    */
   private CSS = {
@@ -35,6 +40,7 @@ export default class MoveUpTune implements BlockTune {
 
   /**
    * Create "MoveUp" button and add click event listener
+   *
    * @returns [HTMLElement}
    */
   public render(): HTMLElement {
@@ -58,6 +64,7 @@ export default class MoveUpTune implements BlockTune {
 
   /**
    * Move current block up
+   *
    * @param {MouseEvent} event
    * @param {HTMLElement} button
    */

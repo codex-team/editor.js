@@ -34,12 +34,14 @@ export interface ShortcutData {
 export default class Shortcuts extends Module {
   /**
    * All registered shortcuts
+   *
    * @type {Shortcut[]}
    */
   private registeredShortcuts: Shortcut[] = [];
 
   /**
    * Register shortcut
+   *
    * @param {ShortcutData} shortcut
    */
   public add(shortcut: ShortcutData): void {
@@ -54,6 +56,7 @@ export default class Shortcuts extends Module {
 
   /**
    * Remove shortcut
+   *
    * @param {ShortcutData} shortcut
    */
   public remove(shortcut: string): void {

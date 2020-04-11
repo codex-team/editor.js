@@ -11,10 +11,14 @@ import $ from '../dom';
 import SelectionUtils from '../selection';
 import Block from '../block';
 
+/**
+ *
+ */
 export default class RectangleSelection extends Module {
   /**
    * CSS classes for the Block
-   * @return {{wrapper: string, content: string}}
+   *
+   * @returns {{wrapper: string, content: string}}
    */
   static get CSS() {
     return {
@@ -28,6 +32,7 @@ export default class RectangleSelection extends Module {
 
   /**
    * Using the selection rectangle
+   *
    * @type {boolean}
    */
   private isRectSelectionActivated = false;
@@ -127,6 +132,7 @@ export default class RectangleSelection extends Module {
 
   /**
    * Init rect params
+   *
    * @param {number} pageX - X coord of mouse
    * @param {number} pageY - Y coord of mouse
    */
@@ -192,6 +198,7 @@ export default class RectangleSelection extends Module {
 
   /**
    * Scroll If mouse in scroll zone
+   *
    * @param {number} clientY - Y coord of mouse
    */
   private scrollByZones(clientY) {
@@ -215,6 +222,9 @@ export default class RectangleSelection extends Module {
     }
   }
 
+  /**
+   *
+   */
   private genHTML() {
     const { UI } = this.Editor;
 
@@ -237,6 +247,7 @@ export default class RectangleSelection extends Module {
 
   /**
    * Activates scrolling if blockSelection is active and mouse is in scroll zone
+   *
    * @param {number} speed - speed of scrolling
    */
   private scrollVertical(speed) {
@@ -254,6 +265,7 @@ export default class RectangleSelection extends Module {
 
   /**
    * Handles the change in the rectangle and its effect
+   *
    * @param {MouseEvent} event
    */
   private changingRectangle(event) {
@@ -350,7 +362,8 @@ export default class RectangleSelection extends Module {
 
   /**
    * Collects information needed to determine the behavior of the rectangle
-   * @return {number} index - index next Block, leftPos - start of left border of Block, rightPos - right border
+   *
+   * @returns {number} index - index next Block, leftPos - start of left border of Block, rightPos - right border
    */
   private genInfoForMouseSelection() {
     const widthOfRedactor = document.body.offsetWidth;
@@ -377,6 +390,7 @@ export default class RectangleSelection extends Module {
 
   /**
    * Select block with index index
+   *
    * @param index - index of block in redactor
    */
   private addBlockInSelection(index) {
@@ -388,6 +402,7 @@ export default class RectangleSelection extends Module {
 
   /**
    * Adds a block to the selection and determines which blocks should be selected
+   *
    * @param {object} index - index of new block in the reactor
    */
   private trySelectNextBlock(index) {

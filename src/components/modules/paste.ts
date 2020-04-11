@@ -17,6 +17,7 @@ import Block from '../block';
 interface TagSubstitute {
   /**
    * Name of related Tool
+   *
    * @type {string}
    */
   tool: string;
@@ -28,18 +29,21 @@ interface TagSubstitute {
 interface PatternSubstitute {
   /**
    * Pattern`s key
+   *
    * @type {string}
    */
   key: string;
 
   /**
    * Pattern regexp
+   *
    * @type {RegExp}
    */
   pattern: RegExp;
 
   /**
    * Name of related Tool
+   *
    * @type {string}
    */
   tool: string;
@@ -51,12 +55,14 @@ interface PatternSubstitute {
 interface FilesSubstitution {
   /**
    * Array of file extensions Tool can handle
+   *
    * @type {string[]}
    */
   extensions: string[];
 
   /**
    * Array of MIME types Tool can handle
+   *
    * @type {string[]}
    */
   mimeTypes: string[];
@@ -68,12 +74,14 @@ interface FilesSubstitution {
 interface PasteData {
   /**
    * Name of related Tool
+   *
    * @type {string}
    */
   tool: string;
 
   /**
    * Pasted data. Processed and wrapped to HTML element
+   *
    * @type {HTMLElement}
    */
   content: HTMLElement;
@@ -85,6 +93,7 @@ interface PasteData {
 
   /**
    * True if content should be inserted as new Block
+   *
    * @type {boolean}
    */
   isBlock: boolean;
@@ -702,7 +711,7 @@ export default class Paste extends Module {
    * Insert pasted Block content to Editor
    *
    * @param {PasteData} data
-   * @param {Boolean} canReplaceCurrentBlock - if true and is current Block is empty, will replace current Block
+   * @param {boolean} canReplaceCurrentBlock - if true and is current Block is empty, will replace current Block
    * @returns {void}
    */
   private insertBlock(data: PasteData, canReplaceCurrentBlock = false): void {
@@ -727,7 +736,7 @@ export default class Paste extends Module {
    *
    * @param {object} blocks — Blocks' data to insert
    *
-   * @return {void}
+   * @returns {void}
    */
   private insertEditorJSData(blocks: Array<{tool: string; data: BlockToolData}>): void {
     const { BlockManager, Tools } = this.Editor;

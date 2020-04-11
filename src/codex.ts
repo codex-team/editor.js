@@ -16,6 +16,7 @@ declare const VERSION: string;
  * Editor.js
  *
  * Short Description (눈_눈;)
+ *
  * @version 2.0
  *
  * @licence Apache-2.0
@@ -39,9 +40,7 @@ export default class EditorJS {
   }
 
   /**
-   * @constructor
-   *
-   * @param {EditorConfig|String|undefined} [configuration] - user configuration
+   * @param {EditorConfig|string|undefined} [configuration] - user configuration
    */
   constructor(configuration?: EditorConfig|string) {
     /**
@@ -64,6 +63,7 @@ export default class EditorJS {
     /**
      * We need to export isReady promise in the constructor
      * as it can be used before other API methods are exported
+     *
      * @type {Promise<void>}
      */
     this.isReady = editor.isReady.then(() => {

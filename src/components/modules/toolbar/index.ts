@@ -42,7 +42,7 @@ import * as _ from '../../utils';
  * @classdesc Toolbar module
  *
  * @typedef {Toolbar} Toolbar
- * @property {Object} nodes
+ * @property {object} nodes
  * @property {Element} nodes.wrapper        - Toolbar main element
  * @property {Element} nodes.content        - Zone with Plus button and toolbox.
  * @property {Element} nodes.actions        - Zone with Block Settings and Remove Button
@@ -73,7 +73,8 @@ export default class Toolbar extends Module {
 
   /**
    * CSS styles
-   * @return {Object}
+   *
+   * @returns {object}
    */
   public get CSS() {
     return {
@@ -179,7 +180,8 @@ export default class Toolbar extends Module {
 
   /**
    * Move Toolbar to the Current Block
-   * @param {Boolean} forceClose - force close Toolbar Settings and Toolbar
+   *
+   * @param {boolean} forceClose - force close Toolbar Settings and Toolbar
    */
   public move(forceClose = true): void {
     if (forceClose) {
@@ -222,6 +224,7 @@ export default class Toolbar extends Module {
 
   /**
    * Open Toolbar with Plus Button and Actions
+   *
    * @param {boolean} withBlockActions - by default, Toolbar opens with Block Actions.
    *                                     This flag allows to open Toolbar without Actions.
    * @param {boolean} needToCloseToolbox - by default, Toolbar will be moved with opening
@@ -244,7 +247,8 @@ export default class Toolbar extends Module {
 
   /**
    * returns toolbar opened state
-   * @return {Boolean}
+   *
+   * @returns {boolean}
    */
   public get opened(): boolean {
     return this.nodes.wrapper.classList.contains(this.CSS.toolbarOpened);
@@ -264,7 +268,8 @@ export default class Toolbar extends Module {
 
   /**
    * Plus Button public methods
-   * @return {{hide: function(): void, show: function(): void}}
+   *
+   * @returns {{hide: function(): void, show: function(): void}}
    */
   public get plusButton(): {hide: () => void; show: () => void} {
     return {
@@ -280,7 +285,8 @@ export default class Toolbar extends Module {
 
   /**
    * Block actions appearance manipulations
-   * @return {{hide: function(): void, show: function(): void}}
+   *
+   * @returns {{hide: function(): void, show: function(): void}}
    */
   private get blockActions(): {hide: () => void; show: () => void} {
     return {
@@ -295,6 +301,7 @@ export default class Toolbar extends Module {
 
   /**
    * Handler for Plus Button
+   *
    * @param {MouseEvent} event
    */
   private plusButtonClicked(): void {

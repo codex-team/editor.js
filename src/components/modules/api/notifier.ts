@@ -2,6 +2,9 @@ import Module from '../../__module';
 import { Notifier } from '../../../../types/api';
 import { ConfirmNotifierOptions, NotifierOptions, PromptNotifierOptions } from 'codex-notifier';
 
+/**
+ *
+ */
 export default class NotifierAPI extends Module {
   /**
    * Available methods
@@ -12,7 +15,11 @@ export default class NotifierAPI extends Module {
     };
   }
 
-  public show(options: NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions) {
+  /**
+   * Show notification
+   * @param options
+   */
+  public show(options: NotifierOptions | ConfirmNotifierOptions | PromptNotifierOptions): void {
     return this.Editor.Notifier.show(options);
   }
 }

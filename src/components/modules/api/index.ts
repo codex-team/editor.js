@@ -12,6 +12,9 @@ import { API as APIInterfaces } from '../../../../types';
  * @class API
  */
 export default class API extends Module {
+  /**
+   * Editor.js Core API modules
+   */
   public get methods(): APIInterfaces {
     return {
       blocks: this.Editor.BlocksAPI.methods,

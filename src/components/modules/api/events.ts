@@ -8,7 +8,8 @@ import { Events } from '../../../../types/api';
 export default class EventsAPI extends Module {
   /**
    * Available methods
-   * @return {Events}
+   *
+   * @returns {Events}
    */
   get methods(): Events {
     return {
@@ -20,7 +21,8 @@ export default class EventsAPI extends Module {
 
   /**
    * Subscribe on Events
-   * @param {String} eventName
+   *
+   * @param {string} eventName
    * @param {Function} callback
    */
   public on(eventName, callback): void {
@@ -29,8 +31,9 @@ export default class EventsAPI extends Module {
 
   /**
    * Emit event with data
-   * @param {String} eventName
-   * @param {Object} data
+   *
+   * @param {string} eventName
+   * @param {object} data
    */
   public emit(eventName, data): void {
     this.Editor.Events.emit(eventName, data);
@@ -38,7 +41,8 @@ export default class EventsAPI extends Module {
 
   /**
    * Unsubscribe from Event
-   * @param {String} eventName
+   *
+   * @param {string} eventName
    * @param {Function} callback
    */
   public off(eventName, callback): void {

@@ -8,7 +8,8 @@ import { Caret } from '../../../../types/api';
 export default class CaretAPI extends Module {
   /**
    * Available methods
-   * @return {Caret}
+   *
+   * @returns {Caret}
    */
   get methods(): Caret {
     return {
@@ -27,7 +28,7 @@ export default class CaretAPI extends Module {
    * @param {string} position - position where to set caret
    * @param {number} offset - caret offset
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   private setToFirstBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.firstBlock) {
@@ -45,7 +46,7 @@ export default class CaretAPI extends Module {
    * @param {string} position - position where to set caret
    * @param {number} offset - caret offset
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   private setToLastBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.lastBlock) {
@@ -63,7 +64,7 @@ export default class CaretAPI extends Module {
    * @param {string} position - position where to set caret
    * @param {number} offset - caret offset
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   private setToPreviousBlock = (
     position: string = this.Editor.Caret.positions.DEFAULT,
@@ -84,7 +85,7 @@ export default class CaretAPI extends Module {
    * @param {string} position - position where to set caret
    * @param {number} offset - caret offset
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   private setToNextBlock = (position: string = this.Editor.Caret.positions.DEFAULT, offset = 0): boolean => {
     if (!this.Editor.BlockManager.nextBlock) {
@@ -103,7 +104,7 @@ export default class CaretAPI extends Module {
    * @param {string} position - position where to set caret
    * @param {number} offset - caret offset
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   private setToBlock = (
     index: number,
@@ -124,7 +125,7 @@ export default class CaretAPI extends Module {
    *
    * @param {boolean} atEnd - if true, set Caret to the end of the Editor
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   private focus = (atEnd = false) => {
     if (atEnd) {

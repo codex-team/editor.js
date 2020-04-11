@@ -8,7 +8,8 @@ import { Listeners } from '../../../../types/api';
 export default class ListenersAPI extends Module {
   /**
    * Available methods
-   * @return {Listeners}
+   *
+   * @returns {Listeners}
    */
   get methods(): Listeners {
     return {

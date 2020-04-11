@@ -1,9 +1,13 @@
 import $ from '../../dom';
 import { BlockTool, BlockToolData } from '../../../../types';
 
+/**
+ *
+ */
 export default class Stub implements BlockTool {
   /**
    * Stub styles
+   *
    * @type {{wrapper: string; info: string; title: string; subtitle: string}}
    */
   private CSS = {
@@ -33,6 +37,11 @@ export default class Stub implements BlockTool {
    */
   private readonly savedData: BlockToolData;
 
+  /**
+   * @param data
+   * @param config
+   * @param api
+   */
   constructor({ data, config, api }) {
     this.title = data.title || 'Error';
     this.subtitle = 'The block can not be displayed correctly.';
@@ -43,7 +52,8 @@ export default class Stub implements BlockTool {
 
   /**
    * Returns stub holder
-   * @return {HTMLElement}
+   *
+   * @returns {HTMLElement}
    */
   public render(): HTMLElement {
     return this.wrapper;
@@ -51,7 +61,8 @@ export default class Stub implements BlockTool {
 
   /**
    * Return original Tool data
-   * @return {BlockToolData}
+   *
+   * @returns {BlockToolData}
    */
   public save(): BlockToolData {
     return this.savedData;
@@ -59,7 +70,8 @@ export default class Stub implements BlockTool {
 
   /**
    * Create Tool html markup
-   * @return {HTMLElement}
+   *
+   * @returns {HTMLElement}
    */
   private make(): HTMLElement {
     const wrapper = $.make('div', this.CSS.wrapper);

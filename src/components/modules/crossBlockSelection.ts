@@ -3,6 +3,9 @@ import Block from '../block';
 import SelectionUtils from '../selection';
 import * as _ from '../utils';
 
+/**
+ *
+ */
 export default class CrossBlockSelection extends Module {
   /**
    * Block where selection is started

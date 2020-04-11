@@ -8,7 +8,8 @@ import { Sanitizer } from '../../../../types/api';
 export default class SanitizerAPI extends Module {
   /**
    * Available methods
-   * @return {Sanitizer}
+   *
+   * @returns {Sanitizer}
    */
   get methods(): Sanitizer {
     return {
@@ -16,6 +17,11 @@ export default class SanitizerAPI extends Module {
     };
   }
 
+  /**
+   * Perform sanitizing of a string
+   * @param taintString - what to sanitize
+   * @param config - sanitizer config
+   */
   public clean(taintString, config) {
     return this.Editor.Sanitizer.clean(taintString, config);
   }

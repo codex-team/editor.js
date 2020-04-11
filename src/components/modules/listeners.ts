@@ -45,6 +45,7 @@ export interface ListenerData {
 export default class Listeners extends Module {
   /**
    * Stores all listeners data to find/remove/process it
+   *
    * @type {ListenerData[]}
    */
   private allListeners: ListenerData[] = [];
@@ -53,9 +54,9 @@ export default class Listeners extends Module {
    * Assigns event listener on element
    *
    * @param {EventTarget} element - DOM element that needs to be listened
-   * @param {String} eventType - event type
+   * @param {string} eventType - event type
    * @param {Function} handler - method that will be fired on event
-   * @param {Boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
+   * @param {boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
    */
   public on(
     element: EventTarget,
@@ -84,9 +85,9 @@ export default class Listeners extends Module {
    * Removes event listener from element
    *
    * @param {EventTarget} element - DOM element that we removing listener
-   * @param {String} eventType - event type
+   * @param {string} eventType - event type
    * @param {Function} handler - remove handler, if element listens several handlers on the same event type
-   * @param {Boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
+   * @param {boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
    */
   public off(
     element: EventTarget,
@@ -109,9 +110,9 @@ export default class Listeners extends Module {
 
   /**
    * @param {EventTarget} element
-   * @param {String} eventType
+   * @param {string} eventType
    * @param {Function} handler
-   * @return {ListenerData|null}
+   * @returns {ListenerData|null}
    */
   public findOne(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData {
     const foundListeners = this.findAll(element, eventType, handler);
@@ -121,9 +122,9 @@ export default class Listeners extends Module {
 
   /**
    * @param {EventTarget} element
-   * @param {String} eventType
+   * @param {string} eventType
    * @param {Function} handler
-   * @return {ListenerData[]}
+   * @returns {ListenerData[]}
    */
   public findAll(element: EventTarget, eventType?: string, handler?: (event: Event) => void): ListenerData[] {
     let found;
@@ -153,6 +154,7 @@ export default class Listeners extends Module {
 
   /**
    * Search method: looks for listener by passed element
+   *
    * @param {EventTarget} element - searching element
    * @returns {Array} listeners that found on element
    */
@@ -166,8 +168,9 @@ export default class Listeners extends Module {
 
   /**
    * Search method: looks for listener by passed event type
-   * @param {String} eventType
-   * @return {Array} listeners that found on element
+   *
+   * @param {string} eventType
+   * @returns {Array} listeners that found on element
    */
   private findByType(eventType: string): ListenerData[] {
     return this.allListeners.filter((listener) => {
@@ -179,8 +182,9 @@ export default class Listeners extends Module {
 
   /**
    * Search method: looks for listener by passed handler
+   *
    * @param {Function} handler
-   * @return {Array} listeners that found on element
+   * @returns {Array} listeners that found on element
    */
   private findByHandler(handler: (event: Event) => void): ListenerData[] {
     return this.allListeners.filter((listener) => {

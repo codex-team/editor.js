@@ -18,12 +18,13 @@ declare const VERSION: string;
  *
  * @typedef {Saver} Saver
  * @property {Element} html - Editor HTML content
- * @property {String} json - Editor JSON output
+ * @property {string} json - Editor JSON output
  */
 export default class Saver extends Module {
   /**
    * Composes new chain of Promises to fire them alternatelly
-   * @return {OutputData}
+   *
+   * @returns {OutputData}
    */
   public async save(): Promise<OutputData> {
     const { BlockManager, Sanitizer, ModificationsObserver } = this.Editor;
@@ -49,8 +50,9 @@ export default class Saver extends Module {
 
   /**
    * Saves and validates
+   *
    * @param {Block} block - Editor's Tool
-   * @return {ValidatedData} - Tool's validated data
+   * @returns {ValidatedData} - Tool's validated data
    */
   private async getSavedData(block: Block): Promise<ValidatedData> {
     const blockData = await block.save();
@@ -64,8 +66,9 @@ export default class Saver extends Module {
 
   /**
    * Creates output object with saved data, time and version of editor
+   *
    * @param {ValidatedData} allExtractedData
-   * @return {OutputData}
+   * @returns {OutputData}
    */
   private makeOutput(allExtractedData): OutputData {
     let totalTime = 0;

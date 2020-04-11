@@ -6,9 +6,13 @@ import * as _ from '../utils';
 import SelectionUtils from '../selection';
 import Flipper from '../flipper';
 
+/**
+ *
+ */
 export default class BlockEvents extends Module {
   /**
    * All keydowns on Block
+   *
    * @param {KeyboardEvent} event - keydown
    */
   public keydown(event: KeyboardEvent): void {
@@ -54,6 +58,7 @@ export default class BlockEvents extends Module {
 
   /**
    * Fires on keydown before event processing
+   *
    * @param {KeyboardEvent} event - keydown
    */
   public beforeKeydownProcessing(event: KeyboardEvent): void {
@@ -76,6 +81,7 @@ export default class BlockEvents extends Module {
 
       /**
        * Allow to use shortcuts with selected blocks
+       *
        * @type {boolean}
        */
       const isShortcut = event.ctrlKey || event.metaKey || event.altKey || event.shiftKey;
@@ -91,6 +97,8 @@ export default class BlockEvents extends Module {
    * Key up on Block:
    * - shows Inline Toolbar if something selected
    * - shows conversion toolbar with 85% of block selection
+   *
+   * @param event
    */
   public keyup(event): void {
     /**
@@ -129,6 +137,7 @@ export default class BlockEvents extends Module {
 
   /**
    * Open Toolbox to leaf Tools
+   *
    * @param {KeyboardEvent} event
    */
   public tabPressed(event): void {
@@ -224,6 +233,7 @@ export default class BlockEvents extends Module {
 
   /**
    * Copy and Delete selected Blocks
+   *
    * @param {ClipboardEvent} event
    */
   public handleCommandX(event: ClipboardEvent): void {
@@ -245,6 +255,7 @@ export default class BlockEvents extends Module {
 
   /**
    * ENTER pressed on block
+   *
    * @param {KeyboardEvent} event - keydown
    */
   private enter(event: KeyboardEvent): void {
@@ -312,6 +323,7 @@ export default class BlockEvents extends Module {
 
   /**
    * Handle backspace keydown on Block
+   *
    * @param {KeyboardEvent} event - keydown
    */
   private backspace(event: KeyboardEvent): void {
@@ -423,6 +435,8 @@ export default class BlockEvents extends Module {
 
   /**
    * Handle right and down keyboard keys
+   *
+   * @param event
    */
   private arrowRightAndDown(event: KeyboardEvent): void {
     const isFlipperCombination = Flipper.usedKeys.includes(event.keyCode) &&
@@ -475,6 +489,8 @@ export default class BlockEvents extends Module {
 
   /**
    * Handle left and up keyboard keys
+   *
+   * @param event
    */
   private arrowLeftAndUp(event: KeyboardEvent): void {
     /**
@@ -533,6 +549,8 @@ export default class BlockEvents extends Module {
 
   /**
    * Cases when we need to close Toolbar
+   *
+   * @param event
    */
   private needToolbarClosing(event) {
     const toolboxItemSelected = (event.keyCode === _.keyCodes.ENTER && this.Editor.Toolbox.opened),

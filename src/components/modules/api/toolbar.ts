@@ -8,7 +8,8 @@ import { Toolbar } from '../../../../types/api';
 export default class ToolbarAPI extends Module {
   /**
    * Available methods
-   * @return {Toolbar}
+   *
+   * @returns {Toolbar}
    */
   get methods(): Toolbar {
     return {

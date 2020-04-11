@@ -1,6 +1,9 @@
 import SelectionUtils from '../selection';
 
 import Module from '../__module';
+/**
+ *
+ */
 export default class DragNDrop extends Module {
   /**
    * If drag has been started at editor, we save it
@@ -21,6 +24,7 @@ export default class DragNDrop extends Module {
 
   /**
    * Add drag events listeners to editor zone
+   *
    * @private
    */
   private bindEvents(): void {

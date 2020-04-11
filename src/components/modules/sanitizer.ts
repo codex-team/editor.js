@@ -20,8 +20,8 @@ import Module from '../__module';
 import * as _ from '../utils';
 
 /**
- * @typedef {Object} SanitizerConfig
- * @property {Object} tags - define tags restrictions
+ * @typedef {object} SanitizerConfig
+ * @property {object} tags - define tags restrictions
  *
  * @example
  *
@@ -38,6 +38,9 @@ import * as _ from '../utils';
 import HTMLJanitor from 'html-janitor';
 import { BlockToolData, InlineToolConstructable, SanitizerConfig } from '../../../types';
 
+/**
+ *
+ */
 export default class Sanitizer extends Module {
   /**
    * Memoize tools config
@@ -54,6 +57,7 @@ export default class Sanitizer extends Module {
    *
    * Enumerate blocks and clean data
    *
+   * @param blocksData
    * @param {{tool, data: BlockToolData}[]} blocksData[]
    */
   public sanitizeBlocks(
@@ -116,7 +120,7 @@ export default class Sanitizer extends Module {
    * @param {string} taintString - taint string
    * @param {SanitizerConfig} customConfig - allowed tags
    *
-   * @return {string} clean HTML
+   * @returns {string} clean HTML
    */
   public clean(taintString: string, customConfig: SanitizerConfig = {} as SanitizerConfig): string {
     const sanitizerConfig = {
@@ -136,7 +140,7 @@ export default class Sanitizer extends Module {
    *
    * @param {string} toolName
    * @param {SanitizerConfig} toolRules
-   * @return {SanitizerConfig}
+   * @returns {SanitizerConfig}
    */
   public composeToolConfig(toolName: string): SanitizerConfig {
     /**
@@ -177,12 +181,28 @@ export default class Sanitizer extends Module {
     return toolConfig;
   }
 
-  /**
-   * Returns Sanitizer config
-   * When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
-   * otherwise get only enabled
-   */
-  public getInlineToolsConfig(name: string): SanitizerConfig {
+  //
+  // Returns Sanitizer config
+  // When Tool's "inlineToolbar" value is True, get all sanitizer rules from all tools,
+  // otherwise get only enabled
+  //
+  // @param name
+  //
+  public getInlineToolsConfig/**
+                              *
+                              *//**
+                                 *
+                                 *//**
+                                    *
+                                    *//**
+                                       *
+                                       *//**
+                                          *
+                                          *//**
+                                             *
+                                             *//**
+ *
+ */(name: string): SanitizerConfig {
     const { Tools } = this.Editor;
     const toolsConfig = Tools.getToolSettings(name);
     const enableInlineTools = toolsConfig.inlineToolbar || [];
@@ -239,7 +259,8 @@ export default class Sanitizer extends Module {
 
   /**
    * Clean array
-   * @param {array} array - [1, 2, {}, []]
+   *
+   * @param {Array} array - [1, 2, {}, []]
    * @param {object} ruleForItem
    */
   private cleanArray(array: any[], ruleForItem: SanitizerConfig): any[] {
@@ -248,9 +269,10 @@ export default class Sanitizer extends Module {
 
   /**
    * Clean object
+   *
    * @param {object} object  - {level: 0, text: 'adada', items: [1,2,3]}}
    * @param {object} rules - { b: true } or true|false
-   * @return {object}
+   * @returns {object}
    */
   private cleanObject(object: any, rules: SanitizerConfig|{[field: string]: SanitizerConfig}): any {
     const cleanData = {};
@@ -278,7 +300,7 @@ export default class Sanitizer extends Module {
   /**
    * @param {string} taintString
    * @param {SanitizerConfig|boolean} rule
-   * @return {string}
+   * @returns {string}
    */
   private cleanOneItem(taintString: string, rule: SanitizerConfig|boolean): string {
     if (typeof rule === 'object') {
@@ -294,6 +316,7 @@ export default class Sanitizer extends Module {
    * Check if passed item is a HTML Janitor rule:
    *  { a : true }, {}, false, true, function(){} — correct rules
    *  undefined, null, 0, 1, 2 — not a rules
+   *
    * @param config
    */
   private isRule(config: SanitizerConfig): boolean {

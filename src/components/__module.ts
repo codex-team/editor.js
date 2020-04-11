@@ -8,24 +8,26 @@ import { ModuleConfig } from '../types-internal/module-config';
  * @classdesc  All modules inherits from this class.
  *
  * @typedef {Module} Module
- * @property {Object} config - Editor user settings
+ * @property {object} config - Editor user settings
  * @property {EditorModules} Editor - List of Editor modules
  */
 export default class Module {
   /**
    * Editor modules list
+   *
    * @type {EditorModules}
    */
   protected Editor: EditorModules;
 
   /**
    * Editor configuration object
+   *
    * @type {EditorConfig}
    */
   protected config: EditorConfig;
 
   /**
-   * @constructor
+   * @class
    * @param {EditorConfig}
    */
   constructor({ config }: ModuleConfig) {
@@ -38,6 +40,7 @@ export default class Module {
 
   /**
    * Editor modules setter
+   *
    * @param {EditorModules} Editor
    */
   set state(Editor: EditorModules) {

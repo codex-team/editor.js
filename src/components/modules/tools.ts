@@ -34,13 +34,15 @@ export default class Tools extends Module {
   /**
    * Name of Stub Tool
    * Stub Tool is used to substitute unavailable block Tools and store their data
+   *
    * @type {string}
    */
   public stubTool = 'stub';
 
   /**
    * Returns available Tools
-   * @return {Tool[]}
+   *
+   * @returns {Tool[]}
    */
   public get available(): {[name: string]: ToolConstructable} {
     return this.toolsAvailable;
@@ -48,7 +50,8 @@ export default class Tools extends Module {
 
   /**
    * Returns unavailable Tools
-   * @return {Tool[]}
+   *
+   * @returns {Tool[]}
    */
   public get unavailable(): {[name: string]: ToolConstructable} {
     return this.toolsUnavailable;
@@ -56,7 +59,8 @@ export default class Tools extends Module {
 
   /**
    * Return Tools for the Inline Toolbar
-   * @return {Object} - object of Inline Tool's classes
+   *
+   * @returns {object} - object of Inline Tool's classes
    */
   public get inline(): {[name: string]: ToolConstructable} {
     if (this._inlineTools) {
@@ -124,7 +128,7 @@ export default class Tools extends Module {
   /**
    * Constant for available Tools internal settings provided by Tool developer
    *
-   * @return {object}
+   * @returns {object}
    */
   public get INTERNAL_SETTINGS() {
     return {
@@ -155,7 +159,8 @@ export default class Tools extends Module {
   /**
    * Map {name: Class, ...} where:
    *  name — block type name in JSON. Got from EditorConfig.tools keys
-   * @type {Object}
+   *
+   * @type {object}
    */
   public readonly toolsClasses: {[name: string]: ToolConstructable} = {};
 
@@ -171,19 +176,21 @@ export default class Tools extends Module {
 
   /**
    * Tools settings in a map {name: settings, ...}
-   * @type {Object}
+   *
+   * @type {object}
    */
   private readonly toolsSettings: {[name: string]: ToolSettings} = {};
 
   /**
    * Cache for the prepared inline tools
+   *
    * @type {null|object}
    * @private
    */
   private _inlineTools: {[name: string]: ToolConstructable} = {};
 
   /**
-   * @constructor
+   * @class
    *
    * @param {EditorConfig} config
    */
@@ -197,14 +204,16 @@ export default class Tools extends Module {
     /**
      * Available tools list
      * {name: Class, ...}
-     * @type {Object}
+     *
+     * @type {object}
      */
     this.toolsAvailable = {};
 
     /**
      * Tools that rejected a prepare method
      * {name: Class, ... }
-     * @type {Object}
+     *
+     * @type {object}
      */
     this.toolsUnavailable = {};
 
@@ -213,7 +222,8 @@ export default class Tools extends Module {
 
   /**
    * Creates instances via passed or default configuration
-   * @return {Promise}
+   *
+   * @returns {Promise}
    */
   public prepare() {
     this.validateTools();
@@ -238,12 +248,14 @@ export default class Tools extends Module {
       if (typeof this.config.tools[toolName] === 'object') {
         /**
          * Save Tool's class from 'class' field
+         *
          * @type {Tool}
          */
         this.toolsClasses[toolName] = (this.config.tools[toolName] as ToolSettings).class;
 
         /**
          * Save Tool's settings
+         *
          * @type {ToolSettings}
          */
         this.toolsSettings[toolName] = this.config.tools[toolName] as ToolSettings;
@@ -255,12 +267,14 @@ export default class Tools extends Module {
       } else {
         /**
          * Save Tool's class
+         *
          * @type {Tool}
          */
         this.toolsClasses[toolName] = this.config.tools[toolName] as ToolConstructable;
 
         /**
          * Set empty settings for Block by default
+         *
          * @type {{}}
          */
         this.toolsSettings[toolName] = { class: this.config.tools[toolName] as ToolConstructable };
@@ -306,9 +320,9 @@ export default class Tools extends Module {
   /**
    * Return Tool`s instance
    *
-   * @param {String} tool — tool name
+   * @param {string} tool — tool name
    * @param {BlockToolData} data — initial data
-   * @return {BlockTool}
+   * @returns {BlockTool}
    */
   public construct(tool, data) {
     const plugin = this.toolsClasses[tool];
@@ -340,7 +354,7 @@ export default class Tools extends Module {
    *
    * @param {InlineTool} tool
    * @param {ToolSettings} toolSettings
-   * @return {InlineTool} — instance
+   * @returns {InlineTool} — instance
    */
   public constructInline(tool: InlineToolConstructable, toolSettings: ToolSettings = {} as ToolSettings): InlineTool {
     /**
@@ -356,8 +370,9 @@ export default class Tools extends Module {
 
   /**
    * Check if passed Tool is an instance of Initial Block Tool
+   *
    * @param {Tool} tool - Tool to check
-   * @return {Boolean}
+   * @returns {boolean}
    */
   public isInitial(tool) {
     return tool instanceof this.available[this.config.initialBlock];
@@ -365,8 +380,9 @@ export default class Tools extends Module {
 
   /**
    * Return Tool's config by name
+   *
    * @param {string} toolName
-   * @return {ToolSettings}
+   * @returns {ToolSettings}
    */
   public getToolSettings(toolName): ToolSettings {
     return this.toolsSettings[toolName];
@@ -374,7 +390,8 @@ export default class Tools extends Module {
 
   /**
    * Binds prepare function of plugins with user or default config
-   * @return {Array} list of functions that needs to be fired sequentially
+   *
+   * @returns {Array} list of functions that needs to be fired sequentially
    */
   private getListOfPrepareFunctions(): Array<{
     function: (data: {toolName: string; config: ToolConfig}) => void;

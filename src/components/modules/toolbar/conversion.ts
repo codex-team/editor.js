@@ -38,6 +38,7 @@ export default class ConversionToolbar extends Module {
 
   /**
    * Conversion Toolbar open/close state
+   *
    * @type {boolean}
    */
   public opened = false;
@@ -49,6 +50,7 @@ export default class ConversionToolbar extends Module {
 
   /**
    * Instance of class that responses for leafing buttons by arrows/tab
+   *
    * @type {Flipper|null}
    */
   private flipper: Flipper = null;
@@ -87,7 +89,8 @@ export default class ConversionToolbar extends Module {
 
   /**
    * Toggle conversion dropdown visibility
-   * @param {function} [togglingCallback] — callback that will accept opening state
+   *
+   * @param {Function} [togglingCallback] — callback that will accept opening state
    */
   public toggle(togglingCallback?: (openedState: boolean) => void): void {
     if (!this.opened) {
@@ -157,6 +160,7 @@ export default class ConversionToolbar extends Module {
   public async replaceWithBlock(replacingToolName: string): Promise <void> {
     /**
      * At first, we get current Block data
+     *
      * @type {BlockToolConstructable}
      */
     const currentBlockClass = this.Editor.BlockManager.currentBlock.class;
@@ -175,6 +179,7 @@ export default class ConversionToolbar extends Module {
 
     /**
      * Getting a class of replacing Tool
+     *
      * @type {BlockToolConstructable}
      */
     const replacingTool = this.Editor.Tools.toolsClasses[replacingToolName] as BlockToolConstructable;
@@ -275,6 +280,10 @@ export default class ConversionToolbar extends Module {
 
   /**
    * Add tool to the Conversion Toolbar
+   *
+   * @param toolName
+   * @param toolIcon
+   * @param title
    */
   private addTool(toolName: string, toolIcon: string, title: string): void {
     const tool = $.make('div', [ ConversionToolbar.CSS.conversionTool ]);

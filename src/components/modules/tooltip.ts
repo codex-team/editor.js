@@ -14,12 +14,13 @@ import { ModuleConfig } from '../../types-internal/module-config';
 export default class Tooltip extends Module {
   /**
    * Tooltips lib: CodeX Tooltips
+   *
    * @see https://github.com/codex-team/codex.tooltips
    */
   private lib: CodeXTooltips = new CodeXTooltips();
 
   /**
-   * @constructor
+   * @class
    * @param {EditorConfig}
    */
   constructor({ config }: ModuleConfig) {

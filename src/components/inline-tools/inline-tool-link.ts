@@ -16,7 +16,7 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Specifies Tool as Inline Toolbar Tool
    *
-   * @return {boolean}
+   * @returns {boolean}
    */
   public static isInline = true;
 
@@ -28,7 +28,8 @@ export default class LinkInlineTool implements InlineTool {
   /**
    * Sanitizer Rule
    * Leave <a> tags
-   * @return {object}
+   *
+   * @returns {object}
    */
   static get sanitize(): SanitizerConfig {
     return {
@@ -140,6 +141,7 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Handle clicks on the Inline Toolbar icon
+   *
    * @param {Range} range
    */
   public surround(range: Range): void {
@@ -179,6 +181,7 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Check selection and set activated state to button if there are <a> tag
+   *
    * @param {Selection} selection
    */
   public checkState(selection?: Selection): boolean {
@@ -219,6 +222,9 @@ export default class LinkInlineTool implements InlineTool {
     return 'CMD+K';
   }
 
+  /**
+   * Show/close link input
+   */
   private toggleActions(): void {
     if (!this.inputOpened) {
       this.openActions(true);
@@ -240,6 +246,7 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Close input
+   *
    * @param {boolean} clearSavedSelection — we don't need to clear saved selection
    *                                        on toggle-clicks on the icon of opened Toolbar
    */
@@ -267,6 +274,7 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Enter pressed on input
+   *
    * @param {KeyboardEvent} event
    */
   private enterPressed(event: KeyboardEvent): void {
@@ -309,8 +317,9 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Detects if passed string is URL
+   *
    * @param  {string}  str
-   * @return {Boolean}
+   * @returns {boolean}
    */
   private validateURL(str: string): boolean {
     /**
@@ -323,6 +332,7 @@ export default class LinkInlineTool implements InlineTool {
    * Process link before injection
    * - sanitize
    * - add protocol for links like 'google.com'
+   *
    * @param {string} link - raw user input
    */
   private prepareLink(link: string): string {
@@ -334,7 +344,8 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Add 'http' protocol to the links like 'vc.ru', 'google.com'
-   * @param {String} link
+   *
+   * @param {string} link
    */
   private addProtocol(link: string): string {
     /**
@@ -363,6 +374,7 @@ export default class LinkInlineTool implements InlineTool {
 
   /**
    * Inserts <a> tag with "href"
+   *
    * @param {string} link - "href" value
    */
   private insertLink(link: string): void {

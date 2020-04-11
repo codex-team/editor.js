@@ -11,11 +11,12 @@ import Module from '../__module';
  * @version 1.0.0
  *
  * @typedef {Events} Events
- * @property {Object} subscribers - all subscribers grouped by event name
+ * @property {object} subscribers - all subscribers grouped by event name
  */
 export default class Events extends Module {
   /**
    * Object with events` names as key and array of callback functions as value
+   *
    * @type {{}}
    */
   private subscribers: {[name: string]: Array<(data?: any) => any>} = {};
@@ -23,7 +24,7 @@ export default class Events extends Module {
   /**
    * Subscribe any event on callback
    *
-   * @param {String} eventName - event name
+   * @param {string} eventName - event name
    * @param {Function} callback - subscriber
    */
   public on(eventName: string, callback: (data: any) => any) {
@@ -38,7 +39,7 @@ export default class Events extends Module {
   /**
    * Subscribe any event on callback. Callback will be called once and be removed from subscribers array after call.
    *
-   * @param {String} eventName - event name
+   * @param {string} eventName - event name
    * @param {Function} callback - subscriber
    */
   public once(eventName: string, callback: (data: any) => any) {
@@ -65,8 +66,8 @@ export default class Events extends Module {
   /**
    * Emit callbacks with passed data
    *
-   * @param {String} eventName - event name
-   * @param {Object} data - subscribers get this data when they were fired
+   * @param {string} eventName - event name
+   * @param {object} data - subscribers get this data when they were fired
    */
   public emit(eventName: string, data?: any): void {
     if (!this.subscribers[eventName]) {

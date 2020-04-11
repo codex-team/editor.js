@@ -14,9 +14,9 @@ import { BlockToolConstructable } from '../../../types/tools';
  */
 export default class Renderer extends Module {
   /**
-   * @typedef {Object} RendererBlocks
-   * @property {String} type - tool name
-   * @property {Object} data - tool data
+   * @typedef {object} RendererBlocks
+   * @property {string} type - tool name
+   * @property {object} data - tool data
    */
 
   /**
@@ -41,6 +41,7 @@ export default class Renderer extends Module {
 
   /**
    * Make plugin blocks from array of plugin`s data
+   *
    * @param {RendererBlocks[]} blocks
    */
   public async render(blocks: BlockToolData[]): Promise<void> {
@@ -58,7 +59,7 @@ export default class Renderer extends Module {
    * Add plugin instance to BlockManager
    * Insert block to working zone
    *
-   * @param {Object} item
+   * @param {object} item
    * @returns {Promise<void>}
    * @private
    */

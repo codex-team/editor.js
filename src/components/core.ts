@@ -109,6 +109,7 @@ export default class Core {
 
   /**
    * Setting for configuration
+   *
    * @param {EditorConfig|string|undefined} config
    */
   set configuration(config: EditorConfig|string) {
@@ -133,6 +134,7 @@ export default class Core {
 
     /**
      * Place config into the class property
+     *
      * @type {EditorConfig}
      */
     this.config = config;
@@ -157,6 +159,7 @@ export default class Core {
 
     /**
      * Height of Editor's bottom area that allows to set focus on the last Block
+     *
      * @type {number}
      */
     this.config.minHeight = this.config.minHeight !== undefined ? this.config.minHeight : 300;
@@ -164,6 +167,7 @@ export default class Core {
     /**
      * Initial block type
      * Uses in case when there is no blocks passed
+     *
      * @type {{type: (*), data: {text: null}}}
      */
     const initialBlockData = {
@@ -199,6 +203,7 @@ export default class Core {
 
   /**
    * Returns private property
+   *
    * @returns {EditorConfig}
    */
   get configuration(): EditorConfig|string {
@@ -207,6 +212,7 @@ export default class Core {
 
   /**
    * Checks for required fields in Editor's config
+   *
    * @returns {Promise<void>}
    */
   public async validate(): Promise<void> {
@@ -249,7 +255,8 @@ export default class Core {
    * Start Editor!
    *
    * Get list of modules that needs to be prepared and return a sequence (Promise)
-   * @return {Promise}
+   *
+   * @returns {Promise}
    */
   public async start() {
     const modulesToPrepare = [
@@ -301,6 +308,7 @@ export default class Core {
          *
          * On build, Babel will transform all Classes to the Functions so, name will always be 'Function'
          * To prevent this, we use 'babel-plugin-class-display-name' plugin
+         *
          * @see  https://www.npmjs.com/package/babel-plugin-class-display-name
          */
         this.moduleInstances[Module.displayName] = new Module({
@@ -330,6 +338,7 @@ export default class Core {
 
   /**
    * Return modules without passed name
+   *
    * @param {string} name - module for witch modules difference should be calculated
    */
   private getModulesDiff(name: string): EditorModules {

@@ -36,6 +36,7 @@ export default class InlineToolbar extends Module {
 
   /**
    * State of inline toolbar
+   *
    * @type {boolean}
    */
   public opened = false;
@@ -73,12 +74,14 @@ export default class InlineToolbar extends Module {
 
   /**
    * Buttons List
+   *
    * @type {NodeList}
    */
   private buttonsList: NodeList = null;
 
   /**
    * Cache for Inline Toolbar width
+   *
    * @type {number}
    */
   private width = 0;
@@ -168,6 +171,7 @@ export default class InlineToolbar extends Module {
 
   /**
    * Shows Inline Toolbar if something is selected
+   *
    * @param {boolean} [needToClose] - pass true to close toolbar if it is not allowed.
    *                                  Avoid to use it just for closing IT, better call .close() clearly.
    */
@@ -370,6 +374,7 @@ export default class InlineToolbar extends Module {
 
     /**
      * All Inline Toolbar buttons
+     *
      * @type {HTMLElement[]}
      */
     const buttons = Array.from(this.nodes.buttons.querySelectorAll(`.${this.CSS.inlineToolButton}`)) as HTMLElement[];
@@ -510,6 +515,9 @@ export default class InlineToolbar extends Module {
 
   /**
    * Add tool button and activate clicks
+   *
+   * @param toolName
+   * @param tool
    */
   private addTool(toolName: string, tool: InlineTool): void {
     const {
@@ -598,6 +606,7 @@ export default class InlineToolbar extends Module {
 
   /**
    * Enable Tool shortcut with Editor Shortcuts Module
+   *
    * @param {InlineTool} tool - Tool instance
    * @param {string} shortcut - shortcut according to the ShortcutData Module format
    */
@@ -635,6 +644,7 @@ export default class InlineToolbar extends Module {
 
   /**
    * Inline Tool button clicks
+   *
    * @param {InlineTool} tool - Tool's instance
    */
   private toolClicked(tool: InlineTool): void {

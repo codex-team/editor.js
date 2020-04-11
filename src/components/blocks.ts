@@ -16,7 +16,7 @@ export default class Blocks {
   /**
    * Get length of Block instances array
    *
-   * @returns {Number}
+   * @returns {number}
    */
   public get length(): number {
     return this.blocks.length;
@@ -47,9 +47,9 @@ export default class Blocks {
    * blocks[0] = new Block(...)
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {Number|String} property — block index or any Blocks class property to set
+   * @param {number|string} property — block index or any Blocks class property to set
    * @param {Block} value — value to set
-   * @returns {Boolean}
+   * @returns {boolean}
    */
   public static set(instance: Blocks, property: number | string, value: Block | any) {
     /**
@@ -76,7 +76,7 @@ export default class Blocks {
    * Proxy trap to implement array-like getter
    *
    * @param {Blocks} instance — Blocks instance
-   * @param {Number|String} property — Blocks class property
+   * @param {number|string} property — Blocks class property
    * @returns {Block|*}
    */
   public static get(instance: Blocks, property: any | number) {
@@ -104,7 +104,7 @@ export default class Blocks {
   public workingArea: HTMLElement;
 
   /**
-   * @constructor
+   * @class
    *
    * @param {HTMLElement} workingArea — editor`s working node
    */
@@ -125,8 +125,9 @@ export default class Blocks {
 
   /**
    * Swaps blocks with indexes first and second
-   * @param {Number} first - first block index
-   * @param {Number} second - second block index
+   *
+   * @param {number} first - first block index
+   * @param {number} second - second block index
    * @deprecated — use 'move' instead
    */
   public swap(first: number, second: number): void {
@@ -146,13 +147,15 @@ export default class Blocks {
 
   /**
    * Move a block from one to another index
-   * @param {Number} toIndex - new index of the block
-   * @param {Number} fromIndex - block to move
+   *
+   * @param {number} toIndex - new index of the block
+   * @param {number} fromIndex - block to move
    */
   public move(toIndex: number, fromIndex: number): void {
     /**
      * cut out the block, move the DOM element and insert at the desired index
      * again (the shifting within the blocks array will happen automatically).
+     *
      * @see https://stackoverflow.com/a/44932690/1238150
      */
     const block = this.blocks.splice(fromIndex, 1)[0];
@@ -183,9 +186,9 @@ export default class Blocks {
   /**
    * Insert new Block at passed index
    *
-   * @param {Number} index — index to insert Block
+   * @param {number} index — index to insert Block
    * @param {Block} block — Block to insert
-   * @param {Boolean} replace — it true, replace block on given index
+   * @param {boolean} replace — it true, replace block on given index
    */
   public insert(index: number, block: Block, replace = false): void {
     if (!this.length) {
@@ -224,7 +227,8 @@ export default class Blocks {
 
   /**
    * Remove block
-   * @param {Number|null} index
+   *
+   * @param {number|null} index
    */
   public remove(index: number): void {
     if (isNaN(index)) {
@@ -266,7 +270,7 @@ export default class Blocks {
   /**
    * Get Block by index
    *
-   * @param {Number} index — Block index
+   * @param {number} index — Block index
    * @returns {Block}
    */
   public get(index: number): Block {
@@ -277,7 +281,7 @@ export default class Blocks {
    * Return index of passed Block
    *
    * @param {Block} block
-   * @returns {Number}
+   * @returns {number}
    */
   public indexOf(block: Block): number {
     return this.blocks.indexOf(block);
@@ -303,7 +307,7 @@ export default class Blocks {
   /**
    * Composes Block event with passed type and details
    *
-   * @param {String} type
+   * @param {string} type
    * @param {MoveEventDetail} detail
    */
   private composeBlockEvent(type: string, detail: MoveEventDetail): MoveEvent {
