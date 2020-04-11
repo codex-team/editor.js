@@ -16999,6 +16999,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
        */
 
       _this.readOnlyEnabled = false;
+      /**
+       * Binded listener ids
+       */
+
+      _this.listenerIds = [];
       return _this;
     }
     /**
@@ -17578,13 +17583,15 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "bindEvents",
       value: function bindEvents(block) {
-        var Listeners = this.Editor.Listeners;
-        Listeners.on(block.holder, 'keydown', this.Editor.BlockEvents.keydown, true);
-        Listeners.on(block.holder, 'mouseup', this.Editor.BlockEvents.mouseUp);
-        Listeners.on(block.holder, 'mousedown', this.Editor.BlockEvents.mouseDown);
-        Listeners.on(block.holder, 'keyup', this.Editor.BlockEvents.keyup);
-        Listeners.on(block.holder, 'dragover', this.Editor.BlockEvents.dragOver);
-        Listeners.on(block.holder, 'dragleave', this.Editor.BlockEvents.dragLeave);
+        var _this$Editor2 = this.Editor,
+            Listeners = _this$Editor2.Listeners,
+            BlockEvents = _this$Editor2.BlockEvents;
+        this.listenerIds.push(Listeners.on(block.holder, 'keydown', BlockEvents.keydown, true));
+        this.listenerIds.push(Listeners.on(block.holder, 'mouseup', BlockEvents.mouseUp));
+        this.listenerIds.push(Listeners.on(block.holder, 'mousedown', BlockEvents.mouseDown));
+        this.listenerIds.push(Listeners.on(block.holder, 'keyup', BlockEvents.keyup));
+        this.listenerIds.push(Listeners.on(block.holder, 'dragover', BlockEvents.dragOver));
+        this.listenerIds.push(Listeners.on(block.holder, 'dragleave', BlockEvents.dragLeave));
       }
       /**
        * Unbind Events
@@ -17595,12 +17602,31 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "unbindEvents",
       value: function unbindEvents(block) {
         var Listeners = this.Editor.Listeners;
-        Listeners.off(block.holder, 'keydown', this.Editor.BlockEvents.keydown, true);
-        Listeners.off(block.holder, 'mouseup', this.Editor.BlockEvents.mouseUp);
-        Listeners.off(block.holder, 'mousedown', this.Editor.BlockEvents.mouseDown);
-        Listeners.off(block.holder, 'keyup', this.Editor.BlockEvents.keyup);
-        Listeners.off(block.holder, 'dragover', this.Editor.BlockEvents.dragOver);
-        Listeners.off(block.holder, 'dragleave', this.Editor.BlockEvents.dragLeave);
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = this.listenerIds[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var id = _step.value;
+            Listeners.offById(id);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+
+        this.listenerIds = [];
       }
     }, {
       key: "currentBlockIndex",
@@ -19176,6 +19202,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       _this.isStartedAtEditor = false;
       /**
+       * Listener identifiers
+       */
+
+      _this.listenerIds = [];
+      /**
        * Handle drop event
        *
        * @param {DragEvent} dropEvent
@@ -19281,11 +19312,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "bindEvents",
       value: function bindEvents() {
-        this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
-        this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', this.processDragStart);
+        this.listenerIds.push(this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true));
+        this.listenerIds.push(this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', this.processDragStart));
         /* Prevent default browser behavior to allow drop on non-contenteditable elements */
 
-        this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', this.processDragOver, true);
+        this.listenerIds.push(this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', this.processDragOver, true));
       }
       /**
        * Unbind drag events
@@ -19294,9 +19325,31 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "unbindEvents",
       value: function unbindEvents() {
-        this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
-        this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'dragstart', this.processDragStart);
-        this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'dragover', this.processDragOver, true);
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = this.listenerIds[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var id = _step.value;
+            this.Editor.Listeners.offById(id);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+
+        this.listenerIds = [];
       }
     }]);
     return DragNDrop;
@@ -19540,12 +19593,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       return _this;
     }
     /**
-     * Assigns event listener on element
+     * Assigns event listener on element and returns unique identifier
      *
      * @param {EventTarget} element - DOM element that needs to be listened
      * @param {String} eventType - event type
      * @param {Function} handler - method that will be fired on event
      * @param {Boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
+     *
+     * @return {string}
      */
 
 
@@ -19553,7 +19608,10 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
       key: "on",
       value: function on(element, eventType, handler) {
         var options = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+        // tslint:disable-next-line:no-bitwise
+        var id = "f".concat((~~(Math.random() * 1e8)).toString(16));
         var assignedEventData = {
+          id: id,
           element: element,
           eventType: eventType,
           handler: handler,
@@ -19567,6 +19625,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
         this.allListeners.push(assignedEventData);
         element.addEventListener(eventType, handler, options);
+        return id;
       }
       /**
        * Removes event listener from element
@@ -19592,6 +19651,22 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             listener.element.removeEventListener(listener.eventType, listener.handler, listener.options);
           }
         });
+      }
+      /**
+       * Removes listener by id
+       * @param {string} id - listener identifier
+       */
+
+    }, {
+      key: "offById",
+      value: function offById(id) {
+        var listener = this.findById(id);
+
+        if (!listener) {
+          return;
+        }
+
+        listener.element.removeEventListener(listener.eventType, listener.handler, listener.options);
       }
       /**
        * @param {EventTarget} element
@@ -19689,6 +19764,43 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             return listener;
           }
         });
+      }
+      /**
+       * Returns listener data found by id
+       * @param {string} id - listener identifier
+       *
+       * @return {ListenerData}
+       */
+
+    }, {
+      key: "findById",
+      value: function findById(id) {
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = this.allListeners[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var listener = _step.value;
+
+            if (listener.id === id) {
+              return listener;
+            }
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
       }
     }]);
     return Listeners;
@@ -21325,6 +21437,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       _this.stackOfSelected = [];
       /**
+       * Listener identifiers
+       */
+
+      _this.listenerIds = [];
+      /**
        * Handle mouse down events
        * @param {MouseEvent} mouseEvent
        */
@@ -21475,25 +21592,44 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var _this$genHTML = this.genHTML(),
             container = _this$genHTML.container;
 
-        Listeners.on(container, 'mousedown', this.processMouseDown, false);
-        Listeners.on(document.body, 'mousemove', this.processMouseMove, false);
-        Listeners.on(document.body, 'mouseleave', this.processMouseLeave);
-        Listeners.on(window, 'scroll', this.processScroll, false);
-        Listeners.on(document.body, 'mouseup', this.processMouseUp, false);
+        this.listenerIds.push(Listeners.on(container, 'mousedown', this.processMouseDown, false));
+        this.listenerIds.push(Listeners.on(document.body, 'mousemove', this.processMouseMove, false));
+        this.listenerIds.push(Listeners.on(document.body, 'mouseleave', this.processMouseLeave));
+        this.listenerIds.push(Listeners.on(window, 'scroll', this.processScroll, false));
+        this.listenerIds.push(Listeners.on(document.body, 'mouseup', this.processMouseUp, false));
       }
+      /**
+       * Unbind events
+       */
+
     }, {
       key: "unbindEvents",
       value: function unbindEvents() {
-        var Listeners = this.Editor.Listeners;
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
 
-        var _this$genHTML2 = this.genHTML(),
-            container = _this$genHTML2.container;
+        try {
+          for (var _iterator = this.listenerIds[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var id = _step.value;
+            this.Editor.Listeners.offById(id);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
 
-        Listeners.off(container, 'mousedown', this.processMouseDown, false);
-        Listeners.off(document.body, 'mousemove', this.processMouseMove, false);
-        Listeners.off(document.body, 'mouseleave', this.processMouseLeave);
-        Listeners.off(window, 'scroll', this.processScroll, false);
-        Listeners.off(document.body, 'mouseup', this.processMouseUp, false);
+        this.listenerIds = [];
       }
       /**
        * Scroll If mouse in scroll zone
@@ -21636,40 +21772,14 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
         var isSelecteMode = firstBlockInStack.selected;
 
         if (this.rectCrossesBlocks && !isSelecteMode) {
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = undefined;
-
-          try {
-            for (var _iterator = this.stackOfSelected[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var it = _step.value;
-              this.Editor.BlockSelection.selectBlockByIndex(it);
-            }
-          } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-                _iterator["return"]();
-              }
-            } finally {
-              if (_didIteratorError) {
-                throw _iteratorError;
-              }
-            }
-          }
-        }
-
-        if (!this.rectCrossesBlocks && isSelecteMode) {
           var _iteratorNormalCompletion2 = true;
           var _didIteratorError2 = false;
           var _iteratorError2 = undefined;
 
           try {
             for (var _iterator2 = this.stackOfSelected[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-              var _it = _step2.value;
-              this.Editor.BlockSelection.unSelectBlockByIndex(_it);
+              var it = _step2.value;
+              this.Editor.BlockSelection.selectBlockByIndex(it);
             }
           } catch (err) {
             _didIteratorError2 = true;
@@ -21682,6 +21792,32 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
             } finally {
               if (_didIteratorError2) {
                 throw _iteratorError2;
+              }
+            }
+          }
+        }
+
+        if (!this.rectCrossesBlocks && isSelecteMode) {
+          var _iteratorNormalCompletion3 = true;
+          var _didIteratorError3 = false;
+          var _iteratorError3 = undefined;
+
+          try {
+            for (var _iterator3 = this.stackOfSelected[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+              var _it = _step3.value;
+              this.Editor.BlockSelection.unSelectBlockByIndex(_it);
+            }
+          } catch (err) {
+            _didIteratorError3 = true;
+            _iteratorError3 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+                _iterator3["return"]();
+              }
+            } finally {
+              if (_didIteratorError3) {
+                throw _iteratorError3;
               }
             }
           }
@@ -25851,6 +25987,11 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 
       _this.contentRectCache = undefined;
       /**
+       * Binded listener ids
+       */
+
+      _this.listenerIds = [];
+      /**
        * Handle window resize only when it finished
        * @type {() => void}
        */
@@ -26306,19 +26447,19 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "bindEvents",
       value: function bindEvents() {
-        this.Editor.Listeners.on(this.nodes.redactor, 'click', this.redactorClicked, false);
-        this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', this.documentTouched, true);
-        this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', this.documentTouched, true);
-        this.Editor.Listeners.on(document, 'keydown', this.documentKeydown, true);
-        this.Editor.Listeners.on(document, 'click', this.documentClicked, true);
+        this.listenerIds.push(this.Editor.Listeners.on(this.nodes.redactor, 'click', this.redactorClicked, false));
+        this.listenerIds.push(this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', this.documentTouched, true));
+        this.listenerIds.push(this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', this.documentTouched, true));
+        this.listenerIds.push(this.Editor.Listeners.on(document, 'keydown', this.documentKeydown, true));
+        this.listenerIds.push(this.Editor.Listeners.on(document, 'click', this.documentClicked, true));
         /**
          * Handle selection change to manipulate Inline Toolbar appearance
          */
 
-        this.Editor.Listeners.on(document, 'selectionchange', this.selectionChanged, true);
-        this.Editor.Listeners.on(window, 'resize', this.windowResizeListener, {
+        this.listenerIds.push(this.Editor.Listeners.on(document, 'selectionchange', this.selectionChanged, true));
+        this.listenerIds.push(this.Editor.Listeners.on(window, 'resize', this.windowResizeListener, {
           passive: true
-        });
+        }));
       }
       /**
        * Unbind events on the Editor.js interface
@@ -26327,19 +26468,31 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
     }, {
       key: "unbindEvents",
       value: function unbindEvents() {
-        this.Editor.Listeners.off(this.nodes.redactor, 'click', this.redactorClicked, false);
-        this.Editor.Listeners.off(this.nodes.redactor, 'mousedown', this.documentTouched, true);
-        this.Editor.Listeners.off(this.nodes.redactor, 'touchstart', this.documentTouched, true);
-        this.Editor.Listeners.off(document, 'keydown', this.documentKeydown, true);
-        this.Editor.Listeners.off(document, 'click', this.documentClicked, true);
-        /**
-         * Handle selection change to manipulate Inline Toolbar appearance
-         */
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
 
-        this.Editor.Listeners.off(document, 'selectionchange', this.selectionChanged, true);
-        this.Editor.Listeners.off(window, 'resize', this.windowResizeListener, {
-          passive: true
-        });
+        try {
+          for (var _iterator = this.listenerIds[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var id = _step.value;
+            this.Editor.Listeners.offById(id);
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+
+        this.listenerIds = [];
       }
       /**
        * Resize window handler

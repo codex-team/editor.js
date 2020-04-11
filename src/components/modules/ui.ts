@@ -104,6 +104,11 @@ export default class UI extends Module {
   private contentRectCache: DOMRect = undefined;
 
   /**
+   * Binded listener ids
+   */
+  private listenerIds: string[] = [];
+
+  /**
    * Handle window resize only when it finished
    * @type {() => void}
    */
@@ -313,39 +318,49 @@ export default class UI extends Module {
    * Bind events on the Editor.js interface
    */
   private bindEvents(): void {
-    this.Editor.Listeners.on(this.nodes.redactor, 'click', this.redactorClicked, false);
-    this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', this.documentTouched, true);
-    this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', this.documentTouched, true);
-    this.Editor.Listeners.on(document, 'keydown', this.documentKeydown, true);
-    this.Editor.Listeners.on(document, 'click', this.documentClicked, true);
+    this.listenerIds.push(
+      this.Editor.Listeners.on(this.nodes.redactor, 'click', this.redactorClicked, false),
+    );
+
+    this.listenerIds.push(
+      this.Editor.Listeners.on(this.nodes.redactor, 'mousedown', this.documentTouched, true),
+    );
+
+    this.listenerIds.push(
+      this.Editor.Listeners.on(this.nodes.redactor, 'touchstart', this.documentTouched, true),
+    );
+
+    this.listenerIds.push(
+      this.Editor.Listeners.on(document, 'keydown', this.documentKeydown, true),
+    );
+
+    this.listenerIds.push(
+      this.Editor.Listeners.on(document, 'click', this.documentClicked, true),
+    );
 
     /**
      * Handle selection change to manipulate Inline Toolbar appearance
      */
-    this.Editor.Listeners.on(document, 'selectionchange', this.selectionChanged, true);
-    this.Editor.Listeners.on(window, 'resize', this.windowResizeListener, {
-      passive: true,
-    });
+    this.listenerIds.push(
+      this.Editor.Listeners.on(document, 'selectionchange', this.selectionChanged, true),
+    );
+
+    this.listenerIds.push(
+      this.Editor.Listeners.on(window, 'resize', this.windowResizeListener, {
+        passive: true,
+      }),
+    );
   }
 
   /**
    * Unbind events on the Editor.js interface
    */
   private unbindEvents(): void {
-    this.Editor.Listeners.off(this.nodes.redactor, 'click', this.redactorClicked, false);
-    this.Editor.Listeners.off(this.nodes.redactor, 'mousedown', this.documentTouched, true);
-    this.Editor.Listeners.off(this.nodes.redactor, 'touchstart', this.documentTouched, true);
+    for (const id of this.listenerIds) {
+      this.Editor.Listeners.offById(id);
+    }
 
-    this.Editor.Listeners.off(document, 'keydown', this.documentKeydown, true);
-    this.Editor.Listeners.off(document, 'click', this.documentClicked, true);
-
-    /**
-     * Handle selection change to manipulate Inline Toolbar appearance
-     */
-    this.Editor.Listeners.off(document, 'selectionchange', this.selectionChanged, true);
-    this.Editor.Listeners.off(window, 'resize', this.windowResizeListener, {
-      passive: true,
-    });
+    this.listenerIds = [];
   }
 
   /**

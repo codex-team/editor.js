@@ -12,6 +12,11 @@ export default class DragNDrop extends Module {
   private isStartedAtEditor = false;
 
   /**
+   * Listener identifiers
+   */
+  private listenerIds: string[] = [];
+
+  /**
    * Bind events
    *
    * @private
@@ -38,20 +43,29 @@ export default class DragNDrop extends Module {
    * @private
    */
   private bindEvents(): void {
-    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
-    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', this.processDragStart);
+    this.listenerIds.push(
+      this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true),
+    );
+
+    this.listenerIds.push(
+      this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragstart', this.processDragStart),
+    );
 
     /* Prevent default browser behavior to allow drop on non-contenteditable elements */
-    this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', this.processDragOver, true);
+    this.listenerIds.push(
+      this.Editor.Listeners.on(this.Editor.UI.nodes.holder, 'dragover', this.processDragOver, true),
+    );
   }
 
   /**
    * Unbind drag events
    */
   private unbindEvents(): void {
-    this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'drop', this.processDrop, true);
-    this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'dragstart', this.processDragStart);
-    this.Editor.Listeners.off(this.Editor.UI.nodes.holder, 'dragover', this.processDragOver, true);
+    for (const id of this.listenerIds) {
+      this.Editor.Listeners.offById(id);
+    }
+
+    this.listenerIds = [];
   }
 
   /**

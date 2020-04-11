@@ -158,6 +158,11 @@ export default class BlockManager extends Module {
   private readOnlyEnabled: boolean = false;
 
   /**
+   * Binded listener ids
+   */
+  private listenerIds: string[] = [];
+
+  /**
    * Should be called after Editor.UI preparation
    * Define this._blocks property
    *
@@ -631,14 +636,31 @@ export default class BlockManager extends Module {
    * @param {Block} block
    */
   private bindEvents(block: Block): void {
-    const {Listeners} = this.Editor;
+    const {Listeners, BlockEvents} = this.Editor;
 
-    Listeners.on(block.holder, 'keydown', this.Editor.BlockEvents.keydown, true);
-    Listeners.on(block.holder, 'mouseup', this.Editor.BlockEvents.mouseUp);
-    Listeners.on(block.holder, 'mousedown', this.Editor.BlockEvents.mouseDown);
-    Listeners.on(block.holder, 'keyup', this.Editor.BlockEvents.keyup);
-    Listeners.on(block.holder, 'dragover', this.Editor.BlockEvents.dragOver);
-    Listeners.on(block.holder, 'dragleave', this.Editor.BlockEvents.dragLeave);
+    this.listenerIds.push(
+      Listeners.on(block.holder, 'keydown', BlockEvents.keydown, true),
+    );
+
+    this.listenerIds.push(
+      Listeners.on(block.holder, 'mouseup', BlockEvents.mouseUp),
+    );
+
+    this.listenerIds.push(
+      Listeners.on(block.holder, 'mousedown', BlockEvents.mouseDown),
+    );
+
+    this.listenerIds.push(
+      Listeners.on(block.holder, 'keyup', BlockEvents.keyup),
+    );
+
+    this.listenerIds.push(
+      Listeners.on(block.holder, 'dragover', BlockEvents.dragOver),
+    );
+
+    this.listenerIds.push(
+      Listeners.on(block.holder, 'dragleave', BlockEvents.dragLeave),
+    );
   }
 
   /**
@@ -648,11 +670,10 @@ export default class BlockManager extends Module {
   private unbindEvents(block: Block): void {
     const {Listeners} = this.Editor;
 
-    Listeners.off(block.holder, 'keydown', this.Editor.BlockEvents.keydown, true);
-    Listeners.off(block.holder, 'mouseup', this.Editor.BlockEvents.mouseUp);
-    Listeners.off(block.holder, 'mousedown', this.Editor.BlockEvents.mouseDown);
-    Listeners.off(block.holder, 'keyup', this.Editor.BlockEvents.keyup);
-    Listeners.off(block.holder, 'dragover', this.Editor.BlockEvents.dragOver);
-    Listeners.off(block.holder, 'dragleave', this.Editor.BlockEvents.dragLeave);
+    for (const id of this.listenerIds) {
+      Listeners.offById(id);
+    }
+
+    this.listenerIds = [];
   }
 }

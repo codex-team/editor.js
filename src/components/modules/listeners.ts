@@ -1,9 +1,15 @@
 import Module from '../__module';
+import listeners from './api/listeners';
 
 /**
  * Event listener information
  */
 export interface ListenerData {
+  /**
+   * Listener unique identifier
+   */
+  id: string;
+
   /**
    * Element where to listen to dispatched events
    */
@@ -51,20 +57,25 @@ export default class Listeners extends Module {
   private allListeners: ListenerData[] = [];
 
   /**
-   * Assigns event listener on element
+   * Assigns event listener on element and returns unique identifier
    *
    * @param {EventTarget} element - DOM element that needs to be listened
    * @param {String} eventType - event type
    * @param {Function} handler - method that will be fired on event
    * @param {Boolean|AddEventListenerOptions} options - useCapture or {capture, passive, once}
+   *
+   * @return {string}
    */
   public on(
     element: EventTarget,
     eventType: string,
     handler: (event: Event) => void,
     options: boolean | AddEventListenerOptions = false,
-  ): void {
+  ): string {
+    // tslint:disable-next-line:no-bitwise
+    const id = `f${(~~(Math.random() * 1e8)).toString(16)}`;
     const assignedEventData = {
+      id,
       element,
       eventType,
       handler,
@@ -77,6 +88,8 @@ export default class Listeners extends Module {
 
     this.allListeners.push(assignedEventData);
     element.addEventListener(eventType, handler, options);
+
+    return id;
   }
 
   /**
@@ -104,7 +117,20 @@ export default class Listeners extends Module {
         listener.element.removeEventListener(listener.eventType, listener.handler, listener.options);
       }
     });
+  }
 
+  /**
+   * Removes listener by id
+   * @param {string} id - listener identifier
+   */
+  public offById(id: string): void {
+    const listener = this.findById(id);
+
+    if (!listener) {
+      return;
+    }
+
+    listener.element.removeEventListener(listener.eventType, listener.handler, listener.options);
   }
 
   /**
@@ -188,5 +214,19 @@ export default class Listeners extends Module {
         return listener;
       }
     });
+  }
+
+  /**
+   * Returns listener data found by id
+   * @param {string} id - listener identifier
+   *
+   * @return {ListenerData}
+   */
+  private findById(id: string): ListenerData {
+    for (const listener of this.allListeners) {
+      if (listener.id === id) {
+        return listener;
+      }
+    }
   }
 }

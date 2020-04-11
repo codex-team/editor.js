@@ -92,6 +92,11 @@ export default class RectangleSelection extends Module {
   private overlayRectangle: HTMLDivElement;
 
   /**
+   * Listener identifiers
+   */
+  private listenerIds: string[] = [];
+
+  /**
    * Module Preparation
    * Creating rect and hang handlers
    */
@@ -173,22 +178,36 @@ export default class RectangleSelection extends Module {
     const {Listeners} = this.Editor;
     const {container} = this.genHTML();
 
-    Listeners.on(container, 'mousedown', this.processMouseDown, false);
-    Listeners.on(document.body, 'mousemove', this.processMouseMove, false);
-    Listeners.on(document.body, 'mouseleave', this.processMouseLeave);
-    Listeners.on(window, 'scroll', this.processScroll, false);
-    Listeners.on(document.body, 'mouseup', this.processMouseUp, false);
+    this.listenerIds.push(
+      Listeners.on(container, 'mousedown', this.processMouseDown, false),
+    );
+
+    this.listenerIds.push(
+      Listeners.on(document.body, 'mousemove', this.processMouseMove, false),
+    );
+
+    this.listenerIds.push(
+      Listeners.on(document.body, 'mouseleave', this.processMouseLeave),
+    );
+
+    this.listenerIds.push(
+      Listeners.on(window, 'scroll', this.processScroll, false),
+    );
+
+    this.listenerIds.push(
+      Listeners.on(document.body, 'mouseup', this.processMouseUp, false),
+    );
   }
 
+  /**
+   * Unbind events
+   */
   private unbindEvents(): void {
-    const {Listeners} = this.Editor;
-    const {container} = this.genHTML();
+    for (const id of this.listenerIds) {
+      this.Editor.Listeners.offById(id);
+    }
 
-    Listeners.off(container, 'mousedown', this.processMouseDown, false);
-    Listeners.off(document.body, 'mousemove', this.processMouseMove, false);
-    Listeners.off(document.body, 'mouseleave', this.processMouseLeave);
-    Listeners.off(window, 'scroll', this.processScroll, false);
-    Listeners.off(document.body, 'mouseup', this.processMouseUp, false);
+    this.listenerIds = [];
   }
 
   /**
